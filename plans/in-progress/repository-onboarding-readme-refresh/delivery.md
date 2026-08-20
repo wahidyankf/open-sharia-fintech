@@ -1993,8 +1993,11 @@ record.
     named. It reran no failed journey, because its defects were cross-document
     inconsistencies rather than journey failures — there was no red journey to
     turn green. The second half of the acceptance still holds, and now
-    non-trivially: every `@01` commit touches Markdown only, so no product
-    behavior could be altered under cover of a documentation fix.
+    non-trivially: `@01` changed Markdown plus twelve captured evidence artifacts
+    under `evidence/` — nine PNG screenshots and three `curl`/coverage
+    transcripts — and nothing else. None of the twelve is source, configuration,
+    a test, or a generated mirror, so no product behavior could be altered under
+    cover of a documentation fix.
 
 - [x] [AI] [P6-002A] For any defect that is a product bug rather than a documentation defect, add
       focused red coverage before the fix — acceptance: the test reproduces the defect and fails
@@ -2048,10 +2051,21 @@ record.
     repository-authoritative gate against merged `main`, and the closeout unit runs
     its own full gate set before it is committed and pushed.
 
-  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration ran
-    unit gates before every one of its commits — governance word-budget,
-    README-index, Markdown-link validation, Prettier, markdownlint, and a
-    remark-gfm parse check — and no cycle's commit landed until each exited 0.
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration did
+    run checks before its commits, and the first wording of this amendment
+    overstated both what they were and what they returned. Precisely: two are
+    real pre-commit gates that did block a landing — `format-prettier` and
+    `markdownlint`, both `*.md`-scoped. Three more were run by hand because they
+    are `pre-push`/`ci` surfaces rather than pre-commit ones —
+    `governance-readme-index`, `md-links`, and `governance-word-budget`, the last
+    of which is path-gated on `repo-governance/` and the harness directories and
+    so would never have fired for this branch's diff at all. The sixth, a
+    remark-gfm table parse, is **not a repository gate**: it is an ad-hoc script
+    run from the worktree because a blank line inside a Markdown table splits it
+    silently past both Prettier and markdownlint. And they did not all exit 0:
+    `md-links` exits 1 on a repository-wide baseline of 312 broken links that
+    predates this branch. What was actually checked each cycle is that the
+    failing set contains no file this plan owns, which it does not.
 
 - [x] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
       or MEDIUM findings.
@@ -2256,7 +2270,8 @@ record.
   - **Amended 2026-08-21.** The bullet above says `execution-record-fixes.md`
     "never will exist". That was true against `origin/main` at `1542ea044`, the
     revision this re-run read, and false by the time iteration `@01` opened: Phase 6
-    reopened, created that file, and added eight files under `evidence/`. The claim
+    reopened, created that file, and added twelve files under `evidence/` — eight
+    at `cb489b874` and four more at `14e58716e`. The claim
     is corrected rather than deleted, because the reasoning was sound on the
     evidence then available — the defect was stating a permanent future from a
     snapshot. P9-003 should expect both paths to exist. The `evidence/README.md`

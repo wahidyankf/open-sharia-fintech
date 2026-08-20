@@ -1285,7 +1285,8 @@ both are named here so P9-003 does not read them as missing.
 > **Amended 2026-08-21.** The paragraph above originally said `execution-record-fixes.md` "will
 > never be created". That was true against `origin/main` at `1542ea044`, the revision this re-run
 > read, and false by the time the same commit was written: Phase 6 reopened as iteration `@01`,
-> which created that file and added eight files under `evidence/`. The claim is corrected rather
+> which created that file and added twelve files under `evidence/` — eight at `cb489b874` and four
+> more at `14e58716e`. The claim is corrected rather
 > than deleted, because the reasoning was sound on the evidence then available — the defect was
 > stating a permanent future ("will never") from a snapshot. P9-003 should expect both paths to
 > exist.

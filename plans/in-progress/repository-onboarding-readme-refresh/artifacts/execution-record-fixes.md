@@ -563,13 +563,61 @@ had sat one screen above seven rows that said so.
 Every Phase 6 row now carries a verdict rather than a silence. Fourteen of the fifteen carry a
 supersession amendment; `P6-G01` carries the conditional-fired amendment it already had. The
 fifteenth, `P6-002B`, is deliberately unamended and that is the finding's own rule applied to itself:
-both its clauses survive `@01` — there was still no red coverage to turn green, and `@01` changed
-Markdown only, so still no source change. An absent marker there means checked-and-standing, which
+both its clauses survive `@01` — there was still no red coverage to turn green, and the only
+non-Markdown paths `@01` added are twelve captured evidence artifacts, so still no source change. An absent marker there means checked-and-standing, which
 is only legible because this paragraph says so.
 
 | Row  | Discipline | Defect                                                                                                                                                                                                                      | Severity | Fix                                                                                                                                                                                               |
 | ---- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | C-72 | Docs       | `delivery.md`'s `P7-001` bullet asserts `artifacts/execution-record-fixes.md` "never will exist". The class sweep it triggered found `P6-001`, `P6-003`, `P6-003A`, and `P6-003B` carrying the same false `@01` disposition | HIGH     | `P7-001` and all four head rows amended. The `evidence/README.md` half of the `P7-001` bullet still stands — P8-002 has not run. `P6-002B` checked and left standing, for the reason stated above |
+
+### Cycle 16 — `d805edee1`
+
+The cycle opened on a figure this record had been repeating without ever counting it.
+
+Iteration `@01` added twelve files under `evidence/`, not eight: `cb489b874` added the four Phase 5A
+and four Phase 5B captures, and `14e58716e` added the four Phase 6 breakpoint captures once `C-23`
+closed the 375px/1280px gap. The `C-26` row is not wrong — it describes what a single commit did,
+and `cb489b874` did add exactly eight. What was wrong is every later sentence that reused that
+figure to describe the whole iteration: the `P7-001` amendment in `delivery.md` written one cycle
+ago, and the identical sentence in `artifacts/reader-doc-disposition-ose-public.md` written before
+it. The number was correct when first written about a commit and became wrong the moment it was
+promoted to a claim about the iteration.
+
+The second finding is the same failure in a different currency. `P6-002`'s amendment and this
+record's own Cycle 15 paragraph both said `@01` "changed Markdown only" — offered, in the second
+case, as the stated reason `P6-002B` needs no amendment. Nine PNGs and three transcripts say otherwise.
+The disposition survives, because none of the twelve is source, configuration, a test, or a
+generated mirror, and that is what `P6-002B` actually turns on. Only the reason was false, and a
+false reason for a true verdict is still a defect — the fifteen cycles behind this one exist because
+that distinction kept getting lost.
+
+Integrity found the third defect independently, and it is the sharper one. `P6-003A`'s amendment,
+written one commit ago, listed six checks as unit gates that each exited 0 before every `@01`
+commit. Checked against `repo-config.yml`: `format-prettier` and `markdownlint` are genuinely
+`pre-commit` and genuinely blocked landings. `governance-readme-index`, `md-links`, and
+`governance-word-budget` are `pre-push`/`ci` surfaces, run here by hand rather than by a hook — and
+`governance-word-budget` is path-gated on `repo-governance/` and the harness directories, so it
+would not have fired for this branch's diff under any circumstance. The remark-gfm table parse is
+not a gate at all; it is a script run from the worktree because a blank line inside a Markdown table
+splits it silently past both Prettier and markdownlint, which is how `C-33`…`C-35` lost their
+header in the first place. And "each exited 0" was never true: `md-links` exits 1 against a
+repository-wide baseline of 312 broken links that predates this branch. What each cycle actually
+verified is that none of those 312 is a file this plan owns.
+
+There is a fourth defect and it is mine. The first fix for `C-74` wrote "eight PNG screenshots and
+four transcripts" — the split one review agent reported, adopted without counting. It is nine and
+three. Two agents disagreed on the composition while agreeing on the total, and the correct response
+was to run `git ls-tree` rather than to pick one. Recorded as `C-76` rather than quietly amended,
+because a review finding is a claim to verify, not a fact to copy — and this record has now made
+that mistake in both directions.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                     | Severity | Fix                                                                                                                                                                                     |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-73 | Docs       | `delivery.md`'s `P7-001` amendment and the same sentence in `reader-doc-disposition-ose-public.md` say `@01` added "eight files under `evidence/`". Twelve exist, all added by `@01`                                                       | HIGH     | Both corrected to twelve, split by the two commits that added them. `C-26` left standing — it describes one commit, which did add eight                                                 |
+| C-74 | Docs       | `P6-002`'s amendment and this record's Cycle 15 paragraph both claim `@01` "changed Markdown only". It also added nine PNGs and three transcripts under `evidence/`                                                                        | HIGH     | Both reworded to name the twelve evidence artifacts. `P6-002B` still needs no amendment, now for the reason that actually holds: none of the twelve is source or a test                 |
+| C-75 | Integrity  | `P6-003A`'s amendment named six checks as "unit gates" run "before every one of its commits", exiting 0. One is not a repository gate, three are `pre-push`/`ci` surfaces rather than pre-commit ones, and `md-links` never exits 0 at all | HIGH     | Rewritten to separate the two real pre-commit gates from the three hand-run ones and the one ad-hoc script, and to state the `md-links` baseline plainly rather than imply a clean exit |
+| C-76 | Docs       | The first fix for `C-74` said "eight PNG screenshots and four transcripts", taken from a review agent's split without counting. It is nine and three                                                                                       | HIGH     | Counted directly — `git ls-tree` over `evidence/` returns 9 `.png` and 3 `.txt` — and corrected at both sites before the commit landed                                                  |
 
 ## Scope Discipline
 
