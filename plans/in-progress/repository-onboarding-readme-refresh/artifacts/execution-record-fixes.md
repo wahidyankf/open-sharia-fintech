@@ -126,10 +126,13 @@ over this file returns every superseded row. That is deliberate. Successive hand
 of this same fact — a row range, a chain count, a chain list, and then a duplicate-row count — were
 each found wrong by a later cycle, so the record now points at something greppable instead of
 something remembered. The prose here is a reading aid and makes no completeness claim.
+**Superseded in part by C-49, C-50, C-51 and C-57**: this preamble is where all four of those
+summaries lived. Each version of it was rewritten when the next cycle found the figure wrong.
 
-The narrative paragraphs between the tables carry the same marker where a later cycle overtook one,
-so the same `grep` surfaces those too. C-57 is why: the rows had been made self-checking and the
-prose around them had not, and two defects were sitting in it.
+The narrative paragraphs between the tables use the same marker, so the same `grep` surfaces prose
+and rows alike. Read a marker as evidence; do not read the absence of one as proof. The rows were
+made self-checking a cycle before the prose was, and the first sweep of the prose missed a paragraph
+that the next cycle found — see C-59.
 
 The multi-step chains, where a fix was found wrong more than once: C-21 → C-31 → C-32 → C-36
 (the Cargo prerequisite wording); C-27 → C-39 → C-44 (the `doctor --scope minimal`
@@ -218,14 +221,13 @@ each checked out. What it did find is a wrong quotation and two rendering or rec
 Cycle 3 also confirmed, by direct reproduction rather than reading, that the Git-hook exit code is
 genuinely preserved end to end: Husky's dispatcher runs the hook as a child process, captures its
 exit status, and re-exits with it; each shim runs under `set -e` with no `|| true`; and
-`rhino-bin.sh` runs under `set -euo pipefail` and `exec`s the binary.
-**Superseded in part by C-41**: this sentence originally said the dispatcher `exec`s the hook, which
-it does not — only `rhino-bin.sh` ends in a real `exec`. The conclusion about the exit code survives
-the correction, but the mechanism named here was wrong when written. It
+`rhino-bin.sh` runs under `set -euo pipefail` and `exec`s the binary. It
 found one nuance that does not change any shipped claim: `rhino-bin.sh` skips the Cargo build when
 a fresh gate binary already exists, so a contributor who has built before would not see the block —
 but every document making the claim is describing a first-time clone, where no such binary can
-exist.
+exist. **Superseded in part by C-41**: the first sentence above originally said the dispatcher
+`exec`s the hook, which it does not — only `rhino-bin.sh` ends in a real `exec`. The conclusion
+about the exit code survives the correction; the mechanism named was wrong when written.
 
 ### Cycle 4 Rows (P6-007D@01)
 
@@ -315,8 +317,9 @@ this very class.
 Both findings are the same shape as C-45: a claim about the record's own completeness, stated more
 confidently than it had been checked. Worth noting where they were found — not in the reader-facing
 documents, which no cycle has needed to change since `afb850f43`, but in the apparatus built to
-audit them. Stated as a commit rather than a streak count, because the first attempt to pin it
-counted from the wrong end and included a cycle that did change them.
+audit them. **Superseded in part by C-55**: this sentence said the documents "have now been clean
+for three consecutive cycles", which counted from the wrong end and included a cycle that did change
+them. It is stated as a commit anchor rather than a streak count for that reason.
 
 ### Cycle 8 Rows (P6-007H@01)
 
@@ -362,6 +365,9 @@ section carried a fifth invented count out of this very commit.
 
 Two findings, one from each specialist, and neither is in a row — both are in the narration around
 the rows, which is the part of this file no sweep had been pointed at.
+**Superseded in part by C-59**: prose had in fact been pointed at once before, by `C-55` the cycle
+before this one, which rewrote a paragraph rather than a row. Saying no sweep had touched it wrote
+the immediate predecessor out of the account.
 
 Integrity found the fifth failed summary count, and it was written into the same commit that
 announced the file had stopped making them. The paragraph closing the Cycle 9 section said "56
@@ -383,13 +389,43 @@ coverage it did not have, and so does the pushed commit message for `9810e71bd`.
 | C-58 | Docs       | The Cycle 5 paragraph said "the reader-facing documents themselves came back clean" on the strength of a brief that named four of the five. `docs/reference/related-repositories.md` was not in that pass                                                      | MEDIUM   | The paragraph now names the four that were read, says which document was not, and points at the Cycle 8 pass that first covered all five. The identical claim in `9810e71bd`'s commit message is disclosed as unamendable. The Cycle 2 paragraph's unqualified "the four documents" was scoped in the same edit — it was ambiguous rather than wrong, since the fifth document carries no version literal and was never in `C-20`'s scope |
 
 Both findings landed in narration, not in a row, and that is the point worth keeping. The marker
-scheme made the rows self-checking; nothing had been pointed at the prose between them, and both
-defects had been sitting there for cycles.
+scheme made the rows self-checking; the prose between them had never been swept as a set. The two
+defects had been there for different lengths of time: `C-58`'s survived five cycles, while `C-57`'s
+was written by the cycle-9 commit and caught in the next one.
 
-Worth being plain about the shape of this: ten review cycles have produced the rows numbered above,
-and every cycle after the fourth changed only plan records, never a reader-facing document. Those
-five documents have not needed a change since `afb850f43`, and this cycle's docs pass cleared them
-to ship again.
+### Cycle 11 Rows (P6-007K@01)
+
+Three findings, and the first is the same failure one layer out. Cycle 10 extended the marker
+convention from the rows to the prose, swept the prose, marked four paragraphs, and then stated that
+the narrative paragraphs now carry a marker wherever a later cycle overtook one. The sweep had
+missed one. The Cycle 7 closing paragraph claimed the reader-facing documents "have now been clean
+for three consecutive cycles", carried that claim through `063026455` and `bc20ca4bd`, and was
+rewritten in place at `14d2f67d7` as the literal implementation of `C-55` — a paragraph, not a row.
+So `C-55` had already pointed at prose a cycle before the sweep that claimed nothing had, and the
+sweep neither found it nor counted it.
+
+That is the fifth completeness claim about this record to fail, and the second to fail inside the
+commit that was meant to close the class. The response is the same one that worked for the rows,
+applied honestly this time: the preamble no longer says the prose is fully marked. It says a marker
+is evidence and the absence of one is not proof, and it names this miss so a reader knows the sweep
+has a history of being incomplete.
+
+The other two findings are the cost of the extension itself. A marker dropped mid-paragraph broke
+the sentence after it — the pronoun "It", whose antecedent was three sentences up, bound instead to
+the correction — which is a real argument that prose markers belong at a paragraph boundary and not
+wherever the corrected sentence happens to sit. And the closing sentence flattened two defects of
+very different ages into one "sitting there for cycles".
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                                                                                                       | Severity | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-59 | Integrity  | The Cycle 7 paragraph carried a false three-cycle streak claim through two commits and was rewritten in place at `14d2f67d7` per `C-55`, with no marker. Cycle 10's claim that the prose now all carries one was false when written, and its "nothing had been pointed at the prose" framing wrote `C-55` out of the account | HIGH     | The paragraph is marked. The preamble drops the completeness claim for prose and states the miss instead; the Cycle 10 narration is marked where it wrote its predecessor out. Same framing appears in `c8054b7d3`'s pushed message and stays there, disclosed rather than force-pushed. The prose was then re-swept mechanically, by diffing non-table lines across every consecutive commit pair rather than by reading, which also gave the preamble a marker for the four summaries it hosted |
+| C-60 | Docs       | Inserting the `C-41` marker mid-paragraph orphaned the pronoun "It" in the next sentence, which a cold reader binds to the correction rather than to "Cycle 3" three sentences up                                                                                                                                            | MEDIUM   | The marker moved to the end of the paragraph, restoring the original sentence flow. The convention is now to place a prose marker at a paragraph boundary, which is where the other five already sit                                                                                                                                                                                                                                                                                              |
+| C-61 | Docs       | "Both defects had been sitting there for cycles" is true of `C-58`, which survived five, and false of `C-57`, which the cycle-9 commit introduced and the next cycle caught                                                                                                                                                  | MEDIUM   | The sentence gives the two ages separately instead of a shared one                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+Worth being plain about the shape of this: eleven review cycles have produced the rows numbered
+above, and every cycle after the fourth changed only plan records, never a reader-facing document.
+Those five documents have not needed a change since `afb850f43`, and the cycle 11 docs pass cleared
+them to ship again.
 
 ## Scope Discipline
 
