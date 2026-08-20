@@ -97,6 +97,29 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
                         entry.name
                     )
                 })?;
+            // A `vendored[]` entry that trims to empty or root (`""`, `/`) must
+            // fail the whole job rather than silently mean "nothing is
+            // vendored": `is_vendored` routes every declaration through
+            // `path_is_under`, whose empty-dir guard makes a malformed
+            // declaration match no file, which flips every currently-vendored
+            // file into `job_diff`'s `to_remove` set and deletes it on the next
+            // `emit_skills_mirrors` (cycle-5 CRITICAL). `repo-config validate`
+            // already rejects this shape, but nothing forces that command to
+            // run before `harness bindings generate` does — this defensive
+            // check makes the removal path itself fail-safe rather than
+            // depending on a separate command having been run first, the same
+            // pattern `confined_repo_path` above already applies to
+            // `skills-dir`/`skills-mirrors`.
+            for v in &entry.vendored {
+                repo_config::validate_repo_relative_path(v).map_err(|error| {
+                    format!(
+                        "harness {:?} vendored {v:?}: {error} (a malformed vendored declaration \
+                         must not be treated as \"nothing is vendored\" — that would delete \
+                         every mirrored file this entry was supposed to protect)",
+                        entry.name
+                    )
+                })?;
+            }
             Ok(MirrorJob {
                 source,
                 target,
@@ -447,6 +470,61 @@ mod tests {
                 expect_removed == 0
             );
         }
+    }
+
+    // Cycle-5 CRITICAL regression: a `vendored[]` entry that trims to empty or
+    // root must fail the whole job rather than silently delete the file it
+    // was declared to protect. Falsifiable both ways from the same fixture
+    // shape the doubled-orphan test above uses: an already-vendored, already-
+    // present file must still exist on disk after the refusal, not just after
+    // a passing run.
+    #[test]
+    fn a_malformed_vendored_declaration_is_refused_rather_than_deleting_the_file_it_protects() {
+        for bad_vendored in [
+            "    vendored:\n      - \"\"\n",
+            "    vendored:\n      - /\n",
+        ] {
+            let dir = fixture(bad_vendored);
+            write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");
+            write(
+                dir.path(),
+                ".agents/skills/vendor-plugin/SKILL.md",
+                "vendored payload\n",
+            );
+
+            let error = emit_skills_mirrors(dir.path(), false)
+                .expect_err("an empty or root vendored declaration must be refused");
+            assert!(
+                error.contains("vendored"),
+                "error must name the offending field; got: {error}"
+            );
+            assert!(
+                dir.path()
+                    .join(".agents/skills/vendor-plugin/SKILL.md")
+                    .exists(),
+                "a malformed vendored declaration must not delete an unrelated file \
+                 (bad_vendored was: {bad_vendored:?})"
+            );
+        }
+    }
+
+    // Cycle-5 CRITICAL regression, direct at `is_vendored` itself (the fourth
+    // and previously-uncovered `path_is_under` call site): an empty
+    // declaration must not claim every mirrored file — `path_is_under`'s
+    // empty-dir guard is what makes this `false`, and `mirror_jobs`'
+    // validation above is what stops the malformed declaration from reaching
+    // `is_vendored` in production, but this function must stay sound on its
+    // own rather than depend on that caller.
+    #[test]
+    fn is_vendored_rejects_an_empty_or_root_declaration_against_any_path() {
+        assert!(!is_vendored(
+            Path::new("any/mirrored/file.md"),
+            &[String::new()]
+        ));
+        assert!(!is_vendored(
+            Path::new("any/mirrored/file.md"),
+            &["/".to_string()]
+        ));
     }
 
     #[test]

@@ -579,6 +579,43 @@ mod tests {
         );
     }
 
+    // Cycle-5 regression, at the fourth and previously-uncovered
+    // `path_is_under` call site (`vendored_ownership_cross_check`'s
+    // `under_skills_dir` closure): a blank `skills-dir` must not make this
+    // cross-check spuriously match every `ownership[]` path as "under
+    // skills-dir". `path_is_under`'s empty-dir guard is what stops that; an
+    // empty `skills-dir` is still rejected on its own by the path-field
+    // check above, just not by this cross-check inventing a second, phantom
+    // finding for an entry that has nothing to do with the skills mirror.
+    #[test]
+    fn an_empty_skills_dir_does_not_make_the_vendored_cross_check_match_every_ownership_path() {
+        let bad = concat!(
+            "harness:\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: \"\"\n",
+            "    ownership:\n",
+            "      - { path: some/unrelated/file.md, class: vendored, reason: unrelated to skills-dir }\n",
+            "coverage:\n",
+            "  projects:\n",
+            "    - name: rhino-cli\n",
+            "      levels: [unit]\n",
+            "      specs: \"x\"\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        );
+        let (ok, out) = write_and_run(bad);
+        assert!(
+            !ok,
+            "an empty skills-dir must still be rejected on its own; got: {out}"
+        );
+        assert!(
+            !out.contains("declared class: vendored under skills-dir"),
+            "an empty skills-dir must not make the cross-check match every ownership path; got: {out}"
+        );
+    }
+
     #[test]
     fn value_only_difference_still_passes() {
         let mutated = VALID.replace("rhino-cli", "some-other-project");
