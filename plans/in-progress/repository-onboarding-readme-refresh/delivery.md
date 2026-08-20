@@ -66,10 +66,12 @@ guard, commit, push, draft PR, the canonical behavior-routed review requirement,
 and merge. Commit messages use Conventional Commits, generated mirrors stay with their canonical
 source, and no commit message contains sensitive facts.
 
-“Full unit gates” means running the repository's own declared gate commands. Phase 0 reads them from
-the registry with
-`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=<surface> --format=text`;
+“Full unit gates” means running the repository's own declared gate commands. Phase 0 reads the
+staged-file surface from the registry with
+`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text`;
 the list below is the expected result and is corrected in this document if the registry disagrees.
+The repo-wide surface is never transcribed as a static list at all — it is always invoked through
+the registry runner itself, so it can never drift from what the registry currently declares.
 
 Staged-file surface (`pre-commit`), plus the repo-wide equivalents this plan runs over its whole
 branch set:
@@ -85,16 +87,27 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md fron
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate
 ```
 
-Repository-wide surface (`pre-push`):
+Repository-wide surface (`pre-push`): the authoritative command is the registry runner itself, the
+same one Iron Rule 5 of the
+[plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution/iron-rules-1-5.md#iron-rules-non-negotiable)
+requires before every push —
 
 ```bash
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate
-npm run validate:sync
-npm exec nx -- affected -t typecheck,lint,test:quick,specs:behavior:coverage
-npm exec nx -- affected -t build,test:quick,lint
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 ```
+
+This resolves and runs every gate the live registry currently declares for `pre-push`, so the set
+executed is always the registry's current content rather than a hardcoded command list that can go
+stale. As Phase 0 finds it, the surface currently covers, in prose: the three hand-wired
+affected-project checks (`test:quick`, `compat:min-version`, `specs:structure-validation`); the
+Markdown link, governance readme-index, parity-manifest, and harness-duplication validators plus
+`env validate` — the environment-contract check, distinct from the staged-file guard that runs at
+`pre-commit`; and a set of path-gated governance checks — vendor independence over
+`repo-governance/`, vendor independence over `AGENTS.md` specifically, convention license, harness
+bindings, harness ownership, harness catalog, governance word-budget, and governance
+readme-completeness. `AGENTS.md` is one of this plan's own File-Impact edit targets (`[E]`), so the
+`AGENTS.md`-scoped vendor-independence check is a real, applicable gate that can fire on this plan's
+own diff whenever a delivery unit touches that file, not a theoretical one.
 
 The `md mermaid`, `md naming`, `md frontmatter`, and Prettier gates are **affected-file-type scoped**:
 they inspect only the files a given commit stages, so a branch can accumulate an unformatted or
@@ -239,10 +252,16 @@ no PR.
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text`
       — acceptance: the exact Markdown, generated-binding, and environment guard commands are
       recorded in the execution record.
-- [ ] [AI] [P0-003A] Resolve every command named in the “full unit gates” block: each Nx target with
-      `npm exec nx show project <project> -- --json`, and each `rhino-cli` subcommand against
-      `rhino-cli <group> --help` — acceptance: every target and subcommand exists, and any missing one
-      is corrected in this document before first execution.
+- [ ] [AI] [P0-003A] Resolve every command named in the staged-file (`pre-commit`) “full unit gates”
+      block: each Nx target with `npm exec nx show project <project> -- --json`, and each `rhino-cli`
+      subcommand against `rhino-cli <group> --help` — acceptance: every target and subcommand exists,
+      and any missing one is corrected in this document before first execution.
+- [ ] [AI] [P0-003B] Run
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-push --format=text`
+      and diff the result against the prose summary in the “Repository-wide surface (`pre-push`)”
+      block above — acceptance: the prose summary's gate list matches the live registry exactly, any
+      drift is corrected in this document before first execution, and the execution record notes
+      whether `AGENTS.md`'s path-gated `vendor-independence-agents-md` entry is present.
 - [ ] [AI] [P0-004] Run the exact staged environment-file gate without staging anything —
       acceptance: the baseline exits 0.
 - [ ] [AI] [P0-004A] Run the silent staged-credential pattern gate without staging anything —
@@ -278,9 +297,12 @@ no PR.
       outcomes from the local record — acceptance: every copied row uses the required schema and no
       local path, dirty filename, or raw output enters the tracked artifact.
 - [ ] [AI] [P1-001] Create `artifacts/reader-doc-disposition-ose-public.md` with repository revision,
-      document kind, exact path, audience, purpose, disposition, owning unit, task ID, Date, Status,
-      Files Changed, Commands/Evidence, and Notes — acceptance: the schema supports one executable row
-      per tracked Markdown file without quoting document bodies.
+      document kind, exact path, audience, purpose, disposition, owning unit, task ID, direct action,
+      source of truth, exact applicable command, acceptance criterion, Date, Status, Files Changed,
+      Commands/Evidence, and Notes — acceptance: the schema supports one executable row per tracked
+      Markdown file without quoting document bodies, and explicitly declares the direct-action,
+      source-of-truth, exact-command, and acceptance-criterion fields that P1-005 requires every
+      expanded row to carry.
 - [ ] [AI] [P1-002] Populate the ledger from
       `git ls-tree -r --name-only <recorded-origin-main-sha> -- '*.md'` — acceptance: every committed
       README is audit-required and each other path is classified reader-related, historical,
@@ -485,6 +507,11 @@ after processes stop and evidence is safely recorded.
       breakpoint named `phase-5a-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5a-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
       execution record and contains no credential, token, or authenticated session data.
+- [ ] [AI] [P5A-006B] In this same macOS clone, before removing it, start at the root `README.md` and
+      follow the documented **Understand the product** path hop by hop to the roadmap or product
+      specification it names — acceptance: every hop resolves to an existing, non-404 target, the
+      route reaches the roadmap or product specification without any hop landing in setup or
+      installation instructions, and a broken or missing hop is recorded as a Phase 6 correction row.
 - [ ] [AI] [P5A-007] Stop the recorded child process, verify clean status, and remove only the exact
       temporary clone — acceptance: no process or temporary checkout remains.
 
@@ -508,33 +535,42 @@ creates survives it.
       and note whether `docker image inspect ubuntu:24.04` already succeeds — acceptance: the record
       states the exact pre-existing state, and whether cleanup must remove the base image or leave a
       preexisting one alone.
-- [ ] [AI] [P5B-001] Start one disposable container from the upstream official image with
-      `docker run --rm --name ose-onboarding-ubuntu-check -p 127.0.0.1:<port>:<port> ubuntu:24.04` and
-      record its exact name — acceptance: the container is started from the unmodified upstream image,
-      no Dockerfile or build step is used, no host path is bind-mounted, and only the loopback port is
-      published.
-- [ ] [AI] [P5B-002] Inside the container, install only the packages the onboarding documentation
-      itself names as prerequisites — acceptance: every install command comes from the documented
-      prerequisite list, and any package the journey turns out to need but the docs never mention
-      becomes a Phase 6 documentation-defect row rather than a silent fix.
-- [ ] [AI] [P5B-003] Clone `main` into a `mktemp -d` directory inside the container and run only its
-      documented bootstrap — acceptance: setup succeeds without checkout-local state and without an
-      undocumented prerequisite.
-- [ ] [AI] [P5B-004] Resolve and start the `ose-www` dev target with
-      `npm exec nx show project ose-www --json` followed by its declared Nx command, bound so the
-      published loopback port reaches it — acceptance: the process ID and loopback address are
-      recorded.
-- [ ] [AI] [P5B-005] Use `curl --fail --silent --show-error` on that address from inside the
-      container, then inspect the published host loopback address in a browser and its console at
-      mobile, tablet, and desktop viewports — acceptance: the documented product context appears at
-      all three with no console error.
+- [ ] [AI] [P5B-001] Start one disposable, detached container from the upstream official image with `docker run --rm -d --name ose-onboarding-ubuntu-check -p 127.0.0.1:<port>:<port> ubuntu:24.04 sleep infinity` and record its exact name — acceptance: `docker ps --filter name=ose-onboarding-ubuntu-check --format '{{.Names}}'` returns the recorded name (confirming the container is actually running, not merely created), the container is started from the unmodified upstream image, no Dockerfile or build step is used, no host path is bind-mounted, and only the loopback port is published.
+- [ ] [AI] [P5B-002] Run each install command inside the container via
+      `docker exec ose-onboarding-ubuntu-check <command>`, installing only the packages the onboarding
+      documentation itself names as prerequisites — acceptance: every install command executes through
+      `docker exec` against the P5B-001 container (never an implied interactive shell), comes from the
+      documented prerequisite list, and any package the journey turns out to need but the docs never
+      mention becomes a Phase 6 documentation-defect row rather than a silent fix.
+- [ ] [AI] [P5B-003] Via `docker exec ose-onboarding-ubuntu-check <command>`, clone `main` into a
+      `mktemp -d` directory inside the container and run only its documented bootstrap — acceptance:
+      every clone and bootstrap command executes through `docker exec` against the P5B-001 container,
+      setup succeeds without checkout-local state, and without an undocumented prerequisite.
+- [ ] [AI] [P5B-004] Via `docker exec ose-onboarding-ubuntu-check <command>`, resolve the `ose-www` dev
+      target with `npm exec nx show project ose-www --json`, then start its declared Nx command bound
+      to all interfaces inside the container (`0.0.0.0`), not the container's own loopback, so the
+      published `127.0.0.1:<port>` reaches it from the host — acceptance: every command executes
+      through `docker exec` against the P5B-001 container, the process ID and bind address are
+      recorded, the recorded bind address is explicitly `0.0.0.0` inside the container, and if the
+      documented onboarding command cannot be made reachable without an undocumented flag, that is
+      itself a Phase 6 documentation-defect row rather than a silent fix to the run command.
+- [ ] [AI] [P5B-005] Run `docker exec ose-onboarding-ubuntu-check curl --fail --silent --show-error <address>` against the bound address, then inspect the published host loopback address in a browser and its console at mobile, tablet, and desktop viewports — acceptance: the `curl` command executes through `docker exec` against the P5B-001 container and succeeds, and the documented product context appears at all three viewports with no console error.
 - [ ] [AI] [P5B-005A] Capture evidence into the plan's `evidence/` folder: one screenshot per
       breakpoint named `phase-5b-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5b-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
       execution record and contains no host path, credential, or session data.
-- [ ] [AI] [P5B-006] Stop the recorded process and exit the container, then verify with
-      `docker ps -a --format '{{.Names}}'` that the recorded container name is absent — acceptance:
-      `--rm` removed the container and no plan-created container remains.
+- [ ] [AI] [P5B-005B] Via `docker exec ose-onboarding-ubuntu-check <command>` against this same
+      container clone, before stopping the process, start at the root `README.md` and follow the
+      documented **Understand the product** path hop by hop to the roadmap or product specification it
+      names — acceptance: every hop-resolution command executes through `docker exec` against the
+      P5B-001 container, every hop resolves to an existing, non-404 target, the route reaches the
+      roadmap or product specification without any hop landing in setup or installation instructions,
+      and a broken or missing hop is recorded as a Phase 6 correction row.
+- [ ] [AI] [P5B-006] Stop the recorded dev-server process via `docker exec`, then stop the container
+      itself with `docker stop ose-onboarding-ubuntu-check` (`--rm` then removes it automatically), and
+      verify with `docker ps -a --format '{{.Names}}'` that the recorded container name is absent —
+      acceptance: `docker stop ose-onboarding-ubuntu-check` exits `0`, `--rm` removed the container, and
+      no plan-created container remains.
 - [ ] [AI] [P5B-007] If P5B-000 recorded `ubuntu:24.04` as absent before this phase, remove it with
       `docker image rm ubuntu:24.04` — acceptance: `docker image inspect ubuntu:24.04` then fails; if
       the image existed beforehand it is left untouched and that decision is recorded.
@@ -656,6 +692,16 @@ record.
       `learnings.md` entry — acceptance: each entry is routed to one durable home, converted to a
       separately scoped backlog item, discarded with a reason, or recorded as no generalizable
       learning.
+- [ ] [AI] [P8-004A] Apply the code-routing rule to every `learnings.md` entry: any entry whose
+      durable home is `apps/`, `libs/`, or a test is always filed as a separate `plans/backlog/`
+      plan and never landed inline in this plan's commits or PRs, except a bug/lint/test failure
+      that blocks this plan's own scope, which is fixed inline as ordinary Root Cause Orientation
+      work — acceptance: no code-homed entry is routed inline; every code-homed entry has a
+      corresponding `plans/backlog/` folder.
+- [ ] [AI] [P8-004B] For every `learnings.md` entry routed to `plans/ideas/`, scan
+      `plans/ideas/README.md` and the existing two-pagers first for a brief already covering the
+      same problem or area and fold the learning into it — acceptance: a new
+      `plans/ideas/<slug>.md` is created only when the scan confirms no existing brief overlaps.
 - [ ] [AI] [P8-005] Reconcile the closeout file-touch ledger — acceptance: only sanitized plan,
       evidence, and learning paths are changed.
 
@@ -663,6 +709,8 @@ record.
 
 - [ ] [AI] [P8-G01] Verify the ledger, evidence, and learnings have terminal safe states —
       acceptance: closeout is ready for archival without another repository change.
+- [ ] [AI] [P8-G02] Verify no code-homed learning landed inline — acceptance: every code-routed
+      `learnings.md` entry has a corresponding `plans/backlog/` folder.
 
 > **Pause Safety**: delivery is complete and closeout artifacts are staged only in the plan worktree.
 

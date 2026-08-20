@@ -5,7 +5,7 @@
 `ose-public` has rich product, engineering, and governance documentation, but a newcomer must
 currently reconcile contradictory setup commands, outdated project inventories, dead-end tutorial
 routes, and repository-specific terminology before they can understand the product or run it.
-[Repo-grounded] A read-only inventory on 2026-08-20 found 1,004 tracked `README.md` files and 9,301
+[Repo-grounded] A read-only inventory on 2026-08-20 found 1,004 tracked `README.md` files and 9,294
 tracked Markdown files. Many are historical, generated, or educational content rather than living
 onboarding surfaces, so a trustworthy refresh needs an explicit disposition for every file rather
 than a blind rewrite.

@@ -142,11 +142,21 @@ This plan deliberately produces no durable container artifact:
 
 - No Dockerfile, compose file, or devcontainer is authored or committed.
 - No image is built, tagged, or published; the upstream image is used unmodified.
-- The container runs with `--rm`, mounts no host path, and publishes only a loopback port.
+- The container starts detached with a keep-alive process
+  (`docker run --rm -d --name ose-onboarding-ubuntu-check ... ubuntu:24.04 sleep infinity`), mounts no
+  host path, and publishes only a loopback port; every in-container command runs through
+  `docker exec ose-onboarding-ubuntu-check <command>` against that running container, never an implied
+  interactive shell.
+- The dev target started inside the container binds to all interfaces (`0.0.0.0`), not the container's
+  own loopback, so the published `127.0.0.1:<port>` on the host can reach it. If the documented
+  onboarding command cannot be made reachable without an undocumented flag, that is a documentation
+  defect to record, not a quiet fix to the run command.
 - Packages installed inside come only from the onboarding documentation's own prerequisite list. A
   package the journey needs but the docs never mention is a documentation defect, not a fix applied
   quietly inside the container.
-- The base image is removed afterwards unless it already existed on the machine before the phase.
+- The container is stopped explicitly with `docker stop ose-onboarding-ubuntu-check`, which `--rm` then
+  removes; the base image is removed afterwards unless it already existed on the machine before the
+  phase.
 - The phase opens and closes with the same four Docker listings — images, containers, volumes,
   networks — and the diff between them must be empty.
 
