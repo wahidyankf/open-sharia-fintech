@@ -2284,6 +2284,17 @@ record.
   - Every reader task is terminal and no mismatch was found, so this item creates
     no Phase 6 correction row and Phase 7 continues rather than restarting.
 
+  - **P7-001 re-run at `400712aa9`, after iteration `@01` merged.** Both enumerators
+    agree at **9,299** tracked Markdown paths — `git ls-tree` and the empty-tree
+    diff. The delta against `1542ea044` is **+2 / −0**:
+    `artifacts/execution-record-fixes.md`, already declared planned-new, and
+    `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`,
+    which was **not** declared. The ledger now carries a row for it and its
+    planned-new section states the case it was missing — an idea-routed learning
+    can add a two-pager, not only fold into one. The acceptance awk still returns
+    `0` interim labels over a non-zero **814**-row denominator. Reconciling the
+    ledger is what this item is for, so the gap creates no Phase 6 correction row.
+
 - [x] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.
@@ -2326,6 +2337,20 @@ record.
     repository state that is out of this plan's File-Impact footprint, is unchanged
     by it, and was classified as such at baseline — so it is carried forward as a
     known condition, not silently absorbed and not newly introduced.
+  - **P7-002 re-run at `400712aa9`, after iteration `@01` merged.** `lint:md` exits
+    0 over **7,905** linted files — a non-vacuous denominator. `md links validate
+--exclude plans/done`, the form the registry actually runs, exits 0 with
+    `All links valid!`; per `C-77` the unscoped 312-link figure is a hand-run
+    artifact, not this gate. `validate:sync` and `harness:bindings-validation`
+    both report VALIDATION PASSED. `gate run --surface=pre-commit` exits 0.
+  - `format:md:check` exits **1** on **58** files, unchanged from the Phase 0
+    baseline: 54 under `apps/ayokoding-www/content/` and 4 under `plans/done/`.
+    The classification is now proved rather than asserted — intersecting the 58
+    against `git diff --name-only 028e8eed9 origin/main` returns **0**, so this
+    program modified none of them. The staged-environment gate passed with **0**
+    files staged, which is a vacuous pass and is recorded as one; the load-bearing
+    check is that the program's whole diff contains **0** `.env` paths.
+
 - [x] [AI] [P7-003] Run strict docs and README checkers in read-only mode — acceptance: two
       consecutive independent checks report zero CRITICAL, HIGH, or MEDIUM findings; any finding
       returns to Phase 6 before Phase 7 restarts.
@@ -2369,6 +2394,18 @@ record.
     `npm install` and reading `package.json`), and the Quick Reference command
     repetition (an intentional cheat-sheet pattern, not accidental duplication).
     Neither sits at a severity this gate blocks on.
+  - **P7-003 re-run at `400712aa9`, round 2.** The README checker returned **zero**
+    CRITICAL, HIGH, or MEDIUM findings — README confirmed at 896 words inside the
+    900-word fail limit, every link and anchor resolving, two LOW notes explicitly
+    no-action. The docs checker returned **two MEDIUM** and two LOW. Both MEDIUMs
+    were verified against primary sources before being accepted: the integration
+    suite publishes PostgreSQL on host `5434` (`"5434:5432"`, and
+    `run-integration.sh` exports `Port=5434`) where the guide said `5432`; and the
+    enforced commitlint type-enum accepts `build`, which the documented list
+    omitted, with four `build(...)` commits in the merged history. One LOW was also
+    verified false and accepted. **Round 2 is not zero, so this item routes to
+    Phase 6 as iteration `@02`** (rows `C-81`, `C-82`, `C-83`).
+
 - [x] [AI] [P7-004] Have an AI reviewer distinct from each file's writer read every changed living
       reader-facing document aloud against the Human Voice Contract — acceptance: every file passes;
       any stock filler, repetitive cadence, or template-like opening becomes a Phase 6 correction row.
@@ -2424,6 +2461,23 @@ record.
     still under the 900-word fail limit with the budget gate green. The figure is
     pinned to a revision because `C-30` and `C-35` are both this same claim going
     stale, and an unpinned one goes stale the moment a later row edits the file.
+  - **P7-004 re-run at `400712aa9`, round 2.** A second independent reviewer read
+    all five documents aloud against the same twelve clauses and returned FAIL on
+    every file, with roughly forty findings. Each was triaged by verification
+    rather than accepted on the reviewer's severity label. **Two HIGH findings
+    survived and became corrections**: `CONTRIBUTING.md` asserted adherence to a
+    Code of Conduct when no `CODE_OF_CONDUCT.md` exists at any path in the tree
+    (`C-84`), and `related-repositories.md` carried an executor instruction —
+    "preserve active goals during runner contention…" — on a reader-facing
+    reference path (`C-85`). **Three HIGH findings did not survive**: the README's
+    "focused check" is defined by the tutorial the same sentence links, at that
+    tutorial's line 97; the tutorial installs and verifies Rust before `npm
+install`, with its own recovery entry, so no reader is stranded; and the
+    "two sibling repositories" count was already cross-read under `P7-005`. The
+    remaining findings are style preferences against clauses measured clean, and
+    are not carried as debt. Clauses 4, 7, and 9 were confirmed clean across all
+    five files.
+
 - [x] [AI] [P7-005] Cross-read contribution, platform support, content parity, `rhino-cli` byte
       identity, repository purpose, package description, and About metadata — acceptance: all current
       claims agree; documentation findings return to Phase 6 and metadata mismatches return to
@@ -2467,6 +2521,33 @@ record.
   - Per this item's own routing rule, a documentation finding returns to **Phase 6**
     before Phase 7 restarts. Phase 6 is therefore reopened as iteration `@01`,
     reversing its earlier not-applicable disposition.
+  - **P7-005 re-run at `400712aa9`, after iteration `@01` merged.** Every repeated
+    claim resolves against its source rather than against a neighbouring document.
+    `package.json` `description` and the live GitHub About description are the
+    same string, character for character. Homepage is `https://oseplatform.com/`.
+    The topic array is the declared ten — `enterprise-software`, `erp`, `fsharp`,
+    `islamic-finance`, `monorepo`, `nx`, `open-source`, `rust`, `sharia-compliant`,
+    `typescript` — exact set equality with the contract, no extras. Contribution
+    intake reads closed in both `README.md` and `CONTRIBUTING.md`. The canonical
+    platform sentences appear identically in `README.md`, `CONTRIBUTING.md`, and
+    the setup guide; the tutorial carries a paraphrase with the same posture, which
+    is deliberate rather than drift. `rhino-cli` byte identity is covered by
+    P7-006's manifest run, and harness-mirror parity by P7-002's `validate:sync`.
+  - The tutorial's success criterion was checked against the application, not
+    against itself: it tells a reader the page shows **Open Sharia Enterprise
+    Platform** and a description beginning "Open-source (MIT) platform for
+    Sharia-compliant enterprise solutions." Both strings are in
+    `apps/ose-www/src/features/landing/shell/hero.tsx` — the first as the `h1`,
+    the second as the paragraph beneath it.
+  - **Three method failures are recorded because each produced a clean-looking
+    false negative.** Two exact-string checks returned `0` for documents that do
+    carry the sentence, because the sentence wraps across a line and `grep` is
+    line-oriented; re-running over whitespace-normalized text returned the true
+    `1`. A third check used `grep -o … | head -1`, where `head` exits 0 and masks
+    `grep`'s failure, so a missing match printed as a blank rather than as an
+    error. Every count above was re-derived after normalizing and after removing
+    the masking pipe.
+
 - [x] [AI] [P7-006] Verify no merged commit in this program touched the identity boundary with
       `git diff --name-only <plan-base-sha>..origin/main -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli`,
       then run `parity manifest validate` on merged `main` — acceptance: the diff prints nothing and
@@ -2490,6 +2571,17 @@ record.
     **no** four-repo parity-propagation obligation in `ose-private`, `ose-primer`,
     or `beaver-nest` — consistent with the plan-level constraint that no delivery
     unit may change a path inside those trees.
+  - **P7-006 re-run at `400712aa9`, over the now-complete merged range.** The
+    program is exactly three squash commits on `main` — `f268c0077` (#237),
+    `1542ea044` (#238), `400712aa9` (#239). Diffing `028e8eed9..origin/main`
+    returns **0** paths under `apps/rhino-cli/` and **0** under
+    `specs/apps/rhino/behavior/rhino-cli/`, and **0** git-identity paths of any
+    kind. The changed set is Markdown only, across `docs/` (45), `plans/` (23),
+    the harness mirrors (`.claude/` 16, `.agents/` 12, `.codex/` 3, `.opencode/`
+    2), `specs/` (9), `repo-governance/` (5), plus `README.md`, `CONTRIBUTING.md`,
+    and `apps/ose-www/README.md`. `parity manifest validate` exits 0 —
+    `apps/rhino-cli/parity-manifest.sha256 is current`.
+
 - [x] [AI] [P7-007] Run both deterministic secret gates and an independent AI semantic sensitivity
       review over plan artifacts, all diffs, evidence, metadata, commits, and PR text — acceptance:
       zero secret or credential leak; a suspected leak stops ordinary execution and invokes the

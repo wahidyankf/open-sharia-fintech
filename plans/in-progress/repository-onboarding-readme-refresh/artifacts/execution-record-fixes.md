@@ -656,16 +656,64 @@ the three documented breakpoints and checked `scrollWidth > clientWidth` at each
 verification, not a product change: nothing in the application was modified, and the check passed
 as it stood.
 
+## Iteration `@02` — Phase 7 reconciliation findings
+
+Iteration `@02` opened because the Phase 7 re-run against merged `origin/main` (`400712aa9`) did
+not come back clean. Two independent reviewers ran against the five reader-facing documents. Every
+row below was verified against a primary source before it was written; findings that did not
+survive verification are recorded as rejected rather than silently dropped.
+
+| Row  | Source         | Severity | Defect                                                                                                                                                                                             | Correction                                                                                                                    |
+| ---- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| C-81 | docs checker   | MEDIUM   | The setup guide's integration-test troubleshooting entry named host port `5432`. `docker-compose.integration.yml` maps `"5434:5432"` and `run-integration.sh` exports `Port=5434`.                 | Entry now names `5434`, explains the remap, and leads with `lsof -i :5434`.                                                   |
+| C-82 | docs checker   | MEDIUM   | `CONTRIBUTING.md` listed ten valid commit types, omitting `build`, which the enforced `@commitlint/config-conventional` type-enum accepts.                                                         | List now carries all eleven enum members alphabetically.                                                                      |
+| C-83 | docs checker   | LOW      | The setup guide attributed `cargo-llvm-cov` to `test:quick`. No `test:quick` invokes it — `rhino-cli:test:quick` is typecheck/lint/test:unit/test:specs, and `crane-cli` covers via `dotnet test`. | Comment now attributes coverage to `test:coverage` and `cargo-deny` to `deps:audit`.                                          |
+| C-84 | voice reviewer | HIGH     | `CONTRIBUTING.md` asserted the project "adheres to a Code of Conduct". No `CODE_OF_CONDUCT.md` exists at any path; the sole match is the convention for authoring one.                             | Section now states the conduct standard directly and says plainly that no root file exists yet. See the follow-up note below. |
+| C-85 | voice reviewer | HIGH     | `related-repositories.md` carried an instruction addressed to an execution agent — "preserve active goals during runner contention…" — on a reader-facing reference path.                          | Sentence removed; the surrounding parity paragraph is unchanged.                                                              |
+
+### Rejected findings
+
+The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
+of its five HIGH findings did not survive verification and were not applied:
+
+- **README "focused check" is undefined.** The term is introduced in the same sentence that routes
+  the reader to the tutorial, and the tutorial defines it at its line 97 with the exact command
+  (`npm run doctor -- --fix --tools git,volta,node,npm`). Not a broken run path.
+- **The tutorial's `npm install` step strands a reader whose Cargo install failed.** The tutorial
+  installs Rust before that step, verifies `cargo --version`, gives recovery inline, and carries a
+  dedicated `volta` or `cargo` is not found troubleshooting entry. The reader is caught earlier.
+- **The "two sibling repositories" count misleads.** Defensible as written, and `P7-005` had
+  already cross-read this claim across the document set.
+
+The remainder were style preferences against clauses already measured clean. They are not applied
+and not carried forward as debt.
+
+### Out-of-scope follow-up
+
+The repository has no root `CODE_OF_CONDUCT.md`, which
+`repo-governance/conventions/writing/oss-documentation/code-of-conduct.md` requires, including a
+reporting mechanism. Authoring one means choosing a covenant and publishing a contact address —
+a governance decision with personal-data implications, outside a documentation-refresh plan.
+`C-84` makes the prose true; it does not close the governance gap.
+
+### Method failure caught during this iteration
+
+Passing three paths through an unquoted shell variable to `prettier` and `markdownlint-cli2`
+produced a false green from both: prettier reported no matching file and markdownlint reported
+`Linting: 0 file(s)`, and both exited 0. Re-run with the paths written out, the same commands
+linted three files and passed for real. A gate's exit code is only meaningful next to its file
+count.
+
 ## File-Touch Ledger
 
-| Path                                                | Change                                                           | Owning Row       |
-| --------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
-| `CONTRIBUTING.md`                                   | Platform statement, prerequisites, intake caveat, Diátaxis gloss | C-01…C-05        |
-| `docs/how-to/setup-development-environment.md`      | Quick Start Rust step and renumbering                            | C-06, C-07       |
-| `README.md`                                         | WSL2 expansion; Rust bullet accuracy; changed-port guidance      | C-08, C-21, C-24 |
-| `docs/tutorials/getting-started-with-ose-public.md` | Lead paragraph, spelling, platform wording, Cargo reason         | C-21, C-25       |
-| `docs/reference/related-repositories.md`            | Retired-sandbox row corrected to infrastructure work             | voice rows       |
-| `plans/in-progress/…/evidence/phase-6-*`            | Documented-breakpoint capture and its transcript                 | C-23             |
-| `plans/in-progress/…/delivery.md`                   | Phase 5–7 ticks and notes                                        | plan records     |
-| `plans/in-progress/…/artifacts/*.md`                | Ledger re-run, public record, this record                        | plan records     |
-| `plans/in-progress/…/evidence/*`                    | Phase 5A and 5B journey evidence                                 | plan records     |
+| Path                                                | Change                                                                                          | Owning Row             |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------- |
+| `CONTRIBUTING.md`                                   | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct | C-01…C-05, C-82, C-84  |
+| `docs/how-to/setup-development-environment.md`      | Quick Start Rust step and renumbering; integration port; cargo tool attribution                 | C-06, C-07, C-81, C-83 |
+| `README.md`                                         | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                     | C-08, C-21, C-24       |
+| `docs/tutorials/getting-started-with-ose-public.md` | Lead paragraph, spelling, platform wording, Cargo reason                                        | C-21, C-25             |
+| `docs/reference/related-repositories.md`            | Retired-sandbox row corrected to infrastructure work; executor instruction removed              | voice rows, C-85       |
+| `plans/in-progress/…/evidence/phase-6-*`            | Documented-breakpoint capture and its transcript                                                | C-23                   |
+| `plans/in-progress/…/delivery.md`                   | Phase 5–7 ticks and notes                                                                       | plan records           |
+| `plans/in-progress/…/artifacts/*.md`                | Ledger re-run, public record, this record                                                       | plan records           |
+| `plans/in-progress/…/evidence/*`                    | Phase 5A and 5B journey evidence                                                                | plan records           |
