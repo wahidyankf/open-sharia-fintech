@@ -26,3 +26,9 @@ Feature: The emitter owns only what it generates
     Given a harness declares .agents/skills/vendor-plugin as ownership class vendored but its vendored list names a different value for it
     When rhino-cli harness bindings generate runs against that mismatched registry
     Then the run fails loudly instead of deleting the directory the ownership record protects
+
+  @unit
+  Scenario: A vendored entry naming no real directory is refused even when no ownership record contradicts it
+    Given a harness's vendored list names a typo'd path with no ownership record for the real directory it was meant to protect
+    When rhino-cli harness bindings generate runs against that under-declared registry
+    Then the run fails loudly instead of deleting the real directory the typo'd entry was meant to protect

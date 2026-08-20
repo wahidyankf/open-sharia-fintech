@@ -242,22 +242,12 @@ fn vendored_ownership_cross_check(i: usize, entry: &HarnessEntry) -> Vec<String>
     let mut findings = repo_config::vendored_missing_from_ownership_backed_list(i, entry);
 
     // Reverse direction: a `vendored[]` entry with no matching `ownership`
-    // entry is schema hygiene (an undocumented exemption), not a deletion
-    // risk, so it stays exact-string-equality here rather than moving into
-    // the shared, destructive-path-facing helper above.
-    for (k, vendored_path) in entry.vendored.iter().enumerate() {
-        let declared = entry
-            .ownership
-            .iter()
-            .any(|owned| owned.class == OwnershipClass::Vendored && &owned.path == vendored_path);
-        if !declared {
-            findings.push(format!(
-                "harness[{i}].vendored[{k}]: {vendored_path:?} has no matching \
-                 harness[{i}].ownership entry with class: vendored (the two \
-                 hand-maintained lists must declare the same fact)"
-            ));
-        }
-    }
+    // entry is just as much a deletion risk as the forward direction (see
+    // `vendored_without_ownership_entry`'s doc comment), so it is now the
+    // shared, destructive-path-facing helper too — called from here AND
+    // directly from `mirror_jobs`, unconditionally, so the two call sites
+    // cannot drift.
+    findings.extend(repo_config::vendored_without_ownership_entry(i, entry));
     findings
 }
 
@@ -581,9 +571,9 @@ mod tests {
     // guard is what stops that; an empty `skills-dir` is still rejected on
     // its own by the path-field check above, just not by this cross-check
     // inventing a second, phantom finding for an entry that has nothing to do
-    // with the skills mirror. Reverting cycle 5's addition of this test does
-    // not trip it — only reverting the older `path_is_under` empty-dir guard
-    // itself does.
+    // with the skills mirror. Reverting cycle 5's addition of this check does
+    // not trip this test — only reverting the older `path_is_under` empty-dir
+    // guard itself does.
     #[test]
     fn an_empty_skills_dir_does_not_make_the_vendored_cross_check_match_every_ownership_path() {
         let bad = concat!(

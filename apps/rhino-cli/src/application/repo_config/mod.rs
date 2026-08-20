@@ -480,21 +480,30 @@ pub struct DoctorConfig {
 /// (`value != value.trim()`). This is deliberately a shape-agnostic check
 /// rather than an enumeration of specific bad inputs (a bare space, a tab, a
 /// trailing space, and so on): whitespace-padding is a class of typo, not a
-/// list of them, and every caller here (`agent-dir`, `skills-dir`, `mirrors`,
-/// `skills-mirrors`, `config`, `forbid-dir`, `shadow`, `instruction[]`,
-/// `vendored[]`, and `ownership[].path`) shares the same exposure: a padded
-/// value can pass this lexical check yet fail to prefix-match the real file it
-/// names once compared byte-for-byte downstream (in [`path_is_under`] or a
-/// plain string/filesystem comparison), silently treating a real, protected
-/// path as unmatched. For `vendored[]` specifically that unmatched state
-/// flips a currently-vendored file into "no longer vendored", which the
-/// skills-mirror emitter then deletes as an orphan (cycle-6 CRITICAL: a
-/// leading space, a trailing space, a tab, or a lone space all independently
-/// reproduced this deletion, none of them caught by the narrower "empty or
-/// root" check cycle 5 added). Rejecting outright is preferable to
-/// normalizing (trimming and proceeding): the registry is hand-authored, and a
-/// silently-trimmed value would hide the very typo this check exists to
-/// surface.
+/// list of them, and every caller here (`agent-dir`, `skills-dir`,
+/// `rules-dir`, `mirrors`, `skills-mirrors`, `config`, `forbid-dir`, `shadow`,
+/// `instruction[]`, `vendored[]`, and `ownership[].path`) shares the same
+/// exposure: a padded value can pass this lexical check yet fail to
+/// prefix-match the real file it names once compared byte-for-byte downstream
+/// (in [`path_is_under`] or a plain string/filesystem comparison), silently
+/// treating a real, protected path as unmatched. For `vendored[]`
+/// specifically that unmatched state flips a currently-vendored file into "no
+/// longer vendored", which the skills-mirror emitter then deletes as an
+/// orphan (cycle-6 CRITICAL: a leading space, a trailing space, a tab, or a
+/// lone space all independently reproduced this deletion, none of them caught
+/// by the narrower "empty or root" check cycle 5 added). Rejecting outright
+/// is preferable to normalizing (trimming and proceeding): the registry is
+/// hand-authored, and a silently-trimmed value would hide the very typo this
+/// check exists to surface.
+///
+/// One caller reaching this function does NOT share that exposure:
+/// `doctor.dotnet-global-json` resolves through
+/// [`confined_repo_path`], whose caller
+/// (`doctor::tools::configured_dotnet_global_json`) treats an `Err` from
+/// either function as "fall back to the conventional root `global.json`"
+/// rather than surfacing a finding — so an invalid value there is silently
+/// discarded, not silently mismatched, and `doctor` still runs, just against
+/// the default path instead of the one the registry named.
 ///
 /// # Errors
 ///
@@ -565,9 +574,31 @@ pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
     path.as_ref().starts_with(dir)
 }
 
+/// `true` when `a` and `b` denote the same repository-relative location,
+/// compared component-wise via [`Path::components`] rather than by raw string
+/// equality.
+///
+/// A string-equality test disagrees with this on shape alone: `Path`'s
+/// component iterator collapses a trailing separator (`"a/b/"` vs `"a/b"`)
+/// and a doubled separator (`"a//b"` vs `"a/b"`) to the identical sequence,
+/// but the two strings are not `==`. `validate_repo_relative_path`
+/// deliberately still ACCEPTS a trailing separator as a legitimate,
+/// non-padded shape (over-rejecting it would itself be a regression) — so two
+/// hand-maintained lists are each free to spell the same path with or without
+/// one, and a raw string comparison between them reports that as drift on a
+/// registry where nothing is actually wrong. The rule this crate encodes is:
+/// reject padding at authoring time (`validate_repo_relative_path`), normalize
+/// shape at comparison time (here). A genuine typo (`vendor-plugin-typo` vs
+/// `vendor-plugin`) still produces a different component sequence and stays
+/// unequal — the two concerns are orthogonal.
+#[must_use]
+pub fn paths_equal<P: AsRef<Path>, Q: AsRef<Path>>(a: P, b: Q) -> bool {
+    a.as_ref().components().eq(b.as_ref().components())
+}
+
 /// `harness[i].ownership` entries declared `class: vendored` under this
-/// entry's `skills-dir` with no matching, EXACT-STRING-EQUAL
-/// `harness[i].vendored` entry.
+/// entry's `skills-dir` with no matching `harness[i].vendored` entry, compared
+/// via [`paths_equal`].
 ///
 /// This is the direction of the ownership/`vendored[]` agreement check that
 /// matters to the skills-mirror emitter's destructive path
@@ -576,12 +607,11 @@ pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
 /// the inconsistency that lets a real vendored directory lose its protection
 /// and get deleted as an orphan on the next regeneration — whether the two
 /// lists drifted because one was edited and not the other, or because a
-/// `vendored[]` value no longer textually matches the path `ownership`
-/// records for it (any mismatch: a typo, a stray character, a whitespace pad
-/// `validate_repo_relative_path` does not already reject, a wrong directory
-/// name entirely). The comparison against `owned.path` is intentionally exact
-/// string equality, not normalized: normalizing away a mismatch here would
-/// hide the very drift this check exists to catch.
+/// `vendored[]` value no longer names the path `ownership` records for it (a
+/// typo, a stray character, a wrong directory name entirely — any mismatch
+/// `paths_equal` cannot reconcile). The comparison is component-wise, not raw
+/// string equality: a shape-only difference (a trailing separator) must not
+/// read as the same drift a genuine typo produces — see [`paths_equal`].
 ///
 /// Scoped to paths under `skills-dir` via [`path_is_under`] (component-wise,
 /// so a hand-typed double separator cannot escape it): a `vendored`-class
@@ -589,15 +619,22 @@ pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
 /// `vendored[]` counterpart, since that list only governs the skills mirror.
 ///
 /// The reverse direction — a `vendored[]` entry with no matching `ownership`
-/// entry — is schema hygiene, not a deletion risk (an orphaned `vendored[]`
-/// declaration simply protects nothing additional; it never itself causes a
-/// deletion), so it is intentionally NOT part of this function and stays
-/// exclusive to the broader bidirectional check `repo-config validate` runs
-/// (`crate::commands::repo_config_validate::vendored_ownership_cross_check`).
-/// Keeping this function forward-only lets it run unconditionally on every
-/// mirror job without requiring every caller (including test fixtures that
-/// declare `vendored[]` with no `ownership:` section at all) to also carry a
-/// full ownership record.
+/// entry — used to be treated here as schema hygiene rather than a deletion
+/// risk, on the theory that "an orphaned `vendored[]` declaration simply
+/// protects nothing additional; it never itself causes a deletion." That
+/// theory is wrong, reproduced end-to-end: it is not the orphaned entry that
+/// deletes anything — it is the REAL directory left unprotected because the
+/// orphaned (typo'd) entry no longer matches it, and that real directory has
+/// no `ownership[]` entry of its own for this function to have flagged in the
+/// forward direction above (there is nothing declared `class: vendored` for
+/// it to notice is missing a `vendored[]` counterpart). The reverse direction
+/// is therefore now ALSO wired onto the destructive path, as the separate
+/// function [`vendored_without_ownership_entry`] — kept distinct from this one
+/// rather than merged into it, because callers with no `ownership:` section
+/// at all still need this function's early-return leniency for the forward
+/// direction; only the destructive path (`mirror_jobs`) and `repo-config
+/// validate` (`crate::commands::repo_config_validate::vendored_ownership_cross_check`)
+/// need to consult both directions together.
 #[must_use]
 pub fn vendored_missing_from_ownership_backed_list(i: usize, entry: &HarnessEntry) -> Vec<String> {
     let mut findings = Vec::new();
@@ -607,13 +644,50 @@ pub fn vendored_missing_from_ownership_backed_list(i: usize, entry: &HarnessEntr
     for owned in &entry.ownership {
         if owned.class == OwnershipClass::Vendored
             && path_is_under(&owned.path, skills_dir)
-            && !entry.vendored.iter().any(|v| v == &owned.path)
+            && !entry.vendored.iter().any(|v| paths_equal(v, &owned.path))
         {
             findings.push(format!(
                 "harness[{i}].ownership: {:?} is declared class: vendored under \
                  skills-dir {skills_dir:?} but has no matching harness[{i}].vendored \
                  entry (the skills mirror will delete it on the next regeneration)",
                 owned.path
+            ));
+        }
+    }
+    findings
+}
+
+/// `harness[i].vendored` entries with no matching `harness[i].ownership` entry
+/// declared `class: vendored`, compared via [`paths_equal`].
+///
+/// This is the reverse of [`vendored_missing_from_ownership_backed_list`], and
+/// is JUST AS MUCH a deletion risk as the forward direction, not mere schema
+/// hygiene: a `vendored[]` entry that fails to match its intended real
+/// directory (a typo, most commonly) leaves that real directory with no
+/// `vendored[]` entry either, and — because nothing declares it `class:
+/// vendored` in `ownership[]` — the forward check above has nothing to flag.
+/// The orphaned `vendored[]` entry is the only surviving signal that
+/// something is wrong; this function is what makes that signal actionable
+/// before the emitter ever computes which files to remove.
+///
+/// Called both from `repo-config validate`'s
+/// `vendored_ownership_cross_check` and directly from `mirror_jobs`
+/// (unconditionally, on every mirror job), so the two call sites cannot
+/// drift, mirroring how the forward direction is already shared between them.
+#[must_use]
+pub fn vendored_without_ownership_entry(i: usize, entry: &HarnessEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+    for (k, vendored_path) in entry.vendored.iter().enumerate() {
+        let declared = entry.ownership.iter().any(|owned| {
+            owned.class == OwnershipClass::Vendored && paths_equal(&owned.path, vendored_path)
+        });
+        if !declared {
+            findings.push(format!(
+                "harness[{i}].vendored[{k}]: {vendored_path:?} has no matching \
+                 harness[{i}].ownership entry with class: vendored (a vendored[] entry \
+                 that fails to match its real directory — most commonly a typo — leaves \
+                 that real directory unprotected and the skills mirror will delete it on \
+                 the next regeneration)"
             ));
         }
     }
@@ -1019,6 +1093,113 @@ mod tests {
         assert!(!path_is_under(Path::new("a/b"), Path::new("")));
         assert!(!path_is_under(Path::new("/etc/passwd"), Path::new("")));
         assert!(!path_is_under(Path::new("plans/done"), Path::new("")));
+    }
+
+    // Cycle-7 HIGH regression: a raw string-equality comparison between
+    // `vendored[]` and `ownership[].path` reported a trailing-separator
+    // mismatch as drift, even though both shapes are individually certified
+    // legal by `validate_repo_relative_path`. `paths_equal` must accept the
+    // shape difference while still rejecting a genuine typo — the pair no
+    // earlier cycle's test suite covered together, which is why the
+    // contradiction shipped.
+    #[test]
+    fn paths_equal_accepts_a_trailing_separator_but_rejects_a_typo() {
+        assert!(paths_equal(
+            ".agents/skills/caveman/",
+            ".agents/skills/caveman"
+        ));
+        assert!(paths_equal(
+            ".agents/skills/caveman",
+            ".agents/skills/caveman/"
+        ));
+        assert!(!paths_equal(
+            ".agents/skills/vendor-plugin-typo",
+            ".agents/skills/vendor-plugin"
+        ));
+    }
+
+    /// A minimal `HarnessEntry` declaring `skills-dir` plus whatever
+    /// `vendored[]`/`ownership[]` values a test needs.
+    fn harness_entry(vendored: &[&str], ownership: &[(&str, OwnershipClass)]) -> HarnessEntry {
+        HarnessEntry {
+            skills_dir: Some(".agents/skills".to_string()),
+            vendored: vendored.iter().map(|s| (*s).to_string()).collect(),
+            ownership: ownership
+                .iter()
+                .map(|(path, class)| OwnershipEntry {
+                    path: (*path).to_string(),
+                    class: *class,
+                    reason: Some("test fixture".to_string()),
+                })
+                .collect(),
+            ..Default::default()
+        }
+    }
+
+    // Cycle-7 HIGH regression, forward direction: `ownership[].path` and
+    // `vendored[]` naming the identical directory with a trailing-separator
+    // shape difference must NOT be reported as drift — over-rejecting it is
+    // itself the regression this cycle closed.
+    #[test]
+    fn forward_cross_check_accepts_a_trailing_separator_shape_mismatch() {
+        let entry = harness_entry(
+            &[".agents/skills/caveman/"],
+            &[(".agents/skills/caveman", OwnershipClass::Vendored)],
+        );
+        assert!(
+            vendored_missing_from_ownership_backed_list(0, &entry).is_empty(),
+            "a trailing-separator shape difference must not be reported as drift"
+        );
+    }
+
+    // Cycle-7 HIGH regression, reverse direction: same pairing as above, the
+    // other way round.
+    #[test]
+    fn reverse_cross_check_accepts_a_trailing_separator_shape_mismatch() {
+        let entry = harness_entry(
+            &[".agents/skills/caveman"],
+            &[(".agents/skills/caveman/", OwnershipClass::Vendored)],
+        );
+        assert!(
+            vendored_without_ownership_entry(0, &entry).is_empty(),
+            "a trailing-separator shape difference must not be reported as drift"
+        );
+    }
+
+    // A genuine typo must still be refused in both directions — the
+    // falsifiability half of the trailing-separator pair above: normalizing
+    // shape must not also normalize away an actual mismatch.
+    #[test]
+    fn forward_and_reverse_cross_checks_still_reject_a_genuine_typo() {
+        let entry = harness_entry(
+            &[".agents/skills/vendor-plugin-typo"],
+            &[(".agents/skills/vendor-plugin", OwnershipClass::Vendored)],
+        );
+        assert!(
+            !vendored_missing_from_ownership_backed_list(0, &entry).is_empty(),
+            "ownership names a real path with no matching vendored[] entry; must be refused"
+        );
+        assert!(
+            !vendored_without_ownership_entry(0, &entry).is_empty(),
+            "vendored[] names a typo with no matching ownership entry; must be refused"
+        );
+    }
+
+    // Cycle-7 CRITICAL regression: a `vendored[]` entry with no `ownership[]`
+    // entry at all — the shape the forward direction alone cannot see, since
+    // there is nothing declared `class: vendored` for it to notice is missing
+    // a `vendored[]` counterpart.
+    #[test]
+    fn reverse_cross_check_catches_a_typod_vendored_entry_with_no_ownership_section_at_all() {
+        let entry = harness_entry(&[".agents/skills/vendor-plugin-typo"], &[]);
+        assert!(
+            vendored_missing_from_ownership_backed_list(0, &entry).is_empty(),
+            "the forward direction has nothing to compare against and must stay silent"
+        );
+        assert!(
+            !vendored_without_ownership_entry(0, &entry).is_empty(),
+            "the reverse direction must catch the orphaned vendored[] entry"
+        );
     }
 
     // Regression: `confined_repo_path` used to join `remaining` onto

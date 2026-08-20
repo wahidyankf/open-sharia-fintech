@@ -79,16 +79,32 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
             // validate` runs, wired directly onto this destructive path
             // rather than left as a separate command nothing forces to run
             // first (cycle-6 CRITICAL follow-up): an `ownership[]` entry
-            // declared `class: vendored` with no matching, EXACT-STRING-EQUAL
-            // `vendored[]` entry is precisely the drift that lets a real
-            // vendored directory lose its protection — whether from an edit
-            // to one list and not the other, or a `vendored[]` value that no
-            // longer textually names the path `ownership` records — and get
+            // declared `class: vendored` with no matching `vendored[]` entry
+            // (compared component-wise, not by raw string, so a trailing
+            // separator is not itself drift — see
+            // `repo_config::paths_equal`) is precisely the drift that lets a
+            // real vendored directory lose its protection — whether from an
+            // edit to one list and not the other, or a `vendored[]` value
+            // that no longer names the path `ownership` records — and get
             // deleted below as an orphan. This closes the class generically:
             // it does not enumerate which mismatch shape (a typo, a stray
-            // separator, a whitespace pad) produced the disagreement.
-            let cross_check_findings =
+            // separator) produced the disagreement.
+            //
+            // BOTH directions are consulted, not just this one (cycle-7
+            // CRITICAL follow-up): a `vendored[]` entry with no matching
+            // `ownership` entry used to be treated as mere schema hygiene,
+            // reachable only through the separate `repo-config validate`
+            // command. That was wrong — reproduced end-to-end — because it is
+            // not the orphaned `vendored[]` entry itself that gets deleted;
+            // it is the REAL directory the typo'd entry no longer matches,
+            // and that real directory can carry no `ownership[]` entry of its
+            // own for the forward check above to have flagged. Both checks
+            // must run here, unconditionally, because `repo-config
+            // validate`'s pre-commit surface only fires when `repo-config.yml`
+            // itself is staged, while this mutation runs on every commit.
+            let mut cross_check_findings =
                 repo_config::vendored_missing_from_ownership_backed_list(i, entry);
+            cross_check_findings.extend(repo_config::vendored_without_ownership_entry(i, entry));
             if !cross_check_findings.is_empty() {
                 return Err(format!(
                     "harness {:?}: ownership and vendored declarations disagree ({}) — refusing \
@@ -455,7 +471,10 @@ mod tests {
 
     #[test]
     fn a_vendored_directory_survives_regeneration() {
-        let dir = fixture("    vendored:\n      - .agents/skills/vendor-plugin\n");
+        let dir = fixture(
+            "    vendored:\n      - .agents/skills/vendor-plugin\n    ownership:\n      \
+             - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
+        );
         write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");
         write(
             dir.path(),
@@ -480,7 +499,11 @@ mod tests {
         // deleted when undeclared and preserved when declared.
         for (vendored, expect_removed) in [
             ("", 1_usize),
-            ("    vendored:\n      - .agents/skills/orphan\n", 0),
+            (
+                "    vendored:\n      - .agents/skills/orphan\n    ownership:\n      \
+                 - { path: .agents/skills/orphan, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
+                0,
+            ),
         ] {
             let dir = fixture(vendored);
             write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");
@@ -497,19 +520,27 @@ mod tests {
         }
     }
 
-    // Cycle-5 CRITICAL regression, generalized in cycle 6: a `vendored[]`
-    // value that passes validation but matches no real file must fail the
-    // whole job rather than silently delete the file it was declared to
-    // protect. Deliberately NOT an enumeration of specific bad shapes — the
-    // first two cases are the values `validate_repo_relative_path` itself
-    // rejects (trims to empty or root); the last is a value that PASSES that
-    // lexical check yet still names nothing real, caught instead by the
-    // ownership/`vendored[]` agreement check `mirror_jobs` now runs
-    // (cycle-6 CRITICAL follow-up), because no amount of lexical validation
-    // on a string in isolation can prove it matches an existing directory.
-    // Falsifiable both ways from the same fixture shape the doubled-orphan
-    // test above uses: an already-vendored, already-present file must still
-    // exist on disk after the refusal, not just after a passing run.
+    // Cycle-5 CRITICAL regression, generalized in cycle 6, generalized again
+    // in cycle 7: a `vendored[]` value that passes validation but matches no
+    // real file must fail the whole job rather than silently delete the file
+    // it was declared to protect. Deliberately NOT an enumeration of specific
+    // bad shapes — the first two cases are the values
+    // `validate_repo_relative_path` itself rejects (trims to empty or root);
+    // the third is a value that PASSES that lexical check yet still names
+    // nothing real, caught by the FORWARD ownership/`vendored[]` agreement
+    // check `mirror_jobs` runs (cycle-6 CRITICAL follow-up: `ownership[]`
+    // declares the real path `class: vendored`, so the mismatched
+    // `vendored[]` entry has something to disagree with); the fourth is the
+    // cycle-7 CRITICAL case the forward check alone cannot see — the SAME
+    // typo, but with no `ownership[]` entry for the real path at all, so
+    // nothing declares it `class: vendored` for the forward check to notice
+    // is missing a `vendored[]` counterpart. Only the REVERSE check (the
+    // typo'd `vendored[]` entry itself has no matching `ownership` entry)
+    // catches this shape, which is why `mirror_jobs` must consult both
+    // directions, not just the one cycle 6 wired. Falsifiable both ways from
+    // the same fixture shape the doubled-orphan test above uses: an
+    // already-vendored, already-present file must still exist on disk after
+    // the refusal, not just after a passing run.
     #[test]
     fn a_vendored_declaration_that_matches_no_real_file_is_refused_rather_than_deleting_the_file_it_protects()
      {
@@ -518,6 +549,7 @@ mod tests {
             "    vendored:\n      - /\n",
             "    vendored:\n      - .agents/skills/vendor-plugin-typo\n    ownership:\n      \
              - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
+            "    vendored:\n      - .agents/skills/vendor-plugin-typo\n",
         ] {
             let dir = fixture(bad_vendored);
             write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");

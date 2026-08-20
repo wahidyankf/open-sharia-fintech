@@ -106,6 +106,8 @@ impl MirrorWorld {
                 "    skills-mirrors: .claude/skills\n",
                 "    vendored:\n",
                 "      - .agents/skills/vendor-plugin\n",
+                "    ownership:\n",
+                "      - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
                 "coverage:\n  projects: []\n",
             ),
         );
@@ -894,6 +896,81 @@ fn then_run_refused_and_vendored_directory_survives(w: &mut MirrorWorld) {
             .join(".agents/skills/vendor-plugin/SKILL.md")
             .exists(),
         "the ownership-protected directory must survive a refused run"
+    );
+}
+
+// ===========================================================================
+// Cycle-7 CRITICAL follow-up — a typo'd `vendored[]` entry with no
+// `ownership[]` entry at all is refused, not silently applied. The forward
+// check above cannot see this shape: nothing declares the real directory
+// `class: vendored`, so there is nothing for the forward direction to notice
+// is missing a `vendored[]` counterpart. Only the reverse direction — the
+// typo'd `vendored[]` entry itself has no matching `ownership` entry —
+// catches it, and it must run unconditionally on the destructive path, not
+// only inside the separate `repo-config validate` command.
+// ===========================================================================
+
+/// A registry whose `codex` entry's `vendored:` list names a typo'd path with
+/// NO `ownership:` section at all — the real payload directory
+/// `.agents/skills/vendor-plugin` is tracked on disk but declared nowhere.
+#[given(
+    "a harness's vendored list names a typo'd path with no ownership record for the real directory it was meant to protect"
+)]
+fn given_typod_vendored_entry_with_no_ownership_record(w: &mut MirrorWorld) {
+    w.write(
+        "repo-config.yml",
+        concat!(
+            "harness:\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills }\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: .agents/skills\n",
+            "    skills-mirrors: .claude/skills\n",
+            "    vendored:\n",
+            "      - .agents/skills/vendor-plugin-typo\n",
+            "coverage:\n  projects: []\n",
+        ),
+    );
+    w.write_catalog();
+    w.write_translation_maps();
+    w.write_agent("alpha-maker");
+    w.write_skill("alpha-skill");
+    write_file(
+        w.work.path(),
+        ".agents/skills/vendor-plugin/SKILL.md",
+        "vendored payload\n",
+    );
+}
+
+#[when("rhino-cli harness bindings generate runs against that under-declared registry")]
+fn when_generate_runs_against_under_declared_registry(w: &mut MirrorWorld) {
+    // Deliberately does NOT assert success — this scenario expects refusal.
+    w.exec(&["harness", "bindings", "generate"]);
+}
+
+#[then(
+    "the run fails loudly instead of deleting the real directory the typo'd entry was meant to protect"
+)]
+fn then_run_refused_and_real_vendored_directory_survives(w: &mut MirrorWorld) {
+    assert_ne!(
+        w.exit_code(),
+        0,
+        "a vendored[] entry with no matching ownership entry must be refused, not silently \
+         applied — this is the exact drift that leaves the real directory unprotected"
+    );
+    assert!(
+        w.work
+            .path()
+            .join(".agents/skills/vendor-plugin/SKILL.md")
+            .exists(),
+        "the real vendored directory must survive a refused run, even though nothing in the \
+         registry declares it class: vendored"
     );
 }
 
