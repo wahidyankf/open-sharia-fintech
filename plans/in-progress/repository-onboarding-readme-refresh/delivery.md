@@ -1905,8 +1905,21 @@ creates survives it.
     "sensitive-token scan clean"). Those are documented constants and prose, not
     raw environment data — no host path, account name, credential, or private
     address appears anywhere in the Phase 5 record.
+
     > **Pause Safety**: all temporary journeys are stopped and removed; failures are recorded as exact
     > correction rows.
+
+  - **Amended 2026-08-21 — breakpoint coverage, rollup.** Both PASS verdicts above are recorded
+    as "zero documentation defects", and that remains true: neither journey found a published
+    instruction that was wrong. But neither journey met the documented breakpoint requirement
+    either. Both captured 390x844, 768x1024, and 1440x900, where `screenshot-conventions.md`
+    and `ui-verification-checklist.md` set the minimum at 375, 768, and 1280 px — so the
+    narrowest required width went unexercised on macOS and on Ubuntu alike. That is a coverage
+    gap in this plan's own execution, not a defect in the product documentation, which is why
+    it does not change either verdict or the Phase 6 disposition below. It was closed
+    separately by `evidence/phase-6-breakpoint-coverage.txt`. The per-item amendments on
+    `P5A-006`, `P5A-006A`, `P5A-G01`, `P5B-005`, `P5B-005A`, and `P5B-G01` carry the detail;
+    this note exists so a reader who stops at the rollup still learns of it.
 
 ## Phase 6: Conditional Correction Units
 

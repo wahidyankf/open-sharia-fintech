@@ -97,7 +97,7 @@ After installation, restart your terminal and Volta will automatically manage No
 
 ### Common Setup Issues
 
-**Issue**: `command not found: volta`
+**Issue**: your shell cannot find `volta`
 **Solution**: Make sure Volta is installed and your terminal is restarted.
 
 **Issue**: Wrong Node.js version

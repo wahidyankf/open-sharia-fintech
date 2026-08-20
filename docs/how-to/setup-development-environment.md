@@ -26,8 +26,7 @@ tests relevant to the project you are changing.
 The monorepo contains projects in TypeScript, Rust, and F#. Each language has its own runtime,
 but they all share the same Nx build system and git hooks.
 
-**Three setup paths**. These name what _you_ install by hand, and are unrelated to the checker's own
-`--scope minimal` flag, which selects which already-installed tools it inspects.
+**Three setup paths**. These name what _you_ install by hand.
 
 - **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
   basic end-to-end (E2E) tests. Rust is here rather than in Full because the tool checker is a Rust
@@ -340,7 +339,9 @@ Never hardcode version numbers in scripts — always read from these source-of-t
 ## Related Documentation
 
 - [Development Environment Setup Workflow](../../repo-governance/workflows/infra/development-environment-setup.md) —
-  Granular workflow with phases and success criteria
+  Granular workflow with phases and success criteria. Its `scope: minimal` parameter is a different
+  thing from the Minimal path above: it selects which already-installed tools the checker inspects,
+  and its tool set is not the same one
 - [Reproducible Environments](../../repo-governance/development/workflow/reproducible-environments.md) —
   Volta, npm, Docker reproducibility practices
 - [Code Quality Convention](../../repo-governance/development/quality/code.md) — Git hooks and
