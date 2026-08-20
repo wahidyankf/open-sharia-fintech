@@ -19,4 +19,10 @@ Feature: The emitter owns only what it generates
     Given a skill directory is renamed under .claude/skills/ so its old mirror becomes stale
     When rhino-cli harness bindings generate runs
     Then the stale mirrored directory is removed and the new one created
-    And all 8 vendored directories are still present, proving cleanup is scoped to emitter-owned paths
+    And every vendored directory is still present, proving cleanup is scoped to emitter-owned paths
+
+  @unit
+  Scenario: A vendored declaration that disagrees with its own ownership record is refused
+    Given a harness declares .agents/skills/vendor-plugin as ownership class vendored but its vendored list names a different value for it
+    When rhino-cli harness bindings generate runs against that mismatched registry
+    Then the run fails loudly instead of deleting the directory the ownership record protects

@@ -809,7 +809,7 @@ fn then_stale_removed_new_created(w: &mut MirrorWorld) {
 }
 
 #[then(
-    "all 8 vendored directories are still present, proving cleanup is scoped to emitter-owned paths"
+    "every vendored directory is still present, proving cleanup is scoped to emitter-owned paths"
 )]
 fn then_vendored_survive_cleanup(w: &mut MirrorWorld) {
     for dir in VENDORED_DIRS {
@@ -824,6 +824,77 @@ fn then_vendored_survive_cleanup(w: &mut MirrorWorld) {
             "vendored payload {dir} must be byte-identical after cleanup"
         );
     }
+}
+
+// ===========================================================================
+// Cycle-6 CRITICAL follow-up — an ownership/vendored[] disagreement is
+// refused, not silently applied
+// ===========================================================================
+
+/// A registry whose `codex` entry disagrees with itself: `ownership[]`
+/// declares `.agents/skills/vendor-plugin` `class: vendored`, but the
+/// operative `vendored[]` list names a different value for the same payload.
+/// General on purpose — the mismatch could be any typo, not specifically
+/// whitespace; whitespace shapes are covered at the `validate_repo_relative_path`
+/// unit-test level in `src/application/repo_config/mod.rs`, not here.
+#[given(
+    "a harness declares .agents/skills/vendor-plugin as ownership class vendored but its vendored list names a different value for it"
+)]
+fn given_ownership_and_vendored_disagree(w: &mut MirrorWorld) {
+    w.write(
+        "repo-config.yml",
+        concat!(
+            "harness:\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills }\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: .agents/skills\n",
+            "    skills-mirrors: .claude/skills\n",
+            "    vendored:\n",
+            "      - .agents/skills/vendor-plugin-typo\n",
+            "    ownership:\n",
+            "      - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
+            "coverage:\n  projects: []\n",
+        ),
+    );
+    w.write_catalog();
+    w.write_translation_maps();
+    w.write_agent("alpha-maker");
+    w.write_skill("alpha-skill");
+    write_file(
+        w.work.path(),
+        ".agents/skills/vendor-plugin/SKILL.md",
+        "vendored payload\n",
+    );
+}
+
+#[when("rhino-cli harness bindings generate runs against that mismatched registry")]
+fn when_generate_runs_against_mismatched_registry(w: &mut MirrorWorld) {
+    // Deliberately does NOT assert success — unlike `when_generate_runs`
+    // above, this scenario expects the run to fail.
+    w.exec(&["harness", "bindings", "generate"]);
+}
+
+#[then("the run fails loudly instead of deleting the directory the ownership record protects")]
+fn then_run_refused_and_vendored_directory_survives(w: &mut MirrorWorld) {
+    assert_ne!(
+        w.exit_code(),
+        0,
+        "an ownership/vendored[] disagreement must be refused, not silently applied"
+    );
+    assert!(
+        w.work
+            .path()
+            .join(".agents/skills/vendor-plugin/SKILL.md")
+            .exists(),
+        "the ownership-protected directory must survive a refused run"
+    );
 }
 
 // ===========================================================================
