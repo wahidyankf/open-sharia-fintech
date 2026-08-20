@@ -56,6 +56,15 @@ fn elixir_formatter_is_configured() -> bool {
             .is_ok_and(|out| out.status.success())
 }
 
+// Deliberately no toolchain guard here, unlike the Elixir tests below: the
+// GitHub Actions `ubuntu-latest` runner image (and this environment) both
+// guarantee Go via the `actions/runner-images` inventory, so a missing `gofmt`
+// would itself be a CI-environment defect worth a hard failure, not a
+// toolchain this repo chose not to provision. Elixir carries no such runner
+// guarantee (see `elixir_formatter_is_configured`'s comment) and provisioning
+// it would fight the repo's deferred Elixir/Erlang-removal position — so the
+// two tests are allowed to diverge in posture on the identical "toolchain
+// missing" question, and this comment is that divergence's written record.
 #[test]
 fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
     let fixture = TempDir::new().expect("create Go fixture directory");
@@ -94,8 +103,12 @@ fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
 }
 
 #[test]
+#[ignore = "requires the mix toolchain; see the deferred Elixir/Erlang-removal position"]
 fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        eprintln!(
+            "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
+        );
         return;
     }
 
@@ -127,8 +140,12 @@ fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
 }
 
 #[test]
+#[ignore = "requires the mix toolchain; see the deferred Elixir/Erlang-removal position"]
 fn elixir_check_accepts_formatted_ex_and_exs_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        eprintln!(
+            "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
+        );
         return;
     }
 
