@@ -65,7 +65,7 @@ Consequences that bind every phase below:
       it returned none before.
 - [x] [AI] Record the PR number in `learnings.md` under `## PR` — acceptance: the number is present
       and every later push references it.
-- [ ] [AI] After **each** phase gate below passes, commit thematically and push to that same branch
+- [x] [AI] After **each** phase gate below passes, commit thematically and push to that same branch
       — acceptance: `gh pr list --head worktree/update-harness-support` still returns exactly one PR
       after every push; a second PR number appearing means the override was violated.
 
@@ -1477,7 +1477,7 @@ is the worst outcome, so each states the class plainly.
       ownership validator, word-budget coverage — acceptance: four Conventional Commits.
 - [x] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
-- [ ] [AI] Poll CI every 2 minutes until the PR's checks are green — acceptance: `gh pr checks`
+- [x] [AI] Poll CI every 2 minutes until the PR's checks are green — acceptance: `gh pr checks`
       reports all checks passing. Fix any failure at the root cause before starting Phase 12.
 
 ---
@@ -1599,13 +1599,13 @@ is the worst outcome, so each states the class plainly.
 
 ## Post-Push Verification
 
-- [ ] [AI] Push changes to the PR branch for the declared `worktree-to-pr` delivery mode
-- [ ] [AI] Monitor the PR's check run via `gh pr checks`, polling every 2 minutes — never
+- [x] [AI] Push changes to the PR branch for the declared `worktree-to-pr` delivery mode
+- [x] [AI] Monitor the PR's check run via `gh pr checks`, polling every 2 minutes — never
       `gh run watch`
-- [ ] [AI] Verify all CI checks pass
-- [ ] [AI] If any CI check fails, investigate at the root cause and push a follow-up commit — never
+- [x] [AI] Verify all CI checks pass
+- [x] [AI] If any CI check fails, investigate at the root cause and push a follow-up commit — never
       bypass
-- [ ] [AI] Do NOT start the next phase until the single PR's CI is green
+- [x] [AI] Do NOT start the next phase until the single PR's CI is green
 
 ## Commit Guidelines
 
