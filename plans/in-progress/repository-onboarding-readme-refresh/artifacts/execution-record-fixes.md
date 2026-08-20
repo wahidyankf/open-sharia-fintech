@@ -127,9 +127,9 @@ fact kept being found wrong by a later cycle — among them a row range, a chain
 a claim that every chain was marked, and a duplicate-row count — so the record now points at
 something greppable instead of something remembered. The prose here is a reading aid and makes no
 completeness claim, including about that list.
-**Superseded in part by C-49, C-50 and C-51**: those three summaries lived in this preamble, and
-each version of it was rewritten when the next cycle found the figure wrong. `C-57`'s did not — see
-C-62.
+**Superseded in part by C-50 and C-51**: those two summaries lived in this preamble, and each
+version of it was rewritten when the next cycle found the figure wrong. `C-49`'s and `C-57`'s lived
+elsewhere — see C-62 and C-66.
 
 The narrative paragraphs between the tables use the same marker, so the same `grep` surfaces prose
 and rows alike. Read a marker as evidence; do not read the absence of one as proof. The rows were
@@ -289,8 +289,10 @@ not as a current-state reference, since several rows were superseded rather than
 the right trade — rewriting them would erase the record this file exists to keep — so the fix is a
 `How to read this section` preamble, plus the in-row markers `C-47` added. Claim and markers were
 made to agree in both directions: the preamble says every superseded row names its successor, so
-every one of them now does. **Superseded in part by C-51, C-52, C-53 and C-54**: that agreement held
-only for the rows checked at the time. Cycle 8 found an unmarked chain and cycle 9 found three more
+every one of them now does. **Superseded in part by C-49, C-51, C-52, C-53 and C-54**: this paragraph
+also said the preamble named "all five supersession chains" — it named four, which is `C-49`, and
+that sentence lived here rather than in the preamble it described. The agreement it claims held only
+for the rows checked at the time; cycle 8 found an unmarked chain and cycle 9 found three more
 unmarked rows, which is what eventually moved the completeness claim out of the prose and onto the
 markers.
 
@@ -462,7 +464,7 @@ briefing that was sent to audit it.
 | Row  | Discipline | Defect                                                                                                                                                                                                                                         | Severity | Fix                                                                                                                                                                                                                          |
 | ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | C-62 | Integrity  | The preamble's new marker named `C-49`, `C-50`, `C-51` and `C-57` as summaries that lived in it. `C-57`'s lived in the section's closing paragraph, which was left unmarked. Repeated in `C-59`'s Fix cell and in `f1a15185f`'s pushed message | HIGH     | The preamble marker names the three that were actually there; the closing paragraph carries its own marker for `C-57`. `C-59`'s Fix cell is corrected. The pushed message stays as it is, disclosed rather than force-pushed |
-| C-63 | Integrity  | The Scope Discipline paragraph opened at `cb489b874` as "All eight rows edit prose in three reader-facing documents" with nineteen rows already present, and the row count was corrected silently at `14e58716e` with no row and no marker     | MEDIUM   | The paragraph is marked and the original wording recorded. Only the row count was wrong: three documents was correct at that commit, so the finding is recorded as half-standing rather than accepted whole                  |
+| C-63 | Integrity  | The Scope Discipline paragraph opened at `cb489b874` as "All eight rows edit prose in three reader-facing documents" with nineteen rows already present, and the row count was corrected silently at `14e58716e` with no row and no marker     | MEDIUM   | The paragraph is marked and the original wording recorded. **Superseded by C-67**: this row's "only the row count was wrong" resolution is false — both figures were wrong, and the finding it downgraded was correct whole  |
 | C-64 | Integrity  | `C-59`'s narration said the Cycle 7 paragraph "carried that claim through `063026455` and `bc20ca4bd`", collapsing two different phrasings into one quoted string                                                                              | LOW      | The narration now gives both phrasings and says the `bc20ca4bd` rewording softened the sentence without fixing the arithmetic                                                                                                |
 | C-65 | Docs       | `C-59`'s narration called itself "the fifth completeness claim about this record to fail" while `C-57` already held that ordinal, with nothing in the text distinguishing two tallies                                                          | MEDIUM   | The ordinal is removed rather than renumbered, and the narration says why: the count of failed counts is itself one of the figures this record kept getting wrong                                                            |
 
@@ -471,17 +473,53 @@ above, and every cycle after the fourth changed only plan records, never a reade
 Those five documents have not needed a change since `afb850f43`, and the cycle 12 docs pass cleared
 them to ship again. **Superseded in part by C-57 and C-62**: this is the paragraph that carried "56
 numbered rows — four of them listed twice", the count `C-57` removed. `C-59`'s marker was put on the
-preamble instead, which is where the other three summaries lived but not this one.
+preamble instead, which is where two of the other summaries lived but not this one.
+
+### Cycle 13 Rows (P6-007M@01)
+
+Two corrections and one decision. The narration ends here.
+
+Integrity found that `C-62` — last cycle's fix for a mislocated summary — mislocated a different
+one. It moved `C-49` onto the preamble; `C-49`'s claim ("the preamble names all five supersession
+chains") was made _about_ the preamble from the Cycle 6 closing paragraph, which is where it now
+sits. And it found that `C-63`'s "half stands" resolution was false: at `cb489b874` the file already
+referenced all five reader-facing documents, so both figures in that sentence were wrong, and both
+were corrected in one hunk. The original finding was right whole.
+
+The second one is mine to own. I checked that claim by grepping the row tables for `.md` filenames.
+The voice table's File column uses short names — `tutorial`, `related-repositories` — so the grep
+returned three documents and I read a false negative as a refutation. I then wrote that refutation
+into cycle 13's brief as established fact. The specialist re-derived it from the blob and disagreed,
+correctly. This is the same false-zero class as the `md links validate` gate recorded near the top
+of this section, made while adjudicating a finding about unverified claims.
+
+Docs made the call the loop needed. The record has crossed from hard to read into functionally
+non-narrative: growth per cycle over the last four cycles ran +734, +776, +699, +848 words —
+accelerating, not settling — while the five reader-facing documents have been byte-identical since
+`afb850f43`, eight cycles back. Every row from `C-41` on audits this record's own prose rather than
+anything a reader of the repository will see. Three consecutive cycles have now found that the fix
+for a false narrative claim contained a fresh one.
+
+So the narration closes. Not because it is finally correct — `C-66` and `C-67` are proof it is not —
+but because it has become a surface that generates defects faster than it retires them, at no
+benefit to any shipped document. The rows and their markers remain the record. Everything above this
+heading is historical and will not be rewritten again.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                      | Severity | Fix                                                                                                                                                                                                                                                  |
+| ---- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-66 | Integrity  | `C-62`'s replacement preamble marker named `C-49` as a summary that lived in the preamble. It lived in the Cycle 6 closing paragraph, which said the preamble named "all five supersession chains"          | HIGH     | The preamble marker names only `C-50` and `C-51`. The Cycle 6 closing paragraph carries `C-49`                                                                                                                                                       |
+| C-67 | Integrity  | `C-63` recorded the Scope Discipline finding as half-standing on the grounds that "three reader-facing documents" was right at `cb489b874`. All five were already referenced there; both figures were wrong | HIGH     | `C-63` is marked and the Scope Discipline marker corrected. The bad adjudication came from grepping for `.md` filenames against a table that uses short names, and it was asserted as fact in the next brief — recorded rather than quietly reversed |
+| C-68 | Docs       | The record has crossed into functionally non-narrative: per-cycle growth accelerating across the last four cycles while the reader-facing set has not changed in eight                                      | MEDIUM   | The narration is closed as historical. Rows and markers carry the record from here; no further cycle rewrites the prose above this heading                                                                                                           |
 
 ## Scope Discipline
 
 No correction here is a product change. The rows edit prose in five reader-facing documents and the
 plan's own records; none touches source, configuration, a test, or a generated mirror. P6-002A and
 P6-002B therefore remain not applicable in this iteration too — no defect was a product bug, so no
-red coverage was needed and none was written. **Superseded in part by C-63**: this paragraph opened
-at `cb489b874` as "All eight rows edit prose in three reader-facing documents", with nineteen rows
-already in the file. The row count was corrected silently at `14e58716e`; the document count was
-right at the time and grew with the scope.
+red coverage was needed and none was written. **Superseded in part by C-63 and C-67**: this paragraph
+opened at `cb489b874` as "All eight rows edit prose in three reader-facing documents". Nineteen rows
+and all five documents were already in the file, so both figures were wrong when written, and both
+were corrected in one hunk at `14e58716e` with no row and no marker.
 
 C-23 is the one row that produced new evidence rather than new prose. It ran the landing page at
 the three documented breakpoints and checked `scrollWidth > clientWidth` at each. That is a
