@@ -9,20 +9,32 @@ Feature files are grouped into domain subdirectories, one per subcommand family:
 
 ```
 behavior/rhino-cli/gherkin/
-├── convention/       # convention subcommand family
-├── ddd/              # ddd subcommand family
-├── env/              # env subcommand family
-├── gate/              # gate-registry command family
-├── git/              # git subcommand family
-├── harness/          # harness subcommand family (agent/binding machinery)
-├── md/               # md subcommand family
-├── repo-governance/  # repo-governance subcommand family
-├── spec-coverage/    # specs coverage command (folded from old spec-coverage subcommand)
-├── specs/            # specs subcommand family
-└── system/           # system commands (doctor)
+├── contracts/              # contracts subcommand family (scaffolding generators)
+├── convention/             # convention subcommand family
+├── ddd/                    # ddd subcommand family
+├── env/                    # env subcommand family
+├── env-contract/           # env validate's IaC (terraform/ansible) dispatch surface
+├── gate/                   # gate-registry command family
+├── git/                    # git subcommand family
+├── governance/             # governance subcommand family (word-budget, readme-index)
+├── harness/                # harness subcommand family (agent/binding machinery)
+├── md/                     # md subcommand family
+├── repo-config/            # repo-config.yml-driven-behaviour regressions
+├── repo-config-validate/   # repo-config validate schema-parity gate
+├── repo-governance/        # repo-governance subcommand family
+├── spec-coverage/          # specs coverage command (folded from old spec-coverage subcommand)
+├── specs/                  # specs subcommand family
+├── system/                 # system commands (doctor)
+└── test-coverage/          # test-coverage subcommand family
 ```
 
 ## Feature Files by Domain
+
+### contracts
+
+| File                              | Command(s)                | Scenarios |
+| --------------------------------- | ------------------------- | --------- |
+| `contracts-dart-scaffold.feature` | `contracts dart-scaffold` | 3         |
 
 ### convention
 
@@ -45,6 +57,12 @@ behavior/rhino-cli/gherkin/
 | `env-backup.feature`  | `env backup`  | 18        |
 | `env-init.feature`    | `env init`    | 4         |
 | `env-restore.feature` | `env restore` | 13        |
+
+### env-contract
+
+| File                         | Command(s)     | Scenarios |
+| ---------------------------- | -------------- | --------- |
+| `iac-env-validation.feature` | `env validate` | 1         |
 
 ### gate
 
@@ -104,6 +122,18 @@ behavior/rhino-cli/gherkin/
 | `docs-validate-naming.feature`              | `md naming validate`            | 3         |
 | `repo-governance-frontmatter-audit.feature` | `md frontmatter-dates validate` | 5         |
 
+### repo-config
+
+| File                  | Command(s)                                                 | Scenarios |
+| --------------------- | ---------------------------------------------------------- | --------- |
+| `data-driven.feature` | N/A — data-driven-behavior regression (no single CLI verb) | 5         |
+
+### repo-config-validate
+
+| File                           | Command(s)             | Scenarios |
+| ------------------------------ | ---------------------- | --------- |
+| `repo-config-validate.feature` | `repo-config validate` | 5         |
+
 ### repo-governance
 
 | File                                         | Command(s)                                 | Scenarios |
@@ -144,6 +174,14 @@ behavior/rhino-cli/gherkin/
 | `cargo-target-share.feature` | `doctor`   | 18        |
 | `doctor.feature`             | `doctor`   | 17        |
 
+### test-coverage
+
+| File                             | Command(s)               | Scenarios |
+| -------------------------------- | ------------------------ | --------- |
+| `test-coverage-diff.feature`     | `test-coverage diff`     | 4         |
+| `test-coverage-merge.feature`    | `test-coverage merge`    | 3         |
+| `test-coverage-validate.feature` | `test-coverage validate` | 10        |
+
 ## Conventions
 
 - **File naming**: `[domain]-[action].feature` (kebab-case, domain-prefixed)
@@ -162,12 +200,16 @@ for the canonical purpose of this folder.
 - [rhino — behavior/rhino-cli/gherkin/convention](./convention/README.md)
 - [rhino — behavior/rhino-cli/gherkin/ddd](./ddd/README.md)
 - [rhino — behavior/rhino-cli/gherkin/env](./env/README.md)
+- [Env-Contract Domain](./env-contract/README.md)
 - [Gate Gherkin Specs](./gate/README.md)
 - [rhino — behavior/rhino-cli/gherkin/git](./git/README.md)
 - [rhino — behavior/rhino-cli/gherkin/governance](./governance/README.md)
 - [rhino — behavior/rhino-cli/gherkin/harness](./harness/README.md)
 - [rhino — behavior/rhino-cli/gherkin/md](./md/README.md)
+- [Repo-Config Domain](./repo-config/README.md)
+- [Repo-Config-Validate Domain](./repo-config-validate/README.md)
 - [rhino — behavior/rhino-cli/gherkin/repo-governance](./repo-governance/README.md)
 - [rhino — behavior/rhino-cli/gherkin/spec-coverage](./spec-coverage/README.md)
+- [Specs Domain](./specs/README.md)
 - [rhino — behavior/rhino-cli/gherkin/system](./system/README.md)
 - [Test Coverage Domain](./test-coverage/README.md)
