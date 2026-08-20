@@ -229,30 +229,22 @@ fn harness_entry_semantic_findings(i: usize, entry: &HarnessEntry) -> Vec<String
 /// own delimited-region logic rather than the skills mirror) legitimately has
 /// no `vendored:` counterpart.
 fn vendored_ownership_cross_check(i: usize, entry: &HarnessEntry) -> Vec<String> {
-    let mut findings = Vec::new();
-    let Some(skills_dir) = entry.skills_dir.as_deref() else {
-        return findings;
-    };
-    // Component-wise, not string-prefix: `repo_config::path_is_under` is the
-    // single shared implementation this cross-check and the skills-mirror
-    // emitter's vendored-skip test both use, so a hand-typed double slash
-    // cannot make the two disagree on which paths sit under `skills-dir`
-    // (cycle-2 Finding 10).
-    let under_skills_dir = |p: &str| repo_config::path_is_under(p, skills_dir);
-
-    for owned in &entry.ownership {
-        if owned.class == OwnershipClass::Vendored
-            && under_skills_dir(&owned.path)
-            && !entry.vendored.iter().any(|v| v == &owned.path)
-        {
-            findings.push(format!(
-                "harness[{i}].ownership: {:?} is declared class: vendored under \
-                 skills-dir {skills_dir:?} but has no matching harness[{i}].vendored \
-                 entry (the skills mirror will delete it on the next regeneration)",
-                owned.path
-            ));
-        }
+    if entry.skills_dir.is_none() {
+        return Vec::new();
     }
+    // The ownership -> vendored direction (an ownership-declared vendored path
+    // with no matching `vendored[]` entry) is the direction that actually
+    // matters to the skills-mirror emitter's destructive path, so it lives as
+    // the shared `repo_config::vendored_missing_from_ownership_backed_list`
+    // and is also called directly from `mirror_jobs`, unconditionally, not
+    // just from this command. `repo-config validate` reuses it here rather
+    // than re-deriving it, so the two call sites cannot drift.
+    let mut findings = repo_config::vendored_missing_from_ownership_backed_list(i, entry);
+
+    // Reverse direction: a `vendored[]` entry with no matching `ownership`
+    // entry is schema hygiene (an undocumented exemption), not a deletion
+    // risk, so it stays exact-string-equality here rather than moving into
+    // the shared, destructive-path-facing helper above.
     for (k, vendored_path) in entry.vendored.iter().enumerate() {
         let declared = entry
             .ownership
@@ -579,14 +571,19 @@ mod tests {
         );
     }
 
-    // Cycle-5 regression, at the fourth and previously-uncovered
-    // `path_is_under` call site (`vendored_ownership_cross_check`'s
-    // `under_skills_dir` closure): a blank `skills-dir` must not make this
-    // cross-check spuriously match every `ownership[]` path as "under
-    // skills-dir". `path_is_under`'s empty-dir guard is what stops that; an
-    // empty `skills-dir` is still rejected on its own by the path-field
-    // check above, just not by this cross-check inventing a second, phantom
-    // finding for an entry that has nothing to do with the skills mirror.
+    // Cycle-4 F1 regression, at the fourth and previously-uncovered
+    // `path_is_under` call site (now
+    // `repo_config::vendored_missing_from_ownership_backed_list`'s
+    // `skills-dir` containment test, given coverage here when cycle 5 added
+    // the two call sites F1's guard had left unguarded by any test): a blank
+    // `skills-dir` must not make this cross-check spuriously match every
+    // `ownership[]` path as "under skills-dir". `path_is_under`'s empty-dir
+    // guard is what stops that; an empty `skills-dir` is still rejected on
+    // its own by the path-field check above, just not by this cross-check
+    // inventing a second, phantom finding for an entry that has nothing to do
+    // with the skills mirror. Reverting cycle 5's addition of this test does
+    // not trip it — only reverting the older `path_is_under` empty-dir guard
+    // itself does.
     #[test]
     fn an_empty_skills_dir_does_not_make_the_vendored_cross_check_match_every_ownership_path() {
         let bad = concat!(

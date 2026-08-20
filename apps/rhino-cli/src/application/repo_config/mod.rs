@@ -476,14 +476,43 @@ pub struct DoctorConfig {
 /// preferable to normalizing: the registry is hand-authored, and this repo's
 /// stated preference is explicit configuration over implicit convention.
 ///
+/// Also rejects any value that carries leading or trailing whitespace
+/// (`value != value.trim()`). This is deliberately a shape-agnostic check
+/// rather than an enumeration of specific bad inputs (a bare space, a tab, a
+/// trailing space, and so on): whitespace-padding is a class of typo, not a
+/// list of them, and every caller here (`agent-dir`, `skills-dir`, `mirrors`,
+/// `skills-mirrors`, `config`, `forbid-dir`, `shadow`, `instruction[]`,
+/// `vendored[]`, and `ownership[].path`) shares the same exposure: a padded
+/// value can pass this lexical check yet fail to prefix-match the real file it
+/// names once compared byte-for-byte downstream (in [`path_is_under`] or a
+/// plain string/filesystem comparison), silently treating a real, protected
+/// path as unmatched. For `vendored[]` specifically that unmatched state
+/// flips a currently-vendored file into "no longer vendored", which the
+/// skills-mirror emitter then deletes as an orphan (cycle-6 CRITICAL: a
+/// leading space, a trailing space, a tab, or a lone space all independently
+/// reproduced this deletion, none of them caught by the narrower "empty or
+/// root" check cycle 5 added). Rejecting outright is preferable to
+/// normalizing (trimming and proceeding): the registry is hand-authored, and a
+/// silently-trimmed value would hide the very typo this check exists to
+/// surface.
+///
 /// # Errors
 ///
-/// Returns an error when the path is empty, absolute, contains a parent
-/// directory component, or contains a `./` current-directory component.
+/// Returns an error when the path is empty, absolute, carries leading or
+/// trailing whitespace, contains a parent directory component, or contains a
+/// `./` current-directory component.
 pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
     let path = Path::new(value);
     if value.is_empty() || path.is_absolute() {
         return Err("must be a non-empty repository-relative path".to_string());
+    }
+    if value != value.trim() {
+        return Err(
+            "must not carry leading or trailing whitespace (a padded value like this can pass \
+             validation yet fail to match the real file it names, silently orphaning whatever \
+             it was declared to protect)"
+                .to_string(),
+        );
     }
     if path.components().any(|component| {
         matches!(
@@ -534,6 +563,61 @@ pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
         return false;
     }
     path.as_ref().starts_with(dir)
+}
+
+/// `harness[i].ownership` entries declared `class: vendored` under this
+/// entry's `skills-dir` with no matching, EXACT-STRING-EQUAL
+/// `harness[i].vendored` entry.
+///
+/// This is the direction of the ownership/`vendored[]` agreement check that
+/// matters to the skills-mirror emitter's destructive path
+/// ([`crate::application::agents::skills_mirror`]): an ownership-declared
+/// vendored path with no matching *operative* `vendored[]` entry is exactly
+/// the inconsistency that lets a real vendored directory lose its protection
+/// and get deleted as an orphan on the next regeneration — whether the two
+/// lists drifted because one was edited and not the other, or because a
+/// `vendored[]` value no longer textually matches the path `ownership`
+/// records for it (any mismatch: a typo, a stray character, a whitespace pad
+/// `validate_repo_relative_path` does not already reject, a wrong directory
+/// name entirely). The comparison against `owned.path` is intentionally exact
+/// string equality, not normalized: normalizing away a mismatch here would
+/// hide the very drift this check exists to catch.
+///
+/// Scoped to paths under `skills-dir` via [`path_is_under`] (component-wise,
+/// so a hand-typed double separator cannot escape it): a `vendored`-class
+/// file elsewhere (e.g. `.codex/config.toml`) legitimately has no
+/// `vendored[]` counterpart, since that list only governs the skills mirror.
+///
+/// The reverse direction — a `vendored[]` entry with no matching `ownership`
+/// entry — is schema hygiene, not a deletion risk (an orphaned `vendored[]`
+/// declaration simply protects nothing additional; it never itself causes a
+/// deletion), so it is intentionally NOT part of this function and stays
+/// exclusive to the broader bidirectional check `repo-config validate` runs
+/// (`crate::commands::repo_config_validate::vendored_ownership_cross_check`).
+/// Keeping this function forward-only lets it run unconditionally on every
+/// mirror job without requiring every caller (including test fixtures that
+/// declare `vendored[]` with no `ownership:` section at all) to also carry a
+/// full ownership record.
+#[must_use]
+pub fn vendored_missing_from_ownership_backed_list(i: usize, entry: &HarnessEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+    let Some(skills_dir) = entry.skills_dir.as_deref() else {
+        return findings;
+    };
+    for owned in &entry.ownership {
+        if owned.class == OwnershipClass::Vendored
+            && path_is_under(&owned.path, skills_dir)
+            && !entry.vendored.iter().any(|v| v == &owned.path)
+        {
+            findings.push(format!(
+                "harness[{i}].ownership: {:?} is declared class: vendored under \
+                 skills-dir {skills_dir:?} but has no matching harness[{i}].vendored \
+                 entry (the skills mirror will delete it on the next regeneration)",
+                owned.path
+            ));
+        }
+    }
+    findings
 }
 
 /// Resolve a configured repository-relative path while proving that existing
@@ -880,6 +964,39 @@ mod tests {
                  and left to defeat path_is_under downstream"
             );
         }
+    }
+
+    // Cycle-6 CRITICAL: the "empty or root" check cycle 5 added rejects only
+    // two literal shapes. A `vendored[]` value carrying leading/trailing
+    // whitespace passed that check, then failed to prefix-match the real file
+    // it named, flipping a currently-vendored file into "no longer vendored"
+    // and letting the skills-mirror emitter delete it. Falsifiable both ways:
+    // every whitespace-padded shape below must be rejected, while a clean
+    // value AND a trailing separator (a distinct, legitimate shape that must
+    // keep surviving — over-rejecting it would itself be a regression) must
+    // both still be accepted.
+    #[test]
+    fn validate_repo_relative_path_rejects_any_leading_or_trailing_whitespace_shape() {
+        for value in [
+            " .agents/skills/vendor-plugin",
+            ".agents/skills/vendor-plugin ",
+            "\t.agents/skills/vendor-plugin",
+            " ",
+        ] {
+            assert!(
+                validate_repo_relative_path(value).is_err(),
+                "whitespace-padded value {value:?} must be rejected"
+            );
+        }
+        assert!(
+            validate_repo_relative_path(".agents/skills/vendor-plugin").is_ok(),
+            "a clean value must still be accepted"
+        );
+        assert!(
+            validate_repo_relative_path(".agents/skills/vendor-plugin/").is_ok(),
+            "a trailing separator carries no whitespace and must still be accepted \
+             (over-rejecting it would itself be a regression)"
+        );
     }
 
     #[test]

@@ -68,12 +68,37 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
     config
         .harness
         .iter()
-        .filter_map(|entry| {
+        .enumerate()
+        .filter_map(|(i, entry)| {
             let target_rel = entry.skills_dir.as_ref()?;
             let source_rel = entry.skills_mirrors.as_ref()?;
-            Some((entry, target_rel, source_rel))
+            Some((i, entry, target_rel, source_rel))
         })
-        .map(|(entry, target_rel, source_rel)| {
+        .map(|(i, entry, target_rel, source_rel)| {
+            // The ownership/`vendored[]` agreement check `repo-config
+            // validate` runs, wired directly onto this destructive path
+            // rather than left as a separate command nothing forces to run
+            // first (cycle-6 CRITICAL follow-up): an `ownership[]` entry
+            // declared `class: vendored` with no matching, EXACT-STRING-EQUAL
+            // `vendored[]` entry is precisely the drift that lets a real
+            // vendored directory lose its protection — whether from an edit
+            // to one list and not the other, or a `vendored[]` value that no
+            // longer textually names the path `ownership` records — and get
+            // deleted below as an orphan. This closes the class generically:
+            // it does not enumerate which mismatch shape (a typo, a stray
+            // separator, a whitespace pad) produced the disagreement.
+            let cross_check_findings =
+                repo_config::vendored_missing_from_ownership_backed_list(i, entry);
+            if !cross_check_findings.is_empty() {
+                return Err(format!(
+                    "harness {:?}: ownership and vendored declarations disagree ({}) — refusing \
+                     to mirror until the registry is internally consistent, because this exact \
+                     disagreement is what lets a vendored directory silently lose its protection \
+                     and get deleted as an orphan",
+                    entry.name,
+                    cross_check_findings.join("; ")
+                ));
+            }
             // `Path::join` silently discards `repo_root` when the joined value
             // is itself absolute, so an absolute or `../`-escaping `skills-dir`
             // / `skills-mirrors` would otherwise make this job read from and
@@ -472,17 +497,27 @@ mod tests {
         }
     }
 
-    // Cycle-5 CRITICAL regression: a `vendored[]` entry that trims to empty or
-    // root must fail the whole job rather than silently delete the file it
-    // was declared to protect. Falsifiable both ways from the same fixture
-    // shape the doubled-orphan test above uses: an already-vendored, already-
-    // present file must still exist on disk after the refusal, not just after
-    // a passing run.
+    // Cycle-5 CRITICAL regression, generalized in cycle 6: a `vendored[]`
+    // value that passes validation but matches no real file must fail the
+    // whole job rather than silently delete the file it was declared to
+    // protect. Deliberately NOT an enumeration of specific bad shapes — the
+    // first two cases are the values `validate_repo_relative_path` itself
+    // rejects (trims to empty or root); the last is a value that PASSES that
+    // lexical check yet still names nothing real, caught instead by the
+    // ownership/`vendored[]` agreement check `mirror_jobs` now runs
+    // (cycle-6 CRITICAL follow-up), because no amount of lexical validation
+    // on a string in isolation can prove it matches an existing directory.
+    // Falsifiable both ways from the same fixture shape the doubled-orphan
+    // test above uses: an already-vendored, already-present file must still
+    // exist on disk after the refusal, not just after a passing run.
     #[test]
-    fn a_malformed_vendored_declaration_is_refused_rather_than_deleting_the_file_it_protects() {
+    fn a_vendored_declaration_that_matches_no_real_file_is_refused_rather_than_deleting_the_file_it_protects()
+     {
         for bad_vendored in [
             "    vendored:\n      - \"\"\n",
             "    vendored:\n      - /\n",
+            "    vendored:\n      - .agents/skills/vendor-plugin-typo\n    ownership:\n      \
+             - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
         ] {
             let dir = fixture(bad_vendored);
             write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");
@@ -508,13 +543,16 @@ mod tests {
         }
     }
 
-    // Cycle-5 CRITICAL regression, direct at `is_vendored` itself (the fourth
-    // and previously-uncovered `path_is_under` call site): an empty
-    // declaration must not claim every mirrored file — `path_is_under`'s
-    // empty-dir guard is what makes this `false`, and `mirror_jobs`'
-    // validation above is what stops the malformed declaration from reaching
-    // `is_vendored` in production, but this function must stay sound on its
-    // own rather than depend on that caller.
+    // Cycle-4 F1 regression, direct at `is_vendored` itself (the fourth and
+    // previously-uncovered `path_is_under` call site, given coverage here when
+    // cycle 5 added the two call sites F1's guard had left unguarded by any
+    // test): an empty declaration must not claim every mirrored file —
+    // `path_is_under`'s empty-dir guard is what makes this `false`, and
+    // `mirror_jobs`' validation above is what stops the malformed declaration
+    // from reaching `is_vendored` in production, but this function must stay
+    // sound on its own rather than depend on that caller. Reverting cycle 5's
+    // `mirror_jobs` validation does not trip this test — only reverting the
+    // older `path_is_under` empty-dir guard itself does.
     #[test]
     fn is_vendored_rejects_an_empty_or_root_declaration_against_any_path() {
         assert!(!is_vendored(
