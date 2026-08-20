@@ -41,10 +41,27 @@ Feature: Governance word budget
       | .claude/agents/example.md                |
       | .claude/skills/example/SKILL.md          |
       | .opencode/agents/example.md              |
-      | .cursor/agents/example.md                |
-      | .amazonq/rules/example.md                |
+      | .codex/agents/example.md                 |
+      | .agents/skills/example/SKILL.md          |
       | AGENTS.md                                |
       | CLAUDE.md                                |
+
+  Scenario: The covered surfaces are exactly the live entry points of the supported harnesses
+    When I read repo-config.yml
+    Then the covered surface globs are exactly the harness entry points and the README glob
+    And the README glob is declared last
+
+  Scenario Outline: A root entry point keeps the unchanged 500-word ceiling
+    Given a file "<path>" contains 515 words
+    When the developer runs governance word-budget validate
+    Then the command exits with a failure code
+    And the output contains a "fail" finding naming "<path>"
+    And the finding states the word count 515 and the ceiling 500
+
+    Examples:
+      | path      |
+      | AGENTS.md |
+      | CLAUDE.md |
 
   Scenario: A README.md file under the specific-surface target produces zero findings
     Given "repo-governance/development/quality/README.md" contains 670 words

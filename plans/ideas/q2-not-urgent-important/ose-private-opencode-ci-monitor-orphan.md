@@ -14,7 +14,7 @@ through the byte-identity boundary.
 ## Problem / context
 
 This repo's binding model is unambiguous: `.claude/` is the only hand-authored surface, and
-`.opencode/`, `.cursor/`, and `.amazonq/` are emitted by `rhino-cli harness bindings generate`. A
+`.opencode/`, `.codex/`, and `.agents/` are emitted by `rhino-cli harness bindings generate`. A
 file sitting in a generated mirror directory with no source is therefore drift by construction — no
 regeneration will ever update it, and no source edit will ever reach it. `ose-private` has exactly
 one such file: `.opencode/agents/ci-monitor-subagent.md`, present in the mirror and absent from
@@ -27,9 +27,8 @@ shape as [mermaid-validator-does-not-check-syntax](../q1-urgent-important/mermai
 board is green because nothing looked.
 
 Two concrete data points sharpen the shape of it. First, `ose-public` itself is clean —
-`.claude/agents/` and `.opencode/agents/` each hold 91 files, and neither contains a
-`ci-monitor-subagent.md`; the only `ci-monitor` references in this repo's generated tree are
-`.opencode/commands/monitor-ci.md` and `.opencode/skills/monitor-ci/SKILL.md`. Second, the filename
+`.claude/agents/` and `.opencode/agents/` held 91 files each at the time of writing, and neither
+contained a `ci-monitor-subagent.md`. Second, the filename
 matches a plugin-provided agent (`nx:ci-monitor-subagent`, the CI helper for `/monitor-ci`), which
 raises the real possibility that the file was installed by tooling rather than authored — in which
 case the right answer is a declared exclusion, not a deletion. That origin is not established.
@@ -44,10 +43,19 @@ The evidence is already gathered and fresh: the Cursor-binding plan enumerated t
 to the exact source line, deliberately left it alone, and wrote down why. Re-deriving that costs more
 than acting on it.
 
-Each new generated binding also widens the asymmetry rather than closing it. The Cursor emitter reads
-`.claude/agents/`, so the orphan is simply absent from `.cursor/agents/` — meaning the file now exists
-in one generated tree and not the others, and the same hardcoded skip keeps that difference invisible
-too. Every additional harness compounds a divergence nobody can see.
+Each new generated binding also widens the asymmetry rather than closing it. Every emitter reads
+`.claude/agents/`, so the orphan is simply absent from the other generated trees — the file exists in
+one and not the rest, and the same hardcoded skip keeps that difference invisible too. Every
+additional harness compounds a divergence nobody can see.
+
+> Narrowed by `update-harness-support`. Three of that plan's outcomes bear on this brief. The
+> `.cursor/` and `.amazonq/` trees named above are deleted; `.codex/` and `.agents/` replace them.
+> The `.opencode/commands/` and `.opencode/skills/` counter-example paths are deleted too, so the
+> ose-public cleanliness argument now rests on the agent directories alone. And Rule 8 makes vendored
+> ownership a **declared** class — ose-public declares `.codex/ci-monitor-subagent.toml` vendored
+> with a reason, which is exactly the "declared exclusion, not a deletion" outcome this brief
+> proposed, applied to the Codex sibling of the same file. The ose-private orphan and the hardcoded
+> `list_agent_files` skip that hides it both survive untouched.
 
 Finally, the skip lives in a byte-identity-gated file. Every future change to the naming validator
 carries the carve-out forward into both parity repos, so the cost of leaving it is not static.

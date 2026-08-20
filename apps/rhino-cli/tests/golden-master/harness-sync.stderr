@@ -1,5 +1,5 @@
 error: 'rhino-cli harness sync' requires a subcommand but one was not provided
-  [subcommands: validate, help]
+  [subcommands: validate, triage, promote, help]
 
 Usage: rhino-cli harness sync [OPTIONS] <COMMAND>
 

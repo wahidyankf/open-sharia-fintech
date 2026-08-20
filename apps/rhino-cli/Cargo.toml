@@ -30,6 +30,9 @@ quick-xml = { version = "0.40.1", features = ["serialize"] }
 chrono = { version = "0.4.44", default-features = false, features = ["serde", "clock"] }
 glob = "0.3.3"
 sha2 = "0.11.0"
+# Scratch regeneration for divergence triage builds a throwaway tree; already
+# present transitively as a dev-dependency, so this adds no new lockfile entry.
+tempfile = "3.27.0"
 
 [target.'cfg(unix)'.dependencies]
 rustix = { version = "1.1.4", features = ["fs"] }
@@ -38,12 +41,35 @@ rustix = { version = "1.1.4", features = ["fs"] }
 cucumber = "0.23.0"
 assert_cmd = "2.2.2"
 predicates = "3.1.4"
-tempfile = "3.27.0"
 tokio = { version = "1.51.0", features = ["macros", "rt-multi-thread"] }
 
 # --- Cucumber harness suites (harness = false: each test file has its own main) ---
 [[test]]
 name = "agents"
+harness = false
+
+[[test]]
+name = "codex_binding"
+harness = false
+
+[[test]]
+name = "skills_mirror"
+harness = false
+
+[[test]]
+name = "harness_ownership"
+harness = false
+
+[[test]]
+name = "harness_sync_triage"
+harness = false
+
+[[test]]
+name = "opencode_conformance"
+harness = false
+
+[[test]]
+name = "harness_catalog"
 harness = false
 
 [[test]]
@@ -108,10 +134,6 @@ harness = false
 
 [[test]]
 name = "ddd"
-harness = false
-
-[[test]]
-name = "cursor_binding"
 harness = false
 
 [[test]]

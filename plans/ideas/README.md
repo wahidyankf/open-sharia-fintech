@@ -18,6 +18,7 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
+- [deletion-authorized-by-absence](./q1-urgent-important/deletion-authorized-by-absence.md) — `harness bindings generate` authorizes deletion by absence from a hand-maintained `vendored[]` list, so every way that list can fail to match reality resolves to destroying the file; four consecutive review cycles found four shapes of one root cause.
 - [markdownlint-ci-gate-lints-zero-files](./q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md) — the `markdownlint` gate declares `all-file-type` with no glob, so CI runs it with empty argv, lints `0 file(s)`, and has always passed vacuously.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [next-image-builds-cannot-resolve-ts-env-loader](./q1-urgent-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build; four scheduled workflows have reported it twice daily for days, and the `prod-*` deploy path for four sites is dead.
@@ -50,15 +51,16 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [fsharp-env-loader-covers-markers-are-inert](./q2-not-urgent-important/fsharp-env-loader-covers-markers-are-inert.md) — 11 `@covers` markers with no step harness and no coverage target; adding the target alone fails, because the validator matches step text.
 - [gate-exclusions-need-a-named-owner](./q2-not-urgent-important/gate-exclusions-need-a-named-owner.md) — a gate's `exclude:` list records that a tree is skipped but never who checks it instead, so an exclusion outlives the tool that justified it.
 - [governance-command-name-reconciliation](./q2-not-urgent-important/governance-command-name-reconciliation.md) — governance tables, agent files, and npm scripts all name commands that do not exist, including a removed `rhino-cli` subcommand three `sync:*` scripts still invoke.
-- [governance-path-ownership-registry](./q2-not-urgent-important/governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
-- [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
+- [governance-path-ownership-registry](./q2-not-urgent-important/governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator; narrowed to the four zero-owner paths outside the binding trees, which Rule 8 now covers.
+- [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — narrowed to one surviving lesson: the 2026-07-20 audit's summary contradicted its own report body, so read the body.
 - [harness-converter-preserve-agent-mode](./q2-not-urgent-important/harness-converter-preserve-agent-mode.md) — the agent converter emits a fixed field set, so OpenCode-only frontmatter like `mode: subagent` is dropped once an agent gains a `.claude/` source.
-- [harness-level-env-file-enforcement-gap](./q2-not-urgent-important/harness-level-env-file-enforcement-gap.md) — Cursor, Amazon Q Developer, and Codex have no equivalent of the Claude Code env-file hook, so three of four supported harnesses have no technical block.
+- [harness-level-env-file-enforcement-gap](./q2-not-urgent-important/harness-level-env-file-enforcement-gap.md) — OpenCode and Codex have no equivalent of the Claude Code env-file hook, so two of the three supported harnesses have no technical block.
 - [iam-service-module](./q2-not-urgent-important/iam-service-module.md) — a shared IAM (authn/authz) capability; early placeholder, mostly open questions.
 - [merge-queue-adoption](./q2-not-urgent-important/merge-queue-adoption.md) — merge-precondition (c) cannot hold under concurrent merges, but GitHub's native queue is gated on organization ownership both parity repos lack.
 - [mermaid-state-label-render-clipping-warn](./q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md) — a WARN rule for `stateDiagram-v2` edge labels that clip in GitHub's renderer.
 - [nx-affected-cross-worktree-contamination](./q2-not-urgent-important/nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
-- [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip both parity repos inherit.
+- [opencode-v2-migration](./q2-not-urgent-important/opencode-v2-migration.md) — OpenCode v2 renames eleven configuration keys the generator emits today, including `permission.bash` → `permission.shell`; plan the migration before the beta is promoted.
+- [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip both parity repos inherit; ose-public solved the sibling case by declaring it vendored.
 - [plan-archival-in-pr-multi-repo-gap](./q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
 - [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
 - [port-registry-lacks-a-validator](./q2-not-urgent-important/port-registry-lacks-a-validator.md) — the cross-repo port registry now exists but is prose no tool reads, so a stale or colliding row still surfaces only when a service fails to bind.
@@ -67,6 +69,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [pr-review-disciplines-applicability-shard-empty](./q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md) — the "Applicability and Finding Disposition" shard's frontmatter promises content its body never delivers; pre-existing, examined and deferred during PR #227.
 - [propagate-env-tier-to-ose-primer](./q2-not-urgent-important/propagate-env-tier-to-ose-primer.md) — port the `APP_ENV` tiered-env-file convention to `ose-primer`, which has received none of it.
 - [propagation-checklist-under-coverage](./q2-not-urgent-important/propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
+- [recurring-defect-family-escalation](./q2-not-urgent-important/recurring-defect-family-escalation.md) — four consecutive PR-review cycles each found a CRITICAL and all four shared one root cause; the loop has no trigger that escalates a recurring family from delta review to root-cause review.
 - [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
 - [repo-rules-quality-gate-convergence](./q2-not-urgent-important/repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
 - [rhino-cli-env-backup-scripts](./q2-not-urgent-important/rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
@@ -85,6 +88,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [standardize-cis](./q2-not-urgent-important/standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
 - [syllabus-conformance-validator](./q2-not-urgent-important/syllabus-conformance-validator.md) — a deterministic `rhino-cli md syllabus validate` for course-file section conformance, deferred until the format settles.
 - [vendor-audit-kiro-term](./q2-not-urgent-important/vendor-audit-kiro-term.md) — add `Kiro` to the vendor-audit denylist before it leaks into governance prose.
+- [vendor-neutral-canonical-source](./q2-not-urgent-important/vendor-neutral-canonical-source.md) — move the canonical agent and skill source out of `.claude/` so no harness is privileged and every harness, Claude Code included, becomes a generated mirror.
 - [vitest-glob-coverage-guard](./q2-not-urgent-important/vitest-glob-coverage-guard.md) — a regression test that matched no Vitest project's include glob ran zero times and passed green; guard the class.
 - [web-ui-alert-destructive-dark-contrast](./q2-not-urgent-important/web-ui-alert-destructive-dark-contrast.md) — shared `Alert variant="destructive"` renders at 1.99:1 in dark mode; the obvious token fix is unsafe.
 
@@ -214,9 +218,9 @@ carry no sync obligation and were not swept.
     appears under **Merged**, for the unrelated `specs-checker` absorption.)
   - `harness-converter-preserve-agent-mode.md` — nothing to fold, therefore **unchanged in this
     commit**.
-- **Reclassified** (1): `audit-e2e-reuse-existing-server-config.md` Q2 → **Q3**. Urgent (its *Why
-  now* records an already-observed defect), but **not** important: the Step 8 importance rubric
-  admits exactly five signals, and a gate that silently *passes* against the wrong build is not "a
+- **Reclassified** (1): `audit-e2e-reuse-existing-server-config.md` Q2 → **Q3**. Urgent (its _Why
+  now_ records an already-observed defect), but **not** important: the Step 8 importance rubric
+  admits exactly five signals, and a gate that silently _passes_ against the wrong build is not "a
   currently-blocking CI gate". It was first moved to Q1 in this run on that misreading, corrected in
   review.
 - **Reshaped** (3): provenance blockquotes added to `plan-checker-forward-reference-detection.md`,
@@ -250,10 +254,10 @@ carry no sync obligation and were not swept.
   reproduced the miss from scratch, finding the validator flags other missing filenames in a
   byte-identical file but not that one. The link is fixed here; the validator behaviour is not, and
   is worth its own investigation.
-- **Step 9's cross-repo link rule was deliberately not applied literally.** It says convert *every*
+- **Step 9's cross-repo link rule was deliberately not applied literally.** It says convert _every_
   `./`-relative link in a relocated file to an absolute URL. Two links were left relative —
   `../../../CLAUDE.md` and `../../../docs/reference/related-repositories.md` — because both resolve
-  correctly here and now point at *this* repo's own copies, which is the right target for a reader of
+  correctly here and now point at _this_ repo's own copies, which is the right target for a reader of
   this repo; converting them would have produced links into a private repo that 404 for most readers.
   Note the two repos' `related-repositories.md` differ in wording, so the citation's meaning did shift
   slightly with the move; the claim it supports (`ose-primer` is outside the parity set) holds in both.

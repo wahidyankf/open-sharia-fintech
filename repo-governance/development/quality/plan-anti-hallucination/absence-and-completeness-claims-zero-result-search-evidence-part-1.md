@@ -38,3 +38,12 @@ zero result may be cited as evidence of absence, all four of the following MUST 
 4. **A known-positive control probe passes** — run the same command shape against a pattern that
    MUST match, in the same tree, and confirm it returns non-zero. Only then does the real query's
    zero mean absence.
+5. **The searcher's own folder is excluded when it documents the token** — a clause greping
+   repo-wide for a term the plan's own `prd.md` spells out can never reach zero. Add
+   `':!plans/in-progress/<slug>'` at authoring time or it is unsatisfiable by construction.
+
+## No-match clauses contradict name-the-removed-thing tests
+
+A plan instructing "write a regression test proving `<removed>` is rejected" and also "grep
+returns no match for `<removed>`" contradicts itself: the test must spell the name. Keep the test,
+scope the grep away from it, and catch the pairing while authoring.

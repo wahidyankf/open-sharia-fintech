@@ -8,12 +8,13 @@ use crate::commands::{
     governance_generate_readme_index, governance_layer_coherence,
     governance_rewrite_readme_index_paths, governance_traceability_audit,
     governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
-    harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_sync, md_audit, md_validate_frontmatter,
-    md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
-    md_validate_mermaid, md_validate_naming, parity, repo_config_validate, specs_audit,
-    specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality, specs_scaffold_dart,
-    specs_structure_validate, specs_validate_counts, test_coverage_validate,
+    harness_audit, harness_catalog, harness_generate_bindings, harness_sync_promote,
+    harness_sync_triage, harness_validate_bindings, harness_validate_claude,
+    harness_validate_duplication, harness_validate_ownership, harness_validate_sync, md_audit,
+    md_validate_frontmatter, md_validate_frontmatter_dates, md_validate_heading_hierarchy,
+    md_validate_links, md_validate_mermaid, md_validate_naming, parity, repo_config_validate,
+    specs_audit, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
+    specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -420,8 +421,8 @@ pub enum ConventionLicenseCommands {
 
 // ---------------------------------------------------------------------------
 // harness (verb-last: harness {noun} validate / harness {noun} generate)
-// Note: harness sync opencode and harness emit amazonq are merged into
-//       harness bindings generate (use --harness opencode / --harness amazonq).
+// Note: harness sync opencode is merged into harness bindings generate
+//       (use --harness opencode).
 //       convention validate instruction-size is cross-domain moved here.
 // ---------------------------------------------------------------------------
 
@@ -440,9 +441,27 @@ pub enum HarnessCommands {
     /// Validate binding artifacts and generate platform bindings.
     #[command(name = "bindings", subcommand)]
     Bindings(HarnessBindingsCommands),
+    /// Validate that every tracked binding file carries one declared owner.
+    #[command(name = "ownership", subcommand)]
+    Ownership(HarnessOwnershipCommands),
+    /// Generate and guard the platform-binding catalog table.
+    #[command(name = "catalog", subcommand)]
+    Catalog(HarnessCatalogCommands),
     /// Run all harness validators in sequence and aggregate findings.
     #[command(name = "audit")]
     Audit(harness_audit::AuditArgs),
+}
+
+/// `harness catalog` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum HarnessCatalogCommands {
+    /// Render the catalog table from the harness registry into its
+    /// generated region, leaving surrounding prose untouched.
+    #[command(name = "generate")]
+    Generate(harness_catalog::CatalogGenerateArgs),
+    /// Fail when the generated region diverges from the harness registry.
+    #[command(name = "validate")]
+    Validate(harness_catalog::CatalogValidateArgs),
 }
 
 /// `harness duplication` subcommands.
@@ -467,16 +486,32 @@ pub enum HarnessSyncCommands {
     /// Validate that .claude/ and .opencode/ are in sync.
     #[command(name = "validate")]
     Validate(harness_validate_sync::ValidateSyncArgs),
+    /// Report every generated mirror that diverges from canonical source, by
+    /// content, and say which side moved.
+    #[command(name = "triage")]
+    Triage(harness_sync_triage::SyncTriageArgs),
+    /// Propose a mirror edit as a patch against canonical source. Writes nothing.
+    #[command(name = "promote")]
+    Promote(harness_sync_promote::SyncPromoteArgs),
+}
+
+/// `harness ownership` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum HarnessOwnershipCommands {
+    /// Validate that every tracked binding file carries one declared owner.
+    #[command(name = "validate")]
+    Validate(harness_validate_ownership::ValidateOwnershipArgs),
 }
 
 /// `harness bindings` subcommands.
 #[derive(Subcommand, Debug)]
 pub enum HarnessBindingsCommands {
-    /// Validate the Amazon Q binding bridge files and catalog coverage.
+    /// Validate the generated binding files and catalog coverage.
     #[command(name = "validate")]
     Validate(harness_validate_bindings::ValidateBindingsArgs),
-    /// Generate all platform bindings (`OpenCode` sync + Amazon Q emit).
-    /// Use --harness opencode or --harness amazonq to regenerate one binding only.
+    /// Generate every generated-tier platform binding.
+    /// Use --harness <NAME> to regenerate one binding only; accepted names are
+    /// the `harness:` registry entries in `repo-config.yml`.
     #[command(name = "generate")]
     Generate(harness_generate_bindings::GenerateBindingsArgs),
 }
@@ -824,6 +859,21 @@ fn dispatch_harness(
         },
         HarnessCommands::Sync(sc) => match sc {
             HarnessSyncCommands::Validate(args) => harness_validate_sync::run(args, output_format),
+            HarnessSyncCommands::Triage(args) => harness_sync_triage::run(args),
+            HarnessSyncCommands::Promote(args) => harness_sync_promote::run(args),
+        },
+        HarnessCommands::Catalog(cc) => match cc {
+            HarnessCatalogCommands::Generate(args) => {
+                harness_catalog::run_generate(args, output_format)
+            }
+            HarnessCatalogCommands::Validate(args) => {
+                harness_catalog::run_validate(args, output_format)
+            }
+        },
+        HarnessCommands::Ownership(oc) => match oc {
+            HarnessOwnershipCommands::Validate(args) => {
+                harness_validate_ownership::run(args, output_format)
+            }
         },
         HarnessCommands::Bindings(bc) => match bc {
             HarnessBindingsCommands::Validate(args) => {

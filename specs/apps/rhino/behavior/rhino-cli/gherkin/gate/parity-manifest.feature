@@ -32,3 +32,18 @@ Feature: Rhino CLI parity manifest
     When an untracked test fixture is created
     And rhino-cli parity manifest validate runs
     Then the untracked fixture is absent from the manifest
+
+  # US-10 of plans/in-progress/update-harness-support: the plan's
+  # apps/rhino-cli/** changes must land in ose-public and ose-private as one
+  # paired merge. The PR-count half of that claim is a workflow fact recorded in
+  # the plan's delivery checklist; the half a gate can actually enforce is this —
+  # a boundary edit that lands on one side only leaves the two manifests
+  # disagreeing, which is what turns the nightly parity audit red.
+  Scenario: A one-sided landing is exactly what the parity gate catches
+    Given a tracked Rhino CLI parity boundary
+    And its parity manifest has been generated and staged
+    And a twin parity repository holds a copy of that manifest
+    When a tracked parity source file is edited
+    And rhino-cli parity manifest validate runs
+    Then the parity gate names the edited source and deliberate remedy
+    And the twin repository's copy no longer matches this repository's manifest

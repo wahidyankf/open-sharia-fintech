@@ -22,6 +22,16 @@ Rust CLI apps (`rhino-cli`) consume Gherkin specs at both the unit and integrati
 | Unit        | `test:unit`        | `src/commands/{domain}_{action}_test.rs` (no tag) | Injected function types mock all I/O            | All mocked      |
 | Integration | `test:integration` | `tests/{domain}_{action}_integration_test.rs`     | Process invocation against real `/tmp` fixtures | Real filesystem |
 
+**Current-state note**: `rhino-cli`'s actual `tests/*.rs` binaries are organized one per
+feature-cluster (e.g. `tests/skills_mirror.rs`, `tests/harness_sync_triage.rs`), not one per
+`{domain}_{action}` command as the pattern column above suggests, and every one of them is
+enumerated by name in `test:unit` — so "Integration | real filesystem" already runs inside
+`test:unit`/`test:quick` (the pre-push and CI gate), not a separately-gated level.
+`test:integration`'s `cargo test --tests` re-runs the identical binaries on demand but is not
+wired into any CI job. See [Per-Backend and CLI App Implementation
+Patterns](../../quality/three-level-testing-standard/per-backend-and-cli-app-implementation-patterns.md)
+for the corrected, current-state description this table's pattern column predates.
+
 ## Unit-Level Step Definitions
 
 Unit steps call command logic directly with mocked dependencies. Injected function types (e.g., `readFileFn`, `writeFileFn`, `statFn`) are overridden in step setup to inject controlled behavior without touching the real filesystem.

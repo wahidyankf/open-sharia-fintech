@@ -8,7 +8,7 @@ termination: "Zero findings on two consecutive validations (max-iterations defau
 inputs:
   - name: scope
     type: string
-    description: 'Subset of harnesses to validate for external drift (e.g., "all", or a harness identifier). Defaults to all supported harnesses.'
+    description: 'Subset of harnesses to validate: "all", or one of "claude-code", "opencode", "codex".'
     required: false
     default: all
   - name: mode
@@ -48,13 +48,12 @@ outputs:
 # Repository Harness Compatibility Quality Gate Workflow
 
 **Purpose**: Validate two dimensions of binding-file health, then fix iteratively until zero
-findings: **internal cross-vendor parity** (five deterministic invariants keeping `.claude/` ↔
-`.opencode/` consistent) and **external harness conformance** (web-research-backed checks that
+findings: **internal cross-vendor parity** (five deterministic invariants keeping `.claude/` and
+its generated mirrors consistent) and **external harness conformance** (web-research-backed checks that
 the platform-bindings catalog and binding files match each harness's upstream conventions).
 
-**Distinct from the pre-push guard**: `rhino-cli harness bindings validate` (automatic) checks
-internal byte-drift; this workflow's Phase 0 checks parity semantically, Phase 1 checks drift
-via web research.
+**Distinct from the pre-push guard**: `harness bindings validate` checks byte-drift; this
+workflow's Phase 0 checks parity semantically, Phase 1 checks drift via web research.
 
 **When to use**: after modifying agents/governance prose/binding-sync logic, after a harness
 breaking change, as a scheduled hygiene audit, or when onboarding a new harness.
@@ -62,6 +61,7 @@ breaking change, as a scheduled hygiene audit, or when onboarding a new harness.
 ## Contents
 
 - [Execution Mode](./repo-harness-compatibility-quality-gate/execution-mode.md) — invocation.
+- [Complementary Anti-Drift Gates](./repo-harness-compatibility-quality-gate/complementary-anti-drift-gates.md) — gates vs. workflow.
 - [Research Delegation](./repo-harness-compatibility-quality-gate/research-delegation.md) — web-researcher use.
 - [Step 1: Initial Validation](./repo-harness-compatibility-quality-gate/step-1-initial-validation.md) — Phase 0/1 checks.
 - [Step 2: Check for Findings](./repo-harness-compatibility-quality-gate/step-2-check-for-findings.md) — threshold counting.

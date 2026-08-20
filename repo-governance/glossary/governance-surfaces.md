@@ -41,6 +41,11 @@ generation and, worse, passes review as if it were a real change.
 Governance prose stays vendor-neutral: it says "the primary binding" rather than naming a harness.
 Concrete directory names belong in binding examples and the platform catalog.
 
+The `class: vendored` exception to "never hand-edited" is not uniform — it covers two structurally
+different subclasses, and confusing one for the other misfires in opposite directions. See [The
+`class: vendored` Exception Has Two Subclasses](./vendored-exception-subclasses.md) before
+hand-editing a vendored path or writing a sentence that states this rule.
+
 ## Autoloaded
 
 **Autoloaded** means a harness reads the file into context unprompted. It is narrower than it

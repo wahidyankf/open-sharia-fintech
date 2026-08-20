@@ -21,6 +21,52 @@ surface (MEDIUM/MEDIUM — reportedly now reads `.claude/skills/`), and **OpenCo
 incomplete not wrong). Note the audit's own summary contradicts its report body in at least one place:
 the summary flagged JetBrains Junie as HIGH, but the report records it `FALSE_POSITIVE`.
 
+> **Narrowed by `update-harness-support` (2026-08-19).** Most of this brief is now closed, and by
+> two different mechanisms.
+>
+> Closed because the harness is gone: **Windsurf → Devin Desktop** and **GitHub Copilot** (both MCP
+> path and skills surface). Supported harnesses are now exactly Claude Code, OpenCode, and Codex CLI;
+> a catalog row for a harness this repository does not bind cannot mis-emit anything.
+>
+> Closed because it was fixed: the **OpenAI Codex CLI** custom-agent finding was real. Codex declares
+> custom agents as standalone `.codex/agents/*.toml` files, the emitter now produces them, and a
+> validator rejects any other extension in that directory. The **OpenCode** skills prose was
+> rewritten in the same plan, along with the repository citation (now `anomalyco/opencode`, after
+> the upstream organization move), the plural `.opencode/agents/` rationale, the v1
+> `theme`/`keybinds`/`tui` deprecation, and the `permission`-versus-`tools` distinction.
+>
+> What survives, and is the whole of this brief now: the **cautionary note that the audit's own
+> summary disagreed with its report body** — the summary rated JetBrains Junie HIGH while the report
+> recorded it `FALSE_POSITIVE`. Read the body, never the summary. That is a durable lesson about the
+> checker, not about any harness, and it outlives every finding above.
+>
+> Also still open, and unrelated to the purge: the Amazon Q → Kiro CLI succession term, tracked
+> separately in [vendor-audit-kiro-term](./vendor-audit-kiro-term.md). The vendor-audit scanner keeps
+> its dropped-harness tokens deliberately — the scanner's job is catching vendor names in
+> vendor-neutral prose, which is unrelated to which harnesses the repository binds.
+
+### Folded in from `update-harness-support` Knowledge Capture (2026-08-19)
+
+Each is catalog-shaped and none justifies its own brief.
+
+**A narrow observation became a broad rule.** The defect Phase 4 fixed was not an omission but an
+inversion: `validate_no_codex_agents_dir` actively failed when `.codex/agents/` existed. Its true
+origin was a correct observation about a **file extension** — Codex reads `.toml` there — hardened
+into a false rule about the **directory**. The general shape is worth watching for whenever a
+harness observation is turned into a validator: state the rule at the width of the evidence, and
+no wider.
+
+**The Codex `Status` cell may understate what loads.** It reads `Partial`, while that plan proved
+non-interactively that the project `.codex/config.toml`, root `AGENTS.md`, and the
+`.agents/skills/` root all load. Only subagent discovery is unverified, for want of a
+non-interactive listing in codex-cli 0.146.0. Re-rate the cell when a listing exists, or restate
+what `Partial` is measuring.
+
+**A declared count is a maintenance liability without an expiry.** Catalog and convention prose
+that says "the seven surfaces" or "183 hits" is correct on the day it is written and silently
+wrong afterwards — that plan found both a stale "seven" and a stale hit count. Prefer a claim the
+reader can re-derive, or carry a dated re-verification note.
+
 ## Why now
 
 Harness conventions move continuously and each stale row is a latent mis-emit. The audit is already
@@ -67,7 +113,8 @@ catalog); any Phase 0 parity work (already green).
 
 ## What success looks like + promotion signal
 
-Success: every Phase 1 finding is either reconciled into the catalog/emitters or recorded as
-deliberately unchanged with a dated reason, and Phase 0 parity stays green. Ready to re-promote to a
-`backlog/` plan once the highest-rated rows (Windsurf/Devin, Codex CLI, Copilot) are independently
-re-verified so the actual set of required changes is known.
+Success: the surviving cautionary note is carried into whatever governs the next
+`repo-harness-compatibility-checker` run, so no future reader trusts an audit summary over its report
+body. There is no longer a promotion signal tied to re-verifying the Windsurf/Devin, Codex CLI, or
+Copilot rows — the first and third are moot and the second is done. Promote only if a fresh audit
+produces a new drift set worth triaging.

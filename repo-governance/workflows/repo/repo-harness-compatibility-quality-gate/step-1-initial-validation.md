@@ -21,7 +21,7 @@ external drift detection (Phase 1).
 
 1. Governance prose vendor-neutrality — runs `rhino-cli repo-governance vendor validate repo-governance/`
 2. Root instruction surface vendor-neutrality — runs vendor-audit on `AGENTS.md` and `CLAUDE.md`
-3. Binding sync no-op — runs `npm run generate:bindings && git diff --quiet .opencode/ .amazonq/`
+3. Binding sync no-op — runs `npm run generate:bindings && git diff --quiet .opencode/ .codex/ .agents/`
 4. Agent inventory parity — compares the two directories' filename sets, so equal counts with
    mismatched names still fail (`.claude/agents/` is nested into role subfolders,
    `.opencode/agents/` is flat, and the `.claude/agents/README.md` index is not an agent)

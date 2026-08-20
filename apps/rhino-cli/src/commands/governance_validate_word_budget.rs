@@ -104,7 +104,8 @@ pub fn run(
     // `registered_excludes`) with any explicit `--exclude` flags so the bare
     // CLI command excludes the same trees the pre-push/CI surface does,
     // without requiring the caller to repeat the registered list by hand.
-    let mut excludes = crate::application::governance::word_budget::registered_excludes(&repo_root);
+    let mut excludes =
+        crate::application::governance::word_budget::registered_excludes(&repo_root)?;
     excludes.extend(args.exclude.iter().cloned());
     run_for_root(&repo_root, output_format, &excludes)
 }
@@ -124,7 +125,7 @@ pub fn run_for_root(
     output_format: OutputFormat,
     excludes: &[String],
 ) -> std::result::Result<(), Error> {
-    let Some(merged_config) = merged_budget_config(repo_root) else {
+    let Some(merged_config) = merged_budget_config(repo_root)? else {
         if output_format == OutputFormat::Text {
             println!(
                 "WORD BUDGET: SKIPPED (no governance-word-budget: section in repo-config.yml)"
@@ -311,6 +312,22 @@ mod tests {
         // No governance-word-budget: section in repo-config.yml — should skip gracefully
         let result = run_for_root(tmp.path(), OutputFormat::Text, &[]);
         assert!(result.is_ok());
+    }
+
+    // Regression for the thread-2 fix: a syntactically broken repo-config.yml
+    // must not be reported as "SKIPPED (no governance-word-budget: section)" —
+    // that message affirmatively misattributes a parse failure as "unarmed".
+    #[test]
+    fn run_errs_naming_the_parse_failure_when_repo_config_is_broken_not_skipped() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("repo-config.yml"), "harness: [\n").unwrap();
+        let err = run_for_root(tmp.path(), OutputFormat::Text, &[])
+            .expect_err("a broken repo-config.yml must fail loudly, not report SKIPPED");
+        let msg = err.to_string();
+        assert!(
+            !msg.contains("SKIPPED"),
+            "must not misattribute a parse failure as an unarmed gate: {msg}"
+        );
     }
 
     // ---- format_text ----

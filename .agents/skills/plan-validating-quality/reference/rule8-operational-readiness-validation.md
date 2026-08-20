@@ -1,0 +1,29 @@
+# Rule 8: Operational Readiness Validation
+
+## 8. Operational Readiness Validation (Step 5b — MANDATORY)
+
+After delivery-checklist structure (Step 5), verify **operational readiness** items — CRITICAL when
+entirely missing, since plans lacking them are incomplete regardless of other quality.
+
+**What to validate**:
+
+1. **Local Quality Gates Before Push** — steps run affected tests/checks locally before pushing,
+   referencing `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (the registry-declared
+   gate set `.husky/pre-push` invokes, including `nx affected -t test:quick`); mentions blast radius
+   (affected projects only); specifies unit/integration/e2e as applicable; includes lint and typecheck.
+2. **Post-Push CI/CD Verification** — steps manually verify related GitHub Actions pass after push,
+   against the plan's declared delivery target (the PR's check run under `*-to-pr`; `origin main`
+   under direct-push modes — hardcoding `main` while declaring `*-to-pr` is itself a finding);
+   specifies which workflows to monitor; instructs watching for and fixing failures.
+3. **Development Environment Setup** — steps set up the dev/execution environment (dependency
+   install, env vars, database setup, dev server startup as needed), specific enough for someone
+   unfamiliar to follow.
+4. **Fix-All-Issues Instruction** — instructs fixing ALL issues found during quality gates, even
+   unrelated to current changes (root-cause orientation), explicitly: "Fix all failures, not just
+   those caused by your changes."
+5. **Thematic Commit Guidance** — instructs committing thematically (logically cohesive groups),
+   references Conventional Commits, instructs splitting different domains/concerns, forbids bundling
+   unrelated fixes into one commit.
+
+**Finding severity**: missing ALL items: **CRITICAL**. Missing an individual item (1-5): **HIGH**
+per missing item. Present but vague/incomplete: **MEDIUM**.

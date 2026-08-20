@@ -42,6 +42,13 @@ is fixed — only the step implementation details change per language and framew
 | **Integration** (`test:integration`) | Real infra (DB, filesystem) | None — no HTTP dispatch        | Not measured  | `cache: false` |
 | **E2E** (`test:e2e`)                 | All real                    | Real HTTP via Playwright       | Not measured  | `cache: false` |
 
+`rhino-cli` is a named exception to two cells above, not a violation of the isolation boundary's
+intent: its `tests/*.rs` binaries read the real repository tree read-only (see [Level 1 unit
+tests](../../quality/three-level-testing-standard/level-1-unit-tests-test-unit.md)) and run inside
+`test:unit`, and its `test:integration` target is `cache: true` (`apps/rhino-cli/project.json`)
+because that command is fully deterministic given the checked-out tree — there is no external
+infrastructure to make it uncacheable.
+
 For the full definition including architecture diagrams, Docker infrastructure requirements, and
 per-backend implementation patterns, see the
 [Three-Level Testing Standard](../../quality/three-level-testing-standard.md).

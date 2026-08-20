@@ -18,7 +18,7 @@ when_to_use: Use whenever you edit a file under the primary binding directory, o
 
 ## Standard 9 — Generated Mirrors Belong on the Ledger and in the Same Commit
 
-`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.cursor/`, and `.amazonq/`
+`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.codex/`, and `.agents/`
 are generated from it mechanically. Editing one agent definition therefore modifies **four** files,
 three of which you never opened — and all four are yours.
 
@@ -45,10 +45,13 @@ automation does _not_ protect you:
 3. **Never bypass the hook that generates them.** `--no-verify` skips Step 3, producing that broken
    state — forbidden by the
    [No Destructive Git Operations Convention](../../workflow/no-destructive-git-operations.md).
-4. **Verify rather than assume.** `npm run validate:sync` is the check — run it after any `.claude/`
-   edit not committed through the standard hook path.
-5. **Never hand-edit a mirror.** An edit to `.opencode/`, `.cursor/`, or `.amazonq/` is silently
-   overwritten by the next generate. Fix the `.claude/` source and regenerate.
+4. **Verify rather than assume.** `npm run harness:bindings-validation` is the all-harness check;
+   `validate:sync` skips `.codex/`. Run it after any `.claude/` edit not committed through the hook.
+5. **Never hand-edit a generated mirror.** An edit under `.opencode/`, `.codex/`, or `.agents/` is
+   silently overwritten by the next generate — except a registry-declared `class: vendored` path,
+   which covers two structurally different subclasses; see [the two vendored
+   subclasses](../../../glossary/vendored-exception-subclasses.md)
+   for which one applies before hand-editing.
 
 The same reasoning covers every other generated artifact — lockfiles, coverage manifests, emitted
 spec stubs. Record the generating command, and let its declared outputs ride in the same commit.

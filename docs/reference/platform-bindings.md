@@ -18,25 +18,72 @@ bindings live in their own directories and are explicitly excluded from the
 
 ## Platform Binding Directories
 
-The table below catalogs all nine named coding-agent harnesses plus OpenCode. Columns record every
-surface each harness exposes so contributors know exactly which files to create or extend when
-adding support for a given tool.
+The table below catalogs the three supported coding-agent harnesses — exactly the entries declared
+in `repo-config.yml` `harness:`. Columns record every surface each harness exposes so contributors
+know which files to create or extend. Harnesses absent from the registry are not supported; adding
+one starts with a registry entry, not a row here.
 
-**Verified 2026-05-24.**
+<!-- >>> rhino-cli generated: harness catalog - do not edit inside this region -->
 
-| Platform                                                | Reads root `AGENTS.md` natively?                                                                                                                                                       | Tool-specific instruction surface                                                                              | Project MCP config                                                                              | Custom-agent surface                                                                                                | Skills surface                            | Status                                                   |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------- |
-| Claude Code                                             | No — reads `CLAUDE.md` (shim `@AGENTS.md`)                                                                                                                                             | `CLAUDE.md`, `.claude/`                                                                                        | `.mcp.json`                                                                                     | `.claude/agents/*.md`                                                                                               | `.claude/skills/*/SKILL.md`               | Active                                                   |
-| OpenCode                                                | Yes                                                                                                                                                                                    | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively                                            | `opencode.json`                                                                                 | `.opencode/agents/*.md`                                                                                             | reads `.claude/skills/`                   | Active                                                   |
-| OpenAI Codex CLI                                        | Yes (since Apr 2025)                                                                                                                                                                   | `AGENTS.override.md` (overrides), `.codex/config.toml`                                                         | `.codex/config.toml` `[mcp_servers]`                                                            | `[agents.<name>]` in `config.toml` (with optional `config_file` pointer to a TOML layer, e.g. `.codex/<name>.toml`) | `.agents/skills/`                         | Partial (`.codex/` exists)                               |
-| GitHub Copilot                                          | Yes (nearest file wins)                                                                                                                                                                | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`                                    | `.vscode/mcp.json`                                                                              | `.github/agents/*.agent.md`                                                                                         | n/a                                       | Reserved (reads root `AGENTS.md`; `.github/` is CI-only) |
-| Cursor                                                  | Yes                                                                                                                                                                                    | `.cursor/rules/*.mdc` (+ legacy `.cursorrules`)                                                                | `.cursor/mcp.json`                                                                              | `.cursor/agents/*.md` (generated from `.claude/agents/`)                                                            | `.cursor/skills/`                         | Active (generated agent surface)                         |
-| Windsurf                                                | Yes                                                                                                                                                                                    | `.windsurf/rules/*.md`, `.windsurf/workflows/`                                                                 | global only                                                                                     | not officially documented                                                                                           | `.windsurf/skills/` (unverified)          | Reserved                                                 |
-| JetBrains Junie                                         | Yes — `.junie/AGENTS.md` outranks root `AGENTS.md`                                                                                                                                     | `.junie/AGENTS.md`, `.junie/rules/*.md` (imports `.claude/agents/`, `.codex/agents/`, `.claude/skills/`)       | `.junie/mcp/mcp.json`                                                                           | `.junie/agents/`, `.agents/`                                                                                        | `.junie/skills/<name>/SKILL.md`           | Reserved                                                 |
-| Amazon Q Developer (superseded by Kiro CLI — see below) | Q Developer CLI: No (feature request #2712, still open and never resolved for that product). **Kiro CLI: Yes** — `AGENTS.md` at workspace root or `~/.kiro/steering/`, always included | Q Developer: `.amazonq/rules/*.md` (via agent JSON `resources`) → Kiro: `.kiro/steering/`, `~/.kiro/steering/` | Q Developer: `.amazonq/mcp.json` → Kiro: `.kiro/settings/mcp.json`, `~/.kiro/settings/mcp.json` | Q Developer: JSON in `.amazonq/` / `~/.aws/amazonq/cli-agents/` → Kiro: `.kiro/agents/`, `~/.kiro/agents/`          | Q Developer: none → Kiro: `.kiro/skills/` | Sunsetting (IDE plugins EOS 2027-04-30)                  |
-| Google Antigravity CLI                                  | Yes (since v1.20.3) — `GEMINI.md` outranks `AGENTS.md`                                                                                                                                 | `GEMINI.md` (overrides), `.agent/rules/*.md`                                                                   | `~/.gemini/antigravity/mcp_config.json` (global; no confirmed project-level path)               | runtime-orchestrated (no declarative file)                                                                          | `.agents/skills/<name>/SKILL.md`          | Reserved                                                 |
-| Pi (pi.dev)                                             | Yes (also reads `CLAUDE.md`)                                                                                                                                                           | `.pi/settings.json`, `.pi/AGENTS.md`, `.pi/SYSTEM.md`                                                          | none (intentionally no native MCP)                                                              | none built-in (extension-based)                                                                                     | `.agents/skills/` or `.pi/skills/`        | Reserved                                                 |
-| Aider                                                   | Requires explicit opt-in — `aider --read AGENTS.md` or `.aider.conf.yml`; AGENTS.md standard site lists support but Aider does not auto-discover any instruction file                  | `CONVENTIONS.md` (requires explicit `--read` or `.aider.conf.yml`; not auto-loaded)                            | n/a                                                                                             | n/a                                                                                                                 | n/a                                       | Reserved (`CONVENTIONS.md` not yet provided)             |
+**Verified 2026-08-19.**
+
+| Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface                                    | Status                     |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------- |
+| Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                                | `.claude/agents/*.md`                                                                                   | `.claude/skills/*/SKILL.md`                       | Active                     |
+| OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                            | `.opencode/agents/*.md`                                                                                 | reads `.claude/skills/` **and** `.agents/skills/` | Active                     |
+| OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]      | `.codex/config.toml` `[mcp_servers]`[^mcp] | `.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents] | `.agents/skills/`[^skills]                        | Partial (`.codex/` exists) |
+
+<!-- <<< rhino-cli generated: harness catalog -->
+
+[^mcp]:
+    The MCP key is `mcp_servers` in **snake_case**. The camelCase `mcpServers` form other harnesses
+    use is **silently ignored** by Codex — no warning, no error, the servers simply never load.
+
+[^agents]:
+    Both mechanisms are official. An `[agents.<name>]` table carries `description` plus an optional
+    `config_file` pointing at a TOML layer (e.g. `.codex/<name>.toml`); a standalone
+    `.codex/agents/<name>.toml` file needs no entry in `config.toml`. `.codex/agents/<name>.md` is
+    not a convention and `rhino-cli harness bindings validate` rejects it.
+    The `[profiles.<name>]` tables that once served this purpose were **removed as of 0.134.0**, in
+    favour of standalone `$CODEX_HOME/<name>.config.toml` files.
+    The global `[agents]` table accepts `enabled`, `max_concurrent_threads_per_session`,
+    `default_subagent_model`, `default_subagent_reasoning_effort`, and `interrupt_message`. Codex
+    ships three built-in agents: `default`, `worker`, and `explorer`.
+
+[^trust]:
+    Project-level `.codex/` layers are read only for a **trusted** project, and trust is granted
+    **per developer on their own machine** — it cannot be shipped in the repository. Codex records
+    it in the user's global `~/.codex/config.toml` as
+    `[projects."<absolute path>"] trust_level = "trusted"`, keyed by absolute path. A second,
+    finer mechanism covers hooks: `[hooks.state."<absolute path>:<event>:<i>:<j>"] trusted_hash =
+"sha256:…"`, keyed by path **and** content, so editing `.codex/hooks.json` re-prompts. Until a
+    teammate trusts this repository on their own machine, everything under `.codex/` does nothing
+    for them. Verified 2026-08-19 against codex-cli 0.146.0.
+
+[^skills]:
+    Codex reads the vendor-neutral `.agents/skills/` tree. It does **not** read `.claude/skills/`.
+    The older `~/.codex/prompts/` custom-prompt mechanism is officially deprecated in favour of
+    Skills.
+
+### Ownership classes
+
+Every path in this catalog carries exactly one declared ownership class, recorded in the
+`harness[].ownership` list in `repo-config.yml`. There is no fourth class and no unclassified
+residue: `rhino-cli harness ownership validate` enumerates every tracked file under every binding
+directory and fails naming any file it cannot classify.
+
+| Class       | What it means                                                               | Paths here                                                                                                                         |
+| ----------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `source`    | Hand-authored canonical input; never written by the emitter                 | `.claude/`, `CLAUDE.md`, `AGENTS.md`                                                                                               |
+| `generated` | Emitted from canonical source; must reproduce byte-for-byte                 | `.opencode/agents/`, `.codex/agents/`, `.agents/skills/` (emitter-owned subdirectories)                                            |
+| `vendored`  | Third-party payload with no in-repo source; survives regeneration untouched | `.opencode/opencode.json`, `.codex/config.toml`, `.codex/ci-monitor-subagent.toml`, the eight `.agents/skills/` plugin directories |
+
+`.codex/config.toml` is `vendored` **with a delimited generated region**: the emitter owns only the
+region between its markers, and the byte guard covers that region alone. Every `vendored`
+declaration carries a reason, because an exemption from regeneration with a blank justification is
+indistinguishable from an oversight someone silenced.
+
+**See**: [Total Ownership of Binding Files (Rule 8)](../../repo-governance/conventions/structure/multi-harness-binding/ownership-classes.md)
 
 ### Root instruction file hierarchy
 
@@ -49,12 +96,6 @@ Some harnesses rank a tool-specific file **above** `AGENTS.md` when both are pre
 must never carry content that diverges from `AGENTS.md`. See the
 [No-shadowing note](#no-shadowing-note) below.
 
-> **Note on Gemini CLI**: The former "Gemini CLI" row referred to the standalone Gemini CLI tool,
-> which was superseded in 2026 by the Google Antigravity CLI (which bundles Gemini model access
-> alongside broader agent orchestration). The Antigravity CLI reads `AGENTS.md` natively since
-> v1.20.3. All previous "Gemini CLI" entries in this document are replaced by the "Google Antigravity
-> CLI" row above.
-
 ### Provenance of pre-existing partial bindings
 
 One binding-adjacent directory exists in the repository but was **not produced by `rhino-cli agents
@@ -62,87 +103,73 @@ sync`**:
 
 - **`.codex/config.toml`** — Provided by the OpenAI Codex CLI tooling. It configures the
   `nx-mcp` MCP server for Codex and declares the `ci-monitor-subagent` agent entry as an
-  `[agents.<name>]` sub-table whose `config_file` points to `.codex/ci-monitor-subagent.toml`.
-  The former `.codex/agents/` directory was removed (2026-06-06): it was never an official
-  Codex CLI convention — the official per-agent mechanism is `config.toml` `agents.<name>`
-  sub-tables — and `rhino-cli harness bindings validate` now fails if `.codex/agents/`
-  reappears. These files are Codex/Nx infrastructure — not
-  hand-authored custom agents produced by this repo's pipeline. `rhino-cli harness bindings generate` does
-  not write to `.codex/` and will not clobber these files.
+  `[agents.<name>]` table whose `config_file` points to `.codex/ci-monitor-subagent.toml`.
+  These files are Codex/Nx infrastructure — not hand-authored custom agents produced by this
+  repo's pipeline.
+
+  **Correction (2026-08-19).** The `.codex/agents/` directory was removed on 2026-06-06 under the
+  belief that it was not a Codex CLI convention. That was wrong, and the removal note has been
+  retracted. Codex CLI recognises **two** per-agent mechanisms, both official:
+  1. standalone `.codex/agents/<name>.toml` files, and
+  2. `[agents.<name>]` tables in `.codex/config.toml`.
+
+  What never was a convention is `.codex/agents/<name>.md` — Codex reads instruction prose from
+  `AGENTS.md`, not from a per-agent Markdown file. `rhino-cli harness bindings validate` therefore
+  permits the directory and fails only on a file whose extension is not `.toml`, naming the
+  offending file.
+
+  Note also that a project-level `.codex/` layer is honoured **only for projects the user has
+  marked trusted**. On an untrusted project Codex ignores the layer, so nothing in `.codex/` can be
+  assumed to load for a fresh clone until that trust decision is made.
 
 `.github/` holds only the in-repo CI surface — GitHub Actions `workflows/` and composite `actions/`,
-hand-authored in this repo. The Nx MCP tooling's Copilot artifacts that previously lived there (the
-`nx-*` agent skills under `.github/skills/`, plus the CI-monitor `.github/agents/ci-monitor-subagent.agent.md`
+hand-authored in this repo. The Nx MCP tooling's editor-assistant artifacts that previously lived
+there (the `nx-*` agent skills under `.github/skills/`, plus `.github/agents/ci-monitor-subagent.agent.md`
 and `.github/prompts/monitor-ci.prompt.md`) were removed; the repo reads Nx skills via the `nx-mcp`
 plugin and monitors CI via the `gh` CLI.
 
-The `.codex` files are safe to leave in place; they serve the Nx CI-monitoring capability and do not
-affect the canonical `AGENTS.md` instruction surface.
+The hand-maintained `.codex` files are safe to leave in place; they serve the Nx CI-monitoring
+capability and do not affect the canonical `AGENTS.md` instruction surface.
 
-### Generated Amazon Q Developer bridge
+### Generated bindings
 
-Amazon Q Developer does not read the canonical `AGENTS.md` natively (open feature request #2712), so
-its instruction surface is generated mechanically by `rhino-cli harness bindings generate`:
+Every generated-tier harness in `repo-config.yml` receives its binding mechanically from
+`rhino-cli harness bindings generate` — never by hand:
 
-- **`.amazonq/rules/00-agents-md.md`** — a pointer file (not a copy) directing Amazon Q to read and
-  follow `AGENTS.md` at the repository root.
-- **`.amazonq/cli-agents/ose-default.json`** — a minimal Amazon Q agent definition whose `resources`
-  load `file://AGENTS.md` and `file://.amazonq/rules/**/*.md`.
+- **`.opencode/agents/*.md`** — mirrors of `.claude/agents/**/*.md`, flattened to one level, with
+  color, model, and tool frontmatter translated (see Translation Artifacts below).
+- **`.codex/agents/*.toml`** — one flat TOML file per Claude agent, keyed on the agent's `name`
+  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, and
+  `developer_instructions`.
+- **`.codex/config.toml`** — only the region between the `rhino-cli generated` markers is
+  generator-owned. The hand-maintained `mcp_servers`, `features`, and vendored agent tables outside
+  that region are preserved across regeneration.
+- **`.agents/skills/`** — a real-file mirror of the whole `.claude/skills/` tree, never symlinks, because the
+  mirror is committed and a symlink would not survive `git archive`, a Windows checkout, or a
+  container `COPY`. Codex discovers skills only under `.agents/skills/`, whereas Claude Code and
+  OpenCode read `.claude/skills/<name>/SKILL.md` natively and need no copy. The registry's
+  `vendored:` list names the directories the emitter must never write, delete, or regenerate;
+  ownership there is declared, never inferred from "this directory has no source counterpart".
 
 These files are deterministic and idempotent — never hand-edit them. The companion guard
 `rhino-cli harness bindings validate` enforces byte-for-byte parity against the generator and runs in
-the pre-push pipeline. The same guard asserts that every present binding directory under `.amazonq`,
-`.claude`, `.opencode`, `.codex`, and `.github` is referenced in this catalog.
+the pre-push pipeline. The same guard asserts that every present binding directory under `.claude`,
+`.opencode`, `.codex`, `.agents`, and `.github` is referenced in this catalog.
 
-### Amazon Q Developer CLI → Kiro CLI succession
+### Accepted capability loss: `.opencode/skills/` and `.opencode/commands/`
 
-**Verified 2026-07-20 against AWS and Kiro primary sources.** This transition is in progress through
-April 2027; re-check as the milestones below pass.
+Both trees were deleted. This was a deliberate, accepted **capability loss**, decided with the
+repository owner — not a cleanup, and not a no-op.
 
-AWS has **rebranded the Amazon Q Developer CLI to Kiro CLI** ("The Amazon Q Developer CLI has been
-rebranded to Kiro" —
-[AWS docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/upgrade-to-kiro.html)). Sunset
-milestones, from the
-[Amazon Q Developer end-of-support announcement](https://aws.amazon.com/blogs/devops/amazon-q-developer-end-of-support-announcement/):
+What was removed: seven skill directories under `.opencode/skills/` and the `/monitor-ci` command at
+`.opencode/commands/monitor-ci.md` — 17 tracked files, all added wholesale by a single commit
+(`4239f3d79`, "Nx-generated AI agent configs") with no `.claude/` source of truth this repository
+produces or can regenerate.
 
-- **2026-05-15** — new sign-ups for Amazon Q Developer no longer available.
-- **2026-05-29** — Opus 4.6 no longer available on Q Developer Pro. Opus 4.5 and other existing
-  models remain; the latest coding models (including Opus 4.7) are available **exclusively on
-  Kiro**.
-- **2027-04-30** — Amazon Q Developer IDE plugins and paid subscriptions reach end of support,
-  giving a 12-month transition window.
-
-**The `AGENTS.md` situation reversed.** Amazon Q Developer CLI did not read `AGENTS.md` natively, and
-[feature request #2712](https://github.com/aws/amazon-q-developer-cli/issues/2712) remains open —
-never resolved for that product. **Kiro CLI supports the `AGENTS.md` standard natively**: files at
-the workspace root or in `~/.kiro/steering/` are picked up automatically and are **always included**,
-unlike custom steering files ([Kiro steering docs](https://kiro.dev/docs/cli/steering/)). Workspace
-scope overrides global on conflict. Note that **custom (non-default) Kiro agents do not auto-include
-steering** — they need an explicit `{"resources": ["file://.kiro/steering/**/*.md"]}` entry.
-
-Kiro CLI orchestration capabilities relevant to this repo's N+1 model
-([Kiro subagents docs](https://kiro.dev/docs/cli/chat/subagents/)):
-
-- **Native DAG task-graphs** — "Subagents support breaking down complex tasks into a directed
-  acyclic graph (DAG) where tasks can depend on each other"; independent tasks run in parallel while
-  dependent ones gate on their dependencies.
-- **Up to four concurrent subagents** — "The main agent can spawn up to four subagents at once."
-- **Isolation is context-level, not git-worktree-level.** Kiro's own docs describe each subagent
-  getting "its own isolated context" and say nothing about git worktrees. Worktree-based isolation
-  for Kiro exists only as a **third-party** orchestration pattern (e.g. the community
-  [`requix/kiro-team`](https://github.com/requix/kiro-team) project), not as a first-party feature.
-- **`q` and `q chat` are preserved** — "All the functionality in Amazon Q Developer CLI is available
-  in Kiro CLI", though `kiro-cli` is the recommended entry point.
-- **Config auto-migrates on upgrade** — agents and prompts from `~/.aws/amazonq` copy to `~/.kiro`,
-  `~/.aws/amazonq/mcp.json` to `~/.kiro/settings/mcp.json`, and the `rules` folder to
-  `~/.kiro/steering` ([migration guide](https://kiro.dev/docs/cli/migrating-from-q/)).
-
-**Implication for this repo's bridge**: the generated `.amazonq/` bridge above exists because Q
-Developer could not read `AGENTS.md`. Kiro can. The bridge stays for now — it still serves Q
-Developer users through the 2027-04-30 end-of-support date — but once this repo targets Kiro rather
-than Q Developer, the bridge becomes redundant and `.amazonq/` can be retired in favour of Kiro's
-native `AGENTS.md` read. That retirement is a separate, deliberate change, not a side effect of this
-catalog update.
+What the cost is: **OpenCode does not read Claude Code plugins.** Unlike the earlier `.github/skills/`
+removal — where the `nx-mcp` plugin covered the gap for Copilot — there is **no equivalent fallback
+for OpenCode**. OpenCode users may genuinely lose Nx skill access and the `/monitor-ci` command.
+That consequence was stated before the decision and accepted.
 
 ### No-shadowing note
 
@@ -152,12 +179,17 @@ tool only, producing divergent behavior invisible to contributors using any othe
 
 The following files trigger this rule:
 
-- `AGENTS.override.md` — OpenAI Codex CLI ranks this above `AGENTS.md` when present.
-- `.junie/AGENTS.md` — JetBrains Junie ranks this above the root `AGENTS.md`.
-- `GEMINI.md` — Google Antigravity CLI ranks this above `AGENTS.md` when present.
+- `AGENTS.override.md` — an **official** OpenAI Codex CLI convention, honoured both globally in
+  `~/.codex/` and per-directory in project scope. Codex concatenates `AGENTS.md` files root-down,
+  with nearer files overriding farther ones; an `AGENTS.override.md` outranks the `AGENTS.md`
+  beside it. Being official is precisely why it is a shadowing hazard rather than a curiosity.
 
-**The repo's default is not to create any of these files.** If a future operational need forces one
-to exist, it must be implemented as a pure pointer or import directive referencing `AGENTS.md` —
+Shadow files belonging to harnesses this repository does not support are out of scope: the rule
+applies to the supported set only. `GEMINI.md` and `.junie/AGENTS.md` were previously listed here
+and have been removed along with their harnesses.
+
+**This repository's standing decision is to ship no `AGENTS.override.md`.** If a future operational
+need forces one to exist, it must be implemented as a pure pointer or import directive referencing `AGENTS.md` —
 never as a file with independent prose. Any exception must be recorded in this catalog with an
 explicit justification.
 
@@ -167,21 +199,14 @@ harness integrations.
 
 ### Optional thin pointers
 
-Tier-1 harnesses (Cursor, Windsurf, JetBrains Junie, GitHub Copilot, OpenAI Codex CLI, Google
-Antigravity CLI, Pi, OpenCode) read the root `AGENTS.md` natively, so they need no tool-specific
-instruction file to receive the canonical instructions.
+OpenCode and the OpenAI Codex CLI read the root `AGENTS.md` natively, so neither needs a
+tool-specific instruction file to receive the canonical instructions. Claude Code is the one
+exception, and its `CLAUDE.md` shim is a pure `@AGENTS.md` import.
 
-**Decision: the repo ships no optional thin pointer files** (e.g., `.github/copilot-instructions.md`,
-`.cursor/rules/*.mdc`, `.windsurf/rules/*.md`) by default. Rationale: each would be either redundant
-(the native `AGENTS.md` read already applies) or a drift/shadowing risk. Only the Tier-2 Amazon Q
-bridge is generated, because Amazon Q does not read `AGENTS.md` natively. If a thin pointer is added
-later, it must be a pure `AGENTS.md` pointer emitted by `rhino-cli harness bindings generate` and covered
-by `rhino-cli harness bindings validate`.
-
-**Amended for the agent surface only (2026-07-28):** the standing "no thin pointer files" decision
-is amended for the agent surface only — `.cursor/agents/` is generated from `.claude/agents/` and is
-not an instruction-surface thin pointer. The instruction surface (rules, `AGENTS.md` read) is unchanged;
-no `.cursor/rules/*.mdc` files are shipped by default.
+**Decision: the repo ships no optional thin pointer files** by default. Rationale: each would be
+either redundant (the native `AGENTS.md` read already applies) or a drift/shadowing risk. If a thin
+pointer is added later, it must be a pure `AGENTS.md` pointer emitted by
+`rhino-cli harness bindings generate` and covered by `rhino-cli harness bindings validate`.
 
 **Why the generator flattens `.claude/agents/` mirrors:** Claude Code scans `.claude/agents/`
 recursively and derives agent identity from the `name` frontmatter key, not the path
@@ -190,6 +215,17 @@ the subdirectory feature request as _not planned_
 ([opencode#6635](https://github.com/anomalyco/opencode/issues/6635)). Any future reorganization of
 `.claude/agents/` into subfolders is safe only because `rhino-cli harness bindings generate` flattens
 every generated mirror; a mirror consumer that assumed the source shape would break silently.
+
+**Why the directory is `.opencode/agents/` and not `.opencode/agent/`:** the plural form is correct.
+The singular name was an OpenCode CLI bug, since fixed. `.opencode/commands/` — also plural — was
+likewise the correct path for commands, but this repository ships none: the command tree was deleted
+as accepted capability loss (see above), so `.opencode/agents/` exists here and `.opencode/commands/`
+does not.
+
+**OpenCode v1 moved presentation keys out of `opencode.json`:** `theme`, `keybinds`, and `tui` now
+live in `tui.json`. This repository's `opencode.json` declares `$schema`, `mcp`, `model`,
+`permission`, `provider`, `small_model`, and `tools` — none of the three deprecated keys — so no
+migration is outstanding.
 
 ## Translation Artifacts
 
@@ -202,7 +238,7 @@ The Claude Code binding uses named color strings (`blue`, `green`, `yellow`, `pu
 agent frontmatter. OpenCode uses theme tokens (`primary`, `success`, `warning`, `secondary`, etc.).
 
 - **Source**: `.claude/agents/<name>.md` frontmatter `color:` field
-- **Transform**: `convert_color` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_color` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `color:` field
 - **Policy**: [Platform Binding Color Translation](../../repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
   ("Platform Binding Color Translation" subsection)
@@ -225,7 +261,7 @@ Claude Code agent frontmatter uses short aliases (`sonnet`, `haiku`) or omits `m
 planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
 
 - **Source**: `.claude/agents/<name>.md` frontmatter `model:` field
-- **Transform**: `convert_model` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_model` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `model:` field
 - **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
   ("Platform Binding Examples" section)
@@ -236,51 +272,40 @@ planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
 | `sonnet`/omit (inherit) | `zai-coding-plan/glm-5.2` | Execution                           |
 | `haiku`                 | `zai-coding-plan/glm-5.2` | Fast (collapsed onto execution)     |
 
-### Model ID Translation (Claude Code → Cursor)
-
-Cursor agent frontmatter uses Cursor-native model IDs. The emitter implements **full tier collapse**
-onto the non-fast Composer 2.5 identifier — every Claude alias maps to the same pin.
-
-- **Source**: `.claude/agents/<name>.md` frontmatter `model:` field (or omitted)
-- **Transform**: `convert_cursor_model` in `apps/rhino-cli/src/application/agents/cursor.rs`
-- **Sink**: `.cursor/agents/<name>.md` frontmatter `model:` field
-- **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
-  ("Platform Binding Examples" section — Cursor full-tier collapse)
-
-| Claude Code alias       | Cursor model ID | Capability tier                     |
-| ----------------------- | --------------- | ----------------------------------- |
-| `opus`                  | `composer-2.5`  | Thinking (collapsed onto execution) |
-| `sonnet`/omit (inherit) | `composer-2.5`  | Execution                           |
-| `haiku`                 | `composer-2.5`  | Fast (collapsed — avoids 6× toggle) |
-
-**The emitter must never write `composer-2.5-fast`.** That slug is the six-times-priced fast
-inference toggle; this binding exists to pin delegated subagents off it.
-
-### Cursor model-pin reach
-
-The `model:` pin in `.cursor/agents/` governs **delegated subagents** launched from those files. It
-**does not govern** the interactive Cursor Agent session's model, the `cursor-agent` CLI default,
-or anything running under Auto/Router mode — those surfaces are outside repository-file control.
-
 ### Tool Translation (Claude Code → OpenCode)
 
 Claude Code agent frontmatter lists tools as an array of string names. OpenCode uses a
 `permission` object mapping each tool to `allow`/`ask`/`deny` (the older boolean flag form
 `tools: { read: true, … }` is deprecated/legacy and no longer emitted).
 
+`permission` and `tools` are **separate models in OpenCode, not two spellings of one setting**.
+`tools` is a capability switch — whether an action exists for the agent at all. `permission` is a
+per-action verdict of `allow`, `ask`, or `deny`, it supports sub-patterns for bash (so
+`git push *` can be denied while the rest of bash stays allowed), and **the last matching rule
+wins**, which makes declaration order significant. This repository's generated mirrors emit
+`permission`; `tools` appears only in the vendored `opencode.json`, never in an emitted agent file.
+
 - **Source**: `.claude/agents/<name>.md` frontmatter `tools:` array
-- **Transform**: `convert_permission` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_permission` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `permission:` map (`read: allow`, `write: allow`, etc.)
 
 ## Adding a New Platform Binding
 
 To add a new generated binding:
 
-1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs).
-2. Add a row to the Platform Binding Directories table above.
+1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs, and `skills-dir` / `skills-mirrors` / `vendored:` if the harness needs a skills mirror). Also add an `ownership:` list classifying every binding path this entry claims as `generated`, `vendored`, or `source` — `harness ownership validate` is a pre-push gate and fails on any tracked binding file with no declared class.
+2. Add a `catalog:` block to that registry entry, then run `rhino-cli harness catalog generate` — never hand-edit the table above, which is machine-owned inside its generated region.
 3. Implement the converter in `apps/rhino-cli/src/application/agents/` and wire it into `harness bindings generate`.
 4. Add Rust integration tests and Gherkin scenarios under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
 5. Update this document's Translation Artifacts section.
+6. `git add` every path touched by steps 1-5, **then** run `rhino-cli parity manifest generate`
+   and stage the regenerated `apps/rhino-cli/parity-manifest.sha256`. The staging order is
+   load-bearing: the manifest hashes the **git index**, not the working tree, so regenerating
+   before `git add` produces a stale manifest. `parity manifest validate` is `scope: other` on
+   both `pre-push` and `ci` — unconditional, not path-gated — so it fires on every push regardless
+   of what changed, and unlike `harness-bindings-generate` it has no pre-commit auto-regeneration.
+   Land the equivalent binding change in the paired `ose-private` PR too; the two repos' binding
+   surfaces are byte-identical.
 
 ## Related
 
@@ -295,4 +320,4 @@ To add a new generated binding:
 - `AGENTS.md` at repo root — canonical root instruction file read by most platforms
 - `CLAUDE.md` at repo root — Claude Code shim importing `AGENTS.md`
 
-Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run harness:bindings-validation`, which covers every harness including `.codex/`; `npm run validate:sync` checks only the OpenCode mirror and the skills mirror, not `.codex/agents/`. Every generated mirror MUST NOT be hand-edited — except a path an entry's `ownership:` list in `repo-config.yml` declares `vendored`, which is hand-maintained by design. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).

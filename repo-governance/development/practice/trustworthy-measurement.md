@@ -20,8 +20,8 @@ result. A harness that never ran the command reports a spectacular speedup. A be
 isolated invocation reports a saving the integrated path never pays. A metric that cannot respond to
 the change reports a regression the change did not cause.
 
-None of these are caught by looking harder at the number. Each needs a separate check, before the
-number is allowed to justify anything.
+None is caught by looking harder at the number. Each needs its own check before the number
+justifies anything.
 
 ## Principles Implemented/Respected
 
@@ -34,13 +34,14 @@ number is allowed to justify anything.
 
 - [Rule 1 — Prove the Command Ran](./trustworthy-measurement/rule-1-prove-the-command-ran.md) — the false-zero timing-harness trap and how to guard against it.
 - [Rules 2-4](./trustworthy-measurement/rules-2-to-4.md) — measure the integrated path, establish the critical path, and treat a pre-authored remedy as a hypothesis.
+- [Rule 5 — Probes and Scans Must Assert Their Reach](./trustworthy-measurement/rule-5-probes-and-scans-must-assert-their-reach.md) — a probe must move the guarded byte; a scan must assert where it stopped.
+- [Rule 6 — An Assertion Must Outlive Its Moment](./trustworthy-measurement/rule-6-an-assertion-must-outlive-its-moment.md) — a baseline read from `HEAD` expires when the change lands; an assertion inside a parity boundary must hold in every repository.
 
 ## Scope
 
-Applies to any number that will justify a decision: benchmark timings, CI metrics, disk
-measurements, coverage figures, and acceptance-clause thresholds in plan gates. It does not apply to
-diagnostic prints or exploratory readings that no decision depends on — but the moment one is quoted
-in a plan, a gate, or a PR, it is in scope.
+Applies to any number justifying a decision: benchmark timings, CI metrics, disk measurements,
+coverage figures, and acceptance-clause thresholds. Diagnostic prints no decision depends on are out
+of scope — but the moment one is quoted in a plan, a gate, or a PR, it is in scope.
 
 ## Related Documentation
 

@@ -15,6 +15,9 @@ created: 2026-05-02
 
 # Vocabulary Map
 
+> **A listed name is not a support claim.** Dropped harnesses stay here on purpose — their names
+> must not leak into governance prose either. `repo-config.yml` `harness:` decides support.
+
 When rewriting governance prose, replace vendor-specific terms with the vendor-neutral equivalents below.
 
 | Vendor-specific term (old)                     | Vendor-neutral term (new)                                            | Notes                                                                                                             |

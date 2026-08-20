@@ -21,7 +21,7 @@ when_to_use: Use when deciding how a change reaches main, choosing a delivery mo
   1. repo-governance/development/workflow/trunk-based-development.md (this file - comprehensive reference)
   2. AGENTS.md (summary for AI agents)
   3. .claude/agents/plan/plan-maker.md (context for plan creation — hand-authored source; .opencode/ and
-     .cursor/ carry auto-generated mirrors, never hand-edited)
+     .codex/ carry auto-generated mirrors, never hand-edited)
   4. repo-governance/workflows/plan/plan-execution.md (context for plan execution — orchestrated by the calling context)
   5. .claude/skills/repo-practicing-trunk-based-development/SKILL.md (operator-facing invocable
      entry point; not mirrored — OpenCode reads .claude/skills/ natively)

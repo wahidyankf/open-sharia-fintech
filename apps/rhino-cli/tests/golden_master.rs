@@ -83,6 +83,18 @@ fn golden_master_replay() {
             .expect("binary not found")
             .args(&resolved_args)
             .arg("--no-color")
+            // `clap` reads `COLUMNS` from the environment to choose its
+            // `--help` wrap width, and this process inherits the caller's
+            // entire environment. zsh exports and updates `COLUMNS` on
+            // `SIGWINCH` (terminal resize), so different invocations of this
+            // same test inherited different values and made a byte-exact
+            // `--help` comparison flake — reproduced diverging on the `md`
+            // row's line wrap. Pin the width as a declared constant, matching
+            // the width the corpus fixtures were captured at, rather than
+            // clearing the variable: `.env_remove("COLUMNS")` would leave the
+            // width implicit in clap's own default and re-break the moment
+            // that default changes.
+            .env("COLUMNS", "100")
             .output()
             .unwrap_or_else(|e| panic!("failed to run {:?}: {e}", entry.args));
 

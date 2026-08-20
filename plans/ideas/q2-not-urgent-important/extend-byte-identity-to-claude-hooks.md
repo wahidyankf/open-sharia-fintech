@@ -57,8 +57,12 @@ In scope: `.claude/hooks/block-env-file-access.sh` and its test file, at minimum
 later identified as security-load-bearing.
 
 Out of scope: hooks that are intentionally repo-specific (e.g. anything referencing a repo's own
-build/deploy pipeline); `.opencode/`/`.amazonq/`/`.cursor/` mirror generation (separate, already-
+build/deploy pipeline); `.opencode/`/`.codex/`/`.agents/` mirror generation (separate, already-
 automated concern via `npm run generate:bindings`).
+
+> Narrowed by `update-harness-support`: the `.amazonq/` and `.cursor/` mirrors named here no longer
+> exist — support is now exactly Claude Code, OpenCode, and Codex CLI. The hook byte-identity
+> question this brief is actually about is untouched by that.
 
 ## Risks & open questions
 

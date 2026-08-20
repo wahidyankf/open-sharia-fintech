@@ -210,6 +210,12 @@ Feature: Mermaid Flowchart Structural Validation
     And the output does not mention the plans/done file
     But the output does mention the docs file
 
+  Scenario: an empty exclude value does not silently empty the file set
+    Given a markdown file under plans/done containing a flowchart with a width violation
+    When the developer runs docs validate-mermaid with an empty --exclude value
+    Then the command exits with a failure code
+    And the output does mention the plans/done file
+
   Scenario: repo-wide default scan finds violation outside the legacy default directories
     Given a markdown file under specs/ containing a flowchart with a width violation
     When the developer runs docs validate-mermaid without path arguments

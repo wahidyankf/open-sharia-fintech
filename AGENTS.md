@@ -97,7 +97,7 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 ## AI Agents
 
 [Agent catalog](./.claude/agents/README.md) is authoritative; filenames follow the ordinary
-kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`.
+kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`, mirrored to `.agents/skills/`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 
@@ -122,7 +122,8 @@ Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private) (i
 
 ## Platform Binding Examples
 
-Vendor-specific; the audit scanner skips this section. Tier-1 harnesses read `AGENTS.md` natively;
-others need a binding, generated via `rhino-cli harness bindings generate`.
+Vendor-specific; the audit scanner skips this section. Three supported harnesses: Claude Code
+(source), OpenCode and Codex CLI (generated via `rhino-cli harness bindings generate`).
+`repo-config.yml` `harness:` is authoritative.
 
 **See**: [platform catalog](./docs/reference/platform-bindings.md)

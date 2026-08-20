@@ -28,13 +28,13 @@ satisfies the subdirectory requirement — no index carries two links to one tar
 | Gate id                          | Finding kinds                | Scan scope (`--paths`)                            | Armed                                             |
 | -------------------------------- | ---------------------------- | ------------------------------------------------- | ------------------------------------------------- |
 | `governance-readme-index`        | `missing`, `orphan`, `ghost` | `docs/`, `repo-governance/`, `specs/`, `.claude/` | Continuous since Phase 1                          |
-| `governance-readme-completeness` | `missing`, `unannotated`     | `repo-governance/`, `.claude/`, `.codex/`, `.pi/` | Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
+| `governance-readme-completeness` | `missing`, `unannotated`     | `repo-governance/`, `.claude/`, `.codex/`         | Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
 
 Structural enforcement covers every content tree. Annotation enforcement stays scoped to trees that
 can satisfy it: `docs/` indexes are partly hand-designed tables and `specs/` targets carry no
 frontmatter, so no annotation is derivable. Raising those two is tracked separately.
 
-Generated mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) sit outside both gates.
+Generated mirrors (`.opencode/`, `.codex/agents/`, `.agents/skills/`) sit outside both gates.
 `harness bindings generate` emits them from `.claude/`, so any index written there is regenerated
 away. `.claude/`, their source, is scanned instead.
 

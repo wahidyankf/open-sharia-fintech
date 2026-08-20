@@ -45,9 +45,42 @@ fn run_elixir_check(sources: &[&Path]) -> Output {
 }
 
 fn elixir_formatter_is_configured() -> bool {
+    // The wrapper script is only half the precondition: it shells out to `mix`,
+    // so a runner without the Elixir toolchain makes both assertions below
+    // meaningless — the accept case fails on `mix: command not found`, and the
+    // reject case passes for that same wrong reason.
     script("format-elixir.sh").is_file()
+        && Command::new("mix")
+            .arg("--version")
+            .output()
+            .is_ok_and(|out| out.status.success())
 }
 
+// Distinguishes "toolchain legitimately unavailable on this developer's
+// laptop" (fine to skip) from "toolchain missing on an environment that
+// declared it would provide one" (must fail loudly, not skip). A CI job opts
+// into the stricter contract by provisioning Erlang/Elixir and setting this
+// variable, which then makes these two tests exercise real coverage on every
+// such run rather than silently skipping forever. This file is
+// byte-identical across both parity repos, so it states the variable's
+// contract rather than any one repo's CI wiring: whether a given repo's CI
+// sets it is a per-repo operational choice, listed explicitly in
+// `docs/reference/related-repositories.md`'s "Private-only operational
+// exceptions".
+fn elixir_toolchain_is_required() -> bool {
+    std::env::var("RHINO_REQUIRE_ELIXIR").is_ok_and(|v| v == "1")
+}
+
+// Deliberately no toolchain guard here, unlike the Elixir tests below: the
+// GitHub Actions `ubuntu-latest` runner image (and this environment) both
+// guarantee Go via the `actions/runner-images` inventory, so a missing `gofmt`
+// would itself be a CI-environment defect worth a hard failure, not a
+// toolchain this repo chose not to provision. Elixir carries no such runner
+// guarantee by default (see `elixir_formatter_is_configured`'s comment), so
+// the two tests below use `elixir_toolchain_is_required` to fail loudly only
+// on an environment that has explicitly opted into providing the toolchain,
+// and to skip quietly everywhere else — rather than diverging in posture
+// permanently the way an unconditional `#[ignore]` would.
 #[test]
 fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
     let fixture = TempDir::new().expect("create Go fixture directory");
@@ -88,6 +121,15 @@ fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
 #[test]
 fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        assert!(
+            !elixir_toolchain_is_required(),
+            "RHINO_REQUIRE_ELIXIR=1 but the mix toolchain is not on PATH; this environment \
+             declared it provisions Elixir/Erlang and must not silently discard Elixir \
+             formatter coverage"
+        );
+        eprintln!(
+            "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
+        );
         return;
     }
 
@@ -121,6 +163,15 @@ fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
 #[test]
 fn elixir_check_accepts_formatted_ex_and_exs_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        assert!(
+            !elixir_toolchain_is_required(),
+            "RHINO_REQUIRE_ELIXIR=1 but the mix toolchain is not on PATH; this environment \
+             declared it provisions Elixir/Erlang and must not silently discard Elixir \
+             formatter coverage"
+        );
+        eprintln!(
+            "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
+        );
         return;
     }
 

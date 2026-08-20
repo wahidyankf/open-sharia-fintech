@@ -30,9 +30,9 @@ Feature: Governance word-budget gate
     And the file is reported with severity "fail"
 
   Scenario: A configured glob matching no file is a no-op
-    Given no file exists at ".github/copilot-instructions.md"
+    Given no file exists at ".codex/agents/example.md"
     When the developer runs governance word-budget validate
-    Then no finding is emitted for ".github/copilot-instructions.md"
+    Then no finding is emitted for ".codex/agents/example.md"
 
   Scenario: The resolved tree is checked against the fail ceiling
     Given "CLAUDE.md" imports "AGENTS.md" via "@AGENTS.md"

@@ -16,7 +16,9 @@ Before implementing anything, ensure the development environment is ready.
 
 **Orchestrator action**:
 
-- Run `npm install` to ensure dependencies are current
+- Run `npm install` **inside the worktree**, not only the primary checkout — a worktree with no
+  `node_modules` of its own silently resolves some tools from a global cache and fails on the
+  first TypeScript-touching `nx affected` run, phases later
 - Run `npm run doctor` to verify all tooling is installed
 - Set up project-specific requirements (env vars, DB, Docker, etc.) as specified in the plan
 - Verify dev server starts for affected projects

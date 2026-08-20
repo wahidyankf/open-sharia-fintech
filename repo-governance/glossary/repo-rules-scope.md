@@ -18,15 +18,15 @@ happens here — whatever its encoding, whatever tree it sits in.
 
 ## In Scope
 
-| Surface                                          | Why it binds                                              |
-| ------------------------------------------------ | --------------------------------------------------------- |
-| `repo-governance/**`                             | The prose rules themselves, across all six layers         |
-| Canonical instruction file and its binding shims | Auto-read guidance that shapes every session              |
-| Agent definitions and agent skill files          | Behaviour contracts for delegated agents                  |
-| Generated binding mirrors                        | Derived rules — in scope to read, never to hand-edit      |
-| `repo-config.yml`                                | Rules encoded as declarations: gates, budgets, registries |
-| Enforcement machinery                            | Hooks and pipeline jobs that make declarations bite       |
-| `docs/explanation/software-engineering/**`       | Normative language style guides — see below               |
+| Surface                                          | Why it binds                                                                                                                                                         |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/**`                             | The prose rules themselves, across all six layers                                                                                                                    |
+| Canonical instruction file and its binding shims | Auto-read guidance that shapes every session                                                                                                                         |
+| Agent definitions and agent skill files          | Behaviour contracts for delegated agents                                                                                                                             |
+| Generated binding mirrors                        | Derived rules — in scope to read, never to hand-edit, except the `class: vendored` carve-out (see [the two vendored subclasses](./vendored-exception-subclasses.md)) |
+| `repo-config.yml`                                | Rules encoded as declarations: gates, budgets, registries                                                                                                            |
+| Enforcement machinery                            | Hooks and pipeline jobs that make declarations bite                                                                                                                  |
+| `docs/explanation/software-engineering/**`       | Normative language style guides — see below                                                                                                                          |
 
 ## Out of Scope
 

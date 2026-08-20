@@ -28,9 +28,14 @@ when_to_use: Use as a quick-reference checklist before and during any session th
    [No Destructive Git Operations Convention](../../workflow/no-destructive-git-operations.md).
 7. **Leave foreign paths untouched** — report and stop rather than resolving them yourself.
 8. **Without a ledger, assume nothing is yours** — reconstruct from the transcript, or ask.
-9. **Count generated mirrors as yours** — a `.claude/` edit produces `.opencode/`, `.cursor/`, and
-   `.amazonq/` changes that belong on your ledger and in the same commit; regenerate with
-   `npm run generate:bindings`, verify with `npm run validate:sync`, and never hand-edit a mirror.
+9. **Count generated mirrors as yours** — a `.claude/` edit produces `.opencode/`, `.codex/`, and
+   `.agents/` changes that belong on your ledger and in the same commit; regenerate with
+   `npm run generate:bindings`, verify with `npm run harness:bindings-validation` (all-harness;
+   `validate:sync` does not cover `.codex/`), and never hand-edit a `class: generated` mirror — a
+   `class: vendored` path is the exception, covering two structurally different subclasses; see
+   [the two vendored
+   subclasses](../../../glossary/vendored-exception-subclasses.md)
+   for which one applies before hand-editing.
 
 ## Related Documentation
 

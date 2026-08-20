@@ -14,52 +14,116 @@
 #   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
 harness:
-  # Authoritative harness registry — all 11 supported coding-agent harnesses.
+  # Authoritative harness registry — all 3 supported coding-agent harnesses.
   # Fields per entry:
   #   name        — harness identifier
-  #   tier        — source | generated | source-config | native
+  #   tier        — source | generated
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
-  #   skills-dir  — directory of skill files (source tier only)
-  #   rules-dir   — directory of injected rules (generated tier only)
+  #   skills-dir  — directory of skill files
   #   agent-name  — generated default-agent name (where the harness has one)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
-  #   config      — config file path (source-config tier)
-  #   forbid-dir  — directory that must NOT exist (source-config tier)
-  #   shadow      — thin-pointer file to check for no-shadowing (native tier)
+  #   skills-mirrors — source skills-dir that skills-dir must mirror (generated tier)
+  #   vendored    — directories inside the mirrored trees the emitter must never touch
+  #   config      — config file path
   #   instruction — instruction surfaces this harness reads (word budget, per governance-word-budget:)
+  #   ownership   — one declared class (generated | vendored | source) per binding path
   #
-  # Adding a 12th harness = one entry here; every harness command picks it up automatically.
-  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills, instruction: [CLAUDE.md] }
-  - { name: opencode, tier: generated, agent-dir: .opencode/agents, mirrors: .claude/agents }
-  - name: amazonq
-    tier: generated
-    rules-dir: .amazonq/rules
-    agent-name: ose-default
+  # Adding a 4th harness = one entry here; every harness command picks it up automatically.
+  - name: claude-code
+    tier: source
+    agent-dir: .claude/agents
+    skills-dir: .claude/skills
     instruction:
-      - .amazonq/rules/*.md
-  - name: codex
-    tier: source-config
-    config: .codex/config.toml
-    forbid-dir: .codex/agents
+      - CLAUDE.md
+    # Cells are transcribed verbatim from the hand-maintained table this
+    # generation replaces, so the first generated output is byte-identical and
+    # any later diff is a deliberate content change rather than emitter noise.
+    catalog:
+      platform: Claude Code
+      reads-agents-md: "No — reads `CLAUDE.md` (shim `@AGENTS.md`)"
+      instruction-surface: "`CLAUDE.md`, `.claude/`"
+      mcp-config: "`.mcp.json`"
+      agent-surface: "`.claude/agents/*.md`"
+      skills-surface: "`.claude/skills/*/SKILL.md`"
+      status: Active
+    # Every path below carries exactly one of generated | vendored | source.
+    # There is no fourth class and no unclassified residue: a tracked binding
+    # file matching no declaration fails `harness ownership validate`.
+    ownership:
+      - { path: .claude/, class: source, reason: hand-authored tree every mirror is generated from }
+      - { path: .claude/agents, class: source, reason: canonical agent definitions }
+      - { path: .claude/skills, class: source, reason: canonical skill definitions }
+      - { path: CLAUDE.md, class: source, reason: hand-authored Claude Code instruction surface }
+  - name: opencode
+    tier: generated
+    agent-dir: .opencode/agents
+    mirrors: .claude/agents
     instruction:
       - AGENTS.md
-  - {
-      name: copilot,
-      tier: native,
-      shadow: .github/copilot-instructions.md,
-      instruction: [AGENTS.md, .github/copilot-instructions.md],
-    }
-  - name: cursor
+    catalog:
+      platform: OpenCode
+      reads-agents-md: "Yes"
+      instruction-surface: "`.opencode/agents/` (auto-synced); reads `.claude/skills/` natively"
+      mcp-config: "`opencode.json`"
+      agent-surface: "`.opencode/agents/*.md`"
+      skills-surface: "reads `.claude/skills/` **and** `.agents/skills/`"
+      status: Active
+    ownership:
+      - { path: .opencode/agents, class: generated, reason: emitted from .claude/agents }
+      - { path: .opencode/opencode.json, class: vendored, reason: OpenCode tooling config; no in-repo source }
+      - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
+  - name: codex
     tier: generated
-    agent-dir: .cursor/agents
+    agent-dir: .codex/agents
     mirrors: .claude/agents
-    shadow: .cursor/rules
-    instruction: [AGENTS.md, .cursor/rules]
-  - { name: windsurf, tier: native, shadow: .windsurf/rules, instruction: [AGENTS.md, .windsurf/rules] }
-  - { name: junie, tier: native, shadow: .junie/guidelines.md, instruction: [AGENTS.md, .junie/guidelines.md] }
-  - { name: antigravity, tier: native, shadow: GEMINI.md, instruction: [AGENTS.md, GEMINI.md] }
-  - { name: pi, tier: native, instruction: [AGENTS.md, CLAUDE.md] }
-  - { name: aider, tier: native, shadow: CONVENTIONS.md, instruction: [AGENTS.md, CONVENTIONS.md] }
+    config: .codex/config.toml
+    skills-dir: .agents/skills
+    skills-mirrors: .claude/skills
+    # Third-party plugin payload committed to the repository. None has a
+    # .claude/skills/ counterpart, so the mirror emitter would have nothing to
+    # regenerate them from — it must leave every one byte-identical (DD-7).
+    # Origin below is each skill's own declared trigger, not an inference.
+    vendored:
+      - .agents/skills/cavecrew # cavecrew plugin — investigator/builder/reviewer subagent presets
+      - .agents/skills/caveman # caveman plugin — /caveman mode toggle
+      - .agents/skills/caveman-commit # caveman plugin — /caveman-commit
+      - .agents/skills/caveman-compress # caveman plugin — /caveman:compress, the full payload
+      - .agents/skills/caveman-help # caveman plugin — /caveman-help
+      - .agents/skills/caveman-review # caveman plugin — /caveman-review
+      - .agents/skills/caveman-stats # caveman plugin — /caveman-stats, /caveman-mode-tracker
+      - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
+    instruction:
+      - AGENTS.md
+    catalog:
+      platform: OpenAI Codex CLI
+      reads-agents-md: "Yes (since Apr 2025)"
+      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
+      mcp-config: "`.codex/config.toml` `[mcp_servers]`[^mcp]"
+      agent-surface: "`.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents]"
+      skills-surface: "`.agents/skills/`[^skills]"
+      status: "Partial (`.codex/` exists)"
+    ownership:
+      - { path: .codex/agents, class: generated, reason: emitted from .claude/agents }
+      - { path: .agents/skills, class: generated, reason: mirrored from .claude/skills }
+      - { path: .codex/config.toml, class: vendored, reason: Nx tooling config; emitter owns the delimited region only }
+      - { path: .codex/ci-monitor-subagent.toml, class: vendored, reason: Nx tooling file config.toml points at }
+      - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
+      - { path: .agents/skills/cavecrew, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-commit, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-compress, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-help, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-review, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-stats, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/compress, class: vendored, reason: third-party plugin skill; no in-repo source }
+
+harness-catalog:
+  # Where the generated catalog region lands, and the date its upstream claims
+  # were last verified by hand. Declared rather than stamped at generation time:
+  # a generated timestamp would change on every run and make the drift guard
+  # fire on its own output.
+  document: docs/reference/platform-bindings.md
+  verified: 2026-08-19
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
@@ -202,6 +266,13 @@ specs:
 # is the raw whole-file split_whitespace() count (tech-docs.md §1.2); see also
 # FR-1.5: no exempt/allow/ignore/waiver/override key is ever permitted in this
 # block, enforced by BudgetConfig's deny_unknown_fields schema.
+#
+# The seven instruction surfaces repeat the same 400/500/500 triple. That
+# repetition is deliberate, not an oversight: YAML merge keys (`<<: *anchor`)
+# are NOT an option here — serde_norway does not expand them, so
+# `- <<: *instruction-budget` deserializes as `surfaces[N]: missing field
+# `target``. Verified at Phase 11 of plans/in-progress/update-harness-support by
+# applying exactly that shape and running `rhino-cli repo-config validate`.
 governance-word-budget:
   surfaces:
     - glob: "repo-governance/**/*.md"
@@ -209,10 +280,6 @@ governance-word-budget:
       warn: 500
       fail: 500
     - glob: ".claude/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
-    - glob: ".cursor/**/*.md"
       target: 400
       warn: 500
       fail: 500
@@ -224,11 +291,12 @@ governance-word-budget:
       target: 400
       warn: 500
       fail: 500
-    - glob: ".pi/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
-    - glob: ".amazonq/**/*.md"
+    # Added at Phase 11 of plans/in-progress/update-harness-support: the Codex
+    # skills mirror is a live instruction surface Codex reads, so it is measured
+    # at the same ceiling as its `.claude/skills/` source. The eight vendored
+    # third-party skill directories under it are excluded by name on the gate
+    # entry below — this repository can neither shorten nor regenerate them.
+    - glob: ".agents/**/*.md"
       target: 400
       warn: 500
       fail: 500
@@ -956,7 +1024,7 @@ gates:
   # content restructure. Those two trees therefore get structural enforcement
   # only; annotation stays scoped to the conforming trees below.
   #
-  # The generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are
+  # The generated harness mirrors (`.opencode/`, `.codex/`) are
   # absent by design: they are emitted by `harness bindings generate` from
   # `.claude/`, are never hand-edited, and an index written into them would be
   # regenerated away. `.claude/` — their source of truth — is covered instead.
@@ -1073,21 +1141,70 @@ gates:
       pre-push:
         scope: path-gated
         trigger:
-          - .amazonq/
           - .claude/
           - .opencode/
           - .codex/
-          - .cursor/
-          - .windsurf/
-          - .junie/
+          - .agents/
           - .github/
           - AGENTS.md
           - CLAUDE.md
-          - GEMINI.md
-          - CONVENTIONS.md
           - docs/reference/platform-bindings.md
           - repo-governance/
       ci: { scope: other }
+
+  # Path-gating is correct here, unlike a time-based check: this gate reads the
+  # git index for the declared binding trees, so a commit touching none of them
+  # cannot change its verdict. Every trigger below is a path whose contents the
+  # classification depends on — the trees themselves, the instruction files, and
+  # the registry that declares the classes.
+  - id: harness-ownership
+    type: check
+    command: harness ownership validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .agents/
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+      ci:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .agents/
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+
+  # Path-gated on the two inputs the verdict depends on: the registry the table
+  # is rendered from, and the document the region lives in. Nothing else can
+  # change the answer. Without this entry the drift guard would exist but never
+  # run — gates invoke validators directly by `command:`, and nothing invokes
+  # `harness audit`, so aggregate membership alone enforces nothing.
+  - id: harness-catalog
+    type: check
+    command: harness catalog validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-config.yml
+          - docs/reference/platform-bindings.md
+      ci:
+        scope: path-gated
+        trigger:
+          - repo-config.yml
+          - docs/reference/platform-bindings.md
 
   # Armed at Phase 9 of plans/done/2026-08-15__optimize-governance-md, dark-launched at Phase 1
   # (config-only, see governance-word-budget: above). No pre-commit surface (FR-1.14): a
@@ -1101,17 +1218,6 @@ gates:
   # (plans/, docs/, specs/) and a local, gitignored Flutter SDK version-manager cache
   # (.fvm/, .fvm-cache/) that only exists on disk for developers who run `fvm` locally
   # and is entirely absent from CI.
-  #
-  # The two `.opencode/skills/` and `.opencode/commands/` tree-level entries are a
-  # different, narrower class (FR-1.16, prd.md FR-1 table): unlike `.fvm/`, both are
-  # git-tracked and present in every clone and every CI run — they are excluded not
-  # because they're absent, but because the whole tree was added wholesale by commit
-  # 4239f3d79 ("Nx-generated AI agent configs") with no `.claude/` source of truth this
-  # repo's governance system produces or can regenerate. Tree-level prefixes (not a
-  # per-skill/per-command enumeration) so a future Nx regeneration adding another
-  # skill or command directory stays covered without an edit here. This is not a
-  # per-file waiver on an in-scope surface (FR-1.5 still forbids that) — every
-  # hand-authored `.claude/` source and its generated mirror stays fully gated.
   - id: governance-word-budget
     type: check
     command: governance word-budget validate
@@ -1124,19 +1230,33 @@ gates:
         - specs/
         - .fvm/
         - .fvm-cache/
-        - .opencode/skills/
-        - .opencode/commands/
+        # Vendored third-party skills mirrored into .agents/skills/, which
+        # Phase 11 of plans/in-progress/update-harness-support brought under the
+        # .agents/**/*.md surface. This repository neither authors nor
+        # regenerates them, so an over-budget vendored SKILL.md cannot be
+        # shortened at any source we own. Excluded as a whole set for
+        # uniformity — four exceed the 500-word fail ceiling and four do not.
+        # Counts are the validator's own split_whitespace measure (which differs
+        # slightly from `wc -w`), verified at Phase 11 by removing each of the
+        # four over-ceiling prefixes in turn and confirming a [FAIL] finding
+        # naming that file, then restoring it and confirming exit 0.
+        - .agents/skills/cavecrew/ # caveman plugin — 566 words, over the ceiling
+        - .agents/skills/caveman/ # caveman plugin — 534 words, over the ceiling
+        - .agents/skills/caveman-commit/ # caveman plugin — 368 words, under the ceiling
+        - .agents/skills/caveman-compress/ # caveman plugin — 668 words, over the ceiling
+        - .agents/skills/caveman-help/ # caveman plugin — 298 words, under the ceiling
+        - .agents/skills/caveman-review/ # caveman plugin — 432 words, under the ceiling
+        - .agents/skills/caveman-stats/ # caveman plugin — 89 words, under the ceiling
+        - .agents/skills/compress/ # caveman plugin — 660 words, over the ceiling
     surfaces:
       pre-push: &word-budget-triggers
         scope: path-gated
         trigger:
           - repo-governance/
           - .claude/
-          - .cursor/
           - .codex/
           - .opencode/
-          - .pi/
-          - .amazonq/
+          - .agents/
           - AGENTS.md
           - CLAUDE.md
           - repo-config.yml
@@ -1145,7 +1265,7 @@ gates:
   # New gate id (FR-3.20) — shares the governance readme-index binary with
   # governance-readme-index above via --paths/--fail-kinds (FR-5.8). Scoped to just the
   # trees Phases 1-8 of plans/done/2026-08-15__optimize-governance-md actually brought to
-  # compliance — repo-governance/, .claude/, .codex/, .pi/ — narrower than FR-1.11's
+  # compliance — repo-governance/, .claude/, .codex/ — narrower than FR-1.11's
   # originally-declared 6-entry list (which also named docs/, specs/): those two trees
   # were never remediated by any phase of this plan and carry ~880 pre-existing
   # missing/unannotated findings; a follow-up plan tracks bringing them to the same bar.
@@ -1160,7 +1280,6 @@ gates:
         - repo-governance/
         - .claude/
         - .codex/
-        - .pi/
       fail-kinds:
         - missing
         - unannotated
@@ -1171,6 +1290,5 @@ gates:
           - repo-governance/
           - .claude/
           - .codex/
-          - .pi/
           - repo-config.yml
       ci: *readme-completeness-triggers

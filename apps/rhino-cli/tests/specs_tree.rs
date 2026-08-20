@@ -92,7 +92,7 @@ use std::process::{Command, Output};
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
 use rhino_cli::application::agents::bindings::{
-    KNOWN_BINDING_DIRS, PLATFORM_BINDINGS_CATALOG, emit_bindings, validate_bindings,
+    KNOWN_BINDING_DIRS, PLATFORM_BINDINGS_CATALOG, validate_bindings,
 };
 use rhino_cli::application::agents::types::ValidationResult;
 use rhino_cli::application::behavior_coverage::types::{
@@ -108,6 +108,9 @@ use rhino_cli::application::specs::{
 use rhino_cli::commands::specs_validate_counts::{self, ValidateCountsArgs};
 use rhino_cli::infrastructure::git::root::find_root_from;
 use tempfile::TempDir;
+
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
 
 /// Repo-relative feature-file path shared by every synthetic `@covers`
 /// scenario/marker built in the behavior-coverage/domain-coverage steps.
@@ -192,6 +195,10 @@ struct SpecsTreeWorld {
     // --- harness-registry-driven.feature (subprocess, synthetic repo-config.yml) ---
     hrd_work: Option<TempDir>,
     hrd_dup_output: Option<Output>,
+    /// `harness bindings generate` run with a registry-declared harness name.
+    hrd_gen_declared: Option<Output>,
+    /// `harness bindings generate` run with a name the registry omits.
+    hrd_gen_undeclared: Option<Output>,
 
     // --- worktree-agnostic.feature (in-process) ---
     wt_main: Option<TempDir>,
@@ -234,6 +241,8 @@ impl SpecsTreeWorld {
             hb_result: None,
             hrd_work: None,
             hrd_dup_output: None,
+            hrd_gen_declared: None,
+            hrd_gen_undeclared: None,
             wt_main: None,
             wt_worktree_dir: None,
             wt_path: None,
@@ -398,89 +407,14 @@ impl SpecsTreeWorld {
     }
 }
 
-/// Runs `git` with `args` inside `dir`, using a fixed synthetic identity.
+/// Runs `git` with `args` inside `dir`, under full Git Fixture Isolation.
 ///
-/// Checks the subprocess's exit status (not just that it spawned) — see
-/// `apps/rhino-cli/src/infrastructure/git/root.rs`'s `build_worktree_fixture`
-/// doc comment for the isolation hazard this guards against: cucumber-rs runs
-/// scenarios concurrently (up to 64 by default), so a silently-failed `git
-/// init` here could otherwise let a later "isolated" git command fall back to
-/// whichever repository is `dir`'s nearest ancestor via git's own upward
-/// repository-discovery walk.
-/// Pre-write escape guard (Git Fixture Isolation convention, Standard 4). Panics
-/// unless git, under the same isolation env as [`run_git`], resolves its
-/// top-level to `dir` (canonicalized). Called before every write once `dir/.git`
-/// exists, so a would-be escape — a missed isolation env on a future write, or a
-/// discovery path not otherwise closed — fails loud instead of silently
-/// corrupting the real repository. GIT_WORK_TREE is deliberately NOT set: it
-/// would make `--show-toplevel` merely echo the variable, defeating the guard.
-fn assert_no_escape(dir: &Path) {
-    let out = Command::new("git")
-        .args(["rev-parse", "--show-toplevel"])
-        .current_dir(dir)
-        .env("GIT_DIR", dir.join(".git"))
-        .env("GIT_CEILING_DIRECTORIES", dir)
-        .env("GIT_CONFIG_GLOBAL", "/dev/null")
-        .env("GIT_CONFIG_SYSTEM", "/dev/null")
-        .output()
-        .expect("escape-guard: git rev-parse must spawn");
-    assert!(
-        out.status.success(),
-        "escape-guard: `git rev-parse --show-toplevel` failed in {} (git could not confirm an \
-         isolated repository here): {}",
-        dir.display(),
-        String::from_utf8_lossy(&out.stderr)
-    );
-    let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
-    let want = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_path_buf());
-    let got = std::fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
-    assert_eq!(
-        got,
-        want,
-        "escape-guard: fixture git resolves to {}, not the intended tempdir {} — \
-         refusing to proceed to avoid corrupting the real repository",
-        got.display(),
-        want.display()
-    );
-}
-
-fn run_git(dir: &Path, args: &[&str]) {
-    // Every caller passes a repository root as `dir`, so `dir/.git` is the repo's
-    // git directory (created by `git init` when args == ["init", …]). Pinning
-    // GIT_DIR explicitly makes git perform NO upward repository-discovery walk:
-    // even if this process's CWD races to the real worktree under cucumber-rs's
-    // concurrency, git operates on exactly `dir/.git` and can never fall back to
-    // an ancestor repository. GIT_CEILING_DIRECTORIES caps any residual walk, and
-    // nulling global/system config keeps identity deterministic and prevents dev
-    // identity from bleeding in. See root.rs `iso_git` for the shared rationale.
-    //
-    // Standard 4 (pre-write escape guard): before every write, once `dir/.git`
-    // exists, prove git still resolves to `dir`. `git init` is the sole pre-repo
-    // command (no `.git` yet) and is exempt — its own failure is caught by the
-    // exit-status assert below.
-    if dir.join(".git").is_dir() {
-        assert_no_escape(dir);
-    }
-    let output = Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env("GIT_DIR", dir.join(".git"))
-        .env("GIT_CEILING_DIRECTORIES", dir)
-        .env("GIT_CONFIG_GLOBAL", "/dev/null")
-        .env("GIT_CONFIG_SYSTEM", "/dev/null")
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .env("GIT_COMMITTER_NAME", "t")
-        .env("GIT_COMMITTER_EMAIL", "t@t")
-        .output()
-        .expect("git command must spawn");
-    assert!(
-        output.status.success(),
-        "git {args:?} in {} must exit zero, got: {}",
-        dir.display(),
-        String::from_utf8_lossy(&output.stderr)
-    );
-}
+/// This suite is the reference implementation `tests/support/git_fixture.rs`
+/// was lifted from (C1) — every other cucumber-rs suite that shells out to
+/// `git` against a synthetic fixture routes through that shared module too,
+/// so this is now a thin re-export rather than a second copy of the six
+/// mandatory layers.
+use git_fixture::{assert_no_escape, run_git};
 
 /// Runs the compiled `rhino-cli` binary with `args` inside `dir` and returns
 /// its captured `Output`.
@@ -903,13 +837,10 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
-    // `emit_bindings` requires `harness.amazonq.agent-name` from repo-config.yml
-    // (no sensible default exists for a generated agent identifier), and
     // `validate_bindings` walks the source (claude-code) and generated
-    // (opencode/cursor/amazonq) tiers together for mirror-parity checks — this
-    // synthetic fixture root needs its own complete registry declaration
-    // rather than relying on a real repo-config.yml being present at this
-    // temp path.
+    // (opencode/codex) tiers together for mirror-parity checks — this synthetic
+    // fixture root needs its own complete registry declaration rather than
+    // relying on a real repo-config.yml being present at this temp path.
     std::fs::write(
         root.join("repo-config.yml"),
         concat!(
@@ -917,54 +848,35 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
             "  - name: claude-code\n",
             "    tier: source\n",
             "    agent-dir: .claude/agents\n",
-            "  - name: cursor\n",
-            "    tier: generated\n",
-            "    agent-dir: .cursor/agents\n",
-            "    mirrors: .claude/agents\n",
             "  - name: opencode\n",
             "    tier: generated\n",
             "    agent-dir: .opencode/agents\n",
             "    mirrors: .claude/agents\n",
-            "  - name: amazonq\n",
+            "  - name: codex\n",
             "    tier: generated\n",
-            "    rules-dir: .amazonq/rules\n",
-            "    agent-name: ose-default\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
         ),
     )
     .expect("write repo-config.yml");
-    emit_bindings(root).expect("emit bindings");
     let catalog = root.join(PLATFORM_BINDINGS_CATALOG);
     std::fs::create_dir_all(catalog.parent().expect("catalog has parent"))
         .expect("mkdir catalog parent");
     std::fs::write(
         &catalog,
-        "# Platform Bindings\n\n- `.amazonq` row\n- `.claude` row\n- `.opencode` row\n",
+        "# Platform Bindings\n\n- `.claude` row\n- `.opencode` row\n- `.codex` row\n",
     )
     .expect("write catalog");
     w.hb_result = Some(validate_bindings(root));
 }
 
-#[then(
-    "all 11 supported harnesses are listed (Claude Code, OpenCode, Amazon Q, Codex, Copilot, Cursor, Windsurf, Junie, Antigravity, Pi, Aider)"
-)]
-fn then_hb_all_11_listed(w: &mut SpecsTreeWorld) {
+#[then("all 3 supported harnesses are listed (Claude Code, OpenCode, Codex)")]
+fn then_hb_all_three_listed(w: &mut SpecsTreeWorld) {
     let names: HashSet<&str> = w.hb_harness.iter().map(|h| h.name.as_str()).collect();
-    assert_eq!(w.hb_harness.len(), 11, "harness list: {names:?}");
-    for expected in [
-        "claude-code",
-        "opencode",
-        "amazonq",
-        "codex",
-        "copilot",
-        "cursor",
-        "windsurf",
-        "junie",
-        "antigravity",
-        "pi",
-        "aider",
-    ] {
+    assert_eq!(w.hb_harness.len(), 3, "harness list: {names:?}");
+    for expected in ["claude-code", "opencode", "codex"] {
         assert!(
             names.contains(expected),
             "missing harness {expected:?} in {names:?}"
@@ -972,18 +884,51 @@ fn then_hb_all_11_listed(w: &mut SpecsTreeWorld) {
     }
 }
 
-#[then("the generated tier (OpenCode, Amazon Q, Cursor) is regenerated and byte-parity-validated")]
+#[then(
+    "the source tier (Claude Code) is the single hand-authored origin every mirror derives from"
+)]
+fn then_hb_source_tier(w: &mut SpecsTreeWorld) {
+    let source: Vec<&HarnessEntry> = w
+        .hb_harness
+        .iter()
+        .filter(|h| h.tier == repo_config::Tier::Source)
+        .collect();
+    let source_names: Vec<&str> = source.iter().map(|h| h.name.as_str()).collect();
+    assert_eq!(source.len(), 1, "source tier: {source_names:?}");
+    let origin = source[0];
+    assert_eq!(origin.name, "claude-code");
+    let origin_dir = origin
+        .agent_dir
+        .as_deref()
+        .expect("the source tier must declare an agent directory");
+
+    // Every generated entry names this one directory as what it mirrors, so
+    // there is exactly one hand-authored origin rather than several.
+    for entry in w
+        .hb_harness
+        .iter()
+        .filter(|h| h.tier == repo_config::Tier::Generated)
+    {
+        assert_eq!(
+            entry.mirrors.as_deref(),
+            Some(origin_dir),
+            "generated harness {:?} must mirror the single source agent-dir",
+            entry.name
+        );
+    }
+}
+
+#[then("the generated tier (OpenCode, Codex) is regenerated and byte-parity-validated")]
 fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
     let generated: Vec<&str> = w
         .hb_harness
         .iter()
-        .filter(|h| h.tier == "generated")
+        .filter(|h| h.tier == repo_config::Tier::Generated)
         .map(|h| h.name.as_str())
         .collect();
-    assert_eq!(generated.len(), 3, "generated tier: {generated:?}");
+    assert_eq!(generated.len(), 2, "generated tier: {generated:?}");
     assert!(generated.contains(&"opencode"));
-    assert!(generated.contains(&"amazonq"));
-    assert!(generated.contains(&"cursor"));
+    assert!(generated.contains(&"codex"));
 
     let result = w.hb_result.as_ref().expect("validate_bindings ran");
     assert_eq!(result.failed_checks, 0, "result: {result:#?}");
@@ -998,39 +943,22 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
     );
 }
 
-#[then(
-    "the native tier (Copilot, Windsurf, Junie, Antigravity, Pi, Aider) is validated by the no-shadowing rule plus the AGENTS.md word budget"
-)]
-fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
-    let native: Vec<&HarnessEntry> = w.hb_harness.iter().filter(|h| h.tier == "native").collect();
-    let native_names: Vec<&str> = native.iter().map(|h| h.name.as_str()).collect();
-    assert_eq!(native.len(), 6, "native tier: {native_names:?}");
-    for expected in ["copilot", "windsurf", "junie", "antigravity", "pi", "aider"] {
+#[then("no entry declares the retired source-config or native tier")]
+fn then_hb_no_retired_tier(w: &mut SpecsTreeWorld) {
+    // `Tier` is now a two-variant enum (C3): a registry entry naming
+    // `source-config` or `native` fails to parse before this scenario's `w`
+    // could even be populated, so every entry here is trivially `source` or
+    // `generated` by construction. The assertion stays as a readable
+    // statement of the invariant rather than dead weight.
+    for entry in &w.hb_harness {
         assert!(
-            native_names.contains(&expected),
-            "missing native harness {expected:?} in {native_names:?}"
-        );
-    }
-
-    // No-shadowing rule: every shadow-bearing native entry's surface is a known binding dir/file.
-    for h in &native {
-        if let Some(shadow) = &h.shadow {
-            let base = shadow.split('/').next().unwrap_or(shadow);
-            assert!(
-                KNOWN_BINDING_DIRS.contains(&base) || KNOWN_BINDING_DIRS.contains(&shadow.as_str()),
-                "shadow surface {shadow:?} for harness {:?} not in KNOWN_BINDING_DIRS",
-                h.name
-            );
-        }
-    }
-
-    // AGENTS.md word budget: every native entry reads AGENTS.md.
-    for h in &native {
-        assert!(
-            h.instruction.iter().any(|i| i == "AGENTS.md"),
-            "native harness {:?} must read AGENTS.md; instruction: {:?}",
-            h.name,
-            h.instruction
+            matches!(
+                entry.tier,
+                repo_config::Tier::Source | repo_config::Tier::Generated
+            ),
+            "harness {:?} declares the retired tier {:?}",
+            entry.name,
+            entry.tier
         );
     }
 }
@@ -1039,10 +967,10 @@ fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
     "the harness set is data in repo-config.yml, identical across both parity repos, not a hard-coded directory list"
 )]
 fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
-    // Cross-check: every KNOWN_BINDING_DIRS entry (the constant `harness bindings validate`
-    // itself uses) corresponds to some repo-config.yml harness declaration — proving the
-    // authoritative, repo-identical source of the harness set is the YAML data, not a
-    // source-hard-coded list maintained independently of it.
+    // Cross-check: every repo-config.yml harness declaration corresponds to a
+    // `KNOWN_BINDING_DIRS` entry that `harness bindings validate` itself uses —
+    // proving the authoritative, repo-identical source of the harness set is the
+    // YAML data, not a source-hard-coded list maintained independently of it.
     let declared_paths: Vec<&str> = w
         .hb_harness
         .iter()
@@ -1050,22 +978,23 @@ fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
             [
                 h.agent_dir.as_deref(),
                 h.rules_dir.as_deref(),
-                h.shadow.as_deref(),
+                h.skills_dir.as_deref(),
                 h.config.as_deref(),
-                h.forbid_dir.as_deref(),
             ]
             .into_iter()
             .flatten()
         })
         .collect();
-    for known in KNOWN_BINDING_DIRS.iter().copied() {
-        let matches = declared_paths
-            .iter()
-            .any(|p| *p == known || p.starts_with(known));
+    assert!(
+        !declared_paths.is_empty(),
+        "the registry must declare at least one binding path"
+    );
+    for declared in &declared_paths {
+        let base = declared.split('/').next().unwrap_or(declared);
         assert!(
-            matches,
-            "KNOWN_BINDING_DIRS entry {known:?} has no corresponding repo-config.yml harness \
-             declaration: {declared_paths:?}"
+            KNOWN_BINDING_DIRS.contains(&base) || KNOWN_BINDING_DIRS.contains(declared),
+            "declared binding path {declared:?} is absent from KNOWN_BINDING_DIRS: \
+             {KNOWN_BINDING_DIRS:?}"
         );
     }
 }
@@ -1075,7 +1004,7 @@ fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
 // ===========================================================================
 
 #[given(
-    "the repo-config.yml harness section lists an agent-bearing tier (Amazon Q) and a native instruction surface"
+    "the repo-config.yml harness section lists an agent-bearing generated tier and a source tier"
 )]
 fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     let tmp = TempDir::new().expect("temp workspace");
@@ -1094,10 +1023,6 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
         "    tier: generated\n",
         "    agent-dir: .custom-gen/amazonq\n",
         "    mirrors: .custom-src/agents\n",
-        "  - name: custom-native\n",
-        "    tier: native\n",
-        "    instruction:\n",
-        "      - .custom-native/SURFACE.md\n",
         "coverage:\n  projects: []\n",
         "specs:\n  ddd-areas: []\n  domain-areas: []\n",
     );
@@ -1133,14 +1058,81 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     std::fs::create_dir_all(root.join(".custom-gen/amazonq")).expect("mkdir");
     std::fs::write(root.join(".custom-gen/amazonq/foo-maker.md"), "---\n---\n").expect("write");
 
-    // Native tier: oversized custom instruction surface (registry default fail budget = 16,000 B).
-    std::fs::create_dir_all(root.join(".custom-native")).expect("mkdir");
-    std::fs::write(root.join(".custom-native/SURFACE.md"), "x".repeat(50_000)).expect("write");
-
     run_git(root, &["add", "-A"]);
     run_git(root, &["commit", "-q", "-m", "seed"]);
 
     w.hrd_work = Some(tmp);
+}
+
+#[given("a repo-config.yml whose harness registry names a harness the source code never mentions")]
+fn given_hrd_generator_registry(w: &mut SpecsTreeWorld) {
+    let tmp = TempDir::new().expect("temp workspace");
+    let root = tmp.path();
+    run_git(root, &["init", "-q"]);
+    // `codex` is declared here but is not one of the generator's emit steps, so
+    // acceptance can only come from the registry, never from a source literal.
+    std::fs::write(
+        root.join("repo-config.yml"),
+        concat!(
+            "harness:\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "coverage:\n  projects: []\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        ),
+    )
+    .expect("write repo-config.yml");
+    std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
+    w.hrd_work = Some(tmp);
+}
+
+#[when("harness bindings generate is asked for that registry-declared name")]
+fn when_hrd_generate_declared_name(w: &mut SpecsTreeWorld) {
+    let root = w
+        .hrd_work
+        .as_ref()
+        .expect("fixture built by Given step")
+        .path()
+        .to_path_buf();
+    w.hrd_gen_declared = Some(run_rhino(
+        &root,
+        &["harness", "bindings", "generate", "--harness", "codex"],
+    ));
+    w.hrd_gen_undeclared = Some(run_rhino(
+        &root,
+        &["harness", "bindings", "generate", "--harness", "cursor"],
+    ));
+}
+
+#[then("the name is not rejected as unknown")]
+fn then_hrd_declared_name_accepted(w: &mut SpecsTreeWorld) {
+    let out = w.hrd_gen_declared.as_ref().expect("generate ran");
+    let text = combined_output(out);
+    assert!(
+        !text.contains("unknown harness name"),
+        "a registry-declared name must not be rejected; got: {text}"
+    );
+}
+
+#[then("asking for a name the registry omits is rejected, listing the registry-derived set")]
+fn then_hrd_undeclared_name_rejected(w: &mut SpecsTreeWorld) {
+    let out = w.hrd_gen_undeclared.as_ref().expect("generate ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "got: {text}");
+    assert!(text.contains("unknown harness name"), "got: {text}");
+    for expected in ["claude-code", "opencode", "codex"] {
+        assert!(
+            text.contains(expected),
+            "the error must list the registry-derived set; missing {expected} in: {text}"
+        );
+    }
 }
 
 #[when("harness duplication validate runs")]

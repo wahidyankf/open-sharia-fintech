@@ -16,12 +16,19 @@ use std::sync::OnceLock;
 use regex::Regex;
 use serde_norway::Value;
 
-use super::cursor::is_mirrorable_agent_filename;
-use super::field_policy::{FieldAction, FieldPolicy};
+use super::field_policy::{FieldAction, FieldPolicy, walk_frontmatter_fields};
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
 
 /// Relative path of the `OpenCode` agent directory (plural `agents/`).
 pub const OPENCODE_AGENT_DIR: &str = ".opencode/agents";
+
+/// Return true when `name` is a Claude agent markdown file that should be mirrored.
+///
+/// Shared by every mirror emitter and by the sync validators, so one rule
+/// decides what counts as a mirrorable agent file.
+pub fn is_mirrorable_agent_filename(name: &str, is_dir: bool) -> bool {
+    !is_dir && name.ends_with(".md") && name != "README.md"
+}
 
 /// A field that was dropped or translated during agent conversion.
 #[derive(Debug, Clone)]
@@ -54,7 +61,11 @@ pub struct OpenCodeAgent {
 }
 
 /// Static (field, action, reason) table powering `claude_agent_field_policy()`.
-const FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
+///
+/// Public because divergence promotion computes which canonical fields the
+/// `OpenCode` schema cannot carry by intersecting this table's `DropWarn`
+/// entries with a canonical file's actual keys. One table, two readers.
+pub const OPENCODE_FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
     ("name", FieldAction::Drop, "filename carries name"),
     ("description", FieldAction::Preserve, ""),
     ("tools", FieldAction::Translate, ""),
@@ -85,11 +96,11 @@ const FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
     ("hooks", FieldAction::DropWarn, "no opencode equivalent"),
 ];
 
-/// Return the lazily-initialized field policy map built from `FIELD_POLICY_TABLE`.
+/// Return the lazily-initialized field policy map built from `OPENCODE_FIELD_POLICY_TABLE`.
 fn claude_agent_field_policy() -> &'static HashMap<&'static str, FieldPolicy> {
     static M: OnceLock<HashMap<&'static str, FieldPolicy>> = OnceLock::new();
     M.get_or_init(|| {
-        FIELD_POLICY_TABLE
+        OPENCODE_FIELD_POLICY_TABLE
             .iter()
             .map(|(k, action, reason)| {
                 (
@@ -143,13 +154,13 @@ fn agent_name_from_path(p: &Path) -> String {
 }
 
 /// Lazily-compiled regex matching Markdown link targets `](...)`.
-fn agent_link_re() -> &'static Regex {
+pub(crate) fn agent_link_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"\]\(([^)]*)\)").expect("valid hardcoded regex"))
 }
 
 /// Lexically normalize `..`/`.` components without touching the filesystem.
-fn normalize_lexical(path: &Path) -> PathBuf {
+pub(crate) fn normalize_lexical(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for component in path.components() {
         match component {
@@ -165,7 +176,7 @@ fn normalize_lexical(path: &Path) -> PathBuf {
 
 /// Compute `target`'s path relative to `base_dir`, given both are already
 /// lexically normalized and share a common root.
-fn relative_from(target: &Path, base_dir: &Path) -> PathBuf {
+pub(crate) fn relative_from(target: &Path, base_dir: &Path) -> PathBuf {
     let target_components: Vec<_> = target.components().collect();
     let base_components: Vec<_> = base_dir.components().collect();
     let mut common = 0;
@@ -268,35 +279,25 @@ pub fn convert_agent(
     };
 
     let agent_name = agent_name_from_path(input_path);
-    let mut warnings: Vec<ConversionWarning> = Vec::new();
     let mut out = OpenCodeAgent::default();
 
-    let policy_map = claude_agent_field_policy();
-
-    for (k, v) in mapping {
-        let Some(s) = k.as_str() else { continue };
-        let key = s.to_string();
-        let Some(policy) = policy_map.get(key.as_str()) else {
-            warnings.push(ConversionWarning {
-                agent_name: agent_name.clone(),
-                field: key.clone(),
-                reason: "unknown claude code field".to_string(),
-            });
-            continue;
-        };
-        match policy.action {
-            FieldAction::Drop => {}
-            FieldAction::DropWarn => {
-                warnings.push(ConversionWarning {
-                    agent_name: agent_name.clone(),
-                    field: key.clone(),
-                    reason: policy.reason.to_string(),
-                });
-            }
-            FieldAction::Preserve => apply_preserve(&mut out, &key, &v),
-            FieldAction::Translate => apply_translate(&mut out, &key, &v),
-        }
-    }
+    let dropped = walk_frontmatter_fields(
+        &mapping,
+        claude_agent_field_policy(),
+        |action, key, v| match action {
+            FieldAction::Preserve => apply_preserve(&mut out, key, v),
+            FieldAction::Translate => apply_translate(&mut out, key, v),
+            FieldAction::Drop | FieldAction::DropWarn => {}
+        },
+    );
+    let warnings: Vec<ConversionWarning> = dropped
+        .into_iter()
+        .map(|d| ConversionWarning {
+            agent_name: agent_name.clone(),
+            field: d.field,
+            reason: d.reason,
+        })
+        .collect();
 
     let new_frontmatter = encode_opencode_agent(&out);
     let mirror_dir = output_path.parent().unwrap_or(output_path);

@@ -66,6 +66,15 @@ reconciled immediately. Verify the portable manifest byte-for-byte; list private
 exceptions explicitly. Across both repos, preserve active goals during runner contention and remove
 only each plan's own verified worktree immediately after that repository's final delivery.
 
+### Private-only operational exceptions
+
+- **Elixir/Erlang CI toolchain provisioning.** `ose-public`'s `rust` job in `pr-quality-gate.yml`
+  installs Erlang/Elixir via `erlef/setup-beam` and sets `RHINO_REQUIRE_ELIXIR=1`, so the two
+  Elixir formatter-wrapper tests in `apps/rhino-cli/tests/gate_format_verify_wrappers.rs` run for
+  real on every push. `ose-private` carries no Elixir source and provisions no such toolchain, so
+  those same byte-identical tests self-skip there instead — a deliberate, not accidental,
+  divergence: nothing in `ose-private` needs the coverage the toolchain would exercise.
+
 ## Contribution and access boundaries
 
 External contribution intake is closed across this coordinated delivery. Public readers can explore,

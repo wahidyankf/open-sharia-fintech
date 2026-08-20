@@ -4,10 +4,19 @@ Gherkin scenarios for rhino-cli agent-harness management commands.
 
 Features in this domain:
 
-- `agents-bindings.feature` — emit and validate the Amazon Q Developer binding bridge
+- `agents-bindings.feature` — generate and validate every generated-tier harness binding
+- `agents-skills-mirror.feature` — mirror `.claude/skills/` into `.agents/skills/` as real files, never symlinks
 - `agents-detect-duplication.feature` — detect duplicate agent definitions
 - `agents-sync.feature` — sync agent definitions across platform bindings
 - `agents-validate-claude.feature` — validate Claude Code agent files
+- `harness-audit.feature` — aggregate every harness validator into one pass/fail report
+- `codex-binding.feature` — generate the Codex agent binding: standalone TOML files plus the delimited `.codex/config.toml` region
+- `opencode-skills-removal.feature` — delete the ungoverned `.opencode/skills/` and `.opencode/commands/` trees as a deliberate accepted capability loss
+- `vendored-skill-preservation.feature` — the mirror emitter touches only what it generates, leaving declared vendored plugin directories byte-identical
+- `harness-ownership.feature` — every tracked binding file carries exactly one declared ownership class: generated, vendored, or source
+- `harness-sync-triage.feature` — divergence between canonical source and its generated mirrors is triaged by content, and a mirror edit is promoted only as a human-reviewed patch
+- `opencode-conformance.feature` — OpenCode claims target v1 stable, and the v2 rename set is filed as a promotable idea rather than a backlog plan
+- `harness-catalog.feature` — the Platform Binding Directories table is rendered from the harness registry, and a hand edit inside the generated region is rejected
 - `governance-word-budget-agents-md.feature` — AGENTS.md word-budget audit (`governance word-budget validate`)
 - `governance-word-budget-pre-push.feature` — word-budget pre-push gate (`governance word-budget validate`)
 - `governance-word-budget-rule.feature` — word-budget governance rule (`governance word-budget validate`)

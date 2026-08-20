@@ -20,6 +20,11 @@ duplicating instruction content or silently diverging per tool. `AGENTS.md` at t
 single source of truth. Every harness-specific file either reads it natively, points to it, or is
 mechanically derived from it — never a hand-maintained copy.
 
+Generation is **one-way by default**: a hand edit inside a generated mirror fails validation rather
+than flowing back. Divergence is detected **by content, never by timestamp**, because git does not
+store modification times and a fresh clone would otherwise report every file as changed. Promoting a
+mirror edit into canonical source is **human-reviewed** — the tool emits a diff and writes nothing.
+
 ## Contents
 
 - [Principles and Purpose](./multi-harness-binding/principles-and-purpose.md) — why this
@@ -32,6 +37,11 @@ mechanically derived from it — never a hand-maintained copy.
   — required binding files must be generated, and the deterministic pre-push guard that enforces it
 - [npm Script Naming and Catalog Requirement (Rules 6-7)](./multi-harness-binding/rules-6-to-7.md) — Rules 6 and 7 — the harness-neutral generate:/validate: npm script naming constraints, and the requirement that...
   — harness-neutral script naming and the platform-bindings catalog obligation
+- [Total Ownership of Binding Files (Rule 8)](./multi-harness-binding/ownership-classes.md) — the
+  three ownership classes — generated, vendored, source — with no fourth class and no
+  unclassified residue
+- [Divergence Triage (Rule 9)](./multi-harness-binding/divergence-triage.md) — generation stays
+  one-way, divergence is detected by content, and promotion is a reviewed patch
 - [Examples](./multi-harness-binding/examples.md) — worked PASS/FAIL scenarios for each rule
 - [Platform Binding Examples](./multi-harness-binding/platform-binding-examples.md) — the
   concrete per-harness file names and tier assignments (vendor-specific content)

@@ -39,7 +39,7 @@ This document defines the standards for selecting the appropriate model tier whe
 
 ## Platform Bindings and Special Cases
 
-- [Platform Binding Examples](./model-selection/platform-binding-examples.md) — `Claude Code`, `Cursor` mappings.
+- [Platform Binding Examples](./model-selection/platform-binding-examples.md) — source-tier to generated-tier model mappings.
 - [Special Considerations — Borderline Cases and Tier Assignments](./model-selection/special-considerations-borderline-and-tier-cases.md) — edge cases.
 - [Special Considerations — Link Fixer as Fast-Tier](./model-selection/special-considerations-link-fixer.md) — link-fixer case.
 - [Tools and Automation](./model-selection/tools-and-automation.md) — validation tools.

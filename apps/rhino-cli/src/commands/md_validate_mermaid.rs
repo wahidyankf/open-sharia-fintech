@@ -194,7 +194,13 @@ fn apply_excludes(repo_root: &Path, files: Vec<PathBuf>, exclude: &[String]) -> 
                 .replace('\\', "/");
             !exclude.iter().any(|e| {
                 let prefix = e.trim_end_matches('/');
-                rel == prefix || rel.starts_with(&format!("{prefix}/"))
+                // Component-wise via `path_is_under`, not a string-prefix
+                // test: a doubled separator in `prefix` or `rel` (e.g. a
+                // trailing `//` typo in `--exclude`) must not silently defeat
+                // this check the way it did before the crate's other
+                // path-containment predicates were unified onto
+                // `path_is_under` (cycle-3 thread 12).
+                rel == prefix || crate::application::repo_config::path_is_under(&rel, prefix)
             })
         })
         .collect()
@@ -319,6 +325,23 @@ mod tests {
         let files = vec![tmp.path().join("docs/z.md")];
         let kept = apply_excludes(tmp.path(), files, &[]);
         assert_eq!(kept.len(), 1);
+    }
+
+    // Cycle-4 F1 regression: `--exclude ""` used to defeat the whole gate —
+    // `path_is_under(rel, "")` was `true` for every `rel`, so a single blank
+    // exclude entry (list non-empty, one element empty) silently emptied the
+    // file set with exit 0. `--exclude` is a bare CLI flag no registry-side
+    // validation can ever reach, so this must hold at the helper, not by
+    // trusting the caller's input to be well-formed.
+    #[test]
+    fn apply_excludes_keeps_every_file_when_the_list_holds_an_empty_string() {
+        let tmp = TempDir::new().unwrap();
+        let files = vec![
+            tmp.path().join("plans/done/x.md"),
+            tmp.path().join("docs/z.md"),
+        ];
+        let kept = apply_excludes(tmp.path(), files, &[String::new()]);
+        assert_eq!(kept.len(), 2, "an empty exclude entry must exclude nothing");
     }
 
     #[test]

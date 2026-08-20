@@ -25,17 +25,17 @@ is a raw whole-file `split_whitespace()` word count, not bytes, with no in-file 
 Configured in the `governance-word-budget:` section of `repo-config.yml`; enforced by
 `rhino-cli governance word-budget validate`.
 
-| Surface                                                                       | Target (✅) | Warn (⚠️)  | Fail (❌)  |
-| ----------------------------------------------------------------------------- | ----------- | ---------- | ---------- |
-| `repo-governance/**/*.md`                                                     | 400 words   | 500 words  | 500 words  |
-| `AGENTS.md` / `CLAUDE.md`                                                     | 400 words   | 500 words  | 500 words  |
-| `.claude/`, `.cursor/`, `.codex/`, `.opencode/`, `.pi/`, `.amazonq/` (`*.md`) | 400         | 500        | 500        |
-| `**/README.md`                                                                | 700 words   | 900 words  | 900 words  |
-| Resolved tree (`CLAUDE.md` + imports)                                         | 1200 words  | 1500 words | 1500 words |
+| Surface                                                             | Target (✅) | Warn (⚠️)  | Fail (❌)  |
+| ------------------------------------------------------------------- | ----------- | ---------- | ---------- |
+| `repo-governance/**/*.md`                                           | 400 words   | 500 words  | 500 words  |
+| `AGENTS.md` / `CLAUDE.md`                                           | 400 words   | 500 words  | 500 words  |
+| Every harness binding directory in the `harness:` registry (`*.md`) | 400         | 500        | 500        |
+| `**/README.md`                                                      | 700 words   | 900 words  | 900 words  |
+| Resolved tree (`CLAUDE.md` + imports)                               | 1200 words  | 1500 words | 1500 words |
 
 `repo-governance/**/*.md` is the largest surface by file count.
 
-**A surface is its glob minus the registered exclude prefixes** — the seven `args.exclude` path
+**A surface is its glob minus the registered exclude prefixes** — the thirteen `args.exclude` path
 prefixes on the gate are part of the published rule, not an implementation detail. `plans/`,
 `docs/`, and `specs/` are among them, so a `plans/` README of any length passes. The full list is
 in the Excluded Prefixes child below.
@@ -66,4 +66,4 @@ a threshold to paper over a bloated file.
 ## Children
 
 - [Vision and Principles](./governance-word-budget/vision-and-principles.md) — vision alignment, principles implemented, and related conventions.
-- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The seven path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.
+- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The thirteen path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.

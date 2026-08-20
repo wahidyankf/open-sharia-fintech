@@ -15,6 +15,9 @@ created: 2026-05-02
 
 # Forbidden Vendor Terms — Models and Branded Concepts
 
+> **A listed name is not a support claim.** Dropped harnesses stay here on purpose — their names
+> must not leak into governance prose either. `repo-config.yml` `harness:` decides support.
+
 ## Model family / model names
 
 | Pattern (regex) | Reason                                                       |

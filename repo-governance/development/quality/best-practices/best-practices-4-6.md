@@ -44,7 +44,7 @@ rm old-doc-1.md old-doc-2.md old-doc-3.md
 
 ## Practice 5: Run Affected Tests Only in Pre-Push Using Canonical Target Names
 
-**Principle**: Use `test:quick` via Nx affected detection for fast, consistent feedback. Only `test:unit` results (and other fast checks) belong in `test:quick`. Integration and E2E tests run on a CI schedule, never in the pre-push gate.
+**Principle**: Use `test:quick` via Nx affected detection for fast, consistent feedback. Only `test:unit` results (and other fast checks) belong in `test:quick`. Integration and E2E tests run on a CI schedule, never in the pre-push gate — with one named carve-out: `rhino-cli`'s `tests/*.rs` cucumber binaries (which drive the real command pipeline against real or fixture filesystems) are enumerated directly in `test:unit` and therefore do run in the pre-push gate; see [Per-Backend and CLI App Implementation Patterns](../three-level-testing-standard/per-backend-and-cli-app-implementation-patterns.md).
 
 **See**: [Three-Level Testing Standard](.././three-level-testing-standard.md) for what belongs at each test level.
 

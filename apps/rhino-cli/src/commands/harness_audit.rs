@@ -9,8 +9,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::commands::{
-    governance_validate_word_budget, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_sync,
+    governance_validate_word_budget, harness_catalog, harness_validate_bindings,
+    harness_validate_claude, harness_validate_duplication, harness_validate_sync,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -23,6 +23,7 @@ const MEMBERS: &[&str] = &[
     "validate-claude",
     "validate-sync",
     "validate-bindings",
+    "validate-catalog",
     "validate-word-budget",
 ];
 
@@ -49,6 +50,10 @@ pub fn run(args: &AuditArgs, output_format: OutputFormat) -> std::result::Result
         if args.skip.iter().any(|s| s == name) {
             continue;
         }
+        // Name the member before running it. The per-validator reporters print
+        // only failures at this verbosity, so without this line a passing audit
+        // never says which validators it actually ran.
+        println!("harness audit: {name}");
         let result = run_member(name, output_format);
         if let Err(e) = result {
             failures.push(format!("{name}: {e}"));
@@ -103,6 +108,13 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
             },
             output_format,
         ),
+        "validate-catalog" => harness_catalog::run_validate(
+            &harness_catalog::CatalogValidateArgs {
+                verbose: false,
+                quiet: false,
+            },
+            output_format,
+        ),
         "validate-word-budget" => governance_validate_word_budget::run(
             &governance_validate_word_budget::ValidateWordBudgetArgs {
                 exclude: Vec::new(),
@@ -120,7 +132,7 @@ mod tests {
 
     #[test]
     fn members_list_has_expected_count() {
-        assert_eq!(MEMBERS.len(), 5);
+        assert_eq!(MEMBERS.len(), 6);
     }
 
     #[test]
@@ -129,6 +141,7 @@ mod tests {
         assert!(MEMBERS.contains(&"validate-claude"));
         assert!(MEMBERS.contains(&"validate-sync"));
         assert!(MEMBERS.contains(&"validate-bindings"));
+        assert!(MEMBERS.contains(&"validate-catalog"));
         assert!(MEMBERS.contains(&"validate-word-budget"));
     }
 

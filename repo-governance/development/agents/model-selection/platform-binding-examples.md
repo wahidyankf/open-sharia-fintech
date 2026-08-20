@@ -43,20 +43,3 @@ onto the same GLM Coding Plan model.
 The `opencode-go` provider remains available for `/models` roster access. If the primary provider
 or model changes, update `convert_model()` in `apps/rhino-cli/src/application/agents/converter.rs`
 and re-run `npm run generate:bindings`.
-
-## Model ID Mapping (Claude Code → Cursor)
-
-| Primary binding                                  | Cursor binding | Capability notes                                                    |
-| ------------------------------------------------ | -------------- | ------------------------------------------------------------------- |
-| `model: opus` (thinking-grade)                   | `composer-2.5` | Full tier collapse — thinking collapses onto execution              |
-| omit (execution-grade inherit) / `model: sonnet` | `composer-2.5` | Same pin as thinking-grade (intentional full-tier collapse)         |
-| `model: haiku` (fast)                            | `composer-2.5` | Fast tier also collapses — avoids the 6× `composer-2.5-fast` toggle |
-
-**Prohibition**: `rhino-cli` must never emit `composer-2.5-fast` into `.cursor/agents/`. That slug
-is the priced-fast inference toggle this binding exists to avoid.
-
-## Cursor Full-Tier Collapse
-
-Every non-fast Claude alias resolves to `composer-2.5`. Unlike OpenCode (where fast maps to a
-lighter model), Cursor's fast toggle is a latency/price choice on identical weights — so haiku-grade
-agents trade hypothetical input-cost savings for deterministic first-party pinning off the fast tier.
