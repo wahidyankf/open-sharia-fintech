@@ -515,9 +515,25 @@ pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
 /// additionally rejects a `./`-prefixed registry value outright, because
 /// normalizing it here would not help a caller that never routes through this
 /// function.
+///
+/// `dir` is deliberately guarded against the empty path: an empty component
+/// iterator is a prefix of every other iterator, so unguarded
+/// `Path::starts_with` treats an empty `dir` as matching every `path`. Every
+/// caller of this function ultimately traces back to a registry or CLI value
+/// that can be blank — a `- ""` entry in `gates[].args.exclude`
+/// (`--exclude ""` on the CLI, which no registry validation can ever reach) or
+/// a `ownership[].path`/`vendored[]` declaration that trims to the empty
+/// string — and an empty `dir` matching every file silently defeats whichever
+/// gate calls this helper. `dir` is guarded here, at the one shared seam,
+/// rather than at each of this function's four call sites, so every current
+/// and future caller inherits the guard instead of re-deriving it.
 #[must_use]
 pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
-    path.as_ref().starts_with(dir.as_ref())
+    let dir = dir.as_ref();
+    if dir.as_os_str().is_empty() {
+        return false;
+    }
+    path.as_ref().starts_with(dir)
 }
 
 /// Resolve a configured repository-relative path while proving that existing
@@ -874,6 +890,18 @@ mod tests {
         // against each other in either direction.
         assert!(!path_is_under(Path::new("./a/b"), Path::new("a")));
         assert!(!path_is_under(Path::new("a/b"), Path::new("./a")));
+    }
+
+    // Cycle-4 F1 regression: an empty `dir` is a prefix of every component
+    // iterator under an unguarded `Path::starts_with`, so an empty
+    // registry/CLI value (a blank `gates[].args.exclude` entry, or
+    // `--exclude ""`) silently matched every file. Guard lives in the
+    // helper, not at each of its four call sites.
+    #[test]
+    fn path_is_under_rejects_an_empty_dir_against_any_non_empty_path() {
+        assert!(!path_is_under(Path::new("a/b"), Path::new("")));
+        assert!(!path_is_under(Path::new("/etc/passwd"), Path::new("")));
+        assert!(!path_is_under(Path::new("plans/done"), Path::new("")));
     }
 
     // Regression: `confined_repo_path` used to join `remaining` onto

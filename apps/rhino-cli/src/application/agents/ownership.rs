@@ -206,11 +206,18 @@ pub fn classify(repo_root: &Path) -> Result<OwnershipReport, String> {
 /// output directory is declared `source`, or when `repo-config.yml` itself
 /// fails to parse.
 ///
-/// Deliberately `load`, not `load_or_default`: this guard is the last thing
-/// standing between `harness bindings generate` and a destructive write, so a
-/// registry that fails to parse must stop generation rather than fall back to
-/// an empty config whose empty `harness` list would make every entry's guard
-/// vacuously pass (C3 — a malformed `tier` used to do exactly this).
+/// Deliberately `load`, not `load_or_default`: a registry that fails to parse
+/// must stop generation rather than fall back to an empty config whose empty
+/// `harness` list would make every entry's guard vacuously pass (C3 — a
+/// malformed `tier` used to do exactly this).
+///
+/// This guard is not independently sound against a malformed *value* the way
+/// it is against a malformed *shape*: `claims()` routes through
+/// [`repo_config::path_is_under`], which trusts `decl` to already be a valid
+/// repository-relative path. Soundness against a `path`/`vendored` entry that
+/// trims to the empty string rests on the sibling `repo-config-schema` gate
+/// (`repo_config_validate::validate_repo_relative_path`) rejecting that value
+/// before it ever reaches this function, not on anything checked here.
 pub fn guard_emitter_targets(repo_root: &Path) -> Result<(), String> {
     let config = repo_config::load(repo_root).map_err(|e| format!("{e:#}"))?;
     let decls = declarations(&config);
@@ -321,6 +328,16 @@ mod tests {
     #[test]
     fn a_doubled_separator_declaration_still_claims_its_children() {
         assert!(claims(".claude//skills", ".claude/skills/x.md"));
+    }
+
+    // Cycle-4 F1 regression: an `ownership[].path` declaration that trims to
+    // the empty string (e.g. `/`) must not claim every tracked file. Blocked
+    // in production by `repo-config-schema` rejecting the value outright, but
+    // `claims()` itself must not depend on that sibling gate to stay sound.
+    #[test]
+    fn an_empty_declaration_claims_nothing() {
+        assert!(!claims("", "any/tracked/file.md"));
+        assert!(!claims("/", "any/tracked/file.md"));
     }
 
     #[test]

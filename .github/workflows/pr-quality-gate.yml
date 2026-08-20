@@ -348,12 +348,25 @@ jobs:
     needs: detect
     if: needs.detect.outputs.has-rust == 'true'
     runs-on: ubuntu-latest
+    # `rhino-cli`'s Elixir formatter-wrapper tests
+    # (`tests/gate_format_verify_wrappers.rs`) assert real `mix format`
+    # behavior when the toolchain is present and otherwise skip quietly —
+    # except in an environment that sets `RHINO_REQUIRE_ELIXIR`, which this
+    # job does. Provisioning the toolchain here, unconditionally, is what
+    # turns that assertion from a dormant opt-in into real coverage that runs
+    # on every CI invocation instead of never running anywhere.
+    env:
+      RHINO_REQUIRE_ELIXIR: "1"
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          elixir-version: "1.18"
       # Rust targets share Cargo's registry and build locks. Keep the target families serial so
       # the nested test:quick gate cannot contend with standalone checks on CI runners.
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream

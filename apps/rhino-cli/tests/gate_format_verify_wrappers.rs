@@ -56,15 +56,27 @@ fn elixir_formatter_is_configured() -> bool {
             .is_ok_and(|out| out.status.success())
 }
 
+// Distinguishes "toolchain legitimately unavailable on this developer's
+// laptop" (fine to skip) from "toolchain missing on an environment that
+// declared it would provide one" (must fail loudly, not skip). Set by CI jobs
+// that provision Erlang/Elixir specifically so these two tests exercise real
+// coverage on every run rather than silently skipping forever — see the
+// `rust` job in `.github/workflows/pr-quality-gate.yml`, which installs the
+// toolchain via `erlef/setup-beam` and sets this variable.
+fn elixir_toolchain_is_required() -> bool {
+    std::env::var("RHINO_REQUIRE_ELIXIR").is_ok_and(|v| v == "1")
+}
+
 // Deliberately no toolchain guard here, unlike the Elixir tests below: the
 // GitHub Actions `ubuntu-latest` runner image (and this environment) both
 // guarantee Go via the `actions/runner-images` inventory, so a missing `gofmt`
 // would itself be a CI-environment defect worth a hard failure, not a
 // toolchain this repo chose not to provision. Elixir carries no such runner
-// guarantee (see `elixir_formatter_is_configured`'s comment) and provisioning
-// it would fight the repo's deferred Elixir/Erlang-removal position — so the
-// two tests are allowed to diverge in posture on the identical "toolchain
-// missing" question, and this comment is that divergence's written record.
+// guarantee by default (see `elixir_formatter_is_configured`'s comment), so
+// the two tests below use `elixir_toolchain_is_required` to fail loudly only
+// on an environment that has explicitly opted into providing the toolchain,
+// and to skip quietly everywhere else — rather than diverging in posture
+// permanently the way an unconditional `#[ignore]` would.
 #[test]
 fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
     let fixture = TempDir::new().expect("create Go fixture directory");
@@ -103,9 +115,14 @@ fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
 }
 
 #[test]
-#[ignore = "requires the mix toolchain; see the deferred Elixir/Erlang-removal position"]
 fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        assert!(
+            !elixir_toolchain_is_required(),
+            "RHINO_REQUIRE_ELIXIR=1 but the mix toolchain is not on PATH; this environment \
+             declared it provisions Elixir/Erlang and must not silently discard Elixir \
+             formatter coverage"
+        );
         eprintln!(
             "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
         );
@@ -140,9 +157,14 @@ fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
 }
 
 #[test]
-#[ignore = "requires the mix toolchain; see the deferred Elixir/Erlang-removal position"]
 fn elixir_check_accepts_formatted_ex_and_exs_files_without_rewriting_them() {
     if !elixir_formatter_is_configured() {
+        assert!(
+            !elixir_toolchain_is_required(),
+            "RHINO_REQUIRE_ELIXIR=1 but the mix toolchain is not on PATH; this environment \
+             declared it provisions Elixir/Erlang and must not silently discard Elixir \
+             formatter coverage"
+        );
         eprintln!(
             "SKIPPED: mix toolchain absent; Elixir formatter wrappers not exercised in this run"
         );
