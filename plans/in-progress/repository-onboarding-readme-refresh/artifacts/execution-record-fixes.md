@@ -112,9 +112,10 @@ Cycle 1 of the PR-review pipeline ran the scout plus eight discipline specialist
 review had wrongly reported as fixed. Every row below is a real finding acted on, not a
 restatement.
 
-**How to read this section.** It is a chronological log, not a current-state summary. Six review
-cycles landed here — C-20 through C-46 — and later cycles corrected earlier ones, including several
-that corrected a correction. Where a row's fix was later found wrong, the row says so and names the
+**How to read this section.** It is a chronological log, not a current-state summary. The review
+cycles for PR #239 land here, beginning at C-20, and later cycles corrected earlier ones, including
+several that corrected a correction. The range deliberately carries no upper bound: naming one made
+it false the moment the next row landed, which is how C-50 came to exist. Where a row's fix was later found wrong, the row says so and names the
 row that superseded it, rather than being rewritten to look right. The chains are: C-21 → C-31 →
 C-32 → C-36 (the Cargo prerequisite wording, wrong three times); C-30 → C-35 (the README word
 count); C-34 → C-37 (the breakpoint amendment, first applied to too few items) → C-45 (a wrong
@@ -258,7 +259,7 @@ untouched by that commit and re-confirmed unchanged.
 The docs specialist also observed that six cycles of rows had left the section usable as a log but
 not as a current-state reference, since several rows were superseded rather than rewritten. That is
 the right trade — rewriting them would erase the record this file exists to keep — so the fix is a
-`How to read this section` preamble naming all five supersession chains, plus the in-row markers
+`How to read this section` preamble naming all four supersession chains, plus the in-row markers
 `C-47` added. Claim and markers were made to agree in both directions: the preamble says every
 superseded row names its successor, so every one of them now does.
 
@@ -268,6 +269,26 @@ handled it correctly by reading `git show <sha>:<path>`, and one of them found t
 that the uncommitted draft happened to already fix. But a reviewer using a plain file read would
 have judged unreviewed content. Reviews should run against a clean tree, or the brief should say
 plainly that it is not one — as these briefs did from cycle 3 onward.
+
+### Cycle 7 Rows (P6-007G@01)
+
+The first cycle to run against a genuinely clean worktree, closing the process gap cycle 6 recorded.
+Governance returned zero findings on a fresh pass over the whole branch diff, confirming from the
+convention documents themselves — rather than from first principles — that `artifacts/` is properly
+declared in this plan's `tech-docs.md` File-Impact Analysis, that `plans/` sits outside both the
+word-budget and README-index gate scopes, and that nothing under `apps/rhino-cli/` or the rhino
+specs is touched. Integrity found two defects, both inside the preamble written last cycle to fix
+this very class.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                                                                      | Severity | Fix                                                                                                                                                                      |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C-49 | Integrity  | The Cycle 6 narrative said the preamble names "all five supersession chains". It names four. Five is the count of in-row markers — the `C-34 → C-37 → C-45` chain carries two of them but is one chain. A completeness claim, miscounted, inside the fix for miscounted completeness claims | MEDIUM   | Corrected to four. The same wrong figure is in the pushed `0db7beda2` message and stays there, disclosed here rather than force-pushed, on the same reasoning as C-45    |
+| C-50 | Integrity  | The preamble bounded itself at "C-20 through C-46" while the same commit appended C-47 and C-48 inside the section it was describing. False the instant it was written, with no time-lag excuse                                                                                             | MEDIUM   | The upper bound is gone rather than corrected. Naming one is what made it false, and a bound updated by hand would go stale again at the next row — as it just did twice |
+
+Both findings are the same shape as C-45: a claim about the record's own completeness, stated more
+confidently than it had been checked. Worth noting where they were found — not in the reader-facing
+documents, which have now been clean for three consecutive cycles, but in the apparatus built to
+audit them.
 
 ## Scope Discipline
 
