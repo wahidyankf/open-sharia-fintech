@@ -27,6 +27,14 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 | Library          | lint, build, test:unit, test:quick                                                                |
 | E2E runner       | lint, test:e2e, test:e2e:ui, specs:behavior:coverage                                              |
 
+Required-target lists name Nx targets that must exist, not necessarily distinct test scopes: for
+`rhino-cli` (the only Rust CLI app today), `test:unit` and `test:integration` both exist as
+required, but `test:integration`'s `cargo test --tests` re-runs the identical `tests/*.rs`
+binaries `test:unit` already enumerates by name — `test:integration` is not wired into any CI job
+for this app, so the two targets do not currently cover disjoint ground. See [Per-Backend and CLI
+App Implementation
+Patterns](../../../repo-governance/development/quality/three-level-testing-standard/per-backend-and-cli-app-implementation-patterns.md).
+
 ## Coverage Thresholds
 
 | Threshold | Projects                                   |

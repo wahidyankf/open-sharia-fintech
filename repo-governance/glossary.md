@@ -43,6 +43,8 @@ style guide binds exactly as much as one stated in a convention document; only i
   boundary, delivery mode, and worktree.
 - [Governance Surfaces](./glossary/governance-surfaces.md) — surface, instruction file, binding,
   mirror, harness, and what "autoloaded" actually means.
+- [The `class: vendored` Exception Has Two Subclasses](./glossary/vendored-exception-subclasses.md) — delimited-region
+  vs. wholly external, and why confusing one for the other misfires in opposite directions.
 - [Agent Vocabulary](./glossary/agent-vocabulary.md) — agent, agent skill, gate, quality gate,
   workflow, and the maker/checker/fixer roles.
 - [Principles and Related Conventions](./glossary/principles-and-related-conventions.md) — Which

@@ -241,9 +241,14 @@ driven by the `harness:` registry (not hard-coded):
    `bindings` today — see item 6), the `instruction` surface list (fed, at
    the time this doc was written, the now-superseded registry-merged word-budget check — see item 7
    below), and the `shadow` glob (feeds `bindings` no-shadowing). **Every** harness
-   command reads this one list, so adding a fourth harness is a config edit, identical across all 3
-   repos. The binding-dir constant `KNOWN_BINDING_DIRS` in `bindings.rs` is replaced by this config
-   list.
+   command reads this one list, so adding a fourth harness that reuses an existing binding
+   directory is a config edit, identical across all 3 repos. That is not the whole onboarding cost,
+   though: `harness ownership validate`'s `binding_roots()` (`ownership.rs:64-70`) genuinely is
+   registry-derived, but `harness bindings validate`'s directory loop (`bindings.rs:192`) still
+   reads the hardcoded `KNOWN_BINDING_DIRS` constant (`bindings.rs:40`) — a fourth harness
+   introducing a **new** binding directory additionally requires editing that constant, or its
+   catalog-coverage check silently never runs for the new directory. See
+   [Adding a New Platform Binding](./platform-bindings.md#adding-a-new-platform-binding).
 5. **Cross-vendor translation-map coverage** — every `color:` and `model:` token used in any agent
    frontmatter has a defined cross-vendor translation in the governance maps (`ai-agents.md` color
    table, `model-selection.md` tier table). Δ absorbed from the former `cross-vendor parity` gate (its

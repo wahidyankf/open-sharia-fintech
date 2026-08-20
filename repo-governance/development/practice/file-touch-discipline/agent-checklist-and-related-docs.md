@@ -32,7 +32,10 @@ when_to_use: Use as a quick-reference checklist before and during any session th
    `.agents/` changes that belong on your ledger and in the same commit; regenerate with
    `npm run generate:bindings`, verify with `npm run harness:bindings-validation` (all-harness;
    `validate:sync` does not cover `.codex/`), and never hand-edit a `class: generated` mirror — a
-   `class: vendored` path is the hand-maintained exception.
+   `class: vendored` path is the exception, covering two structurally different subclasses; see
+   [Governance Surfaces § the two
+   subclasses](../../../glossary/vendored-exception-subclasses.md)
+   for which one applies before hand-editing.
 
 ## Related Documentation
 

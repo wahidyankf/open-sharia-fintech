@@ -49,7 +49,9 @@ automation does _not_ protect you:
    `validate:sync` skips `.codex/`. Run it after any `.claude/` edit not committed through the hook.
 5. **Never hand-edit a generated mirror.** An edit under `.opencode/`, `.codex/`, or `.agents/` is
    silently overwritten by the next generate — except a registry-declared `class: vendored` path,
-   which is hand-maintained by design.
+   which covers two structurally different subclasses; see [Governance Surfaces § the two
+   subclasses](../../../glossary/vendored-exception-subclasses.md)
+   for which one applies before hand-editing.
 
 The same reasoning covers every other generated artifact — lockfiles, coverage manifests, emitted
 spec stubs. Record the generating command, and let its declared outputs ride in the same commit.

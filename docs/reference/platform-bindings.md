@@ -298,6 +298,14 @@ To add a new generated binding:
 3. Implement the converter in `apps/rhino-cli/src/application/agents/` and wire it into `harness bindings generate`.
 4. Add Rust integration tests and Gherkin scenarios under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
 5. Update this document's Translation Artifacts section.
+6. `git add` every path touched by steps 1-5, **then** run `rhino-cli parity manifest generate`
+   and stage the regenerated `apps/rhino-cli/parity-manifest.sha256`. The staging order is
+   load-bearing: the manifest hashes the **git index**, not the working tree, so regenerating
+   before `git add` produces a stale manifest. `parity manifest validate` is `scope: other` on
+   both `pre-push` and `ci` — unconditional, not path-gated — so it fires on every push regardless
+   of what changed, and unlike `harness-bindings-generate` it has no pre-commit auto-regeneration.
+   Land the equivalent binding change in the paired `ose-private` PR too; the two repos' binding
+   surfaces are byte-identical.
 
 ## Related
 
