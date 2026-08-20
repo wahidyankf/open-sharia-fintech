@@ -4,7 +4,7 @@ Gherkin specs proving per-repo behaviour is read from `repo-config.yml` rather t
 
 | File                  | Command(s)                                                 | Scenarios |
 | --------------------- | ---------------------------------------------------------- | --------- |
-| `data-driven.feature` | N/A — data-driven-behavior regression (no single CLI verb) | 5         |
+| `data-driven.feature` | N/A — data-driven-behavior regression (no single CLI verb) | 9         |
 
 ## Related
 

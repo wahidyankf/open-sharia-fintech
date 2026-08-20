@@ -41,6 +41,16 @@ struct RepoConfigDataWorld {
     website_exclusions_respected: bool,
     /// Whether the configured .NET SDK path drove Doctor's version reader.
     dotnet_global_json_respected: bool,
+    /// `repo_config::load_optional`'s three-state result: `Ok(true)` = a config
+    /// was found and parsed, `Ok(false)` = confirmed absent, `Err(_)` =
+    /// unreadable/unparseable — never collapsed to a single boolean.
+    load_optional_result: Option<Result<bool, String>>,
+    /// Captured output of `repo-config validate` for the `./`-prefix rejection scenario.
+    validate_output: String,
+    /// Whether `repo-config validate` accepted the fixture.
+    validate_ok: bool,
+    /// `confined_repo_path`'s resolved destination for the existing-file scenario.
+    confined_path: Option<PathBuf>,
 }
 
 impl std::fmt::Debug for RepoConfigDataWorld {
@@ -60,6 +70,10 @@ impl RepoConfigDataWorld {
             all_entries: Vec::new(),
             website_exclusions_respected: false,
             dotnet_global_json_respected: false,
+            load_optional_result: None,
+            validate_output: String::new(),
+            validate_ok: false,
+            confined_path: None,
         }
     }
 }
@@ -318,6 +332,123 @@ fn when_doctor_resolves_dotnet_version(w: &mut RepoConfigDataWorld) {
 #[then("the configured global.json supplies that version")]
 fn then_configured_dotnet_global_json_supplies_version(w: &mut RepoConfigDataWorld) {
     assert!(w.dotnet_global_json_respected);
+}
+
+// --- Cycle-4 F5: load_optional / CurDir rejection / confined_repo_path coverage ---
+
+#[given("no repo-config.yml exists in the repository")]
+fn given_no_repo_config(_w: &mut RepoConfigDataWorld) {
+    // `RepoConfigDataWorld::new` already starts from a fresh, empty `TempDir`
+    // with no `repo-config.yml` written into it.
+}
+
+#[given("a repo-config.yml that is not valid YAML")]
+fn given_unparseable_repo_config(w: &mut RepoConfigDataWorld) {
+    write(
+        w.repo.path(),
+        "repo-config.yml",
+        "harness: [this is not valid yaml:\n",
+    );
+}
+
+#[when("the optional repo-config loader runs")]
+fn when_load_optional_runs(w: &mut RepoConfigDataWorld) {
+    w.load_optional_result = Some(
+        repo_config::load_optional(w.repo.path())
+            .map(|found| found.is_some())
+            .map_err(|error| format!("{error:#}")),
+    );
+}
+
+#[then("it reports confirmed absence, not an error")]
+fn then_load_optional_confirms_absence(w: &mut RepoConfigDataWorld) {
+    assert_eq!(
+        w.load_optional_result,
+        Some(Ok(false)),
+        "an absent repo-config.yml must be Ok(None), not an error nor a loaded config"
+    );
+}
+
+#[then("it reports an error and never prints a success or SKIPPED line")]
+fn then_load_optional_errors_loudly(w: &mut RepoConfigDataWorld) {
+    let result = w
+        .load_optional_result
+        .clone()
+        .expect("the loader step must run first");
+    assert!(
+        result.is_err(),
+        "unparseable YAML must be Err, never a fabricated success/None result: {result:?}"
+    );
+    let message = result.expect_err("checked above");
+    assert!(
+        !message.to_uppercase().contains("SKIPPED") && !message.to_uppercase().contains("SUCCESS"),
+        "the error must describe the parse failure, not a masked success/skip: {message}"
+    );
+}
+
+#[given("repo-config.yml declares a doctor .NET SDK path with a leading ./ segment")]
+fn given_dotnet_path_with_leading_curdir(w: &mut RepoConfigDataWorld) {
+    write(
+        w.repo.path(),
+        "repo-config.yml",
+        concat!(
+            "harness:\n  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n",
+            "coverage:\n  projects:\n    - name: p\n      levels: [unit]\n      specs: x\n",
+            "doctor:\n  dotnet-global-json: ./tooling/sdk/global.json\n",
+        ),
+    );
+}
+
+#[when("repo-config validate runs")]
+fn when_repo_config_validate_runs(w: &mut RepoConfigDataWorld) {
+    let mut output = Vec::new();
+    let result = repo_config_validate::run_at_root(w.repo.path(), &mut output);
+    w.validate_ok = result.is_ok();
+    w.validate_output = String::from_utf8_lossy(&output).into_owned();
+}
+
+#[then("it rejects the value naming the current-directory component")]
+fn then_validate_rejects_curdir(w: &mut RepoConfigDataWorld) {
+    assert!(
+        !w.validate_ok,
+        "a leading ./ configured path must be rejected; output: {}",
+        w.validate_output
+    );
+    assert!(
+        w.validate_output.contains("current-directory"),
+        "the rejection must name the ./ current-directory component; output: {}",
+        w.validate_output
+    );
+}
+
+#[given("repo-config.yml declares a path to a file that already exists")]
+fn given_path_to_existing_file(w: &mut RepoConfigDataWorld) {
+    write(
+        w.repo.path(),
+        "tooling/sdk/global.json",
+        r#"{"sdk":{"version":"9.0.100"}}"#,
+    );
+}
+
+#[when("the configured path is confined to the repository root")]
+fn when_confined_to_repo_root(w: &mut RepoConfigDataWorld) {
+    w.confined_path = Some(
+        repo_config::confined_repo_path(w.repo.path(), "tooling/sdk/global.json")
+            .expect("an existing configured file must resolve"),
+    );
+}
+
+#[then("the resolved path reads as the existing regular file, not a directory")]
+fn then_resolved_path_reads_as_file(w: &mut RepoConfigDataWorld) {
+    let resolved = w.confined_path.clone().expect("path step must run first");
+    assert!(
+        !resolved.to_string_lossy().ends_with('/'),
+        "resolved path {} must not carry a trailing separator (the ENOTDIR regression)",
+        resolved.display()
+    );
+    let content = std::fs::read_to_string(&resolved)
+        .expect("resolved path must be readable as a regular file, not ENOTDIR");
+    assert!(content.contains("9.0.100"));
 }
 
 fn gates_section_deserializes_gate_entries() {

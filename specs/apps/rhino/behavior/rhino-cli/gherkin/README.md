@@ -40,7 +40,8 @@ behavior/rhino-cli/gherkin/
 
 | File                                    | Command(s)                    | Scenarios |
 | --------------------------------------- | ----------------------------- | --------- |
-| `repo-governance-emoji-audit.feature`   | `convention emoji validate`   | 5         |
+| `convention-audit.feature`              | `convention audit`            | 1         |
+| `repo-governance-emoji-audit.feature`   | `convention emoji validate`   | 6         |
 | `repo-governance-license-audit.feature` | `convention license validate` | 4         |
 
 ### ddd
@@ -52,11 +53,12 @@ behavior/rhino-cli/gherkin/
 
 ### env
 
-| File                  | Command(s)    | Scenarios |
-| --------------------- | ------------- | --------- |
-| `env-backup.feature`  | `env backup`  | 18        |
-| `env-init.feature`    | `env init`    | 4         |
-| `env-restore.feature` | `env restore` | 13        |
+| File                             | Command(s)     | Scenarios |
+| -------------------------------- | -------------- | --------- |
+| `env-backup.feature`             | `env backup`   | 21        |
+| `env-init.feature`               | `env init`     | 4         |
+| `env-restore.feature`            | `env restore`  | 16        |
+| `env-validate-app-drift.feature` | `env validate` | 3         |
 
 ### env-contract
 
@@ -69,25 +71,25 @@ behavior/rhino-cli/gherkin/
 | File                             | Command(s)                            | Scenarios |
 | -------------------------------- | ------------------------------------- | --------- |
 | `gate-binary-resolution.feature` | `gate run` (binary resolution)        | 4         |
-| `gate-declaration.feature`       | `repo-config validate` / `gate list`  | 9         |
+| `gate-declaration.feature`       | `repo-config validate` / `gate list`  | 11        |
 | `gate-emission.feature`          | `gate emit`                           | 5         |
-| `gate-enumeration.feature`       | `gate list`                           | 7         |
-| `gate-execution.feature`         | `gate run`                            | 25        |
-| `gate-validation.feature`        | `gate validate`                       | 20        |
-| `parity-manifest.feature`        | `parity manifest generate`/`validate` | 4         |
+| `gate-enumeration.feature`       | `gate list`                           | 8         |
+| `gate-execution.feature`         | `gate run`                            | 30        |
+| `gate-validation.feature`        | `gate validate`                       | 26        |
+| `parity-manifest.feature`        | `parity manifest generate`/`validate` | 5         |
 
 ### git
 
 | File                     | Command(s)       | Scenarios |
 | ------------------------ | ---------------- | --------- |
-| `git-pre-commit.feature` | `git pre-commit` | 1         |
+| `git-pre-commit.feature` | `git pre-commit` | 5         |
 
 ### governance
 
 | File                              | Command(s)                         | Scenarios |
 | --------------------------------- | ---------------------------------- | --------- |
-| `governance-word-budget.feature`  | `governance word-budget validate`  | 6         |
-| `governance-readme-index.feature` | `governance readme-index validate` | 15        |
+| `governance-word-budget.feature`  | `governance word-budget validate`  | 20        |
+| `governance-readme-index.feature` | `governance readme-index validate` | 19        |
 
 ### harness
 
@@ -115,18 +117,19 @@ behavior/rhino-cli/gherkin/
 
 | File                                        | Command(s)                      | Scenarios |
 | ------------------------------------------- | ------------------------------- | --------- |
-| `docs-validate-frontmatter.feature`         | `md frontmatter validate`       | 5         |
-| `docs-validate-heading-hierarchy.feature`   | `md heading-hierarchy validate` | 4         |
-| `docs-validate-links.feature`               | `md links validate`             | 4         |
-| `docs-validate-mermaid.feature`             | `md mermaid validate`           | 22        |
+| `docs-validate-frontmatter.feature`         | `md frontmatter validate`       | 11        |
+| `docs-validate-heading-hierarchy.feature`   | `md heading-hierarchy validate` | 12        |
+| `docs-validate-links.feature`               | `md links validate`             | 10        |
+| `docs-validate-mermaid.feature`             | `md mermaid validate`           | 39        |
 | `docs-validate-naming.feature`              | `md naming validate`            | 3         |
+| `md-audit.feature`                          | `md audit`                      | 1         |
 | `repo-governance-frontmatter-audit.feature` | `md frontmatter-dates validate` | 5         |
 
 ### repo-config
 
 | File                  | Command(s)                                                 | Scenarios |
 | --------------------- | ---------------------------------------------------------- | --------- |
-| `data-driven.feature` | N/A — data-driven-behavior regression (no single CLI verb) | 5         |
+| `data-driven.feature` | N/A — data-driven-behavior regression (no single CLI verb) | 9         |
 
 ### repo-config-validate
 
@@ -138,16 +141,16 @@ behavior/rhino-cli/gherkin/
 
 | File                                         | Command(s)                                 | Scenarios |
 | -------------------------------------------- | ------------------------------------------ | --------- |
-| `repo-governance-audit.feature`              | `repo-governance audit`                    | 5         |
+| `repo-governance-audit.feature`              | `repo-governance audit`                    | 6         |
 | `repo-governance-layer-coherence.feature`    | `repo-governance layer-coherence validate` | 3         |
 | `repo-governance-traceability-audit.feature` | `repo-governance traceability validate`    | 5         |
-| `repo-governance-vendor-audit.feature`       | `repo-governance vendor validate`          | 7         |
+| `repo-governance-vendor-audit.feature`       | `repo-governance vendor validate`          | 12        |
 
 ### spec-coverage
 
 | File                             | Command(s)       | Scenarios |
 | -------------------------------- | ---------------- | --------- |
-| `spec-coverage-validate.feature` | `specs coverage` | 10        |
+| `spec-coverage-validate.feature` | `specs coverage` | 12        |
 
 ### specs
 
@@ -155,11 +158,11 @@ behavior/rhino-cli/gherkin/
 | --------------------------------- | ------------------------------------------------------------------------------------------- | --------- |
 | `behavior-coverage.feature`       | `specs behavior-coverage validate`                                                          | 6         |
 | `domain-coverage.feature`         | `specs behavior-coverage validate` (domain allowlist gate)                                  | 2         |
-| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                               | 9         |
-| `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 2         |
+| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                               | 13        |
+| `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 3         |
 | `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                        | 1         |
-| `harness-bindings.feature`        | `harness bindings validate`                                                                 | 1         |
-| `harness-registry-driven.feature` | `harness duplication validate`                                                              | 1         |
+| `harness-bindings.feature`        | `harness bindings validate`                                                                 | 2         |
+| `harness-registry-driven.feature` | `harness duplication validate`                                                              | 2         |
 | `specs-audit.feature`             | `specs audit`                                                                               | 1         |
 | `validate-adoption.feature`       | `specs structure validate` (merged; scenarios exercise `validate_spec_adoption` in-process) | 4         |
 | `validate-counts.feature`         | `specs counts validate`                                                                     | 4         |
@@ -169,10 +172,11 @@ behavior/rhino-cli/gherkin/
 
 ### system
 
-| File                         | Command(s) | Scenarios |
-| ---------------------------- | ---------- | --------- |
-| `cargo-target-share.feature` | `doctor`   | 18        |
-| `doctor.feature`             | `doctor`   | 17        |
+| File                             | Command(s)                                             | Scenarios |
+| -------------------------------- | ------------------------------------------------------ | --------- |
+| `cargo-target-share.feature`     | `doctor`                                               | 18        |
+| `doctor.feature`                 | `doctor`                                               | 17        |
+| `fsharp-tool-invocation.feature` | N/A — F# lint-target manifest regression (no CLI verb) | 1         |
 
 ### test-coverage
 

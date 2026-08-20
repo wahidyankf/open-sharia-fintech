@@ -32,3 +32,23 @@ Feature: Repo-specific behaviour is data-driven from repo-config.yml
     Given the Doctor configuration declares a .NET SDK path
     When Doctor resolves its required .NET SDK version
     Then the configured global.json supplies that version
+
+  Scenario: A confirmed-absent repo-config.yml yields no mirrors and exits cleanly
+    Given no repo-config.yml exists in the repository
+    When the optional repo-config loader runs
+    Then it reports confirmed absence, not an error
+
+  Scenario: An unreadable repo-config.yml is a loud error, never a silent success
+    Given a repo-config.yml that is not valid YAML
+    When the optional repo-config loader runs
+    Then it reports an error and never prints a success or SKIPPED line
+
+  Scenario: A leading ./ in a configured path is rejected
+    Given repo-config.yml declares a doctor .NET SDK path with a leading ./ segment
+    When repo-config validate runs
+    Then it rejects the value naming the current-directory component
+
+  Scenario: An existing configured file resolves without a trailing separator
+    Given repo-config.yml declares a path to a file that already exists
+    When the configured path is confined to the repository root
+    Then the resolved path reads as the existing regular file, not a directory

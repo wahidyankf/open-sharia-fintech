@@ -765,6 +765,13 @@ fn when_m_exclude_plans_done(w: &mut DocsWorld) {
     w.exec(&["md", "mermaid", "validate", "--exclude", "plans/done"]);
 }
 
+// Cycle-4 F1/F5 regression: `--exclude ""` used to make `path_is_under(rel, "")`
+// true for every `rel`, silently emptying the scanned file set with exit 0.
+#[when("the developer runs docs validate-mermaid with an empty --exclude value")]
+fn when_m_exclude_empty(w: &mut DocsWorld) {
+    w.exec(&["md", "mermaid", "validate", "--exclude", ""]);
+}
+
 // --- mermaid Then steps ---
 
 #[then("the output reports no violations")]
@@ -897,6 +904,16 @@ fn then_mentions_docs_file(w: &mut DocsWorld) {
     let out = w.stdout();
     let f = w.file_b.clone().expect("fixture set file_b");
     assert!(out.contains(&f), "got: {out}");
+}
+
+#[then("the output does mention the plans/done file")]
+fn then_mentions_plans_done_file(w: &mut DocsWorld) {
+    let out = w.stdout();
+    let f = w.file_a.clone().expect("fixture set file_a");
+    assert!(
+        out.contains(&f),
+        "an empty --exclude value must exclude nothing; got: {out}"
+    );
 }
 
 #[then("the output identifies the file under specs/")]
