@@ -15,12 +15,11 @@ Two other repositories sit nearby, and neither is a copy of this one.
 
 `ose-private` holds authorized product operations and is closed to the public.
 
-[`ose-primer`](https://github.com/wahidyankf/ose-primer) is a separate starter project, openly
-licensed like this one and covering several programming languages. It grew out of earlier OSE
-practice and is free to diverge from it.
+[`ose-primer`](https://github.com/wahidyankf/ose-primer) is a separate, openly licensed
+multi-language starter. It grew out of earlier OSE practice and is free to diverge from it.
 
-The [repository comparison](./docs/reference/related-repositories.md) spells out which one answers
-which question.
+The [repository comparison](./docs/reference/related-repositories.md) says which one answers which
+question.
 
 External contributions are currently closed while the project stabilizes its product and engineering
 patterns.
@@ -36,9 +35,8 @@ Choose the path that fits what you need:
 
 OSE works toward enterprise systems that make Sharia compliance a design constraint from the start.
 The repository brings together product delivery, Shariah and regulatory research, enterprise-domain
-research, security and governance work, platform engineering, and public learning. These streams
-move when their own evidence and dependencies are ready; they do not wait for one portfolio-wide
-stage.
+research, security and governance work, platform engineering, and public learning. Each stream moves
+when its own evidence and dependencies are ready, not on one portfolio-wide stage.
 
 The current product and public surfaces are:
 
@@ -66,9 +64,8 @@ deployable applications and shared libraries while Nx coordinates their developm
 
 ## 🧰 Run OSE locally
 
-This first run starts `ose-www`, the OSE Platform website, at <http://localhost:3100>. It is a
-small, visible way to explore the product without needing to understand every service in the
-repository.
+This first run starts `ose-www`, the OSE Platform website, at <http://localhost:3100> — a small,
+visible way into the product that needs no knowledge of the other services.
 
 Want a paced walkthrough with expected results and recovery steps? Follow
 [Getting started with OSE Public](./docs/tutorials/getting-started-with-ose-public.md).
@@ -85,8 +82,8 @@ Before installing dependencies, have these tools available:
   [`package.json`](./package.json).
 - Rust and Cargo. The repository’s tool checker is a Rust command-line application, so Cargo must
   exist before it can check or install other missing tools.
-- Docker and `jq` only when you move into container-based or broader local-tooling work. They are
-  not needed for the first `ose-www` website run.
+- Docker and `jq` only for container-based or broader local-tooling work. Neither is needed for the
+  first `ose-www` website run.
 
 Follow [Set up your development environment](./docs/how-to/setup-development-environment.md) for
 macOS or Ubuntu installation commands and recovery steps for a missing tool.
@@ -100,16 +97,16 @@ npm install
 ```
 
 `npm install` installs the workspace dependencies, sets up Git hooks, and runs a broad repository
-tool check. Follow the onboarding tutorial's focused check for the website path; install Docker or
-other optional tools only when you choose work that needs them. To repair a required tool after you
-have installed it, run:
+tool check. Follow the onboarding tutorial's focused check for the website path; install Docker and
+other optional tools only when your chosen work needs them. To repair a required tool after
+installing it, run:
 
 ```bash
 npm run doctor -- --fix
 ```
 
-When the focused check is green, you can run the public website. If Cargo, Volta, or another tool
-needed for the work you chose is still missing, return to the
+When the focused check is green, run the public website. If Cargo, Volta, or another tool it names
+is still missing, return to the
 [setup guide](./docs/how-to/setup-development-environment.md) rather than bypassing the check.
 
 ### Find and run the first project
@@ -135,10 +132,8 @@ Already using port 3100? Point the site somewhere else instead of guessing which
 OSE_WWW_PORT=4000 npm exec nx -- dev ose-www
 ```
 
-Two guides go further. The [Nx command guide](./docs/how-to/run-nx-commands.md) explains project
-discovery and other targets, and
-[Getting started with OSE Public](./docs/tutorials/getting-started-with-ose-public.md) walks this
-same first run with recovery steps.
+The [Nx command guide](./docs/how-to/run-nx-commands.md) explains project discovery and the other
+targets you can run.
 
 From there, read [how OSE applications fit together](./docs/reference/system-architecture/applications.md)
 or explore the [OSE Platform app](./apps/ose-www/) itself.
