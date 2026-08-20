@@ -85,7 +85,19 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md head
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate --exempt "*__linkedin__*.md" --exempt "CONTRIBUTING.md"
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git lockfile sync
 ```
+
+P0-003 read the live registry and found it declares 29 `pre-commit` entries, so the block above is a
+scoped subset rather than the whole surface. The subset is correct for this plan — the omitted
+entries are language formatters and linters (`rustfmt`, `fantomas`, `ruff`, `gofmt`, `shfmt`,
+`actionlint`, `shellcheck`, `hadolint`, and the rest) that no documentation-only diff can trigger.
+Three entries the block originally omitted **can** fire on this plan's own footprint and were added
+above during P0-003A: `repo-config validate` (Phase 3 may edit `repo-config.yml`),
+`convention emoji validate` (the reader journey uses purposeful emojis throughout), and
+`git lockfile sync` (Phase 3 edits the root `package.json` description).
 
 Repository-wide surface (`pre-push`): the authoritative command is the registry runner itself, the
 same one Iron Rule 5 of the
@@ -240,124 +252,508 @@ no PR.
 
 ## Phase 0: Environment, Safety, and Baseline
 
-- [ ] [AI] [P0-000] Create the exact gitignored Phase 0 execution record with the required schema —
-      acceptance: `git status --short` does not list the record and it contains no secret value.
-- [ ] [AI] [P0-001] Run `git status --short` in the repository root and record only path-level
+- [x] [AI] [P0-000] Create the exact gitignored Phase 0 execution record with the required schema —
+      acceptance: `git status --short` does not list the record and it contains no secret value. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md` (gitignored) ·
+      **Notes**: Record created with the declared
+      `Task ID | Date | Status | Files Changed | Commands/Evidence | Notes` schema.
+      `git status --short` returned empty and `git check-ignore -v` resolved the path to
+      `.gitignore:84:local-tmp/*`, so the record is untracked by construction. No secret value,
+      credential, hostname, or real `.env*` content is present.
+- [x] [AI] [P0-001] Run `git status --short` in the repository root and record only path-level
       dirty-state facts in the gitignored Phase 0 execution record — acceptance: no existing change
-      is claimed, edited, staged, or copied into plan evidence.
-- [ ] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` —
+      is claimed, edited, staged, or copied into plan evidence. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: Primary checkout reported 0 dirty paths. The plan worktree reported exactly one
+      modified path — this plan's own `delivery.md` carrying the P0-000 tick. No foreign or
+      preexisting change exists, so none was claimed, edited, staged, or copied into evidence.
+      Only path-level facts were recorded; no file content was read into the record.
+- [x] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` —
       acceptance: every future unit is based on current `origin/main`, with any divergence resolved
-      non-destructively before provisioning.
-- [ ] [AI] [P0-003] Run
+      non-destructively before provisioning. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: `git rev-parse main` and `git rev-parse origin/main` both returned `f23b504d8`,
+      and `git rev-list --left-right --count main...origin/main` returned `0 0`, so the local
+      branch was already current. One real divergence existed: the six plan documents lived only
+      on the plan branch in open draft PR #236, so a unit cut from `origin/main` would not have
+      contained `delivery.md`. It was resolved non-destructively — PR #236 was squash-merged after
+      every check passed with zero failures, and `git ls-tree -r --name-only origin/main` now
+      lists all six plan documents. No force push, rebase, reset, or history rewrite was used.
+      Plan-base SHA recorded for the Phase 7 identity-boundary check:
+      `028e8eed9e68112c49ccdee92d3cf29e70e6a4da`.
+- [x] [AI] [P0-003] Run
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text`
       — acceptance: the exact Markdown, generated-binding, and environment guard commands are
-      recorded in the execution record.
-- [ ] [AI] [P0-003A] Resolve every command named in the staged-file (`pre-commit`) “full unit gates”
+      recorded in the execution record. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: The command exited 0 and returned 29 registry entries, recorded verbatim in the
+      Phase 0 execution record. Markdown gates: `markdownlint-cli2`, `md mermaid validate`,
+      `md heading-hierarchy validate`, `md naming validate`, `md frontmatter validate`, and the
+      `prettier --write` mutation. Generated-binding gate: `harness bindings generate` (scope
+      `other`). Environment guard: `env staged-guard validate` (scope `other`, carve-out
+      `staged-only`). Three further entries fire on this plan's own footprint and are handed to
+      P0-003A for reconciliation: `repo-config validate`, `convention emoji validate`, and the
+      `git lockfile sync` mutation.
+- [x] [AI] [P0-003A] Resolve every command named in the staged-file (`pre-commit`) “full unit gates”
       block: each Nx target with `npm exec nx show project <project> -- --json`, and each `rhino-cli`
       subcommand against `rhino-cli <group> --help` — acceptance: every target and subcommand exists,
-      and any missing one is corrected in this document before first execution.
-- [ ] [AI] [P0-003B] Run
+      and any missing one is corrected in this document before first execution. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: `delivery.md`,
+      `learnings.md` · **Notes**: All five npm scripts resolve from `package.json`
+      (`format:md:check`, `lint:md`, `validate:sync`, `generate:bindings`, `doctor`). All 19
+      `rhino-cli` group + subcommand pairs the plan names exist, each carrying a `validate` leaf.
+      The `pre-commit` block declares no Nx target, so no `nx show project` resolution applied.
+      Nothing named was missing; the correction ran the other way — three live registry gates the
+      block omitted but this plan's footprint can trip (`repo-config validate`,
+      `convention emoji validate`, `git lockfile sync`) were added to the block. Recorded as
+      `learnings.md` L-001: a `rhino-cli` group always exits `2` without a subcommand, and
+      `help <group> <sub>` exits `2` too, so exit status cannot prove a subcommand exists —
+      parse the `Commands:` section instead.
+- [x] [AI] [P0-003B] Run
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-push --format=text`
       and diff the result against the prose summary in the “Repository-wide surface (`pre-push`)”
       block above — acceptance: the prose summary's gate list matches the live registry exactly, any
       drift is corrected in this document before first execution, and the execution record notes
-      whether `AGENTS.md`'s path-gated `vendor-independence-agents-md` entry is present.
-- [ ] [AI] [P0-004] Run the exact staged environment-file gate without staging anything —
-      acceptance: the baseline exits 0.
-- [ ] [AI] [P0-004A] Run the silent staged-credential pattern gate without staging anything —
-      acceptance: the baseline exits 0 and emits no candidate value.
-- [ ] [AI] [P0-005] Run `npm run format:md:check` and `npm run lint:md` in the primary checkout —
-      acceptance: baseline outcomes are recorded without modifying unrelated work.
-- [ ] [AI] [P0-006] Run
+      whether `AGENTS.md`'s path-gated `vendor-independence-agents-md` entry is present. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: The command exited 0 and returned exactly 16 entries, matching the prose summary
+      entry-for-entry with zero drift, so no correction was needed. Reconciled as 3 hand-wired
+      affected-projects checks + 5 broad validators (`md links validate`,
+      `governance readme-index validate`, `harness duplication validate`,
+      `parity manifest validate`, `env validate`) + 8 path-gated governance checks = 16.
+      `vendor-independence-agents-md` is **present**, running
+      `repo-governance vendor validate AGENTS.md`; since `AGENTS.md` is an `[E]` target in this
+      plan's File-Impact Analysis, that gate is live and applicable rather than theoretical.
+      Noted for later phases: `governance-readme-completeness` invokes the same
+      `governance readme-index validate` command as `governance-readme-index`, under a path-gated
+      rather than all-file-type scope.
+- [x] [AI] [P0-004] Run the exact staged environment-file gate without staging anything —
+      acceptance: the baseline exits 0. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: `git diff --cached --name-only` returned 0 staged paths first, confirming the
+      gate ran against an empty staged set. `env staged-guard validate` then exited 0 with no
+      output. No real `.env*` file was read, written, or quoted.
+- [x] [AI] [P0-004A] Run the silent staged-credential pattern gate without staging anything —
+      acceptance: the baseline exits 0 and emits no candidate value. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: The gate exited 0 and printed nothing, so no candidate value was emitted. A bare
+      pass would have been vacuous against an empty staged set, so two controls were added: `rg`
+      was confirmed to resolve (ripgrep 15.2.0), and the pattern was exercised against a synthetic
+      non-secret string generated inline, which fired as expected. The synthetic string was never
+      written to disk and is not a real credential.
+- [x] [AI] [P0-005] Run `npm run format:md:check` and `npm run lint:md` in the primary checkout —
+      acceptance: baseline outcomes are recorded without modifying unrelated work. - **Date**: 2026-08-20 · **Status**: Done (baseline red, ledgered paths clean) ·
+      **Files Changed**: `learnings.md` · **Notes**: Both unscoped repo-wide validators exit 1 on
+      preexisting violations, and every violation sits outside this program's ledgered paths, so
+      the scope-control clause above applies. `format:md:check`: 58 files, split 54 under
+      `apps/ayokoding-www/content/` and 4 under `plans/done/`, zero anywhere else.
+      `lint:md`: 565 error lines, **all** under `.fvm-cache/` — an untracked, gitignored vendored
+      Flutter SDK — and zero in tracked repository content. Both splits were verified by inverse
+      grep, not by inspection. Root cause of the markdownlint noise is recorded as `learnings.md`
+      L-003 and routed to a Phase 8 backlog item: `.fvm-cache/` is in `.gitignore` but in neither
+      `.markdownlintignore` nor the `ignores` array of `.markdownlint-cli2.jsonc`. It is not
+      fixed here because that path is outside this plan's File-Impact Analysis footprint. No
+      unrelated work was modified.
+- [x] [AI] [P0-006] Run
       `gh repo view --json nameWithOwner,description,homepageUrl,repositoryTopics,url,visibility` —
-      acceptance: only these safe fields are retained for rollback.
-- [ ] [AI] [P0-006A] Inspect the workflows and required PR checks this repository triggers and record
+      acceptance: only these safe fields are retained for rollback. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `local-tmp/repository-onboarding-readme-refresh/github-about-snapshot-before.json`
+      (gitignored) · **Notes**: The command exited 0. Only the six approved fields were requested
+      and retained; no token, collaborator, or private field was read, and all six values are
+      public repository metadata carrying no secret. Finding handed forward to Phase 4: the live
+      values **already equal** the `prd.md` contract — the description matches character for
+      character, the homepage is `https://oseplatform.com/`, and the topic set is the same ten
+      lowercase slugs. P4-003 should therefore record verified equality and skip mutation, leaving
+      P4-004 and P4-006 unfired.
+- [x] [AI] [P0-006A] Inspect the workflows and required PR checks this repository triggers and record
       their names — acceptance: every future PR unit has named CI checks and the exact run-polling
-      procedure.
-- [ ] [AI] [P0-007] Provision the plan worktree and the contract branch from `origin/main` —
+      procedure. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: Two workflows fire on a PR to `main`: **pr-quality-gate** (17 check runs) and
+      **validate-env** (one check run, `Validate env-contract surfaces (no drift)`). The
+      pr-quality-gate runs are: Detect affected languages; Build rhino-cli (gate profile);
+      Minimum version compatibility (all affected); Specs structure validation (all affected);
+      Auto-format affected (lint-staged); Enumerate registry CI gate groups; `governance`;
+      `harness`; `markdown`; `shell-docker-actions`; `specs`; `formatting-verify`; `Quality gate`;
+      plus the four language gates that skip on a documentation-only diff. Branch protection
+      requires exactly one context — `Quality gate`, the roll-up job. Every later PR unit polls
+      with `gh run list --branch <exact-branch>` then `gh run view <databaseId>` at two-minute
+      intervals, plus `gh pr checks <pr> --required`; never `gh run watch`.
+- [x] [AI] [P0-007] Provision the plan worktree and the contract branch from `origin/main` —
       acceptance: `git worktree list` shows the declared path, and the branch matches the Delivery
-      Boundaries table.
-- [ ] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the plan worktree —
-      acceptance: both exit 0 and no real `.env*` is accessed.
-- [ ] [AI] [P0-009] Run the baseline gates in the plan worktree and classify each repository-wide
+      Boundaries table. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None ·
+      **Notes**: `git worktree list` already showed the declared path
+      `worktrees/repository-onboarding-readme-refresh`, so no second
+      worktree was provisioned and the Worktree Cap holds with one worktree for the whole program.
+      `git checkout -b docs/repository-onboarding-contract origin/main` created the branch named
+      in the Delivery Boundaries table for phases 1–2, and `git merge-base HEAD origin/main`
+      equals `028e8eed9`, proving the unit is based on current `main`. The two uncommitted Phase 0
+      files carried across the switch without conflict. Local `main` in the primary checkout was
+      fast-forwarded `f23b504d8 → 028e8eed9` with `merge --ff-only`, guarded by an assertion that
+      it was on `main` with zero dirty paths; no work was done in the primary checkout.
+- [x] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the plan worktree —
+      acceptance: both exit 0 and no real `.env*` is accessed. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None tracked ·
+      **Notes**: Both commands exited 0. The worktree had no `node_modules` of its own before the
+      install, which is exactly the condition the workflow warns silently breaks a later
+      `nx affected` run. Doctor reports 15/16 tools OK with 0 missing and one warning — npm
+      v11.16.0 against the Volta pin of 11.11.0. That is preexisting local environment drift
+      rather than a gate failure (doctor still exits 0, and CI provisions its own toolchain), so
+      it is recorded rather than resolved by downgrading a global tool. Doctor's target-share step
+      created one shared link, found one already correct, and replaced one plain directory;
+      `git status --short` afterwards lists only this plan's own two uncommitted files, so nothing
+      tracked was mutated. No real `.env*` file was accessed. Confirmed for Phase 5B: Docker
+      v29.7.2 is present.
+- [x] [AI] [P0-009] Run the baseline gates in the plan worktree and classify each repository-wide
       result as ledgered-path or unrelated-baseline evidence — acceptance: every ledgered path is
-      clean and any unrelated baseline result is recorded without expanding scope.
+      clean and any unrelated baseline result is recorded without expanding scope. - **Date**: 2026-08-20 · **Status**: Done (surface green, one advisory red) ·
+      **Files Changed**: `learnings.md` · **Notes**:
+      `rhino-bin.sh gate run --surface=pre-push` exited 0, confirmed by a second identical run.
+      Eight of the sixteen registered gates executed; the eight path-gated governance gates did
+      not fire because no matching path had changed, which is the expected baseline shape.
+      `test-quick`, `compat-min-version`, `specs-structure`, `env-validate`, `md-links`, and
+      `harness-duplication` all passed, and `parity-manifest` reported
+      `apps/rhino-cli/parity-manifest.sha256 is current`, proving the identity boundary is intact
+      at baseline. `governance-readme-index` printed `README INDEX AUDIT FAILED: 425 finding(s)`.
+      **Classification**: all 425 findings are `high/unannotated` and every one sits under `docs/`
+      or `specs/` — verified by extracting and counting every path the report mentions (524
+      `specs/`, 326 `docs/`, nothing else). Those are exactly the two trees the plan's Out of scope
+      section hands to a separate follow-up plan, so they are unrelated-baseline evidence, not
+      ledgered-path failures. Every ledgered path is clean. Recorded as `learnings.md` L-004: this
+      validator prints `FAILED` yet exits 0, so text and exit status must be read as independent
+      signals. Constraint carried forward — this plan must not **add** a README-index finding in a
+      path it touches, even though it does not clear the existing backlog.
 
 ### Phase 0 Gate
 
-- [ ] [AI] [P0-G01] Verify every P0 execution-record row is complete and Phase 0 opened no PR, pushed
-      no branch, and mutated no metadata — acceptance: all baseline evidence is local and secret-free.
+- [x] [AI] [P0-G01] Verify every P0 execution-record row is complete and Phase 0 opened no PR, pushed
+      no branch, and mutated no metadata — acceptance: all baseline evidence is local and secret-free. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: `learnings.md` ·
+      **Notes**: All 14 P0 executable items carry a complete execution-record row (15 rows,
+      including the P0-002a merge sub-row). The tick/task assertion first read **13 ticks against
+      14 closed tasks**, exposing a silent no-op on P0-006A whose notes had landed but whose
+      checkbox was never flipped; it was repaired and the count now reads 14 = 14, with all 146
+      checkboxes still accounted for. Phase 0 pushed nothing — `git log origin/main..HEAD` returns
+      0 commits and `git ls-remote --heads origin 'docs/repository-onboarding-*'` returns 0
+      branches — and opened no PR. PR #236 merged during this phase, but that is the
+      pre-execution plan-documents PR, not one Phase 0 created. Metadata is unmutated: the
+      description length and homepage still match what P0-006 captured. Both evidence files
+      resolve to `.gitignore:84:local-tmp/*`, and the credential-pattern scan returned clean over
+      both the evidence directory and the tracked plan directory. Recorded as `learnings.md`
+      L-005: the per-gate count assertion is the only instrument that catches a tick that was
+      never attempted.
 
 > **Pause Safety**: reader documentation and metadata remain unchanged. To resume, inspect the P0
 > execution record and rerun only failed baselines.
 
 ## Phase 1: Corpus Inventory and Per-Document Task Register
 
-- [ ] [AI] [P1-000] Create `artifacts/execution-record-contract.md` and copy only sanitized Phase 0
+- [x] [AI] [P1-000] Create `artifacts/execution-record-contract.md` and copy only sanitized Phase 0
       outcomes from the local record — acceptance: every copied row uses the required schema and no
-      local path, dirty filename, or raw output enters the tracked artifact.
-- [ ] [AI] [P1-001] Create `artifacts/reader-doc-disposition-ose-public.md` with repository revision,
+      local path, dirty filename, or raw output enters the tracked artifact. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/execution-record-contract.md` · **Notes**: All 15 Phase 0 rows plus the P1-000
+      row were written under the declared
+      `Task ID | Date | Status | Files Changed | Commands/Evidence | Notes` schema — 16 rows
+      total. Sanitization was asserted rather than assumed: a grep for `/Users/` and `~/ose-projects`
+      returns 0, a grep for raw validator output lines returns 0, and the credential-pattern scan
+      returns clean. No dirty working-copy filename from P0-001 was carried over; the row states
+      only that the sole dirty path was this plan's own file. `md heading-hierarchy validate`,
+      `md naming validate`, and `markdownlint-cli2` on the new file all exit 0 with 0 errors.
+- [x] [AI] [P1-001] Create `artifacts/reader-doc-disposition-ose-public.md` with repository revision,
       document kind, exact path, audience, purpose, disposition, owning unit, task ID, direct action,
       source of truth, exact applicable command, acceptance criterion, Date, Status, Files Changed,
       Commands/Evidence, and Notes — acceptance: the schema supports one executable row per tracked
       Markdown file without quoting document bodies, and explicitly declares the direct-action,
       source-of-truth, exact-command, and acceptance-criterion fields that P1-005 requires every
-      expanded row to carry.
-- [ ] [AI] [P1-002] Populate the ledger from
-      `git ls-tree -r --name-only <recorded-origin-main-sha> -- '*.md'` — acceptance: every committed
-      README is audit-required and each other path is classified reader-related, historical,
-      generated, identity-bound, or `not-reader-doc` with a reason.
-- [ ] [AI] [P1-003] Mark `plans/done/` and archived trees historical, generated mirrors generated, and
+      expanded row to carry. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: The ledger declares all
+      seventeen row fields, and the four P1-005 requires — direct action, source of truth, exact
+      applicable command, acceptance criterion — are each declared explicitly and cross-referenced
+      to P1-005 by name. It quotes no document body, command output, configuration value, or
+      credential. **Scale decision recorded here because it shapes P1-002 and P1-007**: the
+      corpus is 9,294 tracked Markdown files, so the schema carries per-document rows for
+      audit-required and reader-related documents and carries the bulk classes (historical,
+      generated, identity-bound, `not-reader-doc`) by classification rule plus matched count. The
+      acceptance asks the schema to _support_ one executable row per tracked file, which it does;
+      exhaustiveness is proven by the Rule Coverage identity — matched counts must sum to the
+      tracked total with zero unmatched — rather than by literal row-per-file, which previously
+      produced an 8.5 MB artifact. The skeleton is 8.3 KB. `markdownlint-cli2`,
+      `md heading-hierarchy validate`, and `convention emoji validate` all exit 0.
+- [x] [AI] [P1-002] Populate the ledger from
+      `git ls-tree -r --name-only <recorded-origin-main-sha> | grep -E '\.md$'` — acceptance: every
+      committed README is audit-required and each other path is classified reader-related,
+      historical, generated, identity-bound, or `not-reader-doc` with a reason, and the enumerated
+      count is non-zero and equals `git ls-files '*.md'` at the same revision. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md`, `tech-docs.md`, `delivery.md`,
+      `learnings.md` · **Notes**: **The documented command was broken and was corrected before
+      use.** `git ls-tree -r --name-only <sha> -- '*.md'` returns **0 paths and exits 0** —
+      `git ls-tree` does not accept glob pathspec magic (`:(glob)` fails outright with
+      `pathspec magic not supported by this command`), so the wildcard matched nothing. The
+      acceptance "every path is classified" would have passed vacuously on an empty list. Fixed
+      as a class, not a site: all three occurrences across `delivery.md` (P1-002, P7-001) and
+      `tech-docs.md` now read
+      `git ls-tree -r --name-only <sha> \| grep -E '\.md$'`, and both inventory acceptances gained
+      a non-zero floor plus a cross-check. A residual grep for the broken form returns 0.
+      Recorded as `learnings.md` L-006. **Population**: 9,294 paths enumerated at
+      `028e8eed9`, matching `git ls-files '*.md'` exactly (9,294 = 9,294) — the independent
+      cross-check the amended acceptance requires. Thirteen ordered first-match-wins rules were
+      written into the ledger with a stated reason each, and their matched counts sum to 9,294
+      with **zero unmatched**. All 1,004 READMEs are `audit-required` under rule 1, which is
+      evaluated first so every README carries an explicit disposition before P1-003 applies any
+      exemption. `markdownlint-cli2` and `prettier --check` both exit 0 on the ledger.
+- [x] [AI] [P1-003] Mark `plans/done/` and archived trees historical, generated mirrors generated, and
       every path under `apps/rhino-cli/` or `specs/apps/rhino/behavior/rhino-cli/` `identity-bound` —
-      acceptance: none is scheduled for hand-editing.
-- [ ] [AI] [P1-004] Re-verify each 2026-08-06 audit finding recorded in `brd.md` against the recorded
+      acceptance: none is scheduled for hand-editing. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: An `Exemption Overrides`
+      section now records all three exempt trees with their final disposition, path count, README
+      count, and the reason the plan does not hand-edit them: `identity-bound` 27 paths (20
+      READMEs), `historical-exempt` 1,390 (236), `generated` 649 (117) — **2,066 paths, 373 of
+      them READMEs**. The ordering matters and is stated in the ledger: rule 1 audits all 1,004
+      READMEs first, and these 373 reach an exempt verdict _through_ that audit rather than by
+      being skipped, which is what lets P1-002's "every committed README is audit-required" and
+      this item's "none is scheduled for hand-editing" both hold literally. Effective dispositions
+      after the overrides — 631 `audit-required`, 183 `reader-related`, 6,414 `not-reader-doc`,
+      1,390 `historical-exempt`, 649 `generated`, 27 `identity-bound` — sum to 9,294, the tracked
+      total, so the overrides neither dropped nor duplicated a path. All 27 identity-bound paths
+      were enumerated explicitly. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P1-004] Re-verify each 2026-08-06 audit finding recorded in `brd.md` against the recorded
       revision — acceptance: every finding is marked reproduced or not-reproduced with evidence, and a
-      non-reproducing finding creates no edit row.
-- [ ] [AI] [P1-005] Expand each audit-required or reader-related document into one exact `[AI]` task
+      non-reproducing finding creates no edit row. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: All seven `brd.md` rows were
+      re-run against `028e8eed9`; the ledger's new `Audit Finding Re-Verification` section
+      carries a verdict, the evidence, and the consequence for each. **Three no longer
+      reproduce** and correctly create no edit row: the onboarding dead-end
+      (`docs/tutorials/README.md` and the getting-started tutorial both exist and `docs/README.md`
+      links each), the contribution contradiction (`CONTRIBUTING.md` states intake is closed,
+      documents the internal worktree-to-draft-PR flow, and the root README agrees), and the
+      product-navigation gap (the root README already opens with a path chooser carrying
+      `🧭 Understand the product` and `🧰 Run OSE locally`). **One reproduces**: no project
+      declares a `specs:coverage` target — the real names are `test:specs`,
+      `specs:behavior:coverage`, `specs:structure-validation`, `specs:e2e:coverage`,
+      `specs:domain:coverage` — and 7 in-scope documents still name it, plus
+      `apps/rhino-cli/README.md` which is `identity-bound` and therefore audited but never edited
+      here. **Two reproduce partly**: the setup-drift finding holds only on its version half (9
+      in-scope files pin `24.13.1` against the authoritative Volta pin `24.16.0` / npm `11.11.0`)
+      and not on its clone-directory half (every reader doc consistently uses `ose-public`); the
+      repetitive-voice finding measures as 4 in-scope stock openings and 55 in-scope uses of
+      `comprehensive`, which is judgment-bearing and so routes to the Human Voice Contract review
+      in Phases 3 and 7 rather than to mechanical find-and-replace rows. Findings were narrowed
+      against the 814-path in-scope set (631 `audit-required` + 183 `reader-related`) so no
+      out-of-scope tree inflates the work. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P1-005] Expand each audit-required or reader-related document into one exact `[AI]` task
       row — acceptance: each row names one path, one direct action, its source of truth, the exact
-      applicable command, a concrete acceptance criterion, and implementation fields.
-- [ ] [AI] [P1-006] Add explicit `planned-new` task rows for this plan's execution artifacts and any
+      applicable command, a concrete acceptance criterion, and implementation fields. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: 814 rows for 814 documents —
+      631 `audit-required` READMEs plus 183 `reader-related` documents — each carrying all
+      seventeen declared fields with no blank required field. The row set was diffed against the
+      in-scope path set and is **identical**: 814 extracted, 814 unique, zero duplicates, zero
+      missing, zero extra. Each row's direct action, source of truth, command, and acceptance are
+      derived from the P1-004 verdicts rather than invented, so the four mechanical defect classes
+      produce falsifiable per-file criteria — `grep -F 'specs:coverage'` returns 0 (7 files),
+      `grep -F '24.13.1'` returns 0 (9 files), the opening names the reader's purpose (4 files),
+      `grep -ci comprehensive` returns 0 (55 files) — and the 745 documents with no mechanical
+      defect carry an audit action whose criterion is that links resolve, commands exist, and the
+      voice review records no finding. That is the plan's "record `verified-unchanged` rather than
+      manufacture an edit" rule expressed per row. Task IDs route 1 row to P3-003, 1 to P3-004, 2
+      to P3-007, and 810 to P3-008. A first integrity check appeared to show 806 unique paths; that
+      was a faulty extraction regex greedily matching the last backticked field rather than the
+      path column, and column-indexed extraction confirms 814. `prettier --check`,
+      `markdownlint-cli2`, `md heading-hierarchy validate`, and `convention emoji validate` all
+      exit 0 on the 672 KB ledger.
+- [x] [AI] [P1-006] Add explicit `planned-new` task rows for this plan's execution artifacts and any
       new document before evaluating inventory drift — acceptance: future known Markdown paths are not
-      mistaken for unexplained extras.
-- [ ] [AI] [P1-007] Reconcile the ledger with its recorded `origin/main` tree plus `planned-new` rows
+      mistaken for unexplained extras. - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+      `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: Seven `planned-new` rows now
+      carry a path, owning unit, task ID, declaration-time status, and reason:
+      `execution-record-contract.md` and `reader-doc-disposition-ose-public.md` (both already
+      created), `execution-record-public.md` (P3-001A), `execution-record-fixes.md` (P6-001A,
+      conditional on Phase 5 finding a defect), `execution-record-closeout.md` (P8-001A),
+      `evidence/README.md` (P8-002), and any `plans/backlog/` plan P8-004A routes a code-homed
+      learning into. Verified against the recorded revision: the plan directory held exactly six
+      tracked Markdown files at `028e8eed9`, and the working tree now holds eight — the two
+      already-created artifacts — so every present extra is declared. Two known non-additive
+      movements are declared for the same reason rather than left to surprise a drift check:
+      P9-002 renames the whole plan directory into `plans/done/`, and P8-004B may fold a learning
+      into an existing `plans/ideas/` two-pager instead of adding a file. Evidence screenshots and
+      captured `curl` responses are not Markdown and are stated as outside this inventory.
+      `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P1-007] Reconcile the ledger with its recorded `origin/main` tree plus `planned-new` rows
       — acceptance: zero missing, duplicate, or unexplained extra paths and zero blank task fields.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: fourteen machine-evaluated checks
+    written into the ledger's Reconciliation section, all PASS. 9,294 tracked Markdown paths at the
+    recorded revision, agreeing exactly with the independent `git ls-files '*.md'` enumerator; every
+    path matched by exactly one rule; rule-coverage counts sum to 9,294 with zero unmatched and zero
+    doubly classified. The 814 per-document rows are set-identical to the in-scope set — zero
+    duplicates, zero in-scope paths without a row, zero row paths absent from the recorded tree. Zero
+    rows carry a blank required field. Every working-tree Markdown path absent from the recorded tree
+    is declared in § Planned-New Paths, so unexplained extras is 0. Zero `follow-up-required` states
+    outstanding, so nothing here blocks archival. `prettier --check` and `markdownlint-cli2` exit 0.
 
 ### Phase 1 Gate
 
-- [ ] [AI] [P1-G01] Have an independent AI plan reviewer sample task rows from every document class —
+- [x] [AI] [P1-G01] Have an independent AI plan reviewer sample task rows from every document class —
       acceptance: exact per-document execution is ready and every row is individually executable.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md`, `delivery.md`, `learnings.md` · **Notes**: five
+    review rounds against an independent AI reviewer, PASS on the fifth. Rounds 1–4 returned FAIL and
+    each found a real defect. Round 1: 745 of 814 rows named a repo-wide `md links validate` whose
+    312 broken links all sit in `plans/done/**`, so the clause could never pass; scoped past the
+    exact trees Classification Rule 3 declares exempt. Round 1 also found the "every command exists"
+    sub-clause unbacked by any command, and the `Disposition` column carrying interim labels absent
+    from the stated vocabulary — the latter fixed with a documented interim-label subsection plus a
+    mechanical retirement in P7-001. Round 3: my Nx sub-clause keyed on the literal string
+    `nx affected -t`, missing `nx run [project]:<target>` and friends; made shape-agnostic. Round 4:
+    the npm-script check could not tell a claim from a teaching example — swept 297 command mentions
+    across 71 documents and found four non-existent scripts, of which three are correctly absent
+    (generic CI examples, "Future"/"pending" labels) and one is a real defect; carve-out added that
+    exempts on framing while still failing an unresolvable command presented as current. I also
+    caught and removed a self-inflicted escaped pipe that split the table under any pipe-field parser
+    (745 rows at 20 fields against 69 at 19; now uniform at 19 across all 814). Round 5 swept 142
+    concrete Nx project:target pairs and 12 npm scripts, found zero genuinely ambiguous mentions and
+    no loophole, and confirmed the carve-out passes the three documents it must exempt and still
+    fails the one it must catch. Two pre-existing documentation defects surfaced for Phase 3 to fix
+    under P3-008: `docs/explanation/.../c4-architecture-model/README.md` names `validate:diagrams` as
+    a current tool, and `apps/organiclever-be/README.md` names a `fmt` target that does not exist.
+    `prettier --check` and `markdownlint-cli2` exit 0.
 
 > **Pause Safety**: the corpus is enumerated and task-shaped, but reader docs remain unchanged. To
 > resume, reconcile the ledger against current `origin/main` before editing anything.
 
 ## Phase 2: Documentation Contract
 
-- [ ] [AI] [P2-001] Record the source-of-truth matrix from `tech-docs.md` in the ledger — acceptance:
+- [x] [AI] [P2-001] Record the source-of-truth matrix from `tech-docs.md` in the ledger — acceptance:
       the ledger names one authority for versions, projects, ports, product facts, relationships,
       contribution policy, and metadata.
-- [ ] [AI] [P2-002] Record the Human Voice Contract and reader paths from `prd.md` in the audit rubric
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: new `## Documentation Contract`
+    section opened in the ledger with `### Source of Truth (P2-001)` as its first subsection. Ten
+    fact classes each name exactly one authority, how a document may carry the fact, and the command
+    that verifies it — covering all seven the acceptance requires (versions, projects, ports, product
+    facts, relationships, contribution policy, metadata) plus targets, behavior/design, and the
+    package description. Added the rule that no document may carry a second independently maintained
+    copy of a fact, and called out version pins as the sharpest case since Phase 1 re-verified pin
+    drift as still live in nine documents. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-002] Record the Human Voice Contract and reader paths from `prd.md` in the audit rubric
       — acceptance: product purpose leads, jargon is explained, emoji is purposeful, and openings are
       not templated clones.
-- [ ] [AI] [P2-003] Record macOS and Ubuntu as supported and WSL2 as possibly workable but unsupported
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: `### Voice and Reader Paths
+(P2-002)` records the rubric as twelve numbered clauses V1–V12, each paired with what its failure
+    looks like so a reviewer can point at a line rather than argue about tone. All four acceptance
+    conditions are named clauses: purpose leads (V1), jargon explained on first use (V3), emoji as
+    labelled wayfinding only (V10), and no templated openings (V5). The shared opening's five
+    questions are recorded in order, as are both reader paths with their ordered stages, and the
+    sibling-repository limit — one-line descriptions and links, no path or metadata change. Noted
+    that V4 and V5 are the corpus's weakest clauses, with `comprehensive` live in 55 tracked
+    documents. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-003] Record macOS and Ubuntu as supported and WSL2 as possibly workable but unsupported
       and unverified — acceptance: every platform task uses the same wording contract.
-- [ ] [AI] [P2-004] Record closed external contribution intake and authorized `worktree-to-pr`
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: `### Supported Platforms (P2-003)`
+    records three states — supported and verified (macOS, Ubuntu), possibly workable but unsupported
+    (WSL2), and not addressed (native Windows) — each with what a document may and may not say. The
+    WSL2 sentence is fixed rather than paraphrasable: "may work", "does not verify", "does not
+    support", with the note that softening any of the three turns it into a promise and breaks the
+    contract. Native Windows gets nothing at all, closing the "should also work" gap. Also folded in
+    the bootstrap-order contract, since the audit's circular prerequisite — doctor runs through the
+    Rust toolchain, so it cannot install Rust on a machine without Cargo — is a platform claim in
+    substance. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-004] Record closed external contribution intake and authorized `worktree-to-pr`
       guidance — acceptance: no task introduces an invitation, response-time promise, or
       direct-`main` workflow.
-- [ ] [AI] [P2-005] Record the exact GitHub description, homepage URL, and topic array from `prd.md` —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: `### Contribution Posture (P2-004)`
+    records the two halves — closed external intake, `worktree-to-pr` for authorized contributors —
+    as a must/may-not table so the acceptance is checkable per document rather than per feeling. All
+    three prohibited moves are named explicitly on the may-not side: no invitation to the general
+    public, no response-time or triage promise, no direct-`main` workflow, and none of them as an
+    example or aside either. Added the must-side clause that a would-be external contributor is
+    routed somewhere useful rather than dead-ended, since closed intake answered by silence is its
+    own defect. Recorded that Phase 1 re-verified this finding as no longer reproducing, so the
+    contract's job is to hold the line through the refresh rather than repair it, and declared the
+    uppercase `CONTRIBUTING.md` filename exemption so no task renames it. `prettier --check` and
+    `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-005] Record the exact GitHub description, homepage URL, and topic array from `prd.md` —
       acceptance: metadata execution cannot improvise values.
-- [ ] [AI] [P2-006] Record the read, write, staged-diff, identity-boundary, and knowledge-capture
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: `### Repository Metadata (P2-005)`
+    carries the description and homepage verbatim plus the ten lowercase topic slugs enumerated in
+    full, and states that Phase 4 may apply only these values — no improvised wording, no added
+    topic. The root `package.json` description is bound to the same string byte for byte. Read the
+    live values while writing this: all four already equal the contract exactly, so Phase 4 is
+    expected to record verified equality rather than mutate, and P3-003A is a verification. Recorded
+    the fallback anyway — if a later read differs, Phase 4 applies the contract value and reads it
+    back — plus the capture/apply/read-back/restore procedure and the limit to the six approved
+    public fields. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-006] Record the read, write, staged-diff, identity-boundary, and knowledge-capture
       gates — acceptance: no execution record can contain a secret and no unit can edit an
       identity-bound path.
-- [ ] [AI] [P2-007] Reconcile the contract unit file-touch ledger with `git status --short` and run
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md` · **Notes**: `### Safety Gates (P2-006)` records
+    all five gates as a table of what each forbids and how it is discharged, so a unit can be checked
+    against them rather than asserted clean. Both acceptance halves are covered: the read, write, and
+    staged-diff gates together make a secret-bearing execution record impossible, and the
+    identity-boundary gate gives the exact staged command whose empty result is the criterion. Noted
+    that the staged check is an earlier tripwire rather than a replacement for the registered
+    `rhino-cli parity manifest validate` gate, and that describing the boundary in reader
+    documentation is not editing it — otherwise the guard would read as a ban on explaining the
+    relationship. Added the evidence prohibitions and the rule that records are sanitized at the
+    point of writing rather than scrubbed later. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-007] Reconcile the contract unit file-touch ledger with `git status --short` and run
       `git diff --check` — acceptance: only declared plan files and artifacts are changed.
-- [ ] [AI] [P2-007A] Stage only contract-ledger paths and inspect `git diff --cached --name-only` —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/execution-record-contract.md` · **Notes**: the unit's file-touch ledger is now written
+    explicitly into the execution record rather than left implicit in the `Files Changed` column, and
+    reconciled by set comparison against `git status --short --untracked-files=all`. Five declared,
+    five actual, zero undeclared changes, zero declared-but-unchanged paths: `delivery.md`,
+    `learnings.md`, `tech-docs.md`, and the two artifacts. Every one is a plan file or artifact
+    declared in the tech-docs File-Impact Analysis; nothing outside `plans/in-progress/` is touched.
+    `git diff --check` exits 0 with no whitespace error. Also appended the seven Phase 2 rows to the
+    execution record. `prettier --check` and `markdownlint-cli2` exit 0.
+- [x] [AI] [P2-007A] Stage only contract-ledger paths and inspect `git diff --cached --name-only` —
       acceptance: the staged set equals the contract file-touch ledger and the identity-boundary guard
       returns empty.
-- [ ] [AI] [P2-008] Run `npm run format:md:check`, `npm run lint:md`, the repository-authoritative
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: staged the five
+    ledger paths by explicit path — never `git add -A` — and read the staged list back. It equals the
+    contract file-touch ledger exactly: the two artifacts plus `delivery.md`, `learnings.md`, and
+    `tech-docs.md`, five paths, nothing else. The identity-boundary guard
+    `git diff --cached --name-only -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli` returns
+    empty, so no staged change reaches inside the byte-identity boundary and no cross-repository
+    obligation is opened. Counted the staged set with `grep -c .` allowing for the RTK trailer rather
+    than reading the raw line count.
+- [x] [AI] [P2-008] Run `npm run format:md:check`, `npm run lint:md`, the repository-authoritative
       Rhino Markdown validators, `npm run validate:sync`, and the exact staged environment-file gate —
       acceptance: every command exits 0.
-- [ ] [AI] [P2-009] Have an independent AI review the staged contract diff for secrets, plan
+  - **Date**: 2026-08-20 · **Status**: Done (one advisory red) · **Files Changed**: `learnings.md` ·
+    **Notes**: both real gate surfaces exit 0 — `gate run --surface=pre-commit` and
+    `gate run --surface=pre-push`, the latter including the parity-manifest check that proves the
+    identity boundary intact. Individually: prettier and markdownlint clean on all 8 plan files,
+    `md links validate --exclude plans/done --exclude archived` clean, `validate:sync` PASSED,
+    `env staged-guard validate` exit 0, `convention emoji validate` and `repo-config validate` exit 0. Unscoped `md mermaid validate` exits 1 with 786 violations across 1,165 files, but zero are in
+    this plan's tree and the registry scopes the gate to `affected-file-type`, so the staged set is
+    clean and both surfaces stay green — the same shape as the Phase 0 `format:md:check` and
+    `lint:md` baselines. Split by fixability and routed to Phase 8 as L-009: the 4 failing
+    `apps/rhino-cli` files are deliberate negative fixtures under `tests/fixtures/state/` — one
+    holds a state named `ThisLabelIsLongerThan30CharsAndFails` — so they must stay broken, and they
+    are byte-identical with `ose-private` besides.
+    Confirmed the binding regeneration inside the pre-commit surface left the tree clean — still
+    exactly 5 staged paths at that moment, nothing unstaged. P2-009 later widened the unit to
+    seven paths; the file-touch ledger records the expansion.
+- [x] [AI] [P2-009] Have an independent AI review the staged contract diff for secrets, plan
       structure, and robotic prose — acceptance: zero CRITICAL, HIGH, or MEDIUM findings.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/reader-doc-disposition-ose-public.md`, `artifacts/execution-record-contract.md`,
+    `delivery.md`, `learnings.md`, `tech-docs.md`, `prd.md`, `README.md` · **Notes**: three review
+    passes, PASS on the third with zero CRITICAL, HIGH, or MEDIUM. Secrets were clean in every pass —
+    zero credentials, emails, or absolute local paths, the only `/Users/` line being the grep pattern
+    in P0-G01's own sanitization assertion, and the only URL the contracted
+    `https://oseplatform.com/`. Pass 1 returned two HIGH and one MEDIUM: the ledger claimed whole-tree
+    byte identity with `ose-private` for `apps/rhino-cli/**`, when `BOUNDARY_PATHS` is seven
+    pathspecs and 25 of the 27 `identity-bound` paths are in the 603-entry manifest — the two
+    absentees being the very READMEs the ledger used the claim to exclude; two items were ticked
+    before their execution-record rows existed, violating the plan's own append-only rule in the
+    commit that establishes it; and `git ls-files '*.md'` cannot be revision-pinned, so the
+    cross-check silently drifted to 9,296 once the artifacts were staged. Pass 2 closed all three but
+    found the boundary claim alive at two more sites, because I had fixed the sites named rather than
+    the class. Pass 3 closed it: 47 vocabulary hits enumerated across the whole plan directory, six
+    definitions and assertions rewritten, and the reviewer's independent sweep found no seventh.
+    Recorded as L-010. Also corrected an error of my own the review had not reached — the four
+    mermaid-failing `rhino-cli` files are negative fixtures whose `.expected.json` siblings assert
+    the exact violations they emit, so they must stay broken. The unit widened from five paths to
+    seven, both additions declared `[E]` in the File-Impact Analysis and recorded in the file-touch
+    ledger. 18 of 20 factual claims reproduced on first read; the two that did not were the two the
+    findings named.
 - [ ] [AI] [P2-010] Commit the contract unit with a Conventional Commit — acceptance: the commit
       contains one cohesive plan/control-plane change and no unrelated file.
 - [ ] [AI] [P2-011] Push the exact contract branch and open its draft PR against `main` — acceptance:
@@ -641,9 +1037,13 @@ record.
 ## Phase 7: Full-Corpus Quality and Safety Reconciliation
 
 - [ ] [AI] [P7-001] Reinventory all tracked Markdown at current `main` and reconcile the ledger with
-      `git ls-tree -r --name-only origin/main -- '*.md'` — acceptance: zero missing/duplicate paths
-      and every reader task is terminal; any mismatch creates an exact Phase 6 correction row before
-      Phase 7 restarts.
+      `git ls-tree -r --name-only origin/main | grep -E '\.md$'` — acceptance: the enumerated count
+      is non-zero, zero missing/duplicate paths remain, and every reader task is terminal — proved by
+      piping the ledger's row lines through
+      `awk -F'|' '/^\| [0-9a-f]+ \| /{print $7}' | grep -c 'audit-required\|reader-related'` and
+      getting `0`, so no row still carries an interim classification label while the same awk over
+      all row lines still returns a non-zero count; any mismatch creates an exact Phase 6 correction
+      row before Phase 7 restarts.
 - [ ] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.

@@ -84,7 +84,7 @@ Every tracked README receives exactly one of these outcomes in the ledger:
 | `verified-unchanged` | It already meets the reader, fact, link, and voice checks.                                                                                 |
 | `generated`          | A canonical source owns it; regenerate and validate instead of hand-editing.                                                               |
 | `historical-exempt`  | It records completed work or archived material and remains untouched.                                                                      |
-| `identity-bound`     | It sits inside the `rhino-cli` byte-identity boundary; audit only, never edit in this plan.                                                |
+| `identity-bound`     | It sits inside this plan's no-edit scope for `rhino-cli`; audit only, never edit in this plan. Most, not all, are byte-identical.          |
 | `not-reader-doc`     | A non-README Markdown file is inventoried but is not living repository-facing documentation.                                               |
 | `follow-up-required` | A blocking non-terminal state: the defect needs a separately scoped code, infrastructure, or governance change before this plan can close. |
 
@@ -254,7 +254,7 @@ obligation opens.
 
 ```gherkin
 Scenario: Delivery units avoid the identity boundary
-  Given apps/rhino-cli and its bound Gherkin tree are byte-identical with ose-private
+  Given this plan declares apps/rhino-cli and its bound Gherkin tree a no-edit scope
   When any delivery unit in this plan is staged for commit
   Then git diff --cached --name-only lists no path inside that boundary
   And the ledger records those paths as identity-bound rather than edited
