@@ -32,7 +32,7 @@ Error handling is critical in financial systems where correctness and auditabili
 **Why Error Handling Matters**:
 
 - **Financial accuracy**: Prevent silent failures in calculations
-- **Auditability**: Comprehensive error logs for compliance
+- **Auditability**: Structured error logs for compliance
 - **User experience**: Meaningful error messages
 - **System resilience**: Graceful degradation
 - **Type safety**: Compile-time error path checking

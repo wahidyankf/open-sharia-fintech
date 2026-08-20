@@ -1,6 +1,6 @@
 ---
 title: "Next.js Data Fetching"
-description: Comprehensive guide to data fetching strategies in Next.js including server-side fetching, caching, revalidation, Server Actions, and client-side patterns
+description: Guide to data fetching strategies in Next.js including server-side fetching, caching, revalidation, Server Actions, and client-side patterns
 category: explanation
 subcategory: platform-web
 tags:

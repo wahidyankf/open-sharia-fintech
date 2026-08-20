@@ -193,3 +193,115 @@ them `identity-bound`.
 vocabulary appears across every file in the delivery unit, and give each site a verdict. Check the
 definitional sites first — a wrong definition re-injects the error into every downstream use of the
 term, including the ones you just fixed. See [[feedback_fix_the_class_not_the_named_sites]].
+
+## L-011 — A declared exemption can be inert, and only a negative control shows it
+
+**Phase**: 3 (P3-005) · **Date**: 2026-08-20 · **Routing**: repository configuration — route to the
+existing [`plans/backlog/file-naming-convention-rework/`](../../backlog/file-naming-convention-rework/README.md)
+plan, which already owns the hard-coded exempt-basename list; do not fix inline and do not open a new
+backlog item
+
+`CONTRIBUTING.md` is declared exempt from `md naming validate` in two places that agree exactly: the
+`lint-staged` `*.md` command in `package.json` and the `md-naming` gate entry in `repo-config.yml`.
+The exemption does nothing, and it is inert for **two independent reasons**, either of which alone
+would suffice. First, the gate invocation passes no paths, so the validator falls back to its
+built-in default scan roots — `docs/` and `repo-governance/`, never the repository root where
+`CONTRIBUTING.md` lives (`md_validate_naming.rs`, `DEFAULT_PATHS`); its own success line says
+`DOCS NAMING VALIDATION PASSED`. Second, even on the `lint-staged` path, which _does_ hand the
+staged file to the validator as a positional argument and therefore does reach the root,
+`CONTRIBUTING.md` is one of nine basenames hard-coded exempt inside the validator itself
+(`docs/naming.rs`, `is_naming_exempt`), guarded by its own regression test. Running
+`md naming validate CONTRIBUTING.md` with no `--exempt` flag at all exits 0.
+
+Finding only the first reason would have been worse than finding neither, because it suggests a fix
+— widen the scan scope — that would not change the outcome.
+
+Three negative controls settled it. A `BAD-NAME.md` in `docs/` is flagged with the expected rule
+(`violates lowercase-kebab-case rule (^[a-z0-9-]+\.md$)`) and exits 1. The identical file at the
+repository root is not flagged. The identical file under gitignored `local-tmp/` is not flagged
+either.
+
+That last one matters twice over, because this plan's own acceptance clause told the executor to put
+the control in `local-tmp/`. Following it literally produces an unflagged control, which reads as
+either a broken validator or nothing at all — a clause that cannot fail is not a control.
+
+Deleting the exemption is not this plan's call. Under the validator as it stands today it is pure
+redundancy, but it is redundancy against a hard-coded list that
+`plans/backlog/file-naming-convention-rework/` proposes to make configurable — and the moment that
+list moves into configuration, the `repo-config.yml` declaration stops being redundant and starts
+being the thing that carries the exemption. Removing it now would arm a failure for whoever lands
+that plan. What matters here is _knowing_ it is currently inert, so nobody cites it as evidence the
+repository root is protected.
+
+**How to apply**: an exemption is a claim that something would otherwise fail. Test that claim by
+removing the exemption, not by observing the gate pass with it. Place the negative control where the
+validator actually looks — confirm its scan scope first, or the control proves nothing. And once one
+reason for inertness is found, keep going: a second, independent reason changes what the fix is, and
+stopping at the first one hands the next reader a repair that repairs nothing.
+
+## L-012 — A linter's "0 errors" is only trustworthy next to its file count
+
+**Phase**: 3 (P3-007) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+remaining sweep in Phases 7 and 8, no repository change required
+
+Verifying three edited documents, `markdownlint-cli2` printed `Summary: 0 error(s)` and Prettier
+printed `All matched files use Prettier code style!`. Both were false. The file list had been held in
+a shell variable and passed unquoted, and this shell does not word-split an unquoted variable, so
+both tools received one argument that was the three paths joined by spaces. No such file exists.
+`markdownlint-cli2` said so in the line directly above its summary — `Linting: 0 file(s)` — and
+Prettier said so in a line its own success message contradicts: `[error] No files matching the
+pattern were found`. Re-run with the paths written out, the same commands report `Linting: 3 file(s)`
+and a genuine clean result.
+
+A tool that lints nothing and a tool that lints everything successfully print the same summary. The
+summary is not the evidence; the count is.
+
+**How to apply**: when a check is meant to prove something about N specific files, assert that the
+tool processed N files before believing its verdict. Prefer writing the paths literally into the
+command over expanding a variable — and when a list must be a variable, print the processed count
+and compare it against the expected one. See [[feedback_zsh_no_word_split_in_bash_tool]] and
+[[feedback_benchmark_harness_false_zeros]].
+
+## L-013 — A gate run before the last edit proves nothing about the commit
+
+**Phase**: 3 (P3-014) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+remaining unit in Phases 6, 8, and 9, no repository change required
+
+This unit ran its full gate surface in P3-011 and then, in P3-012, ran a README maker-checker-fixer
+cycle that rewrote reader-facing prose. Both steps passed on their own terms, so the unit was
+committed. The push was then rejected: `README.md` had grown to 934 words against the 900-word fail
+limit that the `governance-word-budget` gate enforces. The branch had started at 838 words, so the
+overrun was created entirely by the P3-012 rewrite — the exact window the P3-011 gate run could not
+see. The checklist ordering made this look correct at every individual step, which is what let it
+through.
+
+Content-quality cycles and mechanical gates measure different things, and a content cycle that
+improves prose can move a file across a mechanical threshold the cycle knows nothing about.
+Ordering gates before content work leaves that class of regression undetectable until push.
+
+**How to apply**: treat the gate surface as a terminal step, not a phase-ordered one — re-run it
+after the last edit of any kind, including edits produced by a quality cycle that has its own
+passing verdict. When a checklist places a gate step before a content step, run the gate again
+before commit rather than trusting the earlier green. See
+[[feedback_word_budget_trips_on_small_governance_edits]].
+
+## L-014 — A deferral needs the same measurement rigor as the work you did
+
+**Phase**: 3 (P3-016) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+deferral recorded in Phases 6 through 9, no repository change required
+
+This unit fixed one stale-name class (`wahidyankf-web`, 31 occurrences in 11 files, each verified)
+and deferred a second one (`ayokoding-web`, `ose-web`). The fixed class was counted exactly. The
+deferred class was written down as "16 in-scope files" and "14" — a figure narrow enough that a
+reader would size the follow-up at roughly the same effort as the work already done. Re-measuring it
+gives 231 and 83 tracked files outside `plans/done/`, reaching directory names and workflow
+filenames. The deferral was still the right call, and the corrected number is what makes that
+obvious rather than debatable.
+
+The asymmetry is the trap: what you fix gets counted because the count is the acceptance evidence,
+while what you defer gets estimated because nothing forces a number.
+
+**How to apply**: measure a deferral before recording it, with the same command you would use to
+accept the fix, and state the scope the number covers — a bare count invites the reader to assume
+the widest scope. When a later step re-derives the figure and it disagrees, correct the original
+record rather than carrying two numbers. See [[feedback_acceptance_clauses_falsifiable_both_directions]].

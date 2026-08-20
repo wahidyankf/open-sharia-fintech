@@ -1,6 +1,6 @@
 ---
 name: apps-ayokoding-www-developing-content
-description: Comprehensive guide for creating content on ayokoding-web, a Next.js 16 fullstack content platform (ayokoding-web). Covers bilingual content strategy (default English), tRPC API, content workflow, and ayokoding-web specific patterns. Essential for content creation tasks on ayokoding-web
+description: Guide for creating content on ayokoding-web, a Next.js 16 fullstack content platform (ayokoding-web). Covers bilingual content strategy (default English), tRPC API, content workflow, and ayokoding-web specific patterns. Essential for content creation tasks on ayokoding-web
 ---
 
 # ayokoding-web Content Development Skill

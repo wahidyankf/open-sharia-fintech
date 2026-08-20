@@ -1,6 +1,6 @@
 ---
 title: Next.js Accessibility
-description: Comprehensive guide to building accessible Next.js applications with WCAG AA compliance, ARIA patterns, keyboard navigation, and screen reader support
+description: Guide to building accessible Next.js applications with WCAG AA compliance, ARIA patterns, keyboard navigation, and screen reader support
 category: explanation
 subcategory: platform-web
 tags:

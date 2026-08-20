@@ -1,4 +1,4 @@
-# wahidyankf-web — Web Behavior
+# wahidyankf-www — Web Behavior
 
 Audience: Engineers, Technical Product/Project Managers
 
@@ -15,7 +15,7 @@ Background:
   Given the app is running
 ```
 
-This means a dev server (`nx dev wahidyankf-web`) is up at `localhost:3201`.
+This means a dev server (`nx dev wahidyankf-www`) is up at `localhost:3201`.
 
 ## Children
 
@@ -26,4 +26,4 @@ This means a dev server (`nx dev wahidyankf-web`) is up at `localhost:3201`.
 - `../../ddd/` — Ubiquitous language governing step vocabulary
 - [`../../components/web/`](../../components/web/README.md) — C4 L3 component view
 - [`../README.md`](../README.md) — Behavior root (coverage tables)
-- [wahidyankf-web — Gherkin Features](./gherkin/README.md)
+- [wahidyankf-www — Gherkin Features](./gherkin/README.md)

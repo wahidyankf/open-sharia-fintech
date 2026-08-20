@@ -43,11 +43,11 @@ nx start [app-name]
 **Examples**:
 
 ```bash
-nx build ts-utils                    # Build library
-nx run ts-utils:test:quick           # Fast quality gate (pre-push)
-nx run ts-utils:test:unit            # Isolated unit tests
-nx dev customer-portal               # Start Next.js dev server
-nx build customer-portal             # Build Next.js app
+nx build fsharp-env-loader          # Build library
+nx run fsharp-env-loader:test:quick # Fast quality gate (pre-push)
+nx run fsharp-env-loader:test:unit  # Isolated unit tests
+nx dev ose-app-web                  # Start the app dev server
+nx build ose-app-web                # Build the app
 ```
 
 ### Run Multiple Projects
@@ -77,10 +77,10 @@ npm run lint     # Same as: nx run-many -t lint
 
 ```bash
 # Build specific projects
-nx run-many -t build -p ts-utils ts-components
+nx run-many -t build -p fsharp-env-loader ose-www
 
 # Run test:quick for specific projects
-nx run-many -t test:quick -p ts-utils customer-portal
+nx run-many -t test:quick -p fsharp-env-loader ose-app-web
 ```
 
 ## Affected Commands
@@ -107,9 +107,9 @@ nx affected -t test:quick --base=origin/main
 **Using npm scripts**:
 
 ```bash
-npm run affected:build         # Same as: nx affected -t build
-npm run affected:test:quick    # Same as: nx affected -t test:quick
-npm run affected:lint          # Same as: nx affected -t lint
+npm run affected:build # Same as: nx affected -t build
+npm run affected:test  # Same as: nx affected -t test:quick
+npm run affected:lint  # Same as: nx affected -t lint
 ```
 
 ### Affected Graph
@@ -153,10 +153,10 @@ This opens an interactive visualization showing:
 
 ```bash
 # Show dependencies of a specific project
-nx graph --focus=ts-utils
+nx graph --focus=fsharp-env-loader
 
 # Show what depends on a project
-nx graph --focus=ts-utils --groupByFolder
+nx graph --focus=fsharp-env-loader --groupByFolder
 ```
 
 ### Export Graph
@@ -177,11 +177,11 @@ Nx caches task outputs to speed up subsequent runs.
 
 ```bash
 # First build (executes task)
-nx build ts-utils
+nx build fsharp-env-loader
 # Output: Compiled successfully
 
 # Second build (uses cache)
-nx build ts-utils
+nx build fsharp-env-loader
 # Output: [existing outputs match the cache, left as is]
 ```
 
@@ -199,7 +199,7 @@ nx reset
 
 ```bash
 # Skip cache for a single run
-nx build ts-utils --skip-nx-cache
+nx build fsharp-env-loader --skip-nx-cache
 
 # Skip cache for affected
 nx affected -t build --skip-nx-cache
@@ -224,10 +224,10 @@ nx show projects --type=lib
 
 ```bash
 # Show project configuration
-nx show project ts-utils
+nx show project fsharp-env-loader
 
 # Show project graph
-nx graph --focus=ts-utils
+nx graph --focus=fsharp-env-loader
 ```
 
 ### Workspace Information
@@ -251,13 +251,13 @@ nx report
 git pull origin main
 
 # 2. Start development server
-nx dev customer-portal
+nx dev ose-app-web
 
 # 3. Make changes to app or libs
 
 # 4. Test changes
-nx run ts-utils:test:quick
-nx build customer-portal
+nx run fsharp-env-loader:test:quick
+nx build ose-app-web
 
 # 5. View affected projects
 nx affected:graph
@@ -270,10 +270,10 @@ nx affected:graph
 nx affected -t test:quick
 
 # 2. Run test:quick for a specific project
-nx run ts-utils:test:quick
+nx run fsharp-env-loader:test:quick
 
 # 3. Run isolated unit tests for a specific project
-nx run ts-utils:test:unit
+nx run fsharp-env-loader:test:unit
 
 # 4. Run all test:quick targets
 nx run-many -t test:quick
@@ -285,16 +285,17 @@ nx run-many -t test:quick
 # 1. Build affected projects
 nx affected -t build
 
-# 2. Build specific project and its dependencies
-nx build customer-portal
-# (Automatically builds ts-utils first)
+# 2. Build a specific project; Nx builds any dependency that has its own
+#    build target first. ose-app-web's libraries are consumed from source,
+#    so this runs the one build.
+nx build ose-app-web
 
 # 3. Build all projects
 nx run-many -t build
 
 # 4. Verify build outputs
-ls libs/ts-utils/dist
-ls apps/customer-portal/.next
+ls libs/fsharp-env-loader/bin
+ls apps/ose-app-web/.next
 ```
 
 ### Pre-Commit Workflow
@@ -396,7 +397,7 @@ nx run-many -t build --parallel=3
 
 ```bash
 # Watch mode for builds (if configured)
-nx build ts-utils --watch
+nx build fsharp-env-loader --watch
 ```
 
 ## Troubleshooting
@@ -412,7 +413,7 @@ nx build ts-utils --watch
 nx reset
 
 # Rebuild from scratch
-nx build ts-utils --skip-nx-cache
+nx build fsharp-env-loader --skip-nx-cache
 ```
 
 ### Dependency Issues
@@ -423,11 +424,11 @@ nx build ts-utils --skip-nx-cache
 
 ```bash
 # Check if dependency exists in graph
-nx graph --focus=customer-portal
+nx graph --focus=ose-app-web
 
 # Ensure library is built first
-nx build ts-utils
-nx build customer-portal
+nx build fsharp-env-loader
+nx build ose-app-web
 ```
 
 ### Affected Detection Issues
@@ -456,10 +457,10 @@ nx affected:graph
 
 ```bash
 # Set environment variable for command
-NODE_ENV=production nx build customer-portal
+NODE_ENV=production nx build ose-app-web
 
 # Multiple environment variables
-NODE_ENV=production DEBUG=true nx build customer-portal
+NODE_ENV=production DEBUG=true nx build ose-app-web
 ```
 
 ### Run Custom Commands
@@ -469,7 +470,7 @@ NODE_ENV=production DEBUG=true nx build customer-portal
 nx run-many -t custom-script
 
 # Run command for specific projects
-nx run custom-target -p customer-portal
+nx run custom-target -p ose-app-web
 ```
 
 ### Generate Dependency Report

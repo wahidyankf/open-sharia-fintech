@@ -18,7 +18,8 @@ pre-alpha, so interfaces and architecture can change as the platform takes shape
 
 In this tutorial, you will run the OSE public website on your computer. When you finish, the home
 page will be available at <http://localhost:3100> and will show the **Open Sharia Enterprise
-Platform** heading.
+Platform** heading. Port 3100 is a default rather than a fixed address — if you have set
+`OSE_WWW_PORT`, the site listens on that port instead.
 
 ## Choose a supported environment
 
@@ -110,8 +111,9 @@ Start the Nx development target for `ose-www`:
 npm exec nx -- run ose-www:dev
 ```
 
-Nx starts Next.js on port 3100 and keeps the terminal occupied while the server runs. Open
-<http://localhost:3100> in a browser. You have succeeded when the page shows **Open Sharia
+Nx starts Next.js on the resolved port — 3100 unless `OSE_WWW_PORT` says otherwise — and keeps the
+terminal occupied while the server runs. Next.js prints the address it chose as its `Local:` line;
+open that address in a browser. You have succeeded when the page shows **Open Sharia
 Enterprise Platform** and the product description beginning “Open-source (MIT) platform for
 Sharia-compliant enterprise solutions.”
 
@@ -140,9 +142,22 @@ For the complete, multi-language environment and Docker guidance, see
 
 ### Port 3100 is already in use
 
-Another local server is using the website's configured port. If it is an earlier OSE development
+Another local server is using the website's default port. If it is an earlier OSE development
 server, stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> in its terminal, then rerun the development command.
 Do not stop an unfamiliar process just to free the port.
+
+When the port is held by something you do not recognise, move the website instead of the other
+process. The development target reads `OSE_WWW_PORT` and falls back to 3100 only when that variable
+is unset:
+
+```bash
+OSE_WWW_PORT=4000 npm exec nx -- run ose-www:dev
+```
+
+Open <http://localhost:4000> instead. A value that is not a usable port number stops startup and
+names the variable, rather than quietly reverting to 3100. Every app that serves a port takes the same
+override, under its own variable name — see
+[Overriding a port](../reference/web-sites.md#overriding-a-port).
 
 ### A generated artifact is missing or stale
 

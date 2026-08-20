@@ -1,6 +1,6 @@
 ---
 title: "Next.js App Router"
-description: Comprehensive guide to Next.js App Router file-system routing, layouts, loading states, error boundaries, and route organization
+description: Guide to Next.js App Router file-system routing, layouts, loading states, error boundaries, and route organization
 category: explanation
 subcategory: platform-web
 tags:

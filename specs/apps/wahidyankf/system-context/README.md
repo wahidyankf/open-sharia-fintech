@@ -1,8 +1,8 @@
-# wahidyankf-web — System Context (C4 L1)
+# wahidyankf-www — System Context (C4 L1)
 
 Audience: Engineers, Technical Product/Project Managers
 
-System-context specifications for wahidyankf-web — actors, external systems, and the
+System-context specifications for wahidyankf-www — actors, external systems, and the
 boundary of what this site builds vs what it depends on. This is C4 Level 1.
 
 ## Actors
@@ -29,4 +29,4 @@ There is no external API, no database, and no authentication provider.
 - [`../product/`](../product/README.md) — Product framing (above C4)
 - [`../containers/`](../containers/README.md) — C4 L2 zoom into the single `web` container
 - [`../components/`](../components/README.md) — C4 L3 zoom into per-container internals
-- [wahidyankf-web — System Context (C4 L1)](./context.md)
+- [wahidyankf-www — System Context (C4 L1)](./context.md)

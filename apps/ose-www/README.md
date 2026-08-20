@@ -30,8 +30,9 @@ npm install
 npm exec nx -- run ose-www:dev
 ```
 
-Open <http://localhost:3100>. The development server uses port 3100. No local configuration is
-required for the standard site; optional content and development-server settings are documented in
+Open <http://localhost:3100>. The development server uses port 3100 unless `OSE_WWW_PORT` names
+another one. No local configuration is required for the standard site; that variable and the other
+optional content and development-server settings are documented in
 [.env.example](./.env.example).
 
 For supported platforms, prerequisites, and recovery steps, follow

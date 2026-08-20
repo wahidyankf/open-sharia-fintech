@@ -1,6 +1,6 @@
 ---
 title: "By-Concept Tutorial Convention"
-description: "Standards for creating comprehensive concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams"
+description: "Standards for creating concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams"
 when_to_use: "Read this index to find the right By-Concept Tutorial Convention child document."
 ---
 

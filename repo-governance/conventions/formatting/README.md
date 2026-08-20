@@ -34,7 +34,7 @@ These conventions define **HOW to format markdown content** including indentatio
 
 ## Conventions
 
-- [Color Accessibility](./color-accessibility.md) — Comprehensive standards for using color-blind friendly colors across all repository contexts (Mermaid diagrams, emoji categorization, CSS/styling) with verified accessible palette and WCAG compliance requirements. Use when choosing, reviewing, or implementing any color in this repository — diagrams, emoji indicators, agent categorization, or future CSS/styling.
+- [Color Accessibility](./color-accessibility.md) — Standards for using color-blind friendly colors across all repository contexts (Mermaid diagrams, emoji categorization, CSS/styling) with verified accessible palette and WCAG compliance requirements. Use when choosing, reviewing, or implementing any color in this repository — diagrams, emoji indicators, agent categorization, or future CSS/styling.
 - [Diagram and Schema Convention](./diagrams.md) — Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements. Use when adding, reviewing, or fixing any diagram, ASCII art, or plan-doc UI mockup in this repository.
 - [Emoji Usage Convention](./emoji.md) — Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis. Use when deciding whether, where, or which emoji to use in repository documentation.
 - [Indentation Convention](./indentation.md) — Standard markdown indentation for all files in the repository. Use when indenting bullets, YAML frontmatter, or code blocks in any markdown file.

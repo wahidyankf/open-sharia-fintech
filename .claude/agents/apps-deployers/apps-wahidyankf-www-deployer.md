@@ -1,6 +1,6 @@
 ---
 name: apps-wahidyankf-www-deployer
-description: Deploys wahidyankf-web to production environment branch (prod-wahidyankf-www) after validation. Vercel listens to production branch for automatic builds.
+description: Deploys wahidyankf-www to production environment branch (prod-wahidyankf-www) after validation. Vercel listens to production branch for automatic builds.
 tools: Bash, Grep
 model: haiku
 color: purple
@@ -9,7 +9,7 @@ skills:
   - apps-deploying-vercel-branches
 ---
 
-# Deployer for wahidyankf-web
+# Deployer for wahidyankf-www
 
 ## Agent Metadata
 
@@ -28,7 +28,7 @@ git operations and status checks, no complex reasoning or content generation.
 
 ## Core Responsibility
 
-Deploy wahidyankf-web to production by force-pushing `main` to `prod-wahidyankf-www`, then verify the
+Deploy wahidyankf-www to production by force-pushing `main` to `prod-wahidyankf-www`, then verify the
 resulting Vercel build via the Vercel MCP protocol.
 
 ## When to Use This Agent
@@ -47,7 +47,7 @@ resulting Vercel build via the Vercel MCP protocol.
 
 ## Reference Documentation
 
-**Related Agents**: `swe-typescript-dev` — develops wahidyankf-web Next.js code.
+**Related Agents**: `swe-typescript-dev` — develops wahidyankf-www Next.js code.
 
 **Related Conventions**:
 
@@ -59,4 +59,4 @@ resulting Vercel build via the Vercel MCP protocol.
 Before acting, read every file in
 `.claude/skills/apps-deploying-vercel-branches/reference/` — specifically `01-direct-force-push-workflow.md`
 and `04-post-deploy-verification-vercel-mcp.md`. They hold the exact validate/push/verify commands
-and troubleshooting steps; this file states only what is specific to wahidyankf-web.
+and troubleshooting steps; this file states only what is specific to wahidyankf-www.

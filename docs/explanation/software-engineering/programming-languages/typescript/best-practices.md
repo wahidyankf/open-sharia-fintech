@@ -50,7 +50,7 @@ principles:
 
 ## Overview
 
-This document provides comprehensive best practices for TypeScript development in the enterprise platform. Following these standards ensures our codebase remains maintainable, secure, performant, and aligned with modern TypeScript development principles (TypeScript 5.0+).
+This document provides best practices for TypeScript development in the enterprise platform. Following these standards ensures our codebase remains maintainable, secure, performant, and aligned with modern TypeScript development principles (TypeScript 5.0+).
 
 ## Alignment with Software Engineering Principles
 
@@ -648,12 +648,12 @@ class Money {
 
 ### 5. Test-Driven Quality
 
-Write comprehensive tests that document expected behavior. Tests are living documentation and safety nets for refactoring.
+Write tests that document expected behavior. Tests are living documentation and safety nets for refactoring.
 
 **Why it matters**: Zakat calculation rules, Qard Hasan profit computations, and Donation distribution logic must be verifiable through tests that serve as specification documentation.
 
 ```typescript
-// Good: Descriptive test names and comprehensive coverage
+// Good: Descriptive test names covering success and failure paths
 describe("ZakatCalculator", () => {
   it("should calculate Zakat at 2.5 percent", () => {
     const wealth = createMoney(100000, "USD");
@@ -1563,7 +1563,7 @@ function calculateZakat(wealth: Money | null, nisab: Money | null): Money {
 }
 ```
 
-### 15. Write Comprehensive, Well-Named Tests
+### 15. Write Well-Named Tests
 
 Tests should be descriptive and cover edge cases.
 

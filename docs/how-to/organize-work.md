@@ -280,7 +280,7 @@ See [AGENTS.md Plans Organization](../../AGENTS.md#plans--temporary-files) for f
    repo-governance/conventions/formatting/new-convention.md
    ```
 
-   - Write comprehensive explanation
+   - Write the explanation
    - Include examples and rationale
    - Follow [Diátaxis framework](../../repo-governance/conventions/structure/diataxis-framework.md)
 

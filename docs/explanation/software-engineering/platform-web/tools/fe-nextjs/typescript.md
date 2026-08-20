@@ -1,6 +1,6 @@
 ---
 title: Next.js TypeScript
-description: Comprehensive guide to TypeScript integration in Next.js with type-safe patterns, configuration, and best practices
+description: Guide to TypeScript integration in Next.js with type-safe patterns, configuration, and best practices
 category: explanation
 subcategory: platform-web
 tags:
@@ -17,7 +17,7 @@ created: 2026-01-26
 
 # Next.js TypeScript
 
-Next.js provides first-class TypeScript support with automatic type checking, type inference, and comprehensive type definitions. This guide covers TypeScript configuration, type-safe patterns for pages, API routes, Server Components, and advanced typing techniques for production applications.
+Next.js provides first-class TypeScript support with automatic type checking, type inference, and type definitions for its own APIs. This guide covers TypeScript configuration, type-safe patterns for pages, API routes, Server Components, and advanced typing techniques for production applications.
 
 ## 📋 Quick Reference
 

@@ -54,13 +54,13 @@ nx run crane-cli:test:unit
 nx run crane-cli:test:quick
 
 # Validate all scenarios are implemented
-nx run crane-cli:specs:coverage
+nx run crane-cli:specs:behavior:coverage
 ```
 
 ## Coverage Requirement
 
 All scenarios in every feature file must be implemented in a corresponding step file.
-`nx run crane-cli:specs:coverage` enforces this using rhino-cli.
+`nx run crane-cli:specs:behavior:coverage` enforces this using rhino-cli.
 
 - [crane — behavior](./behavior/README.md)
 - [crane — components](./components/README.md)

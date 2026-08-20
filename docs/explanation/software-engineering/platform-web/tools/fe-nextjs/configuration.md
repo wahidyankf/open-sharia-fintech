@@ -1,6 +1,6 @@
 ---
 title: "Next.js Configuration"
-description: Comprehensive guide to Next.js configuration including next.config.ts options, environment variables, TypeScript config, custom webpack, turbopack, and experimental features
+description: Guide to Next.js configuration including next.config.ts options, environment variables, TypeScript config, custom webpack, turbopack, and experimental features
 category: explanation
 subcategory: platform-web
 tags:

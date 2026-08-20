@@ -1,6 +1,6 @@
 ---
 title: Next.js Functional Programming
-description: Comprehensive guide to functional programming in Next.js with immutability, pure functions, composition, and FP patterns for React Server Components
+description: Guide to functional programming in Next.js with immutability, pure functions, composition, and FP patterns for React Server Components
 category: explanation
 subcategory: platform-web
 tags:

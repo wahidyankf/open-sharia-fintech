@@ -1,4 +1,4 @@
-# wahidyankf-web — Web Components (C4 L3)
+# wahidyankf-www — Web Components (C4 L3)
 
 Audience: Engineers, Technical Product/Project Managers
 
@@ -25,4 +25,4 @@ relationships. Each bounded context maps to a folder under
 
 - `../../ddd/` — DDD registry and ubiquitous-language glossaries
 - [`../../behavior/wahidyankf-www/gherkin/`](../../behavior/wahidyankf-www/gherkin/README.md) — Gherkin features per BC
-- [wahidyankf-web — Web Component Diagram (C4 L3)](./component-web.md)
+- [wahidyankf-www — Web Component Diagram (C4 L3)](./component-web.md)

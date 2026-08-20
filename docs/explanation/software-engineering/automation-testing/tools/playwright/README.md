@@ -124,7 +124,7 @@ Playwright usage in this platform follows the software engineering principles fr
 **Rationale**:
 
 - Modern auto-waiting and retry mechanisms
-- Comprehensive trace viewer for debugging
+- Trace viewer for debugging
 - Cross-browser support (Chromium, Firefox, WebKit)
 - First-class TypeScript integration
 - Built-in accessibility testing
@@ -226,7 +226,7 @@ Each browser is automatically downloaded and managed.
 
 ### Trace Viewer and Debugging
 
-Failed tests provide comprehensive debugging information:
+A failed test leaves behind:
 
 - Complete timeline of actions
 - Screenshots before/after each action
@@ -248,7 +248,7 @@ Playwright runs tests in parallel by default:
 
 ✅ Cross-browser end-to-end testing
 ✅ Reliable UI automation with auto-waiting
-✅ Comprehensive debugging with trace viewer
+✅ Debugging with trace viewer
 ✅ Fast parallel test execution
 ✅ Network interception and API mocking
 ✅ Visual regression testing

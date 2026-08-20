@@ -94,7 +94,7 @@ React usage in this platform follows the software engineering principles from [r
 - [React Anti-Patterns](./anti-patterns.md) — Common mistakes and problematic patterns to avoid in React development
 - [React Component Architecture](./component-architecture.md) — Component design patterns and architectural approaches for scalable React applications
 - [React State Management](./state-management.md) — State management patterns and strategies for React applications
-- [React Hooks](./hooks.md) — Comprehensive guide to React hooks including built-in and custom hooks
+- [React Hooks](./hooks.md) — Guide to React hooks including built-in and custom hooks
 - [React TypeScript Integration](./typescript.md) — TypeScript patterns and best practices for React applications
 - [React Testing](./testing.md) — Testing strategies for React applications with React Testing Library and Jest
 - [React Performance](./performance.md) — Performance optimization strategies for React applications
@@ -298,7 +298,7 @@ Deep-dive documentation on critical React areas:
 
 #### [React Component Architecture](component-architecture.md)
 
-Comprehensive guide to component design patterns.
+Guide to component design patterns.
 
 **Covers**:
 
@@ -315,7 +315,7 @@ Comprehensive guide to component design patterns.
 
 #### [React State Management](state-management.md)
 
-Comprehensive guide to state management patterns.
+Guide to state management patterns.
 
 **Covers**:
 
@@ -332,7 +332,7 @@ Comprehensive guide to state management patterns.
 
 #### [React Hooks](hooks.md)
 
-Comprehensive guide to React hooks.
+Guide to React hooks.
 
 **Covers**:
 
@@ -351,7 +351,7 @@ Comprehensive guide to React hooks.
 
 #### [React TypeScript Integration](typescript.md)
 
-Comprehensive guide to TypeScript with React.
+Guide to TypeScript with React.
 
 **Covers**:
 
@@ -370,7 +370,7 @@ Comprehensive guide to TypeScript with React.
 
 #### [React Testing](testing.md)
 
-Comprehensive guide to testing React applications.
+Guide to testing React applications.
 
 **Covers**:
 
@@ -389,7 +389,7 @@ Comprehensive guide to testing React applications.
 
 #### [React Performance](performance.md)
 
-Comprehensive guide to React performance optimization.
+Guide to React performance optimization.
 
 **Covers**:
 
@@ -408,7 +408,7 @@ Comprehensive guide to React performance optimization.
 
 #### [React Routing](routing.md)
 
-Comprehensive guide to routing with React Router.
+Guide to routing with React Router.
 
 **Covers**:
 
@@ -426,7 +426,7 @@ Comprehensive guide to routing with React Router.
 
 #### [React Forms](forms.md)
 
-Comprehensive guide to form handling in React.
+Guide to form handling in React.
 
 **Covers**:
 
@@ -445,7 +445,7 @@ Comprehensive guide to form handling in React.
 
 #### [React Data Fetching](data-fetching.md)
 
-Comprehensive guide to data fetching patterns.
+Guide to data fetching patterns.
 
 **Covers**:
 
@@ -464,7 +464,7 @@ Comprehensive guide to data fetching patterns.
 
 #### [React Styling](styling.md)
 
-Comprehensive guide to styling React applications.
+Guide to styling React applications.
 
 **Covers**:
 
@@ -483,7 +483,7 @@ Comprehensive guide to styling React applications.
 
 #### [React Accessibility](accessibility.md)
 
-Comprehensive guide to accessibility in React.
+Guide to accessibility in React.
 
 **Covers**:
 
@@ -502,7 +502,7 @@ Comprehensive guide to accessibility in React.
 
 #### [React Security](security.md)
 
-Comprehensive guide to security in React applications.
+Guide to security in React applications.
 
 **Covers**:
 
@@ -521,7 +521,7 @@ Comprehensive guide to security in React applications.
 
 #### [React Build & Deployment](build-deployment.md)
 
-Comprehensive guide to building and deploying React applications.
+Guide to building and deploying React applications.
 
 **Covers**:
 
@@ -539,7 +539,7 @@ Comprehensive guide to building and deploying React applications.
 
 #### [React Version Migration](version-migration.md)
 
-Comprehensive guide to upgrading React versions.
+Guide to upgrading React versions.
 
 **Covers**:
 
@@ -556,7 +556,7 @@ Comprehensive guide to upgrading React versions.
 
 #### [React Domain-Driven Design](domain-driven-design.md)
 
-Comprehensive guide to DDD patterns in React.
+Guide to DDD patterns in React.
 
 **Covers**:
 
@@ -573,7 +573,7 @@ Comprehensive guide to DDD patterns in React.
 
 #### [React Functional Programming](functional-programming.md)
 
-Comprehensive guide to FP patterns in React.
+Guide to FP patterns in React.
 
 **Covers**:
 
@@ -1971,7 +1971,7 @@ useEffect(() => {
 - [React Domain-Driven Design](./domain-driven-design.md) — Implementing DDD patterns in React applications
 - [React Forms](./forms.md) — Form handling patterns and validation strategies in React
 - [React Functional Programming](./functional-programming.md) — Functional programming patterns and principles in React
-- [React Hooks](./hooks.md) — Comprehensive guide to React hooks including built-in and custom hooks
+- [React Hooks](./hooks.md) — Guide to React hooks including built-in and custom hooks
 - [React Idioms](./idioms.md) — React-specific patterns and idiomatic framework usage
 - [React Performance](./performance.md) — Performance optimization strategies for React applications
 - [React Routing](./routing.md) — Client-side routing patterns with React Router

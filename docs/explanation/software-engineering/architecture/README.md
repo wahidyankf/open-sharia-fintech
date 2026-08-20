@@ -1,6 +1,6 @@
 ---
 title: Architecture
-description: Comprehensive documentation on software architecture patterns, models, and design approaches
+description: Documentation on software architecture patterns, models, and design approaches
 category: explanation
 subcategory: architecture
 tags:
@@ -135,7 +135,7 @@ C4 and DDD complement each other throughout the design process:
 5. Create **Component diagrams** (C4) showing aggregates and their relationships
 6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
 
-See DDD and C4 Integration for comprehensive examples and guidance.
+See DDD and C4 Integration for examples and guidance.
 
 ---
 

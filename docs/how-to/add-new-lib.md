@@ -380,7 +380,7 @@ npm install -D tsx
 
 ## Next Steps
 
-- Add comprehensive tests
+- Add tests
 - Configure linting
 - Add type definitions for complex types
 - Document all public APIs
