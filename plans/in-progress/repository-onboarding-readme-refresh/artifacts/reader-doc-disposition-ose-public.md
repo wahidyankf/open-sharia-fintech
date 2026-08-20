@@ -1251,3 +1251,46 @@ carrying a rule-level bulk disposition with a matched count. No path is unclassi
 classified, or silently dropped, and no path in the ledger fails to exist at the recorded revision.
 Zero rows hold a non-terminal `follow-up-required` state, so nothing here blocks archival today;
 P7-001 re-runs this table against the post-edit tree and P9-003 re-runs it at archival.
+
+### P7-001 Re-Run at Current `main`
+
+Re-run on 2026-08-21 against `origin/main` at `1542ea04471336f8db902d8c654ed3ba1b403a86`, using the
+same enumerators recorded above so the two runs are directly comparable.
+
+| Check                                   | Expected | Actual        | Verdict |
+| --------------------------------------- | -------- | ------------- | ------- |
+| Tracked Markdown paths enumerated       | non-zero | 9,297         | PASS    |
+| Enumerator cross-check agrees           | equal    | 9,297 = 9,297 | PASS    |
+| Growth over the recorded revision       | +3       | +3            | PASS    |
+| Added paths declared planned-new        | all      | 3 of 3        | PASS    |
+| Paths removed since the recorded tree   | 0        | 0             | PASS    |
+| Per-document rows                       | 814      | 814           | PASS    |
+| Duplicate row paths                     | 0        | 0             | PASS    |
+| Row paths absent from the current tree  | 0        | 0             | PASS    |
+| Rows holding an interim label           | 0        | 0             | PASS    |
+| `follow-up-required` states outstanding | 0        | 0             | PASS    |
+
+**The delta resolves rather than drifts.** The tree grew by exactly three paths and lost none. All
+three — `artifacts/execution-record-contract.md`, `artifacts/execution-record-public.md`, and
+`artifacts/reader-doc-disposition-ose-public.md` — are declared in § Planned-New Paths, so the growth
+is this plan's own declared output and not unaccounted-for drift.
+
+**Two declared planned-new paths did not exist at this observation point.**
+`artifacts/execution-record-fixes.md` was absent because Phase 6 had recorded not applicable: both
+Phase 5 journeys passed with zero documentation defects, and the phase creates no record when there
+is nothing to correct. `evidence/README.md` is created later, by P8-002. A planned-new path is a
+permission to add a file, not an obligation, so neither absence was a reconciliation failure — but
+both are named here so P9-003 does not read them as missing.
+
+> **Amended 2026-08-21.** The paragraph above originally said `execution-record-fixes.md` "will
+> never be created". That was true against `origin/main` at `1542ea044`, the revision this re-run
+> read, and false by the time the same commit was written: Phase 6 reopened as iteration `@01`,
+> which created that file and added twelve files under `evidence/` — eight at `cb489b874` and four
+> more at `14e58716e`. The claim is corrected rather
+> than deleted, because the reasoning was sound on the evidence then available — the defect was
+> stating a permanent future ("will never") from a snapshot. P9-003 should expect both paths to
+> exist.
+
+**Interim labels are gone.** Every one of the 814 row dispositions is terminal; none still carries
+`audit-required` or `reader-related`, and none carries `follow-up-required`. The same `awk` over all
+row lines returns 814, so the zero is a real zero rather than a pattern that matched nothing.

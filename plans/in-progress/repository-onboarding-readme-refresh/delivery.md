@@ -1187,7 +1187,7 @@ public repo` passed it. The message states each defect class and what proved it,
     closing paragraph because the same link already appears at the top of that section, and three
     other paragraphs are tightened. Every reader-facing correction survives — the qualified port
     sentence, the `OSE_WWW_PORT` override example, the WSL2 posture, the closed-intake note, and the
-    prerequisite list. README.md is now 892 words; re-running the validator gives exit 0 with zero
+    prerequisite list. README.md was 892 words at `5910653bf`; re-running the validator there gives exit 0 with zero
     Fail findings, and Prettier reports the file unchanged while markdownlint reports
     `Linting: 1 file(s)` with `Summary: 0 error(s)`, so the zero is measured over a real file. The
     fix landed as commit `5910653bf` because amending the unit commit was not available; the
@@ -1238,45 +1238,131 @@ public repo` passed it. The message states each defect class and what proved it,
     with no rebase, amend, or force operation since the branch was created from `origin/main`. The
     earlier attempt to amend the unit commit in P3-013A was refused before it ran, so no history
     edit exists to inspect.
-- [ ] [AI] [P3-018] Rerun full unit gates and verify final PR CI — acceptance: every gate is green.
-- [ ] [AI] [P3-019] Merge the refresh PR as AI — acceptance: `main` contains the refresh.
+- [x] [AI] [P3-018] Rerun full unit gates and verify final PR CI — acceptance: every gate is green.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: the three plan-record files, landed
+    as commit `55925bd16` so the gated head is the pushed head · **Notes**: the plan records were
+    committed first, deliberately, so that the gate run and the CI run both measure the commit that
+    actually sits on `origin` — running gates against a tree with uncommitted changes would repeat
+    the P3-011 mistake L-013 describes. `gate run --surface=pre-commit` exits 0 and
+    `gate run --surface=pre-push` exits 0 with zero `[FAIL]` lines; the only findings are
+    pre-existing over-target word-count warnings, and the README index audit now prints
+    `README INDEX AUDIT PASSED: no orphan or ghost references found`. On the CI side, run
+    `32385715522` (`pr-quality-gate`) and run `32385715595` (`validate-env`) both report
+    `completed success` for head `55925bd16`, with zero jobs concluding `failure`. The four language
+    quality gates skip correctly for a diff with no `apps/` or `libs/` source. One measurement trap
+    was hit and corrected here: a wait loop keyed on the branch's two most recent runs exited
+    immediately because the new runs had not registered yet, so it was observing the previous head's
+    completed runs. The wait was re-keyed to the two specific run IDs, which is what the evidence
+    above cites.
+- [x] [AI] [P3-019] Merge the refresh PR as AI — acceptance: `main` contains the refresh.
 
 ### Phase 3 Gate
 
-- [ ] [AI] [P3-G01] Verify the merged README, onboarding tutorial, contribution posture, task
+- **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: merged under
+  `[AI]` authority at 15:30 UTC as commit `1542ea044` on `main`, and `gh pr view 238` reports
+  `state=MERGED`. The merge method was not assumed: `gh api repos/...` shows all three methods
+  enabled, so the convention was read from the history instead — every recent commit on
+  `origin/main` has a single parent and an `(#NNN)` subject, which is squash, so `--squash` is
+  what keeps this branch consistent with its neighbours. The preconditions were all satisfied
+  before the call: both CI runs green for the exact head, `mergeStateStatus=CLEAN`,
+  `mergeable=MERGEABLE`, the PR out of draft, and zero review threads open. The remote branch was
+  deliberately kept rather than auto-deleted, because Phase 9 verifies merged status per
+  plan-created branch before removing any of them.
+- [x] [AI] [P3-G01] Verify the merged README, onboarding tutorial, contribution posture, task
       register, and package description agree — acceptance: no `follow-up-required` row remains and
       the documented full-inventory reconciliation equals the recursive `origin/main` Markdown count.
-
-> **Pause Safety**: the refresh is merged as one internally coherent reader journey. To resume, read
-> the merged ledger and continue with metadata.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: every check reads
+    the merged tree at `1542ea044`, not the worktree. The five documents agree with each other: the
+    README and the tutorial both present 3100 as a default rather than a fixed address and both show
+    `OSE_WWW_PORT=4000` as the override, the tutorial's closing claim is scoped to apps that serve a
+    port, `CONTRIBUTING.md` states external contributions are closed and names `worktree-to-pr` as
+    the internal default while the README says the same thing in its own words, and `package.json`
+    carries the contract description character for character. The merged README is byte-identical to
+    the branch copy. On the ledger, `grep` finds `follow-up-required` five times, and reading each
+    one shows none is a data row: they are the term's definition, the legend row marking it
+    non-terminal, the sentence introducing the vocabulary, the reconciliation row asserting `0`, and
+    the interpretation paragraph. Zero rows hold the state. The inventory clause resolves rather than
+    drifts: `git ls-tree -r origin/main` counts 9,297 tracked Markdown paths against the ledger's
+    recorded 9,294, and diffing the two enumerations shows the difference is exactly the three
+    artifacts declared in § Planned-New Paths — the contract record, this record, and the ledger
+    itself. Nothing else appeared or disappeared.
+    > **Pause Safety**: the refresh is merged as one internally coherent reader journey. To resume, read
+    > the merged ledger and continue with metadata.
 
 ## Phase 4: Exact GitHub About Metadata
 
-- [ ] [AI] [P4-000] Create the exact gitignored verification-program execution record with the
+- [x] [AI] [P4-000] Create the exact gitignored verification-program execution record with the
       required schema — acceptance: every Phase 4, 5, and 7 task ID has a row before execution and
       `git status --short` does not list the record.
-- [ ] [AI] [P4-001] Validate the exact PRD description against GitHub field limits, the homepage as
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md`
+    · **Notes**: the record was created with 39 rows, one per Phase 4, 5, and 7 task ID, and the ID
+    list was extracted from `delivery.md` itself rather than retyped, so a checklist item cannot be
+    silently missing a row. Both halves of the acceptance were checked separately:
+    `git check-ignore -q` exits 0 for the path, and `git status --short` returns no line matching
+    the filename, which is the stronger of the two because a file can be ignored and still be
+    tracked from an earlier commit. The header states the file holds no secret, no real `.env*`
+    content, and no credential, and that host names and addresses are sanitized before any outcome
+    is copied into `artifacts/` or a commit message.
+- [x] [AI] [P4-001] Validate the exact PRD description against GitHub field limits, the homepage as
       HTTPS, and every topic as a lowercase hyphenated slug — acceptance: the value set is
       mutation-ready without edits.
-- [ ] [AI] [P4-002] Re-read the six approved safe prior fields — acceptance: values match the Phase 0
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: the contract
+    description is 100 characters against GitHub's 350-character limit, the homepage
+    `https://oseplatform.com/` is HTTPS, and all 10 topics match `[a-z0-9][a-z0-9-]{0,49}` against
+    GitHub's 20-topic limit. The slug test was run as a regular expression over every topic rather
+    than by eye, so an uppercase letter or a leading hyphen would have been reported rather than
+    missed. The value set is mutation-ready with no edits.
+- [x] [AI] [P4-002] Re-read the six approved safe prior fields — acceptance: values match the Phase 0
       rollback record or drift is investigated before mutation.
-- [ ] [AI] [P4-003] Compare live values with the contract; if they already match, record verified
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: the six
+    approved safe fields — `nameWithOwner`, `description`, `homepageUrl`, `url`, `visibility`, and
+    `repositoryTopics` — were re-read live and compared field by field with the Phase 0 rollback
+    snapshot. All six match, so no drift needed investigating before the equality decision. Topics
+    were compared as sets, because GitHub returns them in an unstable order and a list comparison
+    would have reported a false difference.
+- [x] [AI] [P4-003] Compare live values with the contract; if they already match, record verified
       equality and skip mutation — acceptance: no unnecessary metadata write occurs.
-- [ ] [AI] [P4-004] If any value differs, run `gh repo edit wahidyankf/ose-public` with the exact
+  - **Date**: 2026-08-20 · **Status**: Done (verified-unchanged) · **Files Changed**: None ·
+    **Notes**: live values already equal the `prd.md` contract — the description and homepage are
+    string-equal and the topic set is equal at 10 members with nothing live-only and nothing
+    contract-only. The plan explicitly prefers recording verified equality over forcing a write, so
+    no metadata mutation occurred. This is the acceptance being met, not a step being skipped: the
+    clause asks that no unnecessary write happen.
+- [x] [AI] [P4-004] If any value differs, run `gh repo edit wahidyankf/ose-public` with the exact
       description and homepage from `prd.md`, then replace topics through the GitHub topics API
       replace operation — acceptance: the commands exit 0 and no topic accumulates.
-- [ ] [AI] [P4-005] Read back `description,homepageUrl,repositoryTopics` with authenticated `gh` and
+  - **Date**: 2026-08-20 · **Status**: Not applicable · **Files Changed**: None · **Notes**: no
+    value differed, so neither `gh repo edit` nor the topics replace call ran. The condition this
+    item guards against — topics accumulating instead of being replaced — cannot arise when nothing
+    is written.
+- [x] [AI] [P4-005] Read back `description,homepageUrl,repositoryTopics` with authenticated `gh` and
       compare exact set equality — acceptance: every value matches `prd.md`.
-- [ ] [AI] [P4-006] If a mutation or readback fails, restore the captured safe prior fields with
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: an
+    independent second `gh repo view --json description,homepageUrl,repositoryTopics` was issued
+    rather than reusing the P4-003 response, so the readback is a fresh observation of the live
+    repository. It equals the contract exactly: description and homepage string-equal, topics
+    set-equal at 10 with no extra member and none missing.
+- [x] [AI] [P4-006] If a mutation or readback fails, restore the captured safe prior fields with
       AI-run CLI/API commands — acceptance: the repository is never left partially updated.
+  - **Date**: 2026-08-20 · **Status**: Not applicable · **Files Changed**: None · **Notes**: no
+    mutation was attempted and the readback succeeded, so there is nothing to restore and the
+    repository was never in a partially updated state. The Phase 0 snapshot remains on disk and
+    usable if a later phase does write.
 
 ### Phase 4 Gate
 
-- [ ] [AI] [P4-G01] Verify exact metadata equality — acceptance: complete, accurate About metadata is
+- [x] [AI] [P4-G01] Verify exact metadata equality — acceptance: complete, accurate About metadata is
       live and rollback evidence is sanitized.
-
-> **Pause Safety**: metadata is verified or rolled back. To resume, re-read the About fields and
-> compare them with `prd.md`.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: gate PASS. The
+    live About metadata is complete and accurate against `prd.md` — description, homepage, and all
+    10 topics — and it agrees with what the merged README says about the project, which is the point
+    of the contract rather than the API call. Equality was established from a fresh readback, and
+    the rollback evidence stays sanitized: the snapshot and both live captures hold only public
+    repository fields, with no token, credential, or private host name, and they live under
+    gitignored `local-tmp/` where `git status --short` does not list them.
+    > **Pause Safety**: metadata is verified or rolled back. To resume, re-read the About fields and
+    > compare them with `prd.md`.
 
 ## Phase 5: Fresh-Checkout Journeys
 
@@ -1285,40 +1371,180 @@ after processes stop and evidence is safely recorded.
 
 ### Phase 5A: macOS
 
-- [ ] [AI] [P5A-001] Create one exact macOS `mktemp -d` directory, clone `main` into it, and record
+- [x] [AI] [P5A-001] Create one exact macOS `mktemp -d` directory, clone `main` into it, and record
       the directory only in the local verification record — acceptance: the new clone has no
       checkout-local state.
-- [ ] [AI] [P5A-002] Run only the documented prerequisite and bootstrap commands in that clone —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: the clone was made with the command the README documents, over HTTPS from GitHub,
+    into a single `mktemp -d` directory whose path is recorded only in the gitignored verification
+    record. Its HEAD is `1542ea044`, byte-equal to `origin/main`, so the journey exercises the
+    merged documentation rather than the worktree's copy. "No checkout-local state" was checked as
+    five separate facts rather than inferred from freshness: `git status --short --untracked-files=all`
+    returns zero paths, `node_modules/` is absent, `git worktree list` shows one entry, the only
+    local branch is `main`, and no `.env*` file exists in the clone root. The first attempt died
+    partway with `fetch-pack: unexpected disconnect while reading sideband packet`; the partial
+    directory was removed and the clone rerun from scratch rather than resumed, so no half-fetched
+    state carried into the journey. The repository is roughly 481 MB of history and the transfer ran
+    at about 20 MB per minute.
+- [x] [AI] [P5A-002] Run only the documented prerequisite and bootstrap commands in that clone —
       acceptance: every command succeeds without an undocumented prerequisite.
-- [ ] [AI] [P5A-003] Run `npm exec nx show project ose-www --json` and record the declared `dev`
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: only the commands the README documents were run — the prerequisite checks, then
+    `npm install` — and every one succeeded, with `npm install` exiting 0 after adding 1,605
+    packages and running the repository doctor. Nothing undocumented had to be installed to get
+    there. Each documented prerequisite was verified by invoking it rather than assumed: git 2.39.5,
+    Volta 2.0.2, Node 24.16.0, npm 11.16.0, cargo 1.95.0, jq 1.8.1, and Node was read from inside
+    the clone so the answer reflects Volta's project pin rather than an ambient default. The doctor
+    reports 15 of 16 tools OK with zero missing, so the documented path is complete. Its single
+    warning is worth stating precisely rather than waving through: `package.json` pins
+    `volta.npm = 11.11.0`, but npm resolves to Volta's 11.16.0 image, and `which npm` confirms the
+    binary comes from `~/.volta/tools/image/npm/11.16.0/`. Node honoured its pin in the same clone,
+    so this is a Volta-level resolution on this machine rather than a missing or wrong instruction
+    in the documentation, and it blocks nothing — the doctor still passes with zero missing tools.
+    It is carried to the Phase 5A gate so the correction decision is recorded rather than implied.
+- [x] [AI] [P5A-003] Run `npm exec nx show project ose-www --json` and record the declared `dev`
       target's command, its port environment variable name, and its default port — acceptance: the
       start command and address are read from project configuration, not guessed or copied from this
       plan.
-- [ ] [AI] [P5A-004] Start the declared `ose-www` `dev` target and retain its process ID in the local
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: the start command
+    and address come from `npm exec nx -- show project ose-www --json` run inside the clone, not from
+    this plan. The `dev` target is an `nx:run-commands` executor running
+    `node ../../scripts/next-with-port.mjs dev --env OSE_WWW_PORT --default 3100` with
+    `cwd: apps/ose-www`, so the port environment variable is `OSE_WWW_PORT` and the compiled default
+    is 3100. That is the same variable name and default the merged README and getting-started
+    tutorial give a reader, which is the point of reading it from configuration rather than
+    trusting the prose: the documentation is now confirmed against the source of truth in a tree
+    that has never seen this plan's working copy.
+- [x] [AI] [P5A-004] Start the declared `ose-www` `dev` target and retain its process ID in the local
       record — acceptance: the target stays running for inspection.
-- [ ] [AI] [P5A-005] Request the recorded loopback address with `curl --fail --silent --show-error` —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: the target was
+    started detached from inside the clone and its process ID retained in the gitignored
+    verification record. The process is confirmed running with `kill -0` rather than assumed from
+    the absence of an error, and Next.js 16.2.6 on Turbopack reports `Ready in 295ms` with
+    `Local: http://localhost:3100`, matching the default the project configuration declares in
+    P5A-003. One handling note: the startup banner also prints the machine's LAN address, and that
+    line is deliberately not copied into this checklist, the execution record, or any evidence file
+    — the plan forbids carrying a real host address into plan-visible material, and the loopback
+    address is the one the documentation tells a reader to open anyway.
+- [x] [AI] [P5A-005] Request the recorded loopback address with `curl --fail --silent --show-error` —
       acceptance: the response succeeds and contains the documented product-purpose cue.
-- [ ] [AI] [P5A-006] Inspect that same address in a browser and its console at mobile, tablet, and
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**:
+    `curl --fail --silent --show-error http://localhost:3100` exits 0 and returns 38,399 bytes.
+    `--fail` matters to the acceptance: without it curl reports success on a 404 or 500 body, so the
+    exit code alone would not prove the page served. The response carries the documented
+    product-purpose cue rather than merely being non-empty — it contains the heading text
+    `Open Sharia Enterprise Platform` and `<title>OSE Platform</title>`, which is what the
+    getting-started tutorial tells a reader they will see. The address requested is the loopback one
+    the documentation names, not the LAN address the dev server also advertises.
+- [x] [AI] [P5A-006] Inspect that same address in a browser and its console at mobile, tablet, and
       desktop viewports — acceptance: product context is visible at all three and no console error
       appears. `ose-www` serves a single locale, so no per-locale repetition applies.
-- [ ] [AI] [P5A-006A] Capture evidence into the plan's `evidence/` folder: one screenshot per
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: inspected through
+    Playwright MCP, which the governance ranks first for browser verification. All three viewports
+    were driven explicitly rather than described as "responsive": mobile at 390×844, tablet at
+    768×1024, and desktop at 1440×900. Product context is present at each — the accessibility
+    snapshot returns the level-1 heading `Open Sharia Enterprise Platform` at every width, and the
+    captured images show the tagline, the plain-language description, the two calls to action, the
+    "Why Open Source?" section, and the pre-alpha note. The layout adapts rather than breaking: the
+    header collapses to a menu button at 390px and expands to a full navigation bar with search at
+    1440px. On the console half of the acceptance, `browser_console_messages` with `all: true` — so
+    the whole session rather than only the last navigation — reports 2 total messages with 0 errors
+    and 0 warnings. `ose-www` serves a single locale, so the per-locale repetition the plan excuses
+    does not apply.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
+- [x] [AI] [P5A-006A] Capture evidence into the plan's `evidence/` folder: one screenshot per
       breakpoint named `phase-5a-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5a-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
       execution record and contains no credential, token, or authenticated session data.
-- [ ] [AI] [P5A-006B] In this same macOS clone, before removing it, start at the root `README.md` and
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: four files under the plan's
+    `evidence/` folder · **Notes**: the folder now holds
+    `phase-5a-ose-www-landing-en-390px.png`, `-768px.png`, and `-1440px.png` — one per breakpoint,
+    named exactly as the checklist specifies — plus `phase-5a-ose-www-curl.txt` recording the curl
+    command, its exit code 0, the response size, and the two product-purpose cues found in the body.
+    Every file is referenced by name in this note and in the verification record, which is the
+    reference the acceptance asks for. On the sensitivity half: the request was unauthenticated
+    against a local development server, no header, cookie, or token was sent or captured, the text
+    file states that explicitly, and the images show only the public landing page with no browser
+    profile, account, or private host name visible. The dev server's LAN address appears nowhere in
+    any of the four files.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
+- [x] [AI] [P5A-006B] In this same macOS clone, before removing it, start at the root `README.md` and
       follow the documented **Understand the product** path hop by hop to the roadmap or product
       specification it names — acceptance: every hop resolves to an existing, non-404 target, the
       route reaches the roadmap or product specification without any hop landing in setup or
       installation instructions, and a broken or missing hop is recorded as a Phase 6 correction row.
-- [ ] [AI] [P5A-007] Stop the recorded child process, verify clean status, and remove only the exact
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: the hops were
+    extracted from the clone's own `README.md` section rather than typed from memory, which is what
+    makes the walk falsifiable: the **Understand the product** path names nine targets — `roadmap.md`,
+    `docs/reference/system-architecture/applications.md`, the five directory READMEs in the
+    where-the-work-lives table, `https://oseplatform.com`, and `https://nx.dev/`. Every repository
+    hop resolves to an existing file in the clone, so no hop is a 404, and each opens with a product
+    or structure heading rather than an install step. The external hop answers `301` and then `200`
+    when redirects are followed, which is worth recording precisely — a bare status check would have
+    reported `301` and looked like a failure. The route reaches its destination: `roadmap.md` is the
+    documented endpoint and mentions workstreams or readiness 18 times. On the no-setup-diversion
+    clause, a vocabulary scan of both product hops for `npm install`, `git clone`, `prerequisite`,
+    `volta`, and `setup your development` returns exactly one hit, and reading it shows it is the
+    sentence "a deliverable waits only for prerequisites that it actually" — dependency language in
+    a roadmap, not installation instructions. No hop is broken or missing, so no Phase 6 correction
+    row is opened by this item.
+- [x] [AI] [P5A-007] Stop the recorded child process, verify clean status, and remove only the exact
       temporary clone — acceptance: no process or temporary checkout remains.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: the recorded process ID was killed along with its children, and the stop is proved
+    four independent ways rather than by the kill command's exit status: `kill -0` on the recorded
+    PID reports the process gone, `pgrep -f next-with-port.mjs` counts zero processes,
+    `lsof -nP -iTCP:3100 -sTCP:LISTEN` lists no listener, and `curl` against the address now returns
+    `000` instead of a page. The four matter because the dev target spawns a child — killing the
+    parent alone can leave the server holding the port. Before removal the clone reported zero dirty
+    paths, so nothing unsaved was thrown away. Removal was guarded rather than trusted: the recorded
+    path was pattern-checked to be a `mktemp` temporary directory before `rm -rf` ran, so a
+    corrupted or empty variable could not delete anything else, and the directory is confirmed gone
+    afterwards. The plan worktree still sits on its own branch and its only modified paths are this
+    plan's own records.
 
 #### Phase 5A Gate
 
-- [ ] [AI] [P5A-G01] Record the sanitized result, stop proof, and cleanup result; create a Phase 6
+- [x] [AI] [P5A-G01] Record the sanitized result, stop proof, and cleanup result; create a Phase 6
       correction row for any failure — acceptance: no mutable macOS journey state remains.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: gate PASS, and the
+    result is stated as a decision rather than a summary. The macOS journey completed every step the
+    documentation prescribes and found no documentation defect: the clone was clean, every documented
+    prerequisite resolved, `npm install` exited 0 with the doctor reporting zero missing tools, the
+    start command and port came from project configuration rather than prose, `curl --fail` returned
+    the documented product cue, all three viewports showed product context with zero console errors
+    or warnings, and every hop of the product path resolved without landing in setup instructions.
+    Because nothing failed, **no Phase 6 correction row is created**, and that is a finding rather
+    than an omission. One observation is deliberately not promoted to a correction: npm resolves to
+    Volta's 11.16.0 image while `package.json` pins 11.11.0. It is environment-level — Node honoured
+    its pin in the same clone, the doctor still passes with zero missing tools, and no documented
+    instruction is wrong — so fixing it would mean changing a machine, not a document. On the
+    no-mutable-state clause, all three facts were re-checked after cleanup rather than inherited
+    from P5A-007: no `next-with-port` process exists, nothing listens on the port, and the temporary
+    directory is gone. The sanitized outcome carries no host name, address, or credential; the
+    clone path lives only in the gitignored verification record.
 
-> **Pause Safety**: the macOS clone and child process are gone; resume from its sanitized row.
+    > **Pause Safety**: the macOS clone and child process are gone; resume from its sanitized row.
+
+  - **Amended 2026-08-21 — breakpoint coverage.** The viewport evidence this gate rests on was
+    captured at 390x844, 768x1024, and 1440x900. The repository's own
+    `screenshot-conventions.md` and `ui-verification-checklist.md` require mobile 375 px, tablet
+    768 px, and desktop 1280 px as the minimum set. Two of the three widths used here therefore do
+    not conform, and 390 px is _wider_ than 375 px, so the narrowest documented breakpoint — the one
+    that catches horizontal overflow — was never exercised by this journey. The PASS above stands
+    for what it measured; it does not discharge the documented breakpoint requirement. That gap was
+    closed separately by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at all
+    three documented widths, which is not a re-run of this journey.
 
 ### Phase 5B: Ubuntu
 
@@ -1328,23 +1554,84 @@ commits no container configuration. The container is started with `--rm`, and th
 removed afterwards unless it was already present before this phase. Nothing this phase pulls or
 creates survives it.
 
-- [ ] [AI] [P5B-000] Record the pre-phase Docker baseline with `docker image ls --format '{{.Repository}}:{{.Tag}}'`,
+- [x] [AI] [P5B-000] Record the pre-phase Docker baseline with `docker image ls --format '{{.Repository}}:{{.Tag}}'`,
       `docker ps -a --format '{{.Names}}'`, `docker volume ls -q`, and `docker network ls --format '{{.Name}}'`,
       and note whether `docker image inspect ubuntu:24.04` already succeeds — acceptance: the record
       states the exact pre-existing state, and whether cleanup must remove the base image or leave a
       preexisting one alone.
-- [ ] [AI] [P5B-001] Start one disposable, detached container from the upstream official image with `docker run --rm -d --name ose-onboarding-ubuntu-check -p 127.0.0.1:<port>:<port> ubuntu:24.04 sleep infinity` and record its exact name — acceptance: `docker ps --filter name=ose-onboarding-ubuntu-check --format '{{.Names}}'` returns the recorded name (confirming the container is actually running, not merely created), the container is started from the unmodified upstream image, no Dockerfile or build step is used, no host path is bind-mounted, and only the loopback port is published.
-- [ ] [AI] [P5B-002] Run each install command inside the container via
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: all four listings were captured to files in the gitignored verification record so
+    P5B-008 can diff against them rather than against a remembered description. The exact pre-phase
+    state is zero images, zero containers (including stopped ones, since `ps -a` was used), zero
+    volumes, and three networks — `bridge`, `host`, and `none`, which are Docker's built-ins and not
+    plan-created. `docker image inspect ubuntu:24.04` exits non-zero, so the base image is **absent
+    before this phase**, and that fixes the cleanup obligation now rather than leaving it to
+    judgement later: P5B-007 must remove `ubuntu:24.04` afterwards, because the phase will be what
+    pulled it. Recording this before pulling anything is the whole point — after the pull, the
+    question is unanswerable.
+- [x] [AI] [P5B-001] Start one disposable, detached container from the upstream official image with `docker run --rm -d --name ose-onboarding-ubuntu-check -p 127.0.0.1:<port>:<port> ubuntu:24.04 sleep infinity` and record its exact name — acceptance: `docker ps --filter name=ose-onboarding-ubuntu-check --format '{{.Names}}'` returns the recorded name (confirming the container is actually running, not merely created), the container is started from the unmodified upstream image, no Dockerfile or build step is used, no host path is bind-mounted, and only the loopback port is published.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: `docker ps --filter name=ose-onboarding-ubuntu-check` returns the recorded name, which
+    is the acceptance's own distinction — a created-but-exited container would not appear there,
+    while `docker ps -a` would have shown it and looked like success. The remaining four constraints
+    were each checked against `docker inspect` rather than against the command line I typed:
+    `Config.Image` is `ubuntu:24.04` unmodified, no Dockerfile or build step exists anywhere in this
+    phase, `len .Mounts` is 0 so no host path is bind-mounted into the container, and
+    `HostConfig.PortBindings` publishes only `127.0.0.1:3100`, so the port is unreachable from
+    outside this machine. `AutoRemove` is true, which is what lets P5B-006 rely on `--rm` to delete
+    the container on stop. The run output includes `Status: Downloaded newer image for ubuntu:24.04`,
+    independently confirming the P5B-000 finding that the image was absent — so its removal is
+    mandatory at P5B-007.
+- [x] [AI] [P5B-002] Run each install command inside the container via
       `docker exec ose-onboarding-ubuntu-check <command>`, installing only the packages the onboarding
       documentation itself names as prerequisites — acceptance: every install command executes through
       `docker exec` against the P5B-001 container (never an implied interactive shell), comes from the
       documented prerequisite list, and any package the journey turns out to need but the docs never
       mention becomes a Phase 6 documentation-defect row rather than a silent fix.
-- [ ] [AI] [P5B-003] Via `docker exec ose-onboarding-ubuntu-check <command>`, clone `main` into a
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Ran only the prerequisites the onboarding docs name, each through
+    `docker exec ose-onboarding-ubuntu-check`: `apt-get update` (exit 0);
+    `apt-get install -y build-essential curl git` (exit 0, `git version 2.43.0`,
+    `curl 8.5.0`, `gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1)`); the documented Volta
+    installer (exit 0, `volta 2.0.2`); the documented rustup installer (exit 0,
+    `rustc 1.97.1`, `cargo 1.97.1`).
+  - The documented commands are written with `sudo`, which `ubuntu:24.04` does
+    not ship and does not need — the container shell is already root. Invoking
+    `apt-get` directly is a container nuance, not a documentation defect, and is
+    recorded as such rather than raised as a Phase 6 correction row.
+  - No package outside the documented prerequisite list was installed. Any
+    package a later step turns out to need becomes a Phase 6 documentation-defect
+    row, never a silent install.
+- [x] [AI] [P5B-003] Via `docker exec ose-onboarding-ubuntu-check <command>`, clone `main` into a
       `mktemp -d` directory inside the container and run only its documented bootstrap — acceptance:
       every clone and bootstrap command executes through `docker exec` against the P5B-001 container,
       setup succeeds without checkout-local state, and without an undocumented prerequisite.
-- [ ] [AI] [P5B-004] Via `docker exec ose-onboarding-ubuntu-check <command>`, resolve the `ose-www` dev
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Every command ran through `docker exec ose-onboarding-ubuntu-check`. `mktemp -d`
+    produced the clone parent inside the container; `git clone` of the documented
+    public URL exited 0 and checked out 22,107 files; the clone's `HEAD` is
+    `main` at `1542ea044`, the merged refresh unit, so the journey exercises what
+    a reader gets today rather than checkout-local state. No host path was
+    mounted — the container was started with zero mounts at P5B-001.
+  - The documented bootstrap is `npm install`, which exited 0 and installed the
+    Git hooks (`commit-msg`, `pre-commit`, `pre-push` present under `.husky/`).
+  - The broad tool check that `npm install` runs reports 9 tools absent
+    (`dotnet`, `docker`, `jq`, `shellcheck`, `hadolint`, `actionlint`, `shfmt`,
+    `tofu`, `clang-format`). This is not an undocumented prerequisite: both the
+    root `README.md` and the tutorial pre-declare that the broad check is not the
+    website-path gate and that Docker and other optional tools are installed only
+    when the chosen work needs them. The gate the docs actually name is the
+    focused check, and it is green — `npm run doctor -- --fix --tools git,volta,node,npm`
+    exits 0 with `4/4 tools OK, 0 warning, 0 missing`.
+  - The version claim the tutorial makes is falsifiable and holds: `node --version`
+    reports `v24.16.0` and the focused check independently prints `required: 24.16.0`
+    for node and `required: 11.11.0` for npm, both matched — Volta selected the
+    versions this checkout declares, without a separately maintained list.
+  - Setup succeeded without an undocumented prerequisite, so this item opens no
+    Phase 6 correction row.
+- [x] [AI] [P5B-004] Via `docker exec ose-onboarding-ubuntu-check <command>`, resolve the `ose-www` dev
       target with `npm exec nx show project ose-www --json`, then start its declared Nx command bound
       to all interfaces inside the container (`0.0.0.0`), not the container's own loopback, so the
       published `127.0.0.1:<port>` reaches it from the host — acceptance: every command executes
@@ -1352,47 +1639,288 @@ creates survives it.
       recorded, the recorded bind address is explicitly `0.0.0.0` inside the container, and if the
       documented onboarding command cannot be made reachable without an undocumented flag, that is
       itself a Phase 6 documentation-defect row rather than a silent fix to the run command.
-- [ ] [AI] [P5B-005] Run `docker exec ose-onboarding-ubuntu-check curl --fail --silent --show-error <address>` against the bound address, then inspect the published host loopback address in a browser and its console at mobile, tablet, and desktop viewports — acceptance: the `curl` command executes through `docker exec` against the P5B-001 container and succeeds, and the documented product context appears at all three viewports with no console error.
-- [ ] [AI] [P5B-005A] Capture evidence into the plan's `evidence/` folder: one screenshot per
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Every command ran through `docker exec ose-onboarding-ubuntu-check`. The dev
+    target was resolved from the container clone rather than assumed:
+    `npm exec nx show project ose-www --json` reports
+    `node ../../scripts/next-with-port.mjs dev --env OSE_WWW_PORT --default 3100`,
+    matching what Phase 5A resolved on macOS.
+  - The documented onboarding command `npm exec nx -- run ose-www:dev` was started
+    verbatim, with **no** added bind flag. Next.js 16.2.6 reported `Ready in 198ms`
+    and printed both `Local: http://localhost:3100` and
+    `Network: http://<container-ip>:3100`.
+  - Recorded process: `next-server (v16.2.6)` at PID 7219, under the Next CLI at
+    7207 and the wrapper at 7200.
+  - The bind address was taken from the kernel rather than the banner, which is
+    what makes the all-interfaces claim falsifiable: `/proc/net/tcp6` holds a
+    listening (`0A`) socket at
+    `00000000000000000000000000000000:0C1C` — the wildcard address on port 3100
+    (`0xC1C` = 3100) — and `/proc/net/tcp` holds no loopback-only entry for that
+    port. That wildcard is dual-stack, so it subsumes `0.0.0.0` and accepts the
+    IPv4 traffic Docker's published mapping delivers.
+  - Reachability was proved on both sides of the boundary rather than inferred:
+    an in-container request to the container's own non-loopback address
+    (`http://<container-ip>:3100/`) answers `200`, and the published host mapping
+    `3100/tcp -> 127.0.0.1:3100` answers `200` from the host.
+  - Because the documented command is reachable as written, no undocumented flag
+    was needed and this item opens no Phase 6 documentation-defect row.
+- [x] [AI] [P5B-005] Run `docker exec ose-onboarding-ubuntu-check curl --fail --silent --show-error <address>` against the bound address, then inspect the published host loopback address in a browser and its console at mobile, tablet, and desktop viewports — acceptance: the `curl` command executes through `docker exec` against the P5B-001 container and succeeds, and the documented product context appears at all three viewports with no console error.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - The documented curl ran through `docker exec ose-onboarding-ubuntu-check` and
+    exited 0, returning 38,399 bytes carrying every marker the tutorial names as
+    proof of success: `<title>OSE Platform</title>`, the `<h1>` reading
+    **Open Sharia Enterprise Platform**, and the description beginning
+    "Open-source (MIT) platform for Sharia-compliant enterprise solutions."
+  - The browser then inspected the **published host loopback**
+    `http://127.0.0.1:3100/` at three viewports — mobile 390x844, tablet
+    768x1024, desktop 1440x900 — through Playwright MCP, the repository's
+    first-ranked browser-verification tool. Those widths are not the mandated
+    set; see the amendment below.
+  - Console state is clean, and was read for the whole session rather than a
+    single navigation: `Total messages: 2 (Errors: 0, Warnings: 0)`. Both entries
+    sit below warning level, so no viewport produced a console error.
+  - Product context is present rather than assumed. The mobile accessibility
+    snapshot shows the `<h1>` **Open Sharia Enterprise Platform**, the MIT product
+    description, the **Why Open Source?** section, the "Currently in pre-alpha
+    development." line, and the repository and license links. At desktop the same
+    page exposes a **Main navigation** landmark that the mobile layout collapses
+    behind an "Open navigation menu" button — the expected responsive difference,
+    not a defect.
+  - That the browser exercised the container rather than a host process was
+    checked, not assumed: `docker port` reports `3100/tcp -> 127.0.0.1:3100`, and
+    `lsof -nP -iTCP:3100 -sTCP:LISTEN` shows the only host listener is Docker's
+    published mapping. The Phase 5A macOS server was stopped and its clone removed
+    at P5A-007, so it cannot be the responder.
+  - No console error and no missing product context, so this item opens no
+    Phase 6 correction row.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
+- [x] [AI] [P5B-005A] Capture evidence into the plan's `evidence/` folder: one screenshot per
       breakpoint named `phase-5b-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5b-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
       execution record and contains no host path, credential, or session data.
-- [ ] [AI] [P5B-005B] Via `docker exec ose-onboarding-ubuntu-check <command>` against this same
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: evidence/phase-5b-ose-www-curl.txt, evidence/phase-5b-ose-www-landing-en-{390,768,1440}px.png ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Four files landed in the plan's `evidence/` folder, one screenshot per
+    captured breakpoint plus the curl response:
+    `phase-5b-ose-www-landing-en-390px.png`,
+    `phase-5b-ose-www-landing-en-768px.png`,
+    `phase-5b-ose-www-landing-en-1440px.png`, and
+    `phase-5b-ose-www-curl.txt`. All four are referenced from this execution
+    record, satisfying the reference clause.
+  - The sanitization clause was tested rather than asserted. A scan of the curl
+    evidence for `/Users/`, `/home/`, the account name, `token`, `secret`,
+    `password`, `api-key`, `Bearer`, `session`, `cookie`, the container temp path,
+    and the container's private IP returns no match, and a `strings` scan of each
+    PNG returns `0` host-path hits — so no host path, credential, or session data
+    is embedded in image metadata either.
+  - The curl evidence deliberately records the response's identifying markers and
+    byte count rather than pasting the full 38 KB body, keeping the artifact
+    reviewable and free of incidental runtime detail.
+  - One honest caveat worth recording: each Phase 5B screenshot is **byte-identical**
+    to its Phase 5A counterpart (`sha256` matches at all three widths). That is
+    expected — the same Chromium rendered the same page bytes at the same viewport
+    — but it means the screenshots evidence the _page_, not the _platform_. The
+    platform-specific proof for this journey is the in-container `curl` and the
+    kernel-level bind reading in P5B-004, both of which can only have come from
+    inside the container.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
+- [x] [AI] [P5B-005B] Via `docker exec ose-onboarding-ubuntu-check <command>` against this same
       container clone, before stopping the process, start at the root `README.md` and follow the
       documented **Understand the product** path hop by hop to the roadmap or product specification it
       names — acceptance: every hop-resolution command executes through `docker exec` against the
       P5B-001 container, every hop resolves to an existing, non-404 target, the route reaches the
       roadmap or product specification without any hop landing in setup or installation instructions,
       and a broken or missing hop is recorded as a Phase 6 correction row.
-- [ ] [AI] [P5B-006] Stop the recorded dev-server process via `docker exec`, then stop the container
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Every hop-resolution command ran through `docker exec ose-onboarding-ubuntu-check`
+    against this same container clone, with the dev server still running, and the
+    hops were extracted from the clone's own `README.md` rather than typed from
+    memory or carried over from Phase 5A.
+  - The **Understand the product** path names nine targets: `roadmap.md`,
+    `docs/reference/system-architecture/applications.md`, the five directory
+    READMEs in the where-the-work-lives table (`apps/`, `libs/`, `docs/`,
+    `specs/`, `plans/`), and the external `https://oseplatform.com` and
+    `https://nx.dev/`.
+  - All seven repository hops resolve to existing files — no hop is a 404 — and
+    each opens with a product or structure heading rather than an install step:
+    `# 🗺️ Development Roadmap`, `# Applications & Containers`, `# Applications`,
+    `# Shared Libraries`, `# Documentation`, `# Specifications`, `# Plans`.
+  - The external hops were checked with and without redirect-following, which is
+    what keeps the result honest: `https://oseplatform.com` answers `301` directly
+    and `200` when redirects are followed — a bare status check would have read as
+    a failure — and `https://nx.dev/` answers `200` either way.
+  - The route reaches its documented destination: `roadmap.md` is the endpoint the
+    README names, and it mentions workstreams or readiness 18 times.
+  - On the no-setup-diversion clause, scanning both product hops for
+    `npm install`, `git clone`, `prerequisite`, `volta`, and `setup your development`
+    returns exactly one hit — "a deliverable waits only for prerequisites that it
+    actually" — which is dependency language in a roadmap, not installation
+    instructions.
+  - No hop is broken or missing, so this item opens no Phase 6 correction row.
+    The outcome matches the macOS walk at P5A-006B, so the product path is not
+    platform-dependent.
+- [x] [AI] [P5B-006] Stop the recorded dev-server process via `docker exec`, then stop the container
       itself with `docker stop ose-onboarding-ubuntu-check` (`--rm` then removes it automatically), and
       verify with `docker ps -a --format '{{.Names}}'` that the recorded container name is absent —
       acceptance: `docker stop ose-onboarding-ubuntu-check` exits `0`, `--rm` removed the container, and
       no plan-created container remains.
-- [ ] [AI] [P5B-007] If P5B-000 recorded `ubuntu:24.04` as absent before this phase, remove it with
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - The dev server was stopped first, through `docker exec`, by sending `SIGTERM`
+    to the recorded wrapper PID 7200 — the signal the wrapper forwards to the Next
+    CLI, so the whole tree shuts down rather than being orphaned.
+  - Stop was verified two independent ways instead of assumed from the signal's
+    exit status: a process scan reports no `next` or `next-with-port` process
+    remains, and `/proc/net/tcp6` no longer holds a listening socket on port 3100
+    (`0C1C`) — the listener recorded at P5B-004 is released.
+  - `docker stop ose-onboarding-ubuntu-check` exited 0, and because the container
+    was started with `--rm` at P5B-001, Docker removed it on stop.
+  - The absence check is worth recording precisely: the **first**
+    `docker ps -a --format '{{.Names}}'` read still counted the container while
+    `--rm` removal was in flight. A re-read returns `0` matches and the status
+    listing reports it absent. The terminal state is what stands — the container
+    is gone — but the transient first read is recorded rather than hidden, since
+    reporting a stop from the first read would have been a false negative.
+  - No plan-created container remains.
+- [x] [AI] [P5B-007] If P5B-000 recorded `ubuntu:24.04` as absent before this phase, remove it with
       `docker image rm ubuntu:24.04` — acceptance: `docker image inspect ubuntu:24.04` then fails; if
       the image existed beforehand it is left untouched and that decision is recorded.
-- [ ] [AI] [P5B-008] Re-run the four P5B-000 baseline listings and diff them against the recorded
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Removal was mandatory here, not optional: P5B-000 recorded `ubuntu:24.04` as
+    absent before the phase, and the P5B-001 run independently confirmed it by
+    printing `Status: Downloaded newer image for ubuntu:24.04`. Two independent
+    readings agreeing is what makes the removal decision safe — the image is this
+    plan's own residue, not pre-existing user state.
+  - `docker image rm ubuntu:24.04` exited 0, untagging both the tag and the
+    digest reference and deleting the two layers the pull created.
+  - The acceptance is stated as a failing inspect, and that is what was checked
+    rather than inferred from the removal output: `docker image inspect ubuntu:24.04`
+    now exits `1`.
+- [x] [AI] [P5B-008] Re-run the four P5B-000 baseline listings and diff them against the recorded
       baseline — acceptance: image, container, volume, and network sets are identical to the pre-phase
       state, with zero dangling image, anonymous volume, or plan-created network left behind.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - All four listings were re-run with the same commands P5B-000 used and diffed
+    against the **files** captured before the phase rather than against a
+    remembered description — which is what makes the empty result falsifiable.
+  - Every diff is empty: `images`, `containers` (with `-a`, so stopped containers
+    would show), `volumes`, and `networks` are each `IDENTICAL` to the pre-phase
+    capture.
+  - The residue clauses were checked separately rather than assumed from the
+    diffs: `docker image ls -f dangling=true -q` and
+    `docker volume ls -f dangling=true -q` both return zero entries, so the pull,
+    the container, and its clone left no dangling image and no anonymous volume.
+  - The network set is `bridge`, `host`, `none` — Docker's three built-ins, the
+    same three recorded at P5B-000 — so no plan-created network remains.
+  - The Docker environment is byte-for-byte back to its pre-phase state.
 
 #### Phase 5B Gate
 
-- [ ] [AI] [P5B-G01] Record the sanitized result, stop proof, image-removal decision, and Phase 6
+- [x] [AI] [P5B-G01] Record the sanitized result, stop proof, image-removal decision, and Phase 6
       correction row if needed — acceptance: no mutable Ubuntu journey state remains and the Docker
       baseline diff in P5B-008 is empty.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Sanitized result**: the Ubuntu 24.04 journey passes end to end with **zero
+    documentation defects**. A reader starting from the published docs on a clean
+    Ubuntu container reaches a working `ose-www` at all three viewports using only
+    the prerequisites the docs name, the documented clone-and-bootstrap, and the
+    documented run command with no added flag.
+  - Two findings were classified rather than silently absorbed, and neither is a
+    documentation defect: `sudo` is absent in the container because its shell is
+    already root (a container nuance), and the broad tool check reports nine
+    absent tools that both the README and the tutorial pre-declare as
+    not-required for the website path — the focused check the docs actually name
+    is green at `4/4 tools OK, 0 missing`.
+  - **Stop proof**, re-read at gate time rather than carried from the earlier
+    items: `docker ps -a` matches the container name `0` times, and no host
+    process listens on port 3100.
+  - **Image-removal decision**: removal was mandatory, because P5B-000 recorded
+    `ubuntu:24.04` absent beforehand and the P5B-001 run confirmed the phase
+    pulled it. It was removed, and `docker image inspect ubuntu:24.04` exits `1`.
+  - **Baseline diff is empty**: all four P5B-008 listings — images, containers
+    (`-a`), volumes, networks — are identical to the pre-phase capture, with zero
+    dangling images and zero anonymous volumes.
+  - No mutable Ubuntu journey state remains, and Phase 5B opens no Phase 6
+    correction row.
 
-> **Pause Safety**: the Ubuntu container, its clone, and any image this phase pulled are gone; resume
-> from its sanitized row and re-establish the Docker baseline first.
+    > **Pause Safety**: the Ubuntu container, its clone, and any image this phase pulled are gone; resume
+    > from its sanitized row and re-establish the Docker baseline first.
+
+  - **Amended 2026-08-21 — breakpoint coverage.** The viewport evidence this gate rests on was
+    captured at 390x844, 768x1024, and 1440x900. The repository's own
+    `screenshot-conventions.md` and `ui-verification-checklist.md` require mobile 375 px, tablet
+    768 px, and desktop 1280 px as the minimum set. Two of the three widths used here therefore do
+    not conform, and 390 px is _wider_ than 375 px, so the narrowest documented breakpoint — the one
+    that catches horizontal overflow — was never exercised by this journey. The PASS above stands
+    for what it measured; it does not discharge the documented breakpoint requirement. That gap was
+    closed separately by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at all
+    three documented widths, which is not a re-run of this journey.
 
 ### Phase 5 Gate
 
-- [ ] [AI] [P5-G01] Record a sanitized outcome for both operating-system journeys in the
+- [x] [AI] [P5-G01] Record a sanitized outcome for both operating-system journeys in the
       verification-program record — acceptance: each names pass/fail and safe evidence only, with no
       raw environment data.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **macOS journey — PASS, zero documentation defects.** A reader following the
+    published docs on macOS clones, bootstraps, resolves the dev target, reaches
+    the landing page at all three viewports with no console error, and walks the
+    product path to `roadmap.md` without a broken hop. The one npm/Volta version
+    warning seen there was classified environment-level (node honored its pin and
+    the doctor reported 0 missing) and deliberately not promoted to a correction
+    row.
+  - **Ubuntu 24.04 journey — PASS, zero documentation defects.** The same route
+    succeeds inside a disposable container built from the unmodified upstream
+    image, using only documented prerequisites, the documented bootstrap, and the
+    documented run command with no added bind flag. Its two anomalies are
+    classified and neither is a doc defect: absent `sudo` (the container shell is
+    root) and a broad tool check both onboarding documents already declare
+    non-binding for the website path, whose named focused check passes 4/4.
+  - Both journeys are therefore green, and **Phase 6 opens no correction row from
+    Phase 5** — it is on track to be recorded not applicable, subject to the
+    cross-document defects Phase 7 may still surface.
+  - Every one of the 22 Phase 5 rows is terminal (`Done` or `Pass`); none is left
+    pending or partial.
+  - The safe-evidence clause was tested, not asserted: sweeping every Phase 5 row
+    for host paths, usernames, credentials, tokens, keys, and IP-shaped strings
+    returns only `127.0.0.1`, `0.0.0.0`, and two occurrences of the _word_ "token"
+    inside sanitization claims ("no credential, token, cookie, or session data",
+    "sensitive-token scan clean"). Those are documented constants and prose, not
+    raw environment data — no host path, account name, credential, or private
+    address appears anywhere in the Phase 5 record.
 
-> **Pause Safety**: all temporary journeys are stopped and removed; failures are recorded as exact
-> correction rows.
+    > **Pause Safety**: all temporary journeys are stopped and removed; failures are recorded as exact
+    > correction rows.
+
+  - **Amended 2026-08-21 — breakpoint coverage, rollup.** Both PASS verdicts above are recorded
+    as "zero documentation defects", and that remains true: neither journey found a published
+    instruction that was wrong. But neither journey met the documented breakpoint requirement
+    either. Both captured 390x844, 768x1024, and 1440x900, where `screenshot-conventions.md`
+    and `ui-verification-checklist.md` set the minimum at 375, 768, and 1280 px — so the
+    narrowest required width went unexercised on macOS and on Ubuntu alike. That gap was closed
+    by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at 375, 768, and
+    1280 px which found no horizontal overflow and a correct `<h1>` at every one of them.
+    That measured result — not the label "execution gap rather than documentation defect" —
+    is what leaves both verdicts and the Phase 6 disposition below unchanged. The per-item amendments on
+    `P5A-006`, `P5A-006A`, `P5A-G01`, `P5B-005`, `P5B-005A`, and `P5B-G01` carry the detail;
+    this note exists so a reader who stops at the rollup still learns of it.
 
 ## Phase 6: Conditional Correction Units
 
@@ -1402,43 +1930,304 @@ correction unit and increment it for every Phase 7 loopback. Each iteration gets
 and execution record; never reuse a merged unit. Append `@<nn>` to its Phase 6 task IDs in the
 record.
 
-- [ ] [AI] [P6-001] Switch the plan worktree to the correction branch when defects exist —
+- [x] [AI] [P6-001] Switch the plan worktree to the correction branch when defects exist —
       acceptance: install, doctor, and baseline gates pass; otherwise record not applicable.
-- [ ] [AI] [P6-001A] Create `artifacts/execution-record-fixes.md` when applicable — acceptance: every
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** Phase 6 is conditional on a defect existing, and none
+    does: Phase 5A (macOS) and Phase 5B (Ubuntu 24.04) both passed with zero
+    documentation defects, as recorded at P5-G01.
+  - The plan's own instruction for this case is explicit — record the phase not
+    applicable and create no branch or PR — so **no correction branch was
+    created** and the worktree stays on `docs/repository-onboarding-public`. The
+    install/doctor/baseline acceptance does not arise, because there is no
+    correction unit to establish a baseline for.
+  - Every anomaly the journeys surfaced was classified at the point it was found
+    rather than deferred to here: the macOS npm/Volta version warning
+    (environment-level), the container's absent `sudo` (root shell), and the
+    broad tool check's nine absent tools (pre-declared non-binding for the website
+    path by both onboarding documents, whose named focused check passes 4/4).
+    None is a documentation defect, so none produces a correction row.
+  - Phase 7 may still loop back here if it surfaces a cross-document defect; if it
+    does, that iteration gets its own branch, PR, and record with `@<nn>`-suffixed
+    task IDs, exactly as the phase preamble requires.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. The
+    loop-back its final bullet anticipates did happen: Phase 7 surfaced
+    cross-document defects, iteration `@01` opened the correction branch
+    `docs/repository-onboarding-corrections`, and this worktree moved onto it. The
+    install/doctor/baseline acceptance therefore did arise, and was met.
+
+- [x] [AI] [P6-001A] Create `artifacts/execution-record-fixes.md` when applicable — acceptance: every
       Phase 6 task ID has a row.
-- [ ] [AI] [P6-002] Execute each exact correction row separately and rerun its failed journey —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Not applicable at this point; the file was created later, by iteration `@01`.
+  - **Not applicable.** The clause is conditional ("when applicable"), and with
+    zero defects there is no correction unit, so `artifacts/execution-record-fixes.md`
+    was deliberately **not** created. Creating an empty record would assert a unit
+    that does not exist.
+  - The "every Phase 6 task ID has a row" acceptance is satisfied vacuously and,
+    more usefully, is satisfied in the place that does exist: each Phase 6 item is
+    ticked here with an explicit not-applicable disposition, so no task ID is left
+    unaccounted for.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The **Notes** line
+    above already records the outcome; this marker restates it in the form every
+    other superseded Phase 6 row uses, so one grep finds them all rather than
+    seven of nine. `artifacts/execution-record-fixes.md` exists, created by `@01`,
+    and carries a row per correction that iteration applied.
+
+- [x] [AI] [P6-002] Execute each exact correction row separately and rerun its failed journey —
       acceptance: every defect is fixed and no product behavior change is smuggled into docs.
-- [ ] [AI] [P6-002A] For any defect that is a product bug rather than a documentation defect, add
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Not applicable at this point; the documents were corrected later, by iteration `@01`.
+  - **Not applicable.** There are zero correction rows to execute and no failed
+    journey to rerun — both Phase 5 journeys passed on their first run.
+  - The second half of the acceptance ("no product behavior change is smuggled
+    into docs") holds trivially and verifiably: no file was changed in this phase,
+    so no product behavior could be altered under cover of a documentation fix.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration did
+    execute correction rows, against the five reader-facing documents Phase 7
+    named. It reran no failed journey, because its defects were cross-document
+    inconsistencies rather than journey failures — there was no red journey to
+    turn green. The second half of the acceptance still holds, and now
+    non-trivially: `@01` changed Markdown plus twelve captured evidence artifacts
+    under `evidence/` — nine PNG screenshots and three `curl`/coverage
+    transcripts — and nothing else. None of the twelve is source, configuration,
+    a test, or a generated mirror, so no product behavior could be altered under
+    cover of a documentation fix.
+
+- [x] [AI] [P6-002A] For any defect that is a product bug rather than a documentation defect, add
       focused red coverage before the fix — acceptance: the test reproduces the defect and fails
       against current behavior.
-- [ ] [AI] [P6-002B] Apply the minimum correction that turns that coverage green — acceptance: the
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No defect was found at all, so in particular no defect was
+    a product bug. There is nothing to reproduce, and no red test was written.
+  - Recording this explicitly matters: the item exists so that a product bug can
+    never be fixed as a documentation edit. That protection was never engaged
+    because the journeys surfaced no product bug.
+
+  - **Amended 2026-08-21 — superseded in part by iteration `@01`.** "No defect was
+    found at all" is false of `@01`, which found many. What this row actually
+    turns on survives the correction: every `@01` defect was a documentation
+    defect, so none was a product bug, and no red coverage was owed. The
+    protection stayed unengaged for the reason the row gives, not for the reason
+    the first sentence gives.
+
+- [x] [AI] [P6-002B] Apply the minimum correction that turns that coverage green — acceptance: the
       focused assertion passes and no unrelated behavior changes.
-- [ ] [AI] [P6-003] Reconcile and stage only correction-ledger paths, then run the identity-boundary
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** With no red coverage from P6-002A there is no assertion to
+    turn green, and no source change was made.
+- [x] [AI] [P6-003] Reconcile and stage only correction-ledger paths, then run the identity-boundary
       guard — acceptance: every correction is owned, the staged set equals the ledger, and the guard
       returns empty.
-- [ ] [AI] [P6-003A] Run full unit gates — acceptance: every command exits 0.
-- [ ] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** There is no correction ledger, because there is no
+    correction unit. Nothing was staged for a Phase 6 commit.
+  - The identity-boundary guard is not skipped as a result — it runs against the
+    closeout unit's staged set in Phase 8 and again over the whole merged range at
+    P7-006, so the boundary is still proved, just not by a phase that made no
+    change.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration does
+    have a correction ledger — `artifacts/execution-record-fixes.md` — and did
+    stage for Phase 6 commits, each one reconciled against the files that cycle
+    actually changed and committed with `git commit --only -- <paths>`. Whether
+    each `@01` commit ran the identity-boundary guard is deliberately not asserted
+    here; the guard's coverage still comes from P7-006 over the whole merged
+    range and from the closeout unit in Phase 8, exactly as the bullet above says.
+
+- [x] [AI] [P6-003A] Run full unit gates — acceptance: every command exits 0.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there are no unit gates to
+    run here. Repository gates are not thereby skipped: P7-002 runs every
+    repository-authoritative gate against merged `main`, and the closeout unit runs
+    its own full gate set before it is committed and pushed.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration did
+    run checks before its commits, and the first wording of this amendment
+    overstated both what they were and what they returned. Precisely: two are
+    real pre-commit gates that did block a landing — `format-prettier` and
+    `markdownlint`, both `*.md`-scoped. Three more were run by hand because they
+    are `pre-push`/`ci` surfaces rather than pre-commit ones —
+    `governance-readme-index`, `md-links`, and `governance-word-budget`, the last
+    of which is path-gated on `repo-governance/` and the harness directories and
+    so would never have fired for this branch's diff at all. The sixth, a
+    remark-gfm table parse, is **not a repository gate**: it is an ad-hoc script
+    run from the worktree because a blank line inside a Markdown table splits it
+    silently past both Prettier and markdownlint. On exit codes, the
+    registered gates all do exit 0, `md-links` included: its registry entry
+    carries `args.exclude: [plans/done]`, and so scoped it reports
+    `All links valid!`. The 312 broken links this record elsewhere describes
+    come from running `md links validate` **without** that exclude, which is not
+    how the gate runs; all 312 sit inside `plans/done/`, exactly as P3-012's
+    round-1 finding already established.
+
+- [x] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
       or MEDIUM findings.
-- [ ] [AI] [P6-004] Commit the correction unit — acceptance: one cohesive Conventional Commit.
-- [ ] [AI] [P6-005] Push the correction branch — acceptance: `origin` contains the head.
-- [ ] [AI] [P6-006] Open the correction draft PR — acceptance: its scope matches the defect rows.
-- [ ] [AI] [P6-007] Run the canonical behavior-routed review cycles — acceptance: findings are
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** With no correction diff there is nothing for an
+    independent docs/sensitivity review to read. The equivalent coverage still
+    happens: P7-007 runs both secret gates plus an AI semantic sensitivity review
+    over the merged result, and P9-004 repeats a sensitivity review after
+    archival.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration ran an
+    independent AI review on every cycle — `pr-review-integrity-maker` and
+    `pr-review-docs-maker`, each reading the pushed commit rather than the working
+    tree. The zero-CRITICAL/HIGH/MEDIUM acceptance was not met on a first pass;
+    the cycles exist because findings kept arriving. The loop's terminating
+    condition is a cycle that returns zero findings, which is a stronger claim
+    than one clean review and a weaker one than never having had a finding.
+
+- [x] [AI] [P6-004] Commit the correction unit — acceptance: one cohesive Conventional Commit.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no commit step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did commit. Its correction unit landed as a
+    series of Conventional Commits on `docs/repository-onboarding-corrections`,
+    beginning at `cb489b874`.
+
+- [x] [AI] [P6-005] Push the correction branch — acceptance: `origin` contains the head.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no push step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did push. `origin` carries
+    `docs/repository-onboarding-corrections`.
+
+- [x] [AI] [P6-006] Open the correction draft PR — acceptance: its scope matches the defect rows.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no draft PR step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did open a draft PR — #239, scoped to the
+    `C-01`…`C-08` rows and everything the review cycles added to them.
+
+- [x] [AI] [P6-007] Run the canonical behavior-routed review cycles — acceptance: findings are
       resolved.
-- [ ] [AI] [P6-008] Forward-update from `origin/main` — acceptance: the head is current.
-- [ ] [AI] [P6-009] Rerun gates, the failed journey, and PR CI — acceptance: all are green.
-- [ ] [AI] [P6-010] Merge the correction PR as AI — acceptance: fixes are on `main`.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no PR review cycles step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did run review cycles, and this row's
+    acceptance — findings are resolved — is discharged by them rather than by the
+    not-applicable disposition above. Each cycle's findings, and the rows they
+    produced, are in `artifacts/execution-record-fixes.md`.
+
+- [x] [AI] [P6-008] Forward-update from `origin/main` — acceptance: the head is current.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no forward-update step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. Carried out under `P6-008@01` against the `origin/main` this
+    branch was cut from.
+
+- [x] [AI] [P6-009] Rerun gates, the failed journey, and PR CI — acceptance: all are green.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no gate and CI rerun step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did rerun its gates and PR CI, per commit,
+    with the results recorded against each cycle in
+    `artifacts/execution-record-fixes.md`.
+
+- [x] [AI] [P6-010] Merge the correction PR as AI — acceptance: fixes are on `main`.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Not applicable.** No correction unit exists, so there is no merge step to
+    perform. Nothing was committed, pushed, opened, reviewed, or merged under
+    Phase 6, which is exactly what the phase preamble requires when there are zero
+    defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration's merge is tracked as `P6-010@01` and is
+    the terminal step of that iteration rather than of this row.
 
 ### Phase 6 Gate
 
-- [ ] [AI] [P6-G01] Verify corrections are merged or explicitly not applicable — acceptance: no
+- [x] [AI] [P6-G01] Verify corrections are merged or explicitly not applicable — acceptance: no
       journey defect remains.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Phase 6 gate: not applicable, and provably so.** The gate's own wording
+    allows either outcome — "corrections merged **or not applicable**" — and the
+    second branch is the one that holds.
+  - The precondition was verified rather than assumed: every Phase 5 row in the
+    verification-program record is terminal, both journey gates (P5A-G01, P5B-G01)
+    record PASS, and P5-G01 records zero documentation defects across both
+    operating systems.
+  - Consistent with that, this phase created **no branch, no PR, no execution
+    record, and no commit**. The worktree remains on
+    `docs/repository-onboarding-public` and no file changed under Phase 6.
+  - This is a conditional not-applicable, not a permanent one: if Phase 7 surfaces
+    a cross-document defect it loops back here, and that iteration opens its own
+    branch, PR, and `artifacts/execution-record-fixes.md` with `@<nn>`-suffixed
+    task IDs rather than reusing these rows.
 
-> **Pause Safety**: the correction state is terminal. To resume, rerun Phase 5 only for the journey
-> that failed.
+  - **Amended 2026-08-21 — iteration `@01` opened.** The conditional above fired.
+    Phase 7 surfaced cross-document defects from two independent items (P7-005's
+    claim cross-read and P7-003's two strict checkers), so Phase 6 reopened exactly
+    as written: a new branch `docs/repository-onboarding-corrections` off
+    `origin/main`, a new `artifacts/execution-record-fixes.md`, and eight
+    `C-01`…`C-08` correction rows. The not-applicable disposition above stands as an
+    accurate record of what was known when Phase 5 closed; it is superseded, not
+    retracted. P6-002A and P6-002B remain not applicable in `@01` as well — every
+    correction is prose in a reader-facing document, so no defect was a product bug
+    and no red coverage was required.
+    > **Pause Safety**: the correction state is terminal. To resume, rerun Phase 5 only for the journey
+    > that failed.
 
 ## Phase 7: Full-Corpus Quality and Safety Reconciliation
 
-- [ ] [AI] [P7-001] Reinventory all tracked Markdown at current `main` and reconcile the ledger with
+- [x] [AI] [P7-001] Reinventory all tracked Markdown at current `main` and reconcile the ledger with
       `git ls-tree -r --name-only origin/main | grep -E '\.md$'` — acceptance: the enumerated count
       is non-zero, zero missing/duplicate paths remain, and every reader task is terminal — proved by
       piping the ledger's row lines through
@@ -1446,27 +2235,300 @@ record.
       getting `0`, so no row still carries an interim classification label while the same awk over
       all row lines still returns a non-zero count; any mismatch creates an exact Phase 6 correction
       row before Phase 7 restarts.
-- [ ] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: artifacts/reader-doc-disposition-ose-public.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Reinventoried at **current** `main` (`1542ea044`), not at the revision the
+    ledger was originally pinned to: `git ls-tree -r --name-only origin/main | grep -E '\.md$'`
+    enumerates **9,297** tracked Markdown paths — non-zero, so the count clause
+    cannot pass vacuously.
+  - The independent cross-check enumerator recorded in the ledger (a diff against
+    git's empty-tree object, which honours a glob pathspec) returns **9,297** as
+    well. Two enumerators agreeing is what rules out a silently truncated listing.
+  - The growth over the recorded revision **resolves rather than drifts**: the tree
+    is `+3` and `-0` against `028e8eed9`, and all three added paths —
+    `artifacts/execution-record-contract.md`,
+    `artifacts/execution-record-public.md`, and
+    `artifacts/reader-doc-disposition-ose-public.md` — are declared in the ledger's
+    § Planned-New Paths. The delta is this plan's own declared output.
+  - The acceptance's own awk was run **both** directions, as it requires: piping
+    the row lines through
+    `awk -F'|' '/^\| [0-9a-f]+ \| /{print $7}' | grep -c 'audit-required\|reader-related'`
+    returns `0`, while the same awk over all row lines returns **814**. The
+    non-zero denominator is what makes the zero meaningful — a pattern that
+    matched no rows at all would have produced the same `0`.
+  - The first attempt at this check pointed the awk at
+    `artifacts/execution-record-contract.md` and returned `0` for _both_ numbers.
+    That is precisely the false-pass the two-sided clause exists to catch: the
+    zero interim labels were real only because zero rows had been read. Re-running
+    against the actual ledger produced the 814-row denominator above.
+  - Zero missing and zero duplicate paths: no ledger row names a path absent from
+    the current tree, no path appears in two rows, and no in-scope path lacks a
+    row.
+  - Two declared planned-new paths legitimately do not exist and are named in the
+    ledger so P9-003 does not misread them:
+    `artifacts/execution-record-fixes.md` never will exist, because Phase 6
+    recorded not applicable, and `evidence/README.md` is created later by P8-002.
+    A planned-new declaration is permission to add a file, not an obligation.
+
+  - **Amended 2026-08-21.** The bullet above says `execution-record-fixes.md`
+    "never will exist". That was true against `origin/main` at `1542ea044`, the
+    revision this re-run read, and false by the time iteration `@01` opened: Phase 6
+    reopened, created that file, and added twelve files under `evidence/` — eight
+    at `cb489b874` and four more at `14e58716e`. The claim
+    is corrected rather than deleted, because the reasoning was sound on the
+    evidence then available — the defect was stating a permanent future from a
+    snapshot. P9-003 should expect both paths to exist. The `evidence/README.md`
+    half of the bullet still stands; P8-002 has not run. The same claim in
+    `artifacts/reader-doc-disposition-ose-public.md` was amended earlier; this copy
+    was the one that sweep missed.
+  - Every reader task is terminal and no mismatch was found, so this item creates
+    no Phase 6 correction row and Phase 7 continues rather than restarting.
+
+- [x] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.
-- [ ] [AI] [P7-003] Run strict docs and README checkers in read-only mode — acceptance: two
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Green, exit 0**: `npm run validate:sync`; `npm run harness:bindings-validation`;
+    `governance word-budget validate`;
+    `md links validate --exclude plans/done --exclude archived`;
+    `governance readme-index validate`;
+    `nx affected -t build,test:quick,lint --base=origin/main` (reports
+    `No tasks were run`, correct for a documentation-only branch); and
+    `env staged-guard validate`, the staged environment-file gate, with `git diff --cached`
+    independently confirming zero staged paths.
+  - **`lint:md` is green here**: exit 0, `Linting: 7903 file(s)`, `Summary: 0 error(s)`,
+    confirmed on two consecutive runs. This differs from the P0-005 baseline's 565
+    error lines for a locatable reason rather than an unexplained one: every one of
+    those lines came from `.fvm-cache/`, an untracked vendored Flutter SDK, and
+    `.fvm-cache/` does not exist in this worktree. The L-003 backlog item about its
+    missing markdownlint ignore entry still stands for the primary checkout.
+  - **`format:md:check` is red, and it is exactly the recorded baseline.** It exits
+    1 on **58** files. Every one of those 58 was compared against `origin/main`
+    individually: **58 identical, 0 modified locally, 0 absent** — so none was
+    touched by this program. The count and the split match P0-005's baseline
+    (54 under `apps/ayokoding-www/content/`, 4 under `plans/done/`) precisely.
+  - Two of this plan's own files **were** unformatted and are now fixed:
+    `artifacts/reader-doc-disposition-ose-public.md` and `delivery.md`, both
+    written by script and so bypassing the editor formatter hook. After
+    reformatting, the repository-pinned Prettier 3.8.1 reports both `unchanged`,
+    and no path under this plan appears in the check output.
+  - Two tool-invocation errors were caught and corrected rather than being read as
+    results, and both are worth recording because each would have produced a
+    confident false answer. First, three validators were invoked through an
+    unquoted shell variable holding the binary plus a flag; zsh does not word-split
+    it, so all three exited `127` (command not found) — and a `grep -c FAIL` over
+    that empty output returned a meaningless `0`. Second, `governance readme-completeness`
+    does not exist; the real subcommand is `governance readme-index`, and the
+    invented name exited `2`. Both were re-run correctly before anything was
+    recorded.
+  - Applicable commands all exit 0. The single red gate measures pre-existing
+    repository state that is out of this plan's File-Impact footprint, is unchanged
+    by it, and was classified as such at baseline — so it is carried forward as a
+    known condition, not silently absorbed and not newly introduced.
+- [x] [AI] [P7-003] Run strict docs and README checkers in read-only mode — acceptance: two
       consecutive independent checks report zero CRITICAL, HIGH, or MEDIUM findings; any finding
       returns to Phase 6 before Phase 7 restarts.
-- [ ] [AI] [P7-004] Have an AI reviewer distinct from each file's writer read every changed living
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - Both checkers ran **read-only** — no file was edited by either — and each was
+    given the same corrected context brief.
+  - **Round 1 is not zero, so this item fails and routes to Phase 6.** The
+    acceptance requires two consecutive independent checks at zero CRITICAL, HIGH,
+    and MEDIUM; round 1 produced findings at both severities, so the second round
+    is not attempted until the corrections land.
+  - Neither checker reported a CRITICAL finding.
+  - **Two independent confirmations of the same HIGH.** The README checker and the
+    docs checker each flagged `CONTRIBUTING.md`'s Windows-Volta block without
+    knowledge of the other, and both quoted the same lines. That agrees with my own
+    P7-005 cross-read, so three independent readings converge on one defect.
+  - **A second HIGH neither I nor P7-005 had found**: `CONTRIBUTING.md` never
+    mentions Rust or Cargo, yet `package.json`'s `postinstall` is
+    `npm run doctor || true` and `doctor` is `cargo run --release … -- doctor`.
+    I verified this rather than taking it on report — `grep -niE "cargo|rust" CONTRIBUTING.md`
+    returns nothing, while README states "Cargo must exist before it can check or
+    install other missing tools". A contributor following CONTRIBUTING.md alone
+    gets a silently-swallowed postinstall failure.
+  - Checking that finding as a **class** rather than a single site surfaced a third
+    instance the checkers did not name: the Quick Start in
+    `docs/how-to/setup-development-environment.md` promises "If you only work on
+    TypeScript projects, this is all you need", then ends with
+    `# 6. Verify` / `npm run doctor` — a Cargo invocation — while never installing
+    Rust. Its own full-setup section does teach `rustup` at line 161, so the
+    Quick Start contradicts the document containing it.
+  - **Verified MEDIUM findings** carried into the correction set: `CONTRIBUTING.md`
+    hardcodes Node/npm versions in prose where README and the setup guide
+    deliberately point at `package.json` as the single source of truth; `Diátaxis`
+    is used twice with no gloss; the "Getting Started" section reads as open
+    contributor onboarding ~115 lines before the closed-intake caveat lands; and
+    `README.md` never expands WSL2 on first use.
+  - **Verified LOW finding**: the same Quick Start numbers its steps `1, 2, 3, 4, 6`
+    — no content is missing between them, so it is a pure renumbering slip.
+  - Two LOW findings are deliberately **not** actioned, with reasons rather than
+    silence: the Husky/commitlint gloss (the section's readers are already running
+    `npm install` and reading `package.json`), and the Quick Reference command
+    repetition (an intentional cheat-sheet pattern, not accidental duplication).
+    Neither sits at a severity this gate blocks on.
+- [x] [AI] [P7-004] Have an AI reviewer distinct from each file's writer read every changed living
       reader-facing document aloud against the Human Voice Contract — acceptance: every file passes;
       any stock filler, repetitive cadence, or template-like opening becomes a Phase 6 correction row.
-- [ ] [AI] [P7-005] Cross-read contribution, platform support, content parity, `rhino-cli` byte
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: CONTRIBUTING.md, README.md, docs/how-to/setup-development-environment.md, docs/tutorials/getting-started-with-ose-public.md, docs/reference/related-repositories.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - An independent reviewer — not the writer of any of these files — read all five
+    changed living reader-facing documents aloud against the twelve-clause Human
+    Voice Contract, quoted verbatim rather than paraphrased.
+  - **Round 1 fails: all five files break at least one clause.** Since the
+    acceptance says every file must pass, this item fails and its findings become
+    correction rows, which is exactly what the clause prescribes.
+  - **The two clauses this contract predicted would fail most are clean.** V4
+    (stock filler) and V7 (minimizing difficulty) pass in all five files —
+    `comprehensive` appears in none of them, and both `just` occurrences mean
+    "merely" rather than minimizing. The Phase 1 finding that `comprehensive` was
+    live in 55 tracked documents no longer touches this corpus.
+  - **One voice finding turned out to be a factual defect**, which is the strongest
+    argument for reading aloud at all. The reviewer flagged an unexplained codename
+    in the repository-comparison table; checking it showed the table described
+    `ose-private` as doing "local CoralPolyp sandbox work", while a published
+    2026-08-18 update states CoralPolyp "was removed after recovery work showed
+    that no current product needs to keep the app group alive". The row was stale,
+    not merely jargony, and now reads "infrastructure work". (The name itself is
+    not sensitive — it is already public in the site's own updates and in released
+    posts.)
+  - **Corrected in this iteration** as rows `C-09`…`C-19`: the tutorial now opens
+    on the reader's task instead of three sentences of product definition, which
+    also removes a sentence duplicated verbatim from the README (V1); one British
+    spelling aligned with the corpus (non-clause); CONTRIBUTING now glosses Nx and
+    monorepo on first use (V3), gains a missing-Cargo recovery entry (V9), and
+    ends on a recommended move instead of a bare rocket emoji celebrating a closed
+    door (V10, V12); the setup guide's Quick Start no longer strands Ubuntu readers
+    on `source ~/.zshrc` (V9), states an expected outcome after the Rust step (V8),
+    expands E2E on first use (V3), and no longer says "Two setup paths" above three
+    bullets (non-clause); the README states what `nx show projects` prints (V8).
+  - The missing-Cargo recovery entry matters most of these: this program had just
+    documented that failure as the reason CONTRIBUTING needed a Rust prerequisite,
+    yet the troubleshooting section still answered `npm install` failures with a
+    cache clean, which cannot fix it.
+  - **Declined, with reasons rather than silence.** The README's `🌙` is the
+    project's title mark, and removing a brand element is the owner's call, not a
+    voice pass's. Restructuring the README's 386-word local-setup section (V11)
+    would reverse a structure that already passed a maker-checker-fixer cycle and
+    an independent voice review in Phase 3, and the reviewer's own proposal would
+    cut the file to roughly 700 words — a redesign, not a correction. The remaining
+    V2/V5/V8/V12 findings in CONTRIBUTING and the reference page are real but
+    amount to rewriting two long documents wholesale, which is beyond this plan's
+    footprint; they are recorded in the fixes record so a later plan can pick them
+    up rather than being quietly dropped.
+  - Budget respected throughout: the README additions were funded by an offsetting
+    cut. It stood at **894** of 900 words at `cb489b874`, the commit this item
+    describes; later rows in this iteration moved it to **896** at `3d23ad1f9`,
+    still under the 900-word fail limit with the budget gate green. The figure is
+    pinned to a revision because `C-30` and `C-35` are both this same claim going
+    stale, and an unpinned one goes stale the moment a later row edits the file.
+- [x] [AI] [P7-005] Cross-read contribution, platform support, content parity, `rhino-cli` byte
       identity, repository purpose, package description, and About metadata — acceptance: all current
       claims agree; documentation findings return to Phase 6 and metadata mismatches return to
       Phase 4 before Phase 7 restarts.
-- [ ] [AI] [P7-006] Verify no merged commit in this program touched the identity boundary with
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Repository purpose agrees across all three surfaces.** `package.json`
+    describes the repo as "Open source platform for researching and building
+    trustworthy, Sharia-compliant enterprise products.", the live GitHub About
+    description is that same string byte for byte, and the README opens with the
+    same claim in prose.
+  - **About metadata still matches the P2-005 contract**, re-read live rather than
+    carried from Phase 4: description as above, `homepageUrl`
+    `https://oseplatform.com/`, and exactly the 10 contracted topics
+    (`enterprise-software`, `erp`, `fsharp`, `islamic-finance`, `monorepo`, `nx`,
+    `open-source`, `rust`, `sharia-compliant`, `typescript`). No Phase 4 loopback
+    is needed.
+  - **Contribution intake is closed consistently.** README ("External
+    contributions are currently closed…") and CONTRIBUTING.md (§ External
+    Contributions, "not being accepted at this time", plus "an internal delivery
+    process, not an invitation to submit external pull requests") agree; no
+    document invites outside pull requests.
+  - **Sibling-repository claims agree**: `ose-private` is described as closed to
+    the public in both the README and the related-repositories reference;
+    `ose-primer` is described as a separate, openly licensed starter free to
+    diverge. `rhino-cli` byte identity is asserted only as spanning `ose-public`
+    and `ose-private`, matching AGENTS.md's "sole parity sibling" and the P7-006
+    parity result.
+  - **One real defect, and it fails this item.** The recorded platform contract
+    (P2-003) gives native Windows exactly three words of allowance — "Nothing. No
+    instructions, no partial path, no 'should also work' claim." `CONTRIBUTING.md`
+    line 58 breaks it, shipping a **Windows** heading followed by
+    "Download the installer from [volta.sh](https://volta.sh/)" — a native-Windows
+    setup instruction. It also contradicts two sibling documents directly:
+    `README.md` ("Native Windows is not supported.") and
+    `docs/how-to/setup-development-environment.md` ("Windows is not supported.").
+  - The finding was scoped as a **class**, not a single sighting: every Windows
+    mention across the four reader-facing onboarding documents was enumerated.
+    There are three, and only this one violates the contract — the other two are
+    the correct not-supported statements. So the correction has exactly one site.
+  - Per this item's own routing rule, a documentation finding returns to **Phase 6**
+    before Phase 7 restarts. Phase 6 is therefore reopened as iteration `@01`,
+    reversing its earlier not-applicable disposition.
+- [x] [AI] [P7-006] Verify no merged commit in this program touched the identity boundary with
       `git diff --name-only <plan-base-sha>..origin/main -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli`,
       then run `parity manifest validate` on merged `main` — acceptance: the diff prints nothing and
       the parity gate exits 0, so no cross-repository byte-identity obligation was opened.
-- [ ] [AI] [P7-007] Run both deterministic secret gates and an independent AI semantic sensitivity
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - The boundary diff prints nothing:
+    `git diff --name-only 028e8eed9..origin/main -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli`
+    returns 0 lines, so no commit merged by this program touched either
+    identity-bound path.
+  - That zero was proved to be a real zero rather than a broken invocation by
+    running the **same** diff without the pathspec: it returns **100** changed
+    files over the same commit range. An empty result from a diff that can produce
+    results is evidence; an empty result from a diff that would be empty either way
+    is not.
+  - `parity manifest validate` exits `0` and reports
+    `apps/rhino-cli/parity-manifest.sha256 is current`, so the byte-identity
+    manifest matches the tree.
+  - Together these close the cross-repository risk this item exists for: because
+    nothing under `apps/rhino-cli/` or its behavior specs changed, this plan opened
+    **no** four-repo parity-propagation obligation in `ose-private`, `ose-primer`,
+    or `beaver-nest` — consistent with the plan-level constraint that no delivery
+    unit may change a path inside those trees.
+- [x] [AI] [P7-007] Run both deterministic secret gates and an independent AI semantic sensitivity
       review over plan artifacts, all diffs, evidence, metadata, commits, and PR text — acceptance:
       zero secret or credential leak; a suspected leak stops ordinary execution and invokes the
       repository security-incident route.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Deterministic gate 1**: `env staged-guard validate` exits `0` against the full
+    staged set, so no real environment file is staged.
+  - **Deterministic gate 2**: a high-confidence secret-shape scan over ~2.5 MB —
+    the staged diff, every plan artifact, and both evidence text files — matches
+    **zero** GitHub tokens, AWS keys, Slack tokens, private-key headers, or long
+    base64 blobs.
+  - That zero is falsifiable rather than assumed: the same regex was re-run over
+    the same corpus with a synthetic `ghp_`-shaped string appended, and it matched
+    exactly once. A scanner that finds a planted token and nothing else is
+    evidence; a scanner that finds nothing might just be broken.
+  - A broader keyword sweep did return hits, and every one was read rather than
+    counted: all are the plan quoting its **own** sanitization vocabulary
+    ("no credential, token, cookie, or session data", "sensitive-token scan
+    clean"). No credential value appears anywhere.
+  - **Independent AI semantic review**: zero CRITICAL, zero HIGH, zero MEDIUM. It
+    read the full staged diff, all plan documents including the 2 MB ledger, both
+    evidence text files, and ran a `strings` scan over all six PNGs — which
+    returned no host path, account name, or capture-tool metadata.
+  - Its three LOW items are informational and none is a leak this unit introduced:
+    the container's address was Docker's default bridge address for a destroyed
+    `--rm` container, identical on every default install — it has since been
+    replaced by a `<container-ip>` placeholder, because the plan's rule against
+    recording an IP has no private-range carve-out to rely on; an internal
+    codename in `docs/reference/related-repositories.md` is **pre-existing on
+    `main`**, byte-identical there, and absent from this branch's diff; and the
+    maintainer contact address is a deliberately public security-disclosure
+    address, also unchanged.
+  - The review specifically confirmed the private-sibling boundary holds: every
+    `ose-private` mention is confined to "it exists and is closed" or the
+    already-public `rhino-cli` byte-identity boundary. No host, path, or
+    operational detail leaked.
+  - Zero secret or credential leaks, so ordinary execution continues and the
+    repository security-incident route is **not** invoked.
 
 ### Phase 7 Gate
 

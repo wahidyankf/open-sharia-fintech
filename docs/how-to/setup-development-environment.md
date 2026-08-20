@@ -26,25 +26,30 @@ tests relevant to the project you are changing.
 The monorepo contains projects in TypeScript, Rust, and F#. Each language has its own runtime,
 but they all share the same Nx build system and git hooks.
 
-**Two setup paths**:
+**Three setup paths**. These name what _you_ install by hand.
 
-- **Minimal** — Node.js + Docker + jq. Covers git hooks, TypeScript projects, and
-  basic E2E tests.
+- **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
+  basic end-to-end (E2E) tests. Rust is here rather than in Full because the tool checker is a Rust
+  program: `npm install` runs it but discards its exit code, so without Cargo the check fails while
+  the install still reports success. The Quick Start's final `npm run doctor` keeps that exit code,
+  and so do the Git hooks the install sets up — the first `git commit` stops outright.
 - **Full** — All tools checked by doctor. Required for working on F# backend apps
-  (`organiclever-be`, `ose-be`) and Rust CLI tools.
+  (`organiclever-be`, `ose-be`) and for building the Rust CLI tools themselves.
 - **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. Use
   `npm run doctor -- --fix --dry-run` to preview what would be installed.
 
 ## Prerequisites
 
-- **macOS** (primary) or **Linux** (Debian/Ubuntu). Windows is not supported. WSL2 may work, but it
-  is not supported or verified by this repository.
+- **macOS** (primary) or **Linux** (Debian/Ubuntu). The Linux steps may work in WSL2, but WSL2 is
+  neither supported nor verified by this project. Native Windows is not supported.
 - **Admin access** to install system packages.
 - **~5 GB disk space** for all runtimes, Docker images, and Playwright browsers.
 
 ## Quick Start (Minimal Setup)
 
-If you only work on TypeScript projects, this is all you need:
+If you only work on TypeScript projects, this is all you need. Rust still appears below because the
+repository's tool checker is a Rust program, and the verify step at the end of this block will not
+pass without it:
 
 ```bash
 # 1. Install Homebrew (macOS — skip if already installed)
@@ -56,9 +61,14 @@ brew install jq
 
 # 3. Install Volta (Node.js version manager)
 curl https://get.volta.sh | bash
-source ~/.zshrc
+source ~/.zshrc   # or source ~/.bashrc on Ubuntu
 
-# 4. Clone and bootstrap
+# 4. Install Rust (tool checker is a Rust program; without Cargo, the verify step and the hooks fail)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+rustc --version   # Expected: a version line, not "command not found"
+
+# 5. Clone and bootstrap
 git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
 npm install          # Installs deps + git hooks
@@ -134,15 +144,16 @@ After installation, entering the repo directory auto-installs the correct versio
 
 ```bash
 cd ose-public
-node --version   # Expected: v24.16.0
-npm --version    # Expected: 11.11.0
+node --version   # Expected: the `volta.node` value in package.json, prefixed with `v`
+npm --version    # Expected: the `volta.npm` value in package.json
 ```
 
-If the versions don't match, force install:
+If the versions don't match, force install by reading the pin rather than copying a version
+from this page:
 
 ```bash
-volta install node@24.16.0
-volta install npm@11.11.0
+volta install node@$(node -p "require('./package.json').volta.node")
+volta install npm@$(node -p "require('./package.json').volta.npm")
 ```
 
 ### Step 4: Rust Toolchain
@@ -178,7 +189,8 @@ npm install
 `npm install` does three things:
 
 1. Installs all npm dependencies
-2. Runs `npm run doctor` automatically (postinstall script) to verify your toolchain
+2. Runs `npm run doctor` automatically (postinstall script) to verify your toolchain — but discards
+   its exit code, so a failed or skipped check never stops the install
 3. Sets up Husky git hooks (pre-commit, commit-msg, pre-push)
 
 ### Step 6: Keep local environment data out of onboarding
@@ -328,7 +340,9 @@ Never hardcode version numbers in scripts — always read from these source-of-t
 ## Related Documentation
 
 - [Development Environment Setup Workflow](../../repo-governance/workflows/infra/development-environment-setup.md) —
-  Granular workflow with phases and success criteria
+  Granular workflow with phases and success criteria. Its `scope: minimal` parameter is a different
+  thing from the Minimal path above: it selects which already-installed tools the checker inspects,
+  and its tool set is not the same one
 - [Reproducible Environments](../../repo-governance/development/workflow/reproducible-environments.md) —
   Volta, npm, Docker reproducibility practices
 - [Code Quality Convention](../../repo-governance/development/quality/code.md) — Git hooks and

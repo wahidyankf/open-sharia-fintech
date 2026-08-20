@@ -1,0 +1,57 @@
+# Phase 6 iteration @01 — documented-breakpoint coverage capture
+
+## Why this capture exists
+
+The Phase 5A and Phase 5B journeys were inspected at 390x844, 768x1024, and 1440x900. The
+repository's own conventions require a different minimum set:
+
+  repo-governance/development/quality/evidence-capture/screenshot-conventions.md
+  repo-governance/development/quality/manual-behavioral-verification/ui-verification-checklist.md
+
+Both name mobile 375 px, tablet 768 px, desktop 1280 px. Repository practice follows them: 122
+tracked files use 375px against 19 at 390px, and 177 use 1280px against 7 at 1440px.
+
+This is not a cosmetic difference. 390 px is WIDER than 375 px, so the narrowest documented
+breakpoint — the one that catches horizontal overflow — was never exercised by either journey.
+This capture closes that specific gap.
+
+## What this capture is NOT
+
+It is a supplementary breakpoint-coverage check taken from the plan worktree, not a re-run of
+either journey. The Phase 5A fresh-clone and Phase 5B disposable-container environments were torn
+down at the end of their phases and were not rebuilt for this. Nothing here re-evidences the
+bootstrap-from-a-clean-machine claims those phases made; it evidences only how the landing page
+renders at the documented widths.
+
+## Method
+
+Server: `OSE_WWW_PORT=3199 npm exec nx -- dev ose-www`, run from the plan worktree.
+Browser: Playwright MCP.
+Response body: 38399 bytes, matching the byte count both Phase 5 journeys recorded.
+
+## Result — all three documented breakpoints
+
+| Viewport       | innerWidth | scrollWidth | clientWidth | Horizontal overflow | <h1> present |
+| -------------- | ---------- | ----------- | ----------- | ------------------- | ------------ |
+| Mobile 375px   | 375        | 375         | 375         | No                  | Yes          |
+| Tablet 768px   | 768        | 768         | 768         | No                  | Yes          |
+| Desktop 1280px | 1280       | 1280        | 1280        | No                  | Yes          |
+
+`<h1>` reads "Open Sharia Enterprise Platform" at every width.
+
+Console errors across the whole session: 0 (2 total messages, 0 errors, 0 warnings).
+
+The overflow column is the point of the exercise: `scrollWidth > clientWidth` is false at 375 px,
+so the layout does not overflow horizontally at the narrowest documented breakpoint.
+
+## Screenshots
+
+  phase-6-ose-www-landing-en-375px.png
+  phase-6-ose-www-landing-en-768px.png
+  phase-6-ose-www-landing-en-1280px.png
+
+## Sanitization
+
+Unauthenticated request against a local development server on loopback. No header was sent or
+recorded. No credential, token, cookie, or session data is present. The captures are viewport-only,
+with no window chrome, terminal, URL bar, or filesystem path visible.

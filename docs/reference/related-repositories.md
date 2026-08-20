@@ -15,10 +15,10 @@ The OSE ecosystem has two sibling repositories under active coordination. Each h
 so choose the one that matches what you are trying to understand rather than treating them as
 interchangeable copies.
 
-| Repository                                               | Visibility  | Role                                                            | Start there when…                                                  |
-| -------------------------------------------------------- | ----------- | --------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research                | You want to understand or run OSE itself.                          |
-| `ose-private`                                            | Private     | Authorized product operations and local CoralPolyp sandbox work | You are an authorized maintainer following its private onboarding. |
+| Repository                                               | Visibility  | Role                                                  | Start there when…                                                  |
+| -------------------------------------------------------- | ----------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research      | You want to understand or run OSE itself.                          |
+| `ose-private`                                            | Private     | Authorized product operations and infrastructure work | You are an authorized maintainer following its private onboarding. |
 
 ## The reader path that matters most
 
