@@ -58,11 +58,15 @@ fn elixir_formatter_is_configured() -> bool {
 
 // Distinguishes "toolchain legitimately unavailable on this developer's
 // laptop" (fine to skip) from "toolchain missing on an environment that
-// declared it would provide one" (must fail loudly, not skip). Set by CI jobs
-// that provision Erlang/Elixir specifically so these two tests exercise real
-// coverage on every run rather than silently skipping forever — see the
-// `rust` job in `.github/workflows/pr-quality-gate.yml`, which installs the
-// toolchain via `erlef/setup-beam` and sets this variable.
+// declared it would provide one" (must fail loudly, not skip). A CI job opts
+// into the stricter contract by provisioning Erlang/Elixir and setting this
+// variable, which then makes these two tests exercise real coverage on every
+// such run rather than silently skipping forever. This file is
+// byte-identical across both parity repos, so it states the variable's
+// contract rather than any one repo's CI wiring: whether a given repo's CI
+// sets it is a per-repo operational choice, listed explicitly in
+// `docs/reference/related-repositories.md`'s "Private-only operational
+// exceptions" (as of this writing, only `ose-public`'s `rust` job sets it).
 fn elixir_toolchain_is_required() -> bool {
     std::env::var("RHINO_REQUIRE_ELIXIR").is_ok_and(|v| v == "1")
 }
