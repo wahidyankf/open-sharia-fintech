@@ -66,7 +66,7 @@ fn elixir_formatter_is_configured() -> bool {
 // contract rather than any one repo's CI wiring: whether a given repo's CI
 // sets it is a per-repo operational choice, listed explicitly in
 // `docs/reference/related-repositories.md`'s "Private-only operational
-// exceptions" (as of this writing, only `ose-public`'s `rust` job sets it).
+// exceptions".
 fn elixir_toolchain_is_required() -> bool {
     std::env::var("RHINO_REQUIRE_ELIXIR").is_ok_and(|v| v == "1")
 }
