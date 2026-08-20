@@ -32,6 +32,22 @@ did not exist. Forcing a binding would have meant fabricating a fixture assertin
 Both were fixed by moving the authoring into the phase where the behavior actually lands. Neither was
 caught by a checker.
 
+### A sibling gap, same root (2026-08-21)
+
+`repository-onboarding-readme-refresh` Phase 0 found the mirror image of a forward reference: not a
+step naming something that does not exist yet, but a plan **transcribing** a live registry and
+silently transcribing a subset. The plan listed eight `pre-commit` gates; the registry declares 29.
+
+Most of the gap was benign — language formatters a documentation diff never triggers — but it hid
+three gates that do fire on that plan's own declared file footprint: `repo-config validate`,
+`convention emoji validate`, and `git lockfile sync`. A plan can be structurally perfect and still
+be wrong about the repository it runs in, and nothing reads it that way.
+
+The reconciliation has to run in **both** directions. "Does every transcribed command exist" is the
+easy half and passes here. The half that caught this is "which live gates does the transcription
+omit that this plan's declared footprint can trip." Both are mechanical, and both belong wherever
+this brief's check lands.
+
 ## Why now
 
 The two instances cost an execution-time catch and a mid-plan re-sequencing, both of which happened

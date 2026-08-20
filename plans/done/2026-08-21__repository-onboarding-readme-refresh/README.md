@@ -75,7 +75,21 @@ result, and recover from common failures without guessing.
 
 ## Status
 
-**Not started.**
+**Done** — archived 2026-08-21.
+
+All ten phases executed. Five pull requests merged into `main`: [#236](https://github.com/wahidyankf/ose-public/pull/236)
+(plan rescope), [#237](https://github.com/wahidyankf/ose-public/pull/237) (documentation contract and
+corpus ledger), [#238](https://github.com/wahidyankf/ose-public/pull/238) (the reader-facing refresh),
+and [#239](https://github.com/wahidyankf/ose-public/pull/239) plus
+[#240](https://github.com/wahidyankf/ose-public/pull/240) (two correction iterations the fresh-checkout
+journeys and the reconciliation reviews exposed).
+
+The reconciliation phase ran longer than planned. Its factual-accuracy review took nine rounds and its
+voice review seven before each met its termination criterion, producing corrections `C-06` through
+`C-97`. Roughly half of those rounds found genuine pre-existing defects; a few found defects this
+plan's own repairs had introduced. Both patterns are analysed in
+[`artifacts/execution-record-fixes.md`](./artifacts/execution-record-fixes.md) rather than left as an
+unexplained round count.
 
 ## Approach Summary
 

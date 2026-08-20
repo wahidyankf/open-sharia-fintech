@@ -14,12 +14,9 @@ execution checklist.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
-- [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
-  living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata in
-  `ose-public` only, with product-first paths, fresh-checkout proof on macOS and Ubuntu, and strict
-  secret-safety.
-  Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
-  work begins.
+
+Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
+work begins.
 
 ## Instructions
 

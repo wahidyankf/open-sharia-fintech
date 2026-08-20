@@ -17,11 +17,12 @@ parity-manifest obligation.
 
 ## Workstreams
 
-| ID   | Workstream                                                  | Phases | Status    |
-| ---- | ----------------------------------------------------------- | ------ | --------- |
-| WS-1 | Vendor audit: pair backticks across line wraps              | 1      | Specified |
-| WS-2 | `harness bindings validate`: read agent dirs from registry  | 2      | Specified |
-| WS-3 | `rewrite-paths`: path-keyed matching and non-markdown reach | 3      | Specified |
+| ID   | Workstream                                                   | Phases | Status    |
+| ---- | ------------------------------------------------------------ | ------ | --------- |
+| WS-1 | Vendor audit: pair backticks across line wraps               | 1      | Specified |
+| WS-2 | `harness bindings validate`: read agent dirs from registry   | 2      | Specified |
+| WS-3 | `rewrite-paths`: path-keyed matching and non-markdown reach  | 3      | Specified |
+| WS-4 | `readme-index validate`: verdict line ignores `--fail-kinds` | 3A     | Specified |
 
 ### WS-1 — The vendor audit mis-pairs a wrapped inline code span
 
@@ -70,6 +71,31 @@ non-markdown files in `ose-public` found two real stale references — one in `.
 `readme-index validate`) walks markdown only, so a governance path quoted in a config comment, a
 shell script, or a CI workflow sits outside every automated check the repository has.
 
+### WS-4 — `governance readme-index validate`'s verdict line ignores `--fail-kinds`
+
+Run in the exact form `repo-config.yml` registers for the `governance-readme-index` gate, the audit
+prints `README INDEX AUDIT FAILED: 425 finding(s)`, lists all 425, and exits **0**.
+
+The exit code is right. All 425 findings are kind `unannotated`, which
+`has_failing_finding` deliberately dark-launches: with `--fail-kinds` empty every kind gates
+_except_ `unannotated`, and only a caller that names it explicitly — the
+`governance-readme-completeness` gate — arms it. The 425 split 163 in `docs/` and 262 in `specs/`,
+and `repo-governance/` and `.claude/` contribute none, which is why the completeness gate is green
+too.
+
+The bug is the verdict line. `format_text` counts every finding and declares `FAILED` without
+consulting the filter that decides the exit code, so a deliberately dark-launched kind renders as a
+failure on a gate that passed by design. Dark-launching a kind is precisely the case where the two
+must be distinguished: a permanently `FAILED`-looking line above a green gate teaches readers to
+stop reading the line.
+
+Surfaced during `repository-onboarding-readme-refresh` Phase 0 baselining, where it cost a misread
+in both directions before the source settled it.
+
+This is the same shape as WS-1 through WS-3 and belongs with them: a governance tool whose report
+and whose behaviour say different things. Here, uniquely, the behaviour is correct and the report is
+not — so the fix is to the report.
+
 ## Scope
 
 **Repositories**: `ose-public` and `ose-private`. Any `apps/rhino-cli` edit opens a four-repo
@@ -89,8 +115,12 @@ Strict TDD per workstream: a RED test reproducing the silent failure, GREEN mini
 companion Gherkin under `specs/apps/rhino/`, then regenerate and stage the parity manifest in the
 same commit. Each workstream is independently shippable, so each is its own delivery boundary.
 
-WS-3 adds one behaviour the other two do not: a **loud** signal when a rename map matches no target.
-A tool that can silently do nothing is the root cause here, not the keying scheme alone.
+WS-3 adds one behaviour the other three do not: a **loud** signal when a rename map matches no
+target. A tool that can silently do nothing is the root cause here, not the keying scheme alone.
+
+WS-4 inverts the usual direction: WS-1 through WS-3 fix behaviour to match what the tool reports,
+while WS-4 fixes the report to match behaviour that is already correct. Its RED test asserts on the
+verdict line under an active `--fail-kinds`, not on an exit code.
 
 ## Documents
 

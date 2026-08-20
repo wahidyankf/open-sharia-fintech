@@ -47,9 +47,9 @@ but they all share the same Nx build system and git hooks.
 
 ## Quick Start (Minimal Setup)
 
-If you only work on TypeScript projects, this is all you need. Rust still appears below because the
-repository's tool checker is a Rust program, and the verify step at the end of this block will not
-pass without it:
+If you only work on TypeScript projects, this is all you need. Rust still appears below, for the
+reason the Minimal path gives above — the verify step at the end of this block will not pass
+without it:
 
 ```bash
 # 1. Install Homebrew (macOS — skip if already installed)
@@ -63,7 +63,7 @@ brew install jq
 curl https://get.volta.sh | bash
 source ~/.zshrc   # or source ~/.bashrc on Ubuntu
 
-# 4. Install Rust (tool checker is a Rust program; without Cargo, the verify step and the hooks fail)
+# 4. Install Rust — required by step 6 and by the Git hooks
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 rustc --version   # Expected: a version line, not "command not found"
@@ -78,9 +78,8 @@ npx playwright install  # Installs test browsers
 npm run doctor
 ```
 
-If doctor shows all green, you are ready. Run
-`npm exec nx -- affected -t typecheck,lint,test:quick,test:specs`
-to verify the full pre-push pipeline.
+If doctor shows all green, you are ready. To run what the push hook actually runs, use
+`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
 
 ## Full Setup
 
@@ -235,14 +234,20 @@ step above.
 apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit
 ```
 
-**Pre-push** (runs affected quality and specification checks):
+**Pre-push** (delegates to the same gate registry as pre-commit):
 
 ```bash
-# Dry-run: execute the same targets pre-push would
-npm exec nx -- affected -t typecheck,lint,test:quick,test:specs
+# Run the pre-push gate set without creating a push
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 ```
 
-This also warms the Nx cache, making subsequent pushes fast.
+`repo-config.yml` is the source of truth for what that surface carries — a few Nx targets plus a
+dozen-odd repository-wide `rhino-cli` checks that `nx affected` never sees. List them rather than
+copying a set from this page:
+
+```bash
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push
+```
 
 ### Test integration tests
 
@@ -263,12 +268,13 @@ the matching step above.
 
 ### Pre-push hook times out
 
-The pre-push hook runs affected quality and specification checks, including `typecheck`, `lint`,
-`test:quick`, and `test:specs`. On first run with a cold cache, this can take a while. Warm the
-cache first:
+The slow half of the pre-push gate set is its Nx targets: `test:quick` (which itself composes
+`typecheck`, `lint`, `test:unit`, `test:coverage`, and `test:specs` per project),
+`compat:min-version`, and `specs:structure-validation`. On a cold cache this takes a while. Warm
+them first:
 
 ```bash
-npm exec nx -- affected -t typecheck,lint,test:quick,test:specs
+npm exec nx -- affected -t test:quick,compat:min-version,specs:structure-validation
 ```
 
 Subsequent pushes reuse cached results and complete in seconds.

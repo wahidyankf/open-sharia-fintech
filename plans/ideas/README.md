@@ -243,7 +243,7 @@ carry no sync obligation and were not swept.
 
 - **Three** stale references to paths this run changed sit outside the `plans/ideas/**` write scope
   and were left untouched, per the scope boundary's log-don't-write rule. All three are in
-  `plans/in-progress/repository-onboarding-readme-refresh/artifacts/reader-doc-disposition-ose-public.md`
+  `plans/done/2026-08-21__repository-onboarding-readme-refresh/artifacts/reader-doc-disposition-ose-public.md`
   as bare table-cell paths (not links, so not gate-visible): `audit-e2e-reuse-existing-server-config.md`
   (moved quadrant), `cross-repo-port-registry.md` (renamed — old path gone), and
   `specs-checker-phantom-nx-targets.md` (merged away — old path gone). A fourth, a real relative link

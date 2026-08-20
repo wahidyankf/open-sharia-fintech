@@ -28,6 +28,16 @@ Concrete cost already paid during `repo-rules-sweep`:
 - **WS-3** cost a false "clean sweep". Phase 4 reported success; a hand scan of 12,666 non-markdown
   files then found two stale governance paths. Had nobody run that scan, both would have shipped.
 
+Added later, from `repository-onboarding-readme-refresh` Phase 0:
+
+- **WS-4** cost a misread in both directions. Baselining that plan, `gate run --surface=pre-push`
+  exited 0 with `README INDEX AUDIT FAILED: 425 finding(s)` inside its own output. Trusting the exit
+  code meant declaring a surface green while 425 findings scrolled past; trusting the text meant
+  declaring a passing surface red. Only reading the Rust settled which the repository meant. The 425
+  are a **dark-launched** kind — printed deliberately, gating deliberately not — and the wording
+  defeats the point of dark-launching them, because a line that always says `FAILED` is a line
+  readers stop reading.
+
 ## Business Impact
 
 | If fixed                                                                         | If skipped                                                                                          |
@@ -52,6 +62,8 @@ Concrete cost already paid during `repo-rules-sweep`:
    human running `grep` after the fact.
 4. Deliberately wrapping an inline code span across a line break in a fixture changes **no** vendor
    audit finding.
+5. `gate run --surface=pre-push` exits 0 and prints no `AUDIT FAILED` line — a pair that cannot both
+   hold today — while all 425 informational findings remain listed.
 
 ## Non-Goals (business scope)
 

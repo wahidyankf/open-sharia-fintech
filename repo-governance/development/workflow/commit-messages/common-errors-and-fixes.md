@@ -42,12 +42,13 @@ FAIL: feat:
 PASS: feat: add login functionality
 ```
 
-## Error: "header must not be longer than 50 characters"
+## Error: "header must not be longer than 100 characters"
 
-**Problem**: Header line too long
+**Problem**: Header line too long. The enforced limit is 100; the 50-character figure elsewhere in
+these docs is a readability target, not what the hook rejects.
 
 ```bash
-FAIL: feat(auth): add a comprehensive authentication system with multiple providers
+FAIL: feat(auth): add multi-provider authentication covering OAuth 2.0, SAML, API keys, and session refresh
 ```
 
 **Fix**: Shorten description, add details to body

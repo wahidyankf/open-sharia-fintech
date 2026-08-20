@@ -9,6 +9,25 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-21: repository-onboarding-readme-refresh](./2026-08-21__repository-onboarding-readme-refresh/README.md) —
+  Refreshed the reader-facing entry points of `ose-public` — root README, `CONTRIBUTING.md`, the
+  setup guide, the getting-started tutorial, and the related-repositories reference — against a
+  written fact map, a twelve-clause voice contract, and a disposition ledger covering every
+  tracked Markdown file in the repository — 9,299 of them at the archival commit. Proved the documented first-run path from clean checkouts on both
+  supported platforms (macOS natively, Ubuntu 24.04 in a disposable container) and corrected what
+  those journeys exposed. Applied the recorded GitHub About metadata and verified exact equality
+  rather than assuming the write landed. Five PRs merged: `ose-public#236`, `#237`, `#238`, `#239`,
+  `#240`. Two things are worth carrying forward. First, the reconciliation phase needed nine
+  factual-accuracy rounds and seven voice rounds to terminate, producing corrections `C-06` through
+  `C-97`; the later rounds kept finding defects the plan's own repairs had introduced, which is why
+  one correction was deliberately made subtractive and both review lenses were then run against the
+  same state concurrently instead of alternating. Second, `P8-005`'s acceptance clause could not be
+  satisfied as written — 19 of the 23 changed paths fall outside "only sanitized plan, evidence, and
+  learning paths" because two other clauses require them — and that is recorded as a stated
+  deviation rather than reinterpreted away. Fourteen learnings were captured; two routed to backlog
+  plans and six folded into existing idea briefs, with no new idea file created. Delivery Mode:
+  `worktree-to-pr`.
+
 - [2026-08-20: update-harness-support](./2026-08-20__update-harness-support/README.md) — Reduced
   supported coding-agent harnesses from eleven to three (Claude Code, OpenCode, OpenAI Codex CLI),
   raised Codex to generated parity, adopted `.agents/skills/` as a cross-vendor skill surface, and

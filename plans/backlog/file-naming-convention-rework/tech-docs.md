@@ -127,6 +127,38 @@ carries the usual TDD cycle, companion Gherkin, and four-repo parity obligation.
 Renaming the 40 files. The verdict must exist first, and the rename is a sweep with its own risk
 profile — the same shape as `repo-rules-sweep` WS-A, not a footnote to a convention edit.
 
+## 4A. A Downstream Declaration That Is Currently Inert
+
+Recorded from `repository-onboarding-readme-refresh` Phase 3, because it changes what this plan must
+not break.
+
+`CONTRIBUTING.md` is declared exempt from `md naming validate` in two places that agree exactly: the
+`lint-staged` `*.md` command in `package.json`, and the `md-naming` gate entry in `repo-config.yml`.
+**Both declarations currently do nothing**, for two independent reasons, either sufficient on its
+own:
+
+1. The gate invocation passes no paths, so the validator falls back to `DEFAULT_PATHS` in
+   `md_validate_naming.rs` — `docs/` and `repo-governance/`, never the repository root. Its own
+   success line reads `DOCS NAMING VALIDATION PASSED`.
+2. On the `lint-staged` path, which does hand the staged file to the validator positionally and so
+   does reach the root, `CONTRIBUTING.md` is one of the nine basenames hard-coded exempt in
+   `docs/naming.rs`'s `is_naming_exempt`, guarded by its own regression test.
+   `md naming validate CONTRIBUTING.md` with no `--exempt` flag at all exits 0.
+
+Three negative controls established this: a `BAD-NAME.md` in `docs/` is flagged with the expected
+rule and exits 1; the identical file at the repository root is not flagged; the identical file under
+gitignored `local-tmp/` is not flagged either.
+
+**Why it belongs in this plan.** The redundancy is only redundant while the exempt list stays
+hard-coded. The moment WS-B1 moves that list into configuration, the `repo-config.yml` declaration
+stops being decorative and becomes the thing that carries the exemption. Deleting it beforehand — the
+obvious tidy-up — would arm a failure for whoever lands this plan. Conversely, this plan must not
+assume the declaration is already doing work: it is not, and nothing at the repository root is
+protected by it today.
+
+Finding only reason 1 would have been worse than finding neither, because it suggests widening the
+scan scope, which would not change the outcome.
+
 ## 5. Propagation
 
 Both rules are restated across the rules machinery. Per Iron Rule 3, enumerate **every** site stating

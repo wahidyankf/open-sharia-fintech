@@ -74,6 +74,36 @@ Same enforcement owner as the vacuity class (`plan-checker` at authoring time): 
 that cross-reads a phase's later overrides against its earlier acceptance prose, and flags a step
 whose own two halves cannot both hold.
 
+### Three more instances, and the largest one yet (2026-08-21)
+
+`repository-onboarding-readme-refresh` produced three, from Phases 1 and 2. The first two are the
+brief's already-pass and never-pass poles at a scale it had not yet recorded; the third is a shape
+it does not cover.
+
+**Never-pass, times 745.** 745 of that plan's 814 ledger rows shared one acceptance template naming
+a bare, unscoped `md links validate`. At the recorded revision that command reports `found 312
+broken links` — every one inside `plans/done/**`, a tree the same ledger classifies
+`historical-exempt` and forbids editing. The clause could never pass for any row, whatever the
+executor did to that row's own document. Seven self-checks read it as well-formed; the independent
+reviewer at the phase gate was the first to **run** it.
+
+**Passes on nothing.** `git ls-tree -r --name-only <sha> -- '*.md'` returns zero paths and exits 0 —
+`git ls-tree` does not accept glob pathspec magic, so the wildcard matches literally. The true count
+was 9,294. An inventory clause whose acceptance is "every path is classified" passes trivially on an
+empty list, which is the most dangerous form this failure takes: it looks like success. The fix is a
+non-zero floor plus a cross-check against an independent enumerator.
+
+**A shape this brief does not yet cover: the carve-out that becomes a loophole.** A clause read
+"every npm script the document names resolves." Swept across the corpus that is wrong three
+different ways for the _same string_: a script named inside a fenced example teaching a general
+pattern is not a claim about this repository; a script labelled "Future" or "Implementation pending"
+makes the document accurate, and a literal check would fail it for being honest; the same
+non-existent script named with no qualifier in a sibling file is a real defect the check should
+catch. So the clause needs an exemption — and an exemption is itself a loophole any unresolvable
+command can hide behind, unless it passes **on the stated framing being present** rather than on the
+executor's judgement. A clause can be non-vacuous and still be wrong if it cannot tell a claim from
+an illustration.
+
 ## Why now
 
 These four were caught only because a PR-review cycle and a knowledge-capture phase happened to

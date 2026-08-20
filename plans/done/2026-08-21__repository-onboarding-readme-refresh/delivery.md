@@ -2647,67 +2647,67 @@ install`, with its own recovery entry, so no reader is stranded; and the
 
 ### Phase 7 Gate
 
-- [ ] [AI] [P7-G01] Verify every mechanical, reader, voice, relationship, journey, boundary, and
-      sensitivity result is green — acceptance: no unresolved finding of any severity blocks closeout.
+- [x] [AI] [P7-G01] Verify every mechanical, reader, voice, relationship, journey, boundary, and
+      sensitivity result is green — acceptance: no unresolved finding of any severity blocks closeout. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None · **Notes**: All seven Phase 7 results are Pass. `P7-001`: 9,297 tracked Markdown files at `1542ea044`, agreed by an independent enumerator, 814 ledger rows — a figure P9-003 re-measured as 9,299 at `7ebf8fec3`, because two Markdown files landed with PR #239 after the count was taken and it was never re-run, 0 duplicate/absent/interim/follow-up. `P7-002`: every repository-authoritative gate exits 0. `P7-003`: nine rounds, terminating on the consecutive zeros at rounds 8 and 9. `P7-004`: seven rounds, terminating on five PASSes at round 7. `P7-005`, `P7-006`, `P7-007`: Pass. Every finding either produced a correction (`C-06`–`C-97`) or was declined with a stated reason — none was waived and none remains unresolved. The two review loops ran long (nine and seven rounds) because rounds 3–5 kept reaching territory earlier rounds had not examined and rounds 7 found defects this plan's own repairs had introduced; both causes are analysed in the corrections record rather than left as an unexplained round count.
 
 > **Pause Safety**: the delivered documentation system is fully reconciled. To resume, compare the
 > ledger with current `origin/main` before closing out.
 
 ## Phase 8: Sanitized Closeout and Knowledge Capture
 
-- [ ] [AI] [P8-001] Switch the plan worktree to the closeout branch from current `origin/main` —
-      acceptance: install, doctor, and baseline gates pass.
-- [ ] [AI] [P8-001A] Create `artifacts/execution-record-closeout.md` with the required schema —
-      acceptance: every Phase 8–9 task ID has a row before execution.
-- [ ] [AI] [P8-002] Create or update `evidence/README.md` as a sanitized index of PRs, metadata
+- [x] [AI] [P8-001] Switch the plan worktree to the closeout branch from current `origin/main` —
+      acceptance: install, doctor, and baseline gates pass. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None · **Notes**: Branch `docs/repository-onboarding-closeout` cut from `origin/main` after PR 240 merged. Install and doctor ran clean; the baseline gate set (`md links validate`, `governance readme-index validate`, `governance word-budget validate`, `parity manifest validate`, `env staged-guard validate`) each exited 0.
+- [x] [AI] [P8-001A] Create `artifacts/execution-record-closeout.md` with the required schema —
+      acceptance: every Phase 8–9 task ID has a row before execution. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/execution-record-closeout.md` · **Notes**: Created with the declared `Task ID | Date | Status | Files Changed | Commands/Evidence | Notes` schema and a 27-row table covering every Phase 8 and Phase 9 task ID, written before any Phase 8 work ran.
+- [x] [AI] [P8-002] Create or update `evidence/README.md` as a sanitized index of PRs, metadata
       equality, both journey outcomes, and quality gates — acceptance: it contains no raw output,
-      screenshot, environment data, or authentication state.
-- [ ] [AI] [P8-002A] Ingest only sanitized terminal rows from the verification-program record into
+      screenshot, environment data, or authentication state. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `evidence/README.md` · **Notes**: A 450-word index of the four merged PRs, the metadata equality result, both fresh-checkout journeys, and the gate set. It cites outcomes only. A scan for literal PIDs, container IPs, absolute local paths, hostnames, and tokens returned zero, verified against a planted control that fired on all four PID values before the real scan returned its genuine zero.
+- [x] [AI] [P8-002A] Ingest only sanitized terminal rows from the verification-program record into
       `artifacts/execution-record-closeout.md` — acceptance: Phase 4, 5, and 7 outcomes are durable
-      without local paths, raw output, or authentication state.
-- [ ] [AI] [P8-003] Reconcile every execution-record row and per-document task row — acceptance: no
-      blank status or `follow-up-required` state remains.
-- [ ] [AI] [P8-004] Apply the generalization, sensitivity, and repository-relevance gates to every
+      without local paths, raw output, or authentication state. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/execution-record-closeout.md` · **Notes**: 39 rows copied forward into four sub-tables (Phase 4, Phase 5A, Phase 5B, Phase 7). The gitignored source record stays local; only outcome text crossed into the tracked file. The Phase 5B container address is carried as a `<placeholder>` token, not a literal.
+- [x] [AI] [P8-003] Reconcile every execution-record row and per-document task row — acceptance: no
+      blank status or `follow-up-required` state remains. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/execution-record-closeout.md` · **Notes**: Zero blank status cells across all five artifact records, and zero live `follow-up-required` states. A cell-value scan of the disposition ledger returned exactly one `follow-up-required` hit — line 41, the schema legend that _defines_ the state — verified by printing the matched line rather than trusting the count, with a control (`generated`, 5 hits) proving the detector fires on real data rows. `P7-004` moved Pending → Pass after voice round 7 and `P7-003` after docs round 9; every Phase 8 row was synced to `Done` at the same time. Phase 9 rows remain `Pending` because Phase 9 has not run — that is a not-yet state, not a blank one.
+- [x] [AI] [P8-004] Apply the generalization, sensitivity, and repository-relevance gates to every
       `learnings.md` entry — acceptance: each entry is routed to one durable home, converted to a
       separately scoped backlog item, discarded with a reason, or recorded as no generalizable
-      learning.
-- [ ] [AI] [P8-004A] Apply the code-routing rule to every `learnings.md` entry: any entry whose
+      learning. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `learnings.md` · **Notes**: All 14 entries now carry an explicit `**Routing**` field; 6 did before this task. `L-004`'s body was rewritten after reading `has_failing_finding` in the Rust source showed its original premise was imprecise — `unannotated` is deliberately dark-launched, so the validator's exit 0 is correct by design rather than a disagreement between signals.
+- [x] [AI] [P8-004A] Apply the code-routing rule to every `learnings.md` entry: any entry whose
       durable home is `apps/`, `libs/`, or a test is always filed as a separate `plans/backlog/`
       plan and never landed inline in this plan's commits or PRs, except a bug/lint/test failure
       that blocks this plan's own scope, which is fixed inline as ordinary Root Cause Orientation
       work — acceptance: no code-homed entry is routed inline; every code-homed entry has a
-      corresponding `plans/backlog/` folder.
-- [ ] [AI] [P8-004B] For every `learnings.md` entry routed to `plans/ideas/`, scan
+      corresponding `plans/backlog/` folder. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: five files of `plans/backlog/rhino-cli-governance-tooling-defects/`, `plans/backlog/file-naming-convention-rework/tech-docs.md` · **Notes**: Two entries were code-homed. `L-004` became **WS-4** in the `rhino-cli-governance-tooling-defects` plan — a workstream row, a full `### WS-4` section, a BRD cost paragraph and success metric, one user story with three Gherkin scenarios, a `## 4A` tech-docs section with the measured finding attribution (425 total: 163 `docs/`, 262 `specs/`, 0 elsewhere), and an 11-task `## Phase 3A` with its own gate. `L-011` folded into `file-naming-convention-rework/tech-docs.md` as `## 4A`. Neither landed inline: no path under `apps/`, `libs/`, or a test directory appears in this unit's 23 changed paths, and the boundary check confirming that fired correctly against a planted control.
+- [x] [AI] [P8-004B] For every `learnings.md` entry routed to `plans/ideas/`, scan
       `plans/ideas/README.md` and the existing two-pagers first for a brief already covering the
       same problem or area and fold the learning into it — acceptance: a new
-      `plans/ideas/<slug>.md` is created only when the scan confirms no existing brief overlaps.
-- [ ] [AI] [P8-005] Reconcile the closeout file-touch ledger — acceptance: only sanitized plan,
-      evidence, and learning paths are changed.
+      `plans/ideas/<slug>.md` is created only when the scan confirms no existing brief overlaps. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `acceptance-clause-vacuity.md`, `class-sweep-completeness.md`, `doc-command-existence-validation.md`, `plan-checker-forward-reference-detection.md`, `markdownlint-ci-gate-lints-zero-files.md`, `ayokoding-mermaid-diagram-remediation.md` · **Notes**: Six idea-routed learnings, six existing briefs, **zero new idea files created** — the scan found an overlapping brief for every one. `L-006`, `L-007`, and `L-008` all folded into the single `acceptance-clause-vacuity.md` brief rather than fragmenting across three. `L-003`, `L-009`, and `L-011` had their Routing fields corrected during this task from "file as a `plans/backlog/` item" to fold-into-existing-brief, because the backlog index requires promotion from a two-pager first and the original routing skipped that step.
+- [x] [AI] [P8-005] Reconcile the closeout file-touch ledger — acceptance: only sanitized plan,
+      evidence, and learning paths are changed. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/execution-record-closeout.md` · **Notes**: 23 paths, every one classified. **Deviation recorded, not absorbed**: 19 of the 23 fall outside "only sanitized plan, evidence, and learning paths" — 7 are shipping-surface and class-sweep corrections `C-88`–`C-97` that `P7-003`/`P7-004` require, and 12 are the routing paths `P8-004A`/`P8-004B` mandate. The clause cannot be satisfied without failing two others; the reason is stated in the closeout record rather than reinterpreted away. One generated path, `apps/ose-www/next-env.d.ts`, was reverted rather than committed, taking the unit from 24 paths to 23.
 
 ### Phase 8 Gate
 
-- [ ] [AI] [P8-G01] Verify the ledger, evidence, and learnings have terminal safe states —
-      acceptance: closeout is ready for archival without another repository change.
-- [ ] [AI] [P8-G02] Verify no code-homed learning landed inline — acceptance: every code-routed
-      `learnings.md` entry has a corresponding `plans/backlog/` folder.
+- [x] [AI] [P8-G01] Verify the ledger, evidence, and learnings have terminal safe states —
+      acceptance: closeout is ready for archival without another repository change. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None · **Notes**: Ledger: 23 paths, all classified, deviation stated. Evidence: `evidence/README.md` cites outcomes only, with a PID/IP/path/token scan returning zero against a control that fired first. Learnings: all 14 entries carry a `**Routing**` field. Gates re-run on this exact tree — `md links validate`, `governance readme-index validate`, `governance word-budget validate`, `parity manifest validate`, `env staged-guard validate` and `git diff --check` all exit 0; prettier and markdownlint are clean over all 23 changed paths with the file count asserted at 23 first, so the pass is not the docs-only scoping vacuity. One generated path was reverted rather than committed.
+- [x] [AI] [P8-G02] Verify no code-homed learning landed inline — acceptance: every code-routed
+      `learnings.md` entry has a corresponding `plans/backlog/` folder. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None · **Notes**: One entry is code-homed: `L-004` (`apps/rhino-cli`). Its home, `plans/backlog/rhino-cli-governance-tooling-defects/`, exists with all five plan files, and WS-4 is present in every one of them. `L-011` routes to repository configuration and folded into `plans/backlog/file-naming-convention-rework/tech-docs.md` § 4A, which exists at line 130. Neither landed inline: no path under `apps/`, `libs/`, or a test directory appears among this unit's 23 changed paths, and the detector proving that fired correctly on a control pattern (17 hits) before returning its genuine zero.
 
 > **Pause Safety**: delivery is complete and closeout artifacts are staged only in the plan worktree.
 
 ## Phase 9: Plan Archival, Post-Move Inventory, and Cleanup
 
-- [ ] [AI] [P9-001] Verify every phase gate, PR, metadata equality check, and journey result is
-      complete — acceptance: no ambiguous conditional branch or unchecked required task remains.
-- [ ] [AI] [P9-002] Move the plan with
+- [x] [AI] [P9-001] Verify every phase gate, PR, metadata equality check, and journey result is
+      complete — acceptance: no ambiguous conditional branch or unchecked required task remains. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None · **Notes**: All twelve phase gates `P0-G01` through `P8-G02` are ticked; every remaining unchecked item is a Phase 9 task, enumerated to confirm none is a leftover from an earlier phase. Five PRs merged — 236, 237, 238, 239, 240 — all confirmed via `gh pr list --state merged` rather than by ancestry, since squash-merge makes `merge-base --is-ancestor` false-negative here. Metadata re-verified live against the recorded contract: description and homepage compare exactly equal and the ten topic slugs compare set-equal, with a deliberately corrupted control returning False to prove the comparison discriminates. Both journeys (`P5A`, `P5B`) recorded Pass with stop proof and cleanup. No conditional branch is left ambiguous.
+- [x] [AI] [P9-002] Move the plan with
       `git mv plans/in-progress/repository-onboarding-readme-refresh plans/done/<completion-date>__repository-onboarding-readme-refresh`
       and update the in-progress/done indexes — acceptance: the date is the actual archival date and
-      all links resolve.
-- [ ] [AI] [P9-003] Re-run the tracked-Markdown inventory against the staged post-move index and
+      all links resolve. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: the whole plan directory (moved), `plans/in-progress/README.md`, `plans/done/README.md`, `plans/ideas/README.md`, this plan's `README.md` · **Notes**: Moved to `plans/done/2026-08-21__repository-onboarding-readme-refresh` — 2026-08-21 is the actual archival date, not the plan's creation date. Both stages sit at the same directory depth, so every `../../` link inside the plan still resolves. The in-progress index lost its entry and gained back the backlog paragraph as a standalone paragraph: it had been indented two spaces _inside_ this plan's bullet, so removing the bullet would have deleted or orphaned it. The done index gained a dated entry. `plans/ideas/README.md` carried the only live path pointer into the plan and was repathed. Every other surviving `in-progress/repository-onboarding…` string is inside `plans/done/`, where archived bodies deliberately retain what was true when they ran. The plan README's status moved from `**Not started.**` — stale through all nine phases — to `**Done** — archived 2026-08-21`.
+- [x] [AI] [P9-003] Re-run the tracked-Markdown inventory against the staged post-move index and
       update the ledger — acceptance: moved plan/evidence READMEs and both plan indexes have correct
-      final paths and terminal dispositions.
-- [ ] [AI] [P9-004] Run `git diff --check`, all Markdown/Rhino/index/sync/affected gates, the staged
+      final paths and terminal dispositions. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/reader-doc-disposition-ose-public.md`, `artifacts/execution-record-closeout.md`, `plans/done/README.md`, this file · **Notes**: Inventory re-run against the staged index (tree `4e8dd974b`) with two agreeing enumerators: 9,301 Markdown paths, +12/-10 against `7ebf8fec3` for a net +2, every added path accounted for, 814 rows, 0 duplicates, 0 rows absent from the tree — the absence detector proven by a planted nonexistent path returning 1. The plan README row and the planned-new preamble were repathed; the two closeout files moved from `Planned` to `Created`; every plan path is now `historical-exempt` under Classification Rule 3. **The re-run found a real defect in the record itself**: `P7-001`'s figure of 9,297 was true at `1542ea044` but never re-measured after PR #239 added two Markdown files, and it had been carried forward into four later records as though current. The three sites presenting it as a live figure were corrected and the three that pin it to a named commit were left alone, because those are accurate history. This is the `C-93` staleness class — a number correct once and quoted forever — appearing inside the ledger built to catch exactly that.
+- [x] [AI] [P9-004] Run `git diff --check`, all Markdown/Rhino/index/sync/affected gates, the staged
       environment-file guard, the silent staged-credential pattern gate, the identity-boundary guard,
       and an independent AI sensitivity review after archival — acceptance: all pass on the exact
-      final diff.
+      final diff. - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: `artifacts/execution-record-closeout.md` · **Notes**: All 13 repository-wide `rhino-cli` gates exit 0, both `git diff --check` forms exit 0, prettier passes over all 34 staged Markdown files with the count asserted first, identity-boundary and sibling-repository checks return 0 hits against controls that fire, and the staged-credential scan returns 0 over Markdown and evidence alike against a planted positive. The independent sensitivity review returned **CLEAN**, having proven every detector against a control — including a purpose-built PNG with an injected `tEXt` chunk before reporting zero metadata across nine screenshots — and having re-verified four evidence claims that could have been overstated. **Two results are recorded as no-ops rather than passes**: markdownlint covered 21 of 34 files because `plans/done/**` is in its ignore list, and the three Nx-scoped pre-push gates did not run at all because 0 of 33 projects are affected by a Markdown-only change set.
 - [ ] [AI] [P9-005] Commit the closeout/archive unit with a Conventional Commit — acceptance: it
       contains only sanitized closeout and archival changes.
 - [ ] [AI] [P9-006] Push the exact closeout branch — acceptance: `origin` contains the unit head.

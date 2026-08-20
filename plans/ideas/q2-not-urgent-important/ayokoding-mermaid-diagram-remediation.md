@@ -69,6 +69,28 @@ bringing `ose-public` and `ose-private` to it. That is a CI-parity question, not
 and it is worth asking whether the stricter form is the right one and the `plans/done`
 excludes are the drift, rather than assuming the current shape is correct.
 
+### Re-measured, and two of the three trees are not remediation work (2026-08-21)
+
+`repository-onboarding-readme-refresh` Phase 2 re-ran `md mermaid validate` unscoped: **786
+violations and 17 warnings across 1,165 files** — 588 `label_too_long`, 198 `width_exceeded`, 17
+`subgraph_density` — in three trees. `apps/ayokoding-www` holds 256 files, `plans/done` 32, and
+`apps/rhino-cli` 4. The gate surface stays green because the registry scopes `md-mermaid` to
+`affected-file-type`, so it only ever sees staged files.
+
+Two of the three trees are not what a "fix 786 violations" item implies:
+
+- All four `apps/rhino-cli` files sit under `tests/fixtures/state/` and are **negative fixtures** —
+  inputs authored to make the validator fail so its own tests can assert that it does. One is
+  literally a state named `ThisLabelIsLongerThan30CharsAndFails`. Fixing them would break the suite
+  that proves the gate works, and they are byte-identical with `ose-private` besides, so an edit
+  would open a cross-repository parity obligation for a change that should never be made.
+- `plans/done` is completed work. Its 32 files want an ignore-list entry, not 32 rewrites of history.
+
+Only the `apps/ayokoding-www` tree — this brief's actual subject — is remediation. The general
+lesson is worth carrying into the plan that executes this one: **split a red-baseline finding by
+what can actually be fixed where, and open one failing file before assuming any of them is a
+defect.**
+
 ## Why now
 
 A temporary `--exclude apps/ayokoding-www/content` is in place in `.github/workflows/main-ci.yml` and

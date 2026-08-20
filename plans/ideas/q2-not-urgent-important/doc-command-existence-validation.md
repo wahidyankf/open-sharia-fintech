@@ -19,6 +19,21 @@ matching the citations; and the `nx-targets.md` canonical table lists **six** no
 not three. Because agents read these files as executable instruction, a stale command does not get
 charitably reinterpreted — an agent runs it, fails, and either stalls or silently improvises.
 
+### Corroboration — a trap this validator would fall into (2026-08-21)
+
+`repository-onboarding-readme-refresh` Phase 0 needed exactly the check this brief proposes, by
+hand, and got it wrong the obvious way. A `rhino-cli` command group requires a subcommand, so
+`rhino-cli md --help` exits `2` with `error: 'rhino-cli md' requires a subcommand but one was not
+provided`. `rhino-cli help md mermaid` also exits `2` while printing its full help page correctly.
+An existence check written as `cmd --help && echo ok` therefore reports **every real subcommand as
+missing**.
+
+That matters here because it is the shape a first implementation of this validator would reach for.
+The working method is to parse the `Commands:` section of
+`rhino-bin.sh --no-color help <group> <subcommand>` and never read its exit status — and to pass
+`--no-color`, or ANSI escapes defeat the parser. Whatever this validator ends up doing, "shell out
+and check the exit code" is a known-wrong design for at least one of the CLIs it must cover.
+
 ## Why now
 
 The drift is self-inflicted and recurring: commands get renamed and removed routinely, and every
