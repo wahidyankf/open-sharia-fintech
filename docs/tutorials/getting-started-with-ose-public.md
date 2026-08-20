@@ -22,8 +22,9 @@ and architecture can change as the platform takes shape.
 
 ## Choose a supported environment
 
-The onboarding path is verified on macOS and Ubuntu Linux. WSL2 may be workable, but it is
-unsupported and unverified; use one of the supported environments when you need a dependable path.
+The onboarding path is verified on macOS and Ubuntu Linux. WSL2 may work, but it is neither
+supported nor verified by this project; use one of the supported environments when you need a
+dependable path.
 
 You need a terminal, an internet connection, and permission to install development tools. The
 commands below use the shell provided by macOS or Ubuntu.
@@ -50,7 +51,7 @@ sudo apt-get install -y build-essential curl git
 
 The repository pins its Node.js and npm versions in `package.json`; Volta reads those pins when
 you enter the cloned repository. Cargo is also needed because the repository's tool checker is a
-Rust command-line application.
+Rust command-line application, and the check you run below cannot pass without it.
 
 Run these commands on either supported operating system:
 

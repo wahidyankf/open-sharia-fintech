@@ -47,16 +47,26 @@ accidental duplication). Neither sits at a severity this program's gates block o
 
 The independent review of the staged diff found that two corrections had been applied only at the
 site the finding named, not across the class — the exact failure mode this program has hit before.
-Both were swept before commit, and the review's other observations were resolved as follows.
+The review's observations were resolved as follows.
+
+**One row in this table was itself false when written, and is corrected below.** The C-03 row
+claimed both surviving versions had been swept before commit. They had not: commit `cb489b874`
+shipped with four hardcoded version literals still in
+`docs/how-to/setup-development-environment.md`, and the sweep that row asserts was scoped to
+`CONTRIBUTING.md` only. The commit message and the PR body repeated the same overstatement
+("all hardcoded versions are removed"). The PR review caught it; see C-20 for the actual fix and
+the corrected claim. The lesson is recorded rather than smoothed over: a sweep verified against
+one file is not a class sweep, and stating it as one turned a scoping mistake into a false
+gate-pass claim.
 
 | Review finding                                                                                                                     | Severity | Resolution                                                                                                                                                           |
 | ---------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-03 half-applied: two more hardcoded versions survived, so the new "can never drift apart" sentence contradicted its own document | MEDIUM   | Both swept — the post-install prose now names no version, and the troubleshooting command reads the pin from `package.json`.                                         |
+| C-03 half-applied: two more hardcoded versions survived, so the new "can never drift apart" sentence contradicted its own document | MEDIUM   | **This resolution was false as written.** Only `CONTRIBUTING.md` was swept; four literals survived in the setup guide and shipped in `cb489b874`. Corrected in C-20. |
 | C-06 half-applied: three statements still classified Rust as a Full-setup tool                                                     | MEDIUM   | All three corrected; Rust is now classified Minimal, with the reason (bootstrap runs the Rust tool checker) stated.                                                  |
 | C-05 partial: `Diátaxis` still appeared cold in the project-structure tree                                                         | LOW      | The tree entry now points at the four categories listed directly beneath it.                                                                                         |
 | Orphaned `**macOS/Linux**:` label left by removing its Windows peer                                                                | LOW      | Block restructured: the platform statement leads, the install command follows unlabelled.                                                                            |
 | C-04's justification overstated — the closed-intake caveat was already the opening paragraph                                       | LOW      | The row was **corrected rather than defended**: reworded and downgraded MEDIUM → LOW, since the edit adds an in-section signal and an anchor, not a first surfacing. |
-| README headroom: C-08 consumed 5 of an 8-word budget margin                                                                        | LOW      | Accepted and recorded. 897 of 900, gate green; any later addition must name an offsetting cut.                                                                       |
+| README headroom: C-08 consumed 5 of an 8-word budget margin                                                                        | LOW      | Accepted and recorded. `governance word-budget validate` reported 894 of 900 at commit; any later addition must name an offsetting cut.                              |
 
 The review confirmed the two things that most needed confirming: the added rustup command is
 byte-identical to the one the same document already teaches in its full-setup section, and no
@@ -95,20 +105,77 @@ caught a fact error.
 | CONTRIBUTING V2/V5/V8 and reference-page V12 findings             | Real, but they amount to rewriting two long documents wholesale — beyond this plan's File-Impact footprint. Recorded here so a later plan can pick them up.                                                                      |
 | Husky/commitlint gloss; Quick Reference repetition                | LOW, and the second is an intentional cheat sheet.                                                                                                                                                                               |
 
+## PR #239 Review Rows (P6-007@01)
+
+Cycle 1 of the PR-review pipeline ran the scout plus eight discipline specialists against
+`cb489b874`. It surfaced defects the pre-commit review had missed, including one the pre-commit
+review had wrongly reported as fixed. Every row below is a real finding acted on, not a
+restatement.
+
+| Row  | Discipline   | Defect                                                                                                                                                                                     | Severity | Fix                                                                                                                                                                                                       |
+| ---- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-20 | Integrity    | The Follow-Up Sweep claimed the version sweep was complete; four literals still shipped in the setup guide, and the commit message and PR body repeated the claim                          | CRITICAL | All four replaced with commands reading the `package.json` pin; the false row and this record's framing corrected in place rather than quietly amended; PR body corrected                                 |
+| C-21 | Logic        | New troubleshooting text asserted `npm install` fails without Cargo. `postinstall` is `npm run doctor \|\| true`, so it never fails — verified by running both forms with Cargo off `PATH` | HIGH     | Every site restated: the check is silently skipped, the install still succeeds, and the failure only surfaces at an explicit `npm run doctor`. Fixed in README, CONTRIBUTING ×2, setup guide ×4, tutorial |
+| C-22 | Governance   | 34 ticked items from P5B-002 to P7-007 carried no Atomic Sync Ritual evidence block, against 84 that did                                                                                   | HIGH     | Blocks added to all 34; the count now equals the ticked count                                                                                                                                             |
+| C-23 | Governance   | Evidence captured at 390/768/1440 px; conventions require 375/768/1280 px, and 390 is wider than 375, so the narrowest documented breakpoint was never exercised                           | MEDIUM   | Landing page re-inspected at all three documented widths; no horizontal overflow at any, zero console errors. Recorded as a supplementary capture, not a re-run of either journey                         |
+| C-24 | Architecture | The C-18 offsetting cut removed README's only guidance for the changed-port case                                                                                                           | MEDIUM   | Restored, funded by shortening the Rust bullet, which the C-21 rewrite made shorter and more accurate at once                                                                                             |
+| C-25 | Architecture | The platform statement had drifted: the setup guide said "not supported or verified" against "neither supported nor verified" elsewhere                                                    | MEDIUM   | Setup guide and tutorial harmonized to the P2-003 contract wording; all four documents now match                                                                                                          |
+| C-26 | Docs         | The P7-001 ledger block asserted this file "will never be created" and that `evidence/README.md` comes later, while the same commit created this file and added eight evidence files       | MEDIUM   | Both statements amended to record what was true at the observation point without asserting a future the commit falsifies                                                                                  |
+| C-27 | Instruction  | "Minimal path" (what you install by hand) collided with `doctor --scope minimal` (which installed tools get inspected), making the linked governance workflow look contradictory           | MEDIUM   | The two senses distinguished in the setup guide; Rust's absence from the flag's set explained rather than treated as an error                                                                             |
+| C-28 | Security     | `delivery.md` recorded a literal Docker bridge IP                                                                                                                                          | LOW      | Replaced with a placeholder. The address was private and the container destroyed, but the plan's rule has no private-range carve-out                                                                      |
+| C-29 | Performance  | The three Phase 5B screenshots are byte-identical to their 5A counterparts                                                                                                                 | LOW      | Kept, with the reason stated: both were rendered by the same host browser against identical page bytes, so the 5B images evidence delivery from the container, not Ubuntu-side rendering                  |
+| C-30 | Self         | This record cited the README at 897 words                                                                                                                                                  | LOW      | Corrected to the figure the repository's own validator reports, with the counter named                                                                                                                    |
+
+### A Gate I Reported Green That Was Not Measured
+
+Worth recording because it is the same failure mode as C-20, caught a second time.
+
+Every gate re-run in this iteration reported `md links validate` as "0 failures", derived from
+`grep -c '[FAIL]'` over its output. That validator does not emit `[FAIL]` lines. It prints
+`Error: found N broken links` and exits non-zero. The grep therefore returned a meaningless zero on
+every run, and the non-zero exit code was never read — a green that measured nothing.
+
+Reading it properly: 312 broken links across 116 files. All 116 are under `plans/done/`, none is a
+file this branch touches, and each is byte-identical to `origin/main` (116 identical, 0 modified, 0
+absent) — so they are a pre-existing archived-plan baseline, matching how the 58 `format:md:check`
+failures were classified. The conclusion this iteration reached was right. The method that reached
+it was not, and would have reported green just as confidently had the links been broken by this
+branch.
+
+The general rule, now applied: assert the exit code first, and confirm a validator actually emits
+the token being counted before treating a count of zero as evidence.
+
+### Declined, With Reasons — Cycle 1
+
+| Finding                                                                                       | Why not acted on                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Single-source the Rust/Cargo rationale and platform statement across the four entry documents | Real duplication, and the drift it predicted did occur (C-25). But Markdown here has no include mechanism, and building one is a different plan. The wording is harmonized instead; the structural fix is deferred. |
+| Add Rust to the governance workflow's `scope: minimal` table                                  | Would be wrong. `doctor --scope minimal` inspects already-installed tools, and Cargo built the checker before it ran. The collision is terminological and is fixed in the reader-facing document (C-27).            |
+| Sweep the hardcoded versions in the TypeScript style guide                                    | About eight occurrences in a 1,500-line explanation document outside this plan's onboarding reader path. Named here as a deferred follow-up rather than silently widening the delivery unit.                        |
+| Recapture the Phase 5A and 5B journeys at the documented breakpoints                          | The environments were torn down at the end of their phases. C-23 closes the coverage gap directly and says plainly what the new capture does and does not evidence.                                                 |
+
 ## Scope Discipline
 
-No correction here is a product change. All eight rows edit prose in three reader-facing documents;
-none touches source, configuration, a test, or a generated mirror. P6-002A and P6-002B therefore
-remain not applicable in this iteration too — no defect was a product bug, so no red coverage was
-needed and none was written.
+No correction here is a product change. The rows edit prose in five reader-facing documents and the
+plan's own records; none touches source, configuration, a test, or a generated mirror. P6-002A and
+P6-002B therefore remain not applicable in this iteration too — no defect was a product bug, so no
+red coverage was needed and none was written.
+
+C-23 is the one row that produced new evidence rather than new prose. It ran the landing page at
+the three documented breakpoints and checked `scrollWidth > clientWidth` at each. That is a
+verification, not a product change: nothing in the application was modified, and the check passed
+as it stood.
 
 ## File-Touch Ledger
 
-| Path                                           | Change                                                           | Owning Row   |
-| ---------------------------------------------- | ---------------------------------------------------------------- | ------------ |
-| `CONTRIBUTING.md`                              | Platform statement, prerequisites, intake caveat, Diátaxis gloss | C-01…C-05    |
-| `docs/how-to/setup-development-environment.md` | Quick Start Rust step and renumbering                            | C-06, C-07   |
-| `README.md`                                    | WSL2 expansion                                                   | C-08         |
-| `plans/in-progress/…/delivery.md`              | Phase 5–7 ticks and notes                                        | plan records |
-| `plans/in-progress/…/artifacts/*.md`           | Ledger re-run, public record, this record                        | plan records |
-| `plans/in-progress/…/evidence/*`               | Phase 5A and 5B journey evidence                                 | plan records |
+| Path                                                | Change                                                           | Owning Row       |
+| --------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
+| `CONTRIBUTING.md`                                   | Platform statement, prerequisites, intake caveat, Diátaxis gloss | C-01…C-05        |
+| `docs/how-to/setup-development-environment.md`      | Quick Start Rust step and renumbering                            | C-06, C-07       |
+| `README.md`                                         | WSL2 expansion; Rust bullet accuracy; changed-port guidance      | C-08, C-21, C-24 |
+| `docs/tutorials/getting-started-with-ose-public.md` | Lead paragraph, spelling, platform wording, Cargo reason         | C-21, C-25       |
+| `docs/reference/related-repositories.md`            | Retired-sandbox row corrected to infrastructure work             | voice rows       |
+| `plans/in-progress/…/evidence/phase-6-*`            | Documented-breakpoint capture and its transcript                 | C-23             |
+| `plans/in-progress/…/delivery.md`                   | Phase 5–7 ticks and notes                                        | plan records     |
+| `plans/in-progress/…/artifacts/*.md`                | Ledger re-run, public record, this record                        | plan records     |
+| `plans/in-progress/…/evidence/*`                    | Phase 5A and 5B journey evidence                                 | plan records     |

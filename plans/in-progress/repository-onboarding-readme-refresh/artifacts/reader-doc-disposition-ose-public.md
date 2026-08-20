@@ -1275,12 +1275,20 @@ three — `artifacts/execution-record-contract.md`, `artifacts/execution-record-
 `artifacts/reader-doc-disposition-ose-public.md` — are declared in § Planned-New Paths, so the growth
 is this plan's own declared output and not unaccounted-for drift.
 
-**Two declared planned-new paths do not exist, correctly.** `artifacts/execution-record-fixes.md`
-will never be created: Phase 6 recorded not applicable because both Phase 5 journeys passed with zero
-documentation defects, and the phase creates no record when there is nothing to correct.
-`evidence/README.md` is created later, by P8-002. A planned-new path is a permission to add a file,
-not an obligation, so neither absence is a reconciliation failure — but both are named here so P9-003
-does not read them as missing.
+**Two declared planned-new paths did not exist at this observation point.**
+`artifacts/execution-record-fixes.md` was absent because Phase 6 had recorded not applicable: both
+Phase 5 journeys passed with zero documentation defects, and the phase creates no record when there
+is nothing to correct. `evidence/README.md` is created later, by P8-002. A planned-new path is a
+permission to add a file, not an obligation, so neither absence was a reconciliation failure — but
+both are named here so P9-003 does not read them as missing.
+
+> **Amended 2026-08-21.** The paragraph above originally said `execution-record-fixes.md` "will
+> never be created". That was true against `origin/main` at `1542ea044`, the revision this re-run
+> read, and false by the time the same commit was written: Phase 6 reopened as iteration `@01`,
+> which created that file and added eight files under `evidence/`. The claim is corrected rather
+> than deleted, because the reasoning was sound on the evidence then available — the defect was
+> stating a permanent future ("will never") from a snapshot. P9-003 should expect both paths to
+> exist.
 
 **Interim labels are gone.** Every one of the 814 row dispositions is terminal; none still carries
 `audit-required` or `reader-related`, and none carries `follow-up-required`. The same `awk` over all

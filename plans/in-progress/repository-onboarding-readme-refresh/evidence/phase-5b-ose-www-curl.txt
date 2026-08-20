@@ -13,3 +13,21 @@ Documented success markers found in the response body:
 Extracted title and heading:
 <title>OSE Platform</title>
 <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Open Sharia Enterprise Platform</h1>
+
+## What the Phase 5B screenshots do and do not evidence
+
+Added 2026-08-21, after review noted that the three phase-5b PNGs are sha256-identical to their
+phase-5a counterparts.
+
+That identity is the expected result, not a copy. Both phases were rendered by the same host
+browser: Phase 5B was inspected through the container's published host loopback port, not from
+inside the container. Both phases served an identical 38399-byte response body. Same renderer plus
+identical bytes at identical viewports produces identical PNGs.
+
+The consequence worth stating plainly is that the phase-5b images evidence that the container
+served the page correctly. They do NOT evidence Ubuntu-side rendering, which the filenames could be
+read to imply. The Ubuntu-specific proof of this phase is the in-container bootstrap and the
+in-container curl recorded above, not the screenshots.
+
+The images are kept rather than deduplicated, because the per-phase pairing is itself the record of
+what each journey checked.

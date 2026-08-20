@@ -81,8 +81,8 @@ Before installing dependencies, have these tools available:
 - Git to clone the repository.
 - [Volta](https://volta.sh/) to install the Node.js and npm versions pinned in
   [`package.json`](./package.json).
-- Rust and Cargo. The repository’s tool checker is a Rust command-line application, so Cargo must
-  exist before it can check or install other missing tools.
+- Rust and Cargo. The repository’s tool checker is a Rust command-line application. Without Cargo it
+  is silently skipped, leaving your toolchain unverified.
 - Docker and `jq` only for container-based or broader local-tooling work. Neither is needed for the
   first `ose-www` website run.
 
@@ -131,6 +131,8 @@ Already using port 3100? Point the site somewhere else instead of guessing which
 ```bash
 OSE_WWW_PORT=4000 npm exec nx -- dev ose-www
 ```
+
+Then open <http://localhost:4000> instead.
 
 The [Nx command guide](./docs/how-to/run-nx-commands.md) explains project discovery and the other
 targets you can run.

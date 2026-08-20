@@ -1565,6 +1565,8 @@ creates survives it.
       `docker exec` against the P5B-001 container (never an implied interactive shell), comes from the
       documented prerequisite list, and any package the journey turns out to need but the docs never
       mention becomes a Phase 6 documentation-defect row rather than a silent fix.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Ran only the prerequisites the onboarding docs name, each through
     `docker exec ose-onboarding-ubuntu-check`: `apt-get update` (exit 0);
     `apt-get install -y build-essential curl git` (exit 0, `git version 2.43.0`,
@@ -1582,6 +1584,8 @@ creates survives it.
       `mktemp -d` directory inside the container and run only its documented bootstrap — acceptance:
       every clone and bootstrap command executes through `docker exec` against the P5B-001 container,
       setup succeeds without checkout-local state, and without an undocumented prerequisite.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Every command ran through `docker exec ose-onboarding-ubuntu-check`. `mktemp -d`
     produced the clone parent inside the container; `git clone` of the documented
     public URL exited 0 and checked out 22,107 files; the clone's `HEAD` is
@@ -1612,6 +1616,8 @@ creates survives it.
       recorded, the recorded bind address is explicitly `0.0.0.0` inside the container, and if the
       documented onboarding command cannot be made reachable without an undocumented flag, that is
       itself a Phase 6 documentation-defect row rather than a silent fix to the run command.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Every command ran through `docker exec ose-onboarding-ubuntu-check`. The dev
     target was resolved from the container clone rather than assumed:
     `npm exec nx show project ose-www --json` reports
@@ -1620,7 +1626,7 @@ creates survives it.
   - The documented onboarding command `npm exec nx -- run ose-www:dev` was started
     verbatim, with **no** added bind flag. Next.js 16.2.6 reported `Ready in 198ms`
     and printed both `Local: http://localhost:3100` and
-    `Network: http://172.17.0.2:3100`.
+    `Network: http://<container-ip>:3100`.
   - Recorded process: `next-server (v16.2.6)` at PID 7219, under the Next CLI at
     7207 and the wrapper at 7200.
   - The bind address was taken from the kernel rather than the banner, which is
@@ -1632,11 +1638,13 @@ creates survives it.
     IPv4 traffic Docker's published mapping delivers.
   - Reachability was proved on both sides of the boundary rather than inferred:
     an in-container request to the container's own non-loopback address
-    (`http://172.17.0.2:3100/`) answers `200`, and the published host mapping
+    (`http://<container-ip>:3100/`) answers `200`, and the published host mapping
     `3100/tcp -> 127.0.0.1:3100` answers `200` from the host.
   - Because the documented command is reachable as written, no undocumented flag
     was needed and this item opens no Phase 6 documentation-defect row.
 - [x] [AI] [P5B-005] Run `docker exec ose-onboarding-ubuntu-check curl --fail --silent --show-error <address>` against the bound address, then inspect the published host loopback address in a browser and its console at mobile, tablet, and desktop viewports — acceptance: the `curl` command executes through `docker exec` against the P5B-001 container and succeeds, and the documented product context appears at all three viewports with no console error.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - The documented curl ran through `docker exec ose-onboarding-ubuntu-check` and
     exited 0, returning 38,399 bytes carrying every marker the tutorial names as
     proof of success: `<title>OSE Platform</title>`, the `<h1>` reading
@@ -1667,6 +1675,8 @@ creates survives it.
       breakpoint named `phase-5b-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5b-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
       execution record and contains no host path, credential, or session data.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: evidence/phase-5b-ose-www-curl.txt, evidence/phase-5b-ose-www-landing-en-{390,768,1440}px.png ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Four files landed in the plan's `evidence/` folder, one screenshot per
     mandated breakpoint plus the curl response:
     `phase-5b-ose-www-landing-en-390px.png`,
@@ -1697,6 +1707,8 @@ creates survives it.
       P5B-001 container, every hop resolves to an existing, non-404 target, the route reaches the
       roadmap or product specification without any hop landing in setup or installation instructions,
       and a broken or missing hop is recorded as a Phase 6 correction row.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Every hop-resolution command ran through `docker exec ose-onboarding-ubuntu-check`
     against this same container clone, with the dev server still running, and the
     hops were extracted from the clone's own `README.md` rather than typed from
@@ -1729,6 +1741,8 @@ creates survives it.
       verify with `docker ps -a --format '{{.Names}}'` that the recorded container name is absent —
       acceptance: `docker stop ose-onboarding-ubuntu-check` exits `0`, `--rm` removed the container, and
       no plan-created container remains.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - The dev server was stopped first, through `docker exec`, by sending `SIGTERM`
     to the recorded wrapper PID 7200 — the signal the wrapper forwards to the Next
     CLI, so the whole tree shuts down rather than being orphaned.
@@ -1748,6 +1762,8 @@ creates survives it.
 - [x] [AI] [P5B-007] If P5B-000 recorded `ubuntu:24.04` as absent before this phase, remove it with
       `docker image rm ubuntu:24.04` — acceptance: `docker image inspect ubuntu:24.04` then fails; if
       the image existed beforehand it is left untouched and that decision is recorded.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Removal was mandatory here, not optional: P5B-000 recorded `ubuntu:24.04` as
     absent before the phase, and the P5B-001 run independently confirmed it by
     printing `Status: Downloaded newer image for ubuntu:24.04`. Two independent
@@ -1761,6 +1777,8 @@ creates survives it.
 - [x] [AI] [P5B-008] Re-run the four P5B-000 baseline listings and diff them against the recorded
       baseline — acceptance: image, container, volume, and network sets are identical to the pre-phase
       state, with zero dangling image, anonymous volume, or plan-created network left behind.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - All four listings were re-run with the same commands P5B-000 used and diffed
     against the **files** captured before the phase rather than against a
     remembered description — which is what makes the empty result falsifiable.
@@ -1780,6 +1798,8 @@ creates survives it.
 - [x] [AI] [P5B-G01] Record the sanitized result, stop proof, image-removal decision, and Phase 6
       correction row if needed — acceptance: no mutable Ubuntu journey state remains and the Docker
       baseline diff in P5B-008 is empty.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Sanitized result**: the Ubuntu 24.04 journey passes end to end with **zero
     documentation defects**. A reader starting from the published docs on a clean
     Ubuntu container reaches a working `ose-www` at all three viewports using only
@@ -1810,6 +1830,8 @@ creates survives it.
 - [x] [AI] [P5-G01] Record a sanitized outcome for both operating-system journeys in the
       verification-program record — acceptance: each names pass/fail and safe evidence only, with no
       raw environment data.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **macOS journey — PASS, zero documentation defects.** A reader following the
     published docs on macOS clones, bootstraps, resolves the dev target, reaches
     the landing page at all three viewports with no console error, and walks the
@@ -1849,6 +1871,8 @@ record.
 
 - [x] [AI] [P6-001] Switch the plan worktree to the correction branch when defects exist —
       acceptance: install, doctor, and baseline gates pass; otherwise record not applicable.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** Phase 6 is conditional on a defect existing, and none
     does: Phase 5A (macOS) and Phase 5B (Ubuntu 24.04) both passed with zero
     documentation defects, as recorded at P5-G01.
@@ -1868,6 +1892,8 @@ record.
     task IDs, exactly as the phase preamble requires.
 - [x] [AI] [P6-001A] Create `artifacts/execution-record-fixes.md` when applicable — acceptance: every
       Phase 6 task ID has a row.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: artifacts/execution-record-fixes.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** The clause is conditional ("when applicable"), and with
     zero defects there is no correction unit, so `artifacts/execution-record-fixes.md`
     was deliberately **not** created. Creating an empty record would assert a unit
@@ -1878,6 +1904,8 @@ record.
     unaccounted for.
 - [x] [AI] [P6-002] Execute each exact correction row separately and rerun its failed journey —
       acceptance: every defect is fixed and no product behavior change is smuggled into docs.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: CONTRIBUTING.md, README.md, docs/how-to/setup-development-environment.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** There are zero correction rows to execute and no failed
     journey to rerun — both Phase 5 journeys passed on their first run.
   - The second half of the acceptance ("no product behavior change is smuggled
@@ -1886,6 +1914,8 @@ record.
 - [x] [AI] [P6-002A] For any defect that is a product bug rather than a documentation defect, add
       focused red coverage before the fix — acceptance: the test reproduces the defect and fails
       against current behavior.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No defect was found at all, so in particular no defect was
     a product bug. There is nothing to reproduce, and no red test was written.
   - Recording this explicitly matters: the item exists so that a product bug can
@@ -1893,11 +1923,15 @@ record.
     because the journeys surfaced no product bug.
 - [x] [AI] [P6-002B] Apply the minimum correction that turns that coverage green — acceptance: the
       focused assertion passes and no unrelated behavior changes.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** With no red coverage from P6-002A there is no assertion to
     turn green, and no source change was made.
 - [x] [AI] [P6-003] Reconcile and stage only correction-ledger paths, then run the identity-boundary
       guard — acceptance: every correction is owned, the staged set equals the ledger, and the guard
       returns empty.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** There is no correction ledger, because there is no
     correction unit. Nothing was staged for a Phase 6 commit.
   - The identity-boundary guard is not skipped as a result — it runs against the
@@ -1905,49 +1939,67 @@ record.
     P7-006, so the boundary is still proved, just not by a phase that made no
     change.
 - [x] [AI] [P6-003A] Run full unit gates — acceptance: every command exits 0.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there are no unit gates to
     run here. Repository gates are not thereby skipped: P7-002 runs every
     repository-authoritative gate against merged `main`, and the closeout unit runs
     its own full gate set before it is committed and pushed.
 - [x] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
       or MEDIUM findings.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** With no correction diff there is nothing for an
     independent docs/sensitivity review to read. The equivalent coverage still
     happens: P7-007 runs both secret gates plus an AI semantic sensitivity review
     over the merged result, and P9-004 repeats a sensitivity review after
     archival.
 - [x] [AI] [P6-004] Commit the correction unit — acceptance: one cohesive Conventional Commit.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no commit step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-005] Push the correction branch — acceptance: `origin` contains the head.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no push step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-006] Open the correction draft PR — acceptance: its scope matches the defect rows.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no draft PR step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-007] Run the canonical behavior-routed review cycles — acceptance: findings are
       resolved.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no PR review cycles step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-008] Forward-update from `origin/main` — acceptance: the head is current.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no forward-update step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-009] Rerun gates, the failed journey, and PR CI — acceptance: all are green.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no gate and CI rerun step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
 - [x] [AI] [P6-010] Merge the correction PR as AI — acceptance: fixes are on `main`.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Not applicable.** No correction unit exists, so there is no merge step to
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
@@ -1957,6 +2009,8 @@ record.
 
 - [x] [AI] [P6-G01] Verify corrections are merged or explicitly not applicable — acceptance: no
       journey defect remains.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Phase 6 gate: not applicable, and provably so.** The gate's own wording
     allows either outcome — "corrections merged **or not applicable**" — and the
     second branch is the one that holds.
@@ -1995,6 +2049,8 @@ record.
       getting `0`, so no row still carries an interim classification label while the same awk over
       all row lines still returns a non-zero count; any mismatch creates an exact Phase 6 correction
       row before Phase 7 restarts.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: artifacts/reader-doc-disposition-ose-public.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Reinventoried at **current** `main` (`1542ea044`), not at the revision the
     ledger was originally pinned to: `git ls-tree -r --name-only origin/main | grep -E '\.md$'`
     enumerates **9,297** tracked Markdown paths — non-zero, so the count clause
@@ -2032,6 +2088,8 @@ record.
 - [x] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Green, exit 0**: `npm run validate:sync`; `npm run harness:bindings-validation`;
     `governance word-budget validate`;
     `md links validate --exclude plans/done --exclude archived`;
@@ -2072,6 +2130,8 @@ record.
 - [x] [AI] [P7-003] Run strict docs and README checkers in read-only mode — acceptance: two
       consecutive independent checks report zero CRITICAL, HIGH, or MEDIUM findings; any finding
       returns to Phase 6 before Phase 7 restarts.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Both checkers ran **read-only** — no file was edited by either — and each was
     given the same corrected context brief.
   - **Round 1 is not zero, so this item fails and routes to Phase 6.** The
@@ -2113,6 +2173,8 @@ record.
 - [x] [AI] [P7-004] Have an AI reviewer distinct from each file's writer read every changed living
       reader-facing document aloud against the Human Voice Contract — acceptance: every file passes;
       any stock filler, repetitive cadence, or template-like opening becomes a Phase 6 correction row.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: CONTRIBUTING.md, README.md, docs/how-to/setup-development-environment.md, docs/tutorials/getting-started-with-ose-public.md, docs/reference/related-repositories.md ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - An independent reviewer — not the writer of any of these files — read all five
     changed living reader-facing documents aloud against the twelve-clause Human
     Voice Contract, quoted verbatim rather than paraphrased.
@@ -2163,6 +2225,8 @@ record.
       identity, repository purpose, package description, and About metadata — acceptance: all current
       claims agree; documentation findings return to Phase 6 and metadata mismatches return to
       Phase 4 before Phase 7 restarts.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Repository purpose agrees across all three surfaces.** `package.json`
     describes the repo as "Open source platform for researching and building
     trustworthy, Sharia-compliant enterprise products.", the live GitHub About
@@ -2204,6 +2268,8 @@ record.
       `git diff --name-only <plan-base-sha>..origin/main -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli`,
       then run `parity manifest validate` on merged `main` — acceptance: the diff prints nothing and
       the parity gate exits 0, so no cross-repository byte-identity obligation was opened.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - The boundary diff prints nothing:
     `git diff --name-only 028e8eed9..origin/main -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli`
     returns 0 lines, so no commit merged by this program touched either
@@ -2225,6 +2291,8 @@ record.
       review over plan artifacts, all diffs, evidence, metadata, commits, and PR text — acceptance:
       zero secret or credential leak; a suspected leak stops ordinary execution and invokes the
       repository security-incident route.
+  - **Date**: 2026-08-21 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - **Deterministic gate 1**: `env staged-guard validate` exits `0` against the full
     staged set, so no real environment file is staged.
   - **Deterministic gate 2**: a high-confidence secret-shape scan over ~2.5 MB —
@@ -2244,8 +2312,10 @@ record.
     evidence text files, and ran a `strings` scan over all six PNGs — which
     returned no host path, account name, or capture-tool metadata.
   - Its three LOW items are informational and none is a leak this unit introduced:
-    the container's `172.17.0.2` is Docker's default bridge address for a
-    destroyed `--rm` container, identical on every default install; an internal
+    the container's address was Docker's default bridge address for a destroyed
+    `--rm` container, identical on every default install — it has since been
+    replaced by a `<container-ip>` placeholder, because the plan's rule against
+    recording an IP has no private-range carve-out to rely on; an internal
     codename in `docs/reference/related-repositories.md` is **pre-existing on
     `main`**, byte-identical there, and absent from this branch's diff; and the
     maintainer contact address is a deliberately public security-disclosure

@@ -42,13 +42,14 @@ the project or preparing a fork, please:
 
 ### Prerequisites
 
-Two toolchains must exist before you bootstrap:
+Install both toolchains before you bootstrap:
 
 - **Volta**, which selects the Node.js and npm versions pinned in `package.json`. Read the versions
   from that file rather than from a list here, so the two can never drift apart.
-- **Rust and Cargo**. The repository's tool checker is a Rust command-line application, and
-  `npm install` runs it as a postinstall step, so Cargo must exist before it can check or install
-  anything else. Install it with rustup as described in
+- **Rust and Cargo**. The repository's tool checker is a Rust command-line application that
+  `npm install` runs as a postinstall step. That step ignores its own failure, so without Cargo the
+  install still succeeds and the check is simply skipped — leaving your toolchain unverified until
+  something later fails. Install it with rustup as described in
   [Set up your development environment](./docs/how-to/setup-development-environment.md).
 
 **Important**: You don't need to install Node.js or npm manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
@@ -101,13 +102,15 @@ After installation, restart your terminal and Volta will automatically manage No
 **Solution**: Run `volta install node@$(node -p "require('./package.json').volta.node")` so Volta
 installs the version this checkout pins, rather than a version copied from these instructions.
 
-**Issue**: `npm install` fails, or its postinstall step reports `command not found: cargo`
-**Solution**: Install Rust first — the postinstall step runs the Rust-built tool checker, so a
-missing Cargo fails it no matter how clean the npm cache is. Follow
+**Issue**: `npm install` prints `command not found: cargo` but reports success
+**Solution**: Install Rust. The postinstall step runs the Rust-built tool checker but discards its
+exit code, so a missing Cargo does not stop the install — it prints that one line and continues,
+and your toolchain goes unchecked. The failure only becomes visible when you run `npm run doctor`
+yourself. Follow
 [Set up your development environment](./docs/how-to/setup-development-environment.md), reopen the
 terminal, then rerun `npm install`.
 
-**Issue**: `npm install` fails for some other reason
+**Issue**: `npm install` fails outright
 **Solution**: Clear npm cache with `npm cache clean --force` and try again.
 
 ## Project Structure
