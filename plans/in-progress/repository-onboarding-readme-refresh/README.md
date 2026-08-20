@@ -56,9 +56,10 @@ result, and recover from common failures without guessing.
 - Any delivery into `ose-private`, `ose-primer`, or `beaver-nest`. Documentation here may describe
   those repositories accurately; no branch, PR, metadata change, or file edit lands in them.
 - The `apps/rhino-cli/` tree and its bound Gherkin under `specs/apps/rhino/behavior/rhino-cli/`.
-  Those paths are byte-identical with `ose-private`, and changing them here would open a
-  cross-repository obligation this plan explicitly does not carry. They are audited as
-  `verified-unchanged` only.
+  Most of those paths are byte-identical with `ose-private`, and changing one would open a
+  cross-repository obligation this plan explicitly does not carry. The plan declines the whole of
+  both trees rather than only the byte-identical subset, so the rule is simple to check. They are
+  recorded in the ledger as `identity-bound` and audited without being edited.
 - Rewriting completed plans under `plans/done/` or changing historical claims merely to match the
   present.
 - Clearing the pre-existing README-index completeness backlog in `docs/` and `specs/`. Those trees
