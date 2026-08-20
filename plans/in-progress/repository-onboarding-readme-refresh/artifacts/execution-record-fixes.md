@@ -122,12 +122,14 @@ text was corrected in place before the rule was written down. Its marker records
 say.
 
 The authoritative list is the markers themselves, not any prose summary: `grep '\*\*Superseded'`
-over this file returns every superseded row. That is deliberate. Successive hand-written summaries
-of this same fact — a row range, a chain count, a chain list, and then a duplicate-row count — were
-each found wrong by a later cycle, so the record now points at something greppable instead of
-something remembered. The prose here is a reading aid and makes no completeness claim.
-**Superseded in part by C-49, C-50, C-51 and C-57**: this preamble is where all four of those
-summaries lived. Each version of it was rewritten when the next cycle found the figure wrong.
+over this file returns every superseded row. That is deliberate. Hand-written summaries of this same
+fact kept being found wrong by a later cycle — among them a row range, a chain count, a chain list,
+a claim that every chain was marked, and a duplicate-row count — so the record now points at
+something greppable instead of something remembered. The prose here is a reading aid and makes no
+completeness claim, including about that list.
+**Superseded in part by C-49, C-50 and C-51**: those three summaries lived in this preamble, and
+each version of it was rewritten when the next cycle found the figure wrong. `C-57`'s did not — see
+C-62.
 
 The narrative paragraphs between the tables use the same marker, so the same `grep` surfaces prose
 and rows alike. Read a marker as evidence; do not read the absence of one as proof. The rows were
@@ -399,13 +401,16 @@ Three findings, and the first is the same failure one layer out. Cycle 10 extend
 convention from the rows to the prose, swept the prose, marked four paragraphs, and then stated that
 the narrative paragraphs now carry a marker wherever a later cycle overtook one. The sweep had
 missed one. The Cycle 7 closing paragraph claimed the reader-facing documents "have now been clean
-for three consecutive cycles", carried that claim through `063026455` and `bc20ca4bd`, and was
-rewritten in place at `14d2f67d7` as the literal implementation of `C-55` — a paragraph, not a row.
-So `C-55` had already pointed at prose a cycle before the sweep that claimed nothing had, and the
-sweep neither found it nor counted it.
+for three consecutive cycles" at `063026455`, softened the wording to "were clean for the three
+cycles preceding this one" at `bc20ca4bd` without fixing the arithmetic, and was rewritten in place
+at `14d2f67d7` as the literal implementation of `C-55` — a paragraph, not a row. So `C-55` had
+already pointed at prose a cycle before the sweep that claimed nothing had, and the sweep neither
+found it nor counted it.
 
-That is the fifth completeness claim about this record to fail, and the second to fail inside the
-commit that was meant to close the class. The response is the same one that worked for the rows,
+That is another completeness claim about this record failing, and the second time one has failed
+inside the commit meant to close the class — `C-57` was the first, one cycle earlier. The count of
+how many have failed is deliberately not given here; that count is itself one of the figures this
+record kept getting wrong. The response is the same one that worked for the rows,
 applied honestly this time: the preamble no longer says the prose is fully marked. It says a marker
 is evidence and the absence of one is not proof, and it names this miss so a reader knows the sweep
 has a history of being incomplete.
@@ -416,23 +421,67 @@ the correction — which is a real argument that prose markers belong at a parag
 wherever the corrected sentence happens to sit. And the closing sentence flattened two defects of
 very different ages into one "sitting there for cycles".
 
-| Row  | Discipline | Defect                                                                                                                                                                                                                                                                                                                       | Severity | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-59 | Integrity  | The Cycle 7 paragraph carried a false three-cycle streak claim through two commits and was rewritten in place at `14d2f67d7` per `C-55`, with no marker. Cycle 10's claim that the prose now all carries one was false when written, and its "nothing had been pointed at the prose" framing wrote `C-55` out of the account | HIGH     | The paragraph is marked. The preamble drops the completeness claim for prose and states the miss instead; the Cycle 10 narration is marked where it wrote its predecessor out. Same framing appears in `c8054b7d3`'s pushed message and stays there, disclosed rather than force-pushed. The prose was then re-swept mechanically, by diffing non-table lines across every consecutive commit pair rather than by reading, which also gave the preamble a marker for the four summaries it hosted |
-| C-60 | Docs       | Inserting the `C-41` marker mid-paragraph orphaned the pronoun "It" in the next sentence, which a cold reader binds to the correction rather than to "Cycle 3" three sentences up                                                                                                                                            | MEDIUM   | The marker moved to the end of the paragraph, restoring the original sentence flow. The convention is now to place a prose marker at a paragraph boundary, which is where the other five already sit                                                                                                                                                                                                                                                                                              |
-| C-61 | Docs       | "Both defects had been sitting there for cycles" is true of `C-58`, which survived five, and false of `C-57`, which the cycle-9 commit introduced and the next cycle caught                                                                                                                                                  | MEDIUM   | The sentence gives the two ages separately instead of a shared one                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Row  | Discipline | Defect                                                                                                                                                                                                                                                                                                                       | Severity | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-59 | Integrity  | The Cycle 7 paragraph carried a false three-cycle streak claim through two commits and was rewritten in place at `14d2f67d7` per `C-55`, with no marker. Cycle 10's claim that the prose now all carries one was false when written, and its "nothing had been pointed at the prose" framing wrote `C-55` out of the account | HIGH     | The paragraph is marked. The preamble drops the completeness claim for prose and states the miss instead; the Cycle 10 narration is marked where it wrote its predecessor out. Same framing appears in `c8054b7d3`'s pushed message and stays there, disclosed rather than force-pushed. The prose was then re-swept mechanically, by diffing non-table lines across every consecutive commit pair rather than by reading, which also gave the preamble a marker for the summaries it hosted — miscounted at the time as four; see `C-62` |
+| C-60 | Docs       | Inserting the `C-41` marker mid-paragraph orphaned the pronoun "It" in the next sentence, which a cold reader binds to the correction rather than to "Cycle 3" three sentences up                                                                                                                                            | MEDIUM   | The marker moved to the end of the paragraph, restoring the original sentence flow. The convention is now to place a prose marker at a paragraph boundary, which is where the other five already sit                                                                                                                                                                                                                                                                                                                                      |
+| C-61 | Docs       | "Both defects had been sitting there for cycles" is true of `C-58`, which survived five, and false of `C-57`, which the cycle-9 commit introduced and the next cycle caught                                                                                                                                                  | MEDIUM   | The sentence gives the two ages separately instead of a shared one                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-Worth being plain about the shape of this: eleven review cycles have produced the rows numbered
+### Cycle 12 Rows (P6-007L@01)
+
+The mechanical re-sweep cycle 11 ran was the right method and it still put a marker in the wrong
+place. It marked the preamble as the home of four failed summaries. Three of them lived there; the
+fourth, `C-57`'s "56 numbered rows — four of them listed twice", lived in the paragraph that closes
+this whole section, some three hundred lines below. So the paragraph that actually carried the
+corrected claim had no marker, and the misattribution went out three times in one commit — in the
+marker, in `C-59`'s Fix cell, and in the pushed message.
+
+Two things about that are worth stating rather than smoothing. The sweep found the right set of
+paragraphs and then recorded where one of them was from memory instead of from the diff it had just
+run. And the failure landed inside the mechanism the preamble declares authoritative, which is the
+third consecutive cycle where the fix for this class contained a fresh instance of it.
+
+Integrity also went back to the first commit and found the earliest instance of the same shape,
+never recorded: the Scope Discipline paragraph opened as "All eight rows edit prose in three
+reader-facing documents" while nineteen rows were already in the file, and the row count was
+corrected silently one commit later. The "three documents" half was accurate when written — the file
+named exactly three at that point — so only half of that finding stands, and the row is written to
+say which half.
+
+Docs found `C-59`'s narration calling itself "the fifth completeness claim about this record to
+fail" when `C-57` already held that ordinal one cycle earlier. Nothing in the text distinguished two
+tallies, so the ordinal is gone rather than renumbered; the narration now says plainly that the
+count is not given because the count is one of the figures this record kept getting wrong.
+
+One disclosure that belongs here rather than in a row. The brief written for this cycle told both
+specialists the file carried "nineteen markers, six of them in prose". Nineteen was right; six was
+the figure from one commit earlier, and the true number was nine. The docs specialist caught it and
+reported it rather than working from it. The same defect class this record chronicles reached the
+briefing that was sent to audit it.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                         | Severity | Fix                                                                                                                                                                                                                          |
+| ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-62 | Integrity  | The preamble's new marker named `C-49`, `C-50`, `C-51` and `C-57` as summaries that lived in it. `C-57`'s lived in the section's closing paragraph, which was left unmarked. Repeated in `C-59`'s Fix cell and in `f1a15185f`'s pushed message | HIGH     | The preamble marker names the three that were actually there; the closing paragraph carries its own marker for `C-57`. `C-59`'s Fix cell is corrected. The pushed message stays as it is, disclosed rather than force-pushed |
+| C-63 | Integrity  | The Scope Discipline paragraph opened at `cb489b874` as "All eight rows edit prose in three reader-facing documents" with nineteen rows already present, and the row count was corrected silently at `14e58716e` with no row and no marker     | MEDIUM   | The paragraph is marked and the original wording recorded. Only the row count was wrong: three documents was correct at that commit, so the finding is recorded as half-standing rather than accepted whole                  |
+| C-64 | Integrity  | `C-59`'s narration said the Cycle 7 paragraph "carried that claim through `063026455` and `bc20ca4bd`", collapsing two different phrasings into one quoted string                                                                              | LOW      | The narration now gives both phrasings and says the `bc20ca4bd` rewording softened the sentence without fixing the arithmetic                                                                                                |
+| C-65 | Docs       | `C-59`'s narration called itself "the fifth completeness claim about this record to fail" while `C-57` already held that ordinal, with nothing in the text distinguishing two tallies                                                          | MEDIUM   | The ordinal is removed rather than renumbered, and the narration says why: the count of failed counts is itself one of the figures this record kept getting wrong                                                            |
+
+Worth being plain about the shape of this: twelve review cycles have produced the rows numbered
 above, and every cycle after the fourth changed only plan records, never a reader-facing document.
-Those five documents have not needed a change since `afb850f43`, and the cycle 11 docs pass cleared
-them to ship again.
+Those five documents have not needed a change since `afb850f43`, and the cycle 12 docs pass cleared
+them to ship again. **Superseded in part by C-57 and C-62**: this is the paragraph that carried "56
+numbered rows — four of them listed twice", the count `C-57` removed. `C-59`'s marker was put on the
+preamble instead, which is where the other three summaries lived but not this one.
 
 ## Scope Discipline
 
 No correction here is a product change. The rows edit prose in five reader-facing documents and the
 plan's own records; none touches source, configuration, a test, or a generated mirror. P6-002A and
 P6-002B therefore remain not applicable in this iteration too — no defect was a product bug, so no
-red coverage was needed and none was written.
+red coverage was needed and none was written. **Superseded in part by C-63**: this paragraph opened
+at `cb489b874` as "All eight rows edit prose in three reader-facing documents", with nineteen rows
+already in the file. The row count was corrected silently at `14e58716e`; the document count was
+right at the time and grew with the scope.
 
 C-23 is the one row that produced new evidence rather than new prose. It ran the landing page at
 the three documented breakpoints and checked `scrollWidth > clientWidth` at each. That is a
