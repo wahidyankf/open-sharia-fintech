@@ -656,16 +656,137 @@ the three documented breakpoints and checked `scrollWidth > clientWidth` at each
 verification, not a product change: nothing in the application was modified, and the check passed
 as it stood.
 
+## Iteration `@02` — Phase 7 reconciliation findings
+
+Iteration `@02` opened because the Phase 7 re-run against merged `origin/main` (`400712aa9`) did
+not come back clean. Two independent reviewers ran against the five reader-facing documents. Every
+row below was verified against a primary source before it was written; findings that did not
+survive verification are recorded as rejected rather than silently dropped.
+
+| Row  | Source         | Severity | Defect                                                                                                                                                                                             | Correction                                                                                                                    |
+| ---- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| C-81 | docs checker   | MEDIUM   | The setup guide's integration-test troubleshooting entry named host port `5432`. `docker-compose.integration.yml` maps `"5434:5432"` and `run-integration.sh` exports `Port=5434`.                 | Entry now names `5434`, explains the remap, and leads with `lsof -i :5434`.                                                   |
+| C-82 | docs checker   | MEDIUM   | `CONTRIBUTING.md` listed ten valid commit types, omitting `build`, which the enforced `@commitlint/config-conventional` type-enum accepts.                                                         | List now carries all eleven enum members alphabetically.                                                                      |
+| C-83 | docs checker   | LOW      | The setup guide attributed `cargo-llvm-cov` to `test:quick`. No `test:quick` invokes it — `rhino-cli:test:quick` is typecheck/lint/test:unit/test:specs, and `crane-cli` covers via `dotnet test`. | Comment now attributes coverage to `test:coverage` and `cargo-deny` to `deps:audit`.                                          |
+| C-84 | voice reviewer | HIGH     | `CONTRIBUTING.md` asserted the project "adheres to a Code of Conduct". No `CODE_OF_CONDUCT.md` exists at any path; the sole match is the convention for authoring one.                             | Section now states the conduct standard directly and says plainly that no root file exists yet. See the follow-up note below. |
+| C-85 | voice reviewer | HIGH     | `related-repositories.md` carried an instruction addressed to an execution agent — "preserve active goals during runner contention…" — on a reader-facing reference path.                          | Sentence removed; the surrounding parity paragraph is unchanged.                                                              |
+
+### Cycle 1 of the `@02` review — one finding, fixed as a class
+
+| Row  | Source              | Severity | Defect                                                                                                                                                                                         | Correction                                                                              |
+| ---- | ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| C-86 | governance reviewer | MEDIUM   | `C-82` corrected `CONTRIBUTING.md`'s commit-type list but left every other surface stating the same enforced fact untouched, breaking a three-way consistency the repo maintains deliberately. | `build` added to every surface that states the set, and the harness mirror regenerated. |
+
+The reviewer named two stale surfaces. A sweep for every tracked Markdown file stating the full type
+set found **four**, so the fix was applied to the class rather than to the cited sites:
+
+| Surface                                                                                            | Was                                             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | 10-row table plus a prose description section   |
+| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | 10-type inline list                             |
+| `docs/reference/system-architecture/ci-cd.md`                                                      | 10-type inline list — not named by the reviewer |
+| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | 10-bullet list — not named by the reviewer      |
+
+`.agents/skills/caveman-commit/SKILL.md` already carried all eleven and was left alone. Because
+`chore` had been documented as covering build configuration, its description was narrowed where
+`build` now covers that case, so the two do not overlap. `governance word-budget validate` exits 0
+after the edit; the one WARN on `valid-commit-types.md` predates it (428 words at `400712aa9`,
+already over the 400-word target). `npm run generate:bindings` then `npm run validate:sync` both
+exit 0.
+
+### Cycle 2 of the `@02` review — the class fix invented a convention
+
+Both specialists converged on one defect in `C-86`, and the docs reviewer was right to escalate it.
+
+| Row  | Severity | Defect                                                                                                                                                                                                                                                                        | Correction                                                                                                                          |
+| ---- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| C-87 | HIGH     | `C-86` gave `build` the bullet "Dependency manifests and lockfiles" and narrowed `chore` to match. The repository does the opposite: dependency work is filed `chore(deps)`. The same table then still carried `chore: update dependencies`, so the file contradicted itself. | `build` redefined as build, packaging, and compiler configuration; `chore` restored as the home of dependency and lockfile updates. |
+
+Counted against the merged history at `400712aa9`: **17** `chore(deps)` commits, all dependency or
+lockfile work, and **4** `build` commits — Nx cache inputs, F# analyzer settings, and two
+Dockerfiles. None of the four is a dependency change. The definitions now describe what each type is
+actually used for, and both table examples are drawn from real commits rather than invented.
+
+The cycle also closed a second, smaller overlap: `build`'s "Build tool configuration" sat beside
+`chore`'s "Tooling changes", which are near-synonyms a contributor could not choose between. The
+`chore` bullet is gone; the two types no longer share a category.
+
+**Method note.** The first attempt to count these commits returned `0` for both `build` and
+`chore(deps)` — a false zero from the filtered `git log` wrapper, and the third instance of that
+hazard class in this iteration. Re-run through `rtk proxy` against 5,605 raw subjects, the real
+counts are 4 and 17. Had the zero been believed, this row would have "confirmed" that neither
+convention existed and left the invented one in place.
+
+### Cycle 3 of the `@02` review — terminal
+
+Both specialists returned **zero findings** against `7053b0beb`. The docs reviewer independently
+hit the same false-zero this iteration hit twice — an anchored `--grep` returned 0 — recognised it,
+re-ran through `rtk proxy`, and reached the same 17 and 4. That is the counts corroborated from a
+second direction by a reader who did not take them on trust.
+
+The governance reviewer cleared all five checks: `build` and `chore` are compatible on every surface
+that describes them, the split leaves no change type homeless, the `.agents/` mirror is
+byte-identical to its source, the eleven-type list is identical across all four bare-list surfaces,
+and the word budget is green at 482 of a 500 fail threshold.
+
+That last number is worth carrying forward: `valid-commit-types.md` entered this plan at 428 words,
+already over its 400-word target, and leaves at 482. It is green, but the next edit to that file has
+18 words of headroom.
+
+**Cycle count.** Three cycles, terminating on a genuine zero. Iteration `@01` ran nineteen. The
+difference is not that the reviewers were weaker — they found a `CRITICAL` here that `@01`'s
+reviewers never had cause to look for — but that the review scope named the shipping surface and
+excluded the plan's own records, which is exactly the change
+`plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` proposed.
+
+### Rejected findings
+
+The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
+of its five HIGH findings did not survive verification and were not applied:
+
+- **README "focused check" is undefined.** The term is introduced in the same sentence that routes
+  the reader to the tutorial, and the tutorial defines it at its line 97 with the exact command
+  (`npm run doctor -- --fix --tools git,volta,node,npm`). Not a broken run path.
+- **The tutorial's `npm install` step strands a reader whose Cargo install failed.** The tutorial
+  installs Rust before that step, verifies `cargo --version`, gives recovery inline, and carries a
+  dedicated `volta` or `cargo` is not found troubleshooting entry. The reader is caught earlier.
+- **The "two sibling repositories" count misleads.** Defensible as written, and `P7-005` had
+  already cross-read this claim across the document set.
+
+The remainder were style preferences against clauses already measured clean. They are not applied
+and not carried forward as debt.
+
+### Out-of-scope follow-up
+
+The repository has no root `CODE_OF_CONDUCT.md`, which
+`repo-governance/conventions/writing/oss-documentation/code-of-conduct.md` requires, including a
+reporting mechanism. Authoring one means choosing a covenant and publishing a contact address —
+a governance decision with personal-data implications, outside a documentation-refresh plan.
+`C-84` makes the prose true; it does not close the governance gap.
+
+### Method failure caught during this iteration
+
+Passing three paths through an unquoted shell variable to `prettier` and `markdownlint-cli2`
+produced a false green from both: prettier reported no matching file and markdownlint reported
+`Linting: 0 file(s)`, and both exited 0. Re-run with the paths written out, the same commands
+linted three files and passed for real. A gate's exit code is only meaningful next to its file
+count.
+
 ## File-Touch Ledger
 
-| Path                                                | Change                                                           | Owning Row       |
-| --------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
-| `CONTRIBUTING.md`                                   | Platform statement, prerequisites, intake caveat, Diátaxis gloss | C-01…C-05        |
-| `docs/how-to/setup-development-environment.md`      | Quick Start Rust step and renumbering                            | C-06, C-07       |
-| `README.md`                                         | WSL2 expansion; Rust bullet accuracy; changed-port guidance      | C-08, C-21, C-24 |
-| `docs/tutorials/getting-started-with-ose-public.md` | Lead paragraph, spelling, platform wording, Cargo reason         | C-21, C-25       |
-| `docs/reference/related-repositories.md`            | Retired-sandbox row corrected to infrastructure work             | voice rows       |
-| `plans/in-progress/…/evidence/phase-6-*`            | Documented-breakpoint capture and its transcript                 | C-23             |
-| `plans/in-progress/…/delivery.md`                   | Phase 5–7 ticks and notes                                        | plan records     |
-| `plans/in-progress/…/artifacts/*.md`                | Ledger re-run, public record, this record                        | plan records     |
-| `plans/in-progress/…/evidence/*`                    | Phase 5A and 5B journey evidence                                 | plan records     |
+| Path                                                                                               | Change                                                                                          | Owning Row             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------- |
+| `CONTRIBUTING.md`                                                                                  | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct | C-01…C-05, C-82, C-84  |
+| `docs/how-to/setup-development-environment.md`                                                     | Quick Start Rust step and renumbering; integration port; cargo tool attribution                 | C-06, C-07, C-81, C-83 |
+| `README.md`                                                                                        | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                     | C-08, C-21, C-24       |
+| `docs/tutorials/getting-started-with-ose-public.md`                                                | Lead paragraph, spelling, platform wording, Cargo reason                                        | C-21, C-25             |
+| `docs/reference/related-repositories.md`                                                           | Retired-sandbox row corrected to infrastructure work; executor instruction removed              | voice rows, C-85       |
+| `plans/in-progress/…/evidence/phase-6-*`                                                           | Documented-breakpoint capture and its transcript                                                | C-23                   |
+| `plans/in-progress/…/delivery.md`                                                                  | Phase 5–7 ticks and notes                                                                       | plan records           |
+| `plans/in-progress/…/artifacts/*.md`                                                               | Ledger re-run, public record, this record                                                       | plan records           |
+| `plans/in-progress/…/evidence/*`                                                                   | Phase 5A and 5B journey evidence                                                                | plan records           |
+| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | commit-type consistency sweep                                                                   | C-86                   |
+| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | commit-type consistency sweep                                                                   | C-86                   |
+| `docs/reference/system-architecture/ci-cd.md`                                                      | commit-type consistency sweep                                                                   | C-86                   |
+| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | commit-type consistency sweep                                                                   | C-86                   |
+| `.agents/skills/swe-developing-applications-common/reference/git-workflow.md`                      | generated mirror of the above                                                                   | C-86                   |

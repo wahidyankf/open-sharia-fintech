@@ -22,7 +22,9 @@ the project for your own region or use case.
 
 ## Code of Conduct
 
-This project adheres to a Code of Conduct that all contributors are expected to follow.
+We expect everyone taking part here — in issues, discussions, and reviews — to be respectful and
+free of harassment. This repository has not yet published a root `CODE_OF_CONDUCT.md`; until it
+does, treat the standard above as the rule rather than assuming a separate document covers it.
 
 ## Getting Started
 
@@ -216,7 +218,8 @@ that fit your project.
 [optional footer]
 ```
 
-**Valid types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`
+**Valid types**: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`,
+`style`, `test`
 
 **Examples**:
 

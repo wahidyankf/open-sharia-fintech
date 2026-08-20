@@ -45,7 +45,8 @@ The commit-msg hook runs `commitlint` to enforce the [Conventional Commits](http
 
 **Required format**: `<type>(<scope>): <description>`
 
-Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`.
+Valid types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`,
+`style`, `test`.
 
 The scope is optional but recommended. The description must use imperative mood and must not end
 with a period.

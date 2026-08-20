@@ -63,8 +63,7 @@ so governance and tooling drift there is costly immediately, not just eventually
 
 For portable governance, agent, and skill changes, public is the source and `ose-private` is
 reconciled immediately. Verify the portable manifest byte-for-byte; list private-only operational
-exceptions explicitly. Across both repos, preserve active goals during runner contention and remove
-only each plan's own verified worktree immediately after that repository's final delivery.
+exceptions explicitly.
 
 ### Private-only operational exceptions
 

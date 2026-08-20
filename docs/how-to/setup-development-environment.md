@@ -171,7 +171,7 @@ toolchain. A missing component is reported as a warning, not a blocking failure,
 # Install rustup (if not present)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# Install additional cargo tools used by test:quick and deps:audit
+# Install additional cargo tools: coverage for test:coverage, deny for deps:audit
 cargo install cargo-llvm-cov --locked
 cargo install cargo-deny --locked
 
@@ -300,12 +300,14 @@ sudo usermod -aG docker $USER
 
 ### Integration test fails with "port already in use"
 
-Another Docker stack or service is using port 5432. Stop it:
+This suite publishes PostgreSQL on host port **5434** (the container's own 5432 is remapped), so
+the conflict is on 5434 — not on the 5432 that the `infra/dev/ose-app` stack publishes. Find
+whatever holds it:
 
 ```bash
+lsof -i :5434
+# If it is another Docker stack, stop that stack:
 docker compose -f infra/dev/<other-stack>/docker-compose.yml down
-# Or find the process:
-lsof -i :5432
 ```
 
 ### Playwright "browser not found"

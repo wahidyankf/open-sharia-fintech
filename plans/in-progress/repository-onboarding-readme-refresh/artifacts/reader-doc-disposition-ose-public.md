@@ -1002,20 +1002,34 @@ All paths are relative to `plans/in-progress/repository-onboarding-readme-refres
 full. Two already exist in the working tree; the rest are declared before they are written so a
 later drift check cannot mistake a known future file for an unexplained extra.
 
-| Path                                             | Owning unit | Task ID | Status at declaration | Reason                                                                                         |
-| ------------------------------------------------ | ----------- | ------- | --------------------- | ---------------------------------------------------------------------------------------------- |
-| `artifacts/execution-record-contract.md`         | contract    | P1-000  | Created               | Durable append-only record for the contract unit, carrying sanitized Phase 0 outcomes.         |
-| `artifacts/reader-doc-disposition-ose-public.md` | contract    | P1-001  | Created               | This ledger.                                                                                   |
-| `artifacts/execution-record-public.md`           | refresh     | P3-001A | Planned               | Durable record for the documentation refresh unit.                                             |
-| `artifacts/execution-record-fixes.md`            | fixes       | P6-001A | Planned, conditional  | Created only if Phase 5 finds a defect that needs a correction unit.                           |
-| `artifacts/execution-record-closeout.md`         | closeout    | P8-001A | Planned               | Durable record for the closeout unit.                                                          |
-| `evidence/README.md`                             | closeout    | P8-002  | Planned               | Sanitized index of PRs, metadata equality, both journey outcomes, and quality gates.           |
-| `plans/backlog/<name>/…`                         | closeout    | P8-004A | Planned, conditional  | One backlog plan per learning whose durable home is code, a test, or repository configuration. |
+| Path                                                                        | Owning unit | Task ID     | Status at declaration | Reason                                                                                                                |
+| --------------------------------------------------------------------------- | ----------- | ----------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `artifacts/execution-record-contract.md`                                    | contract    | P1-000      | Created               | Durable append-only record for the contract unit, carrying sanitized Phase 0 outcomes.                                |
+| `artifacts/reader-doc-disposition-ose-public.md`                            | contract    | P1-001      | Created               | This ledger.                                                                                                          |
+| `artifacts/execution-record-public.md`                                      | refresh     | P3-001A     | Planned               | Durable record for the documentation refresh unit.                                                                    |
+| `artifacts/execution-record-fixes.md`                                       | fixes       | P6-001A     | Planned, conditional  | Created only if Phase 5 finds a defect that needs a correction unit.                                                  |
+| `artifacts/execution-record-closeout.md`                                    | closeout    | P8-001A     | Planned               | Durable record for the closeout unit.                                                                                 |
+| `evidence/README.md`                                                        | closeout    | P8-002      | Planned               | Sanitized index of PRs, metadata equality, both journey outcomes, and quality gates.                                  |
+| `plans/backlog/<name>/…`                                                    | closeout    | P8-004A     | Planned, conditional  | One backlog plan per learning whose durable home is code, a test, or repository configuration.                        |
+| `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` | fixes       | P6-009AG@01 | Created               | Idea-routed learning from the `@01` review loop, filed as a new Q2 two-pager rather than folded into an existing one. |
 
 Two known non-additive movements are declared here for the same reason: P9-002 renames this entire
 plan directory to `plans/done/<completion-date>__repository-onboarding-readme-refresh/`, and P8-004B
 may fold a learning into an existing `plans/ideas/` two-pager rather than adding a file. Neither
 creates an unexplained path, and P9-003 re-runs the inventory against the post-move index.
+
+> **Amended 2026-08-21.** The sentence above assumed an idea-routed learning either folds into an
+> existing two-pager or becomes a backlog plan. Iteration `@01` produced a third case: a learning
+> whose subject had no existing brief, filed as a **new** `plans/ideas/` file. That path is now
+> declared in the table above rather than left to be discovered as an unexplained extra by the very
+> inventory this section exists to make honest — which is how P7-001's re-run found it.
+>
+> **Amended 2026-08-21 (`@02`).** Three rows in this ledger were touched again after the Phase 7
+> re-run at `400712aa9` found defects the round-1 pass had not: `CONTRIBUTING.md` (`C-82`, `C-84`),
+> `docs/how-to/setup-development-environment.md` (`C-81`, `C-83`), and
+> `docs/reference/related-repositories.md` (`C-85`). Their dispositions are unchanged in kind — each
+> remains a revised living reader-facing document — and the corrections are recorded in
+> `artifacts/execution-record-fixes.md` § Iteration `@02`.
 
 Evidence screenshots and captured `curl` responses are not Markdown, so they never enter this
 inventory; only `evidence/README.md` does.
