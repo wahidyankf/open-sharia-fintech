@@ -33,7 +33,7 @@ when_to_use: Use as a quick-reference checklist before and during any session th
    `npm run generate:bindings`, verify with `npm run harness:bindings-validation` (all-harness;
    `validate:sync` does not cover `.codex/`), and never hand-edit a `class: generated` mirror — a
    `class: vendored` path is the exception, covering two structurally different subclasses; see
-   [Governance Surfaces § the two
+   [the two vendored
    subclasses](../../../glossary/vendored-exception-subclasses.md)
    for which one applies before hand-editing.
 

@@ -51,6 +51,6 @@ overwrites it silently. The change disappears with no error, and the time is spe
 **Fix**: Standard 9 — `.claude/` is the only hand-authored _canonical source_ surface for generated
 mirrors. Edit the source, regenerate, and let `class: generated` mirrors follow. A `class: vendored`
 path (declared in the `harness:` registry's `ownership:` list) is the one exception, and it covers
-two structurally different subclasses — see [Governance Surfaces § the two
+two structurally different subclasses — see [the two vendored
 subclasses](../../../glossary/vendored-exception-subclasses.md)
 for which one applies before hand-editing.

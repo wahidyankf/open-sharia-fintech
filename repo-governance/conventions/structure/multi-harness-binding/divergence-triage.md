@@ -27,9 +27,10 @@ modification times**, so in a fresh clone every file carries checkout time. A ti
 detector reports the whole tree as simultaneously changed there, and reports nothing at all where an
 editor preserved stamps. Content is the only signal that survives both.
 
-Scope is the `generated` class alone. A `vendored` file has no in-repo source to regenerate from,
-and a `source` file is the promotion target rather than a triage subject — see
-[Rule 8](./ownership-classes.md).
+Scope is the `generated` class alone. A `vendored` file covers two structurally different
+subclasses — see [the two vendored
+subclasses](../../../glossary/vendored-exception-subclasses.md) — and a `source` file is the
+promotion target rather than a triage subject; see [Rule 8](./ownership-classes.md).
 
 ## The three outcomes
 
