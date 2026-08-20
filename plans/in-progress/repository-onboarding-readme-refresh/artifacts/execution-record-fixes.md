@@ -115,10 +115,12 @@ restatement.
 **How to read this section.** It is a chronological log, not a current-state summary. The review
 cycles for PR #239 land here, beginning at C-20, and later cycles corrected earlier ones, including
 several that corrected a correction. The range deliberately carries no upper bound: naming one made
-it false the moment the next row landed, which is how C-50 came to exist. Where a row's fix was later found wrong, the row says so and names the
-row that superseded it, rather than being rewritten to look right. The chains are: C-21 → C-31 →
-C-32 → C-36 (the Cargo prerequisite wording, wrong three times); C-30 → C-35 (the README word
-count); C-34 → C-37 (the breakpoint amendment, first applied to too few items) → C-45 (a wrong
+it false the moment the next row landed, which is how C-50 came to exist. Where a row's fix was
+later found wrong, the row says so and names the row that superseded it, rather than being
+rewritten to look right. The chains are: C-21 → C-31 →
+C-32 → C-36 (the Cargo prerequisite wording, wrong three times); C-27 → C-39 → C-44 (the
+`doctor --scope minimal` disambiguation, misplaced twice before it moved); C-30 → C-35 (the README
+word count); C-34 → C-37 (the breakpoint amendment, first applied to too few items) → C-45 (a wrong
 line-distance inside that row); and C-42 → C-46 (the rollup amendment, first argued from a label
 instead of a measurement). To read what the branch currently asserts about any of those, read the
 last row in the chain, not the first.
@@ -132,7 +134,7 @@ last row in the chain, not the first.
 | C-24 | Architecture | The C-18 offsetting cut removed README's only guidance for the changed-port case                                                                                                           | MEDIUM   | Restored, funded by shortening the Rust bullet, which the C-21 rewrite made shorter and more accurate at once                                                                                                                                                                                          |
 | C-25 | Architecture | The platform statement had drifted: the setup guide said "not supported or verified" against "neither supported nor verified" elsewhere                                                    | MEDIUM   | Setup guide and tutorial harmonized to the P2-003 contract wording; all four documents now match                                                                                                                                                                                                       |
 | C-26 | Docs         | The P7-001 ledger block asserted this file "will never be created" and that `evidence/README.md` comes later, while the same commit created this file and added eight evidence files       | MEDIUM   | Both statements amended to record what was true at the observation point without asserting a future the commit falsifies                                                                                                                                                                               |
-| C-27 | Instruction  | "Minimal path" (what you install by hand) collided with `doctor --scope minimal` (which installed tools get inspected), making the linked governance workflow look contradictory           | MEDIUM   | The two senses distinguished in the setup guide; Rust's absence from the flag's set explained rather than treated as an error                                                                                                                                                                          |
+| C-27 | Instruction  | "Minimal path" (what you install by hand) collided with `doctor --scope minimal` (which installed tools get inspected), making the linked governance workflow look contradictory           | MEDIUM   | The two senses distinguished in the setup guide; Rust's absence from the flag's set explained rather than treated as an error. **Superseded by C-39 and C-44**, which found this disambiguation misplaced twice                                                                                        |
 | C-28 | Security     | `delivery.md` recorded a literal Docker bridge IP                                                                                                                                          | LOW      | Replaced with a placeholder. The address was private and the container destroyed, but the plan's rule has no private-range carve-out                                                                                                                                                                   |
 | C-29 | Performance  | The three Phase 5B screenshots are byte-identical to their 5A counterparts                                                                                                                 | LOW      | Kept, with the reason stated: both were rendered by the same host browser against identical page bytes, so the 5B images evidence delivery from the container, not Ubuntu-side rendering                                                                                                               |
 | C-30 | Self         | This record cited the README at 897 words                                                                                                                                                  | LOW      | Corrected. The figure is now pinned to a named revision, because an unpinned count goes stale the moment a later row edits the file — which is exactly what happened once before it was caught. **Superseded by C-35**, which found this corrected figure stale too                                    |
@@ -197,7 +199,7 @@ each checked out. What it did find is a wrong quotation and two rendering or rec
 | C-36 | Logic      | The C-32 rewrite quoted the missing-Cargo error backwards as `command not found: cargo`, at both CONTRIBUTING.md sites and in C-32's own row. That is zsh's interactive phrasing; npm's default script shell is `/bin/sh` and the Husky shims are `sh`, which emit `cargo: command not found`                    | HIGH     | All three sites corrected. Reproduced first: `env -i PATH=<node and npm dirs> npm run doctor` prints `sh: cargo: command not found` and exits 127. The adjacent volta entry was left alone at this point, because volta is typed interactively where zsh does emit that order; C-43 below later removed its quoted string entirely, on the separate ground that two adjacent orders read as a typo |
 | C-37 | Governance | `P5B-005` called 390x844/768x1024/1440x900 "all three mandated viewports" and `P5B-005A` called them "mandated breakpoints". The gate-level amendment landed in cycle 2 sat 175 and 148 lines later respectively, so a reader meeting these items first got an affirmatively false claim, not an unqualified one | MEDIUM   | Both phrases corrected, and the same amendment now appears on `P5A-006`, `P5A-006A`, `P5B-005`, and `P5B-005A`, not only on the two gates. The evidence filenames keep 390/1440 deliberately: renaming them to 375/1280 would misdescribe the images' own bytes. **Superseded in part by C-45**, which found the line distances in this row wrong                                                  |
 | C-38 | Docs       | A blank line after the C-32 row terminated the cycle-2 table, leaving C-33 through C-35 as a header-less pipe block that GFM parses as a paragraph. It would have rendered on GitHub as literal pipe characters — inside the rows documenting this program's own corrections                                     | MEDIUM   | Blank line removed. Worth noting that no gate catches this: markdownlint reports 0 errors and Prettier reports the file already conforms, because without a delimiter row neither tool sees a table at all                                                                                                                                                                                         |
-| C-39 | Docs       | The `doctor --scope minimal` disambiguation added in cycle 1 introduced a flag this document never demonstrates, in the Overview, before the reader has run `doctor` even once                                                                                                                                   | LOW      | Trimmed to a single clause. The disambiguation is kept, because the cycle-1 concern was real; the tangential aside about why Rust is absent from that flag's set is dropped                                                                                                                                                                                                                        |
+| C-39 | Docs       | The `doctor --scope minimal` disambiguation added in cycle 1 introduced a flag this document never demonstrates, in the Overview, before the reader has run `doctor` even once                                                                                                                                   | LOW      | Trimmed to a single clause. The disambiguation is kept, because the cycle-1 concern was real; the tangential aside about why Rust is absent from that flag's set is dropped. **Superseded by C-44**, which found the trim left the placement problem untouched                                                                                                                                     |
 | C-40 | Docs       | The Desktop 1280px row in `evidence/phase-6-breakpoint-coverage.txt` broke the table's column alignment                                                                                                                                                                                                          | LOW      | The whole column widened to fit the longest label. Not gated — the file is `.txt`, so no Markdown formatter reads it                                                                                                                                                                                                                                                                               |
 
 Cycle 3 also confirmed, by direct reproduction rather than reading, that the Git-hook exit code is
@@ -259,7 +261,7 @@ untouched by that commit and re-confirmed unchanged.
 The docs specialist also observed that six cycles of rows had left the section usable as a log but
 not as a current-state reference, since several rows were superseded rather than rewritten. That is
 the right trade — rewriting them would erase the record this file exists to keep — so the fix is a
-`How to read this section` preamble naming all four supersession chains, plus the in-row markers
+`How to read this section` preamble naming every supersession chain, plus the in-row markers
 `C-47` added. Claim and markers were made to agree in both directions: the preamble says every
 superseded row names its successor, so every one of them now does.
 
@@ -287,8 +289,26 @@ this very class.
 
 Both findings are the same shape as C-45: a claim about the record's own completeness, stated more
 confidently than it had been checked. Worth noting where they were found — not in the reader-facing
-documents, which have now been clean for three consecutive cycles, but in the apparatus built to
+documents, which were clean for the three cycles preceding this one, but in the apparatus built to
 audit them.
+
+### Cycle 8 Rows (P6-007H@01)
+
+Integrity returned clean — it re-derived the chain and marker counts by hand, confirmed the removed
+row bound left no dangling reference, verified from `git log` that the wrong "five chains" figure
+really is in the pushed `0db7beda2` message, and checked the three-cycle streak claim against the
+actual per-commit file lists rather than accepting it. Docs gave the five reader-facing documents a
+clean verdict and judged them ready to ship. Its one finding was in the apparatus again.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                                                                      | Severity | Fix                                                                                                                                                                                                                                                                                |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-51 | Docs       | The preamble's chain list missed a chain. `C-44` says in its own text that `C-39`'s trim left the placement problem untouched, which is the same shape as every chain the preamble does name. Tracing it back, `C-27` introduced the disambiguation, `C-39` trimmed it, and `C-44` moved it | MEDIUM   | `C-27` and `C-39` gained markers and the chain joined the list. The chain _count_ is now gone from the narrative entirely — it had been wrong three times, for exactly the reason the row bound was, so it is stated as "every supersession chain" and nothing has to be recounted |
+
+That is three separate completeness claims about this record — a row range, a chain count, and a
+chain list — each found wrong by a later cycle. The pattern is specific enough to name: a summary
+figure written from what the author remembered adding, rather than counted from the file. The
+durable fix in each case turned out to be the same, which is to stop asserting the figure rather
+than to keep correcting it.
 
 ## Scope Discipline
 
