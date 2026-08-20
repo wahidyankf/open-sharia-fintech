@@ -1,11 +1,4 @@
-# 🏗️ Technical Design: Two-Repository Documentation System
-
-> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
-> sync obligation; see
-> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
-> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
-> **descoped**, not deferred. References to `ose-primer` below are historical context, not
-> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
+# 🏗️ Technical Design: Reader Documentation System
 
 ## Architecture Overview
 
@@ -18,6 +11,7 @@ The plan treats documentation as a routed system with four layers:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% TD required: the entry-to-next-step chain is 5 nodes deep, and LR measures depth against MaxWidth=4
 flowchart TD
   E["README entry point"]:::blue --> D{"Reader goal"}:::orange
   D -->|Understand| P["Product map and explanation"]:::teal
@@ -36,39 +30,34 @@ flowchart TD
 
 ## Source-of-Truth Matrix
 
-| Fact class                 | Authoritative source                                | README treatment                                                                    | Validation                                                     |
-| -------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Node/npm versions          | Each repository's `package.json` `volta` object     | Link or show a command that reads the manifest; avoid copied pins unless essential. | `jq '.volta' package.json`                                     |
-| Project inventory          | Resolved Nx workspace                               | Describe only current projects.                                                     | `npm exec nx show projects -- --json`                          |
-| Project targets and ports  | `npm exec nx show project <project> -- --json`      | Use package-manager-prefixed commands and state expected behavior.                  | Parse `targets` before smoke-running.                          |
-| Product status and roadmap | Repository-owned roadmap and product specifications | Summarize purpose; link for detail.                                                 | Cross-read the named canonical file.                           |
-| Behavior and architecture  | `specs/**` and focused reference/explanation docs   | README links rather than duplicating design.                                        | Link and readme-index validation.                              |
-| Contribution posture       | Root policy plus `CONTRIBUTING.md`                  | State closed external intake consistently.                                          | Cross-repository phrase and link audit.                        |
-| Delivery mode              | Plans and trunk/worktree governance                 | Teach `worktree-to-pr` for authorized contributors.                                 | Link check plus workflow review.                               |
-| Repository relationships   | Canonical ecosystem instructions                    | Distinguish public↔private content parity from two-repo Rhino byte identity.        | Two-repository text audit.                                     |
-| GitHub About metadata      | GitHub repository fields                            | Root README and About panel must agree in intent.                                   | `gh repo view --json description,homepageUrl,repositoryTopics` |
-| Package description        | Exact PRD package metadata contract                 | Package tooling and repository positioning must agree.                              | `jq -r '.description' package.json`                            |
-| Private operational facts  | Authorized `ose-private` sources only               | Never copy to public plans/docs; summarize purpose with placeholders.               | Secret scan plus independent AI sensitivity review.            |
+| Fact class                 | Authoritative source                            | README treatment                                                                    | Validation                                                     |
+| -------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Node/npm versions          | `package.json` `volta` object                   | Link or show a command that reads the manifest; avoid copied pins unless essential. | `jq '.volta' package.json`                                     |
+| Project inventory          | Resolved Nx workspace                           | Describe only current projects.                                                     | `npm exec nx show projects -- --json`                          |
+| Project targets and ports  | `npm exec nx show project <project> -- --json`  | Use package-manager-prefixed commands and state expected behavior.                  | Parse `targets` before smoke-running.                          |
+| Product status and roadmap | `roadmap.md` and product specifications         | Summarize purpose; link for detail.                                                 | Cross-read the named canonical file.                           |
+| Behavior and architecture  | `specs/` and focused reference/explanation docs | README links rather than duplicating design.                                        | Link and readme-index validation.                              |
+| Contribution posture       | Root policy plus `CONTRIBUTING.md`              | State closed external intake consistently.                                          | Repository-wide phrase and link audit.                         |
+| Delivery mode              | Plans and trunk/worktree governance             | Teach `worktree-to-pr` for authorized contributors.                                 | Link check plus workflow review.                               |
+| Repository relationships   | Canonical ecosystem instructions                | Distinguish content parity from `rhino-cli` byte identity.                          | Relationship text audit.                                       |
+| GitHub About metadata      | GitHub repository fields                        | Root README and About panel must agree in intent.                                   | `gh repo view --json description,homepageUrl,repositoryTopics` |
+| Package description        | Exact PRD package metadata contract             | Package tooling and repository positioning must agree.                              | `jq -r '.description' package.json`                            |
 
 ## Design Decisions
 
-| Decision                                                                            | Why                                                                                                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Inventory all tracked Markdown, but require every README to receive a reader audit. | This catches directly related non-README docs without turning historical records or product content into rewrite targets.                                                                                                                                                                              |
-| Keep path-complete private evidence inside `ose-private`.                           | Private path names can reveal operational context even when document bodies are omitted.                                                                                                                                                                                                               |
-| Use repository-specific journey labels beneath a shared product-first opening.      | Readers see one ecosystem without mistaking a product platform, a starter, and a private operations repository for one another.                                                                                                                                                                        |
-| Resolve versions, commands, projects, and ports from live configuration.            | Copied facts drift; commands tied to their owning manifests can be retested.                                                                                                                                                                                                                           |
-| Expand the corpus ledger into one executable row per document after inventory.      | Per-file accountability stays granular without publishing hundreds of private paths in a public plan.                                                                                                                                                                                                  |
-| Keep code changes outside this documentation program, unless the change blocks it.  | A required Rhino code/spec change becomes a separately planned prerequisite — unless it blocks this program, in which case it is delivered as a serialized in-plan unit under the regression-test mandate (see `prd.md:333-335`'s blocking-exception carve-out; P6-003 executed under this exception). |
+| Decision                                                                            | Why                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inventory all tracked Markdown, but require every README to receive a reader audit. | This catches directly related non-README docs without turning historical records or educational content into rewrite targets.                                           |
+| Re-verify the prior audit's findings before acting on them.                         | Findings recorded on 2026-08-06 may already be fixed; acting on a stale finding would manufacture churn.                                                                |
+| Leave the `rhino-cli` byte-identity boundary untouched.                             | Those paths are byte-identical with `ose-private`. Editing them here would create a sibling-repository obligation that this single-repository plan explicitly excludes. |
+| Resolve versions, commands, projects, and ports from live configuration.            | Copied facts drift; commands tied to their owning manifests can be retested.                                                                                            |
+| Expand the corpus ledger into one executable row per document after inventory.      | Per-file accountability stays granular and reviewable instead of hiding behind a family-level checkbox.                                                                 |
+| Keep code changes outside this documentation program unless the change blocks it.   | A required code change becomes a separately planned prerequisite — unless it blocks this program, in which case it is delivered under the regression-test mandate.      |
 
 ## Corpus Discovery and Disposition Algorithm
 
-`ose-public` keeps its path-complete Markdown ledger under this plan's `artifacts/` folder.
-`ose-primer` and `ose-private` keep their live path-complete ledgers under plan-scoped `local-tmp/`
-directories in their owning repositories; those files are never committed or copied across
-repositories. The public plan stores only each sibling's source revision, validation result, and
-opaque digest after an independent AI sensitivity review. No ledger quotes document bodies,
-command output, configuration values, or private topology.
+The path-complete Markdown ledger lives under this plan's `artifacts/` folder. No ledger quotes
+document bodies, command output, configuration values, or credentials.
 
 1. Record the repository's `origin/main` SHA, then run
    `git ls-tree -r --name-only <recorded-origin-main-sha> -- '*.md'` and sort paths bytewise. This
@@ -76,13 +65,15 @@ command output, configuration values, or private topology.
 2. Mark every `README.md` as audit-required. For every other Markdown path, record whether it is a
    living repository-facing document related to onboarding, setup, architecture, navigation,
    security, contribution, or repository relationships; otherwise assign `not-reader-doc` with a
-   safe reason.
+   reason.
 3. Classify ownership before reading prose:
-   - `plans/done/**` and `archived/**` → `historical-exempt`.
+   - `plans/done/` and archived trees → `historical-exempt`.
    - Generated harness surfaces → `generated`.
-   - Shared Rhino boundary → `verified-unchanged` or coordinated identical change.
+   - `apps/rhino-cli/` and `specs/apps/rhino/behavior/rhino-cli/` → `identity-bound`.
    - Active plans → navigation/index audit; bodies remain planning records.
    - Specs navigation → product-reader and link audit; no manufactured prose.
+   - Educational content trees → inventoried, but owned by their own content conventions and not
+     rewritten by this plan.
    - Living root/app/lib/docs/infra/governance indexes → full reader/fact/voice audit.
 4. For every audit-required or reader-related file, record intended audience and one-sentence
    purpose.
@@ -92,21 +83,20 @@ command output, configuration values, or private topology.
    against `git ls-files --cached --others --exclude-standard -- '*.md'`; and reconcile post-merge
    state against current `origin/main` with `git ls-tree`. Reject missing, duplicate, or unexplained
    extra paths at every stage.
-8. For `ose-private`, review path names for sensitivity inside the private session, calculate the
-   path-complete ledger's digest, and export only the approved path-free summary fields.
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
+%% TD required: the classification chain is 6 nodes deep, and LR measures depth against MaxWidth=4
 flowchart TD
   A["Tracked Markdown path"]:::blue --> H{"Historical or archived?"}:::orange
   H -->|Yes| HX["historical-exempt"]:::gray
   H -->|No| G{"Generated owner?"}:::orange
   G -->|Yes| GX["generated"]:::gray
-  G -->|No| B{"Shared byte-identity boundary?"}:::orange
-  B -->|Yes| S["Two-repo identity audit"]:::blue
+  G -->|No| B{"Inside the rhino-cli boundary?"}:::orange
+  B -->|Yes| S["identity-bound: audit only"]:::gray
   B -->|No| R["Reader and fact audit"]:::blue
-  S --> O["One terminal disposition"]:::teal
-  R --> O
+  R --> O["One terminal disposition"]:::teal
+  S --> O
 
   classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
   classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -114,41 +104,24 @@ flowchart TD
   classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-## Repository-Specific Information Architecture
+## Information Architecture
 
-### `ose-public`
-
-- Root README: product purpose, maturity, closed contribution posture, two reader paths.
+- Root README: product purpose, maturity, closed contribution posture, sibling-repository lines, and
+  the two reader paths.
 - Product path: roadmap → product specifications → app/spec indexes.
 - Engineering path: onboarding walkthrough → `ose-www` first run → app README → authorized
   contribution workflow.
 - App and library READMEs: local run/build/test/map only; detailed behavior stays in specs.
 
-### `ose-primer`
-
-- Root README: starter/template value, relationship to OSE, closed contribution posture, two reader
-  paths.
-- Product/template path: what the starter gives a product team and what consumers customize.
-- Engineering path: onboarding walkthrough → `crud-fe-ts-nextjs` first run → reference app map.
-- Product-specific `ose-public` content must not propagate into primer.
-
-### `ose-private`
-
-- Root README: safe private-product purpose, authorization boundary, CoralPolyp, two reader paths and
-  a separate operator path.
-- Product path: safe internal product overview and specifications.
-- Engineering path: onboarding walkthrough → local CoralPolyp sandbox → authorized workflow.
-- Operator path: non-destructive validation before any privileged action; never copied publicly.
-
 ## Bootstrap Design
 
 The audit found a circular prerequisite claim: `npm run doctor -- --fix` is invoked through the Rust
 toolchain, so a clean machine cannot use that command to install Rust if Cargo is absent. The
-onboarding tutorials must tell the truth about bootstrap order.
+onboarding tutorial must tell the truth about bootstrap order.
 
 The implementation must:
 
-1. Read the current `package.json` scripts in each repository.
+1. Read the current `package.json` scripts.
 2. Determine the minimum bootstrap tools required to invoke doctor on macOS and Ubuntu.
 3. Document those prerequisites before `npm install` and doctor.
 4. Use manifest-derived version checks rather than duplicated stale values.
@@ -159,6 +132,36 @@ The implementation must:
 
 WSL2 receives a short note: the Linux path may work under WSL2, but this program does not verify or
 support it.
+
+## Ubuntu Verification Environment
+
+The macOS journey runs on the host. The Ubuntu journey runs inside one disposable container started
+from the upstream official `ubuntu:24.04` image.
+
+This plan deliberately produces no durable container artifact:
+
+- No Dockerfile, compose file, or devcontainer is authored or committed.
+- No image is built, tagged, or published; the upstream image is used unmodified.
+- The container starts detached with a keep-alive process
+  (`docker run --rm -d --name ose-onboarding-ubuntu-check ... ubuntu:24.04 sleep infinity`), mounts no
+  host path, and publishes only a loopback port; every in-container command runs through
+  `docker exec ose-onboarding-ubuntu-check <command>` against that running container, never an implied
+  interactive shell.
+- The dev target started inside the container binds to all interfaces (`0.0.0.0`), not the container's
+  own loopback, so the published `127.0.0.1:<port>` on the host can reach it. If the documented
+  onboarding command cannot be made reachable without an undocumented flag, that is a documentation
+  defect to record, not a quiet fix to the run command.
+- Packages installed inside come only from the onboarding documentation's own prerequisite list. A
+  package the journey needs but the docs never mention is a documentation defect, not a fix applied
+  quietly inside the container.
+- The container is stopped explicitly with `docker stop ose-onboarding-ubuntu-check`, which `--rm` then
+  removes; the base image is removed afterwards unless it already existed on the machine before the
+  phase.
+- The phase opens and closes with the same four Docker listings — images, containers, volumes,
+  networks — and the diff between them must be empty.
+
+Running the journey in a stock upstream image is also the point: it proves the documented
+prerequisites are complete, because nothing else is present to paper over a gap.
 
 ## Command Validation Design
 
@@ -177,197 +180,176 @@ target from another repository.
 ## CONTRIBUTING.md Exemption Design
 
 `CONTRIBUTING.md` is a conventional GitHub community file but fails the repository's general
-lowercase Markdown naming gate when touched. This plan uses a narrow per-repository lint-staged
-exemption rather than changing the shared validator:
+lowercase Markdown naming gate when touched. This plan uses a narrow lint-staged exemption rather
+than changing the shared validator:
 
-1. Read the existing Markdown lint-staged command in each `package.json`.
-2. Add an exact `CONTRIBUTING.md` exemption without widening the match.
+The exemption already exists in two places on `origin/main`: the `lint-staged` Markdown command in
+`package.json` passes `--exempt "CONTRIBUTING.md"` to `md naming validate`, and `repo-config.yml`
+carries the matching gate-registry entry. Execution therefore verifies rather than authors:
+
+1. Read the Markdown `lint-staged` command in `package.json` and the corresponding `repo-config.yml`
+   entry.
+2. Confirm both declare the exact `CONTRIBUTING.md` exemption and that neither widens the match.
 3. Verify the naming validator accepts the real root file.
 4. Verify a temporary non-exempt uppercase path such as `<temp-dir>/Some-Doc.md` still fails.
 5. Remove the temporary fixture immediately after the negative check.
 
-The config change is not a production behavior change. If validation requires changes under
-`apps/rhino-cli`, those changes inherit the two-repository code/spec/TDD and byte-identity rules.
+Only a missing or divergent declaration is edited. The change must stay inside repository
+configuration: if it would require an edit under `apps/rhino-cli/`, it stops and becomes a separate
+plan, because that tree is outside this plan's scope.
 
 ## GitHub Metadata Design
 
-Metadata updates use authenticated `gh repo edit` commands inside each repository's own authorized
-session. Before mutation, record only `nameWithOwner`, `description`, `homepageUrl`,
-`repositoryTopics`, `url`, and `visibility`. Never record collaborator, security, environment,
-workflow-secret, or private network data.
+Metadata updates use authenticated `gh repo edit` commands. Before mutation, record only
+`nameWithOwner`, `description`, `homepageUrl`, `repositoryTopics`, `url`, and `visibility`. Never
+record collaborator, security, environment, or workflow-secret data.
 
-The executor applies the exact descriptions and homepages from
+The executor applies the exact description and homepage from
 [prd.md](./prd.md#github-about-metadata-contract), then uses the GitHub topics API's replace
-operation so every final topic array equals the contract instead of accumulating stale topics. The
-private repository's topic set remains purpose-level and non-sensitive. Authenticated CLI/API
-output is authoritative; browser inspection is supplementary and may run only in an already
-authenticated, non-recorded session.
+operation so the final topic array equals the contract instead of accumulating stale topics.
+Authenticated CLI/API output is authoritative; browser inspection is supplementary.
 
 Rollback captures the prior safe field values in the plan evidence and restores them with
 `gh repo edit` if verification fails.
 
-## Cross-Repository Delivery and Byte Identity
+## Byte-Identity Boundary Guard
 
-Content parity and byte identity are different:
+Content parity and byte identity are different, and this plan touches neither:
 
 - Generic content parity: `ose-public` → `ose-private`, adapted rather than blindly copied.
-- `apps/rhino-cli/**` and `specs/apps/rhino/behavior/rhino-cli/gherkin/**` byte identity:
-  `ose-public` = `ose-private`, zero carve-outs.
+- `apps/rhino-cli/` and `specs/apps/rhino/behavior/rhino-cli/gherkin/` byte identity: `ose-public` =
+  `ose-private`, zero carve-outs.
 - `beaver-nest`: a fork outside both sets.
 
-Repository-specific documentation tracks may run independently. A shared Rhino change cannot: its
-PRs serialize, and each newly merged sibling branch is forwarded before the next final review to
-avoid reviewing a stale byte set.
+The repository already enforces this boundary with a registered gate, `rhino-cli parity manifest
+validate`, wired to pre-push and CI against `apps/rhino-cli/parity-manifest.sha256`. This plan adds an
+earlier, cheaper tripwire: because no sibling delivery exists here, every delivery unit asserts a
+zero-diff guard for the identity boundary before commit:
 
-```mermaid
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-flowchart TD
-  P["Public canonical edit"]:::blue --> V1["Byte-identity validation"]:::orange
-  V1 --> R["ose-primer identical delivery"]:::purple
-  R --> V2["Byte-identity validation"]:::orange
-  V2 --> S["ose-private identical delivery"]:::blue
-  S --> V3["Three-way identity gate"]:::teal
-
-  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-  classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```bash
+git diff --cached --name-only -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli | head -1
 ```
+
+An empty result is the acceptance criterion. A non-empty result stops the unit: the change either
+moves to a separate cross-repository plan or is reverted. The parity gate stays authoritative — the
+staged guard only catches the mistake sooner.
+
+Reader documentation may still describe these relationships; describing a boundary is not editing
+it.
 
 ## Secret and Sensitivity Architecture
 
-The plan uses four gates:
+The plan uses three gates:
 
 1. **Read gate** — never read real `.env*`; use `.env.example`, manifests, project configuration,
    safe tracked docs, and sanitized command output only.
-2. **Write gate** — plan files, public docs, metadata, reports, evidence, and commit messages use
-   variable names or `<placeholder>` tokens, never values.
-3. **Cross-repo gate** — private operational facts stay in `ose-private`; public repositories
-   receive purpose-level summaries only.
-4. **Pre-commit gate** — scan staged content and require an independent AI sensitivity review of
-   private-to-public diffs before every delivery boundary.
+2. **Write gate** — plan files, docs, metadata, reports, evidence, and commit messages use variable
+   names or `<placeholder>` tokens, never values.
+3. **Pre-commit gate** — scan staged content with the deterministic gates and require an independent
+   AI sensitivity review of the staged diff before every delivery boundary.
 
 Evidence must not include full environment dumps, GitHub authentication state, remote URLs with
-embedded credentials, process environments, private network output, or screenshots exposing
-sensitive browser/session data.
+embedded credentials, process environments, or screenshots exposing sensitive browser/session data.
 
 ## Corpus Disposition
 
-The new guided onboarding documents are operational setup walkthroughs, not a course or curriculum.
-They remain in each repository's `docs/tutorials/` area because they guide a newcomer through a
-complete first-success journey, but they do not create a syllabus, course catalog, learning path, or
-reusable educational corpus. The learning-plan `syllabus/` convention therefore does not apply.
+The guided onboarding document is an operational setup walkthrough, not a course or curriculum. It
+lives in `docs/tutorials/` because it guides a newcomer through a complete first-success journey, but
+it does not create a syllabus, course catalog, learning path, or reusable educational corpus. The
+learning-plan `syllabus/` convention therefore does not apply.
 
 ## File-Impact Analysis
 
-The exact members are discovered by the tracked-Markdown ledger algorithm before editing. Each tree
-is relative to its named repository root. Bounded families are eligible only after expansion into
-one exact per-document task row in the owning ledger.
+The exact members are discovered by the tracked-Markdown ledger algorithm before editing. Bounded
+families are eligible only after expansion into one exact per-document task row in the ledger.
 
 ```text
 .
-├── README.md [E] — product-first entry and public reader paths
+├── README.md [E] — product-first entry and reader paths
 ├── CONTRIBUTING.md [E] — closed intake and authorized delivery
 ├── AGENTS.md [E] — factual onboarding claims only when evidence requires
 ├── package.json [E] — description truth and filename exemption
 ├── roadmap.md [E] — product-map drift only
 ├── docs/**/*.md [E] — exact reader-related rows only
-├── docs/tutorials/getting-started-with-ose-public.md [N] — public first success
+├── docs/tutorials/getting-started-with-ose-public.md [E] — first-success walkthrough
 ├── {apps,libs,specs,infra}/**/README.md [E] — every README receives a row
 ├── repo-governance/**/README.md [E] — living navigation indexes
 ├── {plans,social-media-posts}/**/README.md [E] — catch-all living indexes
 ├── .claude/{agents,skills}/README.md [E] — canonical catalogs
-├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
-├── apps/rhino-cli/** [E] — identical documentation-only change when needed
-├── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
+├── {.opencode,.codex,.agents}/** [G] — generated from canonical `.claude/` sources
 ├── local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md [N] — gitignored baseline record
 ├── local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md [N] — gitignored safe-status record
-├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — conditional local task records
 └── plans/in-progress/repository-onboarding-readme-refresh/
     ├── {README,brd,prd,tech-docs,delivery,learnings}.md [E] — control plan
-    ├── artifacts/reader-doc-disposition-ose-public.md [N] — public path ledger
-    ├── artifacts/reader-doc-disposition-ose-primer-summary.md [N] — primer revision, result, and digest
-    ├── artifacts/reader-doc-disposition-ose-private-summary.md [N] — revision, result, and opaque digest
-    ├── artifacts/execution-record-{contract,public,closeout}.md [N] — public durable task records
-    ├── artifacts/execution-summary-{ose-primer,ose-private}.md [N] — path-free sibling proof
+    ├── artifacts/reader-doc-disposition-ose-public.md [N] — path ledger
+    ├── artifacts/execution-record-{contract,public,fixes,closeout}.md [N] — durable task records
     └── evidence/README.md [N] — sanitized evidence index
-```
-
-`ose-primer` repository root:
-
-```text
-.
-├── README.md [E] — starter-first entry and primer reader paths
-├── CONTRIBUTING.md [E] — closed intake and authorized delivery
-├── AGENTS.md [E] — factual onboarding claims only when evidence requires
-├── package.json [E] — description truth and filename exemption
-├── docs/**/*.md [E] — exact reader-related rows only
-├── docs/tutorials/getting-started-with-ose-primer.md [N] — reference-app first success
-├── {apps,libs,specs,infra,repo-governance}/**/README.md [E] — every README receives a row
-├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md [N] — local-only live ledger
-├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
-├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
-├── apps/rhino-cli/** [E] — identical documentation-only change when needed
-└── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
-```
-
-`ose-private` repository root:
-
-```text
-.
-├── README.md [E] — safe CoralPolyp entry and private reader paths
-├── CONTRIBUTING.md [E] — authorization-only delivery
-├── package.json [E] — description truth and filename exemption
-├── docs/tutorials/getting-started-with-ose-private.md [N] — local sandbox first success
-├── <private-ledger-resolved-reader-paths> [E] — exact private paths stay inside ose-private
-├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md [N] — local-only private ledger
-├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
-├── <private-ledger-resolved-generated-paths> [G] — exact private paths stay inside ose-private
-├── apps/rhino-cli/** [E] — identical documentation-only change when needed
-└── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
 ```
 
 ### More Detail
 
 `[E]` on a bounded family means “eligible for evidence-based editing,” not “every member must
-change.” The owning ledger is the exact file list. Paths assigned `verified-unchanged`, `generated`,
-or `historical-exempt` remain untouched. Both sibling ledgers stay in their owning `local-tmp/`
-directories; only reviewed path-free summaries and opaque digests cross into this plan.
+change.” The ledger is the exact file list. Paths assigned `verified-unchanged`, `generated`,
+`historical-exempt`, or `identity-bound` remain untouched.
 
-The two placeholder families in the private tree are a deliberate sensitivity exception to the
-usual public-plan path-detail rule. Phase 1 expands them to exact task rows inside `ose-private`; a
-public path list would defeat the plan's no-spill requirement.
+Two trees are deliberately absent from the tree above because this plan edits nothing inside them:
+`apps/rhino-cli/` and `specs/apps/rhino/behavior/rhino-cli/gherkin/`. They receive a ledger row and
+an `identity-bound` audit verdict, and the staged guard in `delivery.md` proves no unit changed them.
+
+The three generated harness trees are the current registry's complete set — `repo-config.yml`'s
+`harness:` list is authoritative, and the repository supports exactly three harnesses.
+
+## Vercel MCP Capability Declaration
+
+`ose-www` is deployed through Vercel and this repository tracks `vercel.json` files, so the Vercel
+capability rule applies. **No Vercel MCP capability is required by this plan and no step contacts
+Vercel.** Every `ose-www` interaction here is a local `dev` run in a disposable checkout; the plan
+performs no deployment, no environment-variable change, no domain or DNS work, no firewall or WAF
+change, and no billing, usage, or Observability query. Phase 0 therefore runs no availability probe.
+If execution ever discovers that a documented claim can only be verified against a live Vercel
+deployment, that verification stops as out of scope and becomes a separate plan rather than being
+attempted here.
+
+## README-Index Completeness Carve-Out
+
+The `governance-readme-completeness` gate is scoped to `repo-governance/`, `.claude/`, and `.codex/`.
+`docs/` and `specs/` are deliberately outside it: they carry a large pre-existing backlog of
+missing/unannotated index entries that a separate follow-up plan owns. This plan does not adopt that
+backlog. A `docs/` or `specs/` README this plan edits must not _introduce_ a new unannotated index
+link, but bringing those two trees up to the annotated-completeness bar is out of scope, and the
+repo-wide `governance readme-index validate` baseline is recorded in Phase 0 rather than driven to
+zero.
 
 ## Dependencies
 
-- Repository access and GitHub CLI authorization for both parity repositories.
-- A clean, independent worktree in each target repository and delivery unit.
-- macOS and Ubuntu environments for fresh-checkout validation.
-- Browser automation for the documented first-success pages.
+- Repository access and GitHub CLI authorization for `ose-public`.
+- One worktree in `ose-public`, branch-switched per delivery unit.
+- macOS for the host fresh-checkout journey, and Docker for the disposable Ubuntu journey.
+- Browser automation for the documented first-success page.
 - `readme-maker` → `readme-checker` → `readme-fixer` and the strict documentation quality gate.
-- Three-cycle PR Review Maker→Fixer execution for every `worktree-to-pr` delivery unit.
+- PR Review Maker→Fixer execution for every `worktree-to-pr` delivery unit.
 
 ## Testing and Verification Strategy
 
-- **Inventory completeness** — compare each baseline ledger with its recorded `origin/main` tree,
-  then compare proposed and merged inventories in each owning unit; require one row per path and one
-  state per row, including planned-new files.
-- **Per-document acceptance** — execute the command, fact, link, reader-route, voice, and sensitivity
-  checks recorded in that exact ledger row; a family gate cannot substitute for a row result.
+- **Inventory completeness** — compare the baseline ledger with its recorded `origin/main` tree, then
+  compare proposed and merged inventories; require one row per path and one state per row, including
+  planned-new files.
+- **Per-document acceptance** — execute the command, fact, link, reader-route, and voice checks
+  recorded in that exact ledger row; a family gate cannot substitute for a row result.
 - **Mechanical quality** — run Prettier, markdownlint, Rhino Mermaid, heading, link, naming,
   frontmatter, and README-index validators through repository-authoritative commands.
-- **Behavioral onboarding** — run each repository journey independently on macOS and Ubuntu, then
-  inspect the expected page or health behavior with browser/API tooling.
-- **Privacy** — run the discovered canonical secret gate and an independent AI semantic review;
-  keep private paths and raw evidence inside `ose-private`.
-- **Cross-repository truth** — compare contribution, platform-support, repository-relationship, and
-  byte-identity claims after all owning PRs merge.
+- **Behavioral onboarding** — run the journey independently on macOS and Ubuntu, then inspect the
+  expected page with browser tooling.
+- **Boundary** — assert the staged zero-diff guard at every commit and let the registered
+  `parity manifest validate` gate confirm the committed byte state at pre-push and in CI.
+- **Privacy** — run the discovered canonical secret gate and an independent AI semantic review.
+- **Repository-wide truth** — compare contribution, platform-support, repository-relationship, and
+  byte-identity claims after the documentation PR merges.
 
 ## Rollback
 
-- Documentation PRs remain independently revertible by repository and document family.
+- Documentation PRs remain independently revertible by document family.
 - Metadata rollback restores the captured safe prior description, homepage, and topics.
 - Generated bindings roll back by reverting the canonical source and regenerating.
-- Shared Rhino rollback applies the same reverted bytes across all three identity-bound repositories.
-- If fresh-checkout proof fails, keep the owning PR open, correct the docs or the blocking root cause,
-  and rerun the journey; never weaken the acceptance criterion.
+- If fresh-checkout proof fails, keep the owning PR open, correct the docs or the blocking root
+  cause, and rerun the journey; never weaken the acceptance criterion.
