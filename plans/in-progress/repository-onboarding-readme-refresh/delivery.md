@@ -1951,6 +1951,14 @@ record.
   - Phase 7 may still loop back here if it surfaces a cross-document defect; if it
     does, that iteration gets its own branch, PR, and record with `@<nn>`-suffixed
     task IDs, exactly as the phase preamble requires.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. The
+    loop-back its final bullet anticipates did happen: Phase 7 surfaced
+    cross-document defects, iteration `@01` opened the correction branch
+    `docs/repository-onboarding-corrections`, and this worktree moved onto it. The
+    install/doctor/baseline acceptance therefore did arise, and was met.
+
 - [x] [AI] [P6-001A] Create `artifacts/execution-record-fixes.md` when applicable — acceptance: every
       Phase 6 task ID has a row.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
@@ -1963,6 +1971,13 @@ record.
     more usefully, is satisfied in the place that does exist: each Phase 6 item is
     ticked here with an explicit not-applicable disposition, so no task ID is left
     unaccounted for.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The **Notes** line
+    above already records the outcome; this marker restates it in the form every
+    other superseded Phase 6 row uses, so one grep finds them all rather than
+    seven of nine. `artifacts/execution-record-fixes.md` exists, created by `@01`,
+    and carries a row per correction that iteration applied.
+
 - [x] [AI] [P6-002] Execute each exact correction row separately and rerun its failed journey —
       acceptance: every defect is fixed and no product behavior change is smuggled into docs.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
@@ -1972,6 +1987,15 @@ record.
   - The second half of the acceptance ("no product behavior change is smuggled
     into docs") holds trivially and verifiably: no file was changed in this phase,
     so no product behavior could be altered under cover of a documentation fix.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration did
+    execute correction rows, against the five reader-facing documents Phase 7
+    named. It reran no failed journey, because its defects were cross-document
+    inconsistencies rather than journey failures — there was no red journey to
+    turn green. The second half of the acceptance still holds, and now
+    non-trivially: every `@01` commit touches Markdown only, so no product
+    behavior could be altered under cover of a documentation fix.
+
 - [x] [AI] [P6-002A] For any defect that is a product bug rather than a documentation defect, add
       focused red coverage before the fix — acceptance: the test reproduces the defect and fails
       against current behavior.
@@ -1982,6 +2006,14 @@ record.
   - Recording this explicitly matters: the item exists so that a product bug can
     never be fixed as a documentation edit. That protection was never engaged
     because the journeys surfaced no product bug.
+
+  - **Amended 2026-08-21 — superseded in part by iteration `@01`.** "No defect was
+    found at all" is false of `@01`, which found many. What this row actually
+    turns on survives the correction: every `@01` defect was a documentation
+    defect, so none was a product bug, and no red coverage was owed. The
+    protection stayed unengaged for the reason the row gives, not for the reason
+    the first sentence gives.
+
 - [x] [AI] [P6-002B] Apply the minimum correction that turns that coverage green — acceptance: the
       focused assertion passes and no unrelated behavior changes.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
@@ -1999,6 +2031,15 @@ record.
     closeout unit's staged set in Phase 8 and again over the whole merged range at
     P7-006, so the boundary is still proved, just not by a phase that made no
     change.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration does
+    have a correction ledger — `artifacts/execution-record-fixes.md` — and did
+    stage for Phase 6 commits, each one reconciled against the files that cycle
+    actually changed and committed with `git commit --only -- <paths>`. Whether
+    each `@01` commit ran the identity-boundary guard is deliberately not asserted
+    here; the guard's coverage still comes from P7-006 over the whole merged
+    range and from the closeout unit in Phase 8, exactly as the bullet above says.
+
 - [x] [AI] [P6-003A] Run full unit gates — acceptance: every command exits 0.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2006,6 +2047,12 @@ record.
     run here. Repository gates are not thereby skipped: P7-002 runs every
     repository-authoritative gate against merged `main`, and the closeout unit runs
     its own full gate set before it is committed and pushed.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration ran
+    unit gates before every one of its commits — governance word-budget,
+    README-index, Markdown-link validation, Prettier, markdownlint, and a
+    remark-gfm parse check — and no cycle's commit landed until each exited 0.
+
 - [x] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
       or MEDIUM findings.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
@@ -2015,6 +2062,15 @@ record.
     happens: P7-007 runs both secret gates plus an AI semantic sensitivity review
     over the merged result, and P9-004 repeats a sensitivity review after
     archival.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** That iteration ran an
+    independent AI review on every cycle — `pr-review-integrity-maker` and
+    `pr-review-docs-maker`, each reading the pushed commit rather than the working
+    tree. The zero-CRITICAL/HIGH/MEDIUM acceptance was not met on a first pass;
+    the cycles exist because findings kept arriving. The loop's terminating
+    condition is a cycle that returns zero findings, which is a stronger claim
+    than one clean review and a weaker one than never having had a finding.
+
 - [x] [AI] [P6-004] Commit the correction unit — acceptance: one cohesive Conventional Commit.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2196,8 +2252,20 @@ record.
     `artifacts/execution-record-fixes.md` never will exist, because Phase 6
     recorded not applicable, and `evidence/README.md` is created later by P8-002.
     A planned-new declaration is permission to add a file, not an obligation.
+
+  - **Amended 2026-08-21.** The bullet above says `execution-record-fixes.md`
+    "never will exist". That was true against `origin/main` at `1542ea044`, the
+    revision this re-run read, and false by the time iteration `@01` opened: Phase 6
+    reopened, created that file, and added eight files under `evidence/`. The claim
+    is corrected rather than deleted, because the reasoning was sound on the
+    evidence then available — the defect was stating a permanent future from a
+    snapshot. P9-003 should expect both paths to exist. The `evidence/README.md`
+    half of the bullet still stands; P8-002 has not run. The same claim in
+    `artifacts/reader-doc-disposition-ose-public.md` was amended earlier; this copy
+    was the one that sweep missed.
   - Every reader task is terminal and no mismatch was found, so this item creates
     no Phase 6 correction row and Phase 7 continues rather than restarting.
+
 - [x] [AI] [P7-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.

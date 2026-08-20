@@ -543,6 +543,34 @@ wrong end.
 | C-70 | Integrity  | The setup guide's Overview says "Step 6 below keeps that exit code". Two Step 6s exist in that document; the heading-level one is about `.env` hygiene and says nothing about exit codes                                       | HIGH     | All three step-number references to the verify step now describe it instead of numbering it. The exit-code claim itself was re-verified: `npm run doctor` exits 127 without Cargo, `postinstall`'s `\|\| true` exits 0 |
 | C-71 | Integrity  | The Cycle 13 closure paragraph and `5e0533953`'s message say the reader-facing documents have been unchanged since `afb850f43`, "eight cycles back". Cycles 5 through 13 is nine                                               | MEDIUM   | The count is removed and the commit anchor kept. The message stays as pushed, disclosed rather than force-pushed                                                                                                       |
 
+### Cycle 15 — `2be98caac`
+
+Integrity returned zero. Docs returned one HIGH, and it is the same defect as `C-69` at a site that
+sweep did not reach: `delivery.md`'s `P7-001` bullet still declared that
+`artifacts/execution-record-fixes.md` "never will exist, because Phase 6 recorded not applicable".
+The sibling ledger `artifacts/reader-doc-disposition-ose-public.md` carried the corrective amendment
+for the identical sentence already; `delivery.md`'s copy was the one that pass missed.
+
+Treating the named site as the whole finding would have repeated `C-69`'s mistake a third time, so
+the sweep ran over the phrase class rather than the sentence — `never will`, `will never`,
+`never exist`, `no correction unit exists` — across every plan file. It found that `C-69` had
+amended the **tail** of Phase 6 and left the **head** untouched: `P6-001` still said no correction
+branch was created and the worktree stays on `docs/repository-onboarding-public`; `P6-003` still said
+nothing was staged; `P6-003A` still said there were no unit gates to run; `P6-003B` still said there
+was no correction diff for an independent review to read. All four are false of `@01`, and all four
+had sat one screen above seven rows that said so.
+
+Every Phase 6 row now carries a verdict rather than a silence. Fourteen of the fifteen carry a
+supersession amendment; `P6-G01` carries the conditional-fired amendment it already had. The
+fifteenth, `P6-002B`, is deliberately unamended and that is the finding's own rule applied to itself:
+both its clauses survive `@01` — there was still no red coverage to turn green, and `@01` changed
+Markdown only, so still no source change. An absent marker there means checked-and-standing, which
+is only legible because this paragraph says so.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                      | Severity | Fix                                                                                                                                                                                               |
+| ---- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-72 | Docs       | `delivery.md`'s `P7-001` bullet asserts `artifacts/execution-record-fixes.md` "never will exist". The class sweep it triggered found `P6-001`, `P6-003`, `P6-003A`, and `P6-003B` carrying the same false `@01` disposition | HIGH     | `P7-001` and all four head rows amended. The `evidence/README.md` half of the `P7-001` bullet still stands — P8-002 has not run. `P6-002B` checked and left standing, for the reason stated above |
+
 ## Scope Discipline
 
 No correction here is a product change. The rows edit prose in five reader-facing documents and the
