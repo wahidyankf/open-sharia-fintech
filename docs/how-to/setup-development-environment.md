@@ -26,12 +26,13 @@ tests relevant to the project you are changing.
 The monorepo contains projects in TypeScript, Rust, and F#. Each language has its own runtime,
 but they all share the same Nx build system and git hooks.
 
-**Two setup paths**:
+**Three setup paths**:
 
-- **Minimal** — Node.js + Docker + jq. Covers git hooks, TypeScript projects, and
-  basic E2E tests.
+- **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
+  basic end-to-end (E2E) tests. Rust is here rather than in Full because `npm install` runs the
+  Rust-built tool checker, so Cargo must exist before you bootstrap at all.
 - **Full** — All tools checked by doctor. Required for working on F# backend apps
-  (`organiclever-be`, `ose-be`) and Rust CLI tools.
+  (`organiclever-be`, `ose-be`) and for building the Rust CLI tools themselves.
 - **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. Use
   `npm run doctor -- --fix --dry-run` to preview what would be installed.
 
@@ -44,7 +45,8 @@ but they all share the same Nx build system and git hooks.
 
 ## Quick Start (Minimal Setup)
 
-If you only work on TypeScript projects, this is all you need:
+If you only work on TypeScript projects, this is all you need. Rust still appears below because the
+repository's tool checker is a Rust program that `npm install` runs for you:
 
 ```bash
 # 1. Install Homebrew (macOS — skip if already installed)
@@ -56,9 +58,14 @@ brew install jq
 
 # 3. Install Volta (Node.js version manager)
 curl https://get.volta.sh | bash
-source ~/.zshrc
+source ~/.zshrc   # or source ~/.bashrc on Ubuntu
 
-# 4. Clone and bootstrap
+# 4. Install Rust (the tool checker is a Rust program, so Cargo must exist before step 5)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+rustc --version   # Expected: a version line, not "command not found"
+
+# 5. Clone and bootstrap
 git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
 npm install          # Installs deps + git hooks

@@ -12,14 +12,13 @@ created: 2026-08-07
 
 # Getting Started with OSE Public
 
-Open Sharia Enterprise (OSE) is an open-source platform for researching and building trustworthy,
-Sharia-compliant enterprise products. This repository is the public upstream for that work. It is
-pre-alpha, so interfaces and architecture can change as the platform takes shape.
-
 In this tutorial, you will run the OSE public website on your computer. When you finish, the home
 page will be available at <http://localhost:3100> and will show the **Open Sharia Enterprise
 Platform** heading. Port 3100 is a default rather than a fixed address — if you have set
 `OSE_WWW_PORT`, the site listens on that port instead.
+
+This repository is the public upstream for Open Sharia Enterprise. It is pre-alpha, so interfaces
+and architecture can change as the platform takes shape.
 
 ## Choose a supported environment
 
@@ -146,7 +145,7 @@ Another local server is using the website's default port. If it is an earlier OS
 server, stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> in its terminal, then rerun the development command.
 Do not stop an unfamiliar process just to free the port.
 
-When the port is held by something you do not recognise, move the website instead of the other
+When the port is held by something you do not recognize, move the website instead of the other
 process. The development target reads `OSE_WWW_PORT` and falls back to 3100 only when that variable
 is unset:
 

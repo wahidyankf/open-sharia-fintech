@@ -72,8 +72,9 @@ Want a paced walkthrough with expected results and recovery steps? Follow
 
 ### Supported platforms and prerequisites
 
-macOS and Ubuntu Linux are supported. The Linux steps may work in WSL2, but WSL2 is neither
-supported nor verified by this project. Native Windows is not supported.
+macOS and Ubuntu Linux are supported. The Linux steps may work in WSL2 (Windows Subsystem for
+Linux 2), but WSL2 is neither supported nor verified by this project. Native Windows is not
+supported.
 
 Before installing dependencies, have these tools available:
 
@@ -117,14 +118,13 @@ List the projects that Nx can run:
 npm exec nx -- show projects
 ```
 
-Start the OSE Platform website:
+The list it prints includes `ose-www`, the public website. Start that one:
 
 ```bash
 npm exec nx -- dev ose-www
 ```
 
-Open <http://localhost:3100> when the development server reports that it is ready, or whichever
-address it prints if you changed the port.
+Open <http://localhost:3100> when the development server reports that it is ready.
 
 Already using port 3100? Point the site somewhere else instead of guessing which process to stop:
 

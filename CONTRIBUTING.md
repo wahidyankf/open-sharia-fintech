@@ -26,8 +26,12 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ## Getting Started
 
-Open Sharia Enterprise is an enterprise platform built with Node.js and organized as an Nx monorepo.
-If you are exploring the project or preparing a fork, please:
+Open Sharia Enterprise is an enterprise platform built with Node.js and organized as an Nx monorepo:
+one repository holding several independently deployable applications and shared libraries, with
+[Nx](https://nx.dev/) coordinating their build and test tasks.
+The steps below describe how the maintainers work; they are not an invitation to open a pull
+request, because [external contributions are closed](#external-contributions). If you are exploring
+the project or preparing a fork, please:
 
 1. Read this contributing guide completely
 2. Review our [documentation](./docs/README.md)
@@ -38,25 +42,28 @@ If you are exploring the project or preparing a fork, please:
 
 ### Prerequisites
 
-This project uses **Volta** to manage Node.js and npm versions automatically:
+Two toolchains must exist before you bootstrap:
 
-- **Node.js**: 24.16.0 (LTS)
-- **npm**: 11.11.0
+- **Volta**, which selects the Node.js and npm versions pinned in `package.json`. Read the versions
+  from that file rather than from a list here, so the two can never drift apart.
+- **Rust and Cargo**. The repository's tool checker is a Rust command-line application, and
+  `npm install` runs it as a postinstall step, so Cargo must exist before it can check or install
+  anything else. Install it with rustup as described in
+  [Set up your development environment](./docs/how-to/setup-development-environment.md).
 
-**Important**: You don't need to install these versions manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
+**Important**: You don't need to install Node.js or npm manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
 
 #### Installing Volta
 
-If you don't have Volta installed:
+macOS and Ubuntu Linux are the supported platforms. The Linux steps may work in WSL2 (Windows
+Subsystem for Linux 2), but WSL2 is neither supported nor verified by this project. Native Windows
+is not supported.
 
-**macOS/Linux**:
+If you don't have Volta installed, run:
 
 ```bash
 curl https://get.volta.sh | bash
 ```
-
-**Windows**:
-Download the installer from [volta.sh](https://volta.sh/)
 
 After installation, restart your terminal and Volta will automatically manage Node.js/npm versions for this project.
 
@@ -75,7 +82,7 @@ After installation, restart your terminal and Volta will automatically manage No
    npm install
    ```
 
-   Volta will automatically use Node.js 24.16.0 and npm 11.11.0 as specified in `package.json`.
+   Volta will automatically use the Node.js and npm versions specified in `package.json`.
 
 3. **Verify installation**:
 
@@ -91,9 +98,16 @@ After installation, restart your terminal and Volta will automatically manage No
 **Solution**: Make sure Volta is installed and your terminal is restarted.
 
 **Issue**: Wrong Node.js version
-**Solution**: Run `volta install node@24.16.0` to ensure Volta has the correct version.
+**Solution**: Run `volta install node@$(node -p "require('./package.json').volta.node")` so Volta
+installs the version this checkout pins, rather than a version copied from these instructions.
 
-**Issue**: `npm install` fails
+**Issue**: `npm install` fails, or its postinstall step reports `command not found: cargo`
+**Solution**: Install Rust first — the postinstall step runs the Rust-built tool checker, so a
+missing Cargo fails it no matter how clean the npm cache is. Follow
+[Set up your development environment](./docs/how-to/setup-development-environment.md), reopen the
+terminal, then rerun `npm install`.
+
+**Issue**: `npm install` fails for some other reason
 **Solution**: Clear npm cache with `npm cache clean --force` and try again.
 
 ## Project Structure
@@ -106,7 +120,7 @@ ose-public/
 │   └── [app-name]/ # Individual apps
 ├── libs/           # Reusable libraries
 │   └── ts-[name]/  # TypeScript libraries (language-prefixed)
-├── docs/           # Documentation (Diátaxis framework)
+├── docs/           # Documentation, in the four Diátaxis categories below
 │   ├── tutorials/  # Learning-oriented guides
 │   ├── how-to/     # Problem-solving guides
 │   ├── reference/  # Technical reference
@@ -334,7 +348,8 @@ or contribution pull request expecting project intake.
 Documentation is as important as code. When maintaining a fork or doing internal work:
 
 - **Update docs** if your changes affect user-facing behavior
-- **Follow Diátaxis**: Use appropriate category (tutorial, how-to, reference, explanation)
+- **Follow Diátaxis**: a documentation taxonomy that sorts every page into one of four categories —
+  tutorial, how-to, reference, or explanation. Write each page as exactly one of them.
 - **Follow conventions**: See [Documentation Standards](./repo-governance/conventions/README.md)
 
 ### Documentation Structure
@@ -399,4 +414,8 @@ npm exec nx -- dev [app-name]
 
 ---
 
-Thank you for respecting Open Sharia Enterprise's current intake boundary. 🚀
+Thank you for respecting Open Sharia Enterprise's current intake boundary.
+
+**Where to go next.** If you are here to run the project, start with
+[Getting started with OSE Public](./docs/tutorials/getting-started-with-ose-public.md). If you are
+here to understand it, start with the [development roadmap](./roadmap.md).

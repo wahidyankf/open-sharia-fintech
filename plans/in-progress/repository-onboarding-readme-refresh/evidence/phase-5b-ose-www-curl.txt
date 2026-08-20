@@ -1,0 +1,15 @@
+# Phase 5B — Ubuntu container journey, ose-www landing response
+
+Command (run inside the disposable Ubuntu container):
+  curl --fail --silent --show-error http://localhost:3100/
+Exit status: 0
+Response bytes: 38399
+
+Documented success markers found in the response body:
+  <title> ....................... OSE Platform
+  <h1> .......................... Open Sharia Enterprise Platform
+  description ................... Open-source (MIT) platform for Sharia-compliant enterprise solutions.
+
+Extracted title and heading:
+<title>OSE Platform</title>
+<h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Open Sharia Enterprise Platform</h1>
