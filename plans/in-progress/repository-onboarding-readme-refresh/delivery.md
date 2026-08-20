@@ -2622,6 +2622,29 @@ install`, with its own recovery entry, so no reader is stranded; and the
   - Zero secret or credential leaks, so ordinary execution continues and the
     repository security-incident route is **not** invoked.
 
+  - **P7-007 re-run at `400712aa9`, round 2.** Both deterministic gates stayed
+    green — `env staged-guard validate` exits 0, and the silent staged-credential
+    pattern gate finds nothing. The independent semantic reviewer returned **zero
+    findings at any severity** across all three squash commit bodies, every plan
+    document and artifact read end to end, all twelve evidence files, and every
+    hunk of the remaining changed files. It cleared eight items it had flagged and
+    run to ground, including the container PIDs (required by `P5B-004`'s own
+    acceptance clause, and disclosing nothing from a `--rm` container destroyed at
+    `P5B-006`), the credential-detection regex in this file (published prefix
+    patterns, no real values), and the `CoralPolyp` codename (present in 96 tracked
+    files on `origin/main`; this program's edit reduces the footprint by one). It
+    also ran a byte-level metadata scan of the nine PNGs: no `tEXt`/`iTXt`/`zTXt`/
+    `eXIf` chunk exists in any of them, and a `strings` sweep for path and account
+    tokens returns nothing.
+  - **Capture identity, recorded for completeness.** The reviewer noted, and this
+    execution confirmed by hash, that all three 768px captures —
+    `phase-5a-`, `phase-5b-`, and `phase-6-ose-www-landing-en-768px.png` — are one
+    byte-identical file (`c5043585…`). The record already explains the 5a↔5b
+    identity; the phase-6 capture matches for the same reason, despite coming from
+    a different server on `OSE_WWW_PORT=3199`: same renderer, same viewport, and an
+    identical response body. This is a disclosure gap in the record, not a
+    sensitivity issue, and it is closed here.
+
 ### Phase 7 Gate
 
 - [ ] [AI] [P7-G01] Verify every mechanical, reader, voice, relationship, journey, boundary, and
