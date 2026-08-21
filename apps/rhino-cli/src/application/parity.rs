@@ -867,8 +867,8 @@ mod tests {
         assert!(message.contains("rhino-cli parity manifest generate"));
         // The boundary is two repos (AGENTS.md §Related Repositories). ose-primer was
         // dropped from it deliberately — it is free to diverge and carries no
-        // propagation obligation. beaver-nest carries a *fork* of rhino-cli and has no
-        // parity-manifest.sha256 at all, so naming either sent every drift report
+        // propagation obligation. beaver-nest carries no rhino-cli at all, and so no
+        // parity-manifest.sha256 either, so naming either sent every drift report
         // chasing a propagation target that cannot receive one. Asserted negatively as
         // well as positively so the message cannot silently regain a third repo.
         assert!(
