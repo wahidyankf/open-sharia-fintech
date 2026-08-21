@@ -3152,8 +3152,8 @@ fn then_parity_source_drift_is_actionable(w: &mut GateWorld) {
     assert!(w.output.contains("rhino-cli parity manifest generate"));
     // Negative guard, mirroring the unit test in `application::parity`: the
     // boundary is two repos — ose-primer is deliberately outside it, and
-    // beaver-nest carries a fork of rhino-cli with no parity-manifest.sha256
-    // to propagate into.
+    // beaver-nest carries no rhino-cli at all, so it has no
+    // parity-manifest.sha256 to propagate into.
     assert!(
         !w.output.contains("beaver-nest"),
         "the parity gate must not name beaver-nest: {}",
