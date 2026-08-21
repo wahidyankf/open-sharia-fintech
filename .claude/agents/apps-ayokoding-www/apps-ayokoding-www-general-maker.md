@@ -7,6 +7,7 @@ color: blue
 skills:
   - docs-applying-content-quality
   - docs-applying-diataxis-framework
+  - repo-maintaining-task-lists
   - apps-ayokoding-www-developing-content
 ---
 

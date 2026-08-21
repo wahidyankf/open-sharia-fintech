@@ -8,6 +8,7 @@ color: secondary
 skills:
   - repo-practicing-trunk-based-development
   - apps-organiclever-www-developing-content
+  - repo-maintaining-task-lists
   - apps-deploying-vercel-branches
 ---
 

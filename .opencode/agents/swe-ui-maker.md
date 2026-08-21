@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - swe-developing-frontend-ui
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

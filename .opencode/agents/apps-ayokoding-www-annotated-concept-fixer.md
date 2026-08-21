@@ -15,6 +15,7 @@ skills:
   - docs-creating-accessible-diagrams
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-maintaining-task-lists
   - repo-generating-validation-reports
 ---
 

@@ -9,6 +9,7 @@ skills:
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - repo-applying-maker-checker-fixer
 ---
 

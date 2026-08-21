@@ -8,6 +8,7 @@ skills:
   - docs-authoring-standards
   - docs-creating-accessible-diagrams
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - docs-applying-diataxis-framework
 ---
 

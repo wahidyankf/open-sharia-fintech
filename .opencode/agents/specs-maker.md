@@ -12,6 +12,7 @@ color: primary
 skills:
   - specs-scaffolding
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - plan-writing-gherkin-criteria
 ---
 

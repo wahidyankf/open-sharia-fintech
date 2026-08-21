@@ -7,6 +7,7 @@ color: purple
 skills:
   - repo-practicing-trunk-based-development
   - apps-ose-www-developing-content
+  - repo-maintaining-task-lists
   - apps-deploying-vercel-branches
 ---
 

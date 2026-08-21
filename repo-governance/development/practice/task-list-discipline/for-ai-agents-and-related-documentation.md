@@ -17,9 +17,9 @@ when_to_use: Use as a quick-reference checklist before starting qualifying multi
 
 ## For AI Agents
 
-All agents doing qualifying multi-step work must follow this practice:
+Every agent — main thread and delegated alike — must follow this practice for any task, conversational ones included:
 
-1. **Create the task list before execution** — use TaskCreate for the known primary tasks
+1. **Create the task list before execution** — record the known primary tasks in the harness's native task list
 2. **Mark each task `in_progress` before starting it** — never start work on a pending task without updating its status first
 3. **Mark each task `completed` immediately after verification** — same turn or immediately following
 4. **Add discovered tasks on the spot** — no deferring, no "I'll add it later"

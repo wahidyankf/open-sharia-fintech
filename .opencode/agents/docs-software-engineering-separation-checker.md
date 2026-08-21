@@ -14,6 +14,7 @@ skills:
   - docs-applying-diataxis-framework
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
+  - repo-maintaining-task-lists
   - repo-applying-maker-checker-fixer
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Repository Workflows"
-description: "Orchestrated repository-level governance workflows — rules consistency, harness compatibility (parity + external drift), and dependency bump planning."
-when_to_use: Use when routing to a workflow that validates repository-level rules, harness compatibility, or dependency posture.
+description: "Orchestrated repository-level governance workflows — rule propagation, rules consistency, harness compatibility (parity + external drift), and dependency bump planning."
+when_to_use: Use when routing to a workflow that propagates a new rule, or validates repository-level rules, harness compatibility, or dependency posture.
 category: explanation
 subcategory: workflows
 tags: []
@@ -14,12 +14,13 @@ Use these workflows when a change affects the repository as a system: its rules,
 
 ## Purpose
 
-These workflows define **WHEN and HOW to validate and synchronize repository artifacts**, orchestrating agents for two concerns: repository rules consistency (repo-rules-checker, repo-rules-fixer) and harness compatibility including cross-vendor parity and external drift (repo-harness-compatibility-checker, repo-harness-compatibility-fixer).
+These workflows define **WHEN and HOW to validate and synchronize repository artifacts**, orchestrating agents for three concerns: writing newly-decided rules onto the correct surface (repo-rules-maker), repository rules consistency (repo-rules-checker, repo-rules-fixer), and harness compatibility including cross-vendor parity and external drift (repo-harness-compatibility-checker, repo-harness-compatibility-fixer).
 
 ## Scope
 
 **✅ Workflows Here:**
 
+- Propagating a newly-decided rule onto the correct surface
 - Repository-wide consistency validation
 - Cross-layer governance checking
 - Agent standards enforcement
@@ -35,6 +36,7 @@ These workflows define **WHEN and HOW to validate and synchronize repository art
 
 - [repo-rules-quality-gate](./repo-rules-quality-gate.md) — Orchestrated quality gate that runs repo-rules-checker iteratively until zero findings, then applies fixes and re-validates. Use after changing conventions/principles/development practices, before major releases, periodically for repo health, or after adding/modifying agents.
 - [repo-harness-compatibility-quality-gate](./repo-harness-compatibility-quality-gate.md) — Validates internal cross-vendor parity and external harness-conformance drift, then fixes iteratively until zero findings. Use after modifying agents, governance prose, or binding-sync logic; after a harness breaking change; or as a scheduled hygiene audit.
+- [repo-rules-propagation](./repo-rules-propagation.md) — Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, and arming enforcement. Use when a decided rule must be written into the repository, or an existing rule superseded.
 - [repo-dependency-bump-planning](./repo-dependency-bump-planning.md) — Surveys monorepo dependency manifests, classifies bumps per the Dependency Bump Policy, and produces a validated backlog plan — never edits a manifest itself. Use for a dependency-hygiene sweep, a pre-release bump snapshot, or an LTS-line upgrade.
 
 ## Related Documentation

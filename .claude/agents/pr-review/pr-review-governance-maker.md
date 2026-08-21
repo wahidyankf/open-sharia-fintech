@@ -6,6 +6,7 @@ model: sonnet
 color: blue
 skills:
   - pr-review-specialist-protocol
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - pr-review-specialist-protocol
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

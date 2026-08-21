@@ -9,6 +9,7 @@ permission:
 color: primary
 skills:
   - pr-review-scout-classification
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

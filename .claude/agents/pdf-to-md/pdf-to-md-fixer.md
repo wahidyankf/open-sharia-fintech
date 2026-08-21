@@ -8,6 +8,7 @@ skills:
   - docs-converting-pdf-to-markdown
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-maintaining-task-lists
   - repo-generating-validation-reports
 ---
 

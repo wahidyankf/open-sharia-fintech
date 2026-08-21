@@ -10,6 +10,7 @@ permission:
 color: primary
 skills:
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - apps-ose-www-developing-content
 ---
 

@@ -13,6 +13,7 @@ skills:
   - plan-writing-gherkin-criteria
   - repo-defining-workflows
   - docs-applying-diataxis-framework
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

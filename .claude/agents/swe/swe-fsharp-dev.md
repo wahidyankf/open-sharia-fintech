@@ -7,6 +7,7 @@ color: purple
 skills:
   - swe-programming-fsharp
   - swe-developing-applications-common
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

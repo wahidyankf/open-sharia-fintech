@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - pr-review-synthesis-coordination
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

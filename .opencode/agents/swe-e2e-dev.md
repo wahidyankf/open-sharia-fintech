@@ -12,6 +12,7 @@ color: secondary
 skills:
   - swe-developing-e2e-test-with-playwright
   - swe-developing-applications-common
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

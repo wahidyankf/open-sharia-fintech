@@ -12,6 +12,7 @@ color: secondary
 skills:
   - swe-programming-typescript
   - swe-developing-applications-common
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

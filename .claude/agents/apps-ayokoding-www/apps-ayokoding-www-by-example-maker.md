@@ -8,6 +8,7 @@ skills:
   - docs-applying-content-quality
   - docs-creating-by-example-tutorials
   - apps-ayokoding-www-developing-content
+  - repo-maintaining-task-lists
   - docs-creating-accessible-diagrams
 ---
 

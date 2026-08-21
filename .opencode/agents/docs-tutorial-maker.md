@@ -14,6 +14,7 @@ skills:
   - docs-creating-accessible-diagrams
   - docs-applying-content-quality
   - docs-applying-diataxis-framework
+  - repo-maintaining-task-lists
   - docs-creating-by-example-tutorials
 ---
 

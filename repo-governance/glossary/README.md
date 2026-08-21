@@ -5,6 +5,7 @@ title: "Glossary"
 # Glossary
 
 - [Repo Rules — Scope Boundaries](./repo-rules-scope.md) — The in-scope and out-of-scope table for the term "repo rules", including why language style guides count despite living outside repo-governance/. Use when deciding whether a given file is a repo rule — for example when scoping a rules audit, a propagation sweep, or a governance review.
+- [Repo Rules — Membership Test](./repo-rules-membership-test.md) — The two-question test for deciding whether an unlisted file is a repo rule, worked verdicts, and the obligations membership carries. Use when a file is not named in the scope-boundaries table and you must decide whether a rule or a sweep reaches it.
 - [Content Trees](./content-trees.md) — What belongs in docs/, repo-governance/, plans/, and specs/, plus the temporary directories that may be swept at any time. Use when deciding which tree a new document belongs in, or when a file feels misfiled.
 - [Plan Vocabulary](./plan-vocabulary.md) — Definitions for plan, phase, delivery unit, delivery boundary, delivery mode, and worktree, and how they nest. Use when scoping a plan, deciding where a PR opens, or arguing about whether two pieces of work are one delivery unit or two.
 - [Governance Surfaces](./governance-surfaces.md) — Definitions for surface, instruction file, binding, mirror, harness, and autoloaded — the vocabulary the word-budget and vendor-independence conventions run on. Use when reading a word-budget report, editing a binding, or reasoning about which guidance an agent actually receives.

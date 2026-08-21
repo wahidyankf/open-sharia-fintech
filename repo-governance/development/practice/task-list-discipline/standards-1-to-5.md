@@ -17,9 +17,9 @@ when_to_use: Use when creating or updating task entries during multi-step execut
 
 ## Standard 1 — Create the List Before Starting
 
-For any qualifying task, the agent MUST create the task list **before** beginning execution. The list captures the known steps at the start. It is not necessary to enumerate every sub-step upfront — the list grows as work proceeds — but the primary phases or deliverables MUST be recorded before the first file edit or tool call.
+For any task, the agent MUST create or update the task list **before** beginning execution. This binds delegated agents exactly as it binds the main thread. The list captures the known steps at the start. It is not necessary to enumerate every sub-step upfront — the list grows as work proceeds — but the primary phases or deliverables MUST be recorded before the first file edit or tool call.
 
-**Tool**: Use the harness `TaskCreate` tool (or the plan's delivery checklist if the work lives inside an active plan). One task per concrete, actionable outcome.
+**Tool**: Use the harness's native task list (or the plan's delivery checklist if the work lives inside an active plan). One task per concrete, actionable outcome.
 
 ## Standard 2 — Mark In Progress Before Starting
 

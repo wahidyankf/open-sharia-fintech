@@ -17,6 +17,7 @@ skills:
   - plan-creating-project-plans
   - docs-validating-factual-accuracy
   - grill-me
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

@@ -13,6 +13,7 @@ skills:
   - apps-ayokoding-www-authoring-annotated-concept
   - docs-applying-content-quality
   - apps-ayokoding-www-developing-content
+  - repo-maintaining-task-lists
   - docs-creating-accessible-diagrams
 ---
 

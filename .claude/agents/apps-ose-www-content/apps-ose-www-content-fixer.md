@@ -9,6 +9,7 @@ skills:
   - apps-ose-www-developing-content
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-maintaining-task-lists
   - repo-generating-validation-reports
 ---
 

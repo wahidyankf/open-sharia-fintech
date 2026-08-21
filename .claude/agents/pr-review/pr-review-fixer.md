@@ -6,6 +6,7 @@ model: sonnet
 color: yellow
 skills:
   - pr-review-fixer-resolution
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 
