@@ -354,6 +354,41 @@ fn given_workflow_missing_agent_ref(w: &mut GovernanceWorld) {
     w.write("repo-governance/workflows/w.md", "# W\n\nno agent here.\n");
 }
 
+#[given(
+    "a repository with a governance document split into a child directory whose children carry plain kebab-case names"
+)]
+fn given_split_child_plain_kebab_case(w: &mut GovernanceWorld) {
+    // The parent keeps the traceability heading; its children, indexed by the
+    // sibling README.md, are exempt by position — the Ordinal Filename Prefixes
+    // Convention strips the `NN-` prefix these children once carried.
+    w.write(
+        "repo-governance/conventions/c.md",
+        "# C\n\n## Principles Implemented/Respected\n\nBody.\n",
+    );
+    w.write(
+        "repo-governance/conventions/c/README.md",
+        "# C\n\n- [One](./one.md) — first shard.\n",
+    );
+    w.write(
+        "repo-governance/conventions/c/one.md",
+        "# One\n\nNo heading here.\n",
+    );
+}
+
+#[given("a repository with an indexed category directory that has no same-named parent document")]
+fn given_indexed_category_dir(w: &mut GovernanceWorld) {
+    // A category directory carries a README.md index but no same-named sibling
+    // `.md`, so its members are whole conventions, not split children.
+    w.write(
+        "repo-governance/conventions/formatting/README.md",
+        "# Formatting\n\n- [Color](./color.md) — palette rules.\n",
+    );
+    w.write(
+        "repo-governance/conventions/formatting/color.md",
+        "# Color\n\nNo heading here.\n",
+    );
+}
+
 // ===========================================================================
 // Given steps — repo-governance audit
 // ===========================================================================

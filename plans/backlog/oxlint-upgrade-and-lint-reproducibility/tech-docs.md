@@ -111,7 +111,34 @@ Then decide the durable mechanism. Candidates, to be chosen during execution rat
 The `rhino-cli` option carries the four-repo parity-manifest obligation and its own TDD cycle. Cost
 it before committing to it.
 
-## 5. Related
+## 5. Dependency Bump Policy Classification (WS-O2)
+
+Per the
+[Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md),
+every `devDependency` bump — oxlint included — must classify under the Three-Path Decision Tree
+before the pin changes, and record a Security Clearance Status before the manifest edit lands.
+
+**Path**: oxlint carries no LTS designation (unlike Node.js or .NET) — **Path B (60-day stable +
+CVE-clean)** applies, not "take the latest published release."
+
+**Cutoff (snapshot, re-derive at execution — see §1 Evidence Method)**: authored 2026-08-21; cutoff
+= bump date − 60 days = 2026-06-22. Per `npm view oxlint time --json`, the latest release published
+on or before that cutoff is `1.71.0` (2026-06-22). §3's "move ... to current" means "current within
+the applicable path," not the literal newest tag — Phase 2 MUST re-run this cutoff calculation
+against the actual execution date and MUST NOT pin to a release younger than 60 days without a
+documented Path C waiver.
+
+**Security Clearance Status**
+
+This is the execution-time decision register required by the policy. It deliberately does not claim
+CVE-clean status before Phase 2 selects and clears the final version. A pending row is a stop
+condition, not clearance.
+
+| Item   | Planned change surface                       | Required exact pin                                               | Selection route                                                                        | Clearance status at plan authoring                                                                                                                                                                                                                                                                                                                                                 |
+| ------ | -------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| oxlint | `package.json` `devDependencies`, both repos | TBD — Phase 2 re-derives the Path B cutoff at the execution date | **Path B** — 60-day soak, no LTS line; candidate at authoring is `1.71.0` (2026-06-22) | **PENDING** — Phase 2 must clear the selected version against NVD, GitHub Advisories, Snyk, oxlint's own security page, and CISA KEV per the [CVE Clearance Process](../../../repo-governance/development/workflow/dependency-bump-policy/cve-clearance-process.md), and record the final `CLEAR`/`CLEAR (patch-of)`/`WAIVER`/`FUNCTIONAL-HOLD` status here before the pin changes |
+
+## 6. Related
 
 - [`repo-rules-sweep`](../../done/2026-08-18__repo-rules-sweep/README.md) — where this surfaced; its
   inline pin is the blocker carve-out of the Code-Routing Downstream Rule, not a scope breach.
