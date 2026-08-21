@@ -739,6 +739,365 @@ reviewers never had cause to look for — but that the review scope named the sh
 excluded the plan's own records, which is exactly the change
 `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` proposed.
 
+### Round 3 of `P7-003` — one more finding after the review had terminated
+
+The PR-review cycles ended at three on a genuine zero, but `P7-003`'s own acceptance is two
+consecutive zero-finding checker rounds, and round 3 against merged `7ebf8fec3` was the first of
+those two. The README checker returned zero. The docs checker re-confirmed all five `@02` fixes and
+returned one new finding.
+
+| Row  | Source       | Severity | Defect                                                                                                                                                                                                                                      | Correction                                                                                                                                             |
+| ---- | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C-88 | docs checker | MEDIUM   | The setup guide claimed in three places that `nx affected -t typecheck,lint,test:quick,test:specs` is "the full pre-push pipeline" / "the same targets pre-push would" run. The push hook runs `gate run --surface=pre-push`, not that set. | All three sites now point at the gate command, name `gate list --surface=pre-push` as the source of truth, and reframe the Nx command as a cache warm. |
+
+Verified independently before applying, because the claim is exactly the kind a reader acts on:
+`gate list --surface=pre-push` returns **16** gates. Three are Nx — `test:quick`,
+`compat:min-version`, `specs:structure-validation` — and the last two were absent from the
+documented command. The other thirteen are repository-wide `rhino-cli` checks (`md-links`,
+`env-validate`, `governance-readme-index`, `harness-duplication`, `parity-manifest`, the two
+`vendor-independence` entries, `convention-license`, the three `harness-*` entries,
+`governance-word-budget`, `governance-readme-completeness`) that `nx affected` never sees. Meanwhile
+`ose-www:test:quick` already composes `typecheck`, `lint`, `test:unit`, `test:coverage`, and
+`test:specs`, so three of the four names in the documented list were redundant with the fourth. The
+cited command was neither the same set as pre-push nor a superset of it, in either direction.
+
+Swept for the class rather than the three cited lines: the literal target list appears in no other
+tracked file, and `CONTRIBUTING.md`'s two pre-push mentions — "recommended for pre-push" and
+"pre-push standard", both `nx affected -t test:quick` — are accurate and were left alone.
+
+### Round 4 of `P7-003` — the C-88 rewrite verified, and one more pre-existing defect
+
+Round 4 confirmed `C-88`'s replacement text against primary sources: it executed both documented
+commands, read `.husky/pre-push` directly, and confirmed `compat:min-version` and
+`specs:structure-validation` each appear in 29 `project.json` files. No inaccuracy in the new text.
+It then found one further defect in text this plan had never touched.
+
+| Row  | Source       | Severity | Defect                                                                                                                                                                                    | Correction                                                                                                       |
+| ---- | ------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| C-89 | docs checker | MEDIUM   | `CONTRIBUTING.md` listed "First line ≤ 50 characters" under **Important rules** and then said the format is "enforced by commitlint on every commit". Commitlint's enforced limit is 100. | 50 reframed as the readability target, 100 named as the line the hook stops you at, on every surface stating it. |
+
+Verified with a control before applying, because "the tool enforces X" is exactly the claim a
+contributor trusts: `@commitlint/config-conventional` sets `header-max-length` to `100` and
+`commitlint.config.js` adds no override. A 75-character subject passes at exit 0; a 122-character
+one fails. So the documented limit was not merely conservative — it was attributed to a gate that
+does not impose it.
+
+The sweep for the class found a **worse** instance the reviewer had not named.
+`repo-governance/development/workflow/commit-messages/common-errors-and-fixes.md` headed a
+troubleshooting section with the error string `"header must not be longer than 50 characters"` —
+which commitlint never emits — and the `FAIL:` example under it is 77 characters and **passes**,
+exit 0. A reader hitting the real error would not find it by searching that heading, and the example
+teaching them what failure looks like was not a failure.
+
+| Surface stating the rule                                                          | Was                                                                                |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `CONTRIBUTING.md`                                                                 | 50 stated as a rule, then attributed to commitlint                                 |
+| `repo-governance/development/workflow/commit-messages/common-errors-and-fixes.md` | Fabricated error string; a `FAIL:` example that passes — not named by the reviewer |
+| `repo-governance/development/workflow/commit-messages/the-format-explained.md`    | 50 listed among rules that are genuinely enforced — not named by the reviewer      |
+
+The replacement `FAIL:` example is 101 characters and was re-run through `commitlint` to confirm it
+exits 1 on `header-max-length` before it was written down. Both governance files stay well inside
+the word budget, at 267 and 260 against a 500-word fail threshold, and the gate exits 0.
+
+**On convergence.** Rounds 3 and 4 each returned exactly one MEDIUM, both in long-standing text
+neither this plan nor any earlier round had examined. That is not the oscillation
+`plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` describes — the surface
+is static and the findings are real and independently reproducible. It is a thorough reader sampling
+a different claim each pass. The acceptance clause asks for two consecutive zeros, so the loop
+continues, but the cost is being paid for genuine defects rather than for the record's own prose.
+
+### Round 3 of `P7-004` — three documents pass, two carry real clause violations
+
+Round 2's voice review returned FAIL on all five documents with roughly forty findings, three of
+whose five HIGHs did not survive verification. Round 3 was run with the twelve contract clauses
+made the exclusive judging surface: every finding had to cite a clause number and quote the
+offending text, style preferences no clause names were declared out of scope, and PASS was stated
+up front as a legitimate outcome. The result was **three PASS and two FAIL** — the first time this
+review has distinguished between the documents rather than failing all of them.
+
+| Row  | Source         | Clause | Defect                                                                                                                                                                                                                                                                  | Correction                                                                                                                                                                              |
+| ---- | -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-90 | voice reviewer | V3     | The tutorial says "Start the Nx development target" and uses `Nx` seven times without ever explaining it. V3 names Nx explicitly, and this is the Diátaxis tutorial — the designated novice on-ramp.                                                                    | First use now glosses Nx as a monorepo task coordinator and links `nx.dev`, matching the gloss the README and `CONTRIBUTING.md` already carry.                                          |
+| C-91 | voice reviewer | V8     | `CONTRIBUTING.md`'s workflow steps 3, 4, and 5 give three consecutive commands with no expected outcome and no recovery route. Steps 3 and 4 are quality gates, so failing is the likely outcome V8 names.                                                              | Each of the three now states what success looks like and where to go when it does not.                                                                                                  |
+| C-92 | voice reviewer | V12    | Six passages of stock filler or circular gloss: "Documentation is as important as code"; three article-dropped bullets in **Before Reporting**; "Description: Clear description of the bug"; "Actual behavior: What actually happens"; "Naming: Use descriptive names". | Filler sentence deleted; the telegraphic bullets rewritten as full sentences that say why each step helps; each circular gloss replaced with the specific thing it was standing in for. |
+
+Verified before applying rather than taken on report. The tutorial's seven `Nx` mentions were listed
+and read: none glosses the term, and a case-insensitive scan for `nx.dev`, "build system", "task
+runner", "monorepo", and "orchestrat" returns nothing in that file while the same scan returns the
+README's gloss at line 54. The `resolvePort` example now used for the naming bullet is a real
+exported symbol in `libs/ts-env-loader`, not an invented illustration.
+
+**Declined, with reason.** The reviewer also flagged a run of twenty bullets sharing the
+`- **Label**: clause` shape across four consecutive sections. Declined: V5 governs documents not
+being stamped from one template, not list items sharing a format, and a scannable label-first list
+is what V10 asks a reference section to be. Rewriting those twenty into varied prose would trade a
+clause the text satisfies for one it does not.
+
+**Method note from the reviewer, worth keeping.** It reported that `IGNORECASE` is a no-op in this
+machine's awk, so its first case-insensitive sweep silently ran case-sensitive, and that numbered
+output arrived through a filter whose line numbers ran two short of the real file. It caught both
+and re-derived every quoted line number against the raw file. Same family as the false zeros this
+iteration hit four times: a tool that answers confidently in the wrong mode.
+
+### Round 5 of `P7-003` — a claim that was true when written
+
+Round 5 re-verified both earlier fixes with controls of its own: it ran `gate list --surface=pre-push`
+and matched `C-88`'s description against the real 3-Nx-plus-13-repo-wide split, and it exercised
+`commitlint` at 100 characters (pass) and 101 (fail) to confirm `C-89`. It then found one HIGH.
+
+| Row  | Source       | Severity | Defect                                                                                                                                                                                | Correction                                                                  |
+| ---- | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| C-93 | docs checker | HIGH     | `related-repositories.md` said `beaver-nest` "carries its own fork of `rhino-cli`". That repository was rebuilt on Phoenix LiveView and Elixir and now carries no `rhino-cli` at all. | Clause rewritten to say what is true now, at both sites carrying the claim. |
+
+Verified against the live repository with a non-vacuity control before applying: `beaver-nest`'s
+`apps/` contains only `bnest-app` and `bnest-e2e` and its primary language is Elixir, while the
+identical query against `ose-public` returns `rhino-cli`. So the absence is a real absence, not a
+query that silently matched nothing.
+
+This one is a different species from `C-88` and `C-89`. Those were wrong when written. This was
+**true when written** and went stale underneath the document — `beaver-nest` was last pushed on
+2026-08-20, one day before this round. No review cadence catches that class; only re-verifying an
+external claim against its live source does, which is what the round did.
+
+The sweep found the same claim in one other place,
+`plans/ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md`, where it justified
+excluding `beaver-nest` from the parity boundary. The exclusion is still right; its stated reason
+was not. Both sites now say the same true thing, and the idea brief pins its statement to a date.
+
+**Convergence, three rounds on.** Rounds 3, 4, and 5 each returned exactly one finding, in
+previously-unexamined territory each time, and all three were real. The acceptance clause wants two
+consecutive zeros and has not got one yet. What the pattern actually shows is that the five
+documents make more checkable claims than any single round samples — not that the loop is
+oscillating. That is worth carrying into the plan's learnings rather than resolving by lowering the
+bar.
+
+### Round 4 of `P7-004` — four pass, and the repair is now the defect
+
+Round 4 returned **four PASS** — README, the setup guide, the tutorial, and
+`related-repositories.md` — with one FAIL on `CONTRIBUTING.md`. Both of its findings are defects in
+`C-91` and `C-92`, this plan's own round-3 repairs, not in original text.
+
+| Row  | Source         | Clause  | Defect                                                                                                                                                                                                                                                                                                      | Correction                                                                                                                  |
+| ---- | -------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| C-94 | voice reviewer | V8, V12 | `C-91` rewrote workflow step 4 with a recovery route but no expected outcome — half the clause, while the steps either side of it carry both. `C-92` rewrote five of the six bug-template bullets and left `**Logs/screenshots**: Any relevant error messages or screenshots` in the old circular register. | Step 4 now opens with what success looks like before the failure guidance; the sixth bullet now matches the five around it. |
+
+The reviewer's own words for the second one are worth keeping: the four rewritten bullets continue
+in lowercase from their label, "then this one restarts as a capitalized stock fragment" — a seam
+audible on a read-aloud pass that no lexical sweep would have flagged, because every individual
+bullet is well-formed.
+
+**The pattern this exposes.** For two consecutive rounds the only surviving findings have been
+introduced by the previous round's repair. That is a narrower, more tractable version of what
+`plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` describes: the fix step
+and the authoring step are the same step, so a repair aimed at one clause can breach another, and a
+partial repair to a list leaves the list less consistent than it found it. Round 5 was therefore
+briefed to check every earlier rewrite against all twelve clauses rather than only the clause it was
+meant to satisfy, and to check what a partial repair left behind next to it.
+
+### Round 5 of `P7-004` — four pass, and the neighbour of a repair again
+
+| Row  | Source         | Clause  | Defect                                                                                                                                                                                         | Correction                                                                                                                                                                          |
+| ---- | -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-95 | voice reviewer | V12, V5 | One fact — that Volta applies the `package.json` pins — stated four times in 42 lines of `CONTRIBUTING.md`, three in the identical `Volta will automatically …` frame, two near word-for-word. | The redundant note folded into the prerequisites bullet; the post-install line now says the one new thing it carried; the `npm install` line now states what that command produces. |
+
+Both round-4 repairs held, and the reviewer confirmed round 3's rewrites clear all twelve clauses
+rather than only the one each was written for. The one finding came from its neighbour-consistency
+sweep, and the diagnosis is worth quoting: line 49 is round-3 rewritten text carrying the sharper
+formulation, while lines 59, 73, and 90 are "the untouched legacy neighbours the refresh did not
+reach — corroborated by their being the only three unwrapped long lines in a file otherwise wrapped
+at 100 columns." A layout artefact identified the un-refreshed text.
+
+That is the **third consecutive round** whose only surviving finding sits beside a repair rather
+than inside original prose. Zero occurrences of the repeated frame remain, confirmed with a control
+that fires on a planted copy.
+
+**Declined, with reasons — recorded so a later round need not re-derive them.** The reviewer
+examined and dropped three candidates itself: V8 against `git pull origin main` (applying V8 to
+every command would also fail `brew update` and `rustc --version`, which passed four rounds, so the
+operative reading is commands whose result the reader must interpret); V8 against the setup guide's
+pre-push block (its pre-commit sibling is equally outcome-less and no repair created the asymmetry);
+and V3 against `monorepo` in the setup guide (V3 is qualified _for the intended audience_, and a
+reader already installing Rust, Docker, and Playwright is not the newcomer the clause protects).
+
+**Its own false zero, disclosed.** Its first banned-vocabulary sweep returned all zeros because BSD
+awk does not support `\b`. It noticed, re-ran with `grep -E`, and found the two real `just`
+occurrences — both in the "merely" sense that V7 does not reach. That is the fifth instance of this
+hazard class in this iteration and the second where the checking tool, not the checked text, was
+the thing that lied.
+
+### Round 7 of `P7-003` — the repair was the defect again, and this time factually
+
+Round 6 returned zero. Round 7 was briefed that a second zero would close `P7-003`, and that the
+editorial rewrites landed after round 5 were the one thing round 6 had not swept. That is where it
+found its finding.
+
+| Row  | Source       | Severity | Defect                                                                                                                                                                                                                                                                                 | Correction                                                                                                                                                                   |
+| ---- | ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-96 | docs checker | MEDIUM   | `C-91`'s workflow step 5 said `prettier --write` "prints each one it changed, so an empty list means everything was already formatted". Prettier prints a line for **every** file it reads and tags untouched ones `(unchanged)`; an empty list is a state the command cannot produce. | Step 5 now describes the real signal: a tagged line means untouched, an untagged line means reformatted, and a run with no untagged lines means nothing needed reformatting. |
+
+Reproduced against the repository's own pinned `prettier` 3.8.1 with a control that distinguishes
+the two cases: an unformatted probe file prints a bare `10ms` line and is rewritten; the same file on
+a second run prints `11ms (unchanged)`. The reviewer reached the same conclusion independently and
+corroborated it against two upstream Prettier issues. The other half of the same sentence — that the
+pre-commit hook runs the same formatter — is accurate and was left alone.
+
+**Four consecutive rounds, across both reviews.** `C-94`, `C-95`, and `C-96` are all defects this
+plan's own repairs introduced, and the voice review's rounds 3, 4, and 5 show the same pattern from
+the other side. Three were breaches of a different clause than the repair targeted or a neighbour
+left in the old register. This one is worse: a repair written to satisfy a **voice** clause invented
+a **factual** claim about tool behaviour, and only the factual checker could catch it. The two
+reviews are not redundant, and running them alternately is what surfaced this.
+
+The general form is that the fixer and the author are the same actor, so every repair is new
+unreviewed prose — the mechanism
+`plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` describes, here reaching
+the shipping surface rather than only the plan's own record.
+
+### Round 6 of `P7-004` — four pass, and a repetition the round-3 commit called deliberate
+
+| Row  | Source         | Clause | Defect                                                                                                                                                                                                                                                                                                                                     | Correction                                                                                                                                                                                                            |
+| ---- | -------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-97 | voice reviewer | V12    | One fact — the tool checker is a Rust program, so the check fails without Cargo — stated three times in a 34-line run of the setup guide, all three in the identical `tool checker is a Rust program` frame. Occurrences 2 and 3 are near-verbatim, one introducing a code block and the other a comment inside it, on the same screenful. | Occurrence 1 keeps the full mechanism, since it is the only one explaining why Rust sits in Minimal rather than Full. Occurrence 2 now states the consequence and points back. Occurrence 3 names the step it serves. |
+
+`CONTRIBUTING.md` passed this round, so `C-95` held. The remaining defect is one the round-3 commit
+message recorded as **deliberate**: "Rust now appears in the prerequisites, in the Minimal setup
+path, and as an explicit Quick Start step ahead of the bootstrap command, each stating why it is
+needed there." Stating why it is needed _there_ was the right instinct; restating the same cause in
+the same words three times inside one screenful was not. Repetition placed for a reader who arrives
+mid-document reads as machine-assembled to a reader going top to bottom, and V12 judges the second
+reader.
+
+The correction is subtractive. That is deliberate: `C-94`, `C-95`, and `C-96` were all defects
+introduced by additive repairs, so a repair that removes words cannot introduce a new claim to be
+wrong about. One occurrence of the frame remains, confirmed with a control, and the step-4 comment's
+new cross-reference to step 6 was checked against the block's actual numbering.
+
+**Declined, with reasons — carried forward.** The reviewer examined and dropped two candidates
+itself. `CONTRIBUTING.md` explains the postinstall exit-code mechanism twice, sharing a near-verbatim
+clause, but the two serve distinct entry points — before-you-bootstrap and you-already-hit-the-symptom
+— and a troubleshooting entry reached by symptom has to stand alone. And
+`related-repositories.md`'s real-time-not-batched cadence appears four times with no repeated frame,
+each clause doing different work: assertion, mechanism, rationale, directionality.
+
+### Round 8 of `P7-003` — zero, and the first of a new pair
+
+Zero findings across all five documents. Round 7's single finding (`C-97`) had reset the
+two-consecutive-zero streak, so round 8 restarts the count rather than closing it — one more clean
+round is required.
+
+The round was told to prioritise the two changes it had never seen, and it verified both by
+execution rather than by reading:
+
+- **`CONTRIBUTING.md` step 5.** It ran the repo-pinned `prettier@3.8.1` directly and confirmed the
+  claim `C-96` replaced the false one with: `--write` prints one line per file, tags untouched files
+  `(unchanged)`, and leaves reformatted files untagged. It then traced the pre-commit claim through
+  `.husky/pre-commit` → `gate run --surface=pre-commit` → `repo-config.yml` → `package.json`'s
+  `lint-staged` block, and confirmed prettier is genuinely wired over staged files for each glob it
+  claims to cover.
+- **The setup guide's Quick Start.** It confirmed `"postinstall": "npm run doctor || true"` discards
+  the exit code while a bare `npm run doctor` does not — the exact asymmetry the Minimal bullet
+  asserts — and that `rhino-bin.sh` `exec`s the Rust binary with its real exit code, so the hooks do
+  require Rust.
+
+It also re-verified, from source rather than from a sibling document, the commitlint 100-character
+limit (by feeding 65-, 100-, and 104-character messages to `commitlint --edit`), the `test:quick`
+five-step composition, the 3-Nx-plus-13-`rhino-cli` pre-push split, the `beaver-nest` state via
+`gh api`, the 5434-versus-5432 port distinction against the actual compose files, and the Rust
+lint-component warning severity against `checker.rs`.
+
+That is the first round in this review where every high-value claim was checked against the thing
+itself and none moved.
+
+### Round 7 of `P7-004` — terminal: all five documents pass
+
+Zero findings. `P7-004`'s acceptance is that every file passes, and round 7 is the first round to
+return five PASSes.
+
+| Round | README | CONTRIBUTING | setup guide | tutorial | related-repos | Findings applied                             |
+| ----- | ------ | ------------ | ----------- | -------- | ------------- | -------------------------------------------- |
+| 1     | FAIL   | FAIL         | FAIL        | FAIL     | FAIL          | 11 (`C-09`…`C-19`), 4 declined               |
+| 2     | FAIL   | FAIL         | FAIL        | FAIL     | FAIL          | 2 (`C-84`, `C-85`), 3 rejected as overstated |
+| 3     | PASS   | FAIL         | PASS        | FAIL     | PASS          | 3 (`C-90`…`C-92`), 1 declined                |
+| 4     | PASS   | FAIL         | PASS        | PASS     | PASS          | 1 (`C-94`)                                   |
+| 5     | PASS   | FAIL         | PASS        | PASS     | PASS          | 1 (`C-95`), 3 declined                       |
+| 6     | PASS   | PASS         | FAIL        | PASS     | PASS          | 1 (`C-97`), 2 declined                       |
+| 7     | PASS   | PASS         | PASS        | PASS     | PASS          | **0**                                        |
+
+What moved the review from "FAIL everything with forty findings" to a per-document verdict was not a
+weaker reviewer. Rounds 1 and 2 judged against an open-ended sense of quality; from round 3 the
+twelve clauses were made the exclusive judging surface, every finding had to quote its text and cite
+a clause, and PASS was stated up front as a legitimate outcome. Round 2 had three of five HIGHs fail
+verification; rounds 3 through 7 had **none** — every finding held, and each round additionally
+recorded the candidates it examined and dropped, with reasons, so no later round re-derived them.
+
+Round 7 confirmed both of the changes it had never seen. On the subtractive `C-97` repair it made a
+point worth keeping: the terser step-4 comment does not under-serve `V8`, because `V8`'s outcome
+limb was always carried by the `rustc --version   # Expected: a version line…` line below the
+command — the words removed sat _before_ the command and were never doing post-command work. And it
+observed that the six Quick Start comments now read as one consistent run, so the repair removed the
+outlier rather than creating one. That is the first repair in this iteration that improved its
+neighbourhood instead of disturbing it.
+
+It also hit, and caught, the zsh unquoted-variable false zero — the sixth instance of that hazard
+class here, and the third time a reviewer's own tooling was the thing that lied.
+
+### Round 9 of `P7-003` — terminal: the second consecutive zero
+
+Zero findings. Rounds 8 and 9 are the consecutive pair `P7-003`'s acceptance requires, so the
+factual-accuracy loop terminates here alongside `P7-004`, which terminated at voice round 7.
+
+| Round | Findings | Corrections produced        |
+| ----- | -------- | --------------------------- |
+| 1     | 10       | `C-06`, `C-07`              |
+| 2     | 5        | `C-81`…`C-85`               |
+| 3     | 1        | `C-88`                      |
+| 4     | 1        | `C-89` (plus a class sweep) |
+| 5     | 1        | `C-93`                      |
+| 6     | 0        | —                           |
+| 7     | 1        | `C-96`                      |
+| 8     | 0        | —                           |
+| 9     | **0**    | —                           |
+
+Round 9 was told explicitly that rounds 6 and 8 had already returned zero, and it re-derived its
+verdicts from source anyway rather than inheriting them. It pinned `header-max-length: 100` and the
+eleven-entry type enum by reading `@commitlint/config-conventional`'s compiled `lib/index.js`; it
+dated the polyglot-demo removal banner by running `git log --diff-filter=D` and getting commit
+`8bcc5c019` on 2026-04-18; it read the two compose files to confirm `5434:5432` against `5432:5432`;
+and it confirmed the tutorial's success criteria by reading the literal `<h1>` string out of
+`hero.tsx`.
+
+One decline is worth keeping, because it is the kind of finding a weaker round would have reported.
+`CONTRIBUTING.md`'s file-naming examples (`api-gateway`, `admin-dashboard`) use no suffix from the
+type vocabulary in `app-naming-types.md`. The round searched `apps/rhino-cli/src/` for enforcement of
+that vocabulary, found none, observed that the target document never claims the list is closed, and
+dropped it as an illustration rather than a falsifiable claim. That is the correct call: the
+examples demonstrate the `[domain]-[type]` shape, and a shape example does not inherit a
+vocabulary's closure unless the vocabulary declares it.
+
+The round's own false-zero audit is the first in this review to report that no negative result was
+trusted blind — every zero it relied on was either itself a positive hit or corroborated by one, and
+where RTK truncated a command's output it re-ran through a different path rather than accepting the
+apparent mismatch.
+
+### Why the loop took nine rounds
+
+Worth stating plainly, because the count looks like thrash and mostly was not:
+
+- **Rounds 1 and 2 (15 findings)** were the genuine backlog — defects that had been in these
+  documents before the plan started.
+- **Rounds 3, 4, and 5 (3 findings)** each reached territory no earlier round had examined. Round 4's
+  `C-89` is the clearest case: it found a governance document quoting an error string commitlint
+  never emits, under a `FAIL:` example that actually passes.
+- **Round 7 (1 finding)** found a defect this plan's own repair had introduced — `C-91` had invented
+  a false claim about `prettier --write` while satisfying a voice clause. That is the
+  review-loop-reviews-its-own-record mechanism reaching the shipping surface.
+- **Rounds 6, 8, and 9 (0 findings)** were clean.
+
+The response to round 7 was to make the next repair (`C-97`) deliberately subtractive — a repair that
+removes words cannot introduce a new claim to be wrong about — and to run both lenses against the
+same state concurrently instead of alternating. Both changes held: nothing found a defect after
+`C-97`.
+
 ### Rejected findings
 
 The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
@@ -774,19 +1133,22 @@ count.
 
 ## File-Touch Ledger
 
-| Path                                                                                               | Change                                                                                          | Owning Row             |
-| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------- |
-| `CONTRIBUTING.md`                                                                                  | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct | C-01…C-05, C-82, C-84  |
-| `docs/how-to/setup-development-environment.md`                                                     | Quick Start Rust step and renumbering; integration port; cargo tool attribution                 | C-06, C-07, C-81, C-83 |
-| `README.md`                                                                                        | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                     | C-08, C-21, C-24       |
-| `docs/tutorials/getting-started-with-ose-public.md`                                                | Lead paragraph, spelling, platform wording, Cargo reason                                        | C-21, C-25             |
-| `docs/reference/related-repositories.md`                                                           | Retired-sandbox row corrected to infrastructure work; executor instruction removed              | voice rows, C-85       |
-| `plans/in-progress/…/evidence/phase-6-*`                                                           | Documented-breakpoint capture and its transcript                                                | C-23                   |
-| `plans/in-progress/…/delivery.md`                                                                  | Phase 5–7 ticks and notes                                                                       | plan records           |
-| `plans/in-progress/…/artifacts/*.md`                                                               | Ledger re-run, public record, this record                                                       | plan records           |
-| `plans/in-progress/…/evidence/*`                                                                   | Phase 5A and 5B journey evidence                                                                | plan records           |
-| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | commit-type consistency sweep                                                                   | C-86                   |
-| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | commit-type consistency sweep                                                                   | C-86                   |
-| `docs/reference/system-architecture/ci-cd.md`                                                      | commit-type consistency sweep                                                                   | C-86                   |
-| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | commit-type consistency sweep                                                                   | C-86                   |
-| `.agents/skills/swe-developing-applications-common/reference/git-workflow.md`                      | generated mirror of the above                                                                   | C-86                   |
+| Path                                                                                               | Change                                                                                                                                                         | Owning Row                                                |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `CONTRIBUTING.md`                                                                                  | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct; header length; command outcomes, filler, and Volta repetition | C-01…C-05, C-82, C-84, C-89, C-91, C-92, C-94, C-95, C-96 |
+| `docs/how-to/setup-development-environment.md`                                                     | Quick Start Rust step and renumbering; integration port; cargo tool attribution; pre-push claim; Rust-reason repetition                                        | C-06, C-07, C-81, C-83, C-88, C-97                        |
+| `README.md`                                                                                        | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                                                                                    | C-08, C-21, C-24                                          |
+| `docs/tutorials/getting-started-with-ose-public.md`                                                | Lead paragraph, spelling, platform wording, Cargo reason; Nx gloss                                                                                             | C-21, C-25, C-90                                          |
+| `docs/reference/related-repositories.md`                                                           | Retired-sandbox row corrected to infrastructure work; executor instruction removed; beaver-nest fork claim                                                     | voice rows, C-85, C-93                                    |
+| `plans/in-progress/…/evidence/phase-6-*`                                                           | Documented-breakpoint capture and its transcript                                                                                                               | C-23                                                      |
+| `plans/in-progress/…/delivery.md`                                                                  | Phase 5–7 ticks and notes                                                                                                                                      | plan records                                              |
+| `plans/in-progress/…/artifacts/*.md`                                                               | Ledger re-run, public record, this record                                                                                                                      | plan records                                              |
+| `plans/in-progress/…/evidence/*`                                                                   | Phase 5A and 5B journey evidence                                                                                                                               | plan records                                              |
+| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | commit-type consistency sweep                                                                                                                                  | C-86                                                      |
+| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | commit-type consistency sweep                                                                                                                                  | C-86                                                      |
+| `docs/reference/system-architecture/ci-cd.md`                                                      | commit-type consistency sweep                                                                                                                                  | C-86                                                      |
+| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | commit-type consistency sweep                                                                                                                                  | C-86                                                      |
+| `.agents/skills/swe-developing-applications-common/reference/git-workflow.md`                      | generated mirror of the above                                                                                                                                  | C-86                                                      |
+| `repo-governance/development/workflow/commit-messages/common-errors-and-fixes.md`                  | header-length error string and failing example                                                                                                                 | C-89                                                      |
+| `repo-governance/development/workflow/commit-messages/the-format-explained.md`                     | header-length rule reframed as a target                                                                                                                        | C-89                                                      |
+| `plans/ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md`                     | same beaver-nest claim, pinned to a date                                                                                                                       | C-93                                                      |

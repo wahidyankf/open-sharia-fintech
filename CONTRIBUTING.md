@@ -46,8 +46,9 @@ the project or preparing a fork, please:
 
 Install both toolchains before you bootstrap:
 
-- **Volta**, which selects the Node.js and npm versions pinned in `package.json`. Read the versions
-  from that file rather than from a list here, so the two can never drift apart.
+- **Volta**, which selects the Node.js and npm versions pinned in `package.json` — so you do not
+  install either separately. Read the versions from that file rather than from a list here, so the
+  two can never drift apart.
 - **Rust and Cargo**. The repository's tool checker is a Rust command-line application that
   `npm install` runs as a postinstall step. That step discards the checker's exit code, so without
   Cargo the check runs, prints `cargo: command not found`, and fails — while `npm install` still
@@ -55,8 +56,6 @@ Install both toolchains before you bootstrap:
   the same binary and keep its exit code, so your first `git commit` stops outright. Install Rust
   with rustup as described in
   [Set up your development environment](./docs/how-to/setup-development-environment.md).
-
-**Important**: You don't need to install Node.js or npm manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
 
 #### Installing Volta
 
@@ -70,7 +69,8 @@ If you don't have Volta installed, run:
 curl https://get.volta.sh | bash
 ```
 
-After installation, restart your terminal and Volta will automatically manage Node.js/npm versions for this project.
+Restart your terminal afterwards — the installer edits your shell profile, and the shell you ran it
+from has not read the change yet.
 
 ### Installation Steps
 
@@ -87,7 +87,8 @@ After installation, restart your terminal and Volta will automatically manage No
    npm install
    ```
 
-   Volta will automatically use the Node.js and npm versions specified in `package.json`.
+   This installs the dependency tree, runs the toolchain checker, and sets up the Git hooks. Expect
+   it to take a few minutes on a cold cache.
 
 3. **Verify installation**:
 
@@ -192,17 +193,31 @@ that fit your project.
    npm exec nx -- affected -t test:quick
    ```
 
+   Every affected project should report success. When one fails, Nx names the project and the
+   target it failed on — rerun that one alone with `npm exec nx -- run <project>:test:quick` to see
+   the full output without the other projects' noise.
+
 4. **Run affected build**:
 
    ```bash
    npm exec nx -- affected -t build
    ```
 
+   Each affected project should build without error, and Nx prints a cached-or-rebuilt line for
+   every one. A failure here after a green quality gate usually means a type or import error the
+   unit tests never exercised — read the first error, not the last, since the rest are typically
+   fallout.
+
 5. **Format code** (automatic on commit):
 
    ```bash
    npx prettier --write .
    ```
+
+   This rewrites files in place and prints a line for every file it reads — a file it left alone is
+   tagged `(unchanged)`, and a file it reformatted is not. So a run with no untagged lines means
+   nothing needed reformatting. The pre-commit hook runs the same formatter over your staged files,
+   so skipping this step costs you nothing but a surprise at commit time.
 
 ## Code Conventions
 
@@ -232,12 +247,14 @@ refactor(utils): simplify date formatting logic
 
 **Important rules**:
 
-- First line ≤ 50 characters
+- Aim for a first line of 50 characters or fewer, so `git log --oneline` stays readable
 - Use imperative mood ("add" not "added")
 - Type and description are required
 - Scope is optional but recommended
 
-This format is **enforced by commitlint** on every commit. For complete details, see [Commit Message Convention](./repo-governance/development/workflow/commit-messages.md).
+Type, case, mood, and length are **enforced by commitlint** on every commit — but its header limit
+is 100 characters, not 50. Treat 50 as the target you write to and 100 as the line the hook stops
+you at. For complete details, see [Commit Message Convention](./repo-governance/development/workflow/commit-messages.md).
 
 ### Commit Granularity
 
@@ -265,7 +282,7 @@ git commit -m "feat: add agent, update docs, fix dates"  # Too many changes in o
 
 - **Prettier**: Code formatting is automatic (runs on commit via Husky)
 - **TypeScript**: Use strict mode, avoid `any` types without justification
-- **Naming**: Use descriptive names (functions, variables, files)
+- **Naming**: name a thing for what it does, not for what it is — `resolvePort`, not `portUtil`
 - **Comments**: Explain "why", not "what" (code should be self-documenting)
 
 ### File Naming
@@ -331,20 +348,23 @@ opening a contribution PR.
 
 ### Before Reporting
 
-1. **Check existing issues**: Your bug may already be reported
-2. **Try latest version**: Bug may be fixed in recent releases
-3. **Search documentation**: Issue may be usage-related, not a bug
+1. **Search the existing issues** — someone may have filed the same thing already, and the
+   discussion there is often faster than a fresh report.
+2. **Update to the latest `main`** and try again, in case the fix has already landed.
+3. **Check the documentation** — if a command behaved differently from what a page told you to
+   expect, say which page, because that makes the report actionable either way.
 
 ### Bug Report Template
 
 When opening an issue, include:
 
-- **Description**: Clear description of the bug
-- **Steps to reproduce**: Numbered list of exact steps
-- **Expected behavior**: What should happen
-- **Actual behavior**: What actually happens
+- **Description**: what broke, in one or two sentences
+- **Steps to reproduce**: the exact commands or clicks, numbered, starting from a clean checkout
+- **Expected behavior**: what the documentation or the command's own output led you to expect
+- **Actual behavior**: what happened instead, quoted rather than paraphrased
 - **Environment**: OS, Node.js version, browser (if applicable)
-- **Logs/screenshots**: Any relevant error messages or screenshots
+- **Logs/screenshots**: the error text itself, pasted rather than described, and a picture only
+  where the problem is visual
 
 ## Product Feedback
 
@@ -354,7 +374,7 @@ or contribution pull request expecting project intake.
 
 ## Documentation
 
-Documentation is as important as code. When maintaining a fork or doing internal work:
+When maintaining a fork or doing internal work:
 
 - **Update docs** if your changes affect user-facing behavior
 - **Follow Diátaxis**: a documentation taxonomy that sorts every page into one of four categories —

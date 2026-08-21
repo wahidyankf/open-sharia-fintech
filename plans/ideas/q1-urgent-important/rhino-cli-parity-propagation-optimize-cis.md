@@ -101,8 +101,9 @@ that repo; re-verification of `parity manifest validate` across both parity repo
   propagation lands as new commits/PRs, not history rewrites.
 - The `ose-primer`-only files in the measured union — that repo is outside the parity set.
 - Any further `apps/rhino-cli` feature work beyond what closes this specific drift.
-- `beaver-nest` — it is deliberately outside the 3-repo parity boundary (it carries a fork, not a
-  byte-identical copy).
+- `beaver-nest` — deliberately outside the 3-repo parity boundary. As of 2026-08-21 it carries no
+  `rhino-cli` at all: its `apps/` holds only `bnest-app` and `bnest-e2e`, and the repository was
+  rebuilt on Phoenix LiveView and Elixir.
 
 ## Risks & open questions
 

@@ -36,7 +36,8 @@ grew out of earlier OSE practice. **It carries no sync obligation in either dire
 part of the `rhino-cli` byte-identity boundary, it is not a propagation target for governance,
 agent, skill, or workflow changes, and it is free to diverge from `ose-public` without that
 divergence being a defect. No gate, agent, or workflow here may treat it as a parity peer. The same
-holds for `beaver-nest`, which carries its own fork of `rhino-cli`.
+holds for [`beaver-nest`](https://github.com/wahidyankf/beaver-nest), which was rebuilt on Phoenix
+LiveView and Elixir and carries no `rhino-cli` at all.
 
 ## Shared boundaries
 

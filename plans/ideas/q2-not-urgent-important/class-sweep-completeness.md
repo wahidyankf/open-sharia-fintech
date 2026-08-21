@@ -61,6 +61,29 @@ edit the matched site — the opposite failure mode from the three above.
   existed in the repo — it does, along with the exact file the brief says is absent, inverting one
   of its findings. A token-matching sweep never reads the sentence.
 
+### A fourth missed-site shape: the definitional site (2026-08-21)
+
+`repository-onboarding-readme-refresh` Phase 2 took three passes to retire one false claim, and the
+third pass worked only because the method changed.
+
+A reviewer found the plan's ledger asserting that two path trees are byte-identical with
+`ose-private`. The real boundary is seven pathspecs, and of the 27 `identity-bound` Markdown paths
+exactly 25 are in the 603-entry parity manifest. The reviewer named four sites; those four were
+fixed; the next pass found the claim alive at two more — including the **vocabulary entry that
+defines the label the fix was about**, sitting 1,150 lines above the correction. Two of the six
+sites were ones neither reviewer nor executor had looked at, and one of those carried a second,
+unrelated error.
+
+What closed it: instead of patching cited line numbers, grep the whole delivery unit for every term
+in the claim's _vocabulary_ — here `byte-identical`, `byte identity`, `identity-bound`,
+`identity boundary`, `zero carve-outs` — classify all 47 hits as definition, assertion, or
+incidental reference, and give each a verdict. The reviewer then enumerated independently and found
+no seventh site.
+
+This adds a fourth shape to the three this brief already names, and it is the one that most
+reliably undoes a sweep: **the definitional site re-injects the error into every downstream use of
+the term, including the uses you have just fixed.** Check definitions first.
+
 ## Why now
 
 The pattern repeated three times inside one plan, each time surviving a review cycle that had

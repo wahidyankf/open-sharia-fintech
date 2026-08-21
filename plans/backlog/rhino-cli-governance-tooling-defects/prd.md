@@ -28,6 +28,9 @@ observable. No new command is introduced and no existing command is withdrawn.
 - As a **sweep executor**, I want tracked non-markdown files scanned for renamed governance paths, so
   that a stale path in a config comment is reported by a tool rather than by a manual `grep` months
   later.
+- As a **plan executor baselining a repository**, I want `readme-index validate`'s verdict line to
+  count only the findings that can fail the run, so that a dark-launched finding kind does not make
+  a passing gate read as failing.
 
 ## Acceptance Criteria (Gherkin)
 
@@ -105,6 +108,25 @@ Feature: readme-index rewrite-paths matches repo-relative paths
     When I run "governance readme-index rewrite-paths --map <map>"
     Then the exit code is 0
 
+  Scenario: The verdict line counts only findings that can fail the run
+    Given a tree producing 3 "unannotated" findings and no other kind
+    When I run "governance readme-index validate" with no "--fail-kinds"
+    Then the exit code is 0
+    And the verdict line reports 0 failing findings and 3 informational ones
+    And all 3 findings are still listed individually
+
+  Scenario: Arming a dark-launched kind makes it count in both signals
+    Given a tree producing 3 "unannotated" findings and no other kind
+    When I run "governance readme-index validate --fail-kinds unannotated"
+    Then the exit code is non-zero
+    And the verdict line reports 3 failing findings
+
+  Scenario: A kind that always gates is unaffected
+    Given a tree producing 1 "ghost" finding
+    When I run "governance readme-index validate" with no "--fail-kinds"
+    Then the exit code is non-zero
+    And the verdict line reports 1 failing finding
+
   Scenario: A renamed governance path inside a tracked non-markdown file is repointed
     Given a rename map row "repo-governance/a/01-x.md -> repo-governance/a/x.md"
     And a tracked ".gitignore" whose comment names "repo-governance/a/01-x.md"
@@ -119,6 +141,8 @@ Feature: readme-index rewrite-paths matches repo-relative paths
 - Registry-derived agent directory resolution in `harness bindings validate`.
 - Repo-relative path matching, a no-match failure signal, and opt-in non-markdown rewriting in
   `readme-index rewrite-paths`.
+- A `readme-index validate` verdict line derived from the same `--fail-kinds` filter as its exit
+  code, distinguishing failing findings from informational ones.
 - Companion Gherkin under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
 - Parity manifest regeneration in each source-changing commit.
 
@@ -130,6 +154,10 @@ Feature: readme-index rewrite-paths matches repo-relative paths
 - Restoring either withdrawn naming validator.
 - Rewriting binary files, or any file not tracked by git.
 - General non-markdown link health.
+- Changing which kinds gate by default. `unannotated` stays dark-launched; WS-4 changes only how the
+  verdict is worded, never which findings fail a run.
+- Fixing the 425 `unannotated` findings themselves — 163 in `docs/`, 262 in `specs/`. That is
+  content work under whichever plan owns those trees, not a tooling defect.
 
 ## Product Risks
 

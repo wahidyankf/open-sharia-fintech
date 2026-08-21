@@ -139,6 +139,52 @@ _Suggested executor:_ `swe-rust-dev`
 
 > **Pause Safety**: WS-3 is independently shippable. Safe to stop after the merge.
 
+## Phase 3A: WS-4 — A verdict line that agrees with the exit code
+
+_Suggested executor:_ `swe-rust-dev`
+
+- [ ] [AI] Add the three `prd.md` readme-index verdict scenarios to the Gherkin tree — acceptance:
+      `specs structure validate` exits 0.
+- [ ] [AI] Record the pre-fix baseline for each registered caller — acceptance: for the
+      `governance-readme-index` and `governance-readme-completeness` argument sets, both the exit
+      code and the verdict line are captured to `local-tmp/`, so the fix can be shown to change the
+      second and not the first.
+- [ ] [AI] RED: a unit test over findings that are all `unannotated`, with `fail_kinds` empty,
+      asserting the verdict line reports **0** failing findings — acceptance: it fails today,
+      because `format_text` reports the full count. Assert on the verdict string, not the exit code;
+      the exit code is already correct and a test reading it would pass before the fix.
+- [ ] [AI] GREEN: partition findings into failing and informational with the same predicate
+      `has_failing_finding` uses, and word the verdict from the failing set — acceptance: the RED
+      test passes and one function owns the failing/informational definition.
+- [ ] [AI] Assert the informational findings are still listed individually — acceptance: all three
+      fixture findings appear in the output body, so the dark launch keeps its only purpose.
+- [ ] [AI] RED then GREEN: `--fail-kinds unannotated` makes the same fixture report failing findings
+      and exit non-zero — acceptance: both signals move together, proving the wording is derived and
+      not hardcoded.
+- [ ] [AI] Assert a `ghost` finding still fails with `fail_kinds` empty — acceptance: exit is
+      non-zero and the verdict names 1 failing finding; the always-gating kinds are untouched.
+- [ ] [AI] Carry the same partition into `format_json` and `format_markdown` — acceptance: each names
+      the failing and informational counts separately, so a machine consumer need not re-derive the
+      rule.
+- [ ] [AI] Re-run both registered caller argument sets and diff against the Phase 3A baseline —
+      acceptance: every exit code is unchanged and only the verdict line differs.
+- [ ] [AI] Document the failing/informational distinction where the command is described —
+      acceptance: `governance word-budget validate` exits 0 and the doc states that a dark-launched
+      kind prints without gating.
+- [ ] [AI] Regenerate and stage the parity checksum manifest — acceptance: `parity manifest validate`
+      exits 0.
+
+### Phase 3A Gate
+
+- [ ] [AI] `npx nx run rhino-cli:test`, `:test:integration`, and `:lint` all exit 0.
+- [ ] [AI] `gate run --surface=pre-push` exits 0 **and** its output contains no `AUDIT FAILED` line —
+      the pair that could not both hold before this workstream.
+- [ ] [AI] Exit codes for both registered callers are byte-identical to the Phase 3A baseline.
+- [ ] [AI] The 425 `unannotated` findings are still printed. This workstream makes them readable, not
+      invisible.
+
+> **Pause Safety**: WS-4 is independently shippable. Safe to stop after the merge.
+
 ## Phase 4: `ose-private` Parity
 
 _Suggested executor:_ the orchestrator directly

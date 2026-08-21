@@ -6,7 +6,9 @@
 
 ## L-001 — `rhino-cli` exit codes cannot prove a subcommand exists
 
-**Phase**: 0 (P0-003A) · **Date**: 2026-08-20
+**Phase**: 0 (P0-003A) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q2-not-urgent-important/doc-command-existence-validation.md`](../../ideas/q2-not-urgent-important/doc-command-existence-validation.md),
+which proposes exactly the validator this trap would break
 
 A `rhino-cli` command group requires a subcommand, so `rhino-cli md --help` exits `2` with
 `error: 'rhino-cli md' requires a subcommand but one was not provided`. `rhino-cli help md mermaid`
@@ -19,7 +21,10 @@ so ANSI escapes do not defeat the parser.
 
 ## L-002 — A plan's transcribed gate list is a subset, not the registry
 
-**Phase**: 0 (P0-003/P0-003A) · **Date**: 2026-08-20
+**Phase**: 0 (P0-003/P0-003A) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`](../../ideas/q1-urgent-important/plan-checker-forward-reference-detection.md),
+the same shape of gap: `plan-checker` validates a plan's structure, not whether its claims about
+the repository hold
 
 The live `pre-commit` registry declares 29 entries; this plan transcribed eight. The gap was benign
 for most of them (language formatters a documentation diff never triggers) but hid three gates that
@@ -32,8 +37,11 @@ omit that this plan's declared file footprint can trip."
 
 ## L-003 — `npm run lint:md` walks into the untracked `.fvm-cache/` SDK
 
-**Phase**: 0 (P0-005) · **Date**: 2026-08-20 · **Routing**: repository configuration — file as a
-`plans/backlog/` item at Phase 8, do not fix inline
+**Phase**: 0 (P0-005) · **Date**: 2026-08-20 · **Routing**: idea — folded into
+[`plans/ideas/q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md`](../../ideas/q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md).
+The Phase 0 note said "file as a `plans/backlog/` item"; the backlog index requires promotion from a
+two-pager first, and a brief on the same gate's opposite failure already existed, so the fold is the
+correct route. Still not fixed inline
 
 `.fvm-cache/` is gitignored (`.gitignore:198`) and holds a vendored Flutter SDK, but it appears in
 neither `.markdownlintignore` nor the `ignores` array of `.markdownlint-cli2.jsonc`. The
@@ -47,22 +55,35 @@ line to `.markdownlintignore` would restore the signal.
 
 ## L-004 — `governance readme-index validate` prints FAILED but exits 0
 
-**Phase**: 0 (P0-009) · **Date**: 2026-08-20
+**Phase**: 0 (P0-009) · **Date**: 2026-08-20 · **Routing**: **code-homed** — `apps/rhino-cli`, so the
+Code-Routing Downstream Rule makes a `plans/backlog/` plan mandatory and forbids an inline fix.
+Filed as a fourth workstream in the existing
+[`plans/backlog/rhino-cli-governance-tooling-defects/`](../../backlog/rhino-cli-governance-tooling-defects/README.md),
+whose stated subject is exactly this defect shape: a tool that exits 0 while reporting failure
 
 `gate run --surface=pre-push` exits 0 while its own output contains
 `README INDEX AUDIT FAILED: 425 finding(s)`. Running the validator alone reproduces it: the audit
-prints `FAILED`, lists every finding, and still exits `0`. The textual verdict and the exit status
-disagree, so an executor that trusts either one alone reaches the wrong conclusion — trusting the
-exit code hides 425 real findings, and trusting the text blocks a surface the repository considers
-green.
+prints `FAILED`, lists every finding, and still exits `0`.
+
+Reading the source at Phase 8 sharpened this. The exit code is **correct**: all 425 findings are
+kind `unannotated`, which `has_failing_finding` deliberately dark-launches — with `--fail-kinds`
+empty every kind gates except that one, and only the `governance-readme-completeness` gate arms it.
+The 425 split 163 in `docs/` and 262 in `specs/`; `repo-governance/` and `.claude/` contribute none.
+So the defect is narrower and more interesting than "the two signals disagree": `format_text` counts
+every finding and says `FAILED` without consulting the filter that decides the exit code, which
+defeats the purpose of dark-launching a kind. A line that always reads `FAILED` above a green gate
+is a line readers stop reading.
 
 **How to apply**: when a gate's acceptance is "exits 0", record the exit code **and** scan the
-output for a textual failure verdict. Treat the two as independent signals, and say which one the
-acceptance criterion actually depends on.
+output for a textual failure verdict — but before filing the disagreement as a defect, find which of
+the two the tool actually intends. Here the intent was legible only in a doc comment on a private
+function, and the imprecise version of this entry survived seven phases before anyone read it.
 
 ## L-005 — The per-gate tick/task count assertion is what catches a silent no-op tick
 
-**Phase**: 0 (P0-G01) · **Date**: 2026-08-20
+**Phase**: 0 (P0-G01) · **Date**: 2026-08-20 · **Routing**: execution technique — the Atomic Sync
+Ritual already binds it; this entry records the evidence for running the count at every gate rather
+than only at plan end. No repository change required
 
 P0-006A's implementation notes were written and its task closed, but its checkbox stayed `- [ ]`.
 Nothing errored: the notes edit succeeded, the task list looked correct, and only the phase-gate
@@ -75,7 +96,10 @@ only instrument that detects a tick that was never attempted, as opposed to one 
 
 ## L-006 — `git ls-tree` silently returns nothing for a `*.md` pathspec
 
-**Phase**: 1 (P1-001/P1-002) · **Date**: 2026-08-20
+**Phase**: 1 (P1-001/P1-002) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md).
+An inventory clause that passes trivially on an empty list is a vacuous clause; this is that brief's
+thesis reached from a different direction
 
 `git ls-tree -r --name-only <sha> -- '*.md'` returns **zero** paths and exits 0. `git ls-tree` does
 not accept glob pathspec magic — `:(glob)` fails outright with
@@ -93,7 +117,10 @@ empty result fails instead of passing.
 
 ## L-007 — A repo-wide validator cannot serve as a per-row acceptance gate
 
-**Phase**: 1 (P1-G01) · **Date**: 2026-08-20
+**Phase**: 1 (P1-G01) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md).
+This is the never-pass pole of that brief's already-pass/never-pass pair, at a scale it has not yet
+recorded: 745 rows sharing one unsatisfiable clause
 
 745 of the ledger's 814 rows shared one acceptance template naming bare `md links validate`. The
 command is repo-wide and unscoped, and at the recorded revision it reports `found 312 broken links`
@@ -113,7 +140,10 @@ it once as literally written and confirm the verdict it returns today is the one
 
 ## L-008 — A fact check on documentation must know what is a claim
 
-**Phase**: 1 (P1-G01) · **Date**: 2026-08-20
+**Phase**: 1 (P1-G01) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md)
+as the carve-out hazard: a clause needs an exemption to avoid failing honest text, and the exemption
+is itself a loophole unless it passes on a stated framing being present
 
 The ledger's shared acceptance clause said "every npm script the document names resolves." Swept
 across the corpus that is wrong four times over. `docs/explanation/.../fe-react/build-deployment.md`
@@ -136,8 +166,10 @@ deserves to fail: an unresolvable command presented as current.
 
 ## L-009 — A third repo-wide Markdown validator is red, and one tree is unfixable here
 
-**Phase**: 2 (P2-008) · **Date**: 2026-08-20 · **Routing**: repository configuration — file as a
-`plans/backlog/` item at Phase 8, do not fix inline
+**Phase**: 2 (P2-008) · **Date**: 2026-08-20 · **Routing**: idea — folded into
+[`plans/ideas/q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md`](../../ideas/q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md),
+which already owns the only one of the three trees that is remediation work. Same correction as
+[[L-003]]: a backlog folder requires promotion from a two-pager. Still not fixed inline
 
 Run unscoped, `md mermaid validate` reports 786 violations and 17 warnings across 1,165 files:
 588 `label_too_long`, 198 `width_exceeded`, 17 `subgraph_density`. They sit in three trees —
@@ -169,7 +201,10 @@ edit, and only then some real content to fix.
 
 ## L-010 — Enumerate a false claim by vocabulary, not by the line numbers a reviewer hands you
 
-**Phase**: 2 (P2-009) · **Date**: 2026-08-20
+**Phase**: 2 (P2-009) · **Date**: 2026-08-20 · **Routing**: idea — fold into
+[`plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`](../../ideas/q2-not-urgent-important/class-sweep-completeness.md)
+as a fourth missed-site shape: the definitional site, which re-injects the error into every
+downstream use of the term
 
 An independent reviewer found the ledger asserting that `apps/rhino-cli/**` and
 `specs/apps/rhino/behavior/rhino-cli/**` are byte-identical with `ose-private`. The real boundary is
@@ -199,7 +234,8 @@ term, including the ones you just fixed. See [[feedback_fix_the_class_not_the_na
 **Phase**: 3 (P3-005) · **Date**: 2026-08-20 · **Routing**: repository configuration — route to the
 existing [`plans/backlog/file-naming-convention-rework/`](../../backlog/file-naming-convention-rework/README.md)
 plan, which already owns the hard-coded exempt-basename list; do not fix inline and do not open a new
-backlog item
+backlog item. Folded in at Phase 8 as that plan's tech-docs § 4A, because deleting the inert
+declaration before its WS-B1 lands would arm a failure for whoever lands it
 
 `CONTRIBUTING.md` is declared exempt from `md naming validate` in two places that agree exactly: the
 `lint-staged` `*.md` command in `package.json` and the `md-naming` gate entry in `repo-config.yml`.

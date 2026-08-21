@@ -105,7 +105,9 @@ Node.js and npm versions from `package.json`, rather than asking you to maintain
 
 ## Run the public website
 
-Start the Nx development target for `ose-www`:
+This repository is an [Nx](https://nx.dev/) monorepo — one repository holding several
+independently deployable applications, with Nx coordinating the tasks that build and run them.
+Start its development target for `ose-www`:
 
 ```bash
 npm exec nx -- run ose-www:dev

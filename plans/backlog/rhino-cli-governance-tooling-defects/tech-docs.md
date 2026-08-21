@@ -118,6 +118,57 @@ Both new behaviours change what a caller's existing invocation touches. Opt-in k
 change to `rewrite-paths` additive for any caller, and makes the sweep procedure state which modes it
 used — a sweep's own record of what it swept.
 
+## 4A. WS-4 — A verdict line that agrees with the exit code
+
+### Current behaviour
+
+```rust
+// run(), paraphrased
+print!("{}", format_text(&findings));            // counts every finding
+if has_failing_finding(&findings, &args.fail_kinds) {
+    return Err(...);                             // counts only the ones that gate
+}
+Ok(())
+```
+
+`format_text` writes `README INDEX AUDIT FAILED: {} finding(s)` with `findings.len()`. It never
+sees `fail_kinds`. `has_failing_finding` does, and it dark-launches one kind: with `--fail-kinds`
+empty every kind gates _except_ `unannotated`; only a caller naming it explicitly arms it.
+
+Measured against `ose-public` in the exact form `repo-config.yml` registers for the
+`governance-readme-index` gate:
+
+| Paths                                          | Findings | All kind    | Exit | Verdict line printed |
+| ---------------------------------------------- | -------- | ----------- | ---- | -------------------- |
+| `docs/` `repo-governance/` `specs/` `.claude/` | 425      | unannotated | 0    | `FAILED: 425`        |
+| `docs/` alone                                  | 163      | unannotated | 0    | `FAILED: 163`        |
+| `specs/` alone                                 | 262      | unannotated | 0    | `FAILED: 262`        |
+| `repo-governance/` alone                       | 0        | —           | 0    | `PASSED`             |
+| `.claude/` alone                               | 0        | —           | 0    | `PASSED`             |
+
+The exit code is correct in every row. Only the wording is wrong, and it is wrong in exactly the
+case a dark launch creates: findings that are meant to be visible without gating.
+
+### Fix design
+
+1. **Partition before wording.** Split findings into failing and informational using the same
+   predicate `has_failing_finding` applies, so one function owns the definition and the two signals
+   cannot drift.
+2. **Word the verdict from the failing set.** `FAILED: n finding(s)` when `n > 0`. When `n == 0` and
+   informational findings exist, say so — a passing verdict that names the informational count,
+   rather than either `FAILED` or a bare `PASSED` that hides them.
+3. **Keep every finding listed.** The listing is the value of a dark launch; only the headline
+   changes.
+4. **Mirror it in the other two formats.** `format_json` and `format_markdown` take the same
+   partition, so a machine consumer can tell the two classes apart without re-deriving the rule.
+
+### Verification strategy
+
+RED first, asserting on the verdict line under a known `--fail-kinds`, not on an exit code — the
+exit code is already right and a test that only checks it would pass before the fix. The three
+Gherkin scenarios in `prd.md` cover the three cases that matter: a dark-launched kind alone, the
+same kind armed, and a kind that always gates.
+
 ## 5. Cross-Repository Obligation
 
 Every commit touching `apps/rhino-cli` regenerates and stages the parity checksum manifest in the

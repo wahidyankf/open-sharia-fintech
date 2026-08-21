@@ -63,6 +63,24 @@ Corroborated 2026-08-18 in `repo-clean-up`: a branch of ~60 changed Markdown fil
 prettier violations with every gate green, caught only by running the repo-pinned binary over the
 branch's own changed set by hand. Second independent instance, different plan.
 
+### The same gate is red the other way locally (2026-08-21)
+
+`repository-onboarding-readme-refresh` Phase 0 baselined the local counterpart and found the inverse
+failure. Where the CI gate lints **zero** files and passes vacuously, `npm run lint:md` lints too
+many and fails vacuously: its `**/*.md` glob walks into `.fvm-cache/`, a gitignored vendored Flutter
+SDK, and reports **565 errors** from third-party documentation. Every one is phantom — zero
+markdownlint errors exist in tracked repository content.
+
+`.fvm-cache/` is gitignored at `.gitignore:198` but appears in neither `.markdownlintignore` nor the
+`ignores` array of `.markdownlint-cli2.jsonc`. CI never sees it, because CI scopes to affected
+files; only a developer running the repo-wide script does.
+
+The two halves are one problem: **the gate's file set is derived independently in two places and is
+wrong in both**, once by omission and once by over-reach. A red local baseline trains readers to
+ignore the gate exactly as thoroughly as a vacuous green one does. Adding one `.fvm-cache/` line to
+`.markdownlintignore` restores the local signal, and belongs with whatever fix gives the CI side a
+positive pattern.
+
 ## Why now
 
 Measured blast radius, so the fix is not a leap in the dark:
