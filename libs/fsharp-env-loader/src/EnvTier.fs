@@ -4,7 +4,7 @@ open System
 open System.IO
 
 /// Shared tiered `.env.<APP_ENV>` env-file loader for this repo's F# backends
-/// (`ose-be`, `organiclever-be`, `beavernest-be`) — see the
+/// (`ose-be`, `organiclever-be`) — see the
 /// `restrict-env-access-to-prod-and-stag` plan's `tech-docs.md` "The APP_ENV
 /// loader contract" for the full rationale. Agent-restricted tiers
 /// (`.env.stag`, `.env.prod`) never need to be opened by an AI agent, while

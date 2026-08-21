@@ -37,8 +37,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [ayokoding-mermaid-diagram-remediation](./q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md) — 636 mermaid violations exposed by the `detect_kind` fix; remediate and drop the temporary CI exclude.
 - [ayokoding-www-app-shell-tap-targets](./q2-not-urgent-important/ayokoding-www-app-shell-tap-targets.md) — shared header/footer tap targets render 17-20 CSS px tall against WCAG 2.5.8's 24x24 floor, site-wide and unguarded by CI.
 - [bare-repo-landing-method-step-count-drift](./q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.
-- [beavernest-first-deploy](./q2-not-urgent-important/beavernest-first-deploy.md) — provision the first real `prod`/`stag` deploy targets for `beavernest-app`/`beavernest-be`; the deployer agents and CI callers ship wired but dormant.
-- [beavernest-local-full-stack-development](./q2-not-urgent-important/beavernest-local-full-stack-development.md) — make one development command own BeaverNest's local data lifecycle, same-origin Flutter/F# runtime, and supported edit loop.
 - [behavior-coverage-json-report-wiring](./q2-not-urgent-important/behavior-coverage-json-report-wiring.md) — wire rhino-cli's JSON-run-report cross-check into project targets + CI.
 - [ci-setup-rust-toolchain-retry](./q2-not-urgent-important/ci-setup-rust-toolchain-retry.md) — `setup-rust` flaked 7× in one phase on the toolchain download; add a retry in both parity repos.
 - [class-sweep-completeness](./q2-not-urgent-important/class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
@@ -82,6 +80,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [rhino-cli-tools-superset-carveout](./q2-not-urgent-important/rhino-cli-tools-superset-carveout.md) — `doctor/tools.rs`'s "zero carve-outs" byte-identity target collides with `ose-private`'s real, needed IaC tool-provisioning extensions.
 - [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
 - [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
+- [setup-playwright-apt-fetch-has-no-retry](./q2-not-urgent-important/setup-playwright-apt-fetch-has-no-retry.md) — the shared Playwright setup action's `apt-get update` has no retry and no step-level timeout, so one stalled mirror burns the whole job budget and surfaces as a bare cancellation.
 - [shared-cargo-target-lock-contention](./q2-not-urgent-important/shared-cargo-target-lock-contention.md) — one shared cargo target directory reclaims disk but serializes concurrent worktree builds; a 65 s pure-lock-wait stall was measured.
 - [sibling-main-ci-never-runs-on-merge](./q2-not-urgent-important/sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in `ose-private`, so a merge to its `main` gets no post-merge CI signal.
 - [source-code-credential-scanning](./q2-not-urgent-important/source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
@@ -99,7 +98,6 @@ Something active references these, but they carry none of the importance signals
 
 - [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
 - [audit-e2e-reuse-existing-server-config](./q3-urgent-not-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`, and can run a suite green against a build that is not the code under test.
-- [beavernest-database-config-test-flake](./q3-urgent-not-important/beavernest-database-config-test-flake.md) — seven cases share one bare `Assert.True`, so three `.NET quality gate` flakes have produced no evidence about which case is nondeterministic.
 
 ### Q4 — Neither Urgent nor Important
 
@@ -108,9 +106,6 @@ Parked deliberately. Kept because the need may become real, not because it is re
 - [ayokoding-i18n-nav-hardening](./q4-not-urgent-not-important/ayokoding-i18n-nav-hardening.md) — pre-existing id-locale, language-switcher-404, and sidebar-clip defects surfaced by the url-restructure Phase-5 retest.
 - [ayokoding-www-cost-reduction](./q4-not-urgent-not-important/ayokoding-www-cost-reduction.md) — retire the 3 MB search index, ~700 KB client mermaid, 97 MB image copy, and the not-XSS-safe HTML parser in one coordinated pass.
 - [ayokoding-www-e2e-parallel-load-flake](./q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md) — the e2e suite flakes under full-suite parallel-worker load (isolated re-runs pass); stabilize or quarantine.
-- [beavernest-be-nullbyte-path-error-envelope](./q4-not-urgent-not-important/beavernest-be-nullbyte-path-error-envelope.md) — a null-byte-path request gets a bare Kestrel 400 instead of `beavernest-be`'s usual `{"error": "..."}` envelope.
-- [beavernest-first-llm-integration](./q4-not-urgent-not-important/beavernest-first-llm-integration.md) — give `beavernest-be` its first real AI-assistant capability; no capture, notes, LLM calls, or prompt plumbing exist yet.
-- [beavernest-persistence-layer](./q4-not-urgent-not-important/beavernest-persistence-layer.md) — introduce the first concrete BeaverNest feature that durably stores and retrieves product data on the SQLite foundation.
 - [dependency-library-updates](./q4-not-urgent-not-important/dependency-library-updates.md) — a standing, policy-compliant sweep to advance pinned library dependencies as their soak windows clear.
 - [fsl-standards](./q4-not-urgent-not-important/fsl-standards.md) — clarify the intent behind "FSL standards" and, if warranted, codify a licensing standard around the Functional Source License.
 - [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./q4-not-urgent-not-important/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.

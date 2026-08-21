@@ -11,9 +11,7 @@ execution checklist.
 
 ## Active Plans
 
-- [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
-  for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
-  selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
+None. No plan is currently under execution.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.

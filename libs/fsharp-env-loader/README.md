@@ -32,4 +32,4 @@ search directories — see `tech-docs.md`'s "The APP_ENV loader contract" in the
 
 ## Consumers
 
-`ose-be`, `organiclever-be`, `beavernest-be`.
+`ose-be`, `organiclever-be`.

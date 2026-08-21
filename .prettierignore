@@ -65,8 +65,3 @@ plans/**/raw/
 # apps/organiclever-be/db/migrations/, apps/ose-be/db/migrations/) are
 # intentionally NOT covered by this exclusion and remain prettier-formatted.
 apps/ayokoding-www/content/**/code/**/*.sql
-
-# Flutter web bootstrap template: `{{flutter_js}}`/`{{flutter_build_config}}`
-# are build-time substitution tokens, not JS. Prettier misparses them as
-# block statements and corrupts the file.
-apps/beavernest-app/web/flutter_bootstrap.js

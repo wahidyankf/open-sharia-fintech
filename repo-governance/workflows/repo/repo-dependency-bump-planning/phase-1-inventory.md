@@ -14,7 +14,7 @@ governed by the policy (intersected with `scope-filter`/`ecosystems`):
 - **Cargo**: `apps/*/Cargo.toml` and `libs/*/Cargo.toml` `[dependencies]` (`rhino-cli` is the
   only Rust project today), plus per-project `rust-toolchain.toml` compiler-channel pins.
 - **.NET**: `apps/*/*.fsproj`/`*.csproj` `<PackageReference>` (e.g. `crane-cli`), plus the per-app
-  `global.json` SDK pins (`apps/beavernest-be`, `apps/organiclever-be`, `apps/ose-be`). The
+  `global.json` SDK pins (`apps/organiclever-be`, `apps/ose-be`). The
   `.github/actions/setup-dotnet` composite-action default pins the SDK CI installs; bump the two
   together. `repo-config.yml` → `doctor.dotnet-global-json` names the `global.json` that
   `rhino-cli doctor` reads.

@@ -5,10 +5,7 @@
  *
  * What is mirrored: the three-tier precedence below, the grammar of a valid port (plain decimal
  * digits, 1-65535 — see `parsePort`), blank-falls-through, and fail-loudly-on-malformed. What is
- * NOT mirrored: the exact error wording, and `beavernest-be`, which composes the contract
- * differently — its own `HttpConfiguration.parse` owns the env-var and default tiers (under the
- * same grammar) and layers `PortResolver` on top for the flag tier alone, because its listener
- * address carries a loopback-versus-wildcard guard the shared resolver knows nothing about.
+ * NOT mirrored: the exact error wording.
  *
  * Precedence, highest first:
  *   1. CLI flag  — an explicit `--port` passed at start time.

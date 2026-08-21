@@ -8,7 +8,7 @@ when_to_use: "Use when setting up .NET for the F# backends and libraries."
 
 **Condition**: `{input.scope} == full`
 
-Required for: `organiclever-be`, `ose-be`, `beavernest-be`, `crane-cli`, `fsharp-crane-core`, `fsharp-env-loader`
+Required for: `organiclever-be`, `ose-be`, `crane-cli`, `fsharp-crane-core`, `fsharp-env-loader`
 
 ## 9.1 Install .NET SDK
 

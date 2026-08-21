@@ -10,9 +10,9 @@ does not work, because the validator matches step text rather than scenario mark
 ## Problem / context
 
 `libs/fsharp-env-loader` is the only F# project in the repo carrying `@covers` markers that nothing
-enforces. Of the six F# projects with real source — `apps/beavernest-be`, `apps/crane-cli`,
+enforces. Of the five F# projects with real source — `apps/crane-cli`,
 `apps/organiclever-be`, `apps/ose-be`, `libs/fsharp-crane-core`, `libs/fsharp-env-loader` — the first
-five each have both a `[<Given>]`-attributed step harness and a `specs:behavior:coverage` target in
+four each have both a `[<Given>]`-attributed step harness and a `specs:behavior:coverage` target in
 their `project.json`. `libs/fsharp-env-loader` has neither, while `PortResolverTests.fs` carries 8
 `@covers` markers and `EnvTierTests.fs` carries 3. Its whole test tree is two files, with no `Steps/`
 directory at all.

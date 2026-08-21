@@ -152,6 +152,7 @@ Archived plans and completed project planning documents.
   `apps/beavernest-app-web`, swept the three surviving repositories, and archived
   `wahidyankf/beaver-nest`. Delivery Mode: `worktree-to-pr`; terminal retirement PR:
   [beaver-nest#4](https://github.com/wahidyankf/beaver-nest/pull/4).
+  **Reversed 2026-08-21** — see the BeaverNest note below.
 
 - [2026-08-10: beavernest-app-setup](./2026-08-10__beavernest-app-setup/README.md) — **Closed
   delivered-as-descoped.** Carried from `beaver-nest`'s stalled in-progress plan (72.5% complete,
@@ -161,6 +162,14 @@ Archived plans and completed project planning documents.
   Compose runtime. Did not ship: human runtime attestation, Knowledge Capture, and archival — Phases
   4-6 had already reached `beaver-nest`'s `main` by direct push before the plan stalled, so no PR #3
   ever opened and its review cycles never ran.
+
+> **BeaverNest left this repository on 2026-08-21.** The three plans above (`beaver-flutter`,
+> `beaver-nest-repo-consolidation`, `beavernest-app-setup`) describe work that really happened here
+> and are kept as a record, but they no longer describe the repository. The product was moved to
+> [`wahidyankf/beaver-nest`](https://github.com/wahidyankf/beaver-nest) and rebuilt on Phoenix
+> LiveView and Elixir; the `beavernest-*` apps, their specs, dev stack, and deployer agents were all
+> removed from `ose-public`. See
+> [Related Repositories](../../docs/reference/related-repositories.md#beavernest-moved-out).
 
 - [2026-08-09: optimize-cis](./2026-08-09__optimize-cis/README.md) —
   Cut fixed overhead from the pre-commit, pre-push, and PR-quality-gate lifecycle across the three

@@ -35,9 +35,24 @@ internal implementation, access model, or operational layout.
 grew out of earlier OSE practice. **It carries no sync obligation in either direction.** It is not
 part of the `rhino-cli` byte-identity boundary, it is not a propagation target for governance,
 agent, skill, or workflow changes, and it is free to diverge from `ose-public` without that
-divergence being a defect. No gate, agent, or workflow here may treat it as a parity peer. The same
-holds for [`beaver-nest`](https://github.com/wahidyankf/beaver-nest), which was rebuilt on Phoenix
-LiveView and Elixir and carries no `rhino-cli` at all.
+divergence being a defect. No gate, agent, or workflow here may treat it as a parity peer.
+
+### BeaverNest moved out
+
+[`beaver-nest`](https://github.com/wahidyankf/beaver-nest) is where the BeaverNest product now
+lives. It used to be developed here as `apps/beavernest-app` (Flutter Web) and `apps/beavernest-be`
+(F#/Giraffe), with a matching `specs/apps/beavernest/` spec tree, an `infra/dev/beavernest-app/`
+Compose stack, and two deployer agents. **All of that was removed from `ose-public`**; the product
+was rebuilt on Phoenix LiveView and Elixir in its own repository.
+
+Treat it exactly like `ose-primer`: no sync obligation in either direction, outside the `rhino-cli`
+byte-identity boundary (it carries no `rhino-cli` at all), and not a propagation target for
+governance, agent, skill, or workflow changes. `rhino-cli`'s parity gate asserts that the boundary
+never names it — see `apps/rhino-cli/src/application/parity.rs`.
+
+If you are looking for BeaverNest code, issues, or plans, go to that repository. Anything still
+naming BeaverNest here is a historical record — an archived plan under [`plans/done/`](../../plans/done/README.md)
+or a published update post — not live work.
 
 ## Shared boundaries
 

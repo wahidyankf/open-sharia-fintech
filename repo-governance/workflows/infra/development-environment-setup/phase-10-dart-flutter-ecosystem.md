@@ -1,14 +1,17 @@
 ---
 title: "Phase 10: Dart/Flutter Ecosystem (Sequential)"
-description: "Phase 10 (full scope only): install Flutter (bundles Dart) and enable Flutter Web, required for beavernest-app."
-when_to_use: "Use when setting up Dart/Flutter for beavernest-app under full scope."
+description: "Phase 10 (full scope only): install Flutter (bundles Dart) so dart format can format the Dart course corpora."
+when_to_use: "Use when setting up Dart/Flutter under full scope."
 ---
 
 # Phase 10: Dart/Flutter Ecosystem (Sequential)
 
 **Condition**: `{input.scope} == full`
 
-Required for: `beavernest-app` (Flutter Web client)
+Required for: the `format-dart` and `format-verify-dart` gates, which run `dart format` over the
+tracked `*.dart` files. No Nx project in this workspace is a Dart project today — the Dart sources
+are AyoKoding course corpora under `apps/ayokoding-www/content/`. `rhino-cli doctor` still checks
+`flutter` at full scope, so the tool must be present for a clean doctor run.
 
 ## 10.1 Install Flutter (includes Dart)
 
@@ -19,10 +22,10 @@ brew install --cask flutter
 # Or manual install: https://docs.flutter.dev/get-started/install
 ```
 
-Flutter bundles the Dart SDK. The minimum Dart SDK version is in `apps/beavernest-app/pubspec.yaml` under `environment.sdk`.
+Flutter bundles the Dart SDK. The Flutter version this repository pins is in
+[`.fvmrc`](../../../../.fvmrc); CI installs that same version.
 
 **Success criteria**: `flutter --version` and `dart --version` both return version strings.
-Dart version >= the pubspec constraint.
 
 ## 10.2 Enable Flutter Web
 
@@ -30,5 +33,8 @@ Dart version >= the pubspec constraint.
 flutter config --enable-web
 flutter doctor
 ```
+
+Enabling web keeps a local toolchain matching CI's Flutter setup, so a Dart or Flutter project added
+later needs no extra local step.
 
 **Success criteria**: `flutter doctor` shows no critical issues for web development.

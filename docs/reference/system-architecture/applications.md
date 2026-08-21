@@ -123,32 +123,6 @@ The platform consists of the following applications across its technology stacks
   - Hexagonal DDD architecture with 5 bounded contexts
   - OpenAPI 3.1 contract-first development (planned)
 
-### BeaverNest Applications
-
-#### beavernest-be
-
-- **Purpose**: Combined BeaverNest runtime — same-origin REST API and static host for the
-  Flutter Web client, served from a single container image
-- **Technology**: F# + Giraffe + ASP.NET 10 + SQLite
-- **Build Command**: `nx build beavernest-be`
-- **Dev Command**: `nx dev beavernest-be` (loopback dev port 19320)
-- **Runtime Port**: 19300 (combined image)
-- **Location**: `apps/beavernest-be/`
-- **Features**:
-  - Coverlet code coverage enforcement (>=90%)
-  - Production Dockerfile builds both the F# API and the Flutter Web client in one multi-stage image
-  - No production branch yet — CI runs on a schedule only; deployment is deferred
-
-#### beavernest-app
-
-- **Purpose**: Flutter Web client for BeaverNest, built into `beavernest-be`'s combined image
-- **Technology**: Flutter Web + Dart
-- **Build Command**: `nx build beavernest-app`
-- **Quality Command**: `nx run beavernest-app:test:quick`
-- **Location**: `apps/beavernest-app/`
-- **Runtime**: Uses relative same-origin API routes and is hosted by `beavernest-be`; it has no
-  standalone development server
-
 ### E2E Test Suites (Playwright)
 
 #### ose-www-fe-e2e
@@ -206,22 +180,6 @@ The platform consists of the following applications across its technology stacks
 - **Technology**: Playwright
 - **Run Command**: `nx run organiclever-be-e2e:test:e2e`
 - **Location**: `apps/organiclever-be-e2e/`
-
-#### beavernest-app-e2e
-
-- **Purpose**: Browser E2E tests for the beavernest-app Flutter Web UI, run against a disposable
-  combined-runtime container
-- **Technology**: Playwright
-- **Run Command**: `nx run beavernest-app-e2e:test:e2e`
-- **Location**: `apps/beavernest-app-e2e/`
-
-#### beavernest-be-e2e
-
-- **Purpose**: End-to-end tests for the beavernest-be REST API, run against a disposable
-  combined-runtime container
-- **Technology**: Playwright
-- **Run Command**: `nx run beavernest-be-e2e:test:e2e`
-- **Location**: `apps/beavernest-be-e2e/`
 
 ## C4 Level 2: Container Diagram
 

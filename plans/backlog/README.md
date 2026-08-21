@@ -76,8 +76,8 @@ two-pager — both arrived plan-ready, with the defect reproduced and the fix de
   two of eleven enforced exemptions, its scope clause cannot be evaluated, and the ordinal convention
   contradicts its own worked example.
 
-**Follow-ups from `update-harness-support`** (filed 2026-08-19 by that plan's Knowledge Capture
-phase, which routes code-bearing learnings straight to a backlog plan — both arrived plan-ready, with
+**Follow-up from `update-harness-support`** (filed 2026-08-19 by that plan's Knowledge Capture
+phase, which routes code-bearing learnings straight to a backlog plan — it arrived plan-ready, with
 each defect observed and its fix designed):
 
 - [harness-mirror-and-test-isolation-defects](./harness-mirror-and-test-isolation-defects/README.md)
@@ -85,10 +85,6 @@ each defect observed and its fix designed):
   an agent named `README`, `rhino-cli`'s generate smoke tests share one process working directory so
   adding a test flakes a sibling, and 47 dangling anchors sat unmeasured under `.claude/skills/`
   while a prefix-keyed link exemption hid them.
-- [ci-workflow-scope-and-build-resilience](./ci-workflow-scope-and-build-resilience/README.md) — a
-  red check whose cause is outside the diff: `repo-config.yml` in an app workflow's `paths:` filter
-  drags a full BeaverNest pipeline onto every governance PR, two CI network fetches retry never and
-  are bounded only by the job timeout, and a seven-case assertion fails without naming its case.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
