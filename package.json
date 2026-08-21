@@ -27,7 +27,6 @@
     "dev:ayokoding-www": "docker compose -f infra/dev/ayokoding-www/docker-compose.yml up --build",
     "dev:ose-www": "docker compose -f infra/dev/ose-www/docker-compose.yml up --build",
     "dev:organiclever": "docker compose --env-file infra/dev/organiclever-app/.env -f infra/dev/organiclever-app/docker-compose.yml up --build",
-    "beavernest:dev": "docker compose -f infra/dev/beavernest-app/docker-compose.yml up --build",
     "generate:bindings": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate",
     "sync:agents": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",
     "sync:skills": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",

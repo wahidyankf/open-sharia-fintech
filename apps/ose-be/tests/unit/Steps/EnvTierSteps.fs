@@ -6,8 +6,8 @@ open TickSpec
 // bind the Gherkin steps for the spec coverage validator; the actual loader
 // behavior is exercised directly against the production code (this app's
 // thin `loadEnvTier` wrapper) in Tests/EnvTierTests.fs. Same no-op-step
-// pattern as the sibling `organiclever-be` / `beavernest-be` backends' env-
-// tier step files — all three backends delegate their loader rules to
+// pattern as the sibling `organiclever-be` backend's env-tier step file —
+// both backends delegate their loader rules to
 // `libs/fsharp-env-loader`, whose own comprehensive suite covers the pure
 // logic once; each app's Tests/EnvTierTests.fs @covers-tagged facts verify
 // only that this app's wrapper resolves its own composition root correctly.

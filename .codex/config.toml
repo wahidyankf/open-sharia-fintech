@@ -100,14 +100,6 @@ config_file = "agents/apps-ayokoding-www-primer-fixer.toml"
 description = "Creates Primer (\"Just Enough X\") tutorial content for ayokoding-web — fast language/tool on-ramps with 75-85 heavily annotated code examples authored at By-Example pace, scoped to just-enough breadth for productive use rather than comprehensive language coverage. Ensures bilingual content and quality compliance."
 config_file = "agents/apps-ayokoding-www-primer-maker.toml"
 
-[agents.apps-beavernest-app-deployer]
-description = "Triggers and monitors the scheduled beavernest-app-test-local-deploy-stag.yml GitHub Actions workflow, which validates the beavernest-app Flutter Web client (lint, widget, and browser E2E checks against a disposable combined-runtime container). No staging or production deploy target is provisioned yet — the workflow tests only and never pushes a stag branch. Deployment is deferred to a future plan."
-config_file = "agents/apps-beavernest-app-deployer.toml"
-
-[agents.apps-beavernest-be-deployer]
-description = "Triggers and monitors the scheduled beavernest-app-test-local-deploy-stag.yml GitHub Actions workflow, which validates the beavernest-be F#/Giraffe backend (integration tests against Dockerfile.integration, plus BE E2E against a disposable combined-runtime container). No staging or production deploy target is provisioned yet — the workflow tests only and never pushes a stag branch. Deployment is deferred to a future plan."
-config_file = "agents/apps-beavernest-be-deployer.toml"
-
 [agents.apps-organiclever-app-web-deployer]
 description = "Deploys the OrganicLever app group to staging via the scheduled organiclever-app-test-local-deploy-stag.yml GitHub Actions workflow. The workflow runs the full local-stack test suite, then force-pushes the stag-organiclever-app-web and stag-organiclever-be branches. Vercel listens to stag-organiclever-app-web for automatic builds. Production promotion is deferred — no production-CD workflow exists yet."
 config_file = "agents/apps-organiclever-app-web-deployer.toml"

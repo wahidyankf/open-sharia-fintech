@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <!-- Pinned explicitly to match every consumer's own pin (e.g.
-         apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj): without this, a clean restore
+         apps/ose-be/src/OseBe/OseBe.fsproj): without this, a clean restore
          can resolve a newer floor than 10.1.302 for this project alone, which NuGet then reports
          as a package downgrade once a consumer's own pinned-down 10.1.302 enters the graph via
          ProjectReference. -->

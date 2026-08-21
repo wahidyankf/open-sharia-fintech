@@ -33,8 +33,6 @@ all use the same MIT text.
 | ---------------------------- | ------- | ----- |
 | `LICENSE` (root)             | MIT     |       |
 | `apps/ayokoding-www/`        | MIT     |       |
-| `apps/beavernest-app/`       | MIT     |       |
-| `apps/beavernest-be/`        | MIT     |       |
 | `apps/crane-cli/`            | MIT     |       |
 | `apps/organiclever-app-web/` | MIT     |       |
 | `apps/organiclever-be/`      | MIT     |       |

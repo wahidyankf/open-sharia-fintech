@@ -13,9 +13,14 @@ full-story hardening), Phase 7 (Knowledge Capture), and Phase 8 (archival, plus 
 — Phases 4-6 had already reached `beaver-nest`'s `main` by direct push before this plan stalled, so
 no PR #3 ever opened, the PR-review cycles never ran against it, and the branch and worktrees behind
 it are gone. This disposition closes the plan rather than resuming it: its remaining real work —
-picking BeaverNest's first stateful product feature — is already represented by the carried
-[`beavernest-persistence-layer`](../../ideas/q4-not-urgent-not-important/beavernest-persistence-layer.md)
-idea brief, so nothing is lost by stopping here.
+picking BeaverNest's first stateful product feature — was represented by the carried
+`beavernest-persistence-layer` idea brief, so nothing is lost by stopping here.
+
+**Superseded 2026-08-21.** BeaverNest left this repository for
+[`beaver-nest`](https://github.com/wahidyankf/beaver-nest); the `beavernest-*` apps, specs, dev
+stack, and the `beavernest-persistence-layer` brief were all removed here. This plan is retained
+only as a record of what ran while BeaverNest lived in `ose-public`. See
+[Related Repositories](../../../docs/reference/related-repositories.md#beavernest-moved-out).
 
 > The body below is retained verbatim as a historical record of what this plan targeted while it
 > executed inside `beaver-nest`, before the port and rename — it still says `beaver-nest-be`/

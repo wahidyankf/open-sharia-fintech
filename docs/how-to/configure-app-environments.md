@@ -101,9 +101,8 @@ Next.js auto-loading these files alongside an explicit `.env.local` tier file is
 
 ### F# backends
 
-All three F# backends (`ose-be`, `organiclever-be`, `beavernest-be`) use the same loader shape,
-in `Contexts/**/Infrastructure/EnvTier.fs` (`ose-be`, `organiclever-be`) or
-`Infrastructure/EnvTierLoader.fs` (`beavernest-be`). `loadEnvTier()` reads `.env.<tier>` line by
+Both F# backends (`ose-be`, `organiclever-be`) use the same loader shape, in
+`Contexts/**/Infrastructure/EnvTier.fs`. `loadEnvTier()` reads `.env.<tier>` line by
 line, applying each `KEY=VALUE` pair to the process environment only when that key is not already
 set (rule 3), and does nothing if no matching tier file is found in any of its search directories
 (rule 4).
@@ -121,18 +120,9 @@ let main args =
     // ...
 ```
 
-### Flutter Web
-
-`beavernest-app` is the approved future-multiplatform app exception and currently targets Flutter
-Web. It has no `.env.*` files or `APP_ENV` loader: the deployed browser client calls only relative,
-same-origin API routes, while environment-dependent runtime configuration belongs to
-`beavernest-be`. Its Flutter toolchain is pinned in [`.fvmrc`](../../.fvmrc), and its production
-output is built into the combined backend image rather than served by a standalone development
-server.
-
 ### Playwright e2e
 
-All 13 `apps/*-e2e/playwright.config.ts` files pin the tier deterministically, right after the
+All 11 `apps/*-e2e/playwright.config.ts` files pin the tier deterministically, right after the
 `playwright-bdd` import:
 
 ```typescript

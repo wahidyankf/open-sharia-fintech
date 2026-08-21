@@ -11,18 +11,16 @@ created: 2026-08-14
 
 # Web Sites
 
-| App                  | Domain                                                   | Port  | Prod Branch                 |
-| -------------------- | -------------------------------------------------------- | ----- | --------------------------- |
-| ose-www              | [oseplatform.com](https://oseplatform.com)               | 3100  | `prod-ose-www`              |
-| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                   | 3101  | `prod-ayokoding-www`        |
-| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)    | 3200  | `prod-organiclever-www`     |
-| organiclever-app-web | TBD                                                      | 3202  | `prod-organiclever-app-web` |
-| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)        | 3201  | `prod-wahidyankf-www`       |
-| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300  | `prod-ose-app-web` (TBD)    |
-| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302  | —                           |
-| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202  | —                           |
-| beavernest-app       | TBD (Flutter Web, same-origin combined runtime)          | 19300 | —                           |
-| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
+| App                  | Domain                                                   | Port | Prod Branch                 |
+| -------------------- | -------------------------------------------------------- | ---- | --------------------------- |
+| ose-www              | [oseplatform.com](https://oseplatform.com)               | 3100 | `prod-ose-www`              |
+| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                   | 3101 | `prod-ayokoding-www`        |
+| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)    | 3200 | `prod-organiclever-www`     |
+| organiclever-app-web | TBD                                                      | 3202 | `prod-organiclever-app-web` |
+| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)        | 3201 | `prod-wahidyankf-www`       |
+| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300 | `prod-ose-app-web` (TBD)    |
+| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302 | —                           |
+| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202 | —                           |
 
 ## Overriding a port
 
@@ -30,17 +28,16 @@ Every app in the table above resolves its listener port the same way: an explici
 then the app's prefixed variable, then the default shown. A malformed value fails at startup rather
 than falling back silently.
 
-| App                  | Variable                         |
-| -------------------- | -------------------------------- |
-| ose-www              | `OSE_WWW_PORT`                   |
-| ayokoding-www        | `AYOKODING_WWW_PORT`             |
-| organiclever-www     | `ORGANICLEVER_WWW_PORT`          |
-| wahidyankf-www       | `WAHIDYANKF_WWW_PORT`            |
-| organiclever-app-web | `ORGANICLEVER_APP_WEB_PORT`      |
-| ose-app-web          | `OSE_APP_WEB_PORT`               |
-| organiclever-be      | `ORGANICLEVER_BE_PORT`           |
-| ose-be               | `OSE_BE_PORT`                    |
-| beavernest-be        | `BEAVERNEST_BE_HTTP_LISTEN_PORT` |
+| App                  | Variable                    |
+| -------------------- | --------------------------- |
+| ose-www              | `OSE_WWW_PORT`              |
+| ayokoding-www        | `AYOKODING_WWW_PORT`        |
+| organiclever-www     | `ORGANICLEVER_WWW_PORT`     |
+| wahidyankf-www       | `WAHIDYANKF_WWW_PORT`       |
+| organiclever-app-web | `ORGANICLEVER_APP_WEB_PORT` |
+| ose-app-web          | `OSE_APP_WEB_PORT`          |
+| organiclever-be      | `ORGANICLEVER_BE_PORT`      |
+| ose-be               | `OSE_BE_PORT`               |
 
 ```bash
 nx dev ose-www --port=4000          # flag

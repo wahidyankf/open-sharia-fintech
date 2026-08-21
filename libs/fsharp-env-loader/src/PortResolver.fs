@@ -4,17 +4,13 @@ open System
 open System.Globalization
 
 /// The repo-wide runtime port contract for this repo's F# backends (`ose-be`,
-/// `organiclever-be`, `beavernest-be`). Mirrors the sibling TypeScript
-/// resolver at `libs/ts-env-loader/src/port-resolver.ts` (`resolvePort`), so a
-/// TypeScript service and an F# service accept and reject exactly the same
-/// port values.
+/// `organiclever-be`). Mirrors the sibling TypeScript resolver at
+/// `libs/ts-env-loader/src/port-resolver.ts` (`resolvePort`), so a TypeScript
+/// service and an F# service accept and reject exactly the same port values.
 ///
 /// Mirrored: the three-tier precedence below, the grammar of a valid port
 /// (plain decimal digits, 1-65535), blank-falls-through, and
-/// fail-loudly-on-malformed. Not mirrored: the exact error wording, and
-/// `beavernest-be`, which owns the env-var and default tiers in its own
-/// `HttpConfiguration.parse` (under the same grammar) and uses this module for
-/// the flag tier alone.
+/// fail-loudly-on-malformed. Not mirrored: the exact error wording.
 ///
 /// Precedence, highest first:
 ///   1. CLI flag  — an explicit `--port` passed at start time, in either
@@ -36,7 +32,7 @@ open System.Globalization
 /// The environment is read through a caller-supplied `readEnvironment`
 /// function rather than `Environment.GetEnvironmentVariable` directly, so the
 /// unit suite can drive every scenario without touching the real process
-/// environment — the same seam `BeaverNestBe.Domain.HttpConfiguration` uses.
+/// environment.
 module PortResolver =
 
     /// Lowest legal TCP port. Port 0 means "let the OS choose", which is never
@@ -120,9 +116,8 @@ module PortResolver =
     /// development service to the local network, while binding loopback inside a container makes
     /// the service unreachable from outside it — the published port would connect to nothing.
     ///
-    /// `DOTNET_RUNNING_IN_CONTAINER` is the same signal
-    /// `BeaverNestBe.Domain.HttpConfiguration` already gates its own wildcard guard on, and the
-    /// official `mcr.microsoft.com/dotnet/aspnet` images set it to "true" themselves.
+    /// `DOTNET_RUNNING_IN_CONTAINER` is the signal this guard reads, and the official
+    /// `mcr.microsoft.com/dotnet/aspnet` images set it to "true" themselves.
     let listenUrl (readEnvironment: string -> string) (port: int) : string =
         let host =
             match readEnvironment "DOTNET_RUNNING_IN_CONTAINER" with

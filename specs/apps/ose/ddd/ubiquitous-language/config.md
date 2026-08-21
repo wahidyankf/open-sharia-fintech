@@ -16,7 +16,7 @@ and that check is unchanged by this context.
 
 The tier-resolution, tier-file-selection, and process-env-wins rules themselves live in the shared
 `libs/fsharp-env-loader` library (`FsharpEnvLoader.EnvTier`), consumed via `ProjectReference` by every
-F# backend in this repo (`ose-be`, `organiclever-be`, `beavernest-be`); this bounded context is a thin
+F# backend in this repo (`ose-be`, `organiclever-be`); this bounded context is a thin
 wrapper that supplies its own composition-root search directories.
 
 ## Term index

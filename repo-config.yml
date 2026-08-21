@@ -214,19 +214,6 @@ coverage:
       levels: [unit, integration]
       specs: "specs/apps/crane/behavior/cli/**"
 
-    # beavernest domain
-    - name: beavernest-be
-      levels: [unit, integration]
-      specs: "specs/apps/beavernest/behavior/beavernest-be/gherkin/**"
-    - name: beavernest-be-e2e
-      levels: [e2e]
-      specs: "specs/apps/beavernest/behavior/beavernest-be/gherkin/**"
-    - name: beavernest-app
-      levels: [unit]
-      specs: "specs/apps/beavernest/behavior/beavernest-app/gherkin/**"
-    - name: beavernest-app-e2e
-      levels: [e2e]
-      specs: "specs/apps/beavernest/behavior/beavernest-app/gherkin/**"
 
     # libs
     - name: web-ui
@@ -423,20 +410,6 @@ env-contract:
         - WAHIDYANKF_WWW_PORT
         - HOSTNAME
 
-    - root: apps/beavernest-be
-      kind: app
-      lang: fsharp
-      allowlist:
-        # Consumed only by the shell wrapper / Compose stack, not the F# host
-        # process directly (readEnvironment reads only the 4 keys below).
-        - BEAVERNEST_BE_DEVELOPMENT_DATA_DIRECTORY
-        - BEAVERNEST_BE_HOST_DATA_DIRECTORY
-        - BEAVERNEST_BE_VPN_HOST_IP
-        - BEAVERNEST_BE_PUBLIC_PORT
-        - BEAVERNEST_BE_BACKUP_DIRECTORY
-        # Tier-selection control var (which .env.<tier> file to load), not an
-        # app config value — same treatment as PORT/HOSTNAME for the TS apps.
-        - APP_ENV
 
 env-injection:
   # Value-less injection contract (extends env-contract:).
@@ -479,9 +452,6 @@ env-injection:
     - app: ose-be
       keys-from: apps/ose-be/.env.example
       runtime: { local-ci: compose, staging: k3s-coralpolyp }
-    - app: beavernest-be
-      keys-from: apps/beavernest-be/.env.example
-      runtime: { local-ci: compose }
 
   # CI test-harness keys — test-only, NEVER in any apps/<app>/.env.example.
   ci-harness:

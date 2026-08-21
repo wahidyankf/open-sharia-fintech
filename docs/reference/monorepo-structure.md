@@ -99,10 +99,6 @@ Flat structure - all apps at the same level, no subdirectories.
 - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
 - `wahidyankf-www` - Personal portfolio website (Next.js 16 application, port 3201)
 - `wahidyankf-www-fe-e2e` - Playwright FE E2E tests for wahidyankf-www
-- `beavernest-be` - BeaverNest F#/Giraffe/ASP.NET combined runtime; serves the Flutter Web client and same-origin API from port 19300 (Nx dev loopback 19320)
-- `beavernest-be-e2e` - Playwright BE E2E tests for beavernest-be
-- `beavernest-app` - BeaverNest Flutter Web client, built into the combined runtime
-- `beavernest-app-e2e` - Playwright browser E2E tests for beavernest-app
 
 ### App Structure (Next.js Application — ose-www)
 

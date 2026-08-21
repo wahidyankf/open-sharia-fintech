@@ -12,7 +12,6 @@
 | OrganicLever's public presence               | [organiclever-www](./organiclever-www/README.md)                                                            | Marketing website for the OrganicLever productivity platform.            |
 | OrganicLever's life journal                  | [organiclever-app-web](./organiclever-app-web/README.md) and [organiclever-be](./organiclever-be/README.md) | Local-first journal and productivity tracker, with its REST API backend. |
 | Wahidyan Kresna Fridayoka's site             | [wahidyankf-www](./wahidyankf-www/README.md)                                                                | Personal portfolio, CV, and projects site.                               |
-| BeaverNest                                   | [beavernest-app](./beavernest-app/README.md) and [beavernest-be](./beavernest-be/README.md)                 | Combined, same-origin BeaverNest runtime (Flutter Web client + F# API).  |
 
 ## Tools
 
@@ -33,7 +32,6 @@ End-to-end projects keep browser and API behavior separate from the application 
 | OrganicLever public website      | [organiclever-www-fe-e2e](./organiclever-www-fe-e2e/README.md)   | [organiclever-www-be-e2e](./organiclever-www-be-e2e/README.md) |
 | OrganicLever product             | [organiclever-app-web-e2e](./organiclever-app-web-e2e/README.md) | [organiclever-be-e2e](./organiclever-be-e2e/README.md)         |
 | Wahidyan Kresna Fridayoka's site | [wahidyankf-www-fe-e2e](./wahidyankf-www-fe-e2e/README.md)       | —                                                              |
-| BeaverNest                       | [beavernest-app-e2e](./beavernest-app-e2e/README.md)             | [beavernest-be-e2e](./beavernest-be-e2e/README.md)             |
 
 ## Work with an app
 
@@ -53,8 +51,7 @@ Apps are independently runnable projects. They can use shared code from [`libs/`
 
 - `[domain]-www` is a public website.
 - `[domain]-app-web` is a product web client.
-- `[domain]-app` is an approved future-multiplatform product client; `beavernest-app` currently
-  targets Flutter Web.
+- `[domain]-app` is an approved future-multiplatform product client (none in this workspace today).
 - `[domain]-be` is a product backend.
 - `*-e2e` is an end-to-end test project for a named surface.
 

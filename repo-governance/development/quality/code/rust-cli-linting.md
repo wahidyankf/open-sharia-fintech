@@ -42,6 +42,6 @@ nx run rhino-cli:lint
 cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings
 ```
 
-Other backends are linted by their own language toolchains, not Clippy — `organiclever-be`,
-`ose-be`, and `beavernest-be` are F#, and use the F# analyzers described in this directory's
-formatter and hook documents.
+Other backends are linted by their own language toolchains, not Clippy — `organiclever-be` and
+`ose-be` are F#, and use the F# analyzers described in this directory's formatter and hook
+documents.

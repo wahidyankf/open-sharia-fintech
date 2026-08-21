@@ -97,7 +97,7 @@ that upstream blocker and these two images start failing the same way the other 
 In scope: making all six Next.js images build again, and adding whatever gate keeps them building.
 
 Out of scope (for now): the two-app resident-process doubling covered by its own brief; changing the
-runtime port contract PR #230 established; publishing these images anywhere new; the F#/`beavernest`
+runtime port contract PR #230 established; publishing these images anywhere new; the F# backend
 Dockerfiles, which do no workspace grafting and are unaffected.
 
 ## Risks & open questions

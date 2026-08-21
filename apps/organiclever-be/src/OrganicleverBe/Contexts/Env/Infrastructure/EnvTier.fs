@@ -8,7 +8,7 @@ open System.IO
 /// opened by an AI agent while `.env.local`/`.env.test` stay agent-readable.
 /// The loader rules themselves (tier resolution, process-env-wins,
 /// missing-file tolerance) live in `FsharpEnvLoader.EnvTier`, shared with the
-/// sibling `ose-be` / `beavernest-be` backends.
+/// sibling `ose-be` backend.
 module Infrastructure =
 
     /// Loads `.env.<APP_ENV>` per the repo's tiered env-file convention.

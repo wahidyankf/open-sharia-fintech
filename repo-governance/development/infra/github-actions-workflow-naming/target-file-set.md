@@ -37,13 +37,12 @@ canonical set, organized by tier:
 
 ## app tier — callers of `_reusable-app-test-local-deploy-stag.yml` / `_reusable-app-test-stag.yml`
 
-| Filename                                      | Domain             | Force-pushes                                                                                                                        |
-| --------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `organiclever-app-test-local-deploy-stag.yml` | `organiclever-app` | `stag-organiclever-app-web` + `stag-organiclever-be`                                                                                |
-| `organiclever-app-test-stag.yml`              | `organiclever-app` | (stops on pass — prod CD deferred)                                                                                                  |
-| `ose-app-test-local-deploy-stag.yml`          | `ose-app`          | `stag-ose-app-web` + `stag-ose-be`                                                                                                  |
-| `ose-app-test-stag.yml`                       | `ose-app`          | (stops on pass — prod CD deferred)                                                                                                  |
-| `beavernest-app-test-local-deploy-stag.yml`   | `beavernest-app`   | none provisioned (mirrors the reusable's non-deploy stages directly rather than calling it — see the workflow's own header comment) |
+| Filename                                      | Domain             | Force-pushes                                         |
+| --------------------------------------------- | ------------------ | ---------------------------------------------------- |
+| `organiclever-app-test-local-deploy-stag.yml` | `organiclever-app` | `stag-organiclever-app-web` + `stag-organiclever-be` |
+| `organiclever-app-test-stag.yml`              | `organiclever-app` | (stops on pass — prod CD deferred)                   |
+| `ose-app-test-local-deploy-stag.yml`          | `ose-app`          | `stag-ose-app-web` + `stag-ose-be`                   |
+| `ose-app-test-stag.yml`                       | `ose-app`          | (stops on pass — prod CD deferred)                   |
 
 ## Backend build-deploy (triggered on push to `stag-*-be`)
 
