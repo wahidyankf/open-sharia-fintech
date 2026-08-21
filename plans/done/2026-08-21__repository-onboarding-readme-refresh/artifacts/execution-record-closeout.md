@@ -185,6 +185,66 @@ detector was then proven against a planted positive outside the repository. Same
 `\y`-word-boundary and unquoted-`$var` traps this plan hit earlier: the tooling reported success for
 a question it had not been asked.
 
+## P9-008 — PR Classification and Route
+
+**Classified: static work.** `P9-008` branches on whether the PR carries executable work. It does
+not. Every one of the 46 paths ends in `.md`, `.png`, or `.txt`, and
+`nx show projects --affected --uncommitted` returns **0** of 33 projects. The classifying check was
+run as a negative with a control: filtering the diff for any path _not_ matching
+`\.(md|png|txt)$` returns nothing, while the same filter inverted returns 34 Markdown paths.
+
+Under `AGENTS.md` § Delivery Mode — "Executable work runs CI-gated review cycles; static work needs
+a green `pr-quality-gate.yml`" — the route is a green quality gate, not a code M/H/C review cycle.
+The seven-cycle clause governs eligible work and does not apply.
+
+## P9-012 — Merged Status of Every Plan-Created Branch
+
+Proven with `gh pr list --head <branch>`, not with `merge-base --is-ancestor`. Squash-merge rewrites
+history here, so an ancestry test false-negatives on every merged PR in this repository.
+
+| Branch                                          | PR(s)    | State          |
+| ----------------------------------------------- | -------- | -------------- |
+| `worktree/repository-onboarding-readme-refresh` | 236      | MERGED         |
+| `docs/repository-onboarding-contract`           | 237, 147 | MERGED, MERGED |
+| `docs/repository-onboarding-public`             | 238      | MERGED         |
+| `docs/repository-onboarding-corrections`        | 239      | MERGED         |
+| `docs/repository-onboarding-corrections-02`     | 240      | MERGED         |
+| `docs/repository-onboarding-closeout`           | 241      | this unit      |
+
+`docs/repository-onboarding-contract` returns two PRs because an earlier, unrelated PR 147 used the
+same branch name. Both are merged, so the branch still carries no unmerged work — but it is the
+reason the query was run per branch rather than per PR.
+
+## P9-014 — Temporary Artifacts
+
+Docker is fully clean, and that is a measurement rather than a daemon-down false zero:
+`docker info` reports server 29.7.2 with `containers=0 images=0`. All four Phase 5B listings
+(containers, images, networks, volumes) are byte-identical between the pre-phase baseline and the
+post-phase re-run, so the disposable `ubuntu:24.04` container and its image were both removed and
+nothing pre-existing was touched.
+
+`local-tmp/` went from 37 entries to 1 (`.gitkeep`). Every removed entry was dated 2026-08-20 or
+2026-08-21 — this plan's own session — and `AGENTS.md` classifies the tree as sweepable
+("regenerate, never protect"). Every outcome those files held had already been copied forward in
+sanitized form into this record.
+
+### The generated-reports sweep removed three files it should not have
+
+`generated-reports/` held twelve `plan__*` audit files, and the first sweep deleted all twelve.
+**Three of them were tracked**, dated 2026-08-13, and belonged to an earlier plan entirely — they
+showed up immediately as ` D` entries in `git status` and were restored with
+`git checkout -- generated-reports/`. The tree is clean and all three files are back on disk.
+
+The mistake was reading a filename prefix as ownership. `plan__*` is the shared naming scheme for
+every plan's audit output, not a marker of _this_ plan's output, and nine of the twelve happened to
+be mine only because I had generated them the previous day. The check that would have prevented it
+is one command — `git ls-files generated-reports/` returns exactly the three tracked files — and it
+was run after the deletion rather than before.
+
+`P9-014`'s own acceptance names the principle the sweep violated: "shared caches, preexisting
+images, and unrelated artifacts are untouched." Recorded here because the deletion happened, was
+caught, and was reverted — not because it was harmless.
+
 ## Phases 4, 5, and 7 — Verification Program (sanitized, copied forward)
 
 The authoritative rows live in a gitignored local record that also holds process IDs and temporary
