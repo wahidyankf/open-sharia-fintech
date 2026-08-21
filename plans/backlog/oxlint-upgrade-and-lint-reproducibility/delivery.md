@@ -13,6 +13,9 @@
       Acceptance: both print the same version.
 - [ ] [AI] Record the current latest published oxlint via `npm view oxlint version`, with the publish
       timestamp from `npm view oxlint time --json`. Acceptance: both figures written to the plan.
+- [ ] [AI] Re-run the Three-Path classification in `tech-docs.md` §5 against the execution date's
+      60-day cutoff (`npm view oxlint time --json`). Acceptance: the eligible Path B version (or a
+      documented Path C waiver) is written to `tech-docs.md`, replacing the authoring-time snapshot.
 - [ ] [AI] Run every affected lint target on the current pin and record exit codes. Acceptance: a
       baseline table exists; any already-failing target is resolved before Phase 1 begins.
 - [ ] [AI] Confirm `apps/ose-www/src/features/search/shell/search-dialog.tsx` still contains the
@@ -47,6 +50,12 @@
       Acceptance: the complete finding list is recorded, per site, with counts.
 - [ ] [AI] Triage each finding: fix, or disable in `oxlint.json` with a stated reason.
       Acceptance: the number of findings with no written disposition is zero.
+- [ ] [AI] Clear the Phase 0 candidate version against NVD, GitHub Advisories, Snyk, oxlint's own
+      security page, and CISA KEV per the
+      [CVE Clearance Process](../../../repo-governance/development/workflow/dependency-bump-policy/cve-clearance-process.md);
+      record the final `CLEAR`/`CLEAR (patch-of)`/`WAIVER`/`FUNCTIONAL-HOLD` status in the
+      `tech-docs.md` Security Clearance Status table before the manifest edit. Acceptance: the
+      `PENDING` placeholder is replaced with one of the four allowed statuses.
 - [ ] [AI] Raise the pin in `ose-public`'s root `package.json`. Acceptance: `npm install` succeeds and
       `./node_modules/.bin/oxlint --version` prints the intended version.
 - [ ] [AI] Raise the pin identically in `ose-private`. Acceptance: both repos print the same version.

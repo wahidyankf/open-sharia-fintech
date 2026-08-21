@@ -33,6 +33,8 @@ all use the same MIT text.
 | ---------------------------- | ------- | ----- |
 | `LICENSE` (root)             | MIT     |       |
 | `apps/ayokoding-www/`        | MIT     |       |
+| `apps/beavernest-app/`       | MIT     |       |
+| `apps/beavernest-be/`        | MIT     |       |
 | `apps/crane-cli/`            | MIT     |       |
 | `apps/organiclever-app-web/` | MIT     |       |
 | `apps/organiclever-be/`      | MIT     |       |
@@ -40,9 +42,12 @@ all use the same MIT text.
 | `apps/ose-be/`               | MIT     |       |
 | `apps/ose-app-web/`          | MIT     |       |
 | `apps/ose-www/`              | MIT     |       |
+| `apps/rhino-cli/`            | MIT     |       |
 | `apps/wahidyankf-www/`       | MIT     |       |
 | `specs/`                     | MIT     |       |
 | `libs/fsharp-crane-core/`    | MIT     |       |
+| `libs/fsharp-env-loader/`    | MIT     |       |
+| `libs/ts-env-loader/`        | MIT     |       |
 | `libs/web-ui/`               | MIT     |       |
 | `libs/web-ui-token/`         | MIT     |       |
 
@@ -53,8 +58,8 @@ Any third-party code that is vendored or archived retains its original license (
 The root `LICENSE` file is MIT. It covers any code or content not covered by a more specific
 per-directory LICENSE file, including:
 
-- Internal CLI tools without their own LICENSE file (e.g., `apps/rhino-cli/`)
-- E2E test suites (`apps/*-e2e/`)
+- E2E test suites (`apps/*-e2e/`) — the only directories currently without a per-directory
+  LICENSE file; every internal CLI tool (`apps/crane-cli/`, `apps/rhino-cli/`) now carries one
 - Documentation (`docs/`, `repo-governance/`, `plans/`)
 - AI agent configuration (`.claude/`, `.opencode/`)
 

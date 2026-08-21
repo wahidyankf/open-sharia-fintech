@@ -9,6 +9,7 @@ skills:
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - docs-applying-content-quality
+  - repo-applying-maker-checker-fixer
 ---
 
 # Specs Fixer Agent

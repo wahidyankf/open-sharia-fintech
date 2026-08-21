@@ -293,7 +293,7 @@ fn list_governance_markdown(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec
                 n.ends_with(".md") && n != "README.md"
             })
         })
-        .filter(|p| !is_split_child(p))
+        .filter(|p| !is_split_child(fs, p))
         .map(|p| p.to_string_lossy().to_string())
         .collect();
     files.sort();
@@ -303,26 +303,39 @@ fn list_governance_markdown(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec
 /// Reports whether `path` is a progressive-disclosure split child.
 ///
 /// Splitting a governance document produces `<name>.md` (the parent, which
-/// keeps the traceability headings) plus a `<name>/` directory of `NN-<slug>.md`
-/// children indexed by a sibling `README.md`. A child carries one section of
-/// the parent and structurally cannot repeat the parent's
+/// keeps the traceability headings) plus a `<name>/` directory of children
+/// indexed by a sibling `README.md`. A child carries one section of the parent
+/// and structurally cannot repeat the parent's
 /// `## Principles Implemented/Respected` / `## Conventions Implemented/Respected`
 /// / `## Vision Supported` headings, so requiring them of every child would
 /// make the audit report thousands of unfixable findings. The parent is still
 /// checked — the requirement is enforced exactly once per document.
-fn is_split_child(path: &Path) -> bool {
-    let Some(name) = path.file_name().map(|n| n.to_string_lossy().to_string()) else {
+///
+/// A child is recognised by its *position*, not its filename: it sits in a
+/// directory that both carries a `README.md` index and has a same-named
+/// sibling parent document. An earlier version keyed off an `NN-` filename
+/// prefix, but `repo-governance/conventions/structure/ordinal-filename-prefixes.md`
+/// strips that prefix from every split child that is not a real step in an
+/// ordered sequence, so the prefix test silently stopped matching most of the
+/// corpus and the category reported thousands of false positives.
+fn is_split_child(fs: &dyn Fs, path: &Path) -> bool {
+    let Some(dir) = path.parent() else {
         return false;
     };
-    let numbered = name.len() > 3
-        && name.as_bytes()[0].is_ascii_digit()
-        && name.as_bytes()[1].is_ascii_digit()
-        && name.as_bytes()[2] == b'-';
-    if !numbered {
+    if !is_file(fs, &dir.join("README.md")) {
         return false;
     }
-    path.parent()
-        .is_some_and(|dir| dir.join("README.md").is_file())
+    let (Some(dir_name), Some(grandparent)) = (dir.file_name(), dir.parent()) else {
+        return false;
+    };
+    let mut parent_doc = dir_name.to_os_string();
+    parent_doc.push(".md");
+    is_file(fs, &grandparent.join(parent_doc))
+}
+
+/// Reports whether `path` exists and is a regular file (not a directory).
+fn is_file(fs: &dyn Fs, path: &Path) -> bool {
+    fs.exists(path) && !fs.is_dir(path)
 }
 
 #[cfg(test)]
@@ -362,6 +375,48 @@ mod tests {
             "only the parent may be flagged, got {findings:?}"
         );
         assert!(findings[0].path.ends_with("principles/p.md"));
+    }
+
+    #[test]
+    fn plain_kebab_case_split_children_are_exempt() {
+        // Regression: the Ordinal Filename Prefixes Convention strips the `NN-`
+        // prefix from split children that are not real steps, so a positional
+        // test — not a filename test — decides exemption.
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path().join("repo-governance/conventions/c.md"),
+            "# C\n\n## Principles Implemented/Respected\n\nx\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/conventions/c/README.md"),
+            "# C\n\n- [One](./one.md) — x\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/conventions/c/one.md"),
+            "# One\n\nno heading here\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert!(findings.is_empty(), "got {findings:?}");
+    }
+
+    #[test]
+    fn document_in_an_indexed_category_dir_without_a_parent_doc_is_still_checked() {
+        // A category directory carries a README.md index but no same-named
+        // sibling `.md`, so its members are whole documents, not split children.
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path()
+                .join("repo-governance/conventions/formatting/README.md"),
+            "# Formatting\n\n- [Color](./color.md) — x\n",
+        );
+        write(
+            &tmp.path()
+                .join("repo-governance/conventions/formatting/color.md"),
+            "# Color\n\nno heading here\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert_eq!(findings.len(), 1, "got {findings:?}");
+        assert!(findings[0].path.ends_with("formatting/color.md"));
     }
 
     #[test]

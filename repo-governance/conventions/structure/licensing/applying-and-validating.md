@@ -33,10 +33,12 @@ When adding a new library to `libs/`:
 1. Create a `LICENSE` file in the library directory using standard MIT text
 2. Use the copyright notice format: `Copyright (c) 2025-2026 wahidyankf`
 
-### Internal CLI Tools and E2E Suites
+### E2E Suites
 
-Internal CLI tools and E2E test suites do NOT require a per-directory LICENSE file. They inherit
-the root MIT license by default.
+E2E test suites do NOT require a per-directory LICENSE file — they inherit the root MIT license by
+default, and `apps/*-e2e/` are the only directories that still do. Internal CLI tools once shared
+that exemption; both (`apps/crane-cli/`, `apps/rhino-cli/`) now carry their own LICENSE file, so a
+new CLI tool takes one too.
 
 ## Examples
 

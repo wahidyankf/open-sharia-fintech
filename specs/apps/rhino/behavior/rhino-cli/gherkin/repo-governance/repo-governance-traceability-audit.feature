@@ -34,3 +34,15 @@ Feature: Governance Traceability Audit
     When the developer runs repo-governance traceability validate
     Then the command exits with a failure code
     And the traceability output identifies the missing agent reference
+
+  Scenario: A progressive-disclosure split child is exempt regardless of its filename
+    Given a repository with a governance document split into a child directory whose children carry plain kebab-case names
+    When the developer runs repo-governance traceability validate
+    Then the command exits successfully
+    And the traceability output reports zero findings
+
+  Scenario: A document in an indexed category directory is still audited
+    Given a repository with an indexed category directory that has no same-named parent document
+    When the developer runs repo-governance traceability validate
+    Then the command exits with a failure code
+    And the traceability output identifies the missing Principles Implemented section
