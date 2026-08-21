@@ -6,6 +6,7 @@ model: sonnet
 color: green
 skills:
   - docs-validating-factual-accuracy
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

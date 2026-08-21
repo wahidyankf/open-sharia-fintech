@@ -1,0 +1,56 @@
+---
+title: "Termination Criteria"
+description: The three terminal states — landed, halted, partial — and the conditions that produce each.
+when_to_use: Use when deciding whether a propagation run is finished, and what to report.
+---
+
+# Termination Criteria
+
+A run ends in exactly one of three states. There is no state in which a rule is written but
+unaccounted for.
+
+## Landed
+
+Every rule in the batch satisfies **all** of:
+
+- Normalized into a falsifiable statement with both observations recorded.
+- Placed on a decided surface, with the placement recorded.
+- Free of unresolved contradiction; every supersession recorded.
+- Subject-scoped tidy complete, with a verdict recorded for every surface examined — including the
+  surfaces that needed no change.
+- Carrying one of the three enforcement dispositions.
+- Verification clean and the ledger reconciled.
+- PR open with its checks green.
+
+## Halted
+
+The run stops without writing, for one of two reasons only:
+
+1. **Unfalsifiable rule.** Step 0 could not produce a checkable statement and the human did not
+   rule it unenforceable by design.
+2. **Higher-layer conflict.** Step 3 found the new rule contradicting a rule in a higher layer.
+   Resolving it is a governance decision, escalated to the human, never made by the run.
+
+A halt is reported with the specific rule and the specific blocker. "Could not proceed" is not a
+halt report.
+
+## Partial
+
+Some rules in a batch landed and others halted. The landed rules ship; the halted ones are named in
+the PR body with their blockers, and nothing about them is written.
+
+Partial is a legitimate outcome, not a failure. Batching rules is a convenience of intake, not a
+commitment to ship them together.
+
+## Never Terminate By
+
+- Softening an unfalsifiable rule into "guidance" so it can be written.
+- Recording an enforcement disposition of "unclear" or leaving it blank.
+- Raising a word-budget threshold, or adding an exemption entry, so a placement fits.
+- Declaring the composed quality gate's pre-existing findings as this run's, or this run's findings
+  as pre-existing, without demonstrating the baseline.
+
+## Related Documents
+
+- [Success Criteria](./success-criteria.md) — the Gherkin form of these conditions.
+- [Safety Features](./safety-features.md) — the guards that keep a run from terminating wrongly.

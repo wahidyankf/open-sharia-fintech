@@ -112,6 +112,8 @@ below.
 - [Repo Practicing Trunk Based Development](./repo-practicing-trunk-based-development/README.md) — Trunk Based Development and the worktree-to-pr default
 - [Repo Rules Fixing](./repo-rules-fixing/README.md) — repo-rules-fixer's applying-fixes mechanics
 - [Repo Understanding Repository Architecture](./repo-understanding-repository-architecture/README.md) — six-layer governance hierarchy
+- [Repo Maintaining Task Lists](./repo-maintaining-task-lists/README.md) — open the harness's native task list before any task and keep it in sync
+- [Repo Propagating Rules](./repo-propagating-rules/README.md) — run the rules-propagation workflow whenever a rule is created, updated, or deleted
 - [Repo Understanding Shared Vocabulary](./repo-understanding-shared-vocabulary/README.md) — what repo rules, content trees, and delivery units cover
 - [Repo Validating Governance Rules](./repo-validating-governance-rules/README.md) — repo-rules-checker's repo-wide consistency methodology
 - [Social Linkedin Posting](./social-linkedin-posting/README.md) — social-linkedin-post-maker's character-limit and workflow rules

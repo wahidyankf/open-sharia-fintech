@@ -9,6 +9,7 @@ skills:
   - repo-assessing-criticality-confidence
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria
+  - repo-maintaining-task-lists
   - specs-validating-structure
 ---
 

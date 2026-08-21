@@ -4,14 +4,15 @@ description: "Executes Phase 0 of any plan delivery checklist: installs dependen
 tools: [Read, Bash, Glob, Grep]
 model: sonnet
 color: green
+skills:
+  - repo-maintaining-task-lists
 ---
 
 # repo-setup-manager
 
 ## Phase 0 Sequence
 
-Execute the steps below in order; each must pass before the next. Ensures every plan starts from
-a clean, known-good state.
+Execute the steps below in order; each must pass before the next, so every plan starts clean.
 
 > **No push, no PR step, ever (HARD RULE).** Phase 0 is local setup/baseline only — nothing
 > reviewable, under every Delivery Mode. Phase 1 is the earliest PR; evidence this sequence writes

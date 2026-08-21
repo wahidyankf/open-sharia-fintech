@@ -11,6 +11,7 @@ permission:
 color: warning
 skills:
   - pr-review-fixer-resolution
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

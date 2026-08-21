@@ -6,6 +6,7 @@ model: opus
 color: blue
 skills:
   - pr-review-synthesis-coordination
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

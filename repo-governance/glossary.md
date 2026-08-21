@@ -37,6 +37,8 @@ style guide binds exactly as much as one stated in a convention document; only i
 - [Repo Rules — Scope Boundaries](./glossary/repo-rules-scope.md) — the in-scope and out-of-scope
   table, including why the language style guides are in scope despite living outside
   `repo-governance/`.
+- [Repo Rules — Membership Test](./glossary/repo-rules-membership-test.md) — the two-question test
+  for a file the table omits, worked verdicts, and what membership obligates.
 - [Content Trees](./glossary/content-trees.md) — what belongs in `docs/`, `repo-governance/`,
   `plans/`, and `specs/`, and the sweepable temporary directories.
 - [Plan Vocabulary](./glossary/plan-vocabulary.md) — plan, phase, delivery unit, delivery

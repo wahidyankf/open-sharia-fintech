@@ -6,6 +6,7 @@ model: sonnet
 color: blue
 skills:
   - docs-converting-pdf-to-markdown
+  - repo-maintaining-task-lists
   - repo-applying-maker-checker-fixer
 ---
 

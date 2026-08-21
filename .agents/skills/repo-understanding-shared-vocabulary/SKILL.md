@@ -18,8 +18,12 @@ rule applies usually agree on the rule and disagree on one word in it.
 - **Repo rules** — every surface that binds how work happens, wherever it sits. Not a synonym for
   one directory: governance prose, the root instruction surfaces, agent and skill definitions,
   generated mirrors, the config's machine-readable declarations, the hooks and pipeline jobs
-  enforcing them, and the language style guides. A sweep scoped to one tree skips most of it. See
-  [Repo Rules — Scope Boundaries](../../../repo-governance/glossary/repo-rules-scope.md).
+  enforcing them, and the language style guides. A sweep scoped to one tree skips most of it. The
+  test for anything unlisted: editing it changes what someone is _required_ to do, and that
+  requirement outlives the work that prompted it. Declarations bind; the code enforcing them is an
+  application, reviewed as product code. See
+  [Repo Rules — Scope Boundaries](../../../repo-governance/glossary/repo-rules-scope.md) and
+  [Membership Test](../../../repo-governance/glossary/repo-rules-membership-test.md).
 - **Content trees** — four trees differing by who is bound and for how long, not by subject: one
   describes the product, one binds contributors, one holds work that expires, one holds acceptance
   criteria. See

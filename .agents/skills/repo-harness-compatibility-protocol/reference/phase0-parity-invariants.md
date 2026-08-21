@@ -41,15 +41,15 @@ fixer clears deterministic drift before spending time on web research.
 - **Pass**: empty output
 - **Fail**: any line — tab-indented names are `.opencode/` orphans, the rest are missing mirrors
 - **Default criticality**: HIGH (divergent agent inventories). **Confidence**: HIGH
-- **Known intentional skip**: `README.md` is an index, not an agent, and is excluded on both sides.
+- **Known intentional skip**: `README.md` is an index, not an agent, excluded on both sides.
   `find` is required on the `.claude/` side, which nests into role subfolders.
-- **Fix scope**: human-required — deleting an `.opencode/` orphan or authoring a missing `.claude/`
-  counterpart both have product implications
+- **Fix scope**: human-required — deleting an `.opencode/` orphan or authoring a missing
+  `.claude/` counterpart both have product implications
 
 ## Invariant 5 — Translation-map coverage
 
 Both greps must be recursive: `.claude/agents/` is nested, and a non-recursive glob silently
-returns nothing — a no-op check.
+returns nothing.
 
 - **Tools**: color map — `grep -rh "^color:" .claude/agents/ | sort -u` vs. the Color Translation
   Table in `repo-governance/development/agents/ai-agents.md`; tier map —
@@ -60,3 +60,7 @@ returns nothing — a no-op check.
 - **Default criticality**: MEDIUM (sync may mistranslate the missing entry). **Confidence**: HIGH
 - **Fix scope**: human-required — adding a new color/tier requires a role-mapping decision a
   fixer cannot make mechanically
+
+## Invariant 6
+
+[Hand-authored config parity](./phase0-invariant-6-config-parity.md).

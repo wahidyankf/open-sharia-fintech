@@ -6,6 +6,7 @@ model: haiku
 color: purple
 skills:
   - repo-practicing-trunk-based-development
+  - repo-maintaining-task-lists
   - apps-deploying-vercel-branches
 ---
 

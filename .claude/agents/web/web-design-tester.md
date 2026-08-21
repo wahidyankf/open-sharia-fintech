@@ -8,6 +8,7 @@ skills:
   - web-testing-design-fidelity
   - plan-creating-project-plans
   - plan-writing-gherkin-criteria
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

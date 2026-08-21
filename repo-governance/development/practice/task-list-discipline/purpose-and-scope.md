@@ -1,6 +1,6 @@
 ---
 title: "Task List Discipline — Purpose and Scope"
-description: The two failure modes (lost context, invisible drift) a live task list prevents, and exactly what qualifying work this practice covers and does not cover
+description: The two failure modes (lost context, invisible drift) a live task list prevents, and why the practice carries no step-count threshold
 category: explanation
 subcategory: development
 tags:
@@ -10,7 +10,7 @@ tags:
   - ai-agents
   - discipline
 created: 2026-06-23
-when_to_use: Use when deciding whether a specific piece of work qualifies for this practice.
+when_to_use: Use when deciding how this practice reaches a specific piece of work.
 ---
 
 # Purpose and Scope
@@ -29,12 +29,24 @@ A live, continuously-synced task list prevents both failures by making progress 
 
 ### What This Practice Covers
 
-- Any work with **3 or more distinct steps** across one or more files or systems
-- Any task that spans **multiple files or phases** regardless of step count
-- Both harness TaskCreate/TaskUpdate tasks and plan delivery checklists when used as a live working list during execution
+- **Any task**, whatever its size — a one-line edit, a rename, a question answered in prose
+- Purely conversational work, which opens or adjusts an entry like any other task
+- Both the harness's native task list and plan delivery checklists when used as a live working list during execution
+
+The threshold is deliberately absent. A step-count trigger asks the agent to estimate the work before recording it, and that estimate is made at exactly the moment it is least reliable.
+
+## Enforcement Disposition
+
+**Unenforced by decision.** This practice governs in-session behaviour that leaves no artifact in
+the repository, so no gate can observe compliance: a task list lives in harness state, not in the
+working tree, and a commit looks identical whether or not one was kept. Declaring a gate here would
+produce a check that always passes.
+
+The obligation is therefore carried by the instruction surface and by the
+`repo-maintaining-task-lists` agent skill, which reach the main thread and delegated agents
+respectively. Enforcement is review-time and human: a session that produced work with no
+corresponding list entries is the violating observation.
 
 ### What This Practice Does NOT Cover
 
-- Trivial single-step work (e.g., "fix this typo", "rename this variable")
-- Purely conversational work with no file changes
 - Plan-file delivery checklists at rest (those are governed by the [Plans Convention](../../../conventions/structure/plans.md))

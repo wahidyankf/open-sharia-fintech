@@ -1,6 +1,6 @@
 ---
 title: "Task List Discipline"
-description: For any non-trivial multi-step work (3+ distinct steps, or any task spanning multiple files or phases), maintain a live task list from the start and keep it continuously in sync with actual progress
+description: Before any task, including a purely conversational one, open the harness's native task list and keep it continuously in sync with actual progress
 category: explanation
 subcategory: development
 tags:
@@ -15,7 +15,7 @@ when_to_use: Use whenever you're about to start work with 3 or more distinct ste
 
 # Task List Discipline
 
-For any non-trivial multi-step work, maintain a live task list from the start and keep it continuously in sync with actual progress. A task list that lags behind reality is a defect — not a detail.
+Before any task — including a purely conversational one — create, update, or adjust the harness's native task list, then keep it continuously in sync with actual progress. A task list that lags behind reality is a defect, not a detail.
 
 ## Principles Implemented/Respected
 
@@ -25,7 +25,7 @@ This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: A task list makes the work plan explicit and shared. Progress, remaining work, and newly discovered tasks are visible rather than held in the agent's context window as implicit state that degrades with distance.
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Keeping the task list current using the harness Task tool (TaskCreate / TaskUpdate) automates progress tracking. It replaces ad-hoc mental bookkeeping with a durable, queryable record.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Keeping the task list current in the harness's native task list automates progress tracking. It replaces ad-hoc mental bookkeeping with a durable, queryable record.
 
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: A task list layers complexity appropriately: start with the known steps, then add newly-discovered follow-up tasks as they surface. Complexity accretes in the list, not in the agent's informal prose output.
 

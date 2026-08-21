@@ -6,6 +6,7 @@ model: sonnet
 color: blue
 skills:
   - social-linkedin-posting
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 

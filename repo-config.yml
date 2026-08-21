@@ -33,6 +33,10 @@ harness:
     tier: source
     agent-dir: .claude/agents
     skills-dir: .claude/skills
+    # Declared so the hand-authored config is visible to the cross-harness config-parity
+    # obligation (Multi-Harness Binding Rule 10). Previously only codex declared a `config:`,
+    # so two of the three configs the rule governs had no machine-readable record.
+    config: .claude/settings.json
     instruction:
       - CLAUDE.md
     # Cells are transcribed verbatim from the hand-maintained table this
@@ -58,6 +62,7 @@ harness:
     tier: generated
     agent-dir: .opencode/agents
     mirrors: .claude/agents
+    config: .opencode/opencode.json
     instruction:
       - AGENTS.md
     catalog:
@@ -213,7 +218,6 @@ coverage:
     - name: crane-cli
       levels: [unit, integration]
       specs: "specs/apps/crane/behavior/cli/**"
-
 
     # libs
     - name: web-ui
@@ -409,7 +413,6 @@ env-contract:
         # is read by the launcher rather than by this app's own source.
         - WAHIDYANKF_WWW_PORT
         - HOSTNAME
-
 
 env-injection:
   # Value-less injection contract (extends env-contract:).

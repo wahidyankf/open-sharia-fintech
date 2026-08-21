@@ -13,6 +13,7 @@ skills:
   - repo-practicing-trunk-based-development
   - docs-validating-links
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - docs-applying-diataxis-framework
 ---
 

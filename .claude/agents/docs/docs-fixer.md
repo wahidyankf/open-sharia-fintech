@@ -11,6 +11,7 @@ skills:
   - docs-validating-factual-accuracy
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-maintaining-task-lists
   - repo-generating-validation-reports
 ---
 

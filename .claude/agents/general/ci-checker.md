@@ -7,6 +7,7 @@ color: green
 skills:
   - ci-standards
   - repo-generating-validation-reports
+  - repo-maintaining-task-lists
   - repo-assessing-criticality-confidence
 ---
 

@@ -6,6 +6,7 @@ model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - agent-developing-agents
 ---
 

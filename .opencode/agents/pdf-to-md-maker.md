@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - docs-converting-pdf-to-markdown
+  - repo-maintaining-task-lists
   - repo-applying-maker-checker-fixer
 ---
 

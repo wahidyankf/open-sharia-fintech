@@ -7,6 +7,7 @@ color: blue
 skills:
   - docs-creating-in-the-field-tutorials
   - docs-applying-content-quality
+  - repo-maintaining-task-lists
   - apps-ayokoding-www-developing-content
 ---
 

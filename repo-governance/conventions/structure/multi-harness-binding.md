@@ -40,6 +40,9 @@ mirror edit into canonical source is **human-reviewed** — the tool emits a dif
 - [Total Ownership of Binding Files (Rule 8)](./multi-harness-binding/ownership-classes.md) — the
   three ownership classes — generated, vendored, source — with no fourth class and no
   unclassified residue
+- [Cross-Harness Config Parity (Rule 10)](./multi-harness-binding/config-parity.md) — editing one
+  harness's hand-authored config obliges the same intent in every other supported harness's
+  config, or a recorded reason for its absence
 - [Divergence Triage (Rule 9)](./multi-harness-binding/divergence-triage.md) — generation stays
   one-way, divergence is detected by content, and promotion is a reviewed patch
 - [Examples](./multi-harness-binding/examples.md) — worked PASS/FAIL scenarios for each rule

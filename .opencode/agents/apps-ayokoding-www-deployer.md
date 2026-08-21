@@ -7,6 +7,7 @@ permission:
 color: secondary
 skills:
   - repo-practicing-trunk-based-development
+  - repo-maintaining-task-lists
   - apps-deploying-vercel-branches
 ---
 

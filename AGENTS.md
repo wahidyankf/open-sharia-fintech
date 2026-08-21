@@ -5,8 +5,8 @@
 
 ## Repository Overview
 
-**open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha. Trunk-Based
-Dev on `main`. Node.js 24 (Volta), npm.
+**open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha.
+Trunk-Based Dev on `main`. Node.js 24 (Volta), npm.
 
 **See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md) (app naming),
 [web-sites.md](./docs/reference/web-sites.md) (domains, ports)
@@ -69,7 +69,8 @@ none.
 
 Deliberate Problem-Solving, Simplicity Over Complexity, Root Cause Orientation, Accessibility
 First, No Time Estimates. TDD required. Specs & Gherkin required for code changes. Every bug fix
-carries a regression test; every plan ends with Knowledge Capture.
+carries a regression test; every plan ends with Knowledge Capture. New code states its
+cost/benefit in the PR body; tests exempt.
 
 **See**: [Principles Index](./repo-governance/principles/README.md)
 
@@ -82,7 +83,8 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 ### Agent Workflow Orchestration
 
-Plan mode for non-trivial tasks. N+1 agents (default N=3). File-touch ledger reconciled against
+Open the harness-native task list before any task, conversational included; keep it live. Plan
+mode for non-trivial tasks. N+1 agents (default N=3). File-touch ledger reconciled against
 `git status`. `.claude/` hand-authored; mirrors via `npm run generate:bindings`, same commit. Poll
 CI every 2 minutes, never `gh run watch`.
 
@@ -116,14 +118,12 @@ Do NOT stage/commit unless explicitly instructed. License MIT — see
 ## Related Repositories
 
 Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private) (infra).
-`apps/rhino-cli` byte-identity spans both. No other repository carries a sync obligation.
+`apps/rhino-cli` byte-identity spans both.
 
 **See**: [Related Repositories reference](./docs/reference/related-repositories.md)
 
 ## Platform Binding Examples
 
-Vendor-specific; the audit scanner skips this section. Three supported harnesses: Claude Code
-(source), OpenCode and Codex CLI (generated via `rhino-cli harness bindings generate`).
-`repo-config.yml` `harness:` is authoritative.
+Vendor-specific; the audit scanner skips this section. `repo-config.yml` `harness:` is authoritative.
 
 **See**: [platform catalog](./docs/reference/platform-bindings.md)

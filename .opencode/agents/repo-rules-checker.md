@@ -15,6 +15,7 @@ skills:
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
   - repo-validating-governance-rules
+  - repo-maintaining-task-lists
   - repo-understanding-shared-vocabulary
 ---
 

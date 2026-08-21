@@ -54,7 +54,7 @@ Each item in a task list or plan checklist must represent one independently comp
 
 ## Use the Task Tool for Multi-Step Work
 
-When working on tasks with multiple steps, agents MUST use `TaskCreate` and `TaskUpdate` to track progress programmatically. This is in addition to updating markdown checklists.
+For any task, agents MUST maintain the harness's native task list to track progress programmatically. This is in addition to updating markdown checklists.
 
 - **TaskCreate**: Create a task for each granular work item before starting
 - **TaskUpdate** (`in_progress`): Mark the task when you begin working on it

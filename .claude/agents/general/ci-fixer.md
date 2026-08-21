@@ -7,6 +7,7 @@ color: yellow
 skills:
   - ci-standards
   - repo-applying-maker-checker-fixer
+  - repo-maintaining-task-lists
   - repo-assessing-criticality-confidence
 ---
 

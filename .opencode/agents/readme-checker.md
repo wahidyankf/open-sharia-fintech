@@ -13,6 +13,7 @@ skills:
   - readme-writing-readme-files
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
+  - repo-maintaining-task-lists
   - repo-applying-maker-checker-fixer
 ---
 

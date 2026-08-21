@@ -8,6 +8,7 @@ skills:
   - api-testing-exploratory-methodology
   - plan-creating-project-plans
   - plan-writing-gherkin-criteria
+  - repo-maintaining-task-lists
   - docs-applying-content-quality
 ---
 
