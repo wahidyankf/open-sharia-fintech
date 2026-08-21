@@ -157,7 +157,7 @@
         "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/apps/rhino-cli/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
+      "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
     "test:specs": {
       "executor": "nx:run-commands",
@@ -177,5 +177,5 @@
     "specs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature"]
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:ose"],
-  "implicitDependencies": ["ose-contracts", "rhino-cli"]
+  "implicitDependencies": ["ose-contracts"]
 }

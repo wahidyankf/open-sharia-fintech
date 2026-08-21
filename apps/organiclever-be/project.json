@@ -163,7 +163,7 @@
         "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/apps/rhino-cli/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
+      "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
     "test:specs": {
       "executor": "nx:run-commands",
@@ -183,5 +183,5 @@
     "specs": ["{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-be/gherkin/**/*.feature"]
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"],
-  "implicitDependencies": ["organiclever-contracts", "rhino-cli"]
+  "implicitDependencies": ["organiclever-contracts"]
 }

@@ -112,7 +112,7 @@
         "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/apps/rhino-cli/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
+      "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
@@ -122,7 +122,6 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/apps/rhino-cli/src/**/*.rs",
         "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-www-be/gherkin/**/*.feature",
         "{projectRoot}/src/steps/**/*.steps.ts",
         "{projectRoot}/playwright.config.ts",
