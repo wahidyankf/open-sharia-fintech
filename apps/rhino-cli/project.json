@@ -61,7 +61,7 @@
         "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.rs"]
+      "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature", "{projectRoot}/**/*.rs"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -115,7 +115,8 @@
         "{projectRoot}/Cargo.toml",
         "{projectRoot}/src/**/*.rs",
         "{projectRoot}/tests/**/*.rs",
-        "{projectRoot}/tests/golden-master/**/*"
+        "{projectRoot}/tests/golden-master/**/*",
+        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature"
       ]
     },
     "typecheck": {

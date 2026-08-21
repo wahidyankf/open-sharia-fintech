@@ -57,6 +57,7 @@ harness:
       - { path: .claude/, class: source, reason: hand-authored tree every mirror is generated from }
       - { path: .claude/agents, class: source, reason: canonical agent definitions }
       - { path: .claude/skills, class: source, reason: canonical skill definitions }
+      - { path: .claude/settings.json, class: source, reason: hand-authored permissions and hook registration }
       - { path: CLAUDE.md, class: source, reason: hand-authored Claude Code instruction surface }
   - name: opencode
     tier: generated
