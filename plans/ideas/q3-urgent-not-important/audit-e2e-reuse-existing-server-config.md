@@ -62,7 +62,7 @@ waits.
 - [`ci-checker` agent](../../../.claude/agents/general/ci-checker.md) — already validates projects against CI
   conventions including E2E pairing and env-variable compliance; the plausible host for an automated
   guard flagging any new `*-e2e` config that hardcodes `true`.
-- [`ayokoding-www-e2e-parallel-load-flake`](../q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md) — a sibling
+- [`ayokoding-www-e2e-flake-under-concurrent-load`](./ayokoding-www-e2e-flake-under-concurrent-load.md) — a sibling
   brief in the same class: an e2e suite whose result depends on ambient environment state rather
   than the code under test.
 - [`fundamentally-strong-software-engineer` learnings](../../done/2026-07-19__fundamentally-strong-software-engineer/learnings.md#openapi-generator-cli-jar-download-race-is-a-second-concurrency-flake-class)

@@ -19,12 +19,16 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
 - [deletion-authorized-by-absence](./q1-urgent-important/deletion-authorized-by-absence.md) — `harness bindings generate` authorizes deletion by absence from a hand-maintained `vendored[]` list, so every way that list can fail to match reality resolves to destroying the file; four consecutive review cycles found four shapes of one root cause.
+- [file-naming-convention-rework](./q1-urgent-important/file-naming-convention-rework.md) — `file-naming.md` documents 2 of the 11 exemptions the gate applies, its scope clause ("and similar locations") cannot be evaluated, and the ordinal convention contradicts its own worked example.
+- [harness-mirror-and-test-isolation-defects](./q1-urgent-important/harness-mirror-and-test-isolation-defects.md) — OpenCode loads `.opencode/agents/README.md` as an agent named `README`, `rhino-cli` smoke tests share one process CWD so a new test flakes a sibling, and 47 dangling anchors hid behind a prefix-keyed link exemption.
 - [markdownlint-ci-gate-lints-zero-files](./q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md) — the `markdownlint` gate declares `all-file-type` with no glob, so CI runs it with empty argv, lints `0 file(s)`, and has always passed vacuously.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [next-image-builds-cannot-resolve-ts-env-loader](./q1-urgent-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build; four scheduled workflows have reported it twice daily for days, and the `prod-*` deploy path for four sites is dead.
+- [oxlint-upgrade-and-lint-reproducibility](./q1-urgent-important/oxlint-upgrade-and-lint-reproducibility.md) — 22 lint sites fetched `npx oxlint@latest`, so a publish turned a green PR red on an untouched file; the 1.78.0 pin froze a real `set-state-in-effect` defect and left the wider class unenumerated.
 - [plan-checker-forward-reference-detection](./q1-urgent-important/plan-checker-forward-reference-detection.md) — a step can name an artifact only a later phase creates; two instances hard-errored in one plan after five clean checker passes.
 - [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
-- [rhino-cli-parity-propagation-optimize-cis](./q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md) — `apps/rhino-cli` byte-identity parity is broken against `ose-private`, whose sibling PR already merged, with nothing left to propagate it automatically.
+- [rhino-cli-byte-identity-drift-reconciliation](./q1-urgent-important/rhino-cli-byte-identity-drift-reconciliation.md) — the zero-carve-out `apps/rhino-cli` byte-identity boundary is broken against `ose-private` in at least two measured places, with nothing left to propagate either fix automatically.
+- [rhino-cli-governance-tooling-defects](./q1-urgent-important/rhino-cli-governance-tooling-defects.md) — four governance tools that exit 0 while doing less than the caller believes: a mis-paired wrapped code span, a hard-coded `.claude/agents`, basename-keyed rename matching, and an `AUDIT FAILED` line above a green gate.
 
 ### Q2 — Important, Not Urgent
 
@@ -42,6 +46,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [class-sweep-completeness](./q2-not-urgent-important/class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
 - [coverage-artifact-relative-paths](./q2-not-urgent-important/coverage-artifact-relative-paths.md) — generated coverage files bake in the last runner's absolute path; most instances are gitignored, but a 2026-08-18 re-check found one finding overstated.
 - [cross-repo-governance-link-parity](./q2-not-urgent-important/cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
+- [declare-vite-peer-dependency](./q2-not-urgent-important/declare-vite-peer-dependency.md) — ten packages test through a `vite*.config.*` that imports a `vite` none of them declares; it resolves only via npm hoisting, and no gate would notice an eleventh.
 - [deploy-targets-registry](./q2-not-urgent-important/deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
 - [doc-command-existence-validation](./q2-not-urgent-important/doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
 - [doctor-fix-polyglot-restore](./q2-not-urgent-important/doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
@@ -75,12 +80,10 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [rhino-cli-exclude-dir-shared-steps-gap](./q2-not-urgent-important/rhino-cli-exclude-dir-shared-steps-gap.md) — thread `--exclude-dir` through rhino-cli's whole-app step scan so both sides of a `--shared-steps` comparison exclude the same dirs.
 - [rhino-cli-git-env-scrub-widening](./q2-not-urgent-important/rhino-cli-git-env-scrub-widening.md) — `find_root_from` scrubs only `GIT_DIR`/`GIT_WORK_TREE` before invoking `git rev-parse`, leaving `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, and `GIT_COMMON_DIR` unscrubbed.
 - [rhino-cli-md-links-json-output-scenario-gap](./q2-not-urgent-important/rhino-cli-md-links-json-output-scenario-gap.md) — the retired CLI link checkers' `Scenario: JSON output produces structured results` has no equivalent in `rhino-cli`'s successor feature, though the behaviour is live and unit-tested.
-- [rhino-cli-sync-validator-wrong-model-drift](./q2-not-urgent-important/rhino-cli-sync-validator-wrong-model-drift.md) — a one-line test-fixture placeholder in `sync_validator.rs` diverges from ose-public, violating the zero-carve-out `apps/rhino-cli` byte-identity rule.
 - [rhino-cli-test-binaries-run-by-no-gate](./q2-not-urgent-important/rhino-cli-test-binaries-run-by-no-gate.md) — 20 of the 27 test binaries under `apps/rhino-cli/tests/` are executed by no gate on any surface; the `test:unit` allowlist names seven and no workflow ever calls this project's `test:integration`.
 - [rhino-cli-tools-superset-carveout](./q2-not-urgent-important/rhino-cli-tools-superset-carveout.md) — `doctor/tools.rs`'s "zero carve-outs" byte-identity target collides with `ose-private`'s real, needed IaC tool-provisioning extensions.
 - [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
 - [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
-- [setup-playwright-apt-fetch-has-no-retry](./q2-not-urgent-important/setup-playwright-apt-fetch-has-no-retry.md) — the shared Playwright setup action's `apt-get update` has no retry and no step-level timeout, so one stalled mirror burns the whole job budget and surfaces as a bare cancellation.
 - [shared-cargo-target-lock-contention](./q2-not-urgent-important/shared-cargo-target-lock-contention.md) — one shared cargo target directory reclaims disk but serializes concurrent worktree builds; a 65 s pure-lock-wait stall was measured.
 - [sibling-main-ci-never-runs-on-merge](./q2-not-urgent-important/sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in `ose-private`, so a merge to its `main` gets no post-merge CI signal.
 - [source-code-credential-scanning](./q2-not-urgent-important/source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
@@ -96,8 +99,10 @@ No active plan waits on these and no live defect is running, but each carries a 
 
 Something active references these, but they carry none of the importance signals. Delegate or timebox.
 
-- [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
 - [audit-e2e-reuse-existing-server-config](./q3-urgent-not-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`, and can run a suite green against a build that is not the code under test.
+- [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
+- [ayokoding-www-e2e-flake-under-concurrent-load](./q3-urgent-not-important/ayokoding-www-e2e-flake-under-concurrent-load.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7, and a third scenario flakes under the same shared-machine load without that mechanism.
+- [setup-playwright-apt-fetch-has-no-retry](./q3-urgent-not-important/setup-playwright-apt-fetch-has-no-retry.md) — the shared Playwright setup action's `apt-get update` has no retry and no step-level timeout, so one stalled mirror burns the whole job budget and surfaces as a bare cancellation.
 
 ### Q4 — Neither Urgent nor Important
 
@@ -105,10 +110,8 @@ Parked deliberately. Kept because the need may become real, not because it is re
 
 - [ayokoding-i18n-nav-hardening](./q4-not-urgent-not-important/ayokoding-i18n-nav-hardening.md) — pre-existing id-locale, language-switcher-404, and sidebar-clip defects surfaced by the url-restructure Phase-5 retest.
 - [ayokoding-www-cost-reduction](./q4-not-urgent-not-important/ayokoding-www-cost-reduction.md) — retire the 3 MB search index, ~700 KB client mermaid, 97 MB image copy, and the not-XSS-safe HTML parser in one coordinated pass.
-- [ayokoding-www-e2e-parallel-load-flake](./q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md) — the e2e suite flakes under full-suite parallel-worker load (isolated re-runs pass); stabilize or quarantine.
 - [dependency-library-updates](./q4-not-urgent-not-important/dependency-library-updates.md) — a standing, policy-compliant sweep to advance pinned library dependencies as their soak windows clear.
 - [fsl-standards](./q4-not-urgent-not-important/fsl-standards.md) — clarify the intent behind "FSL standards" and, if warranted, codify a licensing standard around the Functional Source License.
-- [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./q4-not-urgent-not-important/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.
 - [next-standalone-output-parity](./q4-not-urgent-not-important/next-standalone-output-parity.md) — two of six Next.js apps omit `output: "standalone"`, so their images run a second resident Node process and ship a full `node_modules`.
 - [vercel-cost-steady-state-verification](./q4-not-urgent-not-important/vercel-cost-steady-state-verification.md) — grade the shipped cost fix against the $30 invoice ceiling once the first clean billing cycle closes on 2026-09-26.
 
@@ -265,3 +268,120 @@ carry no sync obligation and were not swept.
   building one is outside this workflow's write scope.
 
 > Last groomed: 2026-08-19
+
+### 2026-08-21 — plan-ideas-grooming (`ose-public`)
+
+Swept the 85 two-pagers resident here; **83 survive**. The run's repo set is `ose-public` alone —
+`ose-private` was groomed in the 2026-08-19 run and no cross-repo relocation was in scope, so Step 3
+(cross-repo dedup) and Step 5 (relocation) were both no-ops with nothing to resolve. Trigger: the
+flat idea count exceeded the 60-file threshold.
+
+- **Pre-grooming demotions** (5), performed on maintainer instruction immediately before the sweep
+  and then swept by it. Recorded here for the audit trail, **not** as a grooming action — this
+  workflow never writes under `plans/backlog/`, so the demotion is a separate act that happened to
+  precede the run. Each five-document backlog plan collapsed into one two-pager carrying a
+  `> Provenance: demoted from the full backlog/ plan ...` line:
+  `oxlint-upgrade-and-lint-reproducibility` (Q1), `rhino-cli-governance-tooling-defects` (Q1),
+  `file-naming-convention-rework` (Q1), `harness-mirror-and-test-isolation-defects` (Q1), and
+  `declare-vite-peer-dependency` (Q2). `plans/backlog/` is now empty and its README says so.
+  One stale reference outside `plans/ideas/**` was repointed as part of that demotion, not by this
+  workflow: `docs/reference/rhino-cli-command-triage.md`'s pointer to the retired backlog folder.
+- **Merged** (2):
+  - `ayokoding-www-e2e-parallel-load-flake.md` → `harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md`.
+    The absorbed brief observes three scenarios flaking under full-suite parallel load; two of the
+    three are exactly the step files the survivor diagnoses as carrying an unbounded `Promise.all`.
+    One brief was the observation and the other the mechanism. The third scenario
+    (`tools/cost-of-living-calculator.feature`) has **no** identified mechanism, and the merged brief
+    now says so explicitly rather than letting the diagnosis imply coverage it does not have.
+  - `rhino-cli-sync-validator-wrong-model-drift.md` → `rhino-cli-parity-propagation-optimize-cis.md`.
+    Two independently-measured violations of the same zero-carve-out `apps/rhino-cli` byte-identity
+    rule against the same sibling repo, both escaping the same way (the fix landed after the
+    sibling's PR merged). The remedy is one act — reproduce the manifest diff, classify each file,
+    propagate — so two briefs meant two passes over the same manifest with the second inheriting the
+    first's leftovers.
+- **Renamed** (2), both because the merge left a filename that no longer described the file:
+  - `harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md` →
+    `ayokoding-www-e2e-flake-under-concurrent-load.md`. Bounded link concurrency is now the dominant
+    mechanism in the brief, not the whole of it.
+  - `rhino-cli-parity-propagation-optimize-cis.md` → `rhino-cli-byte-identity-drift-reconciliation.md`.
+    The old name pins the brief to one era's drift; it now carries two.
+- **Reclassified** (2), both Step 8 adjudications, both moving **into** Q3:
+  - `ayokoding-www-e2e-flake-under-concurrent-load.md` Q4 → **Q3**. Urgent — its _Why now_ records
+    already-observed defects (4 failures in 7 runs; 3 scenarios flaking in one phase). Not important:
+    one repo, no security, secrets, or data-integrity stake, no checker-enforced rule — and although
+    it reddens a required gate, the brief's own open question is whether the pattern still
+    reproduces, so "a **currently**-blocking CI gate" cannot be asserted.
+  - `setup-playwright-apt-fetch-has-no-retry.md` Q2 → **Q3**, on the same reading. Two consecutive
+    runs cancelled at their 35-minute budget is an already-observed live defect (urgent); "two
+    occurrences on one branch is the only recorded evidence" is the brief's own words on whether it
+    currently blocks (not important).
+- **Reshaped** (1): `setup-playwright-apt-fetch-has-no-retry.md` carried 4 of the 8 template
+  sections — filed 2026-08-21, after the last sweep, so it had never been groomed. _Why now_,
+  _Prior art / precedents_, _Proposed direction (sketch)_, and _What success looks like + promotion
+  signal_ were added; its `## See also` block was folded into _Prior art_. No content was discarded.
+  All 83 surviving files now pass the eight-section, single-H1, and provenance-blockquote checks.
+- **Residency**: this is a **single-repo run**, so every surviving idea resolves to rule R3
+  (generalizable default) by construction and no residency was contested. Recording a per-idea R#
+  verdict for all 83 would restate that constant 83 times without adding information; the 2026-08-19
+  run's follow-up about the corpus not carrying per-idea R# records therefore remains open, and this
+  run does not claim to have closed it.
+- **Classification scope**: the 8 files this run created, merged, or reshaped were adjudicated
+  against both Step 8 rubrics from scratch. The other **75 were carried forward unchanged** from the
+  2026-08-19 hand adjudication, two days earlier, with no re-adjudication — their content did not
+  change, and substituting a fresh reading for a fresh hand adjudication would be churn, not
+  convergence. This log does not claim all 83 were re-rubric'd.
+
+**Merge candidates flagged and declined** (Step 2 asks for every candidate and its rationale, so the
+declines are recorded, not just the merges):
+
+- `setup-playwright-apt-fetch-has-no-retry` ↔ `ci-setup-rust-toolchain-retry` — genuinely one class
+  (a shared `.github/actions/setup-*` composite action whose network fetch has no retry) and the
+  closest call of the run. Declined because each carries a **different promotion gate** — "does the
+  cache-miss branch share the defect?" versus "where does the existing rustup retry wrapper actually
+  live?" — and a merged brief with two independent promotion gates cannot be promoted cleanly. They
+  now cross-reference each other, and whichever lands first sets the retry shape the other reuses.
+- `mermaid-validator-does-not-check-syntax` ↔ `mermaid-state-label-render-clipping-warn` — same
+  command, opposite problems: one is that the validator parses no syntax at all, the other adds a
+  render-clipping heuristic the second brief argues **no** text validator can observe. Declined.
+- `plan-quality-gate-convergence` ↔ `repo-rules-quality-gate-convergence` — same shape (a
+  maker-checker-fixer loop over-running its stated iteration budget) and a shared research base, but
+  different workflows with different proposed mechanisms. Merging would produce one plan touching two
+  unrelated gates. Declined.
+- `rhino-cli-byte-identity-drift-reconciliation` ↔ `rhino-cli-tools-superset-carveout` — the latter
+  argues `doctor/tools.rs`, which is **inside** the former's 17-file union, carries a legitimate
+  `ose-private`-only divergence. Declined because one brief fixes instances and the other changes the
+  rule; the survivor now names the interaction explicitly so neither can be executed without the
+  other being read.
+- `extend-byte-identity-to-claude-hooks` ↔ `propagate-env-tier-to-ose-primer`, and
+  `deploy-targets-registry` ↔ `stale-checkout-ref-advance-drift`, and
+  `harness-converter-preserve-agent-mode` ↔ `vendor-neutral-canonical-source` — each pair's shared
+  terms are a source-plan name or generic git/agent vocabulary, not a shared subject. Declined.
+- The `rhino-cli-*` (9 files) and `ayokoding-www-*` (5 files) filename families — a shared **topic
+  namespace**, not the shared _stem_ Step 2's criterion means. Merging on prefix alone would collapse
+  the corpus. Declined as a family, with the two substantive pairs inside them adjudicated
+  individually above.
+
+**Split candidates considered and declined** (1 pair): `rhino-cli-governance-tooling-defects` names
+four defects and `harness-mirror-and-test-isolation-defects` names three. Neither is a split
+candidate under Step 2's "two or more genuinely unrelated concerns" test — each brief argues one
+shape (a tool whose report and behaviour disagree; a tree treated as uniform when it is not), and
+both were authored as single plans on that basis. Both already carry the one-unit-or-several question
+as a stated open item, which is the right place for it.
+
+**Unresolved follow-ups**:
+
+- **Two Rust doc comments cite the retired backlog folder** and were deliberately left untouched:
+  `apps/rhino-cli/src/commands/governance_rewrite_readme_index_paths.rs` (line 30) and
+  `apps/rhino-cli/src/application/governance/readme_index.rs` (line 2103) both name
+  `plans/backlog/rhino-cli-governance-tooling-defects/`. Beyond this workflow's write scope, and
+  editing either would open the four-repo `apps/rhino-cli` parity-manifest obligation for a comment
+  change. Fold into whichever plan next touches those files.
+- **Stale references in `plans/done/**`** to the two renamed and two merged-away idea files, plus the
+five retired backlog folders. All sit in archived plan records, which the `md-links` gate excludes
+(`repo-config.yml` `md-links`→`exclude: [plans/done]`) and which the Plans convention says not to
+  casually rewrite. Left as history.
+- The 2026-08-19 run's open follow-ups carry forward unchanged: the per-idea R# residency gap, the
+  apparent `md links validate` blind spot, the deliberately non-literal Step 9 cross-repo link rule,
+  and the unbuilt rubric-faithful classifier.
+
+> Last groomed: 2026-08-21
