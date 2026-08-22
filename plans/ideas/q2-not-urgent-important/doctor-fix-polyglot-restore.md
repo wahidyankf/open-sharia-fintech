@@ -8,7 +8,7 @@ until an agent manually diagnoses and runs the missing restore.
 
 ## Problem / context
 
-Pushing `ose-primer`'s local `main` failed pre-push on `crud-be-fsharp-giraffe:typecheck` with
+Pushing a sibling repository's local `main` failed pre-push on `crud-be-fsharp-giraffe:typecheck` with
 `NETSDK1004: Assets file ... project.assets.json not found` — the F# demo app's NuGet packages had
 never been restored. `npm run doctor -- --fix` had already run and reported all 13 tools OK; it
 checks toolchain _presence_ (is `dotnet` installed?) not per-project package _restoration_ (has
@@ -26,7 +26,7 @@ each time. A documented or automated fix removes that rediscovery cost.
 
 ## Prior art / precedents
 
-- **This plan's `learnings.md`** — records both the `ose-primer` NuGet-restore incident and the
+- **This plan's `learnings.md`** — records both the .NET NuGet-restore incident and the
   `beaver-nest` npm-hoisting incident with full diagnostic detail.
   [plans/done/2026-08-05\_\_plan-ideas-grooming-workflow/learnings.md](../../done/2026-08-05__plan-ideas-grooming-workflow/learnings.md)
 - **`doctor --fix` command** — the existing entry point this idea would extend.

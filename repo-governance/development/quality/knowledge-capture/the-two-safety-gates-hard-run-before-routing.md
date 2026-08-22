@@ -45,7 +45,7 @@ A learning routes **only** to the repo(s) it actually pertains to:
 - **Public-governance content** MAY propagate `ose-public` → `ose-private` via the existing parity
   loop (see the
   [Multi-Repo Parity Planning workflow](../../../workflows/plan/plan-multi-repo-parity-planning.md)).
-  No other repository is a propagation target — `ose-primer` is outside the parity set and receives
+  No other repository is a propagation target — a repository outside the parity set receives
   nothing (see
   [Related Repositories §Repositories outside the parity set](../../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
 - An **infra-specific** learning never appears in any file destined for a public repo, even in

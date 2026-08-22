@@ -18,31 +18,31 @@ created: 2026-06-07
 This document records every decision in the cross-repo deviation matrix for the
 `gherkin-step-keyword-cardinality` plan (2026-06-07). The plan ships an explicit
 HARD Gherkin convention rule — one primary `Given`, one `When`, one `Then` per
-`Scenario` — across three sibling repositories: ose-public (this repo), ose-private,
-and ose-primer. The full matrix lives in
+`Scenario` — across the sibling repositories: ose-public (this repo) and
+ose-private. The full matrix lives in
 [`plans/done/2026-06-07__gherkin-step-keyword-cardinality/tech-docs.md`](../../plans/done/2026-06-07__gherkin-step-keyword-cardinality/tech-docs.md).
 
-Sibling plans:
+Sibling plan:
 
 - `ose-private`: `plans/done/2026-06-07__gherkin-step-keyword-cardinality/` (private repo)
-- `ose-primer`: `plans/done/2026-06-07__gherkin-step-keyword-cardinality/` (public template repo)
 
-> **Historical record.** This log describes the repository set as it stood on 2026-06-07.
-> `ose-primer` has since left the parity set — the `rhino-cli` byte-identity boundary now spans
-> ose-public and ose-private only, and no `ose-primer` propagation obligation remains. Read the
-> decisions below as history, not as current routing.
+> **Historical record.** This log describes the `gherkin-step-keyword-cardinality` run of
+> 2026-06-07, re-scoped to the current parity pair. Read the decisions below as history, not as
+> current routing.
 
 ## Background
 
-The three repositories share a governance layer originally authored in ose-public.
+The sibling repositories share a governance layer originally authored in ose-public.
 The step-keyword cardinality rule was implicit — skilled authors applied it, but nothing
 stated it formally. This plan makes the rule explicit, enforces it with a deterministic
-linter, and retrofits the existing `.feature` corpus. Because the three repos differ in
-architecture (dual CLI in ose-primer, private CI in ose-private, public GitHub-hosted CI in
-ose-public), the plan carries deliberate per-repo deviations. All deviations were recorded
-before execution began.
+linter, and retrofits the existing `.feature` corpus. Because the repos differ in
+architecture (private CI in ose-private, public GitHub-hosted CI in ose-public), the plan
+carries deliberate per-repo deviations. All deviations were recorded before execution began.
 
 ## Row-by-Row Decisions
+
+Row numbers follow the plan's full deviation matrix. Rows that no longer bind the current parity
+pair are omitted, so the sequence below skips.
 
 ### Row 1 — Plan Handling
 
@@ -53,17 +53,10 @@ validated plan structure with gated phases represents authoring work that should
 discarded. Starting from the existing plan is cheaper and more correct than replacing a
 zero-executed, fully-gated plan with an identical fresh one.
 
-### Row 2 — Linter Architecture (Deliberate Deviation)
+### Row 2 — Linter Architecture
 
 **Decision**: ose-public and ose-private add the `gherkin-keyword-cardinality` category to the
-existing `audit_orchestrator.rs` pattern. ose-primer deviates: it implements the command twice
-— once in Rust and once in Go — plus a Gherkin behavior contract in `specs/apps/rhino/`.
-
-**Why the deviation is acceptable**: ose-primer's dual-implementation parity convention
-requires byte-identical Rust and Go CLIs driven by one behavior contract (this is the template
-repo's core demonstration value). ose-primer has no `audit_orchestrator.rs` because its rhino-cli
-is earlier-stage. Adding an orchestrator solely to match ose-public's pattern would add
-architecture without delivering the dual-implementation demonstration that primer promises.
+existing `audit_orchestrator.rs` pattern.
 
 ### Row 3 — Retrofit Phases
 
@@ -79,7 +72,7 @@ check; authors discover offenders at execution.
 
 **Decision**: Aligned. Every repo runs a `repo-rules-maker`-driven sweep.
 
-**Rationale**: All three repos carry the `repo-rules-maker` agent. The rule propagation
+**Rationale**: Both repos carry the `repo-rules-maker` agent. The rule propagation
 pattern is the same in every repo, so no deviation is warranted.
 
 ### Row 5 — Skill Propagation
@@ -88,48 +81,31 @@ pattern is the same in every repo, so no deviation is warranted.
 (`plan-writing-gherkin-criteria` and `plan-creating-project-plans`) and re-syncs secondary
 bindings via `npm run generate:bindings`.
 
-**Rationale**: All three repos carry both skills and the binding generator. The rule
+**Rationale**: Both repos carry both skills and the binding generator. The rule
 propagates identically through both skill packages in every repo.
 
 ### Row 6 — Quality-Gate Preflight (Deliberate Deviation)
 
 **Decision**: ose-public adds the `gherkin-keyword-cardinality` category to the existing
 Step 0.5 deterministic-preflight enumeration in `repo-rules-quality-gate.md`. ose-private
-and ose-primer first port the Step 0.5 deterministic-preflight section into their own
-`repo-rules-quality-gate.md`, then enumerate the new category.
+first ports the Step 0.5 deterministic-preflight section into its own
+`repo-rules-quality-gate.md`, then enumerates the new category.
 
-**Why the deviation is acceptable**: The sibling repos' quality-gate workflows predate the
-Step 0.5 preflight pattern (introduced in ose-public after the sibling repos were last
+**Why the deviation is acceptable**: The sibling repo's quality-gate workflow predates the
+Step 0.5 preflight pattern (introduced in ose-public after the sibling repo was last
 synchronized). The correct response is to port the pattern first and then add the new
-category — not to wire around the pattern gap. The result in all three repos is the same
+category — not to wire around the pattern gap. The result in both repos is the same
 final state: Step 0.5 present with the new category enumerated.
 
 ### Row 7 — CI Wiring (Deliberate Deviation)
 
 **Decision**: Each repo wires the audit through its own CI topology. ose-public uses its
 existing governance-audit CI path. ose-private uses `validate-markdown.yml` on a self-hosted
-runner (`[self-hosted, linux, ose-self-hosted]`). ose-primer uses GitHub-hosted validation
-workflows plus a dual-CLI parity job.
+runner (`[self-hosted, linux, ose-self-hosted]`).
 
 **Why the deviation is acceptable**: CI topology differs per repo in ways that cannot be
-unified. ose-private runs on private self-hosted runners and cannot use `ubuntu-latest`. ose-primer
-needs a parity job that builds and tests both Rust and Go implementations. Forcing a single CI
-shape across all repos would either break ose-private's runner constraints or omit ose-primer's
-dual-CLI parity validation.
-
-### Row 8 — ose-primer Push Mode (Deliberate Deviation)
-
-**Decision**: For ose-primer, execution results push directly to `origin main`, bypassing
-the PR-only default of the ose-primer sync convention.
-
-**Why the deviation is acceptable**: The invoker explicitly selected `worktree-to-main` (the
-mode name at the time of this 2026-06-07 decision; the same direct-push-to-`origin-main` mode
-was later renamed `worktree-to-origin-main` in the canonical four-mode Delivery Mode vocabulary —
-see [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode))
-for the entire parity set at planning time. ose-primer's own git-push-default convention also
-defaults to direct main push. The ose-primer sync convention's PR-only default applies when
-propagating from ose-public; it does not apply when the plan originates in ose-primer itself
-through the normal execution workflow.
+unified. ose-private runs on private self-hosted runners and cannot use `ubuntu-latest`, so
+forcing a single CI shape across both repos would break its runner constraints.
 
 ### Row 9 — Linter Scan Scope
 

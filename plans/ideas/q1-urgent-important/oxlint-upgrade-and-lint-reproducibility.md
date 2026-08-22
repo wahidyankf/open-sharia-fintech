@@ -78,7 +78,6 @@ Out of scope (for now):
 - Replacing oxlint, or removing the eslint pairing alongside it.
 - Committing to a specific dependency-update bot — that is a candidate WS-O3 outcome, not a premise.
 - The twenty orphaned `rhino-cli` test binaries (separate follow-up).
-- `ose-primer`, which carries no oxlint call site.
 
 ## Risks & open questions
 

@@ -19,28 +19,26 @@ created: 2026-06-12
 
 This document records the ose-public decisions in the cross-repo
 `lint-safety-parity` effort (2026-06-12). The effort brings linting strictness
-and unsafe-code posture to an **equal** standard across three sibling
-repositories — ose-public (this repo), ose-primer, and ose-private — so the shared
+and unsafe-code posture to an **equal** standard across the sibling
+repositories — ose-public (this repo) and ose-private — so the shared
 scaffolding layer stops drifting. The full per-row deviation matrix lives in the
 plan's
 [`tech-docs.md`](../../plans/done/2026-06-12__lint-safety-parity/tech-docs.md).
 
-Sibling plans:
+Sibling plan:
 
-- `ose-primer`: `plans/in-progress/lint-safety-parity/` (public template repo) —
-  covers D1 (Rust `forbid(unsafe_code)`), D3 (C#), D4 (Python), D6/D7/D8; keeps
-  golangci (active Go); primer is the **F# reference** (no D2 work).
 - `ose-private`: `plans/in-progress/lint-safety-parity/` (private repo) — covers
   D1 + D1b, D6/D7/D8, D9 (Terraform + Ansible + yamllint), D10.
 
 ## Background
 
-The three repositories share a governance and CI-harness layer originally
+The sibling repositories share a governance and CI-harness layer originally
 authored in ose-public. Over time each repo grew lint gates independently, so the
 **set** of enforced linters diverged: one repo gated shell scripts, another
-gated Dockerfiles, none gated GitHub Actions workflows uniformly, and the F#
-strictness posture differed between ose-public and ose-primer. This effort closes
-those gaps by adding the missing gates and aligning F# up to the primer reference.
+gated Dockerfiles, none gated GitHub Actions workflows uniformly, and ose-public's
+F# strictness posture lagged the analyzer-backed standard this effort adopts (D2
+below). It closes those gaps by adding the missing gates and raising F# to that
+standard.
 
 Every new gate follows the same **clean-then-gate** discipline expressed as a
 TDD-shaped cycle: RED is "the gate fails on the existing violation backlog",
@@ -113,7 +111,7 @@ GitHub-hosted `ubuntu-latest` with no self-hosted runner labels to declare.
 
 ### D2 — F# strict stack (largest dimension)
 
-**Decision**: Align ose-public's F# projects up to the ose-primer reference
+**Decision**: Raise ose-public's F# projects to the analyzer-backed strict
 standard: `TreatWarningsAsErrors` on all 8 `.fsproj`, pinned
 `G-Research.FSharp.Analyzers` (0.22.0) + `FSharp.Analyzers.Build` (0.5.0) on the
 three source projects with 13 `GRA-*` rules `--treat-as-error`, and the existing
@@ -127,7 +125,7 @@ analyzer findings. The effort was config wiring, not code change.
 
 **Test-project suppressions**: the five test projects receive
 `--nowarn:3261 --nowarn:3264` (F# nullness-interop noise on `box`-ed test data,
-matching the primer reference). The former PDF-pipeline backend's **unit** test
+matching that standard). The former PDF-pipeline backend's **unit** test
 project additionally suppressed **FS0044** because its BDD harness deliberately
 used the deprecated-but-standard Giraffe in-process `WebHostBuilder`/`TestServer`
 pattern; rewriting it to `WebApplicationBuilder` would have added risk for no
@@ -137,7 +135,7 @@ suppression would itself violate clean-then-gate minimalism. (That backend has
 since been removed from the repository; these suppressions are recorded here for
 historical completeness.)
 
-**Stricter than primer on one point**: primer applies `TreatWarningsAsErrors`
+**One point goes further than that standard**: it applies `TreatWarningsAsErrors`
 to source projects only; this plan's gate requires it on all 8 `.fsproj`, so test
 projects carry it too (with the narrow nowarn flags above).
 

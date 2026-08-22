@@ -31,11 +31,10 @@ internal implementation, access model, or operational layout.
 
 ## Repositories outside the parity set
 
-[`ose-primer`](https://github.com/wahidyankf/ose-primer) is a public MIT polyglot Nx starter that
-grew out of earlier OSE practice. **It carries no sync obligation in either direction.** It is not
-part of the `rhino-cli` byte-identity boundary, it is not a propagation target for governance,
-agent, skill, or workflow changes, and it is free to diverge from `ose-public` without that
-divergence being a defect. No gate, agent, or workflow here may treat it as a parity peer.
+Some repositories share history with `ose-public` without sharing obligations. **They carry no sync
+obligation in either direction**, sit outside the `rhino-cli` byte-identity boundary, and are not
+propagation targets for governance, agent, skill, or workflow changes. No gate, agent, or workflow
+here may treat one as a parity peer.
 
 ### BeaverNest moved out
 
@@ -45,10 +44,9 @@ lives. It used to be developed here as `apps/beavernest-app` (Flutter Web) and `
 Compose stack, and two deployer agents. **All of that was removed from `ose-public`**; the product
 was rebuilt on Phoenix LiveView and Elixir in its own repository.
 
-Treat it exactly like `ose-primer`: no sync obligation in either direction, outside the `rhino-cli`
-byte-identity boundary (it carries no `rhino-cli` at all), and not a propagation target for
-governance, agent, skill, or workflow changes. `rhino-cli`'s parity gate asserts that the boundary
-never names it — see `apps/rhino-cli/src/application/parity.rs`.
+It carries no `rhino-cli` at all, so there is nothing for the byte-identity boundary to cover, and
+`rhino-cli`'s parity gate asserts that the boundary never names it — see
+`apps/rhino-cli/src/application/parity.rs`.
 
 If you are looking for BeaverNest code, issues, or plans, go to that repository. Anything still
 naming BeaverNest here is a historical record — an archived plan under [`plans/done/`](../../plans/done/README.md)

@@ -11,15 +11,12 @@ change as product, research, assurance, and platform work develops.
 This is the active OSE product monorepo, not a generic project starter. It holds OSE product work,
 its supporting research, and the governance and automation that carry them.
 
-Two other repositories sit nearby, and neither is a copy of this one.
+One sibling repository sits nearby, and it is not a copy of this one.
 
 `ose-private` holds authorized product operations and is closed to the public.
 
-[`ose-primer`](https://github.com/wahidyankf/ose-primer) is a separate, openly licensed
-multi-language starter. It grew out of earlier OSE practice and is free to diverge from it.
-
-The [repository comparison](./docs/reference/related-repositories.md) says which one answers which
-question.
+The [repository comparison](./docs/reference/related-repositories.md) says which repository answers
+which question.
 
 External contributions are currently closed while the project stabilizes its product and engineering
 patterns.

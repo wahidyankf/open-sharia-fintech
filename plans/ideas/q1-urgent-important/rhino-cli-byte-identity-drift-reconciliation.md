@@ -1,14 +1,11 @@
 # Reconcile the live `apps/rhino-cli` byte-identity drift against `ose-private`
 
 One-line summary: `apps/rhino-cli` byte-identity across `ose-public`/`ose-private` — a zero-carve-out
-MUST boundary — is broken in at least two independently-measured places (a 17-file union from the
-`optimize-cis` era and a one-line fixture string in `sync_validator.rs`), and both escaped the same
-way: the fix landed in one repo after the sibling's PR had already merged, with nothing left to
+MUST boundary — is broken in at least two independently-measured places (an eight-file divergence
+from the `optimize-cis` era, drawn from a 17-file measured set, and a one-line fixture string in
+`sync_validator.rs`), and both escaped the same way: the fix landed in one repo after the sibling's PR had already merged, with nothing left to
 propagate it automatically.
 
-> **Scope note (2026-08-16)**: `ose-primer` left the parity set and carries no propagation
-> obligation. The 2026-08-09 measurements below are preserved verbatim as evidence, but only the
-> `ose-private` half of the drift is actionable; the `ose-primer`-only files are out of scope.
 > Merged with `rhino-cli-sync-validator-wrong-model-drift.md` (itself demoted from a full `backlog/`
 > plan on 2026-08-05 and relocated from `ose-private` on 2026-08-06) on 2026-08-21 by
 > plan-ideas-grooming.
@@ -21,24 +18,25 @@ repos: `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and the sh
 tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**` must all match byte for byte. Two separate
 violations are live.
 
-**Violation 1 — the `optimize-cis`-era union.** Measured on **2026-08-09** during cycle 7 of the
-PR-Review Maker→Fixer Cycle on `ose-public` #162, by diffing `parity-manifest.sha256` (659 entries)
-against both siblings' live `main` via the GitHub Contents API: 15 files diverge against `ose-primer`,
-8 against `ose-private` (6 overlapping), for a **union of 17 distinct files** —
+**Violation 1 — the `optimize-cis`-era measured set.** Measured on **2026-08-09** during cycle 7 of
+the PR-Review Maker→Fixer Cycle on `ose-public` #162, by diffing `parity-manifest.sha256` (659
+entries) against live `main` via the GitHub Contents API: **8 files diverge against `ose-private`**,
+drawn from a wider **17-file measured set** —
 `src/application/doctor/tools.rs`, `src/application/parity.rs`, `src/commands/gate/run.rs`,
 `src/commands/gate/validate.rs`, `src/commands/harness_generate_bindings.rs`,
 `src/commands/md_validate_frontmatter_dates.rs`, `src/commands/repo_config_validate.rs`,
 `tests/agents.rs`, `tests/cursor_binding.rs`, `tests/docs.rs`, `tests/gate_dispatch.rs`,
 `tests/gate_format_verify_wrappers.rs`, `tests/gate_specs.rs`, `tests/specs_tree.rs`, and three files
 under `specs/apps/rhino/behavior/rhino-cli/gherkin/` (`gate/gate-declaration.feature`,
-`gate/gate-execution.feature`, `README.md`). The original PR-review finding (`AR5`) reproduced only
-the `ose-primer` diff and reported 14 — two files diverge only against `ose-private` and were never
-named, and a 17th was found during cycle-8 re-verification.
+`gate/gate-execution.feature`, `README.md`). The original PR-review finding (`AR5`) reported 14 and
+never named two of the diverging files, and a 17th surfaced during cycle-8 re-verification. Treat
+the 17 as the superset to re-check, not a confirmed actionable list — **re-measure against
+`ose-private` before acting** rather than trusting either count.
 
 Root cause: cycle 6 fixed a `validate.rs` staleness finding in `ose-public` only (commit `891ef597a`),
 then regenerated `ose-public`'s own `parity-manifest.sha256` to match (`18ae58897`) — silencing the
-_local_ gate while leaving the _cross-repo_ contract violated. That landed after both siblings'
-`optimize-cis` PRs had merged, so no live PR remained to carry the propagation.
+_local_ gate while leaving the _cross-repo_ contract violated. That landed after the sibling's
+`optimize-cis` PR had merged, so no live PR remained to carry the propagation.
 
 **Violation 2 — the `sync_validator.rs` fixture string.** The test fixture exercising the
 unrecognized-model code path embeds a placeholder that the two repos disagree on:
@@ -77,7 +75,7 @@ progressively more expensive as further drift accretes on top.
   — the sanctioned workflow for a change that must land in more than one repo at once; this follow-up
   should use it rather than an ad hoc cross-repo push.
 - [rhino-cli-tools-superset-carveout](../q2-not-urgent-important/rhino-cli-tools-superset-carveout.md)
-  — argues `doctor/tools.rs`, which is **in the 17-file union above**, carries a legitimate
+  — argues `doctor/tools.rs`, which is **in the 17-file measured set above**, carries a legitimate
   `ose-private`-only divergence. Reconciliation cannot simply converge that file without settling that
   brief first.
 - [extend-byte-identity-to-claude-hooks](../q2-not-urgent-important/extend-byte-identity-to-claude-hooks.md)
@@ -117,8 +115,6 @@ Out of scope (for now):
 
 - Re-opening or amending the already-merged sibling PR (`ose-private` #30) — propagation lands as new
   commits/PRs, never history rewrites.
-- The `ose-primer`-only files in the measured union, and `ose-primer`'s own copies generally — that
-  repo is outside the parity set and free to diverge.
 - Building an automated cross-repo byte-identity CI gate — a larger, separate investment.
 - `beaver-nest` — deliberately outside the parity boundary. As of 2026-08-21 it carries no
   `rhino-cli` at all: its `apps/` holds only `bnest-app` and `bnest-e2e`, and the repo was rebuilt on
@@ -131,11 +127,11 @@ Out of scope (for now):
 
 ## Risks & open questions
 
-- **Are the lists still current?** Neither the 17-file union nor the fixture divergence has been
+- **Are the lists still current?** Neither the 17-file measured set nor the fixture divergence has been
   re-measured since authoring, and independent `rhino-cli` work in either repo may have grown or
   closed them. This is Step 0 and it gates everything else. (open)
 - **For each file, which repo's version is correct?** No default winner is safe. (open)
-- **What happens to `doctor/tools.rs`?** It is in the union _and_ the subject of a brief arguing its
+- **What happens to `doctor/tools.rs`?** It is in the measured set _and_ the subject of a brief arguing its
   divergence is legitimate. Converging it may be the wrong move; the two briefs have to be read
   together. (open)
 - **Does anything outside `sync_validator.rs` reference the losing string?** Changing it in one place

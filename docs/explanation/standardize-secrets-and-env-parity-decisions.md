@@ -22,26 +22,26 @@ This document records every cross-repo parity decision from the `standardize-sec
 technical design lives in
 [`plans/done/2026-06-10__standardize-secrets-and-env/tech-docs.md`](../../plans/done/2026-06-10__standardize-secrets-and-env/tech-docs.md).
 
-Sibling repo plans: the ose-private and ose-primer repositories carry equivalent plans; this document
+Sibling repo plans: the ose-private repository carries an equivalent plan; this document
 records only the ose-public decisions and deviations.
 
 ## Background
 
-The three sibling repositories (`ose-public`, `ose-primer`, `ose-private`) each had independently
+The sibling repositories (`ose-public`, `ose-private`) each had independently
 evolving secrets and env practices — different file naming, no canonical hub doc, and no automated
 drift guard. The `standardize-secrets-and-env` plan establishes a single cross-repo canonical
 baseline. The four parity-sensitive decisions below required explicit deliberation.
 
 ## Decision Matrix
 
-| #   | Dimension                          | ose-public decision                      | ose-primer       | ose-private      | Deviation?                                   |
-| --- | ---------------------------------- | ---------------------------------------- | ---------------- | ---------------- | -------------------------------------------- |
-| 1   | Canonical rule doc filename        | `no-secrets-in-committed-files.md`       | same             | same (source)    | None — aligned to ose-private canonical      |
-| 2   | `guard-env-file-access` identifier | unchanged                                | unchanged        | unchanged        | None — shared across all three               |
-| 3   | Hub doc filename                   | `secrets-and-env-standards.md`           | same (propagate) | same             | None                                         |
-| 4   | `env-contract:` section format     | `serde_norway` YAML in `repo-config.yml` | same (propagate) | same             | None                                         |
-| 5   | `DATABASE_URL` exemption           | unprefixed, exempt                       | exempt           | exempt           | None                                         |
-| 6   | Next.js `PORT` vs backend `PORT`   | webs exempt, backends prefixed           | webs exempt      | n/a (no Next.js) | Structural delta (no deviation in principle) |
+| #   | Dimension                          | ose-public decision                      | ose-private      | Deviation?                                   |
+| --- | ---------------------------------- | ---------------------------------------- | ---------------- | -------------------------------------------- |
+| 1   | Canonical rule doc filename        | `no-secrets-in-committed-files.md`       | same (source)    | None — aligned to ose-private canonical      |
+| 2   | `guard-env-file-access` identifier | unchanged                                | unchanged        | None — shared across both                    |
+| 3   | Hub doc filename                   | `secrets-and-env-standards.md`           | same             | None                                         |
+| 4   | `env-contract:` section format     | `serde_norway` YAML in `repo-config.yml` | same             | None                                         |
+| 5   | `DATABASE_URL` exemption           | unprefixed, exempt                       | exempt           | None                                         |
+| 6   | Next.js `PORT` vs backend `PORT`   | webs exempt, backends prefixed           | n/a (no Next.js) | Structural delta (no deviation in principle) |
 
 ## Decision Details
 
@@ -81,12 +81,11 @@ all secrets and env practices.
 `reproducible-environments.md`). A single hub doc with explicit section anchors makes it possible for
 cross-references to point to exact rules rather than whole documents.
 
-**Cross-repo propagation**: The hub doc is designed to be propagated to `ose-primer` manually
-via the multi-repo parity planning workflows. `ose-private` carries its own equivalent.
+**Cross-repo propagation**: `ose-private` carries its own equivalent, kept current via the
+multi-repo parity planning workflows.
 
 **Deviation**: None in principle. Structural placement in
-`repo-governance/conventions/security/` is shared across ose-public and ose-primer;
-ose-private may differ in directory hierarchy.
+`repo-governance/conventions/security/` may differ from ose-private's directory hierarchy.
 
 ### 4. `env-contract:` section YAML format
 
@@ -100,8 +99,7 @@ the canonical YAML parser in this codebase.
 **Forward scaffold**: Terraform and Ansible surfaces are present as YAML comments — syntactically
 present, not parsed. Uncomment and fill when IaC is added to the repository.
 
-**Cross-repo propagation**: The format is identical across ose-public and ose-primer. ose-private
-adopts the same format.
+**Cross-repo propagation**: ose-private adopts the same format.
 
 **Deviation**: None.
 
@@ -141,13 +139,10 @@ takes the prefix.
 structural rather than a policy divergence — the underlying rule (framework-reserved names stay
 framework-named) is shared.
 
-**Deviation from ose-primer**: `ose-primer` packages the same web applications and inherits the same
-exemption. No deviation.
-
 ## Summary
 
-All four policy decisions are aligned across the three sibling repos after this plan. The only
+All four policy decisions are aligned across both sibling repos after this plan. The only
 structural delta is Decision 6 (Next.js `PORT` vs backend `PORT`) — a necessary consequence of the
-mixed web/backend topology in ose-public and ose-primer that does not exist in ose-private.
+mixed web/backend topology in ose-public that does not exist in ose-private.
 
 See: [`secrets-and-env-standards.md`](../../repo-governance/conventions/security/secrets-and-env-standards.md)
