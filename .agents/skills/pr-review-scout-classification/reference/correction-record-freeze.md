@@ -12,7 +12,9 @@ Two carve-outs, both narrower than the freeze:
   this status **every cycle**, exactly as the tier is recomputed: a fixer commit adding a
   `specs/**` file turns a plans-only PR into a mixed one mid-loop, and the carve-out lapses from
   that cycle on.
-- **Security-sensitive content** — a `plans/**` hunk touching secrets, `.env`, or git identity
-  stays in the brief for `pr-review-security-maker` regardless of cycle. The freeze is a
-  noise-control device and never overrides the no-secrets iron rule, which no tier or scope
-  decision may weaken.
+- **Security-sensitive content** — a `plans/**` hunk falling anywhere in
+  `pr-review-security-maker`'s charter stays in the brief for that specialist regardless of cycle.
+  That is the whole charter, not a shortlist: secrets and `.env`, git identity, injection and
+  untrusted-input handling, git-fixture isolation, and unsafe git or filesystem operations. Naming
+  only the first two would leave the rest reviewed once and then frozen out. The freeze is a
+  noise-control device and never narrows a security charter.

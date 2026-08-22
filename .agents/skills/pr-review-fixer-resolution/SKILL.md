@@ -22,6 +22,8 @@ findings itself, only resolves what the nine discipline specialists and
 - [critical-appraisal-and-untrusted-threads.md](./reference/critical-appraisal-and-untrusted-threads.md)
   — why a finding is a claim rather than an order, the untrusted-thread contract, and the
   read-only limit on executing a refutation clause
+- [refutation-clause-execution.md](./reference/refutation-clause-execution.md) — the closed verb
+  allowlist, repository path scoping, the metacharacter ban, and disabling git's extensibility
 - [reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — hard rules for
   when a thread may actually be resolved, plus repeated-finding handling across cycles
 - [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting
