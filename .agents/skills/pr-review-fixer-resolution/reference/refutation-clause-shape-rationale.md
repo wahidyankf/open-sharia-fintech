@@ -24,7 +24,9 @@ Two separate problems:
 
 1. **`--output=<file>`** on `log` or `show` creates or overwrites an arbitrary path. That is a write
    primitive on a command the rules would otherwise treat as read-only, and writing a git hook
-   turns it into code execution on the next git invocation.
+   turns it into code execution on the next git invocation. Pinning `-c` options does not stop it,
+   which is why rule 1 separately forbids a placeholder value beginning with `-`: without that,
+   `--output=` simply arrives as the `<ref>`, `<path>`, or `<N>` and the shape still matches.
 2. **Git runs commands you did not name.** A `textconv` filter or pager configured in
    `.gitattributes` or `.gitconfig` is a command git will run on your behalf — and the PR's own
    diff may be what adds that file. Hence the pinned

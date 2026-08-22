@@ -15,9 +15,10 @@ Implement the fix, commit, and push to the PR branch. Reply on the same thread w
 `Fixed: <what changed>` — a concrete description naming file and mechanism, never a vague
 "addressed" or "done".
 
-**Link the commit in the reply itself** — `Fixed in <owner>/<repo>@<sha>`, or the commit URL. The
-disposition block's `commit` field serves machines; the link serves the reader, who should verify
-the claim in one click rather than searching branch history. A `Fixed` reply
+**Link the commit in the reply itself** — `Fixed in <owner>/<repo>@<sha>`, or the commit URL. Every
+reply also opens with a **disposition block**, an HTML comment recording the outcome for machines
+(see [reply-resolve-discipline.md](./reply-resolve-discipline.md)); the link serves the reader, who
+should verify in one click. A `Fixed` reply
 naming no commit is unverifiable at the moment it matters most.
 
 ## Reject Path — A Higher Bar Than "Disagree"

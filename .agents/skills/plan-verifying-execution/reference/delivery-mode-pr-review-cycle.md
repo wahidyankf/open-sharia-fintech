@@ -29,9 +29,9 @@ PR to be merged.
        loop reached the seven-cycle ceiling with one still open (status `blocked`): **CRITICAL** —
        a `blocked` route never merges, per merge preconditions (a) and (b).
      - The loop ran past seven cycles with the last cycle clean: **HIGH**. When both this and the
-       bullet above match, the **higher severity governs** — an outstanding finding is CRITICAL however
-       many cycles ran. — the ceiling is never extended as a substitute for
-       resolving a finding.
+       bullet above match, the **higher severity governs**: an outstanding finding is CRITICAL
+       however many cycles ran, and the ceiling is never extended as a substitute for resolving
+       a finding.
    - **Every thread answered/resolved** — zero unresolved threads, OR each remaining open thread
      carries an explicit escalation-to-`[HUMAN]` note in the PR description. An unresolved thread with
      no reply and no escalation note: **HIGH**.
