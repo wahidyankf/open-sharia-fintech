@@ -21,7 +21,7 @@ list: a second copy of it went stale the first time a module was added, which is
 [restatement-by-value.md](../../../repo-governance/workflows/pr/pr-review-quality-gate/restatement-by-value.md)
 describes.
 
-The five `refutation-clause-*` modules are one rule split across a word budget. Read them together
+The `refutation-clause-*` modules are one rule split across a word budget. Read them together
 or not at all — the execution shapes are meaningless without the invariants they derive from.
 
 ## Core Principles

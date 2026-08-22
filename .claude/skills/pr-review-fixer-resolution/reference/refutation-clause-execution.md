@@ -21,14 +21,21 @@ A verb allowlist is not enough: allowlisted commands carry flags that execute or
 exact shapes run, and nothing else ever:
 
 ```bash
-rg -n <pattern> <path>...            # also -c, -i, -F. No other flags.
-cat <path>...
+rg -nF <pattern> <path>              # -F is MANDATORY. Also -c, -i. No other flags.
+cat <path>
 sed -n '<N>,<M>p' <path>             # a line-range print. No other sed script, ever.
 ```
 
+**`-F` is not optional.** It makes `<pattern>` a literal string, removing the regex engine and the
+last unbounded cost in the list. A clause needing a regex is making a claim it cannot test cheaply —
+restate the claim.
+
+**Exactly one `<path>` per invocation**, so each read is one checked file and no two files' bytes
+arrive fused.
+
 **No placeholder value may begin with `-`; `<N>` and `<M>` are digits only.** Every shape reads the
-working tree, so one rule-3 check covers every read. No recursion flag is on the list (`-r`, `-R`, `--recursive`); rule 3 admits one regular file at a
-time.
+working tree, so one rule-3 check covers every read. No recursion flag is on the list (`-r`, `-R`,
+`--recursive`); rule 3 admits one regular file at a time.
 
 Anything outside these shapes is rejected, including an unlisted flag however harmless it reads. Adding a shape means editing this file, never a judgement call.
 
@@ -39,9 +46,8 @@ Each shape is narrow because the wider form executes or writes. See
 
 ## 3. Every Path Is One Git-Tracked Regular File
 
-Resolve each path first: reject a leading `~`, any absolute path, any `..` escaping the root. A
-shape taking `<path>...` gets **one check per path** — N paths, N checks, never one batched call.
-Then reject unless both lines pass:
+Resolve the path first: reject a leading `~`, any absolute path, any `..` escaping the root. Then
+reject unless both lines pass:
 
 ```bash
 git ls-files -s -- <path>            # one line, mode 100644 or 100755, path field == <path>

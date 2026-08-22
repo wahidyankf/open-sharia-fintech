@@ -18,16 +18,18 @@ runs whatever the attacker serves. This was confirmed empirically rather than re
 
 Only a numeric range plus `p` is safe, which is why the shape is exactly `sed -n '<N>,<M>p'`.
 
-## `rg`, and Why Not `grep`
+## `rg -F`, and Why Not `grep`
 
-`rg` is the only search engine on the list, and the reason is cost, not syntax. GNU `grep` matches
-by backtracking: `\(a\{1,n\}\)\{1,n\}b` — ordinary BRE, no backreference, no `-P` — took 19
-seconds against a 500-byte file and grows roughly cubically. `rg` matches with finite automata, ran
-the same pattern in half a second, rejects backreferences at parse time, and refuses an oversized
-pattern outright rather than running it.
+`rg` replaced `grep` because GNU `grep` backtracks: `\(a\{1,n\}\)\{1,n\}b` — ordinary BRE, no
+backreference, no `-P` — took 19 seconds at n=500. True, and not enough. On ripgrep 15.2.0 the same
+construct costs 3.1s at n=500, 13.0s at n=800, 28.7s at n=1000 and over 60s at n=1200; only at
+n=1500 does `rg` refuse to compile it. **Faster is not bounded**, and the size limit arrives long
+after the cost does.
 
-An engine that bounds its own cost is a guarantee; a list of forbidden constructs is an
-enumeration, and enumerations lag — see the [escape ledger](./refutation-clause-escape-ledger.md).
+So the guarantee cannot come from the engine either. `-F` is mandatory, which removes the regex
+engine from the clause path: a literal search has no pattern cost to bound. That is a component
+choice rather than a threshold, and a threshold is an enumeration wearing a number — see the
+[escape ledger](./refutation-clause-escape-ledger.md).
 
 `-f <file>` reads patterns from a path, turning a search into a file read the clause never named.
 `-P` enables PCRE backtracking, the behaviour `rg` was chosen to avoid. Neither is on the list, and
@@ -40,12 +42,10 @@ A value beginning with `-` arrives as a flag, and the flag surface is where the 
 `--output=` on a git command created or overwrote an arbitrary path, and `-f` on a search command
 redirects it to read a file nobody named. The rule is general because the surface is.
 
-`-r` is off the list for a different reason: it changes what a path _means_. Given a directory,
-`grep -r` walks every file underneath, gitignored ones included, so a per-path safety check that
-passed on the directory never saw what was actually read. Note `rg` would have hidden this rather
-than fixed it — it skips gitignored files by default, so the same clause silently reads less under
-one tool than the other, and a safety rule whose effect depends on which binary is installed is
-not a rule.
+`-r` is off the list for a different reason: it changes what a path _means_. Given a directory it
+walks every file underneath, so a check that passed on the directory never saw what was read — and
+the two tools disagree about which files, since `rg` skips gitignored ones. A safety rule whose
+effect depends on which binary is installed is not a rule.
 
 Reads are a separate problem from writes: `cat`, `sed`, and `rg` never write, but none of
 them consults git either — see [why the path rule is that shape](./refutation-clause-path-rule.md).

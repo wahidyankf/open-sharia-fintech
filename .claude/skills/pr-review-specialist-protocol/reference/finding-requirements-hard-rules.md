@@ -18,7 +18,7 @@ Every finding this agent posts MUST carry all of the following. A finding missin
 1. **Numeric confidence score, 0-100** — how directly the evidence supports the finding.
    **Findings scoring below 80 are hard-dropped and never posted.** When in doubt, do not post rather than post a low-confidence guess.
 1. **Refutation clause** — one line naming the **specific, checkable evidence that would prove this
-   finding wrong**. "I am confident" is not one; "if `grep -n 'X' path/f` returns a hit, this
+   finding wrong**. "I am confident" is not one; "if `rg -F 'X' path/f` returns a hit, this
    finding is void" is. Write it as one of the
    [invocation shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md),
    and one this repo's own hooks will let you [post](../../pr-review-fixer-resolution/reference/refutation-clause-postability.md) — a clause naming a write or a dotfile
