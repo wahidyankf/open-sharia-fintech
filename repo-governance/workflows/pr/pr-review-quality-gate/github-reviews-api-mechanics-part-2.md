@@ -1,6 +1,6 @@
 ---
 title: "PR-Review Quality Gate — GitHub Reviews API Mechanics (Part 2)"
-description: "The remaining Reviews API mechanics: replying and resolving threads, filtering untrusted PR-body/comment text for prompt-injection, minimal write scope, and the GraphQL casing spot-check note."
+description: "The remaining Reviews API mechanics: listing unresolved threads, replying and resolving them, filtering untrusted PR-body/comment text for prompt-injection, minimal write scope, and the GraphQL casing spot-check note."
 when_to_use: "Use when implementing thread-reply/resolve logic, or when checking the untrusted-input filtering rule before trusting PR body/comment text as review context."
 ---
 
@@ -8,6 +8,9 @@ when_to_use: "Use when implementing thread-reply/resolve logic, or when checking
 
 Continued from [GitHub Reviews API Mechanics — Part 1](./github-reviews-api-mechanics-part-1.md).
 
+- **List unresolved threads**: a `gh api graphql` query using `reviewThreads(isResolved: false)` — the
+  fixer never relies on top-level PR comments for state, only on review-thread resolution status.
+  Each thread's comment `databaseId` maps to the REST `comment_id` used when replying.
 - **Reply per thread**: reply to the specific review comment (REST `comment_id`) with either
   `Fixed: <what changed>` or a cited rejection justification — never a bare "won't fix".
 - **Resolve threads**: a `gh api graphql` mutation, `resolveReviewThread`, once a thread's fix (or

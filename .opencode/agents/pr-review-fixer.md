@@ -73,5 +73,5 @@ stopgap plus mandatory pre-push gate re-run.
 ## Required Reading
 
 Before acting, read every skill listed in this file's `skills:` frontmatter —
-`pr-review-fixer-resolution` (all nine reference modules) holds the full triage-and-resolution
+`pr-review-fixer-resolution` (all ten reference modules) holds the full triage-and-resolution
 protocol.

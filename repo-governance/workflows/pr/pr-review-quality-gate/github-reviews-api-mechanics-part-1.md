@@ -23,8 +23,11 @@ GitHub **Reviews API** (line-anchored, independently resolvable review threads).
 specialists do not call this API directly — each emits raw findings to the coordinator, which is the
 sole poster of record every cycle.
 
-- **Pin one head SHA per pass**: `gh pr view <PR> --json headRefOid` before posting, so every finding
-  in a cycle anchors to the same commit.
+- **Pin one head SHA per pass, and derive the anchors from it**: `gh pr view <PR> --json
+headRefOid` before posting. Each
+  comment's `path`/`line` must come from the diff **at that SHA**. Anchor against an earlier
+  read and GitHub rejects the entire review with `422 Path could not be resolved` — one stale
+  anchor loses the whole cycle, so recompute after every fixer push.
 - **Post exactly ONE consolidated review per cycle**: `gh api` (REST) or `gh api graphql` (GraphQL) to
   create a single pull request review carrying one line-anchored comment per surviving finding, each
   an independently resolvable thread — never one review per specialist.
@@ -38,8 +41,5 @@ sole poster of record every cycle.
   comment text. This limitation disappears only when a dedicated bot/GitHub App identity is
   provisioned — see the two-pager idea brief
   [`plans/ideas/pr-review-bot-identity.md`](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).
-- **List unresolved threads**: a `gh api graphql` query using `reviewThreads(isResolved: false)` — the
-  fixer never relies on top-level PR comments for state, only on review-thread resolution status.
-  Each thread's comment `databaseId` maps to the REST `comment_id` used when replying.
 
 Continued in [GitHub Reviews API Mechanics — Part 2](./github-reviews-api-mechanics-part-2.md).

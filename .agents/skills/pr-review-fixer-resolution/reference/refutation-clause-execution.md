@@ -14,12 +14,12 @@ grep -n <pattern> <path>...          # also -c, -i, -F, -A/-B/-C <n>. No other f
 rg -n <pattern> <path>...            # same flag set only.
 cat <path>...
 sed -n '<N>,<M>p' <path>             # a line-range print. No other sed script, ever.
-git -c core.pager=cat -c core.hooksPath=/dev/null show --no-textconv <ref>:<path>
+git -c core.pager=cat -c core.hooksPath=/dev/null show --no-textconv HEAD:<path>
 git -c core.pager=cat -c core.hooksPath=/dev/null log --oneline -n <N> [-- <path>]
 ```
 
 **No placeholder value may begin with `-`, and `<N>` is digits only** — a shape is unsafe if its
-holes accept flags. Pass `--` before a path wherever the command allows it. **No recursion flag is
+holes accept flags. `HEAD` is literal, never a ref the clause picks. Pass `--` before a path wherever the command allows it. **No recursion flag is
 on the list** (`-r`, `-R`, `--recursive`): rule 3 admits one regular file at a time, so nothing
 needs to be walked.
 

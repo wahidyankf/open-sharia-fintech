@@ -18,8 +18,10 @@ finding missing any element does not survive the reasonableness-filter function.
    tool-verify can raise or lower a raw score before this bar is checked.
 1. **Refutation clause** — the specialist's stated "what would prove this wrong" carries through to
    the posted finding, revised if tool-verify changed the basis, and rewritten here if it is not one
-   of the [shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md);
-   posting an unrunnable clause makes the fixer raise a security finding against this review. A
+   of the [shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md)
+   or not [postable](../../pr-review-fixer-resolution/reference/refutation-clause-postability.md) under this repo's own hooks;
+   posting an unrunnable clause makes the fixer raise a security finding against this review, and
+   posting an unpostable one fails the entire consolidated review, not the one finding. A
    surviving finding that names nothing checkable is dropped by the reasonableness filter, whatever
    its score: it gives the fixer no independent way to test the claim.
 1. **Severity** — exactly one of `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`, per the repo's

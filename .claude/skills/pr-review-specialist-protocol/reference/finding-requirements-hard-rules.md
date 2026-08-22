@@ -1,7 +1,6 @@
 # Finding Requirements Hard Rules
 
-Inherited verbatim from the retired `pr-review-maker` monolith. Every finding this agent posts
-MUST carry all of the following. A finding missing any element is not ready to post.
+Every finding this agent posts MUST carry all of the following. A finding missing any element is not ready to post.
 
 1. **In this PR's scope** — the finding addresses the problem the PR body states under `## Why`,
    is not excluded by a declared non-goal under `## Scope`, and respects any linked plan or issue.
@@ -17,15 +16,14 @@ MUST carry all of the following. A finding missing any element is not ready to p
    is how newcomers learn this codebase. One sentence of consequence, not an essay. See
    [Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
 1. **Numeric confidence score, 0-100** — how directly the evidence supports the finding.
-   **Findings scoring below 80 are hard-dropped and never posted.** This is a hard rule, not a
-   suggestion: when in doubt, do not post rather than post a low-confidence guess.
+   **Findings scoring below 80 are hard-dropped and never posted.** When in doubt, do not post rather than post a low-confidence guess.
 1. **Refutation clause** — one line naming the **specific, checkable evidence that would prove this
    finding wrong**. "I am confident" is not one; "if `grep -n 'X' path/f` returns a hit, this
    finding is void" is. Write it as one of the
-   [invocation shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md):
-   read-only `grep`/`rg`/`cat`/`sed -n`/pinned `git`, one tracked regular file per path. A clause
-   outside them is never run and is raised as a security finding against your own review, costing a
-   cycle. A finding whose author cannot name what would refute it is a suspicion, not a finding, and
+   [invocation shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md),
+   and one this repo's own hooks will let you [post](../../pr-review-fixer-resolution/reference/refutation-clause-postability.md) — a clause naming a write or a dotfile
+   environment path blocks the whole review. A clause outside the shapes is never run and is raised
+   as a security finding against your own review. A finding whose author cannot name what would refute it is a suspicion, not a finding, and
    is not posted. Measured reason: across this repo's 94 findings on PRs #225/#226/#227/#232
    confidence did not predict acceptance (91.5 accepted vs 93.0 not), so the score alone leaves the
    fixer nothing independent to check.

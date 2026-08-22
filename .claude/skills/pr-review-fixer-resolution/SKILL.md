@@ -26,6 +26,8 @@ findings itself, only resolves what the nine discipline specialists and
   the verified `sed`/`git`/`grep` escapes behind that set
 - [refutation-clause-path-rule.md](./reference/refutation-clause-path-rule.md) — why a path must
   be one tracked regular file
+- [refutation-clause-postability.md](./reference/refutation-clause-postability.md) — why a
+  clause that cannot be posted is worse than one that cannot be run
 - [reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — when a thread may
   actually be resolved
 - [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting identity
