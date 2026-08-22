@@ -21,10 +21,10 @@ the incident procedure before either route; it is never exempted by a docs-only 
 
 ## Execution Mode
 
-Sequential, hard-gated: up to seven cycles run strictly one after another —
+Sequential, hard-gated: cycles up to the configured ceiling (seven by default) run strictly one after another —
 fan-out→synthesize→fixer — never in parallel **across** cycles. Within a cycle's fan-out the
 tier-selected specialists DO run **concurrently** (see
-[Participants](./participants.md#participants)); only cross-cycle ordering is sequential. A full
+[Participants](./participants.md#participants)). A full
 CI-green gate blocks each cycle.
 
 ## PR Applicability Classifier

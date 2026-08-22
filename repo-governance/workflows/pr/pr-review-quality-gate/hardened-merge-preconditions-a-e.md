@@ -9,8 +9,9 @@ when_to_use: "Use when verifying every precondition before merging a PR, or when
 Being **done** is necessary but not sufficient to merge. A PR merges only when **all five** of the
 following hold:
 
-- **(a)** The PR completed its route-specific review: an eligible PR reached a clean exit
-  within the maximum seven, while a noneligible PR has recorded classifier evidence and a green
+- **(a)** The PR completed its route-specific review: an eligible PR reached
+  [its clean exit](./probe-variation-and-exit.md) within its configured ceiling,
+  while a noneligible PR has recorded classifier evidence and a green
   `pr-quality-gate.yml` run. A `blocked` route status always blocks merge.
 - **(b)** **0 code-related CRITICAL + 0 HIGH + 0 MEDIUM findings outstanding.** A reasoned reject or
   deferral does not erase an unresolved code finding; it remains blocking until resolved in the

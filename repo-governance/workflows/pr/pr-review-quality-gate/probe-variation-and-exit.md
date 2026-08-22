@@ -19,9 +19,8 @@ exhaustion, not correctness** — a loop cannot find what it never asks about.
 ## The Probe-Class Register
 
 Each PR's review record names the probe class every cycle used, so "a new probe" is checkable rather
-than asserted. Classes used on PR #249: rule consistency, security shape, restatement, cross-repo
-divergence, adversarial dismissal, inert-rule deletion, clause durability, PR-body drift, and
-enforcement-disposition completeness.
+than asserted. That record is the register; this file does not carry a second copy, which would go
+stale within a cycle and make the exit rule return the wrong answer.
 
 Naming the class is what makes the register useful. "A different question" describes every cycle;
 "the same class as cycle nine" is falsifiable.
@@ -43,6 +42,11 @@ which is [extended only per-PR](./convergence-measurement.md).
 
 A ceiling reached before the exit condition holds is a `blocked` PR, not a clean one. Reaching the
 ceiling never converts an unmet exit condition into a met one.
+
+That includes the case where **nothing is outstanding**: seven cycles run, the last two are clean,
+but one repeats an earlier class. The condition is unmet, so the PR is `blocked` with zero findings.
+Its only lawful resolution is a recorded per-PR ceiling extension — which is permitted here, because
+there is no finding for the extension to avoid resolving.
 
 ## Enforcement
 

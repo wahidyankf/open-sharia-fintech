@@ -35,15 +35,15 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
                 return done             # second consecutive clean cycle; LOW findings never hold the loop open
         if cycle % 3 == 0:
             convergence_checkpoint(prior)   # continue | change fix strategy | block
-        if cycle >= 6:
+        if cycle == 6 or (cycle > 6 and cycle % 3 == 0):
             capture_nonconvergence_learning_and_idea(PR, cycle, unresolved)
-    return blocked                           # ceiling reached with code M/H/C still outstanding
+    return blocked                           # ceiling reached, exit condition unmet — with or
+                                             # without an outstanding finding; extend per-PR to resolve
 ```
 
-- **Up to N cycles, default 7, strictly sequential** — fan-out→synthesize→fixer, repeated only
-  until a clean exit or the configured ceiling,
-  never parallel **across** cycles (the specialist fan-out WITHIN a single cycle is concurrent — see
-  [Participants](./participants.md#participants)).
+- **Sequencing, the ceiling, and within-cycle concurrency** are stated once in
+  [Execution Mode](./purpose-execution-mode-and-classifier.md#execution-mode); this file does not
+  restate them.
 - Each cycle spawns **fresh** specialist instances, tier-selected per
   [PR Reviewer-Discipline Convention §Risk-tier fan-out](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md#risk-tier-fan-out-d12)
   (clean context) fed the coordinator's own prior consolidated findings and their resolution state,

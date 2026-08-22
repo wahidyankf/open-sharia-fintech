@@ -14,8 +14,7 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   work.
 - **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes
   what a fixer commit wrote about the loop's own cycles.
-  The test is authorship, not path. The rule and both its carve-outs (a plans-only PR, and any security-sensitive hunk, which stays reviewable
-  every cycle) are stated once in
+  The test is authorship, not path. The rule and its two carve-outs are stated once in
   [Correction-Record Freeze](../../../../.claude/skills/pr-review-scout-classification/reference/correction-record-freeze.md);
   this layer does not restate them, because a second copy drifts. **The PR body is NOT frozen** —
   it is the human reviewer's entry point, and a description nobody has checked since cycle 1 costs
@@ -26,14 +25,16 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   changing at cycle 14 while the loop ran to 19. A factual defect in a **shipping artifact** is
   never suppressed by this rule.
 
-- **Non-convergence learning**: at cycles six and seven **the orchestrator** appends sanitized evidence explaining why
+- **Non-convergence learning**: at the first cycle at or past six, and at every
+  [convergence checkpoint](./convergence-measurement.md) after it, **the orchestrator** appends sanitized evidence explaining why
   convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
   owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`
   entry for a systemic improvement. Never place a secret, access token,
   or copied vulnerable value in either record.
-- **Ceiling block**: when the configured ceiling (seven by default) is reached with an unresolved
-  code-related MEDIUM/HIGH/CRITICAL finding, status is `blocked`, not `done`; do not merge and do not
-  extend the cycle count as a substitute for resolving the finding. Extending it on the evidence of
+- **Ceiling block**: reaching the configured ceiling (seven by default) without the
+  [exit condition](./probe-variation-and-exit.md) holding is `blocked`, not `done` — whether or not a
+  finding is outstanding. Never
+  extend the cycle count as a substitute for resolving a finding. Extending it on the evidence of
   a [convergence checkpoint](./convergence-measurement.md) is a different act, recorded on the PR.
 - **Repeated rejection block**: a reasoned reject is not an automatic resolution of a code-related
   MEDIUM/HIGH/CRITICAL finding. The next cycle must independently verify it. If it remains, the PR
