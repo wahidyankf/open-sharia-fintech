@@ -37,6 +37,19 @@ In order of preference:
 
 Syncing without reducing is a `fix` that produces the next cycle's finding.
 
+## When the Duplicate Is Mandated
+
+A convention sometimes requires the second copy.
+[governance-readme-completeness.md](../../../conventions/structure/governance-readme-completeness.md)
+keeps a `<dir-name>.md` parent "audited as a second index over the same contents" its `README.md`
+indexes — two annotated indexes over one set, by design. Option 1 is unavailable there and option 2
+usually is too.
+
+Option 3 then applies, and it has to be written rather than assumed: name which copy governs, **in
+both copies**, so the next editor knows where to edit and a reader meeting a disagreement knows
+which side is wrong. A mandated duplicate is not exempt from this class. It is the shape of it that
+recurs most, precisely because nobody is allowed to delete it.
+
 ## Naming It
 
 A reviewer who finds two documents disagreeing reports the restatement, not only the disagreement,

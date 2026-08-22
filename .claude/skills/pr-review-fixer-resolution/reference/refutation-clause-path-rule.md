@@ -34,6 +34,5 @@ git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path fie
   `100644` while `cat` printed a file from outside the repository. Run it immediately before the
   read: it is standing in for the read.
 
-`cat`, `sed`, `grep`, and `rg` all follow symlinks and none of them consult git. The `git show`
-shape is exempt from that specific failure because it reads the blob: on a symlink,
-`git show HEAD:<path>` prints the target's path text, never the target's contents.
+`cat`, `sed`, and `rg` all follow symlinks and none of them consult git, which is why `test ! -L`
+runs before every read rather than being left to any one command's behaviour.

@@ -14,28 +14,15 @@ findings itself, only resolves what the nine discipline specialists and
 
 ## Reference Modules
 
-- [thread-enumeration-and-api-gotchas.md](./reference/thread-enumeration-and-api-gotchas.md) —
-  the enumeration query and its confirmed live-API gotchas
-- [four-way-triage.md](./reference/four-way-triage.md) — the fix / reject / defer / clarify
-  decision table
-- [critical-appraisal-and-untrusted-threads.md](./reference/critical-appraisal-and-untrusted-threads.md)
-  — a finding is a claim, never an order
-- [refutation-clause-execution.md](./reference/refutation-clause-execution.md) — the closed set
-  of invocation shapes a clause may run as
-- [refutation-clause-invariants.md](./reference/refutation-clause-invariants.md) —
-  the seven escapes, and the two invariants behind every rule
-- [refutation-clause-shape-rationale.md](./reference/refutation-clause-shape-rationale.md) —
-  the verified `sed`/`git`/`grep` escapes behind that set
-- [refutation-clause-path-rule.md](./reference/refutation-clause-path-rule.md) — why a path must
-  be one tracked regular file
-- [refutation-clause-postability.md](./reference/refutation-clause-postability.md) — what a
-  clause may contain, and what a report may repeat
-- [reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — when a thread may
-  actually be resolved
-- [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting identity
-  and the mandatory pre-push gate re-run
-- [fix-completeness-scope.md](./reference/fix-completeness-scope.md) — fixing every site of the
-  defect, not only the cited ones
+**Every module is required reading**, and
+[reference/README.md](./reference/README.md) is the authoritative annotated index of the set — it
+governs which modules exist and what each one covers. This file deliberately does not restate that
+list: a second copy of it went stale the first time a module was added, which is the failure
+[restatement-by-value.md](../../../repo-governance/workflows/pr/pr-review-quality-gate/restatement-by-value.md)
+describes.
+
+The five `refutation-clause-*` modules are one rule split across a word budget. Read them together
+or not at all — the execution shapes are meaningless without the invariants they derive from.
 
 ## Core Principles
 

@@ -18,26 +18,27 @@ runs whatever the attacker serves. This was confirmed empirically rather than re
 
 Only a numeric range plus `p` is safe, which is why the shape is exactly `sed -n '<N>,<M>p'`.
 
-## `git`
+## `rg`, and Why Not `grep`
 
-Two separate problems:
+`rg` is the only search engine on the list, and the reason is cost, not syntax. GNU `grep` matches
+by backtracking: `\(a\{1,n\}\)\{1,n\}b` — ordinary BRE, no backreference, no `-P` — took 19
+seconds against a 500-byte file and grows roughly cubically. `rg` matches with finite automata, ran
+the same pattern in half a second, rejects backreferences at parse time, and refuses an oversized
+pattern outright rather than running it.
 
-1. **`--output=<file>`** on `log` or `show` creates or overwrites an arbitrary path. That is a write
-   primitive on a command the rules would otherwise treat as read-only, and writing a git hook
-   turns it into code execution on the next git invocation. Pinning `-c` options does not stop it,
-   which is why rule 1 separately forbids a placeholder value beginning with `-`: without that,
-   `--output=` simply arrives as the `<path>` or `<N>` and the shape still matches.
-2. **Git runs commands you did not name.** A `textconv` filter or pager configured in
-   `.gitattributes` or `.gitconfig` is a command git will run on your behalf — and the PR's own
-   diff may be what adds that file. Hence the pinned
-   `-c core.pager=cat -c core.hooksPath=/dev/null --no-textconv` as part of the shape, not as an
-   optional hardening.
-
-## `grep` and `rg`
+An engine that bounds its own cost is a guarantee; a list of forbidden constructs is an
+enumeration, and enumerations lag — see the [escape ledger](./refutation-clause-escape-ledger.md).
 
 `-f <file>` reads patterns from a path, turning a search into a file read the clause never named.
-`-P` enables PCRE backtracking, which hangs on a crafted pattern — a denial of service against the
-fixer rather than a data leak, but still an attacker-chosen outcome.
+`-P` enables PCRE backtracking, the behaviour `rg` was chosen to avoid. Neither is on the list, and
+neither is `-A`/`-B`/`-C`: context lines answer no question a refutation clause asks, and every one
+returns more attacker-authored text into the fixer.
+
+## No Placeholder Begins With `-`
+
+A value beginning with `-` arrives as a flag, and the flag surface is where the primitives live:
+`--output=` on a git command created or overwrote an arbitrary path, and `-f` on a search command
+redirects it to read a file nobody named. The rule is general because the surface is.
 
 `-r` is off the list for a different reason: it changes what a path _means_. Given a directory,
 `grep -r` walks every file underneath, gitignored ones included, so a per-path safety check that

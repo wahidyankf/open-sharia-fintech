@@ -7,8 +7,9 @@ when_to_use: "Use at every third cycle, and whenever deciding to continue, chang
 # Convergence Measurement
 
 A raw finding count does not measure convergence. It sums two unrelated quantities: defects in the
-change under review, and defects the loop's own fixes created. On PR #249 the second was 63% of 63
-findings, so the count stayed high while the change itself was nearly clean.
+change under review, and defects the loop's own fixes created. On PR #249 the second was 63% of the
+63 findings posted in cycles two through six, so the count stayed high while the change itself was
+nearly clean.
 
 ## Every Disposition Carries a Cause
 
@@ -18,8 +19,13 @@ The `ose-pr-review-disposition:v2` block on each fixer reply names exactly one:
 - `class-escape` — the same class re-escaping after a fix closed only the instance named.
 - `fix-induced` — created by a previous cycle's fix.
 
-The fixer tags it, because only the fixer knows which commit introduced the line. Three tags and no
+The fixer tags it: only the fixer knows which commit introduced the line. Three tags and no
 more: a taxonomy nobody applies consistently measures nothing.
+
+A finding can satisfy two of them — a class re-escaping through a line a previous fix wrote is both
+`class-escape` and `fix-induced`. **The latest applicable cause governs**: `fix-induced` over
+`class-escape` over `original`. Tagging by the earliest instead would bill the loop's own exhaust to
+the change under review, which is the confusion these tags exist to remove.
 
 ## The Two Series
 
@@ -28,25 +34,26 @@ more: a taxonomy nobody applies consistently measures nothing.
 - **Induced rate** — (`class-escape` + `fix-induced`) ÷ total, per cycle. It rises as the loop
   starts reviewing itself.
 
-A cycle whose findings are all `fix-induced` says the change is clean and the fixing is the problem.
-That calls for a different remedy than another review pass.
+A cycle whose findings are all `fix-induced` says the change is clean and the fixing is the problem
+— a different remedy from another review pass.
 
 ## The Checkpoint, Every Third Cycle
 
 Stop after cycles three, six, nine … read both series, and record one of:
 
 - **Continue** — original defects are falling and the induced rate is not rising.
-- **Change fix strategy** — the induced rate is high. Attack the mechanism making surface rather
-  than the surface, most often [restatement by value](./restatement-by-value.md).
+- **Change fix strategy** — the induced rate is high. Attack the mechanism, not the surface — most
+  often [restatement by value](./restatement-by-value.md).
 - **Block** — original defects persist and are not falling.
 
-Extending a ceiling to avoid resolving a finding stays forbidden. Extending one when the checkpoint
-shows a falling original-defect series is a per-PR override, recorded on the PR, citing both series.
+Extending a ceiling when the checkpoint shows a falling original-defect series is a per-PR override,
+recorded on the PR and citing both series. It funds attempts and
+[never waives a finding](./notes.md).
 
 ## Vary the Probe
 
 A cycle repeating the previous cycle's question converges on that question, not on correctness. Six
-cycles on PR #249 walked past a catastrophic-backtracking hole in an allowed command shape; the
+cycles on PR #249 walked past a catastrophic-backtracking hole in an allowed shape; the
 seventh found it because the brief asked something different. Each cycle's scout states how this
 cycle's probe differs — a different failure mode, a different reader, a different level. A clean
 cycle counts as clean only under a probe unlike the one before it.

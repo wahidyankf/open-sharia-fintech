@@ -1,6 +1,6 @@
 ---
 title: "PR-Review Maker→Fixer Cycle Workflow"
-description: "Classify every PR by changed-artifact behavior, then run up to seven sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
+description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
 when_to_use: "Read this index to find the right PR-Review Maker→Fixer Cycle Workflow child document."
 ---
 
