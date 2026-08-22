@@ -23,7 +23,7 @@ reading.
 ## What Every Finding Carries
 
 - **The consequence, in plain terms.** What actually breaks, and for whom. `file:line` and a rule
-  citation say *where* and *which rule*; neither says *why it matters*. One sentence.
+  citation say _where_ and _which rule_; neither says _why it matters_. One sentence.
 - **The rule paraphrased, not merely linked.** A bare path is a lookup task. State what the rule
   requires in the finding itself and link for the detail.
 - **Terms of art defined on first use**, or replaced with plain words. Precision survives

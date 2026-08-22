@@ -40,12 +40,12 @@ second is scope creep, however worthwhile it is on its own.
 
 **Fixing the whole class is not creep.** One defect stated in six files is one problem, and a fix
 touching only the cited file leaves the rest contradicting it. Widening a fix to every site of the
-*same* defect stays in scope; adding a *different* defect does not.
+_same_ defect stays in scope; adding a _different_ defect does not.
 
 ## The One Exception
 
 **A defect this PR introduces is always in scope**, however far it sits from the stated problem.
-The guard bounds *additions* to the problem, never *consequences* of the change under review.
+The guard bounds _additions_ to the problem, never _consequences_ of the change under review.
 Without this carve-out the guard becomes a shield: "out of scope" would excuse a regression the
 PR itself caused.
 

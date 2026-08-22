@@ -16,4 +16,3 @@ Two carve-outs, both narrower than the freeze:
   stays in the brief for `pr-review-security-maker` regardless of cycle. The freeze is a
   noise-control device and never overrides the no-secrets iron rule, which no tier or scope
   decision may weaken.
-

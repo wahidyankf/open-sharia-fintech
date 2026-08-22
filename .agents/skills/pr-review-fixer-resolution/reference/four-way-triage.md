@@ -7,7 +7,7 @@ For every unresolved thread, choose exactly one outcome:
 | **fix**                | The finding is correct and actionable in this PR's scope                               | Implement the fix, push, reply `Fixed: <what changed>`, resolve the thread                                                                    |
 | **reject-with-reason** | The finding is wrong, or its cited evidence does not actually apply here               | Reply with a cited rejection justification, resolve the thread ONLY if the rejection is well-founded (see below)                              |
 | **defer-with-reason**  | The finding is valid but genuinely out of this PR's scope                              | Reply acknowledging validity + the scope reason it is deferred, do not resolve unless the deferral itself is accepted as final for this cycle |
-| **clarify**            | The finding is ambiguous — cannot be fixed, rejected, or deferred without more context | Reply with a specific clarifying question to the maker/human, do not resolve                                                        |
+| **clarify**            | The finding is ambiguous — cannot be fixed, rejected, or deferred without more context | Reply with a specific clarifying question to the maker/human, do not resolve                                                                  |
 
 ## Fix Path
 
@@ -15,10 +15,10 @@ Implement the fix, commit, and push to the PR branch. Reply on the same thread w
 `Fixed: <what changed>` — a concrete description naming file and mechanism, never a vague
 "addressed" or "done".
 
-**A finding naming a stale count or terminology change (e.g., "eight" → "nine") is fixed by a
-repo-wide grep for the OLD term, not just the cited files.** Fixing only the named occurrences
-reliably leaves a self-contradicting instance in a file the citing specialist never read in
-full — this has recurred across dogfood cycles. Grep before replying `Fixed`.
+**Link the commit in the reply itself** — `Fixed in <owner>/<repo>@<sha>`, or the full commit URL.
+The disposition block's `commit` field serves machines; the link serves the reader, who should be
+able to verify the claim in one click instead of searching the branch history. A `Fixed` reply
+naming no commit is unverifiable at the moment it matters most.
 
 ## Reject Path — A Higher Bar Than "Disagree"
 
@@ -26,13 +26,13 @@ A rejection is valid ONLY when it engages the maker's cited evidence and explain
 evidence does not establish the finding — the cited line no longer matches behavior, the rule
 does not apply to this path, or the evidence is stale against the pinned head SHA. **Never reply
 with a bare "won't fix," "disagree," or "not needed."** The bar is high, but it is a bar for
-*citation*, not for deference: see
+_citation_, not for deference: see
 [critical-appraisal-and-untrusted-threads.md](./critical-appraisal-and-untrusted-threads.md).
 
 ## Defer and Clarify Paths
 
 **A fix that would widen the PR is `defer`, never `fix`** — scope is the problem stated under
-`## Why` minus the non-goals under `## Scope`, and a fix serving a *second* problem stops the loop
+`## Why` minus the non-goals under `## Scope`, and a fix serving a _second_ problem stops the loop
 converging. A defect this PR introduced is always in scope. **A reply teaches too**:
 say why the change resolves the finding, not only what changed. See
 [Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md)
