@@ -109,7 +109,7 @@ abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli
 c30bbe0aeabc93d5d50d17749453deb4dcd72314010b4fe98381548e59b3eb6f  apps/rhino-cli/src/commands/gate/emit.rs
 bd80157f5cb43f030d0101e0be9e76d060b23a623a576745bc7179057d3a4590  apps/rhino-cli/src/commands/gate/list.rs
 d500838c85c402bd260502f1a28d489db2ea4e74bc5769f4adf42bb4fc2035b9  apps/rhino-cli/src/commands/gate/mod.rs
-4dde30147e688ef9d7546151427695fd24db40bf1c5196577030af0588d45ed1  apps/rhino-cli/src/commands/gate/run.rs
+bc4b0d1d3df339c739991b299b1638ef82faf8d8e268d3ee5f80955fe4c549c2  apps/rhino-cli/src/commands/gate/run.rs
 70cd5e4416236420d1aef57e703af1f8f5c00a69a3e3fd1fbb3a5534c24fd3e8  apps/rhino-cli/src/commands/gate/validate.rs
 e9c874d47d04b17c2b50a8d3c95dc3a4b287b3ab6cb8861a0d3d7ddd7b0e57e5  apps/rhino-cli/src/commands/git/lockfile.rs
 e15eb24ffe611254491ab849e7acce1ab51996e2a38f04f9bf2f7c5fe447a0a7  apps/rhino-cli/src/commands/git/mod.rs
