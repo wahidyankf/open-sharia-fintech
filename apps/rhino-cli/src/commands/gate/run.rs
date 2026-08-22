@@ -681,6 +681,7 @@ fn changed_paths(repo_root: &Path, surface: &GateSurface) -> Result<Vec<String>,
         && let Some(base) = std::env::var(GATE_CHANGED_BASE_ENV)
             .ok()
             .filter(|base| !base.trim().is_empty())
+            .filter(|base| commit_resolves(repo_root, base.trim()))
     {
         return changed_paths_from_base(repo_root, base.trim(), GATE_CHANGED_BASE_ENV);
     }
@@ -688,6 +689,28 @@ fn changed_paths(repo_root: &Path, surface: &GateSurface) -> Result<Vec<String>,
         return merge_base_paths(repo_root);
     }
     Ok(Vec::new())
+}
+
+/// Returns whether `rev` names a commit reachable in `repo_root`.
+///
+/// `GATE_CHANGED_BASE` carries `github.event.before`, which is not always a commit this checkout
+/// holds: it is all-zeroes on branch creation, absent after a force-push, and absent from any
+/// unrelated repository -- including the disposable fixtures the unit tests build, which inherit
+/// the ambient CI environment because they call `run_at_root` in-process. Treating an unresolvable
+/// base as "no explicit base" lets the caller fall through to the merge base, which computes the
+/// same answer the gate would have used without the variable at all. Failing hard instead would
+/// break every gate on a force-push for no gain.
+fn commit_resolves(repo_root: &Path, rev: &str) -> bool {
+    Command::new("git")
+        .args([
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            &format!("{rev}^{{commit}}"),
+        ])
+        .current_dir(repo_root)
+        .output()
+        .is_ok_and(|output| output.status.success())
 }
 
 /// Returns paths changed from the branch merge base to `HEAD`.
@@ -1498,6 +1521,50 @@ fn affected_file_type_scope_excludes_deleted_paths_from_merge_base_diff() {
         !argv.contains("deleted.rs"),
         "a deleted file must never be passed to a gate command — it cannot be linted, \
          formatted, or checked because it no longer exists: {argv:?}"
+    );
+}
+
+/// Regression: `GATE_CHANGED_BASE` is a workflow-level environment variable, so it is visible to
+/// every process in the job -- including `cargo test`, whose in-process fixtures build throwaway
+/// repositories that have never heard of the outer repository's commits. Before `commit_resolves`
+/// guarded the lookup, `changed_paths` took the explicit-base branch, `git diff <foreign-sha> HEAD`
+/// failed inside the fixture, and
+/// `affected_file_type_scope_excludes_deleted_paths_from_merge_base_diff` panicked in CI while
+/// passing on every developer machine. The same shape is real in production: `github.event.before`
+/// is all-zeroes on branch creation and unreachable after a force-push.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn an_unresolvable_changed_base_is_ignored_rather_than_failing_the_gate() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let git = |args: &[&str]| {
+        let status = fixture_git_command(repo.path())
+            .args(args)
+            .env("GIT_AUTHOR_NAME", "Rhino CLI Test")
+            .env("GIT_AUTHOR_EMAIL", "rhino-cli-test@example.invalid")
+            .env("GIT_COMMITTER_NAME", "Rhino CLI Test")
+            .env("GIT_COMMITTER_EMAIL", "rhino-cli-test@example.invalid")
+            .status()
+            .unwrap();
+        assert!(status.success(), "git {args:?} failed");
+    };
+    git(&["init", "--quiet", "--initial-branch=main", "."]);
+    std::fs::write(repo.path().join("kept.rs"), "fn kept() {}\n").unwrap();
+    git(&["add", "."]);
+    git(&["commit", "--quiet", "-m", "base"]);
+
+    assert!(
+        commit_resolves(repo.path(), "HEAD"),
+        "a commit this repository holds must resolve"
+    );
+    assert!(
+        !commit_resolves(repo.path(), "0000000000000000000000000000000000000000"),
+        "the all-zeroes sha GitHub sends on branch creation must not resolve"
+    );
+    assert!(
+        !commit_resolves(repo.path(), "8632122e4bcd0000000000000000000000000000"),
+        "a sha from an unrelated repository must not resolve, so the caller falls back to the \
+         merge base instead of failing every gate"
     );
 }
 
