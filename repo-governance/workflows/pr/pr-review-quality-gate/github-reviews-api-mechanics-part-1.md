@@ -6,9 +6,20 @@ when_to_use: "Use when implementing or debugging the review-posting mechanics, o
 
 # GitHub Reviews API Mechanics — Part 1
 
+> **HARD RULE — every review artifact is an inline review thread. `gh pr comment` is never used.**
+>
+> A review is a **conversation between reviewer and author**, carried as line-anchored threads:
+> the coordinator posts one comment per finding, and `pr-review-fixer` **replies on that same
+> thread** with its disposition. Two turns, two authors, one thread — never one comment carrying
+> both the finding and its resolution.
+>
+> A top-level comment cannot anchor a line, cannot be replied to as a thread, and cannot be
+> resolved — so a review posted that way is invisible to the thread-resolution query the loop uses
+> to decide whether it may exit. **It reads as zero findings.** This has been done by mistake on
+> this repo; if you find yourself reaching for `gh pr comment`, you are posting the review wrong.
+
 The coordinator (`pr-review-synthesis-maker`) and `pr-review-fixer` interact with the PR through the
-GitHub **Reviews API** (line-anchored, independently resolvable review threads) — never through
-top-level `gh pr comment`, which can neither anchor a line nor resolve a thread. The nine discipline
+GitHub **Reviews API** (line-anchored, independently resolvable review threads). The nine discipline
 specialists do not call this API directly — each emits raw findings to the coordinator, which is the
 sole poster of record every cycle.
 

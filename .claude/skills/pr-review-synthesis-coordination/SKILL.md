@@ -34,6 +34,11 @@ tool-verified before posting exactly ONE consolidated review.
    highest-risk of the tie-breaker outcomes; no specialist self-adjudicates its own verdict once
    reviewed here.
 3. **Exactly ONE consolidated review per cycle** — never one review per specialist or discipline.
+   **Post it through the Reviews API as line-anchored inline threads, one per finding — NEVER
+   `gh pr comment`.** A top-level comment cannot be anchored, replied to as a thread, or resolved,
+   so the loop's thread-resolution query reads it as **zero findings**. A review is a conversation
+   with the author: you post the finding, the fixer replies on the same thread. Never write the
+   disposition into your own comment.
 4. **A `CRITICAL` finding needs reproduction, not just multi-specialist agreement.**
 
 ## Related Agents
