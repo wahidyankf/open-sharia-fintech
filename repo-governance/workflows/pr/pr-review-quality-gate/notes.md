@@ -1,6 +1,6 @@
 ---
 title: "PR-Review Quality Gate — Notes"
-description: "Operating notes: strictly-sequential is a hard requirement, seven is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, no extension past the cycle cap, and the sibling-PR staleness pattern."
+description: "Operating notes: strictly-sequential is a hard requirement, seven is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern."
 when_to_use: "Use when clarifying an operating nuance not covered elsewhere — e.g. why sibling-repo PR loops shouldn't run concurrently with the source PR's."
 ---
 
@@ -8,8 +8,9 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
 
 - **Strictly sequential, never parallel**: this is a hard requirement — the loop's dedup logic and
   the CI-green gate both depend on each cycle observing the previous cycle's fully-settled state.
-- **Seven is a ceiling, not a target**: the eligible loop exits at the earliest completed clean cycle
-  and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
+- **Seven is a ceiling, not a target**: the eligible loop exits at its
+  [clean exit](./probe-variation-and-exit.md) — two consecutive clean cycles under unused probe
+  classes — and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
   code-related MEDIUM/HIGH/CRITICAL finding.
 - **AI-attribution, not a distinct bot identity**: both agents currently post under the existing
   personal `gh` identity with an explicit AI-attribution footer per comment/reply, because no
@@ -23,10 +24,12 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
   unchanged `pr-review-fixer` are this workflow's live actors as of the `worktree-to-pr-hardening`
   plan's Phase 4 cutover, which retired the single-maker `pr-review-maker` monolith immediately (D2)
   rather than running it alongside the split.
-- **No extension past `{input.cycles}`, by design**: a seventh cycle is the last automatic attempt.
-  If eligible review reaches it with code-related MEDIUM/HIGH/CRITICAL findings outstanding, the
-  [ceiling block](./loop-exit-and-block-rules.md#loop-exit-and-block-rules) fires; the PR never merges on the strength of having
-  spent more cycles, only on the strength of an actually-empty blocking-findings list.
+- **Extra cycles never waive a finding**: reaching `{input.cycles}` with code-related
+  MEDIUM/HIGH/CRITICAL findings outstanding fires the
+  [ceiling block](./loop-exit-and-block-rules.md#loop-exit-and-block-rules); the PR never merges on
+  the strength of having spent more cycles, only on the strength of an actually-empty
+  blocking-findings list. A ceiling raised on [checkpoint](./convergence-measurement.md) evidence
+  decides how many attempts to fund; it is never a waiver.
 - **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
   (e.g. `ose-private`), running all repos' review-cycle loops concurrently from the start

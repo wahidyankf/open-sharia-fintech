@@ -35,16 +35,19 @@ resolves to one of four [Delivery Modes](../../../conventions/structure/plans/de
 the three-tier precedence (invocation argument > plan field > `worktree-to-pr` default). For a plan
 executing under a `*-to-pr` mode (`worktree-to-pr` or `main-to-pr`), full "done" for the plan's
 actual delivery additionally requires satisfying the
-[PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md)'s done-definition — N review
-cycles complete, every inline comment answered, all PR gates GREEN, archival committed inside the
-PR — before the merge. The two gates sit at different lifecycle stages: this workflow
+[PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md)'s
+[Route-Specific Done-Definition](../../pr/pr-review-quality-gate/route-specific-done-definition.md)
+— the route's review complete, every inline comment answered and every accepted fix committed and
+pushed, all PR gates GREEN, archival committed inside the PR — before the merge. The two gates sit at different lifecycle stages: this workflow
 gates the plan document pre-execution; the PR-review cycle gates the delivered change pre-merge.
 
-**The hardened merge preconditions** that gate that eventual merge — **all five** required: (a) 3
-fan-out→`pr-review-synthesis-maker`→`pr-review-fixer` cycles complete (a **hard ceiling, not a
-floor** — a PR merges once (b)-(e) also hold, never on additional cycles) **and the loop not exited
-`escalated`**;
-(b) 0 CRITICAL + 0 HIGH findings outstanding;
+**The hardened merge preconditions** that gate that eventual merge — **all five** required: (a) the
+PR's route is complete — an eligible PR stopped at two consecutive clean cycles
+under previously-unused probe classes, neither leaving a code-related MEDIUM/HIGH/CRITICAL
+finding, within the **ceiling of seven** (a ceiling, **not a floor** — a PR
+merges once (b)-(e) also hold, never on additional cycles), while a noneligible PR has recorded
+classifier evidence and a green `pr-quality-gate.yml` run; a `blocked` route never merges;
+(b) 0 code-related CRITICAL + 0 HIGH + 0 MEDIUM findings outstanding;
 (c) the branch **up-to-date with the latest `origin/main`**, brought forward **non-destructively**
 if behind (never a shared-history rewrite); (d) all PR quality gates green; (e) the
 surface-conditional tester gates run and their defect findings resolved, or the exemption explicitly

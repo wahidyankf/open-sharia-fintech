@@ -39,21 +39,23 @@ behavior.
 Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
-**Owns**: Mechanical conformance to already-documented `repo-governance/` conventions,
+**Owns**: the PR body's required sections (`Why`, `Scope`, reading guide); conformance to
+`repo-governance/` conventions,
 naming/structure rules (file naming, agent naming), ADRs, and whether a required spec file is
 **present** (grey-zone ruling (d): presence is governance's, scenario completeness inside it is
 logic's) — the tie-breaker's own "documented + mechanically-checkable rule" branch.
 
-**Routes elsewhere**: whether a new rule should exist at all → `pr-review-architecture-maker`;
-scenario completeness inside an existing spec file → `pr-review-logic-maker`; instruction-decay
-(a framework/build-tool/env-var/CI change not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/`) →
+**Routes elsewhere**: whether a new rule should exist → `pr-review-architecture-maker`;
+scenario completeness inside a spec file → `pr-review-logic-maker`; whether the body is **accurate** →
+`pr-review-docs-maker`; instruction-decay
+(triggers listed there, never here) →
 `pr-review-instruction-maker` — this agent checks conformance **to** the instruction docs, never
 staleness **of** them.
 
 **Severity definitions**: `CRITICAL` = a violation that corrupts a mechanically-enforced
 invariant (e.g. the rhino-cli byte-identity boundary, a naming regex); `HIGH` = a HARD RULE
 convention violation or a missing required spec file; `MEDIUM` = a documented-but-soft convention
-deviation; `LOW` = a cosmetic structure preference with no enforceable rule behind it.
+deviation; `LOW` = a cosmetic preference with no enforceable rule behind it.
 
 ## SUPPRESS Block (Never Raise)
 

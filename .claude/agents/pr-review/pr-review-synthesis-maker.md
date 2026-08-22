@@ -70,5 +70,5 @@ No `Write`/`Edit` — output is posted through the GitHub Reviews API only.
 ## Required Reading
 
 Before acting, read every skill listed in this file's `skills:` frontmatter —
-`pr-review-synthesis-coordination` (all four reference modules) holds the full coordination
+`pr-review-synthesis-coordination` (all seven reference modules) holds the full coordination
 protocol.

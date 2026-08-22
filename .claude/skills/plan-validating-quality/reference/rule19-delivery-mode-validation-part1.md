@@ -20,7 +20,7 @@ integration target and merge authority.
    **LOW** (best-practice gap, not correctness defect).
 3. **Every PR carries the behavior classifier** — when the resolved mode produces a PR, `delivery.md`
    records the canonical classifier: eligible executable work runs sequential CI-green-gated
-   specialist cycles to the earliest clean code M/H/C result within seven; ineligible work requires
+   specialist cycles to its clean exit within its configured ceiling; ineligible work requires
    the named `pr-quality-gate.yml` workflow, per the
    [PR Review Quality Gate workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md),
    positioned before the PR-merge step. A `*-to-pr` plan jumping straight from PR creation to merge

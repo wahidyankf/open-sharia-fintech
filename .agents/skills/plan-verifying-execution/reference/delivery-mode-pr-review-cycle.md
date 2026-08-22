@@ -19,10 +19,20 @@ PR to be merged.
    - **PR exists** and targets `main` from the plan's branch. Missing: **CRITICAL**.
    - **PR's CI gates are green** on the current head SHA. Not green: **CRITICAL** — plan is not done,
      regardless of other criteria.
-   - **Review loop ran** — evidence of the PR-Review Maker→Fixer Cycle (default N=3 sequential
-     maker→fixer cycles — a **hard ceiling, not a floor**, never extended and never exited early)
-     actually executing. Fewer cycles than the plan specified: **HIGH** — there is no legitimate
-     early-exit reason under the hard-ceiling rule. No review-loop evidence at all: **CRITICAL**.
+   - **Review loop ran and exited clean** — evidence of the PR-Review Maker→Fixer Cycle (strictly
+     sequential scout→fan-out→synthesis→fixer cycles under a **configurable ceiling, seven by default**) actually
+     executing. **Verify the outcome, not the cycle count.** The ceiling is not a floor: the loop
+     stops at [its clean exit](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md) — two consecutive cycles under unused probe
+     classes, each leaving zero [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL findings — so a low cycle
+     count is **correct and never a finding**. File:
+     - No review-loop evidence at all: **CRITICAL**.
+     - The last completed cycle left a code-related MEDIUM/HIGH/CRITICAL finding outstanding, or the
+       loop reached its configured ceiling with one still open (status `blocked`): **CRITICAL** —
+       a `blocked` route never merges, per merge preconditions (a) and (b).
+     - The loop ran past seven cycles after its clean exit: **HIGH**. When both this and the
+       bullet above match, the **higher severity governs**: an outstanding finding is CRITICAL
+       however many cycles ran, and the ceiling is never extended as a substitute for resolving
+       a finding.
    - **Every thread answered/resolved** — zero unresolved threads, OR each remaining open thread
      carries an explicit escalation-to-`[HUMAN]` note in the PR description. An unresolved thread with
      no reply and no escalation note: **HIGH**.

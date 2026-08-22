@@ -10,6 +10,7 @@ when_to_use: "Read this index to find the right PR Reviewer-Discipline Conventio
 - [Principles/Conventions](./principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace rationale.
 - [Purpose](./purpose.md) — Why the split exists. Use to orient to the split's purpose.
 - [Nine Reviewer Disciplines: Table (1)](./the-nine-reviewer-disciplines-table-part-1.md) — Shared rules; disciplines Architecture-Performance. Use to find a finding's owning specialist.
+- [Review as Teaching](./review-as-teaching.md) — Every finding and reply stays legible to a junior engineer, and critique addresses the change rather than its author. Use when writing a finding or reply.
 - [Nine Reviewer Disciplines: Table (2)](./the-nine-reviewer-disciplines-table-part-2.md) — Disciplines Documentation-Type-soundness; scout/synthesis. Use to find a finding's owning specialist.
 - [The Boundary Tie-Breaker Rule](./the-boundary-tie-breaker-rule.md) — The three-step cross-discipline tie-breaker. Use for an ambiguous-ownership finding.
 - [Seven Grey-Zone Rulings](./seven-grey-zone-rulings.md) — The tie-breaker pre-resolved for seven recurring cases. Use for a recurring grey-zone finding-ownership question.

@@ -11,7 +11,7 @@ Continued in
 
 **D1. Full lifecycle per plan.** Each plan proceeds through the complete `plan-execution.md` arc:
 execute all `[AI]` items → validation via `plan-execution-checker` → iterate to zero findings → for a
-`*-to-pr` plan, the [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) (default 3 cycles)
+`*-to-pr` plan, the [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) (configurable ceiling, seven by default)
 → merge or `[HUMAN]` handoff per the plan's Delivery Mode → archival to `plans/done/`. Multi-plan
 scheduling changes _when_ these steps run relative to other plans, never _whether_ they run.
 

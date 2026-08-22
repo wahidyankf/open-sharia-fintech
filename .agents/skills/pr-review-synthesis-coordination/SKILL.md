@@ -20,12 +20,17 @@ tool-verified before posting exactly ONE consolidated review.
   Tool-verify, plus the DD-11 attribution-tracking requirement
 - [consolidated-review-header.md](./reference/consolidated-review-header.md) — the
   fixed-shape review header template and the per-finding `Raised by` attribution line
-- [finding-requirements-and-scope-guard.md](./reference/finding-requirements-and-scope-guard.md) —
+- [finding-requirements.md](./reference/finding-requirements.md) —
   the finding requirements hard rules, CRITICAL-requires-reproduction, and the scope guard
+- [scope-guard.md](./reference/scope-guard.md) — the scope test every surviving finding
+  is measured against, and the two things it never suppresses
 - [github-reviews-api-mechanics.md](./reference/github-reviews-api-mechanics.md) — posting
   mechanics (COMMENT-only constraint, SHA reuse), identity note, and untrusted-input handling
 - [cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —
   full-PR re-review each cycle, human-dismissal respect, and when to delegate to `web-researcher`
+- [machine-readable-audit-record.md](./reference/machine-readable-audit-record.md) — the stable
+  post title, the `C<cycle>-F<n>` finding IDs, and the `ose-pr-review:v1` record block every cycle
+  must emit
 
 ## Core Principles
 
@@ -34,6 +39,11 @@ tool-verified before posting exactly ONE consolidated review.
    highest-risk of the tie-breaker outcomes; no specialist self-adjudicates its own verdict once
    reviewed here.
 3. **Exactly ONE consolidated review per cycle** — never one review per specialist or discipline.
+   **Post it through the Reviews API as line-anchored inline threads, one per finding — NEVER
+   `gh pr comment`.** A top-level comment cannot be anchored, replied to as a thread, or resolved,
+   so the loop's thread-resolution query reads it as **zero findings**. A review is a conversation
+   with the author: you post the finding, the fixer replies on the same thread. Never write the
+   disposition into your own comment.
 4. **A `CRITICAL` finding needs reproduction, not just multi-specialist agreement.**
 
 ## Related Agents

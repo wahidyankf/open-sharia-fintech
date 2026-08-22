@@ -59,8 +59,8 @@ commits, read the full diff first.
 
 ### Delivery Mode
 
-`worktree-to-pr` is mandatory. Executable work runs CI-gated review cycles; static work needs a
-green `pr-quality-gate.yml`. `[AI]` merges by default. One worktree per repo per plan; Phase 0 opens
+`worktree-to-pr` is mandatory. Executable work and `plans/**` run review cycles plus
+`pr-quality-gate.yml`; other static work, the gate only. `[AI]` merges by default. One worktree per repo per plan; Phase 0 opens
 none.
 
 **See**: [Delivery Mode](./repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)

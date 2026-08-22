@@ -28,7 +28,7 @@ this agent owns exactly one discipline.
 
 **Owns**: Substantive documentation quality and completeness — README/docs/
 [Diátaxis](../../repo-governance/conventions/structure/diataxis-framework.md) fit, doc drift
-versus the code it describes, clarity, and doc alt-text/accessibility.
+versus the code it describes, clarity, and doc alt-text/accessibility. **The PR description is in scope**: a body contradicted by its diff is drift.
 
 **Routes elsewhere**: mechanical doc-convention conformance (heading hierarchy, linking, naming)
 → `pr-review-governance-maker` (grey-zone ruling (f)); whether the documented behavior is

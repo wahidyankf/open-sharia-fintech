@@ -33,7 +33,7 @@ See [Worktree Path Convention](../worktree-path.md) for the full routing and dir
 
 Worktree path: `worktrees/auth-rewrite/`
 
-Optional manual pre-provisioning (run from repo root):
+Provisioned before this plan was written (run from repo root):
 
 ```bash
 claude --worktree auth-rewrite

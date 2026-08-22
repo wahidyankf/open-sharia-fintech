@@ -21,6 +21,8 @@ re-litigate.
 - [shared-context-and-prior-cycle-read.md](./reference/shared-context-and-prior-cycle-read.md) —
   assembling the once-per-cycle shared-context brief (no-exclusion posture, large-diff slicing),
   and reading prior-cycle thread-resolution/human-dismissal state
+- [correction-record-freeze.md](./reference/correction-record-freeze.md) — omitting the loop's own
+  `plans/**` prose from cycle 2, and the plans-only and security carve-outs that survive it
 - [untrusted-input-and-output-contract.md](./reference/untrusted-input-and-output-contract.md) —
   this agent's first-ingestion-point untrusted-input handling, the trivial-tier handoff, and the
   three-part output contract

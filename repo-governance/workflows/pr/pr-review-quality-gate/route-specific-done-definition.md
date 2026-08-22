@@ -8,12 +8,16 @@ when_to_use: "Use when checking whether a PR meets this workflow's done-definiti
 
 Every PR is **done** only when its classifier route's requirements hold:
 
-1. **Eligible route** — the specialist loop completed at least one cycle and stopped at the earliest
-   completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding**. The
+1. **Eligible route** — the specialist loop reached [its clean exit](./probe-variation-and-exit.md) —
+   two consecutive clean cycles, each under a probe class not previously used on this PR, neither
+   leaving **any code-related MEDIUM/HIGH/CRITICAL finding outstanding** —
+   counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
+   thread, per the
+   [Scope Guard](./scope-deferral-exit.md). The
    default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
    done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
-   At cycles six and seven, record sanitized nonconvergence learning in the owning plan's
-   `learnings.md` (or execution evidence for ad-hoc work) and create or update a deduplicated
+   At the first cycle at or past six and at every convergence checkpoint after it, record sanitized nonconvergence learning in the owning plan's
+   `learnings.md` (or, with no owning plan, a comment on the PR) and create or update a deduplicated
    improvement idea in `plans/ideas`.
 2. **Noneligible route** — the classifier evidence shows that the full diff is non-executing, and
    `.github/workflows/pr-quality-gate.yml` succeeded for the current PR head. No specialist cycle is

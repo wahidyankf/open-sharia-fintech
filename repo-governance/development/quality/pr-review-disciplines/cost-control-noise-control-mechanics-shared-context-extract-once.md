@@ -20,7 +20,17 @@ output such as `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `
 assets — nothing is silently filtered out before a specialist reviews it, and **CI still runs over
 everything regardless** of what any reviewer chooses to skim. This is a deliberate reversal of the
 alternative (auto-detecting and excluding generated files): the rationale is explicitness — a
-hand-edited "generated" file is never silently missed because nothing is silently excluded.
+hand-edited "generated" file is never silently missed because nothing is silently excluded. One
+exception applies from cycle 2 — see the correction record below.
+
+**The one scope exclusion is the correction record, and it starts at cycle 2.** From the second
+cycle onward the scout omits `plans/**` from the brief, so the loop stops reviewing the prose it
+wrote last cycle. The **PR body stays in the brief** — it is what a human reads first, and on a
+plans-only PR the plan itself is the shipping surface and stays too. This is not generated-file filtering by another name: those files are
+excluded because the **loop itself authored them**, not because a tool emitted them, and cycle 1
+still reviews them in full. See
+[Loop-Exit and Block Rules](../../../workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md)
+for the rule and the PR #239 evidence behind it.
 
 Two mechanics keep this full-diff posture tractable rather than merely expensive:
 

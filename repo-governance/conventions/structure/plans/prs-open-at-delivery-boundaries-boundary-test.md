@@ -30,7 +30,7 @@ phases: scaffolding a schema nothing reads yet, extracting a helper the next pha
 a fixture the next phase asserts on.
 
 **Why this is a hard rule**: a PR per phase spends a full discipline-specialist fan-out, a synthesis
-pass, a fixer pass, and up to three CI-gated cycles reviewing scaffolding that the very next phase
+pass, a fixer pass, and up to seven CI-gated cycles reviewing scaffolding that the very next phase
 rewrites — and the review cannot judge the work's intent, because the intent only becomes visible two
 phases later. Grouping to the natural boundary makes each review see one complete thought.
 

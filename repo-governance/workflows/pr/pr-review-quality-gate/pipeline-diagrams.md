@@ -56,8 +56,8 @@ sequenceDiagram
   participant F as pr-review-fixer
   participant CI as CI on PR
 
-  O->>SC: pin head SHA, cycle number N of {total}
-  SC->>SC: classify risk tier, select specialist set, assemble shared-context brief, read prior dismissals
+  O->>SC: cycle number N of {total}
+  SC->>SC: pin head SHA, classify risk tier, select specialist set, assemble shared-context brief, read prior dismissals
   SC->>SP: fan out tier-selected specialists (fed context brief)
   SC->>SY: hand context_brief (SHA, diff, plan context) directly, per Output Contract
   SP-->>SY: raw findings per discipline

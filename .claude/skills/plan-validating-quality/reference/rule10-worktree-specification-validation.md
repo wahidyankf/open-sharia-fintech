@@ -12,9 +12,9 @@ pure-docs, single-file, trivial plans included.
    identifier (folder name minus the `YYYY-MM-DD__` prefix). Wrong format or identifier mismatch:
    **HIGH**.
 3. **Provisioning command present** — the `claude --worktree <plan-identifier>` command shown verbatim
-   as the optional manual pre-provisioning path (plan-execution Step 0 auto-provisions from latest
-   `origin/main` by default, but the manual command must still be documented). Missing or wrong:
-   **MEDIUM**.
+   as the provisioning path the plan was authored inside (plan-execution Step 0 auto-provisions from
+   latest `origin/main` only as a backstop, but the command must still be documented). Missing or
+   wrong: **MEDIUM**.
 4. **Cross-reference** — link to
    [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md)
    and/or

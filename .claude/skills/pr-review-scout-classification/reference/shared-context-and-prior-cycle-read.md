@@ -8,6 +8,8 @@ same context (which would otherwise multiply token cost by the number of special
 
 ## No-Exclusion Posture (Full Diff, No Generated-File Filtering)
 
+One exception applies from cycle 2 — see the correction-record freeze below.
+
 This brief carries the **full diff with NO generated-file exclusion** — reviewers see everything,
 including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**` (e.g. `search-data.json`),
 `package-lock.json` and other lock files, minified assets, source maps, and any file carrying an
@@ -15,6 +17,12 @@ including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `gener
 it — the rationale is explicitness: a hand-edited "generated" file is never silently missed
 because nothing is silently excluded. CI still runs over everything regardless of what any
 reviewer chooses to skim.
+
+## Correction-Record Freeze (Cycle 2 Onward)
+
+The **one** scope exclusion, and the only exception to the posture above: from cycle 2 the brief
+omits `plans/**`. See
+[correction-record-freeze.md](./correction-record-freeze.md) for the rule and its two carve-outs.
 
 ## Large-Diff Posture (Scout's Discretion)
 
@@ -24,6 +32,14 @@ once — record this slicing choice in the shared-context brief so `pr-review-sy
 carries it into the review header it posts. If a diff still cannot be reviewed in one fan-out,
 record an explicit "diff exceeds single-review scope — reviewed in N slices" note in the brief
 rather than silently under-covering it.
+
+## Probe Variation (Cycle 2 Onward)
+
+A cycle repeating the previous cycle's question converges on that question rather than on
+correctness. From cycle 2, read the prior cycle's findings for what they **asked**, and state in the
+brief how this cycle's probe differs — a different failure mode, a different reader, a different
+level of the artifact. Name it, so a specialist can tell a fresh angle from a rerun. See
+[Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
 
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
 

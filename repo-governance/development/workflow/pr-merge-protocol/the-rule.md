@@ -19,8 +19,9 @@ when_to_use: Use immediately before merging any pull request, to confirm all fiv
 
 A PR merges only when **all five** hold:
 
-- **(a)** the PR's behavior route is complete — an eligible PR reached the first completed specialist
-  cycle with zero code-related MEDIUM/HIGH/CRITICAL findings within the default maximum of seven,
+- **(a)** the PR's behavior route is complete — an eligible PR reached
+  [its clean exit](../../../workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md) within
+  its configured ceiling,
   while a noneligible PR has recorded classifier evidence and a green
   `.github/workflows/pr-quality-gate.yml` run. A `blocked` route status prevents merge;
 - **(b)** 0 code-related CRITICAL, HIGH, and MEDIUM findings are outstanding;

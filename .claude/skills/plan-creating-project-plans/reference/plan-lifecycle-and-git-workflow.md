@@ -20,6 +20,8 @@ open. See [Mandatory Pre-Write and Post-Write Grilling](mandatory-grilling.md).
 
 **Actions**:
 
+- Provision the worktree FIRST (`claude --worktree <slug>`), then author every plan
+  document inside it — the worktree precedes the plan, never follows it
 - Create folder with the slug identifier (no date prefix)
 - Write requirements and acceptance criteria
 - Define technical approach

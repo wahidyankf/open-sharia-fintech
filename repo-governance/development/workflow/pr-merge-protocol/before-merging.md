@@ -20,7 +20,7 @@ Before merging, the agent must confirm **all five** hardened preconditions (a)-(
 [the PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate/hardened-merge-preconditions-a-e.md).
 Do not substitute the shorter list that used to live here.
 
-1. **(a)** The route is complete: eligible review stopped at its earliest clean cycle within seven;
+1. **(a)** The route is complete: eligible review reached its clean exit within its configured ceiling;
    noneligible review has classification evidence plus a green `pr-quality-gate.yml` run. `blocked`
    never merges.
 2. **(b)** 0 code-related CRITICAL, HIGH, and MEDIUM findings outstanding, verified against the PR's

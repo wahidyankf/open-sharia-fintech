@@ -8,9 +8,14 @@ the risk-tier decision `pr-review-scout-maker` made this cycle, which specialist
 itself — not just from an internal log:
 
 ```markdown
+## PR Review — Cycle N of M
+
 **Cycle**: N of {total}
+**Head SHA**: <40-char SHA this cycle reviewed>
+**Diff size**: N changed lines, M changed files (K hand-authored, excluding generated mirrors)
 **Risk tier**: trivial | lite | full
-**Specialists fanned out**: none (coordinator-only pass) | governance, logic, security, integrity | all nine specialists (minus any DD-10 content-type skips, named with reason)
+**Probe class**: <class this cycle asked> (new on this PR | same class as cycle N)
+**Specialists fanned out**: none (coordinator-only pass) | governance, architecture, logic, security, integrity | all nine specialists (minus any DD-10 content-type skips, named with reason)
 **Per-specialist raw findings**: architecture 1, logic 1, governance 2, security 1, integrity 0 (skipped: no test/CI files in diff), performance 1, docs 6, instruction 3, types 0 (skipped: no typed source in diff)
 **Security-sensitive-path override applied**: yes | no
 **Diff coverage**: full diff reviewed in one pass | reviewed in N slices (see note)
@@ -25,6 +30,11 @@ transcribes that decision into the header, it does not re-derive it. **`**Per-sp
 findings**` is the one field this agent itself populates** (not scout) — it is a direct byproduct
 of running the Four Coordination Functions over the specialists' actual raw output this cycle, so
 it belongs to this agent's own accounting, not scout's pre-fan-out brief.
+
+The same facts are additionally emitted as a machine-readable block — see
+[machine-readable-audit-record.md](./machine-readable-audit-record.md), which also fixes the post
+title and the `C<cycle>-F<n>` finding-ID scheme. The prose above is for humans; that block is for
+future analysis, and neither substitutes for the other.
 
 Every posted finding in the review body also carries a **`**Raised by**:`** line naming the
 originating specialist(s) — single name for a single-specialist finding, every contributing name
