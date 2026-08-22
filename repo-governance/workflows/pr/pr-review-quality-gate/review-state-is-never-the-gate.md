@@ -1,0 +1,25 @@
+---
+title: "PR-Review Quality Gate — Review STATE Is Never the Gate"
+description: "Why every review this workflow posts lands as COMMENT, and why blocking status is read from the finding's severity label rather than GitHub's review STATE field."
+category: explanation
+subcategory: workflows
+created: 2026-08-22
+when_to_use: "Use when writing or auditing any gate, script, or agent step that decides whether a PR is blocked."
+---
+
+# Review STATE Is Never the Gate
+
+**HARD — `REQUEST_CHANGES` is structurally unavailable to `pr-review-synthesis-maker`.** `gh`
+authenticates as the PR author under this repo's current identity posture, and GitHub rejects
+`REQUEST_CHANGES` on one's own pull request. Every review this workflow posts therefore lands with
+STATE `COMMENT`, including reviews carrying CRITICAL blocking findings.
+
+**Any gate reading GitHub's review state instead of the finding text will read a blocked PR as
+unblocked.** That is the whole reason this page exists: the failure is silent and it fails open.
+
+Blocking status is carried by the finding's severity label in the comment body (`CRITICAL` /
+`HIGH`), never by the review's STATE field. Consumers MUST parse severity from comment text.
+
+The limitation disappears only when a dedicated bot or GitHub App identity is provisioned — see the
+two-pager idea brief
+[`pr-review-bot-identity.md`](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).

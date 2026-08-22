@@ -30,40 +30,41 @@ outputs:
 
 # PR-Review Maker→Fixer Cycle Workflow
 
-**Purpose**: Classify every pull request by the behavior changed in its diff, then run a strictly
-sequential, bounded review loop only for an eligible PR: tier-selected specialists fan out, a
-coordinator consolidates their findings into ONE posted review, and a fixer resolves them, with a
-hard CI-green gate between cycles.
+**Purpose**: Classify every pull request by the behavior its diff changes, then run a bounded,
+sequential review loop only for an eligible PR: specialists fan out, a coordinator consolidates
+their findings into ONE posted review, a fixer resolves them, CI must be green between cycles.
 
 ## Contents
 
 ### Core Flow
 
-- [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/purpose-execution-mode-and-classifier.md) — purpose, sequencing rule, eligibility classifier.
-- [Participants](./pr-review-quality-gate/participants.md) — the eleven pipeline agents and the trivial-tier branch.
-- [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode and its governing rules.
-- [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants flowchart and one-cycle sequence diagram.
+- [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/purpose-execution-mode-and-classifier.md) — sequencing rule, eligibility classifier.
+- [Participants](./pr-review-quality-gate/participants.md) — the eleven agents, and the trivial-tier branch.
+- [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode and its rules.
+- [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants and one-cycle diagrams.
 
 ### Steps
 
-- [Steps 0-1 — Classify and Scout Pass](./pr-review-quality-gate/steps-0-1-classify-and-scout.md) — resolve inputs, then the scout.
-- [Step 2 — Fan-Out + Synthesis](./pr-review-quality-gate/step-2-fan-out-and-synthesis.md) — specialists into one consolidated review.
-- [Steps 3-5 — Fixer, CI Gate, Done-Check](./pr-review-quality-gate/steps-3-5-fixer-ci-gate-done-check.md) — triage/push, the hard gate, final status.
+- [Steps 0-1 — Classify and Scout Pass](./pr-review-quality-gate/steps-0-1-classify-and-scout.md) — resolve inputs, run the scout.
+- [Step 2 — Fan-Out + Synthesis](./pr-review-quality-gate/step-2-fan-out-and-synthesis.md) — specialists into one review.
+- [Steps 3-5 — Fixer, CI Gate, Done-Check](./pr-review-quality-gate/steps-3-5-fixer-ci-gate-done-check.md) — triage, the hard gate, final status.
 
 ### API Mechanics and Done-Definition
 
-- [GitHub Reviews API Mechanics — Part 1](./pr-review-quality-gate/github-reviews-api-mechanics-part-1.md) — pinning the SHA, posting one review.
-- [GitHub Reviews API Mechanics — Part 2](./pr-review-quality-gate/github-reviews-api-mechanics-part-2.md) — reply/resolve, untrusted-input filtering.
-- [Route-Specific Done-Definition](./pr-review-quality-gate/route-specific-done-definition.md) — the five items that make a PR "done".
+- [GitHub Reviews API Mechanics — Part 1](./pr-review-quality-gate/github-reviews-api-mechanics-part-1.md) — the pinned SHA and its anchors.
+- [GitHub Reviews API Mechanics — Part 2](./pr-review-quality-gate/github-reviews-api-mechanics-part-2.md) — reply/resolve, untrusted input.
+- [Route-Specific Done-Definition](./pr-review-quality-gate/route-specific-done-definition.md) — the five items making a PR "done".
 - [Merge Preconditions — (a)-(e)](./pr-review-quality-gate/hardened-merge-preconditions-a-e.md) — the normative merge gate.
-- [Merge Preconditions — Notes](./pr-review-quality-gate/hardened-merge-preconditions-notes.md) — merge command, done-boundary diagram.
+- [Merge Preconditions — Notes](./pr-review-quality-gate/hardened-merge-preconditions-notes.md) — merge command, done-boundary.
 
 ### Rules and Reference
 
 - [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — exit, learn, block.
 - [What Code-Related Means](./pr-review-quality-gate/what-code-related-means.md) — the qualifier.
 - [Scope Guard](./pr-review-quality-gate/scope-guard-no-scope-creep.md) — no scope creep.
-- [Applicability](./pr-review-quality-gate/applicability.md) — mandatory scope; why Phase 0/non-boundary phases are excluded.
-- [Related Workflows and Success Metrics](./pr-review-quality-gate/related-workflows-and-success-metrics.md) — composition and tracked metrics.
-- [Notes](./pr-review-quality-gate/notes.md) — operating notes, including sibling-PR staleness.
+- [Scope-Deferral Exit](./pr-review-quality-gate/scope-deferral-exit.md) — file the follow-up.
+- [Review STATE Is Never the Gate](./pr-review-quality-gate/review-state-is-never-the-gate.md) — parse severity.
+- [Applicability](./pr-review-quality-gate/applicability.md) — mandatory scope; the Phase 0 exclusion.
+- [Related Workflows and Success Metrics](./pr-review-quality-gate/related-workflows-and-success-metrics.md) — composition, tracked metrics.
+- [Notes](./pr-review-quality-gate/notes.md) — operating notes, sibling-PR staleness.
 - [Principles and Conventions](./pr-review-quality-gate/principles-and-conventions.md) — compliance summary.

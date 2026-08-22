@@ -12,7 +12,7 @@ Every PR is **done** only when its classifier route's requirements hold:
    completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding** —
    counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
    thread, per the
-   [Scope Guard](./scope-guard-no-scope-creep.md#scope-deferral-is-the-only-other-exit). The
+   [Scope Guard](./scope-deferral-exit.md). The
    default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
    done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
    At cycles six and seven, record sanitized nonconvergence learning in the owning plan's

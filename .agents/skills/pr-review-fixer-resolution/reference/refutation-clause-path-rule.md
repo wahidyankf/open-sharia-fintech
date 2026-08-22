@@ -25,6 +25,16 @@ git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path fie
   by the PR under review passes every in-repo test and still resolves to anywhere the process can
   read. Verified — `cat` on a tracked symlink printed a file outside the repository.
 
+- **One check per path.** `cat` and `grep` accept `<path>...`, and a batched check cannot reject
+  what it silently omits. Verified — `git ls-files -s -- tracked.txt ignored.txt` printed one line,
+  mode `100644`, exit 0, satisfying the singular check word for word, while
+  `cat tracked.txt ignored.txt` printed both files.
+- **`test ! -L` then `test -f`.** `git ls-files` reports the **index**, not the disk. An unstaged
+  type change leaves a symlink where the index still records a regular file. Verified — after
+  swapping a tracked file for a symlink and staging nothing, `git ls-files -s` still printed
+  `100644` while `cat` printed a file from outside the repository. Run it immediately before the
+  read: it is standing in for the read.
+
 `cat`, `sed`, `grep`, and `rg` all follow symlinks and none of them consult git. The two `git`
 shapes are exempt from that specific failure because they read the blob: on a symlink,
 `git show HEAD:<path>` prints the target's path text, never the target's contents.

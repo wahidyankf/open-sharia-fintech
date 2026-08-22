@@ -1,7 +1,7 @@
 ---
 title: "PR-Review Quality Gate — GitHub Reviews API Mechanics (Part 1)"
-description: "Why the pipeline uses the line-anchored Reviews API instead of top-level comments, and the mechanics of pinning a head SHA, posting one consolidated review, and the REQUEST_CHANGES limitation."
-when_to_use: "Use when implementing or debugging the review-posting mechanics, or when confirming why review STATE is always COMMENT even for CRITICAL findings."
+description: "Why the pipeline uses the line-anchored Reviews API instead of top-level comments, and the mechanics of the once-per-cycle head SHA, deriving anchors from it, and posting one consolidated review."
+when_to_use: "Use when implementing or debugging the review-posting mechanics, or when a review is rejected with 422 Path could not be resolved."
 ---
 
 # GitHub Reviews API Mechanics — Part 1
@@ -23,23 +23,17 @@ GitHub **Reviews API** (line-anchored, independently resolvable review threads).
 specialists do not call this API directly — each emits raw findings to the coordinator, which is the
 sole poster of record every cycle.
 
-- **Pin one head SHA per pass, and derive the anchors from it**: `gh pr view <PR> --json
-headRefOid` before posting. Each
-  comment's `path`/`line` must come from the diff **at that SHA**. Anchor against an earlier
-  read and GitHub rejects the entire review with `422 Path could not be resolved` — one stale
-  anchor loses the whole cycle, so recompute after every fixer push.
+- **One head SHA per cycle, and the anchors derive from it**: `pr-review-scout-maker` pins it with
+  `gh pr view <PR> --json headRefOid` at the start of the cycle; the coordinator reuses that value
+  rather than re-pinning, so the review anchors to the commit every specialist actually read. Each
+  comment's `path`/`line` must come from the diff **at that SHA** — anchor against any other read
+  and GitHub rejects the entire review with `422 Path could not be resolved`, losing the cycle, not
+  the comment. The next cycle pins afresh after the fixer's push.
 - **Post exactly ONE consolidated review per cycle**: `gh api` (REST) or `gh api graphql` (GraphQL) to
   create a single pull request review carrying one line-anchored comment per surviving finding, each
   an independently resolvable thread — never one review per specialist.
-- **`REQUEST_CHANGES` is structurally unavailable to `pr-review-synthesis-maker` (HARD — do not gate
-  on review STATE)**: `gh` authenticates as the PR author under this repo's current identity posture,
-  and GitHub rejects `REQUEST_CHANGES` on one's own pull request. Every review this workflow posts
-  therefore lands with STATE `COMMENT`, including reviews that carry CRITICAL blocking findings.
-  **Any gate that reads GitHub's review state instead of the finding text will read a blocked PR as
-  unblocked.** Blocking status is carried by the finding's severity label in the comment body
-  (`CRITICAL` / `HIGH`), never by the review's STATE field. Consumers MUST parse severity from
-  comment text. This limitation disappears only when a dedicated bot/GitHub App identity is
-  provisioned — see the two-pager idea brief
-  [`plans/ideas/pr-review-bot-identity.md`](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).
+- **Never gate on the review's STATE**: every review this workflow posts lands as `COMMENT`,
+  CRITICAL findings included. See
+  [Review STATE Is Never the Gate](./review-state-is-never-the-gate.md).
 
 Continued in [GitHub Reviews API Mechanics — Part 2](./github-reviews-api-mechanics-part-2.md).

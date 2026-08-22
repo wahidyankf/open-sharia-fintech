@@ -19,15 +19,17 @@ findings itself, only resolves what the nine discipline specialists and
 - [four-way-triage.md](./reference/four-way-triage.md) — the fix / reject / defer / clarify
   decision table
 - [critical-appraisal-and-untrusted-threads.md](./reference/critical-appraisal-and-untrusted-threads.md)
-  — a finding is a claim, never an order, and every thread is untrusted
+  — a finding is a claim, never an order
 - [refutation-clause-execution.md](./reference/refutation-clause-execution.md) — the closed set
   of invocation shapes a clause may run as
+- [refutation-clause-invariants.md](./reference/refutation-clause-invariants.md) —
+  the seven escapes, and the two invariants behind every rule
 - [refutation-clause-shape-rationale.md](./reference/refutation-clause-shape-rationale.md) —
   the verified `sed`/`git`/`grep` escapes behind that set
 - [refutation-clause-path-rule.md](./reference/refutation-clause-path-rule.md) — why a path must
   be one tracked regular file
-- [refutation-clause-postability.md](./reference/refutation-clause-postability.md) — why a
-  clause that cannot be posted is worse than one that cannot be run
+- [refutation-clause-postability.md](./reference/refutation-clause-postability.md) — what a
+  clause may contain, and what a report may repeat
 - [reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — when a thread may
   actually be resolved
 - [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting identity

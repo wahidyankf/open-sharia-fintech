@@ -17,9 +17,18 @@ So a clause is written to be read as data by a hook that cannot tell demonstrati
 - It never contains a command that **writes**, even as an example of what not to do. Describe the
   unsafe shape in prose and name the rule it breaks; do not spell it out as a runnable line.
 - It never names a dotfile environment path, in any position, quoted or not.
-- Where a finding is _about_ an unsafe command, the same restraint applies that
-  [rule 5](./refutation-clause-execution.md) already places on reporting one: name the shape, never
-  reproduce it.
+- Where a finding is _about_ an unsafe command, name the shape and the rule it breaks, never
+  reproduce it as a runnable line.
 
 A specialist writing an unpostable clause has written a finding nobody will see. The requirement is
 stated on both authoring surfaces for that reason.
+
+## Publishing the Outcome, Never the Content
+
+The same restraint governs the report. Naming an unsafe clause must not re-publish its payload:
+state the shape that failed and the rule it broke, never pasting the clause into a reply,
+disposition block, or commit message.
+
+It holds for a clause that **was** run too. `refutation_check` and the prose around it carry the
+outcome only — matched, did not match, how many lines — never file content or a matched literal.
+This is rule 5 of [the execution rules](./refutation-clause-execution.md), which points here.

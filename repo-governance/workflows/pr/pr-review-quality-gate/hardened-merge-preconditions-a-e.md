@@ -15,7 +15,7 @@ following hold:
 - **(b)** **0 code-related CRITICAL + 0 HIGH + 0 MEDIUM findings outstanding.** A reasoned reject or
   deferral does not erase an unresolved code finding; it remains blocking until resolved in the
   PR's code, shown false with recorded evidence, or **scope-deferred with a filed follow-up** per
-  the [Scope Guard](./scope-guard-no-scope-creep.md#scope-deferral-is-the-only-other-exit).
+  the [Scope Guard](./scope-deferral-exit.md).
 - **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
   bring it forward by a **non-destructive forward update** — `git fetch origin` then
   `git merge --ff-only origin/main`, or an ordinary forward merge. **Never** a shared-history rewrite,
