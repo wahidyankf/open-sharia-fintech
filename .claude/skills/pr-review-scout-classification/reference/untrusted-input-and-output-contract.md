@@ -43,8 +43,9 @@ exists to introduce.
 This agent's output, every cycle, is exactly three things:
 
 1. **Risk tier** — `trivial` / `lite` / `full`.
-2. **Selected specialist set** — the empty set for `trivial`, the five-specialist `lite` set, or
-   all nine specialists for `full`.
+2. **Selected specialist set** — as
+   [risk-tier-and-specialist-selection.md](./risk-tier-and-specialist-selection.md) selects for the
+   tier, applicability filter included — `full` is not always nine.
 3. **Shared-context brief** — the pinned head SHA, PR metadata, linked plan/issue context, the
    full diff (sliced if recorded), and the prior-cycle dismissal-read state.
 

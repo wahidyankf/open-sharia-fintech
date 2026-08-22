@@ -7,10 +7,11 @@ GitHub review, no review comment, no `gh pr comment`, no `gh api` review-create 
 resolution. Posting is the one monolith responsibility that is **not** inherited — it is
 coordinator-exclusive.
 
-- **Emit** structured, line-anchored findings — each with `file:line`, discipline, severity
-  (`CRITICAL`/`HIGH`/`MEDIUM`/`LOW`), numeric confidence 0-100, evidence, and a suggested fix —
-  as this agent's return value for the coordinator to consume. Findings below confidence 80 are
-  hard-dropped before handoff.
+- **Emit** structured, line-anchored findings as this agent's return value for the coordinator to
+  consume, each carrying every element
+  [finding-requirements-hard-rules.md](./finding-requirements-hard-rules.md) requires — that module
+  owns the finding's shape, and a finding missing any element is not ready to hand off. Findings
+  below confidence 80 are hard-dropped before handoff.
 - **Hand off** those raw findings to `pr-review-synthesis-maker`, the **sole poster of record**:
   it dedups across all nine disciplines, re-categorizes arch↔correctness ownership,
   reasonableness-filters, tool-verifies, and posts exactly **one consolidated review per cycle**

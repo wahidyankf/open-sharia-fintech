@@ -39,7 +39,7 @@ A cycle whose findings are all `fix-induced` says the change is clean and the fi
 
 ## The Checkpoint, Every Third Cycle
 
-Stop after cycles three, six, nine … read both series, and record one of:
+**The orchestrator** stops after cycles three, six, nine …, reads both series, and records:
 
 - **Continue** — original defects are falling and the induced rate is not rising.
 - **Change fix strategy** — the induced rate is high. Attack the mechanism, not the surface — most

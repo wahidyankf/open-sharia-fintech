@@ -25,7 +25,7 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   changing at cycle 14 while the loop ran to 19. A factual defect in a **shipping artifact** is
   never suppressed by this rule.
 
-- **Non-convergence learning**: at cycles six and seven, append sanitized evidence explaining why
+- **Non-convergence learning**: at cycles six and seven **the orchestrator** appends sanitized evidence explaining why
   convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
   owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`
   entry for a systemic improvement. Never place a secret, access token,
