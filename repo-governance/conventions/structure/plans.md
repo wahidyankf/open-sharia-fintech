@@ -32,9 +32,9 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 
 ## Ideas Folder (Two-Pagers)
 
-- [Ideas Folder (Two-Pagers)](./plans/ideas-folder-overview-rationale-and-file-layout.md) — rationale, layout.
+- [Ideas Folder](./plans/ideas-folder-overview-rationale-and-file-layout.md) — rationale, layout.
 - [Two-Pager Template](./plans/two-pager-template.md) — the eight sections.
-- [Two-Page Discipline and Difference from backlog/](./plans/two-page-discipline-and-difference-from-backlog.md) — length rules.
+- [Two-Page Discipline vs backlog/](./plans/two-page-discipline-and-difference-from-backlog.md) — length rules.
 - [Promoting Ideas and Worked Examples](./plans/promoting-ideas-and-worked-examples.md) — promotion.
 
 ## Plan Folder Naming
@@ -46,7 +46,7 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [Structure Decision](./plans/structure-decision.md) — single- vs. multi-file.
 - [Single-File Structure](./plans/single-file-structure.md) — exception layout.
 - [Multi-File Structure](./plans/multi-file-structure-layout-and-core-files.md) — README/brd/prd.
-- [Multi-File — Additional Files](./plans/multi-file-structure-additional-file-purposes.md) — remaining.
+- [Multi-File — Additional Files](./plans/multi-file-structure-additional-file-purposes.md) — rest.
 - [File-Impact Analysis Format](./plans/file-impact-analysis-format.md) — annotated file tree.
 - [The Knowledge Capture Phase](./plans/the-knowledge-capture-phase.md) — final phase.
 - [Content-Placement Rules](./plans/content-placement-rules.md) — brd vs prd.
@@ -54,9 +54,9 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [Execution-Grade Clarity](./plans/execution-grade-clarity.md) — checkbox rules.
 - [Executor Tagging — Tags and Bias](./plans/executor-tagging-tags-and-bias.md) — [AI]/[HUMAN] tags.
 - [Tagging — Git-Mechanical Steps](./plans/executor-tagging-git-mechanical-steps.md) — worktree/push.
-- [Executor Tagging — Placement and Legend](./plans/executor-tagging-placement-legend-and-execution-semantics.md) — legend.
+- [Tagging — Placement and Legend](./plans/executor-tagging-placement-legend-and-execution-semantics.md) — legend.
 - [Phases as Natural Pauses](./plans/phases-as-natural-pauses.md) — gates.
-- [Delivery Checklists Express a DAG](./plans/delivery-checklists-express-a-dag.md) — parallelization.
+- [Checklists Express a DAG](./plans/delivery-checklists-express-a-dag.md) — parallelization.
 - [Delivery Units and Granularity](./plans/delivery-checklists-express-a-dag-continued.md) — units.
 - [Phase 0 Opens No PR](./plans/phase-0-opens-no-pr.md) — no PR at setup.
 - [Phase 0 — Rationale and Enforcement](./plans/phase-0-opens-no-pr-rationale-and-enforcement.md) — evidence.
@@ -64,16 +64,17 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [PRs Open — Rules 5-7](./plans/prs-open-at-delivery-boundaries-rules-continued.md) — remaining rules.
 - [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — the test.
 - [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — size bound.
+- [PRs Open — Atomicity](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — rule 5.
 - [PRs Open — PR Body](./plans/prs-open-at-delivery-boundaries-pr-body.md) — why, entry, skip.
-- [Delivery Boundaries and Applicability](./plans/delivery-boundaries-and-applicability.md) — table.
+- [Delivery Boundaries](./plans/delivery-boundaries-and-applicability.md) — table.
 - [Worktree Specification](./plans/worktree-specification.md) — declaring worktree.
 - [Worktree Specification — Lifecycle](./plans/worktree-specification-continued.md) — cleanup.
 - [Worktree Cap](./plans/worktree-cap.md) — one per repo.
 - [Delivery Mode — The Four Modes](./plans/delivery-mode-the-four-modes.md) — mode table.
 - [Delivery Mode — Content Restriction](./plans/delivery-mode-content-restriction.md) — validity.
 - [Merge Authority](./plans/delivery-mode-merge-authority-and-precedence.md) — resolution.
-- [Per-Repository Delivery Mode Restrictions](./plans/per-repository-delivery-mode-restrictions.md) — per-repo.
-- [Per-Repo Restrictions — Enforcement](./plans/per-repository-restrictions-enforcement-and-file-naming.md) — enforces.
+- [Per-Repo Delivery Mode Restrictions](./plans/per-repository-delivery-mode-restrictions.md) — per-repo.
+- [Per-Repo — Enforcement](./plans/per-repository-restrictions-enforcement-and-file-naming.md) — enforces.
 
 ## Working with Plans
 

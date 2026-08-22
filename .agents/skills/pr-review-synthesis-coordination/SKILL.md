@@ -26,6 +26,9 @@ tool-verified before posting exactly ONE consolidated review.
   mechanics (COMMENT-only constraint, SHA reuse), identity note, and untrusted-input handling
 - [cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —
   full-PR re-review each cycle, human-dismissal respect, and when to delegate to `web-researcher`
+- [machine-readable-audit-record.md](./reference/machine-readable-audit-record.md) — the stable
+  post title, the `C<cycle>-F<n>` finding IDs, and the `ose-pr-review:v1` record block every cycle
+  must emit
 
 ## Core Principles
 

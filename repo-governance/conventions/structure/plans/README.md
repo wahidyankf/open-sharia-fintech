@@ -29,15 +29,16 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Delivery Checklists Express a DAG](./delivery-checklists-express-a-dag.md) — Requires a Parallelization Model naming concurrent vs. serial delivery nodes.
 - [Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) — Mapping a plan's DAG nodes onto delivery units, branches, and PRs.
 - [the Earliest PR Is Phase 1](./phase-0-opens-no-pr.md) — Scoping a plan's Phase 0 to confirm it contains no PR-creation or merge step.
-- [Baseline Artifacts, Rationale, and Enforcement](./phase-0-opens-no-pr-rationale-and-enforcement.md) — A Phase 0 step writes evidence, or its PR was flagged.
+- [Baseline Artifacts and Enforcement](./phase-0-opens-no-pr-rationale-and-enforcement.md) — A Phase 0 step writes evidence.
 - [PRs Open at Delivery Boundaries, Not Every Phase](./prs-open-at-delivery-boundaries-rules.md) — Deciding if a phase should open a PR.
 - [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether independent work may share a PR, or whether an already-open PR may wait for a later merge.
 - [Boundary Test and Rationale](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing whether a specific phase qualifies as a delivery boundary.
-- [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop. Use when a delivery unit's diff spans many files.
-- [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description. Use when a body states what changed but not why.
+- [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
+- [The Atomicity Exception (Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
+- [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.
 - [Worktree Specification](./worktree-specification.md) — Writing a plan's Worktree section or resolving worktree entry/cleanup.
-- [Executor Lifecycle and Example](./worktree-specification-continued.md) — Implementing or auditing worktree entry, sync, and cleanup behavior.
+- [Executor Lifecycle and Example](./worktree-specification-continued.md) — Auditing worktree entry, sync, and cleanup.
 - [One Worktree Per Repository Per Plan](./worktree-cap.md) — A plan produces a second delivery unit in the same repository.
 - [Delivery Mode](./delivery-mode-the-four-modes.md) — The four delivery modes, their work location, integration target, and merge authority.
 - [main-to-origin-main Content Restriction](./delivery-mode-content-restriction.md) — Deciding whether a plan may select main-to-origin-main as its delivery mode.

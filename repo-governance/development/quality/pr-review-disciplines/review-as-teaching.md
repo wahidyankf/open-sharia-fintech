@@ -52,5 +52,6 @@ A finding that lectures fails this rule as surely as one that explains nothing.
 
 ## Enforcement
 
-None automated. `pr-review-synthesis-maker`'s reasonableness filter drops a finding that states a
-defect no reader could act on, and this is one such case.
+None automated. `pr-review-synthesis-maker`'s reasonableness filter already drops a finding
+stating a defect no reader could act on, and a finding failing this rule is exactly that: an
+unactionable finding. The filter is where it dies.

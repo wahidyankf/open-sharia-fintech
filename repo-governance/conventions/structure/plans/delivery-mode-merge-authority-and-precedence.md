@@ -19,10 +19,10 @@ Continues [Delivery Mode — main-to-origin-main Content Restriction](./delivery
 **[AI] merges by default.** Every PR first uses the canonical behavior classifier, not a separate
 plan-specific review path. Eligible executable work must reach its earliest clean code
 MEDIUM/HIGH/CRITICAL cycle within the seven-cycle maximum; noneligible static work requires the
-named `pr-quality-gate.yml` workflow. **A PR touching `plans/**`is always eligible** and must
+named `pr-quality-gate.yml` workflow. A PR touching `plans/**` is **always eligible** and must
 satisfy both routes unless the user waives it for that PR. A blocked eligible PR never merges. The shared hardened
 preconditions still apply: no code-related CRITICAL/HIGH/MEDIUM finding outstanding, branch current
-with`origin/main` via a non-destructive forward update, route-required quality checks green, and
+with `origin/main` via a non-destructive forward update, route-required quality checks green, and
 eligible surface tester gates run and resolved — see the
 [PR Review Quality Gate workflow](../../../workflows/pr/pr-review-quality-gate.md).
 

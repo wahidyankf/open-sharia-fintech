@@ -33,13 +33,17 @@ Emit this immediately after the prose header, populated for every cycle includin
 {"cycle":3,"cycles_max":7,"tier":"full","head_sha":"<40-char SHA>",
  "diff":{"lines_changed":367,"files_changed":44,"files_hand_authored":30},
  "specialists":["architecture","logic","governance","security","integrity"],
- "raw_findings":{"architecture":1,"logic":1,"governance":2},
+ "raw_findings":{"architecture":2,"logic":2,"governance":3},
  "posted":3,
  "dropped":{"below_confidence_floor":2,"reasonableness_filter":1,"deduplicated":1},
  "findings":[{"id":"C3-F1","severity":"HIGH","discipline":"logic","confidence":92,
    "file":"libs/x/src/a.ts","line":42,"raised_by":["logic"],"refutable_by":"rg -F 'X' libs/x/"}]}
 -->
 ```
+
+**The counts must balance**: the `raw_findings` values sum to `posted` plus the `dropped` values,
+for this cycle alone. Every raw finding is either posted or dropped for exactly one recorded
+reason, so a block that does not balance is malformed.
 
 `diff` is recorded here because the GitHub compare API truncates at 300 files and silently returns
 a floor — a later analysis reading it back gets the wrong number with no error. `dropped` is
