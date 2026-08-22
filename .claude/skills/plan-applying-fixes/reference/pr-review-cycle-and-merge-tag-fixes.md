@@ -8,7 +8,7 @@ verbatim in structure from the
 [PR Review Quality Gate workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md):
 one `- [ ] [AI] Invoke pr-review-scout-maker on $PR` / `- [ ] [AI] Invoke pr-review-synthesis-maker on $PR` /
 `- [ ] [AI] Invoke pr-review-fixer on $PR` triple per cycle, the loop-exit condition (**earliest
-clean exit** — stop at the first completed cycle leaving zero code-related MEDIUM/HIGH/CRITICAL
+clean exit** — stop at the first completed cycle leaving zero [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL
 findings; N is a ceiling, not a floor, so scaffolding all seven pairs is wrong and running fewer is
 correct when the loop exits clean),
 and — where the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to

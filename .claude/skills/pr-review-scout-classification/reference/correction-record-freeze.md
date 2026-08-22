@@ -1,10 +1,16 @@
 # Correction-Record Freeze (Cycle 2 Onward)
 
-From cycle 2 the brief
-OMITS `plans/**` (including `delivery.md` and `learnings.md`): the loop stops reviewing prose it
-authored last cycle. Keep the **PR body** in the brief every cycle — a human reads it first. This
-is not generated-file filtering — those files are excluded because the loop **wrote** them, not
-because a tool emitted them, and cycle 1 still carries them in full. Record the omission.
+The brief OMITS every `plans/**` hunk (`delivery.md` and `learnings.md` included) that **a fixer
+commit introduced** — the prose the loop wrote about its own cycles. Any other `plans/**` hunk is
+reviewed **once, in the first cycle in which it appears**, and omitted from every brief after that;
+for content present at cycle 1 that is cycle 1. Keep the **PR body** in the brief every cycle — a
+human reads it first. Record the omission.
+
+**The test is who wrote it, not where it lives.** This is not generated-file filtering: these files
+are excluded because the loop **wrote** them, not because a tool emitted them. A `plans/**` glob is
+only a proxy for that, and the proxy fails in one direction — a plan document a human pushes at
+cycle 5 matches the glob, was never in a cycle-1 brief, and would otherwise be reviewed by no cycle
+at all. Reviewing it once restores the guarantee below without reopening the loop's own record.
 
 **Why the freeze exists.** A loop whose scope contains its own correction record reviews the
 falsifiable claims it wrote last cycle, so the surface grows about as fast as it is cleaned and a

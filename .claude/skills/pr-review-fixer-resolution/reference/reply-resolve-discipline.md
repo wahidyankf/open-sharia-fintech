@@ -59,7 +59,7 @@ gh api graphql -f query='
 The orchestrating
 [PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
 feeds each fresh cycle the accumulated `prior` findings and their resolution state; use it to
-detect repetition. A reasoned rejection does not erase a code-related
+detect repetition. A reasoned rejection does not erase a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md)
 MEDIUM/HIGH/CRITICAL finding: the next eligible cycle independently verifies the evidence. If it
 remains, it stays merge-blocking and the PR reaches `blocked` at the seven-cycle ceiling rather
 than being handed to a human gate or silently suppressed. Capture sanitized learning at cycles

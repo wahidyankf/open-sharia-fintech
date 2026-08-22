@@ -24,7 +24,7 @@
 - `*-to-pr` mode: PR missing: **CRITICAL**
 - `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
 - `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**
-- `*-to-pr` mode: loop exited with a code-related MEDIUM/HIGH/CRITICAL finding outstanding, or hit
+- `*-to-pr` mode: loop exited with a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL finding outstanding, or hit
   the seven-cycle ceiling with one open (`blocked`): **CRITICAL**
 - `*-to-pr` mode: loop ran past the seven-cycle ceiling, last cycle clean: **HIGH**
 - `*-to-pr` mode: a low cycle count whose final cycle was clean: **not a finding** (the ceiling is

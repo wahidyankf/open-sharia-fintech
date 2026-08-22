@@ -43,7 +43,7 @@ logic's) — the tie-breaker's own "documented + mechanically-checkable rule" br
 **Routes elsewhere**: whether a new rule should exist → `pr-review-architecture-maker`;
 scenario completeness inside a spec file → `pr-review-logic-maker`; whether the body is **accurate** →
 `pr-review-docs-maker`; instruction-decay
-(a build-tool/env-var/CI change not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/`) →
+(triggers listed there, never here) →
 `pr-review-instruction-maker` — this agent checks conformance **to** the instruction docs, never
 staleness **of** them.
 

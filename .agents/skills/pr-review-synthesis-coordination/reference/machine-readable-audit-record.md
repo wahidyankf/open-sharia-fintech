@@ -41,6 +41,12 @@ Emit this immediately after the prose header, populated for every cycle includin
 -->
 ```
 
+On a [checkpoint cycle](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md)
+the block also carries `"checkpoint":{"verdict":"continue|change-fix-strategy|block","original_series":[...],"induced_rate":[...]}`.
+All three verdicts are recorded, not only the one that extends a ceiling: a checkpoint whose
+`continue` leaves no artifact is indistinguishable from a checkpoint that never ran, and a rule
+whose compliance and non-compliance look identical cannot be audited by anyone.
+
 **The counts must balance**: the `raw_findings` values sum to `posted` plus the `dropped` values,
 for this cycle alone. Every raw finding is either posted or dropped for exactly one recorded
 reason, so a block that does not balance is malformed.

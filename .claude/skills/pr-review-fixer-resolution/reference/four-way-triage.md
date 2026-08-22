@@ -21,6 +21,9 @@ reply also opens with a **disposition block**, an HTML comment recording the out
 should verify in one click. A `Fixed` reply
 naming no commit is unverifiable at the moment it matters most.
 
+**A reply teaches too**: say why the change resolves the finding, not only what changed. See
+[Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
+
 ## Reject Path — A Higher Bar Than "Disagree"
 
 A rejection is valid ONLY when it engages the maker's cited evidence and explains why that
@@ -34,9 +37,7 @@ _citation_, not for deference: see
 
 **Whether a fix widens the PR — and which fixes are exempt — is settled by the
 [Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md),
-never restated here.** **A reply teaches too**: say why the change resolves the finding, not only
-what changed. See
-[Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
+never restated here.**
 
 - **Defer**: acknowledge the finding is valid, say why it sits outside this PR's scope, then
   **file the follow-up and link it on the thread** — a `plans/ideas/` two-pager or a tracked

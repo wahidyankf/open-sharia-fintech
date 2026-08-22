@@ -52,6 +52,9 @@ A finding that lectures fails this rule as surely as one that explains nothing.
 
 ## Enforcement
 
-None automated. `pr-review-synthesis-maker`'s reasonableness filter already drops a finding
-stating a defect no reader could act on, and a finding failing this rule is exactly that: an
-unactionable finding. The filter is where it dies.
+None automated, and a finding failing this rule is **not** dropped. The coordinator rewrites it
+where it stands — the defect is real and only the wording is unusable — as
+[finding-requirements.md](../../../../.claude/skills/pr-review-synthesis-coordination/reference/finding-requirements.md)
+requires; that module governs the outcome and this one does not restate it. The reasonableness
+filter drops a finding whose **defect** no reader could act on, which is a different failure from a
+real defect explained badly.
