@@ -40,7 +40,7 @@ Every plan must start with environment setup steps:
 ```markdown
 ### Environment Setup
 
-- [ ] Provision worktree: `claude --worktree <plan-identifier>` (creates `worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md))
+- [ ] Enter the worktree this plan was authored in — provision only if absent: `claude --worktree <plan-identifier>` (`worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md))
 - [ ] Initialize toolchain in the root worktree (not the new worktree): `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md))
 - [ ] [Add project-specific setup: env vars, DB, Docker, etc.]
 - [ ] Verify dev server starts: `nx dev [project-name]`

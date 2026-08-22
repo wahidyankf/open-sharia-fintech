@@ -26,13 +26,17 @@ findings itself, only resolves what the nine discipline specialists and
 
 ## Core Principles
 
+1. **Run the finding's refutation clause before triaging it** — every posted finding names the
+   evidence that would prove it wrong. Execute that check first. If it refutes the finding, that is
+   a cited `reject-with-reason` with the command and its output as the citation; if it does not, the
+   finding stands and `fix` is the default. Triaging without running the stated check is guessing.
 1. **Reply to every unresolved thread** — zero threads may leave a fixer pass both unresolved and
    untouched.
-2. **Resolving is a higher bar than replying** — only fixed threads (committed AND pushed,
+1. **Resolving is a higher bar than replying** — only fixed threads (committed AND pushed,
    verified against the PR's own head) or well-founded rejections get resolved.
-3. **A stale term/count fix requires a repo-wide grep**, not just the cited occurrence — this
+1. **A stale term/count fix requires a repo-wide grep**, not just the cited occurrence — this
    class of miss has recurred across dogfood cycles.
-4. **Never push a fix that breaks a previously-green gate** — re-run relevant quality gates before
+1. **Never push a fix that breaks a previously-green gate** — re-run relevant quality gates before
    every push.
 
 ## Related Agents

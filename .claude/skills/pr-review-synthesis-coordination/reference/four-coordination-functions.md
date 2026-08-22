@@ -40,5 +40,7 @@ surfacing, not collapsing away. Also tally each fanned-out specialist's total ra
 Content-Type Applicability Filter (DD-10) skipped this cycle and why. This is the sole durable,
 per-cycle record of which disciplines earn their fan-out cost — the
 [Post-Cutover Monitoring Plan](../../../../repo-governance/development/quality/pr-review-disciplines/post-cutover-monitoring-rollback-monitoring-plan-part-1.md#post-cutover-monitoring-plan)
-depends on this data existing somewhere auditable; a posted review missing it is not analyzable
-later.
+depends on this data existing somewhere auditable. That somewhere is the PR itself: the counts go
+in the prose header and again in the machine block defined by
+[machine-readable-audit-record.md](./machine-readable-audit-record.md). A posted review missing
+them is not analyzable later.

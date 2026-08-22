@@ -8,20 +8,18 @@ security-sensitive path, then select the specialist set accordingly:
   one consolidated generalist pass itself, with no specialist fan-out at all (see the Trivial-Tier
   Handoff in
   [untrusted-input-and-output-contract.md](./untrusted-input-and-output-contract.md)).
-- **Lite** (≤100 lines AND ≤20 files) → the **four highest-yield specialists** for this repo
-  (`pr-review-governance-maker`, `pr-review-logic-maker`, `pr-review-security-maker`,
-  `pr-review-integrity-maker`). `pr-review-types-maker` is deliberately **not** included — type-
-  soundness launches `full`-tier-only, with promotion to `lite` gated on future acceptance-rate
-  data, not a day-one assumption.
-- **Full** (>100 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
+- **Lite** (≤50 lines AND ≤20 files) → the **five highest-yield specialists** for this repo
+  (`pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-logic-maker`,
+  `pr-review-security-maker`, `pr-review-integrity-maker`). `pr-review-types-maker` is
+  `full`-tier-only; promotion to `lite` is gated on acceptance-rate data.
+- **Full** (>50 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
   identity, CI/workflow files, `pr-merge-protocol.md`) → **all nine specialists, minus the
   Content-Type Applicability Filter below**.
 
 **Security-sensitive paths force `full` regardless of size** — non-negotiable, per the no-secrets
-and git-identity rules. Compute the tier once per cycle (it is
-**re-evaluated every cycle**, since the fixer's own commits can change the diff's size or touched
-paths) and record it in the shared-context brief so `pr-review-synthesis-maker` can carry it into
-the Consolidated Review Header it posts.
+and git-identity rules. Recompute the tier **every cycle**, since the fixer's commits can change the
+diff's size or touched paths, and record it in the shared-context brief so
+`pr-review-synthesis-maker` carries it into the Consolidated Review Header.
 
 ## Content-Type Applicability Filter (DD-10) — `full` tier only, freshly re-derived every cycle
 

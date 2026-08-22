@@ -3,6 +3,21 @@
 - **Reply to every unresolved thread** — zero threads may remain both unresolved and untouched
   (no reply at all) after a fixer pass. Every thread gets exactly one of: a fix reply, a
   rejection reply, a deferral reply, or a clarifying question.
+- **Every reply opens with a machine-readable disposition block**, so a later pass over this
+  repo's PR history can count outcomes without inferring them from prose. Prose disposition alone
+  has already proven unminable: a retrospective read 89% fixed and 0% rejected off reply text and
+  could not tell a genuine reject from an unstated one.
+
+  ```html
+  <!-- ose-pr-review-disposition:v1
+  {"finding_id":"C3-F1","disposition":"fixed|rejected|deferred|clarify",
+   "commit":"<SHA or null>","refutation_check":"<command run and its result, or null>"}
+  -->
+  ```
+
+  `refutation_check` records the outcome of running the finding's own refutation clause, which is
+  what distinguishes a reasoned reject from a guess. Human prose follows the block as normal.
+
 - **Resolve only what was actually addressed** — call the `resolveReviewThread` GraphQL mutation
   ONLY on threads that were fixed, or whose rejection is well-founded per the higher bar in
   [four-way-triage.md](./four-way-triage.md). Never resolve a `defer` or `clarify` thread

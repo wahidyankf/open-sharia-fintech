@@ -8,6 +8,8 @@ same context (which would otherwise multiply token cost by the number of special
 
 ## No-Exclusion Posture (Full Diff, No Generated-File Filtering)
 
+One exception applies from cycle 2 — see the correction-record freeze below.
+
 This brief carries the **full diff with NO generated-file exclusion** — reviewers see everything,
 including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**` (e.g. `search-data.json`),
 `package-lock.json` and other lock files, minified assets, source maps, and any file carrying an
@@ -15,6 +17,14 @@ including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `gener
 it — the rationale is explicitness: a hand-edited "generated" file is never silently missed
 because nothing is silently excluded. CI still runs over everything regardless of what any
 reviewer chooses to skim.
+
+## Correction-Record Freeze (Cycle 2 Onward)
+
+The **one** scope exclusion, and the only exception to the posture above. From cycle 2 the brief
+OMITS `plans/**` (including `delivery.md` and `learnings.md`): the loop stops reviewing prose it
+authored last cycle. **Exception**: on a plans-only PR the plan is the shipping surface — keep it. Keep the **PR body** in the brief every cycle — a human reads it first. This is not generated-file filtering — those files are
+excluded because the loop **wrote** them, not because a tool emitted them, and cycle 1 still
+carries them in full. Record the omission in the brief.
 
 ## Large-Diff Posture (Scout's Discretion)
 
