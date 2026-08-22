@@ -26,16 +26,20 @@ enforcement-disposition completeness.
 Naming the class is what makes the register useful. "A different question" describes every cycle;
 "the same class as cycle nine" is falsifiable.
 
-## What Makes a Cycle Clean
+## What Ends the Loop
 
-**A loop exits when two consecutive cycles, each running a probe class not previously used on that
-PR, both return zero original defects.** One clean cycle is evidence about one probe. Two clean
-cycles under two unused classes is the weakest available evidence that the questions have run out,
-and it is still weak — it is a stopping rule, not a proof of correctness.
+_Clean_ keeps its single definition — a cycle leaving zero unresolved code-related
+MEDIUM/HIGH/CRITICAL findings, stated once in
+[loop-exit and block rules](./loop-exit-and-block-rules.md). This file adds the second
+condition, not a second definition.
 
-This defines the word _clean_ wherever the loop's exit condition uses it. It does not change the
-cycle ceiling, which bounds effort rather than measuring convergence, and which is
-[extended only per-PR](./convergence-measurement.md).
+**A loop exits when two consecutive clean cycles each run a probe class not previously used on
+that PR.** One clean cycle is evidence about one question. Two clean cycles under two unused
+classes is the weakest available evidence that the questions have run out, and it is still weak —
+a stopping rule, not a proof of correctness.
+
+It does not change the cycle ceiling, which bounds effort rather than measuring convergence, and
+which is [extended only per-PR](./convergence-measurement.md).
 
 A ceiling reached before the exit condition holds is a `blocked` PR, not a clean one. Reaching the
 ceiling never converts an unmet exit condition into a met one.

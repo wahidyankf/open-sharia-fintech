@@ -30,8 +30,9 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
         # outstanding = thread still unresolved. A deferral leaves the set only
         # once its follow-up is filed AND linked, which is what lets it resolve.
-        if unresolved is empty:
-            return done                     # earliest safe exit; LOW findings do not keep loop open
+        if unresolved is empty and probe_class_is_new(cycle, prior):
+            if previous_cycle_was_clean_under_a_new_class(prior):
+                return done             # second consecutive clean cycle; LOW findings never hold the loop open
         if cycle % 3 == 0:
             convergence_checkpoint(prior)   # continue | change fix strategy | block
         if cycle >= 6:

@@ -35,11 +35,18 @@ Emit this immediately after the prose header, populated for every cycle includin
  "specialists":["architecture","logic","governance","security","integrity"],
  "raw_findings":{"architecture":2,"logic":2,"governance":3},
  "posted":3,
+ "probe":{"class":"clause-durability","previously_used":false},
  "dropped":{"below_confidence_floor":2,"reasonableness_filter":1,"deduplicated":1},
  "findings":[{"id":"C3-F1","severity":"HIGH","discipline":"logic","confidence":92,
    "file":"libs/x/src/a.ts","line":42,"raised_by":["logic"],"refutable_by":"rg -F 'X' libs/x/src/a.ts"}]}
 -->
 ```
+
+`probe.class` names the question this cycle asked and `previously_used` says whether an earlier
+cycle on this PR asked the same class. The
+[exit condition](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md)
+reads these two fields, so a rule that would otherwise be asserted becomes checkable from the PR
+alone.
 
 On a [checkpoint cycle](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md)
 the block also carries `"checkpoint":{"verdict":"continue|change-fix-strategy|block","original_series":[...],"induced_rate":[...]}`.

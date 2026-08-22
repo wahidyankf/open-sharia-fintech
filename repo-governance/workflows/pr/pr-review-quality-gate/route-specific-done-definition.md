@@ -8,8 +8,9 @@ when_to_use: "Use when checking whether a PR meets this workflow's done-definiti
 
 Every PR is **done** only when its classifier route's requirements hold:
 
-1. **Eligible route** — the specialist loop completed at least one cycle and stopped at the earliest
-   completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding** —
+1. **Eligible route** — the specialist loop reached [its clean exit](./probe-variation-and-exit.md) —
+   two consecutive clean cycles, each under a probe class not previously used on this PR, neither
+   leaving **any code-related MEDIUM/HIGH/CRITICAL finding outstanding** —
    counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
    thread, per the
    [Scope Guard](./scope-deferral-exit.md). The

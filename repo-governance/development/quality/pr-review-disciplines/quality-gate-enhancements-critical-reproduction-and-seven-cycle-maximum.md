@@ -30,9 +30,9 @@ diff is also high-risk, until a reproduction is attached.
 
 For an eligible PR, the [PR Review Quality Gate
 workflow](../../workflows/pr/pr-review-quality-gate.md) runs sequential CI-gated cycles only until
-the first completed cycle with no code-related MEDIUM/HIGH/CRITICAL findings, with seven cycles as
-the default maximum. This is a convergence policy, not a target count: extra cycles after a clean
-result add cost without improving the merge decision.
+two consecutive clean cycles under previously-unused probe classes, with seven cycles as the default
+maximum. This is a convergence policy, not a target count: one clean cycle is evidence about one
+question, and cycles beyond the second add cost without improving the merge decision.
 
 If code-related MEDIUM/HIGH/CRITICAL findings remain at cycle six or seven, the execution captures
 sanitized learning and a deduplicated improvement idea. At the ceiling, the PR is blocked rather

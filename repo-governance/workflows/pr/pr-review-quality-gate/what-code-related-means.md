@@ -18,10 +18,11 @@ convention blocks exactly as a CRITICAL in a function does.
 
 **Two things are not code-related**, and neither blocks:
 
-- **The correction record.** `plans/**` after cycle 1 — the prose the loop itself authors as it
-  works. See the correction-record freeze in
-  [Loop-Exit and Block Rules](./loop-exit-and-block-rules.md). On a plans-only PR the plan is the
-  shipping artifact, so the exclusion does not apply.
+- **The correction record.** Prose introduced by a fixer commit after cycle 1 — what the loop
+  wrote about its own cycles. Authorship is the test, not path: a `plans/**` document a human
+  pushes mid-loop is reviewed once, in the cycle it first appears. See the correction-record
+  freeze in [Loop-Exit and Block Rules](./loop-exit-and-block-rules.md). On a plans-only PR the
+  plan is the shipping artifact, so the exclusion does not apply.
 - **The review conversation.** Review comments, replies, and disposition blocks describe the work;
   they are not the work.
 

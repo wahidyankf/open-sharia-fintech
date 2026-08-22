@@ -6,15 +6,15 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
 
 # Loop-Exit and Block Rules
 
-- **Earliest clean exit**: after every eligible cycle's CI-green gate, evaluate unresolved
+- **Clean exit**: after every eligible cycle's CI-green gate, evaluate unresolved
   [**code-related**](./what-code-related-means.md) findings — a defect in an artifact this PR ships,
   governance prose included. Zero MEDIUM/HIGH/CRITICAL findings makes the cycle clean, and the loop
   exits `done` when [two consecutive cycles under unused probe classes](./probe-variation-and-exit.md)
   are both clean; never spend a cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
   work.
-- **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes the
-  prose the loop itself authors — `plans/**`, including `delivery.md` and `learnings.md`. The rule
-  and both its carve-outs (a plans-only PR, and any security-sensitive hunk, which stays reviewable
+- **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes
+  what a fixer commit wrote about the loop's own cycles.
+  The test is authorship, not path. The rule and both its carve-outs (a plans-only PR, and any security-sensitive hunk, which stays reviewable
   every cycle) are stated once in
   [Correction-Record Freeze](../../../../.claude/skills/pr-review-scout-classification/reference/correction-record-freeze.md);
   this layer does not restate them, because a second copy drifts. **The PR body is NOT frozen** —

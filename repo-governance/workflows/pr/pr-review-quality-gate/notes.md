@@ -8,8 +8,9 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
 
 - **Strictly sequential, never parallel**: this is a hard requirement — the loop's dedup logic and
   the CI-green gate both depend on each cycle observing the previous cycle's fully-settled state.
-- **Seven is a ceiling, not a target**: the eligible loop exits at the earliest completed clean cycle
-  and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
+- **Seven is a ceiling, not a target**: the eligible loop exits at its
+  [clean exit](./probe-variation-and-exit.md) — two consecutive clean cycles under unused probe
+  classes — and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
   code-related MEDIUM/HIGH/CRITICAL finding.
 - **AI-attribution, not a distinct bot identity**: both agents currently post under the existing
   personal `gh` identity with an explicit AI-attribution footer per comment/reply, because no

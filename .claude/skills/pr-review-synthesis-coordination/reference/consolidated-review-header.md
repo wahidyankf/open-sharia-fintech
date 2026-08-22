@@ -14,6 +14,7 @@ itself — not just from an internal log:
 **Head SHA**: <40-char SHA this cycle reviewed>
 **Diff size**: N changed lines, M changed files (K hand-authored, excluding generated mirrors)
 **Risk tier**: trivial | lite | full
+**Probe class**: <class this cycle asked> (new on this PR | same class as cycle N)
 **Specialists fanned out**: none (coordinator-only pass) | governance, architecture, logic, security, integrity | all nine specialists (minus any DD-10 content-type skips, named with reason)
 **Per-specialist raw findings**: architecture 1, logic 1, governance 2, security 1, integrity 0 (skipped: no test/CI files in diff), performance 1, docs 6, instruction 3, types 0 (skipped: no typed source in diff)
 **Security-sensitive-path override applied**: yes | no

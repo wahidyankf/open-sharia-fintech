@@ -27,8 +27,7 @@ when_to_use: "Use when checking how the fan-out is dispatched, what the coordina
   `COMMENT` — `REQUEST_CHANGES` is structurally unavailable here; blocking status lives in each
   finding's severity label, never in the review STATE
 - **Depends on**: Step 1 (same cycle)
-- **Condition**: Runs once per eligible cycle, for `cycle` in `1..={input.cycles}`, stopping at the
-  earliest completed clean cycle
+- **Condition**: Runs once per eligible cycle, for `cycle` in `1..={input.cycles}`, stopping at [its clean exit](./probe-variation-and-exit.md)
 - **Success criteria**: Every finding surviving to the consolidated review carries confidence ≥ 80,
   cited evidence (blob URL + SHA + line range), and a CRITICAL/HIGH/MEDIUM/LOW severity mapping; the
   review's header records the risk tier, the specialist set fanned out, any diff-slicing applied, and
