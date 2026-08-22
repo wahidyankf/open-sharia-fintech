@@ -23,9 +23,9 @@ PRs of 15,000-56,000 lines and 160-3,524 files — far past any measured size.
 1. **Split a propagation sweep into one PR per surface.** Governance text, agents plus their
    generated mirrors, specs, and plans are separate surfaces; each is independently consistent, so
    each lands on its own. Surface seams — not a line count — are the primary split.
-2. **A machine ceiling sits above everything: 300 changed files**, past which GitHub Copilot's
-   review refuses — **observed behavior, not a published limit**, appearing only in its
-   runtime error text. Rule 4 holds every PR far below it, so it never binds.
+2. **A machine ceiling sits above everything: 300 changed files**, past which a hosted AI
+   code-review assistant refuses outright — **observed behavior, not a published limit**, seen
+   only in its runtime error text. Rule 4 holds every PR far below it, so it never binds.
 3. **Split PRs run sequentially from one reused worktree**, never one worktree per PR — land a
    slice, fast-forward the worktree from `origin/main`, open the next. This preserves merge
    precondition (c): each slice is reviewed against a base already on `main`, not stacked on an
