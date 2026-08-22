@@ -21,9 +21,8 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 ## 1. Per-Cycle Scout Pass (Sequential, Repeats for cycle = 1..N)
 
 - **Agent**: `pr-review-scout-maker` (fresh state each cycle)
-- **Args**: PR reference, pinned head SHA (`gh pr view <PR> --json headRefOid`), `prior` state
-  (prior-cycle thread-resolution/dismissal state)
-- **Output**: Risk tier, specialist set, shared-context brief, dismissal state
+- **Args**: PR reference, `prior` state (prior-cycle thread-resolution/dismissal state)
+- **Output**: Pinned head SHA, risk tier, specialist set, shared-context brief, dismissal state
 - **Depends on**: Step 0 (cycle 1); the previous cycle's CI-green gate (cycle > 1)
 - **Condition**: Runs once per eligible cycle, for `cycle` in `1..={input.cycles}`, stopping at the
   earliest completed clean cycle

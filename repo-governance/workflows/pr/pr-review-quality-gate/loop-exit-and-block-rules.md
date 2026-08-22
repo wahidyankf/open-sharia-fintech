@@ -32,7 +32,8 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   or copied vulnerable value in either record.
 - **Ceiling block**: when the configured ceiling (seven by default) is reached with an unresolved
   code-related MEDIUM/HIGH/CRITICAL finding, status is `blocked`, not `done`; do not merge and do not
-  extend the cycle count as a substitute for resolving the finding.
+  extend the cycle count as a substitute for resolving the finding. Extending it on the evidence of
+  a [convergence checkpoint](./convergence-measurement.md) is a different act, recorded on the PR.
 - **Repeated rejection block**: a reasoned reject is not an automatic resolution of a code-related
   MEDIUM/HIGH/CRITICAL finding. The next cycle must independently verify it. If it remains, the PR
   stays in the normal loop and ultimately blocks at the ceiling unless resolved with evidence.

@@ -37,7 +37,7 @@ Emit this immediately after the prose header, populated for every cycle includin
  "posted":3,
  "dropped":{"below_confidence_floor":2,"reasonableness_filter":1,"deduplicated":1},
  "findings":[{"id":"C3-F1","severity":"HIGH","discipline":"logic","confidence":92,
-   "file":"libs/x/src/a.ts","line":42,"raised_by":["logic"],"refutable_by":"rg -F 'X' libs/x/"}]}
+   "file":"libs/x/src/a.ts","line":42,"raised_by":["logic"],"refutable_by":"rg -F 'X' libs/x/src/a.ts"}]}
 -->
 ```
 

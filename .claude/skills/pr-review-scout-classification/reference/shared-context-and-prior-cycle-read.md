@@ -33,6 +33,14 @@ carries it into the review header it posts. If a diff still cannot be reviewed i
 record an explicit "diff exceeds single-review scope — reviewed in N slices" note in the brief
 rather than silently under-covering it.
 
+## Probe Variation (Cycle 2 Onward)
+
+A cycle repeating the previous cycle's question converges on that question rather than on
+correctness. From cycle 2, read the prior cycle's findings for what they **asked**, and state in the
+brief how this cycle's probe differs — a different failure mode, a different reader, a different
+level of the artifact. Name it, so a specialist can tell a fresh angle from a rerun. See
+[Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
+
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
 
 Before fanning out a new cycle, read the **prior cycle's thread resolution status** on the PR —

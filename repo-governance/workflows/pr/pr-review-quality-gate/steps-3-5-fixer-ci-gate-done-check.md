@@ -41,7 +41,7 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 - **Success criteria**: every item in the
   [Route-Specific Done-Definition](./route-specific-done-definition.md#route-specific-done-definition)
 - **Traceability (every cycle)**: the review post carries an `ose-pr-review:v1` block and every
-  fixer reply an `ose-pr-review-disposition:v1` block, keeping the PR a self-contained account of
+  fixer reply an `ose-pr-review-disposition:v2` block, keeping the PR a self-contained account of
   its own review. **Those identifiers and versions are normative here**; the skill below carries
   only field detail, and a field change altering what history recovers needs a version bump
   recorded here. Posting without them is a defect in that cycle's output. See

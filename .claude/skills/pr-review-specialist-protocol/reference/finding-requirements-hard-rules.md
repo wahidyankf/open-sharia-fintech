@@ -22,8 +22,8 @@ Every finding this agent posts MUST carry all of the following. A finding missin
    finding is void" is. Write it as one of the
    [invocation shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md),
    and one this repo's own hooks will let you [post](../../pr-review-fixer-resolution/reference/refutation-clause-postability.md) — a clause naming a write or a dotfile
-   environment path blocks the whole review. A clause outside the shapes is never run and is raised
-   as a security finding against your own review. A finding whose author cannot name what would refute it is a suspicion, not a finding, and
+   environment path blocks the whole review. A clause outside the shapes is repaired or
+   dropped by the coordinator, never posted as written. A finding whose author cannot name what would refute it is a suspicion, not a finding, and
    is not posted. Measured reason: across this repo's 94 findings on PRs #225/#226/#227/#232
    confidence did not predict acceptance (91.5 accepted vs 93.0 not), so the score alone leaves the
    fixer nothing independent to check.

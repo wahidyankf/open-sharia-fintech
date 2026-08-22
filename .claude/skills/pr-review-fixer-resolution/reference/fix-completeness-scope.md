@@ -8,6 +8,10 @@ the **old** term, not only the cited files. Fixing just the named occurrences re
 contradicting instance in a file the citing specialist never read in full — this has recurred
 across cycles. Grep before replying `Fixed`, not after a later cycle rediscovers the miss.
 
+A fact restated across several files is a
+[restatement by value](../../../../repo-governance/workflows/pr/pr-review-quality-gate/restatement-by-value.md):
+reduce how many copies exist rather than syncing them.
+
 ## Why This Is Not Scope Creep
 
 Widening a fix to every site of the **same** defect stays inside the PR — one defect stated in six

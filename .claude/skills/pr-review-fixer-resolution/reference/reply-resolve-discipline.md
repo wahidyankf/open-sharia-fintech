@@ -9,16 +9,18 @@
   text, unable to tell a real reject from an unstated one.
 
   ```html
-  <!-- ose-pr-review-disposition:v1
+  <!-- ose-pr-review-disposition:v2
   {"finding_id":"C3-F1","disposition":"fixed|rejected|deferred|clarify",
+   "cause":"original|class-escape|fix-induced",
    "commit":"<SHA or null>","refutation_check":"<command run and its result, or null>"}
   -->
   ```
 
+  `cause` is defined in
+  [Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
   `refutation_check` records the outcome of running the finding's refutation clause, which is what
-  distinguishes a reasoned reject from a guess. **Never put file content, a secret, a token, or a
-  matched literal in it or the prose around it** — this posts publicly. Record `file:line` and
-  pass/fail, never what was read. See
+  distinguishes a reasoned reject from a guess. **It carries the outcome only** — `file:line` and
+  pass/fail, never file content, a secret, or a matched literal, because this posts publicly. See
   [rule 5](./refutation-clause-execution.md#5-publish-the-outcome-never-the-content).
 
 - **Resolve only what was actually addressed** — call the `resolveReviewThread` GraphQL mutation

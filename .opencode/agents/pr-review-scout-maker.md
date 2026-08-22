@@ -36,7 +36,7 @@ read the full diff via `gh pr diff <PR>`; (3) read the PR's originating plan und
 linked issue, to establish declared scope.
 
 **See `pr-review-scout-classification` Skill** for the full mechanics: risk-tier thresholds and
-the Content-Type Applicability Filter, shared-context-brief assembly and prior-cycle
+the Content-Type Applicability Filter, shared-context-brief assembly, probe variation and prior-cycle
 human-dismissal read, this agent's first-ingestion-point untrusted-input handling, the
 trivial-tier handoff, and the three-part output contract.
 

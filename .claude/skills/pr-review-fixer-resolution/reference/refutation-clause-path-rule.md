@@ -17,9 +17,8 @@ git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path fie
 - **A pinned `HEAD`** is the fourth condition, on the shape rather than the path: the check
   reads the current tree, so the read must too. Left free, `<ref>` lets a clause pass the check
   against a file that is safe today and print that same file as it existed at any earlier commit —
-  a secret committed and later scrubbed is still readable at `HEAD~1`, and the allowed `git log`
-  shape enumerates which commit to ask for. Verified — `git show HEAD~1:config.yml` printed a value
-  the working tree no longer contains.
+  a secret committed and later scrubbed is still readable at `HEAD~1`. Verified —
+  `git show HEAD~1:config.yml` printed a value the working tree no longer contains.
 
 - **Mode `120000`** means a symlink. Git stores the link, not the target, so a symlink committed
   by the PR under review passes every in-repo test and still resolves to anywhere the process can
@@ -35,6 +34,6 @@ git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path fie
   `100644` while `cat` printed a file from outside the repository. Run it immediately before the
   read: it is standing in for the read.
 
-`cat`, `sed`, `grep`, and `rg` all follow symlinks and none of them consult git. The two `git`
-shapes are exempt from that specific failure because they read the blob: on a symlink,
+`cat`, `sed`, `grep`, and `rg` all follow symlinks and none of them consult git. The `git show`
+shape is exempt from that specific failure because it reads the blob: on a symlink,
 `git show HEAD:<path>` prints the target's path text, never the target's contents.

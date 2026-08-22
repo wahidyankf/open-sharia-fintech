@@ -14,9 +14,9 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         return not-applicable
     prior = []                              # accumulated consolidated findings + resolution state
     for cycle in 1..=maximum_cycles:
-        head = gh pr view <PR> --json headRefOid   # pin ONE head SHA for this pass
-        scout = fresh pr-review-scout-maker(pr = PR, head = head, cycle = cycle, total_cycles = N, prior = prior)
-                       # output: tier, specialists, context_brief, dismissals
+        scout = fresh pr-review-scout-maker(pr = PR, cycle = cycle, total_cycles = N, prior = prior)
+                       # scout pins this cycle's ONE head SHA
+                       # output: head, tier, specialists, context_brief, dismissals
         synthesis_maker = fresh pr-review-synthesis-maker(state = clean, context_brief = scout.context_brief, fed = prior)
                        # scout hands its context_brief to BOTH consumers below — see scout's Output Contract
         raw = fan_out(scout.specialists, context_brief = scout.context_brief, fed = prior)   # CONCURRENT within this cycle
@@ -24,7 +24,7 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
                        # dedup + re-categorize + reasonableness-filter + tool-verify
         post consolidated as ONE line-anchored review (Reviews API)
         fixer = pr-review-fixer()
-        fixer.resolve(PR)                   # triage each unresolved thread, fix, push, reply
+        fixer.resolve(PR)                   # triage, fix, push, reply, cause-tag each disposition
         wait_until CI_is_GREEN(PR)          # HARD gate before decision or next cycle
         prior += consolidated + their resolution state
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
@@ -32,6 +32,8 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         # once its follow-up is filed AND linked, which is what lets it resolve.
         if unresolved is empty:
             return done                     # earliest safe exit; LOW findings do not keep loop open
+        if cycle % 3 == 0:
+            convergence_checkpoint(prior)   # continue | change fix strategy | block
         if cycle >= 6:
             capture_nonconvergence_learning_and_idea(PR, cycle, unresolved)
     return blocked                           # ceiling reached with code M/H/C still outstanding

@@ -32,12 +32,11 @@ _citation_, not for deference: see
 
 ## Defer and Clarify Paths
 
-**A fix that would widen the PR is `defer`, never `fix`** — scope is the problem stated under
-`## Why` minus the non-goals under `## Scope`, and a fix serving a _second_ problem stops the loop
-converging. A defect this PR introduced is always in scope. **A reply teaches too**:
-say why the change resolves the finding, not only what changed. See
-[Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md)
-and [Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
+**Whether a fix widens the PR — and which fixes are exempt — is settled by the
+[Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md),
+never restated here.** **A reply teaches too**: say why the change resolves the finding, not only
+what changed. See
+[Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
 
 - **Defer**: acknowledge the finding is valid, say why it sits outside this PR's scope, then
   **file the follow-up and link it on the thread** — a `plans/ideas/` two-pager or a tracked
