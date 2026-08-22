@@ -4,7 +4,7 @@ title: "pr-review-quality-gate"
 description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
 when_to_use: "Use for every open PR before merge, to decide whether the specialist review loop applies and drive it to done or blocked."
 goal: "Classify every pull request by changed-artifact behavior, then run strictly sequential specialist-review cycles only when the PR is eligible"
-termination: every PR has a recorded behavior classification; eligible PRs stop at the first completed clean cycle or block at the ceiling; noneligible PRs pass pr-quality-gate and merge without the specialist cycle
+termination: every PR has a recorded behavior classification; eligible PRs stop at two consecutive clean cycles under unused probe classes, or block at the ceiling; noneligible PRs pass pr-quality-gate and merge without the specialist cycle
 inputs:
   - name: pr
     type: string
@@ -12,7 +12,7 @@ inputs:
     required: true
   - name: cycles
     type: number
-    description: "Maximum sequential fan-out to synthesis to fixer cycles for an eligible PR; use a lower value only when the caller explicitly requests it"
+    description: "Maximum cycles for an eligible PR; lower it only when the caller asks"
     required: false
     default: 7
 outputs:
@@ -61,6 +61,7 @@ their findings into ONE posted review, a fixer resolves them, CI must be green b
 
 - [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — exit, learn, block.
 - [Convergence Measurement](./pr-review-quality-gate/convergence-measurement.md) — cause tags, the checkpoint.
+- [Probe Variation](./pr-review-quality-gate/probe-variation-and-exit.md) — probe classes, the two-clean-cycle exit.
 - [Restatement by Value](./pr-review-quality-gate/restatement-by-value.md) — the largest measured defect class.
 - [What Code-Related Means](./pr-review-quality-gate/what-code-related-means.md) — the qualifier.
 - [Scope Guard](./pr-review-quality-gate/scope-guard-no-scope-creep.md) — no scope creep.

@@ -7,7 +7,9 @@ not: a new escape appends here without touching the reasoning it exists to test.
 1. A verb allowlist accepted `git --output=`, which writes. Closed by matching whole shapes **and**
    forbidding a placeholder value beginning with `-` — shape-matching alone leaves `--output=`
    arriving as the `<path>`, and the shape still matches.
-2. `sed -n '1e cmd'` ran a shell under the very flag that was supposed to make it read-only.
+2. `sed -n '1e cmd'` ran a shell under the very flag that was supposed to make it read-only —
+   confirmed by running it, not reasoned about: `sed -n '1e echo INJECTED' <file>` prints
+   `INJECTED`. GNU `sed` also executes through `s///e`, and both work under `-n`.
 3. A placeholder value beginning with `-` arrived as a flag. Closed by forbidding a leading dash.
 4. A directory pathspec passed the tracked-path check while `grep -r` walked gitignored files.
 5. A tracked symlink passed the same check and resolved outside the repository.

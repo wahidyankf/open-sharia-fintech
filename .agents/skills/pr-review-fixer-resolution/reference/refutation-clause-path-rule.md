@@ -34,5 +34,5 @@ git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path fie
   `100644` while `cat` printed a file from outside the repository. Run it immediately before the
   read: it is standing in for the read.
 
-`cat`, `sed`, and `rg` all follow symlinks and none of them consult git, which is why `test ! -L`
+`cat` and `rg` both follow symlinks and neither consults git, which is why `test ! -L`
 runs before every read rather than being left to any one command's behaviour.

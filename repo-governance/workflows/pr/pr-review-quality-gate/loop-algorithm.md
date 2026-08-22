@@ -40,7 +40,7 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
 ```
 
 - **Up to N cycles, default 7, strictly sequential** — fan-out→synthesize→fixer, repeated only
-  until the earliest clean eligible cycle or the configured ceiling,
+  until a clean exit or the configured ceiling,
   never parallel **across** cycles (the specialist fan-out WITHIN a single cycle is concurrent — see
   [Participants](./participants.md#participants)).
 - Each cycle spawns **fresh** specialist instances, tier-selected per

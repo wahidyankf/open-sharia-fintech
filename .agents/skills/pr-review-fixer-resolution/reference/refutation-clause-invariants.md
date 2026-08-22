@@ -12,8 +12,8 @@ So the rules are stated as consequences of three invariants.
 recurring event is text the author wrote being read by something other than its intended reader — a
 shell, or `sed`'s script parser. Building an argument vector instead of a command string removes the
 shell entirely, so word-splitting cannot occur and no space needs banning. Where a program parses
-its own language, that language is constrained directly: `<N>` and `<M>` are digits because `sed`
-reads its script whatever the shell does. The same sentence decides what `<pattern>` may be: a rule
+its own language, the shape is removed rather than fenced: `sed` is off the list because its
+script parser runs a shell under `-n`. The same sentence decides what `<pattern>` may be: a rule
 cannot enumerate every construct a regex engine mishandles — measured, neither `grep` nor `rg`
 bounds its own cost — so `-F` is mandatory and no regex engine is on the clause path at all.
 

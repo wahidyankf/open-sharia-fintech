@@ -55,3 +55,8 @@ recurs most, precisely because nobody is allowed to delete it.
 A reviewer who finds two documents disagreeing reports the restatement, not only the disagreement,
 and names every site of the fact — so the fixer decides which copies to delete rather than which
 one to edit.
+
+## Enforcement
+
+None automated. A violation is visible as two surfaces stating one fact, where editing either
+leaves the other true-looking and wrong.

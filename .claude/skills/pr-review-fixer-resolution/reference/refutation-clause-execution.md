@@ -23,7 +23,6 @@ exact shapes run, and nothing else ever:
 ```bash
 rg -nF <pattern> <path>              # -F is MANDATORY. Also -c, -i. No other flags.
 cat <path>
-sed -n '<N>,<M>p' <path>             # a line-range print. No other sed script, ever.
 ```
 
 **`-F` is not optional.** It makes `<pattern>` a literal string, removing the regex engine and the
@@ -33,7 +32,7 @@ restate the claim.
 **Exactly one `<path>` per invocation**, so each read is one checked file and no two files' bytes
 arrive fused.
 
-**No placeholder value may begin with `-`; `<N>` and `<M>` are digits only.** Every shape reads the
+**No placeholder value may begin with `-`.** Every shape reads the
 working tree, so one rule-3 check covers every read. No recursion flag is on the list (`-r`, `-R`,
 `--recursive`); rule 3 admits one regular file at a time.
 

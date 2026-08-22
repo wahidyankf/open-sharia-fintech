@@ -1,6 +1,6 @@
 ---
 title: "PR-Review Quality Gate — Convergence Measurement"
-description: "How the loop distinguishes genuine convergence from its own exhaust: the three cause tags carried on every disposition, the two series they produce, the every-third-cycle checkpoint, and the probe-variation rule."
+description: "How the loop distinguishes genuine convergence from its own exhaust: the three cause tags carried on every disposition, the two series they produce, and the every-third-cycle checkpoint that reads them."
 when_to_use: "Use at every third cycle, and whenever deciding to continue, change fix strategy, block, or extend a ceiling."
 ---
 
@@ -19,8 +19,7 @@ The `ose-pr-review-disposition:v2` block on each fixer reply names exactly one:
 - `class-escape` — the same class re-escaping after a fix closed only the instance named.
 - `fix-induced` — created by a previous cycle's fix.
 
-The fixer tags it: only the fixer knows which commit introduced the line. Three tags and no
-more: a taxonomy nobody applies consistently measures nothing.
+The fixer tags it: only the fixer knows which commit introduced the line.
 
 A finding can satisfy two of them — a class re-escaping through a line a previous fix wrote is both
 `class-escape` and `fix-induced`. **The latest applicable cause governs**: `fix-induced` over
@@ -52,8 +51,12 @@ recorded on the PR and citing both series. It funds attempts and
 
 ## Vary the Probe
 
-A cycle repeating the previous cycle's question converges on that question, not on correctness. Six
-cycles on PR #249 walked past a catastrophic-backtracking hole in an allowed shape; the
-seventh found it because the brief asked something different. Each cycle's scout states how the probe
-differs — a different failure mode, reader, or level. A clean
-cycle counts as clean only under a probe unlike the one before it.
+A cycle repeating the previous cycle's question converges on that question, not on correctness,
+and one clean cycle is evidence about one probe. Both rules, the probe-class register, and the
+exit condition they define live in
+[probe variation and what makes a cycle clean](./probe-variation-and-exit.md).
+
+## Enforcement
+
+None automated. A violation is visible as a fixer reply carrying no cause tag, or a checkpoint
+cycle whose audit record has no `checkpoint` block.

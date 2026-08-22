@@ -27,3 +27,8 @@ Blocking status is carried by the finding's severity label in the comment body (
 The limitation disappears only when a dedicated bot or GitHub App identity is provisioned — see the
 two-pager idea brief
 [`pr-review-bot-identity.md`](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).
+
+## Enforcement
+
+None automated. A violation is visible as a consumer branching on a review's STATE field instead
+of parsing severity from the comment text.

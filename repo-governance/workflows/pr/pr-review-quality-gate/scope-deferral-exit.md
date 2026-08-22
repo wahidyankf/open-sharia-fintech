@@ -19,3 +19,7 @@ thread, and merge precondition (b) is satisfied.
 
 **No filed follow-up, no deferral.** A deferral without a link is an unresolved finding wearing a
 different word, and the loop treats it as one.
+
+## Enforcement
+
+None automated. A violation is visible as a deferral reply carrying no link to a filed follow-up.

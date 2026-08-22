@@ -40,3 +40,8 @@ way, and the reader who applies it literally will be the one merging a CRITICAL.
 
 Ask what the PR would be reverted for. If a reader on `main` a month from now would call the finding
 a defect in what shipped, it is code-related and it blocks.
+
+## Enforcement
+
+None automated. A violation is visible as a merge-blocking finding whose remedy nobody on `main`
+would call a defect in what shipped.

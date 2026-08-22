@@ -27,6 +27,11 @@ invariant that already covered them, or by deleting a component that could not s
 16. Terminal control bytes in a tracked file passed through every read shape unaltered. Not closed
     by a rule — bounded instead by invariant 3, which keeps clause content out of anything posted.
 
+17. The `sed -n '<N>,<M>p'` shape could not produce a clause that survived its own fix. It
+    addresses by absolute line number in the file the fix edits, so a correct fix moved the
+    region and the clause read lines that no longer held what it checked. Not a safety escape but
+    a usefulness one — the first entry closed by removing a shape that never leaked anything.
+
 Entries 12 and 14 are one escape twice: the first fix swapped the component and kept the assumption;
 only the second removed what was being assumed about. That is the argument for keeping the
 invariants short and the allowlist shorter.

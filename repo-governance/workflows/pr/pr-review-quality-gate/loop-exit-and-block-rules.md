@@ -8,8 +8,9 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
 
 - **Earliest clean exit**: after every eligible cycle's CI-green gate, evaluate unresolved
   [**code-related**](./what-code-related-means.md) findings — a defect in an artifact this PR ships,
-  governance prose included. Zero MEDIUM/HIGH/CRITICAL findings means status `done`; do not spend an
-  additional cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
+  governance prose included. Zero MEDIUM/HIGH/CRITICAL findings makes the cycle clean, and the loop
+  exits `done` when [two consecutive cycles under unused probe classes](./probe-variation-and-exit.md)
+  are both clean; never spend a cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
   work.
 - **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes the
   prose the loop itself authors — `plans/**`, including `delivery.md` and `learnings.md`. The rule

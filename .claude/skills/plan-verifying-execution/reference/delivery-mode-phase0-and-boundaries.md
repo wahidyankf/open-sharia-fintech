@@ -27,8 +27,8 @@
 - `*-to-pr` mode: loop exited with a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL finding outstanding, or hit
   the seven-cycle ceiling with one open (`blocked`): **CRITICAL**
 - `*-to-pr` mode: loop ran past the seven-cycle ceiling, last cycle clean: **HIGH**
-- `*-to-pr` mode: a low cycle count whose final cycle was clean: **not a finding** (the ceiling is
-  not a floor — earliest clean exit is the correct behavior)
+- `*-to-pr` mode: a low cycle count ending in two clean cycles: **not a finding** (the ceiling is
+  not a floor — a clean exit ends the loop)
 - `*-to-pr` mode: unresolved thread with no reply and no `[HUMAN]` escalation note: **HIGH**
 - `*-to-pr` mode: archival-in-PR missing or deferred post-merge (where applicable): **HIGH**
 - Filing a finding solely because a `*-to-pr` PR remains unmerged: **not a finding** (false positive
