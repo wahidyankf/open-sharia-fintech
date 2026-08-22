@@ -8,7 +8,7 @@ when_to_use: "Use at every third cycle, and whenever deciding to continue, chang
 
 A raw finding count does not measure convergence. It sums two unrelated quantities: defects in the
 change under review, and defects the loop's own fixes created. On PR #249 the second was 63% of the
-63 findings posted in cycles two through six, so the count stayed high while the change itself was
+63 findings posted in cycles two through six, so the count stayed high while the change was
 nearly clean.
 
 ## Every Disposition Carries a Cause
@@ -24,8 +24,8 @@ more: a taxonomy nobody applies consistently measures nothing.
 
 A finding can satisfy two of them — a class re-escaping through a line a previous fix wrote is both
 `class-escape` and `fix-induced`. **The latest applicable cause governs**: `fix-induced` over
-`class-escape` over `original`. Tagging by the earliest instead would bill the loop's own exhaust to
-the change under review, which is the confusion these tags exist to remove.
+`class-escape` over `original`. Tagging by the earliest would bill the loop's own exhaust to the
+change under review — the confusion these tags exist to remove.
 
 ## The Two Series
 
@@ -54,6 +54,6 @@ recorded on the PR and citing both series. It funds attempts and
 
 A cycle repeating the previous cycle's question converges on that question, not on correctness. Six
 cycles on PR #249 walked past a catastrophic-backtracking hole in an allowed shape; the
-seventh found it because the brief asked something different. Each cycle's scout states how this
-cycle's probe differs — a different failure mode, a different reader, a different level. A clean
+seventh found it because the brief asked something different. Each cycle's scout states how the probe
+differs — a different failure mode, reader, or level. A clean
 cycle counts as clean only under a probe unlike the one before it.

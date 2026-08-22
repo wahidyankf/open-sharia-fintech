@@ -47,5 +47,5 @@ than fixed it — it skips gitignored files by default, so the same clause silen
 one tool than the other, and a safety rule whose effect depends on which binary is installed is
 not a rule.
 
-Reads are a separate problem from writes: `cat`, `sed`, `grep`, and `rg` never write, but none of
+Reads are a separate problem from writes: `cat`, `sed`, and `rg` never write, but none of
 them consults git either — see [why the path rule is that shape](./refutation-clause-path-rule.md).
