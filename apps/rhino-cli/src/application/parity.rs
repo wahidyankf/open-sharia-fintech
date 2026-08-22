@@ -865,19 +865,14 @@ mod tests {
         assert!(message.contains("apps/rhino-cli/src/main.rs"));
         assert!(message.contains("byte-identical across ose-public and ose-private"));
         assert!(message.contains("rhino-cli parity manifest generate"));
-        // The boundary is two repos (AGENTS.md §Related Repositories). ose-primer was
-        // dropped from it deliberately — it is free to diverge and carries no
-        // propagation obligation. beaver-nest carries no rhino-cli at all, and so no
-        // parity-manifest.sha256 either, so naming either sent every drift report
-        // chasing a propagation target that cannot receive one. Asserted negatively as
-        // well as positively so the message cannot silently regain a third repo.
+        // The boundary is two repos (AGENTS.md §Related Repositories). beaver-nest
+        // carries no rhino-cli at all, and so no parity-manifest.sha256 either, so
+        // naming it sent every drift report chasing a propagation target that cannot
+        // receive one. Asserted negatively as well as positively so the message cannot
+        // silently regain a third repo.
         assert!(
             !message.contains("beaver-nest"),
             "the parity boundary must not name beaver-nest: {message}"
-        );
-        assert!(
-            !message.contains("ose-primer"),
-            "the parity boundary must not name ose-primer: {message}"
         );
     }
 

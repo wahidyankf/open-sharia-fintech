@@ -1,9 +1,9 @@
 # Extend cross-repo byte-identity checking to `.claude/hooks/`
 
-One-line summary: `apps/rhino-cli` has an enforced byte-identity gate across `ose-public`,
-`ose-primer`, and `ose-private`; `.claude/hooks/` — including the security-load-bearing
-`block-env-file-access.sh` — has no equivalent check, and drifted silently between two of those repos
-during `restrict-env-access-to-prod-and-stag`.
+One-line summary: `apps/rhino-cli` has an enforced byte-identity gate across `ose-public` and
+`ose-private`; `.claude/hooks/` — including the security-load-bearing `block-env-file-access.sh` —
+has no equivalent check, and drifted silently between those repos during
+`restrict-env-access-to-prod-and-stag`.
 
 > Idea, added 2026-08-13 — captured from `restrict-env-access-to-prod-and-stag`'s Phase 9/10
 > (ose-private's `plans/done/2026-08-13__restrict-env-access-to-prod-and-stag/learnings.md`, "Two variants of one
@@ -47,8 +47,7 @@ relies on a human or agent remembering to check it manually — exactly the fail
 - Identify which `.claude/hooks/*.sh` files are security-load-bearing (deny/block hooks) versus
   purely repo-specific (formatting, cache-warming) — only the former need cross-repo identity.
 - Extend the `rhino-cli` byte-identity gate (or add a lighter sibling CI job) to hash-compare the
-  security-load-bearing hooks across `ose-public` and `ose-private` (and `ose-primer`, once
-  `propagate-env-tier-to-ose-primer` lands there).
+  security-load-bearing hooks across `ose-public` and `ose-private`.
 - Fail CI on drift, same as the existing `rhino-cli` gate does today.
 
 ## Rough scope & non-goals

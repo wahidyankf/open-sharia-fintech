@@ -45,9 +45,7 @@ three was observable in plan one's own documents, at plan-one authoring time:
   Capture learnings and routed all five into `repo-governance/`. A ten-cell grep (five routings ×
   the two parity repos) reads present in `ose-public` and absent in `ose-private` for all five. All
   ten target files exist in both repos, so this is drift, not a structural difference — the rules
-  written to prevent a recurrence protect one repo out of two. (The 2026-07 measurement also
-  covered `ose-primer`; that repo has since left the parity set and carries no propagation
-  obligation, so its cells are dropped rather than backfilled.)
+  written to prevent a recurrence protect one repo out of two.
 
 ## Why now
 

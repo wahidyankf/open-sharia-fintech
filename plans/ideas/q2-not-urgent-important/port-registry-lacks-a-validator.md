@@ -18,9 +18,9 @@ repositories claim, `ose-public` continues to document its own allocations in
 `docs/reference/web-sites.md`, and all nine app listeners resolve their port through one contract
 (`--port` flag, then a prefixed environment variable, then a compiled-in default) so each entry has a
 named override variable beside it. The scope also narrowed honestly: the registry covers the two
-repositories under active coordination, not four. `ose-primer` and `beaver-nest` are explicitly
-outside the parity set per `docs/reference/related-repositories.md` and carry no sync obligation in
-either direction, so the original "four sibling repos" framing was never right.
+repositories under active coordination, not four. `beaver-nest` is explicitly outside the parity set
+per `docs/reference/related-repositories.md` and carries no sync obligation in either direction, so
+the original "four sibling repos" framing was never right.
 
 What did not get built is any check. The registry's own "Why this is hand-maintained" section records
 that decision deliberately rather than by omission. So the remaining failure mode is narrower than

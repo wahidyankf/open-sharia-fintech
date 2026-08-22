@@ -11,7 +11,7 @@ should gain an explicit provision for that shape.
 ## Problem / context
 
 `bare-repo-governance-hardening`'s delivery spans **three PRs across three repositories** — the
-`ose-public` PR (Phase 3), the `ose-primer` PR (Phase 4), and the `ose-private` PR (Phase 5, the
+`ose-public` PR (Phase 3), a sibling repository's PR (Phase 4), and the `ose-private` PR (Phase 5, the
 third and last to merge). The plan folder itself is tracked in `ose-public` only; neither sibling
 repo receives a mirrored folder. `plan-execution.md` §8's Archival-in-PR rule requires the archival
 `git mv` land "inside the delivering PR itself... not as a separate commit landed on `main` after

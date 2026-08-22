@@ -41,7 +41,7 @@ The Apache Software Foundation flagged FSL as incompatible with Apache 2.0 in AS
 
 ### Decision: KEEP Liquibase
 
-**Status**: Historical record — the Java demo apps using Liquibase were extracted to [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. This analysis applies to any future Java apps that use Liquibase in this repo.
+**Status**: Historical record — the Java demo apps using Liquibase were removed from this repository on 2026-04-18. This analysis applies to any future Java apps that use Liquibase in this repo.
 
 **Rationale:**
 
@@ -87,7 +87,7 @@ This constitutes **dynamic linking through a standard interface**. The applicati
 
 ### Decision: COMPLIANT — No Action Required
 
-**Status**: Compliant with LGPL-2.1 terms as used in Spring Boot applications. Historical record — the Java demo apps were extracted to [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. This analysis applies to any future Java/Spring Boot apps in this repo.
+**Status**: Compliant with LGPL-2.1 terms as used in Spring Boot applications. Historical record — the Java demo apps were removed from this repository on 2026-04-18. This analysis applies to any future Java/Spring Boot apps in this repo.
 
 **Rationale:**
 
@@ -154,7 +154,7 @@ LGPL-2.1 characteristics (see Hibernate entry above for full analysis):
 
 ### Decision: ELECT EPL-1.0
 
-**Status**: This project elects EPL-1.0 for Logback use. Historical record — the Java demo apps were extracted to [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. This analysis applies to any future Java/Spring Boot apps in this repo.
+**Status**: This project elects EPL-1.0 for Logback use. Historical record — the Java demo apps were removed from this repository on 2026-04-18. This analysis applies to any future Java/Spring Boot apps in this repo.
 
 **Rationale:**
 

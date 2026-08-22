@@ -61,8 +61,8 @@ audits of other `rhino-cli` subcommands.
 
 **The constraint that makes this non-trivial**: `docs-validate-links.feature` is line 571 of
 `apps/rhino-cli/parity-manifest.sha256`. Any edit to it opens a byte-identity parity obligation
-across `ose-public`, `ose-primer`, and `ose-private` — the same class of obligation `repo-clean-up`
-ruled out of scope for `apps/rhino-cli/**` generally (`README.md` § Out of scope,
+across `ose-public` and `ose-private` — the same class of obligation `repo-clean-up` ruled out of
+scope for `apps/rhino-cli/**` generally (`README.md` § Out of scope,
 `delivery.md:140`). Executing this idea means either:
 
 - accepting the three-repo propagation as part of the work (the honest, larger option), or

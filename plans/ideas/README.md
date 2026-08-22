@@ -70,7 +70,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
 - [pr-review-bot-identity](./q2-not-urgent-important/pr-review-bot-identity.md) — a dedicated bot identity so blocking reviews post as `REQUEST_CHANGES`.
 - [pr-review-disciplines-applicability-shard-empty](./q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md) — the "Applicability and Finding Disposition" shard's frontmatter promises content its body never delivers; pre-existing, examined and deferred during PR #227.
-- [propagate-env-tier-to-ose-primer](./q2-not-urgent-important/propagate-env-tier-to-ose-primer.md) — port the `APP_ENV` tiered-env-file convention to `ose-primer`, which has received none of it.
 - [propagation-checklist-under-coverage](./q2-not-urgent-important/propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
 - [recurring-defect-family-escalation](./q2-not-urgent-important/recurring-defect-family-escalation.md) — four consecutive PR-review cycles each found a CRITICAL and all four shared one root cause; the loop has no trigger that escalates a recurring family from delta review to root-cause review.
 - [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
@@ -157,9 +156,9 @@ promoted yet" is a legitimate state, distinct from "rejected".
 
 ## Grooming Log
 
-### 2026-08-06 — plan-ideas-grooming (all four OSE repos in one run)
+### 2026-08-06 — plan-ideas-grooming (multi-repo run)
 
-Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`; 79 survive. Every surviving idea carries a residency verdict (R1 secrets-bearing, R2 single-repo-only, R3 generalizable) and an Eisenhower quadrant.
+Swept 120 two-pagers across the coordinated repo set; 79 survive. Every surviving idea carries a residency verdict (R1 secrets-bearing, R2 single-repo-only, R3 generalizable) and an Eisenhower quadrant.
 
 - **Classified**: 60 idea(s) resident here, filed into quadrant folders.
 - **Relocated in** (9):
@@ -167,13 +166,14 @@ Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beav
   - `cross-repo-port-registry.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `ose-public-nx-affected-rhino-cli-gap.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `refresh-agent-illustrative-example-paths.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
-  - `rhino-cli-exclude-dir-shared-steps-gap.md` from `ose-primer` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `rhino-cli-exclude-dir-shared-steps-gap.md` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `rhino-cli-sync-validator-wrong-model-drift.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `specs-checker-phantom-nx-targets.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `dependency-library-updates.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
   - `fsl-standards.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
-- **Deduplicated out** (1) — the surviving copy is named for each:
-  - `demo-apps-standards-recheck.md` → `ose-primer/plans/ideas/q2-not-urgent-important/demo-apps-standards-recheck.md`
+- **Deduplicated out** (1):
+  - `demo-apps-standards-recheck.md` — the surviving copy is no longer tracked in the coordinated
+    repo set.
 - **Unresolved follow-ups**: none. No relocation was interrupted and no filename collision was
   deferred. One inbound link sat in `plans/backlog/beaver-nest-repo-consolidation/`, an untracked
   plan folder that was another actor's in-flight work at grooming time; its single reference to
@@ -185,8 +185,8 @@ Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beav
 ### 2026-08-19 — plan-ideas-grooming (`ose-public` + `ose-private`)
 
 Swept the 75 two-pagers resident here plus 14 in `ose-private`; **80 survive here and 8 there**. The
-run's repo set is the two repositories under active coordination — `ose-primer` and `beaver-nest`
-carry no sync obligation and were not swept.
+run's repo set is the two repositories under active coordination — `beaver-nest` carries no sync
+obligation and was not swept.
 
 - **Pre-grooming additions** (3), filed directly per the
   [Ideas Folder convention](../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
@@ -205,8 +205,8 @@ carry no sync obligation and were not swept.
   validator question that remains, and its "four sibling repos" framing corrected to the two-repo
   parity set.
 - **Relocated in** (3), all rule R3 — generalizable, no secret required, present in both repos:
-  `extend-byte-identity-to-claude-hooks.md`, `harness-level-env-file-enforcement-gap.md`,
-  `propagate-env-tier-to-ose-primer.md`.
+  `extend-byte-identity-to-claude-hooks.md`, `harness-level-env-file-enforcement-gap.md`, and one
+  since deleted.
 - **Deduplicated in** (3) — cross-repo pairs resolved here under R3. Each `ose-private` copy is
   deleted in its own commit after this one lands. Compared line by line; only one carried anything
   this repo lacked:
@@ -259,7 +259,8 @@ carry no sync obligation and were not swept.
   correctly here and now point at _this_ repo's own copies, which is the right target for a reader of
   this repo; converting them would have produced links into a private repo that 404 for most readers.
   Note the two repos' `related-repositories.md` differ in wording, so the citation's meaning did shift
-  slightly with the move; the claim it supports (`ose-primer` is outside the parity set) holds in both.
+  slightly with the move; the claim it supports (a repo outside the parity set carries no sync
+  obligation) holds in both.
 - **The Step 8 rubrics resisted mechanisation.** A scripted classifier disagreed with the filed
   quadrant on 28 of 80 files, contradicted itself across repos on identical text, and moved every one
   of the then-seven Q1 briefs elsewhere. The heuristic is wrong, not the corpus: "names or blocks an
@@ -352,8 +353,7 @@ declines are recorded, not just the merges):
   `ose-private`-only divergence. Declined because one brief fixes instances and the other changes the
   rule; the survivor now names the interaction explicitly so neither can be executed without the
   other being read.
-- `extend-byte-identity-to-claude-hooks` ↔ `propagate-env-tier-to-ose-primer`, and
-  `deploy-targets-registry` ↔ `stale-checkout-ref-advance-drift`, and
+- `deploy-targets-registry` ↔ `stale-checkout-ref-advance-drift`, and
   `harness-converter-preserve-agent-mode` ↔ `vendor-neutral-canonical-source` — each pair's shared
   terms are a source-plan name or generic git/agent vocabulary, not a shared subject. Declined.
 - The `rhino-cli-*` (9 files) and `ayokoding-www-*` (5 files) filename families — a shared **topic
