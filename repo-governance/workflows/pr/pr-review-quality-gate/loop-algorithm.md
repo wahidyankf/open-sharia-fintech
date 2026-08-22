@@ -28,6 +28,8 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         wait_until CI_is_GREEN(PR)          # HARD gate before decision or next cycle
         prior += consolidated + their resolution state
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
+        # outstanding = thread still unresolved. A deferral leaves the set only
+        # once its follow-up is filed AND linked, which is what lets it resolve.
         if unresolved is empty:
             return done                     # earliest safe exit; LOW findings do not keep loop open
         if cycle >= 6:

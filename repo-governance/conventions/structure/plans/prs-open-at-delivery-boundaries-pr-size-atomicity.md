@@ -3,6 +3,11 @@ title: "Bounding PR Size — The Atomicity Exception (Rule 5)"
 description: "Why a convention and the binding that executes it merge as one slice, past the size bound."
 category: explanation
 subcategory: conventions
+tags:
+  - conventions
+  - plans
+  - project-planning
+  - pr-review
 created: 2026-08-22
 when_to_use: "Use when a size split would leave main stating one rule two contradicting ways."
 ---
@@ -26,6 +31,12 @@ a `main` stating one rule two contradicting ways is worse than a large PR.
 It admits **only the paired surfaces, and only for rules this PR changes**. Nothing else rides
 along on the strength of it — an unrelated fix in a file the slice happens to touch is still scope
 creep, and rules 1-3 still bound what enters. Rule 4 stays the bound for every other PR.
+
+**A surface is a rule-1 category, not a directory.** Governance text is one surface however many
+subdirectories of `repo-governance/` a rule spans; agents plus their generated mirrors are one
+surface covering all of `.claude/` and `.agents/`. The exception pairs exactly **two** of those
+categories. Counting directories instead would make almost any change look like a many-surface
+sweep and read this exception as a blanket exemption, which it is not.
 
 Expect this to fire on most rule changes rather than rarely: a rule worth enforcing is usually
 stated once in governance and again in the binding that executes it. That is the intended reading,

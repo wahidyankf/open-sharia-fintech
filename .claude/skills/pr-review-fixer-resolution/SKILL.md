@@ -28,6 +28,8 @@ findings itself, only resolves what the nine discipline specialists and
   when a thread may actually be resolved, plus repeated-finding handling across cycles
 - [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting
   identity/write-scope stopgap, and the mandatory pre-push gate re-run
+- [fix-completeness-scope.md](./reference/fix-completeness-scope.md) — fixing every site of
+  the defect a finding names, not only the sites it cites
 
 ## Core Principles
 

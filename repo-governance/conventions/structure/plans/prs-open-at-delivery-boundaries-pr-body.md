@@ -1,6 +1,6 @@
 ---
 title: "What Every PR Body Must Carry"
-description: The three things every PR description states — why the change is needed, where a reader starts, and what the reader may skip.
+description: The four things every PR description states — why the change is needed, what is and is not in scope, where a reader starts, and what the reader may skip.
 category: explanation
 subcategory: conventions
 tags:
@@ -14,7 +14,7 @@ when_to_use: Use when writing or reviewing a PR description.
 
 # What Every PR Body Must Carry
 
-Every PR here is read by a human, whatever else reviews it. Three things make that possible, and
+Every PR here is read by a human, whatever else reviews it. Four things make that possible, and
 `.github/pull_request_template.md` prompts for all three.
 
 1. **Why the change is needed, not only what changed.** State the problem it solves in enough

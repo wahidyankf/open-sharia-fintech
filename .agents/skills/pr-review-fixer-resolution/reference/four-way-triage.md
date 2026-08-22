@@ -2,12 +2,12 @@
 
 For every unresolved thread, choose exactly one outcome:
 
-| Outcome                | When to choose it                                                                      | What happens next                                                                                                                             |
-| ---------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **fix**                | The finding is correct and actionable in this PR's scope                               | Implement the fix, push, reply `Fixed: <what changed>`, resolve the thread                                                                    |
-| **reject-with-reason** | The finding is wrong, or its cited evidence does not actually apply here               | Reply with a cited rejection justification, resolve the thread ONLY if the rejection is well-founded (see below)                              |
-| **defer-with-reason**  | The finding is valid but genuinely out of this PR's scope                              | Reply acknowledging validity + the scope reason it is deferred, do not resolve unless the deferral itself is accepted as final for this cycle |
-| **clarify**            | The finding is ambiguous — cannot be fixed, rejected, or deferred without more context | Reply with a specific clarifying question to the maker/human, do not resolve                                                                  |
+| Outcome                | When to choose it                                                 | What happens next                                                                                                      |
+| ---------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **fix**                | The finding is correct and actionable in this PR's scope          | Implement the fix, push, reply `Fixed: <what changed>`, resolve the thread                                             |
+| **reject-with-reason** | The finding is wrong, or its cited evidence does not apply here   | Reply with a cited rejection justification; resolve ONLY if well-founded (see below)                                   |
+| **defer-with-reason**  | The finding is valid but genuinely out of this PR's scope         | Reply acknowledging validity + the scope reason + a link to the filed follow-up; resolve only once that link is posted |
+| **clarify**            | The finding is ambiguous — cannot be triaged without more context | Reply with a specific clarifying question, do not resolve                                                              |
 
 ## Fix Path
 
@@ -15,9 +15,9 @@ Implement the fix, commit, and push to the PR branch. Reply on the same thread w
 `Fixed: <what changed>` — a concrete description naming file and mechanism, never a vague
 "addressed" or "done".
 
-**Link the commit in the reply itself** — `Fixed in <owner>/<repo>@<sha>`, or the full commit URL.
-The disposition block's `commit` field serves machines; the link serves the reader, who should be
-able to verify the claim in one click instead of searching the branch history. A `Fixed` reply
+**Link the commit in the reply itself** — `Fixed in <owner>/<repo>@<sha>`, or the commit URL. The
+disposition block's `commit` field serves machines; the link serves the reader, who should verify
+the claim in one click rather than searching branch history. A `Fixed` reply
 naming no commit is unverifiable at the moment it matters most.
 
 ## Reject Path — A Higher Bar Than "Disagree"
@@ -38,9 +38,10 @@ say why the change resolves the finding, not only what changed. See
 [Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md)
 and [Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
 
-- **Defer**: acknowledge the finding is valid in principle, then state precisely why it sits
-  outside this PR's scope (a different subsystem, a follow-up plan, an existing tracked concern)
-  — with enough detail that a human reviewer can judge whether the deferral itself is reasonable.
-- **Clarify**: ask a specific, answerable question when a finding's intent, scope, or expected
-  fix is genuinely ambiguous — a request for information, never a stalling tactic. Use it only
-  when fix/reject/defer cannot be determined from the finding as posted.
+- **Defer**: acknowledge the finding is valid, say why it sits outside this PR's scope, then
+  **file the follow-up and link it on the thread** — a `plans/ideas/` two-pager or a tracked
+  issue. A MEDIUM+ code finding deferred without that link stays outstanding forever and blocks
+  the loop at the ceiling, so the link is what makes the deferral real.
+- **Clarify**: ask a specific, answerable question when a finding's intent or expected fix is
+  genuinely ambiguous — a request for information, never a stalling tactic. Use it only when
+  fix/reject/defer cannot be determined from the finding as posted.

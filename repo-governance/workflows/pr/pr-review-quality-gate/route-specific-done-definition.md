@@ -9,7 +9,10 @@ when_to_use: "Use when checking whether a PR meets this workflow's done-definiti
 Every PR is **done** only when its classifier route's requirements hold:
 
 1. **Eligible route** — the specialist loop completed at least one cycle and stopped at the earliest
-   completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding**. The
+   completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding** —
+   counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
+   thread, per the
+   [Scope Guard](./scope-guard-no-scope-creep.md#scope-deferral-is-the-only-other-exit). The
    default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
    done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
    At cycles six and seven, record sanitized nonconvergence learning in the owning plan's

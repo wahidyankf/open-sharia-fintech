@@ -23,8 +23,9 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   discovered later is never suppressed by this rule — the freeze covers the correction record, not
   the code, specs, or governance text under review.
 - **Non-convergence learning**: at cycles six and seven, append sanitized evidence explaining why
-  convergence has not occurred to the active plan's `learnings.md`, and create or update a
-  deduplicated `plans/ideas` entry for a systemic improvement. Never place a secret, access token,
+  convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
+  owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`
+  entry for a systemic improvement. Never place a secret, access token,
   or copied vulnerable value in either record.
 - **Ceiling block**: when the configured ceiling (seven by default) is reached with an unresolved
   code-related MEDIUM/HIGH/CRITICAL finding, status is `blocked`, not `done`; do not merge and do not

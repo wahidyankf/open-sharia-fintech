@@ -1,12 +1,12 @@
 # Reply and Resolve Discipline (Hard Rules)
 
-- **Reply to every unresolved thread** — zero threads may remain both unresolved and untouched
-  (no reply at all) after a fixer pass. Every thread gets exactly one of: a fix reply, a
-  rejection reply, a deferral reply, or a clarifying question.
+- **Reply to every unresolved thread** — none may remain both unresolved and untouched after a
+  fixer pass. Every thread gets exactly one of: a fix reply, a rejection, a deferral, or a
+  clarifying question.
 - **Every reply opens with a machine-readable disposition block**, so a later pass over this
-  repo's PR history can count outcomes without inferring them from prose. Prose alone has proven
+  repo's PR history can count outcomes without inferring them from prose. Prose alone proved
   unminable: a retrospective over PRs #225/#226/#227/#232 read 89% fixed and 0% rejected off reply
-  text, unable to tell a genuine reject from an unstated one.
+  text, unable to tell a real reject from an unstated one.
 
   ```html
   <!-- ose-pr-review-disposition:v1
@@ -15,19 +15,21 @@
   -->
   ```
 
-  `refutation_check` records the outcome of running the finding's own refutation clause, which is
-  what distinguishes a reasoned reject from a guess. **Never put a secret, token, or matched
-  literal in it** — a secrets finding's refutation clause quotes the value it searched for, and
-  this block posts publicly. Record `file:line` and pass/fail, never the match. Prose follows.
+  `refutation_check` records the outcome of running the finding's refutation clause, which is what
+  distinguishes a reasoned reject from a guess. **Never put file content, a secret, a token, or a
+  matched literal in it or the prose around it** — this posts publicly. Record `file:line` and
+  pass/fail, never what was read. See
+  [rule 5](./refutation-clause-execution.md#5-publish-the-outcome-never-the-content).
 
 - **Resolve only what was actually addressed** — call the `resolveReviewThread` GraphQL mutation
   ONLY on threads that were fixed, or whose rejection is well-founded per the higher bar in
-  [four-way-triage.md](./four-way-triage.md). Never resolve a `defer` or `clarify` thread on the
-  pass it was posted, nor any thread this agent has not genuinely engaged with.
+  [four-way-triage.md](./four-way-triage.md). A `defer` thread resolves on one condition: its
+  follow-up is filed and the link posted. Never resolve a `defer` or `clarify` thread on the pass
+  it was posted, nor any thread this agent has not genuinely engaged with.
 - **Never resolve a `fix` thread until the fix is COMMITTED AND PUSHED (HARD)** — thread state is
-  not fix state. A fix left uncommitted, or committed but not pushed, leaves GitHub reporting zero
-  unresolved threads on a PR still carrying the blocking defect. This has happened. Verify against
-  the PR's head, never the local tree:
+  not fix state. A fix left uncommitted, or committed but unpushed, leaves GitHub reporting zero
+  unresolved threads on a PR still carrying the defect. This has happened. Verify against the PR's
+  head, never the local tree:
 
   ```bash
   git status --porcelain          # no fix-related path may still be dirty

@@ -16,7 +16,8 @@ Two carve-outs, both narrower than the freeze:
   `pr-review-security-maker`'s charter stays in the **shared** brief regardless of cycle — the
   scout hands every specialist one identical brief, so there is no per-specialist copy to add it
   to.
-  That is the whole charter, not a shortlist: secrets and `.env`, git identity, injection and
-  untrusted-input handling, git-fixture isolation, and unsafe git or filesystem operations. Naming
-  only the first two would leave the rest reviewed once and then frozen out. The freeze is a
-  noise-control device and never narrows a security charter.
+  That is the **whole** charter as stated in
+  [`pr-review-security-maker`'s own Owns section](../../../agents/pr-review/pr-review-security-maker.md),
+  read by reference and never copied here — a copy drifts, and a drifted copy silently narrows or
+  widens what stays reviewable. Naming a shortlist would leave the rest reviewed once and then
+  frozen out. The freeze is a noise-control device and never narrows a security charter.
