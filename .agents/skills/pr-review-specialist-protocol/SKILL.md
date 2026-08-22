@@ -17,7 +17,7 @@ discipline.
 - [Core Responsibility and Scope Guard](reference/core-responsibility-and-scope-guard.md) —
   consuming the scout's shared-context brief (or deriving it standalone), and the scope guard
   that pins findings to the PR's own declared scope
-- [Finding Requirements Hard Rules](reference/finding-requirements-hard-rules.md) — the four
+- [Finding Requirements Hard Rules](reference/finding-requirements-hard-rules.md) — the seven
   mandatory elements every posted finding must carry, inherited verbatim from the retired
   monolith
 - [Untrusted-Input Handling](reference/untrusted-input-handling.md) — treating PR

@@ -6,6 +6,13 @@ authored last cycle. Keep the **PR body** in the brief every cycle — a human r
 is not generated-file filtering — those files are excluded because the loop **wrote** them, not
 because a tool emitted them, and cycle 1 still carries them in full. Record the omission.
 
+**Why the freeze exists.** A loop whose scope contains its own correction record reviews the
+falsifiable claims it wrote last cycle, so the surface grows about as fast as it is cleaned and a
+zero-finding cycle becomes unreachable. On PR #239 the shipping files stopped changing at cycle 14
+while the loop ran to 19, and every finding from `C-72` onward was the record making a claim about
+itself and getting it wrong. Cycle 1 still reviews the record, so a plan document that misstates the
+change is caught once.
+
 Two carve-outs, both narrower than the freeze:
 
 - **Plans-only PR** — the plan is the shipping surface, so `plans/**` stays in the brief. Recompute

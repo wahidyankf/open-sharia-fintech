@@ -7,21 +7,24 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
 # Loop-Exit and Block Rules
 
 - **Earliest clean exit**: after every eligible cycle's CI-green gate, evaluate unresolved
-  **code-related** findings. Zero MEDIUM/HIGH/CRITICAL findings means status `done`; do not spend an
+  [**code-related**](./what-code-related-means.md) findings — a defect in an artifact this PR ships,
+  governance prose included. Zero MEDIUM/HIGH/CRITICAL findings means status `done`; do not spend an
   additional cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
   work.
-- **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope EXCLUDES the
-  prose the loop itself authors: `plans/**`, including `delivery.md` and `learnings.md`. On a
-  plans-only PR the plan **is** the shipping surface and stays in scope every cycle. **The PR
-  body is NOT frozen** — it stays in scope every cycle, because it is the human reviewer's entry
-  point and a description nobody has checked since cycle 1 costs more than re-reading it does. A loop whose scope contains its own correction record
-  reviews new falsifiable claims it wrote last cycle, so the surface grows about as fast as it is
-  cleaned and a zero-finding cycle becomes unreachable: on PR #239 the shipping files stopped
-  changing at cycle 14 while the loop ran to 19, and every finding from `C-72` onward was the record
-  making a claim about itself and getting it wrong. Cycle 1 still reviews the record, so a plan
-  document that misstates the change is caught once. A **factual defect in a shipping artifact**
-  discovered later is never suppressed by this rule — the freeze covers the correction record, not
-  the code, specs, or governance text under review.
+- **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes the
+  prose the loop itself authors — `plans/**`, including `delivery.md` and `learnings.md`. The rule
+  and both its carve-outs (a plans-only PR, and any security-sensitive hunk, which stays reviewable
+  every cycle) are stated once in
+  [Correction-Record Freeze](../../../../.claude/skills/pr-review-scout-classification/reference/correction-record-freeze.md);
+  this layer does not restate them, because a second copy drifts. **The PR body is NOT frozen** —
+  it is the human reviewer's entry point, and a description nobody has checked since cycle 1 costs
+  more than re-reading it does.
+
+  Why: a loop whose scope contains its own correction record reviews the claims it wrote last cycle,
+  so the surface grows about as fast as it is cleaned — on PR #239 the shipping files stopped
+  changing at cycle 14 while the loop ran to 19. A factual defect in a **shipping artifact** is
+  never suppressed by this rule.
+
 - **Non-convergence learning**: at cycles six and seven, append sanitized evidence explaining why
   convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
   owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`

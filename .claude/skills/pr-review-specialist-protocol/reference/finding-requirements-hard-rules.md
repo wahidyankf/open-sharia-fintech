@@ -20,13 +20,15 @@ MUST carry all of the following. A finding missing any element is not ready to p
    **Findings scoring below 80 are hard-dropped and never posted.** This is a hard rule, not a
    suggestion: when in doubt, do not post rather than post a low-confidence guess.
 1. **Refutation clause** — one line naming the **specific, checkable evidence that would prove this
-   finding wrong**: a command whose output would contradict it, a file whose content would, or an
-   observation that would. "I am confident" is not a refutation clause; "if `rg -F 'X' path/` returns
-   a hit, this finding is void" is. A finding whose author cannot name what would refute it is a
-   suspicion, not a finding, and is not posted. The measured reason this exists: across this repo's
-   94 findings posted on PRs #225/#226/#227/#232 confidence did not predict acceptance (91.5
-   accepted vs 93.0 not),
-   so the score alone leaves the fixer nothing independent to check.
+   finding wrong**. "I am confident" is not one; "if `grep -n 'X' path/f` returns a hit, this
+   finding is void" is. Write it as one of the
+   [invocation shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md):
+   read-only `grep`/`rg`/`cat`/`sed -n`/pinned `git`, one tracked regular file per path. A clause
+   outside them is never run and is raised as a security finding against your own review, costing a
+   cycle. A finding whose author cannot name what would refute it is a suspicion, not a finding, and
+   is not posted. Measured reason: across this repo's 94 findings on PRs #225/#226/#227/#232
+   confidence did not predict acceptance (91.5 accepted vs 93.0 not), so the score alone leaves the
+   fixer nothing independent to check.
 1. **Severity** — exactly one of `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`, per the repo's
    [Criticality Levels Convention](../../../../repo-governance/development/quality/criticality-levels.md).
    See the agent file's own Discipline Charter for this discipline's severity definitions.

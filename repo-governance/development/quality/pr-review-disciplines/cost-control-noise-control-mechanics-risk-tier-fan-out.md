@@ -46,8 +46,9 @@ unverified. Cloudflare's production tier sets 100. Revisit against our own data.
 
 **Why architecture joins the lite set.** Of the 94 findings posted on PRs #225/#226/#227/#232,
 architecture
-supplied 17% at 93.8% acceptance — tied second by volume, and its defects are the
-expensive-to-reverse kind. Security stays on 5% volume: risk asymmetry earns that seat, not volume.
+supplied 17% at 93.8% acceptance, and its defects are the
+expensive-to-reverse kind. No per-discipline breakdown is recorded, so the share is measured and
+any ranking is not. Security stays on 5% volume: risk asymmetry earns that seat, not volume.
 That sample is all `full`-tier; the lite distribution stays unmeasured.
 
 **Security-sensitive paths force `full` regardless of size** — this repo's no-secrets iron rule and

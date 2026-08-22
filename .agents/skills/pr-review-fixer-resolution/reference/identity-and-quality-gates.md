@@ -12,7 +12,8 @@ The ideal posting identity for this agent is a dedicated GitHub App or CI identi
 minimal write scope needed (post reply, resolve thread — nothing else). No such identity is
 currently provisioned in this environment. The pragmatic fallback, until one is provisioned, is
 posting under the existing `gh` CLI identity with an explicit AI-attribution footer appended to
-every reply and every PR-description escalation:
+every reply and every PR-description escalation. **This block is the canonical shape**, and every
+other document in the pipeline points here rather than restating it:
 
 ```markdown
 ---

@@ -20,8 +20,10 @@ tool-verified before posting exactly ONE consolidated review.
   Tool-verify, plus the DD-11 attribution-tracking requirement
 - [consolidated-review-header.md](./reference/consolidated-review-header.md) — the
   fixed-shape review header template and the per-finding `Raised by` attribution line
-- [finding-requirements-and-scope-guard.md](./reference/finding-requirements-and-scope-guard.md) —
+- [finding-requirements.md](./reference/finding-requirements.md) —
   the finding requirements hard rules, CRITICAL-requires-reproduction, and the scope guard
+- [scope-guard.md](./reference/scope-guard.md) — the scope test every surviving finding
+  is measured against, and the two things it never suppresses
 - [github-reviews-api-mechanics.md](./reference/github-reviews-api-mechanics.md) — posting
   mechanics (COMMENT-only constraint, SHA reuse), identity note, and untrusted-input handling
 - [cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —

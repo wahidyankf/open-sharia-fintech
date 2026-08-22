@@ -1,4 +1,4 @@
-# Finding Requirements and Scope Guard
+# Finding Requirements
 
 ## Finding Requirements (Hard Rules)
 
@@ -17,10 +17,11 @@ finding missing any element does not survive the reasonableness-filter function.
    consolidated, post-tool-verify score, not merely the specialist's original raw score —
    tool-verify can raise or lower a raw score before this bar is checked.
 1. **Refutation clause** — the specialist's stated "what would prove this wrong" carries through to
-   the posted finding, revised if tool-verify changed the basis. A surviving finding that names
-   nothing checkable is dropped by the reasonableness filter, whatever its score: it gives the fixer
-   no independent way to test the claim, and the score alone has been measured not to predict
-   acceptance.
+   the posted finding, revised if tool-verify changed the basis, and rewritten here if it is not one
+   of the [shapes the fixer may execute](../../pr-review-fixer-resolution/reference/refutation-clause-execution.md);
+   posting an unrunnable clause makes the fixer raise a security finding against this review. A
+   surviving finding that names nothing checkable is dropped by the reasonableness filter, whatever
+   its score: it gives the fixer no independent way to test the claim.
 1. **Severity** — exactly one of `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`, per the repo's
    [Criticality Levels Convention](../../../../repo-governance/development/quality/criticality-levels.md).
    Re-categorization can change a finding's severity along with its discipline (e.g. a
@@ -37,11 +38,5 @@ carry a reproduction/verification step from the tool-verify function, not mere m
 agreement — unanimous agreement across specialists has been shown to endorse non-existent bugs
 absent empirical reproduction.
 
-## Scope Guard
-
-**The loop never widens the PR it reviews.** Scope is the problem the body states under `## Why`
-plus the linked plan or issue. The test: does fixing this finding serve that problem, or add a
-second one? The second is scope creep — drop it in the reasonableness filter, and never manufacture
-new scope during synthesis. A defect this PR itself introduces is always in scope, and a declared
-non-goal never suppresses one. See
-[Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md).
+The scope test every surviving finding is measured against lives in
+[Scope Guard](./scope-guard.md).

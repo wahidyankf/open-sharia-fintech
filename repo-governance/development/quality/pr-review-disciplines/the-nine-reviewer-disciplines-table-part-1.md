@@ -33,9 +33,9 @@ untrusted-input filtering of PR body/comment/linked-issue text. What differs per
 | Security                       | `pr-review-security-maker`     | Secrets in diffs, injection, untrusted-input handling, git-fixture isolation, unsafe git/FS operations                                                       | Non-security convention text → governance                                                                                                                               |
 | CI-gaming / test-integrity     | `pr-review-integrity-maker`    | CI-gaming (weakened/skipped/narrowed tests, coverage-gaming), missing regression tests (regression-test-mandate)                                             | Whether the behavior is correct → logic                                                                                                                                 |
 
-**Why a refutation clause, alongside the confidence score.** Across the 94 findings posted on PRs
-#225/#226/#227/#232, stated confidence did not predict survival: mean 91.5 on findings the fixer accepted versus
-93.0 on findings it rejected or deferred — flat, and slightly inverted. A self-scored number is not
+**Why a refutation clause, alongside the confidence score.** Across the 94 findings posted on
+PRs #225/#226/#227/#232, stated confidence did not predict survival: mean 91.5 on findings the
+fixer accepted versus 93.0 on those it rejected or deferred — flat, and slightly inverted. A self-scored number is not
 checkable by anyone. What the finding claims would disprove it **is** checkable, by the fixer and by
 a human. The 80-floor stays: no finding in that sample was posted below it, so it may be exactly
 what keeps weak findings out, and this data cannot show otherwise.

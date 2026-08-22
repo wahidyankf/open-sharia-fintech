@@ -20,7 +20,11 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
 
 1. **Split a propagation sweep into one PR per surface**, except where rule 5 pairs two of them.
    Governance text, agents plus their generated mirrors, specs, and plans are separate surfaces;
-   each independently consistent, so each lands on its own. Surface seams — not a line count — are
+   each independently consistent, so each lands on its own. **Governance text is every normative
+   prose surface**, not only `repo-governance/**`: `AGENTS.md`, `CLAUDE.md` and their harness
+   shims, and the issue/PR templates prompting for what a convention requires all count as the
+   same surface, because a rule stated in one and not the others is the contradiction rule 5
+   exists to prevent. Surface seams — not a line count — are
    the primary split.
 2. **A machine ceiling sits above everything: 300 changed files**, past which a hosted AI
    code-review assistant refuses outright — **observed behavior, not a published limit**, seen only

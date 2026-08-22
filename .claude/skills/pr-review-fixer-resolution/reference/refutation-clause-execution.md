@@ -10,7 +10,7 @@ A verb allowlist is not enough: allowlisted commands carry flags that execute or
 exact shapes run, and nothing else ever:
 
 ```bash
-grep -n <pattern> <path>...          # also -r, -c, -i, -F, -A/-B/-C <n>. No other flags.
+grep -n <pattern> <path>...          # also -c, -i, -F, -A/-B/-C <n>. No other flags.
 rg -n <pattern> <path>...            # same flag set only.
 cat <path>...
 sed -n '<N>,<M>p' <path>             # a line-range print. No other sed script, ever.
@@ -19,7 +19,9 @@ git -c core.pager=cat -c core.hooksPath=/dev/null log --oneline -n <N> [-- <path
 ```
 
 **No placeholder value may begin with `-`, and `<N>` is digits only** — a shape is unsafe if its
-holes accept flags. Pass `--` before a path wherever the command allows it.
+holes accept flags. Pass `--` before a path wherever the command allows it. **No recursion flag is
+on the list** (`-r`, `-R`, `--recursive`): rule 3 admits one regular file at a time, so nothing
+needs to be walked.
 
 Anything outside these shapes is rejected without further thought, including an unlisted flag
 however harmless it reads. Adding a shape means editing this file, never a judgement call.
@@ -31,17 +33,19 @@ under `-n`, `git --output=` writes any path, `grep -f` reads a pattern file and 
 crafted pattern. See
 [why the shapes are narrow](./refutation-clause-shape-rationale.md) before widening any of them.
 
-## 3. Every Path Is Git-Tracked in This Repository
+## 3. Every Path Is One Git-Tracked Regular File
 
-Resolve each path first: it must land inside the working tree — reject a leading `~`, any absolute
-path, any `..` escaping the root — **and it must be tracked by git**, checked with
-`git ls-files --error-unmatch <path>`. Reject on a non-zero exit.
+Resolve each path first: reject a leading `~`, any absolute path, any `..` escaping the root. Then
+run one check and reject unless all three hold:
 
-Inside-the-repo is not enough: this repo keeps real secrets in gitignored `.env*` files by
-convention, so `cat .env.local` passes any test that only looks for escapes. Tracked-only closes
-the class instead of blacklisting a name — an untracked file is not part of the change under
-review. `cat` and `sed` do not write, but they read whatever they are aimed at, and that can reach
-a public reply.
+```bash
+git ls-files -s -- <path>    # exactly one line, mode 100644 or 100755, path field == <path>
+```
+
+Zero lines means untracked, a differing path field means a directory, and mode `120000` means a
+symlink — three escapes, one check. See
+[why the path rule is that shape](./refutation-clause-path-rule.md) for the verified reproductions
+behind each.
 
 ## 4. No Shell Metacharacters
 

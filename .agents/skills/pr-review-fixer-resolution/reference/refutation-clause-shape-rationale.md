@@ -39,9 +39,12 @@ Two separate problems:
 `-P` enables PCRE backtracking, which hangs on a crafted pattern — a denial of service against the
 fixer rather than a data leak, but still an attacker-chosen outcome.
 
-## `cat` and `sed` Read Whatever They Are Aimed At
+`-r` is off the list for a different reason: it changes what a path _means_. Given a directory,
+`grep -r` walks every file underneath, gitignored ones included, so a per-path safety check that
+passed on the directory never saw what was actually read. Note `rg` would have hidden this rather
+than fixed it — it skips gitignored files by default, so the same clause silently reads less under
+one tool than the other, and a safety rule whose effect depends on which binary is installed is
+not a rule.
 
-Neither writes, which is why both are allowed at all. But an in-repo path is not automatically a
-safe path: this repo keeps real secrets in gitignored `.env*` files by convention, and they live in
-the working tree. That is what the git-tracked requirement in rule 3 exists for — it closes the
-class instead of blacklisting one filename.
+Reads are a separate problem from writes: `cat`, `sed`, `grep`, and `rg` never write, but none of
+them consults git either — see [why the path rule is that shape](./refutation-clause-path-rule.md).

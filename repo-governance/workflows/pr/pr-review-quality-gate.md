@@ -55,14 +55,15 @@ hard CI-green gate between cycles.
 - [GitHub Reviews API Mechanics — Part 1](./pr-review-quality-gate/github-reviews-api-mechanics-part-1.md) — pinning the SHA, posting one review.
 - [GitHub Reviews API Mechanics — Part 2](./pr-review-quality-gate/github-reviews-api-mechanics-part-2.md) — reply/resolve, untrusted-input filtering.
 - [Route-Specific Done-Definition](./pr-review-quality-gate/route-specific-done-definition.md) — the five items that make a PR "done".
-- [Hardened Merge Preconditions — (a)-(e)](./pr-review-quality-gate/hardened-merge-preconditions-a-e.md) — the normative five-lettered merge gate.
-- [Merge Preconditions — Notes and Mechanics](./pr-review-quality-gate/hardened-merge-preconditions-notes.md) — per-repo merge command, done-boundary diagram.
+- [Merge Preconditions — (a)-(e)](./pr-review-quality-gate/hardened-merge-preconditions-a-e.md) — the normative merge gate.
+- [Merge Preconditions — Notes](./pr-review-quality-gate/hardened-merge-preconditions-notes.md) — merge command, done-boundary diagram.
 
 ### Rules and Reference
 
 - [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — exit, learn, block.
+- [What Code-Related Means](./pr-review-quality-gate/what-code-related-means.md) — the qualifier.
 - [Scope Guard](./pr-review-quality-gate/scope-guard-no-scope-creep.md) — no scope creep.
 - [Applicability](./pr-review-quality-gate/applicability.md) — mandatory scope; why Phase 0/non-boundary phases are excluded.
 - [Related Workflows and Success Metrics](./pr-review-quality-gate/related-workflows-and-success-metrics.md) — composition and tracked metrics.
-- [Notes](./pr-review-quality-gate/notes.md) — operating notes, including the sibling-PR staleness pattern.
+- [Notes](./pr-review-quality-gate/notes.md) — operating notes, including sibling-PR staleness.
 - [Principles and Conventions](./pr-review-quality-gate/principles-and-conventions.md) — compliance summary.

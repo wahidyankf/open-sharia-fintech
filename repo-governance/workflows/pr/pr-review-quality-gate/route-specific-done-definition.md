@@ -16,7 +16,7 @@ Every PR is **done** only when its classifier route's requirements hold:
    default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
    done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
    At cycles six and seven, record sanitized nonconvergence learning in the owning plan's
-   `learnings.md` (or execution evidence for ad-hoc work) and create or update a deduplicated
+   `learnings.md` (or, with no owning plan, a comment on the PR) and create or update a deduplicated
    improvement idea in `plans/ideas`.
 2. **Noneligible route** — the classifier evidence shows that the full diff is non-executing, and
    `.github/workflows/pr-quality-gate.yml` succeeded for the current PR head. No specialist cycle is

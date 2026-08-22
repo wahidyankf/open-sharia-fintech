@@ -15,7 +15,7 @@ when_to_use: Use when writing or reviewing a PR description.
 # What Every PR Body Must Carry
 
 Every PR here is read by a human, whatever else reviews it. Four things make that possible, and
-`.github/pull_request_template.md` prompts for all three.
+`.github/pull_request_template.md` prompts for all four.
 
 1. **Why the change is needed, not only what changed.** State the problem it solves in enough
    detail that a reader can judge whether the change answers it. A list of edits is not a reason.
