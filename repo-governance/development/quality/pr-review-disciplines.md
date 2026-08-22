@@ -24,6 +24,7 @@ findings that span disciplines, and the coordinator pipeline's cost- and noise-c
 - [Principles/Conventions](./pr-review-disciplines/principles-and-conventions-implemented-respected.md) — Rationale principles and conventions. Use to trace this convention's rationale.
 - [Purpose](./pr-review-disciplines/purpose.md) — Why the nine-discipline split exists. Use when orienting to the split.
 - [Nine Reviewer Disciplines: Table (1)](./pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md) — Shared rules; Architecture through Performance. Use to find which specialist owns a finding.
+- [Review as Teaching](./pr-review-disciplines/review-as-teaching.md) — Findings a junior can read. Use when writing one.
 - [Nine Reviewer Disciplines: Table (2)](./pr-review-disciplines/the-nine-reviewer-disciplines-table-part-2.md) — Documentation through Type-soundness, plus scout/synthesis roles. Use to find which specialist owns a finding.
 - [The Boundary Tie-Breaker Rule](./pr-review-disciplines/the-boundary-tie-breaker-rule.md) — Three-step tie-breaker for a cross-discipline finding. Use when a finding spans disciplines.
 - [Seven Grey-Zone Rulings](./pr-review-disciplines/seven-grey-zone-rulings.md) — The tie-breaker pre-resolved for seven cases. Use for a recurring grey-zone question.

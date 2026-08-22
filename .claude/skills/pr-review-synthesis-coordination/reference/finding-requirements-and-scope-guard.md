@@ -6,6 +6,9 @@ Inherited verbatim from the retired `pr-review-maker` monolith and carried by ev
 Every finding this agent includes in the consolidated review MUST carry all of the following — a
 finding missing any element does not survive the reasonableness-filter function.
 
+1. **Legible to a junior engineer** — the consequence in plain terms, any cited rule paraphrased
+   rather than only linked, and critique aimed at the change rather than its author. See
+   [Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
 1. **Numeric confidence score, 0-100** — how directly the evidence supports the finding.
    **Findings scoring below 80 are hard-dropped and never posted.** This bar applies to the
    consolidated, post-tool-verify score, not merely the specialist's original raw score —
@@ -34,7 +37,10 @@ absent empirical reproduction.
 
 ## Scope Guard
 
-Only include findings that fall within the PR's own declared plan or issue scope in the
-consolidated review. This agent does not manufacture new scope-creep asks during synthesis — a
-specialist's scope-creep finding is either genuinely in-scope (survives the filter) or is itself
-a reasonableness-filter drop.
+**The loop never widens the PR it reviews.** Scope is the problem the PR body states under
+`## Why`, plus the linked plan or issue when one exists. The test for every finding: does fixing
+it serve that stated problem, or add a second one? The second is scope creep, however worthwhile
+on its own — drop it in the reasonableness filter. This agent never manufactures new scope during
+synthesis. **One exception**: a defect this PR itself introduces is always in scope, however far
+from the stated problem, or "out of scope" would excuse a regression the PR caused. See
+[Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md).

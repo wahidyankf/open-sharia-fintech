@@ -22,11 +22,10 @@ the incident procedure before either route; it is never exempted by a docs-only 
 ## Execution Mode
 
 Sequential, hard-gated: up to seven cycles run strictly one after another —
-fan-out→synthesize→fixer — never in parallel
-**across** cycles. Within a single cycle's fan-out, the tier-selected discipline specialists DO run
-**concurrently** with each other (see [Participants](./participants.md#participants) below); only the cross-cycle
-ordering is strictly sequential. Each cycle is blocked by a full CI-green gate before either the
-next cycle or the eligible-PR early-stop decision.
+fan-out→synthesize→fixer — never in parallel **across** cycles. Within a cycle's fan-out the
+tier-selected specialists DO run **concurrently** (see
+[Participants](./participants.md#participants)); only cross-cycle ordering is sequential. A full
+CI-green gate blocks each cycle.
 
 ## PR Applicability Classifier
 
@@ -41,8 +40,9 @@ review or merge action occurs after this policy lands.
    `scripts/`, `infra/`, `.github/` workflows/actions, and behavior-changing configuration wherever
    it lives.
 3. Mark the PR **noneligible** only when the full diff is non-executing prose or static governance
-   material (for example, docs, plans, agent guidance, skills, or repository rules) and no changed
-   artifact changes executable behavior.
+   material (for example, docs, agent guidance, skills, or repository rules) and no changed
+   artifact changes executable behavior. **A PR touching `plans/**` is always eligible\*\* and runs
+   both routes, waived only by an explicit user instruction on that PR.
 4. If classification is ambiguous, missing evidence, or mixed in a way that cannot be safely
    separated, mark it **eligible**. This fail-safe prevents a behavior-changing change from bypassing
    specialist review.

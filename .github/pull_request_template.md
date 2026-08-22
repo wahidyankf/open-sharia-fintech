@@ -1,6 +1,28 @@
+## Why
+
+<!--
+The problem this PR solves, in enough detail to judge whether the change answers it.
+Required on every PR, including prose-only ones. A list of edits is not a reason.
+This statement also bounds review scope — the cycle may not widen it.
+See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-body.md
+-->
+
+## Scope
+
+<!-- Both halves required. A non-goal without a reason reads as an oversight. -->
+
+- **In scope:**
+- **Deliberately not in scope, and why:**
+
 ## Summary
 
-<!-- What changed and why, in a few sentences. -->
+<!-- What changed. -->
+
+## Reading Guide
+
+- **Start here:**
+- **Skip these paths:** <!-- e.g. generated mirrors: .agents/, .opencode/, .codex/ -->
+- **Size:** <!-- N changed lines, M hand-authored files. Bound: 400 lines, 20 hand-authored files. -->
 
 ## Cost/Benefit of Added Code
 

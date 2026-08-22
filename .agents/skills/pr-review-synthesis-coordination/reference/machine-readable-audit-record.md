@@ -14,9 +14,9 @@ Every consolidated review opens with exactly this line, no variants:
 ## PR Review — Cycle N of M
 ```
 
-Format drift is not cosmetic. A retrospective over this repo's own history found four different
-titles and six different finding-header shapes across four PRs, so cycles could not be ordered
-without a bespoke tolerant parser.
+Format drift is not cosmetic. A retrospective over PRs #225/#226/#227/#232 found four different
+titles and six different finding-header shapes, so cycles could not be ordered without a bespoke
+tolerant parser.
 
 ## Stable Finding IDs
 

@@ -3,6 +3,19 @@
 Inherited verbatim from the retired `pr-review-maker` monolith. Every finding this agent posts
 MUST carry all of the following. A finding missing any element is not ready to post.
 
+1. **In this PR's scope** — the finding addresses the problem the PR body states under `## Why`,
+   is not excluded by a declared non-goal under `## Scope`, and respects any linked plan or issue.
+   A finding whose only remedy is work this PR never set out to do is an adjacent improvement, not
+   a defect here; do not raise it. A defect **this PR introduces** is always in scope, however far
+   from the stated problem. When scope is absent, vague, or contradicted by the diff, raise that
+   as a finding against the body rather than inferring a boundary. See
+   [Scope Guard](../../../../repo-governance/workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md).
+1. **Legible to a junior engineer** — state the **consequence** in plain terms (what breaks, for
+   whom) alongside the evidence, paraphrase any rule you cite rather than only linking it, and
+   define or avoid terms of art. Critique the change, never its author: anti-sycophantic framing
+   is bluntness about the defect, not contempt for the person. A review thread is permanent and
+   is how newcomers learn this codebase. One sentence of consequence, not an essay. See
+   [Review as Teaching](../../../../repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md).
 1. **Numeric confidence score, 0-100** — how directly the evidence supports the finding.
    **Findings scoring below 80 are hard-dropped and never posted.** This is a hard rule, not a
    suggestion: when in doubt, do not post rather than post a low-confidence guess.
@@ -11,7 +24,8 @@ MUST carry all of the following. A finding missing any element is not ready to p
    observation that would. "I am confident" is not a refutation clause; "if `rg -F 'X' path/` returns
    a hit, this finding is void" is. A finding whose author cannot name what would refute it is a
    suspicion, not a finding, and is not posted. The measured reason this exists: across this repo's
-   94 posted findings the confidence score did not predict acceptance (91.5 accepted vs 93.0 not),
+   94 findings posted on PRs #225/#226/#227/#232 confidence did not predict acceptance (91.5
+   accepted vs 93.0 not),
    so the score alone leaves the fixer nothing independent to check.
 1. **Severity** — exactly one of `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`, per the repo's
    [Criticality Levels Convention](../../../../repo-governance/development/quality/criticality-levels.md).

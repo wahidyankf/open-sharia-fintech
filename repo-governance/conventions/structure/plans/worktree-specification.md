@@ -27,12 +27,16 @@ Every plan MUST declare the worktree path in its content so the executor can ver
 - `in-progress/auth-rewrite/` → worktree path `worktrees/auth-rewrite/` (no prefix to strip)
 - `done/2026-03-01__add-user-search/` → worktree path `worktrees/add-user-search/` (strip the completion-date prefix)
 
-**Provisioning command** (optional manual pre-provisioning, run from repo root):
+**Provisioning command** (run from repo root, before the plan is written):
 
 ```bash
 claude --worktree <plan-identifier>
 ```
 
-Manual pre-provisioning is OPTIONAL: the [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters the declared worktree by default — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not.
+**Provision the worktree BEFORE defining the plan, and author the plan inside it.** The worktree comes first; the plan documents are written, grilled, and iterated within it, and the same worktree then carries the plan through execution. Authoring a plan outside its worktree and moving it in later is not the supported path — it splits the plan's own history across two locations and defeats the `## Worktree` declaration's purpose as a pre-execution environment check.
+
+The [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) still enters the declared worktree defensively — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not — but that is a backstop for a plan that arrived without one, not the intended sequence.
+
+**One worktree per plan, reused across every PR the plan opens.** A plan that splits its delivery into several sequential PRs (see [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md)) does NOT provision a worktree per PR. Land one slice, fast-forward the same worktree from `origin/main`, then open the next slice from it.
 
 See [Worktree Specification — Executor Lifecycle and Example](./worktree-specification-continued.md) for how the executor enters, syncs, and cleans up the worktree, plus a worked `## Worktree` block.

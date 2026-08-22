@@ -60,7 +60,8 @@ hard CI-green gate between cycles.
 
 ### Rules and Reference
 
-- [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — when the loop exits, learns, or blocks.
+- [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — exit, learn, block.
+- [Scope Guard](./pr-review-quality-gate/scope-guard-no-scope-creep.md) — no scope creep.
 - [Applicability](./pr-review-quality-gate/applicability.md) — mandatory scope; why Phase 0/non-boundary phases are excluded.
 - [Related Workflows and Success Metrics](./pr-review-quality-gate/related-workflows-and-success-metrics.md) — composition and tracked metrics.
 - [Notes](./pr-review-quality-gate/notes.md) — operating notes, including the sibling-PR staleness pattern.

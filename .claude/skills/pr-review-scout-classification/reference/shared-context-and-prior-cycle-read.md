@@ -20,11 +20,9 @@ reviewer chooses to skim.
 
 ## Correction-Record Freeze (Cycle 2 Onward)
 
-The **one** scope exclusion, and the only exception to the posture above. From cycle 2 the brief
-OMITS `plans/**` (including `delivery.md` and `learnings.md`): the loop stops reviewing prose it
-authored last cycle. **Exception**: on a plans-only PR the plan is the shipping surface — keep it. Keep the **PR body** in the brief every cycle — a human reads it first. This is not generated-file filtering — those files are
-excluded because the loop **wrote** them, not because a tool emitted them, and cycle 1 still
-carries them in full. Record the omission in the brief.
+The **one** scope exclusion, and the only exception to the posture above: from cycle 2 the brief
+omits `plans/**`. See
+[correction-record-freeze.md](./correction-record-freeze.md) for the rule and its two carve-outs.
 
 ## Large-Diff Posture (Scout's Discretion)
 

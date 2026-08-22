@@ -40,6 +40,13 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
   `{output.unresolved-threads}`
 - **Success criteria**: All items in the
   [Route-Specific Done-Definition](./route-specific-done-definition.md#route-specific-done-definition) are satisfied
+- **Traceability (every cycle)**: the review post carries an `ose-pr-review:v1` block and every
+  fixer reply an `ose-pr-review-disposition:v1` block, so the PR stays the complete, self-contained
+  account of its own review. **Those two identifiers and their versions are normative here**; the
+  skill below carries only their field detail, and a field change that alters what a reader can
+  recover from history requires a version bump recorded in this file. A cycle posting without the
+  blocks is unanalyzable later and is a defect in that cycle's output. See
+  [machine-readable-audit-record.md](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md).
 - **On failure**: At the ceiling, unresolved code-related MEDIUM/HIGH/CRITICAL findings produce
   `blocked`, not a merge. Capture the nonconvergence learning and a deduplicated improvement idea;
   never silently loop past `{input.cycles}`.

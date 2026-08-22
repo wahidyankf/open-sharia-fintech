@@ -34,7 +34,8 @@ behavior.
 Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
-**Owns**: Mechanical conformance to already-documented `repo-governance/` conventions,
+**Owns**: the PR body's required sections (`Why`, `Scope`, reading guide), and conformance to
+`repo-governance/` conventions,
 naming/structure rules (file naming, agent naming), ADRs, and whether a required spec file is
 **present** (grey-zone ruling (d): presence is governance's, scenario completeness inside it is
 logic's) — the tie-breaker's own "documented + mechanically-checkable rule" branch.

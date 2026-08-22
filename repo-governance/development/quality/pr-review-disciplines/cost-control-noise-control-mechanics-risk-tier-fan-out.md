@@ -32,11 +32,23 @@ accordingly:
 
 - **Trivial** (≤10 changed lines AND ≤20 files, no security-sensitive path) → coordinator-only: the
   coordinator runs one consolidated generalist pass itself, with no specialist fan-out.
-- **Lite** (≤100 lines AND ≤20 files) → a reduced specialist set of the four highest-yield lenses
-  for this repo (governance, logic, security, integrity) plus the coordinator.
-- **Full** (>100 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
+- **Lite** (≤50 lines AND ≤20 files) → a reduced specialist set of the five highest-yield lenses
+  for this repo (governance, architecture, logic, security, integrity) plus the coordinator.
+- **Full** (>50 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
   identity, CI/workflow, `pr-merge-protocol`) → all nine specialists plus the coordinator, minus the
   Content-Type Applicability Filter (DD-10).
+
+**Why the lite ceiling is 50 lines, not 100.** Risk asymmetry decides it, not a measurement: too
+low a ceiling overspends, too high routes degrading diffs to the _smaller_ set. Supporting evidence
+only — [Bigger Isn't Always Better](https://arxiv.org/abs/2606.15689) reports F1 0.80 at 10-50
+lines collapsing to 0.07 by 150, but on **n=10**, one model of five, unreplicated, provenance
+unverified. Cloudflare's production tier sets 100. Revisit against our own data.
+
+**Why architecture joins the lite set.** Of the 94 findings posted on PRs #225/#226/#227/#232,
+architecture
+supplied 17% at 93.8% acceptance — tied second by volume, and its defects are the
+expensive-to-reverse kind. Security stays on 5% volume: risk asymmetry earns that seat, not volume.
+That sample is all `full`-tier; the lite distribution stays unmeasured.
 
 **Security-sensitive paths force `full` regardless of size** — this repo's no-secrets iron rule and
 git-identity guardrail make that non-negotiable. The tier is computed once per PR, re-evaluated each
