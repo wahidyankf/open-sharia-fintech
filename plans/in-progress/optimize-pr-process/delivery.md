@@ -314,9 +314,9 @@ and pass/fail states.
 - [ ] `[PUB-BASE:P0.06][AI]` Run `npm install`; retain its exact exit state.
 - [ ] `[PUB-BASE:P0.07][AI]` Run plain `npm run doctor`; retain its exact exit state.
 - [ ] `[PUB-BASE:P0.08][AI]` Run the repository pre-push surface; retain its exact exit state.
-- [ ] `[PUB-BASE:P0.09][AI]` Classify each failure as pre-existing baseline or ordinary-unit scope.
+- [ ] `[PUB-BASE:P0.09][AI]` Classify each failure as pre-existing; reject ordinary-unit attribution.
 - [ ] `[PUB-BASE:P0.10][AI]` On clean success, authorize PUB-IDEAS and record PUB-REPAIR as reasoned `N/A`.
-- [ ] `[PUB-BASE:P0.11][AI]` On any evidenced failure, close this attempt and authorize only PUB-REPAIR.
+- [ ] `[PUB-BASE:P0.11][AI]` On evidenced baseline failure, close and authorize only PUB-REPAIR.
 - [ ] `[PUB-BASE:P0.G][AI]` Pass exactly one terminal gate: clean/direct or evidenced-failure/repair.
 - [ ] `[PUB-BASE:P0.P][AI]` Record result, predecessor pin, authorized successor, and recheck command.
 
