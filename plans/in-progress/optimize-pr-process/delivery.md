@@ -106,9 +106,9 @@ worktree. Every assembly slice is at most 400 changed hand-authored lines and 20
 Forecast each slice before opening it; if any would exceed a bound, record its named cohesive
 sub-slices in the prior PR before opening the first split. Gate findings use bounded
 `PLAN-AMENDMENT` PRs, including any formal-gate repair before ACTIVATE. Final ACTIVATE contains only
-the clean formal gate, the recorded user decision to waive a separate structured post-write
-question-and-answer review, and the executable-status change. Merge green and resync before the next
-PR.
+the clean formal gate and the executable-status change. A separate structured post-write grilling
+step is not part of this plan; the user resolved that decision during assembly and its durable
+record already exists. Merge green and resync before the next PR.
 
 | Slice                           | Contract and audit IDs restored before activation                                                                                       | Target changed lines |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
@@ -125,7 +125,7 @@ PR.
 | WAVES-A                         | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and prior-pair reconciliation; F-035 A partial                                       |              190–250 |
 | WAVES-RULES                     | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and prior-pair reconciliation; F-035 terminal owner                          |              200–270 |
 | EXECUTION-CLOSURE               | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
-| ACTIVATE                        | Clean formal plan-quality gate, recorded no-grill decision, and explicit executable-status change                                       |          at most 400 |
+| ACTIVATE                        | Clean formal plan-quality gate and explicit executable-status change                                                                    |          at most 400 |
 
 Closed PR #258 measured 302 changed lines before its six findings. The first complete repair model
 expanded that draft by 106 lines to 408, but a BASE-only authoring probe then measured 401 changed
@@ -194,12 +194,12 @@ The other slice names mean:
 - EXECUTION-CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
   process—using it on its own PRs—capturing knowledge, closing private work, archiving the public
   plan, and safely removing worktrees.
-- ACTIVATE runs the formal plan-quality gate, records the user-ratified no-grill decision, and then
-  changes the assembled plan from dormant to executable. The separate structured post-write
-  question-and-answer review is waived because the user has resolved plan decisions throughout
-  assembly; the [durable decision record](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386294920)
-  preserves its scope and retained gates. Every valid gate finding still requires a bounded
-  PLAN-AMENDMENT before activation.
+- ACTIVATE runs the formal plan-quality gate and then changes the assembled plan from dormant to
+  executable. It does not run a separate structured post-write grilling step. The user resolved
+  that decision throughout assembly, and the
+  [durable decision record](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386294920)
+  explains why removing the redundant checkpoint does not remove any quality gate. Every valid gate
+  finding still requires a bounded PLAN-AMENDMENT before activation.
 
 Both CORE slices, every WAVES forecast repair, all four ENTRY checklist slices, WAVES-A,
 WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
