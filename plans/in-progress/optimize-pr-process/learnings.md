@@ -46,8 +46,5 @@
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
   crossing the ratified 400-line ceiling. Split forecasting must use the repaired shape, not only
   the first authoring estimate; CORE-ENTRY and CORE-REVIEW preserve cohesion and repair headroom.
-- [Repo-grounded] FORECAST PR #253 converged in recovery Cycle 4 after five findings. Local
-  shorthand improved readability but briefly used execution verbs before ACTIVATE; dormant plans
-  need authoring-only verbs near every section that could otherwise look executable.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.

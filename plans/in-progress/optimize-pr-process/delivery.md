@@ -12,21 +12,25 @@
 | [Repo-grounded] CORE-ENTRY                                                          | Active: author lifecycle spine and Phase 0–3 mechanics       |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-ENTRY writes future checklist templates; it runs none.
-> Until an approved ACTIVATE pin exists, do not use the private worktree, retire ideas, propagate
-> rules, generate bindings, change rules/agents/workflows/code/tests, or run the formal plan gate.
+> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-ENTRY writes templates and runs none. Only the four plan
+> docs named below may change; no private worktree, formal gate, idea/rule/agent/code/test work runs.
 
 ## Executor Legend and Plain-Language Terms
 
 Tags become executable only after ACTIVATE: `[AI]` means the agent acts and records evidence;
 `[HUMAN]` reserves an authority decision; `[AI+HUMAN]` means the agent prepares evidence for it.
 
-| Term          | Meaning                                                  |
-| ------------- | -------------------------------------------------------- |
-| Worktree      | A second checkout reserved for this plan.                |
-| Delivery unit | One branch, one PR, and one independently stable result. |
-| Pin           | An immutable commit SHA used as evidence.                |
-| File ledger   | The exact admitted path list before and after work.      |
+| Term               | Meaning                                                                   |
+| ------------------ | ------------------------------------------------------------------------- |
+| Worktree           | A second checkout reserved for this plan.                                 |
+| Delivery unit      | One branch, one PR, and one independently stable result.                  |
+| Pin                | An immutable commit SHA used as evidence.                                 |
+| File ledger        | The exact admitted path list before and after work.                       |
+| Current head       | The exact commit currently under review and checked by CI.                |
+| Semantic exit      | The point where scope, checks, review threads, and audit are complete.    |
+| Landed-diff proof  | Evidence that merged content equals the reviewed change.                  |
+| Resync             | Fetch merged `main`, read what landed, then branch from that `main`.      |
+| Sibling obligation | A PR record asking the other repository to adapt or explain a difference. |
 
 ## Dormant Boundary
 
