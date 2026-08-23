@@ -1,92 +1,203 @@
 # Technical Design: Optimize the Pull Request Process
 
-## Design
+## Design Decisions
 
-[Judgment call] GitHub remains the system of record; repository prose defines the durable contract,
-and no bot, parser, database, or new CI gate is the default. Any mechanism proposal must show a
-repeated measurable failure, no adequate existing gate, a reversible tested implementation, clear
-ownership, and benefit greater than maintenance cost. Evidence labels follow
+[Judgment call] GitHub remains the system of record. Repository prose defines the durable contract;
+no bot, parser, database, registry, or new CI gate is the default. A mechanism may enter optional
+Wave C only after repeated measurable failure, no adequate existing gate, a reversible tested
+design, clear ownership, and benefit greater than maintenance cost. Evidence labels follow
 [README.md](./README.md#evidence-labels-and-sources).
 
+The plan changes sources before consumers. A public source PR merges before its private adaptation;
+hand-authored `.claude/**` content changes before generated bindings; rules change before code; and
+each PR starts from then-current `origin/main` in the one owned worktree for that repository.
+
+## Review State Model
+
 ```mermaid
-flowchart LR
-    P[Plan and describe] --> R[Review, teach, reply, and fix]
-    R --> G{Converged?}
-    G -->|Yes| M[Merge and preserve]
-    G -->|No, cycles 1-4| R
-    G -->|Still blocked after cycle 5| H[Human escalation]
-    classDef source fill:#005A9C,color:#FFFFFF,stroke:#003B66,stroke-width:2px
-    classDef step fill:#FFC857,color:#000000,stroke:#7A4E00,stroke-width:2px
-    classDef decision fill:#2A9D8F,color:#000000,stroke:#0B5345,stroke-width:2px
-    class P source
-    class R,M,H step
-    class G decision
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+flowchart TD
+    accTitle: Bounded pull request review
+    accDescr: The normal target is one to three cycles. Cycles four and five use a changed recovery check. The agent stops before cycle six and asks a human only if still blocked.
+    P["Complete PR and local evidence"]:::blue --> N["Target review<br/>Cycles 1 to 3"]:::blue
+    N --> D{"Merge-ready on<br/>current commit?"}:::orange
+    D -->|Yes| M["Merge and preserve<br/>the PR audit"]:::teal
+    D -->|No after Cycle 3| R["Changed recovery check<br/>Cycles 4 to 5"]:::purple
+    R --> E{"Merge-ready before<br/>Cycle 6?"}:::orange
+    E -->|Yes| M
+    E -->|No| H["Stop and ask a human<br/>before Cycle 6"]:::purple
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
-Equivalent prose: prepare once, review, reply/fix, and rereview only the changed risk. Merge when
-semantic exit conditions pass; after Cycle 5, stop before Cycle 6 and hand the PR record to a human.
+Equivalent prose: prepare a complete PR once, aim to converge in Cycles 1–3, and merge as soon as
+the exact current commit is green, scope is stable, no blocking thread remains, and the PR audit is
+complete. If Cycle 3 misses, Cycles 4–5 name the remaining defect family and use a materially
+different focused check. Stop before Cycle 6; no extra clean cycle or earlier human checkpoint is
+required.
 
-## PR and Review Contract
+## Human PR Artifact Contract
 
-The PR body is a short reading aid, not an academic paper. It starts with outcome and motivation,
-then gives scope/non-goals, a path-ordered reading guide, verification, review focus, dependency,
-integration safety, stable-main statement, rollback, and optional diagram. Deep evidence is linked.
+The PR body is a short reading aid, not an academic paper. It leads with outcome and motivation,
+then gives scope/non-goals, a path-ordered reading guide, verification, review focus, dependencies,
+integration safety, stable-main proof, and rollback. Deep evidence is linked. Mermaid is optional
+and appears only when it makes a multi-step relationship easier to understand; equivalent prose is
+mandatory.
 
-The synthesizer posts one consolidated review. Each finding is anchored to the narrowest relevant
-line and teaches: claim, severity, evidence, impact, bounded fix, and safe refutation. The fixer
-revalidates the claim and replies on that thread with one disposition. Fixed replies link the pushed
-commit; rejected replies cite why evidence fails; deferred replies link a real follow-up; clarifying
-replies ask one answerable question. All AI-authored artifacts end with:
+The synthesizer posts one concise consolidated review. Each blocking finding uses the narrowest
+relevant line and teaches the claim, severity, evidence, impact, bounded remedy, and safe refutation.
+The fixer independently revalidates it and replies in the same native thread with `fix`,
+`reject-with-reason`, `defer-with-reason`, or `clarify`. A fixed reply links the pushed commit;
+a rejection cites contrary evidence; a deferral links a real follow-up; clarification remains open
+until answered. Every AI-authored body, review, reply, and summary ends with `Generated by AI`.
+
+## Root-Relative File-Impact Tree
+
+This tree bounds the known source, mirror, idea, and optional-mechanism surfaces. A directory label
+does not authorize every file below it: each delivery unit records its exact before/after file
+ledger and stays within the 400-line/20-file ceiling.
 
 ```text
----
+ose-public/
+├── plans/in-progress/optimize-pr-process/       # control plan; closure moves it to plans/done/
+├── plans/ideas/{q1-urgent-important,q2-not-urgent-important}/
+│                                                # 19 mapped briefs; PUB-IDEAS retires them
+├── repo-governance/workflows/{plan,pr,repo}/    # durable workflow sources
+├── repo-governance/conventions/structure/plans/ # human PR and delivery rules
+├── repo-governance/development/quality/         # review-discipline guidance
+├── .claude/agents/{plan,pr-review}/              # hand-authored agent sources
+├── .claude/skills/{plan-*,pr-review-*}/          # hand-authored skill sources
+├── .agents/skills/{plan-*,pr-review-*}/          # generated skill mirrors
+├── .opencode/agents/{plan-*,pr-review-*}.md      # generated agent mirrors
+├── .codex/agents/{plan-*,pr-review-*}.toml       # generated agent mirrors
+├── AGENTS.md and CLAUDE.md                       # fixed-size instruction cache; only if admitted
+└── optional Wave C path                          # none unless the necessity gate passes
 
-Generated by AI
+ose-private/
+├── plans/ideas/q2-not-urgent-important/pr-review-governance-reference-defects.md
+│                                                # PRIV-IDEAS retirement source
+├── repo-governance/workflows/{plan,pr,repo}/    # semantic adaptation sources
+├── repo-governance/conventions/structure/plans/ # repository-local human PR rules
+├── .claude/agents/{plan,pr-review}/              # hand-authored agent sources
+├── .claude/skills/{plan-*,pr-review-*}/          # hand-authored skill sources
+├── .agents/skills/{plan-*,pr-review-*}/          # generated skill mirrors
+├── .opencode/agents/{plan-*,pr-review-*}.md      # generated agent mirrors
+├── .codex/agents/{plan-*,pr-review-*}.toml       # generated agent mirrors
+├── AGENTS.md and CLAUDE.md                       # fixed-size instruction cache; only if admitted
+└── optional Wave C path                          # none unless the necessity gate passes
 ```
 
-## Convergence and Scope
+### Bounded Delivery Ledger
 
-Cycle 1 uses a complete PR body, green local gates, risk-based specialists, full-diff coverage, and
-deduplication. Apply verified fixes as one coherent batch. Cycles 2–3 inspect changed and previously
-missed risk, not restart blindly. Cycles 4–5 require explicit remaining blockers and safe recovery.
-There is no routine human checkpoint before the hard stop. Semantic exit requires green current-head
-checks, no unresolved blocking thread, no hidden scope change, and a PR-native evidence trail.
+| Unit                   | Hand-authored source boundary                                                                                     | Generated or retirement boundary                                                                             | Done state                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md`      | No bindings                                                                                                  | Mapped briefs absent, indexes reconciled, historical links preserved                 |
+| A1 public/private      | `repo-governance/workflows/plan/{plan-planning,plan-quality-gate}/**`, plan agents, and directly used plan skills | Matching `.agents/skills/plan-*/**`, `.opencode/agents/plan-*.md`, and `.codex/agents/plan-*.toml`           | Plan making and its gate use the same human-first, bounded delivery vocabulary       |
+| A2 public/private      | `repo-governance/workflows/pr/pr-review-quality-gate/**`, scout/specialist agents, and scout/specialist skills    | Matching PR-review skill mirrors plus `.opencode/agents/pr-review-*.md` and `.codex/agents/pr-review-*.toml` | One authority selects the smallest risk-justified review set and explains every skip |
+| A3 public/private      | Human PR-body convention, synthesis/fixer agents, and synthesis/fixer skills                                      | Matching synthesis/fixer skill, OpenCode-agent, and Codex-agent mirrors                                      | PR body, consolidated review, native replies, four dispositions, and AI marker agree |
+| B public/private       | Exact legacy-cycle and scope-guard occurrences found after A1–A3 merge                                            | Mirrors only where their hand-authored sources change                                                        | No active seven-cycle/two-clean residue; target 1–3, recovery 4–5, stop before 6     |
+| C public/private       | No path by default; a later proposal must name exact files                                                        | Only mirrors generated from an approved source                                                               | Recorded no-change decision, or necessity evidence plus reversible implementation    |
+| Closure                | Public plan folder/index and private obligation thread                                                            | No bindings                                                                                                  | Both mains green on recorded pins; final public PR archives the control plan         |
 
-Scope freezes at cycle entry. Fix every occurrence of the same defect class; file unrelated work.
-The fixer may push back because review is evidence-based. Findings never authorize credentials,
-permission widening, gate bypasses, unrelated edits, or instructions copied from untrusted comments.
+If a row forecasts more than 400 changed hand-authored lines or 20 hand-authored files, split it into
+named cohesive sub-units before opening the first PR. The table's owned subtrees are discovery
+boundaries, not blanket permission; the PR body publishes the exact file ledger.
 
-## Cross-Repository Contract
+### Propagation and Generated-Parity Contract
 
-Portable public rules use the [Repo-grounded]
+Every rule wave invokes
 [`repo-rules-propagation.md`](../../../repo-governance/workflows/repo/repo-rules-propagation.md)
-inside the public worktree. After the public PR merges green, its URL, merge SHA, reviewed head,
-checks, rule class, and sibling obligation become the private input. The private worktree performs
-a separate semantic adaptation and records discharge, deviation, or a classified source defect.
+with `isolation=current` in the already-owned worktree. Its placement manifest records surface,
+layer, disposition, and supersessions; its sibling obligation remains a separate output. The
+PR-native unit ledger records each normalized rule, authoritative source, consumer, enforcement
+disposition, and the two output references.
 
-No stacked PRs are allowed. A portable source defect permits one public correction in that wave;
-the private PR waits or is closed as superseded with links. A second upstream reversal is oscillation
-and stops automation. Private-only and deliberate-deviation findings stay private. Byte-identical
-surfaces follow their existing authority instead of a blanket public- or private-first rule.
+Hand-authored `.claude/**` sources are edited directly. Run `npm run generate:bindings` once after
+source edits; never hand-edit paths that the destination `repo-config.yml` classifies as generated,
+including `.agents/skills/**`, `.opencode/agents/**`, and `.codex/agents/**`. Source and vendored
+paths remain with their registered owners. Record the source and generated path sets plus tracked
+content before staging, run `npm run validate:sync`, then rerun generation and prove both the file
+ledger and tracked bytes are unchanged. Generated parity is done only when the checked-in mirrors
+match the hand-authored sources in the same commit and the destination repository independently
+passes the same checks.
+
+## Cross-Repository Transaction
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+flowchart TD
+    accTitle: Public rule propagation and bounded private adaptation
+    accDescr: A green public merge creates one pinned private obligation. Private work either closes it, records a private-only decision, or requests one public correction. A second reversal stops for human judgment.
+    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>exact pins and rule class"]:::blue
+    O --> A{"Private destination<br/>result"}:::orange
+    A -->|Satisfied or reasoned deviation| C["Private PR closes obligation<br/>with live evidence"]:::teal
+    A -->|Private-only side issue| V["Record issue separately<br/>do not reopen public"]:::gray
+    V -->|Original obligation continues| O
+    A -->|Portable source defect| F["One public correction allowed<br/>link superseded obligation"]:::purple
+    F --> P2["Corrected public PR<br/>new immutable pins"]:::blue
+    P2 --> A2{"Private result after<br/>one correction"}:::orange
+    A2 -->|Terminal| C
+    A2 -->|Another reversal| H["Stop and ask a human<br/>link replacement or terminal"]:::purple
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+Equivalent prose: a portable public rule merges first and creates one native private obligation
+containing its URL, merge SHA, reviewed commit, checks, rule class, and expected destination. Private
+adapts from that immutable source and records satisfaction, a reasoned deviation, or N/A with owner
+and remaining action. A private-only issue is recorded separately and the original obligation still
+ends as satisfaction, reasoned deviation, or N/A. A genuine portable source defect permits one
+public correction and links the superseded record. A second reversal stops automation, asks a
+human, and links the replacement or terminal decision. Byte-identical surfaces follow their
+existing authority rather than a blanket public-first rule.
 
 ## Delivery and Rollback DAG
 
-After assembly and ACTIVATE, delivery is `PUB-IDEAS → PRIV-IDEAS → PUB-A1 → PRIV-A1 → PUB-A2 →
-PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? → closure`.
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    accTitle: Sequential delivery and reverse dependency rollback
+    accDescr: Activation precedes idea retirement, A1 plan-making rules, A2 review routing, A3 PR and reply rules, B legacy cleanup, the optional C mechanism decision, and closure. Each public wave precedes private adaptation; rollback reverses that order.
+    A["ACTIVATE<br/>approved plan"]:::blue --> I1["PUB-IDEAS"]:::brown --> I2["PRIV-IDEAS"]:::brown
+    I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
+    VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
+    VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
+    VA3 --> PB["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
+    VB --> C{"Wave C optional mechanism<br/>necessary?"}:::orange
+    C -->|No, record no change| Z["Public closure<br/>archive plan"]:::teal
+    C -->|Yes| PC["PUB-C<br/>optional mechanism"]:::blue --> VC["PRIV-C<br/>optional mechanism"]:::purple --> Z
+    Z -. "If Wave C merged" .-> VC
+    Z -. "If Wave C absent" .-> VB
+    VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> I1 -.-> A
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
 
-**Rollback follows the reverse dependency order recorded in the delivery DAG.** A unit may roll
-back independently only when it has no merged dependents. Otherwise unwind downstream private then
-public dependents before their source. During a paired unwind, keep a native obligation open with
-the affected pins, temporary incoherence, repair/revert owner, and next action. Coherence is restored
-only when both repos are green on the intended pins and the obligation thread is terminal.
+Equivalent prose: after ACTIVATE, retire public then private ideas; deliver A1 plan-making rules, A2
+review routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
+adaptation. Make C an explicit no-change or approved optional-mechanism decision, and archive only
+after both repositories are terminal. Rollback starts with the last merged dependent and moves
+backward. A unit may revert alone only when nothing merged depends on it. During a paired unwind,
+leave a native obligation naming the pins, temporary incoherence, owner, and next action.
 
-The lightest-fit “feature flag” is recorded per unit: dormant plan/idea text, ordered rule activation,
-a compatibility bridge, a tested runtime flag, or an atomic change. Rollback must never depend on
-unpublished local state.
+The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
+activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects
+dormant text and ordered activation; a runtime flag is not justified unless later code introduces
+independently observable behavior. Rollback never depends on unpublished local state.
 
 ## Validation
 
-Plan quality gate precedes execution. Every delivery uses exact-path staged pre-commit gates,
-cache reconciliation, post-commit pre-push gates, PR review/fix cycles, current-head CI, merge proof,
-and full landed-diff resync. Phase 3 is read-only; any tracked correction becomes a separately gated
-`PLAN-AMENDMENT` PR and cannot ride inside a rule wave.
+The formal plan-quality gate precedes execution but follows complete assembly. Every later delivery
+uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push gates, native
+review/fix conversations, current-head CI, merge proof, and full landed-diff resync. Phase 3 is
+read-only; any tracked correction becomes a separately gated `PLAN-AMENDMENT` PR and cannot ride
+inside a rule wave.

@@ -2,20 +2,22 @@
 
 ## Current State
 
-| Evidence                                                                            | State                                                     |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`  |
-| [Repo-grounded] REQUIREMENTS                                                        | Active: BRD, PRD, and planning-only idea dispositions     |
-| [Repo-grounded] DESIGN and EXECUTION                                                | Dormant; no implementation or formal gate in this slice   |
-| [Unverified] Complete assembled plan                                                | Must pass a fresh formal gate and grill before activation |
+| Evidence                                                                            | State                                                       |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`    |
+| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`  |
+| [Repo-grounded] DESIGN                                                              | Active: file impact, propagation, transaction, and rollback |
+| [Repo-grounded] EXECUTION                                                           | Dormant; no implementation or formal gate in this slice     |
+| [Unverified] Complete assembled plan                                                | Must pass a fresh formal gate and grill before activation   |
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. REQUIREMENTS may add only the
-planning-only [idea disposition map](./idea-disposition-map.md) and repair the owned plan documents.
-All idea-brief, idea-index, and idea-routing-reference edits, moves, deletions, and retirements wait
-for PUB-IDEAS or PRIV-IDEAS after ACTIVATE. `plans/in-progress/README.md`, the active-plan index
-changed by FOUNDATION, remains allowed; no rule, agent, binding, workflow, code, or test may change.
+Plan assembly is deliberately **dormant and non-executable**. DESIGN may repair only this plan's
+`README.md`, `delivery.md`, `learnings.md`, and `tech-docs.md`; REQUIREMENTS already added the
+planning-only [idea disposition map](./idea-disposition-map.md). All idea-brief, idea-index, and
+idea-routing-reference edits, moves, deletions, and retirements wait for PUB-IDEAS or PRIV-IDEAS
+after ACTIVATE. No rule, agent, binding, workflow, code, test, implementation, active-plan index, or
+formal plan gate may change or run in DESIGN.
 
 ## Sequential Plan Assembly
 
@@ -51,10 +53,32 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION fixed its assigned defects. REQUIREMENTS now resolves F-001, F-002, F-021, and the source-pin
-half of F-033; DESIGN and EXECUTION findings remain dormant and open. ACTIVATE may open only after
-every mapped finding is fixed readably. A fresh formal gate must then pass its full semantic exit,
-followed by the required grill. Historic audit evidence cannot substitute.
+FOUNDATION and REQUIREMENTS fixed their assigned defects. DESIGN owns F-004, F-019, F-020, and
+F-027; its [technical design](./tech-docs.md) now supplies the bounded tree/ledger, propagation and
+parity contract, cross-repo transaction, and reverse-order rollback DAG. EXECUTION findings remain
+dormant and open. ACTIVATE may open only after every mapped finding is fixed readably. A fresh
+formal gate must then pass its full semantic exit, followed by the required grill. Historic audit
+evidence cannot substitute.
+
+## Dormant Unit-Edit Contract
+
+After ACTIVATE, every rule unit performs this transaction in its already-owned worktree:
+
+1. Read the unit's merged dependency pin and copy its exact source boundary from the
+   [bounded delivery ledger](./tech-docs.md#bounded-delivery-ledger).
+2. Run `repo-governance/workflows/repo/repo-rules-propagation.md` with `mode=strict`,
+   `isolation=current`, and the unit's normalized rules; retain its placement manifest and sibling
+   obligation.
+3. Publish the exact hand-authored before-ledger, edit only admitted source paths, then run
+   `npm run generate:bindings` once. Treat newly discovered paths as a ledger change requiring a
+   scope and size recheck, not silent permission.
+4. Run `npm run validate:sync`, capture the tracked source/generated content, rerun
+   `npm run generate:bindings`, and prove the tracked content is byte-identical before and after the
+   second run. Also prove the file ledger is unchanged and reconcile it to `git status --short`.
+5. Record the exact source paths, generated paths, parity result, and private obligation in the PR.
+   A missing mirror, unexplained path, or changed second-run ledger fails the unit.
+
+These are design constraints, not authorization to execute a rule wave during plan assembly.
 
 ## Worktree and Cross-Repository Order
 
