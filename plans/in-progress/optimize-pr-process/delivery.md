@@ -17,10 +17,10 @@
 | [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`     |
 | [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`         |
 | [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`  |
-| [Repo-grounded] WAVES-ENTRY-ADAPTERS                                                | #264 merged; author correction/amendment adapters            |
+| [Repo-grounded] WAVES-A                                                             | #265 merged; author A1/A2 public/private checklists          |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate still precedes explicit activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-ADAPTERS changes plan docs only; it runs no
+> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-A changes plan docs only; it runs no
 > gate, private-worktree action, idea retirement, or implementation.
 
 ## Executor Legend and Plain-Language Terms
@@ -55,7 +55,7 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-ADAPTERS may change
+Plan assembly is deliberately **dormant and non-executable**. WAVES-A may change
 only this plan's `README.md`, `delivery.md`, and `learnings.md`. Both private checklist slices,
 ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings,
 workflows, code, tests, implementation, private worktree state, and active-plan indexes remain
@@ -257,7 +257,7 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through WAVES-ENTRY-PRIVATE-IDEAS are merged; WAVES-ENTRY-ADAPTERS is active. ACTIVATE
+FOUNDATION through WAVES-ENTRY-ADAPTERS are merged; WAVES-A is active. ACTIVATE
 may open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
 instantiate every delivery unit as granular, attributable checkboxes and every finding is fixed. A
 fresh formal gate must then pass; historic evidence cannot substitute.
@@ -729,6 +729,52 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
 - [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
 - [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
+
+## Dormant A-Wave Checklist
+
+### PUB-A1 — Plan-Making Rules
+
+- [ ] `[PUB-A1:P1.01][AI]` Read the terminal PRIV-IDEAS obligation and exact predecessor pin.
+- [ ] `[PUB-A1:P1.02][AI]` Fetch public `origin/main` and prove the predecessor is an ancestor.
+- [ ] `[PUB-A1:P1.03][AI]` Create only the declared branch from current public main.
+- [ ] `[PUB-A1:P1.04][AI]` Publish the exact source/generated path ledger and size forecast.
+- [ ] `[PUB-A1:P1.05][AI]` Run strict current-isolation rule propagation and retain its manifest.
+- [ ] `[PUB-A1:P1.06][AI]` Edit only plan-making sources admitted by the ledger.
+- [ ] `[PUB-A1:P1.07][AI]` Generate bindings once and reconcile every generated path.
+- [ ] `[PUB-A1:P1.08][AI]` Validate sync, local gates, staging ledger, committed diff, draft body, review, current-head CI, merge fingerprint, and resync as separate Phase 2–5 evidence states.
+- [ ] `[PUB-A1:P1.G][AI]` Pass propagated-rule, binding, current-head, sibling-obligation, and landed-proof gate.
+- [ ] `[PUB-A1:P1.P][AI]` Record public merge pin and prepared PRIV-A1 obligation.
+
+### PRIV-A1 — Private Plan-Making Adaptation
+
+- [ ] `[PRIV-A1:P1.01][AI]` Read the PUB-A1 obligation and its immutable public merge pin.
+- [ ] `[PRIV-A1:P1.02][AI]` Preserve the authorized overlay before entering the declared private branch.
+- [ ] `[PRIV-A1:P1.03][AI]` Measure the private destination and classify satisfaction, deviation, N/A, or portable defect.
+- [ ] `[PRIV-A1:P1.04][AI]` Adapt only admitted private sources; retain private evidence in the private PR.
+- [ ] `[PRIV-A1:P1.05][AI]` Run propagation, bindings, local gates, review, CI, merge proof, and overlay resync as separate evidence states.
+- [ ] `[PRIV-A1:P1.06][AI]` Use ENTRY-ADAPTERS for any portable or plan defect; do not open a second obligation.
+- [ ] `[PRIV-A1:P1.G][AI]` Pass semantic-correspondence, overlay, current-head, and terminal-obligation gate.
+- [ ] `[PRIV-A1:P1.P][AI]` Record private merge pin and prepared PUB-A2 obligation.
+
+### PUB-A2 — Public Review-Routing Rules
+
+- [ ] `[PUB-A2:P1.01][AI]` Read the terminal PRIV-A1 pin and fetch current public main.
+- [ ] `[PUB-A2:P1.02][AI]` Publish the exact review-routing source/generated ledger and forecast.
+- [ ] `[PUB-A2:P1.03][AI]` Propagate only the selected-risk, applicability, changed-probe, and human-readable route rules.
+- [ ] `[PUB-A2:P1.04][AI]` Generate and validate bindings without hand-editing generated mirrors.
+- [ ] `[PUB-A2:P1.05][AI]` Prove route, specialist selection, synthesis, fix reply, CI, merge, and resync separately.
+- [ ] `[PUB-A2:P1.G][AI]` Pass routing, binding, five-cycle, scope-freeze, and landed-proof gate.
+- [ ] `[PUB-A2:P1.P][AI]` Record public merge pin and prepared PRIV-A2 obligation.
+
+### PRIV-A2 — Private Review-Routing Adaptation
+
+- [ ] `[PRIV-A2:P1.01][AI]` Read PUB-A2's immutable obligation and preserve the private overlay.
+- [ ] `[PRIV-A2:P1.02][AI]` Measure private routing surfaces and adapt only admitted private sources.
+- [ ] `[PRIV-A2:P1.03][AI]` Keep public summaries disclosure-safe and private evidence in the private PR.
+- [ ] `[PRIV-A2:P1.04][AI]` Run propagation, bindings, review, current-head CI, merge proof, and overlay resync separately.
+- [ ] `[PRIV-A2:P1.05][AI]` Freeze and hand portable/plan defects to ENTRY-ADAPTERS; retain the private cycle count.
+- [ ] `[PRIV-A2:P1.G][AI]` Pass semantic-correspondence, scope, cycle, overlay, and obligation gate.
+- [ ] `[PRIV-A2:P1.P][AI]` Record private merge pin and prepare PUB-A3 only after terminal state.
 
 ## Dormant Lifecycle and Evidence-State Template
 
