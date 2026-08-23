@@ -69,7 +69,8 @@ Reuse exactly one worktree per repository for this whole plan; follow the
 - public: `worktrees/optimize-pr-process/` resolves to
   `/Users/wkf/ose-projects/ose-public/worktrees/optimize-pr-process` — active for assembly;
 - private: `worktrees/optimize-pr-process/` resolves to
-  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — quarantined until PRIV-IDEAS.
+  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — quarantined until terminal
+  PUB-IDEAS evidence authorizes PRIV-BASE, and from every other use until its named successor.
 
 Both already exist. Never add a second. If one is later proven absent, run from that repository root:
 
@@ -540,7 +541,8 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P1.10][AI]` Publish exact non-overlay repair paths and the two overlay exclusions.
 - [ ] `[PRIV-REPAIR:P1.11][AI]` Publish forecast, stable-main safety, risk, rollback, and preserved hash.
 - [ ] `[PRIV-REPAIR:P1.12][AI]` Reproduce the original failure before editing; retain the diagnostic.
-- [ ] `[PRIV-REPAIR:P1.13][AI]` Edit only proven non-overlay paths and recheck the working-overlay hash.
+- [ ] `[PRIV-REPAIR:P1.13][AI]` Edit only proven non-overlay paths.
+- [ ] `[PRIV-REPAIR:P1.14][AI]` Recompute and match the working-overlay fingerprint after editing.
 - [ ] `[PRIV-REPAIR:P1.G][AI]` Pass branch/base/pin/scope/ledger/forecast/overlay gate.
 - [ ] `[PRIV-REPAIR:P1.P][AI]` Record head, ledger, overlay hash, and reproduction command.
 - [ ] `[PRIV-REPAIR:P2.01][AI]` Run the focused regression; retain expected and actual results.
@@ -573,8 +575,8 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P4.03][AI]` Run successive exact-head cycles under the five-cycle boundary.
 - [ ] `[PRIV-REPAIR:P4.04][AI]` Classify each concern before any cross-repository handoff.
 - [ ] `[PRIV-REPAIR:P4.05][AI]` Keep local adaptations, deviations, and unrelated follow-ups out of public correction.
-- [ ] `[PRIV-REPAIR:P4.06][AI]` Hand a proven portable or plan defect only to the named ADAPTERS route.
-- [ ] `[PRIV-REPAIR:P4.07][AI]` Record every finding as fix, reject, defer, or clarify with evidence.
+- [ ] `[PRIV-REPAIR:P4.06][AI]` For a proven portable or plan defect, record the paused private head; freeze push, review, readiness, and merge; then hand the required replacement public or amended-plan pin only to ADAPTERS.
+- [ ] `[PRIV-REPAIR:P4.07][AI]` Gate P4.08–P4.16 to the no-handoff path or an ADAPTERS-recorded replacement pin and resumption; record every finding as fix, reject, defer, or clarify with evidence.
 - [ ] `[PRIV-REPAIR:P4.08][AI]` Push each bounded fix before claiming it in the native thread.
 - [ ] `[PRIV-REPAIR:P4.09][AI]` Invalidate every review and CI result from the superseded head.
 - [ ] `[PRIV-REPAIR:P4.10][AI]` Return the repaired head to P4.03 before thread resolution.
