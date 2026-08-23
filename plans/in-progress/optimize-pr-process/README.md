@@ -2,12 +2,12 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-PUBLIC active, authoring only); dormant until ACTIVATE.**
-[Repo-grounded] WAVES-ENTRY-BASE-SPLIT PR
-[#260](https://github.com/wahidyankf/ose-public/pull/260) merged as
-`5c61907d9d24718267dae8a2307e3578df1d18c9`. This slice authors only the continuing evidence rules,
-literal idea-retirement acceptance, and public baseline/repair/ideas checklists. It executes none of
-those checklists; ENTRY-PRIVATE remains the next assembly slice.
+**In Progress (WAVES-ENTRY-PRIVATE-SPLIT active, authoring only); dormant until ACTIVATE.**
+[Repo-grounded] WAVES-ENTRY-PUBLIC PR
+[#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
+`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. A corrected private-entry probe measured 268 changed
+lines and 165 atomic IDs, above its 230-line forecast ceiling. This slice only records the measured
+split and lifecycle decisions; it executes no private action.
 
 ## Outcome
 
@@ -47,13 +47,18 @@ parser, merge queue, universal runtime flag, or unrelated CI cleanup.
 Plan assembly must finish before idea or implementation delivery. The exact unstacked order begins
 `FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION-FORECAST → CORE-SPLIT-FORECAST → CORE-ENTRY →
 CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE-SPLIT →
-WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
+WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT → WAVES-ENTRY-PRIVATE-BASE-REPAIR →
+WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
 EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 
 ## Plan Documents
 
+- Start with this status and the hard boundaries. During assembly, use the active slice named above;
+  after ACTIVATE, use [delivery.md](./delivery.md) for exact tasks. Read [brd.md](./brd.md) and
+  [prd.md](./prd.md) for intent and acceptance, consult [tech-docs.md](./tech-docs.md) for state
+  transitions, and read [learnings.md](./learnings.md) last for historical evidence.
 - [Business requirements](./brd.md)
 - [Product requirements and acceptance criteria](./prd.md)
 - [Planning-only idea disposition map](./idea-disposition-map.md)
