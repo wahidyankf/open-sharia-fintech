@@ -46,5 +46,11 @@
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
   crossing the ratified 400-line ceiling. Split forecasting must use the repaired shape, not only
   the first authoring estimate; CORE-ENTRY and CORE-REVIEW preserve cohesion and repair headroom.
+- [Repo-grounded] PR #254 merged remotely, but a merge command that also requested branch deletion
+  then tried to check out `main`, which another worktree owned. Repository-qualified API-side merge
+  and separate, read-back cleanup avoid coupling a valid remote merge to local checkout state.
+- [Repo-grounded] PR #255 was marked ready immediately after routing, before its review cycle. It
+  was restored to draft; readiness belongs after clean current-head review, resolved threads, and
+  green same-head CI. The repaired PR converged in Cycle 3 without an extra confirmation cycle.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.

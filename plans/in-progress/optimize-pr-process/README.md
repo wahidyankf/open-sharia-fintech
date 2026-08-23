@@ -2,12 +2,11 @@
 
 ## Status
 
-**In Progress (CORE-ENTRY active, authoring only); implementation dormant until ACTIVATE.**
-[Repo-grounded] CORE-SPLIT-FORECAST PR
-[#254](https://github.com/wahidyankf/ose-public/pull/254) merged as
-`b4dca85adc9ebc42eb53d69500e5d0475adb1522`. CORE-ENTRY writes the full lifecycle/state spine and
-detailed Phase 0–3 mechanics; it runs none of them. Later assembly and the formal plan-quality gate
-remain dormant.
+**In Progress (CORE-REVIEW active, authoring only); implementation dormant until ACTIVATE.**
+[Repo-grounded] CORE-ENTRY PR [#255](https://github.com/wahidyankf/ose-public/pull/255) merged as
+`6e3412576ee32b8a34882c8f5df38019a1825e03`. CORE-REVIEW now authors review, fixing, CI,
+cross-repository correction, merge-proof, and amendment mechanics. It runs none of them; later
+assembly and the formal plan-quality gate remain dormant.
 
 ## Outcome
 
