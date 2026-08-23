@@ -12,11 +12,13 @@
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. REQUIREMENTS may add only the
-planning-only [idea disposition map](./idea-disposition-map.md) and repair the owned plan documents.
-All idea-brief, idea-index, and idea-routing-reference edits, moves, deletions, and retirements wait
-for PUB-IDEAS or PRIV-IDEAS after ACTIVATE. `plans/in-progress/README.md`, the active-plan index
-changed by FOUNDATION, remains allowed; no rule, agent, binding, workflow, code, or test may change.
+Plan assembly is deliberately **dormant and non-executable**. DESIGN may repair only this plan's
+`README.md`, `delivery.md`, `learnings.md`, and `tech-docs.md`; REQUIREMENTS already added the
+planning-only [idea disposition map](./idea-disposition-map.md). All idea-brief, idea-index, and
+idea-routing-reference edits, moves, deletions, and retirements wait for PUB-IDEAS or PRIV-IDEAS
+after ACTIVATE. `plans/in-progress/README.md`, the active-plan index changed by FOUNDATION, remains
+allowed. No rule, agent, binding, workflow, code, test, implementation, or formal plan gate may
+change or run in DESIGN.
 
 ## Sequential Plan Assembly
 
@@ -71,8 +73,9 @@ After ACTIVATE, every rule unit performs this transaction in its already-owned w
 3. Publish the exact hand-authored before-ledger, edit only admitted source paths, then run
    `npm run generate:bindings` once. Treat newly discovered paths as a ledger change requiring a
    scope and size recheck, not silent permission.
-4. Run `npm run validate:sync`, rerun `npm run generate:bindings`, and prove the source/generated
-   file ledger is unchanged by the second run. Reconcile that ledger to `git status --short`.
+4. Run `npm run validate:sync`, capture the tracked source/generated content, rerun
+   `npm run generate:bindings`, and prove the tracked content is byte-identical before and after the
+   second run. Also prove the file ledger is unchanged and reconcile it to `git status --short`.
 5. Record the exact source paths, generated paths, parity result, and private obligation in the PR.
    A missing mirror, unexplained path, or changed second-run ledger fails the unit.
 

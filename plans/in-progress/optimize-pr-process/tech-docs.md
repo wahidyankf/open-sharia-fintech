@@ -27,9 +27,9 @@ flowchart TD
     E -->|Yes| M
     E -->|No| H["Stop and ask a human<br/>before Cycle 6"]:::purple
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 Equivalent prose: prepare a complete PR once, aim to converge in Cycles 1–3, and merge as soon as
@@ -71,6 +71,7 @@ ose-public/
 ├── .claude/skills/{plan-*,pr-review-*}/          # hand-authored skill sources
 ├── .agents/skills/{plan-*,pr-review-*}/          # generated skill mirrors
 ├── .opencode/agents/{plan-*,pr-review-*}.md      # generated agent mirrors
+├── .codex/agents/{plan-*,pr-review-*}.toml       # generated agent mirrors
 ├── AGENTS.md and CLAUDE.md                       # fixed-size instruction cache; only if admitted
 └── optional Wave C path                          # none unless the necessity gate passes
 
@@ -83,21 +84,22 @@ ose-private/
 ├── .claude/skills/{plan-*,pr-review-*}/          # hand-authored skill sources
 ├── .agents/skills/{plan-*,pr-review-*}/          # generated skill mirrors
 ├── .opencode/agents/{plan-*,pr-review-*}.md      # generated agent mirrors
+├── .codex/agents/{plan-*,pr-review-*}.toml       # generated agent mirrors
 ├── AGENTS.md and CLAUDE.md                       # fixed-size instruction cache; only if admitted
 └── optional Wave C path                          # none unless the necessity gate passes
 ```
 
 ### Bounded Delivery Ledger
 
-| Unit                   | Hand-authored source boundary                                                                                     | Generated or retirement boundary                                     | Done state                                                                           |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md`      | No bindings                                                          | Mapped briefs absent, indexes reconciled, historical links preserved                 |
-| A1 public/private      | `repo-governance/workflows/plan/{plan-planning,plan-quality-gate}/**`, plan agents, and directly used plan skills | Matching `.agents/skills/plan-*/**` and `.opencode/agents/plan-*.md` | Plan making and its gate use the same human-first, bounded delivery vocabulary       |
-| A2 public/private      | `repo-governance/workflows/pr/pr-review-quality-gate/**`, scout/specialist agents, and scout/specialist skills    | Matching PR-review agent and skill mirrors                           | One authority selects the smallest risk-justified review set and explains every skip |
-| A3 public/private      | Human PR-body convention, synthesis/fixer agents, and synthesis/fixer skills                                      | Matching synthesis/fixer mirrors                                     | PR body, consolidated review, native replies, four dispositions, and AI marker agree |
-| B public/private       | Exact legacy-cycle and scope-guard occurrences found after A1–A3 merge                                            | Mirrors only where their hand-authored sources change                | No active seven-cycle/two-clean residue; target 1–3, recovery 4–5, stop before 6     |
-| C public/private       | No path by default; a later proposal must name exact files                                                        | Only mirrors generated from an approved source                       | Recorded no-change decision, or necessity evidence plus reversible implementation    |
-| Closure                | Public plan folder/index and private obligation thread                                                            | No bindings                                                          | Both mains green on recorded pins; final public PR archives the control plan         |
+| Unit                   | Hand-authored source boundary                                                                                     | Generated or retirement boundary                                                                             | Done state                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md`      | No bindings                                                                                                  | Mapped briefs absent, indexes reconciled, historical links preserved                 |
+| A1 public/private      | `repo-governance/workflows/plan/{plan-planning,plan-quality-gate}/**`, plan agents, and directly used plan skills | Matching `.agents/skills/plan-*/**`, `.opencode/agents/plan-*.md`, and `.codex/agents/plan-*.toml`           | Plan making and its gate use the same human-first, bounded delivery vocabulary       |
+| A2 public/private      | `repo-governance/workflows/pr/pr-review-quality-gate/**`, scout/specialist agents, and scout/specialist skills    | Matching PR-review skill mirrors plus `.opencode/agents/pr-review-*.md` and `.codex/agents/pr-review-*.toml` | One authority selects the smallest risk-justified review set and explains every skip |
+| A3 public/private      | Human PR-body convention, synthesis/fixer agents, and synthesis/fixer skills                                      | Matching synthesis/fixer skill, OpenCode-agent, and Codex-agent mirrors                                      | PR body, consolidated review, native replies, four dispositions, and AI marker agree |
+| B public/private       | Exact legacy-cycle and scope-guard occurrences found after A1–A3 merge                                            | Mirrors only where their hand-authored sources change                                                        | No active seven-cycle/two-clean residue; target 1–3, recovery 4–5, stop before 6     |
+| C public/private       | No path by default; a later proposal must name exact files                                                        | Only mirrors generated from an approved source                                                               | Recorded no-change decision, or necessity evidence plus reversible implementation    |
+| Closure                | Public plan folder/index and private obligation thread                                                            | No bindings                                                                                                  | Both mains green on recorded pins; final public PR archives the control plan         |
 
 If a row forecasts more than 400 changed hand-authored lines or 20 hand-authored files, split it into
 named cohesive sub-units before opening the first PR. The table's owned subtrees are discovery
@@ -111,10 +113,11 @@ with `isolation=current` in the already-owned worktree. Its manifest records eac
 authoritative source, consumer, supersession, enforcement disposition, and sibling obligation.
 
 Hand-authored `.claude/**` sources are edited directly. Run `npm run generate:bindings` once after
-source edits; never hand-edit `.agents/**` or `.opencode/**`. Record the source and generated path
-sets before staging, run `npm run validate:sync`, then rerun generation and prove the file ledger
-does not change. Generated parity is done only when the checked-in mirrors match the hand-authored
-sources in the same commit and the destination repository independently passes the same checks.
+source edits; never hand-edit `.agents/**`, `.opencode/**`, or `.codex/**`. Record the source and
+generated path sets plus tracked content before staging, run `npm run validate:sync`, then rerun
+generation and prove both the file ledger and tracked bytes are unchanged. Generated parity is done
+only when the checked-in mirrors match the hand-authored sources in the same commit and the
+destination repository independently passes the same checks.
 
 ## Cross-Repository Transaction
 
@@ -126,26 +129,28 @@ flowchart TD
     P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>exact pins and rule class"]:::blue
     O --> A{"Private destination<br/>result"}:::orange
     A -->|Satisfied or reasoned deviation| C["Private PR closes obligation<br/>with live evidence"]:::teal
-    A -->|Private-only issue| V["Keep decision private<br/>do not reopen public"]:::gray
+    A -->|Private-only side issue| V["Record issue separately<br/>do not reopen public"]:::gray
+    V -->|Original obligation continues| O
     A -->|Portable source defect| F["One public correction allowed<br/>link superseded obligation"]:::purple
     F --> P2["Corrected public PR<br/>new immutable pins"]:::blue
     P2 --> A2{"Private result after<br/>one correction"}:::orange
     A2 -->|Terminal| C
-    A2 -->|Another reversal| H["Stop automation<br/>ask a human"]:::purple
+    A2 -->|Another reversal| H["Stop and ask a human<br/>link replacement or terminal"]:::purple
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 Equivalent prose: a portable public rule merges first and creates one native private obligation
 containing its URL, merge SHA, reviewed commit, checks, rule class, and expected destination. Private
 adapts from that immutable source and records satisfaction, a reasoned deviation, or N/A with owner
-and remaining action. A private-only issue stays private. A genuine portable source defect permits
-one public correction and links the superseded record; a request for a second reversal stops
-automation. Byte-identical surfaces follow their existing authority rather than a blanket
-public-first rule.
+and remaining action. A private-only issue is recorded separately and the original obligation still
+ends as satisfaction, reasoned deviation, or N/A. A genuine portable source defect permits one
+public correction and links the superseded record. A second reversal stops automation, asks a
+human, and links the replacement or terminal decision. Byte-identical surfaces follow their
+existing authority rather than a blanket public-first rule.
 
 ## Delivery and Rollback DAG
 
@@ -165,11 +170,12 @@ flowchart TD
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
     VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> I1 -.-> A
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 Equivalent prose: after ACTIVATE, retire public then private ideas; deliver each public rule wave
