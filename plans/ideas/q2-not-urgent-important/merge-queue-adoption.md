@@ -105,7 +105,9 @@ Out of scope:
 
 - Any `apps/` or `libs/` runtime code — this is CI config plus governance docs only.
 - The PR-reviewer decomposition, owned by `worktree-to-pr-hardening`.
-- Provisioning a bot or GitHub-App identity — see [pr-review-bot-identity](./pr-review-bot-identity.md).
+- Provisioning a bot or GitHub-App identity — retired into the
+  [optimize-pr-process plan](../../in-progress/optimize-pr-process/README.md#idea-brief-consolidation)
+  and not part of this merge-queue idea.
 - Changing preconditions (a), (b), (d), or (e), or the (a)–(e) lettering.
 - **Deciding MQ-1 on the maintainer's behalf.** Migrating repo ownership to a GitHub organization is a
   significant `[HUMAN]` infra decision and adopting a third-party queue is a vendor decision; this brief

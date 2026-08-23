@@ -11,10 +11,9 @@ execution checklist.
 
 ## Active Plans
 
-None. No plan is currently under execution.
-
-Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
-work begins.
+- [Optimize the Pull Request Process](./optimize-pr-process/README.md) — make planning, PR
+  descriptions, review conversations, quality gates, and cross-repository delivery easier for
+  humans to read, audit, and improve.
 
 ## Instructions
 

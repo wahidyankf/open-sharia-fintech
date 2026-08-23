@@ -59,7 +59,7 @@ that a "N-step" claim matches the number of numbered steps in the thing it descr
 - **Fix the class, not the sites a finding names** — the review comment named the frontmatter and two
   READMEs; the actual population is nine sites across three repos. Enumerate per repo with a
   per-file verdict before declaring it fixed.
-  [class-sweep-completeness](./class-sweep-completeness.md)
+  [optimize-pr-process convergence protocol](../../in-progress/optimize-pr-process/tech-docs.md#five-cycle-convergence-protocol)
 - **Propagation checklist under coverage** — the sibling brief on propagation steps whose checklists
   do not cover every surface the change touches.
   [brief](./propagation-checklist-under-coverage.md)

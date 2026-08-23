@@ -31,6 +31,7 @@ review submitted against one's own pull request. Every blocking review — inclu
 CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
 consumer that gates on STATE alone reads a blocked PR as unblocked while a CRITICAL finding sits open
 on it. This convention does not own closing that gap: provisioning a scope-minimal GitHub App or
-CI-scoped bot identity and rewiring the coordinator to authenticate as it is tracked in the
-[PR-review bot identity idea](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md), which owns the
-AI-attribution and formal `REQUEST_CHANGES` question until an org-level identity becomes available.
+CI-scoped bot identity is now owned by the
+[optimize-pr-process plan](../../../../plans/in-progress/optimize-pr-process/README.md#idea-brief-consolidation)
+and its mechanism-necessity decision. This reference-routing edit does not change current review
+behavior; any semantic change still requires a separately authorized rule delivery.

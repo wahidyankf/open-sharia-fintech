@@ -24,9 +24,9 @@ unblocked.** That is the whole reason this page exists: the failure is silent an
 Blocking status is carried by the finding's severity label in the comment body (`CRITICAL` /
 `HIGH`), never by the review's STATE field. Consumers MUST parse severity from comment text.
 
-The limitation disappears only when a dedicated bot or GitHub App identity is provisioned — see the
-two-pager idea brief
-[`pr-review-bot-identity.md`](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).
+The earlier dedicated bot/GitHub App proposal is now tracked by the
+[optimize-pr-process plan](../../../../plans/in-progress/optimize-pr-process/README.md#idea-brief-consolidation).
+This page's current behavior remains unchanged until a separately authorized rule delivery.
 
 ## Enforcement
 

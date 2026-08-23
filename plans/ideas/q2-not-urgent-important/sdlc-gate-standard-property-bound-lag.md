@@ -62,8 +62,9 @@ In scope: the two sites in `docs/reference/sdlc-gate-standard.md`, and a check f
 name-bound bareness assertion in the same file.
 
 Out of scope: re-litigating the corrected wording (it is already reviewed and landed twice);
-sweeping other documents for the same pattern — that is the class-sweep question, tracked separately
-in [class-sweep-completeness](./class-sweep-completeness.md); any change to the gate standard itself.
+sweeping other documents for the same pattern — the class-complete review method is now owned by the
+[optimize-pr-process plan](../../in-progress/optimize-pr-process/tech-docs.md#five-cycle-convergence-protocol);
+any change to the gate standard itself.
 
 ## Risks & open questions
 
