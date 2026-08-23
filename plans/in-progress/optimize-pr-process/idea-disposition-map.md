@@ -64,7 +64,7 @@ unchanged.
     **Retirement:** `PUB-IDEAS`. Keep body/thread authority and AI markers; reject bot/App/token work.
 14. `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md`
     **Outcome:** `valid`. **Family:** risk-based review routing. **Owner:** `A2`.
-    **Retirement:** `PUB-IDEAS`. Retain applicability and four-way fixer judgment, not fixed fan-out.
+    **Retirement:** `PUB-IDEAS`. Retain applicability and four-way fixer judgment, not fixed review.
 15. `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`
     **Outcome:** `valid`. **Family:** actual-diff propagation. **Owner:** `C`.
     **Retirement:** `PUB-IDEAS`. Use `repo-rules-propagation`, the actual merged diff, justified
@@ -78,7 +78,7 @@ unchanged.
     **Retirement:** `PUB-IDEAS`. Retain varied lenses, known-positive probes, and bounded ground
     truth; reject new machinery and saturation as an exit rule.
 18. `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`
-    **Outcome:** `valid`. **Family:** bounded semantic exit. **Owner:** `B`.
+    **Outcome:** `valid`. **Family:** bounded merge-ready state. **Owner:** `B`.
     **Retirement:** `PUB-IDEAS`. Keep scope stable, audit exact, target 1–3, recover 4–5, and stop
     before 6; reject mandatory three cycles, two-clean confirmation, or an indefinite loop.
 19. `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`

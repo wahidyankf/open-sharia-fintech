@@ -44,14 +44,15 @@ PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
    filed separately. No review cycle grows the PR’s promised outcome.
 7. Entry readiness, specialist selection, deduplication, one repair batch, and focused rereview
    should converge in Cycles 1–3. Cycles 4–5 name the remaining blocker or defect family, use a
-   materially changed bounded probe, preserve frozen scope, and stop before Cycle 6.
+   different focused check, preserve frozen scope, and stop before Cycle 6.
 8. Plans own requirements, design, delivery order, validation, knowledge capture, and closure. Repo
    rules own durable norms. Code/tests implement behavior. Each moves through its own bounded PR.
 9. One named worktree per repository lasts for the whole plan. Dependent PRs are sequential and
    unstacked; each starts from current `origin/main` after the previous dependency merges.
 10. Public portable changes open an auditable private obligation pinned to the public PR, merge SHA,
-    and reviewed head. One upstream correction is allowed per wave; a second reversal stops as
-    oscillation. Private-only defects never trigger public churn.
+    and reviewed commit. One upstream correction is allowed per wave; a second reversal stops the
+    repeated back-and-forth. Private-only defects never trigger public churn. An inapplicable obligation records
+    N/A, its reason, artifact owner, and remaining repository action.
 11. Private-only defects and deliberate deviations stay private. In contrast,
     byte-identity defects follow the existing surface authority; parity repair may require a public
     correction, a private correction, or both under the existing evidence rules.
@@ -59,7 +60,7 @@ PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
     requirement or conflict recorded in the planning-only
     [idea disposition map](./idea-disposition-map.md).
 13. A **review-route record** is a human-readable, PR-native, exact-head record created before
-    specialist fan-out. It states reviewed base/head and scope/diff; risk tier; selected specialists
+    specialist review. It states reviewed base/head and scope/diff; plain-language risk level; selected specialists
     and why; skipped specialists and why safe; current CI/evidence; prior settled threads and human
     dismissals; and the cycle's changed probe. It is an audit record written in plain language, not
     a mechanical classifier or new tool.
@@ -73,33 +74,33 @@ PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
 
 **In scope:** concise PR descriptions; optional accessible Mermaid with equivalent prose; native
 review comments and same-thread replies; risk-based specialist routing; four-way fixer judgment;
-AI attribution; scope freeze; semantic exit and the five-cycle cap; plan/rule/code delivery order;
-one reusable worktree per repository; dormant or reversible integration containment; exact-pin
+AI attribution; scope freeze; merge-ready conditions and the five-cycle cap; plan/rule/code delivery order;
+one reusable worktree per repository; dormant or reversible integration safety; exact-commit
 public/private obligations; idea dispositions; and propagation through
 `repo-governance/workflows/repo/repo-rules-propagation.md`.
 
 **Out of scope:** implementing DESIGN or EXECUTION during this slice; changing any idea/index;
-fixed all-discipline fan-out; mandatory two-clean confirmation; stacked PRs; a review bot, merge
+fixed all-discipline review; mandatory two-clean confirmation; stacked PRs; a review bot, merge
 queue, database, parser, registry, universal runtime flag, or new validator without demonstrated
 necessity; unrelated CI cleanup; and publication of private operational detail in the public plan.
 
 General requirements live in this public control plan. Future private PRs cite exact immutable
-public merged pins and keep proprietary operations private while recording discharge or deviation.
+public merged pins and keep proprietary operations private while recording satisfaction or deviation.
 
 ## Requirements-to-Acceptance Traceability
 
-| Business requirement | Product contract    | User story | Acceptance scenario                                                                        |
-| -------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------ |
-| BR-1                 | PRD-1–PRD-2         | US-2       | A human reads a concise PR description                                                     |
-| BR-2                 | PRD-3               | US-1       | A junior engineer reads a blocking finding                                                 |
-| BR-3                 | PRD-4–PRD-5         | US-3       | A fixer disagrees with a finding                                                           |
-| BR-4                 | PRD-7               | US-3, US-4 | Review converges normally; Review changes strategy in recovery; Review reaches hard stop   |
-| BR-5                 | PRD-4, PRD-13–14    | US-2–US-4  | Review routing is recorded before fan-out; An acceptance check proves it can fail          |
-| BR-6                 | PRD-6               | US-2, US-3 | A review proposes unrelated work                                                           |
-| BR-7                 | PRD-15              | US-4       | New review machinery is proposed                                                           |
-| BR-8                 | PRD-10–PRD-11       | US-4       | A private delivery discharges a public obligation; A second upstream reversal is requested |
-| BR-9                 | PRD-8–PRD-9, PRD-12 | US-4       | A large task spans plans, rules, and code; Related ideas are ready for later retirement    |
-| BR-10                | PRD-8–PRD-11        | US-4       | A large task spans plans, rules, and code; A second upstream reversal is requested         |
+| Business requirement | Product contract    | User story | Acceptance scenario                                                                         |
+| -------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------- |
+| BR-1                 | PRD-1–PRD-2         | US-2       | A human reads a concise PR description                                                      |
+| BR-2                 | PRD-3               | US-1       | A junior engineer reads a blocking finding                                                  |
+| BR-3                 | PRD-4–PRD-5         | US-3       | A fixer decides how to handle a finding                                                     |
+| BR-4                 | PRD-7               | US-3, US-4 | Review converges normally; Review changes strategy in recovery; Review reaches hard stop    |
+| BR-5                 | PRD-4, PRD-13–14    | US-2–US-4  | Review routing is recorded before specialist review; An acceptance check proves it can fail |
+| BR-6                 | PRD-6               | US-2, US-3 | A review proposes unrelated work                                                            |
+| BR-7                 | PRD-15              | US-4       | New review machinery is proposed                                                            |
+| BR-8                 | PRD-10–PRD-11       | US-4       | A private delivery discharges a public obligation; A second upstream reversal is requested  |
+| BR-9                 | PRD-8–PRD-9, PRD-12 | US-4       | A large task spans plans, rules, and code; Related ideas are ready for later retirement     |
+| BR-10                | PRD-1, PRD-8–PRD-11 | US-4       | A large task spans plans, rules, and code; A second upstream reversal is requested          |
 
 ## Acceptance Criteria
 
@@ -110,32 +111,28 @@ Feature: Human-readable pull-request delivery
     When a human reads its description without agent-only context
     Then the reader can find outcome, reason, scope, reading order, evidence, risk, safety, and rollback
     And any Mermaid diagram has equivalent prose
-
-  Scenario: Review routing is recorded before fan-out
+  Scenario: Review routing is recorded before specialist review
     Given the current base, head, diff, checks, and settled review history are known
     When the coordinator prepares the review-route record
     Then the PR names risk, selected and skipped specialists with reasons, evidence, and the changed probe
     And the record is plain-language audit evidence rather than a mechanical classifier
-
   Scenario: A large task spans plans, rules, and code
     Given one plan worktree exists in each affected repository
     When the executor decomposes the delivery
     Then plan, idea, rule, binding, code, and closure concerns use sequential cohesive PRs
     And every dependency merges green before its dependent PR opens
-    And incomplete slices name dormant containment and reverse-DAG rollback order
-
+    And every sequence names its dependency, proof that main stays stable, lightest-fit safety choice, and rollback in reverse dependency order
   Scenario: A junior engineer reads a blocking finding
     Given the reader has coding-bootcamp experience but no university CS background
     When the review is posted
     Then the finding explains evidence, impact, and a bounded remedy in plain language
     And optional teaching is clearly nonblocking
-
-  Scenario: A fixer disagrees with a finding
+  Scenario: A fixer decides how to handle a finding
     Given an unresolved review thread contains a testable claim
-    When the cited evidence does not establish the claim
-    Then the fixer replies in the same thread with a reasoned rejection and evidence
+    When the fixer revalidates the claim and chooses one disposition
+    Then fix links verified evidence and a commit, while rejection cites contrary evidence
+    And deferral links a real follow-up, while clarification stays unresolved until answered
     And the reply ends with `Generated by AI`
-
   Scenario: A review proposes unrelated work
     Given the PR outcome and review scope were frozen at cycle entry
     When a finding proposes work outside the cited defect class
@@ -145,15 +142,13 @@ Feature: Human-readable pull-request delivery
   Scenario: Review converges normally
     Given Cycle 1 began from a complete description and green local checks
     When verified findings are repaired as one coherent batch
-    Then the PR reaches current-head semantic exit in Cycles 1–3
-    And no new outcome enters scope
-
+    Then the PR is merge-ready in Cycles 1–3 with green checks on the current commit and no blocking thread
+    And scope is stable, no unresolved thread remains, and the PR-native audit record is complete
   Scenario: Review changes strategy in recovery
-    Given Cycle 3 missed current-head semantic exit
+    Given Cycle 3 missed the merge-ready conditions
     When Cycle 4 or Cycle 5 begins
-    Then the record names the remaining blocker or defect family and a materially changed bounded probe
+    Then the record names the remaining blocker or defect family and a materially different focused check
     And the frozen outcome and scope remain unchanged
-
   Scenario: Review reaches the hard stop
     Given Cycle 5 still has a merge-blocking finding
     When another cycle would be required
@@ -161,29 +156,26 @@ Feature: Human-readable pull-request delivery
     And no routine human checkpoint was required before the bounded attempt was exhausted
 
   Scenario: A private delivery discharges a public obligation
-    Given a merged public rule change has an exact-pin private obligation
+    Given a merged public rule change has an exact-commit private obligation
     When the private repository applies the named propagation workflow and measures its live destination
-    Then the private PR records semantic discharge or a reasoned deviation without exposing private detail
+    Then the private PR records that the obligation is satisfied or records a reasoned deviation without exposing private detail
     And any byte-identity surface still follows its existing authority
-
+    And an inapplicable obligation records N/A, its reason, artifact owner, and remaining repository action
   Scenario: A second upstream reversal is requested
     Given one public correction already occurred in the current cross-repository wave
     When private review would require another upstream reversal
     Then the agent stops, preserves the PR-native obligation and evidence, and asks a human
     And a private-only defect does not reopen public work
-
   Scenario: Related ideas are ready for later retirement
     Given the planning-only disposition map names every source, outcome, requirement family, and owner
     When ACTIVATE has merged and an idea-only retirement unit begins
     Then PUB-IDEAS or PRIV-IDEAS retires only the mapped sources and updates its own index
     And historical references remain unchanged
-
   Scenario: An acceptance check proves it can fail
     Given an acceptance clause is ready to gate a delivery
     When its tool-capable executor runs the named check against passing and known-failing conditions
     Then the evidence records both expected readings and the artifact location
     And a clause that cannot demonstrate failure does not pass
-
   Scenario: New review machinery is proposed
     Given the existing process failed the same requirement in repeated measured cases
     When mechanical enforcement is proposed
@@ -204,9 +196,9 @@ documented necessity decision and regression evidence.
 - Simplified teaching can become inaccurate; every blocker remains evidence-based and safely
   refutable.
 - A reviewer can hide scope growth inside “completeness”; only the same defect class stays in scope.
-- A fixer can agree blindly or reject defensively; the four-way disposition requires current-head
+- A fixer can agree blindly or reject defensively; the four-way disposition requires current-commit
   evidence either way.
-- A recovery cycle can repeat the same failed lens; Cycles 4–5 must name a changed bounded probe.
+- A recovery cycle can repeat the same failed lens; Cycles 4–5 must name a different focused check.
 - Cross-repo delivery can copy stale or private-only assumptions; use merged pins, live destination
   measurement, and explicit deviation records.
 - A new tool can outlive its benefit; no machinery ships without demonstrated necessity and a named
