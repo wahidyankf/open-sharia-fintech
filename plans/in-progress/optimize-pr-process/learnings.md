@@ -65,5 +65,8 @@
   differed from the raw landed hash despite identical trees. Raw content proofs must use
   `/usr/bin/git diff --binary ... | /usr/bin/shasum -a 256`; human-readable compacted output is not
   fingerprint input.
+- [Repo-grounded] PR #260 converted the 401-line BASE probe into two forecasted successor slices and
+  then dogfooded its own lesson: the reviewed and squash-landed raw patch fingerprints matched. A
+  shared template is not enough unless the first concrete unit also repeats the exact command.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
