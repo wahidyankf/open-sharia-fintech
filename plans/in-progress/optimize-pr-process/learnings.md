@@ -55,5 +55,8 @@
 - [Repo-grounded] The first broad EXECUTION-WAVES draft reached 350 changed lines while still
   missing baseline-repair, correction/amendment, and per-gate pause tasks. Compressing atomic tasks
   would make progress unauditable, so WAVES-ENTRY, WAVES-A, and WAVES-RULES replace the single slice.
+- [Repo-grounded] WAVES-SPLIT Cycle 3 found that correct ownership prose can still coexist with a
+  stale allocation-table cell. Its Cycle 4 recovery swept retired terms before independently
+  conserving every column total, then reached semantic exit without an unnecessary Cycle 5.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
