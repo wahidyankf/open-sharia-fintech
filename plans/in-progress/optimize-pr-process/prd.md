@@ -26,7 +26,7 @@ history; plan executors preserve authority, scope, and stable delivery across bo
 
 ## Functional Requirements
 
-PRD-1–PRD-13 are `[Judgment call]` contracts under the evidence labels in
+PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
 [README.md](./README.md#evidence-labels-and-sources); activation evidence remains `[Unverified]`.
 
 1. PR bodies lead with outcome and why, then scope/non-goals, reading guide, verification, review
@@ -43,8 +43,8 @@ PRD-1–PRD-13 are `[Judgment call]` contracts under the evidence labels in
 6. Scope is frozen at review start. Same-defect completeness is in scope; unrelated improvement is
    filed separately. No review cycle grows the PR’s promised outcome.
 7. Entry readiness, specialist selection, deduplication, one repair batch, and focused rereview
-   should converge in Cycles 1–3. Cycles 4–5 document why recovery is still safe; execution stops
-   before Cycle 6 without a routine earlier human checkpoint.
+   should converge in Cycles 1–3. Cycles 4–5 name the remaining blocker or defect family, use a
+   materially changed bounded probe, preserve frozen scope, and stop before Cycle 6.
 8. Plans own requirements, design, delivery order, validation, knowledge capture, and closure. Repo
    rules own durable norms. Code/tests implement behavior. Each moves through its own bounded PR.
 9. One named worktree per repository lasts for the whole plan. Dependent PRs are sequential and
@@ -63,6 +63,11 @@ PRD-1–PRD-13 are `[Judgment call]` contracts under the evidence labels in
     and why; skipped specialists and why safe; current CI/evidence; prior settled threads and human
     dismissals; and the cycle's changed probe. It is an audit record written in plain language, not
     a mechanical classifier or new tool.
+14. Every acceptance check names its command or observation, expected pass and failure readings,
+    evidence artifact, and an executor with the tool access needed to run it. A clause that cannot
+    demonstrate failure cannot claim execution success.
+15. New mechanical enforcement needs repeated measured failure of the existing process, a named
+    maintenance owner, a reversible design, and evidence that its benefit exceeds its upkeep.
 
 ## Product Scope
 
@@ -83,17 +88,18 @@ public merged pins and keep proprietary operations private while recording disch
 
 ## Requirements-to-Acceptance Traceability
 
-| Requirement   | User story | Acceptance scenario                                     |
-| ------------- | ---------- | ------------------------------------------------------- |
-| PRD-1–PRD-2   | US-2       | A human reads a concise PR description                  |
-| PRD-3         | US-1       | A junior engineer reads a blocking finding              |
-| PRD-4–PRD-5   | US-3       | A fixer disagrees with a finding                        |
-| PRD-6         | US-2, US-3 | A review proposes unrelated work                        |
-| PRD-7         | US-3, US-4 | Review converges normally; Review reaches the hard stop |
-| PRD-8–PRD-9   | US-4       | A large task spans plans, rules, and code               |
-| PRD-10–PRD-11 | US-4       | A private delivery discharges a public obligation       |
-| PRD-12        | US-4       | Related ideas are ready for later retirement            |
-| PRD-13        | US-2, US-3 | Review routing is recorded before fan-out               |
+| Business requirement | Product contract    | User story | Acceptance scenario                                                                        |
+| -------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| BR-1                 | PRD-1–PRD-2         | US-2       | A human reads a concise PR description                                                     |
+| BR-2                 | PRD-3               | US-1       | A junior engineer reads a blocking finding                                                 |
+| BR-3                 | PRD-4–PRD-5         | US-3       | A fixer disagrees with a finding                                                           |
+| BR-4                 | PRD-7               | US-3, US-4 | Review converges normally; Review changes strategy in recovery; Review reaches hard stop   |
+| BR-5                 | PRD-4, PRD-13–14    | US-2–US-4  | Review routing is recorded before fan-out; An acceptance check proves it can fail          |
+| BR-6                 | PRD-6               | US-2, US-3 | A review proposes unrelated work                                                           |
+| BR-7                 | PRD-15              | US-4       | New review machinery is proposed                                                           |
+| BR-8                 | PRD-10–PRD-11       | US-4       | A private delivery discharges a public obligation; A second upstream reversal is requested |
+| BR-9                 | PRD-8–PRD-9, PRD-12 | US-4       | A large task spans plans, rules, and code; Related ideas are ready for later retirement    |
+| BR-10                | PRD-8–PRD-11        | US-4       | A large task spans plans, rules, and code; A second upstream reversal is requested         |
 
 ## Acceptance Criteria
 
@@ -116,6 +122,7 @@ Feature: Human-readable pull-request delivery
     When the executor decomposes the delivery
     Then plan, idea, rule, binding, code, and closure concerns use sequential cohesive PRs
     And every dependency merges green before its dependent PR opens
+    And incomplete slices name dormant containment and reverse-DAG rollback order
 
   Scenario: A junior engineer reads a blocking finding
     Given the reader has coding-bootcamp experience but no university CS background
@@ -141,6 +148,12 @@ Feature: Human-readable pull-request delivery
     Then the PR reaches current-head semantic exit in Cycles 1–3
     And no new outcome enters scope
 
+  Scenario: Review changes strategy in recovery
+    Given Cycle 3 missed current-head semantic exit
+    When Cycle 4 or Cycle 5 begins
+    Then the record names the remaining blocker or defect family and a materially changed bounded probe
+    And the frozen outcome and scope remain unchanged
+
   Scenario: Review reaches the hard stop
     Given Cycle 5 still has a merge-blocking finding
     When another cycle would be required
@@ -153,11 +166,29 @@ Feature: Human-readable pull-request delivery
     Then the private PR records semantic discharge or a reasoned deviation without exposing private detail
     And any byte-identity surface still follows its existing authority
 
+  Scenario: A second upstream reversal is requested
+    Given one public correction already occurred in the current cross-repository wave
+    When private review would require another upstream reversal
+    Then the agent stops, preserves the PR-native obligation and evidence, and asks a human
+    And a private-only defect does not reopen public work
+
   Scenario: Related ideas are ready for later retirement
     Given the planning-only disposition map names every source, outcome, requirement family, and owner
     When ACTIVATE has merged and an idea-only retirement unit begins
     Then PUB-IDEAS or PRIV-IDEAS retires only the mapped sources and updates its own index
     And historical references remain unchanged
+
+  Scenario: An acceptance check proves it can fail
+    Given an acceptance clause is ready to gate a delivery
+    When its tool-capable executor runs the named check against passing and known-failing conditions
+    Then the evidence records both expected readings and the artifact location
+    And a clause that cannot demonstrate failure does not pass
+
+  Scenario: New review machinery is proposed
+    Given the existing process failed the same requirement in repeated measured cases
+    When mechanical enforcement is proposed
+    Then the proposal names evidence, an owner, maintenance cost, and a reversible design
+    And its demonstrated benefit must exceed its upkeep before implementation enters scope
 ```
 
 ## Non-Functional Requirements

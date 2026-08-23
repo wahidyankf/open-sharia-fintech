@@ -13,9 +13,8 @@ unchanged.
 - [Repo-grounded] Private source: `ose-private` commit
   `718c20c923707d777a89639f760f98d53740bd70`. The one brief is 135 lines and 1,381 words; its
   tracked inbound index entry is `plans/ideas/README.md:22`.
-- [Repo-grounded] The private plan worktree has an uncommitted overlay that deletes the brief and
-  adds a consolidation claim to `plans/ideas/README.md`. That overlay is premature, has not landed,
-  remains untouched, and is not retirement evidence until this plan is active.
+- [Repo-grounded] No private retirement has merged. The pinned private source remains authoritative
+  until PRIV-IDEAS records retirement against an activated public plan pin.
 
 ## Public Dispositions
 

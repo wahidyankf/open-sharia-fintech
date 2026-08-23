@@ -51,8 +51,8 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION fixed its assigned defects. REQUIREMENTS now resolves F001, F002, F021, and the source-pin
-half of F033; DESIGN and EXECUTION findings remain dormant and open. ACTIVATE may open only after
+FOUNDATION fixed its assigned defects. REQUIREMENTS now resolves F-001, F-002, F-021, and the source-pin
+half of F-033; DESIGN and EXECUTION findings remain dormant and open. ACTIVATE may open only after
 every mapped finding is fixed readably. A fresh formal gate must then pass its full semantic exit,
 followed by the required grill. Historic audit evidence cannot substitute.
 
