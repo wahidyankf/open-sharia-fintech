@@ -2,12 +2,13 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-PRIVATE-SPLIT active, authoring only); dormant until ACTIVATE.**
+**In Progress (WAVES-ENTRY-PRIVATE-BASE-REPAIR active, authoring only); dormant until ACTIVATE.**
 [Repo-grounded] WAVES-ENTRY-PUBLIC PR
 [#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
 `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. A corrected private-entry probe measured 268 changed
-lines and 165 atomic IDs, above its 230-line forecast ceiling. This slice only records the measured
-split and lifecycle decisions; it executes no private action.
+lines and 165 atomic IDs, above its 230-line forecast ceiling. PR #262 recorded the split and merged
+as `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`. This slice authors private BASE/REPAIR only and leaves
+the private overlay untouched.
 
 ## Outcome
 
