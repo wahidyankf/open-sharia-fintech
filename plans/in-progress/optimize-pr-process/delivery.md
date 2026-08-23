@@ -13,8 +13,10 @@
 
 This foundation is deliberately **dormant and non-executable**. Before ACTIVATE, only a planning
 artifact inside plan documentation may inventory each idea and record its intended integrate/discard
-owner and reason. All idea-brief, index, and routing edits, moves, deletions, and retirements wait for
-PUB-IDEAS or PRIV-IDEAS after ACTIVATE; no rule, agent, binding, workflow, code, or test may change.
+owner and reason. All idea-brief, idea-index, and idea-routing-reference edits, moves, deletions, and
+retirements wait for PUB-IDEAS or PRIV-IDEAS after ACTIVATE. `plans/in-progress/README.md`, the
+active-plan index changed by FOUNDATION, is allowed; no rule, agent, binding, workflow, code, or test
+may change.
 
 ## Sequential Plan Assembly
 
