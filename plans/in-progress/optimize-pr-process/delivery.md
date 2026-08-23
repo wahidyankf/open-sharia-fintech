@@ -298,6 +298,13 @@ than one index line, reviewed `rg` exit other than 1, or unexpected output block
 evidence stays local; its PR records only safe counts, hashes, paths already authorized for disclosure,
 and pass/fail states.
 
+### Entry Command Key
+
+- Guarded detach: `git switch --detach "$(git rev-parse origin/main)"`; require unchanged admitted status and `HEAD == origin/main`.
+- Pre-push: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; require exit 0.
+- Local gates: use the [Phase 2 list](#dormant-phase-2-template--verify-stage-and-commit); record each pass or owner/evidence/reasoned `N/A`.
+- Merge: `gh pr merge --repo <owner/repo> <pr> --squash`; resync with `git fetch origin main` then `git switch --detach <merge-sha>` and prove clean `HEAD == origin/main == <merge-sha>`.
+
 ### PUB-BASE — Public Repository Baseline
 
 - [ ] `[PUB-BASE:P0.01][AI]` Verify ACTIVATE's exact merge pin is an ancestor of public `origin/main`.
@@ -309,14 +316,15 @@ and pass/fail states.
 - [ ] `[PUB-BASE:P0.07][AI]` Run plain `npm run doctor`; retain its exact exit state.
 - [ ] `[PUB-BASE:P0.08][AI]` Run the repository pre-push surface; retain its exact exit state.
 - [ ] `[PUB-BASE:P0.09][AI]` Classify each failure as pre-existing baseline or ordinary-unit scope.
-- [ ] `[PUB-BASE:P0.10][AI]` Authorize only PUB-REPAIR on baseline failure; otherwise record its reasoned `N/A`.
-- [ ] `[PUB-BASE:P0.G][AI]` Pass the no-PR/current-main/status/dependency/doctor/pre-push gate.
+- [ ] `[PUB-BASE:P0.10][AI]` On clean success, authorize PUB-IDEAS and record PUB-REPAIR as reasoned `N/A`.
+- [ ] `[PUB-BASE:P0.11][AI]` On any evidenced failure, close this attempt and authorize only PUB-REPAIR.
+- [ ] `[PUB-BASE:P0.G][AI]` Pass exactly one terminal gate: clean/direct or evidenced-failure/repair.
 - [ ] `[PUB-BASE:P0.P][AI]` Record result, predecessor pin, authorized successor, and recheck command.
 
 ### PUB-REPAIR — Conditional Public Baseline Repair
 
-Open this unit only for a reproduced pre-existing public baseline failure unrelated to PUB-IDEAS.
-Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only inside its own scope.
+Open this unit only for a reproduced public baseline failure. Otherwise record it `N/A` at PUB-BASE;
+repair an ordinary-unit defect only inside that unit's own scope.
 
 - [ ] `[PUB-REPAIR:P1.01][AI]` Name the failed command and retain its complete baseline evidence.
 - [ ] `[PUB-REPAIR:P1.02][AI]` Identify the first bad pin, root-cause owner, and bounded branch slug.
@@ -354,15 +362,18 @@ Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only ins
 - [ ] `[PUB-REPAIR:P3.P][AI]` Record draft URL, current head, and literal body path.
 - [ ] `[PUB-REPAIR:P4.01][AI]` Post the exact-head risk route and selected/skipped review lenses.
 - [ ] `[PUB-REPAIR:P4.02][AI]` Read back the route, frozen scope, changed probe, and AI marker.
-- [ ] `[PUB-REPAIR:P4.03][AI]` Run one bounded review cycle on the exact current head.
+- [ ] `[PUB-REPAIR:P4.03][AI]` Run successive exact-head cycles under the five-cycle boundary.
 - [ ] `[PUB-REPAIR:P4.04][AI]` Record every finding as fix, reject, defer, or clarify with evidence.
 - [ ] `[PUB-REPAIR:P4.05][AI]` Push each bounded fix before claiming it in the native thread.
-- [ ] `[PUB-REPAIR:P4.06][AI]` Reply in the same thread and read back the persisted reply.
-- [ ] `[PUB-REPAIR:P4.07][AI]` Resolve only threads whose terminal evidence is true.
-- [ ] `[PUB-REPAIR:P4.08][AI]` Poll applicable current-head CI exactly every 120 seconds until terminal.
-- [ ] `[PUB-REPAIR:P4.09][AI]` Prove the five readiness preconditions on one current head.
-- [ ] `[PUB-REPAIR:P4.10][AI]` Mark the PR ready only after semantic exit.
-- [ ] `[PUB-REPAIR:P4.11][AI]` Read back ready state, current head, merge state, and green CI.
+- [ ] `[PUB-REPAIR:P4.06][AI]` Invalidate every review and CI result from the superseded head.
+- [ ] `[PUB-REPAIR:P4.07][AI]` Return the repaired head to P4.03 before any thread resolution.
+- [ ] `[PUB-REPAIR:P4.08][AI]` Reply in the original thread with current-head evidence.
+- [ ] `[PUB-REPAIR:P4.09][AI]` Read back the persisted reply and its AI marker.
+- [ ] `[PUB-REPAIR:P4.10][AI]` Resolve only threads whose terminal evidence is true.
+- [ ] `[PUB-REPAIR:P4.11][AI]` Poll applicable current-head CI exactly every 120 seconds until terminal.
+- [ ] `[PUB-REPAIR:P4.12][AI]` Prove the five readiness preconditions on one current head.
+- [ ] `[PUB-REPAIR:P4.13][AI]` Mark the PR ready only after semantic exit.
+- [ ] `[PUB-REPAIR:P4.14][AI]` Read back ready state, current head, merge state, and green CI.
 - [ ] `[PUB-REPAIR:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope readiness gate.
 - [ ] `[PUB-REPAIR:P4.P][AI]` Record reviewed head, cycles, threads, CI, and sibling `N/A`.
 - [ ] `[PUB-REPAIR:P5.01][AI]` Recheck route completion and zero unresolved blocker findings.
@@ -375,10 +386,15 @@ Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only ins
 - [ ] `[PUB-REPAIR:P5.08][AI]` Fetch public `origin/main` after the merge.
 - [ ] `[PUB-REPAIR:P5.09][AI]` Prove fetched `origin/main` equals the merge SHA.
 - [ ] `[PUB-REPAIR:P5.10][AI]` Resync this same worktree to the merge SHA without switching worktrees.
-- [ ] `[PUB-REPAIR:P5.11][AI]` Rerun PUB-BASE on the landed main pin.
-- [ ] `[PUB-REPAIR:P5.12][AI]` Authorize only PUB-IDEAS after the rerun passes.
+- [ ] `[PUB-REPAIR:P5.11][AI]` Record clean status on the resynced landed-main worktree.
+- [ ] `[PUB-REPAIR:P5.12][AI]` Run `npm install` on the landed main pin.
+- [ ] `[PUB-REPAIR:P5.13][AI]` Run plain `npm run doctor` on the landed main pin.
+- [ ] `[PUB-REPAIR:P5.14][AI]` Run the literal pre-push command on the landed main pin.
+- [ ] `[PUB-REPAIR:P5.15][AI]` Classify any second-pass failure and keep PUB-IDEAS frozen.
+- [ ] `[PUB-REPAIR:P5.16][AI]` Pass one recheck outcome: clean/ideas or evidenced-failure/new repair.
+- [ ] `[PUB-REPAIR:P5.17][AI]` Record the recheck evidence and authorize only its named successor.
 - [ ] `[PUB-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/successor gate.
-- [ ] `[PUB-REPAIR:P5.P][AI]` Record merge/main SHA, baseline result, and PUB-IDEAS entry command.
+- [ ] `[PUB-REPAIR:P5.P][AI]` Record merge/main SHA, baseline result, and named-successor command.
 
 ### PUB-IDEAS — Retire the 19 Public Sources
 
@@ -399,13 +415,14 @@ Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only ins
 - [ ] `[PUB-IDEAS:P2.01][AI]` Rerun all reviewed-worktree acceptance commands before staging.
 - [ ] `[PUB-IDEAS:P2.02][AI]` Run Markdown formatting and lint checks.
 - [ ] `[PUB-IDEAS:P2.03][AI]` Run the public pre-push surface.
-- [ ] `[PUB-IDEAS:P2.04][AI]` Calculate and gate actual hand-authored line/file counts.
-- [ ] `[PUB-IDEAS:P2.05][AI]` Stage only the admitted retirement ledger.
-- [ ] `[PUB-IDEAS:P2.06][AI]` Read cached paths and prove staged-ledger equality.
-- [ ] `[PUB-IDEAS:P2.07][AI]` Inspect cached check, statistics, and complete patch.
-- [ ] `[PUB-IDEAS:P2.08][AI]` Commit the cohesive public retirement.
-- [ ] `[PUB-IDEAS:P2.09][AI]` Read the complete committed diff.
-- [ ] `[PUB-IDEAS:P2.10][AI]` Rerun all reviewed-head acceptance commands after commit.
+- [ ] `[PUB-IDEAS:P2.04][AI]` Calculate actual hand-authored line/file counts.
+- [ ] `[PUB-IDEAS:P2.05][AI]` Gate both actual counts against the plan's caps.
+- [ ] `[PUB-IDEAS:P2.06][AI]` Stage only the admitted retirement ledger.
+- [ ] `[PUB-IDEAS:P2.07][AI]` Read cached paths and prove staged-ledger equality.
+- [ ] `[PUB-IDEAS:P2.08][AI]` Inspect cached check, statistics, and complete patch.
+- [ ] `[PUB-IDEAS:P2.09][AI]` Commit the cohesive public retirement.
+- [ ] `[PUB-IDEAS:P2.10][AI]` Read the complete committed diff.
+- [ ] `[PUB-IDEAS:P2.11][AI]` Rerun all reviewed-head acceptance commands after commit.
 - [ ] `[PUB-IDEAS:P2.G][AI]` Pass acceptance/formatting/gates/size/staging/commit gate.
 - [ ] `[PUB-IDEAS:P2.P][AI]` Record local head and clean tree or named intended residue.
 - [ ] `[PUB-IDEAS:P3.01][AI]` Recalculate and gate committed hand-authored counts.
@@ -421,11 +438,16 @@ Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only ins
 - [ ] `[PUB-IDEAS:P4.02][AI]` Read back route, frozen scope, changed probe, and AI marker.
 - [ ] `[PUB-IDEAS:P4.03][AI]` Run bounded current-head review cycles under the Phase 4 template.
 - [ ] `[PUB-IDEAS:P4.04][AI]` Disposition every finding with evidence and no scope widening.
-- [ ] `[PUB-IDEAS:P4.05][AI]` Reply/read/resolve each native thread only at a true terminal state.
-- [ ] `[PUB-IDEAS:P4.06][AI]` Poll applicable current-head CI exactly every 120 seconds.
-- [ ] `[PUB-IDEAS:P4.07][AI]` Prove all five readiness preconditions on the same head.
-- [ ] `[PUB-IDEAS:P4.08][AI]` Mark the PR ready after semantic exit.
-- [ ] `[PUB-IDEAS:P4.09][AI]` Read back ready state, head, merge state, and green CI.
+- [ ] `[PUB-IDEAS:P4.05][AI]` Push each bounded fix before claiming it in the native thread.
+- [ ] `[PUB-IDEAS:P4.06][AI]` Invalidate every review and CI result from the superseded head.
+- [ ] `[PUB-IDEAS:P4.07][AI]` Return the repaired head to P4.03 before any thread resolution.
+- [ ] `[PUB-IDEAS:P4.08][AI]` Reply in the original thread with current-head evidence.
+- [ ] `[PUB-IDEAS:P4.09][AI]` Read back the persisted reply and its AI marker.
+- [ ] `[PUB-IDEAS:P4.10][AI]` Resolve only threads whose terminal evidence is true.
+- [ ] `[PUB-IDEAS:P4.11][AI]` Poll applicable current-head CI exactly every 120 seconds.
+- [ ] `[PUB-IDEAS:P4.12][AI]` Prove all five readiness preconditions on the same head.
+- [ ] `[PUB-IDEAS:P4.13][AI]` Mark the PR ready after semantic exit.
+- [ ] `[PUB-IDEAS:P4.14][AI]` Read back ready state, head, merge state, and green CI.
 - [ ] `[PUB-IDEAS:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope gate.
 - [ ] `[PUB-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and pending private obligation.
 - [ ] `[PUB-IDEAS:P5.01][AI]` Recheck route, findings, base, head, ready state, and green CI.
@@ -436,9 +458,10 @@ Otherwise record the unit `N/A` at PUB-BASE and repair an ordinary unit only ins
 - [ ] `[PUB-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
 - [ ] `[PUB-IDEAS:P5.07][AI]` Publish the pending private obligation from a literal payload.
 - [ ] `[PUB-IDEAS:P5.08][AI]` Read back its public pin, expected private paths, owner, and marker.
-- [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` and prove it equals the merge SHA.
-- [ ] `[PUB-IDEAS:P5.10][AI]` Resync this same public worktree to the merge SHA.
-- [ ] `[PUB-IDEAS:P5.11][AI]` Authorize only PRIV-BASE in the quarantined private worktree.
+- [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` after the merge.
+- [ ] `[PUB-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge SHA.
+- [ ] `[PUB-IDEAS:P5.11][AI]` Resync this same public worktree to the merge SHA.
+- [ ] `[PUB-IDEAS:P5.12][AI]` Authorize only PRIV-BASE in the quarantined private worktree.
 - [ ] `[PUB-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/obligation/resync/sibling gate.
 - [ ] `[PUB-IDEAS:P5.P][AI]` Record merge/main SHA, obligation state, and PRIV-BASE entry command.
 
