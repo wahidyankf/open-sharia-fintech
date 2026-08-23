@@ -292,31 +292,13 @@ means preserve the landed state unless its separately named owner later changes 
 ## Bounded Activation Equivalence Audit
 
 This audit replaces only this plan's redundant iterative run; it neither weakens the pinned catalog
-nor changes the durable workflow. Each ACTIVATE matrix row independently records direct evidence,
-reasoned `N/A`, or uncovered; an evidenced neighbour never completes an uncovered row.
+nor changes the durable workflow. At the recorded pin, the ACTIVATE matrix has exactly one independent
+row for every numbered rule, bullet, sub-bullet, and conditional check in both catalog documents: no
+grouping or inherited evidence. Each row is direct evidence, reasoned `N/A`, or uncovered; it explicitly
+includes Codebase Alignment, and an inapplicable conditional gets reasoned `N/A`, never omission.
 
-| Pinned catalog item                                           | Required independent ACTIVATE-record disposition |
-| ------------------------------------------------------------- | ------------------------------------------------ |
-| Completeness                                                  | Direct evidence, reasoned `N/A`, or uncovered    |
-| Technical Accuracy                                            | Direct evidence, reasoned `N/A`, or uncovered    |
-| Anti-Hallucination Scan                                       | Direct evidence, reasoned `N/A`, or uncovered    |
-| Harness-Neutrality Scan                                       | Direct evidence, reasoned `N/A`, or uncovered    |
-| Worktree Specification                                        | Direct evidence, reasoned `N/A`, or uncovered    |
-| Execution-Grade Clarity                                       | Direct evidence, reasoned `N/A`, or uncovered    |
-| Implementation Readiness                                      | Direct evidence, reasoned `N/A`, or uncovered    |
-| Codebase Alignment                                            | Direct evidence, reasoned `N/A`, or uncovered    |
-| Clarity                                                       | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness                                         | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — local quality gates                   | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — post-push CI verification             | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — development-environment setup         | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — fix-all-issues instruction            | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — thematic Conventional Commit guidance | Direct evidence, reasoned `N/A`, or uncovered    |
-| Operational Readiness — manual behavioral assertions          | Direct evidence, reasoned `N/A`, or uncovered    |
-| Knowledge Capture presence                                    | Direct evidence, reasoned `N/A`, or uncovered    |
-
-- [ ] `[ACTIVATE:A0.01][AI]` Read the current plan-quality-gate workflow and both plan-quality catalog documents; record their exact public `origin/main` pin in the ACTIVATE PR body and copy every matrix row above without grouping or omission.
-- [ ] `[ACTIVATE:A0.02][AI]` For each copied matrix row, link the exact PR review, native thread, merged pin, or current-head check that directly proves it; otherwise record a reasoned `N/A` or mark that single row uncovered.
+- [ ] `[ACTIVATE:A0.01][AI]` Read the current plan-quality-gate workflow and both plan-quality catalog documents; record their exact public `origin/main` pin in the ACTIVATE PR body and enumerate one matrix row for every numbered rule, bullet, sub-bullet, and conditional check without grouping or omission.
+- [ ] `[ACTIVATE:A0.02][AI]` For each matrix row, link the exact PR review, native thread, merged pin, or current-head check that directly proves it; otherwise record a reasoned `N/A` or mark that single row uncovered.
 - [ ] `[ACTIVATE:A0.03][AI]` Read all five plan documents against only uncovered rows; record every blocker with its matrix row and file/line evidence, then record the total blocker count and whether each blocker is proven unique, without starting a double-zero or general re-review loop.
 - [ ] `[ACTIVATE:A0.04][AI]` Apply exactly one cardinality transition: zero blockers authorizes ACTIVATE; exactly one proven unique blocker freezes execution and may open the sole bounded `PLAN-AMENDMENT`; multiple blockers or uncertain uniqueness freezes execution and stops for human judgment.
 - [ ] `[ACTIVATE:A0.04a][AI]` After the sole PLAN-AMENDMENT merges, record its exact merge pin, mark only matrix rows affected by that amendment uncovered, and re-evaluate each affected row once at that pin; any remaining blocker freezes execution and stops for human judgment, without a second amendment or general loop.

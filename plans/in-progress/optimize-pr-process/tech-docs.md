@@ -216,10 +216,10 @@ independently observable behavior. Rollback never depends on unpublished local s
 
 ## Validation
 
-Before ACTIVATE, the bounded audit in `delivery.md` gives every pinned catalog bullet/sub-bullet its
-own evidence, reasoned-`N/A`, or uncovered disposition, including Implementation Readiness, Codebase
-Alignment, Clarity, Operational Readiness' six subchecks, and Knowledge Capture. Only uncovered rows
-read the five plan documents; no double-zero loop runs.
+Before ACTIVATE, the bounded audit in `delivery.md` gives every pinned numbered rule, bullet,
+sub-bullet, and conditional check its own evidence, reasoned-`N/A`, or uncovered disposition,
+including Codebase Alignment. Only uncovered rows read the five plan documents; no double-zero loop
+runs.
 
 It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
 sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After
