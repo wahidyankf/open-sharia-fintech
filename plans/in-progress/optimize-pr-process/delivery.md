@@ -881,11 +881,11 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[PUB-C:P1.02][AI]` Prove whether existing prose, GitHub comments/replies, current gates, and the admitted rules can or cannot close that exact gap.
 - [ ] `[PUB-C:P1.03][AI]` Record `N/A` and continue to closure when no narrow, repeatable gap remains; do not create tooling merely to make the process look enforced.
 - [ ] `[PUB-C:P1.04][AI]` If a gap remains, write a bounded necessity case: affected readers, exact failure, expected benefit, maintenance cost, alternatives rejected, public/private impact, rollback, and why the lightest non-tooling option fails.
-- [ ] `[PUB-C:P1.05][AI]` Freeze all optional-C implementation until the necessity case receives the plan's required approval; a plan amendment, not a hidden rule-wave edit, changes the approved scope.
+- [ ] `[PUB-C:P1.05][AI+HUMAN]` Freeze all optional-C implementation until a human approves the necessity case in its native GitHub thread; only then may a PLAN-AMENDMENT change the approved scope.
 - [ ] `[PUB-C:P1.G][AI]` Pass the evidence-first, no-mechanism-by-default, scope, pair-state, and `N/A`-or-approved-case gate.
-- [ ] `[PUB-C:P1.P][AI]` Record either the no-change decision with PRIV-C `N/A`, or the approved public-C successor and paired private obligation.
+- [ ] `[PUB-C:P1.P][AI]` Record either the no-change decision with PRIV-C `N/A`, or the human-approved public-C successor and paired private obligation.
 - [ ] `[PRIV-C:P1.01][AI]` On public C `N/A`, record private C `N/A` from the immutable PUB-C decision without opening a needless private PR.
-- [ ] `[PRIV-C:P1.02][AI]` On approved public C, inspect the immutable public mechanism obligation and preserve the authorized private overlay before adaptation.
+- [ ] `[PRIV-C:P1.02][AI]` On human-approved public C, inspect the immutable public mechanism obligation and preserve the authorized private overlay before adaptation.
 - [ ] `[PRIV-C:P1.03][AI]` Apply only the approved semantic counterpart, or record a reasoned private deviation with evidence, owner, and disclosure-safe rationale.
 - [ ] `[PRIV-C:P1.04][AI]` Run the same propagation, binding, native-review, current-head-CI, landed-proof, and resync states separately if a private C PR is necessary.
 - [ ] `[PRIV-C:P1.G][AI]` Pass private semantic-correspondence, overlay, disclosure, necessity, and terminal-obligation gate.
