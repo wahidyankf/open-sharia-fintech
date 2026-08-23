@@ -17,11 +17,13 @@
 | [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`     |
 | [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`         |
 | [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`  |
-| [Repo-grounded] EXECUTION-CLOSURE                                                   | #267 merged; author terminal audit and cleanup checklist     |
+| [Repo-grounded] Merged PRs #263–#268                                                | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`       |
+| [Repo-grounded] Merged PRs #269–#271                                                | Nine mapped public ideas retired before activation           |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate still precedes explicit activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** EXECUTION-CLOSURE changes plan docs only; it runs no
-> gate, private-worktree action, idea retirement, or implementation.
+> **RECONCILIATION FREEZE:** PRs #269–#271 are non-authorizing data points. Do not retire another
+> idea, touch the private worktree, or begin a rule/code wave until a plan-only reconciliation,
+> fresh formal gate, and explicit ACTIVATE pin have merged.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -99,7 +101,8 @@ FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → FORECAST (#253) 
 CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT →
 WAVES-ENTRY-BASE-SPLIT → WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT →
 WAVES-ENTRY-PRIVATE-BASE-REPAIR → WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS →
-WAVES-A → WAVES-RULES → EXECUTION-CLOSURE → ACTIVATE/formal-gate → PUB-IDEAS → PRIV-IDEAS →
+WAVES-A → WAVES-RULES → EXECUTION-CLOSURE → non-authorizing PUB-IDEAS-1–3 data points →
+RECONCILE → ACTIVATE/formal-gate → PUB-IDEAS-4–8 → terminal public proof → PRIV-IDEAS →
 implementation waves
 ```
 
@@ -216,27 +219,27 @@ the narrow frozen-PR exception used during one public correction.
 Every unit repeats Phases 1–5 below. `PUB-WT` and `PRIV-WT` mean the declared worktrees;
 The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
 
-| Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                 | Stable result             |
-| -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------- | ------------------------- |
-| 0        | PUB-BASE    | public/PUB-WT   | `—`                                                  | no delivery    | no      | ACTIVATE                    | public baseline recorded  |
-| 1–5?     | PUB-REPAIR  | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`  | worktree-to-pr | Phase 3 | ACTIVATE                    | public baseline repaired  |
-| 1–5      | PUB-IDEAS   | public/PUB-WT   | `optimize-pr-process-pub-ideas`                      | worktree-to-pr | Phase 3 | PUB-REPAIR? else ACTIVATE   | public ideas retired      |
-| 0        | PRIV-BASE   | private/PRIV-WT | `—`                                                  | no delivery    | no      | PUB-IDEAS                   | overlay-safe baseline     |
-| 1–5?     | PRIV-REPAIR | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>` | worktree-to-pr | Phase 3 | PUB-IDEAS                   | private baseline repaired |
-| 1–5      | PRIV-IDEAS  | private/PRIV-WT | `optimize-pr-process-priv-ideas`                     | worktree-to-pr | Phase 3 | PRIV-REPAIR? else PUB-IDEAS | private ideas retired     |
-| 1–5      | PUB-A1      | public/PUB-WT   | `optimize-pr-process-pub-a1`                         | worktree-to-pr | Phase 3 | PRIV-IDEAS                  | plan rules coherent       |
-| 1–5      | PRIV-A1     | private/PRIV-WT | `optimize-pr-process-priv-a1`                        | worktree-to-pr | Phase 3 | PUB-A1                      | private A1 adapted        |
-| 1–5      | PUB-A2      | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                     | review routing coherent   |
-| 1–5      | PRIV-A2     | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                      | private A2 adapted        |
-| 1–5      | PUB-A3      | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                     | PR/reply rules coherent   |
-| 1–5      | PRIV-A3     | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PUB-A3                      | private A3 adapted        |
-| 1–5      | PUB-B       | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3                     | legacy conflict removed   |
-| 1–5      | PRIV-B      | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                       | private conflict removed  |
-| 1–5      | PUB-C?      | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                      | necessity-gated mechanism |
-| 1–5      | PRIV-C?     | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                       | private C adapted         |
-| 1–5?     | PUB-CORR?   | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin       | replacement public pin    |
-| 1–5?     | PLAN-AMEND? | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin    | amended plan pin          |
-| 1–6      | CLOSURE     | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 6 | last unit                   | plan archived and focused |
+| Phase(s) | Unit          | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                      | Stable result             |
+| -------- | ------------- | --------------- | ---------------------------------------------------- | -------------- | ------- | -------------------------------- | ------------------------- |
+| 0        | PUB-BASE      | public/PUB-WT   | `—`                                                  | no delivery    | no      | ACTIVATE                         | public baseline recorded  |
+| 1–5?     | PUB-REPAIR    | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`  | worktree-to-pr | Phase 3 | ACTIVATE                         | public baseline repaired  |
+| 1–5      | PUB-IDEAS-4–8 | public/PUB-WT   | `optimize-pr-process-pub-ideas-<family>`             | worktree-to-pr | Phase 3 | ACTIVATE, then prior subdelivery | remaining ideas retired   |
+| 0        | PRIV-BASE     | private/PRIV-WT | `—`                                                  | no delivery    | no      | terminal PUB-IDEAS proof         | overlay-safe baseline     |
+| 1–5?     | PRIV-REPAIR   | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>` | worktree-to-pr | Phase 3 | terminal PUB-IDEAS proof         | private baseline repaired |
+| 1–5      | PRIV-IDEAS    | private/PRIV-WT | `optimize-pr-process-priv-ideas`                     | worktree-to-pr | Phase 3 | PRIV-REPAIR? else terminal proof | private ideas retired     |
+| 1–5      | PUB-A1        | public/PUB-WT   | `optimize-pr-process-pub-a1`                         | worktree-to-pr | Phase 3 | PRIV-IDEAS                       | plan rules coherent       |
+| 1–5      | PRIV-A1       | private/PRIV-WT | `optimize-pr-process-priv-a1`                        | worktree-to-pr | Phase 3 | PUB-A1                           | private A1 adapted        |
+| 1–5      | PUB-A2        | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                          | review routing coherent   |
+| 1–5      | PRIV-A2       | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                           | private A2 adapted        |
+| 1–5      | PUB-A3        | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                          | PR/reply rules coherent   |
+| 1–5      | PRIV-A3       | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PUB-A3                           | private A3 adapted        |
+| 1–5      | PUB-B         | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3                          | legacy conflict removed   |
+| 1–5      | PRIV-B        | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                            | private conflict removed  |
+| 1–5      | PUB-C?        | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                           | necessity-gated mechanism |
+| 1–5      | PRIV-C?       | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                            | private C adapted         |
+| 1–5?     | PUB-CORR?     | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin            | replacement public pin    |
+| 1–5?     | PLAN-AMEND?   | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin         | amended plan pin          |
+| 1–6      | CLOSURE       | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 6 | last unit                        | plan archived and focused |
 
 Repair rows activate only after their baseline fails; each runs Phases 1–5, merges, and reruns that
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
@@ -257,16 +260,15 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through WAVES-RULES are merged; EXECUTION-CLOSURE is active. ACTIVATE
-may open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
-instantiate every delivery unit as granular, attributable checkboxes and every finding is fixed. A
-fresh formal gate must then pass; historic evidence cannot substitute.
+FOUNDATION through EXECUTION-CLOSURE are merged. PRs #269–#271 then retired nine mapped ideas
+without the required ACTIVATE pin. They authorize no successor. ACTIVATE may open only after this
+reconciliation records their exact effect, freezes the remaining work, and the fresh formal gate
+passes; historic evidence cannot substitute.
 
 ## Dormant Execution-Wave Public Entry Checklist
 
-Every checkbox is inert until ACTIVATE; this PR runs no baseline, idea, private-overlay, rule, or
-implementation work. After activation, copy only the active unit's IDs into the live task list 1:1;
-this Markdown remains durable evidence, and only one unit may be active.
+Every remaining checkbox is inert until ACTIVATE. After activation, copy only the active unit's IDs
+into the live task list 1:1; this Markdown remains durable evidence, and only one unit may be active.
 
 ### Continuing Evidence Rules
 
@@ -410,20 +412,43 @@ repair an ordinary-unit defect only inside that unit's own scope.
 - [ ] `[PUB-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/successor gate.
 - [ ] `[PUB-REPAIR:P5.P][AI]` Record merge/main SHA, baseline result, and named-successor command.
 
-### PUB-IDEAS — Retire the 19 Public Sources
+### PUB-IDEAS — Retire Public Sources in Human-Sized Subdeliveries
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` Verify a clean proof names PUB-IDEAS as successor; record its exact pin.
+The single 19-brief forecast was invalid: it exceeded the 400-line ceiling and the first three
+subdeliveries landed before ACTIVATE. Preserve them as evidence and do not retroactively claim they
+followed the activation gate. The remaining five units start only after ACTIVATE and instantiate
+the checklist below by replacing `PUB-IDEAS` with their exact unit ID and mapped subset.
+
+| Unit                  | State                    | Exact mapped paths                                                                                                                                                                                                                                                                                                  |
+| --------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUB-IDEAS-1 / PR #269 | merged, non-authorizing  | `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`; `plans/ideas/q1-urgent-important/plan-decision-integrity-hardening.md`                                                                                                                                                                              |
+| PUB-IDEAS-2 / PR #270 | merged, non-authorizing  | `plans/ideas/q2-not-urgent-important/plan-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/repo-rules-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`                                                                                   |
+| PUB-IDEAS-3 / PR #271 | merged, non-authorizing  | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`; `plans/ideas/q2-not-urgent-important/governance-path-ownership-registry.md`; `plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md`; `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md` |
+| PUB-IDEAS-4           | frozen until ACTIVATE    | `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md`; `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                                                                                                                                                              |
+| PUB-IDEAS-5           | frozen until PUB-IDEAS-4 | `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`; `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`                                                                                                                                                                        |
+| PUB-IDEAS-6           | frozen until PUB-IDEAS-5 | `plans/ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md`; `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`                                                                                                                                                        |
+| PUB-IDEAS-7           | frozen until PUB-IDEAS-6 | `plans/ideas/q2-not-urgent-important/cross-repo-governance-link-parity.md`; `plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`                                                                                                                                                             |
+| PUB-IDEAS-8           | frozen until PUB-IDEAS-7 | `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`; `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`                                                                                                                                                          |
+
+The mapped source path, not the shortened table label, is authoritative. Re-read the disposition
+map before each unit. PUB-IDEAS-4–7 resync and authorize only the next named public subdelivery;
+only PUB-IDEAS-8 may publish the private obligation and authorize PRIV-BASE.
+At public `origin/main` `7e111df8d821e0e147e0009f6bd66c13e7499614`, their brief-only deletion forecasts are respectively 283, 293,
+320, 227, and 237 lines. Each Phase 1 remeasures index and live-backlink repairs and splits again
+before editing if the complete forecast would cross 400 changed hand-authored lines or 20 files.
+
+- [ ] `[PUB-IDEAS:P1.01][AI]` Verify ACTIVATE or the prior subdelivery names the active PUB-IDEAS unit as successor; record its exact pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
 - [ ] `[PUB-IDEAS:P1.03][AI]` Prove fetched `origin/main` equals the predecessor pin.
-- [ ] `[PUB-IDEAS:P1.04][AI]` Enter `optimize-pr-process-pub-ideas` from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the exact 19-brief plus public-index path ledger.
+- [ ] `[PUB-IDEAS:P1.04][AI]` Enter the table's declared `optimize-pr-process-pub-ideas-<family>` branch from the exact main pin.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief plus public-index path ledger.
 - [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
 - [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
-- [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate all 19 dispositions against the activated plan pin.
-- [ ] `[PUB-IDEAS:P1.09][AI]` Run literal predecessor acceptance for every mapped public row.
-- [ ] `[PUB-IDEAS:P1.10][AI]` Delete only the 19 mapped public briefs.
+- [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
+- [ ] `[PUB-IDEAS:P1.09][AI]` Run literal predecessor acceptance for every row in the active subset.
+- [ ] `[PUB-IDEAS:P1.10][AI]` Delete only the active subset's mapped public briefs.
 - [ ] `[PUB-IDEAS:P1.11][AI]` Remove only their exact links from `plans/ideas/README.md`.
-- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every mapped public row.
+- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every row in the active subset.
 - [ ] `[PUB-IDEAS:P1.13][AI]` Reconcile `git status` exactly to the retirement ledger.
 - [ ] `[PUB-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/disposition/acceptance gate.
 - [ ] `[PUB-IDEAS:P1.P][AI]` Record branch, head, ledger, dirty state, and negative-read commands.
@@ -443,10 +468,10 @@ repair an ordinary-unit defect only inside that unit's own scope.
 - [ ] `[PUB-IDEAS:P3.01][AI]` Recalculate committed hand-authored counts.
 - [ ] `[PUB-IDEAS:P3.02][AI]` Gate committed counts against the plan's caps.
 - [ ] `[PUB-IDEAS:P3.03][AI]` Rerun the public pre-push surface on the committed head.
-- [ ] `[PUB-IDEAS:P3.04][AI]` Push only `optimize-pr-process-pub-ideas`.
+- [ ] `[PUB-IDEAS:P3.04][AI]` Push only the active subdelivery's declared branch.
 - [ ] `[PUB-IDEAS:P3.05][AI]` Read back the remote branch head and prove it equals local `HEAD`.
 - [ ] `[PUB-IDEAS:P3.06][AI]` Rerun all reviewed-head acceptance commands after push.
-- [ ] `[PUB-IDEAS:P3.07][AI]` Open one draft human-readable PR from a literal AI-marked body.
+- [ ] `[PUB-IDEAS:P3.07][AI]` Open one draft human-readable PR for this subdelivery from a literal AI-marked body.
 - [ ] `[PUB-IDEAS:P3.08][AI]` Read back base, head, draft state, body, marker, and statistics.
 - [ ] `[PUB-IDEAS:P3.G][AI]` Pass push/remote-head/acceptance/body/readback gate.
 - [ ] `[PUB-IDEAS:P3.P][AI]` Record draft URL, current head, and literal body path.
@@ -465,21 +490,21 @@ repair an ordinary-unit defect only inside that unit's own scope.
 - [ ] `[PUB-IDEAS:P4.13][AI]` Mark the PR ready after semantic exit.
 - [ ] `[PUB-IDEAS:P4.14][AI]` Read back ready state, head, merge state, and green CI.
 - [ ] `[PUB-IDEAS:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope gate.
-- [ ] `[PUB-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and pending private obligation.
+- [ ] `[PUB-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and the still-frozen successor state.
 - [ ] `[PUB-IDEAS:P5.01][AI]` Recheck route, findings, base, head, ready state, and green CI.
 - [ ] `[PUB-IDEAS:P5.02][AI]` Run `/usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256`.
 - [ ] `[PUB-IDEAS:P5.03][AI]` Squash-merge by repository-qualified GitHub API.
 - [ ] `[PUB-IDEAS:P5.04][AI]` Read back merge SHA and landed path ledger.
 - [ ] `[PUB-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
 - [ ] `[PUB-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PUB-IDEAS:P5.07][AI]` Publish the pending private obligation from a literal payload.
-- [ ] `[PUB-IDEAS:P5.08][AI]` Read back its public pin, expected private paths, owner, and marker.
+- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-4–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
+- [ ] `[PUB-IDEAS:P5.08][AI]` Read back the exact successor, pin, owner, and marker; on PUB-IDEAS-8 also read expected private paths.
 - [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` after the merge.
 - [ ] `[PUB-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge SHA.
 - [ ] `[PUB-IDEAS:P5.11][AI]` Resync this same public worktree to the merge SHA.
-- [ ] `[PUB-IDEAS:P5.12][AI]` Authorize only PRIV-BASE in the quarantined private worktree.
-- [ ] `[PUB-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/obligation/resync/sibling gate.
-- [ ] `[PUB-IDEAS:P5.P][AI]` Record merge/main SHA, obligation state, and PRIV-BASE entry command.
+- [ ] `[PUB-IDEAS:P5.12][AI]` Authorize only the next named public subdelivery, or PRIV-BASE after PUB-IDEAS-8 terminal proof.
+- [ ] `[PUB-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/resync/exact-successor gate.
+- [ ] `[PUB-IDEAS:P5.P][AI]` Record merge/main SHA, successor state, and the next public or PRIV-BASE entry command.
 
 ### WAVES-ENTRY-PUBLIC Finding State
 
@@ -698,8 +723,10 @@ and close the ENTRY gate.
 
 One native obligation is the public record for one active public/private pair. Before public merge,
 its public PR carries a **prepared** note with the reviewed head, rule class, expected private paths,
-safe public summary, owner, and `correction-count: 0`; after merge it becomes **pending-private** by
-adding the immutable merge SHA and private entry command. It never copies private patch content.
+safe public summary, owner, stable `defect-lineage-id`, and `correction-count: 0`; after merge it
+becomes **pending-private** by adding the immutable merge SHA and private entry command. It never
+copies private patch content. Supersession, relabeling, or late discovery of the same root cause
+retains both the lineage ID and its correction count.
 
 | Event                          | Required pair state                   | What remains frozen                  | Terminal evidence                    |
 | ------------------------------ | ------------------------------------- | ------------------------------------ | ------------------------------------ |
@@ -707,9 +734,9 @@ adding the immutable merge SHA and private entry command. It never copies privat
 | Compatible public follow-up    | pending-private                       | no private churn                     | public note and unchanged obligation |
 | Portable/plan defect           | correction-pending                    | paused private PR and all successors | replacement public/amendment pin     |
 | Second reversal                | human-stop                            | pair and successors                  | human-readable escalation            |
-| Completed pair, late defect    | sealed                                | completed pair stays closed          | new linked repair pair               |
+| Completed pair, late defect    | sealed                                | completed pair stays closed          | linked repair retaining lineage      |
 
-- [ ] `[ENTRY-ADAPTERS:A1.01][AI]` Record one prepared native obligation before the public merge with reviewed head, class, expected private paths, safe summary, owner, successor, and `correction-count: 0`.
+- [ ] `[ENTRY-ADAPTERS:A1.01][AI]` Record one prepared native obligation before the public merge with reviewed head, class, stable defect-lineage ID, expected private paths, safe summary, owner, successor, and `correction-count: 0`.
 - [ ] `[ENTRY-ADAPTERS:A1.02][AI]` After merge, update that same note to pending-private with immutable merge SHA, landed fingerprint, and literal private entry command.
 - [ ] `[ENTRY-ADAPTERS:A1.03][AI]` Prove only one public/private pair is active and freeze every later pair before private work starts.
 - [ ] `[ENTRY-ADAPTERS:A1.04][AI]` On unrelated private-main advance, inspect the full base delta, record the new private pin, rerun affected checks, and keep the obligation pending-private.
@@ -718,12 +745,12 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[ENTRY-ADAPTERS:A1.07][AI]` For a portable or plan defect, freeze the paused private PR's push, review, readiness, merge, and successors; record its exact head and cited defect boundary.
 - [ ] `[ENTRY-ADAPTERS:A1.08][AI]` Permit exactly one unstacked public correction or plan amendment, scoped only to the cited portable or plan defect.
 - [ ] `[ENTRY-ADAPTERS:A1.09][AI]` Keep the originating private review thread unresolved; reply there with the replacement pin, frozen state, and resumption condition.
-- [ ] `[ENTRY-ADAPTERS:A1.10][AI]` Supersede the old obligation in its original native note; create no second obligation for the same pair.
+- [ ] `[ENTRY-ADAPTERS:A1.10][AI]` Supersede the old obligation in its original native note; preserve its lineage ID and correction count, and create no second obligation for the same pair.
 - [ ] `[ENTRY-ADAPTERS:A1.11][AI]` Treat the correction PR as its own bounded review, while the resumed private PR retains—not resets—its existing Cycle 1–5 count.
 - [ ] `[ENTRY-ADAPTERS:A1.12][AI]` Stop before a second public reversal, leave a human-readable escalation, and preserve the frozen pair and original thread.
 - [ ] `[ENTRY-ADAPTERS:A1.13][AI]` Resume only after the named replacement pin is merged, inspected, and recorded in the original obligation and private thread.
 - [ ] `[ENTRY-ADAPTERS:A1.14][AI]` Close a pair only with a terminal `satisfied`, `reasoned-deviation`, or `N/A` state, exact public/private pins, and evidence links.
-- [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; file any later defect as a new linked repair pair without reopening the sealed pair.
+- [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; a later defect opens a linked repair pair without reopening the sealed pair, but the same root cause retains its lineage ID and cannot reset the correction budget.
 - [ ] `[ENTRY-ADAPTERS:A1.16][AI]` Use only disclosure-safe public summaries and links; retain private task evidence solely in the private PR artifact.
 - [ ] `[ENTRY-ADAPTERS:A1.17][AI]` For this public control plan, record the explicit override of the legacy per-repo/three-grill composite: one control plan, formal plan-quality gate, and no separate post-plan grill.
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
@@ -1117,20 +1144,23 @@ One draft PR exists at the declared boundary and its human entry point matches t
 ### Cross-Repository Correction Firewall
 
 Only one public/private pair is active; every later unit is frozen. Before a public wave merges, its
-PR records a pending sibling obligation with wave, public URL, reviewed head, rule class, expected
-private paths, byte-identity class, `correction-count: 0`, successor, and one accountable owner.
+PR records a pending sibling obligation with wave, public URL, reviewed head, rule class, stable
+defect-lineage ID, expected private paths, byte-identity class, `correction-count: 0`, successor,
+and one accountable owner.
 
 Private review classifies each concern as local adaptation, private deviation, unrelated follow-up,
 or portable defect, using the glossary above. Only the last may request upstream correction, citing
 the public line, private evidence, and why local adaptation would be wrong. Freeze the private PR:
 it may remain open, but receives no push, review cycle, readiness transition, or merge.
 
-At most one fresh, unstacked `optimize-pr-process-pub-<wave>-correction-1` PR may merge. Its native
-record links both public pins/heads and the paused private PR/head, supersedes the old obligation,
-and changes `correction-count: 0 → 1`; private review restarts from the correction pin. A second
-portable-source reversal stops before another correction and asks a human. Downstream remains
-frozen until the obligation is `satisfied`, `reasoned-deviation`, or `N/A`. “In sync” means semantic
-correspondence with explicit deviations; byte identity applies only to an existing contract.
+At most one fresh, unstacked `optimize-pr-process-pub-<wave>-correction-1` PR may merge per defect
+lineage. Its native record links both public pins/heads and the paused private PR/head, supersedes the
+old obligation, preserves the lineage ID, and changes `correction-count: 0 → 1`; private review
+restarts from the correction pin. Relabeling, a late finding, or a new repair-pair URL does not reset
+that count when the root cause is the same. A second portable-source reversal in the lineage stops
+before another correction and asks a human. Downstream remains frozen until the obligation is
+`satisfied`, `reasoned-deviation`, or `N/A`. “In sync” means semantic correspondence with explicit
+deviations; byte identity applies only to an existing contract.
 
 ### Phase 4 Gate
 
@@ -1198,7 +1228,7 @@ is resynced, and the sibling obligation has one owner, state, and immutable pin.
 
 ## Cross-Repository Order (Dormant)
 
-After activation, PUB-IDEAS merges before PRIV-IDEAS. Later implementation remains sequential:
+After activation, PUB-IDEAS-4–8 merge sequentially before PRIV-IDEAS. Later implementation remains sequential:
 `PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? →
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.

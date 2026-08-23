@@ -50,7 +50,8 @@ PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
 9. One named worktree per repository lasts for the whole plan. Dependent PRs are sequential and
    unstacked; each starts from current `origin/main` after the previous dependency merges.
 10. A portable public change opens a private obligation pinned to its PR, merge SHA, and reviewed
-    commit. One upstream correction is allowed per wave; a second stops the back-and-forth.
+    commit. One stable defect-lineage ID follows the root cause across superseded and late repair
+    pairs. One upstream correction is allowed per lineage; a second stops the back-and-forth.
     Private-only defects never trigger public churn. N/A records reason, artifact owner, and remaining
     repository action. A superseded obligation links its replacement or terminal decision.
 11. Private-only defects and deliberate deviations stay private. In contrast,
@@ -160,14 +161,14 @@ Feature: Human-readable pull-request delivery
     And any byte-identity surface still follows its existing authority
     And an inapplicable obligation records N/A, its reason, artifact owner, and remaining repository action
   Scenario: A second upstream reversal is requested
-    Given one public correction already occurred in the current cross-repository wave
+    Given one public correction already occurred for the current defect lineage
     When private review would require another upstream reversal
     Then the agent stops, asks a human, and links the replacement or terminal decision
     And a private-only defect does not reopen public work
   Scenario: Related ideas are ready for later retirement
     Given the planning-only disposition map names every source, outcome, requirement family, and owner
-    When ACTIVATE has merged and an idea-only retirement unit begins
-    Then PUB-IDEAS or PRIV-IDEAS retires only the mapped sources and updates its own index
+    When ACTIVATE has merged and a remaining idea-only retirement subdelivery begins
+    Then that PUB-IDEAS subdelivery or PRIV-IDEAS retires only its mapped sources and updates its own index
     And historical references remain unchanged
   Scenario: An acceptance check proves it can fail
     Given an acceptance clause is ready to gate a delivery

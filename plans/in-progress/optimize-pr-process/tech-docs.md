@@ -63,7 +63,7 @@ ledger and stays within the 400-line/20-file ceiling.
 ose-public/
 ├── plans/in-progress/optimize-pr-process/       # control plan; closure moves it to plans/done/
 ├── plans/ideas/{q1-urgent-important,q2-not-urgent-important}/
-│                                                # 19 mapped briefs; PUB-IDEAS retires them
+│                                                # 9 mapped briefs retired; 10 remain in PUB-IDEAS
 ├── repo-governance/workflows/{plan,pr,repo}/    # durable workflow sources
 ├── repo-governance/conventions/structure/plans/ # human PR and delivery rules
 ├── repo-governance/development/quality/         # review-discipline guidance
@@ -130,7 +130,7 @@ passes the same checks.
 flowchart TD
     accTitle: Public rule propagation and bounded private adaptation
     accDescr: A green public merge creates one pinned private obligation. Private work either closes it, records a private-only decision, or requests one public correction. A second reversal stops for human judgment.
-    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>exact pins and rule class"]:::blue
+    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>pins, class, lineage ID"]:::blue
     O --> A{"Private destination<br/>result"}:::orange
     A -->|Satisfied or reasoned deviation| C["Private PR closes obligation<br/>with live evidence"]:::teal
     A -->|Private-only side issue| V["Record issue separately<br/>do not reopen public"]:::gray
@@ -148,12 +148,14 @@ flowchart TD
 ```
 
 Equivalent prose: a portable public rule merges first and creates one native private obligation
-containing its URL, merge SHA, reviewed commit, checks, rule class, and expected destination. Private
+containing its URL, merge SHA, reviewed commit, checks, rule class, defect-lineage ID, and expected destination. Private
 adapts from that immutable source and records satisfaction, a reasoned deviation, or N/A with owner
 and remaining action. A private-only issue is recorded separately and the original obligation still
 ends as satisfaction, reasoned deviation, or N/A. A genuine portable source defect permits one
-public correction and links the superseded record. A second reversal stops automation, asks a
-human, and links the replacement or terminal decision. Byte-identical surfaces follow their
+public correction and links the superseded record. A late or relabeled occurrence of the same root
+cause keeps the lineage ID and correction count; it cannot reset the budget by opening a nominally
+new pair. A second reversal stops automation, asks a human, and links the replacement or terminal
+decision. Byte-identical surfaces follow their
 existing authority rather than a blanket public-first rule.
 
 ## Delivery and Rollback DAG

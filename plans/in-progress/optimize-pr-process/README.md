@@ -2,13 +2,15 @@
 
 ## Status
 
-**In Progress (EXECUTION-CLOSURE active, authoring only); dormant until ACTIVATE.**
-[Repo-grounded] WAVES-ENTRY-PUBLIC PR
-[#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
-`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. PR #264 completed the private entry checklist at
-`3a18ba819fb235eff0377e4e8c4ba8be0ad0cb23`. This slice authors the cross-repository correction
-and amendment adapters only; it executes no private action and does not read or alter the private
-overlay.
+**In Progress (formal-gate reconciliation active); further execution is paused.**
+[Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
+[#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its fresh formal gate,
+PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
+[#270](https://github.com/wahidyankf/ose-public/pull/270), and
+[#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
+Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
+private work, and every rule/code wave stay frozen until this reconciliation merges and the formal
+gate records an ACTIVATE pin. The private overlay remains untouched.
 
 ## Outcome
 
@@ -53,7 +55,8 @@ Plan assembly must finish before idea or implementation delivery. The exact unst
 CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE-SPLIT →
 WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT → WAVES-ENTRY-PRIVATE-BASE-REPAIR →
 WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
-EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
+EXECUTION-CLOSURE → reconciliation/formal gate → ACTIVATE → remaining PUB-IDEAS subdeliveries
+→ terminal public proof → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 

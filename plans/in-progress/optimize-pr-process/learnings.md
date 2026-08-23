@@ -75,5 +75,13 @@
 - [Repo-grounded] The corrected private-entry probe measured 268 changed lines and 165 unique IDs,
   above its 230-line forecast ceiling. BASE-REPAIR and IDEAS are cohesive independently, so two
   private checklist slices preserve atomic tasks without burdening one human review.
+- [Repo-grounded] PRs #269–#271 retired nine public idea briefs before the plan's formal ACTIVATE
+  gate. Their bounded PRs and native review threads remain useful dogfood, but landed work cannot
+  retroactively satisfy an unmet predecessor gate. The safe response is to record the exact landed
+  state, freeze every successor, reconcile the plan, and run the fresh gate before continuing.
+- [Judgment call] A correction count attached only to a pair URL can be reset accidentally by
+  relabeling a late occurrence as a new pair. A stable defect-lineage ID must carry the count across
+  superseded and late repair records; one reversal remains autonomous, and the second stops for
+  human judgment instead of starting a cross-repository chain reaction.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
