@@ -18,5 +18,14 @@
   further issues, and reached semantic exit without a confirmation Cycle 5.
 - [Judgment call] Recovery should name the failed reasoning method as well as the defect family.
   Otherwise “changed strategy” can repeat the same blind spot under a new label.
+- [Repo-grounded] DESIGN PR #252 selected logic, governance, and documentation review instead of a
+  fixed full panel. Cycle 1 opened eight actionable findings spanning state termination, rollback,
+  generated-surface parity, diagram contrast, and the human reading guide; one coherent repair batch
+  addressed all eight before the next cycle.
+- [Repo-grounded] The first attempt to publish Cycle 1 replies passed Markdown with backticked terms
+  through shell interpolation, so GitHub received incomplete prose. Editing the same native comments
+  from reviewed JSON payloads and reading them back restored the audit trail before thread resolution.
+  PR automation that writes human-facing artifacts should use literal payload files and verify the
+  persisted result; a successful API response alone is insufficient evidence.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
