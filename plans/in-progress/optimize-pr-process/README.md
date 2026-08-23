@@ -2,15 +2,15 @@
 
 ## Status
 
-**In Progress (formal-gate reconciliation active); further execution is paused.**
+**In Progress (activation reconciliation active); further execution is paused.**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
-[#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its fresh formal gate,
+[#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
 [#270](https://github.com/wahidyankf/ose-public/pull/270), and
 [#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
 Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
-private work, and every rule/code wave stay frozen until this reconciliation merges and the formal
-gate records an ACTIVATE pin. The private overlay remains untouched.
+private work, and every rule/code wave stay frozen until this reconciliation merges and the
+equivalence audit records an ACTIVATE pin. The private overlay remains untouched.
 
 ## Outcome
 
@@ -36,8 +36,11 @@ computer-science background. A merged PR remains an educational team record, not
   cycle 6 and ask a human only when the bounded process cannot safely finish. Humans may read every
   PR after merge.
 - Do not add a separate post-write or post-plan grilling session. This conversation already resolved
-  the planning decisions; the formal plan-quality gate validates the assembled plan, and only a
-  genuinely unresolved decision returns to the human.
+  the planning decisions. Before ACTIVATE, one bounded equivalence audit maps the existing stricter
+  PR-review evidence to the plan-quality-gate catalog and checks only uncovered plan-specific
+  surfaces. Do not run the full iterative workflow or its double-zero loop; only a genuinely unique
+  blocker may open one bounded amendment, and only a genuinely unresolved decision returns to the
+  human.
 - Preserve trunk stability with the lightest suitable “feature flag”: dormant documentation,
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.

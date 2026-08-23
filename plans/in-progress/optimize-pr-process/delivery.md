@@ -19,11 +19,11 @@
 | [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`  |
 | [Repo-grounded] Merged PRs #263–#268                                                | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`       |
 | [Repo-grounded] Merged PRs #269–#271                                                | Nine mapped public ideas retired before activation           |
-| [Unverified] Complete assembled plan                                                | Fresh formal gate still precedes explicit activation         |
+| [Unverified] Complete assembled plan                                                | Bounded equivalence audit still precedes explicit activation |
 
 > **RECONCILIATION FREEZE:** PRs #269–#271 are non-authorizing data points. Do not retire another
 > idea, touch the private worktree, or begin a rule/code wave until a plan-only reconciliation,
-> fresh formal gate, and explicit ACTIVATE pin have merged.
+> bounded equivalence audit, and explicit ACTIVATE pin have merged.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -102,7 +102,7 @@ CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → WAVES-SPLIT → WAVES-ENT
 WAVES-ENTRY-BASE-SPLIT → WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT →
 WAVES-ENTRY-PRIVATE-BASE-REPAIR → WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS →
 WAVES-A → WAVES-RULES → EXECUTION-CLOSURE → non-authorizing PUB-IDEAS-1–3 data points →
-RECONCILE → ACTIVATE/formal-gate → PUB-IDEAS-4–8 → terminal public proof → PRIV-BASE →
+RECONCILE → ACTIVATE/equivalence-audit → PUB-IDEAS-4–8 → terminal public proof → PRIV-BASE →
 conditional PRIV-REPAIR → PRIV-IDEAS →
 implementation waves
 ```
@@ -110,9 +110,9 @@ implementation waves
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
 worktree. Every assembly slice is at most 400 changed hand-authored lines and 20 hand-authored files.
 Forecast each slice before opening it; if any would exceed a bound, record its named cohesive
-sub-slices in the prior PR before opening the first split. Gate findings use bounded
-`PLAN-AMENDMENT` PRs, including any formal-gate repair before ACTIVATE. Final ACTIVATE contains only
-the clean formal gate and executable-status change. Merge green and resync before the next PR.
+sub-slices in the prior PR before opening the first split. A unique equivalence-audit blocker may
+use one bounded `PLAN-AMENDMENT` PR before ACTIVATE. Final ACTIVATE contains only the PR-native
+equivalence record and executable-status change. Merge green and resync before the next PR.
 
 | Slice                           | Contract and audit IDs restored before activation                                                                                       | Target changed lines |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
@@ -129,7 +129,7 @@ the clean formal gate and executable-status change. Merge green and resync befor
 | WAVES-A                         | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and prior-pair reconciliation; F-035 A partial                                       |              190–250 |
 | WAVES-RULES                     | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and prior-pair reconciliation; F-035 terminal owner                          |              200–270 |
 | EXECUTION-CLOSURE               | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
-| ACTIVATE                        | Clean formal plan-quality gate and explicit executable-status change                                                                    |          at most 400 |
+| ACTIVATE                        | Bounded plan-gate equivalence record and explicit executable-status change                                                              |          at most 400 |
 
 Closed PR #258 measured 302 changed lines before its six findings. The first complete repair model
 expanded that draft by 106 lines to 408, but a BASE-only authoring probe then measured 401 changed
@@ -198,8 +198,10 @@ The other slice names mean:
 - EXECUTION-CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
   process—using it on its own PRs—capturing knowledge, closing private work, archiving the public
   plan, and safely removing worktrees.
-- ACTIVATE runs the formal plan-quality gate, repairs every valid finding through a bounded
-  PLAN-AMENDMENT, and then changes the assembled plan from dormant to executable.
+- ACTIVATE records one bounded equivalence audit: map existing PR-review evidence to the formal
+  plan-quality-gate catalog, check only uncovered plan-specific surfaces, and open at most one
+  bounded PLAN-AMENDMENT only for a genuine unique blocker. It does not run the iterative gate or
+  its double-zero loop before changing the assembled plan from dormant to executable.
 
 Both CORE slices, every WAVES forecast repair, all four ENTRY checklist slices, WAVES-A,
 WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
@@ -267,8 +269,9 @@ owner even after the gitignored source report is cleared.
 
 FOUNDATION through EXECUTION-CLOSURE are merged. PRs #269–#271 then retired nine mapped ideas
 without the required ACTIVATE pin. They authorize no successor. ACTIVATE may open only after this
-reconciliation records their exact effect, freezes the remaining work, and the fresh formal gate
-passes; historic evidence cannot substitute.
+reconciliation records their exact effect, freezes the remaining work, and the bounded equivalence
+audit passes. Historic evidence may satisfy only a catalog row it directly proves; it cannot stand
+in for an uncovered check.
 
 ### Reconciliation Ledger — Surviving Source and Rule Changes
 
@@ -288,6 +291,23 @@ means preserve the landed state unless its separately named owner later changes 
 | `plans/ideas/q2-not-urgent-important/vitest-glob-coverage-guard.md`                     | Repointed falsifiability evidence to Trustworthy Measurement Rule 5.                                               | Current main, outside this control plan | `7e111df8d821e0e147e0009f6bd66c13e7499614` | No action; preserve the landed replacement reference.                      |
 | `repo-governance/development/quality/pr-review-disciplines/future-work-bot-identity.md` | Made the no-bot/App decision explicit and requires separate evidence before review state can become authoritative. | PUB-A3                                  | `7e111df8d821e0e147e0009f6bd66c13e7499614` | Retain as live rule baseline; no identity tooling in this plan.            |
 | `repo-governance/workflows/pr/pr-review-quality-gate/review-state-is-never-the-gate.md` | Requires finding severity, not review state, until a separately proven independent identity exists.                | PUB-A2                                  | `7e111df8d821e0e147e0009f6bd66c13e7499614` | Retain as live rule baseline; A2 must not contradict it.                   |
+
+## Bounded Activation Equivalence Audit
+
+This audit replaces only this plan's redundant full iterative plan-quality-gate run. It does not
+weaken the catalog or change the durable workflow before the rule waves land. The ACTIVATE PR keeps
+one human-readable matrix with these rows: structure and requirements, technical documentation,
+delivery clarity and boundaries, operational readiness, worktree and delivery mode,
+anti-hallucination grounding, harness neutrality, knowledge capture, and explicit `N/A` rows for
+specs/Gherkin, UI, API, learning syllabus, and Vercel capability when truly out of scope.
+
+- [ ] `[ACTIVATE:A0.01][AI]` Read the current plan-quality-gate workflow and plan-validating-quality catalog; record their exact public `origin/main` pin in the ACTIVATE PR body.
+- [ ] `[ACTIVATE:A0.02][AI]` For every matrix row, link the exact PR review, native thread, merged pin, or current-head check that directly proves it; mark every row without direct evidence as uncovered.
+- [ ] `[ACTIVATE:A0.03][AI]` Read all five plan documents against only the uncovered rows and record pass, reasoned `N/A`, or one concrete blocker with file/line evidence; do not start a double-zero or general re-review loop.
+- [ ] `[ACTIVATE:A0.04][AI]` If a genuine unique blocker exists, keep execution frozen and open at most one bounded `PLAN-AMENDMENT`; otherwise record the amendment route as reasoned `N/A`.
+- [ ] `[ACTIVATE:A0.05][AI]` Post and read back the complete matrix in the ACTIVATE PR artifact with `Generated by AI`; acceptance is every row directly evidenced and zero unresolved blocker.
+- [ ] `[ACTIVATE:A0.G][AI]` Pass exact-pin, full-catalog, evidence-link, uncovered-row, no-duplicate-loop, and zero-blocker checks before changing status to executable.
+- [ ] `[ACTIVATE:A0.P][AI]` Record the ACTIVATE reviewed head, equivalence-record URL, CI result, merge pin, and exact PUB-BASE successor command.
 
 ## Dormant Execution-Wave Public Entry Checklist
 
@@ -776,7 +796,7 @@ retains both the lineage ID and its correction count.
 - [ ] `[ENTRY-ADAPTERS:A1.14][AI]` Close a pair only with a terminal `satisfied`, `reasoned-deviation`, or `N/A` state, exact public/private pins, and evidence links.
 - [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; a later defect opens a linked repair pair without reopening the sealed pair, but the same root cause retains its lineage ID and cannot reset the correction budget.
 - [ ] `[ENTRY-ADAPTERS:A1.16][AI]` Use only disclosure-safe public summaries and links; retain private task evidence solely in the private PR artifact.
-- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` For this public control plan, record the explicit override of the legacy per-repo/three-grill composite: one control plan, formal plan-quality gate, and no separate post-plan grill.
+- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` For this public control plan, record the explicit override of the legacy per-repo/three-grill and iterative formal-gate composite: one control plan, one bounded equivalence audit, and no separate post-plan grill.
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
 - [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
 - [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
@@ -872,7 +892,7 @@ retains both the lineage ID and its correction count.
 - [ ] `[PUB-A3:P1.06][AI]` Require frozen scope, changed probes, target Cycles 1–3, recovery 4–5, and stop before Cycle 6.
 - [ ] `[PUB-A3:P1.07][AI]` Inventory the exact canonical plan-maker, skill, and workflow sentences that require a post-write or post-plan grill.
 - [ ] `[PUB-A3:P1.08][AI]` Remove that separate plan-making requirement from admitted canonical sources without removing ordinary grilling or escalation for a genuinely unresolved decision.
-- [ ] `[PUB-A3:P1.09][AI]` State that the fresh formal plan-quality gate is the replacement validation step and record the rationale in plain language.
+- [ ] `[PUB-A3:P1.09][AI]` State that one bounded equivalence audit reuses stronger PR evidence, checks only uncovered plan-specific surfaces, and replaces both a separate grill and the full iterative formal gate; record the rationale in plain language.
 - [ ] `[PUB-A3:P2.01][AI]` Run the required rule-propagation workflow and record its placement manifest before generating bindings.
 - [ ] `[PUB-A3:P2.02][AI]` Generate bindings once from the admitted canonical sources.
 - [ ] `[PUB-A3:P2.03][AI]` Validate synchronization and rerun generation to prove tracked bytes are stable.

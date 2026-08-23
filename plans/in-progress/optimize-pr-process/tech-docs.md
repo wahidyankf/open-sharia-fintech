@@ -231,8 +231,11 @@ independently observable behavior. Rollback never depends on unpublished local s
 
 ## Validation
 
-The formal plan-quality gate precedes execution but follows complete assembly. Every later delivery
-uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push gates, native
-review/fix conversations, current-head CI, merge proof, and full landed-diff resync. Formal-gate
-validation is read-only; any tracked correction becomes a separately gated `PLAN-AMENDMENT` PR and
-cannot ride inside a rule wave.
+Before ACTIVATE, one bounded equivalence audit maps the existing stricter PR-review evidence to every
+plan-quality-gate catalog row and reads the five plan documents only for uncovered rows. The
+PR-native matrix records direct evidence, reasoned `N/A`, or a genuine unique blocker; it does not
+run the full iterative workflow or require a double-zero confirmation. At most one unique-blocker
+correction becomes a separately gated `PLAN-AMENDMENT` PR and cannot ride inside a rule wave.
+
+Every later delivery uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push
+gates, native review/fix conversations, current-head CI, merge proof, and full landed-diff resync.
