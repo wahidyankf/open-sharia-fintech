@@ -2,29 +2,27 @@
 
 ## Current State
 
-| Evidence                                                                            | State                                                       |
-| ----------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`    |
-| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`  |
-| [Repo-grounded] DESIGN                                                              | Active: file impact, propagation, transaction, and rollback |
-| [Repo-grounded] EXECUTION                                                           | Dormant; no implementation or formal gate in this slice     |
-| [Unverified] Complete assembled plan                                                | Must pass a fresh formal gate and grill before activation   |
+| Evidence                                                                            | State                                                      |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`   |
+| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f` |
+| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`       |
+| [Repo-grounded] EXECUTION-FORECAST                                                  | Active: name human-sized checklist-authoring boundaries    |
+| [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation       |
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. DESIGN may repair only this plan's
-`README.md`, `delivery.md`, `learnings.md`, and `tech-docs.md`; REQUIREMENTS already added the
-planning-only [idea disposition map](./idea-disposition-map.md). All idea-brief, idea-index, and
-idea-routing-reference edits, moves, deletions, and retirements wait for PUB-IDEAS or PRIV-IDEAS
-after ACTIVATE. No rule, agent, binding, workflow, code, test, implementation, active-plan index, or
-formal plan gate may change or run in DESIGN.
+Plan assembly is deliberately **dormant and non-executable**. EXECUTION-FORECAST may change only
+this plan's `README.md`, `delivery.md`, and `learnings.md`. CORE, WAVES, and CLOSURE remain dormant;
+so do all idea, index, routing-reference, rule, agent, binding, workflow, code, test, implementation,
+and active-plan-index surfaces. The formal plan-quality gate does not run before complete assembly.
 
 ## Sequential Plan Assembly
 
 ```text
-FOUNDATION (#250) → REQUIREMENTS/idea-disposition-map → DESIGN/file-impact/cross-repo diagrams →
-EXECUTION/worktree/mode/boundaries/phases/commands/gates/knowledge/archival →
-ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
+FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → EXECUTION-FORECAST →
+EXECUTION-CORE → EXECUTION-WAVES → EXECUTION-CLOSURE → ACTIVATE/formal-gate/grill →
+PUB-IDEAS → PRIV-IDEAS → implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
@@ -34,12 +32,17 @@ sub-slices in the prior PR before opening the first split. Gate findings use bou
 `ACTIVATE-REPAIR-*` PRs. Final ACTIVATE contains only the clean formal gate, post-write grill, and
 executable-status change. Merge green and resync before the next PR.
 
-| Slice        | Contract restored before activation                                                                 |
-| ------------ | --------------------------------------------------------------------------------------------------- |
-| REQUIREMENTS | Business/product structure plus the planning-only public/private idea-disposition map               |
-| DESIGN       | File-impact tree, public/private obligation design, propagation/correction and rollback diagrams    |
-| EXECUTION    | Worktree/mode/boundaries, phases, commands, gates, review transaction, knowledge, archival, cleanup |
-| ACTIVATE     | Clean formal plan-quality gate, post-write grill, and explicit executable-status change             |
+| Slice             | Contract and audit IDs restored before activation                                                                | Target changed lines |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------: |
+| EXECUTION-CORE    | Legend, worktrees, mode, boundaries, entry/unit/review/merge transactions; F-005–F-012, F-014–F-017, F-025–F-034 |              260–330 |
+| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                       |              280–340 |
+| EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037   |              220–300 |
+| ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                          |          at most 400 |
+
+The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
+PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
+worktree before the next slice. If a slice forecast crosses 400 lines or 20 files, split that slice
+again in its immediately preceding PR; never rely on a later explanation of an already-large diff.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
 the [idea disposition map](./idea-disposition-map.md). Its public source pin is
@@ -53,12 +56,10 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION and REQUIREMENTS fixed their assigned defects. DESIGN owns F-004, F-019, F-020, and
-F-027; its [technical design](./tech-docs.md) now supplies the bounded tree/ledger, propagation and
-parity contract, cross-repo transaction, and reverse-order rollback DAG. EXECUTION findings remain
-dormant and open. ACTIVATE may open only after every mapped finding is fixed readably. A fresh
-formal gate must then pass its full semantic exit, followed by the required grill. Historic audit
-evidence cannot substitute.
+FOUNDATION, REQUIREMENTS, and DESIGN fixed their assigned defects. The 25 EXECUTION findings remain
+open and are allocated above; no forecast claim closes them. ACTIVATE may open only after CORE,
+WAVES, and CLOSURE merge and every mapped finding is fixed readably. A fresh formal gate must then
+pass semantic exit, followed by the required grill. Historic audit evidence cannot substitute.
 
 ## Dormant Unit-Edit Contract
 
