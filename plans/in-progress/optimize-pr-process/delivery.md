@@ -741,7 +741,19 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[PUB-A1:P1.05][AI]` Run strict current-isolation rule propagation and retain its manifest.
 - [ ] `[PUB-A1:P1.06][AI]` Edit only plan-making sources admitted by the ledger.
 - [ ] `[PUB-A1:P1.07][AI]` Generate bindings once and reconcile every generated path.
-- [ ] `[PUB-A1:P1.08][AI]` Validate sync, local gates, staging ledger, committed diff, draft body, review, current-head CI, merge fingerprint, and resync as separate Phase 2–5 evidence states.
+- [ ] `[PUB-A1:P1.08][AI]` Run `npm run validate:sync` and retain its result.
+- [ ] `[PUB-A1:P2.01][AI]` Run each applicable local quality gate and retain its result.
+- [ ] `[PUB-A1:P2.02][AI]` Reconcile working paths to the admitted ledger before staging.
+- [ ] `[PUB-A1:P2.03][AI]` Stage only admitted paths and prove cached-ledger equality.
+- [ ] `[PUB-A1:P2.04][AI]` Read the complete cached diff and commit one cohesive change.
+- [ ] `[PUB-A1:P3.01][AI]` Rerun the pre-push surface on the committed head.
+- [ ] `[PUB-A1:P3.02][AI]` Push the declared branch and read back the remote head.
+- [ ] `[PUB-A1:P3.03][AI]` Open a human-readable draft PR and read back its body and statistics.
+- [ ] `[PUB-A1:P4.01][AI]` Post the exact-head review route and run bounded review cycles.
+- [ ] `[PUB-A1:P4.02][AI]` Reply to each finding in its original thread and resolve only true terminal evidence.
+- [ ] `[PUB-A1:P4.03][AI]` Poll current-head CI, prove readiness, and read back ready state.
+- [ ] `[PUB-A1:P5.01][AI]` Compute the reviewed raw-patch fingerprint and squash-merge.
+- [ ] `[PUB-A1:P5.02][AI]` Compare landed fingerprint, resync to merge SHA, and prepare the sibling obligation.
 - [ ] `[PUB-A1:P1.G][AI]` Pass propagated-rule, binding, current-head, sibling-obligation, and landed-proof gate.
 - [ ] `[PUB-A1:P1.P][AI]` Record public merge pin and prepared PRIV-A1 obligation.
 
@@ -753,6 +765,14 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[PRIV-A1:P1.04][AI]` Adapt only admitted private sources; retain private evidence in the private PR.
 - [ ] `[PRIV-A1:P1.05][AI]` Run propagation, bindings, local gates, review, CI, merge proof, and overlay resync as separate evidence states.
 - [ ] `[PRIV-A1:P1.06][AI]` Use ENTRY-ADAPTERS for any portable or plan defect; do not open a second obligation.
+- [ ] `[PRIV-A1:P2.01][AI]` Reconcile the private source/generated ledger and overlay exclusion before staging.
+- [ ] `[PRIV-A1:P2.02][AI]` Run local gates and prove the overlay is absent from cached change paths.
+- [ ] `[PRIV-A1:P2.03][AI]` Commit the private adaptation and recheck the working-overlay fingerprint.
+- [ ] `[PRIV-A1:P3.01][AI]` Push the declared branch and open a private-safe AI-marked draft PR.
+- [ ] `[PRIV-A1:P3.02][AI]` Read back remote head, private-safe body, and safe statistics.
+- [ ] `[PRIV-A1:P4.01][AI]` Post a private-safe exact-head route and run bounded review cycles.
+- [ ] `[PRIV-A1:P4.02][AI]` Preserve same-thread replies, current-head CI, and the existing cycle count.
+- [ ] `[PRIV-A1:P5.01][AI]` Compare reviewed and landed fingerprints and resync without stashing the overlay.
 - [ ] `[PRIV-A1:P1.G][AI]` Pass semantic-correspondence, overlay, current-head, and terminal-obligation gate.
 - [ ] `[PRIV-A1:P1.P][AI]` Record private merge pin and prepared PUB-A2 obligation.
 
@@ -763,6 +783,13 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[PUB-A2:P1.03][AI]` Propagate only the selected-risk, applicability, changed-probe, and human-readable route rules.
 - [ ] `[PUB-A2:P1.04][AI]` Generate and validate bindings without hand-editing generated mirrors.
 - [ ] `[PUB-A2:P1.05][AI]` Prove route, specialist selection, synthesis, fix reply, CI, merge, and resync separately.
+- [ ] `[PUB-A2:P2.01][AI]` Run local quality gates and exact-ledger staging checks.
+- [ ] `[PUB-A2:P2.02][AI]` Inspect the cached and committed full diffs before push.
+- [ ] `[PUB-A2:P3.01][AI]` Push the declared branch, open a human-readable draft PR, and read it back.
+- [ ] `[PUB-A2:P4.01][AI]` Post the exact-head route, use changed probes, and stop before Cycle 6.
+- [ ] `[PUB-A2:P4.02][AI]` Reply to every finding with one four-way disposition and current-head evidence.
+- [ ] `[PUB-A2:P4.03][AI]` Poll current-head CI and prove readiness before merge.
+- [ ] `[PUB-A2:P5.01][AI]` Compare reviewed/landed fingerprints, resync, and prepare PRIV-A2.
 - [ ] `[PUB-A2:P1.G][AI]` Pass routing, binding, five-cycle, scope-freeze, and landed-proof gate.
 - [ ] `[PUB-A2:P1.P][AI]` Record public merge pin and prepared PRIV-A2 obligation.
 
@@ -773,6 +800,12 @@ adding the immutable merge SHA and private entry command. It never copies privat
 - [ ] `[PRIV-A2:P1.03][AI]` Keep public summaries disclosure-safe and private evidence in the private PR.
 - [ ] `[PRIV-A2:P1.04][AI]` Run propagation, bindings, review, current-head CI, merge proof, and overlay resync separately.
 - [ ] `[PRIV-A2:P1.05][AI]` Freeze and hand portable/plan defects to ENTRY-ADAPTERS; retain the private cycle count.
+- [ ] `[PRIV-A2:P2.01][AI]` Reconcile the private ledger, generated paths, and overlay exclusion before staging.
+- [ ] `[PRIV-A2:P2.02][AI]` Run private local gates, cached checks, and committed overlay fingerprint proof.
+- [ ] `[PRIV-A2:P3.01][AI]` Push only the declared branch and read back its private-safe draft PR.
+- [ ] `[PRIV-A2:P4.01][AI]` Run the private-safe route, same-thread replies, changed probes, and current-head CI.
+- [ ] `[PRIV-A2:P4.02][AI]` Stop before Cycle 6 or a second public reversal, preserving the frozen record.
+- [ ] `[PRIV-A2:P5.01][AI]` Compare reviewed/landed fingerprints and resync without disturbing overlay state.
 - [ ] `[PRIV-A2:P1.G][AI]` Pass semantic-correspondence, scope, cycle, overlay, and obligation gate.
 - [ ] `[PRIV-A2:P1.P][AI]` Record private merge pin and prepare PUB-A3 only after terminal state.
 
