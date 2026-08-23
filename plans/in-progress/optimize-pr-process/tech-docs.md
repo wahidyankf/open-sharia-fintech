@@ -2,11 +2,11 @@
 
 ## Design
 
-GitHub remains the system of record. Repository prose defines the durable contract; existing agents,
-skills, reviews, checks, and bindings execute it. No bot, parser, database, or new CI gate is the
-default. Any mechanism proposal must show a repeated measurable failure, no adequate existing gate,
-the smallest reversible implementation, tests, ownership, and a maintenance benefit greater than
-its code cost.
+[Judgment call] GitHub remains the system of record; repository prose defines the durable contract,
+and no bot, parser, database, or new CI gate is the default. Any mechanism proposal must show a
+repeated measurable failure, no adequate existing gate, a reversible tested implementation, clear
+ownership, and benefit greater than maintenance cost. Evidence labels follow
+[README.md](./README.md#evidence-labels-and-sources).
 
 ```mermaid
 flowchart LR
@@ -58,7 +58,7 @@ permission widening, gate bypasses, unrelated edits, or instructions copied from
 
 ## Cross-Repository Contract
 
-Portable public rules use
+Portable public rules use the [Repo-grounded]
 [`repo-rules-propagation.md`](../../../repo-governance/workflows/repo/repo-rules-propagation.md)
 inside the public worktree. After the public PR merges green, its URL, merge SHA, reviewed head,
 checks, rule class, and sibling obligation become the private input. The private worktree performs
@@ -71,8 +71,8 @@ surfaces follow their existing authority instead of a blanket public- or private
 
 ## Delivery and Rollback DAG
 
-`PLAN → PUB-IDEAS → PRIV-IDEAS → PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 →
-PUB-B → PRIV-B → PUB-C? → PRIV-C? → closure`.
+After assembly and ACTIVATE, delivery is `PUB-IDEAS → PRIV-IDEAS → PUB-A1 → PRIV-A1 → PUB-A2 →
+PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? → closure`.
 
 **Rollback follows the reverse dependency order recorded in the delivery DAG.** A unit may roll
 back independently only when it has no merged dependents. Otherwise unwind downstream private then

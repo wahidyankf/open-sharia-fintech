@@ -5,7 +5,9 @@
 Improve review quality without turning delivery into ceremony. Industry guidance favors small,
 self-contained changes, descriptions that explain why and how to review, and comments that are
 specific, respectful, and educational. Native GitHub conversations preserve that context for later
-readers. The source list in [README.md](./README.md#authoritative-research-sources) is authoritative.
+readers. [Web-cited] Evidence is mapped in
+[README.md](./README.md#evidence-labels-and-sources); BR-1–BR-10 are user-ratified `[Judgment call]`
+contracts, not measured outcomes.
 
 ## Requirements
 

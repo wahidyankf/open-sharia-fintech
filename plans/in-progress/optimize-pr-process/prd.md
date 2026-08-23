@@ -8,6 +8,9 @@ history; plan executors preserve authority, scope, and stable delivery across bo
 
 ## Functional Requirements
 
+PRD-1–PRD-12 are `[Judgment call]` contracts under the evidence labels in
+[README.md](./README.md#evidence-labels-and-sources); activation evidence remains `[Unverified]`.
+
 1. PR bodies lead with outcome and why, then scope/non-goals, reading guide, verification, review
    focus, dependency, “feature flag” or integration safety, stable-main proof, and rollback.
 2. Useful Mermaid diagrams may clarify three or more relationships. They use accessible colors,
@@ -46,10 +49,12 @@ Feature: Human-readable pull-request delivery
     Then plan, idea, rule, binding, code, and closure concerns use sequential cohesive PRs
     And every dependency merges green before its dependent PR opens
   Scenario: A junior engineer reads a blocking finding
+    Given the reader has coding-bootcamp experience but no university CS background
     When the review is posted
     Then the finding explains evidence, impact, and a bounded remedy in plain language
     And optional teaching is clearly nonblocking
   Scenario: A fixer disagrees with a finding
+    Given an unresolved review thread contains a testable claim
     When the cited evidence does not establish the claim
     Then the fixer replies in the same thread with a reasoned rejection and evidence
     And the reply ends with the AI marker
@@ -63,6 +68,7 @@ Feature: Human-readable pull-request delivery
     When another cycle would be required
     Then automation stops before Cycle 6 and leaves a human-readable escalation on the PR
   Scenario: Private review finds byte-identity drift
+    Given a public change has a pinned private sibling obligation
     When the affected surface has an existing byte-identity contract
     Then repair follows that surface's authority and records parity evidence
     And the one-correction and oscillation bounds still apply
