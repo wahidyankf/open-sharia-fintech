@@ -397,7 +397,7 @@ repair an ordinary-unit defect only inside that unit's own scope.
 
 ### PUB-IDEAS — Retire the 19 Public Sources
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` Verify PUB-BASE or PUB-REPAIR terminal proof and its exact pin.
+- [ ] `[PUB-IDEAS:P1.01][AI]` Verify a clean proof names PUB-IDEAS as successor; record its exact pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
 - [ ] `[PUB-IDEAS:P1.03][AI]` Prove fetched `origin/main` equals the predecessor pin.
 - [ ] `[PUB-IDEAS:P1.04][AI]` Enter `optimize-pr-process-pub-ideas` from the exact main pin.
