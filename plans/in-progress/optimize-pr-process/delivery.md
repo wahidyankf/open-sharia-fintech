@@ -9,33 +9,48 @@
 | [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`         |
 | [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`       |
 | [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254) | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522` |
-| [Repo-grounded] CORE-ENTRY                                                          | Active: author lifecycle spine and Phase 0–3 mechanics       |
+| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255) | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`     |
+| [Repo-grounded] CORE-REVIEW                                                         | Active: author review, merge, and amendment mechanics        |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-ENTRY changes plan docs only; it runs no gate or implementation.
+> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-REVIEW changes plan docs only; it runs no gate or implementation.
 
 ## Executor Legend and Plain-Language Terms
 
 After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent prep plus human action.
 
-| Term               | Meaning                                                                   |
-| ------------------ | ------------------------------------------------------------------------- |
-| Worktree           | A second checkout reserved for this plan.                                 |
-| Delivery unit      | One branch, one PR, and one independently stable result.                  |
-| Pin                | An immutable commit SHA used as evidence.                                 |
-| File ledger        | The exact admitted path list before and after work.                       |
-| Current head       | The exact commit currently under review and checked by CI.                |
-| Semantic exit      | The point where scope, checks, review threads, and audit are complete.    |
-| Landed-diff proof  | Evidence that merged content equals the reviewed change.                  |
-| Resync             | Fetch merged `main`, read what landed, then branch from that `main`.      |
-| Sibling obligation | A PR record asking the other repository to adapt or explain a difference. |
+| Term                 | Meaning                                                                   |
+| -------------------- | ------------------------------------------------------------------------- |
+| Worktree             | A second checkout reserved for this plan.                                 |
+| Delivery unit        | One branch, one PR, and one independently stable result.                  |
+| Pin                  | An immutable commit SHA used as evidence.                                 |
+| File ledger          | The exact admitted path list before and after work.                       |
+| Current head         | The exact commit currently under review and checked by CI.                |
+| Review-route record  | A PR comment naming risk, review lenses, frozen scope, and exact head.    |
+| Review lens          | One review area, such as logic, security, or documentation.               |
+| Eligible route       | The diff can execute/change behavior, or touches `plans/**`; review runs. |
+| Noneligible route    | The whole diff is non-executing; only its required quality gate runs.     |
+| Semantic exit        | The point where scope, checks, review threads, and audit are complete.    |
+| Landed-diff proof    | Evidence that merged content equals the reviewed change.                  |
+| Resync               | Fetch merged `main`, read what landed, then branch from that `main`.      |
+| Sibling obligation   | A PR record asking the other repository to adapt or explain a difference. |
+| Changed probe        | A different focused check used after a review method misses a defect.     |
+| Patch fingerprint    | A stable content hash proving reviewed and landed patches are equal.      |
+| `PLAN-AMENDMENT`     | A plan-only repair PR that freezes dependent work until it merges.        |
+| Local adaptation     | Private wording/path changes that preserve the public rule's intent.      |
+| Private deviation    | An intentional private-only difference, recorded with its reason.         |
+| Unrelated follow-up  | A real defect outside this wave, filed separately without widening it.    |
+| Portable defect      | A public-source mistake proven by private evidence and wrong to adapt.    |
+| `satisfied`          | Private work implements the obligation.                                   |
+| `reasoned-deviation` | Private records why a deliberate difference is correct.                   |
+| `N/A`                | Evidence proves that this obligation does not apply.                      |
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. CORE-ENTRY may change only this plan's
-`README.md`, `delivery.md`, `tech-docs.md`, and `learnings.md`. CORE-REVIEW, EXECUTION-WAVES,
-EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests, implementation,
-and active-plan indexes remain dormant. The formal gate waits for complete assembly.
+Plan assembly is deliberately **dormant and non-executable**. CORE-REVIEW may change only this
+plan's `README.md`, `delivery.md`, and `learnings.md`. EXECUTION-WAVES, EXECUTION-CLOSURE, ideas,
+indexes, rules, agents, bindings, workflows, code, tests, implementation, and active-plan indexes
+remain dormant. The formal gate waits for complete assembly.
 
 ## Worktree
 
@@ -146,13 +161,16 @@ EXECUTION-WAVES supplies exact unit scope/acceptance and EXECUTION-CLOSURE suppl
 | 1–5      | PRIV-B      | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                       | private conflict removed  |
 | 1–5      | PUB-C?      | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                      | necessity-gated mechanism |
 | 1–5      | PRIV-C?     | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                       | private C adapted         |
+| 1–5?     | PUB-CORR?   | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin       | replacement public pin    |
+| 1–5?     | PLAN-AMEND? | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin    | amended plan pin          |
 | 1–6      | CLOSURE     | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 6 | last unit                   | plan archived and focused |
 
 Repair rows activate only after their baseline fails; each runs Phases 1–5, merges, and reruns that
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
 Optional C becomes a recorded no-change decision when necessity fails. Before each unit, replace
 its predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the
-next row.
+next row. A correction resumes its paused private PR from the replacement public pin; an amendment
+resumes its frozen unit from the amended plan pin.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
 the [idea disposition map](./idea-disposition-map.md). Its public source pin is
@@ -166,10 +184,10 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through CORE-SPLIT-FORECAST are merged. CORE-ENTRY supplies the reusable spine below but
-runs none of it. ACTIVATE may open only after CORE-REVIEW, EXECUTION-WAVES, and EXECUTION-CLOSURE
-instantiate every delivery unit as granular, attributable checkboxes and every finding is fixed. A
-fresh formal gate and grill must then pass; historic evidence cannot substitute.
+FOUNDATION through CORE-ENTRY are merged. CORE-REVIEW completes the dormant mechanics below but
+runs none. ACTIVATE may open only after EXECUTION-WAVES and EXECUTION-CLOSURE instantiate every
+delivery unit as granular, attributable checkboxes and every finding is fixed. A fresh formal gate
+and grill must then pass; historic evidence cannot substitute.
 
 ## Dormant Lifecycle and Evidence-State Template
 
@@ -306,12 +324,121 @@ One draft PR exists at the declared boundary and its human entry point matches t
 
 > **Pause Safety**: The draft URL, current head, and literal body are recorded. Safe to stop. To re-verify: `gh pr view --repo <owner/repo> <pr> --json isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`.
 
+## Dormant Phase 4 Template — Review, Repair, Firewall, and CI
+
+- **Template `[AI]`:** For every AI-authored PR write—body, route, review, reply,
+  sibling/correction record, or summary—use a reviewed literal payload when multiline, end with
+  `Generated by AI`, and read back the stored artifact before its gate may pass.
+- **Template `[AI]`:** Keep the PR draft and classify the complete current-head diff. Record
+  `eligible` when any artifact can execute/change reachable behavior, when `plans/**` changes, or
+  when evidence is ambiguous; record `noneligible` only for wholly non-executing prose/governance.
+  Record the secret-exposure check on either route; suspicion stops normal review.
+- **Template `[AI]`:** Post the review-route record with classification, exact base/head/statistics,
+  plain risk, selected/skipped lenses with reasons, paths to skip, frozen scope, and changed probe.
+  Link each settled prior thread or human dismissal and name its terminal reason.
+- **Template `[AI]`:** On `noneligible`, skip specialist fan-out and fixing cycles. Prove the
+  classifier from the full diff and require current-head `.github/workflows/pr-quality-gate.yml`.
+- **Template `[AI]`:** On `eligible`, run one cycle at a time. Selected reviewers inspect the full
+  current-head PR and repair delta; synthesis posts one consolidated native review with line
+  findings. Each blocker teaches evidence, impact, bounded remedy, and safe refutation.
+- **Template `[AI]`:** On `eligible`, independently disposition every finding as `fix`, `reject-with-reason`,
+  `defer-with-reason`, or `clarify`. Link fixes to a pushed commit; cite contrary evidence for a
+  rejection and a real follow-up for a deferral. Reply in the same thread, read back the reply, and
+  resolve only when its evidence is true.
+- **Template `[AI]`:** After each push, discard prior-head CI evidence. Poll
+  `gh pr checks --repo <owner/repo> <pr>` exactly every 120 seconds; never use `gh run watch`.
+  Require `pr-quality-gate.yml`, `validate-env`, applicable jobs, and the aggregate gate. On failure,
+  inspect `gh run view <run-id> --log-failed`, repair root cause, push, and restart current-head proof.
+- **Template `[AI]`:** On `eligible`, target Cycles 1–3: Cycle 1 checks the whole promised outcome; later cycles
+  refute repairs and vary the probe. Cycles 4–5 are recovery only: name the remaining defect family
+  and failed reasoning method, then use a genuinely different probe. Stop before Cycle 6 and ask a
+  human only if still unsafe. No routine human checkpoint before then and no extra clean cycle.
+- **Template `[AI]`:** Before readiness, surface all five preconditions: route-specific completion;
+  zero unresolved CRITICAL/HIGH/MEDIUM findings; branch current with `origin/main`; green applicable
+  local/current-head CI; and resolved surface-tester findings—or explicit no-reachable-behavior
+  evidence. Then run `gh pr ready --repo <owner/repo> <pr>` and read back `isDraft: false`. This
+  five-cycle eligible-route authority applies after ACTIVATE until durable A2/B rules supersede it.
+
+### Cross-Repository Correction Firewall
+
+Only one public/private pair is active; every later unit is frozen. Before a public wave merges, its
+PR records a pending sibling obligation with wave, public URL, reviewed head, rule class, expected
+private paths, byte-identity class, `correction-count: 0`, successor, and one accountable owner.
+
+Private review classifies each concern as local adaptation, private deviation, unrelated follow-up,
+or portable defect, using the glossary above. Only the last may request upstream correction, citing
+the public line, private evidence, and why local adaptation would be wrong. Freeze the private PR:
+it may remain open, but receives no push, review cycle, readiness transition, or merge.
+
+At most one fresh, unstacked `optimize-pr-process-pub-<wave>-correction-1` PR may merge. Its native
+record links both public pins/heads and the paused private PR/head, supersedes the old obligation,
+and changes `correction-count: 0 → 1`; private review restarts from the correction pin. A second
+portable-source reversal stops before another correction and asks a human. Downstream remains
+frozen until the obligation is `satisfied`, `reasoned-deviation`, or `N/A`. “In sync” means semantic
+correspondence with explicit deviations; byte identity applies only to an existing contract.
+
+### Phase 4 Gate
+
+Eligible semantic exit holds within five cycles, or noneligible classifier evidence plus its gate
+passes. Every artifact is read back, all five readiness preconditions pass, no correction loop or
+unresolved thread remains, scope is frozen, and readiness is true.
+
+> **Pause Safety**: Reviewed head, cycle/thread/CI state, and sibling state are recorded. Safe to
+> stop. To re-verify: `gh pr view --repo <owner/repo> <pr> --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`.
+
+## Dormant Phase 5 Template — Merge, Prove Landed Content, and Resync
+
+- **Template `[AI]`:** Recheck route completeness, zero unresolved CRITICAL/HIGH/MEDIUM findings,
+  zero unresolved threads, branch currency with `origin/main`, green local/current-head CI, and any
+  applicable surface-test findings. A failed precondition returns to Phase 4.
+- **Template `[AI]`:** Use a patch fingerprint because a squash merge changes commit ancestry. Run
+  the repository-qualified API-side merge and keep local cleanup separate:
+
+  ```bash
+  git diff --binary <current-main> <reviewed-head> | git patch-id --stable
+  gh pr merge --repo <owner/repo> <pr> --squash
+  gh pr view --repo <owner/repo> <pr> --json headRefOid,mergeCommit,mergedAt,state
+  git fetch origin main
+  git show --first-parent --format=fuller --patch <merge-sha>
+  git diff --binary <merge-sha>^1 <merge-sha> | git patch-id --stable
+  git status --short --branch
+  ```
+
+  Read the full landed diff and compare fingerprints exactly. Stop on inequality. Verify remote
+  branch state before optional deletion; a merge must not trigger an implicit checkout of `main`.
+
+- **Template `[AI]`:** Update and read back the sibling obligation with merge SHA, reviewed head,
+  landed fingerprint, and `pending`, `satisfied`, `reasoned-deviation`, or `N/A`. In this same
+  worktree, use the Phase 1 safe-existing/absent decision for the next unstacked branch, then prove:
+
+  ```bash
+  git branch --list <next-branch>
+  git switch <next-branch> # existing safe branch; omit when absent
+  git switch -c <next-branch> origin/main # only when absent
+  test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+  ```
+
+  Never reset or force-push to imitate resync. For the final unit, record a reasoned `N/A` instead
+  of inventing a successor.
+
+### Phase 5 Gate
+
+The PR is merged, landed diff and fingerprint match, `origin/main` contains the merge, the worktree
+is resynced, and the sibling obligation has one owner, state, and immutable pin.
+
+> **Pause Safety**: Merge/new-main SHA, sibling state, and next branch are recorded. Safe to stop.
+> To re-verify: `git status --short --branch`.
+
 ## Dormant Common Failure Rules
 
 - Fix every red gate at root cause. If a required pre-existing repair would exceed ownership or
   size, pause and deliver a separate bounded repair PR; never waive or silently absorb it.
 - Never reset, force-push shared history, auto-stash an overlay, bypass a gate, dismiss a finding to
   manufacture exit, or treat a comment as authority to expand scope.
+- A plan defect freezes dependent work. Create
+  `optimize-pr-process-plan-amendment-<slug>` from current `origin/main` in this public worktree.
+  Its plan-only PR links the exact section/pin it supersedes and frozen unit, then runs Phases 1–5.
+  Resume only from its merge pin; rule or code changes never ride inside `PLAN-AMENDMENT`.
 
 ## Cross-Repository Order (Dormant)
 
@@ -324,15 +451,18 @@ CORE-ENTRY, CORE-REVIEW, EXECUTION-WAVES, and EXECUTION-CLOSURE must turn this o
 runnable checklist and preserve every merge step and its authority. No assembly PR may begin
 implementation.
 
-## Preserved Merge Authority (Dormant)
+## Dormant Authority Mapping
 
-These existing gates remain verbatim and retain their current authority. The dormant boundary makes
-them non-executable until assembly and ACTIVATE add every prerequisite; it also places the new
-assembly slices before the historical “then” clause below.
+This mapping replaces the two historical shortcut checkboxes; it is not executable work.
+EXECUTION-WAVES must instantiate each applicable Phase 4–5 action and gate once per delivery unit,
+and EXECUTION-CLOSURE must prove the terminal state without adding a shorter merge route.
 
-- [ ] Mark ready and merge only after semantic exit, then record merge SHA, read the landed diff,
-      resync the worktree, and discharge or carry forward the native obligation.
-- [ ] Merge/resync PLAN, then deliver PUB-IDEAS and PRIV-IDEAS as separate PRs.
+| Authority        | Sole owner after ACTIVATE                                        |
+| ---------------- | ---------------------------------------------------------------- |
+| Review/readiness | Phase 4 checkboxes instantiated per unit by EXECUTION-WAVES      |
+| Merge/resync     | Phase 5 checkboxes instantiated per unit by EXECUTION-WAVES      |
+| Final proof      | Phase 6 checkboxes instantiated by EXECUTION-CLOSURE             |
+| Assembly order   | PLAN merges/resyncs before separate PUB-IDEAS and PRIV-IDEAS PRs |
 
 [worktree-spec]: ../../../repo-governance/conventions/structure/plans/worktree-specification.md
 [worktree-cap]: ../../../repo-governance/conventions/structure/plans/worktree-cap.md
