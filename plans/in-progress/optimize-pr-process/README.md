@@ -2,7 +2,7 @@
 
 ## Status
 
-**In Progress (WAVES-RULES active, authoring only); dormant until ACTIVATE.**
+**In Progress (EXECUTION-CLOSURE active, authoring only); dormant until ACTIVATE.**
 [Repo-grounded] WAVES-ENTRY-PUBLIC PR
 [#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
 `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. PR #264 completed the private entry checklist at
