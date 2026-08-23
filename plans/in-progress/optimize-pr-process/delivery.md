@@ -140,6 +140,11 @@ separately. Scaffolding is the status, owner, and acceptance text repeated so ea
 The ledger is lossless: a row closes only at its terminal proof. Closing PR #258 removes its unsafe
 draft from the delivery path but does not itself close any repair row.
 
+PR #259 added one later dogfood lesson. WAVES-ENTRY-BASE-SPLIT owns aligning the shared Phase 5
+template on raw input; ENTRY-PUBLIC owns copying that exact command into its continuing rules and
+public-unit tasks. The lesson closes only at PUBLIC's merged pin after its checklist and the shared
+template use the same `/usr/bin/git diff --binary ... | /usr/bin/shasum -a 256` procedure.
+
 | Complete-preview component           | ENTRY-PUBLIC | ENTRY-PRIVATE | ENTRY-ADAPTERS | WAVES-A | WAVES-RULES |
 | ------------------------------------ | -----------: | ------------: | -------------: | ------: | ----------: |
 | Shared rules and literal acceptance  |           52 |             0 |             18 |      18 |          18 |
@@ -443,16 +448,17 @@ unresolved thread remains, scope is frozen, and readiness is true.
 - **Template `[AI]`:** Recheck route completeness, zero unresolved CRITICAL/HIGH/MEDIUM findings,
   zero unresolved threads, branch currency with `origin/main`, green local/current-head CI, and any
   applicable surface-test findings. A failed precondition returns to Phase 4.
-- **Template `[AI]`:** Use a patch fingerprint because a squash merge changes commit ancestry. Run
-  the repository-qualified API-side merge and keep local cleanup separate:
+- **Template `[AI]`:** Use a raw patch fingerprint because a squash merge changes commit ancestry.
+  Call `/usr/bin/git` directly so display compaction cannot rewrite the bytes being hashed. Run the
+  repository-qualified API-side merge and keep local cleanup separate:
 
   ```bash
-  git diff --binary <current-main> <reviewed-head> | git patch-id --stable
+  /usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256
   gh pr merge --repo <owner/repo> <pr> --squash
   gh pr view --repo <owner/repo> <pr> --json headRefOid,mergeCommit,mergedAt,state
   git fetch origin main
   git show --first-parent --format=fuller --patch <merge-sha>
-  git diff --binary <merge-sha>^1 <merge-sha> | git patch-id --stable
+  /usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256
   git status --short --branch
   ```
 
