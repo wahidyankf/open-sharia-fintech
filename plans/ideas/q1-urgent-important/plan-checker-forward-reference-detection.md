@@ -65,13 +65,9 @@ identifiers created by later steps) will drown in false positives on ordinary pr
 
 - **`optimize-cis`** — both instances, recorded in its `learnings.md` with the second explicitly
   logged as "2nd instance of the cross-phase forward-reference class."
-- **`plan-decision-integrity-hardening`** — the sibling plan-quality two-pager; that one covers
-  decision records drifting from the plan, this one covers step text that cannot execute in its
-  declared order. Fold-check this brief against it before promoting either.
-  [two-pager](./plan-decision-integrity-hardening.md)
-- **`acceptance-clause-vacuity`** — the closest existing sibling: a clause that cannot fail. A
-  forward reference is the mirror image — a clause that cannot pass.
-  [two-pager](./acceptance-clause-vacuity.md)
+- **Related planning evidence** — a decision record can drift from its plan, and a clause can be
+  unable to fail; a forward reference is the mirror image, where the clause cannot pass. Fold these
+  failure modes together before promoting a planning rule.
 - **[Trustworthy Measurement](../../../repo-governance/development/practice/trustworthy-measurement.md)** —
   its rule 4 ("a remedy written before anyone saw a timeline is a hypothesis") is the same underlying
   problem in the metrics domain: plan text authored ahead of the state it assumes.

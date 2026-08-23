@@ -28,8 +28,8 @@ identically to zero files failed.
 This is the **silent-false-pass** class: a check that cannot fail certifies nothing, yet it occupies
 the same slot in every status report as a check that can. It is strictly worse than a missing test,
 because a missing test at least leaves a visible hole.
-[`acceptance-clause-vacuity`](../q1-urgent-important/acceptance-clause-vacuity.md) covers the same failure class from the
-acceptance-clause angle, and
+[Trustworthy Measurement — Rule 5](../../../repo-governance/development/practice/trustworthy-measurement/rule-5-probes-and-scans-must-assert-their-reach.md)
+covers the same failure class from the acceptance-evidence angle, and
 [`mermaid-validator-does-not-check-syntax`](../q1-urgent-important/mermaid-validator-does-not-check-syntax.md) covers it
 from the validator angle. This brief covers the test-discovery angle.
 
@@ -70,10 +70,10 @@ to satisfy it.
 
 ## Prior art / precedents
 
-- **`acceptance-clause-vacuity`** — the sibling brief on the same silent-false-pass class, framed as
-  unfalsifiable acceptance clauses; its "simulate the negative case before trusting it" rule is
-  exactly the proof technique that caught this one.
-  [brief](../q1-urgent-important/acceptance-clause-vacuity.md)
+- **Trustworthy Measurement — Rule 5** — the same silent-false-pass class, framed as a
+  falsifiability probe that must move the byte a check actually guards; its negative-case proof is
+  exactly the technique that caught this one.
+  [rule](../../../repo-governance/development/practice/trustworthy-measurement/rule-5-probes-and-scans-must-assert-their-reach.md)
 - **`mermaid-validator-does-not-check-syntax`** — a validator cited as the correctness gate that
   never parses syntax; same shape, different surface.
   [brief](../q1-urgent-important/mermaid-validator-does-not-check-syntax.md)

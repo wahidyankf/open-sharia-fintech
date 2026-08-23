@@ -53,9 +53,8 @@ while the work was live — and it decays as memory of which cycle touched what 
 - **PR Review Quality Gate workflow** — the mechanism that _discovered_ every one of these gaps
   live, after the checklist had already been written and reviewed.
   [pr-review-quality-gate](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
-- **`acceptance-clause-vacuity`** — the sibling brief on clauses that cannot fail; the "exits 1
-  before this step" clause above is a member of both classes.
-  [brief](../q1-urgent-important/acceptance-clause-vacuity.md)
+- **Falsifiable acceptance evidence** — the "exits 1 before this step" clause above belongs to
+  both failure classes.
 - **Vendor-neutral analogue: cherry-pick by commit range, not by ticket** — the widely-practised
   release-engineering habit of backporting from the merge commit's diff rather than from a
   human-curated list of changes, for exactly this reason.
