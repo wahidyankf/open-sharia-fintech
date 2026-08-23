@@ -78,6 +78,8 @@
 - [Judgment call] A separate structured post-write question-and-answer review is unnecessary for
   this plan because the user has continuously reviewed and resolved its design decisions during
   assembly. ACTIVATE still requires a fresh formal plan-quality gate, repairs for every valid
-  finding, and an explicit status change; the waiver removes a redundant checkpoint, not quality.
+  finding, and an explicit status change; the
+  [PR-native decision](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386294920)
+  records that the waiver removes a redundant checkpoint, not quality.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.

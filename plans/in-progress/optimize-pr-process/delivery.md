@@ -197,7 +197,9 @@ The other slice names mean:
 - ACTIVATE runs the formal plan-quality gate, records the user-ratified no-grill decision, and then
   changes the assembled plan from dormant to executable. The separate structured post-write
   question-and-answer review is waived because the user has resolved plan decisions throughout
-  assembly; every valid gate finding still requires a bounded PLAN-AMENDMENT before activation.
+  assembly; the [durable decision record](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386294920)
+  preserves its scope and retained gates. Every valid gate finding still requires a bounded
+  PLAN-AMENDMENT before activation.
 
 Both CORE slices, every WAVES forecast repair, all four ENTRY checklist slices, WAVES-A,
 WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
