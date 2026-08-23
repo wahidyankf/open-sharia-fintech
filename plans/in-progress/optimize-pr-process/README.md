@@ -2,13 +2,13 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-PRIVATE-IDEAS active, authoring only); dormant until ACTIVATE.**
+**In Progress (WAVES-ENTRY-ADAPTERS active, authoring only); dormant until ACTIVATE.**
 [Repo-grounded] WAVES-ENTRY-PUBLIC PR
 [#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
-`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. PR #263 recorded the private baseline/repair
-checklists at `339f464e4aca08e29a93a844e2c194c358d52a94`. This slice authors the remaining
-overlay-safe private-idea checklist only; it executes no private action and does not read or alter
-the private overlay.
+`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. PR #264 completed the private entry checklist at
+`3a18ba819fb235eff0377e4e8c4ba8be0ad0cb23`. This slice authors the cross-repository correction
+and amendment adapters only; it executes no private action and does not read or alter the private
+overlay.
 
 ## Outcome
 
