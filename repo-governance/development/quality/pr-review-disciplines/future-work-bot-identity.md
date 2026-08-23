@@ -30,7 +30,7 @@ coordinator authenticates as the PR author's own identity, and GitHub rejects a 
 review submitted against one's own pull request. Every blocking review — including one carrying a
 CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
 consumer that gates on STATE alone reads a blocked PR as unblocked while a CRITICAL finding sits open
-on it. This convention does not own closing that gap: provisioning a scope-minimal GitHub App or
-CI-scoped bot identity and rewiring the coordinator to authenticate as it is tracked in the
-[PR-review bot identity idea](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md), which owns the
-AI-attribution and formal `REQUEST_CHANGES` question until an org-level identity becomes available.
+on it. This convention does not own closing that gap. No bot or GitHub App identity is added by this
+plan. A future change must demonstrate the need, then provision and verify an independently posting
+identity before review STATE can become authoritative; until then, the AI-attribution footer and the
+finding text remain the authority.

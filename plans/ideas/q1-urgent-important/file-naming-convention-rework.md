@@ -59,8 +59,8 @@ less than that.
   class, not the sites a finding names; the propagation discipline any prose change here inherits.
 - [rhino-cli-governance-tooling-defects](./rhino-cli-governance-tooling-defects.md) — the sibling
   family, where the tool under-reports rather than the document.
-- [governance-path-ownership-registry](../q2-not-urgent-important/governance-path-ownership-registry.md)
-  — the same underlying question one level up: which paths a governance rule actually reaches.
+- **Rule reach** — the same underlying question one level up: which paths a governance rule actually
+  reaches.
 - **Hugo's `_index.md` contract** — the external mandate behind the exemption nobody documented; the
   worked precedent for stating _why_ a fixed filename is exempt rather than just listing it.
 
