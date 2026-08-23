@@ -47,6 +47,16 @@ CORE groups its 20 findings so a reader can check the allocation without decodin
   F-028–F-032.
 - Plan-amendment escape hatch: F-034.
 
+The other slice names mean:
+
+- WAVES delivers paired public/private units: A1 plan-making rules, A2 review routing, A3 PR and
+  reply rules, B legacy-conflict cleanup, and optional C tooling only if evidence proves it necessary.
+  Any code change uses test-driven development: write the failing test before the behavior change.
+- CLOSURE reconciles the plan with what landed and dogfoods the process—uses it on its own PRs—then
+  captures knowledge, closes private work, archives the public plan, and safely removes worktrees.
+- ACTIVATE runs the formal plan-quality gate and a structured post-write user review (the “grill”)
+  before changing the assembled plan from dormant to executable.
+
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
 worktree before the next slice. If a slice forecast crosses 400 lines or 20 files, split that slice
