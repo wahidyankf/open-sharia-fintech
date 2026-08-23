@@ -49,7 +49,7 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 ## Dormant Boundary
 
 Plan assembly is deliberately **dormant and non-executable**. WAVES-SPLIT may change only this
-plan's `README.md`, `delivery.md`, and `learnings.md`. Both execution-wave checklist slices,
+plan's `README.md`, `delivery.md`, and `learnings.md`. All three execution-wave checklist slices,
 EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests, implementation,
 and active-plan indexes remain dormant. The formal gate waits for complete assembly.
 
@@ -103,17 +103,17 @@ executable-status change. Merge green and resync before the next PR.
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
 | CORE-ENTRY        | Complete Phase 0–5 gate/pause-safe spine and state model, plus Phase 0–3 mechanics; F-005–F-011, F-014–F-016, F-025, F-026, F-028–F-030 |              230–300 |
 | CORE-REVIEW       | Review route, CI, correction firewall, merge and amendment; F-012, F-017, F-031, F-032, F-034                                           |              150–230 |
-| WAVES-SPLIT       | Forecast-only repair after missing task classes pushed the complete EXECUTION-WAVES forecast above the hard cap                         |               70–110 |
+| WAVES-SPLIT       | Forecast-only repair after missing task classes pushed the complete EXECUTION-WAVES forecast above the hard cap                         |               70–125 |
 | WAVES-ENTRY       | Contract; baselines/repairs; ideas; correction and sole PLAN-AMEND adapters; F-035 ENTRY partial                                        |              285–330 |
-| WAVES-A           | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and checked-file lag; F-035 A partial                                                |              190–250 |
-| WAVES-RULES       | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and checked-file lag; F-035 terminal owner                                   |              200–270 |
+| WAVES-A           | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and prior-pair reconciliation; F-035 A partial                                       |              190–250 |
+| WAVES-RULES       | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and prior-pair reconciliation; F-035 terminal owner                          |              200–270 |
 | EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
 | ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
 
-The complete-preview accounting below starts from the 350-line authoring measurement recorded in
-this PR and counts one changed line per separately tagged action, gate, and pause record. Metadata
-includes headings, status updates, and expected formatting churn; totals therefore forecast changed
-lines, not just checkboxes.
+The complete-preview accounting below uses the 350-line authoring measurement recorded in this PR
+as source evidence, then counts one forecast changed line per separately tagged action, gate, and
+pause record. Its 734-line cross-PR sum is intentionally larger: each independent slice repeats its
+own status/ownership/acceptance scaffolding, and the first draft omitted conditional and pause tasks.
 
 | Complete-preview component           | WAVES-ENTRY | WAVES-A | WAVES-RULES |
 | ------------------------------------ | ----------: | ------: | ----------: |
@@ -126,12 +126,16 @@ lines, not just checkboxes.
 | Public-correction adapter            |          32 |       0 |           0 |
 | Sole `PLAN-AMENDMENT` adapter        |          32 |       0 |           0 |
 | C decision/trigger and pair lag      |           0 |      12 |          48 |
-| **Measured complete preview**        |     **298** | **208** |     **228** |
+| **Forecast complete-preview total**  |     **298** | **208** |     **228** |
 | **Repair headroom to range ceiling** |      **32** |  **42** |      **42** |
 
 Every preview includes all conditional routes assigned to that slice. If actual authoring crosses
 its range ceiling, the preceding merged PR must forecast another split before the oversized slice
 opens; a checklist may not reclaim headroom by bundling independent actions.
+
+Prior-pair reconciliation means that, after a private PR merges, the next public slice compares the
+immutable public/private merge pins, copies completed task evidence into the public plan, and checks
+the sibling obligation. A missing pin, unchecked prior task, or unresolved obligation blocks entry.
 
 The two CORE slices keep the original 20-finding ownership complete:
 
