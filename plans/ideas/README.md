@@ -43,6 +43,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [bare-repo-landing-method-step-count-drift](./q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.
 - [behavior-coverage-json-report-wiring](./q2-not-urgent-important/behavior-coverage-json-report-wiring.md) — wire rhino-cli's JSON-run-report cross-check into project targets + CI.
 - [ci-setup-rust-toolchain-retry](./q2-not-urgent-important/ci-setup-rust-toolchain-retry.md) — `setup-rust` flaked 7× in one phase on the toolchain download; add a retry in both parity repos.
+- [class-sweep-completeness](./q2-not-urgent-important/class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
 - [coverage-artifact-relative-paths](./q2-not-urgent-important/coverage-artifact-relative-paths.md) — generated coverage files bake in the last runner's absolute path; most instances are gitignored, but a 2026-08-18 re-check found one finding overstated.
 - [cross-repo-governance-link-parity](./q2-not-urgent-important/cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
 - [declare-vite-peer-dependency](./q2-not-urgent-important/declare-vite-peer-dependency.md) — ten packages test through a `vite*.config.*` that imports a `vite` none of them declares; it resolves only via npm hoisting, and no gate would notice an eleventh.
@@ -63,10 +64,17 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [nx-affected-cross-worktree-contamination](./q2-not-urgent-important/nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
 - [opencode-v2-migration](./q2-not-urgent-important/opencode-v2-migration.md) — OpenCode v2 renames eleven configuration keys the generator emits today, including `permission.bash` → `permission.shell`; plan the migration before the beta is promoted.
 - [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip both parity repos inherit; ose-public solved the sibling case by declaring it vendored.
+- [plan-archival-in-pr-multi-repo-gap](./q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
+- [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
 - [port-registry-lacks-a-validator](./q2-not-urgent-important/port-registry-lacks-a-validator.md) — the cross-repo port registry now exists but is prose no tool reads, so a stale or colliding row still surfaces only when a service fails to bind.
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
+- [pr-review-bot-identity](./q2-not-urgent-important/pr-review-bot-identity.md) — a dedicated bot identity so blocking reviews post as `REQUEST_CHANGES`.
+- [pr-review-disciplines-applicability-shard-empty](./q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md) — the "Applicability and Finding Disposition" shard's frontmatter promises content its body never delivers; pre-existing, examined and deferred during PR #227.
 - [propagation-checklist-under-coverage](./q2-not-urgent-important/propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
+- [recurring-defect-family-escalation](./q2-not-urgent-important/recurring-defect-family-escalation.md) — four consecutive PR-review cycles each found a CRITICAL and all four shared one root cause; the loop has no trigger that escalates a recurring family from delta review to root-cause review.
 - [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
+- [repo-rules-quality-gate-convergence](./q2-not-urgent-important/repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
+- [review-loop-reviews-its-own-record](./q2-not-urgent-important/review-loop-reviews-its-own-record.md) — a review loop whose scope includes the correction record it writes grows its own surface as fast as it cleans it; nineteen cycles ran where three were required, and three consecutive fixes each produced the next cycle's finding.
 - [rhino-cli-env-backup-scripts](./q2-not-urgent-important/rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
 - [rhino-cli-exclude-dir-shared-steps-gap](./q2-not-urgent-important/rhino-cli-exclude-dir-shared-steps-gap.md) — thread `--exclude-dir` through rhino-cli's whole-app step scan so both sides of a `--shared-steps` comparison exclude the same dirs.
 - [rhino-cli-git-env-scrub-widening](./q2-not-urgent-important/rhino-cli-git-env-scrub-widening.md) — `find_root_from` scrubs only `GIT_DIR`/`GIT_WORK_TREE` before invoking `git rev-parse`, leaving `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, and `GIT_COMMON_DIR` unscrubbed.
@@ -147,14 +155,6 @@ promoted yet" is a legitimate state, distinct from "rejected".
   routes future-work learnings from plan execution here as two-pagers.
 
 ## Grooming Log
-
-### 2026-08-23 — optimize-pr-process consolidation
-
-Retired eight overlapping review/planning briefs into
-`plans/in-progress/optimize-pr-process/`: seven contributed bounded prose-first requirements and
-`pr-review-bot-identity` was rejected as unnecessary new identity/security machinery. The active
-index and live inbound links were reconciled. Independent ideas, including merge-queue adoption,
-remain here.
 
 ### 2026-08-06 — plan-ideas-grooming (multi-repo run)
 
