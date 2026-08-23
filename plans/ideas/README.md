@@ -16,7 +16,6 @@ Grouped into Eisenhower quadrants by [`plan-ideas-grooming`](../../repo-governan
 
 Blocks an active plan or documents a live defect, and carries a cross-repo, security, data-integrity, CI-gate, or checker-enforced stake. Do these first.
 
-- [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
 - [deletion-authorized-by-absence](./q1-urgent-important/deletion-authorized-by-absence.md) — `harness bindings generate` authorizes deletion by absence from a hand-maintained `vendored[]` list, so every way that list can fail to match reality resolves to destroying the file; four consecutive review cycles found four shapes of one root cause.
 - [file-naming-convention-rework](./q1-urgent-important/file-naming-convention-rework.md) — `file-naming.md` documents 2 of the 11 exemptions the gate applies, its scope clause ("and similar locations") cannot be evaluated, and the ordinal convention contradicts its own worked example.
@@ -26,7 +25,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 - [next-image-builds-cannot-resolve-ts-env-loader](./q1-urgent-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build; four scheduled workflows have reported it twice daily for days, and the `prod-*` deploy path for four sites is dead.
 - [oxlint-upgrade-and-lint-reproducibility](./q1-urgent-important/oxlint-upgrade-and-lint-reproducibility.md) — 22 lint sites fetched `npx oxlint@latest`, so a publish turned a green PR red on an untouched file; the 1.78.0 pin froze a real `set-state-in-effect` defect and left the wider class unenumerated.
 - [plan-checker-forward-reference-detection](./q1-urgent-important/plan-checker-forward-reference-detection.md) — a step can name an artifact only a later phase creates; two instances hard-errored in one plan after five clean checker passes.
-- [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
 - [rhino-cli-byte-identity-drift-reconciliation](./q1-urgent-important/rhino-cli-byte-identity-drift-reconciliation.md) — the zero-carve-out `apps/rhino-cli` byte-identity boundary is broken against `ose-private` in at least two measured places, with nothing left to propagate either fix automatically.
 - [rhino-cli-governance-tooling-defects](./q1-urgent-important/rhino-cli-governance-tooling-defects.md) — four governance tools that exit 0 while doing less than the caller believes: a mis-paired wrapped code span, a hard-coded `.claude/agents`, basename-keyed rename matching, and an `AUDIT FAILED` line above a green gate.
 

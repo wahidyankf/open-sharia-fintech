@@ -73,9 +73,8 @@ inside its own review scope inherits this, and the rules currently encourage kee
   shapes of one root cause and the loop had no trigger to escalate from delta review to root-cause
   review. Same family, adjacent mechanism.
   [brief](./recurring-defect-family-escalation.md)
-- **`acceptance-clause-vacuity`** — the counterweight. Any bound on cycles must not become a way to
-  stop before the shipping surface is actually clean.
-  [brief](../q1-urgent-important/acceptance-clause-vacuity.md)
+- **Falsifiable acceptance evidence** — the counterweight. Any bound on cycles must not become a
+  way to stop before the shipping surface is actually clean.
 - **Maker-Checker-Fixer pattern** — the general shape whose fixer step, here, was also an author.
   [maker-checker-fixer](../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
@@ -115,8 +114,8 @@ execution and against a static plan.
   governance or documentation plan may have no other surface. Where the boundary sits for those is
   unresolved. (open)
 - A cycle cap risks the opposite failure: stopping at three while a real reader-facing defect is
-  still live. The cap must bind the record, not the shipping surface, and `acceptance-clause-vacuity`
-  is the standard it has to clear. (open)
+  still live. The cap must bind the record, not the shipping surface, and it must still clear
+  falsifiable acceptance evidence. (open)
 - Reviewing the record once at the end concentrates its defects into a single pass that has no
   follow-up cycle to catch what that pass misses. Whether "once" should be "twice, by different
   disciplines" is a real question. (open)

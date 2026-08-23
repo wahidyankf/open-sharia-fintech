@@ -75,9 +75,8 @@ a list.
 - **Ownership classes (SOURCE / GENERATED / VENDORED)** — the repo already models exactly the
   distinction the safe rule needs; the emitter simply does not consult it as the deletion authority.
   [ownership-classes](../../../repo-governance/conventions/structure/multi-harness-binding/ownership-classes.md)
-- **`acceptance-clause-vacuity`** — sibling brief; the per-shape tests here all passed in both
-  directions and still left the class open, which is the same "verified the wrong thing" family.
-  [brief](./acceptance-clause-vacuity.md)
+- **Falsifiable acceptance evidence** — the per-shape tests here all passed in both directions and
+  still left the class open, which is the same "verified the wrong thing" family.
 
 ## Proposed direction (sketch)
 
