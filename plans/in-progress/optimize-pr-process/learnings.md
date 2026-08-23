@@ -40,9 +40,9 @@
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.
 - [Judgment call] Twenty-five execution findings cannot stay bootcamp-readable in one repair-sized
-  PR. Forecast, CORE, three WAVES-ENTRY checklist slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE keep
-  mechanics, instantiated units, and final evidence independently reviewable while preserving one
-  worktree and sequential dependencies.
+  PR. Forecast, CORE, four WAVES-ENTRY checklist slices (PUBLIC, both PRIVATE slices, and ADAPTERS),
+  WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE keep mechanics, instantiated units, and final evidence
+  independently reviewable while preserving one worktree and sequential dependencies.
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
   crossing the ratified 400-line ceiling. Split forecasting must use the repaired shape, not only
   the first authoring estimate; CORE-ENTRY and CORE-REVIEW preserve cohesion and repair headroom.
@@ -60,7 +60,8 @@
   The first complete repair forecast was 408 lines, so BASE and ADAPTERS replaced the unmerged draft.
 - [Repo-grounded] A complete BASE authoring probe then measured 401 changed lines and 276 granular
   checkboxes—one line beyond the hard cap. Public and private baseline/repair/idea units are cohesive
-  independently, so ENTRY-PUBLIC and ENTRY-PRIVATE replace BASE without compressing state changes.
+  independently, so ENTRY-PUBLIC and the initial ENTRY-PRIVATE model replaced BASE without
+  compressing state changes; the later measured private probe required one further split.
 - [Repo-grounded] PR #259's first readiness hash consumed compacted `git diff` output and therefore
   differed from the raw landed hash despite identical trees. Raw content proofs must use
   `/usr/bin/git diff --binary ... | /usr/bin/shasum -a 256`; human-readable compacted output is not
@@ -68,5 +69,17 @@
 - [Repo-grounded] PR #260 converted the 401-line BASE probe into two forecasted successor slices and
   then dogfooded its own lesson: the reviewed and squash-landed raw patch fingerprints matched. A
   shared template is not enough unless the first concrete unit also repeats the exact command.
+- [Repo-grounded] PR #261 replaced the 132-task public preview with 150 atomic IDs and converged in
+  recovery Cycle 4 after state-machine review exposed a scope contradiction. The final reviewed and
+  landed raw patch fingerprints matched; authoring forecasts must reserve review-repair headroom.
+- [Repo-grounded] The corrected private-entry probe measured 268 changed lines and 165 unique IDs,
+  above its 230-line forecast ceiling. BASE-REPAIR and IDEAS are cohesive independently, so two
+  private checklist slices preserve atomic tasks without burdening one human review.
+- [Judgment call] A separate structured post-write question-and-answer review is unnecessary for
+  this plan because the user has continuously reviewed and resolved its design decisions during
+  assembly. ACTIVATE still requires a fresh formal plan-quality gate, repairs for every valid
+  finding, and an explicit status change; the
+  [PR-native decision](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386294920)
+  records that the waiver removes a redundant checkpoint, not quality.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
