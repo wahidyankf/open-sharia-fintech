@@ -2,11 +2,10 @@
 
 ## Status
 
-**In Progress (REQUIREMENTS active); implementation dormant and non-executable until ACTIVATE.**
-[Repo-grounded] Foundation PR [#250](https://github.com/wahidyankf/ose-public/pull/250) merged as
-`62608547df0d2063d369537e0753f22699456f44`. This slice repairs business/product requirements and
-records idea dispositions. DESIGN and EXECUTION remain dormant; no formal plan-quality gate runs
-until ACTIVATE.
+**In Progress (DESIGN active); implementation dormant and non-executable until ACTIVATE.**
+[Repo-grounded] REQUIREMENTS PR [#251](https://github.com/wahidyankf/ose-public/pull/251) merged as
+`8884ec79437a05af3e8404e63239e079a379d84f`. This slice adds file-impact, propagation, cross-repo,
+and rollback design. EXECUTION remains dormant; no formal plan-quality gate runs until ACTIVATE.
 
 ## Outcome
 

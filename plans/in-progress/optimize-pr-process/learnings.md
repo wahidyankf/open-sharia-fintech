@@ -13,5 +13,10 @@
   reached semantic exit; Cycle 5 was unnecessary.
 - [Repo-grounded] A late fix introduced an unqualified `index` ambiguity. The declared docs-only
   Cycle 4 changed strategy and closed it by distinguishing `active-plan index` from `idea index`.
+- [Repo-grounded] REQUIREMENTS PR #251 opened 12 findings across Cycles 1–3. Literal trace checks
+  could still miss contradictory terminal states; Cycle 4 changed to state simulation, found zero
+  further issues, and reached semantic exit without a confirmation Cycle 5.
+- [Judgment call] Recovery should name the failed reasoning method as well as the defect family.
+  Otherwise “changed strategy” can repeat the same blind spot under a new label.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
