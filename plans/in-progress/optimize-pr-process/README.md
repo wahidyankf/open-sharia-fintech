@@ -2,10 +2,11 @@
 
 ## Status
 
-**In Progress (plan assembly); implementation dormant and non-executable until ACTIVATE.** [Repo-grounded] Draft PR
-[#250](https://github.com/wahidyankf/ose-public/pull/250) is only the plan foundation. Cycle 1 fixes
-are complete, but fresh strict audit `ced0ed` failed. The older `378d66` PASS was invalidated by the
-material compaction and cannot activate this head.
+**In Progress (REQUIREMENTS active); implementation dormant and non-executable until ACTIVATE.**
+[Repo-grounded] Foundation PR [#250](https://github.com/wahidyankf/ose-public/pull/250) merged as
+`62608547df0d2063d369537e0753f22699456f44`. This slice repairs business/product requirements and
+records idea dispositions. DESIGN and EXECUTION remain dormant; no formal plan-quality gate runs
+until ACTIVATE.
 
 ## Outcome
 
@@ -51,6 +52,7 @@ merged-green pins and record discharge or deliberate deviation.
 
 - [Business requirements](./brd.md)
 - [Product requirements and acceptance criteria](./prd.md)
+- [Planning-only idea disposition map](./idea-disposition-map.md)
 - [Technical design](./tech-docs.md)
 - [Delivery checklist](./delivery.md)
 - [Learnings](./learnings.md)
@@ -61,13 +63,13 @@ Defining claims use `[Repo-grounded]` for repository/PR evidence, `[Web-cited]` 
 `[Judgment call]` for user-ratified policy, and `[Unverified]` for work activation must still prove.
 Repeated claims cross-reference this section rather than duplicating evidence.
 
-| Claim                             | Source evidence (paraphrased)                                                                                              | Accessed   |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [Web-cited] Small, focused PRs    | [Google small changes][google-small] says no universal size; [descriptions][google-body] ask what and why                  | 2026-08-23 |
-| [Web-cited] Native review history | [GitHub review help][github-help] recommends focused context; [resolution][github-resolve] preserves discussion            | 2026-08-23 |
-| [Web-cited] Teaching and pushback | [Microsoft reviewer guidance][ms-review] asks why; [author guidance][ms-author] supports reasoned rejection and follow-ups | 2026-08-23 |
-| [Web-cited] Bounded feedback      | [Stripe Minions][stripe] reports often one, at most two CI runs after local repair—not five review cycles                  | 2026-08-23 |
-| [Web-cited] Short-lived branches  | [Trunk Based Development][tbd] describes branches integrated quickly to trunk                                              | 2026-08-23 |
+| Claim                             | Source evidence (paraphrased)                                                                                                                                        | Accessed   |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Web-cited] Small, focused PRs    | [Google small changes][google-small] says no universal size; [descriptions][google-body] ask what and why                                                            | 2026-08-23 |
+| [Web-cited] Native review history | [GitHub review help][github-help] recommends focused context; [resolution][github-resolve] preserves discussion                                                      | 2026-08-23 |
+| [Web-cited] Teaching and pushback | [Microsoft reviewer guidance][ms-review] asks reviewers to explain why; [author guidance][ms-author] allows a reasoned “won't fix” and keeps questions in the review | 2026-08-23 |
+| [Web-cited] Bounded feedback      | [Stripe Minions][stripe] reports often one, at most two CI runs after local repair—not five review cycles                                                            | 2026-08-23 |
+| [Web-cited] Short-lived branches  | [Trunk Based Development][tbd] describes branches integrated quickly to trunk                                                                                        | 2026-08-23 |
 
 The 400-line/20-file ceiling and hard stop before Cycle 6 are repository judgment calls, not
 universal industry measurements. The inaccessible DOI previously listed here is removed.

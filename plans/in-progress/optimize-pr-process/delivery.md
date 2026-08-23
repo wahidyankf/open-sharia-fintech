@@ -2,21 +2,20 @@
 
 ## Current State
 
-| Evidence                                                                           | State                                                       |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [Repo-grounded] Draft [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | Foundation only; Cycle 1 fixes completed                    |
-| [Repo-grounded] Historic audit `378d66`                                            | Invalidated by material compaction; not activation evidence |
-| [Repo-grounded] Fresh strict audit `ced0ed`                                        | Failed with F-001–F-037; activation remains closed          |
-| [Unverified] Complete assembled plan                                               | Must pass a fresh formal gate and grill before activation   |
+| Evidence                                                                            | State                                                     |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`  |
+| [Repo-grounded] REQUIREMENTS                                                        | Active: BRD, PRD, and planning-only idea dispositions     |
+| [Repo-grounded] DESIGN and EXECUTION                                                | Dormant; no implementation or formal gate in this slice   |
+| [Unverified] Complete assembled plan                                                | Must pass a fresh formal gate and grill before activation |
 
 ## Dormant Boundary
 
-This foundation is deliberately **dormant and non-executable**. Before ACTIVATE, only a planning
-artifact inside plan documentation may inventory each idea and record its intended integrate/discard
-owner and reason. All idea-brief, idea-index, and idea-routing-reference edits, moves, deletions, and
-retirements wait for PUB-IDEAS or PRIV-IDEAS after ACTIVATE. `plans/in-progress/README.md`, the
-active-plan index changed by FOUNDATION, is allowed; no rule, agent, binding, workflow, code, or test
-may change.
+Plan assembly is deliberately **dormant and non-executable**. REQUIREMENTS may add only the
+planning-only [idea disposition map](./idea-disposition-map.md) and repair the owned plan documents.
+All idea-brief, idea-index, and idea-routing-reference edits, moves, deletions, and retirements wait
+for PUB-IDEAS or PRIV-IDEAS after ACTIVATE. `plans/in-progress/README.md`, the active-plan index
+changed by FOUNDATION, remains allowed; no rule, agent, binding, workflow, code, or test may change.
 
 ## Sequential Plan Assembly
 
@@ -40,16 +39,22 @@ executable-status change. Merge green and resync before the next PR.
 | EXECUTION    | Worktree/mode/boundaries, phases, commands, gates, review transaction, knowledge, archival, cleanup |
 | ACTIVATE     | Clean formal plan-quality gate, post-write grill, and explicit executable-status change             |
 
-## Confirmed Open Audit Map
+The exact 20-source classification, owner, retained requirement, and later retirement unit live in
+the [idea disposition map](./idea-disposition-map.md). Its public source pin is
+`62608547df0d2063d369537e0753f22699456f44`; its private source pin is
+`718c20c923707d777a89639f760f98d53740bd70`.
 
-The 33 findings are **CONFIRMED and intentionally OPEN**, not waived or deferred forever. Their
+## Audit Ownership Map
+
+The fresh findings are confirmed and remain owned, not waived or deferred forever. Their
 [durable PR-native catalog](https://github.com/wahidyankf/ose-public/pull/250#issuecomment-5384375806)
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION fixes F-003, F-023, and F-024 in tracked plan text; its PR body fixes F-022. ACTIVATE may
-open only after every mapped finding is fixed readably. A fresh formal gate must then pass its full
-semantic exit, followed by the required grill. Historic audit evidence cannot substitute.
+FOUNDATION fixed its assigned defects. REQUIREMENTS now resolves F001, F002, F021, and the source-pin
+half of F033; DESIGN and EXECUTION findings remain dormant and open. ACTIVATE may open only after
+every mapped finding is fixed readably. A fresh formal gate must then pass its full semantic exit,
+followed by the required grill. Historic audit evidence cannot substitute.
 
 ## Worktree and Cross-Repository Order
 
