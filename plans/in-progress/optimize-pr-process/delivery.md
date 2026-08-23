@@ -134,10 +134,10 @@ resync, and three-state overlay work. Splitting that measured draft repeats 12 s
 lines: 413 total across PUBLIC and PRIVATE.
 
 The corrected private-entry probe then measured 268 changed lines and 165 unique IDs: 19 PRIV-BASE,
-75 PRIV-REPAIR, and 71 PRIV-IDEAS. It stayed under the 400-line hard cap but exceeded its 230-line
-forecast ceiling. BASE-REPAIR and IDEAS therefore become two independently readable checklist
-slices; they repeat only the private command key, status, ownership, and terminal handoff needed for
-each PR to stand alone.
+75 PRIV-REPAIR, and 71 PRIV-IDEAS. Its [PR-native provenance record](https://github.com/wahidyankf/ose-public/pull/262#issuecomment-5386581220)
+pins the inputs, exact compact inventory, measurement, and successor hashes. BASE-REPAIR and IDEAS
+therefore become two independently readable checklist slices; they repeat only the private command
+key, status, ownership, and terminal handoff needed for each PR to stand alone.
 
 Here, an invariant is an always-on evidence rule, literal acceptance gives the exact command and
 expected result, and state-specific overlay proof hashes unstaged, staged, and committed changes
