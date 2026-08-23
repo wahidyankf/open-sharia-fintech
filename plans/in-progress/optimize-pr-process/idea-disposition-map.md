@@ -100,7 +100,12 @@ unchanged.
 
 ## Retirement Rule
 
-After ACTIVATE, retire the 19 public briefs and public index entries atomically in `PUB-IDEAS`; retire
-the private brief and private index entry separately in `PRIV-IDEAS`. The retirement PRs cite the
-merged plan pin and preserve historical references. Until then, every source and routing artifact
-above remains unchanged.
+PRs #269–#271 retired nine public briefs in three cohesive, human-sized subdeliveries before
+ACTIVATE. They are retained as execution data points, not authority to start private or rule work.
+After the reconciliation and ACTIVATE pin merge, retire the remaining ten public briefs through the
+five named `PUB-IDEAS-4`–`PUB-IDEAS-8` subdeliveries in `delivery.md`. Only their terminal proof may
+authorize `PRIV-BASE`; its clean or overlay-owned result, or an evidenced failure repaired by
+`PRIV-REPAIR`, may then authorize `PRIV-IDEAS`, which retires the private brief and index entry
+separately. Every retirement
+PR preserves historical references and cites its exact predecessor; no subdelivery may exceed the
+plan's human-size boundary.

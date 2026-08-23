@@ -63,7 +63,7 @@ ledger and stays within the 400-line/20-file ceiling.
 ose-public/
 ├── plans/in-progress/optimize-pr-process/       # control plan; closure moves it to plans/done/
 ├── plans/ideas/{q1-urgent-important,q2-not-urgent-important}/
-│                                                # 19 mapped briefs; PUB-IDEAS retires them
+│                                                # 9 mapped briefs retired; 10 remain in PUB-IDEAS
 ├── repo-governance/workflows/{plan,pr,repo}/    # durable workflow sources
 ├── repo-governance/conventions/structure/plans/ # human PR and delivery rules
 ├── repo-governance/development/quality/         # review-discipline guidance
@@ -130,14 +130,19 @@ passes the same checks.
 flowchart TD
     accTitle: Public rule propagation and bounded private adaptation
     accDescr: A green public merge creates one pinned private obligation. Private work either closes it, records a private-only decision, or requests one public correction. A second reversal stops for human judgment.
-    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>exact pins and rule class"]:::blue
+    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> R{"Read-only lineage<br/>reconciliation"}:::orange
+    R -->|No match: allocate count 0| O["PR-native private obligation<br/>pins, class, lineage ID"]:::blue
+    R -->|One clear match: reuse ID and count| O
+    R -->|Ambiguous: no obligation| HS["Freeze pair and stop<br/>for human judgment"]:::purple
     O --> A{"Private destination<br/>result"}:::orange
     A -->|Satisfied or reasoned deviation| C["Private PR closes obligation<br/>with live evidence"]:::teal
     A -->|Private-only side issue| V["Record issue separately<br/>do not reopen public"]:::gray
     V -->|Original obligation continues| O
     A -->|Portable source defect| F["One public correction allowed<br/>link superseded obligation"]:::purple
     F --> P2["Corrected public PR<br/>new immutable pins"]:::blue
-    P2 --> A2{"Private result after<br/>one correction"}:::orange
+    P2 --> R2{"Reconcile existing lineage<br/>before resumed private work"}:::orange
+    R2 -->|Clear existing lineage| A2{"Private result after<br/>one correction"}:::orange
+    R2 -->|Ambiguous: no obligation or correction| H
     A2 -->|Terminal| C
     A2 -->|Another reversal| H["Stop and ask a human<br/>link replacement or terminal"]:::purple
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -147,14 +152,13 @@ flowchart TD
     classDef gray fill:#808080,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
-Equivalent prose: a portable public rule merges first and creates one native private obligation
-containing its URL, merge SHA, reviewed commit, checks, rule class, and expected destination. Private
-adapts from that immutable source and records satisfaction, a reasoned deviation, or N/A with owner
-and remaining action. A private-only issue is recorded separately and the original obligation still
-ends as satisfaction, reasoned deviation, or N/A. A genuine portable source defect permits one
-public correction and links the superseded record. A second reversal stops automation, asks a
-human, and links the replacement or terminal decision. Byte-identical surfaces follow their
-existing authority rather than a blanket public-first rule.
+Equivalent prose: a portable public rule reconciles sealed/correction-pending lineage before obligation:
+no match allocates count 0, one clear match reuses ID/count, and ambiguity freezes the pair with no
+obligation or correction pending human judgment. The first two outcomes create the obligation with its
+URL, merge SHA, reviewed commit, checks, rule class, lineage ID, and destination. Private records
+satisfaction, reasoned deviation, or N/A; a private-only issue is separate. A portable defect permits
+one public correction, then reconciliation again before resumed private work. A relabel keeps its lineage
+and count; a second reversal stops for a human. Byte-identical surfaces retain their existing authority.
 
 ## Delivery and Rollback DAG
 
@@ -162,32 +166,48 @@ existing authority rather than a blanket public-first rule.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     accTitle: Sequential delivery and reverse dependency rollback
-    accDescr: Activation precedes idea retirement, A1 plan-making rules, A2 review routing, A3 PR and reply rules, B legacy cleanup, the optional C mechanism decision, and closure. Each public wave precedes private adaptation; rollback reverses that order.
-    A["ACTIVATE<br/>approved plan"]:::blue --> I1["PUB-IDEAS"]:::brown --> I2["PRIV-IDEAS"]:::brown
+    accDescr: Activation starts a public baseline that either cleanly authorizes the first public idea subdelivery or requires a bounded repair. Terminal public proof starts a separate private baseline with the same explicit repair outcome. Rollback reverses each path actually used.
+    A["ACTIVATE<br/>approved plan"]:::blue --> PUB_BASE{"PUB-BASE<br/>baseline result"}:::orange
+    PUB_BASE -->|Clean direct| I4["PUB-IDEAS-4"]:::brown --> I5["PUB-IDEAS-5"]:::brown --> I6["PUB-IDEAS-6"]:::brown --> I7["PUB-IDEAS-7"]:::brown --> I8["PUB-IDEAS-8"]:::brown
+    PUB_BASE -->|Baseline failure| PUB_REPAIR["PUB-REPAIR<br/>bounded repair"]:::purple
+    PUB_REPAIR -->|Clean repair| I4
+    PUB_REPAIR -->|Failed recheck| PUB_FROZEN["PUB-IDEAS frozen<br/>one repair spent; human stop"]:::gray
+    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PRIV_BASE{"PRIV-BASE<br/>baseline result"}:::orange
+    PRIV_BASE -->|Clean / overlay-owned| I2["PRIV-IDEAS"]:::brown
+    PRIV_BASE -->|Baseline failure| PRIV_REPAIR["PRIV-REPAIR<br/>bounded repair"]:::purple
+    PRIV_REPAIR -->|Clean repair| I2
+    PRIV_REPAIR -->|Failed or ambiguous| PRIV_FROZEN["PRIV-IDEAS frozen<br/>repair path or human stop"]:::gray
     I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
-    VA3 --> PB["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
+    VA3 --> PUB_B["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
     VB --> C{"Wave C optional mechanism<br/>necessary?"}:::orange
     C -->|No, record no change| Z["Public closure<br/>archive plan"]:::teal
     C -->|Yes| PC["PUB-C<br/>optional mechanism"]:::blue --> VC["PRIV-C<br/>optional mechanism"]:::purple --> Z
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
-    VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
-    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> I1 -.-> A
+    VC -.-> PC -.-> VB -.-> PUB_B -.-> VA3 -.-> PA3
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2
+    I2 -. "if private repair used" .-> PRIV_REPAIR -.-> PRIV_BASE
+    I2 -. "if private baseline was clean" .-> PRIV_BASE
+    PRIV_BASE -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4
+    I4 -. "if public repair used" .-> PUB_REPAIR -.-> PUB_BASE -.-> A
+    I4 -. "if public baseline was clean" .-> PUB_BASE
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-Equivalent prose: after ACTIVATE, retire public then private ideas; deliver A1 plan-making rules, A2
-review routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
-adaptation. Make C an explicit no-change or approved optional-mechanism decision, and archive only
-after both repositories are terminal. Rollback starts with the last merged dependent and moves
-backward. A unit may revert alone only when nothing merged depends on it. During a paired unwind,
-leave a native obligation naming the pins, temporary incoherence, owner, and next action.
+Equivalent prose: PUB-BASE cleanly authorizes PUB-IDEAS-4; failure gets one PUB-REPAIR attempt, whose
+clean recheck authorizes -4 and whose failed recheck freezes ideas for a human, with no second repair.
+Successor pins carry -4 through -8; -8's landed pin, matching fingerprint, and obligation authorize
+PRIV-BASE. Private baseline/repair has the stated clean, frozen, and ambiguity outcomes before
+PRIV-IDEAS. Then A1, A2, A3, and B run public before private; C is explicit and closure waits for both
+repositories. Rollback reverses the path actually used, including repair only when used; paired unwind
+records pins, temporary incoherence, owner, and next action.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects
@@ -196,8 +216,15 @@ independently observable behavior. Rollback never depends on unpublished local s
 
 ## Validation
 
-The formal plan-quality gate precedes execution but follows complete assembly. Every later delivery
-uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push gates, native
-review/fix conversations, current-head CI, merge proof, and full landed-diff resync. Formal-gate
-validation is read-only; any tracked correction becomes a separately gated `PLAN-AMENDMENT` PR and
-cannot ride inside a rule wave.
+Before ACTIVATE, the bounded audit in `delivery.md` gives every pinned numbered rule, bullet,
+sub-bullet, and conditional check its own evidence or uncovered disposition. Only a catalog-defined
+conditional may use reasoned `N/A`, with its applicability condition and proof; a nonconditional row
+is never `N/A`. Only uncovered rows read the five plan documents; no double-zero loop runs.
+
+It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
+sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After
+that amendment, record its merge pin, re-open and re-evaluate only affected rows once, and human-stop on
+any remainder. No amendment rides in a rule wave or starts a general loop.
+
+Every later delivery uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push
+gates, native review/fix conversations, current-head CI, merge proof, and full landed-diff resync.

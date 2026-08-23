@@ -37,7 +37,9 @@ contracts, not measured outcomes.
 - **BR-7 — Minimal machinery:** use prose and current GitHub/repository capabilities unless a
   measured gap proves a new mechanism necessary and cheaper than its maintenance burden.
 - **BR-8 — Cross-repo coherence:** public portable rules propagate through the canonical workflow;
-  private adapts from exact merged pins and records semantic correspondence or deviation.
+  private adapts from exact merged pins and records semantic correspondence or deviation. One stable
+  defect-lineage ID follows a root cause across superseded or late repair pairs so relabeling cannot
+  reset the one-reversal boundary.
 - **BR-9 — Large-plan safety:** plan docs, rules, bindings, code, tests, ideas, and closure become
   sequential delivery units in one worktree per repo, with a stable `main` between units.
 - **BR-10 — Trunk safety:** every multi-PR sequence names its lightest-fit “feature flag,” dependency,
