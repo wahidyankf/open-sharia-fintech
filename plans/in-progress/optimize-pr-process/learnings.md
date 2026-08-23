@@ -40,9 +40,9 @@
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.
 - [Judgment call] Twenty-five execution findings cannot stay bootcamp-readable in one repair-sized
-  PR. Forecast, CORE, WAVES-ENTRY, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE slices keep mechanics,
-  instantiated units, and final evidence independently reviewable while preserving one worktree and
-  sequential dependencies.
+  PR. Forecast, CORE, two WAVES-ENTRY slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE keep
+  mechanics, instantiated units, and final evidence independently reviewable while preserving one
+  worktree and sequential dependencies.
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
   crossing the ratified 400-line ceiling. Split forecasting must use the repaired shape, not only
   the first authoring estimate; CORE-ENTRY and CORE-REVIEW preserve cohesion and repair headroom.
@@ -54,6 +54,9 @@
   green same-head CI. The repaired PR converged in Cycle 3 without an extra confirmation cycle.
 - [Repo-grounded] The first broad EXECUTION-WAVES draft reached 350 changed lines while still
   missing baseline-repair, correction/amendment, and per-gate pause tasks. Compressing atomic tasks
-  would make progress unauditable, so WAVES-ENTRY, WAVES-A, and WAVES-RULES replace the single slice.
+  would make progress unauditable, so ENTRY, A, and RULES waves replace the single slice.
+- [Repo-grounded] Closed PR #258 reached 302 changed lines but still bundled push, review, readiness,
+  landed proof, and resync states. Its Cycle 1 also exposed stale-baseline and overlay-proof gaps.
+  The complete repair forecast is 408 lines, so BASE and ADAPTERS replace the unmerged ENTRY draft.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
