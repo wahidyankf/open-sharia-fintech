@@ -17,10 +17,10 @@
 | [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`     |
 | [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`         |
 | [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`  |
-| [Repo-grounded] WAVES-ENTRY-PRIVATE-IDEAS                                           | #263 merged; author private-idea checklist                   |
+| [Repo-grounded] WAVES-ENTRY-ADAPTERS                                                | #264 merged; author correction/amendment adapters            |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate still precedes explicit activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-PRIVATE-IDEAS changes plan docs only; it runs no
+> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-ADAPTERS changes plan docs only; it runs no
 > gate, private-worktree action, idea retirement, or implementation.
 
 ## Executor Legend and Plain-Language Terms
@@ -55,7 +55,7 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-PRIVATE-IDEAS may change
+Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-ADAPTERS may change
 only this plan's `README.md`, `delivery.md`, and `learnings.md`. Both private checklist slices,
 ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings,
 workflows, code, tests, implementation, private worktree state, and active-plan indexes remain
@@ -257,8 +257,8 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through WAVES-ENTRY-PRIVATE-BASE-REPAIR are merged; WAVES-ENTRY-PRIVATE-IDEAS is active.
-ACTIVATE may open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
+FOUNDATION through WAVES-ENTRY-PRIVATE-IDEAS are merged; WAVES-ENTRY-ADAPTERS is active. ACTIVATE
+may open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
 instantiate every delivery unit as granular, attributable checkboxes and every finding is fixed. A
 fresh formal gate must then pass; historic evidence cannot substitute.
 
@@ -693,6 +693,42 @@ PR #263 fixed the baseline/repair checklist at `339f464e4aca08e29a93a844e2c194c3
 slice owns the overlay-safe private-idea unit and keeps F-035 partial. ENTRY-ADAPTERS must still
 instantiate the freeze/replacement/abandonment/rollback transitions, record all four ENTRY pins,
 and close the ENTRY gate.
+
+### ENTRY-ADAPTERS — Bounded Cross-Repository Correction and Amendment
+
+One native obligation is the public record for one active public/private pair. Before public merge,
+its public PR carries a **prepared** note with the reviewed head, rule class, expected private paths,
+safe public summary, owner, and `correction-count: 0`; after merge it becomes **pending-private** by
+adding the immutable merge SHA and private entry command. It never copies private patch content.
+
+| Event                          | Required pair state                   | What remains frozen                  | Terminal evidence                    |
+| ------------------------------ | ------------------------------------- | ------------------------------------ | ------------------------------------ |
+| Unrelated private-main advance | pending-private after base inspection | no pair work                         | inspection and current private pin   |
+| Compatible public follow-up    | pending-private                       | no private churn                     | public note and unchanged obligation |
+| Portable/plan defect           | correction-pending                    | paused private PR and all successors | replacement public/amendment pin     |
+| Second reversal                | human-stop                            | pair and successors                  | human-readable escalation            |
+| Completed pair, late defect    | sealed                                | completed pair stays closed          | new linked repair pair               |
+
+- [ ] `[ENTRY-ADAPTERS:A1.01][AI]` Record one prepared native obligation before the public merge with reviewed head, class, expected private paths, safe summary, owner, successor, and `correction-count: 0`.
+- [ ] `[ENTRY-ADAPTERS:A1.02][AI]` After merge, update that same note to pending-private with immutable merge SHA, landed fingerprint, and literal private entry command.
+- [ ] `[ENTRY-ADAPTERS:A1.03][AI]` Prove only one public/private pair is active and freeze every later pair before private work starts.
+- [ ] `[ENTRY-ADAPTERS:A1.04][AI]` On unrelated private-main advance, inspect the full base delta, record the new private pin, rerun affected checks, and keep the obligation pending-private.
+- [ ] `[ENTRY-ADAPTERS:A1.05][AI]` On a compatible public follow-up, record nonblocking compatibility without creating private churn or replacing the obligation.
+- [ ] `[ENTRY-ADAPTERS:A1.06][AI]` Classify a private finding as local adaptation, reasoned deviation, unrelated follow-up, portable defect, or plan defect before any handoff.
+- [ ] `[ENTRY-ADAPTERS:A1.07][AI]` For a portable or plan defect, freeze the paused private PR's push, review, readiness, merge, and successors; record its exact head and cited defect boundary.
+- [ ] `[ENTRY-ADAPTERS:A1.08][AI]` Permit exactly one unstacked public correction or plan amendment, scoped only to the cited portable or plan defect.
+- [ ] `[ENTRY-ADAPTERS:A1.09][AI]` Keep the originating private review thread unresolved; reply there with the replacement pin, frozen state, and resumption condition.
+- [ ] `[ENTRY-ADAPTERS:A1.10][AI]` Supersede the old obligation in its original native note; create no second obligation for the same pair.
+- [ ] `[ENTRY-ADAPTERS:A1.11][AI]` Treat the correction PR as its own bounded review, while the resumed private PR retains—not resets—its existing Cycle 1–5 count.
+- [ ] `[ENTRY-ADAPTERS:A1.12][AI]` Stop before a second public reversal, leave a human-readable escalation, and preserve the frozen pair and original thread.
+- [ ] `[ENTRY-ADAPTERS:A1.13][AI]` Resume only after the named replacement pin is merged, inspected, and recorded in the original obligation and private thread.
+- [ ] `[ENTRY-ADAPTERS:A1.14][AI]` Close a pair only with a terminal `satisfied`, `reasoned-deviation`, or `N/A` state, exact public/private pins, and evidence links.
+- [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; file any later defect as a new linked repair pair without reopening the sealed pair.
+- [ ] `[ENTRY-ADAPTERS:A1.16][AI]` Use only disclosure-safe public summaries and links; retain private task evidence solely in the private PR artifact.
+- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` For this public control plan, record the explicit override of the legacy per-repo/three-grill composite: one control plan, formal plan-quality gate, and no separate post-plan grill.
+- [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
+- [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
+- [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
 
 ## Dormant Lifecycle and Evidence-State Template
 
