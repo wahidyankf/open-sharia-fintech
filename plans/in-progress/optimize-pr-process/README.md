@@ -2,10 +2,11 @@
 
 ## Status
 
-**In Progress (DESIGN active); implementation dormant and non-executable until ACTIVATE.**
-[Repo-grounded] REQUIREMENTS PR [#251](https://github.com/wahidyankf/ose-public/pull/251) merged as
-`8884ec79437a05af3e8404e63239e079a379d84f`. This slice adds file-impact, propagation, cross-repo,
-and rollback design. EXECUTION remains dormant; no formal plan-quality gate runs until ACTIVATE.
+**In Progress (EXECUTION-FORECAST active); implementation dormant until ACTIVATE.**
+[Repo-grounded] DESIGN PR [#252](https://github.com/wahidyankf/ose-public/pull/252) merged as
+`3ac2468f534be2faaf0b5a784b04b6411313f49e`. The 25 remaining EXECUTION findings need three named
+human-sized authoring slices. This forecast records those boundaries before substantive checklist
+work begins; no formal plan-quality gate runs until ACTIVATE.
 
 ## Outcome
 
@@ -43,7 +44,8 @@ idea retirement, knowledge capture, and plan closure. Out of scope: a new review
 parser, merge queue, universal runtime flag, or unrelated CI cleanup.
 
 Plan assembly must finish before idea or implementation delivery. The exact unstacked order begins
-`FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
+`FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION-FORECAST → CORE → WAVES → CLOSURE → ACTIVATE →
+PUB-IDEAS → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 
