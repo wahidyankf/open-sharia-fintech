@@ -11,15 +11,15 @@
 
 ## Dormant Boundary
 
-This foundation is deliberately **dormant and non-executable**. Until ACTIVATE merges, no repo rule,
-idea disposition, agent, skill, binding, workflow, CI mechanism, application code, or test may be
-implemented or deleted under this plan. PR #250 establishes only six plan documents and the active
-index; it does not claim the complete execution contract or a passing plan-quality gate.
+This foundation is deliberately **dormant and non-executable**. Before ACTIVATE, only a planning
+artifact inside plan documentation may inventory each idea and record its intended integrate/discard
+owner and reason. All idea-brief, index, and routing edits, moves, deletions, and retirements wait for
+PUB-IDEAS or PRIV-IDEAS after ACTIVATE; no rule, agent, binding, workflow, code, or test may change.
 
 ## Sequential Plan Assembly
 
 ```text
-FOUNDATION (#250) → REQUIREMENTS/idea-disposition → DESIGN/file-impact/cross-repo diagrams →
+FOUNDATION (#250) → REQUIREMENTS/idea-disposition-map → DESIGN/file-impact/cross-repo diagrams →
 EXECUTION/worktree/mode/boundaries/phases/commands/gates/knowledge/archival →
 ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
 ```
@@ -33,7 +33,7 @@ executable-status change. Merge green and resync before the next PR.
 
 | Slice        | Contract restored before activation                                                                 |
 | ------------ | --------------------------------------------------------------------------------------------------- |
-| REQUIREMENTS | Business/product structure plus the exact public/private idea-disposition map                       |
+| REQUIREMENTS | Business/product structure plus the planning-only public/private idea-disposition map               |
 | DESIGN       | File-impact tree, public/private obligation design, propagation/correction and rollback diagrams    |
 | EXECUTION    | Worktree/mode/boundaries, phases, commands, gates, review transaction, knowledge, archival, cleanup |
 | ACTIVATE     | Clean formal plan-quality gate, post-write grill, and explicit executable-status change             |
