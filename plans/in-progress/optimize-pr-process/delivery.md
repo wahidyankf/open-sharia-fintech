@@ -7,22 +7,24 @@
 | [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`   |
 | [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f` |
 | [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`       |
-| [Repo-grounded] EXECUTION-FORECAST                                                  | Active: name human-sized checklist-authoring boundaries    |
+| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`     |
+| [Repo-grounded] CORE-SPLIT-FORECAST                                                 | Active: split the over-ceiling audited CORE draft          |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation       |
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. EXECUTION-FORECAST may change only
-this plan's `README.md`, `delivery.md`, and `learnings.md`. CORE, WAVES, and CLOSURE remain dormant;
-so do all idea, index, routing-reference, rule, agent, binding, workflow, code, test, implementation,
-and active-plan-index surfaces. The formal plan-quality gate does not run before complete assembly.
+Plan assembly is deliberately **dormant and non-executable**. CORE-SPLIT-FORECAST may change only
+this plan's `README.md`, `delivery.md`, and `learnings.md`. Both CORE slices, EXECUTION-WAVES, and
+EXECUTION-CLOSURE remain dormant; so do all idea, index, routing-reference, rule, agent, binding,
+workflow, code, test, implementation, and active-plan-index surfaces. The formal gate waits for
+complete assembly.
 
 ## Sequential Plan Assembly
 
 ```text
-FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → EXECUTION-FORECAST →
-EXECUTION-CORE → EXECUTION-WAVES → EXECUTION-CLOSURE → ACTIVATE/formal-gate/grill →
-PUB-IDEAS → PRIV-IDEAS → implementation waves
+FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → FORECAST (#253) →
+CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → EXECUTION-WAVES → EXECUTION-CLOSURE →
+ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
@@ -32,35 +34,35 @@ sub-slices in the prior PR before opening the first split. Gate findings use bou
 `ACTIVATE-REPAIR-*` PRs. Final ACTIVATE contains only the clean formal gate, post-write grill, and
 executable-status change. Merge green and resync before the next PR.
 
-| Slice             | Contract and audit IDs restored before activation                                                                                     | Target changed lines |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
-| EXECUTION-CORE    | Legend, worktrees, mode, boundaries, entry/unit/review/merge transactions; F-005–F-012, F-014–F-017, F-025, F-026, F-028–F-032, F-034 |              260–330 |
-| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                                            |              280–340 |
-| EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                        |              220–300 |
-| ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                               |          at most 400 |
+| Slice             | Contract and audit IDs restored before activation                                                                                       | Target changed lines |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
+| CORE-ENTRY        | Complete Phase 0–5 gate/pause-safe spine and state model, plus Phase 0–3 mechanics; F-005–F-011, F-014–F-016, F-025, F-026, F-028–F-030 |              230–300 |
+| CORE-REVIEW       | Review route, CI, correction firewall, merge and amendment; F-012, F-017, F-031, F-032, F-034                                           |              150–230 |
+| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                                              |              280–340 |
+| EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
+| ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
 
-CORE groups its 20 findings so a reader can check the allocation without decoding one long row:
+The two CORE slices keep the original 20-finding ownership complete:
 
-- Phases, boundaries, worktrees, executor tags, delivery mode, and review routing: F-005–F-012.
-- Failure handling, commits, local verification, and CI: F-014–F-017.
-- Current-state, entry, staging, push, PR-body, review, and merge transactions: F-025, F-026, and
-  F-028–F-032.
-- Plan-amendment escape hatch: F-034.
+- CORE-ENTRY owns the complete lifecycle spine and separate authoring, pushed-head, review, CI,
+  merge, landed-proof, resync, and sibling states, plus detailed Phase 0–3 mechanics.
+- CORE-REVIEW owns routing, review/fixer cycles, current-head CI, cross-repo correction limits,
+  merge/landed proof, and `PLAN-AMENDMENT`.
 
 The other slice names mean:
 
-- WAVES authors the later checklists for paired public/private units: A1 plan-making rules, A2 review
+- EXECUTION-WAVES authors the later checklists for paired public/private units: A1 plan-making rules, A2 review
   routing, A3 PR and reply rules, B legacy-conflict cleanup, and optional C tooling only if evidence
   proves it necessary. Any future code change uses test-driven development: write the failing test
   before the behavior change.
-- CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
+- EXECUTION-CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
   process—using it on its own PRs—capturing knowledge, closing private work, archiving the public
   plan, and safely removing worktrees.
 - ACTIVATE runs the formal plan-quality gate and a structured post-write user review (the “grill”)
   before changing the assembled plan from dormant to executable.
 
-CORE, WAVES, and CLOSURE only author these checklists; none of their described delivery or closure
-actions executes before ACTIVATE.
+Both CORE slices, EXECUTION-WAVES, and EXECUTION-CLOSURE only author checklists; none executes
+before ACTIVATE.
 
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
@@ -79,10 +81,11 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION, REQUIREMENTS, and DESIGN fixed their assigned defects. The 25 EXECUTION findings remain
-open and are allocated above; no forecast claim closes them. ACTIVATE may open only after CORE,
-WAVES, and CLOSURE merge and every mapped finding is fixed readably. A fresh formal gate must then
-pass semantic exit, followed by the required grill. Historic audit evidence cannot substitute.
+FOUNDATION, REQUIREMENTS, DESIGN, and FORECAST are merged. The 25 EXECUTION findings remain open and
+are allocated above; this split closes none. ACTIVATE may open only after both CORE slices,
+EXECUTION-WAVES, and EXECUTION-CLOSURE merge and every mapped finding is fixed readably. A fresh
+formal gate must then pass semantic exit, followed by the required grill. Historic audit evidence
+cannot substitute.
 
 ## Dormant Unit-Edit Contract
 
@@ -116,8 +119,9 @@ After activation, PUB-IDEAS merges before PRIV-IDEAS. Later implementation remai
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
-The EXECUTION slice must turn this order into a 1:1 runnable checklist and preserve every existing
-merge step and its authority. No assembly PR may weaken merge gates or begin implementation.
+CORE-ENTRY, CORE-REVIEW, EXECUTION-WAVES, and EXECUTION-CLOSURE must turn this order into a 1:1
+runnable checklist and preserve every merge step and its authority. No assembly PR may begin
+implementation.
 
 ## Preserved Merge Authority (Dormant)
 
