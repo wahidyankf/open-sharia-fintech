@@ -164,8 +164,9 @@ existing authority rather than a blanket public-first rule.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     accTitle: Sequential delivery and reverse dependency rollback
-    accDescr: Activation precedes idea retirement, A1 plan-making rules, A2 review routing, A3 PR and reply rules, B legacy cleanup, the optional C mechanism decision, and closure. Each public wave precedes private adaptation; rollback reverses that order.
-    A["ACTIVATE<br/>approved plan"]:::blue --> I1["PUB-IDEAS"]:::brown --> I2["PRIV-IDEAS"]:::brown
+    accDescr: Activation precedes five separately pinned public idea subdeliveries. Only the fifth's terminal public proof authorizes the private baseline and then private ideas; each later public wave precedes private adaptation. Rollback reverses that order.
+    A["ACTIVATE<br/>approved plan"]:::blue --> I4["PUB-IDEAS-4"]:::brown --> I5["PUB-IDEAS-5"]:::brown --> I6["PUB-IDEAS-6"]:::brown --> I7["PUB-IDEAS-7"]:::brown --> I8["PUB-IDEAS-8"]:::brown
+    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PB["PRIV-BASE<br/>baseline or repair"]:::purple --> I2["PRIV-IDEAS"]:::brown
     I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
@@ -176,7 +177,7 @@ flowchart TD
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
     VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
-    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> I1 -.-> A
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> PB -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4 -.-> A
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
@@ -184,12 +185,16 @@ flowchart TD
     classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
-Equivalent prose: after ACTIVATE, retire public then private ideas; deliver A1 plan-making rules, A2
+Equivalent prose: after ACTIVATE, retire PUB-IDEAS-4, then -5, -6, -7, and -8 from their exact
+successor pins. Only PUB-IDEAS-8's terminal public proof—landed pin, matching fingerprint, and
+pending private obligation—authorizes PRIV-BASE. PRIV-BASE records either a clean baseline or the
+bounded PRIV-REPAIR before it authorizes PRIV-IDEAS. Only then deliver A1 plan-making rules, A2
 review routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
 adaptation. Make C an explicit no-change or approved optional-mechanism decision, and archive only
 after both repositories are terminal. Rollback starts with the last merged dependent and moves
-backward. A unit may revert alone only when nothing merged depends on it. During a paired unwind,
-leave a native obligation naming the pins, temporary incoherence, owner, and next action.
+backward through PRIV-IDEAS, PRIV-BASE, terminal proof, and PUB-IDEAS-8 through -4. A unit may revert
+alone only when nothing merged depends on it. During a paired unwind, leave a native obligation
+naming the pins, temporary incoherence, owner, and next action.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects
