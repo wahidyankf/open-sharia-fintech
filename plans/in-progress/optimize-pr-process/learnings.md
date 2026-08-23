@@ -40,7 +40,7 @@
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.
 - [Judgment call] Twenty-five execution findings cannot stay bootcamp-readable in one repair-sized
-  PR. Forecast, CORE, two WAVES-ENTRY slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE keep
+  PR. Forecast, CORE, three WAVES-ENTRY checklist slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE keep
   mechanics, instantiated units, and final evidence independently reviewable while preserving one
   worktree and sequential dependencies.
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
@@ -57,6 +57,13 @@
   would make progress unauditable, so ENTRY, A, and RULES waves replace the single slice.
 - [Repo-grounded] Closed PR #258 reached 302 changed lines but still bundled push, review, readiness,
   landed proof, and resync states. Its Cycle 1 also exposed stale-baseline and overlay-proof gaps.
-  The complete repair forecast is 408 lines, so BASE and ADAPTERS replace the unmerged ENTRY draft.
+  The first complete repair forecast was 408 lines, so BASE and ADAPTERS replaced the unmerged draft.
+- [Repo-grounded] A complete BASE authoring probe then measured 401 changed lines and 276 granular
+  checkboxes—one line beyond the hard cap. Public and private baseline/repair/idea units are cohesive
+  independently, so ENTRY-PUBLIC and ENTRY-PRIVATE replace BASE without compressing state changes.
+- [Repo-grounded] PR #259's first readiness hash consumed compacted `git diff` output and therefore
+  differed from the raw landed hash despite identical trees. Raw content proofs must use
+  `/usr/bin/git diff --binary ... | /usr/bin/shasum -a 256`; human-readable compacted output is not
+  fingerprint input.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.

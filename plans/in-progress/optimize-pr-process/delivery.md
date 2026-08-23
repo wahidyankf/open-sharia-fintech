@@ -13,10 +13,11 @@
 | [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256) | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`    |
 | [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257) | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`    |
 | [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258) | Incomplete WAVES-ENTRY draft; never merged                   |
-| [Repo-grounded] WAVES-ENTRY-SPLIT                                                   | Active: re-forecast atomic ENTRY checklist slices            |
+| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259) | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`    |
+| [Repo-grounded] WAVES-ENTRY-BASE-SPLIT                                              | Active: split the measured 401-line BASE checklist           |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-SPLIT changes plan docs only; it runs no gate or implementation.
+> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-BASE-SPLIT changes plan docs only; it runs no gate or implementation.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -50,10 +51,10 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-SPLIT may change only
-this plan's `README.md`, `delivery.md`, and `learnings.md`. Both ENTRY checklist slices, WAVES-A,
-WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests,
-implementation, and active-plan indexes remain dormant. The formal gate waits for complete assembly.
+Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-BASE-SPLIT may change only
+this plan's `README.md`, `delivery.md`, and `learnings.md`. All three ENTRY checklist slices,
+WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code,
+tests, implementation, and active-plan indexes remain dormant. The formal gate waits for assembly.
 
 ## Worktree
 
@@ -90,8 +91,9 @@ stacked dependency, or concurrent mutation is allowed. CORE-REVIEW adds the rout
 ```text
 FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → FORECAST (#253) →
 CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT →
-WAVES-ENTRY-BASE → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES → EXECUTION-CLOSURE →
-ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
+WAVES-ENTRY-BASE-SPLIT → WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE → WAVES-ENTRY-ADAPTERS →
+WAVES-A → WAVES-RULES → EXECUTION-CLOSURE → ACTIVATE/formal-gate/grill → PUB-IDEAS →
+PRIV-IDEAS → implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
@@ -101,57 +103,55 @@ sub-slices in the prior PR before opening the first split. Gate findings use bou
 `ACTIVATE-REPAIR-*` PRs. Final ACTIVATE contains only the clean formal gate, post-write grill, and
 executable-status change. Merge green and resync before the next PR.
 
-| Slice                | Contract and audit IDs restored before activation                                                                                       | Target changed lines |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
-| CORE-ENTRY           | Complete Phase 0–5 gate/pause-safe spine and state model, plus Phase 0–3 mechanics; F-005–F-011, F-014–F-016, F-025, F-026, F-028–F-030 |              230–300 |
-| CORE-REVIEW          | Review route, CI, correction firewall, merge and amendment; F-012, F-017, F-031, F-032, F-034                                           |              150–230 |
-| WAVES-SPLIT          | Forecast repair after the original EXECUTION-WAVES draft exceeded the hard cap                                                          |               70–125 |
-| WAVES-ENTRY-SPLIT    | Forecast repair after PR #258 proved atomic ENTRY work exceeds its range ceiling                                                        |              100–180 |
-| WAVES-ENTRY-BASE     | Invariants; literal acceptance; baselines/repairs; idea units; F-035 ENTRY partial                                                      |              280–330 |
-| WAVES-ENTRY-ADAPTERS | Single correction and sole PLAN-AMEND adapters; F-035 ENTRY pins                                                                        |              100–155 |
-| WAVES-A              | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and prior-pair reconciliation; F-035 A partial                                       |              190–250 |
-| WAVES-RULES          | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and prior-pair reconciliation; F-035 terminal owner                          |              200–270 |
-| EXECUTION-CLOSURE    | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
-| ACTIVATE             | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
+| Slice                  | Contract and audit IDs restored before activation                                                                                       | Target changed lines |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
+| CORE-ENTRY             | Complete Phase 0–5 gate/pause-safe spine and state model, plus Phase 0–3 mechanics; F-005–F-011, F-014–F-016, F-025, F-026, F-028–F-030 |              230–300 |
+| CORE-REVIEW            | Review route, CI, correction firewall, merge and amendment; F-012, F-017, F-031, F-032, F-034                                           |              150–230 |
+| WAVES-SPLIT            | Forecast repair after the original EXECUTION-WAVES draft exceeded the hard cap                                                          |               70–125 |
+| WAVES-ENTRY-SPLIT      | Forecast repair after PR #258 proved atomic ENTRY work exceeds its range ceiling                                                        |              100–180 |
+| WAVES-ENTRY-BASE-SPLIT | Forecast repair after the complete BASE probe crossed its forecast and hard cap                                                         |              120–180 |
+| WAVES-ENTRY-PUBLIC     | Continuing rules; literal acceptance; public baseline/repair/ideas; F-035 partial                                                       |              200–260 |
+| WAVES-ENTRY-PRIVATE    | Private overlay-safe baseline/repair/ideas; F-035 BASE pair pin                                                                         |              170–230 |
+| WAVES-ENTRY-ADAPTERS   | Single correction and sole PLAN-AMEND adapters; F-035 ENTRY terminal                                                                    |              100–155 |
+| WAVES-A                | PUB/PRIV A1–A2 checklists, acceptance, pair gates, and prior-pair reconciliation; F-035 A partial                                       |              190–250 |
+| WAVES-RULES            | PUB/PRIV A3 and B; optional-C decision/trigger; pair gates and prior-pair reconciliation; F-035 terminal owner                          |              200–270 |
+| EXECUTION-CLOSURE      | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
+| ACTIVATE               | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
 
-Closed PR #258 measured 302 changed lines before accounting for the repairs required by its six
-Cycle 1 findings. The complete ENTRY preview adds 56 lines to split separately observable Git and
-GitHub transitions, 18 for current-main/acceptance and state-specific overlay proof, and 32 for
-repeated independent-slice scaffolding: 408 total.
+Closed PR #258 measured 302 changed lines before its six findings. The first complete repair model
+expanded that draft by 106 lines to 408, but a BASE-only authoring probe then measured 401 changed
+lines and 276 checkboxes: the model under-counted repeated per-unit review, CI, readiness, merge,
+resync, and three-state overlay work. Splitting that measured draft repeats 12 status/ownership
+lines: 413 total across PUBLIC and PRIVATE.
 
 Here, an invariant is an always-on evidence rule, literal acceptance gives the exact command and
 expected result, and state-specific overlay proof hashes unstaged, staged, and committed changes
 separately. Scaffolding is the status, owner, and acceptance text repeated so each PR stands alone.
 
-| PR #258 Cycle 1 finding                                                                                                   | Local repair owner                         | Required repair                                                                                    | Terminal proof                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [Compound Git/GitHub transitions](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415346)               | BASE for its units; ADAPTERS for its units | Separate calculate/gate/push, route/read/review, ready, merge/landed-proof, and resync actions     | ADAPTERS records both merged ENTRY pins and verifies both local checklists before F-035 advances |
-| [Continuing ENTRY rules used as tasks](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415349)          | BASE                                       | Keep always-on rules as prose enforced by each unit gate; check only finishable owned actions      | BASE merged pin plus its unit-gate evidence                                                      |
-| [Ambiguous idea acceptance](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415350)                     | BASE                                       | Give literal predecessor/reviewed-head commands, expected results, and the post-push rerun         | BASE merged pin plus command/output evidence                                                     |
-| [Worktree may not be on current main](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415351)           | BASE                                       | Separate fetch, safe detach, `HEAD == origin/main`, status, and private before/after overlay proof | BASE merged pin plus equality and fingerprint evidence                                           |
-| [One fingerprint cannot cover three Git states](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415352) | BASE                                       | Compare unstaged, staged, and `<unit-base>..HEAD` fingerprints at their real states                | BASE merged pin plus three-state equality evidence                                               |
-| [Stale assembly state](https://github.com/wahidyankf/ose-public/pull/258#pullrequestreview-5002302877)                    | WAVES-ENTRY-SPLIT                          | Record PR #257 as merged, PR #258 as closed unmerged, and both successor slices                    | This PR's merged pin                                                                             |
+| PR #258 Cycle 1 finding                                                                                                   | Local repair owner                                 | Required repair                                                                                    | Terminal proof                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Compound Git/GitHub transitions](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415346)               | PUBLIC, PRIVATE, then ADAPTERS for their own units | Separate calculate/gate/push, route/read/review, ready, merge/landed-proof, and resync actions     | ADAPTERS records all three merged ENTRY pins and verifies every local checklist before F-035 advances |
+| [Continuing ENTRY rules used as tasks](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415349)          | PUBLIC                                             | Keep always-on rules as prose enforced by each unit gate; check only finishable owned actions      | PUBLIC merged pin plus its unit-gate evidence                                                         |
+| [Ambiguous idea acceptance](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415350)                     | PUBLIC                                             | Give literal predecessor/reviewed-head commands, expected results, and the post-push rerun         | PUBLIC merged pin plus command/output evidence                                                        |
+| [Worktree may not be on current main](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415351)           | PUBLIC for public; PRIVATE for private             | Separate fetch, safe detach, `HEAD == origin/main`, status, and private before/after overlay proof | PRIVATE merged pin verifies both repository-local checklists                                          |
+| [One fingerprint cannot cover three Git states](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415352) | PRIVATE                                            | Compare unstaged, staged, and `<unit-base>..HEAD` fingerprints at their real states                | PRIVATE merged pin plus three-state equality evidence                                                 |
+| [Stale assembly state](https://github.com/wahidyankf/ose-public/pull/258#pullrequestreview-5002302877)                    | WAVES-ENTRY-SPLIT                                  | Record PR #257 as merged, PR #258 as closed unmerged, and successor slices                         | PR #259 merge pin                                                                                     |
 
 The ledger is lossless: a row closes only at its terminal proof. Closing PR #258 removes its unsafe
 draft from the delivery path but does not itself close any repair row.
 
-| Complete-preview component           | ENTRY-BASE | ENTRY-ADAPTERS | WAVES-A | WAVES-RULES |
-| ------------------------------------ | ---------: | -------------: | ------: | ----------: |
-| Status, ownership, and formatting    |         22 |             18 |      18 |          18 |
-| Invariants, acceptance, and paths    |         34 |             18 |      18 |          18 |
-| Baselines/current-main transitions   |         26 |              0 |       0 |           0 |
-| Conditional baseline repairs         |         82 |              0 |       0 |           0 |
-| Idea-retirement units                |        104 |              0 |       0 |           0 |
-| State-specific overlay proof         |         14 |              0 |       0 |           0 |
-| Public-correction adapter            |          0 |             36 |       0 |           0 |
-| Sole `PLAN-AMENDMENT` adapter        |          0 |             36 |       0 |           0 |
-| F-035 state/pin ownership            |          8 |             10 |       0 |           0 |
-| Owned A/B ordinary-unit tasks        |          0 |              0 |     120 |         104 |
-| Separate A/B gates/pause records     |          0 |              0 |      40 |          40 |
-| Prior-pair reconciliation            |          0 |              0 |      12 |          16 |
-| C decision/trigger                   |          0 |              0 |       0 |          32 |
-| **Forecast complete-preview total**  |    **290** |        **118** | **208** |     **228** |
-| **Repair headroom to range ceiling** |     **40** |         **37** |  **42** |      **42** |
+PR #259 added one later dogfood lesson. WAVES-ENTRY-BASE-SPLIT owns aligning the shared Phase 5
+template on raw input; ENTRY-PUBLIC owns copying that exact command into its continuing rules and
+public-unit tasks. The lesson closes only at PUBLIC's merged pin after its checklist and the shared
+template use the same `/usr/bin/git diff --binary ... | /usr/bin/shasum -a 256` procedure.
+
+| Complete-preview component           | ENTRY-PUBLIC | ENTRY-PRIVATE | ENTRY-ADAPTERS | WAVES-A | WAVES-RULES |
+| ------------------------------------ | -----------: | ------------: | -------------: | ------: | ----------: |
+| Shared rules and literal acceptance  |           52 |             0 |             18 |      18 |          18 |
+| Repository-local units               |          145 |           160 |             72 |     160 |         176 |
+| Status, ownership, and F-035 proof   |           28 |            28 |             28 |      30 |          34 |
+| **Forecast complete-preview total**  |      **225** |       **188** |        **118** | **208** |     **228** |
+| **Repair headroom to range ceiling** |       **35** |        **42** |         **37** |  **42** |      **42** |
 
 Every preview includes all conditional routes assigned to that slice. If actual authoring crosses
 its range ceiling, the preceding merged PR must forecast another split before the oversized slice
@@ -170,19 +170,19 @@ The two CORE slices keep the original 20-finding ownership complete:
 
 The other slice names mean:
 
-- WAVES-ENTRY-BASE authors invariants, literal acceptance, current-main baselines/repairs, and idea
-  retirement. WAVES-ENTRY-ADAPTERS owns the single public correction and sole reusable
-  `PLAN-AMENDMENT` adapter. WAVES-A owns A1–A2; WAVES-RULES owns A3/B/C, and a positive C decision
-  triggers only the ADAPTERS-owned route. F-035 closes only after both ENTRY pins and the A and
-  RULES pins exist.
+- WAVES-ENTRY-PUBLIC authors continuing rules, literal acceptance, and public baseline/repair/idea
+  units. WAVES-ENTRY-PRIVATE authors the private overlay-safe counterparts. ENTRY-ADAPTERS owns the
+  single public correction and sole reusable `PLAN-AMENDMENT` adapter. WAVES-A owns A1–A2;
+  WAVES-RULES owns A3/B/C, and a positive C decision triggers only the ADAPTERS route. F-035 closes
+  only after all three ENTRY pins and the A and RULES pins exist.
 - EXECUTION-CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
   process—using it on its own PRs—capturing knowledge, closing private work, archiving the public
   plan, and safely removing worktrees.
 - ACTIVATE runs the formal plan-quality gate and a structured post-write user review (the “grill”)
   before changing the assembled plan from dormant to executable.
 
-Both CORE slices, both WAVES forecast repairs, both ENTRY slices, WAVES-A, WAVES-RULES, and
-EXECUTION-CLOSURE only author plan text or checklists; none executes before ACTIVATE.
+Both CORE slices, all three WAVES forecast repairs, all three ENTRY checklist slices, WAVES-A,
+WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
 
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
@@ -198,7 +198,7 @@ the narrow frozen-PR exception used during one public correction.
 ### Delivery Boundaries
 
 Every unit repeats Phases 1–5 below. `PUB-WT` and `PRIV-WT` mean the declared worktrees;
-The four WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
+The five WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
 
 | Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                 | Stable result             |
 | -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------- | ------------------------- |
@@ -241,14 +241,14 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through WAVES-SPLIT are merged; WAVES-ENTRY-SPLIT is active. ACTIVATE may open only
-after both ENTRY slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE instantiate every delivery
-unit as granular, attributable checkboxes and every finding is fixed. A fresh formal gate and grill
-must then pass; historic evidence cannot substitute.
+FOUNDATION through WAVES-ENTRY-SPLIT are merged; WAVES-ENTRY-BASE-SPLIT is active. ACTIVATE may open
+only after all three ENTRY checklist slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE instantiate
+every delivery unit as granular, attributable checkboxes and every finding is fixed. A fresh formal
+gate and grill must then pass; historic evidence cannot substitute.
 
 ## Dormant Lifecycle and Evidence-State Template
 
-The lines below deliberately are not checkboxes. The four WAVES checklist slices must copy every
+The lines below deliberately are not checkboxes. The five WAVES checklist slices must copy every
 universal action and gate into separate tagged checkboxes per owned unit; conditional blocks copy
 applicable actions or one reasoned `N/A` checkbox. EXECUTION-CLOSURE does the same for Phase 6.
 After ACTIVATE, each active unit copies its Markdown IDs into the live task list 1:1.
@@ -448,16 +448,17 @@ unresolved thread remains, scope is frozen, and readiness is true.
 - **Template `[AI]`:** Recheck route completeness, zero unresolved CRITICAL/HIGH/MEDIUM findings,
   zero unresolved threads, branch currency with `origin/main`, green local/current-head CI, and any
   applicable surface-test findings. A failed precondition returns to Phase 4.
-- **Template `[AI]`:** Use a patch fingerprint because a squash merge changes commit ancestry. Run
-  the repository-qualified API-side merge and keep local cleanup separate:
+- **Template `[AI]`:** Use a raw patch fingerprint because a squash merge changes commit ancestry.
+  Call `/usr/bin/git` directly so display compaction cannot rewrite the bytes being hashed. Run the
+  repository-qualified API-side merge and keep local cleanup separate:
 
   ```bash
-  git diff --binary <current-main> <reviewed-head> | git patch-id --stable
+  /usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256
   gh pr merge --repo <owner/repo> <pr> --squash
   gh pr view --repo <owner/repo> <pr> --json headRefOid,mergeCommit,mergedAt,state
   git fetch origin main
   git show --first-parent --format=fuller --patch <merge-sha>
-  git diff --binary <merge-sha>^1 <merge-sha> | git patch-id --stable
+  /usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256
   git status --short --branch
   ```
 
@@ -504,14 +505,14 @@ After activation, PUB-IDEAS merges before PRIV-IDEAS. Later implementation remai
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
-CORE-ENTRY, CORE-REVIEW, both WAVES-ENTRY slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE must
+CORE-ENTRY, CORE-REVIEW, all three WAVES-ENTRY slices, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE must
 turn this order into a 1:1 runnable checklist and preserve every merge step and its authority. No
 assembly PR may begin implementation.
 
 ## Dormant Authority Mapping
 
 This mapping replaces the two historical shortcut checkboxes; it is not executable work.
-The four WAVES checklist slices must instantiate each applicable Phase 4–5 action and gate per owned unit,
+The five WAVES checklist slices must instantiate each applicable Phase 4–5 action and gate per owned unit,
 and EXECUTION-CLOSURE must prove the terminal state without adding a shorter merge route.
 
 | Authority        | Sole owner after ACTIVATE                                          |
