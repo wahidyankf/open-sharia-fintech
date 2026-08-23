@@ -2,12 +2,12 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-PRIVATE-SPLIT active, authoring only); dormant until ACTIVATE.**
+**In Progress (WAVES-ENTRY-PRIVATE-BASE-REPAIR active, authoring only); dormant until ACTIVATE.**
 [Repo-grounded] WAVES-ENTRY-PUBLIC PR
 [#261](https://github.com/wahidyankf/ose-public/pull/261) merged as
-`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. A corrected private-entry probe measured 268 changed
-lines and 165 atomic IDs, above its 230-line forecast ceiling. This slice only records the measured
-split and lifecycle decisions; it executes no private action.
+`9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`. PR #262 recorded the 268-line, 165-ID private split at
+`3d9c0d843f877cfa498fe73ff4b321cef677dfb3`. This slice authors BASE/REPAIR only and leaves the
+private overlay untouched.
 
 ## Outcome
 
@@ -32,6 +32,9 @@ computer-science background. A merged PR remains an educational team record, not
 - [Judgment call] Aim to converge in cycles 1–3. Cycles 4–5 are autonomous recovery; stop before
   cycle 6 and ask a human only when the bounded process cannot safely finish. Humans may read every
   PR after merge.
+- Do not add a separate post-write or post-plan grilling session. This conversation already resolved
+  the planning decisions; the formal plan-quality gate validates the assembled plan, and only a
+  genuinely unresolved decision returns to the human.
 - Preserve trunk stability with the lightest suitable “feature flag”: dormant documentation,
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.
