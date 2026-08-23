@@ -6,8 +6,8 @@
 [Repo-grounded] WAVES-SPLIT PR [#257](https://github.com/wahidyankf/ose-public/pull/257) merged as
 `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`. WAVES-ENTRY draft PR
 [#258](https://github.com/wahidyankf/ose-public/pull/258) closed unmerged after Cycle 1 proved that
-truthfully separating external-state tasks crosses its forecast ceiling. This slice re-forecasts
-two cohesive ENTRY checklist PRs; it runs neither.
+truthfully separating independently checkable Git and GitHub state changes crosses its forecast
+ceiling. This slice re-forecasts two cohesive ENTRY checklist PRs; it runs neither.
 
 ## Outcome
 

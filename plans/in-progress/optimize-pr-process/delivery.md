@@ -114,10 +114,26 @@ executable-status change. Merge green and resync before the next PR.
 | EXECUTION-CLOSURE    | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
 | ACTIVATE             | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
 
-Closed PR #258 measured 302 changed lines before its six Cycle 1 findings were repaired. The
-complete ENTRY preview adds 56 lines to split external-state transitions, 18 for
-current-main/acceptance and state-specific overlay proof, and 32 for repeated independent-slice
-scaffolding: 408 total.
+Closed PR #258 measured 302 changed lines before accounting for the repairs required by its six
+Cycle 1 findings. The complete ENTRY preview adds 56 lines to split separately observable Git and
+GitHub transitions, 18 for current-main/acceptance and state-specific overlay proof, and 32 for
+repeated independent-slice scaffolding: 408 total.
+
+Here, an invariant is an always-on evidence rule, literal acceptance gives the exact command and
+expected result, and state-specific overlay proof hashes unstaged, staged, and committed changes
+separately. Scaffolding is the status, owner, and acceptance text repeated so each PR stands alone.
+
+| PR #258 Cycle 1 finding                                                                                                   | Local repair owner                         | Required repair                                                                                    | Terminal proof                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Compound Git/GitHub transitions](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415346)               | BASE for its units; ADAPTERS for its units | Separate calculate/gate/push, route/read/review, ready, merge/landed-proof, and resync actions     | ADAPTERS records both merged ENTRY pins and verifies both local checklists before F-035 advances |
+| [Continuing ENTRY rules used as tasks](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415349)          | BASE                                       | Keep always-on rules as prose enforced by each unit gate; check only finishable owned actions      | BASE merged pin plus its unit-gate evidence                                                      |
+| [Ambiguous idea acceptance](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415350)                     | BASE                                       | Give literal predecessor/reviewed-head commands, expected results, and the post-push rerun         | BASE merged pin plus command/output evidence                                                     |
+| [Worktree may not be on current main](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415351)           | BASE                                       | Separate fetch, safe detach, `HEAD == origin/main`, status, and private before/after overlay proof | BASE merged pin plus equality and fingerprint evidence                                           |
+| [One fingerprint cannot cover three Git states](https://github.com/wahidyankf/ose-public/pull/258#discussion_r3838415352) | BASE                                       | Compare unstaged, staged, and `<unit-base>..HEAD` fingerprints at their real states                | BASE merged pin plus three-state equality evidence                                               |
+| [Stale assembly state](https://github.com/wahidyankf/ose-public/pull/258#pullrequestreview-5002302877)                    | WAVES-ENTRY-SPLIT                          | Record PR #257 as merged, PR #258 as closed unmerged, and both successor slices                    | This PR's merged pin                                                                             |
+
+The ledger is lossless: a row closes only at its terminal proof. Closing PR #258 removes its unsafe
+draft from the delivery path but does not itself close any repair row.
 
 | Complete-preview component           | ENTRY-BASE | ENTRY-ADAPTERS | WAVES-A | WAVES-RULES |
 | ------------------------------------ | ---------: | -------------: | ------: | ----------: |
