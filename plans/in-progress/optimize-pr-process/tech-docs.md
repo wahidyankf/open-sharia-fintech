@@ -130,14 +130,19 @@ passes the same checks.
 flowchart TD
     accTitle: Public rule propagation and bounded private adaptation
     accDescr: A green public merge creates one pinned private obligation. Private work either closes it, records a private-only decision, or requests one public correction. A second reversal stops for human judgment.
-    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> O["PR-native private obligation<br/>pins, class, lineage ID"]:::blue
+    P["Merged public PR<br/>URL, SHA, reviewed head"]:::blue --> R{"Read-only lineage<br/>reconciliation"}:::orange
+    R -->|No match: allocate count 0| O["PR-native private obligation<br/>pins, class, lineage ID"]:::blue
+    R -->|One clear match: reuse ID and count| O
+    R -->|Ambiguous: no obligation| HS["Freeze pair and stop<br/>for human judgment"]:::purple
     O --> A{"Private destination<br/>result"}:::orange
     A -->|Satisfied or reasoned deviation| C["Private PR closes obligation<br/>with live evidence"]:::teal
     A -->|Private-only side issue| V["Record issue separately<br/>do not reopen public"]:::gray
     V -->|Original obligation continues| O
     A -->|Portable source defect| F["One public correction allowed<br/>link superseded obligation"]:::purple
     F --> P2["Corrected public PR<br/>new immutable pins"]:::blue
-    P2 --> A2{"Private result after<br/>one correction"}:::orange
+    P2 --> R2{"Reconcile existing lineage<br/>before resumed private work"}:::orange
+    R2 -->|Clear existing lineage| A2{"Private result after<br/>one correction"}:::orange
+    R2 -->|Ambiguous: no obligation or correction| H
     A2 -->|Terminal| C
     A2 -->|Another reversal| H["Stop and ask a human<br/>link replacement or terminal"]:::purple
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -147,16 +152,20 @@ flowchart TD
     classDef gray fill:#808080,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
-Equivalent prose: a portable public rule merges first and creates one native private obligation
-containing its URL, merge SHA, reviewed commit, checks, rule class, defect-lineage ID, and expected destination. Private
-adapts from that immutable source and records satisfaction, a reasoned deviation, or N/A with owner
-and remaining action. A private-only issue is recorded separately and the original obligation still
-ends as satisfaction, reasoned deviation, or N/A. A genuine portable source defect permits one
-public correction and links the superseded record. A late or relabeled occurrence of the same root
-cause keeps the lineage ID and correction count; it cannot reset the budget by opening a nominally
-new pair. A second reversal stops automation, asks a human, and links the replacement or terminal
-decision. Byte-identical surfaces follow their
-existing authority rather than a blanket public-first rule.
+Equivalent prose: a portable public rule merges first, then performs read-only reconciliation with
+native sealed and correction-pending lineage records before creating an obligation. No match allocates
+one new lineage at count 0; one clear match reuses its existing ID and current count; ambiguity freezes
+the pair, creates no obligation or correction, and stops for human judgment. Only the first two outcomes
+create the native private obligation containing its URL, merge SHA, reviewed commit, checks, rule class,
+defect-lineage ID, and expected destination. Private adapts from that immutable source and records
+satisfaction, a reasoned deviation, or N/A with owner and remaining action. A private-only issue is
+recorded separately and the original obligation still ends as satisfaction, reasoned deviation, or N/A.
+A genuine portable source defect permits one public correction and links the superseded record; the
+resumed private path reconciles that existing lineage before proceeding, and ambiguity again stops with
+no obligation or correction. A late or relabeled occurrence of the same root cause keeps the lineage ID
+and correction count; it cannot reset the budget by opening a nominally new pair. A second reversal stops
+automation, asks a human, and links the replacement or terminal decision. Byte-identical surfaces follow
+their existing authority rather than a blanket public-first rule.
 
 ## Delivery and Rollback DAG
 
@@ -164,9 +173,17 @@ existing authority rather than a blanket public-first rule.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     accTitle: Sequential delivery and reverse dependency rollback
-    accDescr: Activation precedes five separately pinned public idea subdeliveries. Only the fifth's terminal public proof authorizes the private baseline and then private ideas; each later public wave precedes private adaptation. Rollback reverses that order.
-    A["ACTIVATE<br/>approved plan"]:::blue --> I4["PUB-IDEAS-4"]:::brown --> I5["PUB-IDEAS-5"]:::brown --> I6["PUB-IDEAS-6"]:::brown --> I7["PUB-IDEAS-7"]:::brown --> I8["PUB-IDEAS-8"]:::brown
-    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PRIV_BASE["PRIV-BASE<br/>baseline or repair"]:::purple --> I2["PRIV-IDEAS"]:::brown
+    accDescr: Activation starts a public baseline that either cleanly authorizes the first public idea subdelivery or requires a bounded repair. Terminal public proof starts a separate private baseline with the same explicit repair outcome. Rollback reverses each path actually used.
+    A["ACTIVATE<br/>approved plan"]:::blue --> PUB_BASE{"PUB-BASE<br/>baseline result"}:::orange
+    PUB_BASE -->|Clean direct| I4["PUB-IDEAS-4"]:::brown --> I5["PUB-IDEAS-5"]:::brown --> I6["PUB-IDEAS-6"]:::brown --> I7["PUB-IDEAS-7"]:::brown --> I8["PUB-IDEAS-8"]:::brown
+    PUB_BASE -->|Baseline failure| PUB_REPAIR["PUB-REPAIR<br/>bounded repair"]:::purple
+    PUB_REPAIR -->|Clean repair| I4
+    PUB_REPAIR -->|Failed recheck| PUB_FROZEN["PUB-IDEAS frozen<br/>new repair only"]:::gray
+    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PRIV_BASE{"PRIV-BASE<br/>baseline result"}:::orange
+    PRIV_BASE -->|Clean / overlay-owned| I2["PRIV-IDEAS"]:::brown
+    PRIV_BASE -->|Baseline failure| PRIV_REPAIR["PRIV-REPAIR<br/>bounded repair"]:::purple
+    PRIV_REPAIR -->|Clean repair| I2
+    PRIV_REPAIR -->|Failed or ambiguous| PRIV_FROZEN["PRIV-IDEAS frozen<br/>repair path or human stop"]:::gray
     I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
@@ -177,23 +194,34 @@ flowchart TD
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
     VC -.-> PC -.-> VB -.-> PUB_B -.-> VA3 -.-> PA3
-    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> PRIV_BASE -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4 -.-> A
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2
+    I2 -. "if private repair used" .-> PRIV_REPAIR -.-> PRIV_BASE
+    I2 -. "if private baseline was clean" .-> PRIV_BASE
+    PRIV_BASE -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4
+    I4 -. "if public repair used" .-> PUB_REPAIR -.-> PUB_BASE -.-> A
+    I4 -. "if public baseline was clean" .-> PUB_BASE
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-Equivalent prose: after ACTIVATE, retire PUB-IDEAS-4, then -5, -6, -7, and -8 from their exact
-successor pins. Only PUB-IDEAS-8's terminal public proof—landed pin, matching fingerprint, and
-pending private obligation—authorizes PRIV-BASE. PRIV-BASE records either a clean baseline or the
-bounded PRIV-REPAIR before it authorizes PRIV-IDEAS. Only then deliver A1 plan-making rules, A2
-review routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
+Equivalent prose: after ACTIVATE, PUB-BASE takes one of two explicit paths: its clean proof
+authorizes PUB-IDEAS-4 directly, while a baseline failure runs PUB-REPAIR and only a clean successful
+repair authorizes PUB-IDEAS-4; a failed recheck leaves public ideas frozen and names only a new repair.
+PUB-IDEAS-4 then authorizes -5, -6, -7, and -8 from their exact successor pins. Only PUB-IDEAS-8's
+terminal public proof—landed pin, matching fingerprint, and pending private obligation—authorizes
+PRIV-BASE. PRIV-BASE likewise authorizes PRIV-IDEAS only from a clean/overlay-owned baseline or a
+clean successful PRIV-REPAIR; a failed repair keeps private ideas frozen on its bounded repair or
+human-stop path, and ambiguity has no successor. Only then deliver A1 plan-making rules, A2 review
+routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
 adaptation. Make C an explicit no-change or approved optional-mechanism decision, and archive only
-after both repositories are terminal. Rollback starts with the last merged dependent and moves
-backward through PRIV-IDEAS, PRIV-BASE, terminal proof, and PUB-IDEAS-8 through -4. A unit may revert
-alone only when nothing merged depends on it. During a paired unwind, leave a native obligation
+after both repositories are terminal. Rollback starts with the last merged dependent and moves backward
+through PRIV-IDEAS, then the private repair only if used, PRIV-BASE, terminal proof, and
+PUB-IDEAS-8 through -4; it likewise includes PUB-REPAIR only when that path was used. A unit may
+revert alone only when nothing merged depends on it. During a paired unwind, leave a native obligation
 naming the pins, temporary incoherence, owner, and next action.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule

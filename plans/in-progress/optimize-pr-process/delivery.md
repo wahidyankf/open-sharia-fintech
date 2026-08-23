@@ -461,7 +461,7 @@ At public `origin/main` `7e111df8d821e0e147e0009f6bd66c13e7499614`, their brief-
 320, 227, and 237 lines. Each Phase 1 remeasures index and live-backlink repairs and splits again
 before editing if the complete forecast would cross 400 changed hand-authored lines or 20 files.
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-4, verify PUB-BASE:P0.10 names `optimize-pr-process-pub-ideas-4`; for PUB-IDEAS-5–8, verify the immediately prior unit's P5.12 names this exact active unit; record its exact pin.
+- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-4, verify exactly one clean predecessor proof names `optimize-pr-process-pub-ideas-4`: PUB-BASE:P0.10 clean-direct **or** PUB-REPAIR:P5.17 successful-repair; for PUB-IDEAS-5–8, verify the immediately prior unit's P5.12 names this exact active unit; record its exact pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
 - [ ] `[PUB-IDEAS:P1.03][AI]` Prove fetched `origin/main` equals the predecessor pin.
 - [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-4`, `-5`, `-6`, `-7`, or `-8`) from the exact main pin.
@@ -651,7 +651,7 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P5.12][AI]` Run `npm install` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.13][AI]` Run plain `npm run doctor` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.14][AI]` Run the literal private pre-push command on landed private main.
-- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one landed-main successor or ambiguity stop.
+- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck keeps PRIV-IDEAS frozen and names only its bounded new repair or human-escalation path; ambiguity names no successor, keeps PRIV-IDEAS frozen, and stops for human judgment.
 - [ ] `[PRIV-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/overlay/successor gate.
 - [ ] `[PRIV-REPAIR:P5.P][AI]` Record merge/main SHA, overlay hash, result, and named-successor command.
 
