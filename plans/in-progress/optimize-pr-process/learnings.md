@@ -7,5 +7,11 @@
   idea retirement are clearer as separate sequential PRs.
 - [Judgment call] A delivery DAG needs reverse-DAG rollback, collision-safe worktree reuse, amendment
   transactions, and live execution evidence; local-only rollback or stale prose is not auditable.
+- [Repo-grounded] The legacy PR #250 review mandated seven disciplines, used `1 of 7` language,
+  opened ten initial threads, and drove an oversized rewrite surface.
+- [Repo-grounded] The risk-selected PR #250 review ran Cycles 1–4 within its maximum of five and
+  reached semantic exit; Cycle 5 was unnecessary.
+- [Repo-grounded] A late fix introduced an unqualified `index` ambiguity. The declared docs-only
+  Cycle 4 changed strategy and closed it by distinguishing `active-plan index` from `idea index`.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
