@@ -12,13 +12,11 @@
 | [Repo-grounded] CORE-ENTRY                                                          | Active: author lifecycle spine and Phase 0–3 mechanics       |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-ENTRY writes templates and runs none. Only the four plan
-> docs named below may change; no private worktree, formal gate, idea/rule/agent/code/test work runs.
+> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-ENTRY changes plan docs only; it runs no gate or implementation.
 
 ## Executor Legend and Plain-Language Terms
 
-Tags become executable only after ACTIVATE: `[AI]` means the agent acts and records evidence;
-`[HUMAN]` reserves an authority decision; `[AI+HUMAN]` means the agent prepares evidence for it.
+After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent prep plus human action.
 
 | Term               | Meaning                                                                   |
 | ------------------ | ------------------------------------------------------------------------- |
@@ -41,7 +39,8 @@ and active-plan indexes remain dormant. The formal gate waits for complete assem
 
 ## Worktree
 
-Reuse exactly one worktree per repository for this whole plan:
+Reuse exactly one worktree per repository for this whole plan; follow the
+[specification][worktree-spec], [cap][worktree-cap], and [path rule][worktree-path]:
 
 - public: `worktrees/optimize-pr-process/` resolves to
   `/Users/wkf/ose-projects/ose-public/worktrees/optimize-pr-process` — active for assembly;
@@ -57,9 +56,6 @@ git worktree add worktrees/optimize-pr-process optimize-pr-process-base # branch
 git worktree add -b optimize-pr-process-base worktrees/optimize-pr-process origin/main # branch absent
 git worktree prune # stale registration only; retry the applicable add once
 ```
-
-Follow the [worktree specification][worktree-spec], [one-worktree cap][worktree-cap], and [path
-rule][worktree-path].
 
 The private worktree intentionally carries a modified `plans/ideas/README.md` and deleted
 `plans/ideas/q2-not-urgent-important/pr-review-governance-reference-defects.md`. Do not stash,
@@ -212,8 +208,9 @@ before PRIV-IDEAS; record and preserve its authorized overlay. Phase 0 itself op
 ### Phase 0 Gate
 
 All commands pass, authorized dirty paths are named, Phase 0 itself created no PR, any repair PR is
-merged and recorded, no ordinary-unit PR is open, and the first unit has an exact pin. **Pause
-Safety:** record repository, baseline result, predecessor, and Phase 1 entry command.
+merged and recorded, no ordinary-unit PR is open, and the first unit has an exact pin.
+
+> **Pause Safety**: The repository, baseline result, predecessor, and Phase 1 entry command are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
 
 ## Dormant Phase 1 Template — Entry and Bounded Authoring
 
@@ -259,8 +256,9 @@ Every rule unit then performs these authoring steps:
 ### Phase 1 Gate
 
 Branch/base/pin evidence is exact, scope is frozen, forecast is within bounds, and the before/after
-ledger contains only owned paths. **Pause Safety:** record branch, head, ledger, dirty state, and one
-next verification command; do not start another unit.
+ledger contains only owned paths.
+
+> **Pause Safety**: Branch, head, ledger, and dirty state are recorded; no other unit has started. Safe to stop. To re-verify: `git status --short --branch`.
 
 ## Dormant Phase 2 Template — Verify, Stage, and Commit
 
@@ -281,8 +279,9 @@ next verification command; do not start another unit.
 ### Phase 2 Gate
 
 Acceptance/local gates pass, actual size is within bounds, staged paths equal the ledger, commits
-are cohesive, and the full diff was read. **Pause Safety:** record local head and clean tree or
-named intended residue; resume with the pre-push command.
+are cohesive, and the full diff was read.
+
+> **Pause Safety**: The local head and clean tree or named intended residue are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
 
 ## Dormant Phase 3 Template — Push and Draft Human Entry Point
 
@@ -303,8 +302,9 @@ named intended residue; resume with the pre-push command.
 
 ### Phase 3 Gate
 
-One draft PR exists at the declared boundary and its human entry point matches the diff. **Pause
-Safety:** retain URL, current head, literal payload, and the next review-route command.
+One draft PR exists at the declared boundary and its human entry point matches the diff.
+
+> **Pause Safety**: The draft URL, current head, and literal body are recorded. Safe to stop. To re-verify: `gh pr view --repo <owner/repo> <pr> --json isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`.
 
 ## Dormant Common Failure Rules
 
