@@ -32,12 +32,12 @@ sub-slices in the prior PR before opening the first split. Gate findings use bou
 `ACTIVATE-REPAIR-*` PRs. Final ACTIVATE contains only the clean formal gate, post-write grill, and
 executable-status change. Merge green and resync before the next PR.
 
-| Slice             | Contract and audit IDs restored before activation                                                                | Target changed lines |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------: |
-| EXECUTION-CORE    | Legend, worktrees, mode, boundaries, entry/unit/review/merge transactions; F-005–F-012, F-014–F-017, F-025–F-034 |              260–330 |
-| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                       |              280–340 |
-| EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037   |              220–300 |
-| ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                          |          at most 400 |
+| Slice             | Contract and audit IDs restored before activation                                                                                     | Target changed lines |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
+| EXECUTION-CORE    | Legend, worktrees, mode, boundaries, entry/unit/review/merge transactions; F-005–F-012, F-014–F-017, F-025, F-026, F-028–F-032, F-034 |              260–330 |
+| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                                            |              280–340 |
+| EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                        |              220–300 |
+| ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                               |          at most 400 |
 
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
