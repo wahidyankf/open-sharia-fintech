@@ -161,13 +161,16 @@ EXECUTION-WAVES supplies exact unit scope/acceptance and EXECUTION-CLOSURE suppl
 | 1–5      | PRIV-B      | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                       | private conflict removed  |
 | 1–5      | PUB-C?      | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                      | necessity-gated mechanism |
 | 1–5      | PRIV-C?     | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                       | private C adapted         |
+| 1–5?     | PUB-CORR?   | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin       | replacement public pin    |
+| 1–5?     | PLAN-AMEND? | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin    | amended plan pin          |
 | 1–6      | CLOSURE     | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 6 | last unit                   | plan archived and focused |
 
 Repair rows activate only after their baseline fails; each runs Phases 1–5, merges, and reruns that
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
 Optional C becomes a recorded no-change decision when necessity fails. Before each unit, replace
 its predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the
-next row.
+next row. A correction resumes its paused private PR from the replacement public pin; an amendment
+resumes its frozen unit from the amended plan pin.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
 the [idea disposition map](./idea-disposition-map.md). Its public source pin is
