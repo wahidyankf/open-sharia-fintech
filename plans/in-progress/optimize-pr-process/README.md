@@ -32,6 +32,9 @@ computer-science background. A merged PR remains an educational team record, not
 - [Judgment call] Aim to converge in cycles 1–3. Cycles 4–5 are autonomous recovery; stop before
   cycle 6 and ask a human only when the bounded process cannot safely finish. Humans may read every
   PR after merge.
+- Do not add a separate post-write or post-plan grilling session. This conversation already resolved
+  the planning decisions; the formal plan-quality gate validates the assembled plan, and only a
+  genuinely unresolved decision returns to the human.
 - Preserve trunk stability with the lightest suitable “feature flag”: dormant documentation,
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.
