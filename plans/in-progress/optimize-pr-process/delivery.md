@@ -125,7 +125,8 @@ own status/ownership/acceptance scaffolding, and the first draft omitted conditi
 | Separate phase gates/pause records   |          18 |      40 |          40 |
 | Public-correction adapter            |          32 |       0 |           0 |
 | Sole `PLAN-AMENDMENT` adapter        |          32 |       0 |           0 |
-| C decision/trigger and pair lag      |           0 |      12 |          48 |
+| Prior-pair reconciliation            |           0 |      12 |          16 |
+| C decision/trigger                   |           0 |       0 |          32 |
 | **Forecast complete-preview total**  |     **298** | **208** |     **228** |
 | **Repair headroom to range ceiling** |      **32** |  **42** |      **42** |
 
