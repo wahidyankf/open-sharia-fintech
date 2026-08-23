@@ -49,10 +49,10 @@ PRD-1–PRD-15 are `[Judgment call]` contracts under the evidence labels in
    rules own durable norms. Code/tests implement behavior. Each moves through its own bounded PR.
 9. One named worktree per repository lasts for the whole plan. Dependent PRs are sequential and
    unstacked; each starts from current `origin/main` after the previous dependency merges.
-10. Public portable changes open an auditable private obligation pinned to the public PR, merge SHA,
-    and reviewed commit. One upstream correction is allowed per wave; a second reversal stops the
-    repeated back-and-forth. Private-only defects never trigger public churn. An inapplicable obligation records
-    N/A, its reason, artifact owner, and remaining repository action.
+10. A portable public change opens a private obligation pinned to its PR, merge SHA, and reviewed
+    commit. One upstream correction is allowed per wave; a second stops the back-and-forth.
+    Private-only defects never trigger public churn. N/A records reason, artifact owner, and remaining
+    repository action. A superseded obligation links its replacement or terminal decision.
 11. Private-only defects and deliberate deviations stay private. In contrast,
     byte-identity defects follow the existing surface authority; parity repair may require a public
     correction, a private correction, or both under the existing evidence rules.
@@ -89,18 +89,18 @@ public merged pins and keep proprietary operations private while recording satis
 
 ## Requirements-to-Acceptance Traceability
 
-| Business requirement | Product contract    | User story | Acceptance scenario                                                                         |
-| -------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------- |
-| BR-1                 | PRD-1–PRD-2         | US-2       | A human reads a concise PR description                                                      |
-| BR-2                 | PRD-3               | US-1       | A junior engineer reads a blocking finding                                                  |
-| BR-3                 | PRD-4–PRD-5         | US-3       | A fixer decides how to handle a finding                                                     |
-| BR-4                 | PRD-7               | US-3, US-4 | Review converges normally; Review changes strategy in recovery; Review reaches hard stop    |
-| BR-5                 | PRD-4, PRD-13–14    | US-2–US-4  | Review routing is recorded before specialist review; An acceptance check proves it can fail |
-| BR-6                 | PRD-6               | US-2, US-3 | A review proposes unrelated work                                                            |
-| BR-7                 | PRD-15              | US-4       | New review machinery is proposed                                                            |
-| BR-8                 | PRD-10–PRD-11       | US-4       | A private delivery discharges a public obligation; A second upstream reversal is requested  |
-| BR-9                 | PRD-8–PRD-9, PRD-12 | US-4       | A large task spans plans, rules, and code; Related ideas are ready for later retirement     |
-| BR-10                | PRD-1, PRD-8–PRD-11 | US-4       | A large task spans plans, rules, and code; A second upstream reversal is requested          |
+| Business requirement | Product contract                    | User story | Acceptance scenario                                                                          |
+| -------------------- | ----------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| BR-1                 | PRD-1–PRD-2                         | US-2       | A human reads a concise PR description                                                       |
+| BR-2                 | PRD-3                               | US-1       | A junior engineer reads a blocking finding                                                   |
+| BR-3                 | PRD-4–PRD-5                         | US-3       | A fixer decides how to handle a finding                                                      |
+| BR-4                 | PRD-7                               | US-3, US-4 | Review converges normally; Review changes strategy in recovery; Review reaches hard stop     |
+| BR-5                 | PRD-4, PRD-10–PRD-11, PRD-13–PRD-14 | US-2–US-4  | Review routing is recorded; Private delivery records replacements; Acceptance proves failure |
+| BR-6                 | PRD-6                               | US-2, US-3 | A review proposes unrelated work                                                             |
+| BR-7                 | PRD-15                              | US-4       | New review machinery is proposed                                                             |
+| BR-8                 | PRD-10–PRD-11                       | US-4       | A private delivery closes a public obligation; A second upstream reversal is requested       |
+| BR-9                 | PRD-8–PRD-9, PRD-12                 | US-4       | A large task spans plans, rules, and code; Related ideas are ready for later retirement      |
+| BR-10                | PRD-1, PRD-8–PRD-11                 | US-4       | A large task spans plans, rules, and code; A second upstream reversal is requested           |
 
 ## Acceptance Criteria
 
@@ -138,7 +138,6 @@ Feature: Human-readable pull-request delivery
     When a finding proposes work outside the cited defect class
     Then the fixer records a reasoned deferral or rejection without changing this PR's outcome
     And any retained improvement becomes a linked follow-up
-
   Scenario: Review converges normally
     Given Cycle 1 began from a complete description and green local checks
     When verified findings are repaired as one coherent batch
@@ -154,17 +153,16 @@ Feature: Human-readable pull-request delivery
     When another cycle would be required
     Then the agent stops before Cycle 6 and leaves a human-readable escalation on the PR
     And no routine human checkpoint was required before the bounded attempt was exhausted
-
-  Scenario: A private delivery discharges a public obligation
+  Scenario: A private delivery closes a public obligation
     Given a merged public rule change has an exact-commit private obligation
     When the private repository applies the named propagation workflow and measures its live destination
-    Then the private PR records that the obligation is satisfied or records a reasoned deviation without exposing private detail
+    Then an applicable obligation records satisfaction or a reasoned deviation without exposing private detail
     And any byte-identity surface still follows its existing authority
     And an inapplicable obligation records N/A, its reason, artifact owner, and remaining repository action
   Scenario: A second upstream reversal is requested
     Given one public correction already occurred in the current cross-repository wave
     When private review would require another upstream reversal
-    Then the agent stops, preserves the PR-native obligation and evidence, and asks a human
+    Then the agent stops, asks a human, and links the replacement or terminal decision
     And a private-only defect does not reopen public work
   Scenario: Related ideas are ready for later retirement
     Given the planning-only disposition map names every source, outcome, requirement family, and owner
