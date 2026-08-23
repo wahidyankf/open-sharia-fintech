@@ -2,11 +2,12 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-BASE-SPLIT active, authoring only); dormant until ACTIVATE.**
-[Repo-grounded] WAVES-ENTRY-SPLIT PR [#259](https://github.com/wahidyankf/ose-public/pull/259)
-merged as `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`. A complete local BASE authoring probe
-measured 401 changed lines and 276 granular tasks, crossing both its 330-line forecast and the
-400-line hard cap. This slice forecasts separate public and private checklists; it runs neither.
+**In Progress (WAVES-ENTRY-PUBLIC active, authoring only); dormant until ACTIVATE.**
+[Repo-grounded] WAVES-ENTRY-BASE-SPLIT PR
+[#260](https://github.com/wahidyankf/ose-public/pull/260) merged as
+`5c61907d9d24718267dae8a2307e3578df1d18c9`. This slice authors only the continuing evidence rules,
+literal idea-retirement acceptance, and public baseline/repair/ideas checklists. It executes none of
+those checklists; ENTRY-PRIVATE remains the next assembly slice.
 
 ## Outcome
 
