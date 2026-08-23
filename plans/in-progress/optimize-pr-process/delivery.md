@@ -17,10 +17,10 @@
 | [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`     |
 | [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`         |
 | [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`  |
-| [Repo-grounded] WAVES-ENTRY-PRIVATE-BASE-REPAIR                                     | Active: author private baseline and repair checklists        |
+| [Repo-grounded] WAVES-ENTRY-PRIVATE-IDEAS                                           | #263 merged; author private-idea checklist                   |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate still precedes explicit activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-PRIVATE-BASE-REPAIR changes plan docs only; it runs no
+> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-ENTRY-PRIVATE-IDEAS changes plan docs only; it runs no
 > gate, private-worktree action, idea retirement, or implementation.
 
 ## Executor Legend and Plain-Language Terms
@@ -55,7 +55,7 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-PRIVATE-BASE-REPAIR may change
+Plan assembly is deliberately **dormant and non-executable**. WAVES-ENTRY-PRIVATE-IDEAS may change
 only this plan's `README.md`, `delivery.md`, and `learnings.md`. Both private checklist slices,
 ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings,
 workflows, code, tests, implementation, private worktree state, and active-plan indexes remain
@@ -257,8 +257,8 @@ The fresh findings are confirmed and remain owned, not waived or deferred foreve
 gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
 owner even after the gitignored source report is cleared.
 
-FOUNDATION through WAVES-ENTRY-PRIVATE-SPLIT are merged; WAVES-ENTRY-PRIVATE-BASE-REPAIR is active. ACTIVATE may
-open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
+FOUNDATION through WAVES-ENTRY-PRIVATE-BASE-REPAIR are merged; WAVES-ENTRY-PRIVATE-IDEAS is active.
+ACTIVATE may open only after PUBLIC, both PRIVATE slices, ADAPTERS, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE
 instantiate every delivery unit as granular, attributable checkboxes and every finding is fixed. A
 fresh formal gate must then pass; historic evidence cannot substitute.
 
@@ -605,6 +605,94 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one landed-main successor or ambiguity stop.
 - [ ] `[PRIV-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/overlay/successor gate.
 - [ ] `[PRIV-REPAIR:P5.P][AI]` Record merge/main SHA, overlay hash, result, and named-successor command.
+
+### PRIV-IDEAS — Preserve the Overlay and Retire Its One Source
+
+Entry accepts only a terminal baseline/repair proof naming PRIV-IDEAS. Cross-repo byte identity is
+`N/A` for these idea paths; semantic retirement is proved against the disposition map. Before
+staging, every index hunk must belong to retirement/index maintenance or remain excluded residue.
+
+- [ ] `[PRIV-IDEAS:P1.01][AI]` Verify the terminal private proof names PRIV-IDEAS and reject every other successor.
+- [ ] `[PRIV-IDEAS:P1.02][AI]` Read back the exact pending public obligation and activated-plan pin.
+- [ ] `[PRIV-IDEAS:P1.03][AI]` Fetch current private `origin/main`.
+- [ ] `[PRIV-IDEAS:P1.04][AI]` Prove fetched `origin/main` equals the predecessor pin.
+- [ ] `[PRIV-IDEAS:P1.05][AI]` Compute the literal raw working-overlay fingerprint before branching.
+- [ ] `[PRIV-IDEAS:P1.06][AI]` Enter `optimize-pr-process-priv-ideas` without stashing.
+- [ ] `[PRIV-IDEAS:P1.07][AI]` Prove branch `HEAD` equals current private `origin/main`.
+- [ ] `[PRIV-IDEAS:P1.08][AI]` Recompute and match the literal working-overlay fingerprint.
+- [ ] `[PRIV-IDEAS:P1.09][AI]` Prove status contains only the admitted two-path overlay.
+- [ ] `[PRIV-IDEAS:P1.10][AI]` Publish ledger, forecast, dormant safety, risk, and rollback.
+- [ ] `[PRIV-IDEAS:P1.11][AI]` Record propagation, bindings, and cross-repo byte identity as reasoned `N/A`.
+- [ ] `[PRIV-IDEAS:P1.12][AI]` Revalidate the private disposition against the activated plan pin.
+- [ ] `[PRIV-IDEAS:P1.13][AI]` Run literal predecessor acceptance for the mapped private row.
+- [ ] `[PRIV-IDEAS:P1.14][AI]` Attribute every index hunk to retirement maintenance or excluded residue.
+- [ ] `[PRIV-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/overlay/disposition/provenance gate.
+- [ ] `[PRIV-IDEAS:P1.P][AI]` Record branch, head, ledger, original hash, and safe negative reads.
+- [ ] `[PRIV-IDEAS:P2.01][AI]` Run reviewed-worktree acceptance before staging.
+- [ ] `[PRIV-IDEAS:P2.02][AI]` Run private Markdown formatting and lint checks.
+- [ ] `[PRIV-IDEAS:P2.03][AI]` Run the private pre-push surface.
+- [ ] `[PRIV-IDEAS:P2.04][AI]` Calculate actual hand-authored changed lines and files.
+- [ ] `[PRIV-IDEAS:P2.05][AI]` Gate both actual counts against the plan's caps.
+- [ ] `[PRIV-IDEAS:P2.06][AI]` Compute the literal raw working-overlay fingerprint.
+- [ ] `[PRIV-IDEAS:P2.07][AI]` Stage only the authorized two-path content.
+- [ ] `[PRIV-IDEAS:P2.08][AI]` Read cached paths and prove staged-ledger equality.
+- [ ] `[PRIV-IDEAS:P2.09][AI]` Compute the literal raw cached-overlay fingerprint.
+- [ ] `[PRIV-IDEAS:P2.10][AI]` Prove cached and original working-overlay fingerprints are equal.
+- [ ] `[PRIV-IDEAS:P2.11][AI]` Inspect cached check, statistics, and complete private-safe patch.
+- [ ] `[PRIV-IDEAS:P2.12][AI]` Commit the cohesive private retirement without rewriting its bytes.
+- [ ] `[PRIV-IDEAS:P2.13][AI]` Read the complete committed diff.
+- [ ] `[PRIV-IDEAS:P2.14][AI]` Compute the literal raw `<unit-base>..HEAD` overlay fingerprint.
+- [ ] `[PRIV-IDEAS:P2.15][AI]` Prove committed and original working-overlay fingerprints are equal.
+- [ ] `[PRIV-IDEAS:P2.16][AI]` Rerun reviewed-head acceptance after commit.
+- [ ] `[PRIV-IDEAS:P2.G][AI]` Pass acceptance/gates/size/staging/commit/three-state fingerprint gate.
+- [ ] `[PRIV-IDEAS:P2.P][AI]` Record local head, committed hash, and clean tree or authorized residue.
+- [ ] `[PRIV-IDEAS:P3.01][AI]` Recalculate committed hand-authored counts.
+- [ ] `[PRIV-IDEAS:P3.02][AI]` Gate committed counts against the plan's caps.
+- [ ] `[PRIV-IDEAS:P3.03][AI]` Rerun the private pre-push surface on committed head.
+- [ ] `[PRIV-IDEAS:P3.04][AI]` Push only `optimize-pr-process-priv-ideas`.
+- [ ] `[PRIV-IDEAS:P3.05][AI]` Read back and match remote branch head to local `HEAD`.
+- [ ] `[PRIV-IDEAS:P3.06][AI]` Rerun reviewed-head acceptance after push.
+- [ ] `[PRIV-IDEAS:P3.07][AI]` Open one private-safe draft PR from a literal AI-marked body.
+- [ ] `[PRIV-IDEAS:P3.08][AI]` Read back base, head, draft, body, marker, and safe statistics.
+- [ ] `[PRIV-IDEAS:P3.G][AI]` Pass push/remote-head/acceptance/private-safe-body/readback gate.
+- [ ] `[PRIV-IDEAS:P3.P][AI]` Record draft URL, current head, and literal body path.
+- [ ] `[PRIV-IDEAS:P4.01][AI]` Post the exact-head private-safe route and selected/skipped review lenses.
+- [ ] `[PRIV-IDEAS:P4.02][AI]` Read back route, frozen scope, changed probe, and AI marker.
+- [ ] `[PRIV-IDEAS:P4.03][AI]` Run successive exact-head cycles under the five-cycle boundary.
+- [ ] `[PRIV-IDEAS:P4.04][AI]` Classify each concern before any cross-repository handoff.
+- [ ] `[PRIV-IDEAS:P4.05][AI]` For a proven portable or plan defect, record the paused private head; freeze push, review, readiness, and merge; then hand the required replacement public or amended-plan pin only to ADAPTERS.
+- [ ] `[PRIV-IDEAS:P4.06][AI]` Gate P4.07–P4.14 to the no-handoff path or an ADAPTERS-recorded replacement pin and resumption; record every finding as fix, reject, defer, or clarify with evidence.
+- [ ] `[PRIV-IDEAS:P4.07][AI]` Push each bounded fix before claiming it in the native thread.
+- [ ] `[PRIV-IDEAS:P4.08][AI]` Invalidate every review and CI result from the superseded head.
+- [ ] `[PRIV-IDEAS:P4.09][AI]` Return the repaired head to P4.03 before thread resolution.
+- [ ] `[PRIV-IDEAS:P4.10][AI]` Reply in the original thread with current-head evidence.
+- [ ] `[PRIV-IDEAS:P4.11][AI]` Read back the persisted reply and its AI marker.
+- [ ] `[PRIV-IDEAS:P4.12][AI]` Resolve only threads whose terminal evidence is true.
+- [ ] `[PRIV-IDEAS:P4.13][AI]` Poll applicable current-head CI exactly every 120 seconds.
+- [ ] `[PRIV-IDEAS:P4.14][AI]` Prove readiness, mark ready, and read back the same current head.
+- [ ] `[PRIV-IDEAS:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope/firewall/obligation gate.
+- [ ] `[PRIV-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and obligation state.
+- [ ] `[PRIV-IDEAS:P5.01][AI]` Recheck route, findings, base, head, ready state, and green CI.
+- [ ] `[PRIV-IDEAS:P5.02][AI]` Run `/usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256`.
+- [ ] `[PRIV-IDEAS:P5.03][AI]` Squash-merge by repository-qualified GitHub API.
+- [ ] `[PRIV-IDEAS:P5.04][AI]` Read back merge SHA and landed two-path ledger.
+- [ ] `[PRIV-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
+- [ ] `[PRIV-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
+- [ ] `[PRIV-IDEAS:P5.07][AI]` Publish exactly one terminal obligation state from a literal AI-marked payload.
+- [ ] `[PRIV-IDEAS:P5.08][AI]` Read back terminal state, immutable private pin, owner, reason/action, and AI marker.
+- [ ] `[PRIV-IDEAS:P5.09][AI]` Fetch private `origin/main` after the merge.
+- [ ] `[PRIV-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge pin.
+- [ ] `[PRIV-IDEAS:P5.11][AI]` Resync this private worktree without stashing the overlay.
+- [ ] `[PRIV-IDEAS:P5.12][AI]` Authorize only PUB-A1 from the resynced landed main.
+- [ ] `[PRIV-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/obligation/resync/sibling gate.
+- [ ] `[PRIV-IDEAS:P5.P][AI]` Record private merge/main SHA, terminal obligation, and PUB-A1 command.
+
+### WAVES-ENTRY-PRIVATE Finding State
+
+PR #263 fixed the baseline/repair checklist at `339f464e4aca08e29a93a844e2c194c358d52a94`. This
+slice owns the overlay-safe private-idea unit and keeps F-035 partial. ENTRY-ADAPTERS must still
+instantiate the freeze/replacement/abandonment/rollback transitions, record all four ENTRY pins,
+and close the ENTRY gate.
 
 ## Dormant Lifecycle and Evidence-State Template
 
