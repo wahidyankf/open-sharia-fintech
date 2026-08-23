@@ -32,9 +32,10 @@
   prohibitions. Repairs should preserve the authoritative ownership class instead of widening a path
   rule for convenience; a different probe is useful because a coherent fix batch can still introduce
   a new boundary error.
-- [Repo-grounded] DESIGN converged in target Cycle 3 with 12 findings and no recovery cycle. Its
-  reviewed and squash-merged patches had the same stable patch ID, so landed-diff verification did
-  not rely on branch ancestry.
+- [Repo-grounded] DESIGN converged in target Cycle 3 with 12 findings and no recovery cycle. A patch
+  ID is a fingerprint of changed content. Because a squash merge creates a new commit without the
+  reviewed branch's ancestry, matching patch IDs proved the reviewed and landed changes were
+  equivalent.
 - [Repo-grounded] DESIGN CI was polled more frequently than the repository's two-minute minimum.
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.

@@ -39,6 +39,14 @@ executable-status change. Merge green and resync before the next PR.
 | EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                        |              220–300 |
 | ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                               |          at most 400 |
 
+CORE groups its 20 findings so a reader can check the allocation without decoding one long row:
+
+- Phases, boundaries, worktrees, executor tags, delivery mode, and review routing: F-005–F-012.
+- Failure handling, commits, local verification, and CI: F-014–F-017.
+- Current-state, entry, staging, push, PR-body, review, and merge transactions: F-025, F-026, and
+  F-028–F-032.
+- Plan-amendment escape hatch: F-034.
+
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
 worktree before the next slice. If a slice forecast crosses 400 lines or 20 files, split that slice
