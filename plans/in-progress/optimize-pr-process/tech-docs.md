@@ -198,6 +198,6 @@ independently observable behavior. Rollback never depends on unpublished local s
 
 The formal plan-quality gate precedes execution but follows complete assembly. Every later delivery
 uses exact-path staged gates, file-ledger reconciliation, post-commit pre-push gates, native
-review/fix conversations, current-head CI, merge proof, and full landed-diff resync. Phase 3 is
-read-only; any tracked correction becomes a separately gated `PLAN-AMENDMENT` PR and cannot ride
-inside a rule wave.
+review/fix conversations, current-head CI, merge proof, and full landed-diff resync. Formal-gate
+validation is read-only; any tracked correction becomes a separately gated `PLAN-AMENDMENT` PR and
+cannot ride inside a rule wave.
