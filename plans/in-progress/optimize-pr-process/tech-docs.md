@@ -166,18 +166,18 @@ flowchart TD
     accTitle: Sequential delivery and reverse dependency rollback
     accDescr: Activation precedes five separately pinned public idea subdeliveries. Only the fifth's terminal public proof authorizes the private baseline and then private ideas; each later public wave precedes private adaptation. Rollback reverses that order.
     A["ACTIVATE<br/>approved plan"]:::blue --> I4["PUB-IDEAS-4"]:::brown --> I5["PUB-IDEAS-5"]:::brown --> I6["PUB-IDEAS-6"]:::brown --> I7["PUB-IDEAS-7"]:::brown --> I8["PUB-IDEAS-8"]:::brown
-    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PB["PRIV-BASE<br/>baseline or repair"]:::purple --> I2["PRIV-IDEAS"]:::brown
+    I8 --> T["Terminal public proof<br/>landed pin and obligation"]:::teal --> PRIV_BASE["PRIV-BASE<br/>baseline or repair"]:::purple --> I2["PRIV-IDEAS"]:::brown
     I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
-    VA3 --> PB["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
+    VA3 --> PUB_B["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
     VB --> C{"Wave C optional mechanism<br/>necessary?"}:::orange
     C -->|No, record no change| Z["Public closure<br/>archive plan"]:::teal
     C -->|Yes| PC["PUB-C<br/>optional mechanism"]:::blue --> VC["PRIV-C<br/>optional mechanism"]:::purple --> Z
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
-    VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
-    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> PB -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4 -.-> A
+    VC -.-> PC -.-> VB -.-> PUB_B -.-> VA3 -.-> PA3
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2 -.-> PRIV_BASE -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4 -.-> A
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#000000,stroke-width:2px

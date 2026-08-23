@@ -56,7 +56,7 @@ CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE-SPLIT →
 WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT → WAVES-ENTRY-PRIVATE-BASE-REPAIR →
 WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
 EXECUTION-CLOSURE → reconciliation/formal gate → ACTIVATE → remaining PUB-IDEAS subdeliveries
-→ terminal public proof → PRIV-IDEAS`; see
+→ terminal public proof → PRIV-BASE → conditional PRIV-REPAIR → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 

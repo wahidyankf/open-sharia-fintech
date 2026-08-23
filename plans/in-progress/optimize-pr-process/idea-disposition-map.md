@@ -104,6 +104,8 @@ PRs #269–#271 retired nine public briefs in three cohesive, human-sized subdel
 ACTIVATE. They are retained as execution data points, not authority to start private or rule work.
 After the reconciliation and ACTIVATE pin merge, retire the remaining ten public briefs through the
 five named `PUB-IDEAS-4`–`PUB-IDEAS-8` subdeliveries in `delivery.md`. Only their terminal proof may
-authorize `PRIV-IDEAS`, which retires the private brief and index entry separately. Every retirement
+authorize `PRIV-BASE`; its clean or overlay-owned result, or an evidenced failure repaired by
+`PRIV-REPAIR`, may then authorize `PRIV-IDEAS`, which retires the private brief and index entry
+separately. Every retirement
 PR preserves historical references and cites its exact predecessor; no subdelivery may exceed the
 plan's human-size boundary.
