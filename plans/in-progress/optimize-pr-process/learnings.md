@@ -40,7 +40,7 @@
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.
 - [Judgment call] Twenty-five execution findings cannot stay bootcamp-readable in one repair-sized
-  PR. Forecast, CORE, WAVES-ENTRY, WAVES-RULES, and EXECUTION-CLOSURE slices keep mechanics,
+  PR. Forecast, CORE, WAVES-ENTRY, WAVES-A, WAVES-RULES, and EXECUTION-CLOSURE slices keep mechanics,
   instantiated units, and final evidence independently reviewable while preserving one worktree and
   sequential dependencies.
 - [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
@@ -54,6 +54,6 @@
   green same-head CI. The repaired PR converged in Cycle 3 without an extra confirmation cycle.
 - [Repo-grounded] The first broad EXECUTION-WAVES draft reached 350 changed lines while still
   missing baseline-repair, correction/amendment, and per-gate pause tasks. Compressing atomic tasks
-  would make progress unauditable, so WAVES-ENTRY and WAVES-RULES replace the single wave slice.
+  would make progress unauditable, so WAVES-ENTRY, WAVES-A, and WAVES-RULES replace the single slice.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
