@@ -2,12 +2,11 @@
 
 ## Status
 
-**In Progress (WAVES-ENTRY-SPLIT active, authoring only); dormant until ACTIVATE.**
-[Repo-grounded] WAVES-SPLIT PR [#257](https://github.com/wahidyankf/ose-public/pull/257) merged as
-`aa5f14f768d0a8c4e0877d8aab7135b4d7529135`. WAVES-ENTRY draft PR
-[#258](https://github.com/wahidyankf/ose-public/pull/258) closed unmerged after Cycle 1 proved that
-truthfully separating independently checkable Git and GitHub state changes crosses its forecast
-ceiling. This slice re-forecasts two cohesive ENTRY checklist PRs; it runs neither.
+**In Progress (WAVES-ENTRY-BASE-SPLIT active, authoring only); dormant until ACTIVATE.**
+[Repo-grounded] WAVES-ENTRY-SPLIT PR [#259](https://github.com/wahidyankf/ose-public/pull/259)
+merged as `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`. A complete local BASE authoring probe
+measured 401 changed lines and 276 granular tasks, crossing both its 330-line forecast and the
+400-line hard cap. This slice forecasts separate public and private checklists; it runs neither.
 
 ## Outcome
 
@@ -46,8 +45,9 @@ parser, merge queue, universal runtime flag, or unrelated CI cleanup.
 
 Plan assembly must finish before idea or implementation delivery. The exact unstacked order begins
 `FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION-FORECAST → CORE-SPLIT-FORECAST → CORE-ENTRY →
-CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE → WAVES-ENTRY-ADAPTERS →
-WAVES-A → WAVES-RULES → EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
+CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE-SPLIT →
+WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
+EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 
