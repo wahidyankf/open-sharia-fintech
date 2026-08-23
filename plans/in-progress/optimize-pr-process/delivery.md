@@ -10,10 +10,11 @@
 | [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`       |
 | [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254) | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522` |
 | [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255) | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`     |
-| [Repo-grounded] CORE-REVIEW                                                         | Active: author review, merge, and amendment mechanics        |
+| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256) | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`    |
+| [Repo-grounded] WAVES-SPLIT                                                         | Active: forecast complete execution-wave checklists          |
 | [Unverified] Complete assembled plan                                                | Fresh formal gate and grill still precede activation         |
 
-> **AUTHORING-ONLY UNTIL ACTIVATE:** CORE-REVIEW changes plan docs only; it runs no gate or implementation.
+> **AUTHORING-ONLY UNTIL ACTIVATE:** WAVES-SPLIT changes plan docs only; it runs no gate or implementation.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -47,10 +48,10 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Plan assembly is deliberately **dormant and non-executable**. CORE-REVIEW may change only this
-plan's `README.md`, `delivery.md`, and `learnings.md`. EXECUTION-WAVES, EXECUTION-CLOSURE, ideas,
-indexes, rules, agents, bindings, workflows, code, tests, implementation, and active-plan indexes
-remain dormant. The formal gate waits for complete assembly.
+Plan assembly is deliberately **dormant and non-executable**. WAVES-SPLIT may change only this
+plan's `README.md`, `delivery.md`, and `learnings.md`. Both execution-wave checklist slices,
+EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests, implementation,
+and active-plan indexes remain dormant. The formal gate waits for complete assembly.
 
 ## Worktree
 
@@ -86,8 +87,8 @@ stacked dependency, or concurrent mutation is allowed. CORE-REVIEW adds the rout
 
 ```text
 FOUNDATION (#250) → REQUIREMENTS (#251) → DESIGN (#252) → FORECAST (#253) →
-CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → EXECUTION-WAVES → EXECUTION-CLOSURE →
-ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
+CORE-SPLIT-FORECAST → CORE-ENTRY → CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY → WAVES-RULES →
+EXECUTION-CLOSURE → ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
@@ -101,7 +102,9 @@ executable-status change. Merge green and resync before the next PR.
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------: |
 | CORE-ENTRY        | Complete Phase 0–5 gate/pause-safe spine and state model, plus Phase 0–3 mechanics; F-005–F-011, F-014–F-016, F-025, F-026, F-028–F-030 |              230–300 |
 | CORE-REVIEW       | Review route, CI, correction firewall, merge and amendment; F-012, F-017, F-031, F-032, F-034                                           |              150–230 |
-| EXECUTION-WAVES   | Numbered PUB/PRIV idea, A1–A3, B, and optional C units with stability and TDD gates; F-035                                              |              280–340 |
+| WAVES-SPLIT       | Forecast-only repair after missing task classes pushed the complete EXECUTION-WAVES forecast above the hard cap                         |                35–75 |
+| WAVES-ENTRY       | Task/evidence contract; baselines/repairs; PUB/PRIV ideas, A1–A2; correction/amendment adapters; F-035                                  |              250–320 |
+| WAVES-RULES       | PUB/PRIV A3 and B; optional-C decision/amendment; pair gates and checked-file lag; F-035                                                |              170–240 |
 | EXECUTION-CLOSURE | Reconciliation/dogfood, knowledge, private terminal proof, public archival, cleanup; F-013, F-018, F-036–F-037                          |              220–300 |
 | ACTIVATE          | Clean formal plan-quality gate, post-write grill, and explicit executable-status change                                                 |          at most 400 |
 
@@ -114,18 +117,18 @@ The two CORE slices keep the original 20-finding ownership complete:
 
 The other slice names mean:
 
-- EXECUTION-WAVES authors the later checklists for paired public/private units: A1 plan-making rules, A2 review
-  routing, A3 PR and reply rules, B legacy-conflict cleanup, and optional C tooling only if evidence
-  proves it necessary. Any future code change uses test-driven development: write the failing test
-  before the behavior change.
+- WAVES-ENTRY authors the task/evidence contract, conditional baseline repairs, idea retirement,
+  A1 plan-making, A2 review routing, and correction/amendment adapters. WAVES-RULES authors A3 PR
+  and reply rules, B legacy cleanup, and the default-no-change C decision. Approved C work requires
+  a later `PLAN-AMENDMENT` with exact TDD tasks; neither checklist slice implements it.
 - EXECUTION-CLOSURE authors the later checklist for reconciling the plan with what landed, dogfooding the
   process—using it on its own PRs—capturing knowledge, closing private work, archiving the public
   plan, and safely removing worktrees.
 - ACTIVATE runs the formal plan-quality gate and a structured post-write user review (the “grill”)
   before changing the assembled plan from dormant to executable.
 
-Both CORE slices, EXECUTION-WAVES, and EXECUTION-CLOSURE only author checklists; none executes
-before ACTIVATE.
+Both CORE slices, WAVES-SPLIT, WAVES-ENTRY, WAVES-RULES, and EXECUTION-CLOSURE only author plan
+text or checklists; none executes before ACTIVATE.
 
 The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
 PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
@@ -141,7 +144,7 @@ the narrow frozen-PR exception used during one public correction.
 ### Delivery Boundaries
 
 Every unit repeats Phases 1–5 below. `PUB-WT` and `PRIV-WT` mean the declared worktrees;
-EXECUTION-WAVES supplies exact unit scope/acceptance and EXECUTION-CLOSURE supplies Phase 6 proof.
+WAVES-ENTRY and WAVES-RULES supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
 
 | Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                 | Stable result             |
 | -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------- | ------------------------- |
@@ -185,16 +188,16 @@ gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DES
 owner even after the gitignored source report is cleared.
 
 FOUNDATION through CORE-ENTRY are merged. CORE-REVIEW completes the dormant mechanics below but
-runs none. ACTIVATE may open only after EXECUTION-WAVES and EXECUTION-CLOSURE instantiate every
-delivery unit as granular, attributable checkboxes and every finding is fixed. A fresh formal gate
+runs none. ACTIVATE may open only after WAVES-ENTRY, WAVES-RULES, and EXECUTION-CLOSURE instantiate
+every delivery unit as granular, attributable checkboxes and every finding is fixed. A fresh formal gate
 and grill must then pass; historic evidence cannot substitute.
 
 ## Dormant Lifecycle and Evidence-State Template
 
-The lines below deliberately are not checkboxes. EXECUTION-WAVES must copy every universal action
-and gate into separate tagged checkboxes per unit; for a conditional block it copies applicable
-actions or one reasoned `N/A` checkbox. EXECUTION-CLOSURE does the same for Phase 6, and CORE-REVIEW
-replaces the historical merge placeholders. Before ACTIVATE, checkboxes and live tasks map 1:1.
+The lines below deliberately are not checkboxes. WAVES-ENTRY and WAVES-RULES must copy every
+universal action and gate into separate tagged checkboxes per owned unit; conditional blocks copy
+applicable actions or one reasoned `N/A` checkbox. EXECUTION-CLOSURE does the same for Phase 6.
+After ACTIVATE, each active unit copies its Markdown IDs into the live task list 1:1.
 
 For each unit, keep separate evidence states for local authoring/gates, pushed commit, PR current
 head, current-head CI, review semantic exit, merge proof, landed-diff proof, worktree resync, and
@@ -447,20 +450,20 @@ After activation, PUB-IDEAS merges before PRIV-IDEAS. Later implementation remai
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
-CORE-ENTRY, CORE-REVIEW, EXECUTION-WAVES, and EXECUTION-CLOSURE must turn this order into a 1:1
+CORE-ENTRY, CORE-REVIEW, WAVES-ENTRY, WAVES-RULES, and EXECUTION-CLOSURE must turn this order into a 1:1
 runnable checklist and preserve every merge step and its authority. No assembly PR may begin
 implementation.
 
 ## Dormant Authority Mapping
 
 This mapping replaces the two historical shortcut checkboxes; it is not executable work.
-EXECUTION-WAVES must instantiate each applicable Phase 4–5 action and gate once per delivery unit,
+WAVES-ENTRY and WAVES-RULES must instantiate each applicable Phase 4–5 action and gate per owned unit,
 and EXECUTION-CLOSURE must prove the terminal state without adding a shorter merge route.
 
 | Authority        | Sole owner after ACTIVATE                                        |
 | ---------------- | ---------------------------------------------------------------- |
-| Review/readiness | Phase 4 checkboxes instantiated per unit by EXECUTION-WAVES      |
-| Merge/resync     | Phase 5 checkboxes instantiated per unit by EXECUTION-WAVES      |
+| Review/readiness | Phase 4 checkboxes instantiated per unit by the two WAVES slices |
+| Merge/resync     | Phase 5 checkboxes instantiated per unit by the two WAVES slices |
 | Final proof      | Phase 6 checkboxes instantiated by EXECUTION-CLOSURE             |
 | Assembly order   | PLAN merges/resyncs before separate PUB-IDEAS and PRIV-IDEAS PRs |
 

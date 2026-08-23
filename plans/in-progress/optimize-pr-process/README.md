@@ -2,11 +2,11 @@
 
 ## Status
 
-**In Progress (CORE-REVIEW active, authoring only); implementation dormant until ACTIVATE.**
-[Repo-grounded] CORE-ENTRY PR [#255](https://github.com/wahidyankf/ose-public/pull/255) merged as
-`6e3412576ee32b8a34882c8f5df38019a1825e03`. CORE-REVIEW now authors review, fixing, CI,
-cross-repository correction, merge-proof, and amendment mechanics. It runs none of them; later
-assembly and the formal plan-quality gate remain dormant.
+**In Progress (EXECUTION-WAVES split forecast active, authoring only); dormant until ACTIVATE.**
+[Repo-grounded] CORE-REVIEW PR [#256](https://github.com/wahidyankf/ose-public/pull/256) merged as
+`b872a142a5063ff8d97bc04b89bc090529c932a4`. An audited 350-line wave draft still lacked required
+repair/correction and pause tasks, so this slice forecasts two cohesive checklist PRs before either
+opens. It runs no checklist, gate, idea retirement, propagation, or implementation.
 
 ## Outcome
 
@@ -45,7 +45,8 @@ parser, merge queue, universal runtime flag, or unrelated CI cleanup.
 
 Plan assembly must finish before idea or implementation delivery. The exact unstacked order begins
 `FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION-FORECAST → CORE-SPLIT-FORECAST → CORE-ENTRY →
-CORE-REVIEW → EXECUTION-WAVES → EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS → PRIV-IDEAS`; see
+CORE-REVIEW → WAVES-ENTRY → WAVES-RULES → EXECUTION-CLOSURE → ACTIVATE → PUB-IDEAS →
+PRIV-IDEAS`; see
 [delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 
