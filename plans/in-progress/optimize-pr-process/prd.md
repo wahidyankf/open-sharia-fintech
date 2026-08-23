@@ -30,9 +30,9 @@ history; plan executors preserve authority, scope, and stable delivery across bo
 10. Public portable changes open an auditable private obligation pinned to the public PR, merge SHA,
     and reviewed head. One upstream correction is allowed per wave; a second reversal stops as
     oscillation. Private-only defects never trigger public churn.
-11. Private-only defects and deliberate deviations stay private. **Byte-identity defects follow the
-    existing surface authority**, parity-repair order, and evidence rules; they may require a public
-    correction, a private correction, or both.
+11. Private-only defects and deliberate deviations stay private. In contrast,
+    byte-identity defects follow the existing surface authority; parity repair may require a public
+    correction, a private correction, or both under the existing evidence rules.
 12. Idea briefs related to this plan retire in later public/private idea-only PRs, with each useful
     requirement mapped here and each discarded item given a short reason.
 
