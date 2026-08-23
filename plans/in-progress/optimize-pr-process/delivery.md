@@ -249,10 +249,9 @@ and grill must then pass; historic evidence cannot substitute.
 
 ## Dormant Execution-Wave Public Entry Checklist
 
-Every checkbox below is inert until ACTIVATE merges. It describes later work; this assembly PR does
-not run a baseline command, edit an idea, touch the private overlay, change a rule, or open an
-implementation PR. After activation, copy only the active unit's unchecked IDs into the live task
-list 1:1. Keep this Markdown as the durable evidence index and allow only one active unit at a time.
+Every checkbox is inert until ACTIVATE; this PR runs no baseline, idea, private-overlay, rule, or
+implementation work. After activation, copy only the active unit's IDs into the live task list 1:1;
+this Markdown remains durable evidence, and only one unit may be active.
 
 ### Continuing Evidence Rules
 
@@ -399,17 +398,18 @@ repair an ordinary-unit defect only inside that unit's own scope.
 ### PUB-IDEAS — Retire the 19 Public Sources
 
 - [ ] `[PUB-IDEAS:P1.01][AI]` Verify PUB-BASE or PUB-REPAIR terminal proof and its exact pin.
-- [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main` and prove it equals that predecessor.
-- [ ] `[PUB-IDEAS:P1.03][AI]` Enter `optimize-pr-process-pub-ideas` from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.04][AI]` Publish the exact 19-brief plus public-index path ledger.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
-- [ ] `[PUB-IDEAS:P1.06][AI]` Record propagation and generated bindings as reasoned `N/A`.
-- [ ] `[PUB-IDEAS:P1.07][AI]` Revalidate all 19 dispositions against the activated plan pin.
-- [ ] `[PUB-IDEAS:P1.08][AI]` Run literal predecessor acceptance for every mapped public row.
-- [ ] `[PUB-IDEAS:P1.09][AI]` Delete only the 19 mapped public briefs.
-- [ ] `[PUB-IDEAS:P1.10][AI]` Remove only their exact links from `plans/ideas/README.md`.
-- [ ] `[PUB-IDEAS:P1.11][AI]` Run reviewed-worktree acceptance for every mapped public row.
-- [ ] `[PUB-IDEAS:P1.12][AI]` Reconcile `git status` exactly to the retirement ledger.
+- [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
+- [ ] `[PUB-IDEAS:P1.03][AI]` Prove fetched `origin/main` equals the predecessor pin.
+- [ ] `[PUB-IDEAS:P1.04][AI]` Enter `optimize-pr-process-pub-ideas` from the exact main pin.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the exact 19-brief plus public-index path ledger.
+- [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
+- [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
+- [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate all 19 dispositions against the activated plan pin.
+- [ ] `[PUB-IDEAS:P1.09][AI]` Run literal predecessor acceptance for every mapped public row.
+- [ ] `[PUB-IDEAS:P1.10][AI]` Delete only the 19 mapped public briefs.
+- [ ] `[PUB-IDEAS:P1.11][AI]` Remove only their exact links from `plans/ideas/README.md`.
+- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every mapped public row.
+- [ ] `[PUB-IDEAS:P1.13][AI]` Reconcile `git status` exactly to the retirement ledger.
 - [ ] `[PUB-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/disposition/acceptance gate.
 - [ ] `[PUB-IDEAS:P1.P][AI]` Record branch, head, ledger, dirty state, and negative-read commands.
 - [ ] `[PUB-IDEAS:P2.01][AI]` Rerun all reviewed-worktree acceptance commands before staging.
@@ -425,13 +425,14 @@ repair an ordinary-unit defect only inside that unit's own scope.
 - [ ] `[PUB-IDEAS:P2.11][AI]` Rerun all reviewed-head acceptance commands after commit.
 - [ ] `[PUB-IDEAS:P2.G][AI]` Pass acceptance/formatting/gates/size/staging/commit gate.
 - [ ] `[PUB-IDEAS:P2.P][AI]` Record local head and clean tree or named intended residue.
-- [ ] `[PUB-IDEAS:P3.01][AI]` Recalculate and gate committed hand-authored counts.
-- [ ] `[PUB-IDEAS:P3.02][AI]` Rerun the public pre-push surface on the committed head.
-- [ ] `[PUB-IDEAS:P3.03][AI]` Push only `optimize-pr-process-pub-ideas`.
-- [ ] `[PUB-IDEAS:P3.04][AI]` Read back the remote branch head and prove it equals local `HEAD`.
-- [ ] `[PUB-IDEAS:P3.05][AI]` Rerun all reviewed-head acceptance commands after push.
-- [ ] `[PUB-IDEAS:P3.06][AI]` Open one draft human-readable PR from a literal AI-marked body.
-- [ ] `[PUB-IDEAS:P3.07][AI]` Read back base, head, draft state, body, marker, and statistics.
+- [ ] `[PUB-IDEAS:P3.01][AI]` Recalculate committed hand-authored counts.
+- [ ] `[PUB-IDEAS:P3.02][AI]` Gate committed counts against the plan's caps.
+- [ ] `[PUB-IDEAS:P3.03][AI]` Rerun the public pre-push surface on the committed head.
+- [ ] `[PUB-IDEAS:P3.04][AI]` Push only `optimize-pr-process-pub-ideas`.
+- [ ] `[PUB-IDEAS:P3.05][AI]` Read back the remote branch head and prove it equals local `HEAD`.
+- [ ] `[PUB-IDEAS:P3.06][AI]` Rerun all reviewed-head acceptance commands after push.
+- [ ] `[PUB-IDEAS:P3.07][AI]` Open one draft human-readable PR from a literal AI-marked body.
+- [ ] `[PUB-IDEAS:P3.08][AI]` Read back base, head, draft state, body, marker, and statistics.
 - [ ] `[PUB-IDEAS:P3.G][AI]` Pass push/remote-head/acceptance/body/readback gate.
 - [ ] `[PUB-IDEAS:P3.P][AI]` Record draft URL, current head, and literal body path.
 - [ ] `[PUB-IDEAS:P4.01][AI]` Post the exact-head review route and selected/skipped lenses.
@@ -467,10 +468,9 @@ repair an ordinary-unit defect only inside that unit's own scope.
 
 ### WAVES-ENTRY-PUBLIC Finding State
 
-This slice repairs the continuing-rule and literal idea-acceptance findings from PR #258, instantiates
-the public half of current-main baseline handling, and carries PR #259's raw-fingerprint lesson into
-both public units. Its merge pin is necessary but does not close F-035: ENTRY-PRIVATE must add the
-overlay-safe units, and ENTRY-ADAPTERS must record all three ENTRY pins before advancing that finding.
+This slice fixes PR #258's continuing-rule and idea-acceptance defects and carries PR #259's raw-hash
+lesson into both public units. F-035 stays open until ENTRY-PRIVATE adds overlay-safe units and
+ENTRY-ADAPTERS records all three ENTRY pins.
 
 ## Dormant Lifecycle and Evidence-State Template
 
