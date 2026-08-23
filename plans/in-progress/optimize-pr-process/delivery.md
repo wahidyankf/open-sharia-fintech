@@ -25,26 +25,25 @@ ACTIVATE/formal-gate/grill → PUB-IDEAS → PRIV-IDEAS → implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
-worktree. Each PR is at most 400 changed hand-authored lines and 20 hand-authored files. Estimate
-DESIGN and EXECUTION before opening them; if either would exceed a bound, record its named cohesive
-sub-slices in the prior PR before opening the first split. Merge green and resync before the next PR.
+worktree. Every assembly slice is at most 400 changed hand-authored lines and 20 hand-authored files.
+Forecast each slice before opening it; if any would exceed a bound, record its named cohesive
+sub-slices in the prior PR before opening the first split. Gate findings use bounded
+`ACTIVATE-REPAIR-*` PRs. Final ACTIVATE contains only the clean formal gate, post-write grill, and
+executable-status change. Merge green and resync before the next PR.
 
-| Slice        | Contract restored before activation                                                                   |
-| ------------ | ----------------------------------------------------------------------------------------------------- |
-| REQUIREMENTS | Business/product structure plus the exact public/private idea-disposition map                         |
-| DESIGN       | File-impact tree, public/private obligation design, propagation/correction and rollback diagrams      |
-| EXECUTION    | Worktree/mode/boundaries, phases, commands, gates, review transaction, knowledge, archival, cleanup   |
-| ACTIVATE     | Fresh formal plan-quality gate, all resulting fixes, post-write grill, and explicit executable status |
+| Slice        | Contract restored before activation                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------- |
+| REQUIREMENTS | Business/product structure plus the exact public/private idea-disposition map                       |
+| DESIGN       | File-impact tree, public/private obligation design, propagation/correction and rollback diagrams    |
+| EXECUTION    | Worktree/mode/boundaries, phases, commands, gates, review transaction, knowledge, archival, cleanup |
+| ACTIVATE     | Clean formal plan-quality gate, post-write grill, and explicit executable-status change             |
 
 ## Confirmed Open Audit Map
 
-The following findings are **CONFIRMED and intentionally OPEN**, not waived or deferred forever:
-
-| Assembly owner | Fresh-audit findings                               |
-| -------------- | -------------------------------------------------- |
-| REQUIREMENTS   | F-001, F-002, F-021, F-033                         |
-| DESIGN         | F-004, F-019, F-020, F-027                         |
-| EXECUTION      | F-005–F-018, F-025–F-026, F-028–F-032, F-034–F-037 |
+The 33 findings are **CONFIRMED and intentionally OPEN**, not waived or deferred forever. Their
+[durable PR-native catalog](https://github.com/wahidyankf/ose-public/pull/250#issuecomment-5384375806)
+gives every ID a plain-language defect, affected artifact, and REQUIREMENTS, DESIGN, or EXECUTION
+owner even after the gitignored source report is cleared.
 
 FOUNDATION fixes F-003, F-023, and F-024 in tracked plan text; its PR body fixes F-022. ACTIVATE may
 open only after every mapped finding is fixed readably. A fresh formal gate must then pass its full

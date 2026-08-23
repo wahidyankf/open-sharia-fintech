@@ -2,7 +2,7 @@
 
 ## Status
 
-**Dormant and non-executable.** [Repo-grounded] Draft PR
+**In Progress (plan assembly); implementation dormant and non-executable until ACTIVATE.** [Repo-grounded] Draft PR
 [#250](https://github.com/wahidyankf/ose-public/pull/250) is only the plan foundation. Cycle 1 fixes
 are complete, but fresh strict audit `ced0ed` failed. The older `378d66` PASS was invalidated by the
 material compaction and cannot activate this head.
