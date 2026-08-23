@@ -40,7 +40,11 @@
   EXECUTION must use the authoritative cadence and retain this as a process defect, even though no
   rate-limit or CI failure occurred.
 - [Judgment call] Twenty-five execution findings cannot stay bootcamp-readable in one repair-sized
-  PR. A forecast plus CORE, WAVES, and CLOSURE slices keeps mechanics, instantiated units, and final
-  evidence independently reviewable while preserving one worktree and sequential dependencies.
+  PR. A forecast plus CORE, EXECUTION-WAVES, and EXECUTION-CLOSURE slices keeps mechanics,
+  instantiated units, and final evidence independently reviewable while preserving one worktree and
+  sequential dependencies.
+- [Repo-grounded] The audited CORE draft reached 405 changed lines after essential review repairs,
+  crossing the ratified 400-line ceiling. Split forecasting must use the repaired shape, not only
+  the first authoring estimate; CORE-ENTRY and CORE-REVIEW preserve cohesion and repair headroom.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
