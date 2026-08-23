@@ -109,15 +109,19 @@ boundaries, not blanket permission; the PR body publishes the exact file ledger.
 
 Every rule wave invokes
 [`repo-rules-propagation.md`](../../../repo-governance/workflows/repo/repo-rules-propagation.md)
-with `isolation=current` in the already-owned worktree. Its manifest records each normalized rule,
-authoritative source, consumer, supersession, enforcement disposition, and sibling obligation.
+with `isolation=current` in the already-owned worktree. Its placement manifest records surface,
+layer, disposition, and supersessions; its sibling obligation remains a separate output. The
+PR-native unit ledger records each normalized rule, authoritative source, consumer, enforcement
+disposition, and the two output references.
 
 Hand-authored `.claude/**` sources are edited directly. Run `npm run generate:bindings` once after
-source edits; never hand-edit `.agents/**`, `.opencode/**`, or `.codex/**`. Record the source and
-generated path sets plus tracked content before staging, run `npm run validate:sync`, then rerun
-generation and prove both the file ledger and tracked bytes are unchanged. Generated parity is done
-only when the checked-in mirrors match the hand-authored sources in the same commit and the
-destination repository independently passes the same checks.
+source edits; never hand-edit paths that the destination `repo-config.yml` classifies as generated,
+including `.agents/skills/**`, `.opencode/agents/**`, and `.codex/agents/**`. Source and vendored
+paths remain with their registered owners. Record the source and generated path sets plus tracked
+content before staging, run `npm run validate:sync`, then rerun generation and prove both the file
+ledger and tracked bytes are unchanged. Generated parity is done only when the checked-in mirrors
+match the hand-authored sources in the same commit and the destination repository independently
+passes the same checks.
 
 ## Cross-Repository Transaction
 
@@ -158,15 +162,15 @@ existing authority rather than a blanket public-first rule.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     accTitle: Sequential delivery and reverse dependency rollback
-    accDescr: Activation precedes idea retirement, paired public and private waves, an optional mechanism decision, and closure. Rollback moves in the opposite order.
+    accDescr: Activation precedes idea retirement, A1 plan-making rules, A2 review routing, A3 PR and reply rules, B legacy cleanup, the optional C mechanism decision, and closure. Each public wave precedes private adaptation; rollback reverses that order.
     A["ACTIVATE<br/>approved plan"]:::blue --> I1["PUB-IDEAS"]:::brown --> I2["PRIV-IDEAS"]:::brown
-    I2 --> PA1["PUB-A1"]:::blue --> VA1["PRIV-A1"]:::purple
-    VA1 --> PA2["PUB-A2"]:::blue --> VA2["PRIV-A2"]:::purple
-    VA2 --> PA3["PUB-A3"]:::blue --> VA3["PRIV-A3"]:::purple
-    VA3 --> PB["PUB-B"]:::blue --> VB["PRIV-B"]:::purple
-    VB --> C{"Wave C<br/>necessary?"}:::orange
+    I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
+    VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
+    VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
+    VA3 --> PB["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
+    VB --> C{"Wave C optional mechanism<br/>necessary?"}:::orange
     C -->|No, record no change| Z["Public closure<br/>archive plan"]:::teal
-    C -->|Yes| PC["PUB-C"]:::blue --> VC["PRIV-C"]:::purple --> Z
+    C -->|Yes| PC["PUB-C<br/>optional mechanism"]:::blue --> VC["PRIV-C<br/>optional mechanism"]:::purple --> Z
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
     VC -.-> PC -.-> VB -.-> PB -.-> VA3 -.-> PA3
@@ -178,11 +182,12 @@ flowchart TD
     classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
-Equivalent prose: after ACTIVATE, retire public then private ideas; deliver each public rule wave
-before its private adaptation; make Wave C an explicit no-change or approved-mechanism decision; and
-archive only after both repositories are terminal. Rollback starts with the last merged dependent
-and moves backward. A unit may revert alone only when nothing merged depends on it. During a paired
-unwind, leave a native obligation naming the pins, temporary incoherence, owner, and next action.
+Equivalent prose: after ACTIVATE, retire public then private ideas; deliver A1 plan-making rules, A2
+review routing, A3 PR-and-reply rules, and B legacy cleanup, with each public wave before its private
+adaptation. Make C an explicit no-change or approved optional-mechanism decision, and archive only
+after both repositories are terminal. Rollback starts with the last merged dependent and moves
+backward. A unit may revert alone only when nothing merged depends on it. During a paired unwind,
+leave a native obligation naming the pins, temporary incoherence, owner, and next action.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects

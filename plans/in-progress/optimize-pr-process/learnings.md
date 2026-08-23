@@ -27,5 +27,10 @@
   from reviewed JSON payloads and reading them back restored the audit trail before thread resolution.
   PR automation that writes human-facing artifacts should use literal payload files and verify the
   persisted result; a successful API response alone is insufficient evidence.
+- [Repo-grounded] DESIGN Cycle 2 changed from discovery to refutation and found four narrower defects.
+  The Cycle 1 Codex-mirror repair had overgeneralized three generated subtrees into whole-tree
+  prohibitions. Repairs should preserve the authoritative ownership class instead of widening a path
+  rule for convenience; a different probe is useful because a coherent fix batch can still introduce
+  a new boundary error.
 
 Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.

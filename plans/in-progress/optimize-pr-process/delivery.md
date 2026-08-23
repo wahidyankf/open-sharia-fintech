@@ -16,9 +16,8 @@ Plan assembly is deliberately **dormant and non-executable**. DESIGN may repair 
 `README.md`, `delivery.md`, `learnings.md`, and `tech-docs.md`; REQUIREMENTS already added the
 planning-only [idea disposition map](./idea-disposition-map.md). All idea-brief, idea-index, and
 idea-routing-reference edits, moves, deletions, and retirements wait for PUB-IDEAS or PRIV-IDEAS
-after ACTIVATE. `plans/in-progress/README.md`, the active-plan index changed by FOUNDATION, remains
-allowed. No rule, agent, binding, workflow, code, test, implementation, or formal plan gate may
-change or run in DESIGN.
+after ACTIVATE. No rule, agent, binding, workflow, code, test, implementation, active-plan index, or
+formal plan gate may change or run in DESIGN.
 
 ## Sequential Plan Assembly
 
