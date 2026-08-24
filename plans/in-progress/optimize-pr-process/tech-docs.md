@@ -68,21 +68,18 @@ ceiling.
 │       # control-plan sources for pre-move edits; no other in-progress plan is admitted
 ├── [D] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # CLOSURE removes these seven files only after those reviewed pre-move edits
-├── [D] plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md
-├── [D] plans/ideas/q2-not-urgent-important/{merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
-│       # eight named PUB-IDEAS-5–8 sources; no discovery may add a brief
+├── [D] plans/ideas/q2-not-urgent-important/{nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
+│       # six named future PUB-IDEAS-6–8 sources; no discovery may add a brief
 ├── [E] plans/ideas/README.md
-│       # unlink only the eight `[D]` brief paths; retain completed/history links
+│       # unlink only the six `[D]` brief paths; retain completed/history links
 ├── [E] plans/in-progress/README.md
 │       # CLOSURE removes only this control-plan entry after its reviewed archive move
 ├── [E] plans/done/README.md
 │       # CLOSURE adds only the archived control-plan entry after its reviewed archive move
-├── [E] repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md
-│       # the sole PUB-IDEAS-5 live-backlink repair admitted by PR #277
 ├── [E] plans/ideas/q2-not-urgent-important/{actions-cache-eviction-policy,shared-cargo-target-lock-contention,deploy-targets-registry}.md
-│       # the three PUB-IDEAS-6 live-backlink repairs admitted only by its merged amendment ledger
+│       # the three PUB-IDEAS-6 repairs admitted only by merged PR #282 at 56e5fa6c
 ├── [E] repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md
-│       # the fourth PUB-IDEAS-6 live-backlink repair admitted only by its merged amendment ledger
+│       # the fourth PUB-IDEAS-6 repair admitted only by merged PR #282 at 56e5fa6c
 └── [N] plans/done/<recorded-YYYY-MM-DD>__optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
         # CLOSURE archive targets only; record the runtime date before the move
 ```
@@ -90,8 +87,11 @@ ceiling.
 Completed PUB-IDEAS-4 sources
 `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md` and
 `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md` are historical evidence only:
-they are absent and never re-admitted. Their former index history is retained; only the eight `[D]`
-paths above are unlinked by future PUB-IDEAS-5–8 work.
+they are absent and never re-admitted. Their former index history is retained; only the six `[D]`
+paths above are unlinked by future PUB-IDEAS-6–8 work. Completed PUB-IDEAS-5 sources
+`plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md` and
+`plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`, plus their PR #281 backlink repair,
+are historical evidence only and are never re-admitted.
 
 ### External Repository — `ose-private` (Record Only; No Edit Authority)
 

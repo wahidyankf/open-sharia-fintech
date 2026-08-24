@@ -17,7 +17,7 @@ noted below — this section is the summary layer):
   **MEDIUM**.
 - **Execution-grade clarity (HARD RULE)**: every checkbox names explicit file path(s), verbatim
   shell command(s), and a concrete acceptance criterion — or has a valid same-document controlled
-  runbook-reference binding for a cross-repository confidentiality/admission case. Bare "implement
+  runbook-reference binding for a finite cross-repository lifecycle procedure. Bare "implement
   X"/"set up Y" is **HIGH**.
   Full detail in `reference/12-rule11-execution-grade-clarity-validation.md` (Step 5e). See
   [Plans Organization Convention §Execution-Grade Clarity](../../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md#execution-grade-clarity-hard-rule).

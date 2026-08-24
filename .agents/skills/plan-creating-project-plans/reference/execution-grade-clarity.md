@@ -10,6 +10,11 @@ Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-gra
 
 **`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**
 
+A finite cross-repository lifecycle checkbox may instead use the canonical same-document controlled
+runbook-reference exception when it meets every condition in the
+[Plans Organization Convention §Execution-Grade Clarity](../../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md#controlled-runbook-reference-exception).
+Do not duplicate that exception here.
+
 ## Bad / Good Examples
 
 **Bad** (missing path, missing command, missing criterion):

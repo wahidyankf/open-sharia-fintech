@@ -14,10 +14,10 @@ authoring-grade hand-waving is a HARD RULE violation.
 ose-web:typecheck` exits 0"). Bare "implement X", "set up Y", "configure Z", "add caching", "fix
    the bug": **HIGH**.
 
-**Controlled runbook-reference exception**: A cross-repository confidentiality/admission checkbox
-may bind to one same-document, uniquely named runbook packet instead of repeating commands or
-private paths only when the packet is explicitly bound to the checkbox's ID or unit/phase. It must state the exact
-record fields and their sources, copyable commands, exact admitted public paths or a maximum-detail
+**Controlled runbook-reference exception**: A finite cross-repository lifecycle checkbox may bind
+to one same-document, uniquely named runbook packet instead of repeating one maintained procedure
+or private paths only when the packet is explicitly bound to the checkbox's ID or unit/phase and
+states why the packet is needed. It must state the exact record fields and their sources, copyable commands, exact admitted public paths or a maximum-detail
 private-safe target, observable pass/fail result, record location, and finite applicability. The
 packet must be in the same `delivery.md`; “see template”, an external document, or an execution-time
 invented record is still **HIGH**. The exception preserves one independently completable checkbox and

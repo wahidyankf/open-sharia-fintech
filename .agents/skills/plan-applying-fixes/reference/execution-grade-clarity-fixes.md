@@ -3,6 +3,11 @@
 When a delivery checkbox lacks explicit file paths, verbatim commands, or a concrete acceptance
 criterion, rewrite with maximum detail.
 
+Before rewriting, check whether the checkbox is a finite cross-repository lifecycle binding that
+satisfies the canonical same-document controlled runbook-reference exception in
+`repo-governance/conventions/structure/plans/execution-grade-clarity.md`. A valid binding is not a
+finding; an incomplete binding is repaired against that canonical rule rather than by duplicating it.
+
 **Confidence**: **HIGH** — the missing element can be derived from plan context (`tech-docs.md`
 names the file, the project list implies the Nx command, the Gherkin criterion implies the test
 command) — apply automatically. **MEDIUM** — genuinely ambiguous even on careful read — skip and

@@ -2,35 +2,39 @@
 
 ## Current State
 
-| Evidence                                                                                           | State                                                                                                          |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250)                | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                                       |
-| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251)                | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                                                     |
-| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252)                | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                                           |
-| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253)                | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                                         |
-| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254)                | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                                                   |
-| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255)                | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                                       |
-| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256)                | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                                      |
-| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257)                | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                                      |
-| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258)                | Incomplete WAVES-ENTRY draft; never merged                                                                     |
-| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259)                | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                                      |
-| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260)                | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                                       |
-| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261)                | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                                           |
-| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262)                | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                                                    |
-| [Repo-grounded] Merged PRs #263–#268                                                               | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                                         |
-| [Repo-grounded] Merged PRs #269–#271                                                               | Nine mapped public ideas retired before activation                                                             |
-| [Repo-grounded] Merged [ACTIVATE PR #274](https://github.com/wahidyankf/ose-public/pull/274)       | ACTIVATE at `f30a9e55b232bb98d26482238ce50dd7a1391817`; its A0.P receipt authorizes PUB-BASE                   |
-| [Repo-grounded] Merged [plan amendment PR #275](https://github.com/wahidyankf/ose-public/pull/275) | PUB-IDEAS-4 live-backlink authority at `f87347632e5b40188340339f888dfbb8f8b8f85c`                              |
-| [Repo-grounded] Merged [PUB-IDEAS-4 PR #276](https://github.com/wahidyankf/ose-public/pull/276)    | PUB-IDEAS-4 terminal successor evidence at `64dbe6de9607d682f15c9c2edb18e720bafab248`                          |
-| [Repo-grounded] Merged [plan amendment PR #277](https://github.com/wahidyankf/ose-public/pull/277) | PUB-IDEAS-5 execution base at `2d2e8208076a6be4e57087ea02f15b1338afb80f`; quality remediation freezes its edit |
+| Evidence                                                                                             | State                                                                                                                             |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250)                  | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                                                          |
+| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251)                  | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                                                                        |
+| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252)                  | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                                                              |
+| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253)                  | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                                                            |
+| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254)                  | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                                                                      |
+| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255)                  | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                                                          |
+| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256)                  | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                                                         |
+| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257)                  | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                                                         |
+| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258)                  | Incomplete WAVES-ENTRY draft; never merged                                                                                        |
+| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259)                  | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                                                         |
+| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260)                  | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                                                          |
+| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261)                  | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                                                              |
+| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262)                  | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                                                                       |
+| [Repo-grounded] Merged PRs #263–#268                                                                 | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                                                            |
+| [Repo-grounded] Merged PRs #269–#271                                                                 | Nine mapped public ideas retired before activation                                                                                |
+| [Repo-grounded] Merged [ACTIVATE PR #274](https://github.com/wahidyankf/ose-public/pull/274)         | ACTIVATE at `f30a9e55b232bb98d26482238ce50dd7a1391817`; its A0.P receipt authorizes PUB-BASE                                      |
+| [Repo-grounded] Merged [plan amendment PR #275](https://github.com/wahidyankf/ose-public/pull/275)   | PUB-IDEAS-4 live-backlink authority at `f87347632e5b40188340339f888dfbb8f8b8f85c`                                                 |
+| [Repo-grounded] Merged [PUB-IDEAS-4 PR #276](https://github.com/wahidyankf/ose-public/pull/276)      | PUB-IDEAS-4 terminal successor evidence at `64dbe6de9607d682f15c9c2edb18e720bafab248`                                             |
+| [Repo-grounded] Merged [plan amendment PR #277](https://github.com/wahidyankf/ose-public/pull/277)   | PUB-IDEAS-5 execution base at `2d2e8208076a6be4e57087ea02f15b1338afb80f`; quality remediation freezes its edit                    |
+| [Repo-grounded] Merged [plan remediation PR #280](https://github.com/wahidyankf/ose-public/pull/280) | PUB-IDEAS-5 plan-quality remediation at `7ea591ee54363c4811fb42ccef94cac898b598cc`                                                |
+| [Repo-grounded] Merged [PUB-IDEAS-5 PR #281](https://github.com/wahidyankf/ose-public/pull/281)      | PUB-IDEAS-5 completed at `e70ef47b945cbc91d23a641230a87a2b8879f75a`; its receipt named PUB-IDEAS-6                                |
+| [Repo-grounded] Merged [plan amendment PR #282](https://github.com/wahidyankf/ose-public/pull/282)   | PUB-IDEAS-6 four-path live-backlink authority at `56e5fa6c5168ffe5569d21a4b685a76168dd6f13`; strict revalidation remains required |
 
 > **RECONCILIATION HISTORY AND FREEZE:** PRs #269–#271 are non-authorizing data points. PR #274
 > merged with its read-back A0.P receipt, PUB-BASE completed cleanly, PR #275 amended only
 > PUB-IDEAS-4's live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 amended only
-> PUB-IDEAS-5's live-backlink authority. PUB-IDEAS-5 is the sole candidate successor, but its edit
-> remains frozen until this plan-quality remediation merges; it then starts only from that amendment
-> merge pin. Private work and every rule/code wave remain frozen until their declared predecessor
-> authorizes them.
+> PUB-IDEAS-5's live-backlink authority. PR #280 supplied its plan-quality remediation; PR #281
+> completed PUB-IDEAS-5 and named PUB-IDEAS-6 as successor; and PR #282 admitted only
+> PUB-IDEAS-6's four mapped live-backlink repairs. PUB-IDEAS-6 is the sole candidate successor and
+> remains frozen until the strict revalidation below is clean. Private work and every rule/code wave
+> remain frozen until their declared predecessor authorizes them.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -65,14 +69,14 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 ## Dormant Boundary
 
 PR #274 has merged, its zero-blocker ACTIVATE record was read back, and PUB-BASE completed cleanly.
-PR #275 authorized PUB-IDEAS-4's live-backlink repair, PR #276 completed PUB-IDEAS-4, and PR #277
-authorized PUB-IDEAS-5's live-backlink repair. PUB-IDEAS-5 is now the sole candidate successor, but
-its edit remains **frozen** until this quality-remediation PR merges, its merge receipt supplies the
-new execution-base pin, and the remediation successor records two consecutive strict zero-finding
-plan-quality-gate validations. Both private checklist slices, ENTRY-ADAPTERS, WAVES-A, WAVES-RULES,
-EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests, implementation,
-private worktree state, and active-plan indexes remain frozen until their declared predecessors
-authorize them.
+PR #275 authorized PUB-IDEAS-4's live-backlink repair, PR #276 completed PUB-IDEAS-4, PR #277
+authorized PUB-IDEAS-5's repair, PR #280 completed its plan-quality remediation, PR #281 completed
+PUB-IDEAS-5, and PR #282 authorized PUB-IDEAS-6's exact four repairs. PUB-IDEAS-6 is now the sole
+candidate successor, but its edit remains **frozen** until this plan-state correction merges and
+two consecutive strict zero-finding plan-quality validations are recorded. Both private checklist
+slices, ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules, agents,
+bindings, workflows, code, tests, implementation, private worktree state, and active-plan indexes
+remain frozen until their declared predecessors authorize them.
 
 ## Worktree
 
@@ -499,20 +503,20 @@ repair an ordinary-unit defect only inside that unit's own scope.
 
 The single 19-brief forecast was invalid: it exceeded the 400-line ceiling and the first three
 subdeliveries landed before ACTIVATE. Preserve them as evidence and do not retroactively claim they
-followed the activation gate. PUB-IDEAS-4 is complete under its immutable ledger below. Only the
-remaining PUB-IDEAS-5–8 units may instantiate the unchecked shared checklist by replacing
+followed the activation gate. PUB-IDEAS-4 and PUB-IDEAS-5 are complete under their immutable
+evidence. Only the remaining PUB-IDEAS-6–8 units may instantiate the unchecked shared checklist by replacing
 `PUB-IDEAS` with their exact unit ID and mapped subset.
 
-| Unit                  | State                                                                                | Exact mapped paths                                                                                                                                                                                                                                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PUB-IDEAS-1 / PR #269 | merged, non-authorizing                                                              | `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`; `plans/ideas/q1-urgent-important/plan-decision-integrity-hardening.md`                                                                                                                                                                              |
-| PUB-IDEAS-2 / PR #270 | merged, non-authorizing                                                              | `plans/ideas/q2-not-urgent-important/plan-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/repo-rules-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`                                                                                   |
-| PUB-IDEAS-3 / PR #271 | merged, non-authorizing                                                              | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`; `plans/ideas/q2-not-urgent-important/governance-path-ownership-registry.md`; `plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md`; `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md` |
-| PUB-IDEAS-4 / PR #276 | merged at `64dbe6de9607d682f15c9c2edb18e720bafab248`                                 | `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md`; `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                                                                                                                                                              |
-| PUB-IDEAS-5           | frozen pending this plan-quality remediation; PR #277 is its live-backlink authority | `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`; `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`                                                                                                                                                                        |
-| PUB-IDEAS-6           | frozen until PUB-IDEAS-5                                                             | `plans/ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md`; `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`                                                                                                                                                        |
-| PUB-IDEAS-7           | frozen until PUB-IDEAS-6                                                             | `plans/ideas/q2-not-urgent-important/cross-repo-governance-link-parity.md`; `plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`                                                                                                                                                             |
-| PUB-IDEAS-8           | frozen until PUB-IDEAS-7                                                             | `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`; `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`                                                                                                                                                          |
+| Unit                  | State                                                                                                                                                                     | Exact mapped paths                                                                                                                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUB-IDEAS-1 / PR #269 | merged, non-authorizing                                                                                                                                                   | `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`; `plans/ideas/q1-urgent-important/plan-decision-integrity-hardening.md`                                                                                                                                                                              |
+| PUB-IDEAS-2 / PR #270 | merged, non-authorizing                                                                                                                                                   | `plans/ideas/q2-not-urgent-important/plan-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/repo-rules-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`                                                                                   |
+| PUB-IDEAS-3 / PR #271 | merged, non-authorizing                                                                                                                                                   | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`; `plans/ideas/q2-not-urgent-important/governance-path-ownership-registry.md`; `plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md`; `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md` |
+| PUB-IDEAS-4 / PR #276 | merged at `64dbe6de9607d682f15c9c2edb18e720bafab248`                                                                                                                      | `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md`; `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                                                                                                                                                              |
+| PUB-IDEAS-5 / PR #281 | merged at `e70ef47b945cbc91d23a641230a87a2b8879f75a`                                                                                                                      | `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`; `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`                                                                                                                                                                        |
+| PUB-IDEAS-6           | sole candidate; frozen for this plan-state correction and strict revalidation; PR #282 is its exact live-backlink authority at `56e5fa6c5168ffe5569d21a4b685a76168dd6f13` | `plans/ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md`; `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`                                                                                                                                                        |
+| PUB-IDEAS-7           | frozen until PUB-IDEAS-6                                                                                                                                                  | `plans/ideas/q2-not-urgent-important/cross-repo-governance-link-parity.md`; `plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`                                                                                                                                                             |
+| PUB-IDEAS-8           | frozen until PUB-IDEAS-7                                                                                                                                                  | `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`; `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`                                                                                                                                                          |
 
 The mapped source path, not the shortened table label, is authoritative. Re-read the disposition
 map before each unit. PUB-IDEAS-4–7 resync and authorize only the next named public subdelivery;
@@ -548,25 +552,26 @@ proves which current `origin/main` it may safely edit from. Missing either pin f
 
 #### PUB-IDEAS-5 live-backlink amendment ledger
 
-This table resolves the pre-edit freeze at
-`64dbe6de9607d682f15c9c2edb18e720bafab248`. PUB-IDEAS-5 remains frozen until this plan-only
-amendment merges; its resumed entry must use that merge pin.
+This table resolved the pre-edit freeze at
+`64dbe6de9607d682f15c9c2edb18e720bafab248`. PUB-IDEAS-5 completed in PR #281 at
+`e70ef47b945cbc91d23a641230a87a2b8879f75a`; it is immutable completion evidence, not a future
+entry point.
 
 | Exact live-backlink path                                                                        | Mapped target             | Minimal permitted repair                                                                                                                                                                                    |
 | ----------------------------------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace the complete ownership sentence containing the direct link with “The deferred investigation, availability matrix, and adoption path are tracked separately as future work, not by this convention.” |
 
-For PUB-IDEAS-5 after this amendment, retain PUB-IDEAS-4's merged successor proof and PR #277 as
-**authorization evidence**. This plan-quality-remediation PR's future merge receipt supplies the
-sole **execution-base pin**; it does not alter PR #277's live-backlink authority. No later,
-unrelated amendment may replace that pin. Missing the required authorization evidence, PR #277
-authority, or this remediation receipt freezes the unit.
+PUB-IDEAS-5 retained PUB-IDEAS-4's merged successor proof and PR #277 as authorization evidence;
+PR #280 supplied the plan-quality execution base, and PR #281 is its landed completion receipt.
+No later amendment reopens that completed unit.
 
 #### PUB-IDEAS-6 live-backlink amendment ledger
 
 This table resolves the pre-edit freeze at
-`e70ef47b945cbc91d23a641230a87a2b8879f75a`. PUB-IDEAS-6 remains frozen until this plan-only
-amendment merges; its resumed entry must use that merge pin.
+`e70ef47b945cbc91d23a641230a87a2b8879f75a`. PR #282 merged at
+`56e5fa6c5168ffe5569d21a4b685a76168dd6f13`, supplying this table's immutable live-backlink
+authority. PUB-IDEAS-6 remains frozen until this plan-state correction and strict revalidation
+complete.
 
 | Exact live-backlink path                                                             | Mapped target                                 | Minimal permitted repair                                                                                                                                                                                                   |
 | ------------------------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -575,16 +580,18 @@ amendment merges; its resumed entry must use that merge pin.
 | `plans/ideas/q2-not-urgent-important/deploy-targets-registry.md`                     | `stale-checkout-ref-advance-drift.md`         | Replace the complete linked sibling bullet with “**Checkout ref drift** — a separately tracked sibling concern about a ref-advancing fetch desyncing a checkout; this brief retains the phantom-refs scope.”               |
 | `repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md` | `stale-checkout-ref-advance-drift.md`         | Replace the complete tail clause containing the `stale-checkout-ref-advance-drift` Markdown link and ending “incident this caused.” with “and the incident this caused is separately tracked.”                             |
 
-For PUB-IDEAS-6 after this amendment, retain PUB-IDEAS-5's merged successor proof as authorization
-evidence. This amendment's future merge receipt supplies the sole execution-base pin; it does not
-authorize any path outside this table. Missing the proof, table match, or receipt freezes the unit.
+For PUB-IDEAS-6, retain PUB-IDEAS-5's merged successor proof as authorization evidence and retain
+PR #282's `56e5fa6c5168ffe5569d21a4b685a76168dd6f13` as immutable live-backlink authority. The
+entry's exact execution base is the fetched current `origin/main` recorded at P1.03; it must be a
+descendant of that PR #282 pin. Neither record authorizes a path outside this table. Missing proof,
+table match, or ancestry freezes the unit.
 
 #### Immutable Completion Ledger — PUB-IDEAS-4 (Do Not Re-run)
 
-The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-5–8 only.
-They are not open work for PUB-IDEAS-4 and must not be ticked retroactively. PR #276 is the durable,
-immutable completion record for PUB-IDEAS-4; this ledger maps the completed state without rewriting
-the future units' task IDs.
+The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-6–8 only.
+They are not open work for PUB-IDEAS-4 or PUB-IDEAS-5 and must not be ticked retroactively. PR #276
+and PR #281 are the durable immutable completion records; their ledgers map completed state without
+rewriting future units' task IDs.
 
 | PUB-IDEAS-4 state       | Immutable PR #276 evidence                                                                                                                    | Completion criterion                                                                                                        |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -594,11 +601,11 @@ the future units' task IDs.
 | P4.01–P4.14, P4.G, P4.P | PR #276 route, review, reply, CI, and readiness artifacts                                                                                     | The review cycle reached semantic exit on its current head without widening scope.                                          |
 | P5.01–P5.12, P5.G, P5.P | PR #276 merge receipt and successor publication                                                                                               | Reviewed and landed fingerprints matched; the public worktree resynced and named PUB-IDEAS-5.                               |
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-5, read PUB-IDEAS-4's P5.07 publication and P5.08 read-back record on PR #276; acceptance: it names exact successor `PUB-IDEAS-5`, immutable predecessor/authorization-evidence pin, declared public worktree/branch, and `Generated by AI`. Record that pin, PR #277's immutable live-backlink-authority pin, and this plan-quality-remediation PR's merge-receipt execution-base pin. For PUB-IDEAS-6, retain PUB-IDEAS-5's receipt only as authorization evidence and record this exact amendment's merged receipt as the sole execution-base pin; its table, proof, and marker are mandatory. For PUB-IDEAS-7–8, verify the immediately prior unit's P5.07 publication and P5.08 read-back name this exact active unit and immutable pin.
+- [ ] `[PUB-IDEAS:P1.01][AI]` PUB-IDEAS-5 is complete and is never instantiated again. For PUB-IDEAS-6, read PUB-IDEAS-5's P5.07 publication and P5.08 read-back on PR #281; acceptance: it names exact successor `PUB-IDEAS-6`, immutable predecessor/authorization-evidence pin, declared public worktree/branch, and `Generated by AI`. Record that proof and PR #282's immutable live-backlink-authority pin `56e5fa6c5168ffe5569d21a4b685a76168dd6f13`; its table, proof, and marker are mandatory. For PUB-IDEAS-7–8, verify the immediately prior unit's P5.07 publication and P5.08 read-back name this exact active unit and immutable pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
-- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-5, retain the predecessor proof but require fetched `origin/main` to equal its P1.01 execution-base pin. For PUB-IDEAS-6, retain PUB-IDEAS-5's proof but require fetched `origin/main` to equal this amendment's P1.01 execution-base pin. For PUB-IDEAS-7–8, prove fetched `origin/main` equals the predecessor pin.
-- [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-5`, `-6`, `-7`, or `-8`) from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-5 and PUB-IDEAS-6, verify it exactly matches their respective merged tracked live-backlink amendment ledger; for PUB-IDEAS-7–8, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
+- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-6, retain PUB-IDEAS-5's proof, run `git merge-base --is-ancestor 56e5fa6c5168ffe5569d21a4b685a76168dd6f13 origin/main`, and require exit 0; record fetched `origin/main` as this unit's exact execution-base pin. For PUB-IDEAS-7–8, prove fetched `origin/main` equals the predecessor pin.
+- [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-6`, `-7`, or `-8`) from the exact main pin.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-6, verify it exactly matches PR #282's merged tracked amendment ledger; for PUB-IDEAS-7–8, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
 - [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
 - [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
 - [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
@@ -654,7 +661,7 @@ the future units' task IDs.
 - [ ] `[PUB-IDEAS:P5.04][AI]` Read back merge SHA and landed path ledger.
 - [ ] `[PUB-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
 - [ ] `[PUB-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-5–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
+- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-6–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
 - [ ] `[PUB-IDEAS:P5.08][AI]` Read back the exact successor, pin, owner, and marker; on PUB-IDEAS-8 also read expected private paths.
 - [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` after the merge.
 - [ ] `[PUB-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge SHA.
