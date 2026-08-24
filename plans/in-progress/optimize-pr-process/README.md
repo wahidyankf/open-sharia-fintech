@@ -2,7 +2,7 @@
 
 ## Status
 
-**In Progress (executable after PR #274 merges); PUB-BASE is then the sole next unit.**
+**In Progress (executable after PR #274 merges and its A0.P handoff is read back); PUB-BASE is then the sole next unit.**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
@@ -12,8 +12,9 @@ Treat those merges as non-authorizing execution data points: the remaining 10 pu
 private work, and every rule/code wave stay frozen until this reconciliation merges and the
 equivalence audit records an ACTIVATE pin. The private overlay remains untouched. PR #273 merged the
 sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; this ACTIVATE PR records the
-one permitted affected-row recheck. After PR #274 merges with zero blockers, PUB-BASE alone may
-start; every unit after PUB-BASE remains paused, and the private overlay remains untouched.
+one permitted affected-row recheck. After PR #274 merges with zero blockers and its AI-marked A0.P
+handoff comment is posted and read back, PUB-BASE alone may start; every unit after PUB-BASE remains
+paused, and the private overlay remains untouched.
 
 ## Outcome
 

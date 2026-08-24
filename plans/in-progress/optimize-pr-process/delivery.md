@@ -2,29 +2,29 @@
 
 ## Current State
 
-| Evidence                                                                            | State                                                                                    |
-| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                 |
-| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                               |
-| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                     |
-| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                   |
-| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254) | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                             |
-| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255) | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                 |
-| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256) | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                |
-| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257) | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                |
-| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258) | Incomplete WAVES-ENTRY draft; never merged                                               |
-| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259) | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                |
-| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                 |
-| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                     |
-| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                              |
-| [Repo-grounded] Merged PRs #263–#268                                                | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                   |
-| [Repo-grounded] Merged PRs #269–#271                                                | Nine mapped public ideas retired before activation                                       |
-| [Repo-grounded] ACTIVATE PR #274 under review                                       | Its merged zero-blocker record makes the plan executable; PUB-BASE is the sole next unit |
+| Evidence                                                                            | State                                                                                                               |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                                            |
+| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                                                          |
+| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                                                |
+| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                                              |
+| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254) | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                                                        |
+| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255) | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                                            |
+| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256) | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                                           |
+| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257) | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                                           |
+| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258) | Incomplete WAVES-ENTRY draft; never merged                                                                          |
+| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259) | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                                           |
+| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                                            |
+| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                                                |
+| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                                                         |
+| [Repo-grounded] Merged PRs #263–#268                                                | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                                              |
+| [Repo-grounded] Merged PRs #269–#271                                                | Nine mapped public ideas retired before activation                                                                  |
+| [Repo-grounded] ACTIVATE PR #274 under review                                       | Its merged zero-blocker record plus read-back A0.P handoff make the plan executable; PUB-BASE is the sole next unit |
 
 > **RECONCILIATION HISTORY AND FREEZE:** PRs #269–#271 are non-authorizing data points. Before PR
 > #274 merges, do not retire another idea, touch the private worktree, or begin a rule/code wave.
-> After its merged zero-blocker ACTIVATE record, only PUB-BASE may begin; every later unit remains
-> frozen until its declared predecessor authorizes it.
+> After its merged zero-blocker ACTIVATE record and read-back A0.P handoff comment, only PUB-BASE
+> may begin; every later unit remains frozen until its declared predecessor authorizes it.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -59,7 +59,8 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 ## Dormant Boundary
 
 Before PR #274 merges, plan assembly is deliberately **dormant and non-executable**. After its
-merged zero-blocker ACTIVATE record, PUB-BASE is the sole executable successor. Both private
+merged zero-blocker ACTIVATE record and read-back A0.P handoff comment, PUB-BASE is the sole
+executable successor. Both private
 checklist slices, ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules,
 agents, bindings, workflows, code, tests, implementation, private worktree state, and active-plan
 indexes remain frozen until their declared predecessors authorize them.
@@ -320,7 +321,7 @@ row instead follows the single PLAN-AMENDMENT route and keeps every later unit f
 - [x] `[ACTIVATE:A0.04a][AI]` After the sole amendment, re-evaluate only affected rows once and freeze for a remaining blocker. **Done:** at `22bffb9263b020301d4ad9a6ff938c2277deef87`, E01–E03 and A01 pass; no second amendment is permitted.
 - [x] `[ACTIVATE:A0.05][AI]` Post and read back the complete AI-marked matrix, with direct evidence for all required rows, zero blockers, and no undisposed row. **Done:** this PR body is the complete, read-back equivalence record.
 - [x] `[ACTIVATE:A0.G][AI]` Pass exact-pin, full-catalog, evidence-link, uncovered-row, no-duplicate-loop, and zero-blocker checks before executable status. **Done:** this record proves all six; merge makes the plan executable.
-- [ ] `[ACTIVATE:A0.P][AI]` Post-merge artifact only: after PR #274 merges, a read-back AI-marked PR comment records its reviewed head, equivalence-record URL, final CI result, actual merge pin, and exact PUB-BASE successor command. Do not claim this evidence before it exists; PUB-BASE waits for that comment.
+- [ ] `[ACTIVATE:A0.P][AI]` Post-merge artifact only: after PR #274 merges, a read-back AI-marked PR comment records its reviewed head, equivalence-record URL, final CI result, actual merge pin, and exact PUB-BASE successor command. Do not claim this evidence before it exists; the read-back handoff comment authorizes PUB-BASE.
 
 ## Dormant Execution-Wave Public Entry Checklist
 
@@ -380,6 +381,7 @@ and pass/fail states.
 
 ### PUB-BASE — Public Repository Baseline
 
+- [ ] `[PUB-BASE:P0.00][AI]` PUB-BASE may start only after the read-back AI-marked A0.P comment on merged PR #274. Locate and read it back; verify its reviewed head, equivalence-record URL, final CI result, actual merge pin, and exact PUB-BASE command against GitHub/current `origin/main`; record the comment URL as baseline evidence.
 - [ ] `[PUB-BASE:P0.01][AI]` Verify ACTIVATE's exact merge pin is an ancestor of public `origin/main`.
 - [ ] `[PUB-BASE:P0.02][AI]` Fetch public `origin/main` without advancing a checked-out local branch.
 - [ ] `[PUB-BASE:P0.03][AI]` Record the public worktree and prove its status is clean or fully explained.
