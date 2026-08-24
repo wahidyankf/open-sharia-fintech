@@ -523,11 +523,25 @@ For PUB-IDEAS-4 after this amendment, retain the clean PUB-BASE/PUB-REPAIR prede
 The two pins answer different questions: the first proves why this unit is eligible; the second
 proves which current `origin/main` it may safely edit from. Missing either pin freezes the unit.
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-4, verify exactly one clean predecessor proof names `optimize-pr-process-pub-ideas-4`: PUB-BASE:P0.10 clean-direct **or** PUB-REPAIR:P5.17 successful-repair; record its immutable authorization-evidence pin. Also read the merged `optimize-pr-process-plan-amendment-idea4-live-backlinks` PR and record its immutable merge pin as the sole execution-base pin. For PUB-IDEAS-5–8, verify the immediately prior unit's P5.12 names this exact active unit and record its exact pin.
+#### PUB-IDEAS-5 live-backlink amendment ledger
+
+This table resolves the pre-edit freeze at
+`64dbe6de9607d682f15c9c2edb18e720bafab248`. PUB-IDEAS-5 remains frozen until this plan-only
+amendment merges; its resumed entry must use that merge pin.
+
+| Exact live-backlink path                                                                        | Mapped target             | Minimal permitted repair                                                                                         |
+| ----------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace only the two-line direct Markdown link with “tracked separately as future work, not by this convention.” |
+
+For PUB-IDEAS-5 after this amendment, retain PUB-IDEAS-4's merged successor proof as
+**authorization evidence**, but use the merged amendment pin as the sole **execution-base pin**.
+Missing either pin freezes the unit.
+
+- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-4, verify exactly one clean predecessor proof names `optimize-pr-process-pub-ideas-4`: PUB-BASE:P0.10 clean-direct **or** PUB-REPAIR:P5.17 successful-repair; record its immutable authorization-evidence pin. Also read the merged `optimize-pr-process-plan-amendment-idea4-live-backlinks` PR and record its immutable merge pin as the sole execution-base pin. For PUB-IDEAS-5, verify PUB-IDEAS-4:P5.12 names `optimize-pr-process-pub-ideas-5`, record its immutable authorization-evidence pin, then read the merged `optimize-pr-process-plan-amendment-idea5-live-backlink` PR and record its immutable merge pin as the sole execution-base pin. For PUB-IDEAS-6–8, verify the immediately prior unit's P5.12 names this exact active unit and record its exact pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
-- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-4, retain the predecessor proof but require fetched `origin/main` to equal the merged amendment execution-base pin from P1.01. For PUB-IDEAS-5–8, prove fetched `origin/main` equals the predecessor pin.
+- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-4 or PUB-IDEAS-5, retain the predecessor proof but require fetched `origin/main` to equal that unit's merged amendment execution-base pin from P1.01. For PUB-IDEAS-6–8, prove fetched `origin/main` equals the predecessor pin.
 - [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-4`, `-5`, `-6`, `-7`, or `-8`) from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-4, verify it exactly matches the merged tracked `PUB-IDEAS-4 live-backlink amendment ledger`; for every other unit, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-4 or PUB-IDEAS-5, verify it exactly matches that unit's merged tracked live-backlink amendment ledger; for every other unit, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
 - [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
 - [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
 - [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
