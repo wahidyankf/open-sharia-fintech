@@ -10,13 +10,18 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 
 - **Agent**: Orchestrator (the caller — `plan-execution.md` Step 8, or a direct invocation)
 - **Args**: `{input.pr}`, `{input.cycles}` (default maximum 7)
-- **Output**: Confirmed PR reference, behavior classification, classification evidence, and maximum
-  cycle count when eligible
+- **Output**: Confirmed PR reference, behavior classification, classification evidence, maximum
+  cycle count when eligible, and a reader-facing review-route record in the PR body before fan-out
 - **Success criteria**: The PR exists and is open; the classifier has recorded `eligible` or
   `noneligible`; `cycles` is a positive integer no greater than 7 unless the caller explicitly
   authorizes a different ceiling
 - **Route**: A noneligible PR skips Steps 1–3 and proceeds to the `pr-quality-gate.yml` verification
   in Step 4. An eligible PR proceeds through the loop.
+
+Before specialist fan-out, the coordinator records the current base/head and diff scope, plain-language
+risk tier, selected specialists and safely skipped specialists with their reasons, current check
+evidence, settled review history, the frozen outcome, and this cycle's changed probe in the PR
+body. This is a human-readable audit aid, not a new classifier or mechanical gate.
 
 ## 1. Per-Cycle Scout Pass (Sequential, Repeats for cycle = 1..N)
 
@@ -30,3 +35,7 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 - **On failure**: If the scout cannot access the PR or an API call fails, retry once and record the
   blocked condition. Do not relabel the PR noneligible merely because classification evidence is
   unavailable.
+
+For a paired public/private delivery, read the predecessor's terminal handoff before this pass.
+Do not start a new sibling-repository cycle while its source PR is still being fixed or awaiting
+current-head CI: that creates stale evidence and an avoidable review chain reaction.

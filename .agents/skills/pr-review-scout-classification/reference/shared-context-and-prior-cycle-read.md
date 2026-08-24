@@ -6,32 +6,17 @@ per cycle**, and hand the identical brief to every specialist selected for this 
 to `pr-review-synthesis-maker`, rather than each downstream consumer separately re-deriving the
 same context (which would otherwise multiply token cost by the number of specialists fanned out).
 
-## No-Exclusion Posture (Full Diff, No Generated-File Filtering)
-
-One exception applies from cycle 2 — see the correction-record freeze below.
-
-This brief carries the **full diff with NO generated-file exclusion** — reviewers see everything,
-including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**` (e.g. `search-data.json`),
-`package-lock.json` and other lock files, minified assets, source maps, and any file carrying an
-`@generated` / "DO NOT EDIT" marker. Nothing is silently filtered out before a specialist reviews
-it — the rationale is explicitness: a hand-edited "generated" file is never silently missed
-because nothing is silently excluded. CI still runs over everything regardless of what any
-reviewer chooses to skim.
+The brief includes the full diff, including generated artifacts; only the cycle-record freeze below
+is excluded. CI still covers every artifact.
 
 ## Correction-Record Freeze (Cycle 2 Onward)
 
 The **one** scope exclusion, and the only exception to the posture above: from cycle 2 the brief
-omits `plans/**`. See
+omits the loop's own cycle-record material. See
 [correction-record-freeze.md](./correction-record-freeze.md) for the rule and its two carve-outs.
-
-## Large-Diff Posture (Scout's Discretion)
-
-For a `full`-tier PR whose unfiltered diff exceeds a specialist's comfortable context budget, you
-**MAY** have specialists review per-domain-relevant file slices rather than the whole diff at
-once — record this slicing choice in the shared-context brief so `pr-review-synthesis-maker`
-carries it into the review header it posts. If a diff still cannot be reviewed in one fan-out,
-record an explicit "diff exceeds single-review scope — reviewed in N slices" note in the brief
-rather than silently under-covering it.
+A factual defect in a shipping artifact remains reviewable. The frozen delivery outcome still
+permits same-defect completion; an unrelated improvement belongs in a linked follow-up, not this
+PR's next fixer batch.
 
 ## Probe Variation (Cycle 2 Onward)
 
@@ -51,3 +36,11 @@ resolution state in the shared-context brief and feed it to the specialists (alo
 of the brief) so no specialist wastes a finding re-litigating something a human has already
 settled, and so `pr-review-synthesis-maker` never re-surfaces a dismissed finding in the
 consolidated review it posts.
+
+## Review-Route Read-Back
+
+Before fan-out, read the PR body and verify its review-route record names the pinned base/head,
+frozen outcome/scope, classification evidence, risk, selected and skipped lenses with reasons,
+current checks, settled threads, and this cycle's changed probe. Treat a missing or stale record as
+a routing defect to correct before specialist review; it is human-readable audit evidence, not a
+new enforcement mechanism.
