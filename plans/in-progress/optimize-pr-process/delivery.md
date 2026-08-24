@@ -127,7 +127,7 @@ git worktree prune # stale registration only; retry the applicable add once
 ```
 
 The former private two-path patch was reviewed and landed in private PR #63. The worktree is now
-clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` starts from
+clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` is historical:
 private PR #64 completed its native ledger. `PRIV-A1` is the active unit and starts from its fetched
 private `origin/main` with its separately declared ledger.
 
@@ -287,9 +287,9 @@ The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLO
 | 0        | PRIV-BASE        | private/PRIV-WT | `—`                                                  | no delivery    | no      | terminal PUB-IDEAS proof                                                                      | clean-worktree baseline                  |
 | 1–5?     | PRIV-REPAIR      | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>` | worktree-to-pr | Phase 3 | evidenced PRIV-BASE failure                                                                   | private baseline repaired                |
 | 1–5      | PRIV-IDEAS       | private/PRIV-WT | `optimize-pr-process-priv-ideas`                     | worktree-to-pr | Phase 3 | PRIV-BASE:P0.16 clean **or PRIV-REPAIR:P5.15 successful-repair**                              | private ideas retired                    |
-| receipt  | PRE-A1-ADMISSION | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct PUB-A1 and public admission done  |
-| receipt  | PRIV-ADMISSION   | historical      | —                                                    | merged receipt | #64     | private PR #64 `db40c969f8c6a554837efab1cf266c8d505c02a6`                                     | exact private adaptation admission pin   |
+| receipt  | PRE-A1-ADMISSION | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct public admission done             |
 | receipt  | PUB-A1           | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct size policy done (not executable) |
+| receipt  | PRIV-ADMISSION   | historical      | —                                                    | merged receipt | #64     | private PR #64 `db40c969f8c6a554837efab1cf266c8d505c02a6`                                     | exact private adaptation admission pin   |
 | 1–5      | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1-size-policy`            | worktree-to-pr | Phase 3 | PRIV-ADMISSION                                                                                | private A1 adapted                       |
 | 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent                  |
 | 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted                       |
@@ -676,6 +676,12 @@ retains both the lineage ID and its correction count.
 - [x] `[ENTRY-ADAPTERS:A1.17][AI]` Completed immutable evidence: the legacy per-repo/three-grill
       and iterative formal-gate composite remains historical. PR #290 and reader PR #291 merged; private
       PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6` completed the native admission receipt.
+
+  **Date:** 2026-08-24  
+  **Status:** complete  
+  **Files Changed:** public plan-state receipt only  
+  **Notes:** PR #290, #291, and private PR #64 are immutable evidence; no private path or content is repeated.
+
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
 - [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
 - [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
@@ -1041,24 +1047,27 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
 - [x] `[PRIV-ADMISSION:P4.02][AI]` Record the current-head review, cycle, and changed probe.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
       **Notes:** private PR #64 has five reviews/comments.
-- [x] `[PRIV-ADMISSION:P4.03][AI]` Record a same-thread AI-marked disposition for each finding.
-      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** native review-conversation evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P4.03][AI]` Historical-evidence audit: same-thread dispositions are unavailable.
+      **Date:** 2026-08-24; **Status:** documented historical exception; **Files Changed:** none;
+      **Notes:** private PR #64 has no review threads. This does not claim a disposition occurred;
+      `PRIV-A1` must use the current native thread-and-reply protocol.
 - [x] `[PRIV-ADMISSION:P4.04][AI]` Read back current-head required checks.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
       **Notes:** native CI evidence remains in private PR #64.
 - [x] `[PRIV-ADMISSION:P4.05][AI]` Read back readiness after current-head preconditions hold.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
       **Notes:** native readiness evidence remains in private PR #64.
-- [x] `[PRIV-ADMISSION:P5.01][AI]` Store the reviewed-patch fingerprint before merge.
-      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** native fingerprint evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P5.01][AI]` Historical-evidence audit: a reviewed-patch fingerprint is unavailable.
+      **Date:** 2026-08-24; **Status:** documented historical exception; **Files Changed:** none;
+      **Notes:** no fingerprint was published on private PR #64. This does not claim one existed;
+      `PRIV-A1` must store its reviewed fingerprint before merge.
 - [x] `[PRIV-ADMISSION:P5.02][AI]` Merge through the existing authorized merge gate.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
       **Notes:** immutable merge pin is `db40c969f8c6a554837efab1cf266c8d505c02a6`.
-- [x] `[PRIV-ADMISSION:P5.03][AI]` Verify that landed and reviewed fingerprints match.
-      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** native landed-proof evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P5.03][AI]` Historical-evidence audit: a landed/reviewed fingerprint comparison is unavailable.
+      **Date:** 2026-08-24; **Status:** documented historical exception; **Files Changed:** none;
+      **Notes:** private PR #64 has no published comparison. This does not claim verification occurred;
+      `PRIV-A1` must compare its landed and reviewed fingerprints.
 - [x] `[PRIV-ADMISSION:P5.04][AI]` Resync private `origin/main` and prepare `PRIV-A1` as sole successor.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
       **Notes:** the public-safe result is `PRIV-A1` then `PUB-A2`.
