@@ -68,6 +68,10 @@ its exact before/after ledger and stays within the 400-line/20-file ceiling.
 │       # the ten named PUB-IDEAS-4–8 sources; no discovery may add a brief
 ├── [E] plans/ideas/README.md
 │       # unlink only the ten named brief paths; retain historical plans/done/** links
+├── [E] plans/in-progress/README.md
+│       # CLOSURE removes only this control-plan entry after its reviewed archive move
+├── [E] plans/done/README.md
+│       # CLOSURE adds only the archived control-plan entry after its reviewed archive move
 ├── [E] repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md
 │       # the sole PUB-IDEAS-5 live-backlink repair admitted by PR #277
 └── [E] plans/done/YYYY-MM-DD__optimize-pr-process/**

@@ -1161,6 +1161,7 @@ follow-up only; it never creates a new `plans/backlog/**` or `plans/ideas/**` pa
 - [ ] `[CLOSURE:P5.13][AI]` Before ready state, triage `plans/in-progress/optimize-pr-process/learnings.md`: retain a safe, repository-relevant learning only with one existing named durable destination; otherwise add a discard reason. Acceptance: no private value enters public text and no new path is created.
 - [ ] `[CLOSURE:P5.14][AI]` Before ready state, run `rg -ni --glob '*.md' "$idea_search" plans/ideas/README.md plans/ideas/q1-urgent-important plans/ideas/q2-not-urgent-important` for every ideas candidate and record its result in the CLOSURE PR. Acceptance: a match reuses the existing brief; no match becomes a proposed follow-up requiring a separate exact-path amendment.
 - [ ] `[CLOSURE:P5.15][AI]` Before ready state, move the completed control plan and update only its admitted archive/index paths in the CLOSURE PR. Acceptance: the full staged ledger stays within the file-impact tree and the closure PR contains every mutation for review.
+- [ ] `[CLOSURE:P5.16][AI]` Before ready state, post an AI-marked closure-PR evidence comment with the reviewed raw-patch hash, the literal base/head inputs, and `CLOSURE_PR`. Acceptance: the comment is read back before merge and survives local-tmp cleanup.
 
 - [ ] `[CLOSURE:P6.01][AI]` Read the terminal public C state and enumerate every public unit plus each optional route.
 - [ ] `[CLOSURE:P6.02][AI]` Read the terminal private C state and enumerate every private unit plus each terminal `N/A` decision.
@@ -1186,7 +1187,7 @@ follow-up only; it never creates a new `plans/backlog/**` or `plans/ideas/**` pa
 - [ ] `[CLOSURE:P6.22][AI]` Read-only validation: run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json reviews,comments` and compare returned URLs with the Phase 4 evidence. Acceptance: every recorded review/disposition is present and no new review or reply is posted in Phase 6.
 - [ ] `[CLOSURE:P6.23][AI]` Read-only validation: run `gh pr checks "$CLOSURE_PR" --repo wahidyankf/ose-public --required`. Acceptance: the pre-merge recorded current-head CI is green and names the reviewed head; Phase 6 does not poll, repair, or restart CI.
 - [ ] `[CLOSURE:P6.24][AI]` Read-only validation: run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`. Acceptance: it confirms the Phase 4 ready-state record; Phase 6 does not transition readiness.
-- [ ] `[CLOSURE:P6.25][AI]` Read-only validation: run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --comments` and compare Phase 5's recorded raw-patch hashes. Acceptance: both hashes are present and identical; Phase 6 calculates no replacement fingerprint.
+- [ ] `[CLOSURE:P6.25][AI]` Read-only validation: read the Phase 5 reviewed hash/base/head from `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --comments`, then run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256` from the landed public main. Acceptance: the recomputed landed hash equals the durable Phase 5 reviewed hash; Phase 6 posts no mutation.
 - [ ] `[CLOSURE:P6.26][AI]` Read-only validation: run `git fetch origin main && git status --short --branch` in the declared public worktree and compare `origin/main` with the merge SHA read in P6.21. Acceptance: `origin/main` contains that merge and the Phase 5 resync record is present; Phase 6 does not merge, switch branches, or resync again.
 - [ ] `[CLOSURE:P6.27][AI]` Read-only validation: compare the merged CLOSURE PR's measured PR sizes, cycle counts, corrections, amendments, and terminal states with its pre-merge evidence record.
 - [ ] `[CLOSURE:P6.28][AI]` Read-only validation: verify every exception/follow-up in the merged CLOSURE PR has an owner, evidence, next action, and no undeclared path mutation.
@@ -1197,8 +1198,8 @@ follow-up only; it never creates a new `plans/backlog/**` or `plans/ideas/**` pa
 - [ ] `[CLOSURE:P6.29d][AI]` Verify each ideas candidate has the Phase 5 search result and either an existing reused brief or a proposed separate exact-path amendment; no new idea path was created here.
 - [ ] `[CLOSURE:P6.29e][AI]` Verify Phase 5 wrote the explicit none outcome when no generalizable learning survived; otherwise verify every entry has a terminal evidence link.
 - [ ] `[CLOSURE:P6.30][AI]` Verify the repository-approved archive location and its required public indexes.
-- [ ] `[CLOSURE:P6.31][AI]` Move the completed public plan only after all audit and archive checks pass.
-- [ ] `[CLOSURE:P6.32][AI]` Update only the required plan indexes and read them back after archive.
+- [ ] `[CLOSURE:P6.31][AI]` Read-only validation: verify the merged CLOSURE PR already moved the completed public plan before merge. Acceptance: the archive path is present in its landed diff and no Phase 6 mutation occurs.
+- [ ] `[CLOSURE:P6.32][AI]` Read-only validation: verify the merged CLOSURE PR already updated only `plans/in-progress/README.md` and `plans/done/README.md`. Acceptance: both index edits appear in its landed diff and no Phase 6 mutation occurs.
 - [ ] `[CLOSURE:P6.33][AI]` Fetch public `origin/main` and record its immutable tip before cleanup.
 - [ ] `[CLOSURE:P6.34][AI]` Fetch private `origin/main` and record its immutable tip before cleanup.
 - [ ] `[CLOSURE:P6.35][AI]` Prove public main contains every recorded public merge pin.
