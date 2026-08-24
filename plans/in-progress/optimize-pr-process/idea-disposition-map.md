@@ -28,9 +28,9 @@ No public idea brief remains. PR #285 retired the cross-worktree set at
 `5e45ae3e1969359a233ac8be2d7b176492d0531b`; PR #286 retired the cross-repository set at
 `d440f7385aa32eadeaf224bb10a633837a31055a`; and PR #288 retired the final set at
 `70dbe4187dd720d8fe344960d227c44cf3d549f5`. Their absent source paths and old forecast are
-immutable historical evidence only. PR #291 supplied the reader-state receipt; PR #290 still requires
-two fresh strict zero-finding results in its terminal handoff before `PRIV-ADMISSION`, then `PRIV-A1`
-and `PUB-A2`, can start.
+immutable historical evidence only. PR #291 supplied the reader-state receipt, and private PR #64
+merged the native `PRIV-ADMISSION` receipt at `db40c969f8c6a554837efab1cf266c8d505c02a6`.
+`PRIV-A1`, then `PUB-A2`, is the remaining live order.
 
 ## Historical Public Dispositions
 

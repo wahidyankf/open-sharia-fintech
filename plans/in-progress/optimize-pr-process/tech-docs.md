@@ -70,10 +70,6 @@ hand-authored files.
 │       # control-plan sources for pre-move edits; no other in-progress plan is admitted
 ├── [D] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # CLOSURE removes these seven files only after those reviewed pre-move edits
-├── [D] plans/ideas/q2-not-urgent-important/{nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
-│       # six named future PUB-IDEAS-6–8 sources; no discovery may add a brief
-├── [E] plans/ideas/README.md
-│       # unlink only the six `[D]` brief paths; retain completed/history links
 ├── [E] plans/in-progress/README.md
 │       # CLOSURE removes only this control-plan entry after its reviewed archive move
 ├── [E] plans/done/README.md
@@ -103,8 +99,8 @@ hand-authored files.
 Completed PUB-IDEAS-4 sources
 `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md` and
 `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md` are historical evidence only:
-they are absent and never re-admitted. Their former index history is retained; only the six `[D]`
-paths above are unlinked by future PUB-IDEAS-6–8 work. Completed PUB-IDEAS-5 sources
+they are absent and never re-admitted. The former PUB-IDEAS-6–8 idea briefs are also retired
+historical receipts and are deliberately absent from this active file-impact tree. Completed PUB-IDEAS-5 sources
 `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md` and
 `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`, plus their PR #281 backlink repair,
 are historical evidence only and are never re-admitted.
@@ -122,10 +118,10 @@ No A1, A2, A3, B, or optional-C source/mirror path is admitted by a generic fami
 discovery result. The scheduled `PRE-A1-ADMISSION` plan-only PR is the one explicit route for known
 A1/A2/A3/B public paths: it must add each exact source path, every generated mirror (if any), its
 owning unit, and bounded before-ledger to this tree and matching delivery ledger before `PUB-A1`
-starts. PR #289 is public provenance only. Its paired private plan-only `PRIV-ADMISSION` begins
-only from PR #290's posted-and-read-back terminal handoff, after the merged reader receipt and two
-fresh strict zero-finding results; it then supplies the private-safe counterpart before `PRIV-A1`.
-Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
+starts. PR #289 is public provenance only. Its paired private plan-only `PRIV-ADMISSION` completed
+in [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
+`db40c969f8c6a554837efab1cf266c8d505c02a6`; it supplied the private-safe counterpart and released
+`PRIV-A1`. Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
 expand scope. Optional Wave C remains `N/A` unless its separately human-approved necessity case
 first supplies exact paths through the ordinary amendment route.
 
@@ -156,15 +152,15 @@ path is admitted here.
 | Unit    | Exact hand-authored candidate paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Generated paths                                                         | Owner and bounded outcome                                                                                                                 |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | PUB-A1  | Compact summary only — see the following **Exact Source, Hunk, and Mirror Records** for literal paths and hunk ownership.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | None                                                                    | Completed in PR #289: update the human PR-size policy and direct reader prompts only; no new enforcement.                                 |
-| PRIV-A1 | None before `PRIV-ADMISSION` publishes exact private counterparts from PR #290's posted-and-read-back terminal handoff; PR #289 pin `539cda50e6aa48079d347ae6131b81901120cd84` is provenance only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | None                                                                    | It must publish a private-safe semantic adaptation, reasoned deviation, or `N/A`; it cannot infer edit authority from PUB-A1.             |
+| PRIV-A1 | The native private admission receipt is complete in PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; PR #289 pin `539cda50e6aa48079d347ae6131b81901120cd84` is provenance only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | None                                                                    | It must publish a private-safe semantic adaptation, reasoned deviation, or `N/A`; it cannot infer edit authority from PUB-A1.             |
 | PUB-A2  | Exact sources are listed in the records below; this compact row is a summary only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Exact generated mirrors are listed below.                               | Add one pre-fan-out route record and bounded-cycle policy without widening the existing scope guard.                                      |
 | PUB-A3  | Exact sources are listed in the records below; this compact row is a summary only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Exact generated mirrors are listed below.                               | Make bodies and native review conversations human-readable without duplicating compatible scope/marker rules.                             |
 | PUB-B   | `repo-governance/development/quality/pr-review-disciplines/quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md`; `repo-governance/workflows/pr/README.md`; `repo-governance/conventions/structure/plans/delivery-mode-merge-authority-and-precedence.md`; `repo-governance/development/workflow/pr-merge-protocol/the-worktree-to-pr-terminal-step.md`; `repo-governance/workflows/plan/plan-execution/finalization-pr-review-gate.md`; `repo-governance/workflows/plan/plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md`; `repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md`; `.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md`; `.claude/skills/plan-creating-project-plans/reference/delivery-mode.md`; `.claude/skills/plan-applying-fixes/reference/pr-review-cycle-and-merge-tag-fixes.md`; `.claude/skills/plan-verifying-execution/reference/delivery-mode-pr-review-cycle.md`; `.claude/skills/plan-verifying-execution/reference/delivery-mode-phase0-and-boundaries.md` | Generated counterparts of the five listed `.claude` skill sources only. | Supersede live seven-cycle, two-clean, extensible-ceiling, scope-expanding, and agent-only wording; retain historical evidence unchanged. |
 
-PR #289 supplies public provenance only. The sole actionable private obligation is PR #290's
-AI-marked terminal handoff after PR #291's reader receipt and two fresh strict zero-finding results
-are recorded and read back. `PRIV-ADMISSION` independently classifies semantic counterparts at pin
-`539cda50e6aa48079d347ae6131b81901120cd84` and receives no public-path authority.
+PR #289 supplies public provenance only. The native private admission receipt is complete in
+private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; it classified the counterpart at
+public provenance pin `539cda50e6aa48079d347ae6131b81901120cd84` and released `PRIV-A1` without
+receiving public-path authority.
 
 #### Exact Source, Hunk, and Mirror Records
 
@@ -345,8 +341,9 @@ flowchart TD
 Historical receipt only: PUB-BASE cleanly authorized PUB-IDEAS-4; failure received one PUB-REPAIR attempt, whose
 clean recheck authorizes -4 and whose failed recheck freezes ideas for a human, with no second repair.
 Successor pins carried -4 through -8; the rest is preserved for audit and grants no future unit,
-path, branch, PR, or merge authority. The live order is the one stated above: `PRIV-ADMISSION`, then
-`PRIV-A1`, then `PUB-A2`.
+path, branch, PR, or merge authority. The live order is the one stated above: `PRIV-A1`, then
+`PUB-A2`; its predecessor is the native private-admission receipt in PR #64 at
+`db40c969f8c6a554837efab1cf266c8d505c02a6`.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects
@@ -369,8 +366,9 @@ and conditional check its own evidence or uncovered disposition. Only a catalog-
 could use reasoned `N/A`, with its applicability condition and proof; a nonconditional row was never
 `N/A`. Only uncovered rows read the five plan documents. PR #290 merged at
 `1c916103e75e48c939439d381e8f3ddb9ea3dd54` and its reader receipt, PR #291, at
-`92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`; two fresh strict results plus the native #290 handoff
-comment remain required before `PRIV-ADMISSION` can begin.
+`92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`. The later native private-admission receipt merged in
+[private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
+`db40c969f8c6a554837efab1cf266c8d505c02a6`, releasing `PRIV-A1` only.
 
 It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
 sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After
