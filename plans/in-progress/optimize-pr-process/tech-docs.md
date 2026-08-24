@@ -365,9 +365,10 @@ does not authorize a new path, and cannot weaken an existing merge gate.
 The historical ACTIVATE audit in `delivery.md` gave every pinned numbered rule, bullet, sub-bullet,
 and conditional check its own evidence or uncovered disposition. Only a catalog-defined conditional
 could use reasoned `N/A`, with its applicability condition and proof; a nonconditional row was never
-`N/A`. Only uncovered rows read the five plan documents. It does not start a second double-zero loop:
-PR #290's two zero-finding results are draft evidence until that PR merges and its native terminal-handoff
-comment is posted and read back; only then can `PRIV-ADMISSION` begin.
+`N/A`. Only uncovered rows read the five plan documents. PR #290 merged at
+`1c916103e75e48c939439d381e8f3ddb9ea3dd54` and its reader receipt, PR #291, at
+`92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`; two fresh strict results plus the native #290 handoff
+comment remain required before `PRIV-ADMISSION` can begin.
 
 It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
 sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After

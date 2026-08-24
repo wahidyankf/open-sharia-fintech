@@ -45,10 +45,10 @@
 
 ### PR #290 Post-Merge Terminal Handoff — Pending
 
-- [ ] `[PLAN-QUALITY-290:P5.HANDOFF][AI]` After PR #290 merges, fetch `origin/main` and prove it
-      equals the merge SHA; then merge/read back one unstacked `PLAN-STATE-READER` PR aligning `README.md`
-      and `idea-disposition-map.md` to this runbook. Record its URL/SHA, rerun the strict plan-quality gate
-      to two consecutive zero-finding confirmations, then post/read back one AI-marked terminal-handoff
+- [ ] `[PLAN-QUALITY-290:P5.HANDOFF][AI]` Fetch `origin/main` and prove it contains PR #290 merge
+      `1c916103e75e48c939439d381e8f3ddb9ea3dd54` and reader-state PR #291 merge
+      `92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`; read back #291's receipt. Rerun the strict gate to two
+      consecutive zero-finding confirmations, then post/read back one AI-marked terminal-handoff
       comment on PR #290. It must name #289's provenance pin `539cda50e6aa48079d347ae6131b81901120cd84`,
       #63's baseline pin `25bb1d81f53156d001f2ab25cca07d23ab8ce062`, the reader PR receipt, and no
       public-to-private authority before it. It must state `PRIV-ADMISSION`, `PRIV-A1`, then `PUB-A2`;
@@ -95,9 +95,9 @@ PUB-IDEAS-5, PR #282 authorized PUB-IDEAS-6's exact four repairs, and PR #283 re
 plan state. Private PR #63 landed the former two-path patch cleanly; PRs #285, #286, and #288 then
 retired the remaining public idea briefs. Public PR #289 admitted the exact A-wave source/mirror paths
 and completed direct PUB-A1 size-policy edits. Its pin is provenance only; the private obligation remains
-frozen until PR #290, then its `PLAN-STATE-READER`, merge and the terminal-handoff receipt are read back.
-All other private A-wave, rules, bindings, workflow, code, and implementation work remains frozen until
-its declared predecessor authorizes it.
+frozen until #291's reader receipt and PR #290's fresh two-zero terminal-handoff receipt are read back.
+All other private A-wave, rules, bindings, workflow, code, and implementation work remains frozen until its
+declared predecessor authorizes it.
 
 ## Worktree
 
@@ -667,7 +667,7 @@ retains both the lineage ID and its correction count.
 - [ ] `[ENTRY-ADAPTERS:A1.14][AI]` Close a pair only with a terminal `satisfied`, `reasoned-deviation`, or `N/A` state, exact public/private pins, and evidence links.
 - [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; a later defect opens a linked repair pair without reopening the sealed pair, but the same root cause retains its lineage ID and cannot reset the shared correction budget across either `correction-kind`.
 - [ ] `[ENTRY-ADAPTERS:A1.16][AI]` Use only disclosure-safe public summaries and links; retain private task evidence solely in the private PR artifact.
-- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` Record the historical exception for the legacy per-repo/three-grill and iterative formal-gate composite: one control plan, one bounded equivalence audit, and no separate post-plan grill. PR #290's two zero-finding plan-quality validations remain draft evidence until it merges and the required PR-native handoff is read back; only then may `PRIV-ADMISSION` start.
+- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` Record the historical exception for the legacy per-repo/three-grill and iterative formal-gate composite: one control plan, one bounded equivalence audit, and no separate post-plan grill. PR #290 and reader PR #291 are merged; only two fresh strict results plus the required PR-native handoff may start `PRIV-ADMISSION`.
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
 - [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
 - [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
