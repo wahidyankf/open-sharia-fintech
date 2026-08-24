@@ -99,7 +99,7 @@ resolved inputs and durable read-back artifact for `CLOSURE:P6.29a`–`P6.29e`; 
 from a sibling PR or a private repository.
 
 ```text
-terminal-state: routed | discarded | private-only
+terminal-state: routed | discarded
 durable-destination: <one exact repository path or external durable record>  # routed only
 discard-reason: <one plain-language reason>                                  # discarded only
 backlog-plan: plans/backlog/<kebab-case-slug>/                                # code/test only
@@ -107,6 +107,10 @@ idea-search: <literal case-insensitive rg query>                              # 
 idea-search-result: <matching path(s) | no-match>                             # ideas only
 none-reason: <one plain-language reason>                                     # only when none survive
 ```
+
+Private-only learning is not a public terminal state: record it here as `discarded` with
+`discard-reason: private-only; no public detail`, then retain any substantive private evidence only
+in the private repository's own closure artifact.
 
 The executor reads the recorded `backlog-plan:` into `backlog_plan`, the recorded `idea-search:`
 into `idea_search`, and the recorded `none-reason:` into `none_reason` before running the literal

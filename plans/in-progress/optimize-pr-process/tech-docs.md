@@ -55,17 +55,20 @@ until answered. Every AI-authored body, review, reply, and summary ends with `Ge
 
 ## File-Impact Analysis
 
-This scan-first tree is the public-repository source of truth. Every leaf is an admitted public
-path or a closed path pattern; it does not make a directory an edit authorization. A unit records
-its exact before/after ledger and stays within the 400-line/20-file ceiling.
+This scan-first tree is the public-repository source of truth. Every `[E]` or `[D]` leaf is an
+admitted public path or closed path pattern; `[H]` is historical evidence only. A label does not
+make a directory an edit authorization. A unit records its exact before/after ledger and stays
+within the 400-line/20-file ceiling.
 
 ```text
 .
 ├── [E] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # control-plan sources; no other in-progress plan is admitted
-├── [D] plans/ideas/q1-urgent-important/{deletion-authorized-by-absence,plan-checker-forward-reference-detection}.md
-├── [D] plans/ideas/q2-not-urgent-important/{class-sweep-completeness,merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
-│       # the ten named PUB-IDEAS-4–8 sources; no discovery may add a brief
+├── [H] plans/ideas/{q1-urgent-important/deletion-authorized-by-absence,q2-not-urgent-important/class-sweep-completeness}.md
+│       # completed PUB-IDEAS-4 evidence; never admitted again
+├── [D] plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md
+├── [D] plans/ideas/q2-not-urgent-important/{merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
+│       # eight named PUB-IDEAS-5–8 sources; no discovery may add a brief
 ├── [E] plans/ideas/README.md
 │       # unlink only the ten named brief paths; retain historical plans/done/** links
 ├── [E] plans/in-progress/README.md
@@ -193,7 +196,7 @@ flowchart TD
     PRIV_BASE -->|Baseline failure| PRIV_REPAIR["PRIV-REPAIR<br/>bounded repair"]:::purple
     PRIV_REPAIR -->|Clean repair| I2
     PRIV_REPAIR -->|Failed or ambiguous| PRIV_FROZEN["PRIV-IDEAS frozen<br/>repair path or human stop"]:::gray
-    I2 --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
+    I2 --> ADMIT_PUB["PRE-A1-ADMISSION<br/>exact public paths"]:::teal --> ADMIT_PRIV["PRIV-ADMISSION<br/>exact private paths"]:::purple --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
     VA3 --> PUB_B["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple
@@ -203,7 +206,7 @@ flowchart TD
     Z -. "If Wave C merged" .-> VC
     Z -. "If Wave C absent" .-> VB
     VC -.-> PC -.-> VB -.-> PUB_B -.-> VA3 -.-> PA3
-    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> I2
+    PA3 -.-> VA2 -.-> PA2 -.-> VA1 -.-> PA1 -.-> ADMIT_PRIV -.-> ADMIT_PUB -.-> I2
     I2 -. "if private repair used" .-> PRIV_REPAIR -.-> PRIV_BASE
     I2 -. "if private baseline was clean" .-> PRIV_BASE
     PRIV_BASE -.-> T -.-> I8 -.-> I7 -.-> I6 -.-> I5 -.-> I4
