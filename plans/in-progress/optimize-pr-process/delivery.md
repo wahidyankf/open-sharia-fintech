@@ -821,19 +821,56 @@ git status --short --branch
 
 ```bash
 apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
-P_LINES="$(git diff --numstat "$UNIT_BASE" -- $PROGRAM_PATHS | awk '{a+=$1; d+=$2} END {print a+d}')"
-N_LINES="$(git diff --numstat "$UNIT_BASE" -- $NONPROGRAM_PATHS | awk '{a+=$1; d+=$2} END {print a+d}')"
+
+count_numstat_paths() {
+  path_list=$1
+  if [ -z "$path_list" ]; then
+    printf '0\n'
+    return
+  fi
+
+  set --
+  while IFS= read -r entry; do
+    [ -n "$entry" ] && set -- "$@" "$entry"
+  done <<EOF
+$path_list
+EOF
+  git diff --numstat "$UNIT_BASE" -- "$@" | awk '{a+=$1; d+=$2} END {print a+d}'
+}
+
+count_changed_paths() {
+  path_list=$1
+  if [ -z "$path_list" ]; then
+    printf '0\n'
+    return
+  fi
+
+  set --
+  while IFS= read -r entry; do
+    [ -n "$entry" ] && set -- "$@" "$entry"
+  done <<EOF
+$path_list
+EOF
+  git diff --name-only "$UNIT_BASE" -- "$@" | wc -l | tr -d ' '
+}
+
+P_LINES="$(count_numstat_paths "$PROGRAM_PATHS")"
+N_LINES="$(count_numstat_paths "$NONPROGRAM_PATHS")"
 HANDWRITTEN_LINES="$((P_LINES + N_LINES))"
-HANDWRITTEN_FILES="$(git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l | tr -d ' ')"
+HANDWRITTEN_FILES="$(count_changed_paths "$HAND_AUTHORED_PATHS")"
 printf 'program/script=%s non-program=%s total=%s files=%s\n' "$P_LINES" "$N_LINES" "$HANDWRITTEN_LINES" "$HANDWRITTEN_FILES"
 ```
 
-Before running this record, the author declares `$PROGRAM_PATHS` and `$NONPROGRAM_PATHS` as the
-disjoint handwritten subsets of `$HAND_AUTHORED_PATHS`; generated paths belong to neither. The first
-command exits 0 or has a reasoned `N/A` in `RECORD`. Record the four values, then apply the human
-policy: `P_LINES ≤ 400`; if both categories are nonzero, `HANDWRITTEN_LINES ≤ 900`; in every case,
-`HANDWRITTEN_LINES ≤ 1,000`; and `HANDWRITTEN_FILES ≤ 20`. These are transparent evidence commands,
-not a new automated gate.
+Before running this record, the author declares `$PROGRAM_PATHS`, `$NONPROGRAM_PATHS`, and
+`$HAND_AUTHORED_PATHS` as newline-delimited lists. The first two are disjoint handwritten subsets of
+the third; generated paths belong to neither. The helpers return zero for an empty category and pass
+each nonempty path as one quoted Git pathspec, so they work in Bash and zsh. PR #294 validated this
+helper in both shells against documentation-only range `402694c..a82042f` (`P=0`, `N=87`, 2 files)
+and mixed range `28a60f2..06eebba` (both categories nonzero); that is completed implementation
+evidence, not a new per-unit gate. The pre-push command exits 0 or has a reasoned `N/A` in `RECORD`.
+Record the four unit values, then apply the human policy: `P_LINES ≤ 400`; if both categories are
+nonzero, `HANDWRITTEN_LINES ≤ 900`; in every case, `HANDWRITTEN_LINES ≤ 1,000`; and
+`HANDWRITTEN_FILES ≤ 20`. These are transparent evidence commands, not a new automated gate.
 
 ```bash
 /usr/bin/git diff --binary "$CURRENT_MAIN" "$REVIEWED_HEAD" | /usr/bin/shasum -a 256
@@ -1394,11 +1431,10 @@ ledger contains only owned paths.
   `npx nx affected -t test:integration`, `npx nx affected -t test:e2e`, and named manual UI/API
   assertions. Record a reasoned `N/A`; never silently skip a gate.
 - **Template `[AI]`:** Classify every handwritten path in the ledger as program/script or
-  non-program; generated paths are excluded. For each category, use
-  `git diff --numstat <unit-base> -- <that-category-paths> | awk '{a+=$1; d+=$2} END {print a+d}'`
-  for additions plus deletions, and use `git diff --name-only <unit-base> -- <hand-authored-paths> |
-wc -l` for files. First keep the largest natural, independently stable seam together; split only
-  when it would exceed 400 program/script lines, 900 mixed handwritten lines, 1,000 handwritten
+  non-program; generated paths are excluded. Record each category as a newline-delimited list and
+  use the bound `AR-LOCAL` helpers, which return zero for an empty category and pass each path as a
+  quoted Git pathspec. First keep the largest natural, independently stable seam together; split
+  only when it would exceed 400 program/script lines, 900 mixed handwritten lines, 1,000 handwritten
   lines, or 20 files, then repeat before push. Keep these cap-counted statistics separate from PR
   totals.
 - **Template `[AI]`:** Stage only explicit ledger paths with `git add -- <path>...`; run
@@ -1415,7 +1451,7 @@ are cohesive, and the full diff was read.
 > All checks below must pass before starting Phase 3.
 
 - [ ] `[PHASE-2:G2.01][AI]` Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: it exits 0 or the record contains an applicable evidenced `N/A`.
-- [ ] `[PHASE-2:G2.02][AI]` Record each handwritten path's category, run the `numstat` calculation separately for program/script and non-program paths, then run `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l`; acceptance: program/script is no more than 400 lines, a mixed PR is no more than 900 handwritten lines, no PR exceeds 1,000 handwritten lines, and there are at most 20 hand-authored files.
+- [ ] `[PHASE-2:G2.02][AI]` Record each handwritten path's category as a newline-delimited list and run the bound `AR-LOCAL` helpers separately for program/script, non-program, and all handwritten paths; acceptance: program/script is no more than 400 lines, a mixed PR is no more than 900 handwritten lines, no PR exceeds 1,000 handwritten lines, and there are at most 20 hand-authored files.
 - [ ] `[PHASE-2:G2.03][AI]` Run `git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; acceptance: cached paths equal the admitted ledger in both directions, check exits 0, and the complete patch is read before the cohesive commit.
 
 > **Pause Safety**: The local head and clean tree or named intended residue are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
