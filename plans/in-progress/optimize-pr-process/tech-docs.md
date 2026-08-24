@@ -314,7 +314,7 @@ flowchart TD
     PRIV_BASE -->|Baseline failure| PRIV_REPAIR["PRIV-REPAIR<br/>bounded repair"]:::purple
     PRIV_REPAIR -->|Clean repair| I2
     PRIV_REPAIR -->|Failed or ambiguous| PRIV_FROZEN["PRIV-IDEAS frozen<br/>repair path or human stop"]:::gray
-    I2 --> ADMIT_PUB["PRE-A1-ADMISSION<br/>exact public paths"]:::teal --> ADMIT_PRIV["PRIV-ADMISSION<br/>exact private paths"]:::purple --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
+    I2 --> ADMIT_PUB["PRE-A1-ADMISSION<br/>exact public paths"]:::teal --> PA1["PUB-A1<br/>plan-making rules"]:::blue --> ADMIT_PRIV["PRIV-ADMISSION<br/>exact private paths"]:::purple --> VA1["PRIV-A1<br/>plan-making rules"]:::purple
     VA1 --> PA2["PUB-A2<br/>review routing"]:::blue --> VA2["PRIV-A2<br/>review routing"]:::purple
     VA2 --> PA3["PUB-A3<br/>PR and reply rules"]:::blue --> VA3["PRIV-A3<br/>PR and reply rules"]:::purple
     VA3 --> PUB_B["PUB-B<br/>legacy cleanup"]:::blue --> VB["PRIV-B<br/>legacy cleanup"]:::purple

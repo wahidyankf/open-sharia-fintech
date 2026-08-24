@@ -51,6 +51,11 @@
       at `db40c969f8c6a554837efab1cf266c8d505c02a6` were read back. They release `PRIV-A1` only;
       a new private PR starts at Cycle 1.
 
+  **Date:** 2026-08-24  
+  **Status:** complete  
+  **Files Changed:** public plan-state receipt only  
+  **Notes:** immutable handoff and native private admission read back; no private path or content is recorded here.
+
 ## Executor Legend and Plain-Language Terms
 
 After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent prep plus human action.
@@ -123,7 +128,8 @@ git worktree prune # stale registration only; retry the applicable add once
 
 The former private two-path patch was reviewed and landed in private PR #63. The worktree is now
 clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` starts from
-its fetched private `origin/main` and records only its newly admitted private ledger.
+private PR #64 completed its native ledger. `PRIV-A1` is the active unit and starts from its fetched
+private `origin/main` with its separately declared ledger.
 
 ## Delivery Mode
 
@@ -1008,10 +1014,60 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
       **Completed immutable evidence:** the subsequent `PLAN-QUALITY-290:P5.HANDOFF` released private
       admission, which merged in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`.
 
-- [x] `[PRIV-ADMISSION:COMPLETE][AI]` Completed immutable evidence: the native private admission
-      receipt merged in [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
-      `db40c969f8c6a554837efab1cf266c8d505c02a6` after PR #290's handoff. Its terminal handoff
-      releases `PRIV-A1` only; no private paths or content are repeated in this public plan.
+- [x] `[PRIV-ADMISSION:P1.01][AI]` Record the private predecessor and create the admission branch.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native receipt is [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at `db40c969f8c6a554837efab1cf266c8d505c02a6`.
+- [x] `[PRIV-ADMISSION:P1.02][AI]` Classify the private semantic counterpart, deviation, or `N/A`.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** classification evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P1.03][AI]` Admit the private ledger and record its public-safe obligation.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** private PR #64 releases `PRIV-A1` only.
+- [x] `[PRIV-ADMISSION:P2.01][AI]` Run local quality before staging.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native local-gate evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P2.02][AI]` Stage one cohesive private plan-only commit with its exact ledger.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native cached-ledger evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P3.00][AI]` Push the declared remote branch and verify its committed head.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** merged receipt pin is `db40c969f8c6a554837efab1cf266c8d505c02a6`.
+- [x] `[PRIV-ADMISSION:P3.01][AI]` Open a readable, exact-head, AI-marked private plan-only draft.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native draft and durable body are private PR #64.
+- [x] `[PRIV-ADMISSION:P4.01][AI]` Route the frozen scope before review begins.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native routing evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P4.02][AI]` Record the current-head review, cycle, and changed probe.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** private PR #64 has five reviews/comments.
+- [x] `[PRIV-ADMISSION:P4.03][AI]` Record a same-thread AI-marked disposition for each finding.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native review-conversation evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P4.04][AI]` Read back current-head required checks.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native CI evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P4.05][AI]` Read back readiness after current-head preconditions hold.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native readiness evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P5.01][AI]` Store the reviewed-patch fingerprint before merge.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native fingerprint evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P5.02][AI]` Merge through the existing authorized merge gate.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** immutable merge pin is `db40c969f8c6a554837efab1cf266c8d505c02a6`.
+- [x] `[PRIV-ADMISSION:P5.03][AI]` Verify that landed and reviewed fingerprints match.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** native landed-proof evidence remains in private PR #64.
+- [x] `[PRIV-ADMISSION:P5.04][AI]` Resync private `origin/main` and prepare `PRIV-A1` as sole successor.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** the public-safe result is `PRIV-A1` then `PUB-A2`.
+- [x] `[PRIV-ADMISSION:P1.G][AI]` Pass clean-entry, correspondence, disclosure, review, and terminal checks.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** private PR #64 is the immutable aggregate receipt.
+- [x] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and authorize `PRIV-A1` only.
+      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
+      **Notes:** private PR #64 releases no later unit.
 
 ### PUB-A1 — Completed Direct Size-Policy Work
 
