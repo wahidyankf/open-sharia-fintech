@@ -240,11 +240,12 @@ independently observable behavior. Rollback never depends on unpublished local s
 
 ## Validation
 
-Before ACTIVATE, the bounded audit in `delivery.md` gives every pinned numbered rule, bullet,
-sub-bullet, and conditional check its own evidence or uncovered disposition. Only a catalog-defined
-conditional may use reasoned `N/A`, with its applicability condition and proof; a nonconditional row
-is never `N/A`. Only uncovered rows read the five plan documents. This bounded ACTIVATE audit does
-not start a second double-zero loop; the required pre-execution plan-quality gate runs separately.
+The historical ACTIVATE audit in `delivery.md` gave every pinned numbered rule, bullet, sub-bullet,
+and conditional check its own evidence or uncovered disposition. Only a catalog-defined conditional
+could use reasoned `N/A`, with its applicability condition and proof; a nonconditional row was never
+`N/A`. Only uncovered rows read the five plan documents. It does not start a second double-zero loop:
+the remediation successor's required two-zero pre-execution plan-quality gate runs separately after
+that successor merges and before the first non-plan unit starts.
 
 It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
 sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After
