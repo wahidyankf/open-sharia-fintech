@@ -52,11 +52,8 @@ more.
 - **`optimize-cis`** — where both the widening and the 65 s measurement happened; its `learnings.md`
   records the trade explicitly as deliberately unfixed, and its M8 row shows `ose-cargo-target`
   growing 15.37 → 21.47 GiB over the plan, so the disk side is not obviously being won either.
-- **`nx-affected-cross-worktree-contamination`** — the sibling cross-worktree-interference
-  two-pager; that one is about `nx affected` reading another worktree's uncommitted state, this one
-  about two worktrees contending for one lock. Same root assumption (concurrent worktrees on one
-  disk), different resource.
-  [two-pager](./nx-affected-cross-worktree-contamination.md)
+- **Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected`
+  selects across worktrees, unlike shared-target lock contention.
 - **`sccache`** — the standard answer to "share compilation results without sharing a build
   directory". Content-addressed, no exclusive lock, works across worktrees by construction. Not
   currently used anywhere in this repo.

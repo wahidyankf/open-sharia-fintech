@@ -32,6 +32,5 @@ origin/main` — is the command for you, not the bare-repo refspec form.** Runni
 `git fetch origin main:main` against a **checked-out** branch fast-forwards the ref without touching
 the index or working tree, leaving them pinned to the old commit while `HEAD` points at the new one;
 git then reports the entire skipped delta as a pending mass revert. This happened for real — see the
-[Terminal Reconcile](./terminal-reconcile.md#terminal-reconcile) table's "Why this form" column and
-[`stale-checkout-ref-advance-drift`](../../../../plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md) for the
-incident this caused.
+[Terminal Reconcile](./terminal-reconcile.md#terminal-reconcile) table's "Why this form" column, and
+the incident this caused is separately tracked.
