@@ -56,15 +56,18 @@ until answered. Every AI-authored body, review, reply, and summary ends with `Ge
 ## File-Impact Analysis
 
 This scan-first tree is the public-repository source of truth. Every `[E]` or `[D]` leaf is an
-admitted public path or closed path pattern. A label does not make a directory an edit authorization.
-A unit records its exact before/after ledger and stays within the 400-line/20-file ceiling.
+admitted public path or closed path pattern. A literal `[N]` leaf is an equally admitted, finite
+creation target only: it authorizes no existing-file edit and never expands through a glob. `[N] no
+private path` remains an explicit no-authority record. A label does not make a directory an edit
+authorization. A unit records its exact before/after ledger and stays within the 400-line/20-file
+ceiling.
 
 ```text
 .
 ├── [E] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # control-plan sources for pre-move edits; no other in-progress plan is admitted
-├── [D] plans/in-progress/optimize-pr-process/**
-│       # CLOSURE removes this whole directory only after those reviewed pre-move edits
+├── [D] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
+│       # CLOSURE removes these seven files only after those reviewed pre-move edits
 ├── [D] plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md
 ├── [D] plans/ideas/q2-not-urgent-important/{merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
 │       # eight named PUB-IDEAS-5–8 sources; no discovery may add a brief
@@ -76,8 +79,8 @@ A unit records its exact before/after ledger and stays within the 400-line/20-fi
 │       # CLOSURE adds only the archived control-plan entry after its reviewed archive move
 ├── [E] repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md
 │       # the sole PUB-IDEAS-5 live-backlink repair admitted by PR #277
-└── [N] plans/done/YYYY-MM-DD__optimize-pr-process/**
-# CLOSURE archive destination only; the runtime date is recorded before the move
+└── [N] plans/done/<recorded-YYYY-MM-DD>__optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
+        # CLOSURE archive targets only; record the runtime date before the move
 ```
 
 Completed PUB-IDEAS-4 sources
