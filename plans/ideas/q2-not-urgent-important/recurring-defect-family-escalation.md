@@ -72,7 +72,6 @@ harness-binding emitters, the mirror cleanups, and the parity machinery all dele
   [principles](../../../repo-governance/principles/README.md)
 - **`deletion-authorized-by-absence`** — the sibling brief: the concrete design defect this loop
   took four cycles to name. Useful as the worked example for whatever rule comes out of this.
-  [brief](../q1-urgent-important/deletion-authorized-by-absence.md)
 - **Five Whys / Andon cord** — the manufacturing analogue: a repeated defect stops the line and
   triggers a root-cause investigation rather than a fourth rework.
 
