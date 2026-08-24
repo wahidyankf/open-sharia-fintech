@@ -13,8 +13,9 @@ unchanged.
 - [Repo-grounded] Private source: `ose-private` commit
   `718c20c923707d777a89639f760f98d53740bd70`. The one brief is 135 lines and 1,381 words; its
   tracked inbound index entry is `plans/ideas/README.md:22`.
-- [Repo-grounded] No private retirement has merged. The pinned private source remains authoritative
-  until PRIV-IDEAS records retirement against an activated public plan pin.
+- [Repo-grounded] Private PR [#63](https://github.com/wahidyankf/ose-private/pull/63) merged the
+  two-path `PRIV-IDEAS` retirement at `25bb1d81f53156d001f2ab25cca07d23ab8ce062`. Its terminal
+  comment names `PRE-A1-ADMISSION` as the public historical successor; no private overlay remains.
 
 ## Current Public Retirement State
 
@@ -23,13 +24,12 @@ completed unit. PRs #269–#271 retired nine briefs before ACTIVATE; PUB-IDEAS-4
 in PR #276; and PUB-IDEAS-5 completed two in PR #281. Those 13 retirements and their associated
 backlink repairs are historical evidence only.
 
-Exactly six public briefs remain: PUB-IDEAS-6 owns
-`nx-affected-cross-worktree-contamination.md` and `stale-checkout-ref-advance-drift.md`; PUB-IDEAS-7
-owns `cross-repo-governance-link-parity.md` and `plan-archival-in-pr-multi-repo-gap.md`; and
-PUB-IDEAS-8 owns `propagation-checklist-under-coverage.md` and
-`recurring-defect-family-escalation.md`. PUB-IDEAS-6 is the sole candidate successor and remains
-frozen until the two strict revalidations recorded in `delivery.md` are clean. The plan-state
-correction already merged in PR #283 at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`.
+No public idea brief remains. PR #285 retired the cross-worktree set at
+`5e45ae3e1969359a233ac8be2d7b176492d0531b`; PR #286 retired the cross-repository set at
+`d440f7385aa32eadeaf224bb10a633837a31055a`; and PR #288 retired the final set at
+`70dbe4187dd720d8fe344960d227c44cf3d549f5`. Their absent source paths and old forecast are
+immutable historical evidence only. PR #290 requires this reader-state delivery before its terminal
+handoff can release `PRIV-ADMISSION`; its successors are `PRIV-A1`, then `PUB-A2`.
 
 ## Historical Public Dispositions
 
@@ -111,15 +111,12 @@ correction already merged in PR #283 at `6ecb22d0a4f7216cfb6865c502ca21801ebed70
    validator,” legacy Cycle 10/12/two-clean rules, three-repo assumptions, the stale five-consumer
    count (the pinned base has six), and the unrelated 168-annotation sweep. Private PR
    [#62 review 5000710561](https://github.com/wahidyankf/ose-private/pull/62#pullrequestreview-5000710561)
-   remains historical discovery evidence, not current authority.
+   remains historical discovery evidence, not current authority. This row was retired in private
+   PR #63 and remains historical planning evidence only.
 
-## Retirement Rule
+## Historical Retirement Rule
 
 The original forecast allocated ten remaining briefs to five named `PUB-IDEAS-4`–`PUB-IDEAS-8`
-subdeliveries. It is now historical: PUB-IDEAS-4 and PUB-IDEAS-5 are immutable completed evidence,
-and only the six paths named in **Current Public Retirement State** may be retired through
-PUB-IDEAS-6–8. Only PUB-IDEAS-8's terminal proof may authorize `PRIV-BASE`; its clean or
-overlay-owned result, or an evidenced failure repaired by `PRIV-REPAIR`, may then authorize
-`PRIV-IDEAS`, which retires the private brief and index entry separately. Every retirement PR
-preserves historical references and cites its exact predecessor; no subdelivery may exceed the
-plan's human-size boundary.
+subdeliveries. It is entirely historical: PRs #285, #286, and #288 retired its remaining public
+briefs, and private PR #63 retired the private brief and index entry. The old DAG, order, and
+checklists remain immutable audit receipts; they authorize no path, branch, PR, merge, or successor.

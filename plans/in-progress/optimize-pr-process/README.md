@@ -2,9 +2,9 @@
 
 ## Status
 
-**In Progress (PUB-IDEAS-5 is complete; PUB-IDEAS-6 is the sole candidate successor, frozen until
-two consecutive strict zero-finding plan-quality validations are recorded from PR #283's merged
-state).**
+**In Progress (`PLAN-STATE-READER` is aligning the final reader surfaces; after it merges, PR #290's
+terminal handoff may release `PRIV-ADMISSION`, whose sole successor is `PRIV-A1`, followed by
+`PUB-A2`).**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
@@ -12,7 +12,8 @@ PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
 [#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
 Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
 private work, and every rule/code wave stayed frozen until the reconciliation merged and the
-equivalence audit recorded the ACTIVATE pin. The private overlay remains untouched. PR #273 merged the
+equivalence audit recorded the ACTIVATE pin. The former private two-path overlay landed in private
+PR #63 at `25bb1d81f53156d001f2ab25cca07d23ab8ce062`; it is no longer worktree residue. PR #273 merged the
 sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; PR #274 then merged, its
 AI-marked A0.P receipt was verified, and PUB-BASE completed cleanly. PR #275 supplied PUB-IDEAS-4's
 live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 supplied PUB-IDEAS-5's
@@ -20,11 +21,16 @@ live-backlink authority. The plan-quality remediation merged as PR #280 at
 `7ea591ee54363c4811fb42ccef94cac898b598cc`; PUB-IDEAS-5 then completed in PR #281 at
 `e70ef47b945cbc91d23a641230a87a2b8879f75a`, whose receipt named PUB-IDEAS-6. PR #282 merged at
 `56e5fa6c5168ffe5569d21a4b685a76168dd6f13` and admitted PUB-IDEAS-6's four exact live-backlink
-repairs. PR #283 then merged at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`, recording the current
-state and finite runbook rule. Tracked plan text defines the successor and admissible paths; GitHub
-remains the durable review and receipt record. PUB-IDEAS-6 remains frozen until two consecutive
-strict revalidation passes are recorded from this merged state; the private
-overlay and every rule/code wave remain frozen until their declared predecessor authorizes them.
+repairs. PR #283 then merged at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`, recording the prior
+state and finite runbook rule. Public PRs #285, #286, and #288 subsequently retired the remaining
+public idea briefs at `5e45ae3e1969359a233ac8be2d7b176492d0531b`,
+`d440f7385aa32eadeaf224bb10a633837a31055a`, and `70dbe4187dd720d8fe344960d227c44cf3d549f5`.
+Those historical receipts supersede the former future idea-delivery forecast. Public PR #289 merged at
+`539cda50e6aa48079d347ae6131b81901120cd84`, admitting the exact A-wave paths and completing direct
+PUB-A1 size-policy edits. PR #290 merged at `1c916103e75e48c939439d381e8f3ddb9ea3dd54`, correcting
+the executable runbook. This reader-state PR is the required next predecessor; GitHub remains the
+durable review and receipt record. Private rule/code work remains frozen until this PR merges and the
+PR #290 terminal-handoff comment records the fresh strict gate results and its exact URL.
 
 ## Outcome
 
@@ -36,8 +42,11 @@ computer-science background. A merged PR remains an educational team record, not
 
 - Prefer prose, existing GitHub features, and existing workflows. Add mechanical enforcement only
   when evidence shows it is necessary; every line of tooling becomes maintenance burden.
-- [Judgment call] Keep each PR cohesive and readable. Program/script lines (`P`) are at most 400.
-  A PR that mixes program/script and non-program files (`N`) is at most 900 handwritten lines
+- [Judgment call] Keep each PR cohesive and readable. `P` is the count of handwritten changed lines
+  in program or script files (including tests); `N` is the count in handwritten non-program files
+  such as Markdown, plans, specs, and configuration. Generated files are excluded from both counts.
+  Program/script lines (`P`) are at most 400. A PR that mixes program/script and non-program files
+  (`N`) is at most 900 handwritten lines
   (`P + N ≤ 900`, therefore `N ≤ 900 − P`); 1,000 handwritten lines is the absolute ceiling for
   every PR. Thus a 100-program-line mixed PR may contain 800 non-program lines, a 300-program-line
   mixed PR may contain 600, while a documentation-only PR may contain 1,000 non-program lines. The
@@ -78,15 +87,16 @@ cycle gates, planning lifecycle, repo-rule propagation, necessary binding update
 idea retirement, knowledge capture, and plan closure. Out of scope: a new review bot, database,
 parser, merge queue, universal runtime flag, or unrelated CI cleanup.
 
-Plan assembly must finish before idea or implementation delivery. The exact unstacked order begins
+The following plan-assembly order is an immutable historical receipt, not an executable route.
 `FOUNDATION → REQUIREMENTS → DESIGN → EXECUTION-FORECAST → CORE-SPLIT-FORECAST → CORE-ENTRY →
 CORE-REVIEW → WAVES-SPLIT → WAVES-ENTRY-SPLIT → WAVES-ENTRY-BASE-SPLIT →
 WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT → WAVES-ENTRY-PRIVATE-BASE-REPAIR →
 WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
 EXECUTION-CLOSURE → reconciliation/bounded equivalence audit → ACTIVATE → remaining PUB-IDEAS subdeliveries
 → terminal public proof → PRIV-BASE → conditional PRIV-REPAIR → PRIV-IDEAS`; see
-[delivery.md](./delivery.md#historical-sequential-plan-assembly-receipt). Later public/private waves consume exact
-merged-green pins and record discharge or deliberate deviation.
+[delivery.md](./delivery.md#historical-sequential-plan-assembly-receipt). The executable order after
+this reader-state PR and #290's terminal receipt is `PRIV-ADMISSION` → `PRIV-A1` → `PUB-A2`; later
+waves remain frozen.
 
 ## Plan Documents
 
@@ -107,16 +117,17 @@ Defining claims use `[Repo-grounded]` for repository/PR evidence, `[Web-cited]` 
 `[Judgment call]` for user-ratified policy, and `[Unverified]` for work activation must still prove.
 Repeated claims cross-reference this section rather than duplicating evidence.
 
-| Claim                             | Source evidence (paraphrased)                                                                                                                                        | Accessed   |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [Web-cited] Small, focused PRs    | [Google small changes][google-small] says no universal size; [descriptions][google-body] ask what and why                                                            | 2026-08-23 |
-| [Web-cited] Native review history | [GitHub review help][github-help] recommends focused context; [resolution][github-resolve] preserves discussion                                                      | 2026-08-23 |
-| [Web-cited] Teaching and pushback | [Microsoft reviewer guidance][ms-review] asks reviewers to explain why; [author guidance][ms-author] allows a reasoned “won't fix” and keeps questions in the review | 2026-08-23 |
-| [Web-cited] Bounded feedback      | [Stripe Minions][stripe] reports often one, at most two CI runs after local repair—not five review cycles                                                            | 2026-08-23 |
-| [Web-cited] Short-lived branches  | [Trunk Based Development][tbd] describes branches integrated quickly to trunk                                                                                        | 2026-08-23 |
+| Claim                             | Source evidence (short excerpt)                                                                                                                          | Accessed   |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Web-cited] Small, focused PRs    | [Google small changes][google-small]: “no hard and fast rules”; [descriptions][google-body]: “What change” and “Why”                                     | 2026-08-24 |
+| [Web-cited] Native review history | [GitHub review help][github-help]: “focused, clear, and easy to follow”; [resolution][github-resolve]: “mark conversations as resolved”                  | 2026-08-24 |
+| [Web-cited] Teaching and pushback | [Microsoft reviewer guidance][ms-review]: “explain why ... preferably with an example”; [author guidance][ms-author]: “won't fix” with “clear reasoning” | 2026-08-24 |
+| [Judgment call] Bounded feedback  | Cycles 1–3 target, Cycles 4–5 recovery, and the hard stop before Cycle 6 are this repository's bounded policy; no Stripe measurement is claimed.         | 2026-08-24 |
+| [Web-cited] Short-lived branches  | [Trunk Based Development][tbd]: “the branch should only last a couple of days.”                                                                          | 2026-08-24 |
 
-The 400-program-line / 1,000-combined-line / 20-file ceiling and hard stop before Cycle 6 are repository judgment calls, not
-universal industry measurements. The inaccessible DOI previously listed here is removed.
+The 400-program-line / 900-mixed-line / 1,000-absolute-line / 20-file ceiling and hard stop before
+Cycle 6 are repository judgment calls, not universal industry measurements. The inaccessible DOI
+and the unverified Stripe cycle claim previously listed here are removed.
 
 [google-small]: https://google.github.io/eng-practices/review/developer/small-cls.html
 [google-body]: https://google.github.io/eng-practices/review/developer/cl-descriptions.html
@@ -124,5 +135,4 @@ universal industry measurements. The inaccessible DOI previously listed here is 
 [github-resolve]: https://docs.github.com/en/pull-requests/concepts/resolving-reviews
 [ms-review]: https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/
 [ms-author]: https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/author-guidance/
-[stripe]: https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents
 [tbd]: https://trunkbaseddevelopment.com/short-lived-feature-branches/
