@@ -85,7 +85,7 @@ WAVES-ENTRY-PUBLIC → WAVES-ENTRY-PRIVATE-SPLIT → WAVES-ENTRY-PRIVATE-BASE-RE
 WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES →
 EXECUTION-CLOSURE → reconciliation/bounded equivalence audit → ACTIVATE → remaining PUB-IDEAS subdeliveries
 → terminal public proof → PRIV-BASE → conditional PRIV-REPAIR → PRIV-IDEAS`; see
-[delivery.md](./delivery.md#sequential-plan-assembly). Later public/private waves consume exact
+[delivery.md](./delivery.md#historical-sequential-plan-assembly-receipt). Later public/private waves consume exact
 merged-green pins and record discharge or deliberate deviation.
 
 ## Plan Documents
