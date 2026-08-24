@@ -296,7 +296,7 @@ The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLO
 | receipt  | PRE-A1-ADMISSION | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct public admission done             |
 | receipt  | PUB-A1           | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct size policy done (not executable) |
 | receipt  | PRIV-ADMISSION   | historical      | —                                                    | merged receipt | #64     | private PR #64 `db40c969f8c6a554837efab1cf266c8d505c02a6`                                     | exact private adaptation admission pin   |
-| 1–5      | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1-size-policy`            | worktree-to-pr | Phase 3 | PRIV-ADMISSION                                                                                | private A1 adapted                       |
+| frozen   | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1-size-policy`            | worktree-to-pr | Phase 3 | private PR #64 admission + #296 landed merge SHA; no action while #296 is open                | private A1 adapted                       |
 | 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent                  |
 | 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted                       |
 | 1–5      | PUB-A3           | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent                  |
@@ -1097,10 +1097,14 @@ PR #289 merged at `539cda50e6aa48079d347ae6131b81901120cd84` with the direct pub
 size-policy edit only. Its PR body, native review, and current-head CI are the immutable evidence.
 It created no private obligation and granted no private path authority. The post-merge
 `PLAN-QUALITY-290:P5.HANDOFF` released the admission which private PR #64 completed at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`; the live order now proceeds with `PRIV-A1`, then
-`PUB-A2`.
+`db40c969f8c6a554837efab1cf266c8d505c02a6`. Its historical successor order is `PRIV-A1`, then
+`PUB-A2`; while public plan-amendment PR #296 is open, `PRIV-A1` receives no action and resumes
+only from #296's landed merge SHA.
 
 ### PRIV-A1 — Private Plan-Making Adaptation
+
+While public plan-amendment PR #296 is open, every `PRIV-A1` checkbox below is frozen: do not push,
+review, mark ready, or merge private PR #65. Resume this section only from #296's landed merge SHA.
 
 - [ ] `[PRIV-A1:P1.01][AI]` Execute `AR-ENTRY` in the declared private worktree and read the `PRIV-ADMISSION` immutable obligation. Acceptance: the public PR #289 pin is retained as lineage evidence, the private landed main is `local-base`, and the worktree is clean before branch entry.
 - [ ] `[PRIV-A1:P1.02][AI]` Classify the private destination as satisfied, reasoned deviation, `N/A`, or portable defect before editing. Acceptance: the private PR artifact contains one class and supporting private-safe evidence.

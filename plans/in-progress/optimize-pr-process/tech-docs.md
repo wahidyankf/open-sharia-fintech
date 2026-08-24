@@ -343,8 +343,9 @@ flowchart TD
 Historical receipt only: PUB-BASE cleanly authorized PUB-IDEAS-4; failure received one PUB-REPAIR attempt, whose
 clean recheck authorizes -4 and whose failed recheck freezes ideas for a human, with no second repair.
 Successor pins carried -4 through -8; the rest is preserved for audit and grants no future unit,
-path, branch, PR, or merge authority. The live order is the one stated above: `PRIV-A1`, then
-`PUB-A2`; its predecessor is the native private-admission receipt in PR #64 at
+path, branch, PR, or merge authority. The historical successor order is `PRIV-A1`, then `PUB-A2`;
+while public plan-amendment PR #296 is open, `PRIV-A1` receives no action and resumes only from
+PR #296's landed merge SHA. Its predecessor is the native private-admission receipt in PR #64 at
 `db40c969f8c6a554837efab1cf266c8d505c02a6`.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
