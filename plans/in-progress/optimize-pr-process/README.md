@@ -2,7 +2,7 @@
 
 ## Status
 
-**In Progress (activation reconciliation active); further execution is paused.**
+**In Progress (ACTIVATE record under review); all later delivery units remain paused.**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
@@ -10,7 +10,9 @@ PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
 [#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
 Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
 private work, and every rule/code wave stay frozen until this reconciliation merges and the
-equivalence audit records an ACTIVATE pin. The private overlay remains untouched.
+equivalence audit records an ACTIVATE pin. The private overlay remains untouched. PR #273 merged the
+sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; this ACTIVATE PR records the
+one permitted affected-row recheck. Only after this PR merges with zero blockers may PUB-BASE start.
 
 ## Outcome
 
