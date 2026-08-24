@@ -62,7 +62,9 @@ A unit records its exact before/after ledger and stays within the 400-line/20-fi
 ```text
 .
 ├── [E] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
-│       # control-plan sources; no other in-progress plan is admitted
+│       # control-plan sources for pre-move edits; no other in-progress plan is admitted
+├── [D] plans/in-progress/optimize-pr-process/**
+│       # CLOSURE removes this whole directory only after those reviewed pre-move edits
 ├── [D] plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md
 ├── [D] plans/ideas/q2-not-urgent-important/{merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
 │       # eight named PUB-IDEAS-5–8 sources; no discovery may add a brief
@@ -74,8 +76,8 @@ A unit records its exact before/after ledger and stays within the 400-line/20-fi
 │       # CLOSURE adds only the archived control-plan entry after its reviewed archive move
 ├── [E] repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md
 │       # the sole PUB-IDEAS-5 live-backlink repair admitted by PR #277
-└── [E] plans/done/YYYY-MM-DD__optimize-pr-process/**
-        # CLOSURE archive destination only; the runtime date is recorded before the move
+└── [N] plans/done/YYYY-MM-DD__optimize-pr-process/**
+# CLOSURE archive destination only; the runtime date is recorded before the move
 ```
 
 Completed PUB-IDEAS-4 sources
