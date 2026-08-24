@@ -91,15 +91,10 @@ paths above are unlinked by future PUB-IDEAS-5–8 work.
 
 ### External Repository — `ose-private` (Record Only; No Edit Authority)
 
-```text
-ose-private/
-└── [N] no private path is admitted by this public plan tree
-        # a public PR may record a sibling obligation and an explicit semantic deviation only
-```
-
-`ose-private` is a separate repository. Its own plan, worktree, branch, before-ledger, PR, and
-explicit deviation record decide any private edit. The public plan may never treat this external
-section, a sibling obligation, or a public propagation manifest as permission to edit private files.
+`ose-private` is a separate repository and is deliberately outside this public file-impact tree.
+Its own plan, worktree, branch, before-ledger, PR, and explicit deviation record decide any private
+edit. A public PR may record only a sibling obligation and public-safe semantic deviation; neither
+that record nor a public propagation manifest grants private-file authority.
 
 ### Amendment-Only Admission for Later Rule Waves
 
@@ -248,7 +243,8 @@ independently observable behavior. Rollback never depends on unpublished local s
 Before ACTIVATE, the bounded audit in `delivery.md` gives every pinned numbered rule, bullet,
 sub-bullet, and conditional check its own evidence or uncovered disposition. Only a catalog-defined
 conditional may use reasoned `N/A`, with its applicability condition and proof; a nonconditional row
-is never `N/A`. Only uncovered rows read the five plan documents; no double-zero loop runs.
+is never `N/A`. Only uncovered rows read the five plan documents. This bounded ACTIVATE audit does
+not start a second double-zero loop; the required pre-execution plan-quality gate runs separately.
 
 It records every blocker first: zero authorizes ACTIVATE; exactly one proven unique blocker may use the
 sole separately gated `PLAN-AMENDMENT`; multiple or uncertain blockers freeze for human judgment. After

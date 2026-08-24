@@ -43,11 +43,11 @@ computer-science background. A merged PR remains an educational team record, not
   cycle 6 and ask a human only when the bounded process cannot safely finish. Humans may read every
   PR after merge.
 - Do not add a separate post-write or post-plan grilling session. This conversation already resolved
-  the planning decisions. Before ACTIVATE, one bounded equivalence audit maps the existing stricter
-  PR-review evidence to the plan-quality-gate catalog and checks only uncovered plan-specific
-  surfaces. Do not run the full iterative workflow or its double-zero loop; only a genuinely unique
-  blocker may open one bounded amendment, and only a genuinely unresolved decision returns to the
-  human.
+  the planning decisions. Before execution, run `plan-quality-gate.md` in strict mode to two
+  consecutive zero-finding validations. Before ACTIVATE, one bounded equivalence audit additionally
+  maps the existing stricter PR-review evidence to only uncovered plan-specific surfaces; it does
+  not replace the required gate. Only a genuinely unique blocker may open one bounded amendment,
+  and only a genuinely unresolved decision returns to the human.
 - Preserve trunk stability with the lightest suitable “feature flag”: dormant documentation,
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.
