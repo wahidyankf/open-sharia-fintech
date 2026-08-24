@@ -221,6 +221,7 @@ The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLO
 
 | Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                                                                                   | Stable result                 |
 | -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------------- | ----------------------------- |
+| 1–5      | ACTIVATE    | public/PUB-WT   | `optimize-pr-process-activate`                       | worktree-to-pr | Phase 3 | RECONCILE / #272 merge, or the sole PLAN-AMENDMENT merge                                      | executable plan record        |
 | 0        | PUB-BASE    | public/PUB-WT   | `—`                                                  | no delivery    | no      | ACTIVATE                                                                                      | public baseline recorded      |
 | 1–5?     | PUB-REPAIR  | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`  | worktree-to-pr | Phase 3 | ACTIVATE                                                                                      | public baseline repaired      |
 | 1–5      | PUB-IDEAS-4 | public/PUB-WT   | `optimize-pr-process-pub-ideas-4`                    | worktree-to-pr | Phase 3 | PUB-BASE:P0.10 → PUB-IDEAS-4 clean-direct or PUB-REPAIR:P5.17 → PUB-IDEAS-4 successful-repair | first remaining ideas retired |
@@ -297,6 +298,19 @@ row for every numbered rule, bullet, sub-bullet, and conditional check in both c
 grouping or inherited evidence. A nonconditional row is never `N/A`: without direct evidence it is
 uncovered. Only a catalog-defined conditional whose applicability condition is demonstrably false may
 be reasoned `N/A`; its row cites that condition and the evidence. Codebase Alignment remains explicit.
+
+### ACTIVATE Entry Contract
+
+ACTIVATE is a public plan-only PR from `optimize-pr-process-activate`. Its exact predecessor is the
+RECONCILE merge or, only when this audit proves one unique blocker, the sole PLAN-AMENDMENT merge.
+Its admitted tracked ledger is only `plans/in-progress/optimize-pr-process/README.md` and
+`plans/in-progress/optimize-pr-process/delivery.md`; the complete evidence matrix lives in the
+AI-marked literal PR body and is read back through GitHub. Before editing, fetch `origin/main`,
+create or safely reuse the declared branch from that exact pin, prove `HEAD == origin/main`, and
+record the predecessor SHA, two-path ledger, static-document safety, rollback-by-revert, and
+400-line/20-file forecast. ACTIVATE never touches the private worktree, ideas, rules, bindings,
+code, or tests. Its successor is only PUB-BASE after its merged zero-blocker record; an uncovered
+row instead follows the single PLAN-AMENDMENT route and keeps every later unit frozen.
 
 - [ ] `[ACTIVATE:A0.01][AI]` Read the current plan-quality-gate workflow and both plan-quality catalog documents; record their exact public `origin/main` pin in the ACTIVATE PR body and enumerate one matrix row for every numbered rule, bullet, sub-bullet, and conditional check without grouping or omission.
 - [ ] `[ACTIVATE:A0.02][AI]` For each matrix row, link direct current evidence; otherwise mark it uncovered, except a catalog-defined inapplicable conditional may record reasoned `N/A` with its condition and proof.
