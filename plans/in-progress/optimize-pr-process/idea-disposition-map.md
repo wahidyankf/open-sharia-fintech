@@ -16,7 +16,21 @@ unchanged.
 - [Repo-grounded] No private retirement has merged. The pinned private source remains authoritative
   until PRIV-IDEAS records retirement against an activated public plan pin.
 
-## Public Dispositions
+## Current Public Retirement State
+
+The original 19-brief catalog below is immutable planning evidence, not a command to re-open a
+completed unit. PRs #269–#271 retired nine briefs before ACTIVATE; PUB-IDEAS-4 completed two more
+in PR #276; and PUB-IDEAS-5 completed two in PR #281. Those 13 retirements and their associated
+backlink repairs are historical evidence only.
+
+Exactly six public briefs remain: PUB-IDEAS-6 owns
+`nx-affected-cross-worktree-contamination.md` and `stale-checkout-ref-advance-drift.md`; PUB-IDEAS-7
+owns `cross-repo-governance-link-parity.md` and `plan-archival-in-pr-multi-repo-gap.md`; and
+PUB-IDEAS-8 owns `propagation-checklist-under-coverage.md` and
+`recurring-defect-family-escalation.md`. PUB-IDEAS-6 is the sole candidate successor and remains
+frozen until the plan-state correction and strict revalidation recorded in `delivery.md` are clean.
+
+## Historical Public Dispositions
 
 1. `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`
    **Outcome:** `valid`. **Family:** falsifiable planning evidence. **Owner:** `REQUIREMENTS`.
@@ -100,12 +114,11 @@ unchanged.
 
 ## Retirement Rule
 
-PRs #269–#271 retired nine public briefs in three cohesive, human-sized subdeliveries before
-ACTIVATE. They are retained as execution data points, not authority to start private or rule work.
-After the reconciliation and ACTIVATE pin merge, retire the remaining ten public briefs through the
-five named `PUB-IDEAS-4`–`PUB-IDEAS-8` subdeliveries in `delivery.md`. Only their terminal proof may
-authorize `PRIV-BASE`; its clean or overlay-owned result, or an evidenced failure repaired by
-`PRIV-REPAIR`, may then authorize `PRIV-IDEAS`, which retires the private brief and index entry
-separately. Every retirement
-PR preserves historical references and cites its exact predecessor; no subdelivery may exceed the
+The original forecast allocated ten remaining briefs to five named `PUB-IDEAS-4`–`PUB-IDEAS-8`
+subdeliveries. It is now historical: PUB-IDEAS-4 and PUB-IDEAS-5 are immutable completed evidence,
+and only the six paths named in **Current Public Retirement State** may be retired through
+PUB-IDEAS-6–8. Only PUB-IDEAS-8's terminal proof may authorize `PRIV-BASE`; its clean or
+overlay-owned result, or an evidenced failure repaired by `PRIV-REPAIR`, may then authorize
+`PRIV-IDEAS`, which retires the private brief and index entry separately. Every retirement PR
+preserves historical references and cites its exact predecessor; no subdelivery may exceed the
 plan's human-size boundary.

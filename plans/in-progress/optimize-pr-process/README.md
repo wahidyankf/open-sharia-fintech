@@ -2,8 +2,8 @@
 
 ## Status
 
-**In Progress (PR #277 is merged; PUB-IDEAS-5 is the sole candidate successor, frozen until this
-quality-remediation PR's merge receipt supplies its execution-base pin).**
+**In Progress (PUB-IDEAS-5 is complete; PUB-IDEAS-6 is the sole candidate successor, frozen until
+the strict post-amendment plan-quality revalidation passes).**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
@@ -15,8 +15,12 @@ equivalence audit recorded the ACTIVATE pin. The private overlay remains untouch
 sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; PR #274 then merged, its
 AI-marked A0.P receipt was verified, and PUB-BASE completed cleanly. PR #275 supplied PUB-IDEAS-4's
 live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 supplied PUB-IDEAS-5's
-live-backlink authority. Tracked plan text—not GitHub prose—defines every command and successor:
-PUB-IDEAS-5 remains frozen pending this quality-remediation PR's merge receipt, and the private
+live-backlink authority. The plan-quality remediation merged as PR #280 at
+`7ea591ee54363c4811fb42ccef94cac898b598cc`; PUB-IDEAS-5 then completed in PR #281 at
+`e70ef47b945cbc91d23a641230a87a2b8879f75a`, whose receipt named PUB-IDEAS-6. PR #282 merged at
+`56e5fa6c5168ffe5569d21a4b685a76168dd6f13` and admitted PUB-IDEAS-6's four exact live-backlink
+repairs. Tracked plan text defines the successor and admissible paths; GitHub remains the durable
+review and receipt record. PUB-IDEAS-6 remains frozen until strict revalidation passes; the private
 overlay and every rule/code wave remain frozen until their declared predecessor authorizes them.
 
 ## Outcome

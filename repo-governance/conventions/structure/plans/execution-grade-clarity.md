@@ -24,12 +24,12 @@ Plans are executed by execution-grade agents. Every checkbox MUST be unambiguous
 
 ## Controlled Runbook-Reference Exception
 
-Use a same-document, uniquely named runbook packet only for a cross-repository
-confidentiality/admission case where literal repetition would duplicate one maintained procedure or
-disclose private detail. Its finite binding to the checkbox ID or phase MUST state record sources,
-copyable commands, its admitted public path or private-safe target, and the pass/fail record. It
-cannot refer generically elsewhere, invent records at execution, change an existing merge gate, or
-evade file-touch, scope, or acceptance requirements.
+Use a same-document, uniquely named runbook packet only for a finite cross-repository lifecycle
+procedure where literal row repetition would duplicate one maintained procedure or disclose private
+detail. Its finite binding to the checkbox ID or phase MUST state why the packet is needed, record
+sources, copyable commands, its admitted public path or private-safe target, and the pass/fail
+record. It cannot refer generically elsewhere, invent records at execution, change an existing merge
+gate, or evade file-touch, scope, or acceptance requirements.
 
 **Enforcement disposition — unenforced by decision:** contextual `plan-checker` review records the
 binding and violations; no scanner or exception list is introduced. This limits drift and preserves
