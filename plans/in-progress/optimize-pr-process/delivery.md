@@ -132,8 +132,9 @@ git worktree prune # stale registration only; retry the applicable add once
 
 The former private two-path patch was reviewed and landed in private PR #63. The worktree is now
 clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` is historical:
-private PR #64 completed its native ledger. `PRIV-A1` is the active unit and starts from its fetched
-private `origin/main` with its separately declared ledger.
+private PR #64 completed its native ledger. While public plan-amendment PR #296 is open, `PRIV-A1`
+is frozen. It becomes the active unit and starts from its fetched private `origin/main` with its
+separately declared ledger only from #296's landed merge SHA.
 
 ## Delivery Mode
 
@@ -330,9 +331,9 @@ sole exact public source/mirror authority. It was derived from the strict dry-ru
 from discovery during a later rule wave. `PUB-A1` completed within PR #289; it is not an empty or
 future PR. PR #289 remains provenance only: private PR #64 at
 `db40c969f8c6a554837efab1cf266c8d505c02a6` completed `PRIV-ADMISSION` and established the private
-A1 decision. `PRIV-A1` is now live; `PUB-A2`,
-`PUB-A3`, and `PUB-B` remain independently bounded PRs; their private counterpart is a separate
-semantic adaptation after its preceding immutable obligation.
+A1 decision. While public plan-amendment PR #296 is open, `PRIV-A1` is frozen; it becomes live only
+from #296's landed merge SHA. `PUB-A2`, `PUB-A3`, and `PUB-B` remain independently bounded PRs;
+their private counterpart is a separate semantic adaptation after its preceding immutable obligation.
 
 The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
 counted separately when binding generation identifies them. Each unit first uses one PR for as much
@@ -1077,13 +1078,18 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
       `PRIV-A1` must compare its landed and reviewed fingerprints.
 - [x] `[PRIV-ADMISSION:P5.04][AI]` Resync private `origin/main` and prepare `PRIV-A1` as sole successor.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** the public-safe result is `PRIV-A1` then `PUB-A2`.
-- [x] `[PRIV-ADMISSION:P1.G][AI]` Pass clean-entry, correspondence, disclosure, review, and terminal checks.
+      **Notes:** the public-safe historical order is `PRIV-A1` then `PUB-A2`; while #296 is open,
+      `PRIV-A1` remains frozen and resumes only from its landed merge SHA.
+- [x] `[PRIV-ADMISSION:P1.G][AI]` Historical-evidence audit: the native aggregate receipt has unavailable
+      review-thread and fingerprint terminal subchecks.
+      **Date:** 2026-08-24; **Status:** documented historical exception; **Files Changed:** none;
+      **Notes:** private PR #64 proves the private admission merge and its safe public summary, but not
+      same-thread dispositions or reviewed/landed fingerprint comparison. `PRIV-A1` must pass all current
+      review and terminal checks; this item does not claim that unavailable checks passed.
+- [x] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and historically authorize `PRIV-A1` only.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** private PR #64 is the immutable aggregate receipt.
-- [x] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and authorize `PRIV-A1` only.
-      **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** private PR #64 releases no later unit.
+      **Notes:** private PR #64 releases no later unit. While public plan-amendment PR #296 is open,
+      `PRIV-A1` is frozen and resumes only from #296's landed merge SHA.
 
 ### PUB-A1 — Completed Direct Size-Policy Work
 
