@@ -152,8 +152,9 @@ implementation waves
 
 This completed assembly sequence is retained as an immutable receipt only; it grants no current
 unit, branch, path, PR, merge, or successor authority. The private-admission receipt completed in
-private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; the sole live sequence is
-`PRIV-A1` → `PUB-A2`. Each historical arrow was a separate, unstacked PR from then-current `origin/main`, using the same owned public
+private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`. While public plan-amendment PR #296
+is open, `PRIV-A1` is frozen: it receives no push, review, readiness, or merge action. From #296's
+landed merge SHA, the sole live sequence is `PRIV-A1` → `PUB-A2`. Each historical arrow was a separate, unstacked PR from then-current `origin/main`, using the same owned public
 worktree. `P` counts handwritten changed program/script lines (including tests); `N` counts handwritten
 changed non-program lines (such as Markdown, plans, specs, and configuration); generated files are
 excluded from both. Every assembly slice has at most 400 handwritten program/script lines. When both program/
@@ -1680,8 +1681,10 @@ is resynced, and the sibling obligation has one owner, state, and immutable pin.
 ## Cross-Repository Order — Historical Receipt and Live Sequence
 
 The completed activation-to-idea order is historical evidence only. The private-admission receipt
-is complete in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`. The sole live
-sequence is `PRIV-A1` → `PUB-A2`. Later waves remain frozen. Public pins and native sibling
+is complete in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`. While public
+plan-amendment PR #296 is open, `PRIV-A1` is frozen and receives no push, review, readiness, or
+merge action. From #296's landed merge SHA, the sole live sequence is `PRIV-A1` → `PUB-A2`.
+Later waves remain frozen. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
 CORE-ENTRY, CORE-REVIEW, all four WAVES-ENTRY checklist slices, WAVES-A, WAVES-RULES, and

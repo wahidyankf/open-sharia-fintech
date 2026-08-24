@@ -3,7 +3,8 @@
 ## Status
 
 **In Progress (`PRIV-ADMISSION` is complete in private PR #64 at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`; `PRIV-A1` is the sole live unit, followed by
+`db40c969f8c6a554837efab1cf266c8d505c02a6`; `PRIV-A1` is frozen while public plan-amendment
+PR #296 is open. From #296's landed merge SHA, `PRIV-A1` becomes the sole live unit, followed by
 `PUB-A2`).**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
@@ -31,7 +32,9 @@ PUB-A1 size-policy edits. PR #290 merged at `1c916103e75e48c939439d381e8f3ddb9ea
 the executable runbook; PR #291 merged at `92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`, supplying the
 required reader-state receipt. GitHub remains the durable review and receipt record. The public-safe
 private admission receipt is [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`; `PRIV-A1` alone is now active.
+`db40c969f8c6a554837efab1cf266c8d505c02a6`. While public plan-amendment
+[#296](https://github.com/wahidyankf/ose-public/pull/296) is open, `PRIV-A1` is frozen; it becomes
+the sole live unit only from #296's landed merge SHA.
 
 ## Outcome
 
@@ -96,7 +99,9 @@ WAVES-ENTRY-PRIVATE-IDEAS → WAVES-ENTRY-ADAPTERS → WAVES-A → WAVES-RULES �
 EXECUTION-CLOSURE → reconciliation/bounded equivalence audit → ACTIVATE → remaining PUB-IDEAS subdeliveries
 → terminal public proof → PRIV-BASE → conditional PRIV-REPAIR → PRIV-IDEAS`; see
 [delivery.md](./delivery.md#historical-sequential-plan-assembly-receipt). The executable order after
-the private-admission receipt in PR #64 is `PRIV-A1` → `PUB-A2`; later waves remain frozen.
+the private-admission receipt in PR #64 is `PRIV-A1` → `PUB-A2`; later waves remain frozen. While
+public plan-amendment PR #296 is open, `PRIV-A1` is also frozen and resumes only from that PR's
+landed merge SHA.
 
 ## Plan Documents
 
