@@ -30,7 +30,8 @@ No public idea brief remains. PR #285 retired the cross-worktree set at
 `70dbe4187dd720d8fe344960d227c44cf3d549f5`. Their absent source paths and old forecast are
 immutable historical evidence only. PR #291 supplied the reader-state receipt, and private PR #64
 merged the native `PRIV-ADMISSION` receipt at `db40c969f8c6a554837efab1cf266c8d505c02a6`.
-`PRIV-A1`, then `PUB-A2`, is the remaining live order.
+`PRIV-A1`, then `PUB-A2`, is the remaining order. While public plan-amendment PR #296 is open,
+`PRIV-A1` is frozen and resumes only from #296's landed merge SHA.
 
 ## Historical Public Dispositions
 

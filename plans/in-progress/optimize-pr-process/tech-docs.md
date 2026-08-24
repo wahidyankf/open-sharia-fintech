@@ -120,8 +120,9 @@ A1/A2/A3/B public paths: it must add each exact source path, every generated mir
 owning unit, and bounded before-ledger to this tree and matching delivery ledger before `PUB-A1`
 starts. PR #289 is public provenance only. Its paired private plan-only `PRIV-ADMISSION` completed
 in [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`; it supplied the private-safe counterpart and released
-`PRIV-A1`. Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
+`db40c969f8c6a554837efab1cf266c8d505c02a6`; it supplied the private-safe counterpart and historically
+released `PRIV-A1`. While public plan-amendment PR #296 is open, `PRIV-A1` is frozen; it resumes only
+from #296's landed merge SHA. Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
 expand scope. Optional Wave C remains `N/A` unless its separately human-approved necessity case
 first supplies exact paths through the ordinary amendment route.
 
@@ -159,8 +160,9 @@ path is admitted here.
 
 PR #289 supplies public provenance only. The native private admission receipt is complete in
 private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; it classified the counterpart at
-public provenance pin `539cda50e6aa48079d347ae6131b81901120cd84` and released `PRIV-A1` without
-receiving public-path authority.
+public provenance pin `539cda50e6aa48079d347ae6131b81901120cd84` and historically released
+`PRIV-A1` without receiving public-path authority. While public plan-amendment PR #296 is open,
+`PRIV-A1` is frozen and resumes only from #296's landed merge SHA.
 
 #### Exact Source, Hunk, and Mirror Records
 

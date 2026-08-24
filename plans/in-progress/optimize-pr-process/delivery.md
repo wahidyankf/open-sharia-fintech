@@ -41,15 +41,17 @@
 > PR #289 is provenance only. PR #290's terminal-handoff receipt was read back after its reader
 > successor landed; it released `PRIV-ADMISSION`, whose native private receipt merged in
 > [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
-> `db40c969f8c6a554837efab1cf266c8d505c02a6`. The sole live successor is `PRIV-A1`; no private
-> path or content is reproduced here.
+> `db40c969f8c6a554837efab1cf266c8d505c02a6`. It historically released `PRIV-A1`; while public
+> plan-amendment PR #296 is open, that successor is frozen and receives no action. It becomes sole
+> live successor only from #296's landed merge SHA. No private path or content is reproduced here.
 
 ### PR #290 Post-Merge Terminal Handoff — Complete
 
 - [x] `[PLAN-QUALITY-290:P5.HANDOFF][AI]` Completed immutable evidence: PR #290 terminal handoff,
       its reader-state successor, and [private PR #64](https://github.com/wahidyankf/ose-private/pull/64)
-      at `db40c969f8c6a554837efab1cf266c8d505c02a6` were read back. They release `PRIV-A1` only;
-      a new private PR starts at Cycle 1.
+      at `db40c969f8c6a554837efab1cf266c8d505c02a6` were read back. They historically released
+      `PRIV-A1` only; public plan-amendment PR #296 temporarily freezes it. A new private PR starts
+      at Cycle 1 only from #296's landed merge SHA.
 
   **Date:** 2026-08-24  
   **Status:** complete  
@@ -95,8 +97,10 @@ PUB-IDEAS-5, PR #282 authorized PUB-IDEAS-6's exact four repairs, and PR #283 re
 plan state. Private PR #63 landed the former two-path patch cleanly; PRs #285, #286, and #288 then
 retired the remaining public idea briefs. Public PR #289 admitted the exact A-wave source/mirror paths
 and completed direct PUB-A1 size-policy edits. Its pin is provenance only. PR #290's terminal handoff
-then released `PRIV-ADMISSION`, which has its native merged private receipt; `PRIV-A1` is now sole live
-successor. Other later units remain frozen until their declared predecessor authorizes them.
+then released `PRIV-ADMISSION`, which has its native merged private receipt. That receipt historically
+released `PRIV-A1`; public plan-amendment PR #296 temporarily freezes it. `PRIV-A1` becomes the sole
+live successor only from #296's landed merge SHA. Other later units remain frozen until their declared
+predecessor authorizes them.
 
 ## Worktree
 
@@ -106,8 +110,8 @@ Reuse exactly one worktree per repository for this whole plan; follow the
 - public: `worktrees/optimize-pr-process/` resolves to
   `/Users/wkf/ose-projects/ose-public/worktrees/optimize-pr-process` — active for assembly;
 - private: `worktrees/optimize-pr-process/` resolves to
-  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — reused for the admitted,
-  current `PRIV-A1` delivery after its merged native admission receipt.
+  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — reused for the admitted
+  `PRIV-A1` delivery only from public plan-amendment PR #296's landed merge SHA.
 
 For authored provisioning, run this documentation-only harness command from the relevant repository
 root before using the fallback below; it does not authorize a second worktree:
@@ -311,9 +315,10 @@ in PR #289 at `539cda50e6aa48079d347ae6131b81901120cd84`: it admitted the exact 
 public source/mirror paths **and** completed the direct PUB-A1 size-policy edits. That pin is
 provenance only. `PRIV-ADMISSION` completed in private PR #64 at
 `db40c969f8c6a554837efab1cf266c8d505c02a6`, which published its private adaptation decision and
-released `PRIV-A1`. Before each unit, replace its
-predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the next
-row. CLOSURE opens its one draft PR in inherited Phase 3, completes all knowledge capture,
+historically released `PRIV-A1`. While public plan-amendment PR #296 is open, that successor is
+frozen and resumes only from #296's landed merge SHA. Before each unit, replace its predecessor
+with the exact SHA in the task, body, and audit comment. Missing state blocks the next row. CLOSURE
+opens its one draft PR in inherited Phase 3, completes all knowledge capture,
 archive, review, merge, and resync in inherited Phases 4–5, then performs only read-only validation
 and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
 resumes its frozen unit from the amended plan pin.
@@ -693,9 +698,10 @@ retains both the lineage ID and its correction count.
 
 PR #289 completed PRE-A1-ADMISSION: it created the exact public ledger A1–B need **and** made its
 admitted direct PUB-A1 size-policy edits. It is provenance only. The native private admission
-merged in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6` and released `PRIV-A1`.
-Any unexpected path, cap breach, or disagreement freezes that successor for human review rather than
-admitting a generic subtree.
+merged in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6` and historically released
+`PRIV-A1`. While public plan-amendment PR #296 is open, that successor is frozen and resumes only
+from #296's landed merge SHA. Any unexpected path, cap breach, or disagreement freezes that
+successor for human review rather than admitting a generic subtree.
 
 Every A/Rules checkbox below is one atomic state transition, not optional background. Before a row
 uses an `AR-*` reference, its unit heading declares a literal `UNIT`, `REPO`, `BRANCH`, and
