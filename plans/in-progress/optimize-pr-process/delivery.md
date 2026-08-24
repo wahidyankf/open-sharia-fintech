@@ -529,9 +529,9 @@ This table resolves the pre-edit freeze at
 `64dbe6de9607d682f15c9c2edb18e720bafab248`. PUB-IDEAS-5 remains frozen until this plan-only
 amendment merges; its resumed entry must use that merge pin.
 
-| Exact live-backlink path                                                                        | Mapped target             | Minimal permitted repair                                                                                         |
-| ----------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace only the two-line direct Markdown link with “tracked separately as future work, not by this convention.” |
+| Exact live-backlink path                                                                        | Mapped target             | Minimal permitted repair                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace the complete three-line ownership clause containing the direct link with “The deferred investigation, availability matrix, and adoption path are tracked separately as future work, not by this convention.” |
 
 For PUB-IDEAS-5 after this amendment, retain PUB-IDEAS-4's merged successor proof as
 **authorization evidence**, but use the merged amendment pin as the sole **execution-base pin**.
