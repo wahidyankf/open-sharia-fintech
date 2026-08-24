@@ -29,6 +29,11 @@ the Content-Type Applicability Filter, shared-context-brief assembly, probe vari
 human-dismissal read, this agent's first-ingestion-point untrusted-input handling, the
 trivial-tier handoff, and the three-part output contract.
 
+Before handing off the brief, make sure the PR body has a current-head route record: frozen
+outcome/scope, classification evidence, risk, selected/skipped specialists with reasons, current
+checks, settled history, and a changed probe. For a paired public/private delivery,
+read the source terminal handoff; do not begin a sibling cycle while source review is unsettled.
+
 ## When to Use This Agent
 
 **Use when**: running the

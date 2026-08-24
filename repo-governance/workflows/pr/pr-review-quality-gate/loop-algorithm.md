@@ -16,7 +16,7 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
     for cycle in 1..=maximum_cycles:
         scout = fresh pr-review-scout-maker(pr = PR, cycle = cycle, total_cycles = N, prior = prior)
                        # scout pins this cycle's ONE head SHA
-                       # output: head, tier, specialists, context_brief, dismissals
+        write_or_refresh_pr_body_route_record(route, scout)
         synthesis_maker = fresh pr-review-synthesis-maker(state = clean, context_brief = scout.context_brief, fed = prior)
                        # scout hands its context_brief to BOTH consumers below — see scout's Output Contract
         raw = fan_out(scout.specialists, context_brief = scout.context_brief, fed = prior)   # CONCURRENT within this cycle
@@ -25,11 +25,10 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         post consolidated as ONE line-anchored review (Reviews API)
         fixer = pr-review-fixer()
         fixer.resolve(PR)                   # triage, fix, push, reply, cause-tag each disposition
+                       # same-defect completion is allowed; unrelated work becomes a linked follow-up
         wait_until CI_is_GREEN(PR)          # HARD gate before decision or next cycle
         prior += consolidated + their resolution state
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
-        # outstanding = thread still unresolved. A deferral leaves the set only
-        # once its follow-up is filed AND linked, which is what lets it resolve.
         if unresolved is empty and probe_class_is_new(cycle, prior):
             if previous_cycle_was_clean_under_a_new_class(prior):
                 return done             # second consecutive clean cycle; LOW findings never hold the loop open
@@ -41,9 +40,6 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
                                              # without an outstanding finding; extend per-PR to resolve
 ```
 
-- **Sequencing, the ceiling, and within-cycle concurrency** are stated once in
-  [Execution Mode](./purpose-execution-mode-and-classifier.md#execution-mode); this file does not
-  restate them.
 - Each cycle spawns **fresh** specialist instances, tier-selected per
   [PR Reviewer-Discipline Convention §Risk-tier fan-out](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md#risk-tier-fan-out-d12)
   (clean context) fed the coordinator's own prior consolidated findings and their resolution state,
@@ -57,5 +53,3 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
   [Identity and Quality Gates](../../../../.claude/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md) —
   since no dedicated bot/GitHub App identity is provisioned; any agent may call `web-researcher` for
   external facts while reviewing, synthesizing, or answering.
-
-See [Pipeline Diagrams](./pipeline-diagrams.md) for the sequence diagram of one cycle.
