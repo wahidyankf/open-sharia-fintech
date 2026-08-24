@@ -285,6 +285,21 @@ archive, review, merge, and resync in inherited Phases 4–5, then performs only
 and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
 resumes its frozen unit from the amended plan pin.
 
+#### PRE-A1-ADMISSION Exact Later-Unit Ledger
+
+The merged admission table in `tech-docs.md#pre-a1-admission-exact-public-ledger` is this unit's
+sole exact public source/mirror authority. It was derived from the strict dry-run manifest, not
+from discovery during a later rule wave. `PUB-A1` and `PRIV-A1` are evidence-backed no-change
+decisions: they publish their current canonical evidence and directly authorize `PUB-A2`, but do
+not open empty PRs. `PUB-A2`, `PUB-A3`, and `PUB-B` each remain independently bounded PRs; their
+private counterpart is a separate semantic adaptation after the public immutable obligation.
+
+The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
+counted separately when binding generation identifies them. If a unit's measured complete ledger
+crosses 20 hand-authored files or 400 hand-authored lines, its immediately preceding public PR must
+split it into named cohesive successors before that unit starts. Historical `plans/done/**`, past
+PR comments, and previous review artifacts are evidence only and never enter a future edit ledger.
+
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
 the [idea disposition map](./idea-disposition-map.md). Its public source pin is
 `62608547df0d2063d369537e0753f22699456f44`; its private source pin is
