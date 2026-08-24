@@ -46,8 +46,8 @@ exist, in a document whose job is recording what was verified.
 - **`plan-multi-repo-parity-planning` workflow** — the mechanism for keeping the three copies
   aligned, and the reason a lagging source of truth is a problem rather than a curiosity.
   [workflow](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
-- **`propagation-checklist-under-coverage`** — the sibling brief explaining how a sibling ends up
-  ahead of the source in the first place. [brief](./propagation-checklist-under-coverage.md)
+- **Propagation coverage** — a separately tracked sibling concern about how a sibling gets ahead of
+  its source.
 
 ## Proposed direction (sketch)
 

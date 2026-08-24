@@ -61,7 +61,6 @@ that a "N-step" claim matches the number of numbered steps in the thing it descr
   per-file verdict before declaring it fixed.
 - **Propagation checklist under coverage** — the sibling brief on propagation steps whose checklists
   do not cover every surface the change touches.
-  [brief](./propagation-checklist-under-coverage.md)
 - **Dynamic Collection References Convention** — the existing rule against hardcoding counts of
   dynamic collections in prose. A numbered procedure is not quite a "collection", but the failure
   mode is identical and the convention is the natural place to extend.
