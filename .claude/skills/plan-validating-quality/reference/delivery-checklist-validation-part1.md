@@ -16,7 +16,9 @@ noted below — this section is the summary layer):
   `[Action verb] [file] — acceptance: [outcome]`, not RED/GREEN/REFACTOR. Misapplied TDD shape:
   **MEDIUM**.
 - **Execution-grade clarity (HARD RULE)**: every checkbox names explicit file path(s), verbatim
-  shell command(s), and a concrete acceptance criterion — bare "implement X"/"set up Y" is **HIGH**.
+  shell command(s), and a concrete acceptance criterion — or has a valid same-document controlled
+  runbook-reference binding for a cross-repository confidentiality/admission case. Bare "implement
+  X"/"set up Y" is **HIGH**.
   Full detail in `reference/12-rule11-execution-grade-clarity-validation.md` (Step 5e). See
   [Plans Organization Convention §Execution-Grade Clarity](../../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md#execution-grade-clarity-hard-rule).
 - **Executor tagging (HARD RULE)**: every checkbox declares `[AI]`/`[HUMAN]`/`[AI+HUMAN]` (unmarked

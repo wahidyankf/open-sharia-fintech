@@ -238,6 +238,15 @@ activation, a compatibility bridge, a tested runtime flag, or an atomic change. 
 dormant text and ordered activation; a runtime flag is not justified unless later code introduces
 independently observable behavior. Rollback never depends on unpublished local state.
 
+### Controlled Cross-Repository Runbook Binding
+
+The public plan cannot safely enumerate private paths before native private admission, and repeating
+the same lifecycle shell commands in every public/private checkbox would create a second source of
+truth. `delivery.md` therefore binds only its finite lifecycle IDs to a same-document packet that
+lists record-field sources, copyable commands, private-safe path treatment, and pass/fail evidence.
+The binding is human-readable and auditable from the PR artifact; it is not a synchronization tool,
+does not authorize a new path, and cannot weaken an existing human merge gate.
+
 ## Validation
 
 The historical ACTIVATE audit in `delivery.md` gave every pinned numbered rule, bullet, sub-bullet,

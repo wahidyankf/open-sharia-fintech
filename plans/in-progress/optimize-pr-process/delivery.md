@@ -966,12 +966,45 @@ The variables in the references below are only shorthand for these fields: `$AUT
 `$REVIEWED_HEAD`, and `$MERGE_SHA` are their same-named record fields. A field is passed exactly as
 recorded; it is never inferred from a branch name, a directory, or a previous PR.
 
+### Controlled Runbook Bindings
+
+This cross-repository plan uses the controlled runbook-reference exception in
+`repo-governance/conventions/structure/plans/execution-grade-clarity.md`. It avoids duplicating
+private-safe commands and dynamic admission ledgers into every checklist row. The binding is finite:
+it applies only to unchecked lifecycle rows whose IDs start with `P0`, `P1`, `P2`, `P3`, `P4`, `P5`,
+`P6`, or `A1` in the named delivery units below. Each packet uses the exact record fields above, the
+same-document
+copyable commands below, and the unit's admitted-path ledger; no external template or invented
+record is authority.
+
+| Checklist ID family                       | Uniquely bound packet                                                                  | Observable exit                                                                                                                                |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `P0.*`                                    | `BASELINE-PACKET`                                                                      | public clean/private overlay-only state, baseline results, and one successor or terminal stop are recorded without a Phase 0 PR                |
+| `P1.*`                                    | `AR-ENTRY`, then `AR-PROPAGATE`/`AR-BIND` when the unit's record marks them applicable | current main, local base, authorization evidence, path ledger, and forecast are recorded; an unknown path or overlay mismatch freezes the unit |
+| `P2.*`                                    | `AR-LOCAL` and `AR-STAGE`                                                              | local gate, cap, cached-ledger, and cohesive-commit evidence are recorded                                                                      |
+| `P3.*`                                    | `AR-PUSH` and `AR-DRAFT`                                                               | remote/local head equality and one readable AI-marked draft are read back                                                                      |
+| `P4.*`                                    | `AR-ROUTE`, `AR-REVIEW`, `AR-REPLY`, `AR-CI`, and `AR-READY`                           | the route, bounded review/dispositions, current-head CI, and readiness evidence are read back without scope expansion                          |
+| `P5.*` except the existing merge checkbox | `AR-FINGERPRINT`, `AR-LANDED`, and `AR-RESYNC`                                         | reviewed/landed fingerprints, merged main, and exactly one successor or terminal state are recorded                                            |
+| `A1.*`                                    | `CORRECTION-FIREWALL-PACKET`                                                           | one reconciled lineage, frozen scope, count, owner, and allowed terminal or human-stop state are recorded                                      |
+| `P6.*`                                    | `CLOSURE-PACKET`                                                                       | immutable PR, pair, archive, main-tip, and worktree-removal evidence is read-only reconciled; Phase 6 creates no PR mutation                   |
+
+The existing `AR-MERGE` checkbox in each unit remains its own repository-authorized merge gate. This
+binding never rewords, scripts, absorbs, or otherwise changes its authority. For future public paths, PRE-A1 admission writes
+the exact public ledger before editing; private paths remain in their native private record and the
+public packet names only the private-safe field contract.
+
+| Packet                       | Record location and authoritative sources                                                                                                                                                     | Bound actions and admitted target                                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BASELINE-PACKET`            | `local-tmp/optimize-pr-process/<public-or-private>-baseline-record.md`; `origin/main` SHA, `git status`, `npm` output, and, privately only, the pre-existing two-path overlay/fingerprint     | `PRIV-BASE:P0.01–P0.P`; public `PUB-BASE` is historical. No tracked path is admitted and Phase 0 cannot create a PR.                                       |
+| `CORRECTION-FIREWALL-PACKET` | the original native public/private PR obligation plus its same-thread reply; source `$REPO`, `$PR`, `$PR_NODE_ID`, and `$ROUTE_PAYLOAD` are recorded there before use                         | `ENTRY-ADAPTERS:A1.01–A1.P`; only the original native record/reply is admitted. A replacement or amendment remains frozen until the record proves count 0. |
+| `CLOSURE-PACKET`             | `local-tmp/optimize-pr-process/closure-record.md`, the merged public closure PR, and `$ARCHIVE_PATH`; merge SHAs and worktree paths are copied there from each terminal record before cleanup | `CLOSURE:P6.01–P6.P`; Phase 6 reads immutable PR/archive evidence, then may remove only the two literal recorded worktree paths.                           |
+
 | Reference        | Exact input, command, and output record                                                                                                                                                                                                                                                                                                                                                                                                                                    | Pass/fail condition                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AR-ENTRY`       | Input: literal `REPO`, `BRANCH`, `RECORD`, `authorization-pin`, `local-base`, `amendment-url`, `admitted-paths`, and `cap-forecast`; private records also require `overlay-paths`/`overlay-fingerprint`. Read the authorization pin from its native sibling artifact, then run the copyable `AR-ENTRY` sequence directly below. Record the selected branch, resolved `current-main`/`unit-base`, and command output in `RECORD`.                                           | `authorization-pin` is native-PR evidence only; `local-base` is an ancestor of fetched current main. Public entry is clean; private entry preserves exactly the recorded overlay and rejects every other staged, untracked, or unstaged residue. The declared branch is created or safely reused from current main and `HEAD`, `current-main`, and `unit-base` exactly equal it before edit. A missing field, stale branch base, overlay mismatch, or nonzero command freezes the unit. |
 | `AR-PROPAGATE`   | Input: `RECORD`'s exact normalized rules and admitted source paths. Read `repo-governance/workflows/repo/repo-rules-propagation.md`, invoke it with `mode=strict` and `isolation=current`, then write its `generated-reports/repo-rules-propagation__*__manifest.md` path and sibling obligation URL into `RECORD`.                                                                                                                                                        | The read-back manifest names only the pre-admitted paths and owners. A new path is fail/stop for a plan amendment, not permission to edit it.                                                                                                                                                                                                                                                                                                                                           |
 | `AR-BIND`        | Input: exact hand-authored paths in `RECORD`. Run `npm run generate:bindings && npm run validate:sync && npm run generate:bindings && git status --short`; append source/generated path sets and output to `RECORD`.                                                                                                                                                                                                                                                       | All commands exit 0; second generation has no tracked change and no generated file was hand-edited.                                                                                                                                                                                                                                                                                                                                                                                     |
-| `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, `git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS \| awk '{a+=$1; d+=$2} END {print a+d}'`, and `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS \| wc -l`; append each result to `RECORD`.                                                                                                                   | Gate exits 0 or the record has an explicit reasoned `N/A`; size is at most 400 lines and 20 files.                                                                                                                                                                                                                                                                                                                                                                                      |
+| `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Run the copyable `AR-LOCAL` sequence below and append each result to `RECORD`.                                                                                                                                                                                                                                                                                                                        | Gate exits 0 or the record has an explicit reasoned `N/A`; size is at most 400 lines and 20 files.                                                                                                                                                                                                                                                                                                                                                                                      |
 | `AR-STAGE`       | Input: admitted path list in `RECORD`. Run `git add -- $ADMITTED_PATHS && git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; record cached paths and full-diff read-back in `RECORD`.                                                                                                                                                                                                                   | Cached paths equal the admitted list in both directions, check exits 0, and one cohesive commit is created/read.                                                                                                                                                                                                                                                                                                                                                                        |
 | `AR-PUSH`        | Input: literal `REPO`, `BRANCH`, and local `HEAD` in `RECORD`. Run `git push --set-upstream origin "$BRANCH" && git ls-remote origin "refs/heads/$BRANCH"`; append both SHAs to `RECORD`.                                                                                                                                                                                                                                                                                  | Remote SHA equals local `HEAD`; no other branch is pushed.                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `AR-DRAFT`       | Input: literal AI-marked `pr-title`/`pr-body-file`, plus `REPO`/`BRANCH` and the immediately preceding `AR-PUSH` remote/local SHA equality in `RECORD`. Run `gh pr create --repo "$REPO" --draft --base main --head "$BRANCH" --title "$PR_TITLE" --body-file "$PR_BODY_FILE"` then `gh pr view --repo "$REPO" --json url,isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`; copy read-back JSON and its `headRefOid` as `reviewed-head` into `RECORD`. | Exactly one draft has the resolved base/head, readable body ending `Generated by AI`, separately recorded whole-PR totals, a literal title, and a preceding `AR-PUSH` equality. Missing title or push evidence fails before PR creation.                                                                                                                                                                                                                                                |
@@ -980,9 +1013,9 @@ recorded; it is never inferred from a branch name, a directory, or a previous PR
 | `AR-REPLY`       | Input: each finding's native thread URL and disposition evidence in `RECORD`. For each fix/reject/defer/clarify, post a literal AI-marked same-thread reply and read it back with `gh pr view --repo "$REPO" --comments`; append reply URL, current head, and terminal state to `RECORD`.                                                                                                                                                                                  | Every finding has exactly one evidence-backed disposition; only a true terminal record is resolved and a fix cites a pushed SHA. A fix that changes the head returns to `AR-REVIEW` with the next cycle and a changed probe before CI or readiness.                                                                                                                                                                                                                                     |
 | `AR-CI`          | Input: current head and PR URL in `RECORD`. Run `gh pr checks --repo "$REPO" --required` after each changed head, at 120-second intervals while pending; append timestamp, head, and result to `RECORD`.                                                                                                                                                                                                                                                                   | Required/current-head checks are green; a push invalidates earlier CI entries and a failure returns to the review route.                                                                                                                                                                                                                                                                                                                                                                |
 | `AR-READY`       | Input: route, thread, CI, and branch-current evidence in `RECORD`. Run `gh pr ready --repo "$REPO"` then `gh pr view --repo "$REPO" --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`; append JSON to `RECORD`.                                                                                                                                                                                                                                                | All five readiness preconditions are listed against the same head and `isDraft` is `false`.                                                                                                                                                                                                                                                                                                                                                                                             |
-| `AR-FINGERPRINT` | Input: `CURRENT_MAIN` and reviewed head recorded in `RECORD`. Run `/usr/bin/git diff --binary "$CURRENT_MAIN" "$REVIEWED_HEAD" \| /usr/bin/shasum -a 256`; append the hash to `RECORD`.                                                                                                                                                                                                                                                                                    | The reviewed-patch hash is present before merge; an unreadable/mismatched head fails.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `AR-FINGERPRINT` | Input: `CURRENT_MAIN` and reviewed head recorded in `RECORD`. Run the copyable `AR-FINGERPRINT` command below and append the hash to `RECORD`.                                                                                                                                                                                                                                                                                                                             | The reviewed-patch hash is present before merge; an unreadable/mismatched head fails.                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `AR-MERGE`       | Input: ready PR URL and zero-unresolved finding/thread evidence in `RECORD`. Run `gh pr merge --repo "$REPO" --squash` then `gh pr view --repo "$REPO" --json mergeCommit,mergedAt,state,headRefOid`; append JSON to `RECORD`.                                                                                                                                                                                                                                             | The PR is merged once under its existing merge gate; no merge-step wording or authority is changed by this reference.                                                                                                                                                                                                                                                                                                                                                                   |
-| `AR-LANDED`      | Input: merge SHA from `RECORD`. Run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" \| /usr/bin/shasum -a 256`; append the landed hash to `RECORD`.                                                                                                                                                                                                                                                                                                                | Landed and reviewed hashes match exactly; inequality stops the unit.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `AR-LANDED`      | Input: merge SHA from `RECORD`. Run the copyable `AR-LANDED` command below and append the landed hash to `RECORD`.                                                                                                                                                                                                                                                                                                                                                         | Landed and reviewed hashes match exactly; inequality stops the unit.                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `AR-RESYNC`      | Input: merge SHA and literal successor state in `RECORD`. Run `git fetch origin main && test "$(git rev-parse origin/main)" = "$MERGE_SHA" && git status --short --branch`; append output and sibling-obligation URL/state to `RECORD`.                                                                                                                                                                                                                                    | `origin/main` equals the merge, the same worktree is clean or has only named private overlay, and exactly one successor/terminal state is published.                                                                                                                                                                                                                                                                                                                                    |
 
 #### `AR-ENTRY` copyable command
@@ -1011,6 +1044,123 @@ fi
 test "$(git rev-parse HEAD)" = "$CURRENT_MAIN"
 git status --short --branch
 ```
+
+#### `AR-LOCAL`, `AR-FINGERPRINT`, and `AR-LANDED` copyable commands
+
+```bash
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
+git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | awk '{a+=$1; d+=$2} END {print a+d}'
+git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l
+```
+
+The first command exits 0 or has a reasoned `N/A` in `RECORD`; the next two results are at most 400
+and 20 respectively.
+
+```bash
+/usr/bin/git diff --binary "$CURRENT_MAIN" "$REVIEWED_HEAD" | /usr/bin/shasum -a 256
+/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256
+```
+
+Record the first hash before merge and the second after merge; exact equality is required.
+
+#### `BASELINE-PACKET`, `CORRECTION-FIREWALL-PACKET`, and `CLOSURE-PACKET` copyable commands
+
+```bash
+git status --short --branch
+npm install
+npm run doctor
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
+```
+
+`BASELINE-PACKET` records the four outputs, public clean/private overlay-only state, and one
+successor or terminal stop; it creates no PR.
+
+```bash
+git fetch origin main
+git status --short --branch
+git switch --detach "$(git rev-parse origin/main)"
+test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+test -z "$(git diff --cached --name-only)"
+test -z "$(git ls-files --others --exclude-standard)"
+test "$(git diff --binary | /usr/bin/shasum -a 256)" = "$OVERLAY_FINGERPRINT"
+```
+
+For a public baseline, the final three private-overlay checks are `N/A` and `git status --porcelain`
+must be empty. For a private baseline, `$OVERLAY_FINGERPRINT` and its two exact paths come from the
+native record before detaching; every other residue freezes the unit.
+
+```bash
+gh pr view --repo "$REPO" "$PR" --json url,headRefOid,mergeCommit,state,reviews,comments
+gh pr checks --repo "$REPO" "$PR" --required
+```
+
+`CORRECTION-FIREWALL-PACKET` compares those read-backs with the native obligation's lineage ID,
+count, paused head, owner, and permitted state; ambiguity or count 1 freezes for a human rather than
+opening a second correction.
+
+```bash
+gh api graphql -f query='query($id:ID!){node(id:$id){... on PullRequest{reviewThreads(first:100){nodes{id isResolved comments(first:100){nodes{url body}}}}}}}' -F id="$PR_NODE_ID"
+gh pr comment --repo "$REPO" "$PR" --body-file "$ROUTE_PAYLOAD"
+gh pr view --repo "$REPO" "$PR" --comments
+```
+
+Read the original native obligation before writing; record its compared URL/evidence and one result:
+no match allocates a count-0 lineage, a proven match reuses its current count, and ambiguity or count
+1 posts no replacement and freezes the pair. A portable/plan defect updates that same native record
+and pauses the private PR; local adaptation, reasoned deviation, and unrelated follow-up do not open
+an upstream correction.
+
+```bash
+git fetch origin main
+git worktree list --porcelain
+gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json url,baseRefOid,headRefOid,body,mergeCommit,state
+/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256
+```
+
+`CLOSURE-PACKET` first performs read-only reconciliation after the closure merge, compares the landed
+hash, terminal pair records, and archive/index evidence, then performs only the explicitly bounded
+local cleanup that removes the two already-recorded clean plan worktrees.
+
+```bash
+git -C /Users/wkf/ose-projects/ose-public merge-base --is-ancestor "$PUBLIC_MERGE_SHA" origin/main
+git -C /Users/wkf/ose-projects/ose-private merge-base --is-ancestor "$PRIVATE_MERGE_SHA" origin/main
+test -d "$ARCHIVE_PATH"
+git -C /Users/wkf/ose-projects/ose-public worktree list --porcelain
+git -C /Users/wkf/ose-projects/ose-private worktree list --porcelain
+git -C "$PUBLIC_WORKTREE" status --short
+git -C "$PRIVATE_WORKTREE" status --short
+git -C /Users/wkf/ose-projects/ose-public worktree remove "$PUBLIC_WORKTREE"
+git -C /Users/wkf/ose-projects/ose-private worktree remove "$PRIVATE_WORKTREE"
+git -C /Users/wkf/ose-projects/ose-public worktree prune
+git -C /Users/wkf/ose-projects/ose-private worktree prune
+```
+
+Run removal only after every terminal record is read back and both worktrees are clean; then rerun
+both list commands and require neither recorded worktree path to remain. Archive, index, semantic
+pair comparison, AI-marker, cycle, and disclosure evidence are read from the immutable closure PR;
+an absent item is a closure blocker, never a new Phase 6 mutation.
+
+#### `AR-PROPAGATE` and `AR-REVIEW` explicit invocations
+
+`AR-PROPAGATE` is a repository workflow, not a shell tool. Invoke it **only** with
+`repo-governance/workflows/repo/repo-rules-propagation.md` in the current worktree with literal
+inputs `rules=$NORMALIZED_RULES`, `mode=strict`, `isolation=current`, and `dry-run=true`; first
+read the workflow, then record its generated
+`generated-reports/repo-rules-propagation__*__manifest.md` path, normalized statement, placement,
+enforcement disposition, and private sibling obligation in `RECORD`. Its pass condition is a manifest
+with only admitted paths and one explicit sibling obligation or `none`; an unadmitted path freezes
+the unit. The workflow creates no commit or PR in this mode; `AR-STAGE`, `AR-PUSH`, and `AR-DRAFT`
+remain the unit's sole delivery owner. No CLI wrapper is invented for this documentation workflow.
+
+`AR-REVIEW` directly composes the repository's native PR-review makers once for the current
+`$REPO/$PR` and `$REVIEWED_HEAD`: first `pr-review-scout-maker` produces the risk tier, selected
+lenses, and PR-native route; the selected specialists inspect that same head; then
+`pr-review-synthesis-maker` posts exactly one AI-marked consolidated native review. Read back
+`gh pr view --repo "$REPO" "$PR" --json reviews` and record the review URL, cycle, changed probe,
+and finding IDs. It passes only when all artifacts name the current head and one cycle; a changed
+head, missing route, or Cycle 6 request freezes for the next permitted action or human stop. This
+plan does not invoke the separate seven-cycle `pr-review-quality-gate`: its user-authorized eligible
+route targets Cycles 1–3, permits bounded recovery only in Cycles 4–5, and hard-stops before Cycle 6. This is an explicit agent invocation, not a fictitious command-line program.
 
 ### PRE-A1-ADMISSION / PRIV-ADMISSION — Make the Known Rule Waves Reachable
 
@@ -1346,6 +1496,18 @@ follow-up only; it never creates a new `plans/backlog/**` or `plans/ideas/**` pa
 - [ ] `[CLOSURE:P6.G][AI]` Pass complete task/evidence reconciliation, pair terminality, auditability, public/private disclosure, no-tooling, dogfood, archive, main-branch, and worktree-removal gate.
 - [ ] `[CLOSURE:P6.P][AI]` Record final public/private main pins, archive location, removed worktree paths, retained follow-ups, and the ose-public focus state.
 
+### Phase 6 Gate
+
+> All checks below must pass before declaring the plan complete. Phase 6 is read-only validation and
+> cleanup; it creates no PR mutation or successor branch.
+
+- [ ] `[PHASE-6:G6.01][AI]` Run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json url,baseRefOid,headRefOid,body,mergeCommit,state,reviews,comments`; acceptance: immutable PR, readable AI-marked body, merge, and all recorded review evidence equal the Phase 3–5 records.
+- [ ] `[PHASE-6:G6.02][AI]` Run `git fetch origin main && /usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256`; acceptance: fetched main contains every recorded public merge and the recomputed landed hash equals the stored reviewed hash.
+- [ ] `[PHASE-6:G6.03][AI]` Run `git -C /Users/wkf/ose-projects/ose-public worktree list --porcelain && git -C /Users/wkf/ose-projects/ose-private worktree list --porcelain`; acceptance: neither explicit public nor private plan-worktree path remains registered after their separately recorded clean removal, and the terminal record names the final public/private main pins and archive path.
+
+> **Pause Safety**: The public archive, terminal native PR evidence, final main pins, and worktree
+> removal record are durable. Safe to stop. To resume: `git -C /Users/wkf/ose-projects/ose-public worktree list --porcelain`.
+
 ## Dormant Lifecycle and Evidence-State Template
 
 The lines below deliberately are not checkboxes. The six WAVES checklist slices must copy every
@@ -1384,6 +1546,12 @@ before PRIV-IDEAS; record and preserve its authorized overlay. Phase 0 itself op
 
 All commands pass, authorized dirty paths are named, Phase 0 itself created no PR, any repair PR is
 merged and recorded, no ordinary-unit PR is open, and the first unit has an exact pin.
+
+> All checks below must pass before starting Phase 1. Phase 0 opens no PR.
+
+- [ ] `[PHASE-0:G0.01][AI]` Run `git status --short --branch`; acceptance: the baseline record names every dirty path, public is clean, and private contains only its recorded authorized overlay.
+- [ ] `[PHASE-0:G0.02][AI]` Run `npm install && npm run doctor && apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: every command exits 0, or the record proves the prescribed baseline-repair route completed and its plain-doctor recheck passed.
+- [ ] `[PHASE-0:G0.03][AI]` Read the baseline record in `local-tmp/optimize-pr-process/<unit>-record.md`; acceptance: it names one exact successor pin or terminal reasoned `N/A`, and records that Phase 0 created no PR.
 
 > **Pause Safety**: The repository, baseline result, predecessor, and Phase 1 entry command are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
 
@@ -1435,6 +1603,12 @@ Every rule unit then performs these authoring steps:
 Branch/base/pin evidence is exact, scope is frozen, forecast is within bounds, and the before/after
 ledger contains only owned paths.
 
+> All checks below must pass before starting Phase 2.
+
+- [ ] `[PHASE-1:G1.01][AI]` Run the bound `AR-ENTRY` command from [Controlled Runbook Bindings](#controlled-runbook-bindings); acceptance: its exit is 0 and `HEAD`, `current-main`, and `unit-base` equal the record's fetched repository-local `origin/main`.
+- [ ] `[PHASE-1:G1.02][AI]` Run `git status --short --branch`; acceptance: output equals the record's admitted before-ledger, with no unexpected path and only the recorded private overlay where applicable.
+- [ ] `[PHASE-1:G1.03][AI]` Run `npm run generate:bindings && npm run validate:sync && npm run generate:bindings && git status --short` when the record marks binding work applicable; acceptance: all commands exit 0, second generation has no tracked change, otherwise the record has a reasoned `N/A`.
+
 > **Pause Safety**: Branch, head, ledger, and dirty state are recorded; no other unit has started. Safe to stop. To re-verify: `git status --short --branch`.
 
 ## Dormant Phase 2 Template — Verify, Stage, and Commit
@@ -1458,6 +1632,12 @@ ledger contains only owned paths.
 Acceptance/local gates pass, actual size is within bounds, staged paths equal the ledger, commits
 are cohesive, and the full diff was read.
 
+> All checks below must pass before starting Phase 3.
+
+- [ ] `[PHASE-2:G2.01][AI]` Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: it exits 0 or the record contains an applicable evidenced `N/A`.
+- [ ] `[PHASE-2:G2.02][AI]` Run `git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | awk '{a+=$1; d+=$2} END {print a+d}'` and `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l`; acceptance: results are no more than 400 changed lines and 20 hand-authored files.
+- [ ] `[PHASE-2:G2.03][AI]` Run `git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; acceptance: cached paths equal the admitted ledger in both directions, check exits 0, and the complete patch is read before the cohesive commit.
+
 > **Pause Safety**: The local head and clean tree or named intended residue are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.
 
 ## Dormant Phase 3 Template — Push and Draft Human Entry Point
@@ -1480,6 +1660,11 @@ are cohesive, and the full diff was read.
 ### Phase 3 Gate
 
 One draft PR exists at the declared boundary and its human entry point matches the diff.
+
+> All checks below must pass before starting Phase 4.
+
+- [ ] `[PHASE-3:G3.01][AI]` Run `git push --set-upstream origin "$BRANCH" && git ls-remote origin "refs/heads/$BRANCH"`; acceptance: remote SHA equals the record's local `HEAD` and no other branch is pushed.
+- [ ] `[PHASE-3:G3.02][AI]` Run `gh pr view --repo "$REPO" --json url,isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`; acceptance: one draft has base `main`, the declared branch/head, separately recorded totals, and body ending `Generated by AI`.
 
 > **Pause Safety**: The draft URL, current head, and literal body are recorded. Safe to stop. To re-verify: `gh pr view --repo <owner/repo> <pr> --json isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`.
 
@@ -1557,6 +1742,12 @@ Eligible semantic exit holds within five cycles, or noneligible classifier evide
 passes. Every artifact is read back, all five readiness preconditions pass, no correction loop or
 unresolved thread remains, scope is frozen, and readiness is true.
 
+> All checks below must pass before starting Phase 5.
+
+- [ ] `[PHASE-4:G4.01][AI]` Run `gh pr view --repo "$REPO" --json reviews` and `gh pr view --repo "$REPO" --comments`; acceptance: the record proves route-specific completion, every finding has one AI-marked same-thread disposition, and only terminal evidence is resolved.
+- [ ] `[PHASE-4:G4.02][AI]` Run `gh pr checks --repo "$REPO" --required`; acceptance: required checks are green for the record's current `reviewed-head`, not a superseded head.
+- [ ] `[PHASE-4:G4.03][AI]` Run `gh pr view --repo "$REPO" --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`; acceptance: all five readiness preconditions are recorded against one head and `isDraft` is `false`.
+
 > **Pause Safety**: Reviewed head, cycle/thread/CI state, and sibling state are recorded. Safe to
 > stop. To re-verify: `gh pr view --repo <owner/repo> <pr> --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`.
 
@@ -1600,6 +1791,12 @@ unresolved thread remains, scope is frozen, and readiness is true.
 
 The PR is merged, landed diff and fingerprint match, `origin/main` contains the merge, the worktree
 is resynced, and the sibling obligation has one owner, state, and immutable pin.
+
+> All checks below must pass before starting the declared successor or terminal Phase 6. This gate verifies a completed merge; it does not perform or alter the existing merge step.
+
+- [ ] `[PHASE-5:G5.01][AI]` Run `gh pr view --repo "$REPO" --json headRefOid,mergeCommit,mergedAt,state`; acceptance: the PR is merged once and returned head/merge SHA equal the immutable record.
+- [ ] `[PHASE-5:G5.02][AI]` Run `git fetch origin main && test "$(git rev-parse origin/main)" = "$MERGE_SHA" && git status --short --branch`; acceptance: fetched main equals the merge and the worktree is clean or has only the named private overlay.
+- [ ] `[PHASE-5:G5.03][AI]` Run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256`; acceptance: landed fingerprint equals the reviewed fingerprint in the record.
 
 > **Pause Safety**: Merge/new-main SHA, sibling state, and next branch are recorded. Safe to stop.
 > To re-verify: `git status --short --branch`.

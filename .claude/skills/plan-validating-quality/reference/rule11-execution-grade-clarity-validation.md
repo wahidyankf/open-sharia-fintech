@@ -14,6 +14,15 @@ authoring-grade hand-waving is a HARD RULE violation.
 ose-web:typecheck` exits 0"). Bare "implement X", "set up Y", "configure Z", "add caching", "fix
    the bug": **HIGH**.
 
+**Controlled runbook-reference exception**: A cross-repository delivery checkbox may bind to one
+same-document, uniquely named runbook packet instead of repeating commands or private paths only
+when the packet is explicitly bound to the checkbox's ID or unit/phase. It must state the exact
+record fields and their sources, copyable commands, exact admitted public paths or a maximum-detail
+private-safe target, observable pass/fail result, record location, and finite applicability. The
+packet must be in the same `delivery.md`; “see template”, an external document, or an execution-time
+invented record is still **HIGH**. The exception preserves one independently completable checkbox and
+never hides a human merge gate, a scope boundary, or an acceptance criterion.
+
 **How to audit**: for each `- [ ]` line, identify whether it edits a file, runs a command, verifies an
 outcome, then check the corresponding element is present. **Exempt the final PR-merge step** from (b)
 and (c) — a governance gate whose acceptance criterion is the PR Merge Protocol's five preconditions,
@@ -21,7 +30,8 @@ not a scripted command; this exemption does not extend to (a), nor to phase-gate
 checkboxes merely mentioning merging. Treat each missing element as a separate **HIGH** finding (one
 per element per checkbox — plan-fixer batch-resolves).
 
-**Finding severity**: bare action verbs without path/command/criterion: **HIGH** per checkbox. Path
+**Finding severity**: bare action verbs without path/command/criterion outside a valid controlled
+runbook-reference exception: **HIGH** per checkbox. Path
 placeholder without resolution: **HIGH**. Command placeholder without verbatim invocation: **HIGH**.
 Missing acceptance criterion where the action could partially complete without external proof:
 **HIGH**. Multiple missing elements on one checkbox: still ONE finding. Final PR-merge step missing
