@@ -62,10 +62,8 @@ and the current design has no mechanism — human or automated — to flag the m
   — the sibling repo's own two-pager that provisions the first real `prod-beaver-nest-fe`/
   `stag-beaver-nest-be` targets; whatever registry shape this brief settles on should be the one that
   plan declares into, not a second convention it must also satisfy.
-- [`stale-checkout-ref-advance-drift`](./stale-checkout-ref-advance-drift.md) — the sibling brief from
-  the same investigation, covering the mechanism that actually broke something (a ref-advancing
-  `fetch` desyncing a checkout). That brief explicitly scopes the phantom-refs finding **out**, leaving
-  it here.
+- **Checkout ref drift** — a separately tracked sibling concern about a ref-advancing `fetch`
+  desyncing a checkout; this brief retains the phantom-refs scope.
 
 ## Proposed direction (sketch)
 

@@ -45,9 +45,8 @@ someone measures it deliberately — which is what just happened.
 - **`optimize-cis`** (this repo, Phase 7 + Phase 11) — where the key change landed and where M7 was
   recorded as FAIL with the accumulation gap named. Its `results.md` is the source of every figure
   above.
-- **`nx-affected-cross-worktree-contamination`** — the sibling Nx-caching two-pager; that one is
-  about which projects `nx affected` selects, this one about what the Actions cache retains.
-  [two-pager](./nx-affected-cross-worktree-contamination.md)
+- **Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected`
+  selects across worktrees, unlike Actions cache retention.
 - **GitHub's documented behaviour** — repositories get 10 GiB of Actions cache and entries are
   evicted LRU once the ceiling is reached; entries unused for 7 days expire on their own. Both
   mechanisms are time/recency-based and neither is size- or cost-aware.
