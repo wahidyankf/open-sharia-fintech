@@ -19,8 +19,10 @@ live-backlink authority. The plan-quality remediation merged as PR #280 at
 `7ea591ee54363c4811fb42ccef94cac898b598cc`; PUB-IDEAS-5 then completed in PR #281 at
 `e70ef47b945cbc91d23a641230a87a2b8879f75a`, whose receipt named PUB-IDEAS-6. PR #282 merged at
 `56e5fa6c5168ffe5569d21a4b685a76168dd6f13` and admitted PUB-IDEAS-6's four exact live-backlink
-repairs. Tracked plan text defines the successor and admissible paths; GitHub remains the durable
-review and receipt record. PUB-IDEAS-6 remains frozen until strict revalidation passes; the private
+repairs. PR #283 then merged at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`, recording the current
+state and finite runbook rule. Tracked plan text defines the successor and admissible paths; GitHub
+remains the durable review and receipt record. PUB-IDEAS-6 remains frozen until two consecutive
+strict revalidation passes are recorded from this merged state; the private
 overlay and every rule/code wave remain frozen until their declared predecessor authorizes them.
 
 ## Outcome

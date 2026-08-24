@@ -28,7 +28,8 @@ Exactly six public briefs remain: PUB-IDEAS-6 owns
 owns `cross-repo-governance-link-parity.md` and `plan-archival-in-pr-multi-repo-gap.md`; and
 PUB-IDEAS-8 owns `propagation-checklist-under-coverage.md` and
 `recurring-defect-family-escalation.md`. PUB-IDEAS-6 is the sole candidate successor and remains
-frozen until the plan-state correction and strict revalidation recorded in `delivery.md` are clean.
+frozen until the two strict revalidations recorded in `delivery.md` are clean. The plan-state
+correction already merged in PR #283 at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`.
 
 ## Historical Public Dispositions
 
