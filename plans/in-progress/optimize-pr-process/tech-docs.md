@@ -79,6 +79,10 @@ ceiling.
 │       # CLOSURE adds only the archived control-plan entry after its reviewed archive move
 ├── [E] repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md
 │       # the sole PUB-IDEAS-5 live-backlink repair admitted by PR #277
+├── [E] plans/ideas/q2-not-urgent-important/{actions-cache-eviction-policy,shared-cargo-target-lock-contention,deploy-targets-registry}.md
+│       # the three PUB-IDEAS-6 live-backlink repairs admitted only by its merged amendment ledger
+├── [E] repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md
+│       # the fourth PUB-IDEAS-6 live-backlink repair admitted only by its merged amendment ledger
 └── [N] plans/done/<recorded-YYYY-MM-DD>__optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
         # CLOSURE archive targets only; record the runtime date before the move
 ```
