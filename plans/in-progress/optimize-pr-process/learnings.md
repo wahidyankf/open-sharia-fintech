@@ -87,11 +87,10 @@
 
 ## Closure Triage Record
 
-Before archival, apply `CLOSURE:P6.29a`–`P6.29e` in `delivery.md` to every entry above and every
-new dogfood result. Record each surviving entry's one durable destination, or its discard reason.
-Sanitize sensitive/private material before recording it here; private-only learning stays in the
-private repository. If none survive, replace this paragraph with `No generalizable learnings —
-<reason>`.
+Before the CLOSURE PR is made ready, apply `CLOSURE:P5.13`–`P5.15` in `delivery.md` to every entry
+above and every new dogfood result. Record each surviving entry's one durable destination, or its
+discard reason. Sanitize sensitive/private material before recording it here; private-only learning
+stays in the private repository. Phase 6 (`P6.29a`–`P6.29e`) only validates the landed archive.
 
 ### Required Per-Entry Read-Back Fields
 

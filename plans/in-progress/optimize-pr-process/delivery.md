@@ -1062,6 +1062,7 @@ unit's PR route/reply artifact before the associated gate passes.
 - [ ] `[PRIV-A3:P4.01][AI]` Run only `AR-DRAFT`. Acceptance: the private-safe body is read back at its exact current head.
 - [ ] `[PRIV-A3:P4.02][AI]` Run only `AR-ROUTE` with `UNIT=priv-a3` and `RECORD=local-tmp/optimize-pr-process/priv-a3-record.md`. Acceptance: the private-safe route is read back with frozen scope and selected lenses.
 - [ ] `[PRIV-A3:P4.03][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PRIV-A3:P4.03a][AI]` On a portable or plan defect, freeze through `ENTRY-ADAPTERS:A1.06`–`A1.12` before readiness or merge. Acceptance: the active private cycle count and shared correction budget are retained.
 - [ ] `[PRIV-A3:P4.04][AI]` Run only `AR-REPLY` with that same record. Acceptance: every finding has an AI-marked same-thread disposition without private leakage.
 - [ ] `[PRIV-A3:P4.05][AI]` Run only `AR-CI` with that same record. Acceptance: required checks are green for the recorded current head.
 - [ ] `[PRIV-A3:P4.06][AI]` Run only `AR-READY` with that same record. Acceptance: read-back confirms all readiness preconditions on that head.
@@ -1069,7 +1070,6 @@ unit's PR route/reply artifact before the associated gate passes.
 - [ ] `[PRIV-A3:P5.02][AI]` Run only `AR-MERGE` with that same record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
 - [ ] `[PRIV-A3:P5.03][AI]` Run only `AR-LANDED` with that same record. Acceptance: landed and reviewed hashes match exactly.
 - [ ] `[PRIV-A3:P5.04][AI]` Run only `AR-RESYNC` with that same record. Acceptance: overlay-safe resync records one terminal obligation state.
-- [ ] `[PRIV-A3:P5.02][AI]` Freeze portable or plan defects through ENTRY-ADAPTERS without resetting the active private cycle count.
 - [ ] `[PRIV-A3:P1.G][AI]` Pass semantic-correspondence, disclosure, overlay, cycle, and terminal-obligation gate.
 - [ ] `[PRIV-A3:P1.P][AI]` Record private merge pin and prepare PUB-B only after terminal state.
 
