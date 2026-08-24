@@ -590,6 +590,20 @@ entry's exact execution base is the fetched current `origin/main` recorded at P1
 descendant of that PR #282 pin. Neither record authorizes a path outside this table. Missing proof,
 table match, or ancestry freezes the unit.
 
+#### PUB-IDEAS-8 live-backlink amendment ledger
+
+PUB-IDEAS-8's pre-edit scan found the two links below after PUB-IDEAS-7's terminal receipt. This
+amendment authorizes only their minimal reader-preserving repair before the mapped briefs retire.
+
+| Exact live-backlink path                                                           | Mapped target                             | Minimal permitted repair                                                                                                                                        |
+| ---------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plans/ideas/q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md`     | `propagation-checklist-under-coverage.md` | Replace the complete linked sibling bullet with “**Propagation coverage** — a separately tracked sibling concern about how a sibling gets ahead of its source.” |
+| `plans/ideas/q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md` | `propagation-checklist-under-coverage.md` | Remove only the standalone direct Markdown-link line; preserve the preceding precedent explanation.                                                             |
+
+For PUB-IDEAS-8, the merged amendment commit becomes its immutable live-backlink authority. No
+other discovered path, plain-text historical mention, or plan-state record is admitted by this
+table; any additional live Markdown backlink freezes the unit again.
+
 #### PLAN-STATE-CORRECTION rule-propagation ledger
 
 Before PUB-IDEAS-6 can resume, this plan-only correction may change only the canonical convention
