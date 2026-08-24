@@ -1127,18 +1127,27 @@ git -C /Users/wkf/ose-projects/ose-private merge-base --is-ancestor "$PRIVATE_ME
 test -d "$ARCHIVE_PATH"
 git -C /Users/wkf/ose-projects/ose-public worktree list --porcelain
 git -C /Users/wkf/ose-projects/ose-private worktree list --porcelain
+PUBLIC_BRANCH="$(git -C "$PUBLIC_WORKTREE" branch --show-current)"
+PRIVATE_BRANCH="$(git -C "$PRIVATE_WORKTREE" branch --show-current)"
+test -n "$PUBLIC_BRANCH" && test -n "$PRIVATE_BRANCH"
+gh pr list --repo wahidyankf/ose-public --head "$PUBLIC_BRANCH" --state all --json number,state,mergedAt
+gh pr list --repo wahidyankf/ose-private --head "$PRIVATE_BRANCH" --state all --json number,state,mergedAt
 git -C "$PUBLIC_WORKTREE" status --short
 git -C "$PRIVATE_WORKTREE" status --short
+git -C "$PUBLIC_WORKTREE" log "origin/$PUBLIC_BRANCH..$PUBLIC_BRANCH"
+git -C "$PRIVATE_WORKTREE" log "origin/$PRIVATE_BRANCH..$PRIVATE_BRANCH"
 git -C /Users/wkf/ose-projects/ose-public worktree remove "$PUBLIC_WORKTREE"
 git -C /Users/wkf/ose-projects/ose-private worktree remove "$PRIVATE_WORKTREE"
 git -C /Users/wkf/ose-projects/ose-public worktree prune
 git -C /Users/wkf/ose-projects/ose-private worktree prune
 ```
 
-Run removal only after every terminal record is read back and both worktrees are clean; then rerun
-both list commands and require neither recorded worktree path to remain. Archive, index, semantic
-pair comparison, AI-marker, cycle, and disclosure evidence are read from the immutable closure PR;
-an absent item is a closure blocker, never a new Phase 6 mutation.
+Run removal only after every terminal record is read back, both PR-list results show a merged PR,
+both worktrees are clean, both local-only commit logs are empty, and the terminal record proves the
+two paths were created by this plan and are idle. Then rerun both list commands and require neither
+recorded worktree path to remain. Archive, index, semantic pair comparison, AI-marker, cycle, and
+disclosure evidence are read from the immutable closure PR; an absent item is a closure blocker,
+never a new Phase 6 mutation.
 
 #### `AR-PROPAGATE` and `AR-REVIEW` explicit invocations
 

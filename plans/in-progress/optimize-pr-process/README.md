@@ -56,7 +56,8 @@ computer-science background. A merged PR remains an educational team record, not
 - For cross-repository execution, a controlled same-document runbook binding may carry the one
   copyable procedure and private-safe admission fields for a finite set of lifecycle checkboxes.
   This is a readability and maintenance boundary, not tooling: it avoids divergent copies of the
-  same command while retaining an auditable, junior-readable procedure and never hiding a merge gate.
+  same command while retaining an auditable, junior-readable procedure and never changing an existing
+  merge gate.
 
 ## Scope and Delivery Shape
 

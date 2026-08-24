@@ -21,7 +21,7 @@ record fields and their sources, copyable commands, exact admitted public paths 
 private-safe target, observable pass/fail result, record location, and finite applicability. The
 packet must be in the same `delivery.md`; “see template”, an external document, or an execution-time
 invented record is still **HIGH**. The exception preserves one independently completable checkbox and
-never hides a human merge gate, a scope boundary, or an acceptance criterion.
+never changes an existing merge gate, a scope boundary, or an acceptance criterion.
 
 **How to audit**: for each `- [ ]` line, identify whether it edits a file, runs a command, verifies an
 outcome, then check the corresponding element is present. **Exempt the final PR-merge step** from (b)

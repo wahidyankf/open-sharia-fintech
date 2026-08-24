@@ -24,18 +24,27 @@ Plans are executed by execution-grade agents. Every checkbox MUST be unambiguous
 
 ## Controlled Runbook-Reference Exception
 
-Use a same-document, uniquely named runbook packet only when literal repetition would duplicate
-one maintained procedure or disclose private detail. Its finite binding to the checkbox ID or phase
-MUST state record sources, copyable commands, its admitted public path or private-safe target, and
-the pass/fail record. It cannot refer generically elsewhere, invent records at execution, change a
-merge gate, or evade file-touch, scope, or acceptance requirements.
+Use a same-document, uniquely named runbook packet only for a cross-repository
+confidentiality/admission case where literal repetition would duplicate one maintained procedure or
+disclose private detail. Its finite binding to the checkbox ID or phase MUST state record sources,
+copyable commands, its admitted public path or private-safe target, and the pass/fail record. It
+cannot refer generically elsewhere, invent records at execution, change an existing merge gate, or
+evade file-touch, scope, or acceptance requirements.
 
 **Enforcement disposition — unenforced by decision:** contextual `plan-checker` review records the
 binding and violations; no scanner or exception list is introduced. This limits drift and preserves
 human readability without adding maintenance burden.
 
-- **One scenario per behavior cycle + inline Gherkin**: each behavior RED→GREEN→REFACTOR cycle
-  binds exactly one verbatim scenario. See [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development/gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
+- **One scenario per behavior cycle + inline Gherkin**: Every behavior-implementing
+  RED→GREEN→REFACTOR cycle targets **exactly one** Gherkin scenario. Its RED step carries a
+  single-scenario `**Gherkin (binds) →** "<title>"` tag line followed immediately by that
+  scenario's full `Given/When/Then` as a fenced ` ```gherkin ` block copied verbatim from the
+  companion `.feature`; never bundle multiple scenarios into one cycle (long checklists are
+  expected). Pure-core (`**Gherkin (underpins) →**`) data/calc tests and the aggregate
+  feature-consuming / `playwright-bdd` binders are the only steps that keep a multi-scenario
+  title list. `plan-checker` flags a multi-scenario behavior RED, or absent/non-verbatim inline
+  Gherkin, as a **HIGH** finding. See
+  [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development/gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
 
 **HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
 
@@ -53,4 +62,4 @@ human readability without adding maintenance burden.
       `npx nx run ose-www:test:quick` — all tests pass.
 ```
 
-**Acceptance Criteria**: User stories in `prd.md` (or a single-file plan’s condensed PRD) use testable Gherkin. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md).
+**Acceptance Criteria**: All user stories in `prd.md` (or the condensed PRD section of a single-file plan's `README.md`) must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md) for complete details, including the **step-keyword cardinality HARD rule**: every `Scenario` uses exactly one primary `Given`, one `When`, and one `Then`; additional steps chain with `And`/`But`. `Background` blocks and `Scenario Outline` `Examples` tables are exempt. `plan-checker` and `repo-rules-checker` enforce this rule on Gherkin fences in `plans/in-progress/` and `plans/backlog/`; `plans/done/` is exempt as an immutable archive.

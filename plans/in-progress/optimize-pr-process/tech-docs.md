@@ -245,7 +245,7 @@ the same lifecycle shell commands in every public/private checkbox would create 
 truth. `delivery.md` therefore binds only its finite lifecycle IDs to a same-document packet that
 lists record-field sources, copyable commands, private-safe path treatment, and pass/fail evidence.
 The binding is human-readable and auditable from the PR artifact; it is not a synchronization tool,
-does not authorize a new path, and cannot weaken an existing human merge gate.
+does not authorize a new path, and cannot weaken an existing merge gate.
 
 ## Validation
 
