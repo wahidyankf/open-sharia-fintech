@@ -562,6 +562,23 @@ sole **execution-base pin**; it does not alter PR #277's live-backlink authority
 unrelated amendment may replace that pin. Missing the required authorization evidence, PR #277
 authority, or this remediation receipt freezes the unit.
 
+#### PUB-IDEAS-6 live-backlink amendment ledger
+
+This table resolves the pre-edit freeze at
+`e70ef47b945cbc91d23a641230a87a2b8879f75a`. PUB-IDEAS-6 remains frozen until this plan-only
+amendment merges; its resumed entry must use that merge pin.
+
+| Exact live-backlink path                                                             | Mapped target                                 | Minimal permitted repair                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plans/ideas/q2-not-urgent-important/actions-cache-eviction-policy.md`               | `nx-affected-cross-worktree-contamination.md` | Replace the complete two-line linked sibling bullet with “**Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected` selects across worktrees, unlike Actions cache retention.”       |
+| `plans/ideas/q2-not-urgent-important/shared-cargo-target-lock-contention.md`         | `nx-affected-cross-worktree-contamination.md` | Replace the complete two-line linked sibling bullet with “**Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected` selects across worktrees, unlike shared-target lock contention.” |
+| `plans/ideas/q2-not-urgent-important/deploy-targets-registry.md`                     | `stale-checkout-ref-advance-drift.md`         | Replace the complete linked sibling bullet with “**Checkout ref drift** — a separately tracked sibling concern about a ref-advancing fetch desyncing a checkout; this brief retains the phantom-refs scope.”               |
+| `repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md` | `stale-checkout-ref-advance-drift.md`         | Replace only the direct-link clause with “the incident this caused is separately tracked,” preserving the Terminal Reconcile link and its command guidance.                                                                |
+
+For PUB-IDEAS-6 after this amendment, retain PUB-IDEAS-5's merged successor proof as authorization
+evidence. This amendment's future merge receipt supplies the sole execution-base pin; it does not
+authorize any path outside this table. Missing the proof, table match, or receipt freezes the unit.
+
 #### Immutable Completion Ledger — PUB-IDEAS-4 (Do Not Re-run)
 
 The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-5–8 only.
