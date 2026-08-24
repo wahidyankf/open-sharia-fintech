@@ -14,14 +14,13 @@ when_to_use: "Use when a size split would leave main stating one rule two contra
 
 # The Atomicity Exception (PR-Size Rule 5)
 
-**Which rule 5?** Two schemes share this family — delivery-boundary rules 1-7 in
-[Rules](./prs-open-at-delivery-boundaries-rules.md), PR-size rules 1-5 in
-[Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md). This is the latter; qualify the
-number when citing it elsewhere.
+**Which rule 5?** This is [PR-size rule 5](./prs-open-at-delivery-boundaries-pr-size.md), not
+delivery-boundary rule 5; qualify it when citing.
 
 [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) rule 1 splits a sweep by surface;
-rule 4 bounds each slice at ≤400 changed lines and ≤20 hand-authored files. This is the single case
-where those yield.
+rule 4 allows at most 400 handwritten program/script lines, 900 handwritten lines for a mixed PR,
+1,000 handwritten lines in every case, and 20 hand-authored files. This is the single case where
+those yield.
 
 ## The Rule
 

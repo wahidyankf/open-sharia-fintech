@@ -35,10 +35,16 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    [Worktree Specification](./worktree-specification.md#worktree-specification) and
    [Worktree Cap](./worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
-4. **Every PR here is human-readable — there are no machine-only PRs.** A person must review any
-   of them unaided, so the bound is human-scale: **≤400 changed lines AND ≤20 changed files,
-   counting hand-authored files only**. Generated mirrors (`.agents/`, `.opencode/`, `.codex/`)
-   enter neither count — byte-generated from `.claude/`, sync-gated, read by nobody.
+4. **Every PR here is human-readable — there are no machine-only PRs.** A person must review it
+   unaided. Count handwritten lines and files: program/script lines (`P`) are at most **400**; if
+   program/script and non-program lines (`N`) mix, `P + N ≤ 900` (`N ≤ 900 − P`); every PR has an
+   absolute **1,000-line** ceiling; and there are at most **20 hand-authored files**. A
+   documentation-only PR may reach 1,000 lines; a 100-program-line mixed PR permits 800 non-program
+   lines.
+   Generated mirrors (`.agents/`, `.opencode/`, `.codex/`) enter neither count — byte-generated from
+   `.claude/`, sync-gated, read by nobody.
+   **Use one PR for as much of one natural, independently stable seam as fits.** Split only at a
+   real seam when its applicable limit would otherwise be exceeded.
 5. **A slice must be self-consistent on `main` the moment it merges** — see
    [The Atomicity Exception](./prs-open-at-delivery-boundaries-pr-size-atomicity.md), which pairs a
    convention with the binding that executes it and is the one exception to rule 4.

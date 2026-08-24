@@ -36,8 +36,13 @@ computer-science background. A merged PR remains an educational team record, not
 
 - Prefer prose, existing GitHub features, and existing workflows. Add mechanical enforcement only
   when evidence shows it is necessary; every line of tooling becomes maintenance burden.
-- [Judgment call] Keep each PR cohesive and readable: at most 400 changed hand-authored lines and 20
-  hand-authored files. Split larger work into sequential, independently stable PRs.
+- [Judgment call] Keep each PR cohesive and readable. Program/script lines (`P`) are at most 400.
+  A PR that mixes program/script and non-program files (`N`) is at most 900 handwritten lines
+  (`P + N ≤ 900`, therefore `N ≤ 900 − P`); 1,000 handwritten lines is the absolute ceiling for
+  every PR. Thus a 100-program-line mixed PR may contain 800 non-program lines, a 300-program-line
+  mixed PR may contain 600, while a documentation-only PR may contain 1,000 non-program lines. The
+  20 hand-authored-file limit still applies. Split larger work into sequential, independently stable
+  PRs at real seams only; do not make an otherwise cohesive PR smaller merely to use less capacity.
 - Use one reusable worktree per repository for this entire plan. Never use stacked dependent PRs;
   merge, verify, and resync before opening the next dependency.
 - A PR description explains outcome, reason, scope/non-goals, reading order, verification, risk,
@@ -110,7 +115,7 @@ Repeated claims cross-reference this section rather than duplicating evidence.
 | [Web-cited] Bounded feedback      | [Stripe Minions][stripe] reports often one, at most two CI runs after local repair—not five review cycles                                                            | 2026-08-23 |
 | [Web-cited] Short-lived branches  | [Trunk Based Development][tbd] describes branches integrated quickly to trunk                                                                                        | 2026-08-23 |
 
-The 400-line/20-file ceiling and hard stop before Cycle 6 are repository judgment calls, not
+The 400-program-line / 1,000-combined-line / 20-file ceiling and hard stop before Cycle 6 are repository judgment calls, not
 universal industry measurements. The inaccessible DOI previously listed here is removed.
 
 [google-small]: https://google.github.io/eng-practices/review/developer/small-cls.html

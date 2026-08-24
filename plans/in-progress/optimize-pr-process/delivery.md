@@ -133,9 +133,12 @@ implementation waves
 ```
 
 Each arrow is a separate, unstacked PR from then-current `origin/main`, using the same owned public
-worktree. Every assembly slice is at most 400 changed hand-authored lines and 20 hand-authored files.
-Forecast each slice before opening it; if any would exceed a bound, record its named cohesive
-sub-slices in the prior PR before opening the first split. A unique equivalence-audit blocker may
+worktree. Every assembly slice has at most 400 handwritten program/script lines. When both program/
+script and non-program lines are present, their handwritten total is at most 900; 1,000 handwritten
+lines is the absolute ceiling, and there are at most 20 hand-authored files.
+Forecast each slice before opening it; retain as much of one natural, independently stable seam as
+fits, and only if it would exceed a bound record its named cohesive sub-slices in the prior PR before
+opening the first split. A unique equivalence-audit blocker may
 use one bounded `PLAN-AMENDMENT` PR before ACTIVATE. Final ACTIVATE contains only the PR-native
 equivalence record and executable-status change. Merge green and resync before the next PR.
 
@@ -228,10 +231,11 @@ The other slice names mean:
 Both CORE slices, every WAVES forecast repair, all four ENTRY checklist slices, WAVES-A,
 WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
 
-The targets reserve repair headroom below the 400-line ceiling. Each slice is a separate unstacked
-PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this same public
-worktree before the next slice. If a slice forecast crosses 400 lines or 20 files, split that slice
-again in its immediately preceding PR; never rely on a later explanation of an already-large diff.
+The targets reserve repair headroom below the 900-line mixed-PR limit. Each slice is a separate
+unstacked PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this
+same public worktree before the next slice. If a slice forecast crosses 400 program/script lines,
+900 mixed handwritten lines, the 1,000-line absolute ceiling, or 20 files, split that slice again
+in its immediately preceding PR; never rely on a later explanation of an already-large diff.
 
 ## Parallelization Model
 
@@ -284,6 +288,22 @@ next row. CLOSURE opens its one draft PR in inherited Phase 3, completes all kno
 archive, review, merge, and resync in inherited Phases 4–5, then performs only read-only validation
 and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
 resumes its frozen unit from the amended plan pin.
+
+#### PRE-A1-ADMISSION Exact Later-Unit Ledger
+
+The merged admission table in `tech-docs.md#pre-a1-admission-public-ledger` is this unit's
+sole exact public source/mirror authority. It was derived from the strict dry-run manifest, not
+from discovery during a later rule wave. `PUB-A1` and `PRIV-A1` are evidence-backed no-change
+decisions: they publish their current canonical evidence and directly authorize `PUB-A2`, but do
+not open empty PRs. `PUB-A2`, `PUB-A3`, and `PUB-B` each remain independently bounded PRs; their
+private counterpart is a separate semantic adaptation after the public immutable obligation.
+
+The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
+counted separately when binding generation identifies them. If a unit's measured complete ledger
+crosses 20 hand-authored files, 400 handwritten program/script lines, 900 handwritten lines when
+both categories are present, or the 1,000-line absolute ceiling, its immediately preceding public
+PR must split it into named cohesive successors before that unit starts. Historical `plans/done/**`, past
+PR comments, and previous review artifacts are evidence only and never enter a future edit ledger.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
 the [idea disposition map](./idea-disposition-map.md). Its public source pin is
@@ -525,8 +545,9 @@ The mapped source path, not the shortened table label, is authoritative. Re-read
 map before each unit. PUB-IDEAS-4–7 resync and authorize only the next named public subdelivery;
 only PUB-IDEAS-8 may publish the private obligation and authorize PRIV-BASE.
 At public `origin/main` `7e111df8d821e0e147e0009f6bd66c13e7499614`, their brief-only deletion forecasts are respectively 283, 293,
-320, 227, and 237 lines. Each Phase 1 remeasures index and live-backlink repairs and splits again
-before editing if the complete forecast would cross 400 changed hand-authored lines or 20 files.
+320, 227, and 237 lines. Each Phase 1 remeasures index and live-backlink repairs, keeps each natural
+seam intact where possible, and splits only if the complete forecast would exceed 400 program/script
+lines, 900 mixed handwritten lines, the 1,000-line absolute ceiling, or 20 files.
 
 A **live backlink** is a Markdown link to an active unit's mapped brief from outside `plans/done/**`.
 Historical `plans/done/**` references remain unchanged. Before editing, P1.05 must enumerate every
@@ -1065,7 +1086,7 @@ public packet names only the private-safe field contract.
 | `AR-ENTRY`       | Input: literal `REPO`, `BRANCH`, `RECORD`, `authorization-pin`, `local-base`, `amendment-url`, `admitted-paths`, and `cap-forecast`; private records also require `overlay-paths`/`overlay-fingerprint`. Read the authorization pin from its native sibling artifact, then run the copyable `AR-ENTRY` sequence directly below. Record the selected branch, resolved `current-main`/`unit-base`, and command output in `RECORD`.                                           | `authorization-pin` is native-PR evidence only; `local-base` is an ancestor of fetched current main. Public entry is clean; private entry preserves exactly the recorded overlay and rejects every other staged, untracked, or unstaged residue. The declared branch is created or safely reused from current main and `HEAD`, `current-main`, and `unit-base` exactly equal it before edit. A missing field, stale branch base, overlay mismatch, or nonzero command freezes the unit. |
 | `AR-PROPAGATE`   | Input: `RECORD`'s exact normalized rules and admitted source paths. Read `repo-governance/workflows/repo/repo-rules-propagation.md`, invoke it with `mode=strict` and `isolation=current`, then write its `generated-reports/repo-rules-propagation__*__manifest.md` path and sibling obligation URL into `RECORD`.                                                                                                                                                        | The read-back manifest names only the pre-admitted paths and owners. A new path is fail/stop for a plan amendment, not permission to edit it.                                                                                                                                                                                                                                                                                                                                           |
 | `AR-BIND`        | Input: exact hand-authored paths in `RECORD`. Run `npm run generate:bindings && npm run validate:sync && npm run generate:bindings && git status --short`; append source/generated path sets and output to `RECORD`.                                                                                                                                                                                                                                                       | All commands exit 0; second generation has no tracked change and no generated file was hand-edited.                                                                                                                                                                                                                                                                                                                                                                                     |
-| `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Run the copyable `AR-LOCAL` sequence below and append each result to `RECORD`.                                                                                                                                                                                                                                                                                                                        | Gate exits 0 or the record has an explicit reasoned `N/A`; size is at most 400 lines and 20 files.                                                                                                                                                                                                                                                                                                                                                                                      |
+| `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Classify each handwritten path as program/script or non-program, record both line counts, then run the copyable `AR-LOCAL` sequence below and append each result to `RECORD`.                                                                                                                                                                                                                         | Gate exits 0 or the record has an explicit reasoned `N/A`; program/script lines are at most 400, a mixed PR is at most 900 handwritten lines, every PR is at most 1,000 handwritten lines, and there are at most 20 files.                                                                                                                                                                                                                                                              |
 | `AR-STAGE`       | Input: admitted path list in `RECORD`. Run `git add -- $ADMITTED_PATHS && git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; record cached paths and full-diff read-back in `RECORD`.                                                                                                                                                                                                                   | Cached paths equal the admitted list in both directions, check exits 0, and one cohesive commit is created/read.                                                                                                                                                                                                                                                                                                                                                                        |
 | `AR-PUSH`        | Input: literal `REPO`, `BRANCH`, and local `HEAD` in `RECORD`. Run `git push --set-upstream origin "$BRANCH" && git ls-remote origin "refs/heads/$BRANCH"`; append both SHAs to `RECORD`.                                                                                                                                                                                                                                                                                  | Remote SHA equals local `HEAD`; no other branch is pushed.                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `AR-DRAFT`       | Input: literal AI-marked `pr-title`/`pr-body-file`, plus `REPO`/`BRANCH` and the immediately preceding `AR-PUSH` remote/local SHA equality in `RECORD`. Run `gh pr create --repo "$REPO" --draft --base main --head "$BRANCH" --title "$PR_TITLE" --body-file "$PR_BODY_FILE"` then `gh pr view --repo "$REPO" --json url,isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`; copy read-back JSON and its `headRefOid` as `reviewed-head` into `RECORD`. | Exactly one draft has the resolved base/head, readable body ending `Generated by AI`, separately recorded whole-PR totals, a literal title, and a preceding `AR-PUSH` equality. Missing title or push evidence fails before PR creation.                                                                                                                                                                                                                                                |
@@ -1110,12 +1131,19 @@ git status --short --branch
 
 ```bash
 apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
-git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | awk '{a+=$1; d+=$2} END {print a+d}'
-git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l
+P_LINES="$(git diff --numstat "$UNIT_BASE" -- $PROGRAM_PATHS | awk '{a+=$1; d+=$2} END {print a+d}')"
+N_LINES="$(git diff --numstat "$UNIT_BASE" -- $NONPROGRAM_PATHS | awk '{a+=$1; d+=$2} END {print a+d}')"
+HANDWRITTEN_LINES="$((P_LINES + N_LINES))"
+HANDWRITTEN_FILES="$(git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l | tr -d ' ')"
+printf 'program/script=%s non-program=%s total=%s files=%s\n' "$P_LINES" "$N_LINES" "$HANDWRITTEN_LINES" "$HANDWRITTEN_FILES"
 ```
 
-The first command exits 0 or has a reasoned `N/A` in `RECORD`; the next two results are at most 400
-and 20 respectively.
+Before running this record, the author declares `$PROGRAM_PATHS` and `$NONPROGRAM_PATHS` as the
+disjoint handwritten subsets of `$HAND_AUTHORED_PATHS`; generated paths belong to neither. The first
+command exits 0 or has a reasoned `N/A` in `RECORD`. Record the four values, then apply the human
+policy: `P_LINES ≤ 400`; if both categories are nonzero, `HANDWRITTEN_LINES ≤ 900`; in every case,
+`HANDWRITTEN_LINES ≤ 1,000`; and `HANDWRITTEN_FILES ≤ 20`. These are transparent evidence commands,
+not a new automated gate.
 
 ```bash
 /usr/bin/git diff --binary "$CURRENT_MAIN" "$REVIEWED_HEAD" | /usr/bin/shasum -a 256
@@ -1234,9 +1262,9 @@ route targets Cycles 1–3, permits bounded recovery only in Cycles 4–5, and h
 
 ### PRE-A1-ADMISSION / PRIV-ADMISSION — Make the Known Rule Waves Reachable
 
-- [ ] `[PRE-A1-ADMISSION:P1.01][AI]` From the terminal PRIV-IDEAS pin, record the exact public predecessor, then use `AR-ENTRY` to create the declared public plan-amendment branch from fetched public current main. Record the public plan-only ledger, 400-line/20-file forecast, and frozen successor set (`PUB-A1` through `PRIV-B`).
+- [ ] `[PRE-A1-ADMISSION:P1.01][AI]` From the terminal PRIV-IDEAS pin, record the exact public predecessor, then use `AR-ENTRY` to create the declared public plan-amendment branch from fetched public current main. Record the public plan-only ledger, 400-program-line/mixed-900-line/absolute-1,000-line/20-file forecast, and frozen successor set (`PUB-A1` through `PRIV-B`).
 - [ ] `[PRE-A1-ADMISSION:P1.02][AI]` Run the prescribed rule-propagation workflow as `mode=strict`, `isolation=current`, `dry-run=true` for the normalized A1/A2/A3/B rules. Record its candidate canonical source, consumer, generated-mirror, owner, and private-sibling-obligation inventory; a candidate path is not permission to edit it.
-- [ ] `[PRE-A1-ADMISSION:P1.03][AI]` Admit only the verified exact public A1/A2/A3/B source and generated-mirror paths, with one bounded before-ledger and owner per path, by changing this plan's tree and matching delivery ledger. Acceptance: no rule, agent, binding, workflow, code, or private path changes in this PR.
+- [ ] `[PRE-A1-ADMISSION:P1.03][AI]` Admit only the verified exact public A1/A2/A3/B source and generated-mirror paths, with one bounded before-ledger and owner per path. This user-directed amendment also changes only the four A1 direct public PR-size sources (canonical rule, atomicity companion, delivery-workflow consumer, and PR template) to the same prose-only cap, plus the existing staged naming-command exemption required for GitHub's underscored template filename; no agent, binding, code, or private path changes are permitted in this PR.
 - [ ] `[PRE-A1-ADMISSION:P1.04][AI]` Record the immutable public admission pin and one private-safe sibling obligation requiring `PRIV-ADMISSION`; keep every A/B implementation PR frozen until both admission pins are read back.
 - [ ] `[PRE-A1-ADMISSION:P2.01][AI]` Run only `AR-LOCAL` with `UNIT=pre-a1-admission`. Acceptance: local quality and cap results are recorded before staging.
 - [ ] `[PRE-A1-ADMISSION:P2.02][AI]` Run only `AR-STAGE`. Acceptance: one cohesive commit has an exact cached ledger and full-diff read-back.
@@ -1651,8 +1679,9 @@ Record repository, worktree, native sibling `authorization-pin`, repository-loca
 current `origin/main`, owned hand-authored/generated paths, projected changed lines/files, rollback,
 and the lightest stable-main safety choice. For
 PRIV-IDEAS, prove the authorized overlay is unchanged before and after switching. Stop on a wrong
-worktree, unexpected path, missing pin/ownership, stacked dependency, or forecast above 400 changed
-hand-authored lines or 20 hand-authored files.
+worktree, unexpected path, missing pin/ownership, stacked dependency, more than 400 program/script
+lines, more than 900 mixed handwritten lines, more than 1,000 handwritten lines, or 20 hand-authored
+files.
 
 Every rule unit then performs these authoring steps:
 
@@ -1686,11 +1715,13 @@ ledger contains only owned paths.
 - **Template `[AI]`:** Run unit acceptance and the pre-push gate. When applicable, also run
   `npx nx affected -t test:integration`, `npx nx affected -t test:e2e`, and named manual UI/API
   assertions. Record a reasoned `N/A`; never silently skip a gate.
-- **Template `[AI]`:** Classify generated paths from repository ownership. Use
-  `git diff --numstat <unit-base> -- <hand-authored-paths> | awk '{a+=$1; d+=$2} END {print a+d}'`
-  for additions plus deletions and
-  `git diff --name-only <unit-base> -- <hand-authored-paths> | wc -l` for files. Stop and split
-  above 400 or 20; repeat before push. Keep these cap-counted statistics separate from PR totals.
+- **Template `[AI]`:** Classify every handwritten path in the ledger as program/script or
+  non-program; generated paths are excluded. For each category, use
+  `git diff --numstat <unit-base> -- <that-category-paths> | awk '{a+=$1; d+=$2} END {print a+d}'`
+  for additions plus deletions, and use `git diff --name-only <unit-base> -- <hand-authored-paths> |
+wc -l` for files. Stop and split above 400 program/script lines, 900 mixed handwritten lines,
+  1,000 handwritten lines, or 20 files; repeat before push. Keep these cap-counted statistics
+  separate from PR totals.
 - **Template `[AI]`:** Stage only explicit ledger paths with `git add -- <path>...`; run
   `git diff --cached --name-only`, `git diff --cached --check`, `git diff --cached --stat`, and
   `git diff --cached --patch`. Staged paths must equal the admitted ledger in both directions.
@@ -1705,7 +1736,7 @@ are cohesive, and the full diff was read.
 > All checks below must pass before starting Phase 3.
 
 - [ ] `[PHASE-2:G2.01][AI]` Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: it exits 0 or the record contains an applicable evidenced `N/A`.
-- [ ] `[PHASE-2:G2.02][AI]` Run `git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | awk '{a+=$1; d+=$2} END {print a+d}'` and `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l`; acceptance: results are no more than 400 changed lines and 20 hand-authored files.
+- [ ] `[PHASE-2:G2.02][AI]` Record each handwritten path's category, run the `numstat` calculation separately for program/script and non-program paths, then run `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS | wc -l`; acceptance: program/script is no more than 400 lines, a mixed PR is no more than 900 handwritten lines, no PR exceeds 1,000 handwritten lines, and there are at most 20 hand-authored files.
 - [ ] `[PHASE-2:G2.03][AI]` Run `git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; acceptance: cached paths equal the admitted ledger in both directions, check exits 0, and the complete patch is read before the cohesive commit.
 
 > **Pause Safety**: The local head and clean tree or named intended residue are recorded. Safe to stop. To re-verify: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`.

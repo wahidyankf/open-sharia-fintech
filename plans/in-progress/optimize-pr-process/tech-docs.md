@@ -59,8 +59,10 @@ This scan-first tree is the public-repository source of truth. Every `[E]` or `[
 admitted public path or closed path pattern. A literal `[N]` leaf is an equally admitted, finite
 creation target only: it authorizes no existing-file edit and never expands through a glob. `[N] no
 private path` remains an explicit no-authority record. A label does not make a directory an edit
-authorization. A unit records its exact before/after ledger and stays within the 400-line/20-file
-ceiling.
+authorization. A unit records its exact before/after ledger. Program/script lines (`P`) are at most
+400; when program/script and non-program lines (`N`) are both present, `P + N` is at most 900
+(`N ≤ 900 − P`); 1,000 handwritten lines is the absolute ceiling; and there are at most 20
+hand-authored files.
 
 ```text
 .
@@ -136,9 +138,102 @@ route.
 | C public/private       | `N/A` unless a human-approved amendment supplies exact paths                                                 | `N/A` unless that amendment names exact generated mirrors    | Recorded no-change decision, or necessity evidence plus reversible implementation |
 | Closure                | Public plan folder/index and private obligation thread                                                       | No bindings                                                  | Both mains green on recorded pins; final public PR archives the control plan      |
 
-If a row forecasts more than 400 changed hand-authored lines or 20 hand-authored files, split it into
-named cohesive sub-units before opening the first PR. The table's owned subtrees are discovery
-boundaries, not blanket permission; the PR body publishes the exact file ledger.
+If a row forecasts more than 400 handwritten program/script lines, more than 900 handwritten lines
+when both categories are present, more than 1,000 handwritten lines in total, or 20 hand-authored
+files, split it into named cohesive sub-units before opening the first PR. The table's owned
+subtrees are discovery boundaries, not blanket permission; the PR body publishes the exact file
+ledger and both line categories.
+
+### PRE-A1-ADMISSION Public Ledger
+
+The strict dry run used public pin `70dbe4187dd720d8fe344960d227c44cf3d549f5`. The tracked table
+and exact records below, plus the PR-native admission comment, are the authority; the ignored
+`generated-reports/**` manifest is only a local working aid. Every listed path is a future candidate,
+not permission to edit it before its named unit. No private path is admitted here.
+
+| Unit             | Exact hand-authored candidate paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Generated paths                                                         | Owner and bounded outcome                                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| PUB-A1 / PRIV-A1 | `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md`, its atomicity companion, the delivery-workflow consumer, and the PR template only; all other existing plan-boundary, one-worktree, atomic-binding, and cross-repository-obligation rules remain authoritative.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | None                                                                    | Update the human PR-size policy and direct reader prompts only; do not open an empty PR for any remaining `N/A` category.                 |
+| PUB-A2           | Exact sources are listed in the records below; this compact row is a summary only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Exact generated mirrors are listed below.                               | Add one pre-fan-out route record and bounded-cycle policy without widening the existing scope guard.                                      |
+| PUB-A3           | Exact sources are listed in the records below; this compact row is a summary only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Exact generated mirrors are listed below.                               | Make bodies and native review conversations human-readable without duplicating compatible scope/marker rules.                             |
+| PUB-B            | `repo-governance/development/quality/pr-review-disciplines/quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md`; `repo-governance/workflows/pr/README.md`; `repo-governance/conventions/structure/plans/delivery-mode-merge-authority-and-precedence.md`; `repo-governance/development/workflow/pr-merge-protocol/the-worktree-to-pr-terminal-step.md`; `repo-governance/workflows/plan/plan-execution/finalization-pr-review-gate.md`; `repo-governance/workflows/plan/plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md`; `repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md`; `.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md`; `.claude/skills/plan-creating-project-plans/reference/delivery-mode.md`; `.claude/skills/plan-applying-fixes/reference/pr-review-cycle-and-merge-tag-fixes.md`; `.claude/skills/plan-verifying-execution/reference/delivery-mode-pr-review-cycle.md`; `.claude/skills/plan-verifying-execution/reference/delivery-mode-phase0-and-boundaries.md` | Generated counterparts of the five listed `.claude` skill sources only. | Supersede live seven-cycle, two-clean, extensible-ceiling, scope-expanding, and agent-only wording; retain historical evidence unchanged. |
+
+`PRIV-ADMISSION` must independently classify the semantic counterparts. It receives one
+private-safe obligation after this admission merges; it must not copy this public path list as
+private edit authority.
+
+#### Exact Source, Hunk, and Mirror Records
+
+`PUB-A1` owns only these direct public rule and reader surfaces:
+
+- `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md`
+- `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md`
+- `repo-governance/workflows/plan/plan-execution/per-phase-quality-gate-push-targets.md`
+- `.github/pull_request_template.md`
+- `package.json` (the existing staged Markdown naming command’s required GitHub-template exemption)
+
+It changes the human policy to `P ≤ 400`; where both categories occur, `P + N ≤ 900`
+(`N ≤ 900 − P`); and `P + N ≤ 1,000` in all cases. It adds no enforcement. `PRIV-A1` must
+independently decide whether its semantic counterpart needs the same prose change.
+
+`PUB-A2` owns the routing hunks, and only those hunks, in these exact sources:
+
+- `repo-governance/workflows/pr/pr-review-quality-gate/steps-0-1-classify-and-scout.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/loop-algorithm.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/purpose-execution-mode-and-classifier.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/route-specific-done-definition.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/notes.md`
+- `.claude/agents/pr-review/pr-review-scout-maker.md`
+- `.claude/skills/pr-review-scout-classification/reference/shared-context-and-prior-cycle-read.md`
+- `.claude/skills/pr-review-scout-classification/reference/risk-tier-and-specialist-selection.md`
+
+Its exact generated mirrors are `.opencode/agents/pr-review-scout-maker.md`,
+`.codex/agents/pr-review-scout-maker.toml`,
+`.agents/skills/pr-review-scout-classification/reference/shared-context-and-prior-cycle-read.md`,
+and `.agents/skills/pr-review-scout-classification/reference/risk-tier-and-specialist-selection.md`.
+`PUB-B` owns only the cadence and terminal-state hunks in the six shared A2 workflow sources;
+that hunk division prevents overlapping edits.
+
+`PUB-A3` owns the exact body, teaching, GitHub-conversation, and fixer-triage sources:
+
+- `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-body.md`
+- `.github/pull_request_template.md`
+- `repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/github-reviews-api-mechanics-part-1.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/github-reviews-api-mechanics-part-2.md`
+- `.claude/skills/pr-review-fixer-resolution/reference/four-way-triage.md`
+- `.claude/skills/pr-review-fixer-resolution/reference/reply-resolve-discipline.md`
+- `.claude/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md`
+
+Its exact generated mirrors are `.agents/skills/pr-review-fixer-resolution/reference/four-way-triage.md`,
+`.agents/skills/pr-review-fixer-resolution/reference/reply-resolve-discipline.md`, and
+`.agents/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md`. `PUB-B` owns
+only the cadence hunk in `reply-resolve-discipline.md`.
+
+`PUB-B` owns the remaining exact sources and the named cadence/terminal hunks above:
+
+- `repo-governance/workflows/pr/pr-review-quality-gate.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/step-2-fan-out-and-synthesis.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/steps-3-5-fixer-ci-gate-done-check.md`
+- `repo-governance/development/quality/pr-review-disciplines/quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md`
+- `repo-governance/workflows/pr/README.md`
+- `repo-governance/conventions/structure/plans/delivery-mode-merge-authority-and-precedence.md`
+- `repo-governance/development/workflow/pr-merge-protocol/the-worktree-to-pr-terminal-step.md`
+- `repo-governance/workflows/plan/plan-execution/finalization-pr-review-gate.md`
+- `repo-governance/workflows/plan/plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md`
+- `repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md`
+- `.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md`
+- `.claude/skills/plan-creating-project-plans/reference/delivery-mode.md`
+- `.claude/skills/plan-applying-fixes/reference/pr-review-cycle-and-merge-tag-fixes.md`
+- `.claude/skills/plan-verifying-execution/reference/delivery-mode-pr-review-cycle.md`
+- `.claude/skills/plan-verifying-execution/reference/delivery-mode-phase0-and-boundaries.md`
+
+The five exact `PUB-B` generated mirrors are the same relative five `.claude/skills/**` paths under
+`.agents/skills/**`. A unit’s before-ledger must list all 20 or fewer hand-authored paths it will
+actually edit; this admission inventory is a maximum discovery boundary, never an instruction to
+change every listed path.
 
 ### Propagation and Generated-Parity Contract
 

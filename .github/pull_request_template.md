@@ -22,7 +22,7 @@ See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-
 
 - **Start here:**
 - **Skip these paths:** <!-- e.g. generated mirrors: .agents/, .opencode/, .codex/ -->
-- **Size:** <!-- N changed lines, M hand-authored files. Bound: 400 lines, 20 hand-authored files. -->
+- **Size:** <!-- Program/script P lines, non-program N lines, and hand-authored files. Bound: P≤400; if both categories occur P+N≤900; absolute P+N≤1,000; files≤20. -->
 
 ## Cost/Benefit of Added Code
 
