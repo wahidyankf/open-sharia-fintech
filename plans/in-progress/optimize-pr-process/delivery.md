@@ -272,9 +272,9 @@ one planned admission for the known A1/A2/A3/B rule waves, not a correction and 
 to change any rule: it inventories and admits exact later source/mirror paths in a plan-only PR.
 PRIV-ADMISSION is its private-safe counterpart and must preserve the approved overlay. Before each unit, replace
 its predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the
-next row. CLOSURE opens its one draft PR in inherited Phase 3, completes review/merge/resync in
-inherited Phases 4–5, then performs only final evidence, knowledge capture, archive, and cleanup in
-Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
+next row. CLOSURE opens its one draft PR in inherited Phase 3, completes all knowledge capture,
+archive, review, merge, and resync in inherited Phases 4–5, then performs only read-only validation
+and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
 resumes its frozen unit from the amended plan pin.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
@@ -766,7 +766,7 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P5.12][AI]` Run `npm install` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.13][AI]` Run plain `npm run doctor` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.14][AI]` Run the literal private pre-push command on landed private main.
-- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck keeps PRIV-IDEAS frozen and names only its bounded new repair or human-escalation path; ambiguity names no successor, keeps PRIV-IDEAS frozen, and stops for human judgment.
+- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck or ambiguity keeps PRIV-IDEAS frozen, names no successor repair, and stops for human judgment.
 - [ ] `[PRIV-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/overlay/successor gate.
 - [ ] `[PRIV-REPAIR:P5.P][AI]` Record merge/main SHA, overlay hash, result, and named-successor command.
 

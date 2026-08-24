@@ -56,21 +56,18 @@ until answered. Every AI-authored body, review, reply, and summary ends with `Ge
 ## File-Impact Analysis
 
 This scan-first tree is the public-repository source of truth. Every `[E]` or `[D]` leaf is an
-admitted public path or closed path pattern; `[H]` is historical evidence only. A label does not
-make a directory an edit authorization. A unit records its exact before/after ledger and stays
-within the 400-line/20-file ceiling.
+admitted public path or closed path pattern. A label does not make a directory an edit authorization.
+A unit records its exact before/after ledger and stays within the 400-line/20-file ceiling.
 
 ```text
 .
 ├── [E] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # control-plan sources; no other in-progress plan is admitted
-├── [H] plans/ideas/{q1-urgent-important/deletion-authorized-by-absence,q2-not-urgent-important/class-sweep-completeness}.md
-│       # completed PUB-IDEAS-4 evidence; never admitted again
 ├── [D] plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md
 ├── [D] plans/ideas/q2-not-urgent-important/{merge-queue-adoption,nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
 │       # eight named PUB-IDEAS-5–8 sources; no discovery may add a brief
 ├── [E] plans/ideas/README.md
-│       # unlink only the ten named brief paths; retain historical plans/done/** links
+│       # unlink only the eight `[D]` brief paths; retain completed/history links
 ├── [E] plans/in-progress/README.md
 │       # CLOSURE removes only this control-plan entry after its reviewed archive move
 ├── [E] plans/done/README.md
@@ -80,6 +77,12 @@ within the 400-line/20-file ceiling.
 └── [E] plans/done/YYYY-MM-DD__optimize-pr-process/**
         # CLOSURE archive destination only; the runtime date is recorded before the move
 ```
+
+Completed PUB-IDEAS-4 sources
+`plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md` and
+`plans/ideas/q2-not-urgent-important/class-sweep-completeness.md` are historical evidence only:
+they are absent and never re-admitted. Their former index history is retained; only the eight `[D]`
+paths above are unlinked by future PUB-IDEAS-5–8 work.
 
 ### External Repository — `ose-private` (Record Only; No Edit Authority)
 
@@ -224,9 +227,11 @@ Equivalent prose: PUB-BASE cleanly authorizes PUB-IDEAS-4; failure gets one PUB-
 clean recheck authorizes -4 and whose failed recheck freezes ideas for a human, with no second repair.
 Successor pins carry -4 through -8; -8's landed pin, matching fingerprint, and obligation authorize
 PRIV-BASE. Private baseline/repair has the stated clean, frozen, and ambiguity outcomes before
-PRIV-IDEAS. Then A1, A2, A3, and B run public before private; C is explicit and closure waits for both
-repositories. Rollback reverses the path actually used, including repair only when used; paired unwind
-records pins, temporary incoherence, owner, and next action.
+PRIV-IDEAS. `PRE-A1-ADMISSION` then records the exact public A1/A2/A3/B paths, followed by
+`PRIV-ADMISSION` with the paired private pin; only then do A1, A2, A3, and B run public before
+private. C is explicit and closure waits for both repositories. Rollback reverses the path actually
+used, including repair only when used; paired unwind records pins, temporary incoherence, owner, and
+next action.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects
