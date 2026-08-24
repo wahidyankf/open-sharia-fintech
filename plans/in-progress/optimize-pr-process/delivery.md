@@ -586,6 +586,25 @@ entry's exact execution base is the fetched current `origin/main` recorded at P1
 descendant of that PR #282 pin. Neither record authorizes a path outside this table. Missing proof,
 table match, or ancestry freezes the unit.
 
+#### PLAN-STATE-CORRECTION rule-propagation ledger
+
+Before PUB-IDEAS-6 can resume, this plan-only correction may change only the canonical convention
+and guidance below. It authorizes neither an idea retirement nor a product, CI, workflow, or private
+change. The `.agents` rows are generated solely by `npm run generate:bindings` from their paired
+`.claude` sources; binding validation must pass before review.
+
+| Exact path                                                                                      | Role                                                |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `repo-governance/conventions/structure/plans/execution-grade-clarity.md`                        | canonical finite cross-repository runbook exception |
+| `.claude/skills/plan-validating-quality/reference/delivery-checklist-validation-part1.md`       | checker summary source                              |
+| `.claude/skills/plan-validating-quality/reference/rule11-execution-grade-clarity-validation.md` | checker detailed source                             |
+| `.claude/skills/plan-creating-project-plans/reference/execution-grade-clarity.md`               | plan-maker source                                   |
+| `.claude/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md`                 | plan-fixer source                                   |
+| `.agents/skills/plan-validating-quality/reference/delivery-checklist-validation-part1.md`       | generated checker summary mirror                    |
+| `.agents/skills/plan-validating-quality/reference/rule11-execution-grade-clarity-validation.md` | generated checker detailed mirror                   |
+| `.agents/skills/plan-creating-project-plans/reference/execution-grade-clarity.md`               | generated plan-maker mirror                         |
+| `.agents/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md`                 | generated plan-fixer mirror                         |
+
 #### Immutable Completion Ledger — PUB-IDEAS-4 (Do Not Re-run)
 
 The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-6–8 only.

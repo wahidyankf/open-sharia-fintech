@@ -80,6 +80,20 @@ ceiling.
 │       # the three PUB-IDEAS-6 repairs admitted only by merged PR #282 at 56e5fa6c
 ├── [E] repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md
 │       # the fourth PUB-IDEAS-6 repair admitted only by merged PR #282 at 56e5fa6c
+├── [E] repo-governance/conventions/structure/plans/execution-grade-clarity.md
+│       # PLAN-STATE-CORRECTION: canonical finite cross-repository runbook exception only
+├── [E] .claude/skills/plan-validating-quality/reference/{delivery-checklist-validation-part1,rule11-execution-grade-clarity-validation}.md
+│       # PLAN-STATE-CORRECTION: exact checker sources only
+├── [E] .claude/skills/plan-creating-project-plans/reference/execution-grade-clarity.md
+│       # PLAN-STATE-CORRECTION: exact plan-maker source only
+├── [E] .claude/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md
+│       # PLAN-STATE-CORRECTION: exact plan-fixer source only
+├── [E] .agents/skills/plan-validating-quality/reference/{delivery-checklist-validation-part1,rule11-execution-grade-clarity-validation}.md
+│       # PLAN-STATE-CORRECTION: generated checker mirrors only
+├── [E] .agents/skills/plan-creating-project-plans/reference/execution-grade-clarity.md
+│       # PLAN-STATE-CORRECTION: generated plan-maker mirror only
+├── [E] .agents/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md
+│       # PLAN-STATE-CORRECTION: generated plan-fixer mirror only; never hand-edit and require binding validation
 └── [N] plans/done/<recorded-YYYY-MM-DD>__optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
         # CLOSURE archive targets only; record the runtime date before the move
 ```
