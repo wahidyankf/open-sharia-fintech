@@ -82,6 +82,34 @@
 - [Judgment call] A correction count attached only to a pair URL can be reset accidentally by
   relabeling a late occurrence as a new pair. A stable defect-lineage ID must carry the count across
   superseded and late repair records; one reversal remains autonomous, and the second stops for
-  human judgment instead of starting a cross-repository chain reaction.
+  human judgment instead of starting a cross-repository chain reaction. A cross-repository
+  `PLAN-AMENDMENT` for that same lineage consumes the same one-correction budget; it is not a reset.
 
-Add final dogfood results, exceptions, measurements, and retained follow-ups before archival.
+## Closure Triage Record
+
+Before archival, apply `CLOSURE:P6.29a`–`P6.29e` in `delivery.md` to every entry above and every
+new dogfood result. Record each surviving entry's one durable destination, or its discard reason.
+Sanitize sensitive/private material before recording it here; private-only learning stays in the
+private repository. If none survive, replace this paragraph with `No generalizable learnings —
+<reason>`.
+
+### Required Per-Entry Read-Back Fields
+
+Closure writes the following literal fields beneath each triaged entry in this file. These are the
+resolved inputs and durable read-back artifact for `CLOSURE:P6.29a`–`P6.29e`; do not infer a value
+from a sibling PR or a private repository.
+
+```text
+terminal-state: routed | discarded | private-only
+durable-destination: <one exact repository path or external durable record>  # routed only
+discard-reason: <one plain-language reason>                                  # discarded only
+backlog-plan: plans/backlog/<kebab-case-slug>/                                # code/test only
+idea-search: <literal case-insensitive rg query>                              # ideas only
+idea-search-result: <matching path(s) | no-match>                             # ideas only
+none-reason: <one plain-language reason>                                     # only when none survive
+```
+
+The executor reads the recorded `backlog-plan:` into `backlog_plan`, the recorded `idea-search:`
+into `idea_search`, and the recorded `none-reason:` into `none_reason` before running the literal
+commands in the matching delivery checkbox. One entry has exactly one terminal state and never two
+durable homes.
