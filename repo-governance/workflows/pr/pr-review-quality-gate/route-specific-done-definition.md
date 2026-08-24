@@ -8,6 +8,11 @@ when_to_use: "Use when checking whether a PR meets this workflow's done-definiti
 
 Every PR is **done** only when its classifier route's requirements hold:
 
+Before either route begins, the PR body must contain a human-readable review-route record for its
+current head. It names the frozen outcome/scope, classification evidence, risk, selected and
+skipped lenses with reasons, current checks, settled prior threads, and this cycle's changed probe.
+The record makes the route auditable; it does not replace reviewer judgment or add a tool.
+
 1. **Eligible route** — the specialist loop reached [its clean exit](./probe-variation-and-exit.md) —
    two consecutive clean cycles, each under a probe class not previously used on this PR, neither
    leaving **any code-related MEDIUM/HIGH/CRITICAL finding outstanding** —

@@ -13,17 +13,16 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   are both clean; never spend a cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
   work.
 - **Correction-record freeze (after cycle 1)**: from cycle 2 onward the review scope excludes
-  what a fixer commit wrote about the loop's own cycles.
-  The test is authorship, not path. The rule and its two carve-outs are stated once in
-  [Correction-Record Freeze](../../../../.claude/skills/pr-review-scout-classification/reference/correction-record-freeze.md);
-  this layer does not restate them, because a second copy drifts. **The PR body is NOT frozen** —
-  it is the human reviewer's entry point, and a description nobody has checked since cycle 1 costs
-  more than re-reading it does.
+  what a fixer commit wrote about the loop's own cycles. The frozen delivery outcome still allows a
+  correction that completes the same evidenced defect; unrelated improvements are not smuggled
+  into the fix and instead receive a reasoned reject or a linked follow-up.
+  The test is authorship, not path; the PR body remains reviewable. A shipping-artifact defect is
+  never suppressed.
 
-  Why: a loop whose scope contains its own correction record reviews the claims it wrote last cycle,
-  so the surface grows about as fast as it is cleaned — on PR #239 the shipping files stopped
-  changing at cycle 14 while the loop ran to 19. A factual defect in a **shipping artifact** is
-  never suppressed by this rule.
+- **Paired-repository handoff**: when a reviewed public rule has a private counterpart, the public
+  PR publishes one terminal handoff before private review. The private artifact records
+  satisfaction, reasoned deviation, or one bounded correction request; a second reversal freezes
+  the pair for human judgment.
 
 - **Non-convergence learning**: at the first cycle at or past six, and at every
   [convergence checkpoint](./convergence-measurement.md) after it, **the orchestrator** appends sanitized evidence explaining why
@@ -36,9 +35,6 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   finding is outstanding. Never
   extend the cycle count as a substitute for resolving a finding. Extending it on the evidence of
   a [convergence checkpoint](./convergence-measurement.md) is a different act, recorded on the PR.
-- **Repeated rejection block**: a reasoned reject is not an automatic resolution of a code-related
-  MEDIUM/HIGH/CRITICAL finding. The next cycle must independently verify it. If it remains, the PR
-  stays in the normal loop and ultimately blocks at the ceiling unless resolved with evidence.
-- **CI wait discipline**: investigate code failures and fix their root cause. For queued or stalled
-  jobs, first inspect runner contention across the OSE repositories, then continue patient two-minute
-  polling. Do not cancel the active goal or classify a runner wait as a code defect.
+- **Repeated rejection block**: independently verify a reasoned reject next cycle; an unresolved
+  finding blocks at the ceiling.
+- **CI wait discipline**: diagnose failures at root cause; a queued job is not a code defect.

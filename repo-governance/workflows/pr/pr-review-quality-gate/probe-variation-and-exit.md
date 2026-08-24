@@ -9,13 +9,6 @@ when_to_use: "Use when a scout plans a cycle's probe, and whenever deciding that
 A cycle repeating the previous cycle's question converges on that question, not on correctness. Each
 cycle's scout states how the probe differs — a different failure mode, reader, or level.
 
-## Measured on PR #249
-
-Cycles five through ten each returned zero or one original defect and read as converged. Cycle
-eleven asked three questions no earlier cycle had asked and found six; cycle twelve asked three more
-and found five. All eleven had been in the diff since cycle one. The flat stretch measured **probe
-exhaustion, not correctness** — a loop cannot find what it never asks about.
-
 ## The Probe-Class Register
 
 Each PR's review record names the probe class every cycle used, so "a new probe" is checkable rather
@@ -24,6 +17,11 @@ stale within a cycle and make the exit rule return the wrong answer.
 
 Naming the class is what makes the register useful. "A different question" describes every cycle;
 "the same class as cycle nine" is falsifiable.
+
+The changed probe also respects the frozen delivery outcome. It may test a different failure mode,
+reader, or level of the shipped seam, but it does not introduce an unrelated improvement merely to
+make a later cycle look productive. Record an unrelated observation as a reasoned reject or linked
+follow-up instead.
 
 ## What Ends the Loop
 

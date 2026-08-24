@@ -21,6 +21,11 @@ and git-identity rules. Recompute the tier **every cycle**, since the fixer's co
 diff's size or touched paths, and record it in the shared-context brief so
 `pr-review-synthesis-maker` carries it into the Consolidated Review Header.
 
+The scout records the resulting tier and every selected or skipped specialist in the PR's
+human-readable review-route record. A selected lens names the risk it addresses; a skipped lens
+names the applicable tier/filter reason. This makes a risk-selected review explainable to a
+bootcamp-graduate reader without turning the selection into mechanical enforcement.
+
 ## Content-Type Applicability Filter (DD-10) — `full` tier only, freshly re-derived every cycle
 
 Two specialists' own charters declare themselves gated on a specific artifact class existing in
@@ -34,14 +39,8 @@ current diff** — never from a prior cycle's diff, never cached:
 - `pr-review-integrity-maker` — skip if the current diff contains **zero** test files or
   CI/workflow config files (this repo's own test-path and `.github/workflows/**` conventions).
 
-**The other seven specialists (architecture, logic, governance, security, performance, docs,
-instruction) are never skipped by this filter, regardless of file type** — their charters reason
-about intent, tradeoffs, and conventions in _any_ changed content, prose or code alike (empirically
-confirmed: on this plan's own PR #139, a 38-file Markdown-only diff, all seven of these surfaced
-real, high-confidence findings, including a CRITICAL security finding a content-type skip would
-have prevented from being raised). **Default to including a specialist when applicability is
-ambiguous** — this filter trims two structurally-gated disciplines only;
-it is not a general "is this specialist plausibly useful" judgment call.
+The other seven specialists are never skipped by this filter; include a specialist when
+applicability is ambiguous.
 
 Because the diff's file-type composition can change between cycles (a fixer's pushed fix might add
 a test file absent in cycle 1), this filter is **re-applied from a fresh reading of the current

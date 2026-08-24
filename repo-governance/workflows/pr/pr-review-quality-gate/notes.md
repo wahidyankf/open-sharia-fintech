@@ -6,8 +6,6 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
 
 # Notes
 
-- **Strictly sequential, never parallel**: this is a hard requirement — the loop's dedup logic and
-  the CI-green gate both depend on each cycle observing the previous cycle's fully-settled state.
 - **Seven is a ceiling, not a target**: the eligible loop exits at its
   [clean exit](./probe-variation-and-exit.md) — two consecutive clean cycles under unused probe
   classes — and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
@@ -30,7 +28,7 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
   the strength of having spent more cycles, only on the strength of an actually-empty
   blocking-findings list. A ceiling raised on [checkpoint](./convergence-measurement.md) evidence
   decides how many attempts to fund; it is never a waiver.
-- **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
+- **Paired-repository sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
   (e.g. `ose-private`), running all repos' review-cycle loops concurrently from the start
   means every fixer commit on the source PR immediately makes the siblings stale again, and each
@@ -41,3 +39,7 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
   already in flight when the source PR converges can still finish its current pass and resync on its
   own next cycle, but do not deliberately kick off a NEW sibling cycle while the source PR's loop is
   still open.
+
+  The same sequencing applies to semantic counterparts, not only byte-identical mirrors. The
+  counterpart records satisfaction, reasoned deviation, or one bounded correction request; in sync
+  means that traceable semantic state, not automatically identical files.
