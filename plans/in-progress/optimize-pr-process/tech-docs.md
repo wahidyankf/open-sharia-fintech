@@ -93,24 +93,24 @@ section, a sibling obligation, or a public propagation manifest as permission to
 ### Amendment-Only Admission for Later Rule Waves
 
 No A1, A2, A3, B, or optional-C source/mirror path is admitted by a generic family or by a
-discovery result. Before one of those waves edits a path not listed above, a single-purpose
-`PLAN-AMENDMENT` PR must add the exact public source path, every generated mirror (if any), its
-owning unit, and the bounded before-ledger to this tree and the matching delivery ledger. The
-amendment must merge before that unit begins; a propagation manifest may recommend placement but
-cannot itself expand scope. Optional Wave C remains `N/A` unless its separately human-approved
-necessity case first supplies those exact paths through the same amendment route.
+discovery result. The scheduled `PRE-A1-ADMISSION` plan-only PR is the one explicit route for known
+A1/A2/A3/B public paths: it must add each exact source path, every generated mirror (if any), its
+owning unit, and bounded before-ledger to this tree and matching delivery ledger before `PUB-A1`
+starts. Its paired private plan-only `PRIV-ADMISSION` follows the public pin and supplies the
+private-safe counterpart before `PRIV-A1`; neither admission edits a rule. A propagation manifest
+may recommend placement but cannot itself expand scope. Optional Wave C remains `N/A` unless its
+separately human-approved necessity case first supplies exact paths through the ordinary amendment
+route.
 
 ### Bounded Delivery Ledger
 
-| Unit                   | Hand-authored source boundary                                                                                | Generated or retirement boundary                             | Done state                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md` | No bindings                                                  | Mapped briefs absent, indexes reconciled, historical links preserved                 |
-| A1 public/private      | `N/A` until an amendment admits exact public paths; private scope remains external to this tree              | `N/A` until the same amendment names exact generated mirrors | Plan making and its gate use the same human-first, bounded delivery vocabulary       |
-| A2 public/private      | `N/A` until an amendment admits exact public paths; private scope remains external to this tree              | `N/A` until the same amendment names exact generated mirrors | One authority selects the smallest risk-justified review set and explains every skip |
-| A3 public/private      | `N/A` until an amendment admits exact public paths; private scope remains external to this tree              | `N/A` until the same amendment names exact generated mirrors | PR body, consolidated review, native replies, four dispositions, and AI marker agree |
-| B public/private       | `N/A` until an amendment names each exact legacy occurrence and owner                                        | `N/A` until the same amendment names exact generated mirrors | No active seven-cycle/two-clean residue; target 1–3, recovery 4–5, stop before 6     |
-| C public/private       | `N/A` unless a human-approved amendment supplies exact paths                                                 | `N/A` unless that amendment names exact generated mirrors    | Recorded no-change decision, or necessity evidence plus reversible implementation    |
-| Closure                | Public plan folder/index and private obligation thread                                                       | No bindings                                                  | Both mains green on recorded pins; final public PR archives the control plan         |
+| Unit                   | Hand-authored source boundary                                                                                | Generated or retirement boundary                             | Done state                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md` | No bindings                                                  | Mapped briefs absent, indexes reconciled, historical links preserved              |
+| A1/A2/A3/B public      | Exact paths only after merged `PRE-A1-ADMISSION`; private scope remains external to this tree                | Exact mirrors only after that same public admission          | Each later row cites the admitted owner and predecessor pin                       |
+| A1/A2/A3/B private     | Exact private paths only after merged `PRIV-ADMISSION`                                                       | Exact private mirrors only after that same private admission | Private PR records semantic counterpart/deviation without public leakage          |
+| C public/private       | `N/A` unless a human-approved amendment supplies exact paths                                                 | `N/A` unless that amendment names exact generated mirrors    | Recorded no-change decision, or necessity evidence plus reversible implementation |
+| Closure                | Public plan folder/index and private obligation thread                                                       | No bindings                                                  | Both mains green on recorded pins; final public PR archives the control plan      |
 
 If a row forecasts more than 400 changed hand-authored lines or 20 hand-authored files, split it into
 named cohesive sub-units before opening the first PR. The table's owned subtrees are discovery

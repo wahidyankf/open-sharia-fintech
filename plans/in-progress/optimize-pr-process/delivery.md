@@ -236,36 +236,41 @@ the narrow frozen-PR exception used during one public correction.
 Every unit repeats Phases 1–5 below. `PUB-WT` and `PRIV-WT` mean the declared worktrees;
 The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
 
-| Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                                                                                   | Stable result                 |
-| -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------------- | ----------------------------- |
-| 1–5      | ACTIVATE    | public/PUB-WT   | `optimize-pr-process-activate`                       | worktree-to-pr | Phase 3 | RECONCILE / #272 merge, or the sole PLAN-AMENDMENT merge                                      | executable plan record        |
-| 0        | PUB-BASE    | public/PUB-WT   | `—`                                                  | no delivery    | no      | ACTIVATE                                                                                      | public baseline recorded      |
-| 1–5?     | PUB-REPAIR  | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`  | worktree-to-pr | Phase 3 | ACTIVATE                                                                                      | public baseline repaired      |
-| 1–5      | PUB-IDEAS-4 | public/PUB-WT   | `optimize-pr-process-pub-ideas-4`                    | worktree-to-pr | Phase 3 | PUB-BASE:P0.10 → PUB-IDEAS-4 clean-direct or PUB-REPAIR:P5.17 → PUB-IDEAS-4 successful-repair | first remaining ideas retired |
-| 1–5      | PUB-IDEAS-5 | public/PUB-WT   | `optimize-pr-process-pub-ideas-5`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-4:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-6 | public/PUB-WT   | `optimize-pr-process-pub-ideas-6`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-5:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-7 | public/PUB-WT   | `optimize-pr-process-pub-ideas-7`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-6:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-8 | public/PUB-WT   | `optimize-pr-process-pub-ideas-8`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-7:P5.12                                                                             | terminal public proof         |
-| 0        | PRIV-BASE   | private/PRIV-WT | `—`                                                  | no delivery    | no      | terminal PUB-IDEAS proof                                                                      | overlay-safe baseline         |
-| 1–5?     | PRIV-REPAIR | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>` | worktree-to-pr | Phase 3 | evidenced PRIV-BASE failure                                                                   | private baseline repaired     |
-| 1–5      | PRIV-IDEAS  | private/PRIV-WT | `optimize-pr-process-priv-ideas`                     | worktree-to-pr | Phase 3 | PRIV-BASE:P0.16 clean/overlay-owned **or PRIV-REPAIR:P5.15 successful-repair**                | private ideas retired         |
-| 1–5      | PUB-A1      | public/PUB-WT   | `optimize-pr-process-pub-a1`                         | worktree-to-pr | Phase 3 | PRIV-IDEAS                                                                                    | plan rules coherent           |
-| 1–5      | PRIV-A1     | private/PRIV-WT | `optimize-pr-process-priv-a1`                        | worktree-to-pr | Phase 3 | PUB-A1                                                                                        | private A1 adapted            |
-| 1–5      | PUB-A2      | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent       |
-| 1–5      | PRIV-A2     | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted            |
-| 1–5      | PUB-A3      | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent       |
-| 1–5      | PRIV-A3     | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PUB-A3                                                                                        | private A3 adapted            |
-| 1–5      | PUB-B       | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3                                                                                       | legacy conflict removed       |
-| 1–5      | PRIV-B      | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                                                                                         | private conflict removed      |
-| 1–5      | PUB-C?      | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                                                                                        | necessity-gated mechanism     |
-| 1–5      | PRIV-C?     | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                                                                                         | private C adapted             |
-| 1–5?     | PUB-CORR?   | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin                                                                         | replacement public pin        |
-| 1–5?     | PLAN-AMEND? | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin                                                                      | amended plan pin              |
-| 1–6      | CLOSURE     | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 3 | last unit                                                                                     | plan archived and focused     |
+| Phase(s) | Unit             | Repo/WT         | Branch                                                      | Mode           | PR      | Predecessor                                                                                   | Stable result                          |
+| -------- | ---------------- | --------------- | ----------------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 1–5      | ACTIVATE         | public/PUB-WT   | `optimize-pr-process-activate`                              | worktree-to-pr | Phase 3 | RECONCILE / #272 merge, or the sole PLAN-AMENDMENT merge                                      | executable plan record                 |
+| 0        | PUB-BASE         | public/PUB-WT   | `—`                                                         | no delivery    | no      | ACTIVATE                                                                                      | public baseline recorded               |
+| 1–5?     | PUB-REPAIR       | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`         | worktree-to-pr | Phase 3 | ACTIVATE                                                                                      | public baseline repaired               |
+| 1–5      | PUB-IDEAS-4      | public/PUB-WT   | `optimize-pr-process-pub-ideas-4`                           | worktree-to-pr | Phase 3 | PUB-BASE:P0.10 → PUB-IDEAS-4 clean-direct or PUB-REPAIR:P5.17 → PUB-IDEAS-4 successful-repair | first remaining ideas retired          |
+| 1–5      | PUB-IDEAS-5      | public/PUB-WT   | `optimize-pr-process-pub-ideas-5`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-4:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-6      | public/PUB-WT   | `optimize-pr-process-pub-ideas-6`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-5:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-7      | public/PUB-WT   | `optimize-pr-process-pub-ideas-7`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-6:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-8      | public/PUB-WT   | `optimize-pr-process-pub-ideas-8`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-7:P5.12                                                                             | terminal public proof                  |
+| 0        | PRIV-BASE        | private/PRIV-WT | `—`                                                         | no delivery    | no      | terminal PUB-IDEAS proof                                                                      | overlay-safe baseline                  |
+| 1–5?     | PRIV-REPAIR      | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>`        | worktree-to-pr | Phase 3 | evidenced PRIV-BASE failure                                                                   | private baseline repaired              |
+| 1–5      | PRIV-IDEAS       | private/PRIV-WT | `optimize-pr-process-priv-ideas`                            | worktree-to-pr | Phase 3 | PRIV-BASE:P0.16 clean/overlay-owned **or PRIV-REPAIR:P5.15 successful-repair**                | private ideas retired                  |
+| 1–5      | PRE-A1-ADMISSION | public/PUB-WT   | `optimize-pr-process-plan-amendment-a-rules-admission`      | worktree-to-pr | Phase 3 | PRIV-IDEAS                                                                                    | exact public A1/A2/A3/B admission pin  |
+| 1–5      | PRIV-ADMISSION   | private/PRIV-WT | `optimize-pr-process-priv-plan-amendment-a-rules-admission` | worktree-to-pr | Phase 3 | PRE-A1-ADMISSION sibling obligation                                                           | exact private adaptation admission pin |
+| 1–5      | PUB-A1           | public/PUB-WT   | `optimize-pr-process-pub-a1`                                | worktree-to-pr | Phase 3 | PRE-A1-ADMISSION + PRIV-ADMISSION                                                             | plan rules coherent                    |
+| 1–5      | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1`                               | worktree-to-pr | Phase 3 | PUB-A1                                                                                        | private A1 adapted                     |
+| 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                                | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent                |
+| 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                               | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted                     |
+| 1–5      | PUB-A3           | public/PUB-WT   | `optimize-pr-process-pub-a3`                                | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent                |
+| 1–5      | PRIV-A3          | private/PRIV-WT | `optimize-pr-process-priv-a3`                               | worktree-to-pr | Phase 3 | PUB-A3                                                                                        | private A3 adapted                     |
+| 1–5      | PUB-B            | public/PUB-WT   | `optimize-pr-process-pub-b`                                 | worktree-to-pr | Phase 3 | PRIV-A3                                                                                       | legacy conflict removed                |
+| 1–5      | PRIV-B           | private/PRIV-WT | `optimize-pr-process-priv-b`                                | worktree-to-pr | Phase 3 | PUB-B                                                                                         | private conflict removed               |
+| 1–5      | PUB-C?           | public/PUB-WT   | `optimize-pr-process-pub-c`                                 | worktree-to-pr | Phase 3 | PRIV-B                                                                                        | necessity-gated mechanism              |
+| 1–5      | PRIV-C?          | private/PRIV-WT | `optimize-pr-process-priv-c`                                | worktree-to-pr | Phase 3 | PUB-C                                                                                         | private C adapted                      |
+| 1–5?     | PUB-CORR?        | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`               | worktree-to-pr | Phase 3 | portable defect + pin                                                                         | replacement public pin                 |
+| 1–5?     | PLAN-AMEND?      | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`                 | worktree-to-pr | Phase 3 | plan defect + frozen pin                                                                      | amended plan pin                       |
+| 1–6      | CLOSURE          | public/PUB-WT   | `optimize-pr-process-closure`                               | worktree-to-pr | Phase 3 | last unit                                                                                     | plan archived and focused              |
 
 Repair rows activate only after their baseline fails; each runs Phases 1–5, merges, and reruns that
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
-Optional C becomes a recorded no-change decision when necessity fails. Before each unit, replace
+Optional C becomes a recorded no-change decision when necessity fails. PRE-A1-ADMISSION is the
+one planned admission for the known A1/A2/A3/B rule waves, not a correction and not an authorization
+to change any rule: it inventories and admits exact later source/mirror paths in a plan-only PR.
+PRIV-ADMISSION is its private-safe counterpart and must preserve the approved overlay. Before each unit, replace
 its predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the
 next row. CLOSURE opens its one draft PR in inherited Phase 3, completes review/merge/resync in
 inherited Phases 4–5, then performs only final evidence, knowledge capture, archive, and cleanup in
@@ -893,7 +898,17 @@ retains both the lineage ID and its correction count.
 
 ## Dormant A-Wave Checklist
 
-### A/Rules Atomic Execution References
+### Pre-A1 Admission and A/Rules Atomic Execution References
+
+Before A1 starts, PRE-A1-ADMISSION creates the exact public ledger that A1–B need; it does not edit
+the prospective rule sources. Its PR first performs the prescribed propagation read and records the
+candidate owner/source/mirror paths, then adds only those exact public paths, bounded before-ledgers,
+and their A1/A2/A3/B owner to this plan's file-impact tree and delivery ledger. Its body records the
+private sibling obligation, but no private evidence or path is added to this public PR. PRIV-ADMISSION
+then creates the equivalent private plan-only admission from that immutable public pin, preserving the
+authorized overlay. Both admission PRs run Phases 1–5 and must merge before `AR-ENTRY` for PUB-A1;
+any unexpected path, cap breach, or disagreement freezes the successor for human review rather than
+admitting a generic subtree.
 
 Every A/Rules checkbox below is one atomic state transition, not optional background. Before a row
 uses an `AR-*` reference, its unit heading declares a literal `UNIT`, `REPO`, `BRANCH`, and
@@ -902,18 +917,20 @@ to that `RECORD`, read it back with `sed -n '1,$p' "$RECORD"`, and stop if a req
 `RECORD` is local preparation only; the same resolved values and read-back result must appear in the
 unit's PR route/reply artifact before the associated gate passes.
 
-| Unit    | `REPO`                   | `BRANCH`                      | `RECORD`                                          |
-| ------- | ------------------------ | ----------------------------- | ------------------------------------------------- |
-| PUB-A1  | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a1`  | `local-tmp/optimize-pr-process/pub-a1-record.md`  |
-| PRIV-A1 | `wahidyankf/ose-private` | `optimize-pr-process-priv-a1` | `local-tmp/optimize-pr-process/priv-a1-record.md` |
-| PUB-A2  | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a2`  | `local-tmp/optimize-pr-process/pub-a2-record.md`  |
-| PRIV-A2 | `wahidyankf/ose-private` | `optimize-pr-process-priv-a2` | `local-tmp/optimize-pr-process/priv-a2-record.md` |
-| PUB-A3  | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a3`  | `local-tmp/optimize-pr-process/pub-a3-record.md`  |
-| PRIV-A3 | `wahidyankf/ose-private` | `optimize-pr-process-priv-a3` | `local-tmp/optimize-pr-process/priv-a3-record.md` |
-| PUB-B   | `wahidyankf/ose-public`  | `optimize-pr-process-pub-b`   | `local-tmp/optimize-pr-process/pub-b-record.md`   |
-| PRIV-B  | `wahidyankf/ose-private` | `optimize-pr-process-priv-b`  | `local-tmp/optimize-pr-process/priv-b-record.md`  |
-| PUB-C   | `wahidyankf/ose-public`  | `optimize-pr-process-pub-c`   | `local-tmp/optimize-pr-process/pub-c-record.md`   |
-| PRIV-C  | `wahidyankf/ose-private` | `optimize-pr-process-priv-c`  | `local-tmp/optimize-pr-process/priv-c-record.md`  |
+| Unit             | `REPO`                   | `BRANCH`                                                    | `RECORD`                                                   |
+| ---------------- | ------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| PRE-A1-ADMISSION | `wahidyankf/ose-public`  | `optimize-pr-process-plan-amendment-a-rules-admission`      | `local-tmp/optimize-pr-process/pre-a1-admission-record.md` |
+| PRIV-ADMISSION   | `wahidyankf/ose-private` | `optimize-pr-process-priv-plan-amendment-a-rules-admission` | `local-tmp/optimize-pr-process/priv-admission-record.md`   |
+| PUB-A1           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a1`                                | `local-tmp/optimize-pr-process/pub-a1-record.md`           |
+| PRIV-A1          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a1`                               | `local-tmp/optimize-pr-process/priv-a1-record.md`          |
+| PUB-A2           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a2`                                | `local-tmp/optimize-pr-process/pub-a2-record.md`           |
+| PRIV-A2          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a2`                               | `local-tmp/optimize-pr-process/priv-a2-record.md`          |
+| PUB-A3           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a3`                                | `local-tmp/optimize-pr-process/pub-a3-record.md`           |
+| PRIV-A3          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a3`                               | `local-tmp/optimize-pr-process/priv-a3-record.md`          |
+| PUB-B            | `wahidyankf/ose-public`  | `optimize-pr-process-pub-b`                                 | `local-tmp/optimize-pr-process/pub-b-record.md`            |
+| PRIV-B           | `wahidyankf/ose-private` | `optimize-pr-process-priv-b`                                | `local-tmp/optimize-pr-process/priv-b-record.md`           |
+| PUB-C            | `wahidyankf/ose-public`  | `optimize-pr-process-pub-c`                                 | `local-tmp/optimize-pr-process/pub-c-record.md`            |
+| PRIV-C           | `wahidyankf/ose-private` | `optimize-pr-process-priv-c`                                | `local-tmp/optimize-pr-process/priv-c-record.md`           |
 
 | Reference        | Exact input, command, and output record                                                                                                                                                                                                                                                                                                                                                                                                 | Pass/fail condition                                                                                                                                                                                          |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -934,9 +951,26 @@ unit's PR route/reply artifact before the associated gate passes.
 | `AR-LANDED`      | Input: merge SHA from `RECORD`. Run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" \| /usr/bin/shasum -a 256`; append the landed hash to `RECORD`.                                                                                                                                                                                                                                                                             | Landed and reviewed hashes match exactly; inequality stops the unit.                                                                                                                                         |
 | `AR-RESYNC`      | Input: merge SHA and literal successor state in `RECORD`. Run `git fetch origin main && test "$(git rev-parse origin/main)" = "$MERGE_SHA" && git status --short --branch`; append output and sibling-obligation URL/state to `RECORD`.                                                                                                                                                                                                 | `origin/main` equals the merge, the same worktree is clean or has only named private overlay, and exactly one successor/terminal state is published.                                                         |
 
+### PRE-A1-ADMISSION / PRIV-ADMISSION — Make the Known Rule Waves Reachable
+
+- [ ] `[PRE-A1-ADMISSION:P1.01][AI]` From the terminal PRIV-IDEAS pin, create the declared public plan-amendment branch and record the exact predecessor, public plan-only ledger, 400-line/20-file forecast, and frozen successor set (`PUB-A1` through `PRIV-B`).
+- [ ] `[PRE-A1-ADMISSION:P1.02][AI]` Read and run the prescribed rule-propagation workflow in its plan-admission mode. Record its candidate canonical source, consumer, generated-mirror, owner, and private-sibling-obligation inventory; a candidate path is not permission to edit it.
+- [ ] `[PRE-A1-ADMISSION:P1.03][AI]` Admit only the verified exact public A1/A2/A3/B source and generated-mirror paths, with one bounded before-ledger and owner per path, by changing this plan's tree and matching delivery ledger. Acceptance: no rule, agent, binding, workflow, code, or private path changes in this PR.
+- [ ] `[PRE-A1-ADMISSION:P1.04][AI]` Record the immutable public admission pin and one private-safe sibling obligation requiring `PRIV-ADMISSION`; keep every A/B implementation PR frozen until both admission pins are read back.
+- [ ] `[PRE-A1-ADMISSION:P1.05][AI]` Run `AR-LOCAL`, `AR-STAGE`, `AR-DRAFT`, `AR-ROUTE`, `AR-REVIEW`, `AR-REPLY`, `AR-CI`, `AR-READY`, `AR-FINGERPRINT`, `AR-MERGE`, `AR-LANDED`, and `AR-RESYNC` with `UNIT=pre-a1-admission`. Acceptance: review cycles retain the 1–3 target, changed-probe recovery rule, and stop-before-6 bound.
+- [ ] `[PRE-A1-ADMISSION:P1.G][AI]` Pass exact-path, no-rule-mutation, public-safe-sibling, cap, native-review, fingerprint, and resync gate.
+- [ ] `[PRE-A1-ADMISSION:P1.P][AI]` Publish the public admission merge pin, exact frozen/resumption state, and private sibling obligation URL.
+
+- [ ] `[PRIV-ADMISSION:P1.01][AI]` From the immutable PRE-A1-ADMISSION obligation, create the declared private plan-amendment branch and record the authorized overlay before-ledger; no public artifact receives private path or content detail.
+- [ ] `[PRIV-ADMISSION:P1.02][AI]` Classify each public admission as a private semantic counterpart, reasoned deviation, or documented `N/A`; record exact private paths/mirrors only in the private plan-amendment PR.
+- [ ] `[PRIV-ADMISSION:P1.03][AI]` Admit only that private ledger, preserve the overlay, and record the public-safe terminal obligation in the paired native artifacts. A missing, extra, or unexplainable path freezes `PRIV-A1`.
+- [ ] `[PRIV-ADMISSION:P1.04][AI]` Complete the private PR lifecycle through `AR-LOCAL`, `AR-STAGE`, `AR-DRAFT`, `AR-ROUTE`, `AR-REVIEW`, `AR-REPLY`, `AR-CI`, `AR-READY`, `AR-FINGERPRINT`, `AR-MERGE`, `AR-LANDED`, and `AR-RESYNC` with the inherited cycle count.
+- [ ] `[PRIV-ADMISSION:P1.G][AI]` Pass overlay, semantic-correspondence, private-safe disclosure, exact-admission, native-review, and terminal-obligation gate.
+- [ ] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and authorize `PUB-A1` only when both admission pins and one paired obligation are read back.
+
 ### PUB-A1 — Plan-Making Rules
 
-- [ ] `[PUB-A1:P1.01][AI]` Execute `AR-ENTRY` for the `A1 public/private` row in `tech-docs.md`; read the terminal PRIV-IDEAS obligation and record its exact predecessor pin. Acceptance: current public `origin/main` contains that pin.
+- [ ] `[PUB-A1:P1.01][AI]` Execute `AR-ENTRY` for the admitted A1 public row in `tech-docs.md`; read both admission pins and record the exact public predecessor. Acceptance: current public `origin/main` contains the public admission pin and its paired private obligation is terminal.
 - [ ] `[PUB-A1:P1.02][AI]` Run only `AR-PROPAGATE` for normalized plan-making rules. Acceptance: the strict manifest names the authoritative source, consumer, and private sibling obligation.
 - [ ] `[PUB-A1:P1.03][AI]` Edit only public paths listed in the `AR-PROPAGATE` manifest. Acceptance: `git status --short` contains no unlisted path.
 - [ ] `[PUB-A1:P1.04][AI]` Run only `AR-BIND`. Acceptance: generated paths and second-generation stability are recorded separately from source paths.
@@ -1486,7 +1520,7 @@ is resynced, and the sibling obligation has one owner, state, and immutable pin.
 ## Cross-Repository Order (Dormant)
 
 After activation, PUB-IDEAS-4–8 merge sequentially before PRIV-IDEAS. Later implementation remains sequential:
-`PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? →
+`PRE-A1-ADMISSION → PRIV-ADMISSION → PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? →
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
