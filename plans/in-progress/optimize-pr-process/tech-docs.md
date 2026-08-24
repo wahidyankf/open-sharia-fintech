@@ -56,14 +56,11 @@ until answered. Every AI-authored body, review, reply, and summary ends with `Ge
 ## File-Impact Analysis
 
 This scan-first tree is the public-repository source of truth. Every `[E]` or `[D]` leaf is an
-admitted public path or closed path pattern; every `[G]` leaf is its exact generated mirror and is
-never hand-edited. A literal `[N]` leaf is an equally admitted, finite creation target only: it
-authorizes no existing-file edit and never expands through a glob. `[N] no private path` remains an
-explicit no-authority record. A label does not make a directory an edit authorization. A unit records
-its exact before/after ledger. `P` is handwritten changed lines in program/script files (including
-tests); `N` is handwritten changed lines in non-program files such as Markdown, plans, specs, and
-configuration; generated files are excluded from both. Program/script lines (`P`) are at most 400;
-when program/script and non-program lines (`N`) are both present, `P + N` is at most 900
+admitted public path or closed path pattern. A literal `[N]` leaf is an equally admitted, finite
+creation target only: it authorizes no existing-file edit and never expands through a glob. `[N] no
+private path` remains an explicit no-authority record. A label does not make a directory an edit
+authorization. A unit records its exact before/after ledger. Program/script lines (`P`) are at most
+400; when program/script and non-program lines (`N`) are both present, `P + N` is at most 900
 (`N ≤ 900 − P`); 1,000 handwritten lines is the absolute ceiling; and there are at most 20
 hand-authored files.
 
@@ -74,9 +71,9 @@ hand-authored files.
 ├── [D] plans/in-progress/optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
 │       # CLOSURE removes these seven files only after those reviewed pre-move edits
 ├── [D] plans/ideas/q2-not-urgent-important/{nx-affected-cross-worktree-contamination,stale-checkout-ref-advance-drift,cross-repo-governance-link-parity,plan-archival-in-pr-multi-repo-gap,propagation-checklist-under-coverage,recurring-defect-family-escalation}.md
-│       # historical deletions completed in PRs #285/#286/#288; paths are absent and grant no future authority
+│       # six named future PUB-IDEAS-6–8 sources; no discovery may add a brief
 ├── [E] plans/ideas/README.md
-│       # historical index update completed with PRs #285/#286/#288; no future unlink authority
+│       # unlink only the six `[D]` brief paths; retain completed/history links
 ├── [E] plans/in-progress/README.md
 │       # CLOSURE removes only this control-plan entry after its reviewed archive move
 ├── [E] plans/done/README.md
@@ -93,35 +90,12 @@ hand-authored files.
 │       # PLAN-STATE-CORRECTION: exact plan-maker source only
 ├── [E] .claude/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md
 │       # PLAN-STATE-CORRECTION: exact plan-fixer source only
-├── [G] .agents/skills/plan-validating-quality/reference/{delivery-checklist-validation-part1,rule11-execution-grade-clarity-validation}.md
+├── [E] .agents/skills/plan-validating-quality/reference/{delivery-checklist-validation-part1,rule11-execution-grade-clarity-validation}.md
 │       # PLAN-STATE-CORRECTION: generated checker mirrors only
-├── [G] .agents/skills/plan-creating-project-plans/reference/execution-grade-clarity.md
+├── [E] .agents/skills/plan-creating-project-plans/reference/execution-grade-clarity.md
 │       # PLAN-STATE-CORRECTION: generated plan-maker mirror only
-├── [G] .agents/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md
+├── [E] .agents/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md
 │       # PLAN-STATE-CORRECTION: generated plan-fixer mirror only; never hand-edit and require binding validation
-├── [E] repo-governance/conventions/structure/plans/{prs-open-at-delivery-boundaries-pr-size,prs-open-at-delivery-boundaries-pr-size-atomicity}.md
-├── [E] repo-governance/workflows/plan/plan-execution/per-phase-quality-gate-push-targets.md
-├── [E] package.json
-│       # PUB-A1, completed in PR #289: exact size-policy sources and template-name exemption
-├── [E] .github/pull_request_template.md
-│       # PUB-A1 owns only its `- **Size:**` comment; PUB-A3 owns every other template line
-├── [E] repo-governance/workflows/pr/pr-review-quality-gate/{steps-0-1-classify-and-scout,loop-algorithm,loop-exit-and-block-rules,purpose-execution-mode-and-classifier,route-specific-done-definition,probe-variation-and-exit,notes}.md
-├── [E] .claude/agents/pr-review/pr-review-scout-maker.md
-├── [E] .claude/skills/pr-review-scout-classification/reference/{shared-context-and-prior-cycle-read,risk-tier-and-specialist-selection}.md
-├── [G] .opencode/agents/pr-review-scout-maker.md
-├── [G] .codex/agents/pr-review-scout-maker.toml
-├── [G] .agents/skills/pr-review-scout-classification/reference/{shared-context-and-prior-cycle-read,risk-tier-and-specialist-selection}.md
-│       # PUB-A2: routing hunks only; PUB-B owns the named cadence/terminal hunks in the seven workflow sources
-├── [E] repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-body.md
-├── [E] repo-governance/development/quality/pr-review-disciplines/review-as-teaching.md
-├── [E] repo-governance/workflows/pr/pr-review-quality-gate/{github-reviews-api-mechanics-part-1,github-reviews-api-mechanics-part-2}.md
-├── [E] .claude/skills/pr-review-fixer-resolution/reference/{four-way-triage,reply-resolve-discipline,identity-and-quality-gates}.md
-├── [G] .agents/skills/pr-review-fixer-resolution/reference/{four-way-triage,reply-resolve-discipline,identity-and-quality-gates}.md
-│       # PUB-A3: reader body, teaching, and native-conversation sources; PUB-B owns only reply-resolve cadence
-├── [E] repo-governance/{workflows/pr/pr-review-quality-gate.md,workflows/pr/pr-review-quality-gate/{step-2-fan-out-and-synthesis,steps-3-5-fixer-ci-gate-done-check,convergence-measurement}.md,development/quality/pr-review-disciplines/quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md,workflows/pr/README.md,conventions/structure/plans/delivery-mode-merge-authority-and-precedence.md,development/workflow/pr-merge-protocol/the-worktree-to-pr-terminal-step.md,workflows/plan/plan-execution/finalization-pr-review-gate.md,workflows/plan/plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md}
-├── [E] .claude/skills/{pr-review-synthesis-coordination/reference/machine-readable-audit-record,plan-creating-project-plans/reference/delivery-mode,plan-applying-fixes/reference/pr-review-cycle-and-merge-tag-fixes,plan-verifying-execution/reference/{delivery-mode-pr-review-cycle,delivery-mode-phase0-and-boundaries}}.md
-├── [G] .agents/skills/{pr-review-synthesis-coordination/reference/machine-readable-audit-record,plan-creating-project-plans/reference/delivery-mode,plan-applying-fixes/reference/pr-review-cycle-and-merge-tag-fixes,plan-verifying-execution/reference/{delivery-mode-pr-review-cycle,delivery-mode-phase0-and-boundaries}}.md
-│       # PUB-B: remaining sources plus only its named shared cadence/terminal hunks
 └── [N] plans/done/<recorded-YYYY-MM-DD>__optimize-pr-process/{README,brd,prd,tech-docs,delivery,idea-disposition-map,learnings}.md
         # CLOSURE archive targets only; record the runtime date before the move
 ```
@@ -130,8 +104,7 @@ Completed PUB-IDEAS-4 sources
 `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md` and
 `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md` are historical evidence only:
 they are absent and never re-admitted. Their former index history is retained; only the six `[D]`
-paths above were unlinked by historical PRs #285, #286, and #288; they are absent and never
-re-admitted. Completed PUB-IDEAS-5 sources
+paths above are unlinked by future PUB-IDEAS-6–8 work. Completed PUB-IDEAS-5 sources
 `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md` and
 `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`, plus their PR #281 backlink repair,
 are historical evidence only and are never re-admitted.
@@ -146,15 +119,14 @@ that record nor a public propagation manifest grants private-file authority.
 ### Amendment-Only Admission for Later Rule Waves
 
 No A1, A2, A3, B, or optional-C source/mirror path is admitted by a generic family or by a
-discovery result. `PRE-A1-ADMISSION` completed in merged public
-[PR #289](https://github.com/wahidyankf/ose-public/pull/289) at
-`539cda50e6aa48079d347ae6131b81901120cd84`: it admitted each exact public path and mirror to this
-tree and matching delivery ledger, and completed the direct `PUB-A1` size-policy edits. Its sole
-public-to-private successor is `PRIV-ADMISSION`, which must start from that public pin, classify only
-the private semantic counterparts, and publish a private-safe discharge or deviation before
-`PRIV-A1`; it receives no public-file authority. A propagation manifest may recommend placement but
-cannot itself expand scope. Optional Wave C remains `N/A` unless its separately human-approved
-necessity case first supplies exact paths through the ordinary amendment route.
+discovery result. The scheduled `PRE-A1-ADMISSION` plan-only PR is the one explicit route for known
+A1/A2/A3/B public paths: it must add each exact source path, every generated mirror (if any), its
+owning unit, and bounded before-ledger to this tree and matching delivery ledger before `PUB-A1`
+starts. Its paired private plan-only `PRIV-ADMISSION` follows the public pin and supplies the
+private-safe counterpart before `PRIV-A1`; neither admission edits a rule. A propagation manifest
+may recommend placement but cannot itself expand scope. Optional Wave C remains `N/A` unless its
+separately human-approved necessity case first supplies exact paths through the ordinary amendment
+route.
 
 ### Bounded Delivery Ledger
 
@@ -326,20 +298,6 @@ lineage and count. This is human-auditable PR evidence, not synchronization auto
 surfaces retain their existing authority.
 
 ## Delivery and Rollback DAG
-
-### Live Navigation
-
-The historical DAG below records completed idea retirement and admission sequencing; it is not an
-executable order. The only live order is frozen behind PR #290's post-merge terminal handoff:
-
-```mermaid
-flowchart LR
-    Q["#290 handoff read back"] --> A["PRIV-ADMISSION"] --> B["PRIV-A1"] --> C["PUB-A2"]
-```
-
-Equivalent prose: after the PR #290 receipt, and only then, start `PRIV-ADMISSION`; its sole
-successor is `PRIV-A1`, whose sole public successor is `PUB-A2`. A new private PR starts review at
-Cycle 1 unless it is the same paused PR being resumed.
 
 ### Historical Delivery and Rollback Receipt
 
