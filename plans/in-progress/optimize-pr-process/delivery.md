@@ -133,8 +133,9 @@ git worktree prune # stale registration only; retry the applicable add once
 The former private two-path patch was reviewed and landed in private PR #63. The worktree is now
 clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` is historical:
 private PR #64 completed its native ledger. While public plan-amendment PR #296 is open, `PRIV-A1`
-and existing private PR #65 are frozen. From #296's landed merge SHA, `AR-RESUME` proves the clean
-existing branch/head against fetched private `origin/main` before that same PR becomes active.
+and existing private PR #65 are frozen. From #296's landed merge SHA, `AR-RESUME` proves the
+existing branch/head against fetched private `origin/main` and permits only its recorded admitted
+preexisting dirty diff before that same PR becomes active.
 
 ## Delivery Mode
 
@@ -745,6 +746,7 @@ pretends a post-merge value existed before merge.
 | `cap-forecast`                    | The before-edit line/file forecast for `hand-authored-paths`; record it before edit.                                                                                                                                                                                                                            |
 | `pr-title` and `pr-body-file`     | The literal human-readable title and exact local PR-body file under `local-tmp/optimize-pr-process/`, written and read back after the cohesive commit and before `AR-DRAFT`/`AR-ROUTE`; `## Review route` in that body is the sole route record, and the title states the unit outcome without inventing scope. |
 | `resume-pr-url` and `resume-head` | Required only for an explicitly declared frozen-PR continuation. They are the existing PR URL and exact remote head read back before `AR-RESUME`; no new draft is created.                                                                                                                                      |
+| `paused-dirty-diff`               | Required only for the named frozen continuation with pre-existing work. It contains the exact admitted private path ledger and patch hash recorded before resumption; a clean worktree records `none`.                                                                                                          |
 | `current-main` and `unit-base`    | The same immutable `origin/main` SHA read by `AR-ENTRY` after it proves `local-base` is an ancestor and before edit.                                                                                                                                                                                            |
 | `historical-private-patch-fields` | Historical PR #63 evidence only; record `N/A` for every future public or private unit.                                                                                                                                                                                                                          |
 | `reviewed-head`                   | The exact pushed SHA read by `AR-DRAFT`, then refreshed after every fixing push before `AR-REVIEW`, CI, or readiness.                                                                                                                                                                                           |
@@ -759,7 +761,7 @@ cross-repository chain in PR-native evidence.
 
 The variables in the references below are only shorthand for these fields: `$AUTHORIZATION_PIN`,
 `$LOCAL_BASE`, `$UNIT_BASE`, `$PR_TITLE`, `$HAND_AUTHORED_PATHS`, `$ADMITTED_PATHS`,
-`$PR_BODY_FILE`, `$RESUME_PR`, `$RESUME_HEAD`, `$CURRENT_MAIN`, `$REVIEWED_HEAD`, and `$MERGE_SHA` are their
+`$PR_BODY_FILE`, `$RESUME_PR`, `$RESUME_HEAD`, `$PAUSED_DIRTY_PATHS`, `$PAUSED_DIRTY_PATCH_HASH`, `$CURRENT_MAIN`, `$REVIEWED_HEAD`, and `$MERGE_SHA` are their
 same-named record fields. A field is passed exactly as
 recorded; it is never inferred from a branch name, a directory, or a previous PR.
 
@@ -774,16 +776,16 @@ same-document
 copyable commands below, and the unit's admitted-path ledger; no external template or invented
 record is authority.
 
-| Checklist ID family                       | Uniquely bound packet                                                                                                          | Observable exit                                                                                                                                                      |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `P0.*`                                    | `BASELINE-PACKET`                                                                                                              | clean worktree, baseline results, and one successor or terminal stop are recorded without a Phase 0 PR                                                               |
-| `P1.*`                                    | `AR-ENTRY` for a fresh unit or declared `AR-RESUME` for its frozen continuation, then `AR-PROPAGATE`/`AR-BIND` when applicable | current main, local base, authorization evidence, path ledger, and forecast are recorded; an unknown path, dirty worktree, or unproven resumed head freezes the unit |
-| `P2.*`                                    | `AR-LOCAL` and `AR-STAGE`                                                                                                      | local gate, cap, cached-ledger, and cohesive-commit evidence are recorded                                                                                            |
-| `P3.*`                                    | `AR-PUSH` and `AR-DRAFT`, or `AR-RESUME` for the declared existing draft                                                       | remote/local head equality and one readable AI-marked draft are read back                                                                                            |
-| `P4.*`                                    | `AR-ROUTE`, `AR-REVIEW`, `AR-REPLY`, `AR-CI`, and `AR-READY`                                                                   | the route, bounded review/dispositions, current-head CI, and readiness evidence are read back without scope expansion                                                |
-| `P5.*` except the existing merge checkbox | `AR-FINGERPRINT`, `AR-LANDED`, and `AR-RESYNC`                                                                                 | reviewed/landed fingerprints, merged main, and exactly one successor or terminal state are recorded                                                                  |
-| `A1.*`                                    | `CORRECTION-FIREWALL-PACKET`                                                                                                   | one reconciled lineage, frozen scope, count, owner, and allowed terminal or human-stop state are recorded                                                            |
-| `P6.*`                                    | `CLOSURE-PACKET`                                                                                                               | immutable PR, pair, archive, main-tip, and worktree-removal evidence is read-only reconciled; Phase 6 creates no PR mutation                                         |
+| Checklist ID family                       | Uniquely bound packet                                                                                                          | Observable exit                                                                                                                                                |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `P0.*`                                    | `BASELINE-PACKET`                                                                                                              | clean worktree, baseline results, and one successor or terminal stop are recorded without a Phase 0 PR                                                         |
+| `P1.*`                                    | `AR-ENTRY` for a fresh unit or declared `AR-RESUME` for its frozen continuation, then `AR-PROPAGATE`/`AR-BIND` when applicable | current main, local base, authorization evidence, path ledger, and forecast are recorded; an unknown dirty path/hash or unproven resumed head freezes the unit |
+| `P2.*`                                    | `AR-LOCAL` and `AR-STAGE`                                                                                                      | local gate, cap, cached-ledger, and cohesive-commit evidence are recorded                                                                                      |
+| `P3.*`                                    | `AR-PUSH` and `AR-DRAFT`, or `AR-RESUME` for the declared existing draft                                                       | remote/local head equality and one readable AI-marked draft are read back                                                                                      |
+| `P4.*`                                    | `AR-ROUTE`, `AR-REVIEW`, `AR-REPLY`, `AR-CI`, and `AR-READY`                                                                   | the route, bounded review/dispositions, current-head CI, and readiness evidence are read back without scope expansion                                          |
+| `P5.*` except the existing merge checkbox | `AR-FINGERPRINT`, `AR-LANDED`, and `AR-RESYNC`                                                                                 | reviewed/landed fingerprints, merged main, and exactly one successor or terminal state are recorded                                                            |
+| `A1.*`                                    | `CORRECTION-FIREWALL-PACKET`                                                                                                   | one reconciled lineage, frozen scope, count, owner, and allowed terminal or human-stop state are recorded                                                      |
+| `P6.*`                                    | `CLOSURE-PACKET`                                                                                                               | immutable PR, pair, archive, main-tip, and worktree-removal evidence is read-only reconciled; Phase 6 creates no PR mutation                                   |
 
 The existing `AR-MERGE` checkbox in each unit remains its own repository-authorized merge gate. This
 binding never rewords, scripts, absorbs, or otherwise changes its authority. For future public paths, PRE-A1 admission writes
@@ -799,7 +801,7 @@ public packet names only the private-safe field contract.
 | Reference        | Exact input, command, and output record                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Pass/fail condition                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AR-ENTRY`       | Input: literal `REPO`, new `BRANCH`, `RECORD`, `authorization-pin`, `local-base`, `amendment-url`, `admitted-paths`, and `cap-forecast`. Read the authorization pin from its native sibling artifact, then run the copyable fresh-branch `AR-ENTRY` sequence directly below. Record the selected branch, resolved `current-main`/`unit-base`, and command output in `RECORD`.                                                                                                                                                                           | `authorization-pin` is native-PR evidence only; `local-base` is an ancestor of fetched current main. Every fresh entry starts clean. The declared new branch and `HEAD`, `current-main`, and `unit-base` exactly equal it before edit. An existing branch, missing field, stale branch base, dirty worktree, or nonzero command freezes the unit for `AR-RESUME` or a human decision; it never silently reuses a branch.                                                                                 |
-| `AR-RESUME`      | Input: the explicitly declared frozen `resume-pr-url`, `resume-head`, `BRANCH`, `RECORD`, and `local-base`. Run the copyable resumed-PR sequence below only after the named predecessor's landed SHA authorizes it. Read back the existing draft's URL/state/base/head and record them without creating a draft.                                                                                                                                                                                                                                        | Worktree is clean; `local-base` equals fetched current main; local and remote branch heads equal the recorded existing PR head; the PR is open/draft against `main`. Any mismatch freezes the unit. The resumed PR begins its first **review cycle** at Cycle 1; it is not a new PR.                                                                                                                                                                                                                     |
+| `AR-RESUME`      | Input: the explicitly declared frozen `resume-pr-url`, `resume-head`, `paused-dirty-diff`, `BRANCH`, `RECORD`, and `local-base`. Run the copyable resumed-PR sequence below only after the named predecessor's landed SHA authorizes it. Read back the existing draft's URL/state/base/head and record them without creating a draft.                                                                                                                                                                                                                   | `local-base` equals fetched current main; local and remote branch heads equal the recorded existing PR head; the PR is open/draft against `main`; and the worktree is clean **or** exactly matches the recorded admitted preexisting dirty diff. Any mismatch freezes the unit. The resumed PR begins its first **review cycle** at Cycle 1; it is not a new PR.                                                                                                                                         |
 | `AR-PROPAGATE`   | Input: `RECORD`'s exact normalized rules and admitted source paths. Read `repo-governance/workflows/repo/repo-rules-propagation.md`, invoke it with `mode=strict` and `isolation=current`, then write its `generated-reports/repo-rules-propagation__*__manifest.md` path and sibling obligation URL into `RECORD`.                                                                                                                                                                                                                                     | The read-back manifest names only the pre-admitted paths and owners. A new path is fail/stop for a plan amendment, not permission to edit it.                                                                                                                                                                                                                                                                                                                                                            |
 | `AR-BIND`        | Input: exact hand-authored paths in `RECORD`. Run `npm run generate:bindings && npm run validate:sync && npm run generate:bindings && git status --short`; append source/generated path sets and output to `RECORD`.                                                                                                                                                                                                                                                                                                                                    | All commands exit 0; second generation has no tracked change and no generated file was hand-edited.                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Classify each handwritten path as program/script or non-program, record both line counts, then run the copyable `AR-LOCAL` sequence below and append each result to `RECORD`.                                                                                                                                                                                                                                                                                                      | Gate exits 0 or the record has an explicit reasoned `N/A`; program/script lines are at most 400, a mixed PR is at most 900 handwritten lines, every PR is at most 1,000 handwritten lines, and there are at most 20 files.                                                                                                                                                                                                                                                                               |
@@ -841,12 +843,24 @@ git status --short --branch
 #### `AR-RESUME` copyable command
 
 Use this only for the named frozen continuation. It verifies the existing PR before any further
-action; it does not create a branch or draft PR.
+action; it does not create a branch or draft PR. A nonempty worktree is permitted only when its
+recorded admitted preexisting dirty diff matches exactly; no unrecorded residue is tolerated.
 
 ```bash
 set -euo pipefail
 git fetch origin main
-test -z "$(git status --porcelain)"
+DIRTY_STATUS="$(git status --porcelain --untracked-files=all)"
+if [ -z "$DIRTY_STATUS" ]; then
+  test "$PAUSED_DIRTY_PATHS" = none
+  test "$PAUSED_DIRTY_PATCH_HASH" = none
+else
+  test -n "$PAUSED_DIRTY_PATHS" && test "$PAUSED_DIRTY_PATHS" != none
+  test -n "$PAUSED_DIRTY_PATCH_HASH" && test "$PAUSED_DIRTY_PATCH_HASH" != none
+  test -z "$(git diff --cached --name-only)"
+  test "$(printf '%s\n' "$DIRTY_STATUS" | sed -E 's/^.. //')" = "$PAUSED_DIRTY_PATHS"
+  test "$(git diff --name-only)" = "$PAUSED_DIRTY_PATHS"
+  test "$(git diff --no-ext-diff | git hash-object --stdin)" = "$PAUSED_DIRTY_PATCH_HASH"
+fi
 CURRENT_MAIN="$(git rev-parse origin/main)"
 test "$LOCAL_BASE" = "$CURRENT_MAIN"
 git switch "$BRANCH"
@@ -856,8 +870,10 @@ gh pr view --repo "$REPO" "$RESUME_PR" --json url,state,isDraft,baseRefName,base
 ```
 
 Record the read-back and require `state=OPEN`, `isDraft=true`, `baseRefName=main`,
-`baseRefOid=$LOCAL_BASE`, `headRefName=$BRANCH`, and `headRefOid=$RESUME_HEAD`. A mismatch is a
-human-stop; do not create a replacement PR.
+`baseRefOid=$LOCAL_BASE`, `headRefName=$BRANCH`, and `headRefOid=$RESUME_HEAD`. For the only
+allowed dirty continuation, record the exact admitted paths and patch hash before `AR-RESUME`, then
+preserve and carry that same diff through `AR-LOCAL`, `AR-STAGE`, commit, and `AR-PUSH` on #65. A
+mismatch is a human-stop; do not discard work or create a replacement PR.
 
 #### `AR-LOCAL`, `AR-FINGERPRINT`, and `AR-LANDED` copyable commands
 
@@ -1270,7 +1286,7 @@ Run the mutation only for that single terminal thread after the relevant precond
 recorded. The final read-back must show the same `THREAD_ID`, all reply IDs/URLs, and
 `is_resolved: true`; `clarify` and every non-terminal thread instead record `is_resolved: false`.
 After all per-thread records are complete, rerun the first query and record every remaining
-unresolved thread. This is review-state evidence only; route and summary comments stay separate,
+unresolved thread. This is review-state evidence only; route and summary evidence in the PR body stay separate,
 and it neither changes the 1–3 target / recovery-4–5 / stop-before-6 policy nor adds mechanical
 enforcement.
 
@@ -1381,10 +1397,10 @@ only from #296's landed merge SHA.
 While public plan-amendment PR #296 is open, every `PRIV-A1` checkbox below is frozen: do not push,
 review, mark ready, or merge private PR #65. Resume this section only from #296's landed merge SHA.
 
-- [ ] `[PRIV-A1:P1.01][AI]` Execute `AR-RESUME` in the declared private worktree for existing private PR #65 only after #296's landed merge SHA is read back. Acceptance: the public PR #289 pin remains lineage evidence; the private landed main equals `local-base`; the clean local and remote branch heads equal #65's read-back head; and #65 remains the existing draft against `main`.
+- [ ] `[PRIV-A1:P1.01][AI]` Execute `AR-RESUME` in the declared private worktree for existing private PR #65 only after #296's landed merge SHA is read back. Acceptance: the public PR #289 pin remains lineage evidence; the private landed main equals `local-base`; local and remote branch heads equal #65's read-back head; the worktree is clean or exactly matches its recorded admitted preexisting dirty diff; and #65 remains the existing draft against `main`.
 - [ ] `[PRIV-A1:P1.02][AI]` Classify the private destination as satisfied, reasoned deviation, `N/A`, or portable defect before editing. Acceptance: the private PR artifact contains one class and supporting private-safe evidence.
 - [ ] `[PRIV-A1:P1.03][AI]` Run only `AR-PROPAGATE` for the admitted private semantic counterpart. Acceptance: the manifest and sibling record contain only its admitted private ledger.
-- [ ] `[PRIV-A1:P1.04][AI]` Edit only manifest-admitted private source paths. Acceptance: private evidence remains in the private PR and `git status --short` has no unlisted path.
+- [ ] `[PRIV-A1:P1.04][AI]` Reconcile only the `AR-RESUME`-recorded admitted preexisting dirty diff, then edit only manifest-admitted private source paths. Acceptance: private evidence remains in #65; its initial path ledger/patch hash and later `git status --short` have no unlisted path.
 - [ ] `[PRIV-A1:P1.05][AI]` Run only `AR-BIND`. Acceptance: second-generation stability is recorded without hand-editing generated mirrors.
 - [ ] `[PRIV-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: local gate results are recorded with the private ledger.
 - [ ] `[PRIV-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached paths equal the private ledger.
@@ -1834,8 +1850,9 @@ One draft PR exists at the declared boundary and its human entry point matches t
   `eligible` when any artifact can execute/change reachable behavior, when `plans/**` changes, or
   when evidence is ambiguous; record `noneligible` only for wholly non-executing prose/governance.
   Record the secret-exposure check on either route; suspicion stops normal review.
-- **Template `[AI]`:** Post the review-route record with classification, exact base/head/statistics,
-  plain risk, selected/skipped lenses with reasons, paths to skip, frozen scope, and changed probe.
+- **Template `[AI]`:** Include and read back the `## Review route` section in the readable PR body
+  with classification, exact base/head/statistics, plain risk, selected/skipped lenses with reasons,
+  paths to skip, frozen scope, and changed probe.
   Link each settled prior thread or human dismissal and name its terminal reason.
 - **Template `[AI]`:** On `noneligible`, skip specialist fan-out and fixing cycles. Prove the
   classifier from the full diff and require current-head `.github/workflows/pr-quality-gate.yml`.
