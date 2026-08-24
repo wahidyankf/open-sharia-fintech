@@ -34,8 +34,9 @@
 > PUB-IDEAS-5's live-backlink authority. PR #280 supplied its plan-quality remediation; PR #281
 > completed PUB-IDEAS-5 and named PUB-IDEAS-6 as successor; and PR #282 admitted only
 > PUB-IDEAS-6's four mapped live-backlink repairs. PUB-IDEAS-6 is the sole candidate successor and
-> remains frozen until the strict revalidation below is clean. Private work and every rule/code wave
-> remain frozen until their declared predecessor authorizes them.
+> remains frozen until two consecutive strict zero-finding plan-quality validations are recorded from
+> PR #283's merged state. Private work and every rule/code wave remain frozen until their declared
+> predecessor authorizes them.
 
 ## Executor Legend and Plain-Language Terms
 

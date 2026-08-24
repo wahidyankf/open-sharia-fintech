@@ -3,7 +3,8 @@
 ## Status
 
 **In Progress (PUB-IDEAS-5 is complete; PUB-IDEAS-6 is the sole candidate successor, frozen until
-the strict post-amendment plan-quality revalidation passes).**
+two consecutive strict zero-finding plan-quality validations are recorded from PR #283's merged
+state).**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
