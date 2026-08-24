@@ -53,6 +53,11 @@ computer-science background. A merged PR remains an educational team record, not
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.
   Byte identity applies only where an existing surface contract requires it.
+- For cross-repository execution, a controlled same-document runbook binding may carry the one
+  copyable procedure and private-safe admission fields for a finite set of lifecycle checkboxes.
+  This is a readability and maintenance boundary, not tooling: it avoids divergent copies of the
+  same command while retaining an auditable, junior-readable procedure and never changing an existing
+  merge gate.
 
 ## Scope and Delivery Shape
 

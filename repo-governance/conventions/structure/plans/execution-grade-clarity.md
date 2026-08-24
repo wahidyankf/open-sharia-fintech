@@ -14,13 +14,27 @@ when_to_use: Use when writing or reviewing a delivery.md checkbox for execution-
 
 # Execution-Grade Clarity (HARD RULE)
 
-Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade agents. Authoring-grade clarity is not sufficient — every checkbox MUST be unambiguous at execution time without consulting additional context.
+Plans are executed by execution-grade agents. Every checkbox MUST be unambiguous without extra context.
 
 **Each checkbox MUST contain all of the following that apply:**
 
-- **Explicit file path(s)**: Name the exact file path(s) when known (e.g., `apps/ose-www/src/server/trpc.ts`). When the path cannot be determined at authoring time (e.g., a new file whose location is implementation-dependent), provide the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-www/src/lib/` following the pattern of sibling `auth.ts`").
-- **Explicit shell command(s)**: State the verbatim invocation when a command is involved (e.g., `npx nx run ose-www:test:quick`), not a vague instruction like "run the lint".
-- **Concrete acceptance criterion**: State the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass" or "`nx run ose-www:typecheck` exits 0"). No bare "implement X", "set up Y", or "configure Z" without a concrete verifiable outcome.
+- **Exact path(s)**, or the maximum-detail target: parent, naming pattern, and sibling reference.
+- **Verbatim command(s)** when a command is involved.
+- **Observable acceptance criterion**; never only “implement”, “set up”, or “configure”.
+
+## Controlled Runbook-Reference Exception
+
+Use a same-document, uniquely named runbook packet only for a cross-repository
+confidentiality/admission case where literal repetition would duplicate one maintained procedure or
+disclose private detail. Its finite binding to the checkbox ID or phase MUST state record sources,
+copyable commands, its admitted public path or private-safe target, and the pass/fail record. It
+cannot refer generically elsewhere, invent records at execution, change an existing merge gate, or
+evade file-touch, scope, or acceptance requirements.
+
+**Enforcement disposition — unenforced by decision:** contextual `plan-checker` review records the
+binding and violations; no scanner or exception list is introduced. This limits drift and preserves
+human readability without adding maintenance burden.
+
 - **One scenario per behavior cycle + inline Gherkin**: Every behavior-implementing
   RED→GREEN→REFACTOR cycle targets **exactly one** Gherkin scenario. Its RED step carries a
   single-scenario `**Gherkin (binds) →** "<title>"` tag line followed immediately by that
@@ -34,13 +48,13 @@ Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade a
 
 **HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
 
-**Bad** (missing path, missing command, missing criterion):
+**Bad**:
 
 ```markdown
 - [ ] Add caching
 ```
 
-**Good** (explicit path, explicit command, explicit criterion):
+**Good**:
 
 ```markdown
 - [ ] Edit `apps/ose-www/src/server/trpc.ts`: wrap the public router with
