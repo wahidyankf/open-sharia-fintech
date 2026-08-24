@@ -500,10 +500,11 @@ before editing if the complete forecast would cross 400 changed hand-authored li
 
 A **live backlink** is a Markdown link to an active unit's mapped brief from outside `plans/done/**`.
 Historical `plans/done/**` references remain unchanged. Before editing, P1.05 must enumerate every
-such source path and the minimal unlink/rewording that preserves its surrounding meaning. The exact
-published ledger—not a broad permission to edit references—then admits only the mapped briefs,
-`plans/ideas/README.md`, and those named live-backlink repairs. An unexpected link or any repair
-that would exceed either cap freezes the unit for the bounded split or amendment route.
+such source path and the minimal unlink/rewording that preserves its surrounding meaning. That
+published ledger is **evidence only**, never permission to edit a path. The merged, tracked
+amendment table is the sole authority for a live-backlink repair; without an exact table entry, only
+the mapped briefs and `plans/ideas/README.md` are admitted. A missing, unexpected, or mismatched
+entry—or any repair above either cap—freezes the unit for the bounded split or amendment route.
 
 #### PUB-IDEAS-4 live-backlink amendment ledger
 
@@ -521,14 +522,14 @@ amendment merges; its resumed entry must use that merge pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
 - [ ] `[PUB-IDEAS:P1.03][AI]` Prove fetched `origin/main` equals the predecessor pin.
 - [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-4`, `-5`, `-6`, `-7`, or `-8`) from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. Acceptance: the published list equals the paths later admitted to `git status`.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-4, verify it exactly matches the merged tracked `PUB-IDEAS-4 live-backlink amendment ledger`; for every other unit, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
 - [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
 - [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
 - [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
 - [ ] `[PUB-IDEAS:P1.09][AI]` Run literal predecessor acceptance for every row in the active subset.
 - [ ] `[PUB-IDEAS:P1.10][AI]` Delete only the active subset's mapped public briefs.
-- [ ] `[PUB-IDEAS:P1.11][AI]` Remove only their exact links from `plans/ideas/README.md`, then apply only the named P1.05 live-backlink unlink/rewording; preserve every historical `plans/done/**` reference and all unrelated prose.
-- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every row in the active subset and verify `rg -n --glob '*.md' '\\]\\([^)]*<brief-basename>\\.md\\)' . -g '!plans/done/**'` exits `1` with no output for each retired brief basename.
+- [ ] `[PUB-IDEAS:P1.11][AI]` Remove only their exact links from `plans/ideas/README.md`, then apply only the matching merged tracked amendment-table repair; preserve every historical `plans/done/**` reference and all unrelated prose. A P1.05 GitHub ledger cannot supply an edit path.
+- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every row in the active subset and verify `rg -n --glob '*.md' '\]\([^)]*<brief-basename>\.md[^)]*\)' . -g '!plans/done/**'` exits `1` with no output for each retired brief basename. The matcher deliberately includes any continuation after `.md` before `)` so fragment, query, and title forms cannot evade the negative check.
 - [ ] `[PUB-IDEAS:P1.13][AI]` Reconcile `git status` exactly to the retirement ledger.
 - [ ] `[PUB-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/disposition/acceptance gate.
 - [ ] `[PUB-IDEAS:P1.P][AI]` Record branch, head, ledger, dirty state, and negative-read commands.
