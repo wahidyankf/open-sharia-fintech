@@ -2,20 +2,22 @@
 
 ## Status
 
-**In Progress (after PR #274 merges, PUB-BASE alone is eligible; its evidence-only A0.P receipt is verified first).**
+**In Progress (PR #277 is merged; PUB-IDEAS-5 is the sole candidate successor, frozen until this
+quality-remediation PR's merge receipt supplies its execution-base pin).**
 [Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
 [#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
 PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
 [#270](https://github.com/wahidyankf/ose-public/pull/270), and
 [#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
 Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
-private work, and every rule/code wave stay frozen until this reconciliation merges and the
-equivalence audit records an ACTIVATE pin. The private overlay remains untouched. PR #273 merged the
-sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; this ACTIVATE PR records the
-one permitted affected-row recheck. After PR #274 merges with zero blockers, PUB-BASE alone is
-eligible. Its read-only P0.00 entry check first verifies the AI-marked A0.P receipt; tracked plan
-text—not GitHub prose—defines every command and successor. Every unit after PUB-BASE remains paused,
-and the private overlay remains untouched.
+private work, and every rule/code wave stayed frozen until the reconciliation merged and the
+equivalence audit recorded the ACTIVATE pin. The private overlay remains untouched. PR #273 merged the
+sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; PR #274 then merged, its
+AI-marked A0.P receipt was verified, and PUB-BASE completed cleanly. PR #275 supplied PUB-IDEAS-4's
+live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 supplied PUB-IDEAS-5's
+live-backlink authority. Tracked plan text—not GitHub prose—defines every command and successor:
+PUB-IDEAS-5 remains frozen pending this quality-remediation PR's merge receipt, and the private
+overlay and every rule/code wave remain frozen until their declared predecessor authorizes them.
 
 ## Outcome
 
@@ -41,11 +43,12 @@ computer-science background. A merged PR remains an educational team record, not
   cycle 6 and ask a human only when the bounded process cannot safely finish. Humans may read every
   PR after merge.
 - Do not add a separate post-write or post-plan grilling session. This conversation already resolved
-  the planning decisions. Before ACTIVATE, one bounded equivalence audit maps the existing stricter
-  PR-review evidence to the plan-quality-gate catalog and checks only uncovered plan-specific
-  surfaces. Do not run the full iterative workflow or its double-zero loop; only a genuinely unique
-  blocker may open one bounded amendment, and only a genuinely unresolved decision returns to the
-  human.
+  the planning decisions. This remediation successor adopts the strict two-zero
+  `plan-quality-gate.md` as a prerequisite after its merge and before the first non-plan unit
+  executes. The historical bounded ACTIVATE equivalence audit remains evidence for its original
+  scope only; it neither substitutes for nor needs to be replayed by the successor gate. Only a
+  genuinely unique blocker may open one bounded amendment, and only a genuinely unresolved decision
+  returns to the human.
 - Preserve trunk stability with the lightest suitable “feature flag”: dormant documentation,
   ordered activation, compatibility bridge, runtime flag, or atomic slice.
 - Keep public/private rules semantically aligned through exact merged pins and explicit deviations.

@@ -2,30 +2,35 @@
 
 ## Current State
 
-| Evidence                                                                            | State                                                                                            |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250) | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                         |
-| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251) | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                                       |
-| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252) | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                             |
-| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253) | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                           |
-| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254) | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                                     |
-| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255) | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                         |
-| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256) | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                        |
-| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257) | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                        |
-| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258) | Incomplete WAVES-ENTRY draft; never merged                                                       |
-| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259) | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                        |
-| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260) | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                         |
-| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261) | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                             |
-| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262) | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                                      |
-| [Repo-grounded] Merged PRs #263–#268                                                | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                           |
-| [Repo-grounded] Merged PRs #269–#271                                                | Nine mapped public ideas retired before activation                                               |
-| [Repo-grounded] ACTIVATE PR #274                                                    | After its merge, PUB-BASE alone is eligible; P0.00 verifies the evidence-only A0.P receipt first |
+| Evidence                                                                                           | State                                                                                                          |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [Repo-grounded] Merged [PR #250](https://github.com/wahidyankf/ose-public/pull/250)                | FOUNDATION at `62608547df0d2063d369537e0753f22699456f44`                                                       |
+| [Repo-grounded] Merged [PR #251](https://github.com/wahidyankf/ose-public/pull/251)                | REQUIREMENTS at `8884ec79437a05af3e8404e63239e079a379d84f`                                                     |
+| [Repo-grounded] Merged [PR #252](https://github.com/wahidyankf/ose-public/pull/252)                | DESIGN at `3ac2468f534be2faaf0b5a784b04b6411313f49e`                                                           |
+| [Repo-grounded] Merged [PR #253](https://github.com/wahidyankf/ose-public/pull/253)                | FORECAST at `a46725dba24c4880e7854b0b5504b26dd3bdbb33`                                                         |
+| [Repo-grounded] Merged [PR #254](https://github.com/wahidyankf/ose-public/pull/254)                | Split forecast at `b4dca85adc9ebc42eb53d69500e5d0475adb1522`                                                   |
+| [Repo-grounded] Merged [PR #255](https://github.com/wahidyankf/ose-public/pull/255)                | CORE-ENTRY at `6e3412576ee32b8a34882c8f5df38019a1825e03`                                                       |
+| [Repo-grounded] Merged [PR #256](https://github.com/wahidyankf/ose-public/pull/256)                | CORE-REVIEW at `b872a142a5063ff8d97bc04b89bc090529c932a4`                                                      |
+| [Repo-grounded] Merged [PR #257](https://github.com/wahidyankf/ose-public/pull/257)                | WAVES-SPLIT at `aa5f14f768d0a8c4e0877d8aab7135b4d7529135`                                                      |
+| [Repo-grounded] Closed [PR #258](https://github.com/wahidyankf/ose-public/pull/258)                | Incomplete WAVES-ENTRY draft; never merged                                                                     |
+| [Repo-grounded] Merged [PR #259](https://github.com/wahidyankf/ose-public/pull/259)                | ENTRY split at `e205eca335d62618a206d5c85ebc8e8cdc4fa66e`                                                      |
+| [Repo-grounded] Merged [PR #260](https://github.com/wahidyankf/ose-public/pull/260)                | BASE split at `5c61907d9d24718267dae8a2307e3578df1d18c9`                                                       |
+| [Repo-grounded] Merged [PR #261](https://github.com/wahidyankf/ose-public/pull/261)                | PUBLIC at `9f1669e14bfed1e900b2ed81bb042d1b5c13ffd8`                                                           |
+| [Repo-grounded] Merged [PR #262](https://github.com/wahidyankf/ose-public/pull/262)                | PRIVATE split at `3d9c0d843f877cfa498fe73ff4b321cef677dfb3`                                                    |
+| [Repo-grounded] Merged PRs #263–#268                                                               | Assembly and EXECUTION-CLOSURE complete at `f9e96824c`                                                         |
+| [Repo-grounded] Merged PRs #269–#271                                                               | Nine mapped public ideas retired before activation                                                             |
+| [Repo-grounded] Merged [ACTIVATE PR #274](https://github.com/wahidyankf/ose-public/pull/274)       | ACTIVATE at `f30a9e55b232bb98d26482238ce50dd7a1391817`; its A0.P receipt authorizes PUB-BASE                   |
+| [Repo-grounded] Merged [plan amendment PR #275](https://github.com/wahidyankf/ose-public/pull/275) | PUB-IDEAS-4 live-backlink authority at `f87347632e5b40188340339f888dfbb8f8b8f85c`                              |
+| [Repo-grounded] Merged [PUB-IDEAS-4 PR #276](https://github.com/wahidyankf/ose-public/pull/276)    | PUB-IDEAS-4 terminal successor evidence at `64dbe6de9607d682f15c9c2edb18e720bafab248`                          |
+| [Repo-grounded] Merged [plan amendment PR #277](https://github.com/wahidyankf/ose-public/pull/277) | PUB-IDEAS-5 execution base at `2d2e8208076a6be4e57087ea02f15b1338afb80f`; quality remediation freezes its edit |
 
-> **RECONCILIATION HISTORY AND FREEZE:** PRs #269–#271 are non-authorizing data points. Before PR
-> #274 merges, do not retire another idea, touch the private worktree, or begin a rule/code wave.
-> After its merged zero-blocker ACTIVATE record, only PUB-BASE is eligible. Its read-only P0.00
-> check must verify the A0.P receipt before P0.01; every later unit remains frozen until its declared
-> predecessor authorizes it.
+> **RECONCILIATION HISTORY AND FREEZE:** PRs #269–#271 are non-authorizing data points. PR #274
+> merged with its read-back A0.P receipt, PUB-BASE completed cleanly, PR #275 amended only
+> PUB-IDEAS-4's live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 amended only
+> PUB-IDEAS-5's live-backlink authority. PUB-IDEAS-5 is the sole candidate successor, but its edit
+> remains frozen until this plan-quality remediation merges; it then starts only from that amendment
+> merge pin. Private work and every rule/code wave remain frozen until their declared predecessor
+> authorizes them.
 
 ## Executor Legend and Plain-Language Terms
 
@@ -59,12 +64,15 @@ After ACTIVATE: `[AI]` acts, `[HUMAN]` decides, and `[AI+HUMAN]` means agent pre
 
 ## Dormant Boundary
 
-Before PR #274 merges, plan assembly is deliberately **dormant and non-executable**. After its
-merged zero-blocker ACTIVATE record, PUB-BASE is the sole eligible successor; its P0.00 evidence
-check is required before baseline work. Both private
-checklist slices, ENTRY-ADAPTERS, WAVES-A, WAVES-RULES, EXECUTION-CLOSURE, ideas, indexes, rules,
-agents, bindings, workflows, code, tests, implementation, private worktree state, and active-plan
-indexes remain frozen until their declared predecessors authorize them.
+PR #274 has merged, its zero-blocker ACTIVATE record was read back, and PUB-BASE completed cleanly.
+PR #275 authorized PUB-IDEAS-4's live-backlink repair, PR #276 completed PUB-IDEAS-4, and PR #277
+authorized PUB-IDEAS-5's live-backlink repair. PUB-IDEAS-5 is now the sole candidate successor, but
+its edit remains **frozen** until this quality-remediation PR merges, its merge receipt supplies the
+new execution-base pin, and the remediation successor records two consecutive strict zero-finding
+plan-quality-gate validations. Both private checklist slices, ENTRY-ADAPTERS, WAVES-A, WAVES-RULES,
+EXECUTION-CLOSURE, ideas, indexes, rules, agents, bindings, workflows, code, tests, implementation,
+private worktree state, and active-plan indexes remain frozen until their declared predecessors
+authorize them.
 
 ## Worktree
 
@@ -76,6 +84,13 @@ Reuse exactly one worktree per repository for this whole plan; follow the
 - private: `worktrees/optimize-pr-process/` resolves to
   `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — quarantined until terminal
   PUB-IDEAS evidence authorizes PRIV-BASE, and from every other use until its named successor.
+
+For authored provisioning, run this documentation-only harness command from the relevant repository
+root before using the fallback below; it does not authorize a second worktree:
+
+```bash
+claude --worktree optimize-pr-process
+```
 
 Both already exist. Never add a second. If one is later proven absent, run from that repository root:
 
@@ -222,38 +237,45 @@ the narrow frozen-PR exception used during one public correction.
 Every unit repeats Phases 1–5 below. `PUB-WT` and `PRIV-WT` mean the declared worktrees;
 The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLOSURE supplies Phase 6.
 
-| Phase(s) | Unit        | Repo/WT         | Branch                                               | Mode           | PR      | Predecessor                                                                                   | Stable result                 |
-| -------- | ----------- | --------------- | ---------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------------- | ----------------------------- |
-| 1–5      | ACTIVATE    | public/PUB-WT   | `optimize-pr-process-activate`                       | worktree-to-pr | Phase 3 | RECONCILE / #272 merge, or the sole PLAN-AMENDMENT merge                                      | executable plan record        |
-| 0        | PUB-BASE    | public/PUB-WT   | `—`                                                  | no delivery    | no      | ACTIVATE                                                                                      | public baseline recorded      |
-| 1–5?     | PUB-REPAIR  | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`  | worktree-to-pr | Phase 3 | ACTIVATE                                                                                      | public baseline repaired      |
-| 1–5      | PUB-IDEAS-4 | public/PUB-WT   | `optimize-pr-process-pub-ideas-4`                    | worktree-to-pr | Phase 3 | PUB-BASE:P0.10 → PUB-IDEAS-4 clean-direct or PUB-REPAIR:P5.17 → PUB-IDEAS-4 successful-repair | first remaining ideas retired |
-| 1–5      | PUB-IDEAS-5 | public/PUB-WT   | `optimize-pr-process-pub-ideas-5`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-4:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-6 | public/PUB-WT   | `optimize-pr-process-pub-ideas-6`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-5:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-7 | public/PUB-WT   | `optimize-pr-process-pub-ideas-7`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-6:P5.12                                                                             | next ideas retired            |
-| 1–5      | PUB-IDEAS-8 | public/PUB-WT   | `optimize-pr-process-pub-ideas-8`                    | worktree-to-pr | Phase 3 | PUB-IDEAS-7:P5.12                                                                             | terminal public proof         |
-| 0        | PRIV-BASE   | private/PRIV-WT | `—`                                                  | no delivery    | no      | terminal PUB-IDEAS proof                                                                      | overlay-safe baseline         |
-| 1–5?     | PRIV-REPAIR | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>` | worktree-to-pr | Phase 3 | evidenced PRIV-BASE failure                                                                   | private baseline repaired     |
-| 1–5      | PRIV-IDEAS  | private/PRIV-WT | `optimize-pr-process-priv-ideas`                     | worktree-to-pr | Phase 3 | PRIV-BASE:P0.16 clean/overlay-owned **or PRIV-REPAIR:P5.15 successful-repair**                | private ideas retired         |
-| 1–5      | PUB-A1      | public/PUB-WT   | `optimize-pr-process-pub-a1`                         | worktree-to-pr | Phase 3 | PRIV-IDEAS                                                                                    | plan rules coherent           |
-| 1–5      | PRIV-A1     | private/PRIV-WT | `optimize-pr-process-priv-a1`                        | worktree-to-pr | Phase 3 | PUB-A1                                                                                        | private A1 adapted            |
-| 1–5      | PUB-A2      | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent       |
-| 1–5      | PRIV-A2     | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted            |
-| 1–5      | PUB-A3      | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent       |
-| 1–5      | PRIV-A3     | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PUB-A3                                                                                        | private A3 adapted            |
-| 1–5      | PUB-B       | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3                                                                                       | legacy conflict removed       |
-| 1–5      | PRIV-B      | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                                                                                         | private conflict removed      |
-| 1–5      | PUB-C?      | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                                                                                        | necessity-gated mechanism     |
-| 1–5      | PRIV-C?     | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                                                                                         | private C adapted             |
-| 1–5?     | PUB-CORR?   | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin                                                                         | replacement public pin        |
-| 1–5?     | PLAN-AMEND? | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin                                                                      | amended plan pin              |
-| 1–6      | CLOSURE     | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 6 | last unit                                                                                     | plan archived and focused     |
+| Phase(s) | Unit             | Repo/WT         | Branch                                                      | Mode           | PR      | Predecessor                                                                                   | Stable result                          |
+| -------- | ---------------- | --------------- | ----------------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 1–5      | ACTIVATE         | public/PUB-WT   | `optimize-pr-process-activate`                              | worktree-to-pr | Phase 3 | RECONCILE / #272 merge, or the sole PLAN-AMENDMENT merge                                      | executable plan record                 |
+| 0        | PUB-BASE         | public/PUB-WT   | `—`                                                         | no delivery    | no      | ACTIVATE                                                                                      | public baseline recorded               |
+| 1–5?     | PUB-REPAIR       | public/PUB-WT   | `optimize-pr-process-public-baseline-repair-<slug>`         | worktree-to-pr | Phase 3 | ACTIVATE                                                                                      | public baseline repaired               |
+| 1–5      | PUB-IDEAS-4      | public/PUB-WT   | `optimize-pr-process-pub-ideas-4`                           | worktree-to-pr | Phase 3 | PUB-BASE:P0.10 → PUB-IDEAS-4 clean-direct or PUB-REPAIR:P5.17 → PUB-IDEAS-4 successful-repair | first remaining ideas retired          |
+| 1–5      | PUB-IDEAS-5      | public/PUB-WT   | `optimize-pr-process-pub-ideas-5`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-4:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-6      | public/PUB-WT   | `optimize-pr-process-pub-ideas-6`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-5:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-7      | public/PUB-WT   | `optimize-pr-process-pub-ideas-7`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-6:P5.12                                                                             | next ideas retired                     |
+| 1–5      | PUB-IDEAS-8      | public/PUB-WT   | `optimize-pr-process-pub-ideas-8`                           | worktree-to-pr | Phase 3 | PUB-IDEAS-7:P5.12                                                                             | terminal public proof                  |
+| 0        | PRIV-BASE        | private/PRIV-WT | `—`                                                         | no delivery    | no      | terminal PUB-IDEAS proof                                                                      | overlay-safe baseline                  |
+| 1–5?     | PRIV-REPAIR      | private/PRIV-WT | `optimize-pr-process-private-baseline-repair-<slug>`        | worktree-to-pr | Phase 3 | evidenced PRIV-BASE failure                                                                   | private baseline repaired              |
+| 1–5      | PRIV-IDEAS       | private/PRIV-WT | `optimize-pr-process-priv-ideas`                            | worktree-to-pr | Phase 3 | PRIV-BASE:P0.16 clean/overlay-owned **or PRIV-REPAIR:P5.15 successful-repair**                | private ideas retired                  |
+| 1–5      | PRE-A1-ADMISSION | public/PUB-WT   | `optimize-pr-process-plan-amendment-a-rules-admission`      | worktree-to-pr | Phase 3 | PRIV-IDEAS                                                                                    | exact public A1/A2/A3/B admission pin  |
+| 1–5      | PRIV-ADMISSION   | private/PRIV-WT | `optimize-pr-process-priv-plan-amendment-a-rules-admission` | worktree-to-pr | Phase 3 | PRE-A1-ADMISSION sibling obligation                                                           | exact private adaptation admission pin |
+| 1–5      | PUB-A1           | public/PUB-WT   | `optimize-pr-process-pub-a1`                                | worktree-to-pr | Phase 3 | PRE-A1-ADMISSION + PRIV-ADMISSION                                                             | plan rules coherent                    |
+| 1–5      | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1`                               | worktree-to-pr | Phase 3 | PUB-A1                                                                                        | private A1 adapted                     |
+| 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                                | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent                |
+| 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                               | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted                     |
+| 1–5      | PUB-A3           | public/PUB-WT   | `optimize-pr-process-pub-a3`                                | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent                |
+| 1–5      | PRIV-A3          | private/PRIV-WT | `optimize-pr-process-priv-a3`                               | worktree-to-pr | Phase 3 | PUB-A3                                                                                        | private A3 adapted                     |
+| 1–5      | PUB-B            | public/PUB-WT   | `optimize-pr-process-pub-b`                                 | worktree-to-pr | Phase 3 | PRIV-A3                                                                                       | legacy conflict removed                |
+| 1–5      | PRIV-B           | private/PRIV-WT | `optimize-pr-process-priv-b`                                | worktree-to-pr | Phase 3 | PUB-B                                                                                         | private conflict removed               |
+| 1–5      | PUB-C?           | public/PUB-WT   | `optimize-pr-process-pub-c`                                 | worktree-to-pr | Phase 3 | PRIV-B                                                                                        | necessity-gated mechanism              |
+| 1–5      | PRIV-C?          | private/PRIV-WT | `optimize-pr-process-priv-c`                                | worktree-to-pr | Phase 3 | PUB-C                                                                                         | private C adapted                      |
+| 1–5?     | PUB-CORR?        | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`               | worktree-to-pr | Phase 3 | portable defect + pin                                                                         | replacement public pin                 |
+| 1–5?     | PLAN-AMEND?      | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`                 | worktree-to-pr | Phase 3 | plan defect + frozen pin                                                                      | amended plan pin                       |
+| 1–6      | CLOSURE          | public/PUB-WT   | `optimize-pr-process-closure`                               | worktree-to-pr | Phase 3 | last unit                                                                                     | plan archived and focused              |
 
 Repair rows activate only after their baseline fails; each runs Phases 1–5, merges, and reruns that
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
-Optional C becomes a recorded no-change decision when necessity fails. Before each unit, replace
+Optional C becomes a recorded no-change decision when necessity fails. PRE-A1-ADMISSION is the
+one planned admission for the known A1/A2/A3/B rule waves, not a correction and not an authorization
+to change any rule: it inventories and admits exact later source/mirror paths in a plan-only PR.
+PRIV-ADMISSION is its private-safe counterpart and must preserve the approved overlay. Before each unit, replace
 its predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the
-next row. A correction resumes its paused private PR from the replacement public pin; an amendment
+next row. CLOSURE opens its one draft PR in inherited Phase 3, completes all knowledge capture,
+archive, review, merge, and resync in inherited Phases 4–5, then performs only read-only validation
+and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
 resumes its frozen unit from the amended plan pin.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
@@ -323,7 +345,7 @@ row instead follows the single PLAN-AMENDMENT route and keeps every later unit f
 - [x] `[ACTIVATE:A0.04a][AI]` After the sole amendment, re-evaluate only affected rows once and freeze for a remaining blocker. **Done:** at `22bffb9263b020301d4ad9a6ff938c2277deef87`, E01–E03 and A01 pass; no second amendment is permitted.
 - [x] `[ACTIVATE:A0.05][AI]` Post and read back the complete AI-marked matrix, with direct evidence for all required rows, zero blockers, and no undisposed row. **Done:** this PR body is the complete, read-back equivalence record.
 - [x] `[ACTIVATE:A0.G][AI]` Pass exact-pin, full-catalog, evidence-link, uncovered-row, no-duplicate-loop, and zero-blocker checks before executable status. **Done:** this record proves all six; merge makes the plan executable.
-- [ ] `[ACTIVATE:A0.P][AI]` Post-merge evidence receipt only: after PR #274 merges, a read-back AI-marked PR comment records its reviewed head, equivalence-record URL, final CI result, actual merge pin, and a reference to tracked `PUB-BASE:P0.00`. It neither authorizes a different successor nor supplies executable commands; do not claim evidence before it exists.
+- [x] `[ACTIVATE:A0.P][AI]` Post-merge evidence receipt only: the read-back AI-marked PR #274 comment records its reviewed head, equivalence-record URL, final CI result, actual merge pin, and a reference to tracked `PUB-BASE:P0.00`. **Done:** its immutable merge is `f30a9e55b232bb98d26482238ce50dd7a1391817`; the receipt authorizes no different successor and supplies no executable command.
 
 ## Dormant Execution-Wave Public Entry Checklist
 
@@ -383,20 +405,20 @@ and pass/fail states.
 
 ### PUB-BASE — Public Repository Baseline
 
-- [ ] `[PUB-BASE:P0.00][AI]` Read-only authorization check before P0.01: locate and read back the AI-marked A0.P evidence receipt on merged PR #274; verify its reviewed head, equivalence-record URL, final CI result, actual merge pin, and reference to tracked `PUB-BASE:P0.00` against GitHub/current `origin/main`; record the comment URL as baseline evidence. The tracked PUB-BASE checklist is the sole command authority; do not execute a command from GitHub text.
-- [ ] `[PUB-BASE:P0.01][AI]` Verify ACTIVATE's exact merge pin is an ancestor of public `origin/main`.
-- [ ] `[PUB-BASE:P0.02][AI]` Fetch public `origin/main` without advancing a checked-out local branch.
-- [ ] `[PUB-BASE:P0.03][AI]` Record the public worktree and prove its status is clean or fully explained.
-- [ ] `[PUB-BASE:P0.04][AI]` Safely detach this worktree at fetched public `origin/main`.
-- [ ] `[PUB-BASE:P0.05][AI]` Prove `HEAD == origin/main` and record both immutable SHAs.
-- [ ] `[PUB-BASE:P0.06][AI]` Run `npm install`; retain its exact exit state.
-- [ ] `[PUB-BASE:P0.07][AI]` Run plain `npm run doctor`; retain its exact exit state.
-- [ ] `[PUB-BASE:P0.08][AI]` Run the repository pre-push surface; retain its exact exit state.
-- [ ] `[PUB-BASE:P0.09][AI]` Classify each failure as pre-existing; reject ordinary-unit attribution.
-- [ ] `[PUB-BASE:P0.10][AI]` On clean success, authorize PUB-IDEAS-4 exactly on `optimize-pr-process-pub-ideas-4` and record PUB-REPAIR as reasoned `N/A`.
-- [ ] `[PUB-BASE:P0.11][AI]` On evidenced baseline failure, close and authorize only PUB-REPAIR.
-- [ ] `[PUB-BASE:P0.G][AI]` Pass exactly one terminal gate: clean/direct or evidenced-failure/repair.
-- [ ] `[PUB-BASE:P0.P][AI]` Record result, predecessor pin, authorized successor, and recheck command.
+- [x] `[PUB-BASE:P0.00][AI]` Read-only authorization check completed against PR #274's read-back AI-marked A0.P receipt. **Done:** it named the reviewed head, equivalence record, final CI, merge pin, and tracked `PUB-BASE:P0.00`; GitHub evidence was not treated as executable commands.
+- [x] `[PUB-BASE:P0.01][AI]` Verified ACTIVATE's merge pin was an ancestor of public `origin/main`. **Done:** direct route recorded in the PR #274 receipt.
+- [x] `[PUB-BASE:P0.02][AI]` Fetched public `origin/main` without advancing a checked-out local branch. **Done:** recorded before baseline commands.
+- [x] `[PUB-BASE:P0.03][AI]` Recorded the public worktree and its explained clean state. **Done:** no unadmitted residue entered PUB-BASE.
+- [x] `[PUB-BASE:P0.04][AI]` Safely detached this worktree at fetched public `origin/main`. **Done:** baseline used the recorded main pin.
+- [x] `[PUB-BASE:P0.05][AI]` Proved `HEAD == origin/main` and recorded both immutable SHAs. **Done:** the evidence is in the A0.P-linked baseline receipt.
+- [x] `[PUB-BASE:P0.06][AI]` Ran `npm install`. **Done:** exit 0.
+- [x] `[PUB-BASE:P0.07][AI]` Ran plain `npm run doctor`. **Done:** 16/16 checks passed.
+- [x] `[PUB-BASE:P0.08][AI]` Ran the repository pre-push surface. **Done:** exit 0; 419 known README-index advisories are recorded as nonblocking baseline diagnostics.
+- [x] `[PUB-BASE:P0.09][AI]` Classified failures as pre-existing and rejected ordinary-unit attribution. **Done:** no baseline failure required PUB-REPAIR.
+- [x] `[PUB-BASE:P0.10][AI]` Authorized PUB-IDEAS-4 exactly on `optimize-pr-process-pub-ideas-4` and recorded PUB-REPAIR as reasoned `N/A`. **Done:** PUB-IDEAS-4 later landed in PR #276.
+- [x] `[PUB-BASE:P0.11][AI]` On evidenced baseline failure, close and authorize only PUB-REPAIR. **N/A:** P0.06–P0.08 were clean.
+- [x] `[PUB-BASE:P0.G][AI]` Passed exactly one terminal gate: clean/direct. **Done:** PUB-IDEAS-4 was the only authorized ordinary successor.
+- [x] `[PUB-BASE:P0.P][AI]` Recorded result, predecessor pin, authorized successor, and recheck command. **Done:** the immutable receipt is linked from PR #274 and the successor landed in PR #276.
 
 ### PUB-REPAIR — Conditional Public Baseline Repair
 
@@ -477,19 +499,20 @@ repair an ordinary-unit defect only inside that unit's own scope.
 
 The single 19-brief forecast was invalid: it exceeded the 400-line ceiling and the first three
 subdeliveries landed before ACTIVATE. Preserve them as evidence and do not retroactively claim they
-followed the activation gate. The remaining five units start only after ACTIVATE and instantiate
-the checklist below by replacing `PUB-IDEAS` with their exact unit ID and mapped subset.
+followed the activation gate. PUB-IDEAS-4 is complete under its immutable ledger below. Only the
+remaining PUB-IDEAS-5–8 units may instantiate the unchecked shared checklist by replacing
+`PUB-IDEAS` with their exact unit ID and mapped subset.
 
-| Unit                  | State                    | Exact mapped paths                                                                                                                                                                                                                                                                                                  |
-| --------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PUB-IDEAS-1 / PR #269 | merged, non-authorizing  | `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`; `plans/ideas/q1-urgent-important/plan-decision-integrity-hardening.md`                                                                                                                                                                              |
-| PUB-IDEAS-2 / PR #270 | merged, non-authorizing  | `plans/ideas/q2-not-urgent-important/plan-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/repo-rules-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`                                                                                   |
-| PUB-IDEAS-3 / PR #271 | merged, non-authorizing  | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`; `plans/ideas/q2-not-urgent-important/governance-path-ownership-registry.md`; `plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md`; `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md` |
-| PUB-IDEAS-4           | frozen until ACTIVATE    | `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md`; `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                                                                                                                                                              |
-| PUB-IDEAS-5           | frozen until PUB-IDEAS-4 | `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`; `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`                                                                                                                                                                        |
-| PUB-IDEAS-6           | frozen until PUB-IDEAS-5 | `plans/ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md`; `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`                                                                                                                                                        |
-| PUB-IDEAS-7           | frozen until PUB-IDEAS-6 | `plans/ideas/q2-not-urgent-important/cross-repo-governance-link-parity.md`; `plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`                                                                                                                                                             |
-| PUB-IDEAS-8           | frozen until PUB-IDEAS-7 | `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`; `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`                                                                                                                                                          |
+| Unit                  | State                                                                                | Exact mapped paths                                                                                                                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUB-IDEAS-1 / PR #269 | merged, non-authorizing                                                              | `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`; `plans/ideas/q1-urgent-important/plan-decision-integrity-hardening.md`                                                                                                                                                                              |
+| PUB-IDEAS-2 / PR #270 | merged, non-authorizing                                                              | `plans/ideas/q2-not-urgent-important/plan-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/repo-rules-quality-gate-convergence.md`; `plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md`                                                                                   |
+| PUB-IDEAS-3 / PR #271 | merged, non-authorizing                                                              | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`; `plans/ideas/q2-not-urgent-important/governance-path-ownership-registry.md`; `plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md`; `plans/ideas/q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md` |
+| PUB-IDEAS-4 / PR #276 | merged at `64dbe6de9607d682f15c9c2edb18e720bafab248`                                 | `plans/ideas/q1-urgent-important/deletion-authorized-by-absence.md`; `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                                                                                                                                                              |
+| PUB-IDEAS-5           | frozen pending this plan-quality remediation; PR #277 is its live-backlink authority | `plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`; `plans/ideas/q2-not-urgent-important/merge-queue-adoption.md`                                                                                                                                                                        |
+| PUB-IDEAS-6           | frozen until PUB-IDEAS-5                                                             | `plans/ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md`; `plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md`                                                                                                                                                        |
+| PUB-IDEAS-7           | frozen until PUB-IDEAS-6                                                             | `plans/ideas/q2-not-urgent-important/cross-repo-governance-link-parity.md`; `plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`                                                                                                                                                             |
+| PUB-IDEAS-8           | frozen until PUB-IDEAS-7                                                             | `plans/ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md`; `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`                                                                                                                                                          |
 
 The mapped source path, not the shortened table label, is authoritative. Re-read the disposition
 map before each unit. PUB-IDEAS-4–7 resync and authorize only the next named public subdelivery;
@@ -533,15 +556,32 @@ amendment merges; its resumed entry must use that merge pin.
 | ----------------------------------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace the complete ownership sentence containing the direct link with “The deferred investigation, availability matrix, and adoption path are tracked separately as future work, not by this convention.” |
 
-For PUB-IDEAS-5 after this amendment, retain PUB-IDEAS-4's merged successor proof as
-**authorization evidence**, but use the merged amendment pin as the sole **execution-base pin**.
-Missing either pin freezes the unit.
+For PUB-IDEAS-5 after this amendment, retain PUB-IDEAS-4's merged successor proof and PR #277 as
+**authorization evidence**. This plan-quality-remediation PR's future merge receipt supplies the
+sole **execution-base pin**; it does not alter PR #277's live-backlink authority. No later,
+unrelated amendment may replace that pin. Missing the required authorization evidence, PR #277
+authority, or this remediation receipt freezes the unit.
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-4, verify exactly one clean predecessor proof names `optimize-pr-process-pub-ideas-4`: PUB-BASE:P0.10 clean-direct **or** PUB-REPAIR:P5.17 successful-repair; record its immutable authorization-evidence pin. Also read the merged `optimize-pr-process-plan-amendment-idea4-live-backlinks` PR and record its immutable merge pin as the sole execution-base pin. For PUB-IDEAS-5, read the PUB-IDEAS-4 P5.07 publication and P5.08 read-back record on its merged PR; acceptance: it names exact successor `PUB-IDEAS-5`, immutable predecessor/authorization-evidence pin, declared public worktree/branch, and `Generated by AI`. Record that pin, then read the merged `optimize-pr-process-plan-amendment-idea5-live-backlink` PR and record its immutable merge pin as the sole execution-base pin. For PUB-IDEAS-6–8, verify the immediately prior unit's P5.07 publication and P5.08 read-back name this exact active unit and immutable pin.
+#### Immutable Completion Ledger — PUB-IDEAS-4 (Do Not Re-run)
+
+The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-5–8 only.
+They are not open work for PUB-IDEAS-4 and must not be ticked retroactively. PR #276 is the durable,
+immutable completion record for PUB-IDEAS-4; this ledger maps the completed state without rewriting
+the future units' task IDs.
+
+| PUB-IDEAS-4 state       | Immutable PR #276 evidence                                                                                                                    | Completion criterion                                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| P1.01–P1.13, P1.G, P1.P | [PR #276](https://github.com/wahidyankf/ose-public/pull/276), its route/ledger comments, and merge `64dbe6de9607d682f15c9c2edb18e720bafab248` | The two mapped briefs, index changes, and three #275-authorized live-backlink repairs were scoped and recorded before edit. |
+| P2.01–P2.11, P2.G, P2.P | PR #276 commits and local-gate evidence                                                                                                       | The admitted retirement patch was gated, staged, committed, and read in full.                                               |
+| P3.01–P3.08, P3.G, P3.P | PR #276 draft body/read-back and pushed head                                                                                                  | One human-readable, AI-marked draft represented the exact public head.                                                      |
+| P4.01–P4.14, P4.G, P4.P | PR #276 route, review, reply, CI, and readiness artifacts                                                                                     | The review cycle reached semantic exit on its current head without widening scope.                                          |
+| P5.01–P5.12, P5.G, P5.P | PR #276 merge receipt and successor publication                                                                                               | Reviewed and landed fingerprints matched; the public worktree resynced and named PUB-IDEAS-5.                               |
+
+- [ ] `[PUB-IDEAS:P1.01][AI]` For PUB-IDEAS-5, read PUB-IDEAS-4's P5.07 publication and P5.08 read-back record on PR #276; acceptance: it names exact successor `PUB-IDEAS-5`, immutable predecessor/authorization-evidence pin, declared public worktree/branch, and `Generated by AI`. Record that pin, PR #277's immutable live-backlink-authority pin, and this plan-quality-remediation PR's merge-receipt execution-base pin. For PUB-IDEAS-6–8, verify the immediately prior unit's P5.07 publication and P5.08 read-back name this exact active unit and immutable pin.
 - [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
-- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-4 or PUB-IDEAS-5, retain the predecessor proof but require fetched `origin/main` to equal that unit's merged amendment execution-base pin from P1.01. For PUB-IDEAS-6–8, prove fetched `origin/main` equals the predecessor pin.
-- [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-4`, `-5`, `-6`, `-7`, or `-8`) from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-4 or PUB-IDEAS-5, verify it exactly matches that unit's merged tracked live-backlink amendment ledger; for every other unit, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
+- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-5, retain the predecessor proof but require fetched `origin/main` to equal its P1.01 execution-base pin. For PUB-IDEAS-6–8, prove fetched `origin/main` equals the predecessor pin.
+- [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-5`, `-6`, `-7`, or `-8`) from the exact main pin.
+- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-5, verify it exactly matches its merged tracked live-backlink amendment ledger; for every other unit, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
 - [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
 - [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
 - [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
@@ -597,7 +637,7 @@ Missing either pin freezes the unit.
 - [ ] `[PUB-IDEAS:P5.04][AI]` Read back merge SHA and landed path ledger.
 - [ ] `[PUB-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
 - [ ] `[PUB-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-4–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
+- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-5–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
 - [ ] `[PUB-IDEAS:P5.08][AI]` Read back the exact successor, pin, owner, and marker; on PUB-IDEAS-8 also read expected private paths.
 - [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` after the merge.
 - [ ] `[PUB-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge SHA.
@@ -727,7 +767,7 @@ stops with no successor.
 - [ ] `[PRIV-REPAIR:P5.12][AI]` Run `npm install` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.13][AI]` Run plain `npm run doctor` on landed private main.
 - [ ] `[PRIV-REPAIR:P5.14][AI]` Run the literal private pre-push command on landed private main.
-- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck keeps PRIV-IDEAS frozen and names only its bounded new repair or human-escalation path; ambiguity names no successor, keeps PRIV-IDEAS frozen, and stops for human judgment.
+- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck or ambiguity keeps PRIV-IDEAS frozen, names no successor repair, and stops for human judgment.
 - [ ] `[PRIV-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/overlay/successor gate.
 - [ ] `[PRIV-REPAIR:P5.P][AI]` Record merge/main SHA, overlay hash, result, and named-successor command.
 
@@ -808,9 +848,9 @@ staging, every index hunk must belong to retirement/index maintenance or remain 
 - [ ] `[PRIV-IDEAS:P5.09][AI]` Fetch private `origin/main` after the merge.
 - [ ] `[PRIV-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge pin.
 - [ ] `[PRIV-IDEAS:P5.11][AI]` Resync this private worktree without stashing the overlay.
-- [ ] `[PRIV-IDEAS:P5.12][AI]` Authorize only PUB-A1 from the resynced landed main.
+- [ ] `[PRIV-IDEAS:P5.12][AI]` Authorize only PRE-A1-ADMISSION from the resynced landed main; PUB-A1 remains frozen until both admission pins are terminal.
 - [ ] `[PRIV-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/obligation/resync/sibling gate.
-- [ ] `[PRIV-IDEAS:P5.P][AI]` Record private merge/main SHA, terminal obligation, and PUB-A1 command.
+- [ ] `[PRIV-IDEAS:P5.P][AI]` Record private merge/main SHA, terminal obligation, and PRE-A1-ADMISSION command/pin.
 
 ### WAVES-ENTRY-PRIVATE Finding State
 
@@ -843,96 +883,265 @@ retains both the lineage ID and its correction count.
 - [ ] `[ENTRY-ADAPTERS:A1.05][AI]` On a compatible public follow-up, record nonblocking compatibility without creating private churn or replacing the obligation.
 - [ ] `[ENTRY-ADAPTERS:A1.06][AI]` Classify a private finding as local adaptation, reasoned deviation, unrelated follow-up, portable defect, or plan defect before any handoff.
 - [ ] `[ENTRY-ADAPTERS:A1.07][AI]` For a portable or plan defect, freeze the paused private PR's push, review, readiness, merge, and successors; record its exact head and cited defect boundary.
-- [ ] `[ENTRY-ADAPTERS:A1.08][AI]` Permit exactly one unstacked public correction or plan amendment, scoped only to the cited portable or plan defect.
+- [ ] `[ENTRY-ADAPTERS:A1.08][AI]` Before any replacement PR, read the original obligation and write `correction-kind: correction` or `correction-kind: plan-amendment` in its same native record. Acceptance: this existing lineage has reconciled `correction-count: 0`, one cited portable/plan defect, and no other pair becomes active; at count 1 neither replacement type may start.
 - [ ] `[ENTRY-ADAPTERS:A1.09][AI]` Keep the originating private review thread unresolved; reply there with the replacement pin, frozen state, and resumption condition.
-- [ ] `[ENTRY-ADAPTERS:A1.10][AI]` Supersede the old obligation in its original native note; preserve its lineage ID and correction count, and create no second obligation for the same pair.
+- [ ] `[ENTRY-ADAPTERS:A1.10][AI]` Supersede the old obligation in its original native note; preserve lineage ID, `correction-kind`, and the `0 → 1` correction count, and create no second obligation for the same pair. Acceptance: a PR reader can trace original pin, replacement pin, paused private head, and resumption condition from that note alone.
 - [ ] `[ENTRY-ADAPTERS:A1.11][AI]` Treat the correction PR as its own bounded review, while the resumed private PR retains—not resets—its existing Cycle 1–5 count.
 - [ ] `[ENTRY-ADAPTERS:A1.12][AI]` Stop before a second public reversal, leave a human-readable escalation, and preserve the frozen pair and original thread.
 - [ ] `[ENTRY-ADAPTERS:A1.13][AI]` Resume only after the named replacement pin is merged, inspected, and recorded in the original obligation and private thread.
 - [ ] `[ENTRY-ADAPTERS:A1.14][AI]` Close a pair only with a terminal `satisfied`, `reasoned-deviation`, or `N/A` state, exact public/private pins, and evidence links.
-- [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; a later defect opens a linked repair pair without reopening the sealed pair, but the same root cause retains its lineage ID and cannot reset the correction budget.
+- [ ] `[ENTRY-ADAPTERS:A1.15][AI]` Seal the terminal pair in its native record; a later defect opens a linked repair pair without reopening the sealed pair, but the same root cause retains its lineage ID and cannot reset the shared correction budget across either `correction-kind`.
 - [ ] `[ENTRY-ADAPTERS:A1.16][AI]` Use only disclosure-safe public summaries and links; retain private task evidence solely in the private PR artifact.
-- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` For this public control plan, record the explicit override of the legacy per-repo/three-grill and iterative formal-gate composite: one control plan, one bounded equivalence audit, and no separate post-plan grill.
+- [ ] `[ENTRY-ADAPTERS:A1.17][AI]` Record the historical exception for the legacy per-repo/three-grill and iterative formal-gate composite: one control plan, one bounded equivalence audit, and no separate post-plan grill. The remediation successor does not replay ACTIVATE, but it must record the two strict zero-finding plan-quality-gate validations before the first non-plan unit starts.
 - [ ] `[ENTRY-ADAPTERS:A1.18][AI]` Instantiate the sole `PLAN-AMENDMENT` route with exact superseded section/pin, frozen units, single-purpose scope, and resumption pin.
 - [ ] `[ENTRY-ADAPTERS:A1.G][AI]` Pass pair-state, freeze, replacement, cycle-budget, disclosure, terminal-seal, and amendment gate.
 - [ ] `[ENTRY-ADAPTERS:A1.P][AI]` Record pair URL, prepared/pending/terminal state, pins, correction count, private-thread URL, and named successor.
 
 ## Dormant A-Wave Checklist
 
+### Pre-A1 Admission and A/Rules Atomic Execution References
+
+Before A1 starts, PRE-A1-ADMISSION creates the exact public ledger that A1–B need; it does not edit
+the prospective rule sources. Its PR first performs the prescribed propagation read and records the
+candidate owner/source/mirror paths, then adds only those exact public paths, bounded before-ledgers,
+and their A1/A2/A3/B owner to this plan's file-impact tree and delivery ledger. Its body records the
+private sibling obligation, but no private evidence or path is added to this public PR. PRIV-ADMISSION
+then creates the equivalent private plan-only admission from that immutable public pin, preserving the
+authorized overlay. Both admission PRs run Phases 1–5 and must merge before `AR-ENTRY` for PUB-A1;
+any unexpected path, cap breach, or disagreement freezes the successor for human review rather than
+admitting a generic subtree.
+
+Every A/Rules checkbox below is one atomic state transition, not optional background. Before a row
+uses an `AR-*` reference, its unit heading declares a literal `UNIT`, `REPO`, `BRANCH`, and
+`RECORD` in the parameter table below. Its record must also name the literal fields in the record
+contract below; a reference may use only the fields named in its input and direct prerequisites.
+Write the resolved values and the exact admitted source paths to that `RECORD`, read it back with
+`sed -n '1,$p' "$RECORD"`, and stop if a required field is blank or has no stated source. `RECORD`
+is local preparation only; the same resolved values and read-back result must appear in the unit's
+PR route/reply artifact before the associated gate passes.
+
+| Unit             | `REPO`                   | `BRANCH`                                                    | `RECORD`                                                   |
+| ---------------- | ------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| PRE-A1-ADMISSION | `wahidyankf/ose-public`  | `optimize-pr-process-plan-amendment-a-rules-admission`      | `local-tmp/optimize-pr-process/pre-a1-admission-record.md` |
+| PRIV-ADMISSION   | `wahidyankf/ose-private` | `optimize-pr-process-priv-plan-amendment-a-rules-admission` | `local-tmp/optimize-pr-process/priv-admission-record.md`   |
+| PUB-A1           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a1`                                | `local-tmp/optimize-pr-process/pub-a1-record.md`           |
+| PRIV-A1          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a1`                               | `local-tmp/optimize-pr-process/priv-a1-record.md`          |
+| PUB-A2           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a2`                                | `local-tmp/optimize-pr-process/pub-a2-record.md`           |
+| PRIV-A2          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a2`                               | `local-tmp/optimize-pr-process/priv-a2-record.md`          |
+| PUB-A3           | `wahidyankf/ose-public`  | `optimize-pr-process-pub-a3`                                | `local-tmp/optimize-pr-process/pub-a3-record.md`           |
+| PRIV-A3          | `wahidyankf/ose-private` | `optimize-pr-process-priv-a3`                               | `local-tmp/optimize-pr-process/priv-a3-record.md`          |
+| PUB-B            | `wahidyankf/ose-public`  | `optimize-pr-process-pub-b`                                 | `local-tmp/optimize-pr-process/pub-b-record.md`            |
+| PRIV-B           | `wahidyankf/ose-private` | `optimize-pr-process-priv-b`                                | `local-tmp/optimize-pr-process/priv-b-record.md`           |
+| PUB-C            | `wahidyankf/ose-public`  | `optimize-pr-process-pub-c`                                 | `local-tmp/optimize-pr-process/pub-c-record.md`            |
+| PRIV-C           | `wahidyankf/ose-private` | `optimize-pr-process-priv-c`                                | `local-tmp/optimize-pr-process/priv-c-record.md`           |
+
+Each record has the following literal contract. `AR-ENTRY` refuses a missing pre-entry field;
+later fields are populated only by their named transition, so an executor never invents a value or
+pretends a post-merge value existed before merge.
+
+| Record field                                    | Literal source and when it becomes available                                                                                                                                                                                                 |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `predecessor`                                   | The immutable immediately preceding delivery URL/pin for audit lineage; it may name either repository and is never used as a local Git ref.                                                                                                  |
+| `authorization-pin`                             | The immutable sibling-obligation pin/URL authorizing this cross-repository successor; read it from its native PR artifact before `AR-ENTRY`.                                                                                                 |
+| `local-base`                                    | The exact same-repository landed `origin/main` SHA before entry; it alone may be checked by local Git ancestry or used to establish a branch base.                                                                                           |
+| `amendment-url`                                 | The merged admission/amendment PR URL that admitted the row's exact paths; record it before `AR-ENTRY`.                                                                                                                                      |
+| `admitted-paths`                                | Newline-delimited exact tracked source and generated paths from that merged amendment; record it before edit.                                                                                                                                |
+| `hand-authored-paths`                           | Newline-delimited subset of `admitted-paths`; record it before `AR-LOCAL`.                                                                                                                                                                   |
+| `cap-forecast`                                  | The before-edit line/file forecast for `hand-authored-paths`; record it before edit.                                                                                                                                                         |
+| `pr-title`, `pr-body-file`, and `route-payload` | The literal human-readable title plus exact local files under `local-tmp/optimize-pr-process/`, written and read back after the cohesive commit and before `AR-DRAFT`/`AR-ROUTE`; the title states the unit outcome without inventing scope. |
+| `current-main` and `unit-base`                  | The same immutable `origin/main` SHA read by `AR-ENTRY` after it proves `local-base` is an ancestor and before edit.                                                                                                                         |
+| `overlay-paths` and `overlay-fingerprint`       | Private units only: newline-delimited exact authorized private-overlay paths plus their pre-entry binary-diff SHA-256; record them before `AR-ENTRY`. Public units record `N/A`.                                                             |
+| `reviewed-head`                                 | The exact pushed SHA read by `AR-DRAFT`, then refreshed after every fixing push before `AR-REVIEW`, CI, or readiness.                                                                                                                        |
+| `merge-sha`                                     | Blank and forbidden as an input until `AR-MERGE` reads it back; required by `AR-LANDED` and `AR-RESYNC`.                                                                                                                                     |
+
+For a public unit, `local-base` comes from public `origin/main` and `authorization-pin` comes from
+the terminal private obligation that authorizes it. For a private unit, `local-base` comes from
+private `origin/main`, `authorization-pin` comes from the terminal public obligation, and the
+private overlay fields are mandatory. This keeps Git commands repository-local while preserving the
+cross-repository chain in PR-native evidence.
+
+The variables in the references below are only shorthand for these fields: `$AUTHORIZATION_PIN`,
+`$LOCAL_BASE`, `$UNIT_BASE`, `$PR_TITLE`, `$HAND_AUTHORED_PATHS`, `$ADMITTED_PATHS`,
+`$PR_BODY_FILE`, `$ROUTE_PAYLOAD`, `$CURRENT_MAIN`, `$OVERLAY_PATHS`, `$OVERLAY_FINGERPRINT`,
+`$REVIEWED_HEAD`, and `$MERGE_SHA` are their same-named record fields. A field is passed exactly as
+recorded; it is never inferred from a branch name, a directory, or a previous PR.
+
+| Reference        | Exact input, command, and output record                                                                                                                                                                                                                                                                                                                                                                                                                                    | Pass/fail condition                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AR-ENTRY`       | Input: literal `REPO`, `BRANCH`, `RECORD`, `authorization-pin`, `local-base`, `amendment-url`, `admitted-paths`, and `cap-forecast`; private records also require `overlay-paths`/`overlay-fingerprint`. Read the authorization pin from its native sibling artifact, then run the copyable `AR-ENTRY` sequence directly below. Record the selected branch, resolved `current-main`/`unit-base`, and command output in `RECORD`.                                           | `authorization-pin` is native-PR evidence only; `local-base` is an ancestor of fetched current main. Public entry is clean; private entry preserves exactly the recorded overlay and rejects every other staged, untracked, or unstaged residue. The declared branch is created or safely reused from current main and `HEAD`, `current-main`, and `unit-base` exactly equal it before edit. A missing field, stale branch base, overlay mismatch, or nonzero command freezes the unit. |
+| `AR-PROPAGATE`   | Input: `RECORD`'s exact normalized rules and admitted source paths. Read `repo-governance/workflows/repo/repo-rules-propagation.md`, invoke it with `mode=strict` and `isolation=current`, then write its `generated-reports/repo-rules-propagation__*__manifest.md` path and sibling obligation URL into `RECORD`.                                                                                                                                                        | The read-back manifest names only the pre-admitted paths and owners. A new path is fail/stop for a plan amendment, not permission to edit it.                                                                                                                                                                                                                                                                                                                                           |
+| `AR-BIND`        | Input: exact hand-authored paths in `RECORD`. Run `npm run generate:bindings && npm run validate:sync && npm run generate:bindings && git status --short`; append source/generated path sets and output to `RECORD`.                                                                                                                                                                                                                                                       | All commands exit 0; second generation has no tracked change and no generated file was hand-edited.                                                                                                                                                                                                                                                                                                                                                                                     |
+| `AR-LOCAL`       | Input: unit acceptance commands and hand-authored paths in `RECORD`. Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, `git diff --numstat "$UNIT_BASE" -- $HAND_AUTHORED_PATHS \| awk '{a+=$1; d+=$2} END {print a+d}'`, and `git diff --name-only "$UNIT_BASE" -- $HAND_AUTHORED_PATHS \| wc -l`; append each result to `RECORD`.                                                                                                                   | Gate exits 0 or the record has an explicit reasoned `N/A`; size is at most 400 lines and 20 files.                                                                                                                                                                                                                                                                                                                                                                                      |
+| `AR-STAGE`       | Input: admitted path list in `RECORD`. Run `git add -- $ADMITTED_PATHS && git diff --cached --name-only && git diff --cached --check && git diff --cached --stat && git diff --cached --patch`; record cached paths and full-diff read-back in `RECORD`.                                                                                                                                                                                                                   | Cached paths equal the admitted list in both directions, check exits 0, and one cohesive commit is created/read.                                                                                                                                                                                                                                                                                                                                                                        |
+| `AR-PUSH`        | Input: literal `REPO`, `BRANCH`, and local `HEAD` in `RECORD`. Run `git push --set-upstream origin "$BRANCH" && git ls-remote origin "refs/heads/$BRANCH"`; append both SHAs to `RECORD`.                                                                                                                                                                                                                                                                                  | Remote SHA equals local `HEAD`; no other branch is pushed.                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `AR-DRAFT`       | Input: literal AI-marked `pr-title`/`pr-body-file`, plus `REPO`/`BRANCH` and the immediately preceding `AR-PUSH` remote/local SHA equality in `RECORD`. Run `gh pr create --repo "$REPO" --draft --base main --head "$BRANCH" --title "$PR_TITLE" --body-file "$PR_BODY_FILE"` then `gh pr view --repo "$REPO" --json url,isDraft,baseRefOid,headRefOid,body,additions,deletions,changedFiles`; copy read-back JSON and its `headRefOid` as `reviewed-head` into `RECORD`. | Exactly one draft has the resolved base/head, readable body ending `Generated by AI`, separately recorded whole-PR totals, a literal title, and a preceding `AR-PUSH` equality. Missing title or push evidence fails before PR creation.                                                                                                                                                                                                                                                |
+| `AR-ROUTE`       | Input: PR URL/current head and literal route payload path in `RECORD`. Post the reviewed payload with `gh pr comment --repo "$REPO" --body-file "$ROUTE_PAYLOAD"`, then run `gh pr view --repo "$REPO" --comments`; append the returned comment URL/head to `RECORD`.                                                                                                                                                                                                      | The read-back route names classification, frozen scope, selected/skipped lenses, changed probe, and `Generated by AI`; a mismatch fails before review starts.                                                                                                                                                                                                                                                                                                                           |
+| `AR-REVIEW`      | Input: route URL/current head in `RECORD`. Invoke the selected review cycle once, then read its consolidated review with `gh pr view --repo "$REPO" --json reviews`; append cycle number, review URL, and finding IDs to `RECORD`.                                                                                                                                                                                                                                         | One current-head cycle is recorded; target is Cycles 1–3, cycles 4–5 require a new probe/failure-family record, and Cycle 6 is never started.                                                                                                                                                                                                                                                                                                                                           |
+| `AR-REPLY`       | Input: each finding's native thread URL and disposition evidence in `RECORD`. For each fix/reject/defer/clarify, post a literal AI-marked same-thread reply and read it back with `gh pr view --repo "$REPO" --comments`; append reply URL, current head, and terminal state to `RECORD`.                                                                                                                                                                                  | Every finding has exactly one evidence-backed disposition; only a true terminal record is resolved and a fix cites a pushed SHA. A fix that changes the head returns to `AR-REVIEW` with the next cycle and a changed probe before CI or readiness.                                                                                                                                                                                                                                     |
+| `AR-CI`          | Input: current head and PR URL in `RECORD`. Run `gh pr checks --repo "$REPO" --required` after each changed head, at 120-second intervals while pending; append timestamp, head, and result to `RECORD`.                                                                                                                                                                                                                                                                   | Required/current-head checks are green; a push invalidates earlier CI entries and a failure returns to the review route.                                                                                                                                                                                                                                                                                                                                                                |
+| `AR-READY`       | Input: route, thread, CI, and branch-current evidence in `RECORD`. Run `gh pr ready --repo "$REPO"` then `gh pr view --repo "$REPO" --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`; append JSON to `RECORD`.                                                                                                                                                                                                                                                | All five readiness preconditions are listed against the same head and `isDraft` is `false`.                                                                                                                                                                                                                                                                                                                                                                                             |
+| `AR-FINGERPRINT` | Input: `CURRENT_MAIN` and reviewed head recorded in `RECORD`. Run `/usr/bin/git diff --binary "$CURRENT_MAIN" "$REVIEWED_HEAD" \| /usr/bin/shasum -a 256`; append the hash to `RECORD`.                                                                                                                                                                                                                                                                                    | The reviewed-patch hash is present before merge; an unreadable/mismatched head fails.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `AR-MERGE`       | Input: ready PR URL and zero-unresolved finding/thread evidence in `RECORD`. Run `gh pr merge --repo "$REPO" --squash` then `gh pr view --repo "$REPO" --json mergeCommit,mergedAt,state,headRefOid`; append JSON to `RECORD`.                                                                                                                                                                                                                                             | The PR is merged once under its existing merge gate; no merge-step wording or authority is changed by this reference.                                                                                                                                                                                                                                                                                                                                                                   |
+| `AR-LANDED`      | Input: merge SHA from `RECORD`. Run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" \| /usr/bin/shasum -a 256`; append the landed hash to `RECORD`.                                                                                                                                                                                                                                                                                                                | Landed and reviewed hashes match exactly; inequality stops the unit.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `AR-RESYNC`      | Input: merge SHA and literal successor state in `RECORD`. Run `git fetch origin main && test "$(git rev-parse origin/main)" = "$MERGE_SHA" && git status --short --branch`; append output and sibling-obligation URL/state to `RECORD`.                                                                                                                                                                                                                                    | `origin/main` equals the merge, the same worktree is clean or has only named private overlay, and exactly one successor/terminal state is published.                                                                                                                                                                                                                                                                                                                                    |
+
+#### `AR-ENTRY` copyable command
+
+```bash
+set -euo pipefail
+git fetch origin main
+git worktree list --porcelain
+
+if test "$REPO" = "wahidyankf/ose-public"; then
+  test -z "$(git status --porcelain)"
+else
+  test -z "$(git diff --cached --name-only)"
+  test -z "$(git ls-files --others --exclude-standard)"
+  test "$(git diff --binary | /usr/bin/shasum -a 256)" = "$OVERLAY_FINGERPRINT"
+  test "$(git diff --name-only | sort)" = "$(printf '%s\n' "$OVERLAY_PATHS" | sort)"
+fi
+
+git merge-base --is-ancestor "$LOCAL_BASE" origin/main
+CURRENT_MAIN="$(git rev-parse origin/main)"
+if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+  git switch "$BRANCH"
+else
+  git switch -c "$BRANCH" "$CURRENT_MAIN"
+fi
+test "$(git rev-parse HEAD)" = "$CURRENT_MAIN"
+git status --short --branch
+```
+
+### PRE-A1-ADMISSION / PRIV-ADMISSION — Make the Known Rule Waves Reachable
+
+- [ ] `[PRE-A1-ADMISSION:P1.01][AI]` From the terminal PRIV-IDEAS pin, record the exact public predecessor, then use `AR-ENTRY` to create the declared public plan-amendment branch from fetched public current main. Record the public plan-only ledger, 400-line/20-file forecast, and frozen successor set (`PUB-A1` through `PRIV-B`).
+- [ ] `[PRE-A1-ADMISSION:P1.02][AI]` Run the prescribed rule-propagation workflow as `mode=strict`, `isolation=current`, `dry-run=true` for the normalized A1/A2/A3/B rules. Record its candidate canonical source, consumer, generated-mirror, owner, and private-sibling-obligation inventory; a candidate path is not permission to edit it.
+- [ ] `[PRE-A1-ADMISSION:P1.03][AI]` Admit only the verified exact public A1/A2/A3/B source and generated-mirror paths, with one bounded before-ledger and owner per path, by changing this plan's tree and matching delivery ledger. Acceptance: no rule, agent, binding, workflow, code, or private path changes in this PR.
+- [ ] `[PRE-A1-ADMISSION:P1.04][AI]` Record the immutable public admission pin and one private-safe sibling obligation requiring `PRIV-ADMISSION`; keep every A/B implementation PR frozen until both admission pins are read back.
+- [ ] `[PRE-A1-ADMISSION:P2.01][AI]` Run only `AR-LOCAL` with `UNIT=pre-a1-admission`. Acceptance: local quality and cap results are recorded before staging.
+- [ ] `[PRE-A1-ADMISSION:P2.02][AI]` Run only `AR-STAGE`. Acceptance: one cohesive commit has an exact cached ledger and full-diff read-back.
+- [ ] `[PRE-A1-ADMISSION:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals committed local `HEAD` before draft creation.
+- [ ] `[PRE-A1-ADMISSION:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the public plan-only draft is readable, exact-head, and AI-marked.
+- [ ] `[PRE-A1-ADMISSION:P4.01][AI]` Run only `AR-ROUTE`. Acceptance: the frozen-scope route is read back before review starts.
+- [ ] `[PRE-A1-ADMISSION:P4.02][AI]` Run only `AR-REVIEW`. Acceptance: the current-head review, cycle, and changed probe are recorded.
+- [ ] `[PRE-A1-ADMISSION:P4.03][AI]` Run only `AR-REPLY`. Acceptance: every finding has one AI-marked same-thread disposition.
+- [ ] `[PRE-A1-ADMISSION:P4.04][AI]` Run only `AR-CI`. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PRE-A1-ADMISSION:P4.05][AI]` Run only `AR-READY`. Acceptance: readiness is read back only after all current-head preconditions hold.
+- [ ] `[PRE-A1-ADMISSION:P5.01][AI]` Run only `AR-FINGERPRINT`. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PRE-A1-ADMISSION:P5.02][AI]` Run only `AR-MERGE`. Acceptance: merge JSON is stored under the existing merge gate.
+- [ ] `[PRE-A1-ADMISSION:P5.03][AI]` Run only `AR-LANDED`. Acceptance: landed and reviewed fingerprints match exactly.
+- [ ] `[PRE-A1-ADMISSION:P5.04][AI]` Run only `AR-RESYNC`. Acceptance: public `origin/main` equals the merge and exactly one private-admission obligation is published.
+- [ ] `[PRE-A1-ADMISSION:P1.G][AI]` Pass exact-path, no-rule-mutation, public-safe-sibling, cap, native-review, fingerprint, and resync gate.
+- [ ] `[PRE-A1-ADMISSION:P1.P][AI]` Publish the public admission merge pin, exact frozen/resumption state, and private sibling obligation URL.
+
+- [ ] `[PRIV-ADMISSION:P1.01][AI]` From the immutable PRE-A1-ADMISSION obligation, record the exact private predecessor, then use `AR-ENTRY` to create the declared private plan-amendment branch from fetched private current main. Record the authorized overlay before-ledger; no public artifact receives private path or content detail.
+- [ ] `[PRIV-ADMISSION:P1.02][AI]` Classify each public admission as a private semantic counterpart, reasoned deviation, or documented `N/A`; record exact private paths/mirrors only in the private plan-amendment PR.
+- [ ] `[PRIV-ADMISSION:P1.03][AI]` Admit only that private ledger, preserve the overlay, and record the public-safe terminal obligation in the paired native artifacts. A missing, extra, or unexplainable path freezes `PRIV-A1`.
+- [ ] `[PRIV-ADMISSION:P2.01][AI]` Run only `AR-LOCAL` with the inherited cycle count. Acceptance: local quality, cap, and overlay evidence are recorded before staging.
+- [ ] `[PRIV-ADMISSION:P2.02][AI]` Run only `AR-STAGE`. Acceptance: one cohesive private plan-only commit has an exact cached ledger.
+- [ ] `[PRIV-ADMISSION:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals committed local `HEAD` before draft creation.
+- [ ] `[PRIV-ADMISSION:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the private-safe plan-only draft is readable, exact-head, and AI-marked.
+- [ ] `[PRIV-ADMISSION:P4.01][AI]` Run only `AR-ROUTE`. Acceptance: the inherited route and frozen scope are read back before review starts.
+- [ ] `[PRIV-ADMISSION:P4.02][AI]` Run only `AR-REVIEW`. Acceptance: the current-head review, cycle, and changed probe are recorded.
+- [ ] `[PRIV-ADMISSION:P4.03][AI]` Run only `AR-REPLY`. Acceptance: every finding has one private-safe AI-marked same-thread disposition.
+- [ ] `[PRIV-ADMISSION:P4.04][AI]` Run only `AR-CI`. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PRIV-ADMISSION:P4.05][AI]` Run only `AR-READY`. Acceptance: readiness is read back only after all current-head preconditions hold.
+- [ ] `[PRIV-ADMISSION:P5.01][AI]` Run only `AR-FINGERPRINT`. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PRIV-ADMISSION:P5.02][AI]` Run only `AR-MERGE`. Acceptance: merge JSON is stored under the existing merge gate.
+- [ ] `[PRIV-ADMISSION:P5.03][AI]` Run only `AR-LANDED`. Acceptance: landed and reviewed fingerprints match exactly.
+- [ ] `[PRIV-ADMISSION:P5.04][AI]` Run only `AR-RESYNC`. Acceptance: private `origin/main` equals the merge and PUB-A1 is the sole prepared successor.
+- [ ] `[PRIV-ADMISSION:P1.G][AI]` Pass overlay, semantic-correspondence, private-safe disclosure, exact-admission, native-review, and terminal-obligation gate.
+- [ ] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and authorize `PUB-A1` only when both admission pins and one paired obligation are read back.
+
 ### PUB-A1 — Plan-Making Rules
 
-- [ ] `[PUB-A1:P1.01][AI]` Read the terminal PRIV-IDEAS obligation and exact predecessor pin.
-- [ ] `[PUB-A1:P1.02][AI]` Fetch public `origin/main` and prove the predecessor is an ancestor.
-- [ ] `[PUB-A1:P1.03][AI]` Create only the declared branch from current public main.
-- [ ] `[PUB-A1:P1.04][AI]` Publish the exact source/generated path ledger and size forecast.
-- [ ] `[PUB-A1:P1.05][AI]` Run strict current-isolation rule propagation and retain its manifest.
-- [ ] `[PUB-A1:P1.06][AI]` Edit only plan-making sources admitted by the ledger.
-- [ ] `[PUB-A1:P1.07][AI]` Generate bindings once and reconcile every generated path.
-- [ ] `[PUB-A1:P1.08][AI]` Run `npm run validate:sync` and retain its result.
-- [ ] `[PUB-A1:P2.01][AI]` Run each applicable local quality gate and retain its result.
-- [ ] `[PUB-A1:P2.02][AI]` Reconcile working paths to the admitted ledger before staging.
-- [ ] `[PUB-A1:P2.03][AI]` Stage only admitted paths and prove cached-ledger equality.
-- [ ] `[PUB-A1:P2.04][AI]` Read the complete cached diff and commit one cohesive change.
-- [ ] `[PUB-A1:P3.01][AI]` Rerun the pre-push surface on the committed head.
-- [ ] `[PUB-A1:P3.02][AI]` Push the declared branch and read back the remote head.
-- [ ] `[PUB-A1:P3.03][AI]` Open a human-readable draft PR and read back its body and statistics.
-- [ ] `[PUB-A1:P4.01][AI]` Post the exact-head review route and run bounded review cycles.
-- [ ] `[PUB-A1:P4.02][AI]` Reply to each finding in its original thread and resolve only true terminal evidence.
-- [ ] `[PUB-A1:P4.03][AI]` Poll current-head CI, prove readiness, and read back ready state.
-- [ ] `[PUB-A1:P5.01][AI]` Compute the reviewed raw-patch fingerprint and squash-merge.
-- [ ] `[PUB-A1:P5.02][AI]` Compare landed fingerprint, resync to merge SHA, and prepare the sibling obligation.
+- [ ] `[PUB-A1:P1.01][AI]` Execute `AR-ENTRY` for the admitted A1 public row in `tech-docs.md`; read both admission pins and record the exact public predecessor. Acceptance: current public `origin/main` contains the public admission pin and its paired private obligation is terminal.
+- [ ] `[PUB-A1:P1.02][AI]` Run only `AR-PROPAGATE` for normalized plan-making rules. Acceptance: the strict manifest names the authoritative source, consumer, and private sibling obligation.
+- [ ] `[PUB-A1:P1.03][AI]` Edit only public paths listed in the `AR-PROPAGATE` manifest. Acceptance: `git status --short` contains no unlisted path.
+- [ ] `[PUB-A1:P1.04][AI]` Run only `AR-BIND`. Acceptance: generated paths and second-generation stability are recorded separately from source paths.
+- [ ] `[PUB-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: each unit gate has its exit result or recorded reasoned `N/A`.
+- [ ] `[PUB-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: the cached ledger is exactly the before-ledger and one cohesive commit is read in full.
+- [ ] `[PUB-A1:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PUB-A1:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the public draft body is readable, exact-head, and AI-marked.
+- [ ] `[PUB-A1:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=pub-a1` and `RECORD=local-tmp/optimize-pr-process/pub-a1-record.md`. Acceptance: its read-back route is frozen before reviewer work.
+- [ ] `[PUB-A1:P4.02][AI]` Run only `AR-REVIEW` with that same resolved record. Acceptance: the consolidated review URL, cycle, and changed probe are read back.
+- [ ] `[PUB-A1:P4.03][AI]` Run only `AR-REPLY` with that same resolved record. Acceptance: every finding has a same-thread, AI-marked evidence disposition.
+- [ ] `[PUB-A1:P4.04][AI]` Run only `AR-CI` with that same resolved record. Acceptance: the stored check result is green for the current head.
+- [ ] `[PUB-A1:P4.05][AI]` Run only `AR-READY` with that same resolved record. Acceptance: the read-back is non-draft after all five preconditions.
+- [ ] `[PUB-A1:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=pub-a1`. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PUB-A1:P5.02][AI]` Run only `AR-MERGE` with the ready public PR record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PUB-A1:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: the landed hash matches P5.01.
+- [ ] `[PUB-A1:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: `origin/main` equals the merge and the prepared PRIV-A1 obligation identifies the exact successor.
 - [ ] `[PUB-A1:P1.G][AI]` Pass propagated-rule, binding, current-head, sibling-obligation, and landed-proof gate.
 - [ ] `[PUB-A1:P1.P][AI]` Record public merge pin and prepared PRIV-A1 obligation.
 
 ### PRIV-A1 — Private Plan-Making Adaptation
 
-- [ ] `[PRIV-A1:P1.01][AI]` Read the PUB-A1 obligation and its immutable public merge pin.
-- [ ] `[PRIV-A1:P1.02][AI]` Preserve the authorized overlay before entering the declared private branch.
-- [ ] `[PRIV-A1:P1.03][AI]` Measure the private destination and classify satisfaction, deviation, N/A, or portable defect.
-- [ ] `[PRIV-A1:P1.04][AI]` Adapt only admitted private sources; retain private evidence in the private PR.
-- [ ] `[PRIV-A1:P1.05][AI]` Run propagation, bindings, local gates, review, CI, merge proof, and overlay resync as separate evidence states.
-- [ ] `[PRIV-A1:P1.06][AI]` Use ENTRY-ADAPTERS for any portable or plan defect; do not open a second obligation.
-- [ ] `[PRIV-A1:P2.01][AI]` Reconcile the private source/generated ledger and overlay exclusion before staging.
-- [ ] `[PRIV-A1:P2.02][AI]` Run local gates and prove the overlay is absent from cached change paths.
-- [ ] `[PRIV-A1:P2.03][AI]` Commit the private adaptation and recheck the working-overlay fingerprint.
-- [ ] `[PRIV-A1:P3.01][AI]` Push the declared branch and open a private-safe AI-marked draft PR.
-- [ ] `[PRIV-A1:P3.02][AI]` Read back remote head, private-safe body, and safe statistics.
-- [ ] `[PRIV-A1:P4.01][AI]` Post a private-safe exact-head route and run bounded review cycles.
-- [ ] `[PRIV-A1:P4.02][AI]` Preserve same-thread replies, current-head CI, and the existing cycle count.
-- [ ] `[PRIV-A1:P5.01][AI]` Compare reviewed and landed fingerprints and resync without stashing the overlay.
+- [ ] `[PRIV-A1:P1.01][AI]` Execute `AR-ENTRY` in the declared private worktree and read the PUB-A1 immutable obligation. Acceptance: the public merge pin is `authorization-pin`, the private landed main is `local-base`, and the authorized overlay fingerprint/path set is recorded before branch entry.
+- [ ] `[PRIV-A1:P1.02][AI]` Classify the private destination as satisfied, reasoned deviation, `N/A`, or portable defect before editing. Acceptance: the private PR artifact contains one class and supporting private-safe evidence.
+- [ ] `[PRIV-A1:P1.03][AI]` Run only `AR-PROPAGATE` for the admitted private semantic counterpart. Acceptance: the manifest and sibling record exclude the authorized overlay.
+- [ ] `[PRIV-A1:P1.04][AI]` Edit only manifest-admitted private source paths. Acceptance: private evidence remains in the private PR and `git status --short` excludes the overlay.
+- [ ] `[PRIV-A1:P1.05][AI]` Run only `AR-BIND`. Acceptance: second-generation stability is recorded without hand-editing generated mirrors.
+- [ ] `[PRIV-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: local gate results and the overlay exclusion are separate records.
+- [ ] `[PRIV-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached paths equal the private ledger and omit the overlay.
+- [ ] `[PRIV-A1:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PRIV-A1:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the private-safe AI-marked draft and safe statistics are read back.
+- [ ] `[PRIV-A1:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=priv-a1` and `RECORD=local-tmp/optimize-pr-process/priv-a1-record.md`. Acceptance: its read-back route preserves the inherited cycle count.
+- [ ] `[PRIV-A1:P4.02][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the review URL/cycle and changed probe are read back.
+- [ ] `[PRIV-A1:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: same-thread evidence has no private leakage.
+- [ ] `[PRIV-A1:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: current-head CI is green in the stored result.
+- [ ] `[PRIV-A1:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: readiness is read back without reopening the overlay.
+- [ ] `[PRIV-A1:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-a1`. Acceptance: the reviewed hash is stored before merge.
+- [ ] `[PRIV-A1:P5.02][AI]` Run only `AR-MERGE` with the ready private PR record. Acceptance: merge JSON is stored under the existing merge gate.
+- [ ] `[PRIV-A1:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: landed and reviewed hashes match.
+- [ ] `[PRIV-A1:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: overlay-safe resync and one terminal obligation state are recorded.
+- [ ] `[PRIV-A1:P1.06][AI]` On a portable or plan defect, perform only the `ENTRY-ADAPTERS:A1.06` classification/handoff. Acceptance: no second obligation or private mutation starts.
 - [ ] `[PRIV-A1:P1.G][AI]` Pass semantic-correspondence, overlay, current-head, and terminal-obligation gate.
 - [ ] `[PRIV-A1:P1.P][AI]` Record private merge pin and prepared PUB-A2 obligation.
 
 ### PUB-A2 — Public Review-Routing Rules
 
-- [ ] `[PUB-A2:P1.01][AI]` Read the terminal PRIV-A1 pin and fetch current public main.
-- [ ] `[PUB-A2:P1.02][AI]` Publish the exact review-routing source/generated ledger and forecast.
-- [ ] `[PUB-A2:P1.03][AI]` Propagate only the selected-risk, applicability, changed-probe, and human-readable route rules.
-- [ ] `[PUB-A2:P1.04][AI]` Generate and validate bindings without hand-editing generated mirrors.
-- [ ] `[PUB-A2:P1.05][AI]` Prove route, specialist selection, synthesis, fix reply, CI, merge, and resync separately.
-- [ ] `[PUB-A2:P2.01][AI]` Run local quality gates and exact-ledger staging checks.
-- [ ] `[PUB-A2:P2.02][AI]` Inspect the cached and committed full diffs before push.
-- [ ] `[PUB-A2:P3.01][AI]` Push the declared branch, open a human-readable draft PR, and read it back.
-- [ ] `[PUB-A2:P4.01][AI]` Post the exact-head route, use changed probes, and stop before Cycle 6.
-- [ ] `[PUB-A2:P4.02][AI]` Reply to every finding with one four-way disposition and current-head evidence.
-- [ ] `[PUB-A2:P4.03][AI]` Poll current-head CI and prove readiness before merge.
-- [ ] `[PUB-A2:P5.01][AI]` Compare reviewed/landed fingerprints, resync, and prepare PRIV-A2.
+- [ ] `[PUB-A2:P1.01][AI]` Execute `AR-ENTRY` from the terminal PRIV-A1 pin. Acceptance: the exact public review-routing source/generated candidate ledger and forecast are in the route record.
+- [ ] `[PUB-A2:P1.02][AI]` Run only `AR-PROPAGATE` for selected-risk, applicability, changed-probe, and bootcamp-readable route rules. Acceptance: every admitted public consumer appears in the strict manifest.
+- [ ] `[PUB-A2:P1.03][AI]` Edit only manifest-admitted source paths. Acceptance: no generated mirror is hand-edited and unlisted status paths fail scope.
+- [ ] `[PUB-A2:P1.04][AI]` Run only `AR-BIND`. Acceptance: `npm run validate:sync` passes and the second generation leaves tracked bytes unchanged.
+- [ ] `[PUB-A2:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: local quality and cap results are recorded before staging.
+- [ ] `[PUB-A2:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached and committed full diffs were read and the exact ledger matches.
+- [ ] `[PUB-A2:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PUB-A2:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the human-readable public draft is read back at its current head.
+- [ ] `[PUB-A2:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=pub-a2` and `RECORD=local-tmp/optimize-pr-process/pub-a2-record.md`. Acceptance: risk-selected/skipped lenses are read back.
+- [ ] `[PUB-A2:P4.02][AI]` Run only `AR-REVIEW` with that same record. Acceptance: synthesis, cycle, and changed probe are read back; no Cycle 6 starts.
+- [ ] `[PUB-A2:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: every disposition has native current-head evidence.
+- [ ] `[PUB-A2:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: required CI is green for the record's current head.
+- [ ] `[PUB-A2:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: ready-state JSON is read back.
+- [ ] `[PUB-A2:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=pub-a2`. Acceptance: reviewed hash is stored before merge.
+- [ ] `[PUB-A2:P5.02][AI]` Run only `AR-MERGE` with the ready public PR record. Acceptance: merge JSON is stored under the existing merge gate.
+- [ ] `[PUB-A2:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: matching landed fingerprint is recorded.
+- [ ] `[PUB-A2:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: resync prepares exactly one PRIV-A2 obligation.
 - [ ] `[PUB-A2:P1.G][AI]` Pass routing, binding, five-cycle, scope-freeze, and landed-proof gate.
 - [ ] `[PUB-A2:P1.P][AI]` Record public merge pin and prepared PRIV-A2 obligation.
 
 ### PRIV-A2 — Private Review-Routing Adaptation
 
-- [ ] `[PRIV-A2:P1.01][AI]` Read PUB-A2's immutable obligation and preserve the private overlay.
-- [ ] `[PRIV-A2:P1.02][AI]` Measure private routing surfaces and adapt only admitted private sources.
-- [ ] `[PRIV-A2:P1.03][AI]` Keep public summaries disclosure-safe and private evidence in the private PR.
-- [ ] `[PRIV-A2:P1.04][AI]` Run propagation, bindings, review, current-head CI, merge proof, and overlay resync separately.
-- [ ] `[PRIV-A2:P1.05][AI]` Freeze and hand portable/plan defects to ENTRY-ADAPTERS; retain the private cycle count.
-- [ ] `[PRIV-A2:P2.01][AI]` Reconcile the private ledger, generated paths, and overlay exclusion before staging.
-- [ ] `[PRIV-A2:P2.02][AI]` Run private local gates, cached checks, and committed overlay fingerprint proof.
-- [ ] `[PRIV-A2:P3.01][AI]` Push only the declared branch and read back its private-safe draft PR.
-- [ ] `[PRIV-A2:P4.01][AI]` Run the private-safe route, same-thread replies, changed probes, and current-head CI.
-- [ ] `[PRIV-A2:P4.02][AI]` Stop before Cycle 6 or a second public reversal, preserving the frozen record.
-- [ ] `[PRIV-A2:P5.01][AI]` Compare reviewed/landed fingerprints and resync without disturbing overlay state.
+- [ ] `[PRIV-A2:P1.01][AI]` Execute `AR-ENTRY` with PUB-A2's immutable obligation. Acceptance: the before/after overlay fingerprints match and the private routing ledger is explicit.
+- [ ] `[PRIV-A2:P1.02][AI]` Classify the private routing result before edit. Acceptance: the private-safe PR records satisfaction, deviation, `N/A`, or portable defect with its evidence.
+- [ ] `[PRIV-A2:P1.03][AI]` Run only `AR-PROPAGATE`. Acceptance: admitted private destinations are in the manifest and public summaries contain no private evidence.
+- [ ] `[PRIV-A2:P1.04][AI]` Run only `AR-BIND`. Acceptance: generated parity succeeds without changing the authorized overlay.
+- [ ] `[PRIV-A2:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: private local gates and cap results are recorded separately from overlay proof.
+- [ ] `[PRIV-A2:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached paths equal the ledger and omit the overlay.
+- [ ] `[PRIV-A2:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PRIV-A2:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the declared branch's private-safe draft is read back.
+- [ ] `[PRIV-A2:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=priv-a2` and `RECORD=local-tmp/optimize-pr-process/priv-a2-record.md`. Acceptance: exact-head route read-back is stored.
+- [ ] `[PRIV-A2:P4.02a][AI]` Run only `AR-REVIEW` with that same record. Acceptance: review cycle and changed probe are separately stored.
+- [ ] `[PRIV-A2:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: every same-thread disposition is read back.
+- [ ] `[PRIV-A2:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: current-head CI result is stored and green.
+- [ ] `[PRIV-A2:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: ready state is read back before merge.
+- [ ] `[PRIV-A2:P4.05a][AI]` Only when semantic exit is still unsafe at Cycle 5 or a second shared-budget reversal occurs, perform the stop condition: freeze the private PR/pair with its cycle count and native thread preserved. Otherwise record this condition as not applicable and proceed to Phase 5.
+- [ ] `[PRIV-A2:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-a2`. Acceptance: reviewed hash is stored before merge.
+- [ ] `[PRIV-A2:P5.02][AI]` Run only `AR-MERGE` with the ready private PR record. Acceptance: merge JSON is stored under the existing merge gate.
+- [ ] `[PRIV-A2:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: matching landed hash is stored.
+- [ ] `[PRIV-A2:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: overlay-safe resync keeps one terminal obligation.
+- [ ] `[PRIV-A2:P1.05][AI]` On portable/plan defect, execute only `ENTRY-ADAPTERS:A1.06`–`A1.12`. Acceptance: the shared correction budget and private cycle count are retained.
 - [ ] `[PRIV-A2:P1.G][AI]` Pass semantic-correspondence, scope, cycle, overlay, and obligation gate.
 - [ ] `[PRIV-A2:P1.P][AI]` Record private merge pin and prepare PUB-A3 only after terminal state.
 
@@ -941,36 +1150,51 @@ retains both the lineage ID and its correction count.
 ### PUB-A3 / PRIV-A3 — Human PRs and Native Review Conversations
 
 - [ ] `[PUB-A3:P1.01][AI]` Publish the exact public PR-body and source/generated ledger from the PRIV-A2 pin.
-- [ ] `[PUB-A3:P1.02][AI]` Update only admitted public body, synthesis, fixer, and skill sources.
-- [ ] `[PUB-A3:P1.03][AI]` Require outcome, why, scope, non-goals, reading order, verification, risk, safety, and rollback in plain language.
-- [ ] `[PUB-A3:P1.04][AI]` Require blocking findings to explain evidence, impact, bounded remedy, and refutation for bootcamp-graduate readers.
-- [ ] `[PUB-A3:P1.05][AI]` Require same-thread four-way dispositions and `Generated by AI` on every AI-authored artifact.
-- [ ] `[PUB-A3:P1.06][AI]` Require frozen scope, changed probes, target Cycles 1–3, recovery 4–5, and stop before Cycle 6.
-- [ ] `[PUB-A3:P1.07][AI]` Inventory the exact canonical plan-maker, skill, and workflow sentences that require a post-write or post-plan grill.
-- [ ] `[PUB-A3:P1.08][AI]` Remove that separate plan-making requirement from admitted canonical sources without removing ordinary grilling or escalation for a genuinely unresolved decision.
-- [ ] `[PUB-A3:P1.09][AI]` State that one bounded equivalence audit reuses stronger PR evidence, checks only uncovered plan-specific surfaces, and replaces both a separate grill and this plan's former full iterative workflow; record the rationale in plain language.
-- [ ] `[PUB-A3:P2.01][AI]` Run the required rule-propagation workflow and record its placement manifest before generating bindings.
-- [ ] `[PUB-A3:P2.02][AI]` Generate bindings once from the admitted canonical sources.
-- [ ] `[PUB-A3:P2.03][AI]` Validate synchronization and rerun generation to prove tracked bytes are stable.
-- [ ] `[PUB-A3:P2.04][AI]` Reconcile source/generated paths to the staged ledger before committing.
-- [ ] `[PUB-A3:P3.01][AI]` Commit only the reconciled, separately evidenced source and generated state.
-- [ ] `[PUB-A3:P4.01][AI]` Push and read back the draft PR body at its exact current head.
-- [ ] `[PUB-A3:P4.02][AI]` Run the planned route, native review, same-thread repair, and current-head CI.
-- [ ] `[PUB-A3:P5.01][AI]` Record the merge fingerprint and prove the landed content before resyncing the worktree.
-- [ ] `[PUB-A3:P5.02][AI]` Resync public worktree state and record the prepared PRIV-A3 obligation.
+- [ ] `[PUB-A3:P1.02][AI]` Run only `AR-PROPAGATE` for the exact normalized PR-body/synthesis/fixer rules and admitted source set. Acceptance: placement manifest is read before any rule-surface write or binding generation.
+- [ ] `[PUB-A3:P1.03][AI]` Update only admitted public body, synthesis, fixer, and skill sources through the propagation result.
+- [ ] `[PUB-A3:P1.04][AI]` Require outcome, why, scope, non-goals, reading order, verification, risk, safety, and rollback in plain language.
+- [ ] `[PUB-A3:P1.05][AI]` Require blocking findings to explain evidence, impact, bounded remedy, and refutation for bootcamp-graduate readers.
+- [ ] `[PUB-A3:P1.06][AI]` Require same-thread four-way dispositions and `Generated by AI` on every AI-authored artifact.
+- [ ] `[PUB-A3:P1.07][AI]` Require frozen scope, changed probes, target Cycles 1–3, recovery 4–5, and stop before Cycle 6.
+- [ ] `[PUB-A3:P1.08][AI]` Inventory the exact canonical plan-maker, skill, and workflow sentences that require a post-write or post-plan grill.
+- [ ] `[PUB-A3:P1.09][AI]` Remove that separate plan-making requirement from admitted canonical sources without removing ordinary grilling or escalation for a genuinely unresolved decision.
+- [ ] `[PUB-A3:P1.10][AI]` State that one bounded equivalence audit reuses stronger PR evidence, checks only uncovered plan-specific surfaces, and replaces both a separate grill and this plan's former full iterative workflow; record the rationale in plain language.
+- [ ] `[PUB-A3:P2.01][AI]` Run only `AR-BIND`. Acceptance: source/generated paths and stable second generation are distinct evidence records.
+- [ ] `[PUB-A3:P2.02][AI]` Run only `AR-LOCAL`. Acceptance: every applicable local command has result or reasoned `N/A` before staging.
+- [ ] `[PUB-A3:P2.03][AI]` Run only `AR-STAGE`. Acceptance: staged source/generated paths equal the manifest-derived ledger.
+- [ ] `[PUB-A3:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PUB-A3:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the public body is read back at exact current head.
+- [ ] `[PUB-A3:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=pub-a3` and `RECORD=local-tmp/optimize-pr-process/pub-a3-record.md`. Acceptance: the public route is read back with frozen scope and selected lenses.
+- [ ] `[PUB-A3:P4.02][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PUB-A3:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: every finding has an AI-marked same-thread disposition.
+- [ ] `[PUB-A3:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PUB-A3:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: read-back confirms all readiness preconditions on that head.
+- [ ] `[PUB-A3:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=pub-a3` and that same record. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PUB-A3:P5.02][AI]` Run only `AR-MERGE` with that same record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PUB-A3:P5.03][AI]` Run only `AR-LANDED` with that same record. Acceptance: landed and reviewed hashes match exactly.
+- [ ] `[PUB-A3:P5.04][AI]` Run only `AR-RESYNC` with that same record. Acceptance: `origin/main` equals the merge and one PRIV-A3 obligation is prepared.
 - [ ] `[PUB-A3:P1.G][AI]` Pass body, review, reply, AI-marker, scope, cycle, binding, and landed-proof gate.
 - [ ] `[PUB-A3:P1.P][AI]` Record public merge pin and prepared PRIV-A3 obligation.
 - [ ] `[PRIV-A3:P1.01][AI]` Read PUB-A3's immutable obligation and preserve the private overlay before adaptation.
-- [ ] `[PRIV-A3:P1.02][AI]` Adapt only admitted private PR/review sources and keep private evidence in the private PR.
-- [ ] `[PRIV-A3:P1.03][AI]` Apply the same body, native-thread, AI-marker, scope, and five-cycle intent semantically.
-- [ ] `[PRIV-A3:P1.04][AI]` Remove only the private semantic equivalent of the obsolete post-plan grill; keep ordinary grilling and unresolved-decision escalation intact.
-- [ ] `[PRIV-A3:P1.05][AI]` Record the private source/generated ledger and private-safe rationale for the bounded equivalence audit that replaces this plan's iterative gate run.
-- [ ] `[PRIV-A3:P2.01][AI]` Run propagation and generate bindings from the admitted private canonical sources.
-- [ ] `[PRIV-A3:P2.02][AI]` Validate sync, rerun generation, and reconcile the private staged ledger.
-- [ ] `[PRIV-A3:P3.01][AI]` Commit only reconciled private source/generated state.
-- [ ] `[PRIV-A3:P4.01][AI]` Push, read back the private-safe body, and run private-safe review/replies/current-head CI.
-- [ ] `[PRIV-A3:P5.01][AI]` Prove the private merge, landed content, and overlay-safe worktree resync.
-- [ ] `[PRIV-A3:P5.02][AI]` Freeze portable or plan defects through ENTRY-ADAPTERS without resetting the active private cycle count.
+- [ ] `[PRIV-A3:P1.02][AI]` Run only `AR-PROPAGATE` for admitted private canonical sources. Acceptance: manifest excludes the overlay and names one semantic counterpart/deviation before any private rule write.
+- [ ] `[PRIV-A3:P1.03][AI]` Adapt only admitted private PR/review sources through the propagation result and keep private evidence in the private PR.
+- [ ] `[PRIV-A3:P1.04][AI]` Apply the same body, native-thread, AI-marker, scope, and five-cycle intent semantically.
+- [ ] `[PRIV-A3:P1.05][AI]` Remove only the private semantic equivalent of the obsolete post-plan grill; keep ordinary grilling and unresolved-decision escalation intact.
+- [ ] `[PRIV-A3:P1.06][AI]` Record the private source/generated ledger and private-safe rationale for the bounded equivalence audit that replaces this plan's iterative gate run.
+- [ ] `[PRIV-A3:P2.01][AI]` Run only `AR-BIND`. Acceptance: sync and second-generation proof leave the private overlay unchanged.
+- [ ] `[PRIV-A3:P3.01][AI]` Run only `AR-STAGE`. Acceptance: one reconciled private source/generated commit excludes the overlay.
+- [ ] `[PRIV-A3:P3.02][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PRIV-A3:P4.01][AI]` Run only `AR-DRAFT`. Acceptance: the private-safe body is read back at its exact current head.
+- [ ] `[PRIV-A3:P4.02][AI]` Run only `AR-ROUTE` with `UNIT=priv-a3` and `RECORD=local-tmp/optimize-pr-process/priv-a3-record.md`. Acceptance: the private-safe route is read back with frozen scope and selected lenses.
+- [ ] `[PRIV-A3:P4.03][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PRIV-A3:P4.03a][AI]` On a portable or plan defect, freeze through `ENTRY-ADAPTERS:A1.06`–`A1.12` before readiness or merge. Acceptance: the active private cycle count and shared correction budget are retained.
+- [ ] `[PRIV-A3:P4.04][AI]` Run only `AR-REPLY` with that same record. Acceptance: every finding has an AI-marked same-thread disposition without private leakage.
+- [ ] `[PRIV-A3:P4.05][AI]` Run only `AR-CI` with that same record. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PRIV-A3:P4.06][AI]` Run only `AR-READY` with that same record. Acceptance: read-back confirms all readiness preconditions on that head.
+- [ ] `[PRIV-A3:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-a3` and that same record. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PRIV-A3:P5.02][AI]` Run only `AR-MERGE` with that same record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PRIV-A3:P5.03][AI]` Run only `AR-LANDED` with that same record. Acceptance: landed and reviewed hashes match exactly.
+- [ ] `[PRIV-A3:P5.04][AI]` Run only `AR-RESYNC` with that same record. Acceptance: overlay-safe resync records one terminal obligation state.
 - [ ] `[PRIV-A3:P1.G][AI]` Pass semantic-correspondence, disclosure, overlay, cycle, and terminal-obligation gate.
 - [ ] `[PRIV-A3:P1.P][AI]` Record private merge pin and prepare PUB-B only after terminal state.
 
@@ -978,27 +1202,46 @@ retains both the lineage ID and its correction count.
 
 - [ ] `[PUB-B:P1.01][AI]` Read the terminal PRIV-A3 pin and publish the exact public legacy-rule inventory with source, mirror, and historical-evidence classifications.
 - [ ] `[PUB-B:P1.02][AI]` Distinguish live normative “one of seven”, seven-cycle, mandatory-three-cycle, and two-clean wording from immutable historical PR evidence.
-- [ ] `[PUB-B:P1.03][AI]` Edit only admitted live canonical sources so they defer to the target 1–3, recovery 4–5, stop-before-6 policy.
-- [ ] `[PUB-B:P1.04][AI]` Preserve historical evidence as history rather than rewriting a past PR or hiding why the policy changed.
-- [ ] `[PUB-B:P1.05][AI]` Remove scope-expanding, automatic-agreement, or agent-only-review wording that conflicts with the frozen-scope and four-disposition rules.
-- [ ] `[PUB-B:P1.06][AI]` Record every retained exception, its exact authority, and why it does not reintroduce an unbounded or conflicting review loop.
-- [ ] `[PUB-B:P2.01][AI]` Run rule propagation and retain the manifest for every affected public destination.
-- [ ] `[PUB-B:P2.02][AI]` Generate bindings, validate synchronization, and prove a second generation creates no tracked change.
-- [ ] `[PUB-B:P2.03][AI]` Reconcile the source/generated ledger, actual cap statistics, and staged paths before committing.
-- [ ] `[PUB-B:P3.01][AI]` Commit the reconciled legacy-cleanup state and read the complete committed diff.
-- [ ] `[PUB-B:P4.01][AI]` Push, read back the human-readable draft, and post the exact-head review route.
-- [ ] `[PUB-B:P4.02][AI]` Complete native review, same-thread dispositions, changed probes, and current-head CI without reopening settled A3 scope.
-- [ ] `[PUB-B:P5.01][AI]` Prove reviewed/landed fingerprint equality, resync public state, and publish the immutable PRIV-B obligation.
+- [ ] `[PUB-B:P1.03][AI]` Run only `AR-PROPAGATE` for the exact normalized legacy-rule change and admitted source set. Acceptance: placement/conflict evidence is read before any live-rule mutation.
+- [ ] `[PUB-B:P1.04][AI]` Edit only admitted live canonical sources through the propagation result so they defer to the target 1–3, recovery 4–5, stop-before-6 policy.
+- [ ] `[PUB-B:P1.05][AI]` Preserve historical evidence as history rather than rewriting a past PR or hiding why the policy changed.
+- [ ] `[PUB-B:P1.06][AI]` Remove scope-expanding, automatic-agreement, or agent-only-review wording that conflicts with the frozen-scope and four-disposition rules.
+- [ ] `[PUB-B:P1.07][AI]` Record every retained exception, its exact authority, and why it does not reintroduce an unbounded or conflicting review loop.
+- [ ] `[PUB-B:P2.01][AI]` Run only `AR-BIND`. Acceptance: sync passes and second generation creates no tracked change.
+- [ ] `[PUB-B:P2.02][AI]` Run only `AR-LOCAL`. Acceptance: cap statistics are within bounds before staging.
+- [ ] `[PUB-B:P2.03][AI]` Run only `AR-STAGE`. Acceptance: staged paths equal the source/generated ledger before commit.
+- [ ] `[PUB-B:P3.01][AI]` Read the complete committed diff from `AR-STAGE`. Acceptance: legacy cleanup is one cohesive commit.
+- [ ] `[PUB-B:P3.02][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PUB-B:P4.01][AI]` Run only `AR-DRAFT`. Acceptance: the human-readable draft is read back at its exact head.
+- [ ] `[PUB-B:P4.02][AI]` Run only `AR-ROUTE` with `UNIT=pub-b` and `RECORD=local-tmp/optimize-pr-process/pub-b-record.md`. Acceptance: the route is read back with frozen A3 scope and selected lenses.
+- [ ] `[PUB-B:P4.03][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PUB-B:P4.04][AI]` Run only `AR-REPLY` with that same record. Acceptance: every finding has an AI-marked same-thread disposition.
+- [ ] `[PUB-B:P4.05][AI]` Run only `AR-CI` with that same record. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PUB-B:P4.06][AI]` Run only `AR-READY` with that same record. Acceptance: read-back confirms all readiness preconditions on that head.
+- [ ] `[PUB-B:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=pub-b` and that same record. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PUB-B:P5.02][AI]` Run only `AR-MERGE` with that same record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PUB-B:P5.03][AI]` Run only `AR-LANDED` with that same record. Acceptance: landed and reviewed hashes match exactly.
+- [ ] `[PUB-B:P5.04][AI]` Run only `AR-RESYNC` with that same record. Acceptance: `origin/main` equals the merge and one PRIV-B obligation is prepared.
 - [ ] `[PUB-B:P1.G][AI]` Pass the legacy-inventory, historical-preservation, scope, cycle, binding, review, and landed-proof gate.
 - [ ] `[PUB-B:P1.P][AI]` Record public merge pin and prepare PRIV-B only after terminal state.
 - [ ] `[PRIV-B:P1.01][AI]` Read PUB-B's immutable obligation and preserve the authorized private overlay before inspecting private legacy wording.
 - [ ] `[PRIV-B:P1.02][AI]` Classify private occurrences as a semantic counterpart, a private-only historical record, or a reasoned private deviation.
-- [ ] `[PRIV-B:P1.03][AI]` Remove only conflicting live private wording while preserving accurate private history and disclosure boundaries.
-- [ ] `[PRIV-B:P1.04][AI]` Record retained private exceptions and prove they neither reset cycle count nor widen the active public/private pair.
-- [ ] `[PRIV-B:P2.01][AI]` Run private propagation, generate bindings, validate synchronization, and reconcile the overlay-safe ledger.
-- [ ] `[PRIV-B:P3.01][AI]` Commit only reconciled private source/generated state after reading its full diff.
-- [ ] `[PRIV-B:P4.01][AI]` Push, read back the private-safe body, and complete review/reply/current-head-CI evidence.
-- [ ] `[PRIV-B:P5.01][AI]` Prove landed content, overlay-safe resync, and the terminal paired legacy-cleanup record.
+- [ ] `[PRIV-B:P1.03][AI]` Run only `AR-PROPAGATE` for the classified private legacy-rule change. Acceptance: the strict manifest names every private destination and excludes the overlay before any private rule write.
+- [ ] `[PRIV-B:P1.04][AI]` Remove only conflicting live private wording through the propagation result while preserving accurate private history and disclosure boundaries.
+- [ ] `[PRIV-B:P1.05][AI]` Record retained private exceptions and prove they neither reset cycle count nor widen the active public/private pair.
+- [ ] `[PRIV-B:P2.01][AI]` Run only `AR-BIND`. Acceptance: parity result and overlay-safe ledger are separate records.
+- [ ] `[PRIV-B:P3.01][AI]` Run only `AR-STAGE`. Acceptance: one reconciled private source/generated commit has a read full diff.
+- [ ] `[PRIV-B:P3.02][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PRIV-B:P4.01][AI]` Run only `AR-DRAFT`. Acceptance: the private-safe body is individually read back.
+- [ ] `[PRIV-B:P4.02][AI]` Run only `AR-ROUTE` with `UNIT=priv-b` and `RECORD=local-tmp/optimize-pr-process/priv-b-record.md`. Acceptance: the private-safe route is read back with frozen scope and selected lenses.
+- [ ] `[PRIV-B:P4.03][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PRIV-B:P4.04][AI]` Run only `AR-REPLY` with that same record. Acceptance: every finding has an AI-marked same-thread disposition without private leakage.
+- [ ] `[PRIV-B:P4.05][AI]` Run only `AR-CI` with that same record. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PRIV-B:P4.06][AI]` Run only `AR-READY` with that same record. Acceptance: read-back confirms all readiness preconditions on that head.
+- [ ] `[PRIV-B:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-b` and that same record. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PRIV-B:P5.02][AI]` Run only `AR-MERGE` with that same record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PRIV-B:P5.03][AI]` Run only `AR-LANDED` with that same record. Acceptance: landed and reviewed hashes match exactly.
+- [ ] `[PRIV-B:P5.04][AI]` Run only `AR-RESYNC` with that same record. Acceptance: overlay-safe resync records one terminal pair state.
 - [ ] `[PRIV-B:P1.G][AI]` Pass semantic correspondence, historical preservation, disclosure, scope, cycle, and terminal-obligation gate.
 - [ ] `[PRIV-B:P1.P][AI]` Record private merge pin and authorize the Wave C necessity decision.
 
@@ -1014,13 +1257,40 @@ retains both the lineage ID and its correction count.
 - [ ] `[PRIV-C:P1.01][AI]` On public C `N/A`, record private C `N/A` from the immutable PUB-C decision without opening a needless private PR.
 - [ ] `[PRIV-C:P1.02][AI]` On human-approved public C, inspect the immutable public mechanism obligation and preserve the authorized private overlay before adaptation.
 - [ ] `[PRIV-C:P1.03][AI]` Apply only the approved semantic counterpart, or record a reasoned private deviation with evidence, owner, and disclosure-safe rationale.
-- [ ] `[PRIV-C:P1.04][AI]` Run the same propagation, binding, native-review, current-head-CI, landed-proof, and resync states separately if a private C PR is necessary.
+- [ ] `[PRIV-C:P1.04][AI]` If a private C PR is necessary, run only `AR-PROPAGATE`. Acceptance: the strict manifest names only approved private paths; otherwise record the explicit `N/A` from P1.01.
+- [ ] `[PRIV-C:P1.05][AI]` Run only `AR-BIND` when a private C PR is necessary. Acceptance: source/generated paths and stable second generation are separately recorded.
+- [ ] `[PRIV-C:P2.01][AI]` Run only `AR-LOCAL` when a private C PR is necessary. Acceptance: every applicable local result or reasoned `N/A` is recorded before staging.
+- [ ] `[PRIV-C:P2.02][AI]` Run only `AR-STAGE` when a private C PR is necessary. Acceptance: cached paths equal the manifest-derived ledger.
+- [ ] `[PRIV-C:P3.00][AI]` Run only `AR-PUSH` when a private C PR is necessary. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
+- [ ] `[PRIV-C:P3.01][AI]` Run only `AR-DRAFT` when a private C PR is necessary. Acceptance: the private-safe, AI-marked draft is read back at its exact head.
+- [ ] `[PRIV-C:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=priv-c` and `RECORD=local-tmp/optimize-pr-process/priv-c-record.md` when a private C PR is necessary. Acceptance: the private-safe route is read back with frozen scope and selected lenses.
+- [ ] `[PRIV-C:P4.02][AI]` Run only `AR-REVIEW` with that same record when a private C PR is necessary. Acceptance: the current-head review URL, cycle, and changed probe are recorded.
+- [ ] `[PRIV-C:P4.03][AI]` Run only `AR-REPLY` with that same record when a private C PR is necessary. Acceptance: every finding has an AI-marked same-thread disposition without private leakage.
+- [ ] `[PRIV-C:P4.04][AI]` Run only `AR-CI` with that same record when a private C PR is necessary. Acceptance: required checks are green for the recorded current head.
+- [ ] `[PRIV-C:P4.05][AI]` Run only `AR-READY` with that same record when a private C PR is necessary. Acceptance: read-back confirms all readiness preconditions on that head.
+- [ ] `[PRIV-C:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-c` and that same record when a private C PR is necessary. Acceptance: the reviewed-patch hash is stored before merge.
+- [ ] `[PRIV-C:P5.02][AI]` Run only `AR-MERGE` with that same record when a private C PR is necessary. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
+- [ ] `[PRIV-C:P5.03][AI]` Run only `AR-LANDED` with that same record when a private C PR is necessary. Acceptance: landed and reviewed hashes match exactly.
+- [ ] `[PRIV-C:P5.04][AI]` Run only `AR-RESYNC` with that same record when a private C PR is necessary. Acceptance: overlay-safe resync records one terminal C state.
 - [ ] `[PRIV-C:P1.G][AI]` Pass private semantic-correspondence, overlay, disclosure, necessity, and terminal-obligation gate.
 - [ ] `[PRIV-C:P1.P][AI]` Record the terminal C state and authorize EXECUTION-CLOSURE.
 
 ## Dormant Execution-Closure Checklist
 
 ### CLOSURE — Final Audit, Knowledge Capture, Archive, and Worktree Removal
+
+#### Pre-merge closure evidence (Phase 5)
+
+Before the CLOSURE PR is made ready, record `CLOSURE_PR` (its immutable number/URL) in the
+closure PR body and perform every permitted knowledge-capture, archive, and index mutation in that
+same reviewed PR. A candidate learning may name an existing durable destination or a proposed
+follow-up only; it never creates a new `plans/backlog/**` or `plans/ideas/**` path in this unit.
+
+- [ ] `[CLOSURE:P5.13][AI]` Before ready state, triage `plans/in-progress/optimize-pr-process/learnings.md`: retain a safe, repository-relevant learning only with one existing named durable destination; otherwise add a discard reason. Acceptance: no private value enters public text and no new path is created.
+- [ ] `[CLOSURE:P5.14][AI]` Before ready state, run `rg -ni --glob '*.md' "$idea_search" plans/ideas/README.md plans/ideas/q1-urgent-important plans/ideas/q2-not-urgent-important` for every ideas candidate and record its result in the CLOSURE PR. Acceptance: a match reuses the existing brief; no match becomes a proposed follow-up requiring a separate exact-path amendment.
+- [ ] `[CLOSURE:P5.14a][AI]` Before the move, record one literal `ARCHIVE_PATH=plans/done/<actual-YYYY-MM-DD>__optimize-pr-process` in the CLOSURE PR body and evidence record. Acceptance: it resolves the finite `[N]` targets in the file-impact tree and is read back before staging.
+- [ ] `[CLOSURE:P5.15][AI]` Before ready state, move the completed control plan to `$ARCHIVE_PATH` and update only its admitted archive/index paths in the CLOSURE PR. Acceptance: the full staged ledger stays within the file-impact tree and the closure PR contains every mutation for review.
+- [ ] `[CLOSURE:P5.16][AI]` Before ready state, post an AI-marked closure-PR evidence comment with the reviewed raw-patch hash, the literal base/head inputs, and `CLOSURE_PR`. Acceptance: the comment is read back before merge and survives local-tmp cleanup.
 
 - [ ] `[CLOSURE:P6.01][AI]` Read the terminal public C state and enumerate every public unit plus each optional route.
 - [ ] `[CLOSURE:P6.02][AI]` Read the terminal private C state and enumerate every private unit plus each terminal `N/A` decision.
@@ -1042,18 +1312,23 @@ retains both the lineage ID and its correction count.
 - [ ] `[CLOSURE:P6.18][AI]` Verify no private review resumed with a reset cycle budget.
 - [ ] `[CLOSURE:P6.19][AI]` Verify Wave C is a durable no-change decision, or link its separately human-approved amendment.
 - [ ] `[CLOSURE:P6.20][AI]` Reject and record any tooling or enforcement surface not declared by a Wave C decision.
-- [ ] `[CLOSURE:P6.21][AI]` Recompute the closure PR's exact base, current head, scope, size, risk, and route record.
-- [ ] `[CLOSURE:P6.22][AI]` Post and read back the closure PR's native review and same-thread repair evidence.
-- [ ] `[CLOSURE:P6.23][AI]` Poll and record closure PR current-head CI at the required cadence.
-- [ ] `[CLOSURE:P6.24][AI]` Verify closure readiness preconditions and read back its ready state.
-- [ ] `[CLOSURE:P6.25][AI]` Record closure reviewed and landed raw-patch fingerprints separately.
-- [ ] `[CLOSURE:P6.26][AI]` Prove closure merge and resync the public worktree from its landed public main.
-- [ ] `[CLOSURE:P6.27][AI]` Record measured PR sizes, cycle counts, corrections, amendments, and terminal states in knowledge capture.
-- [ ] `[CLOSURE:P6.28][AI]` Record exceptions and retained follow-ups with owner, evidence, and next action.
-- [ ] `[CLOSURE:P6.29][AI]` Record public-safe lessons without exposing private content.
+- [ ] `[CLOSURE:P6.21][AI]` Read-only validation: read `CLOSURE_PR` from the merged closure PR body, then run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json url,baseRefOid,headRefOid,body,additions,deletions,changedFiles,mergeCommit,state`. Acceptance: its immutable URL, base/head, readable AI-marked body, statistics, state, and merge SHA equal the pre-merge Phase 3 and Phase 5 records; this step creates no PR mutation.
+- [ ] `[CLOSURE:P6.22][AI]` Read-only validation: run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json reviews,comments` and compare returned URLs with the Phase 4 evidence. Acceptance: every recorded review/disposition is present and no new review or reply is posted in Phase 6.
+- [ ] `[CLOSURE:P6.23][AI]` Read-only validation: run `gh pr checks "$CLOSURE_PR" --repo wahidyankf/ose-public --required`. Acceptance: the pre-merge recorded current-head CI is green and names the reviewed head; Phase 6 does not poll, repair, or restart CI.
+- [ ] `[CLOSURE:P6.24][AI]` Read-only validation: run `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --json isDraft,headRefOid,mergeStateStatus,statusCheckRollup`. Acceptance: it confirms the Phase 4 ready-state record; Phase 6 does not transition readiness.
+- [ ] `[CLOSURE:P6.25][AI]` Read-only validation: read the Phase 5 reviewed hash/base/head from `gh pr view "$CLOSURE_PR" --repo wahidyankf/ose-public --comments`, then run `/usr/bin/git diff --binary "$MERGE_SHA^1" "$MERGE_SHA" | /usr/bin/shasum -a 256` from the landed public main. Acceptance: the recomputed landed hash equals the durable Phase 5 reviewed hash; Phase 6 posts no mutation.
+- [ ] `[CLOSURE:P6.26][AI]` Read-only validation: run `git fetch origin main && git status --short --branch` in the declared public worktree and compare `origin/main` with the merge SHA read in P6.21. Acceptance: `origin/main` contains that merge and the Phase 5 resync record is present; Phase 6 does not merge, switch branches, or resync again.
+- [ ] `[CLOSURE:P6.27][AI]` Read-only validation: compare the merged CLOSURE PR's measured PR sizes, cycle counts, corrections, amendments, and terminal states with its pre-merge evidence record.
+- [ ] `[CLOSURE:P6.28][AI]` Read-only validation: verify every exception/follow-up in the merged CLOSURE PR has an owner, evidence, next action, and no undeclared path mutation.
+- [ ] `[CLOSURE:P6.29][AI]` Read-only validation: verify Phase 5 performed public-safe knowledge capture before merge.
+- [ ] `[CLOSURE:P6.29a][AI]` Read `$ARCHIVE_PATH/learnings.md` from the immutable Phase 5 record and verify every entry is retained with one existing durable destination or discarded with a reason.
+- [ ] `[CLOSURE:P6.29b][AI]` Run `rg -ni --glob '*.md' '(secret|credential|token|private hostname)' "$ARCHIVE_PATH/learnings.md"`. Acceptance: any match is a documented placeholder or discard; Phase 6 changes nothing.
+- [ ] `[CLOSURE:P6.29c][AI]` Verify a proposed code/test follow-up is only a named candidate in the merged CLOSURE PR, awaiting its own exact-path plan/amendment; no `plans/backlog/**` path was created here.
+- [ ] `[CLOSURE:P6.29d][AI]` Verify each ideas candidate has the Phase 5 search result and either an existing reused brief or a proposed separate exact-path amendment; no new idea path was created here.
+- [ ] `[CLOSURE:P6.29e][AI]` Verify Phase 5 wrote the explicit none outcome when no generalizable learning survived; otherwise verify every entry has a terminal evidence link.
 - [ ] `[CLOSURE:P6.30][AI]` Verify the repository-approved archive location and its required public indexes.
-- [ ] `[CLOSURE:P6.31][AI]` Move the completed public plan only after all audit and archive checks pass.
-- [ ] `[CLOSURE:P6.32][AI]` Update only the required plan indexes and read them back after archive.
+- [ ] `[CLOSURE:P6.31][AI]` Read-only validation: verify the merged CLOSURE PR already moved the completed public plan before merge. Acceptance: the archive path is present in its landed diff and no Phase 6 mutation occurs.
+- [ ] `[CLOSURE:P6.32][AI]` Read-only validation: verify the merged CLOSURE PR already updated only `plans/in-progress/README.md` and `plans/done/README.md`. Acceptance: both index edits appear in its landed diff and no Phase 6 mutation occurs.
 - [ ] `[CLOSURE:P6.33][AI]` Fetch public `origin/main` and record its immutable tip before cleanup.
 - [ ] `[CLOSURE:P6.34][AI]` Fetch private `origin/main` and record its immutable tip before cleanup.
 - [ ] `[CLOSURE:P6.35][AI]` Prove public main contains every recorded public merge pin.
@@ -1129,12 +1404,14 @@ git switch -c <declared-unit-branch> origin/main # only when show-ref proves abs
 test "$(git branch --show-current)" = "<declared-unit-branch>"
 git rev-parse HEAD
 git rev-parse origin/main
-git merge-base --is-ancestor <predecessor-pin> origin/main
+git merge-base --is-ancestor <local-base> origin/main
+# Read <authorization-pin> from its native sibling-PR artifact; never treat it as a local Git ref.
 test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
 ```
 
-Record repository, worktree, predecessor pin, current `origin/main`, owned hand-authored/generated
-paths, projected changed lines/files, rollback, and the lightest stable-main safety choice. For
+Record repository, worktree, native sibling `authorization-pin`, repository-local `local-base`,
+current `origin/main`, owned hand-authored/generated paths, projected changed lines/files, rollback,
+and the lightest stable-main safety choice. For
 PRIV-IDEAS, prove the authorized overlay is unchanged before and after switching. Stop on a wrong
 worktree, unexpected path, missing pin/ownership, stacked dependency, or forecast above 400 changed
 hand-authored lines or 20 hand-authored files.
@@ -1226,7 +1503,8 @@ One draft PR exists at the declared boundary and its human entry point matches t
 - **Template `[AI]`:** On `eligible`, independently disposition every finding as `fix`, `reject-with-reason`,
   `defer-with-reason`, or `clarify`. Link fixes to a pushed commit; cite contrary evidence for a
   rejection and a real follow-up for a deferral. Reply in the same thread, read back the reply, and
-  resolve only when its evidence is true.
+  resolve only when its evidence is true. A disposition that pushes a fix returns to the next
+  current-head review cycle with a changed probe before CI or readiness.
 - **Template `[AI]`:** After each push, discard prior-head CI evidence. Poll
   `gh pr checks --repo <owner/repo> <pr>` exactly every 120 seconds; never use `gh run watch`.
   Require `pr-quality-gate.yml`, `validate-env`, applicable jobs, and the aggregate gate. On failure,
@@ -1246,7 +1524,8 @@ One draft PR exists at the declared boundary and its human entry point matches t
 Only one public/private pair is active; every later unit is frozen. Before a public wave merges, its
 PR records a pending sibling obligation with wave, public URL, reviewed head, rule class, stable
 defect-lineage ID, expected private paths, byte-identity class, reconciled `correction-count`
-(`0` only on no match), successor, and one accountable owner.
+(`0` only on no match), `correction-kind: correction|plan-amendment`, successor, and one accountable
+owner. The native record is human-readable PR evidence, not an automated synchronization mechanism.
 
 Private review classifies each concern as local adaptation, private deviation, unrelated follow-up,
 or portable defect, using the glossary above. Only the last may request upstream correction, citing
@@ -1260,13 +1539,15 @@ count; an ambiguous comparison freezes the pair and stops for human judgment wit
 preparing, or correcting—ambiguity stops without a prepared obligation. This makes relabeling a
 reconciliation decision rather than a fresh budget.
 
-At most one fresh, unstacked `optimize-pr-process-pub-<wave>-correction-1` PR may merge per defect
-lineage **only when the reconciled count is 0**. Its native record links both public pins/heads and
-the paused private PR/head, supersedes the old obligation, preserves the reconciled lineage ID, and
-changes `correction-count: 0 → 1`; private review restarts from the correction pin. A late finding
-or a new repair-pair URL must first complete the same reconciliation and cannot reset the count. A
-reconciled count 1 stops for human before a correction; no `0 → 1` path is available. Downstream
-remains frozen until the obligation is
+At most one fresh, unstacked `optimize-pr-process-pub-<wave>-correction-1` PR **or** one
+single-purpose cross-repository `PLAN-AMENDMENT` may merge per defect lineage **only when the
+reconciled count is 0**. A PLAN-AMENDMENT for an existing lineage is that correction, never a reset
+or parallel escape. Its native record links both public pins/heads and the paused private PR/head,
+supersedes the old obligation, preserves the reconciled lineage ID, records the applicable
+`correction-kind`, and changes `correction-count: 0 → 1`; private review restarts from the
+replacement pin. A late finding or a new repair-pair URL must first complete the same reconciliation
+and cannot reset the count. At reconciled count 1, neither correction type may start: stop for a
+human with the pair frozen. Downstream remains frozen until the obligation is
 `satisfied`, `reasoned-deviation`, or `N/A`. “In sync” means semantic correspondence with explicit
 deviations; byte identity applies only to an existing contract.
 
@@ -1337,7 +1618,7 @@ is resynced, and the sibling obligation has one owner, state, and immutable pin.
 ## Cross-Repository Order (Dormant)
 
 After activation, PUB-IDEAS-4–8 merge sequentially before PRIV-IDEAS. Later implementation remains sequential:
-`PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? →
+`PRE-A1-ADMISSION → PRIV-ADMISSION → PUB-A1 → PRIV-A1 → PUB-A2 → PRIV-A2 → PUB-A3 → PRIV-A3 → PUB-B → PRIV-B → PUB-C? → PRIV-C? →
 closure`; C stays a no-change decision unless necessity passes. Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
