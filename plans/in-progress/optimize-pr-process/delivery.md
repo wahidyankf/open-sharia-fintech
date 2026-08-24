@@ -162,7 +162,8 @@ script and non-program lines are present, their handwritten total is at most 900
 lines is the absolute ceiling, and there are at most 20 hand-authored files.
 Forecast each slice before opening it; retain as much of one natural, independently stable seam as
 fits, and only if it would exceed a bound record its named cohesive sub-slices in the prior PR before
-opening the first split. A unique equivalence-audit blocker may
+opening the first split. Use capacity up to 1,000 handwritten changed lines when it preserves that
+seam; never pad to reach the cap or split a cohesive seam merely to make a smaller PR. A unique equivalence-audit blocker may
 use one bounded `PLAN-AMENDMENT` PR before ACTIVATE. Final ACTIVATE contains only the PR-native
 equivalence record and executable-status change. Merge green and resync before the next PR.
 
@@ -570,80 +571,24 @@ obligation.
 | PUB-IDEAS-7     | PR #286 `d440f7385aa32eadeaf224bb10a633837a31055a` |
 | PUB-IDEAS-8     | PR #288 `70dbe4187dd720d8fe344960d227c44cf3d549f5` |
 
-#### PUB-IDEAS-4 live-backlink amendment ledger
+#### Historical PUB-IDEAS-4–5 Amendment Receipts
 
-This table supersedes the ambiguous PUB-IDEAS-4 interpretation at
-`f30a9e55b232bb98d26482238ce50dd7a1391817`. PUB-IDEAS-4 remains frozen until this plan-only
-amendment merges; its resumed entry must use that merge pin.
+PR #275 supplied the recorded PUB-IDEAS-4 backlink correction and PR #276 completed that retirement
+at `64dbe6de9607d682f15c9c2edb18e720bafab248`. PR #277 and PR #280 are recorded PUB-IDEAS-5
+provenance; PR #281 completed that retirement at `e70ef47b945cbc91d23a641230a87a2b8879f75a`.
+These past amendments and their path-level repair records grant no current authority.
 
-| Exact live-backlink path                                                           | Mapped target                       | Minimal permitted repair                                                                                               |
-| ---------------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `plans/ideas/q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md`     | `class-sweep-completeness.md`       | Replace the direct Markdown link with the existing plain-language “separately tracked class-sweep question” reference. |
-| `plans/ideas/q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md` | `class-sweep-completeness.md`       | Remove only the standalone direct Markdown-link line; preserve the preceding precedent explanation.                    |
-| `plans/ideas/q2-not-urgent-important/recurring-defect-family-escalation.md`        | `deletion-authorized-by-absence.md` | Remove only the standalone direct Markdown-link line; preserve the worked-example explanation.                         |
+#### Historical PUB-IDEAS-6–8 Amendment Receipts
 
-For PUB-IDEAS-4 after this amendment, retain the clean PUB-BASE/PUB-REPAIR predecessor proof as
-**authorization evidence**, but use the merged amendment pin as the sole **execution-base pin**.
-The two pins answer different questions: the first proves why this unit is eligible; the second
-proves which current `origin/main` it may safely edit from. Missing either pin freezes the unit.
+PR #282 (`56e5fa6c5168ffe5569d21a4b685a76168dd6f13`) and PR #283
+(`6ecb22d0a4f7216cfb6865c502ca21801ebed70b`) are historical PUB-IDEAS-6 provenance; PR #285
+completed the retirement. PR #286 completed PUB-IDEAS-7, and PR #288 completed PUB-IDEAS-8.
+Their past backlink records are immutable audit evidence and grant no current authority.
 
-#### PUB-IDEAS-5 live-backlink amendment ledger
+#### Historical PLAN-STATE-CORRECTION Receipt
 
-This table resolved the pre-edit freeze at
-`64dbe6de9607d682f15c9c2edb18e720bafab248`. PUB-IDEAS-5 completed in PR #281 at
-`e70ef47b945cbc91d23a641230a87a2b8879f75a`; it is immutable completion evidence, not a future
-entry point.
-
-| Exact live-backlink path                                                                        | Mapped target             | Minimal permitted repair                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `repo-governance/development/quality/pr-review-disciplines/future-work-deferred-merge-queue.md` | `merge-queue-adoption.md` | Replace the complete ownership sentence containing the direct link with “The deferred investigation, availability matrix, and adoption path are tracked separately as future work, not by this convention.” |
-
-PUB-IDEAS-5 retained PUB-IDEAS-4's merged successor proof and PR #277 as authorization evidence;
-PR #280 supplied the plan-quality execution base, and PR #281 is its landed completion receipt.
-No later amendment reopens that completed unit.
-
-#### PUB-IDEAS-6 live-backlink amendment ledger
-
-This table resolves the pre-edit freeze at
-`e70ef47b945cbc91d23a641230a87a2b8879f75a`. PR #282 merged at
-`56e5fa6c5168ffe5569d21a4b685a76168dd6f13`, supplying this table's immutable live-backlink
-authority. PR #283 is the merged plan-state correction at
-`6ecb22d0a4f7216cfb6865c502ca21801ebed70b`; this is historical state only, superseded by PR #285's
-retirement receipt.
-
-| Exact live-backlink path                                                             | Mapped target                                 | Minimal permitted repair                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/ideas/q2-not-urgent-important/actions-cache-eviction-policy.md`               | `nx-affected-cross-worktree-contamination.md` | Replace the complete two-line linked sibling bullet with “**Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected` selects across worktrees, unlike Actions cache retention.”       |
-| `plans/ideas/q2-not-urgent-important/shared-cargo-target-lock-contention.md`         | `nx-affected-cross-worktree-contamination.md` | Replace the complete two-line linked sibling bullet with “**Nx cross-worktree selection** — a separately tracked sibling concern about what `nx affected` selects across worktrees, unlike shared-target lock contention.” |
-| `plans/ideas/q2-not-urgent-important/deploy-targets-registry.md`                     | `stale-checkout-ref-advance-drift.md`         | Replace the complete linked sibling bullet with “**Checkout ref drift** — a separately tracked sibling concern about a ref-advancing fetch desyncing a checkout; this brief retains the phantom-refs scope.”               |
-| `repo-governance/development/workflow/bare-repo-landing-method/when-this-applies.md` | `stale-checkout-ref-advance-drift.md`         | Replace the complete tail clause containing the `stale-checkout-ref-advance-drift` Markdown link and ending “incident this caused.” with “and the incident this caused is separately tracked.”                             |
-
-For PUB-IDEAS-6, retain PUB-IDEAS-5's merged successor proof as authorization evidence and retain
-PR #282's `56e5fa6c5168ffe5569d21a4b685a76168dd6f13` as immutable live-backlink authority. The
-entry's exact execution base is the fetched current `origin/main` recorded at P1.03; it must be a
-descendant of that PR #282 pin. Neither record authorizes a path outside this table. Missing proof,
-table match, or ancestry freezes the unit.
-
-#### PUB-IDEAS-8 live-backlink amendment ledger
-
-PUB-IDEAS-8's pre-edit scan found the two links below after PUB-IDEAS-7's terminal receipt. This
-amendment authorizes only their minimal reader-preserving repair before the mapped briefs retire.
-
-| Exact live-backlink path                                                           | Mapped target                             | Minimal permitted repair                                                                                                                                        |
-| ---------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/ideas/q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md`     | `propagation-checklist-under-coverage.md` | Replace the complete linked sibling bullet with “**Propagation coverage** — a separately tracked sibling concern about how a sibling gets ahead of its source.” |
-| `plans/ideas/q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md` | `propagation-checklist-under-coverage.md` | Remove only the standalone direct Markdown-link line; preserve the preceding precedent explanation.                                                             |
-
-For PUB-IDEAS-8, the merged amendment commit becomes its immutable live-backlink authority. No
-other discovered path, plain-text historical mention, or plan-state record is admitted by this
-table; any additional live Markdown backlink freezes the unit again.
-
-#### PLAN-STATE-CORRECTION rule-propagation ledger
-
-Before PUB-IDEAS-6 can resume, this plan-only correction may change only the canonical convention
-and guidance below. It authorizes neither an idea retirement nor a product, CI, workflow, or private
-change. The `.agents` rows are generated solely by `npm run generate:bindings` from their paired
-`.claude` sources; binding validation must pass before review.
+PR #283 (`6ecb22d0a4f7216cfb6865c502ca21801ebed70b`) recorded the then-current plan state. The
+following path list is immutable provenance only; it grants no current rule, binding, or path authority.
 
 | Exact path                                                                                      | Role                                                |
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -657,12 +602,11 @@ change. The `.agents` rows are generated solely by `npm run generate:bindings` f
 | `.agents/skills/plan-creating-project-plans/reference/execution-grade-clarity.md`               | generated plan-maker mirror                         |
 | `.agents/skills/plan-applying-fixes/reference/execution-grade-clarity-fixes.md`                 | generated plan-fixer mirror                         |
 
-#### Immutable Completion Ledger — PUB-IDEAS-4 (Do Not Re-run)
+#### Immutable Completion Ledger — PUB-IDEAS-4–8 (Do Not Re-run)
 
-The shared unchecked `PUB-IDEAS:P*` rows below are the executable template for PUB-IDEAS-6–8 only.
-They are not open work for PUB-IDEAS-4 or PUB-IDEAS-5 and must not be ticked retroactively. PR #276
-and PR #281 are the durable immutable completion records; their ledgers map completed state without
-rewriting future units' task IDs.
+The historical `PUB-IDEAS:P*` rows below are retained solely as a closed audit record. They are not
+unchecked work, do not define a runnable template, and grant no entry, execution, resync, merge, or
+successor authority. The merged receipts above are the complete provenance for PUB-IDEAS-4–8.
 
 | PUB-IDEAS-4 state       | Immutable PR #276 evidence                                                                                                                    | Completion criterion                                                                                                        |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -672,286 +616,18 @@ rewriting future units' task IDs.
 | P4.01–P4.14, P4.G, P4.P | PR #276 route, review, reply, CI, and readiness artifacts                                                                                     | The review cycle reached semantic exit on its current head without widening scope.                                          |
 | P5.01–P5.12, P5.G, P5.P | PR #276 merge receipt and successor publication                                                                                               | Reviewed and landed fingerprints matched; the public worktree resynced and named PUB-IDEAS-5.                               |
 
-- [ ] `[PUB-IDEAS:P1.01][AI]` PUB-IDEAS-5 is complete and is never instantiated again. For PUB-IDEAS-6, read PUB-IDEAS-5's P5.07 publication and P5.08 read-back on PR #281; acceptance: it names exact successor `PUB-IDEAS-6`, immutable predecessor/authorization-evidence pin, declared public worktree/branch, and `Generated by AI`. Record that proof and PR #282's immutable live-backlink-authority pin `56e5fa6c5168ffe5569d21a4b685a76168dd6f13`; its table, proof, and marker are mandatory. For PUB-IDEAS-7–8, verify the immediately prior unit's P5.07 publication and P5.08 read-back name this exact active unit and immutable pin.
-- [ ] `[PUB-IDEAS:P1.02][AI]` Fetch public `origin/main`.
-- [ ] `[PUB-IDEAS:P1.03][AI]` For PUB-IDEAS-6, retain PUB-IDEAS-5's proof, run `git merge-base --is-ancestor 56e5fa6c5168ffe5569d21a4b685a76168dd6f13 origin/main`, and require exit 0; record fetched `origin/main` as this unit's exact execution-base pin. For PUB-IDEAS-7, prove fetched `origin/main` equals the predecessor pin. For PUB-IDEAS-8, retain PUB-IDEAS-7's proof, read the P8 amendment merge receipt, run `git merge-base --is-ancestor <P8-amendment-pin> origin/main`, and require exit 0; record fetched `origin/main` as the exact execution-base pin.
-- [ ] `[PUB-IDEAS:P1.04][AI]` Enter this active unit's literal branch from the Delivery Boundaries table (`optimize-pr-process-pub-ideas-6`, `-7`, or `-8`) from the exact main pin.
-- [ ] `[PUB-IDEAS:P1.05][AI]` Publish the active subdelivery's exact mapped-brief, public-index, and every discovered live-backlink-repair path ledger before editing. For each backlink, name its target and minimal unlink/rewording; `plans/done/**` stays excluded and unchanged. This GitHub ledger is evidence only. For PUB-IDEAS-6, verify it exactly matches PR #282's merged tracked amendment ledger; for PUB-IDEAS-7–8, a discovered live backlink without an exact merged tracked entry freezes the unit. Acceptance: the later `git status` ledger equals the tracked authority, not GitHub prose.
-- [ ] `[PUB-IDEAS:P1.06][AI]` Record forecast, static-doc safety, risk, and rollback-by-revert.
-- [ ] `[PUB-IDEAS:P1.07][AI]` Record propagation and generated bindings as reasoned `N/A`.
-- [ ] `[PUB-IDEAS:P1.08][AI]` Revalidate the active subset's dispositions against the activated plan pin.
-- [ ] `[PUB-IDEAS:P1.09][AI]` Run literal predecessor acceptance for every row in the active subset.
-- [ ] `[PUB-IDEAS:P1.10][AI]` Delete only the active subset's mapped public briefs.
-- [ ] `[PUB-IDEAS:P1.11][AI]` Remove only their exact links from `plans/ideas/README.md`, then apply only the matching merged tracked amendment-table repair; preserve every historical `plans/done/**` reference and all unrelated prose. A P1.05 GitHub ledger cannot supply an edit path.
-- [ ] `[PUB-IDEAS:P1.12][AI]` Run reviewed-worktree acceptance for every row in the active subset and verify `rg -n --glob '*.md' '\]\([^)]*<brief-basename>\.md[^)]*\)' . -g '!plans/done/**'` exits `1` with no output for each retired brief basename. The matcher deliberately includes any continuation after `.md` before `)` so fragment, query, and title forms cannot evade the negative check.
-- [ ] `[PUB-IDEAS:P1.13][AI]` Reconcile `git status` exactly to the retirement ledger.
-- [ ] `[PUB-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/disposition/acceptance gate.
-- [ ] `[PUB-IDEAS:P1.P][AI]` Record branch, head, ledger, dirty state, and negative-read commands.
-- [ ] `[PUB-IDEAS:P2.01][AI]` Rerun all reviewed-worktree acceptance commands before staging.
-- [ ] `[PUB-IDEAS:P2.02][AI]` Run Markdown formatting and lint checks.
-- [ ] `[PUB-IDEAS:P2.03][AI]` Run the public pre-push surface.
-- [ ] `[PUB-IDEAS:P2.04][AI]` Calculate actual hand-authored line/file counts.
-- [ ] `[PUB-IDEAS:P2.05][AI]` Gate both actual counts against the plan's caps.
-- [ ] `[PUB-IDEAS:P2.06][AI]` Stage only the admitted retirement ledger.
-- [ ] `[PUB-IDEAS:P2.07][AI]` Read cached paths and prove staged-ledger equality.
-- [ ] `[PUB-IDEAS:P2.08][AI]` Inspect cached check, statistics, and complete patch.
-- [ ] `[PUB-IDEAS:P2.09][AI]` Commit the cohesive public retirement.
-- [ ] `[PUB-IDEAS:P2.10][AI]` Read the complete committed diff.
-- [ ] `[PUB-IDEAS:P2.11][AI]` Rerun all reviewed-head acceptance commands after commit.
-- [ ] `[PUB-IDEAS:P2.G][AI]` Pass acceptance/formatting/gates/size/staging/commit gate.
-- [ ] `[PUB-IDEAS:P2.P][AI]` Record local head and clean tree or named intended residue.
-- [ ] `[PUB-IDEAS:P3.01][AI]` Recalculate committed hand-authored counts.
-- [ ] `[PUB-IDEAS:P3.02][AI]` Gate committed counts against the plan's caps.
-- [ ] `[PUB-IDEAS:P3.03][AI]` Rerun the public pre-push surface on the committed head.
-- [ ] `[PUB-IDEAS:P3.04][AI]` Push only the active subdelivery's declared branch.
-- [ ] `[PUB-IDEAS:P3.05][AI]` Read back the remote branch head and prove it equals local `HEAD`.
-- [ ] `[PUB-IDEAS:P3.06][AI]` Rerun all reviewed-head acceptance commands after push.
-- [ ] `[PUB-IDEAS:P3.07][AI]` Open one draft human-readable PR for this subdelivery from a literal AI-marked body.
-- [ ] `[PUB-IDEAS:P3.08][AI]` Read back base, head, draft state, body, marker, and statistics.
-- [ ] `[PUB-IDEAS:P3.G][AI]` Pass push/remote-head/acceptance/body/readback gate.
-- [ ] `[PUB-IDEAS:P3.P][AI]` Record draft URL, current head, and literal body path.
-- [ ] `[PUB-IDEAS:P4.01][AI]` Post the exact-head review route and selected/skipped lenses.
-- [ ] `[PUB-IDEAS:P4.02][AI]` Read back route, frozen scope, changed probe, and AI marker.
-- [ ] `[PUB-IDEAS:P4.03][AI]` Run bounded current-head review cycles under the Phase 4 template.
-- [ ] `[PUB-IDEAS:P4.04][AI]` Disposition every finding with evidence and no scope widening.
-- [ ] `[PUB-IDEAS:P4.05][AI]` Push each bounded fix before claiming it in the native thread.
-- [ ] `[PUB-IDEAS:P4.06][AI]` Invalidate every review and CI result from the superseded head.
-- [ ] `[PUB-IDEAS:P4.07][AI]` Return the repaired head to P4.03 before any thread resolution.
-- [ ] `[PUB-IDEAS:P4.08][AI]` Reply in the original thread with current-head evidence.
-- [ ] `[PUB-IDEAS:P4.09][AI]` Read back the persisted reply and its AI marker.
-- [ ] `[PUB-IDEAS:P4.10][AI]` Resolve only threads whose terminal evidence is true.
-- [ ] `[PUB-IDEAS:P4.11][AI]` Poll applicable current-head CI exactly every 120 seconds.
-- [ ] `[PUB-IDEAS:P4.12][AI]` Prove all five readiness preconditions on the same head.
-- [ ] `[PUB-IDEAS:P4.13][AI]` Mark the PR ready after semantic exit.
-- [ ] `[PUB-IDEAS:P4.14][AI]` Read back ready state, head, merge state, and green CI.
-- [ ] `[PUB-IDEAS:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope gate.
-- [ ] `[PUB-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and the still-frozen successor state.
-- [ ] `[PUB-IDEAS:P5.01][AI]` Recheck route, findings, base, head, ready state, and green CI.
-- [ ] `[PUB-IDEAS:P5.02][AI]` Run `/usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256`.
-- [ ] `[PUB-IDEAS:P5.03][AI]` Squash-merge by repository-qualified GitHub API.
-- [ ] `[PUB-IDEAS:P5.04][AI]` Read back merge SHA and landed path ledger.
-- [ ] `[PUB-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
-- [ ] `[PUB-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PUB-IDEAS:P5.07][AI]` For PUB-IDEAS-6–7, publish only the next public successor; for PUB-IDEAS-8, publish the pending private obligation from a literal payload.
-- [ ] `[PUB-IDEAS:P5.08][AI]` Read back the exact successor, pin, owner, and marker; on PUB-IDEAS-8 also read expected private paths.
-- [ ] `[PUB-IDEAS:P5.09][AI]` Fetch public `origin/main` after the merge.
-- [ ] `[PUB-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge SHA.
-- [ ] `[PUB-IDEAS:P5.11][AI]` Resync this same public worktree to the merge SHA.
-- [ ] `[PUB-IDEAS:P5.12][AI]` Authorize only the next named public subdelivery, or PRIV-BASE after PUB-IDEAS-8 terminal proof.
-- [ ] `[PUB-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/resync/exact-successor gate.
-- [ ] `[PUB-IDEAS:P5.P][AI]` Record merge/main SHA, successor state, and the next public or PRIV-BASE entry command.
-
 ### WAVES-ENTRY-PUBLIC Finding State
 
 This slice fixes PR #258's continuing-rule and idea-acceptance defects and carries PR #259's raw-hash
 lesson into both public units. F-035 stays open until both private slices add clean-worktree units and
 ENTRY-ADAPTERS records all four ENTRY checklist pins.
 
-## Historical Private Overlay Protocol — Completed in PR #63
+## Historical Private Overlay Receipt — Completed in PR #63
 
-The unchecked overlay-preservation checklist below is retained only as the auditable procedure that
-produced private PR #63. It is not executable authority for a later unit: PR #63 landed both paths,
-and the private plan worktree is clean/detached at its merge pin. Every future private unit, starting
-with `PRIV-ADMISSION`, uses the clean-worktree `AR-ENTRY` contract below; it must not recreate or
-carry a private overlay.
-
-### Private Overlay Command Key
-
-The admitted ledger is `plans/ideas/README.md` plus
-`plans/ideas/q2-not-urgent-important/pr-review-governance-reference-defects.md`. Hash output is safe
-to record; private patch content is not. Use these literal raw-byte commands at their real states:
-
-- working: `/usr/bin/git diff --binary -- <overlay-ledger> | /usr/bin/shasum -a 256`;
-- cached: `/usr/bin/git diff --cached --binary -- <overlay-ledger> | /usr/bin/shasum -a 256`;
-- committed: `/usr/bin/git diff --binary <unit-base>..HEAD -- <overlay-ledger> | /usr/bin/shasum -a 256`;
-- reviewed/landed: use the two exact Phase 5 raw commands with private base, head, and merge pins.
-
-### PRIV-BASE — Overlay-Safe Private Baseline
-
-Only a terminal PUB-IDEAS proof may authorize this baseline. Clean, non-overlay failure,
-overlay-owned failure, and ambiguous attribution are mutually exclusive outcomes: clean and
-overlay-owned continue to PRIV-IDEAS; evidenced non-overlay failure opens PRIV-REPAIR; ambiguity
-stops with no successor.
-
-- [ ] `[PRIV-BASE:P0.01][AI]` Read back the pending public obligation and every immutable pin, owner, class, successor, and AI marker.
-- [ ] `[PRIV-BASE:P0.02][AI]` Prove the obligation's PUB-IDEAS merge pin is an ancestor of public `origin/main`.
-- [ ] `[PRIV-BASE:P0.03][AI]` Record private status and prove only the admitted two-path overlay exists.
-- [ ] `[PRIV-BASE:P0.04][AI]` Compute the literal raw working-overlay fingerprint before switching.
-- [ ] `[PRIV-BASE:P0.05][AI]` Fetch private `origin/main` without advancing a checked-out branch.
-- [ ] `[PRIV-BASE:P0.06][AI]` Safely detach this worktree at fetched private `origin/main` without stashing.
-- [ ] `[PRIV-BASE:P0.07][AI]` Prove `HEAD == origin/main` and record both immutable SHAs.
-- [ ] `[PRIV-BASE:P0.08][AI]` Re-read status and prove it still contains only the admitted overlay.
-- [ ] `[PRIV-BASE:P0.09][AI]` Recompute the literal raw working-overlay fingerprint after switching.
-- [ ] `[PRIV-BASE:P0.10][AI]` Prove the before/after working-overlay fingerprints are equal.
-- [ ] `[PRIV-BASE:P0.11][AI]` Run `npm install`; retain its exact exit state.
-- [ ] `[PRIV-BASE:P0.12][AI]` Run plain `npm run doctor`; retain its exact exit state.
-- [ ] `[PRIV-BASE:P0.13][AI]` Run the private pre-push surface; retain its exact exit state.
-- [ ] `[PRIV-BASE:P0.14][AI]` Classify the result as clean, evidenced non-overlay, overlay-owned, or ambiguous.
-- [ ] `[PRIV-BASE:P0.15][AI]` Reject ordinary-unit attribution and keep the public obligation pending.
-- [ ] `[PRIV-BASE:P0.16][AI]` Record exactly one authorized successor or the ambiguity stop with no successor.
-- [ ] `[PRIV-BASE:P0.17][AI]` Record PRIV-REPAIR as reasoned `N/A` unless evidenced non-overlay failure authorizes it.
-- [ ] `[PRIV-BASE:P0.G][AI]` Pass exactly one terminal current-main/overlay/baseline/dependency gate.
-- [ ] `[PRIV-BASE:P0.P][AI]` Record result, overlay hash, predecessor pin, one successor, and recheck command.
-
-### PRIV-REPAIR — Conditional Overlay-Safe Private Baseline Repair
-
-- [ ] `[PRIV-REPAIR:P1.01][AI]` Name the failed command and retain its private-safe baseline evidence.
-- [ ] `[PRIV-REPAIR:P1.02][AI]` Verify the pending public obligation and exact PUB-IDEAS pin.
-- [ ] `[PRIV-REPAIR:P1.03][AI]` Identify the first bad private pin, root-cause owner, and bounded branch slug.
-- [ ] `[PRIV-REPAIR:P1.04][AI]` Compute the literal raw working-overlay fingerprint before switching.
-- [ ] `[PRIV-REPAIR:P1.05][AI]` Fetch current private `origin/main` and record its SHA.
-- [ ] `[PRIV-REPAIR:P1.06][AI]` Enter only the declared repair branch without stashing the overlay.
-- [ ] `[PRIV-REPAIR:P1.07][AI]` Prove repair `HEAD == origin/main` before editing.
-- [ ] `[PRIV-REPAIR:P1.08][AI]` Recompute the literal raw working-overlay fingerprint after switching.
-- [ ] `[PRIV-REPAIR:P1.09][AI]` Prove the before/after working-overlay fingerprints are equal.
-- [ ] `[PRIV-REPAIR:P1.10][AI]` Publish exact non-overlay repair paths and the two overlay exclusions.
-- [ ] `[PRIV-REPAIR:P1.11][AI]` Publish forecast, stable-main safety, risk, rollback, and preserved hash.
-- [ ] `[PRIV-REPAIR:P1.12][AI]` Reproduce the original failure before editing; retain the diagnostic.
-- [ ] `[PRIV-REPAIR:P1.13][AI]` Edit only proven non-overlay paths.
-- [ ] `[PRIV-REPAIR:P1.14][AI]` Recompute and match the working-overlay fingerprint after editing.
-- [ ] `[PRIV-REPAIR:P1.G][AI]` Pass branch/base/pin/scope/ledger/forecast/overlay gate.
-- [ ] `[PRIV-REPAIR:P1.P][AI]` Record head, ledger, overlay hash, and reproduction command.
-- [ ] `[PRIV-REPAIR:P2.01][AI]` Run the focused regression; retain expected and actual results.
-- [ ] `[PRIV-REPAIR:P2.02][AI]` Rerun the original failing baseline command; require success.
-- [ ] `[PRIV-REPAIR:P2.03][AI]` Run every applicable private local gate; retain each exit state.
-- [ ] `[PRIV-REPAIR:P2.04][AI]` Run the private pre-push surface; retain its exit state.
-- [ ] `[PRIV-REPAIR:P2.05][AI]` Calculate actual hand-authored changed lines and files.
-- [ ] `[PRIV-REPAIR:P2.06][AI]` Gate both actual counts against the plan's caps before staging.
-- [ ] `[PRIV-REPAIR:P2.07][AI]` Reconcile non-overlay working paths exactly to the repair ledger.
-- [ ] `[PRIV-REPAIR:P2.08][AI]` Stage only the admitted non-overlay repair ledger.
-- [ ] `[PRIV-REPAIR:P2.09][AI]` Read cached paths and prove staged-ledger equality.
-- [ ] `[PRIV-REPAIR:P2.10][AI]` Inspect cached check, statistics, and complete private-safe patch.
-- [ ] `[PRIV-REPAIR:P2.11][AI]` Prove the authorized overlay is absent from the cached repair diff.
-- [ ] `[PRIV-REPAIR:P2.12][AI]` Commit one cohesive non-overlay baseline repair.
-- [ ] `[PRIV-REPAIR:P2.13][AI]` Read the complete committed repair diff.
-- [ ] `[PRIV-REPAIR:P2.14][AI]` Recompute and match the literal working-overlay fingerprint.
-- [ ] `[PRIV-REPAIR:P2.G][AI]` Pass acceptance/size/staging/commit/overlay gate.
-- [ ] `[PRIV-REPAIR:P2.P][AI]` Record local head, overlay hash, and intended residue.
-- [ ] `[PRIV-REPAIR:P3.01][AI]` Recalculate committed hand-authored line/file counts.
-- [ ] `[PRIV-REPAIR:P3.02][AI]` Gate the committed counts against both caps.
-- [ ] `[PRIV-REPAIR:P3.03][AI]` Rerun the private pre-push surface on committed head.
-- [ ] `[PRIV-REPAIR:P3.04][AI]` Push only the declared private repair branch.
-- [ ] `[PRIV-REPAIR:P3.05][AI]` Read back and match the remote branch head to local `HEAD`.
-- [ ] `[PRIV-REPAIR:P3.06][AI]` Open one private-safe draft PR from a literal AI-marked body.
-- [ ] `[PRIV-REPAIR:P3.07][AI]` Read back boundary, body, marker, and safe statistics.
-- [ ] `[PRIV-REPAIR:P3.G][AI]` Pass push/remote-head/private-safe-body/readback gate.
-- [ ] `[PRIV-REPAIR:P3.P][AI]` Record draft URL, current head, body path, and overlay hash.
-- [ ] `[PRIV-REPAIR:P4.01][AI]` Post the exact-head private-safe route and selected/skipped review lenses.
-- [ ] `[PRIV-REPAIR:P4.02][AI]` Read back route, frozen scope, changed probe, and AI marker.
-- [ ] `[PRIV-REPAIR:P4.03][AI]` Run successive exact-head cycles under the five-cycle boundary.
-- [ ] `[PRIV-REPAIR:P4.04][AI]` Classify each concern before any cross-repository handoff.
-- [ ] `[PRIV-REPAIR:P4.05][AI]` Keep local adaptations, deviations, and unrelated follow-ups out of public correction.
-- [ ] `[PRIV-REPAIR:P4.06][AI]` For a proven portable or plan defect, record the paused private head; freeze push, review, readiness, and merge; then hand the required replacement public or amended-plan pin only to ADAPTERS.
-- [ ] `[PRIV-REPAIR:P4.07][AI]` Gate P4.08–P4.16 to the no-handoff path or an ADAPTERS-recorded replacement pin and resumption; record every finding as fix, reject, defer, or clarify with evidence.
-- [ ] `[PRIV-REPAIR:P4.08][AI]` Push each bounded fix before claiming it in the native thread.
-- [ ] `[PRIV-REPAIR:P4.09][AI]` Invalidate every review and CI result from the superseded head.
-- [ ] `[PRIV-REPAIR:P4.10][AI]` Return the repaired head to P4.03 before thread resolution.
-- [ ] `[PRIV-REPAIR:P4.11][AI]` Reply in the original thread with current-head evidence.
-- [ ] `[PRIV-REPAIR:P4.12][AI]` Read back the persisted reply and its AI marker.
-- [ ] `[PRIV-REPAIR:P4.13][AI]` Resolve only threads whose terminal evidence is true.
-- [ ] `[PRIV-REPAIR:P4.14][AI]` Poll applicable current-head CI exactly every 120 seconds.
-- [ ] `[PRIV-REPAIR:P4.15][AI]` Recompute and match the literal working-overlay fingerprint.
-- [ ] `[PRIV-REPAIR:P4.16][AI]` Prove readiness, mark ready, and read back the same current head.
-- [ ] `[PRIV-REPAIR:P4.G][AI]` Pass semantic-exit/CI/frozen-scope/firewall/overlay readiness gate.
-- [ ] `[PRIV-REPAIR:P4.P][AI]` Record head, cycles, threads, CI, overlay hash, and obligation state.
-- [ ] `[PRIV-REPAIR:P5.01][AI]` Recheck route completion and zero unresolved blocker findings.
-- [ ] `[PRIV-REPAIR:P5.02][AI]` Recheck current base, reviewed head, ready state, and green CI.
-- [ ] `[PRIV-REPAIR:P5.03][AI]` Run `/usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256`.
-- [ ] `[PRIV-REPAIR:P5.04][AI]` Squash-merge by repository-qualified GitHub API.
-- [ ] `[PRIV-REPAIR:P5.05][AI]` Read back the immutable merge SHA and landed non-overlay ledger.
-- [ ] `[PRIV-REPAIR:P5.06][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
-- [ ] `[PRIV-REPAIR:P5.07][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PRIV-REPAIR:P5.08][AI]` Fetch private `origin/main` after the merge.
-- [ ] `[PRIV-REPAIR:P5.09][AI]` Prove fetched `origin/main` equals the merge SHA.
-- [ ] `[PRIV-REPAIR:P5.10][AI]` Resync this private worktree without stashing the overlay.
-- [ ] `[PRIV-REPAIR:P5.11][AI]` Recompute and match the literal working-overlay fingerprint.
-- [ ] `[PRIV-REPAIR:P5.12][AI]` Run `npm install` on landed private main.
-- [ ] `[PRIV-REPAIR:P5.13][AI]` Run plain `npm run doctor` on landed private main.
-- [ ] `[PRIV-REPAIR:P5.14][AI]` Run the literal private pre-push command on landed private main.
-- [ ] `[PRIV-REPAIR:P5.15][AI]` Classify and record exactly one outcome: a clean landed repair authorizes PRIV-IDEAS; an evidenced failed recheck or ambiguity keeps PRIV-IDEAS frozen, names no successor repair, and stops for human judgment.
-- [ ] `[PRIV-REPAIR:P5.G][AI]` Pass merge/landed/fingerprint/resync/baseline/overlay/successor gate.
-- [ ] `[PRIV-REPAIR:P5.P][AI]` Record merge/main SHA, overlay hash, result, and named-successor command.
-
-### PRIV-IDEAS — Preserve the Overlay and Retire Its One Source
-
-Entry accepts only a terminal baseline/repair proof naming PRIV-IDEAS. Cross-repo byte identity is
-`N/A` for these idea paths; semantic retirement is proved against the disposition map. Before
-staging, every index hunk must belong to retirement/index maintenance or remain excluded residue.
-
-- [ ] `[PRIV-IDEAS:P1.01][AI]` Verify the terminal private proof names PRIV-IDEAS and reject every other successor.
-- [ ] `[PRIV-IDEAS:P1.02][AI]` Read back the exact pending public obligation and activated-plan pin.
-- [ ] `[PRIV-IDEAS:P1.03][AI]` Fetch current private `origin/main`.
-- [ ] `[PRIV-IDEAS:P1.04][AI]` Prove fetched `origin/main` equals the predecessor pin.
-- [ ] `[PRIV-IDEAS:P1.05][AI]` Compute the literal raw working-overlay fingerprint before branching.
-- [ ] `[PRIV-IDEAS:P1.06][AI]` Enter `optimize-pr-process-priv-ideas` without stashing.
-- [ ] `[PRIV-IDEAS:P1.07][AI]` Prove branch `HEAD` equals current private `origin/main`.
-- [ ] `[PRIV-IDEAS:P1.08][AI]` Recompute and match the literal working-overlay fingerprint.
-- [ ] `[PRIV-IDEAS:P1.09][AI]` Prove status contains only the admitted two-path overlay.
-- [ ] `[PRIV-IDEAS:P1.10][AI]` Publish ledger, forecast, dormant safety, risk, and rollback.
-- [ ] `[PRIV-IDEAS:P1.11][AI]` Record propagation, bindings, and cross-repo byte identity as reasoned `N/A`.
-- [ ] `[PRIV-IDEAS:P1.12][AI]` Revalidate the private disposition against the activated plan pin.
-- [ ] `[PRIV-IDEAS:P1.13][AI]` Run literal predecessor acceptance for the mapped private row.
-- [ ] `[PRIV-IDEAS:P1.14][AI]` Attribute every index hunk to retirement maintenance or excluded residue.
-- [ ] `[PRIV-IDEAS:P1.G][AI]` Pass pin/scope/size/ledger/overlay/disposition/provenance gate.
-- [ ] `[PRIV-IDEAS:P1.P][AI]` Record branch, head, ledger, original hash, and safe negative reads.
-- [ ] `[PRIV-IDEAS:P2.01][AI]` Run reviewed-worktree acceptance before staging.
-- [ ] `[PRIV-IDEAS:P2.02][AI]` Run private Markdown formatting and lint checks.
-- [ ] `[PRIV-IDEAS:P2.03][AI]` Run the private pre-push surface.
-- [ ] `[PRIV-IDEAS:P2.04][AI]` Calculate actual hand-authored changed lines and files.
-- [ ] `[PRIV-IDEAS:P2.05][AI]` Gate both actual counts against the plan's caps.
-- [ ] `[PRIV-IDEAS:P2.06][AI]` Compute the literal raw working-overlay fingerprint.
-- [ ] `[PRIV-IDEAS:P2.07][AI]` Stage only the authorized two-path content.
-- [ ] `[PRIV-IDEAS:P2.08][AI]` Read cached paths and prove staged-ledger equality.
-- [ ] `[PRIV-IDEAS:P2.09][AI]` Compute the literal raw cached-overlay fingerprint.
-- [ ] `[PRIV-IDEAS:P2.10][AI]` Prove cached and original working-overlay fingerprints are equal.
-- [ ] `[PRIV-IDEAS:P2.11][AI]` Inspect cached check, statistics, and complete private-safe patch.
-- [ ] `[PRIV-IDEAS:P2.12][AI]` Commit the cohesive private retirement without rewriting its bytes.
-- [ ] `[PRIV-IDEAS:P2.13][AI]` Read the complete committed diff.
-- [ ] `[PRIV-IDEAS:P2.14][AI]` Compute the literal raw `<unit-base>..HEAD` overlay fingerprint.
-- [ ] `[PRIV-IDEAS:P2.15][AI]` Prove committed and original working-overlay fingerprints are equal.
-- [ ] `[PRIV-IDEAS:P2.16][AI]` Rerun reviewed-head acceptance after commit.
-- [ ] `[PRIV-IDEAS:P2.G][AI]` Pass acceptance/gates/size/staging/commit/three-state fingerprint gate.
-- [ ] `[PRIV-IDEAS:P2.P][AI]` Record local head, committed hash, and clean tree or authorized residue.
-- [ ] `[PRIV-IDEAS:P3.01][AI]` Recalculate committed hand-authored counts.
-- [ ] `[PRIV-IDEAS:P3.02][AI]` Gate committed counts against the plan's caps.
-- [ ] `[PRIV-IDEAS:P3.03][AI]` Rerun the private pre-push surface on committed head.
-- [ ] `[PRIV-IDEAS:P3.04][AI]` Push only `optimize-pr-process-priv-ideas`.
-- [ ] `[PRIV-IDEAS:P3.05][AI]` Read back and match remote branch head to local `HEAD`.
-- [ ] `[PRIV-IDEAS:P3.06][AI]` Rerun reviewed-head acceptance after push.
-- [ ] `[PRIV-IDEAS:P3.07][AI]` Open one private-safe draft PR from a literal AI-marked body.
-- [ ] `[PRIV-IDEAS:P3.08][AI]` Read back base, head, draft, body, marker, and safe statistics.
-- [ ] `[PRIV-IDEAS:P3.G][AI]` Pass push/remote-head/acceptance/private-safe-body/readback gate.
-- [ ] `[PRIV-IDEAS:P3.P][AI]` Record draft URL, current head, and literal body path.
-- [ ] `[PRIV-IDEAS:P4.01][AI]` Post the exact-head private-safe route and selected/skipped review lenses.
-- [ ] `[PRIV-IDEAS:P4.02][AI]` Read back route, frozen scope, changed probe, and AI marker.
-- [ ] `[PRIV-IDEAS:P4.03][AI]` Run successive exact-head cycles under the five-cycle boundary.
-- [ ] `[PRIV-IDEAS:P4.04][AI]` Classify each concern before any cross-repository handoff.
-- [ ] `[PRIV-IDEAS:P4.05][AI]` For a proven portable or plan defect, record the paused private head; freeze push, review, readiness, and merge; then hand the required replacement public or amended-plan pin only to ADAPTERS.
-- [ ] `[PRIV-IDEAS:P4.06][AI]` Gate P4.07–P4.14 to the no-handoff path or an ADAPTERS-recorded replacement pin and resumption; record every finding as fix, reject, defer, or clarify with evidence.
-- [ ] `[PRIV-IDEAS:P4.07][AI]` Push each bounded fix before claiming it in the native thread.
-- [ ] `[PRIV-IDEAS:P4.08][AI]` Invalidate every review and CI result from the superseded head.
-- [ ] `[PRIV-IDEAS:P4.09][AI]` Return the repaired head to P4.03 before thread resolution.
-- [ ] `[PRIV-IDEAS:P4.10][AI]` Reply in the original thread with current-head evidence.
-- [ ] `[PRIV-IDEAS:P4.11][AI]` Read back the persisted reply and its AI marker.
-- [ ] `[PRIV-IDEAS:P4.12][AI]` Resolve only threads whose terminal evidence is true.
-- [ ] `[PRIV-IDEAS:P4.13][AI]` Poll applicable current-head CI exactly every 120 seconds.
-- [ ] `[PRIV-IDEAS:P4.14][AI]` Prove readiness, mark ready, and read back the same current head.
-- [ ] `[PRIV-IDEAS:P4.G][AI]` Pass semantic-exit/current-head-CI/frozen-scope/firewall/obligation gate.
-- [ ] `[PRIV-IDEAS:P4.P][AI]` Record head, cycles, threads, CI, and obligation state.
-- [ ] `[PRIV-IDEAS:P5.01][AI]` Recheck route, findings, base, head, ready state, and green CI.
-- [ ] `[PRIV-IDEAS:P5.02][AI]` Run `/usr/bin/git diff --binary <current-main> <reviewed-head> | /usr/bin/shasum -a 256`.
-- [ ] `[PRIV-IDEAS:P5.03][AI]` Squash-merge by repository-qualified GitHub API.
-- [ ] `[PRIV-IDEAS:P5.04][AI]` Read back merge SHA and landed two-path ledger.
-- [ ] `[PRIV-IDEAS:P5.05][AI]` Run `/usr/bin/git diff --binary <merge-sha>^1 <merge-sha> | /usr/bin/shasum -a 256`.
-- [ ] `[PRIV-IDEAS:P5.06][AI]` Prove reviewed and landed fingerprints are equal.
-- [ ] `[PRIV-IDEAS:P5.07][AI]` Publish exactly one terminal obligation state from a literal AI-marked payload.
-- [ ] `[PRIV-IDEAS:P5.08][AI]` Read back terminal state, immutable private pin, owner, reason/action, and AI marker.
-- [ ] `[PRIV-IDEAS:P5.09][AI]` Fetch private `origin/main` after the merge.
-- [ ] `[PRIV-IDEAS:P5.10][AI]` Prove fetched `origin/main` equals the merge pin.
-- [ ] `[PRIV-IDEAS:P5.11][AI]` Resync this private worktree without stashing the overlay.
-- [ ] `[PRIV-IDEAS:P5.12][AI]` Authorize only PRE-A1-ADMISSION from the resynced landed main; PUB-A1 remains frozen until both admission pins are terminal.
-- [ ] `[PRIV-IDEAS:P5.G][AI]` Pass merge/landed/fingerprint/obligation/resync/sibling gate.
-- [ ] `[PRIV-IDEAS:P5.P][AI]` Record private merge/main SHA, terminal obligation, and PRE-A1-ADMISSION command/pin.
+Private PR #63 merged the two-path overlay retirement at
+`25bb1d81f53156d001f2ab25cca07d23ab8ce062`. Its route, review, reply, CI, and landed records are
+the immutable audit evidence. It grants no overlay, baseline, repair, idea-retirement, successor, or
+private-path authority. Every future private unit starts from the live `PRIV-ADMISSION` contract.
 
 ### WAVES-ENTRY-PRIVATE Finding State
 
@@ -1313,30 +989,11 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
 
 ### PUB-A1 — Completed Direct Size-Policy Work
 
-PR #289 completed the bounded public A1 change at
-`539cda50e6aa48079d347ae6131b81901120cd84`. The completed checkboxes below are an immutable
-historical receipt for that merge; they do not authorize a second PUB-A1 branch or PR. The next
-pending public unit in declared order is `PUB-A2`, and it may start only after terminal `PRIV-A1`.
-
-- [x] `[PUB-A1:P1.01][AI]` Execute `AR-ENTRY` for the admitted A1 public row in `tech-docs.md`; read both admission pins and record the exact public predecessor. Acceptance: current public `origin/main` contains the public admission pin and its paired private obligation is terminal.
-- [x] `[PUB-A1:P1.02][AI]` Run only `AR-PROPAGATE` for normalized plan-making rules. Acceptance: the strict manifest names the authoritative source, consumer, and private sibling obligation.
-- [x] `[PUB-A1:P1.03][AI]` Edit only public paths listed in the `AR-PROPAGATE` manifest. Acceptance: `git status --short` contains no unlisted path.
-- [x] `[PUB-A1:P1.04][AI]` Run only `AR-BIND`. Acceptance: generated paths and second-generation stability are recorded separately from source paths.
-- [x] `[PUB-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: each unit gate has its exit result or recorded reasoned `N/A`.
-- [x] `[PUB-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: the cached ledger is exactly the before-ledger and one cohesive commit is read in full.
-- [x] `[PUB-A1:P3.00][AI]` Run only `AR-PUSH`. Acceptance: the declared remote branch SHA equals the committed local `HEAD` before the draft is created.
-- [x] `[PUB-A1:P3.01][AI]` Run only `AR-DRAFT`. Acceptance: the public draft body is readable, exact-head, and AI-marked.
-- [x] `[PUB-A1:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=pub-a1` and `RECORD=local-tmp/optimize-pr-process/pub-a1-record.md`. Acceptance: its read-back route is frozen before reviewer work.
-- [x] `[PUB-A1:P4.02][AI]` Run only `AR-REVIEW` with that same resolved record. Acceptance: the consolidated review URL, cycle, and changed probe are read back.
-- [x] `[PUB-A1:P4.03][AI]` Run only `AR-REPLY` with that same resolved record. Acceptance: every finding has a same-thread, AI-marked evidence disposition.
-- [x] `[PUB-A1:P4.04][AI]` Run only `AR-CI` with that same resolved record. Acceptance: the stored check result is green for the current head.
-- [x] `[PUB-A1:P4.05][AI]` Run only `AR-READY` with that same resolved record. Acceptance: the read-back is non-draft after all five preconditions.
-- [x] `[PUB-A1:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=pub-a1`. Acceptance: the reviewed-patch hash is stored before merge.
-- [x] `[PUB-A1:P5.02][AI]` Run only `AR-MERGE` with the ready public PR record. Acceptance: the existing merge gate is satisfied and merge JSON is stored.
-- [x] `[PUB-A1:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: the landed hash matches P5.01.
-- [x] `[PUB-A1:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: `origin/main` equals the merge and the prepared PRIV-A1 obligation identifies the exact successor.
-- [x] `[PUB-A1:P1.G][AI]` Pass propagated-rule, binding, current-head, sibling-obligation, and landed-proof gate.
-- [x] `[PUB-A1:P1.P][AI]` Record public merge pin and prepared PRIV-A1 obligation.
+PR #289 merged at `539cda50e6aa48079d347ae6131b81901120cd84` with the direct public
+size-policy edit only. Its PR body, native review, and current-head CI are the immutable evidence.
+It created no private obligation and granted no private path authority. The sole public-to-private
+obligation is created by the post-merge `PLAN-QUALITY-290:P5.HANDOFF` comment; only then does the
+live order proceed to `PRIV-ADMISSION`, `PRIV-A1`, and `PUB-A2`.
 
 ### PRIV-A1 — Private Plan-Making Adaptation
 
