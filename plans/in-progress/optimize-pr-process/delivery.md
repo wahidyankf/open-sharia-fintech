@@ -254,11 +254,13 @@ The other slice names mean:
 Both CORE slices, every WAVES forecast repair, all four ENTRY checklist slices, WAVES-A,
 WAVES-RULES, and EXECUTION-CLOSURE author only plan text or checklists; none executes before ACTIVATE.
 
-The targets reserve repair headroom below the 900-line mixed-PR limit. Each slice is a separate
-unstacked PR from then-current `origin/main`, merges green, records its exact pin, and resyncs this
-same public worktree before the next slice. If a slice forecast crosses 400 program/script lines,
-900 mixed handwritten lines, the 1,000-line absolute ceiling, or 20 files, split that slice again
-in its immediately preceding PR; never rely on a later explanation of an already-large diff.
+Each slice first carries as much of one natural, independently stable seam as fits: up to 400
+program/script lines, up to 900 mixed handwritten lines, up to 1,000 handwritten lines in every
+case, and up to 20 files. It is a separate unstacked PR from then-current `origin/main`, merges
+green, records its exact pin, and resyncs this same public worktree before the next slice. Split
+only when an applicable cap would otherwise be exceeded, and make the split at the next real seam;
+never split early merely to create a smaller PR or rely on a later explanation of an already-large
+diff.
 
 ## Parallelization Model
 
@@ -304,8 +306,9 @@ Repair rows activate only after their baseline fails; each runs Phases 1–5, me
 baseline. Its ordinary successor uses the repair merge SHA; otherwise it uses the normal pin shown.
 Optional C becomes a recorded no-change decision when necessity fails. PRE-A1-ADMISSION completed
 in PR #289 at `539cda50e6aa48079d347ae6131b81901120cd84`: it admitted the exact later
-source/mirror paths **and** completed the direct PUB-A1 size-policy edits. `PRIV-ADMISSION` is its
-sole pending private-safe counterpart; it starts clean from that public obligation and must publish
+public source/mirror paths **and** completed the direct PUB-A1 size-policy edits. That pin is
+provenance only. `PRIV-ADMISSION` begins only from the terminal PR #290 handoff after the merged
+reader receipt and two fresh strict zero-finding results are posted and read back; it must publish
 its exact private adaptation, deviation, or `N/A` before `PRIV-A1`. Before each unit, replace its
 predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the next
 row. CLOSURE opens its one draft PR in inherited Phase 3, completes all knowledge capture,
@@ -318,16 +321,18 @@ resumes its frozen unit from the amended plan pin.
 The merged admission table in `tech-docs.md#pre-a1-admission-public-ledger` is this unit's
 sole exact public source/mirror authority. It was derived from the strict dry-run manifest, not
 from discovery during a later rule wave. `PUB-A1` completed within PR #289; it is not an empty or
-future PR. `PRIV-ADMISSION` is now the only pending private-safe successor and must establish the
-private A1 decision before `PRIV-A1`. `PUB-A2`, `PUB-A3`, and `PUB-B` remain independently bounded
-PRs; their private counterpart is a separate semantic adaptation after the public immutable
-obligation.
+future PR. PR #289 remains provenance only: the pending `PRIV-ADMISSION` is released solely by the
+PR #290 terminal handoff after the reader receipt and two fresh strict zero-finding results are
+posted and read back, then establishes the private A1 decision before `PRIV-A1`. `PUB-A2`,
+`PUB-A3`, and `PUB-B` remain independently bounded PRs; their private counterpart is a separate
+semantic adaptation after its preceding immutable obligation.
 
 The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
-counted separately when binding generation identifies them. If a unit's measured complete ledger
-crosses 20 hand-authored files, 400 handwritten program/script lines, 900 handwritten lines when
-both categories are present, or the 1,000-line absolute ceiling, its immediately preceding public
-PR must split it into named cohesive successors before that unit starts. Historical `plans/done/**`, past
+counted separately when binding generation identifies them. Each unit first uses one PR for as much
+of its natural, independently stable seam as fits. Only if its measured complete ledger would cross
+20 hand-authored files, 400 handwritten program/script lines, 900 handwritten lines when both
+categories are present, or the 1,000-line absolute ceiling, split it at a named cohesive seam before
+the first PR opens. Historical `plans/done/**`, past
 PR comments, and previous review artifacts are evidence only and never enter a future edit ledger.
 
 The exact 20-source classification, owner, retained requirement, and later retirement unit live in
@@ -677,10 +682,12 @@ retains both the lineage ID and its correction count.
 ### Pre-A1 Admission and A/Rules Atomic Execution References
 
 PR #289 completed PRE-A1-ADMISSION: it created the exact public ledger A1–B need **and** made its
-admitted direct PUB-A1 size-policy edits. Its private-safe successor, `PRIV-ADMISSION`, creates the
-equivalent private plan-only admission from that immutable public pin using a clean worktree. It must
-merge before `AR-ENTRY` for `PRIV-A1`; any unexpected path, cap breach, or disagreement freezes the
-successor for human review rather than admitting a generic subtree.
+admitted direct PUB-A1 size-policy edits. It is provenance only. The terminal PR #290 handoff,
+after the merged reader receipt and two fresh strict zero-finding results are posted and read back,
+creates the sole actionable private obligation. Only then may `PRIV-ADMISSION` create the equivalent
+private plan-only admission using a clean worktree. It must merge before `AR-ENTRY` for `PRIV-A1`;
+any unexpected path, cap breach, or disagreement freezes the successor for human review rather than
+admitting a generic subtree.
 
 Every A/Rules checkbox below is one atomic state transition, not optional background. Before a row
 uses an `AR-*` reference, its unit heading declares a literal `UNIT`, `REPO`, `BRANCH`, and
@@ -727,8 +734,9 @@ pretends a post-merge value existed before merge.
 
 For a public unit, `local-base` comes from public `origin/main` and `authorization-pin` comes from
 the terminal private obligation that authorizes it. For a private unit, `local-base` comes from
-private `origin/main` and `authorization-pin` comes from the terminal public obligation; its
-worktree must be clean. This keeps Git commands repository-local while preserving the
+private `origin/main` and `authorization-pin` comes from the terminal public obligation; for
+`PRIV-ADMISSION`, that is specifically PR #290's posted-and-read-back terminal handoff, never #289.
+Its worktree must be clean. This keeps Git commands repository-local while preserving the
 cross-repository chain in PR-native evidence.
 
 The variables in the references below are only shorthand for these fields: `$AUTHORIZATION_PIN`,
@@ -1389,9 +1397,10 @@ ledger contains only owned paths.
   non-program; generated paths are excluded. For each category, use
   `git diff --numstat <unit-base> -- <that-category-paths> | awk '{a+=$1; d+=$2} END {print a+d}'`
   for additions plus deletions, and use `git diff --name-only <unit-base> -- <hand-authored-paths> |
-wc -l` for files. Stop and split above 400 program/script lines, 900 mixed handwritten lines,
-  1,000 handwritten lines, or 20 files; repeat before push. Keep these cap-counted statistics
-  separate from PR totals.
+wc -l` for files. First keep the largest natural, independently stable seam together; split only
+  when it would exceed 400 program/script lines, 900 mixed handwritten lines, 1,000 handwritten
+  lines, or 20 files, then repeat before push. Keep these cap-counted statistics separate from PR
+  totals.
 - **Template `[AI]`:** Stage only explicit ledger paths with `git add -- <path>...`; run
   `git diff --cached --name-only`, `git diff --cached --check`, `git diff --cached --stat`, and
   `git diff --cached --patch`. Staged paths must equal the admitted ledger in both directions.
