@@ -23,6 +23,4 @@ merge at overlapping times. **That adoption was researched but NOT delivered.** 
 settings expose no merge-queue toggle to enable, because GitHub merge queue requires organization
 ownership and the repos in scope are personal-account-owned. Precondition (c) therefore remains the
 manual branch-up-to-date check, unchanged. The deferred investigation, availability matrix, and
-adoption path are owned by the standalone
-[merge-queue-adoption backlog plan](../../../../plans/ideas/q2-not-urgent-important/merge-queue-adoption.md), not by
-this convention.
+adoption path are tracked separately as future work, not by this convention.
