@@ -121,20 +121,21 @@ owning unit, and bounded before-ledger to this tree and matching delivery ledger
 starts. PR #289 is public provenance only. Its paired private plan-only `PRIV-ADMISSION` completed
 in [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
 `db40c969f8c6a554837efab1cf266c8d505c02a6`; it supplied the private-safe counterpart and historically
-released `PRIV-A1`. While public plan-amendment PR #296 is open, `PRIV-A1` is frozen; it resumes only
-from #296's landed merge SHA. Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
+released `PRIV-A1`, completed by private PR #65 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`.
+Neither admission edits a rule. A propagation manifest may recommend placement but cannot itself
 expand scope. Optional Wave C remains `N/A` unless its separately human-approved necessity case
 first supplies exact paths through the ordinary amendment route.
 
 ### Bounded Delivery Ledger
 
-| Unit                   | Hand-authored source boundary                                                                                | Generated or retirement boundary                             | Done state                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md` | No bindings                                                  | Mapped briefs absent, indexes reconciled, historical links preserved              |
-| A1/A2/A3/B public      | Exact paths only after merged `PRE-A1-ADMISSION`; private scope remains external to this tree                | Exact mirrors only after that same public admission          | Each later row cites the admitted owner and predecessor pin                       |
-| A1/A2/A3/B private     | Exact private paths only after merged `PRIV-ADMISSION`                                                       | Exact private mirrors only after that same private admission | Private PR records semantic counterpart/deviation without public leakage          |
-| C public/private       | `N/A` unless a human-approved amendment supplies exact paths                                                 | `N/A` unless that amendment names exact generated mirrors    | Recorded no-change decision, or necessity evidence plus reversible implementation |
-| Closure                | Public plan folder/index and private obligation thread                                                       | No bindings                                                  | Both mains green on recorded pins; final public PR archives the control plan      |
+| Unit                   | Hand-authored source boundary                                                                                | Generated or retirement boundary                             | Done state                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| PUB-IDEAS / PRIV-IDEAS | Only paths pinned in the [idea map](./idea-disposition-map.md) and each repository's `plans/ideas/README.md` | No bindings                                                  | Mapped briefs absent, indexes reconciled, historical links preserved                  |
+| A1/A2/A3/B public      | Exact paths only after merged `PRE-A1-ADMISSION`; private scope remains external to this tree                | Exact mirrors only after that same public admission          | Each later row cites the admitted owner and predecessor pin                           |
+| A1 private             | Exact private paths only after merged `PRIV-ADMISSION`                                                       | Exact private mirrors only after that same private admission | Completed by #65; historical receipt only                                             |
+| A2/A3/B private        | A small `PRIV-<wave>-ADMIT` PR records exact paths after its public predecessor terminal handoff             | Exact mirrors only after that admission PR merges            | The following source PR records semantic counterpart/deviation without public leakage |
+| C public/private       | `N/A` unless a human-approved amendment supplies exact paths                                                 | `N/A` unless that amendment names exact generated mirrors    | Recorded no-change decision, or necessity evidence plus reversible implementation     |
+| Closure                | Public plan folder/index and private obligation thread                                                       | No bindings                                                  | Both mains green on recorded pins; final public PR archives the control plan          |
 
 Use one PR for as much of each natural, independently stable row as fits. Split into named cohesive
 sub-units only if it would exceed 400 handwritten program/script lines, 900 handwritten lines when
@@ -161,8 +162,7 @@ path is admitted here.
 PR #289 supplies public provenance only. The native private admission receipt is complete in
 private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; it classified the counterpart at
 public provenance pin `539cda50e6aa48079d347ae6131b81901120cd84` and historically released
-`PRIV-A1` without receiving public-path authority. While public plan-amendment PR #296 is open,
-`PRIV-A1` is frozen and resumes only from #296's landed merge SHA.
+`PRIV-A1`, now completed by private PR #65 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`.
 
 #### Exact Source, Hunk, and Mirror Records
 
@@ -343,10 +343,9 @@ flowchart TD
 Historical receipt only: PUB-BASE cleanly authorized PUB-IDEAS-4; failure received one PUB-REPAIR attempt, whose
 clean recheck authorizes -4 and whose failed recheck freezes ideas for a human, with no second repair.
 Successor pins carried -4 through -8; the rest is preserved for audit and grants no future unit,
-path, branch, PR, or merge authority. The historical successor order is `PRIV-A1`, then `PUB-A2`;
-while public plan-amendment PR #296 is open, `PRIV-A1` receives no action and resumes only from
-PR #296's landed merge SHA. Its predecessor is the native private-admission receipt in PR #64 at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`.
+path, branch, PR, or merge authority. The completed private A1 receipt releases public `PUB-A2`;
+its merged terminal handoff is private PR #65 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. After
+public A2, a distinct private admission PR records its exact source ledger before private A2 begins.
 
 The lightest-fit “feature flag” is recorded per unit: dormant plan or idea text, ordered rule
 activation, a compatibility bridge, a tested runtime flag, or an atomic change. This plan expects

@@ -41,17 +41,16 @@
 > PR #289 is provenance only. PR #290's terminal-handoff receipt was read back after its reader
 > successor landed; it released `PRIV-ADMISSION`, whose native private receipt merged in
 > [private PR #64](https://github.com/wahidyankf/ose-private/pull/64) at
-> `db40c969f8c6a554837efab1cf266c8d505c02a6`. It historically released `PRIV-A1`; while public
-> plan-amendment PR #296 is open, that successor is frozen and receives no action. It becomes sole
-> live successor only from #296's landed merge SHA. No private path or content is reproduced here.
+> `db40c969f8c6a554837efab1cf266c8d505c02a6`. Private PR #65 then completed `PRIV-A1` at
+> `71c8a0f1f318bf856141f1067a31f15f307b7f3b` and released public `PUB-A2`. No private path or
+> content is reproduced here.
 
 ### PR #290 Post-Merge Terminal Handoff — Complete
 
 - [x] `[PLAN-QUALITY-290:P5.HANDOFF][AI]` Completed immutable evidence: PR #290 terminal handoff,
       its reader-state successor, and [private PR #64](https://github.com/wahidyankf/ose-private/pull/64)
-      at `db40c969f8c6a554837efab1cf266c8d505c02a6` were read back. They historically released
-      `PRIV-A1` only; public plan-amendment PR #296 temporarily freezes existing private PR #65. That
-      same PR resumes its first review cycle only from #296's landed merge SHA.
+      at `db40c969f8c6a554837efab1cf266c8d505c02a6` were read back. Private PR #65 subsequently merged
+      `PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b` and released public `PUB-A2`.
 
   **Date:** 2026-08-24  
   **Status:** complete  
@@ -97,10 +96,9 @@ PUB-IDEAS-5, PR #282 authorized PUB-IDEAS-6's exact four repairs, and PR #283 re
 plan state. Private PR #63 landed the former two-path patch cleanly; PRs #285, #286, and #288 then
 retired the remaining public idea briefs. Public PR #289 admitted the exact A-wave source/mirror paths
 and completed direct PUB-A1 size-policy edits. Its pin is provenance only. PR #290's terminal handoff
-then released `PRIV-ADMISSION`, which has its native merged private receipt. That receipt historically
-released `PRIV-A1`; public plan-amendment PR #296 temporarily freezes it. `PRIV-A1` becomes the sole
-live successor only from #296's landed merge SHA. Other later units remain frozen until their declared
-predecessor authorizes them.
+then released `PRIV-ADMISSION`, which has its native merged private receipt. Private PR #65 completed
+`PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b` and released public `PUB-A2`. Other
+later units remain frozen until their declared predecessor authorizes them.
 
 ## Worktree
 
@@ -110,8 +108,8 @@ Reuse exactly one worktree per repository for this whole plan; follow the
 - public: `worktrees/optimize-pr-process/` resolves to
   `/Users/wkf/ose-projects/ose-public/worktrees/optimize-pr-process` — active for assembly;
 - private: `worktrees/optimize-pr-process/` resolves to
-  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — reused for the admitted
-  `PRIV-A1` delivery only from public plan-amendment PR #296's landed merge SHA.
+  `/Users/wkf/ose-projects/ose-private/worktrees/optimize-pr-process` — reused for every private
+  admission and source delivery in this plan.
 
 For authored provisioning, run this documentation-only harness command from the relevant repository
 root before using the fallback below; it does not authorize a second worktree:
@@ -131,19 +129,17 @@ git worktree prune # stale registration only; retry the applicable add once
 ```
 
 The former private two-path patch was reviewed and landed in private PR #63. The worktree is now
-clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` is historical:
-private PR #64 completed its native ledger. While public plan-amendment PR #296 is open, `PRIV-A1`
-and existing private PR #65 are frozen. From #296's landed merge SHA, `AR-RESUME` proves the
-existing branch/head against fetched private `origin/main` and permits only its recorded admitted
-preexisting dirty diff before that same PR becomes active.
+clean; no future unit may recreate, preserve, or rely on residue. `PRIV-ADMISSION` and `PRIV-A1`
+are historical: PR #64 admitted the former and PR #65 completed the latter. Future private waves
+open a small admission-record PR after their public predecessor's terminal handoff, then a fresh
+source PR only from the admission merge pin.
 
 ## Delivery Mode
 
 Both repositories use `worktree-to-pr`: every delivery unit is a fresh branch from then-current
 `origin/main`, one draft PR to `main`, and one independently stable result. No direct-to-main push,
-stacked dependency, or concurrent mutation is allowed. The sole declared exception is the already-created,
-frozen private PR #65: after #296 lands, `AR-RESUME` verifies and continues that same PR and branch;
-it never creates a replacement. CORE-REVIEW adds the route and cycle rules.
+stacked dependency, or concurrent mutation is allowed. Each future private wave has two sequential
+units: its small admission PR and its subsequent source PR. CORE-REVIEW adds the route and cycle rules.
 
 ## Historical Sequential Plan Assembly Receipt
 
@@ -160,9 +156,10 @@ implementation waves
 
 This completed assembly sequence is retained as an immutable receipt only; it grants no current
 unit, branch, path, PR, merge, or successor authority. The private-admission receipt completed in
-private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`. While public plan-amendment PR #296
-is open, `PRIV-A1` is frozen: it receives no push, review, readiness, or merge action. From #296's
-landed merge SHA, the sole live sequence is `PRIV-A1` → `PUB-A2`. Each historical arrow was a separate, unstacked PR from then-current `origin/main`, using the same owned public
+private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`, and private PR #65 completed
+`PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. The sole live sequence is public
+`PUB-A2` → private `PRIV-A2-ADMIT` → private `PRIV-A2`. Each historical arrow was a separate,
+unstacked PR from then-current `origin/main`, using the same owned public
 worktree. `P` counts handwritten changed program/script lines (including tests); `N` counts handwritten
 changed non-program lines (such as Markdown, plans, specs, and configuration); generated files are
 excluded from both. Every assembly slice has at most 400 handwritten program/script lines. When both program/
@@ -299,15 +296,19 @@ The six WAVES checklist slices supply exact unit scope/acceptance; EXECUTION-CLO
 | receipt  | PRE-A1-ADMISSION | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct public admission done             |
 | receipt  | PUB-A1           | historical      | —                                                    | merged receipt | #289    | PR #289 `539cda50e6aa48079d347ae6131b81901120cd84`                                            | direct size policy done (not executable) |
 | receipt  | PRIV-ADMISSION   | historical      | —                                                    | merged receipt | #64     | private PR #64 `db40c969f8c6a554837efab1cf266c8d505c02a6`                                     | exact private adaptation admission pin   |
-| frozen   | PRIV-A1          | private/PRIV-WT | `optimize-pr-process-priv-a1-size-policy`            | worktree-to-pr | Phase 3 | private PR #64 admission + #296 landed merge SHA; no action while #296 is open                | private A1 adapted                       |
-| 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1                                                                                       | review routing coherent                  |
-| 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PUB-A2                                                                                        | private A2 adapted                       |
-| 1–5      | PUB-A3           | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2                                                                                       | PR/reply rules coherent                  |
-| 1–5      | PRIV-A3          | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PUB-A3                                                                                        | private A3 adapted                       |
-| 1–5      | PUB-B            | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3                                                                                       | legacy conflict removed                  |
-| 1–5      | PRIV-B           | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PUB-B                                                                                         | private conflict removed                 |
-| 1–5      | PUB-C?           | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B                                                                                        | necessity-gated mechanism                |
-| 1–5      | PRIV-C?          | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PUB-C                                                                                         | private C adapted                        |
+| receipt  | PRIV-A1          | historical      | —                                                    | merged receipt | #65     | private PR #65 `71c8a0f1f318bf856141f1067a31f15f307b7f3b`                                     | private A1 adapted                       |
+| 1–5      | PUB-A2           | public/PUB-WT   | `optimize-pr-process-pub-a2`                         | worktree-to-pr | Phase 3 | PRIV-A1 terminal receipt                                                                      | review routing coherent                  |
+| 1–5      | PRIV-A2-ADMIT    | private/PRIV-WT | `optimize-pr-process-priv-a2-admit`                  | worktree-to-pr | Phase 3 | PUB-A2 terminal public handoff                                                                | exact private A2 ledger merged           |
+| 1–5      | PRIV-A2          | private/PRIV-WT | `optimize-pr-process-priv-a2`                        | worktree-to-pr | Phase 3 | PRIV-A2-ADMIT merge                                                                           | private A2 adapted                       |
+| 1–5      | PUB-A3           | public/PUB-WT   | `optimize-pr-process-pub-a3`                         | worktree-to-pr | Phase 3 | PRIV-A2 terminal receipt                                                                      | PR/reply rules coherent                  |
+| 1–5      | PRIV-A3-ADMIT    | private/PRIV-WT | `optimize-pr-process-priv-a3-admit`                  | worktree-to-pr | Phase 3 | PUB-A3 terminal public handoff                                                                | exact private A3 ledger merged           |
+| 1–5      | PRIV-A3          | private/PRIV-WT | `optimize-pr-process-priv-a3`                        | worktree-to-pr | Phase 3 | PRIV-A3-ADMIT merge                                                                           | private A3 adapted                       |
+| 1–5      | PUB-B            | public/PUB-WT   | `optimize-pr-process-pub-b`                          | worktree-to-pr | Phase 3 | PRIV-A3 terminal receipt                                                                      | legacy conflict removed                  |
+| 1–5      | PRIV-B-ADMIT     | private/PRIV-WT | `optimize-pr-process-priv-b-admit`                   | worktree-to-pr | Phase 3 | PUB-B terminal public handoff                                                                 | exact private B ledger merged            |
+| 1–5      | PRIV-B           | private/PRIV-WT | `optimize-pr-process-priv-b`                         | worktree-to-pr | Phase 3 | PRIV-B-ADMIT merge                                                                            | private conflict removed                 |
+| 1–5      | PUB-C?           | public/PUB-WT   | `optimize-pr-process-pub-c`                          | worktree-to-pr | Phase 3 | PRIV-B terminal receipt                                                                       | necessity-gated mechanism                |
+| 1–5      | PRIV-C?-ADMIT    | private/PRIV-WT | `optimize-pr-process-priv-c-admit`                   | worktree-to-pr | Phase 3 | PUB-C terminal public handoff                                                                 | exact private C ledger merged            |
+| 1–5      | PRIV-C?          | private/PRIV-WT | `optimize-pr-process-priv-c`                         | worktree-to-pr | Phase 3 | PRIV-C?-ADMIT merge                                                                           | private C adapted                        |
 | 1–5?     | PUB-CORR?        | public/PUB-WT   | `optimize-pr-process-pub-<wave>-correction-1`        | worktree-to-pr | Phase 3 | portable defect + pin                                                                         | replacement public pin                   |
 | 1–5?     | PLAN-AMEND?      | public/PUB-WT   | `optimize-pr-process-plan-amendment-<slug>`          | worktree-to-pr | Phase 3 | plan defect + frozen pin                                                                      | amended plan pin                         |
 | 1–6      | CLOSURE          | public/PUB-WT   | `optimize-pr-process-closure`                        | worktree-to-pr | Phase 3 | last unit                                                                                     | plan archived and focused                |
@@ -318,10 +319,11 @@ Optional C becomes a recorded no-change decision when necessity fails. PRE-A1-AD
 in PR #289 at `539cda50e6aa48079d347ae6131b81901120cd84`: it admitted the exact later
 public source/mirror paths **and** completed the direct PUB-A1 size-policy edits. That pin is
 provenance only. `PRIV-ADMISSION` completed in private PR #64 at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`, which published its private adaptation decision and
-historically released `PRIV-A1`. While public plan-amendment PR #296 is open, that successor is
-frozen and resumes only from #296's landed merge SHA. Before each unit, replace its predecessor
-with the exact SHA in the task, body, and audit comment. Missing state blocks the next row. CLOSURE
+`db40c969f8c6a554837efab1cf266c8d505c02a6`, and private PR #65 completed `PRIV-A1` at
+`71c8a0f1f318bf856141f1067a31f15f307b7f3b`. Every future private adaptation has two unstacked
+boundaries: the small `PRIV-<wave>-ADMIT` PR records exact private paths and merges first; the
+following `PRIV-<wave>` source PR begins only from that merge. Before each unit, replace its
+predecessor with the exact SHA in the task, body, and audit comment. Missing state blocks the next row. CLOSURE
 opens its one draft PR in inherited Phase 3, completes all knowledge capture,
 archive, review, merge, and resync in inherited Phases 4–5, then performs only read-only validation
 and cleanup in Phase 6. A correction resumes its paused private PR from the replacement public pin; an amendment
@@ -333,10 +335,9 @@ The merged admission table in `tech-docs.md#pre-a1-admission-public-ledger` is t
 sole exact public source/mirror authority. It was derived from the strict dry-run manifest, not
 from discovery during a later rule wave. `PUB-A1` completed within PR #289; it is not an empty or
 future PR. PR #289 remains provenance only: private PR #64 at
-`db40c969f8c6a554837efab1cf266c8d505c02a6` completed `PRIV-ADMISSION` and established the private
-A1 decision. While public plan-amendment PR #296 is open, `PRIV-A1` is frozen; it becomes live only
-from #296's landed merge SHA. `PUB-A2`, `PUB-A3`, and `PUB-B` remain independently bounded PRs;
-their private counterpart is a separate semantic adaptation after its preceding immutable obligation.
+`db40c969f8c6a554837efab1cf266c8d505c02a6` completed `PRIV-ADMISSION` and private PR #65 completed
+A1 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. `PUB-A2`, `PUB-A3`, and `PUB-B` remain
+independently bounded PRs; each future private counterpart has a separate admission PR before source work.
 
 The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
 counted separately when binding generation identifies them. Each unit first uses one PR for as much
@@ -702,10 +703,9 @@ retains both the lineage ID and its correction count.
 
 PR #289 completed PRE-A1-ADMISSION: it created the exact public ledger A1–B need **and** made its
 admitted direct PUB-A1 size-policy edits. It is provenance only. The native private admission
-merged in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6` and historically released
-`PRIV-A1`. While public plan-amendment PR #296 is open, that successor is frozen and resumes only
-from #296's landed merge SHA. Any unexpected path, cap breach, or disagreement freezes that
-successor for human review rather than admitting a generic subtree.
+merged in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`; private PR #65 completed
+`PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. Any unexpected path, cap breach, or
+disagreement freezes the active successor for human review rather than admitting a generic subtree.
 
 Every A/Rules checkbox below is one atomic state transition, not optional background. Before a row
 uses an `AR-*` reference, its unit heading declares a literal `UNIT`, `REPO`, `BRANCH`, and
@@ -1369,8 +1369,7 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
       `PRIV-A1` must compare its landed and reviewed fingerprints.
 - [x] `[PRIV-ADMISSION:P5.04][AI]` Resync private `origin/main` and prepare `PRIV-A1` as sole successor.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** the public-safe historical order is `PRIV-A1` then `PUB-A2`; while #296 is open,
-      `PRIV-A1` remains frozen and resumes only from its landed merge SHA.
+      **Notes:** private PR #65 completed `PRIV-A1` and released `PUB-A2`; later waves remain frozen.
 - [x] `[PRIV-ADMISSION:P1.G][AI]` Historical-evidence audit: the native aggregate receipt has unavailable
       review-thread and fingerprint terminal subchecks.
       **Date:** 2026-08-24; **Status:** documented historical exception; **Files Changed:** none;
@@ -1379,8 +1378,7 @@ the existing merge-gate line is preserved unchanged as required by the merge-ste
       review and terminal checks; this item does not claim that unavailable checks passed.
 - [x] `[PRIV-ADMISSION:P1.P][AI]` Publish the private admission pin and historically authorize `PRIV-A1` only.
       **Date:** 2026-08-24; **Status:** complete; **Files Changed:** private-only (not enumerated);
-      **Notes:** private PR #64 releases no later unit. While public plan-amendment PR #296 is open,
-      `PRIV-A1` is frozen and resumes only from #296's landed merge SHA.
+      **Notes:** private PR #64 admitted A1; private PR #65 completed it and released `PUB-A2`.
 
 ### PUB-A1 — Completed Direct Size-Policy Work
 
@@ -1388,36 +1386,36 @@ PR #289 merged at `539cda50e6aa48079d347ae6131b81901120cd84` with the direct pub
 size-policy edit only. Its PR body, native review, and current-head CI are the immutable evidence.
 It created no private obligation and granted no private path authority. The post-merge
 `PLAN-QUALITY-290:P5.HANDOFF` released the admission which private PR #64 completed at
-`db40c969f8c6a554837efab1cf266c8d505c02a6`. Its historical successor order is `PRIV-A1`, then
-`PUB-A2`; while public plan-amendment PR #296 is open, `PRIV-A1` receives no action and resumes
-only from #296's landed merge SHA.
+`db40c969f8c6a554837efab1cf266c8d505c02a6`. Private PR #65 completed `PRIV-A1` at
+`71c8a0f1f318bf856141f1067a31f15f307b7f3b` and released `PUB-A2`.
 
-### PRIV-A1 — Private Plan-Making Adaptation
+### PRIV-A1 — Historical Completed Private Plan-Making Adaptation
 
-While public plan-amendment PR #296 is open, every `PRIV-A1` checkbox below is frozen: do not push,
-review, mark ready, or merge private PR #65. Resume this section only from #296's landed merge SHA.
+Private PR #65 merged `PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. Its terminal
+handoff is the authoritative completion record and releases public `PUB-A2`. The unmarked legacy
+checklist below is retained as historical execution evidence only; do not resume it or recreate #65.
 
-- [ ] `[PRIV-A1:P1.01][AI]` Execute `AR-RESUME` in the declared private worktree for existing private PR #65 only after #296's landed merge SHA is read back. Acceptance: the public PR #289 pin remains lineage evidence; the private landed main equals `local-base`; local and remote branch heads equal #65's read-back head; the worktree is clean or exactly matches its recorded admitted preexisting dirty diff; and #65 remains the existing draft against `main`.
-- [ ] `[PRIV-A1:P1.02][AI]` Classify the private destination as satisfied, reasoned deviation, `N/A`, or portable defect before editing. Acceptance: the private PR artifact contains one class and supporting private-safe evidence.
-- [ ] `[PRIV-A1:P1.03][AI]` Run only `AR-PROPAGATE` for the admitted private semantic counterpart. Acceptance: the manifest and sibling record contain only its admitted private ledger.
-- [ ] `[PRIV-A1:P1.04][AI]` Reconcile only the `AR-RESUME`-recorded admitted preexisting dirty diff, then edit only manifest-admitted private source paths. Acceptance: private evidence remains in #65; its initial path ledger/patch hash and later `git status --short` have no unlisted path.
-- [ ] `[PRIV-A1:P1.05][AI]` Run only `AR-BIND`. Acceptance: second-generation stability is recorded without hand-editing generated mirrors.
-- [ ] `[PRIV-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: local gate results are recorded with the private ledger.
-- [ ] `[PRIV-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached paths equal the private ledger.
-- [ ] `[PRIV-A1:P3.00][AI]` Run `AR-PUSH` only after a new private commit. Acceptance: the declared remote branch SHA equals that committed local `HEAD` and updates existing #65 without creating another PR.
-- [ ] `[PRIV-A1:P3.01][AI]` Read back existing #65 through `AR-RESUME`; do not run `AR-DRAFT`. Acceptance: its private-safe AI-marked draft and safe statistics are read back at its exact current head.
-- [ ] `[PRIV-A1:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=priv-a1` and `RECORD=local-tmp/optimize-pr-process/priv-a1-record.md`. Acceptance: the existing paused #65 begins its first review Cycle 1 only after successful resume; no replacement PR is created.
-- [ ] `[PRIV-A1:P4.02][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the review URL/cycle and changed probe are read back.
-- [ ] `[PRIV-A1:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: same-thread evidence has no private leakage.
-- [ ] `[PRIV-A1:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: current-head CI is green in the stored result.
-- [ ] `[PRIV-A1:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: readiness is read back on the same clean-entry lineage.
-- [ ] `[PRIV-A1:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-a1`. Acceptance: the reviewed hash is stored before merge.
-- [ ] `[PRIV-A1:P5.02][AI]` Run only `AR-MERGE` with the ready private PR record. Acceptance: merge JSON is stored under the existing merge gate.
-- [ ] `[PRIV-A1:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: landed and reviewed hashes match.
-- [ ] `[PRIV-A1:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: clean resync and one terminal obligation state are recorded.
-- [ ] `[PRIV-A1:P1.06][AI]` On a portable or plan defect, perform only the `ENTRY-ADAPTERS:A1.06` classification/handoff. Acceptance: no second obligation or private mutation starts.
-- [ ] `[PRIV-A1:P1.G][AI]` Pass semantic-correspondence, clean-entry, current-head, and terminal-obligation gate.
-- [ ] `[PRIV-A1:P1.P][AI]` Record private merge pin and prepared PUB-A2 obligation.
+- [x] `[PRIV-A1:P1.01][AI]` Execute `AR-RESUME` in the declared private worktree for existing private PR #65 only after #296's landed merge SHA is read back. Acceptance: the public PR #289 pin remains lineage evidence; the private landed main equals `local-base`; local and remote branch heads equal #65's read-back head; the worktree is clean or exactly matches its recorded admitted preexisting dirty diff; and #65 remains the existing draft against `main`.
+- [x] `[PRIV-A1:P1.02][AI]` Classify the private destination as satisfied, reasoned deviation, `N/A`, or portable defect before editing. Acceptance: the private PR artifact contains one class and supporting private-safe evidence.
+- [x] `[PRIV-A1:P1.03][AI]` Run only `AR-PROPAGATE` for the admitted private semantic counterpart. Acceptance: the manifest and sibling record contain only its admitted private ledger.
+- [x] `[PRIV-A1:P1.04][AI]` Reconcile only the `AR-RESUME`-recorded admitted preexisting dirty diff, then edit only manifest-admitted private source paths. Acceptance: private evidence remains in #65; its initial path ledger/patch hash and later `git status --short` have no unlisted path.
+- [x] `[PRIV-A1:P1.05][AI]` Run only `AR-BIND`. Acceptance: second-generation stability is recorded without hand-editing generated mirrors.
+- [x] `[PRIV-A1:P2.01][AI]` Run only `AR-LOCAL`. Acceptance: local gate results are recorded with the private ledger.
+- [x] `[PRIV-A1:P2.02][AI]` Run only `AR-STAGE`. Acceptance: cached paths equal the private ledger.
+- [x] `[PRIV-A1:P3.00][AI]` Run `AR-PUSH` only after a new private commit. Acceptance: the declared remote branch SHA equals that committed local `HEAD` and updates existing #65 without creating another PR.
+- [x] `[PRIV-A1:P3.01][AI]` Read back existing #65 through `AR-RESUME`; do not run `AR-DRAFT`. Acceptance: its private-safe AI-marked draft and safe statistics are read back at its exact current head.
+- [x] `[PRIV-A1:P4.01][AI]` Run only `AR-ROUTE` with `UNIT=priv-a1` and `RECORD=local-tmp/optimize-pr-process/priv-a1-record.md`. Acceptance: the existing paused #65 begins its first review Cycle 1 only after successful resume; no replacement PR is created.
+- [x] `[PRIV-A1:P4.02][AI]` Run only `AR-REVIEW` with that same record. Acceptance: the review URL/cycle and changed probe are read back.
+- [x] `[PRIV-A1:P4.03][AI]` Run only `AR-REPLY` with that same record. Acceptance: same-thread evidence has no private leakage.
+- [x] `[PRIV-A1:P4.04][AI]` Run only `AR-CI` with that same record. Acceptance: current-head CI is green in the stored result.
+- [x] `[PRIV-A1:P4.05][AI]` Run only `AR-READY` with that same record. Acceptance: readiness is read back on the same clean-entry lineage.
+- [x] `[PRIV-A1:P5.01][AI]` Run only `AR-FINGERPRINT` with `UNIT=priv-a1`. Acceptance: the reviewed hash is stored before merge.
+- [x] `[PRIV-A1:P5.02][AI]` Run only `AR-MERGE` with the ready private PR record. Acceptance: merge JSON is stored under the existing merge gate.
+- [x] `[PRIV-A1:P5.03][AI]` Run only `AR-LANDED` with the merge SHA. Acceptance: landed and reviewed hashes match.
+- [x] `[PRIV-A1:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: clean resync and one terminal obligation state are recorded.
+- [x] `[PRIV-A1:P1.06][AI]` On a portable or plan defect, perform only the `ENTRY-ADAPTERS:A1.06` classification/handoff. Acceptance: no second obligation or private mutation starts.
+- [x] `[PRIV-A1:P1.G][AI]` Pass semantic-correspondence, clean-entry, current-head, and terminal-obligation gate.
+- [x] `[PRIV-A1:P1.P][AI]` Record private merge pin and prepared PUB-A2 obligation.
 
 ### PUB-A2 — Public Review-Routing Rules
 
@@ -1440,6 +1438,19 @@ review, mark ready, or merge private PR #65. Resume this section only from #296'
 - [ ] `[PUB-A2:P5.04][AI]` Run only `AR-RESYNC` with the same record. Acceptance: resync prepares exactly one PRIV-A2 obligation.
 - [ ] `[PUB-A2:P1.G][AI]` Pass routing, binding, five-cycle, scope-freeze, and landed-proof gate.
 - [ ] `[PUB-A2:P1.P][AI]` Record public merge pin and prepared PRIV-A2 obligation.
+
+### PRIV-A2-ADMIT — Private Review-Routing Admission
+
+- [ ] `[PRIV-A2-ADMIT:P1.01][AI]` Start only from the merged public A2 terminal handoff. Create one
+      plan-only private admission PR from current private main with the exact private candidate paths,
+      semantic counterpart class, cap forecast, and public predecessor URL/head. Acceptance: no routing
+      source is edited in this PR.
+- [ ] `[PRIV-A2-ADMIT:P4.01][AI]` Use the ordinary readable PR route, current-head CI, and five-cycle
+      limit; record the four-way disposition and any public-safe sibling correction request. Acceptance:
+      the merged admission record is auditable in its native PR.
+- [ ] `[PRIV-A2-ADMIT:P5.01][AI]` Merge only after current-head evidence is green; post one terminal
+      handoff naming the private admission merge SHA and `PRIV-A2` as sole successor. Acceptance: the
+      source PR cannot start from the public A2 pin directly.
 
 ### PRIV-A2 — Private Review-Routing Adaptation
 
@@ -1988,11 +1999,10 @@ is resynced, and the sibling obligation has one owner, state, and immutable pin.
 
 ## Cross-Repository Order — Historical Receipt and Live Sequence
 
-The completed activation-to-idea order is historical evidence only. The private-admission receipt
-is complete in private PR #64 at `db40c969f8c6a554837efab1cf266c8d505c02a6`. While public
-plan-amendment PR #296 is open, `PRIV-A1` is frozen and receives no push, review, readiness, or
-merge action. From #296's landed merge SHA, the sole live sequence is `PRIV-A1` → `PUB-A2`.
-Later waves remain frozen. Public pins and native sibling
+The completed activation-to-idea order is historical evidence only. Private PR #65 completed
+`PRIV-A1` at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. The sole live sequence is
+public `PUB-A2` → private `PRIV-A2-ADMIT` → private `PRIV-A2`. Later waves remain frozen.
+Public pins and native sibling
 obligations keep the repositories semantically “in sync”; private-only deviations stay private.
 
 CORE-ENTRY, CORE-REVIEW, all four WAVES-ENTRY checklist slices, WAVES-A, WAVES-RULES, and
