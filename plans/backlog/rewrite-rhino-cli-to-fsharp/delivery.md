@@ -482,12 +482,23 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       fsproj, or `learnings.md` states why this CLI is exempt and links the tier rule.
 - [ ] [AI] Author the remaining required-where-applicable targets the Rust project defines so no
       downstream caller breaks at Phase 9c — acceptance: the target-name set of `rhino-cli-fsharp`
-      is a superset of `rhino-cli`'s minus the two Rust-specific ones, verified by diffing the two
-      `jq -r '.targets | keys[]'` outputs.
+      is a superset of `rhino-cli`'s **20 target names minus exactly one**, `compat:min-version`,
+      giving **19**, verified by diffing the two `jq -r '.targets | keys[]'` outputs.
+      **`compat:min-version` is the only Rust-specific target name**, because it asserts a Rust MSRV
+      via `cargo hack --rust-version` and has no name-preserving .NET analogue; Phase 9c removes it
+      and establishes a scoped `global.json` instead, per
+      [DD-8](./tech-docs.md#dd-8--the-depsaudit-narrowing-and-the-sdk-floor). Every other target
+      keeps its name and swaps only its command — `install` becomes `dotnet restore`, `typecheck`
+      becomes `dotnet build --no-restore`, `deps:audit` swaps per DD-8, and so on. Do not infer a
+      second excluded target; there is none.
 - [ ] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
-      zero tests, and no target is a silent `echo` stub — acceptance:
+      zero tests, and no target that should do work is a silent `echo` stub — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets[].options.command'` contains no
-      bare `echo`.
+      bare `echo` **other than `test:e2e`**, which is a no-op in the Rust project today
+      [Repo-grounded — `apps/rhino-cli/project.json`, `echo 'no-op: target not applicable for this
+      project'`] and stays a no-op in F#: a CLI has no browser surface, and the mandatory-six-targets
+      rule requires the target to exist even when it is inapplicable. Carrying it over unchanged is
+      parity, not a stub smuggled in.
 - [ ] [AI] Re-measure the wave map against the specs tree and reconcile it against the table at the
       top of this file — acceptance: the per-directory scenario counts still sum to 525 across 71
       feature files, or the table is corrected in the same commit with the delta stated.
@@ -14336,9 +14347,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/` **in both repos**, and `test -f` confirms it in each — verified
       by `dotnet --version` run from inside `apps/rhino-cli/src-fsharp/` reporting the pinned
       version, not merely by the file existing.
-- [ ] [AI] Verify the other 18 targets kept their names so no downstream caller changes —
+- [ ] [AI] Verify the other **19** targets kept their names so no downstream caller changes —
       acceptance: `npx nx show project rhino-cli --json | jq -r '.targets | keys[]' | sort` differs
-      from the Phase 0 capture by exactly the removal of `compat:min-version`.
+      from **the pre-rewire target list read out of git in this same sub-phase** by exactly the
+      removal of `compat:min-version`. Get the "before" side with
+      `git show origin/main:apps/rhino-cli/project.json | jq -r '.targets | keys[]' | sort` — this
+      sub-phase rewires `project.json` in place, so the live file cannot supply its own baseline
+      once edited, and **no earlier phase persists that list to a file**. The baseline is 20 target
+      names [Repo-grounded — `apps/rhino-cli/project.json`], so removing exactly one leaves 19. If
+      the diff shows any second removal, a target was dropped that no step authorized; stop and
+      reconcile rather than accepting the new set.
 - [ ] [AI] Decide and record whether `apps/rhino-cli/src-fsharp/` is flattened into
       `apps/rhino-cli/src/` now that no Rust tree competes for the path — acceptance: either the move
       is done with the parity manifest regenerated, or `learnings.md` records why it was deferred.

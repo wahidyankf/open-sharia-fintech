@@ -151,9 +151,16 @@ plan exists to test. Splitting into five projects ([DD-3](#dd-3--project-per-lay
 bounds it, since a touch inside one project rebuilds that project and its dependents rather than
 everything.
 
-**Be honest about this one**: a 3.9–11.1 s inner loop becoming a 10–25 s inner loop is a change a
-contributor will notice on every edit, unlike the 0.41 s startup delta they never will. It is the
+**Be honest about this one**: a 3.9–11.1 s inner loop becoming a **20–33 s** inner loop is a change
+a contributor will notice on every edit, unlike the 0.41 s startup delta they never will. It is the
 strongest practical argument against this plan and it is not mitigated anywhere — it is accepted.
+
+The 20–33 s is the **whole-project** figure derived above (`49,460 / 1,500` and `29,676 / 1,500`).
+The DD-3 five-project split lowers it, because touching one project rebuilds that project and its
+dependents rather than everything — but **by how much is not yet measurable**, since it depends on
+the dependency shape of code that does not exist. No smaller number is quoted here on purpose: an
+unsourced figure in the plan's most load-bearing paragraph would be worse than an honest upper
+bound. Phase 10's A4 measures the real edit-rebuild loop and replaces this range with it.
 
 #### The one where F# may win the number that matters most
 
@@ -374,7 +381,7 @@ Two repo rules set the shape of this plan's delivery checklist.
 one scenario, with that scenario inlined verbatim
 [Repo-grounded — `repo-governance/conventions/structure/plans/execution-grade-clarity.md`
 §One scenario per behavior cycle, which states plainly that "long checklists are expected"]. The
-rhino spec tree holds **525 scenarios**, so `delivery.md` carries 525 cycles and 1,859 checkboxes.
+rhino spec tree holds **525 scenarios**, so `delivery.md` carries 525 cycles and 1,863 checkboxes.
 That is the rule working as designed, not an authoring accident.
 
 **Rule 2 — PR size.** At most 400 handwritten program/script lines per PR, 900 when program and
@@ -473,7 +480,7 @@ apps/rhino-cli/
 ├── tests/                                                    [D] Phase 9c, 25 cucumber suites retired
 ├── deny.toml                                                 [D] Phase 9c, cargo-deny no longer applicable
 ├── rust-toolchain.toml                                       [D] Phase 9c
-├── project.json                                              [E] Phase 9c: tags lang:rust -> lang:fsharp, 20 targets rewired, compat:min-version removed
+├── project.json                                              [E] Phase 9c: tags lang:rust -> lang:fsharp, 20 targets -> 19, only compat:min-version removed
 ├── parity-manifest.sha256                                    [G] Phase 2 (src-fsharp/ enters the boundary) and Phase 9c (Rust leaves it)
 ├── scripts/
 │   ├── rhino-bin.sh                                          [E] Phase 2: FSHARP_NAMESPACES table, shipped empty; [E] once per wave; [E] Phase 9c: collapsed to one resolution path
@@ -567,8 +574,9 @@ CI after re-homing proves nothing on its own — the assertion may simply have s
   `dotnet-global-json: apps/ose-be/global.json`, which is a **sibling** of `apps/rhino-cli/` and so
   cannot scope to it (.NET resolves `global.json` upward only), and `ose-private` has no
   `global.json` at all. Phase 9c therefore establishes a `global.json` that actually covers
-  `apps/rhino-cli/src-fsharp/` in both repos. The other 18 targets keep their names so no
-  downstream caller changes.
+  `apps/rhino-cli/src-fsharp/` in both repos. `compat:min-version` is the **only** target removed,
+  so of the 20 the other **19** keep their names and no downstream caller changes — `deps:audit`
+  among them, since it is retained under its own name with a swapped command.
 - **The new F# tree gets its own Nx project.** Without one, `nx affected` never sees it and the
   `dotnet` CI job never runs its tests — the suite would be green because it never ran. Phase 2
   creates `apps/rhino-cli/src-fsharp/project.json` as `rhino-cli-fsharp` with `tag:lang:fsharp`.
