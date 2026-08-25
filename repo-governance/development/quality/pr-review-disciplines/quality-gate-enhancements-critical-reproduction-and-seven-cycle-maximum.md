@@ -1,6 +1,6 @@
 ---
 title: "Quality Gates: CRITICAL-Reproduction and Cycle Cap"
-description: "Requiring reproduction for CRITICAL, and the seven-cycle cap."
+description: "Requiring reproduction for CRITICAL, and the bounded five-cycle cap."
 category: explanation
 subcategory: development
 tags:
@@ -13,7 +13,7 @@ created: 2026-07-23
 when_to_use: "Use when a CRITICAL finding lacks reproduction steps."
 ---
 
-# Quality-Gate Enhancements: CRITICAL-Requires-Reproduction and Seven-Cycle Maximum With Early Clean Exit
+# Quality-Gate Enhancements: CRITICAL-Requires-Reproduction and Bounded Cycle Cap
 
 ## CRITICAL-Requires-Reproduction
 
@@ -26,15 +26,13 @@ finding — it is held at a lower severity, or held for further verification und
 [Selective Adversarial Verification](./quality-gate-enhancements-selective-adversarial-verification.md) rule above when the
 diff is also high-risk, until a reproduction is attached.
 
-## Seven-Cycle Maximum With Early Clean Exit
+## Five-Cycle Maximum
 
 For an eligible PR, the [PR Review Quality Gate
 workflow](../../workflows/pr/pr-review-quality-gate.md) runs sequential CI-gated cycles only until
-two consecutive clean cycles under previously-unused probe classes, with seven cycles as the default
-maximum. This is a convergence policy, not a target count: one clean cycle is evidence about one
-question, and cycles beyond the second add cost without improving the merge decision.
+the target is resolution in cycles 1–3. Cycles 4–5 may use a changed focused probe only when the
+remaining defect family is named. This is a convergence policy, not a target count.
 
-If code-related MEDIUM/HIGH/CRITICAL findings remain at cycle six or seven, the execution captures
-sanitized learning and a deduplicated improvement idea. At the ceiling, the PR is blocked rather
-than merged or extended automatically. LOW findings retain full evidence but are non-blocking and
-do not prevent the early clean exit.
+If a blocking finding remains after cycle 5, stop before cycle 6, capture sanitized learning, and
+ask for human direction. The ceiling is never extended automatically. LOW findings retain evidence
+but are non-blocking.

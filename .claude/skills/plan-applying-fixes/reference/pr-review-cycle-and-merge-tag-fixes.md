@@ -2,15 +2,14 @@
 
 ## How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
 
-Insert the cycle steps (strictly sequential scout→fan-out→synthesis→fixer, **ceiling N = 7** — never
-extended, each cycle CI-green-gated) immediately before the PR-merge step, sourced
+Insert the cycle steps (strictly sequential scout→fan-out→synthesis→fixer; target 1–3, focused
+recovery only in 4–5, stop before 6; each cycle CI-green-gated) immediately before the PR-merge step, sourced
 verbatim in structure from the
 [PR Review Quality Gate workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md):
 one `- [ ] [AI] Invoke pr-review-scout-maker on $PR` / `- [ ] [AI] Invoke pr-review-synthesis-maker on $PR` /
 `- [ ] [AI] Invoke pr-review-fixer on $PR` triple per cycle, the loop-exit condition (**clean
-exit** — stop at two consecutive clean cycles under previously-unused probe classes, neither
-leaving a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL finding; N is a ceiling, not a floor, so scaffolding all seven pairs is wrong and running fewer is
-correct when the loop exits clean),
+exit** — stop when the current head is green with no blocking thread; a blocking finding after
+cycle 5 requires human direction, so scaffolding every cycle is wrong),
 and — where the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to
 `plans/done/` + README updates) committed inside the same PR, before the final merge step — whatever
 tag it already carries. Never retag it while scaffolding.

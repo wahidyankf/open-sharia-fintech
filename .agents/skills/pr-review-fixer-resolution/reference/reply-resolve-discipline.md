@@ -61,7 +61,6 @@ The orchestrating
 feeds each fresh cycle the accumulated `prior` findings and their resolution state; use it to
 detect repetition. A reasoned rejection does not erase a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md)
 MEDIUM/HIGH/CRITICAL finding: the next eligible cycle independently verifies the evidence. If it
-remains, it stays merge-blocking and the PR reaches `blocked` at the seven-cycle ceiling rather
-than being handed to a human gate or silently suppressed. Capture sanitized learning at cycles
-six and seven; see
+remains, it stays merge-blocking through the five-cycle cap. Capture sanitized learning after
+cycle five and request human direction before cycle six; see
 [Loop-Exit and Block Rules](../../../../repo-governance/workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md#loop-exit-and-block-rules).
