@@ -8,4 +8,4 @@ title: "Reference"
 - [02 Shared Context And Prior Cycle Read](./shared-context-and-prior-cycle-read.md) — assembling the shared-context brief once per cycle, including the pinned head SHA (D13)
 - [03 Untrusted Input And Output Contract](./untrusted-input-and-output-contract.md) — untrusted-input handling, trivial-tier handoff, and the output contract
 - [04 Correction Record Freeze](./correction-record-freeze.md) — omitting the loop's own `plans/**` prose from cycle 2 onward, and the two carve-outs that survive it
-- [05 Plans Only Route](./plans-only-route.md) — selecting the fixed plans-only lenses, secrets probe, and suppression boundary
+- [05 Plans Only Route](./plans-only-route.md) — selecting the fixed five-specialist plans-only route, secrets probe, and suppression boundary

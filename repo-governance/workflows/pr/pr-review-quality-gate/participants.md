@@ -20,8 +20,8 @@ transform-only charter (see
 [`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md) and
 [`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#trivial-tier-handoff-dd-7)).
 
-**Plans-only branch**: the scout still records the ordinary tier but selects security,
-documentation, and governance plus the coordinator. See the
+**Plans-only branch**: the scout still records the ordinary tier but selects the linked fixed
+five-specialist set plus the coordinator. See the
 [Plans-Only Review Route](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-plans-only-route.md)
 for its fresh-per-cycle test, primary secrets probe, plan-artifact review, and implementation
 suppression.
@@ -32,7 +32,7 @@ suppression.
   fan-out does not re-litigate a settled thread. Defined at `.claude/agents/pr-review/pr-review-scout-maker.md`.
 - **Nine discipline specialists** — execution/sonnet-tier agents, one per discipline, run
   **concurrently** within a cycle's route-selected fan-out. The plans-only route selects its fixed
-  three-specialist set. **Even under the standard `full` route, the fan-out is not unconditionally
+  five-specialist set. **Even under the standard `full` route, the fan-out is not unconditionally
   all nine**: the scout's Content-Type Applicability Filter (DD-10) skips
   `pr-review-types-maker` and `pr-review-integrity-maker` from a given cycle when their own declared
   artifact class (typed-language files; test/CI-workflow files, respectively) is verifiably absent

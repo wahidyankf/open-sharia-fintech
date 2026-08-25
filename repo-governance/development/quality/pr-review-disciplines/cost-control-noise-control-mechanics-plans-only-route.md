@@ -21,10 +21,12 @@ Recompute this route from the current diff every cycle. It applies only when the
 hand-authored diff consists of `plans/**` documents and their required plan indexes. Generated
 mirrors do not affect the test.
 
-Record the ordinary trivial/lite/full risk tier, but select these three specialists plus
+Record the ordinary trivial/lite/full risk tier, but select these five specialists plus
 `pr-review-synthesis-maker` as coordinator regardless of that tier:
 
 - `pr-review-security-maker`
+- `pr-review-architecture-maker`
+- `pr-review-logic-maker`
 - `pr-review-docs-maker`
 - `pr-review-governance-maker`
 
@@ -34,13 +36,16 @@ review-route record.
 ## Review Focus
 
 Security runs the **primary mandatory probe**: whether the diff exposes real secrets, credentials,
-or sensitive operational values. Documentation reviews the plan as the shipping artifact for
-substantive quality and completeness. Governance reviews its mechanical conformance to repository
-rules.
+or other values that grant access under the canonical
+[system-secret boundary](../../../conventions/security/secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md).
+Architecture reviews architecture and design decisions made by the plan. Logic reviews domain
+intent and Gherkin acceptance-criteria completeness. Documentation reviews the plan as the shipping
+artifact for substantive quality and completeness. Governance reviews mechanical conformance.
 
 Suppress findings that merely complain that eventual implementation artifacts are absent from the
 plans-only PR. Later implementation correctness belongs to the PR that ships that implementation;
-the plan's own contradictions, omissions, and rule violations remain in scope.
+the plan's own architecture, domain criteria, contradictions, omissions, and rule violations remain
+in scope.
 
 For every non-plans-only PR, security-sensitive paths still force `full` regardless of size. The
 standard full-tier Content-Type Applicability Filter also remains unchanged.

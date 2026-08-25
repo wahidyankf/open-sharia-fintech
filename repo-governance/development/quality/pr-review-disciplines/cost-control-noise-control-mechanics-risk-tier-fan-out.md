@@ -38,9 +38,8 @@ accordingly:
   Content-Type Applicability Filter (DD-10).
 
 The [Plans-Only Review Route](./cost-control-noise-control-mechanics-plans-only-route.md) overrides
-specialist selection, not tier classification: every cycle records its ordinary tier but selects
-security, documentation, and governance plus the coordinator. Its primary mandatory probe is
-exposed secrets or sensitive values; the linked rule defines its exact scope and suppressions.
+specialist selection, not tier classification: every cycle records its ordinary tier. The linked
+rule defines the fixed specialist set, exact primary secret probe, and suppressions.
 
 **Why 50 lines, not 100.** Risk asymmetry decides it: too low overspends; too high sends degrading
 diffs to fewer specialists. Weak supporting evidence only —

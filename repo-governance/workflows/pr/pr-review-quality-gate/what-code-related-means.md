@@ -16,10 +16,12 @@ this is the half most easily misread — governance prose, agent definitions, an
 PR whose whole purpose is to change the rules, the rules **are** the artifact. A CRITICAL in a
 convention blocks exactly as a CRITICAL in a function does.
 
-On a plans-only PR, the plan is the shipping artifact. Review it for exposed secrets, credentials,
-or sensitive operational values as the primary mandatory probe, and for substantive document
-quality and governance conformance. Do not treat an eventual implementation artifact's absence as
-a defect in this PR; review that artifact when its implementation PR ships it.
+On a plans-only PR, the plan is the shipping artifact. Its
+[primary mandatory probe](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-plans-only-route.md)
+covers exposed real secrets, credentials, or other values that grant access. Also review the plan's
+architecture, domain criteria, substantive document quality, and governance conformance. Do not
+treat an eventual implementation artifact's absence as a defect; review it when its implementation
+PR ships.
 
 **Two things are not code-related**, and neither blocks:
 
