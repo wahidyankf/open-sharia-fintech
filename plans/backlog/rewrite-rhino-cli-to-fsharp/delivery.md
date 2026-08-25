@@ -158,7 +158,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [ ] [AI] Create `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` with a two-column
       before/after table and every row present, each cell in **both** columns pre-filled with the
       literal `TBD` — the placeholder the Phase 0 and Phase 10 gates grep for, which nothing else in
-      this plan ever writes — acceptance: the file has exactly the eight rows named in the six steps
+      this plan ever writes — acceptance: the file has exactly the eight rows named in the eight steps (B1-B8)
       below plus §Source size, and `grep -c 'TBD' benchmark.md` returns **18** (nine rows × two
       columns) at creation time. Without this seeding step the gates' `grep -c 'TBD' … returns 0`
       clause passes on an untouched file and measures nothing.
@@ -1252,8 +1252,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And each .env file is copied to the backup directory preserving its relative path
       And the output lists each backed-up file
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1278,8 +1276,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --dir pointing to a directory outside the repository
       Then the command exits successfully
       And the .env file is copied to the specified directory preserving its relative path
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1304,8 +1300,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --dir pointing to a path inside the git root
       Then the command exits with a failure code
       And the output warns that the backup directory must be outside the repository
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1332,8 +1326,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the symlinked .env file is skipped with a warning
       And the oversized .env file is skipped with a warning
       And the regular .env file is copied to the backup directory
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1358,8 +1350,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup
       Then the command exits successfully
       And the output reports that zero files were backed up
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1385,8 +1375,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the output is valid JSON
       And the JSON includes the direction, backup directory, list of files, copied count, and skipped count
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1411,8 +1399,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup
       Then the command exits successfully
       And none of the .env files inside auto-generated directories are backed up
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1438,8 +1424,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And only apps/web/.env.local is copied to the backup directory
       And the .env file inside apps/web/node_modules is not backed up
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1464,8 +1448,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup
       Then the command exits successfully
       And the .env file is copied to the backup directory with a flat structure
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1490,8 +1472,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --worktree-aware
       Then the command exits successfully
       And the .env file is copied under a feature-branch subdirectory inside the backup directory
-
-    @env-backup
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1516,8 +1496,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --worktree-aware
       Then the command exits successfully
       And the .env file is copied under an open-sharia-enterprise subdirectory inside the backup directory
-
-    @env-backup-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1543,8 +1521,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup and confirms the overwrite
       Then the command exits successfully
       And the .env file is overwritten in the backup directory
-
-    @env-backup-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1571,8 +1547,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the output reports that backup was cancelled
       And the existing backup file is unchanged
-
-    @env-backup-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1598,8 +1572,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --force
       Then the command exits successfully
       And the .env file is overwritten in the backup directory without prompting
-
-    @env-backup-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1626,8 +1598,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And no confirmation prompt is shown
       And the .env file is copied to the backup directory
-
-    @env-backup-config
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1653,8 +1623,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is copied to the backup directory
       And the .claude/settings.local.json is copied to the backup directory preserving its relative path
-
-    @env-backup-config
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1680,8 +1648,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is copied to the backup directory
       And the .claude/settings.local.json is not copied to the backup directory
-
-    @env-backup-config
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1706,8 +1672,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup with --include-config and --force
       Then the command exits successfully
       And only the .env file is copied to the backup directory
-
-    @env-backup-secrets
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1736,8 +1700,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And secrets.json is copied to the backup directory
       And cert.pem is copied to the backup directory
       And .secrets/notes.md is copied to the backup directory preserving its relative path
-
-    @env-backup-secrets
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1762,8 +1724,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env backup
       Then the command exits successfully
       And no files from the .git directory are backed up
-
-    @env-backup-dry-run
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1820,8 +1780,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And .env.local files are created from each .env.example
       And no bare .env file is created
       And the output lists each created file
-
-    @env-init
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1847,8 +1805,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And existing .env.local files are not overwritten
       And the output shows skipped files
-
-    @env-init
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1874,8 +1830,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And all .env.local files are created or overwritten
       And the output lists each created file
-
-    @env-init
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1929,8 +1883,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And each .env file is copied back to its original path in the repository
       And the output lists each restored file
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1955,8 +1907,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore with --dir /tmp/my-env-backup
       Then the command exits successfully
       And the .env file is copied back to its original path in the repository
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -1981,8 +1931,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore with --dir /nonexistent
       Then the command exits with a failure code
       And the output reports that the directory does not exist
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2008,8 +1956,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the output is valid JSON
       And the JSON includes the direction, backup directory, list of files, copied count, and skipped count
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2035,8 +1981,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is copied back to its original path in the repository
       And README.md is not restored
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2061,8 +2005,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore
       Then the command exits successfully
       And the output reports that zero files were restored
-
-    @env-restore
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2088,8 +2030,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is read from the feature-branch namespace inside the backup directory
       And the .env file is copied back to its original path in the worktree
-
-    @env-restore-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2115,8 +2055,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore and confirms the overwrite
       Then the command exits successfully
       And the .env file in the repository is overwritten with the backup
-
-    @env-restore-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2143,8 +2081,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the output reports that restore was cancelled
       And the existing repository file is unchanged
-
-    @env-restore-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2170,8 +2106,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore with --force
       Then the command exits successfully
       And the .env file in the repository is overwritten without prompting
-
-    @env-restore-confirm
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2198,8 +2132,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And no confirmation prompt is shown
       And the .env file is restored to the repository
-
-    @env-restore-config
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2225,8 +2157,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is restored to the repository
       And the .claude/settings.local.json is restored to the repository preserving its relative path
-
-    @env-restore-config
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2252,8 +2182,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
       And the .env file is restored to the repository
       And the .claude/settings.local.json is not restored to the repository
-
-    @env-restore-secrets
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2282,8 +2210,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And secrets.json is copied back to the repository
       And cert.pem is copied back to the repository
       And .secrets/notes.md is copied back to the repository preserving its relative path
-
-    @env-restore-secrets
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -2308,8 +2234,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the developer runs rhino-cli env restore
       Then the command exits successfully
       And secrets.json is copied back to the repository
-
-    @env-restore-dry-run
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7084,8 +7008,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         When git ls-files is run against those three paths after the purge
         Then each returns zero tracked files
         And harness bindings validate exits successfully, where before the purge it required .amazonq/ byte-parity
-
-    @binding-surface-set
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7133,8 +7055,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         Given the compiled set of known binding directories
         When the expected binding files are computed
         Then no expected file lives under a dropped harness surface
-
-    @harness-name-registry-derived
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7182,8 +7102,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         When the developer runs harness bindings generate for cursor
         Then the command exits with a failure code
         And the error names the registry-derived accepted set
-
-    @agents-validate-bindings
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7257,8 +7175,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         When the developer runs harness bindings validate
         Then the command exits successfully
         And no catalog row is required for the absent binding directories
-
-    @codex-agents-extension
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7434,8 +7350,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the codex entry is updated to declare .agents/skills as a mirror of .claude/skills
       Then rhino-cli repo-config validate exits 0 with both kinds of mirror relationship declared: agent directories and skill directories
       And rhino-cli harness bindings generate emits the .agents/skills mirror without a new command-line flag
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7460,8 +7374,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness bindings generate runs
       Then .agents/skills/ contains one real directory per .claude/skills/ skill
       And find .agents/skills -type l returns zero results, proving no symlink was created in either direction
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7486,8 +7398,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the command runs a second time
       Then git diff --quiet .agents/ exits 0, proving no churn
       And after a single character is changed in one mirrored file, rhino-cli harness bindings validate exits non-zero naming that file, where it exited 0 before the edit
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7512,8 +7422,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When both scripts run after the mirror is wired
       Then generate:bindings emits .agents/skills/ and validate:sync reports it as in-parity
       And neither script names a skills-specific or mirror-specific flag, because both delegate to the registry-driven commands
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7663,8 +7571,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         When the developer runs agents sync
         Then the command exits successfully
         And the corresponding .opencode/ agent uses the "zai-coding-plan/glm-5.2" model identifier
-
-    @agents-validate-sync
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8422,8 +8328,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness catalog generate runs
       Then docs/reference/platform-bindings.md contains one table row per registry entry between the generated-region markers
       And prose outside those markers is byte-identical to its pre-run content
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8476,8 +8380,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When a tracked file with no declared class is introduced under a binding directory
       Then rhino-cli harness ownership validate exits non-zero naming that exact file as unclassified
       And it exits 0 once the file is removed, proving the check is falsifiable in both directions rather than always-green
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8502,8 +8404,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When one emitted file is hand-edited
       Then rhino-cli harness ownership validate exits non-zero naming the drifted generated file
       And it exits 0 after regeneration restores the canonical bytes
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8528,8 +8428,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the vendored file is hand-edited
       Then rhino-cli harness ownership validate still exits 0, because a vendored path has no in-repo source to compare against
       And the vendored file is still present, so nothing deleted it in passing
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8554,8 +8452,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness bindings generate runs
       Then every declared source path is byte-identical to what it was before the run
       And a registry declaring an emitter output directory as source makes the generator refuse rather than silently succeed
-
-    @integration
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8607,8 +8503,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given every generated mirror matches what the generator produces from canonical source
       When rhino-cli harness sync triage runs
       Then it exits 0 reporting zero divergences
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8633,8 +8527,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync triage runs
       Then it exits 0 reporting zero divergences, because detection compares content and never a clock
       And no clock-reading call appears anywhere on the detection path
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8659,8 +8551,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync triage runs
       Then it exits non-zero naming that mirror as the hand-edited side and naming the promote command
       And it exits 0 again once the mirror is restored, so the detection is falsifiable in both directions
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8685,8 +8575,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync triage runs
       Then it exits non-zero naming the canonical side and naming the generate command rather than the promote command
       And it exits 0 once the generator is run
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8712,8 +8600,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it exits non-zero naming both files
       And it offers neither promotion nor any automatic resolution, because no correct automatic answer exists
       And it exits 0 once both files are restored
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8738,8 +8624,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync promote runs against that mirror
       Then a proposed unified diff against the canonical source is emitted
       And the canonical source file is byte-identical to what it was before the promote run, proving nothing was overwritten
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8764,8 +8648,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync promote runs against that harness's mirror
       Then the output lists exactly those fields under an at-risk heading
       And an agent whose canonical source carries none of them lists nothing, proving the list is computed rather than hardcoded
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8790,8 +8672,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness sync promote runs against that mirror, without triage having run first
       Then the output carries a hard-stop warning naming both sides as hand-edited
       And nothing was written to canonical source
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8815,8 +8695,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given a generated skills mirror carries a hand edit
       When rhino-cli harness sync promote runs against that skills mirror
       Then the output lists nothing under the at-risk heading
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8841,8 +8719,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the vendored file is hand-edited and rhino-cli harness sync triage runs
       Then no divergence is reported for the vendored file, because the generator does not own it
       And hand-editing the generated file instead does report a divergence
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8867,8 +8743,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness bindings validate runs without triage
       Then it exits non-zero exactly as it did before triage existed
       And the failure message names both the canonical source file to edit and the harness sync promote command
-
-    @integration
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8920,8 +8794,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the citation sweep completes
       Then a search for that former organization path across tracked non-archival documents returns zero matches, where it returned at least one before the sweep
       And the current organization path appears in its place
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8975,8 +8847,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then neither tree exists as a directory in the working tree
       And neither prefix remains in the governance-word-budget gate exclude list
       And rhino-cli governance word-budget validate exits 0, proving the exclusions were removed because the trees are gone rather than because coverage was weakened
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9029,8 +8899,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the harness registry declares each of those directories as vendored
       Then rhino-cli repo-config validate exits 0
       And an undeclared directory appearing under .agents/skills/ with no .claude/skills/ counterpart makes rhino-cli harness bindings validate exit non-zero, where an ownership heuristic would have silently deleted it instead
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9055,8 +8923,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli harness bindings generate runs
       Then the stale mirrored directory is removed and the new one created
       And every vendored directory is still present, proving cleanup is scoped to emitter-owned paths
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9080,8 +8946,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given a harness declares .agents/skills/vendor-plugin as ownership class vendored but its vendored list names a different value for it
       When rhino-cli harness bindings generate runs against that mismatched registry
       Then the run fails loudly instead of deleting the directory the ownership record protects
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9132,8 +8996,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given a scenario with no @unit, @integration, or @e2e level tag
       When rhino-cli specs behavior-coverage validate runs
       Then it fails and names the untagged scenario
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9158,8 +9020,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And a scenario in that project tagged @integration
       When rhino-cli specs behavior-coverage validate runs
       Then it fails because the scenario requires a level not in the project envelope
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9184,8 +9044,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And a test marks it @covers at the unit level only
       When rhino-cli specs behavior-coverage validate runs
       Then it fails and names the missing e2e coverage
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9210,8 +9068,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And a test marks it @covers at the e2e level
       When rhino-cli specs behavior-coverage validate runs
       Then it fails because the e2e level is not declared for that scenario
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9235,8 +9091,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given a test with an @covers marker referencing a scenario title that no feature file contains
       When rhino-cli specs behavior-coverage validate runs
       Then it fails and names the orphan marker
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9288,8 +9142,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And a domain scenario not covered at its required level by any @covers marker
       When rhino-cli specs domain-coverage validate runs
       Then it fails and names the uncovered domain scenario
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9343,8 +9195,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it passes with exit code 0
       And it reports 2 declared-but-unbound scenarios all covered by the baseline
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9371,8 +9221,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails with a non-zero exit code
       And it names scenario "C" and its containing .feature file as a new unbound gap
       And it does not report scenario "A" as a new gap
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9398,8 +9246,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it passes with exit code 0
       And it reports scenario "B" as newly bound relative to the baseline
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9425,8 +9271,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it passes with exit code 0
       And it reports scenario "B" as a stale baseline entry that can be pruned
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9452,8 +9296,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it passes with exit code 0
       And it does not report the @unit-only scenario as an unbound gap
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9479,8 +9321,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it fails with a non-zero exit code
       And it reports exactly one new unbound scenario for the outline
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9506,8 +9346,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it fails with a non-zero exit code
       And it reports exactly one new unbound scenario for the zero-row outline
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9533,8 +9371,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the file also has other, non-skipped content so it still generates
       When rhino-cli specs e2e-coverage validate runs for that project
       Then every scenario nested under the skipped Rule is reported as unbound
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9558,8 +9394,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given a .feature file whose top-level "Feature:" is tagged "@fixme"
       When rhino-cli specs e2e-coverage validate runs for that project
       Then every scenario in the file is reported as unbound
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9585,8 +9419,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs for that project
       Then it fails with a non-zero exit code
       And it reports exactly one new unbound scenario for the apostrophe-bearing title
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9612,8 +9444,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the failure output contains the scenario title "Resize the sidebar by keyboard"
       And the failure output contains the feature file path ending in "resizable-panel.feature"
       And the failure output states the delta is an increase of 1 over baseline
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9639,8 +9469,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When rhino-cli specs e2e-coverage validate runs with the --update-baseline flag
       Then it writes a baseline manifest listing scenarios "A" and "B" as allowed unbound
       And a subsequent validate run for that project passes with exit code 0
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9693,8 +9521,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the pre-commit hook runs rhino-cli env staged-guard validate
       Then it exits non-zero and names the offending file
       And the commit is aborted
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9718,8 +9544,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given only .env.example is staged for commit
       When the pre-commit hook runs rhino-cli env staged-guard validate
       Then it exits zero and does not block the commit
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9811,8 +9635,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the source tier (Claude Code) is the single hand-authored origin every mirror derives from
       And the generated tier (OpenCode, Codex) is regenerated and byte-parity-validated
       And the harness set is data in repo-config.yml, identical across both parity repos, not a hard-coded directory list
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -9864,8 +9686,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When harness duplication validate runs
       Then it derives its target set from the registry, not a hard-coded .claude/.opencode pair
       And a config-only addition of a new agent-bearing tier is covered with no source edit
-
-    @unit
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11715,8 +11535,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits successfully
       And there are no findings in the output
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11741,8 +11559,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits with failure
       And the output mentions "missing frontmatter key"
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11767,8 +11583,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits with failure
       And the output mentions "malformed terms table header"
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11793,8 +11607,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits with failure
       And the output mentions "stale identifier"
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11819,8 +11631,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits with failure
       And the output mentions "missing feature reference"
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11845,8 +11655,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When the glossary validator runs for "organiclever"
       Then the command exits with failure
       And the output mentions "term collision"
-
-    @ddd-ul
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
