@@ -358,7 +358,9 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `Cargo.lock`, and `plans/` changes — then, per the amendment above, those exact paths are
       committed to this plan's first open PR in each repo alongside a regenerated
       `apps/rhino-cli/parity-manifest.sha256` — acceptance:
-      `rhino-cli parity manifest validate` exits 0 in both worktrees, asserted on the exit code.
+      `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
+      worktrees, asserted on the exit code. (Bare `rhino-cli` is not on `PATH`; this is the
+      resolvable form every husky hook and `package.json` script already calls.)
 
 > **Pause Safety**: the Rust crate is unchanged except for one unused dependency removal; both repos
 > are green. Safe to stop. To resume: `npx nx run rhino-cli:test:quick`.
@@ -14413,11 +14415,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
       accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
       `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
-      unknown-source hole) plus a license check in the `deps:audit` command, **or** `learnings.md`
-      carries a dated entry naming both dropped controls, stating who accepted the regression and
-      why, and `tech-docs.md` gains a DD recording it. Silence is not an option here: an unchanged
-      target name reading "audit" while auditing one-third of what it used to is the failure mode
-      this step exists to prevent.
+      unknown-source hole) plus a license check in the `deps:audit` command, **proved the same way
+      the preceding step proves the vulnerability check**: create a scratch project referencing a
+      disallowed package, run the exact `deps:audit` command against a known-disallowed license,
+      and record the observed exit code in `learnings.md`; if that code is 0, wrap the license
+      check so a known-disallowed finding exits non-zero, and re-prove the wrapper against the same
+      scratch project — **or** `learnings.md` carries a dated entry naming both dropped controls,
+      stating who accepted the regression and why, and `tech-docs.md` gains a DD recording it.
+      Silence is not an option here: an unchanged target name reading "audit" while auditing
+      one-third of what it used to is the failure mode this step exists to prevent.
 - [ ] [AI] Remove `compat:min-version` **and replace the SDK floor it was standing in for** — the
       target asserts a Rust MSRV floor and cannot survive the crate, but its stated justification
       does not hold: `repo-config.yml` pins `dotnet-global-json: apps/ose-be/global.json`

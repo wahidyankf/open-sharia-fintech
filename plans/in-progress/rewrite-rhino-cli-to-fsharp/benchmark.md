@@ -11,49 +11,73 @@ Its figures therefore live here, in a second table, rather than in a `benchmark.
 Gate arithmetic, counted as **occurrences** rather than lines, because a table row carries both of
 its cells on one physical line:
 
-| Point                             | `/usr/bin/grep -o "$PH" benchmark.md \| wc -l` |
-| --------------------------------- | ---------------------------------------------- |
-| At seeding (one table)            | 18                                             |
-| After the `ose-public` Before run | 9                                              |
-| End of Phase 0 (both tables)      | 18                                             |
-| End of Phase 10                   | 0                                              |
+| Point                             | `PH=$(printf 'TB%s' D); /usr/bin/grep -o "$PH" benchmark.md \| wc -l` |
+| --------------------------------- | --------------------------------------------------------------------- |
+| At seeding (one table)            | 18                                                                    |
+| After the `ose-public` Before run | 9                                                                     |
+| End of Phase 0 (both tables)      | 18                                                                    |
+| End of Phase 10                   | 0                                                                     |
 
 The count returns to 18 at the end of Phase 0 rather than falling to 9, because P0.17 adds the
 second table: nine filled `ose-private` **Before** cells and nine fresh **After** placeholders.
 
-`$PH` stands for the placeholder token itself — spelling it out in prose would inflate the very
-count these gates read, so it is named indirectly here and appears only inside table cells.
+The command above assigns `$PH` inline via `printf` so it is self-contained and runnable verbatim
+from this page. Copying only the `grep` half without the `PH=...;` prefix silently returns `0` —
+which happens to match this same table's "End of Phase 10" row, so a partial copy reads as "done"
+when it has measured nothing. Always run the full `PH=...; grep ...` command together. The
+placeholder token itself is still never spelled out in prose, because doing so would inflate the
+very count these gates read.
+
+**Baseline provenance.** Only **B1** in each table below was re-measured after the tree-sitter
+dependency removal — see the [Phase 0 note](#phase-0-note) for both post-removal figures
+(17.59 s / 73 crates in `ose-public`, 16.00 s / 73 crates in `ose-private`). Every other row —
+**B2 through B8**, in both the `ose-public` and `ose-private` tables — records a Before figure
+measured against the **pre-removal** dependency graph (79 crates, tree-sitter still linked) and
+has not been re-measured since; each such value is marked `†` below. Read every `†`-marked Before
+value as a pre-removal baseline until it is re-measured, and account for that when Phase 10 fills
+the After column and Verdict for those rows.
 
 ## Measurements — ose-public
 
-| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
-| ---- | --------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                  | 17.59 s       | TBD        | —       |
-| B2   | Gate-profile build          | 34.44 s       | TBD        | —       |
-| B3   | Warm no-op build            | 0.24 s        | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.43 s        | TBD        | —       |
-| B5   | Startup, mean of 50         | 11.2 ms       | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 5.24 s        | TBD        | —       |
-| B7   | CI critical path, build job | 70.67 s       | TBD        | —       |
-| B8   | Artifact size               | 4,489,616 B   | TBD        | —       |
-| Size | Non-test source lines       | 49,460        | TBD        | —       |
+| Row  | Metric                        | Before (Rust) | After (F#) | Verdict |
+| ---- | ----------------------------- | ------------- | ---------- | ------- |
+| B1   | Cold build                    | 17.59 s       | TBD        | —       |
+| B2   | Gate-profile build            | 34.44 s †     | TBD        | —       |
+| B3   | Warm no-op build              | 0.24 s †      | TBD        | —       |
+| B4   | Edit-rebuild loop             | 0.43 s †      | TBD        | —       |
+| B5   | Startup, mean of 50           | 11.2 ms †     | TBD        | —       |
+| B6   | Full `.husky/pre-commit`      | 5.24 s †      | TBD        | —       |
+| B7   | CI critical path, build job   | 70.67 s †     | TBD        | —       |
+| B8   | Artifact size                 | 4,489,616 B † | TBD        | —       |
+| Size | Source lines (tests included) | 49,460        | TBD        | —       |
 
 ## Measurements — ose-private
 
-| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
-| ---- | --------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                  | 16.00 s       | TBD        | —       |
-| B2   | Gate-profile build          | 35.57 s       | TBD        | —       |
-| B3   | Warm no-op build            | 0.17 s        | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.35 s        | TBD        | —       |
-| B5   | Startup, mean of 50         | 15.3 ms       | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 3.38 s        | TBD        | —       |
-| B7   | CI critical path, build job | 88.67 s       | TBD        | —       |
-| B8   | Artifact size               | 4,489,616 B   | TBD        | —       |
-| Size | Non-test source lines       | 49,460        | TBD        | —       |
+| Row  | Metric                        | Before (Rust) | After (F#) | Verdict |
+| ---- | ----------------------------- | ------------- | ---------- | ------- |
+| B1   | Cold build                    | 16.00 s       | TBD        | —       |
+| B2   | Gate-profile build            | 35.57 s †     | TBD        | —       |
+| B3   | Warm no-op build              | 0.17 s †      | TBD        | —       |
+| B4   | Edit-rebuild loop             | 0.35 s †      | TBD        | —       |
+| B5   | Startup, mean of 50           | 15.3 ms †     | TBD        | —       |
+| B6   | Full `.husky/pre-commit`      | 3.38 s †      | TBD        | —       |
+| B7   | CI critical path, build job   | 88.67 s †     | TBD        | —       |
+| B8   | Artifact size                 | 4,489,616 B † | TBD        | —       |
+| Size | Source lines (tests included) | 49,460        | TBD        | —       |
+
+`†` — pre-removal baseline (79 crates, tree-sitter still linked); see "Baseline provenance" above.
 
 Verdict is filled at Phase 10 with `better` / `worse` / `unchanged` plus the absolute delta, per
 repository. No row is dropped for being unfavourable to F#.
+
+**Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
+B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
+own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed
+by 42% in `ose-public` and by 4.4x in `ose-private`, and B3's and B4's table values are each smaller
+than that spread. At Phase 10, any row's Before/After delta smaller than the larger of (a) the
+cross-repo noise floor stated below (~1-2 s) or (b) that row's own observed run-to-run spread, where
+one was measured, is recorded as `unchanged`, never `better`/`worse` — the raw delta is still
+written alongside so it is not lost, only not over-read as a directional result.
 
 ## Measurement commands
 
@@ -94,13 +118,19 @@ machine noise rather than signal.
   runs on `main`. `ose-public`: 73 s, 69 s, 70 s (runs 32810578748, 32797537004, 32796057166), mean
   **70.67 s**. `ose-private`: 89 s, 88 s, 89 s (runs 32797359073, 32796938182, 32795391522), mean
   **88.67 s**.
-- **B8** — byte count of the `gate`-profile binary: **4,489,616** bytes in both repositories, which
-  is itself the parity check working — the two crates are byte-identical here.
+- **B8** — byte count of the `gate`-profile binary: **4,489,616** bytes in both repositories, equal
+  in size. No digest was taken, so this is evidence of matching size only, not of byte-identity.
+  It is also not the parity check: `apps/rhino-cli/parity-manifest.sha256` hashes 603 tracked
+  source files and covers no build artifact, so an equal binary size here is a separate, weaker
+  observation from what that manifest asserts.
 
 ## Source size
 
-Non-test source lines, excluding comments and blank lines. Measured at **49,460** lines across 189
-`.rs` files in each repository, of which 132 contain a `cfg(test)` block in `ose-public`. The exact
+Non-blank, non-comment `.rs` lines — **not** non-test lines despite this row's name in the tables
+above: the `awk` filter below strips only leading whitespace, blank lines, and `//`-prefixed lines,
+with no `#[cfg(test)]` handling. Measured at **49,460** lines across 189 `.rs` files in each
+repository, of which 132 files contain at least one `cfg(test)` block; a brace-depth accounting of
+those blocks attributes roughly 45% of the 49,460 figure to `#[cfg(test)]` bodies. The exact
 command:
 
 ```bash
@@ -108,8 +138,12 @@ find apps/rhino-cli/src -name '*.rs' -type f -print0 | xargs -0 cat \
   | awk '{ sub(/^[ \t]+/,""); if ($0=="") next; if ($0 ~ /^\/\//) next; print }' | wc -l
 ```
 
-Phase 10 runs the identical command with `-name '*.fs'` against the F# tree, so the two figures are
-comparable rather than merely both present.
+Phase 10 runs the identical command with `-name '*.fs'` against the F# tree, which counts the same
+thing (non-blank, non-comment lines, tests included) — but only if the F# port keeps its tests
+inside `src-fsharp/`. If Phase 10 places tests in a separate project outside that path (the
+idiomatic xUnit layout), the identical command stops being comparable: the Rust figure is ~45% test
+code and the F# figure would be closer to 0%. Phase 10 must record which layout it used before
+filling this row's Verdict.
 
 ## Phase 0 note
 
@@ -117,7 +151,8 @@ The Before figure for B1 was measured twice in each repository — once as found
 unused `tree-sitter` dependency was removed from `Cargo.toml`. `ose-public` as found: **19.91 s**,
 79 crates, 21,597,224 bytes; after removal **17.59 s**, 73 crates, 21,597,000 bytes. `ose-private`
 as found: **22.39 s**, 79 crates, 21,597,240 bytes; after removal **16.00 s**, 73 crates,
-21,597,016 bytes. Both tables record the post-removal figure.
+21,597,016 bytes. Both tables' **B1** row records the post-removal figure; B2 through B8 do not —
+see "Baseline provenance" above the measurement tables.
 
 `rhino-cli:test:quick` exits 0 after the removal in both repositories, so each baseline is a working
 one. In `ose-private` the target was also run before the removal, uncached, at 441.72 s, and after
