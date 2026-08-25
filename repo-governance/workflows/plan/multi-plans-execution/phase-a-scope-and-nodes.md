@@ -27,13 +27,12 @@ the whole run** (never re-expanded later — a plan added to `plans/backlog/` mi
   resolved set (e.g., `all-in-progress` with nothing in-progress) terminates `fail` with a clear
   message — there is nothing to execute.
 - **Promote every resolved `plans/backlog/` entry before scheduling.** For each plan in the frozen
-  set that still resolves inside `plans/backlog/` (an explicit-list entry or any `all-backlog`/`all`
-  member), run the promotion from
-  [`plan-execution.md` Step 0](../plan-execution/enter-worktree-preconditions-and-work-branch.md) —
-  `git mv plans/backlog/<slug>/ plans/in-progress/<slug>/`, commit, push to `origin main` — on the
-  local `main` checkout, never inside a worktree, before that plan's first node is scheduled. Only
-  after that push lands does the plan's path resolve to `plans/in-progress/` for the rest of this
-  run. No plan in the frozen set is ever scheduled directly out of `plans/backlog/`.
+  set, resolve that plan's delivery mode and apply the canonical
+  [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
+  Complete and merge the pure-move worktree PR for a `*-to-pr` or direct-push-unavailable route;
+  use direct push only for a selected direct-push mode that the repository permits. Schedule no
+  node until the promotion exists on `origin/main` and the plan resolves under
+  `plans/in-progress/`.
 
 **A2. Refuse unvetted plans.** For each plan, confirm it passed `plan-quality-gate` (a clean strict
 double-zero — check for the plan's audit trail or re-run the gate). A plan that has not been vetted

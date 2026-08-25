@@ -40,10 +40,10 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
                                              # without an outstanding finding; extend per-PR to resolve
 ```
 
-- Each cycle spawns **fresh** specialist instances, tier-selected per
+- Each cycle spawns **fresh** specialist instances, route-selected per
   [PR Reviewer-Discipline Convention §Risk-tier fan-out](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md#risk-tier-fan-out-d12)
-  (clean context) fed the coordinator's own prior consolidated findings and their resolution state,
-  so the fan-out does not repeat already-posted comments.
+  and its plans-only override (clean context), fed the coordinator's own prior consolidated findings
+  and their resolution state, so the fan-out does not repeat already-posted comments.
 - `pr-review-synthesis-maker` reviews the **full PR each cycle** (deduplicating against
   already-posted comments) and MUST explicitly re-review the fixer's new commits from the previous
   cycle, to catch fix-induced regressions.

@@ -17,14 +17,12 @@ User: "Execute plan plans/in-progress/new-feature/plan.md"
 The calling context will:
 
 0. **Promote from `plans/backlog/` first, if needed**: if `plan-path` resolves inside
-   `plans/backlog/`, this step runs on the local `main` checkout — never inside a worktree, since
-   plan-folder promotion is plan-doc work, not implementation — BEFORE step 1 below: `git mv
-plans/backlog/<slug>/ plans/in-progress/<slug>/` (no date prefix; `in-progress/` uses the same
-   bare slug as `backlog/`), commit the move, and push directly to `origin main`. Only after that
-   push lands does `plan-path` resolve to its new `plans/in-progress/` location and execution
-   proceeds to step 1. This guarantees the plan's in-progress state is committed and visible on
-   `origin main` before any implementation work begins — never execute directly out of
-   `plans/backlog/`. See [Execute Plan from Backlog](./example-usage-and-iteration-example.md#execute-plan-from-backlog) below.
+   `plans/backlog/`, resolve the delivery mode and repository restrictions, then land the pure move
+   through the mode-appropriate route before step 1. A `*-to-pr` or direct-push-unavailable route
+   uses a dedicated worktree branch, PR quality gate, and merge; only a permitted, explicitly
+   selected direct-push mode pushes the move to `origin main`. Follow the canonical
+   [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work);
+   never execute directly from `plans/backlog/`.
 1. **Enter the work branch** (Step 0): the work branch is whatever the user specifies at invocation (a dedicated worktree, the `main` checkout, or any existing branch); if unspecified, the plan docs win (the `## Worktree` section, defaulting to a worktree provisioned from `origin/main`) — refuse to start only when neither the user nor the plan specifies one. Then, by default, pull the latest `origin/main` into the work branch first — before any implementation — to minimize merge collisions
 2. Read the delivery checklist from the plan's `delivery.md` to understand all items
 3. Create granular tasks using `TaskCreate` — one per remaining checkbox (including nested sub-bullets)

@@ -35,16 +35,16 @@ and tool-verified before a human or `pr-review-fixer` ever sees it.
 
 `pr-review-scout-maker` pins the head SHA, reads the full diff, and reads the PR's plan/issue
 context once per cycle, upstream of this agent — do not re-derive that. Work begins once scout's
-shared-context brief exists and tier-selected specialists (or, for `trivial`, this agent's own
-generalist pass, per DD-7) have emitted raw findings.
+shared-context brief exists and route-selected specialists (or, for a non-plans-only `trivial`
+cycle, this agent's own generalist pass per DD-7) have emitted raw findings.
 
 ## Charter: Produces Exactly ONE Consolidated Review
 
 **Owns**: Dedup, re-categorize (owns the architecture-versus-correctness boundary),
 reasonableness-filter, tool-verify, and emit exactly ONE consolidated review that
 `pr-review-fixer` consumes. **Routes elsewhere**: finding discovery in any discipline, except the
-trivial-tier generalist pass (DD-7); risk-tier classification, context assembly, and prior-cycle
-dismissal-read are `pr-review-scout-maker`'s upstream duties.
+non-plans-only trivial-tier generalist pass (DD-7); risk-tier and route classification, context
+assembly, and prior-cycle dismissal-read are `pr-review-scout-maker`'s upstream duties.
 
 **See `pr-review-synthesis-coordination` Skill** for the full mechanics: the four coordination
 functions and DD-11 attribution tracking, the review header template and finding-requirements

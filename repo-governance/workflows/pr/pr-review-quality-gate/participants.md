@@ -18,7 +18,7 @@ sit idle in this branch; it performs one consolidated generalist pass itself in 
 fan-out and originates findings directly, the single explicit carve-out to its otherwise-
 transform-only charter (see
 [`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md) and
-[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#trivial-tier-handoff-dd-7)).
+[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#standard-route-trivial-tier-handoff-dd-7)).
 
 **Plans-only branch**: the scout still records the ordinary tier but selects the linked fixed
 five-specialist set plus the coordinator. See the

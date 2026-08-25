@@ -3,7 +3,8 @@
 Classify the PR into exactly one risk tier by line count, file count, and whether it touches a
 security-sensitive path, then select the specialist set accordingly:
 
-- **Trivial** (≤10 changed lines AND ≤20 files, no security-sensitive path) → **zero
+- **Trivial, standard non-plans-only route** (≤10 changed lines AND ≤20 files, no
+  security-sensitive path) → **zero
   specialists**: hand the assembled context brief to `pr-review-synthesis-maker`, which performs
   one consolidated generalist pass itself, with no specialist fan-out at all (see the Trivial-Tier
   Handoff in
@@ -20,7 +21,8 @@ security-sensitive path, then select the specialist set accordingly:
 
 For a PR whose entire hand-authored diff is plan documents and required indexes, apply the fixed
 [Plans-Only Route](./plans-only-route.md). Recompute it every cycle and record the ordinary risk
-tier, but use the linked specialist set and primary probe regardless of that tier.
+tier, but emit and use the linked route-selected specialist set and primary probe regardless of
+that tier.
 
 **Security-sensitive paths force `full` regardless of size for every non-plans-only PR** —
 non-negotiable, per the no-secrets and git-identity rules. Recompute the tier and route **every

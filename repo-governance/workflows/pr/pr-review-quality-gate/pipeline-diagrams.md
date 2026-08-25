@@ -23,7 +23,7 @@ flowchart LR
     N["pr-review-instruction-maker"]:::blue
     T["pr-review-types-maker"]:::blue
   end
-  SC -->|"tier-selected specialist set"| FANOUT
+  SC -->|"route-selected specialist set"| FANOUT
   SC -.->|"context_brief<br/>(SHA, diff, plan context)"| SY
   A --> SY
   L --> SY
@@ -58,7 +58,7 @@ sequenceDiagram
 
   O->>SC: cycle number N of {total}
   SC->>SC: pin head SHA, classify risk tier, select specialist set, assemble shared-context brief, read prior dismissals
-  SC->>SP: fan out tier-selected specialists (fed context brief)
+  SC->>SP: fan out route-selected specialists (fed context brief)
   SC->>SY: hand context_brief (SHA, diff, plan context) directly, per Output Contract
   SP-->>SY: raw findings per discipline
   SY->>SY: dedup + re-categorize + reasonableness-filter + tool-verify

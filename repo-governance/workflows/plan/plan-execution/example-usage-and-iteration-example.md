@@ -38,18 +38,23 @@ The AI will invoke agents with extended iteration limit:
 User: "Execute plan plans/backlog/future-feature/plan.md"
 ```
 
-The AI runs Step 0 first, on the local `main` checkout, before any implementation begins:
+The AI runs Step 0 before any implementation begins. With the default `worktree-to-pr` mode, it:
 
-- `git mv plans/backlog/future-feature/ plans/in-progress/future-feature/`
-- Commit the move and push directly to `origin main`
-- Only then resolve `plan-path` to `plans/in-progress/future-feature/plan.md` and continue with
-  Step 1 (enter the work branch) onward
+- Resolves the delivery mode and confirms the repository restrictions.
+- Creates a dedicated worktree branch from current `origin/main`.
+- Moves `plans/backlog/future-feature/` to `plans/in-progress/future-feature/` and updates the two
+  required indexes, with no implementation or ride-along changes.
+- Pushes the branch, opens the pure-move PR, completes its PR quality gate, and merges it into
+  `origin/main`.
+- Refreshes the implementation branch from that merge, resolves `plan-path` to
+  `plans/in-progress/future-feature/plan.md`, and continues with Step 1.
 - Implement plan requirements via orchestrated specialized agents
 - Won't move to done until zero findings achieved
 - Plan archived to plans/done/ only on complete success
 
-Execution never runs directly out of `plans/backlog/` — the promotion commit+push is a mandatory
-precondition, not an optional courtesy.
+Only a selected direct-push mode that the repository permits replaces the promotion PR with a
+direct push. Execution never runs from `plans/backlog/`; see the canonical
+[Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
 
 ## Quick Validation Only
 

@@ -2,7 +2,7 @@
 
 Assemble a single shared-context brief — the **pinned head SHA** from Core Responsibility step 1,
 PR metadata (title, body, author), the linked plan/issue context, and the **full diff** — **once
-per cycle**, and hand the identical brief to every specialist selected for this cycle's tier, and
+per cycle**, and hand the identical brief to every specialist selected for this cycle's route, and
 to `pr-review-synthesis-maker`, rather than each downstream consumer separately re-deriving the
 same context (which would otherwise multiply token cost by the number of specialists fanned out).
 
