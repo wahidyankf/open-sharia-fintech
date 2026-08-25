@@ -339,7 +339,7 @@ future PR. PR #289 remains provenance only: private PR #64 at
 A1 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. `PUB-A2`, `PUB-A3`, and `PUB-B` remain
 independently bounded PRs; each future private counterpart has a separate admission PR before source work.
 
-The A2 list has 10 hand-authored candidates, A3 has 8, and B has 12; their generated mirrors are
+The A2 list has 10 hand-authored candidates, A3 has 11, and B has 12; their generated mirrors are
 counted separately when binding generation identifies them. Each unit first uses one PR for as much
 of its natural, independently stable seam as fits. Only if its measured complete ledger would cross
 20 hand-authored files, 400 handwritten program/script lines, 900 handwritten lines when both

@@ -209,11 +209,15 @@ that hunk division prevents overlapping edits.
 - `.claude/skills/pr-review-fixer-resolution/reference/four-way-triage.md`
 - `.claude/skills/pr-review-fixer-resolution/reference/reply-resolve-discipline.md`
 - `.claude/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md`
+- `.claude/skills/plan-creating-project-plans/SKILL.md`
+- `.claude/skills/plan-creating-project-plans/reference/mandatory-grilling.md`
+- `.claude/skills/plan-creating-project-plans/reference/plan-lifecycle-and-git-workflow.md`
 
 Its exact generated mirrors are `.agents/skills/pr-review-fixer-resolution/reference/four-way-triage.md`,
 `.agents/skills/pr-review-fixer-resolution/reference/reply-resolve-discipline.md`, and
-`.agents/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md`. `PUB-B` owns
-only the cadence hunk in `reply-resolve-discipline.md`.
+`.agents/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md`, plus the
+same relative three plan-creating-project-plans paths under `.agents/skills/`. `PUB-B` owns only
+the cadence hunk in `reply-resolve-discipline.md`.
 
 `PUB-B` owns the remaining exact sources and the named cadence/terminal hunks above:
 
