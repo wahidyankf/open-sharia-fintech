@@ -39,31 +39,31 @@ the After column and Verdict for those rows.
 
 ## Measurements — ose-public
 
-| Row  | Metric                        | Before (Rust) | After (F#) | Verdict |
-| ---- | ----------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                    | 17.59 s       | TBD        | —       |
-| B2   | Gate-profile build            | 34.44 s †     | TBD        | —       |
-| B3   | Warm no-op build              | 0.24 s †      | TBD        | —       |
-| B4   | Edit-rebuild loop             | 0.43 s †      | TBD        | —       |
-| B5   | Startup, mean of 50           | 11.2 ms †     | TBD        | —       |
-| B6   | Full `.husky/pre-commit`      | 5.24 s †      | TBD        | —       |
-| B7   | CI critical path, build job   | 70.67 s †     | TBD        | —       |
-| B8   | Artifact size                 | 4,489,616 B † | TBD        | —       |
-| Size | Source lines (tests included) | 49,460        | TBD        | —       |
+| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
+| ---- | --------------------------- | ------------- | ---------- | ------- |
+| B1   | Cold build                  | 17.59 s       | TBD        | —       |
+| B2   | Gate-profile build          | 34.44 s †     | TBD        | —       |
+| B3   | Warm no-op build            | 0.24 s †      | TBD        | —       |
+| B4   | Edit-rebuild loop           | 0.43 s †      | TBD        | —       |
+| B5   | Startup, mean of 50         | 11.2 ms †     | TBD        | —       |
+| B6   | Full `.husky/pre-commit`    | 5.24 s †      | TBD        | —       |
+| B7   | CI critical path, build job | 70.67 s †     | TBD        | —       |
+| B8   | Artifact size               | 4,489,616 B † | TBD        | —       |
+| Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
 
 ## Measurements — ose-private
 
-| Row  | Metric                        | Before (Rust) | After (F#) | Verdict |
-| ---- | ----------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                    | 16.00 s       | TBD        | —       |
-| B2   | Gate-profile build            | 35.57 s †     | TBD        | —       |
-| B3   | Warm no-op build              | 0.17 s †      | TBD        | —       |
-| B4   | Edit-rebuild loop             | 0.35 s †      | TBD        | —       |
-| B5   | Startup, mean of 50           | 15.3 ms †     | TBD        | —       |
-| B6   | Full `.husky/pre-commit`      | 3.38 s †      | TBD        | —       |
-| B7   | CI critical path, build job   | 88.67 s †     | TBD        | —       |
-| B8   | Artifact size                 | 4,489,616 B † | TBD        | —       |
-| Size | Source lines (tests included) | 49,460        | TBD        | —       |
+| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
+| ---- | --------------------------- | ------------- | ---------- | ------- |
+| B1   | Cold build                  | 16.00 s       | TBD        | —       |
+| B2   | Gate-profile build          | 35.57 s †     | TBD        | —       |
+| B3   | Warm no-op build            | 0.17 s †      | TBD        | —       |
+| B4   | Edit-rebuild loop           | 0.35 s †      | TBD        | —       |
+| B5   | Startup, mean of 50         | 15.3 ms †     | TBD        | —       |
+| B6   | Full `.husky/pre-commit`    | 3.38 s †      | TBD        | —       |
+| B7   | CI critical path, build job | 88.67 s †     | TBD        | —       |
+| B8   | Artifact size               | 4,489,616 B † | TBD        | —       |
+| Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
 
 `†` — pre-removal baseline (79 crates, tree-sitter still linked); see "Baseline provenance" above.
 
@@ -126,12 +126,13 @@ machine noise rather than signal.
 
 ## Source size
 
-Non-blank, non-comment `.rs` lines — **not** non-test lines despite this row's name in the tables
-above: the `awk` filter below strips only leading whitespace, blank lines, and `//`-prefixed lines,
-with no `#[cfg(test)]` handling. Measured at **49,460** lines across 189 `.rs` files in each
-repository, of which 132 files contain at least one `cfg(test)` block; a brace-depth accounting of
-those blocks attributes roughly 45% of the 49,460 figure to `#[cfg(test)]` bodies. The exact
-command:
+Non-blank, non-comment `.rs` lines, walking `apps/rhino-cli/src` only: the `awk` filter below strips
+leading whitespace, blank lines, and `//`-prefixed lines, has no `#[cfg(test)]` handling, and never
+descends into the sibling `apps/rhino-cli/tests/` directory (34 files, 20,540 lines under the same
+filter, excluded from every figure on this page). Measured at **49,460** lines across 189 `.rs`
+files in `src/` in each repository, of which 132 files contain at least one `cfg(test)` block; a
+brace-depth accounting of those blocks attributes roughly 45% of the 49,460 figure to
+`#[cfg(test)]` bodies. The exact command:
 
 ```bash
 find apps/rhino-cli/src -name '*.rs' -type f -print0 | xargs -0 cat \
@@ -139,10 +140,12 @@ find apps/rhino-cli/src -name '*.rs' -type f -print0 | xargs -0 cat \
 ```
 
 Phase 10 runs the identical command with `-name '*.fs'` against the F# tree, which counts the same
-thing (non-blank, non-comment lines, tests included). `delivery.md:455-461` (Phase 2, frozen)
-unconditionally creates both `RhinoCli.UnitTests.fsproj` and `RhinoCli.IntegrationTests.fsproj`
-inside `src-fsharp/`, so the two counts stay comparable with no open layout question for Phase 10
-to resolve.
+thing (non-blank, non-comment lines) over the same `src/`-only scope. The "Phase 2: Scaffold,
+Dispatch Shim, and CI Wiring" section in `delivery.md` (frozen) unconditionally creates both
+`RhinoCli.UnitTests.fsproj` and `RhinoCli.IntegrationTests.fsproj` inside `src-fsharp/` — that does
+not by itself make the two counts comparable, since the F# tree has no sibling directory excluded
+the way Rust's `tests/` is. The comparability statement for Phase 10 lives in `delivery.md`'s own
+Phase 10 clause, not here, so it is where a future executor can actually be held to it.
 
 ## B1 baseline note
 

@@ -123,7 +123,7 @@ inherited.
 **Per-crate build cost** from `cargo build --profile gate --timings`: 253.5 unit-seconds total
 across 123 units, of which `rhino-cli` itself is 17.8 s and `tree-sitter` is 13.4 s. `tree-sitter`
 is declared in `Cargo.toml` but has zero references in any `.rs` file
-[Repo-grounded — `grep -rn 'tree.sitter' --include='*.rs' apps/rhino-cli/` returns nothing]. Phase 0
+[Repo-grounded — `grep -rn 'tree.sitter' --include='*.rs' apps/rhino-cli/` returns nothing]. Phase 1
 removes it so the retired-crate comparison is honest.
 
 ### Felt cost in perspective

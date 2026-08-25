@@ -56,7 +56,7 @@ implementation change.
 
 | Phase(s) | Delivery unit                                  | Worktree                      | Branch                       | PR opens                                                                                                |
 | -------- | ---------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| —        | Initial plan documents (this PR)               | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
+| —        | Initial plan documents (#305)                  | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
 | 0        | — (baseline and "before" benchmark)            | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
 | 1        | `tree-sitter` removal + regenerated manifest   | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead             |
 | 2        | Scaffold, dispatch shim, CI wiring             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
@@ -213,6 +213,20 @@ initial PR, so any figure written here is stale the moment a pass finds somethin
 - It is not precedent for a second oversized plan PR in this repo; a future plan wanting the same
   treatment records its own exclusion with its own reasoning.
 
+### Review-cycle ceiling exception (PR #306 only)
+
+**The five-cycle review ceiling is raised for this PR specifically; the two-consecutive-clean exit
+rule is unchanged.** Authorized by the user during the cycle-4 fixer pass (2026-08-25). Scope:
+`ose-public` PR #306 only — it does not generalize to any other PR or plan, and per the
+non-precedent clause above, a future PR wanting the same treatment records its own exception with
+its own reasoning.
+
+**Justification.** Cycle 4 produced three verified HIGH findings (`C4-F2`, `C4-F3`, `C4-F4`)
+against this same plan folder's own prose. The loop was still finding real defects at cycle 4, not
+converging on a clean pass — so the five-cycle ceiling was binding on the wrong signal (elapsed
+cycles) rather than the one that actually governs the loop's exit: whether it is still productive.
+The two-consecutive-clean exit rule remains the real exit condition.
+
 **Nine feature files are too big for one PR and must split.** "One feature file is one PR" is the
 default seam, not a licence to exceed the ceiling. Measured over this delivery checklist, the
 scenario counts per feature file are: `md/docs-validate-mermaid.feature` **39**,
@@ -272,7 +286,9 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 > This phase opens **no PR** [Repo-grounded —
 > [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md)].
 > It is setup and baseline only: it measures, records, and changes nothing a reviewer can review.
-> Its only artifact is `benchmark.md`, which rides the plan's first PR as a baseline artifact.
+> Its only artifact is `benchmark.md`, which rides `ose-public` PR #306 as a baseline artifact — not
+> the plan's own first PR (#305), since `benchmark.md` did not exist until this later PR's Phase 0
+> work landed.
 >
 > **Re-scoped during execution.** An earlier draft placed the `tree-sitter` dependency removal here
 > and routed its diff into an already-open PR. That made Phase 0 change-producing, which the rule
@@ -329,10 +345,11 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       and their mean are written to `benchmark.md`.
 - [x] [AI] **B8 — artifact size**: `ls -l apps/rhino-cli/target/gate/rhino-cli` — acceptance: byte
       count written to `benchmark.md`.
-- [x] [AI] **Source size, both sides of the eventual comparison**: count Rust code lines (tests
-      included) excluding comments and blank lines, and record the counting command itself so the F# side can
-      be counted identically at Phase 10 — acceptance: the count and the exact command are in
-      `benchmark.md`.
+- [x] [AI] **Source size, both sides of the eventual comparison**: count Rust code lines under
+      `apps/rhino-cli/src` only (the sibling `apps/rhino-cli/tests/` directory is out of scope —
+      see `benchmark.md`'s Source size section) excluding comments and blank lines, and record the
+      counting command itself so the F# side can be counted identically at Phase 10 — acceptance:
+      the count and the exact command are in `benchmark.md`.
 - [x] [AI] Repeat every measurement step above in the `ose-private` worktree at the same paths,
       authored there rather than copied, and record its figures in the single-sourced `benchmark.md`
       under `ose-public` — `ose-private` carries no copy of this plan folder by design
@@ -364,10 +381,13 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 ## Phase 1: Dependency Removal and the Publish-Mode Spike
 
-> This phase opens **this plan's first PR** in each repository — the earliest phase permitted to,
-> per [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md).
-> It carries exactly one reviewable change, the `tree-sitter` removal below, plus Phase 0's
-> `benchmark.md` baseline artifact riding along as that rule directs.
+> In `ose-private`, this phase opens a dedicated PR (#75) — the earliest phase permitted to, per
+> [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md)
+> — carrying exactly one reviewable change: the `tree-sitter` removal below, plus Phase 0's
+> `benchmark.md` baseline artifact riding along as that rule directs. In `ose-public`, this plan's
+> first PR was #305 (the plan-document promotion), and Phase 1's reviewable change is folded into
+> this same PR (#306) instead of a dedicated one — see the † footnote in Delivery Boundaries above,
+> so `ose-public` does not open a phase-1-only PR at all.
 >
 > The publish-mode spike itself produces **no** reviewable change: it is throwaway and lives under
 > `local-tmp/`, which is swept freely per
@@ -14649,10 +14669,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       written to row B7.
 - [ ] [AI] **A8 — artifact size**: `ls -l` the published binary — acceptance: byte count written to
       row B8.
-- [ ] [AI] **Source size**: count F# code lines (tests included) excluding comments and blanks
-      using the **same counting command shape** recorded at Phase 0, so the two sides are
-      comparable — acceptance: the count, the command, and the F#-to-Rust ratio are written into
-      `benchmark.md`.
+- [ ] [AI] **Source size**: count F# code lines under `apps/rhino-cli/src-fsharp` **excluding its
+      `tests/` subdirectory**, using the same counting command shape recorded at Phase 0 (the
+      Rust side counted `apps/rhino-cli/src` only) — acceptance: the count, the command, and the
+      F#-to-Rust ratio are written into `benchmark.md`. **Comparability caveat**: the Rust figure
+      excludes `apps/rhino-cli/tests/` (20,540 lines at Phase 0, ~41.5% of the counted `src/`
+      figure); every F# test project sits inside `src-fsharp/` (Phase 2), so running the same
+      command shape against the **whole** `src-fsharp/` tree unmodified would sweep 100% of F#
+      test code while the Rust figure sweeps none of its own. Excluding `src-fsharp/tests/` here is
+      what keeps the two sides on comparable terms — it is not automatic from "the same command
+      shape" alone.
 - [ ] [AI] Complete the whole-run picture: total wall time of one CI run before and after, taken
       from the same `gh run list` sample — acceptance: both figures in `benchmark.md`.
 - [ ] [AI] Write the verdict paragraph: for each of the nine rows, state better, worse, or

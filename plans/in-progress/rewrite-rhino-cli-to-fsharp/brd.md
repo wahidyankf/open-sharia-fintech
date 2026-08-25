@@ -61,9 +61,10 @@ What replaces it is a discipline, not a gate:
 
 - **Primary**: all 525 Gherkin scenarios pass against the F# implementation, and every namespace was
   proved byte-identical by `shadow-diff.sh` before its shim entry flipped.
-- **Recorded, not gated**: F# source line count (tests included) against the Rust it replaced,
-  counted on comparable terms (code lines only, comments and blanks excluded, both sides, same
-  command shape).
+- **Recorded, not gated**: F# source line count (`src-fsharp/` excluding its `tests/` subdirectory)
+  against the Rust `src/`-only count it replaced, counted on comparable terms (code lines only,
+  comments and blanks excluded, both sides, same command shape, both sides' own test directories
+  excluded — see `benchmark.md`'s Source size section).
 - **Hard constraint**: startup stays within the ceiling accepted at the Phase 1 gate, and the CI
   shape stays toolchain-free — no `setup-dotnet` in the eight jobs that currently install nothing.
 - **Hard constraint**: byte-identical stdout/stderr/exit-code against the Rust binary for every
