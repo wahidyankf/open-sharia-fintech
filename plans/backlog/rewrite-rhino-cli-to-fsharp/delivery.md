@@ -13865,13 +13865,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       When an untracked test fixture is created
       And rhino-cli parity manifest validate runs
       Then the untracked fixture is absent from the manifest
-
-    # US-10 of plans/in-progress/update-harness-support: the plan's
-    # apps/rhino-cli/** changes must land in ose-public and ose-private as one
-    # paired merge. The PR-count half of that claim is a workflow fact recorded in
-    # the plan's delivery checklist; the half a gate can actually enforce is this —
-    # a boundary edit that lands on one side only leaves the two manifests
-    # disagreeing, which is what turns the nightly parity audit red.
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
