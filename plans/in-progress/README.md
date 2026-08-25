@@ -11,10 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [Optimize the Pull Request Process](./optimize-pr-process/README.md) — make planning, PR
-  descriptions, review conversations, quality gates, and cross-repository delivery easier for
-  humans to read, audit, and improve.
-
 ## Instructions
 
 **Idea Capture**: For ideas not ready for formal planning, write a two-pager in `../ideas/`.
