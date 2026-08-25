@@ -38,6 +38,39 @@ same mode here for symmetry, since this is not an infrastructure-as-code plan. E
 within the five-cycle cap, stopping before cycle 6, plus `pr-quality-gate.yml`; `[AI]` merges once
 the hardened preconditions hold.
 
+## Parallelization Model
+
+The waves are strictly sequential, not parallel. Each wave flips namespaces in the dispatch shim,
+and a later wave's shadow-diff runs against a binary the earlier flips already changed — so two
+waves in flight at once would make a byte-identity failure unattributable. One worktree per
+repository, one delivery unit at a time, per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
+
+Within a wave, the ~71 feature-file PRs are independent of each other and may be opened
+back-to-back, but each still lands before the wave's integration and flip steps run.
+
+### Delivery Boundaries
+
+Every change-producing phase appears in exactly one row. Both repositories use the same worktree
+name and the same branch per unit; `ose-private` has no plan folder, so its branches carry only the
+implementation change.
+
+| Phase(s) | Delivery unit                                  | Worktree                      | Branch                       | PR opens                                                                                                |
+| -------- | ---------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| —        | Initial plan documents (this PR)               | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
+| 0        | — (baseline and "before" benchmark)            | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
+| 1        | — (publish-mode spike, findings only)          | `worktrees/rewrite-rhino-cli` | —                            | no — folds into the Phase 2 PR                                                                          |
+| 2        | Scaffold, dispatch shim, CI wiring             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
+| 3        | Wave A — `convention`, `parity`                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
+| 4        | Wave B — `repo-config`, `env`                  | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
+| 5        | Wave C — `doctor`, `test-coverage`             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-c`        | yes — one per feature file, then the flip PR                                                            |
+| 6        | Wave D — `md`, `governance`, `git`             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-d`        | yes — one per feature file, then the flip PR                                                            |
+| 7        | Wave E — `harness`, `specs`, `repo-governance` | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-e`        | yes — one per feature file, then the flip PR                                                            |
+| 8        | Wave F — `gate`                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-f`        | yes — one per feature file, then the flip PR                                                            |
+| 9a-9d    | Retire the Rust crate                          | `worktrees/rewrite-rhino-cli` | `rhino-rust-teardown`        | yes — four PRs, in the stated order                                                                     |
+| 10       | The "after" benchmark and comparison           | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                       |
+| 11       | Rules propagation and documentation sweep      | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                       |
+| 12       | Knowledge capture and archival                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                       |
+
 ## What is different in `ose-private`
 
 Every phase below lands in both repositories. `apps/rhino-cli/` is byte-identical across them —
@@ -83,10 +116,83 @@ the decision, and the before/after numbers are **recorded, not obeyed**. Phase 0
 **Every PR obeys the size rule**: at most 400 handwritten program/script lines, at most 900 combined
 when program and non-program lines mix, an absolute 1,000-line ceiling, and at most 20 hand-authored
 files [Repo-grounded — `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md`
-rule 4]. The seam is stated once and applies throughout: **one `.feature` file is one PR**. There are
+rule 4] — with exactly one recorded exclusion, stated next. The seam is stated once and applies
+throughout: **one `.feature` file is one PR**. There are
 71 feature files carrying 525 scenarios [Repo-grounded — counted over
 `specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 71 PRs,
 plus the scaffolding, retirement, benchmark, propagation, and archival PRs.
+
+### Fixture isolation is a per-cycle acceptance condition
+
+**Every new F# test fixture that shells out to `git` MUST implement all six mandatory layers of the
+[Git Fixture Isolation Convention](../../../repo-governance/development/quality/git-fixture-isolation.md)**
+before its cycle may be marked GREEN. This binds `EnvSteps.fs` (Wave B — several `env` scenarios
+build a throwaway repository, and `env-restore.feature` writes files back to "its original path in
+the repository") and `PreCommitHookSteps.fs` (Wave D — the five resequenced `git-pre-commit.feature`
+scenarios stage files and run the hook). It binds any other fixture that later shells `git`, whether
+or not this plan names it.
+
+The six layers, and the .NET API that carries them
+[Repo-grounded — `git-fixture-isolation/language-agnostic-equivalents.md`, which names F#/.NET
+explicitly]: set them via `ProcessStartInfo.EnvironmentVariables[...]`, which inherits the parent
+environment by default — add the isolation keys, never clear the collection.
+
+1. **Cap discovery** — `GIT_CEILING_DIRECTORIES` = the fixture's temp root, so `git` never walks
+   above it looking for a `.git`.
+2. **No ambient discovery** — an explicit `GIT_DIR`.
+3. **Identity/config hygiene** — `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` pointed away from the
+   developer's real config.
+4. **Pre-write escape guard** — shell `git rev-parse --show-toplevel` with the isolation vars set,
+   canonicalize, and compare against the fixture root **before any write**; abort if it escapes.
+5. **Exit-status checking** — assert every fixture `git` invocation's exit status; never infer
+   success from absent output.
+6. **Process rule** — never diagnose a failing fixture in the primary worktree.
+
+**Why this is stated here rather than left to the executor**: DD-6 accepts that F#'s `use`/
+`IDisposable` gives only a runtime cleanup guarantee, where Rust's `tempfile::TempDir` gave a
+compile-time one. That is a ratified trade-off, but it removes a safety net — so the layers that
+remain are not optional. A fixture with a weaker cleanup guarantee **and** no discovery ceiling is
+precisely the combination the convention's own motivating incident describes.
+
+- [ ] [AI] Before marking GREEN on the first cycle that touches `EnvSteps.fs`, and again on the
+      first that touches `PreCommitHookSteps.fs`, verify all six layers are present in the fixture
+      helper — acceptance: the file sets `GIT_CEILING_DIRECTORIES`, `GIT_DIR`, `GIT_CONFIG_GLOBAL`,
+      and `GIT_CONFIG_SYSTEM`, contains a pre-write `rev-parse --show-toplevel` comparison against
+      the fixture root, and asserts exit status on every `git` invocation. A fixture missing any one
+      of the six is a rule violation, not a style preference.
+- [ ] [AI] Record in `learnings.md` that the Rust fixtures being ported
+      (`apps/rhino-cli/tests/git_hooks.rs`, `apps/rhino-cli/tests/env.rs`) are themselves
+      non-compliant today, so the F# port must implement the layers from the convention rather than
+      by copying the Rust helper's shape — acceptance: the entry names both files and states that
+      porting their `run_git`/`init_git_repo` structure verbatim would carry the gap forward.
+
+### The one recorded rule-4 exclusion
+
+**The initial plan-document PR is excluded from rule 4's line ceilings, and nothing else is.** That
+PR carries these six documents — of which `delivery.md` alone binds all 525 scenarios verbatim — and
+lands at roughly 15,500 lines across 7 files. It is under rule 4's 20-file cap and far over its
+1,000-line ceiling.
+
+The exclusion is granted because the alternative destroys the artifact. Splitting the plan across
+several PRs would either fragment one delivery checklist into pieces that are individually
+unreviewable (a wave's cycles with no scope, wave map, or gate to read them against) or land a
+`delivery.md` that references phases not yet in the tree — and rule 1's "split only at a real seam"
+test is not met, because a single plan document has no seam that survives being cut. The
+countervailing risk rule 4 exists to prevent, review quality degrading on a large diff, was
+addressed instead by mechanical review: `plan-quality-gate` ran 10 strict iterations, and the
+PR-review cycle's specialists diffed all 525 transcribed scenarios against their source `.feature`
+files rather than reading the diff linearly.
+
+**Scope of the exclusion, stated so it cannot creep:**
+
+- It covers the **initial plan-document PR only** — the one that first lands
+  `plans/backlog/rewrite-rhino-cli-to-fsharp/`.
+- It does **not** cover any later PR from this plan. Every implementation, flip, retirement,
+  benchmark, propagation, and archival PR obeys rule 4 in full, unchanged.
+- It does **not** cover later edits to these same plan documents. A subsequent plan-doc PR is an
+  ordinary documentation PR under the 1,000-line ceiling.
+- It is not precedent for a second oversized plan PR in this repo; a future plan wanting the same
+  treatment records its own exclusion with its own reasoning.
 
 **Nine feature files are too big for one PR and must split.** "One feature file is one PR" is the
 default seam, not a licence to exceed the ceiling. Measured over this delivery checklist, the
@@ -94,8 +200,10 @@ scenario counts per feature file are: `md/docs-validate-mermaid.feature` **39**,
 `gate/gate-execution.feature` **30**, `gate/gate-validation.feature` **26**,
 `env/env-backup.feature` **21**, `governance/governance-word-budget.feature` **20**,
 `governance/governance-readme-index.feature` **19**, `system/cargo-target-share.feature` **18**,
-`system/doctor.feature` **17**, and `md/docs-validate-links.feature` — every file at **15 scenarios
-or more** is presumed over budget until measured otherwise. Before opening any feature-file PR:
+`system/doctor.feature` **17**, and `env/env-restore.feature` **16** — every file at **15 scenarios
+or more** is presumed over budget until measured otherwise. `md/docs-validate-links.feature` is
+**not** on this list: it carries 10 scenarios, under the threshold. Before opening any feature-file
+PR:
 
 - [ ] [AI] Measure the actual diff before opening the PR, never after — acceptance:
       `git diff --numstat origin/main... | awk '{a+=$1} END {print a}'` is recorded in the PR body
@@ -167,18 +275,23 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `benchmark.md`, not to prose.
 - [ ] [AI] **B2 — gate-profile build**, the one CI actually runs:
       `CARGO_TARGET_DIR=$(mktemp -d) cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml`
-      under `/usr/bin/time -p` — acceptance: elapsed seconds written to `benchmark.md`.
-- [ ] [AI] **B3 — warm no-op build**: run `cargo build --profile gate` twice, record the second —
-      acceptance: elapsed seconds written to `benchmark.md`.
+      under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
+      `benchmark.md`, and the recorded exit code is 0.
+- [ ] [AI] **B3 — warm no-op build**: run `cargo build --profile gate` twice **under
+      `/usr/bin/time -p`**, record the second, asserting exit code 0 on both — acceptance: elapsed
+      seconds written to `benchmark.md`, and the recorded exit code is 0.
 - [ ] [AI] **B4 — edit-rebuild loop**: touch `apps/rhino-cli/src/main.rs`, rebuild under
-      `/usr/bin/time -p` — acceptance: elapsed seconds written to `benchmark.md`.
+      `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
+      `benchmark.md`, and the recorded exit code is 0.
 - [ ] [AI] **B5 — startup**: run `apps/rhino-cli/target/gate/rhino-cli --help` 50 times under
       `/usr/bin/time -p`, asserting exit code 0 on **every** iteration without aborting the loop, so
       a crashing binary cannot report a false-fast time — acceptance: total wall time and derived
       mean milliseconds written to `benchmark.md`.
 - [ ] [AI] **B6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
-      one-file change — acceptance: elapsed seconds written to `benchmark.md`, together with the
-      counted number of `rhino-bin.sh` invocations it made.
+      one-file change, asserting exit code 0 — acceptance: elapsed seconds written to
+      `benchmark.md`, together with the counted number of `rhino-bin.sh` invocations it made, and
+      the recorded exit code is 0. A hook that aborts early on an unrelated lint failure produces a
+      fast, meaningless figure; discard and re-run on a clean file rather than recording it.
 - [ ] [AI] **B7 — CI critical path**: read the `build-rhino` job duration from the three most recent
       green `pr-quality-gate.yml` runs on `main` via `gh run list` — acceptance: the three durations
       and their mean are written to `benchmark.md`.
@@ -889,6 +1002,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > plus one flip PR.
 >
 > `env` touches real `.env*` files. Every fixture is a temporary directory; no scenario in this wave may read or write a real `.env` outside the fixture root.
+>
+> **Every fixture in this wave that shells out to `git` implements all six layers of the
+> [Git Fixture Isolation Convention](../../../repo-governance/development/quality/git-fixture-isolation.md)**
+> — see §Fixture isolation is a per-cycle acceptance condition in the Scope section above. This is
+> not satisfied by the temp-directory sentence alone.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
@@ -3825,6 +3943,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > feature file lands.
 >
 > `md` is the single largest validator family and the one every documentation commit exercises. The shadow-diff for this wave runs over the whole repository, not a fixture.
+>
+> **`PreCommitHookSteps.fs` builds throwaway git repositories and stages files into them**, so every
+> fixture behind the five resequenced `git-pre-commit.feature` scenarios implements all six layers of
+> the [Git Fixture Isolation Convention](../../../repo-governance/development/quality/git-fixture-isolation.md)
+> — see §Fixture isolation is a per-cycle acceptance condition in the Scope section above.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
@@ -6289,6 +6412,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file within target passes silently" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A file within target passes silently
       Given "repo-governance/conventions/formatting/linking.md" contains 380 words
       When the developer runs governance word-budget validate
@@ -6313,6 +6440,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file between target and fail warns without blocking" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A file between target and fail warns without blocking
       Given "repo-governance/conventions/formatting/linking.md" contains 450 words
       When the developer runs governance word-budget validate
@@ -6337,6 +6468,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file over the ceiling fails the gate" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A file over the ceiling fails the gate
       Given "repo-governance/development/agents/ai-agents.md" contains 14720 words
       When the developer runs governance word-budget validate
@@ -6363,6 +6498,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Every covered surface is scanned" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario Outline: Every covered surface is scanned
       Given a file "<path>" contains 900 words
       When the developer runs governance word-budget validate
@@ -6398,6 +6537,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The covered surfaces are exactly the live entry points of the supported harnesses" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The covered surfaces are exactly the live entry points of the supported harnesses
       When I read repo-config.yml
       Then the covered surface globs are exactly the harness entry points and the README glob
@@ -6421,6 +6564,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A root entry point keeps the unchanged 500-word ceiling" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario Outline: A root entry point keeps the unchanged 500-word ceiling
       Given a file "<path>" contains 515 words
       When the developer runs governance word-budget validate
@@ -6451,6 +6598,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A README.md file under the specific-surface target produces zero findings" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A README.md file under the specific-surface target produces zero findings
       Given "repo-governance/development/quality/README.md" contains 670 words
       When the developer runs governance word-budget validate
@@ -6476,6 +6627,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A README.md file uses the wider README-specific glob threshold" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A README.md file uses the wider README-specific glob threshold
       Given "repo-governance/development/quality/README.md" contains 850 words
       When the developer runs governance word-budget validate
@@ -6500,6 +6655,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A README.md file over the wider ceiling still fails" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A README.md file over the wider ceiling still fails
       Given "repo-governance/development/quality/README.md" contains 950 words
       When the developer runs governance word-budget validate
@@ -6524,6 +6683,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Non-prose content counts toward the budget" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: Non-prose content counts toward the budget
       Given "repo-governance/conventions/formatting/diagrams.md" contains 200 prose words
       And it contains a Mermaid block of 400 words
@@ -6549,6 +6712,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "An out-of-scope file is never scanned" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: An out-of-scope file is never scanned
       Given "apps/ayokoding-www/content/lesson.md" contains 5000 words
       When the developer runs governance word-budget validate
@@ -6573,6 +6740,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The config schema rejects an exemption key" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The config schema rejects an exemption key
       Given repo-config.yml adds "exempt: [AGENTS.md]" under governance-word-budget
       When the developer runs repo-config schema validate
@@ -6596,6 +6767,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The old command is gone" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The old command is gone
       When the developer runs harness instruction-size validate
       Then the command exits with a usage error
@@ -6619,6 +6794,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The old config block is gone" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The old config block is gone
       When I read repo-config.yml
       Then it contains no "instruction-size:" section
@@ -6642,6 +6821,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The old gate id is replaced by the armed word-budget gate" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The old gate id is replaced by the armed word-budget gate
       When the developer runs gate list with surface pre-push and format text
       Then the output contains no gate id "instruction-size"
@@ -6665,6 +6848,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The resolved tree is measured in words" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: The resolved tree is measured in words
       Given "CLAUDE.md" contains 480 words
       And "CLAUDE.md" imports "AGENTS.md" via an @-directive
@@ -6691,6 +6878,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "An oversized resolved tree fails" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: An oversized resolved tree fails
       Given the resolved CLAUDE.md tree totals 1600 words
       When the developer runs governance word-budget validate
@@ -6715,6 +6906,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Import cycles terminate" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: Import cycles terminate
       Given "CLAUDE.md" imports "AGENTS.md"
       And "AGENTS.md" imports "CLAUDE.md"
@@ -6740,6 +6935,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A generated mirror is still subject to the word budget" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: A generated mirror is still subject to the word budget
       Given ".opencode/agents/plan-checker.md" contains 900 words
       When the developer runs governance word-budget validate
@@ -6764,6 +6963,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "No inbound link to the renamed convention is left broken" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 400, warn 500, fail 500
+
     Scenario: No inbound link to the renamed convention is left broken
       When the developer runs md links validate
       Then the command exits successfully
@@ -8156,6 +8359,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file within target passes silently" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: A file within target passes silently
       Given "AGENTS.md" is 400 words
       And its target is 400 and its fail ceiling is 500
@@ -8181,6 +8387,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file over target but under the ceiling warns without failing" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: A file over target but under the ceiling warns without failing
       Given "AGENTS.md" is 450 words
       And its target is 400 and its fail ceiling is 500
@@ -8206,6 +8415,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A file over its hard ceiling fails the command" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: A file over its hard ceiling fails the command
       Given "AGENTS.md" is 600 words
       And its fail ceiling is 500
@@ -8231,6 +8443,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A configured glob matching no file is a no-op" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: A configured glob matching no file is a no-op
       Given no file exists at ".codex/agents/example.md"
       When the developer runs governance word-budget validate
@@ -8254,6 +8469,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The resolved tree is checked against the fail ceiling" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: The resolved tree is checked against the fail ceiling
       Given "CLAUDE.md" imports "AGENTS.md" via "@AGENTS.md"
       And the sum of "CLAUDE.md" plus the imported files exceeds the 1500-word tree ceiling
@@ -8278,6 +8496,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "The legacy registry-merge alias no longer exists" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
 
   ```gherkin
+    Background:
+      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
+
     Scenario: The legacy registry-merge alias no longer exists
       When the developer runs harness instruction-size validate
       Then the command exits with a usage error
@@ -11537,6 +11758,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "All glossaries are valid — exits successfully with no findings" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: All glossaries are valid — exits successfully with no findings
       Given every registered glossary file has correct frontmatter keys
       And every terms table header is well-formed
@@ -11564,6 +11788,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Glossary is missing a required frontmatter key" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: Glossary is missing a required frontmatter key
       Given a glossary file is missing the "Maintainer" frontmatter key
       When the glossary validator runs for "organiclever"
@@ -11588,6 +11815,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Terms table has a malformed header" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: Terms table has a malformed header
       Given a glossary file has a terms table with a wrong column header
       When the glossary validator runs for "organiclever"
@@ -11612,6 +11842,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A code identifier is stale (not found in BC code path)" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: A code identifier is stale (not found in BC code path)
       Given a glossary file has a term with a code identifier not present in any source file
       When the glossary validator runs for "organiclever"
@@ -11636,6 +11869,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "A feature reference does not resolve to an existing .feature file" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: A feature reference does not resolve to an existing .feature file
       Given a glossary file has a term referencing a non-existent feature file
       When the glossary validator runs for "organiclever"
@@ -11660,6 +11896,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "Same term appears in two glossaries without mutual Forbidden-synonyms cross-link" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: Same term appears in two glossaries without mutual Forbidden-synonyms cross-link
       Given two glossaries declare the same term without cross-linking via Forbidden synonyms
       When the glossary validator runs for "organiclever"
@@ -11684,6 +11923,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Gherkin (binds) →** "--severity=warn downgrades findings — exits successfully with warnings" — `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature`
 
   ```gherkin
+    Background:
+      Given the repository has a valid bounded-contexts.yaml for "organiclever"
+
     Scenario: --severity=warn downgrades findings — exits successfully with warnings
       Given a glossary file has a term with a code identifier not present in any source file
       When the glossary validator runs for "organiclever" with severity "warn"
@@ -14023,9 +14265,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Remove `cargo build --profile gate` from the `build-rhino` job, leaving only the F#
       publish, and rename the published artifact back to `rhino-cli-gate-binary` so `enumerate`,
       `gate`, and `format` need no edit of their own — acceptance:
-      `grep -c 'cargo build' .github/workflows/pr-quality-gate.yml` returns 0 for the `build-rhino`
-      job, `grep -c 'rhino-cli-fsharp-binary' .github/workflows/pr-quality-gate.yml` returns 0, and
-      the `gate` matrix groups still pass on this PR.
+      `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
+      returns 0, `grep -c 'rhino-cli-fsharp-binary' .github/workflows/pr-quality-gate.yml` returns 0,
+      and the `gate` matrix groups still pass on this PR.
+      **Scope the grep to the job, never the whole file**: `cargo build` also appears in an
+      explanatory comment in the `format` job's `env:` block (pre-edit,
+      `grep -c 'cargo build' .github/workflows/pr-quality-gate.yml` returns **2**, not 1) that
+      documents the `RHINO_CLI_BIN` tier-1-resolution trade-off. That comment is deliberate and no
+      step in Phase 9 touches it. A whole-file `returns 0` clause would be unsatisfiable after a
+      correct edit, and forcing it to 0 would destroy the provenance rationale.
 - [ ] [AI] Verify the crate is still present and still buildable at this point, because that is what
       makes this PR safe — acceptance: `test -f apps/rhino-cli/Cargo.toml` succeeds and
       `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml` exits 0 locally, even
@@ -14059,13 +14307,35 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       would mean a wave's widening was never merged, and not more, which would mean the glob picked
       up a tree this project does not own.
 - [ ] [AI] Retain `deps:audit` under its existing name, swapping `cargo-deny` for
-      `dotnet list package --vulnerable --include-transitive` so supply-chain scanning is not
-      silently dropped — acceptance: `npx nx run rhino-cli:deps:audit` exits 0 and its command
-      contains no `cargo`.
-- [ ] [AI] Remove `compat:min-version` with its rationale recorded — it asserts a Rust MSRV floor,
-      and the .NET equivalent is already pinned by `apps/ose-be/global.json`
-      [Repo-grounded — `repo-config.yml` `dotnet-global-json`] — acceptance: the target is absent
-      from `project.json` and the reason is in the PR body.
+      `dotnet list package --vulnerable --include-transitive` — acceptance:
+      `npx nx run rhino-cli:deps:audit` exits 0 and its command contains no `cargo`.
+      **This is a narrowing, not a like-for-like swap, and it must not be described as one.**
+      `deny.toml` enforces three independent controls [Repo-grounded — `apps/rhino-cli/deny.toml`]:
+      `[advisories]` (known vulnerabilities), `[licenses]` (an allowlist of MIT, Apache-2.0, ISC,
+      BSD-2-Clause, BSD-3-Clause, Unicode-3.0 only), and `[sources]`/`[bans]` (deny unknown
+      registries, deny unknown git sources, warn on duplicate versions). The replacement command
+      covers **only the first**. After this step the F# dependency tree has no license-compliance
+      and no source-provenance gate.
+- [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
+      accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
+      `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
+      unknown-source hole) plus a license check in the `deps:audit` command, **or** `learnings.md`
+      carries a dated entry naming both dropped controls, stating who accepted the regression and
+      why, and `tech-docs.md` gains a DD recording it. Silence is not an option here: an unchanged
+      target name reading "audit" while auditing one-third of what it used to is the failure mode
+      this step exists to prevent.
+- [ ] [AI] Remove `compat:min-version` **and replace the SDK floor it was standing in for** — the
+      target asserts a Rust MSRV floor and cannot survive the crate, but its stated justification
+      does not hold: `repo-config.yml` pins `dotnet-global-json: apps/ose-be/global.json`
+      [Repo-grounded], and `apps/ose-be/` is a **sibling** of `apps/rhino-cli/`, not an ancestor.
+      .NET resolves `global.json` by walking upward from the working directory only, never
+      sideways, so a build under `apps/rhino-cli/src-fsharp/` cannot see it. There is no repo-root
+      `global.json` in `ose-public`, and this plan's own delta table records that `ose-private` has
+      **no `global.json` at all**. Acceptance: the target is absent from `project.json`, a
+      `global.json` pinning the SDK version exists at a path that actually covers
+      `apps/rhino-cli/src-fsharp/` **in both repos**, and `test -f` confirms it in each — verified
+      by `dotnet --version` run from inside `apps/rhino-cli/src-fsharp/` reporting the pinned
+      version, not merely by the file existing.
 - [ ] [AI] Verify the other 18 targets kept their names so no downstream caller changes —
       acceptance: `npx nx show project rhino-cli --json | jq -r '.targets | keys[]' | sort` differs
       from the Phase 0 capture by exactly the removal of `compat:min-version`.
@@ -14097,8 +14367,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `nx affected -t test:coverage` for `rhino-cli` with the same `--fail-under-lines 90` threshold
       enforced inside the target.
 - [ ] [AI] Remove the `has-rust` output, its two `echo` lines, and the `lang:rust` case from the
-      `detect` job — acceptance: `grep -c 'has-rust' .github/workflows/pr-quality-gate.yml` returns
-      0 and the workflow still parses under `actionlint`.
+      `detect` job — **and** rewrite the comment that names `has-rust` as a sibling example, since
+      the acceptance below counts it too. Pre-edit the string appears **6** times: the output
+      declaration, the two `echo` lines, the `lang:rust` case, the `rust` job's `if:` guard (which
+      disappears with the job, deleted earlier in this sub-phase), and a comment explaining
+      `has-dotnet-projects` by analogy ("like `has-ts` / `has-rust`"). Reword that comment to use a
+      surviving sibling — `has-ts` alone — rather than deleting it; it explains a real distinction.
+      Acceptance: `grep -c 'has-rust' .github/workflows/pr-quality-gate.yml` returns 0 and the
+      workflow still parses under `actionlint`.
 
 > **This repository keeps Rust after the crate is gone.** `apps/ayokoding-www/content/` carries
 > **198 `.rs` files** across **8 `Cargo.toml` projects** — the worked examples for the
@@ -14135,9 +14411,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       course examples rather than by oversight. Delete it only if the count step above returned 0.
 - [ ] [AI] Confirm 9b already removed `cargo build --profile gate` and renamed the artifact, and
       do **not** repeat that edit here — acceptance:
-      `grep -c 'cargo build' .github/workflows/pr-quality-gate.yml` returns 0 before this
-      sub-phase makes any change. If it returns non-zero, 9b did not land and 9c should never
-      have opened; stop and re-sequence rather than patching forward.
+      `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
+      returns 0 before this sub-phase makes any change. If it returns non-zero, 9b did not land and
+      9c should never have opened; stop and re-sequence rather than patching forward. Scoped to the
+      job for the same reason 9b's clause is — the `format` job's explanatory comment keeps the
+      whole-file count at 1 even after a correct 9b.
 - [ ] [AI] Remove the `cargo clippy` command from `apps/rhino-cli/project.json`'s `lint` target and
       replace it with the F# analyzers — note clippy is **not** a `repo-config.yml` gate entry, it
       lives only in that target [Repo-grounded — `apps/rhino-cli/project.json` line 26] — acceptance:
@@ -14186,17 +14464,21 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       cleared `obj/`+`bin/` under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed
       seconds written to the "after" column of `benchmark.md` row B1.
 - [ ] [AI] **A2 — publish build**, the one CI runs, in the mode selected at Phase 1, under
-      `/usr/bin/time -p` — acceptance: elapsed seconds written to row B2.
-- [ ] [AI] **A3 — warm no-op build**: run the build twice, record the second — acceptance: elapsed
-      seconds written to row B3.
+      `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to row B2, and
+      the recorded exit code is 0.
+- [ ] [AI] **A3 — warm no-op build**: run the build twice **under `/usr/bin/time -p`**, record the
+      second, asserting exit code 0 on both — acceptance: elapsed seconds written to row B3, and the
+      recorded exit code is 0.
 - [ ] [AI] **A4 — edit-rebuild loop**: touch the deepest `.fs` file in `RhinoCli.Application` and
-      rebuild under `/usr/bin/time -p` — acceptance: elapsed seconds written to row B4.
+      rebuild under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written
+      to row B4, and the recorded exit code is 0.
 - [ ] [AI] **A5 — startup**: run the published binary's `--help` 50 times under `/usr/bin/time -p`,
       asserting exit code 0 on **every** iteration without aborting the loop — acceptance: total wall
       time and derived mean milliseconds written to row B5.
 - [ ] [AI] **A6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
-      one-file change, and count the `rhino-bin.sh` invocations — acceptance: elapsed seconds and
-      invocation count written to row B6.
+      one-file change, asserting exit code 0, and count the `rhino-bin.sh` invocations — acceptance:
+      elapsed seconds and invocation count written to row B6, and the recorded exit code is 0. Same
+      rule as B6: an early-aborting hook is discarded, never recorded.
 - [ ] [AI] **A7 — CI critical path**: read the `build-rhino` job duration from the three most recent
       green `pr-quality-gate.yml` runs on `main` — acceptance: the three durations and their mean
       written to row B7.
@@ -14305,11 +14587,24 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 ### 11b — Descriptive documentation, updated without the rules workflow
 
 - [ ] [AI] Enumerate the surface:
-      `grep -rlE 'rhino-cli[^.]{0,120}(Rust|cargo)|(Rust|cargo)[^.]{0,120}rhino-cli' docs repo-governance AGENTS.md README.md`
+      `grep -rlE 'rhino-cli[^.]{0,120}(Rust|cargo)|(Rust|cargo)[^.]{0,120}rhino-cli' docs repo-governance AGENTS.md CLAUDE.md README.md .claude/skills`
       — acceptance: the file list is written into `learnings.md` with a per-file verdict of _edit_ or
-      _correct as-is_. The count measured while authoring this plan was **51** in `ose-public` (it was 52 a day
-      earlier — the surface moves); a
-      materially different count means the surface moved and must be re-read, not assumed.
+      _correct as-is_. The count measured while authoring this plan was **51** in `ose-public` over
+      `docs repo-governance AGENTS.md README.md` alone (it was 52 a day earlier — the surface moves);
+      a materially different count means the surface moved and must be re-read, not assumed.
+      **`.claude/skills` is in the sweep and must stay in it.** `SKILL.md` files are autoloaded agent
+      working context, not passive prose, so a stale sentence there is read as fact by the next agent
+      that runs. `.claude/skills/ci-standards/SKILL.md` is a known hit: it calls `rhino-cli` "the only
+      Rust CLI app today", which after Phase 9 is wrong twice over — `rhino-cli` is no longer Rust,
+      **and** no Rust CLI app remains at all, so the parenthetical's premise disappears rather than
+      just its label. Its generated mirror `.agents/skills/ci-standards/SKILL.md` carries the same
+      sentence and regenerates via `npm run generate:bindings` once the source is fixed — never
+      hand-edit the mirror.
+- [ ] [AI] Do **not** widen the remedy to every `.claude/skills` grep hit — several match while
+      being correct. `.claude/skills/swe-developing-applications-common/reference/checker-validation-steps.md`
+      describes `rhino-cli` as the **tool** that validates Rust coverage for any Rust project, not as
+      a Rust project itself; its verdict is _correct as-is_ — acceptance: `learnings.md` records that
+      verdict explicitly, so a later reader does not "fix" it.
 - [ ] [AI] Edit the five files that **match the grep** and assert `rhino-cli` is a Rust project —
       `docs/reference/system-architecture/technology-stack.md` (1 hit),
       `docs/reference/system-architecture/applications.md` (1),

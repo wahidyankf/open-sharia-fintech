@@ -42,7 +42,7 @@ are **projections for a plan**, not the plan's outcome; Phase 10 replaces them w
 | Axis                                    | Rust `rhino-cli`  | F# `crane-cli`           | Comparable?               | Better            |
 | --------------------------------------- | ----------------- | ------------------------ | ------------------------- | ----------------- |
 | Source size measured                    | 65,858 src lines  | 3,770 src lines          | — context row             | —                 |
-| Marginal compile throughput             | **~5,900 LOC/s**  | **~1,200 LOC/s**         | **Yes — size-normalized** | **Rust** (~5x)    |
+| Marginal compile throughput             | **~5,900 LOC/s**  | **~1,500 LOC/s**         | **Yes — size-normalized** | **Rust** (~4x)    |
 | Startup per invocation                  | **5.2 ms**        | **46.0–53.0 ms**         | **Yes**                   | **Rust** (~9–10x) |
 | CI artifact, moved 9x per run           | **4.5 MB** static | **45 MB** fd / 128 MB sc | **Yes — but weakly**      | **Rust**          |
 | Warm no-op build                        | 1.7 s             | 0.77 s                   | **Yes — fixed overhead**  | **F#** (0.9 s)    |
@@ -66,11 +66,11 @@ framework-dependent .NET build would force a toolchain install into 8 jobs that 
 
 **Read ratios as felt cost.** Of the axes Rust wins, startup (+0.41 s per commit) and artifact size
 (seconds of intra-CI transfer) are too small to matter. Only one projected regression is genuinely
-felt: the edit-rebuild loop, 11.1 s today against a projected 25–41 s in F#. On the other side,
+felt: the edit-rebuild loop, 11.1 s today against a projected 20–33 s in F#. On the other side,
 92.7% of a cold Rust build is dependency crates F# never compiles, so CI build time may improve. See
 [tech-docs.md](./tech-docs.md) §Felt cost in perspective for the full per-axis breakdown.
 
-**Compile speed is explicitly NOT a goal of this plan.** The measurements above show F# is ~5x
+**Compile speed is explicitly NOT a goal of this plan.** The measurements above show F# is ~4x
 slower per line of first-party code. Any acceptance criterion phrased as "builds faster" would fail.
 See [brd.md](./brd.md) §Non-Goals.
 

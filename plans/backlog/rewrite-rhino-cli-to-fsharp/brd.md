@@ -71,8 +71,8 @@ What replaces it is a discipline, not a gate:
 ## Non-Goals
 
 - **Compile speed of first-party code.** Measured on 2026-08-25: F# marginal throughput
-  ~1,200 LOC/s vs. Rust's ~5,900 LOC/s, i.e. ~5x slower per line. In felt terms the edit-rebuild
-  loop goes from a measured **11.1 s** to a projected **~25–41 s** [Judgment call, range set by the
+  ~1,500 LOC/s vs. Rust's ~5,900 LOC/s, i.e. ~4x slower per line. In felt terms the edit-rebuild
+  loop goes from a measured **11.1 s** to a projected **~20–33 s** [Judgment call, range set by the
   source-size hypothesis]. **This is the plan's one genuinely significant projected regression** — a
   contributor notices it on every edit. It is accepted, not mitigated, and must never be sold as a
   build-speed win. Note the fair counterpart: 92.7% of a cold Rust build is dependency crates that
@@ -101,7 +101,7 @@ What replaces it is a discipline, not a gate:
 The plan author's recommendation, recorded for the reader, stated in felt terms rather than ratios:
 
 - **Against the plan, and it counts**: the edit-rebuild loop is projected to roughly double or
-  triple, 11.1 s to 25–41 s. Every contributor pays this on every edit.
+  triple, 11.1 s to 20–33 s. Every contributor pays this on every edit.
 - **Against the plan, but it does not count**: startup (+0.41 s per commit) and artifact size
   (seconds of intra-CI transfer). Both were overstated in earlier drafts of this document and are
   corrected here rather than quietly dropped. Neither is a reason to reject the plan.

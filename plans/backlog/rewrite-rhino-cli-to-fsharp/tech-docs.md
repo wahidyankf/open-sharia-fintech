@@ -11,7 +11,7 @@ them on the executing machine before any porting begins, because the thresholds 
 | ---------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------- | -------------------- |
 | Source size measured                     | 65,858 src lines                                       | 3,770 src lines                                              | — context row                   | —                    |
 | **Dependency compile cost**              | **234.8 unit-s** (92.7% of the gate build, 183 crates) | **~0** (prebuilt NuGet DLLs)                                 | **Yes — ecosystem property**    | **F#**, decisively   |
-| Marginal compile throughput, first-party | ~5,900 LOC/s                                           | ~1,200 LOC/s                                                 | **Yes — size-normalized**       | **Rust** (~5x)       |
+| Marginal compile throughput, first-party | ~5,900 LOC/s                                           | ~1,500 LOC/s                                                 | **Yes — size-normalized**       | **Rust** (~4x)       |
 | Startup, per invocation                  | **5.2 ms**                                             | **46.0 ms** Debug JIT / 46.8 fd / 53.0 self-contained        | **Yes — per-invocation**        | **Rust** (~9–10x)    |
 | **Startup, aggregated per run**          | baseline                                               | **+0.41 s** pre-commit (10 calls), **+0.82 s** CI (20 calls) | **Yes — what is actually felt** | **Rust**, negligibly |
 | Warm no-op build                         | 1.7 s                                                  | 0.77 s                                                       | **Yes — fixed overhead**        | **F#** (0.9 s)       |
@@ -32,7 +32,7 @@ section — marking which of the projections above turned out wrong (see [prd.md
 **The two headline rows point in opposite directions.** F# wins dependency compile decisively —
 92.7% of a cold Rust gate build is the 183 dependency crates, and NuGet ships prebuilt DLLs so F#
 pays essentially nothing there [Repo-grounded — `cargo build --profile gate --timings`, 234.8 of
-253.5 unit-seconds outside `rhino-cli` itself]. Rust wins first-party throughput by ~5x. Which
+253.5 unit-seconds outside `rhino-cli` itself]. Rust wins first-party throughput by ~4x. Which
 dominates depends entirely on the ratio of dependency code to first-party code, and at 49,460
 first-party code lines this project is unusually first-party-heavy — which is why the `Cold build,
 whole project` row is marked `n/c` rather than scored for F#.
@@ -76,7 +76,7 @@ therefore paid once per repo, not once per worktree, which is why this row is no
 startup, marginal throughput, CI artifact, and warm no-op. The raw build-time rows put a
 65,858-line project beside a 3,770-line one, so "F# cold-builds in 7 s" is a statement about
 `crane-cli`'s size, not about F#. The size-normalized rows are the ones that carry the argument, and
-they say F# compiles **~5x slower per line** and starts **~9x slower per invocation**.
+they say F# compiles **~4x slower per line** and starts **~9x slower per invocation**.
 
 ### Reproduction commands
 
@@ -106,12 +106,19 @@ for i in $(seq 50); do crane --version >/dev/null; done                         
 ```
 
 Every timing above was taken under `/usr/bin/time -p`, and every startup loop asserts exit code 0
-per iteration so a crashing binary cannot report a false-fast figure.
+per iteration so a crashing binary cannot report a false-fast figure. The Phase 0 (B1–B8) and Phase
+10 (A1–A8) steps carry that same exit-code assertion on every timed step, not only the startup
+loops.
 
-**Derived**: F# marginal compile throughput ≈ 1,200 LOC/s (`(2.45 − 0.77) / 2048`); Rust crate
-rebuild throughput ≈ 5,900 LOC/s (`65858 / 11.1`). [Judgment call] A 66k-LOC F# project therefore
-rebuilds in roughly 55 s against Rust's 11.1 s — treat as an order-of-magnitude expectation, not a
-measurement, since no F# project in this repo exceeds 2,048 lines.
+**Derived**: F# marginal compile throughput ≈ 1,500 LOC/s — `2048 / (2.13 − 0.77) = 1,506`, where
+both inputs come from the table above: **2.13 s** is `crane-cli`'s rebuild after one source touch
+and **0.77 s** is its warm no-op build, so their difference is the marginal cost of recompiling its
+2,048 source lines. Rust crate rebuild throughput ≈ 5,900 LOC/s (`65858 / 11.1`). [Judgment call] A
+66k-LOC F# project therefore rebuilds in roughly 44 s against Rust's 11.1 s — treat as an
+order-of-magnitude expectation, not a measurement, since no F# project in this repo exceeds 2,048
+lines. Phase 10 re-derives the F# side with the same two measurements (A3 warm no-op, A4
+edit-rebuild) over the real line count, which is what makes the figure reproducible rather than
+inherited.
 
 **Per-crate build cost** from `cargo build --profile gate --timings`: 253.5 unit-seconds total
 across 123 units, of which `rhino-cli` itself is 17.8 s and `tree-sitter` is 13.4 s. `tree-sitter`
@@ -132,14 +139,14 @@ matter — including where that verdict works against the case for Rust.
 | Warm no-op build               | F#     | 0.9 s, on a target Nx usually serves from cache                      | **No**                        |
 | Build directory on disk        | —      | 1.6 GB per repo (shared across worktrees), so ~3.2 GB for both repos | **Modest**                    |
 | Dependency compile             | F#     | 234.8 unit-s of the Rust cold build that F# never pays               | **Possibly yes** — see below  |
-| First-party compile throughput | Rust   | Full rebuild ~11.1 s today, projected ~25–41 s in F#                 | **Yes** — the one that bites  |
+| First-party compile throughput | Rust   | Full rebuild ~11.1 s today, projected ~20–33 s in F#                 | **Yes** — the one that bites  |
 
 #### The only regression that is genuinely felt: the edit-rebuild loop
 
 Rust rebuilds the whole crate in **11.1 s** after a `lib.rs`-level touch and **3.9 s** after a
-`main.rs` touch [Repo-grounded — measured]. [Judgment call] At F#'s measured 1,200 LOC/s marginal
-throughput, an F# implementation would take **~41 s if it lands at the same 49,460 code lines,
-~25 s if it comes out 40% smaller** — the range depends entirely on the source-size hypothesis this
+`main.rs` touch [Repo-grounded — measured]. [Judgment call] At F#'s measured 1,500 LOC/s marginal
+throughput, an F# implementation would take **~33 s if it lands at the same 49,460 code lines,
+~20 s if it comes out 40% smaller** — the range depends entirely on the source-size hypothesis this
 plan exists to test. Splitting into five projects ([DD-3](#dd-3--project-per-layer-not-one-giant-fsproj))
 bounds it, since a touch inside one project rebuilds that project and its dependents rather than
 everything.
@@ -237,11 +244,25 @@ reject F# in the first place — with no measurement at all behind it.
 
 #### What AOT is actually worth
 
-AOT's unique contribution over a self-contained non-AOT publish is startup, and startup is worth
-**0.41 s per pre-commit and 0.82 s per CI run** [Repo-grounded — 10 and 20 rhino invocations
-respectively per `rhino-cli gate list --surface=<s>`, times the measured 40.8 ms delta]. Against
+Startup is worth **0.41 s per pre-commit and 0.82 s per CI run** [Repo-grounded — 10 and 20 rhino
+invocations respectively per `rhino-cli gate list --surface=<s>`, times a 40.8 ms delta]. Against
 gate jobs of 22–253 s and a full CI run of ~380 s, that is under 0.25%. Real, but not a reason to
 gate a plan on.
+
+**Which delta those figures use, stated plainly, because it is easy to misread.** The 40.8 ms is
+`46.0 ms (F# Debug JIT) − 5.2 ms (Rust)` — the **best** of the four measured F# configurations
+against Rust. Debug JIT is not a shipping candidate; it is the floor, and it is quoted here because
+it is the most conservative possible statement of the penalty.
+
+If the plan ships the **self-contained non-AOT fallback** — an explicitly allowed Phase 1 outcome —
+the delta is `53.0 − 5.2 = 47.8 ms`, giving **0.478 s per commit and 0.956 s per CI run**, about 17%
+worse than the headline figures. Still under 0.25% of a CI run, so the conclusion is unchanged, but
+the larger pair is the honest one to plan against.
+
+AOT's unique contribution **over** the self-contained fallback cannot be stated yet at all: AOT's
+own startup is `TBD` in the ranking table below, so the AOT-versus-self-contained delta is exactly
+what Phase 1 measures. Until then, "AOT saves 0.41 s" would be an unmeasured claim — what is
+measured is that F# costs at most ~0.48 s per commit in the worst allowed shipping mode.
 
 #### The toolchain-free CI shape does not require AOT
 
@@ -407,6 +428,38 @@ the authoritative 17-row mapping by reading each namespace's `--help`, and corre
 it disagrees. The wave assignment above is grouped so that every directory feeding one namespace
 lands in the same wave, which is what makes a shim flip possible at each wave boundary.
 
+### DD-8 — The `deps:audit` narrowing and the SDK floor
+
+Two Phase 9c consequences that earlier drafts recorded as no-ops. Both are real changes in what the
+repository enforces, so both are decided here rather than discovered during execution.
+
+**The `deps:audit` narrowing.** `apps/rhino-cli/deny.toml` enforces three independent controls:
+`[advisories]` (known vulnerabilities), `[licenses]` (an allowlist of MIT, Apache-2.0, ISC,
+BSD-2-Clause, BSD-3-Clause, Unicode-3.0), and `[sources]`/`[bans]` (deny unknown registries, deny
+unknown git sources, warn on duplicate versions). The replacement command,
+`dotnet list package --vulnerable --include-transitive`, covers only the first. Keeping the target's
+name while it checks one of three things is worse than renaming it, because every caller and every
+reader takes "audit" at face value.
+
+**Decision**: Phase 9c must close the gap or record it. Preferred close: a `nuget.config` under
+`apps/rhino-cli/src-fsharp/` that opens with `<clear />` and pins `packageSources` to nuget.org
+(covering `[sources]`/`[bans]`), plus a license check folded into the `deps:audit` command
+(covering `[licenses]`). If either is deferred, `learnings.md` records which control was dropped,
+who accepted it, and why — and the target is renamed to say what it actually does.
+
+**The SDK floor.** Removing `compat:min-version` is correct — it asserts a Rust MSRV and cannot
+outlive the crate. The justification that a .NET floor already exists is not. `repo-config.yml`
+pins `dotnet-global-json: apps/ose-be/global.json`; `apps/ose-be/` is a sibling of
+`apps/rhino-cli/`, and .NET resolves `global.json` by walking upward from the working directory,
+never sideways. No repo-root `global.json` exists in `ose-public`, and `ose-private` has none at
+all — as this plan's own `ose-private` delta table already states.
+
+**Decision**: Phase 9c establishes a `global.json` at a path that actually covers
+`apps/rhino-cli/src-fsharp/`, in both repos, before removing `compat:min-version`. The acceptance
+is behavioural, not existential: `dotnet --version` run from inside `apps/rhino-cli/src-fsharp/`
+reports the pinned version. A file that exists but does not scope is the defect being fixed, so
+`test -f` alone cannot be the check.
+
 ## File-Impact Analysis
 
 Legend: `[E]` edited, `[N]` new, `[D]` deleted, `[G]` generated. Every phase number below is a phase
@@ -505,11 +558,17 @@ CI after re-homing proves nothing on its own — the assertion may simply have s
 - **`project.json` target rewiring happens at Phase 9c**, once no namespace still routes to Rust.
   Its shape is already known [Repo-grounded — the existing file names all 20 targets]: `deps:audit`
   is **retained** with its name unchanged, its command swapped from `cargo-deny` to
-  `dotnet list package --vulnerable --include-transitive`, so supply-chain scanning is not silently
-  dropped; `compat:min-version` is **removed** with no replacement, because it asserts a Rust MSRV
-  floor and the .NET equivalent is already guaranteed by the SDK version pinned in
-  `apps/ose-be/global.json` [Repo-grounded — `repo-config.yml` `dotnet-global-json`]; the other 18
-  keep their names so no downstream caller changes.
+  `dotnet list package --vulnerable --include-transitive` — a **narrowing**, not a like-for-like
+  swap. `deny.toml` enforces three controls (`[advisories]`, `[licenses]`, `[sources]`/`[bans]`);
+  the replacement covers only advisories, so Phase 9c must either restore license and
+  source-provenance checking on the NuGet side or record the drop as an accepted regression. See
+  [DD-8](#dd-8--the-depsaudit-narrowing-and-the-sdk-floor). `compat:min-version` is **removed**,
+  but not because a .NET floor already exists — `repo-config.yml` pins
+  `dotnet-global-json: apps/ose-be/global.json`, which is a **sibling** of `apps/rhino-cli/` and so
+  cannot scope to it (.NET resolves `global.json` upward only), and `ose-private` has no
+  `global.json` at all. Phase 9c therefore establishes a `global.json` that actually covers
+  `apps/rhino-cli/src-fsharp/` in both repos. The other 18 targets keep their names so no
+  downstream caller changes.
 - **The new F# tree gets its own Nx project.** Without one, `nx affected` never sees it and the
   `dotnet` CI job never runs its tests — the suite would be green because it never ran. Phase 2
   creates `apps/rhino-cli/src-fsharp/project.json` as `rhino-cli-fsharp` with `tag:lang:fsharp`.
