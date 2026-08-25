@@ -12,10 +12,11 @@ created: 2026-08-22
 when_to_use: "Use when writing a review finding or a fixer reply."
 ---
 
-# Review as Teaching — Every Finding Is Legible to a Junior Engineer
+# Review as Teaching — Every Finding Is Legible to a Bootcamp Graduate
 
 A PR review is the most-read technical writing this repo produces, and its thread is permanent.
-Someone new to the codebase learns more from reading past reviews than from any document written
+Someone who has completed a coding bootcamp but has not worked on a professional engineering team
+learns more from reading past reviews than from any document written
 to be read. That makes legibility a requirement of the finding, not a courtesy — a finding only a
 specialist can decode teaches nobody, and the review culture it builds is one where people stop
 reading.
@@ -33,9 +34,9 @@ reading.
 ## What Every Reply Carries
 
 A fixer reply is half the conversation. `Fixed: <what changed>` states the change; the reply also
-states **why that change resolves the finding**. A rejection explains the reasoning so a reader
-learns the boundary, not just the outcome — a rejection nobody can follow reads as a dismissal
-even when it is correct.
+states **why that change resolves the finding**, the reviewed head, and one four-way disposition.
+A rejection explains the evidence and boundary so a reader learns the outcome rather than seeing a
+dismissal.
 
 ## Critique the Change, Never the Author
 

@@ -14,10 +14,12 @@ when_to_use: Use when writing or reviewing a PR description.
 
 # What Every PR Body Must Carry
 
-Every PR here is read by a human, whatever else reviews it. Four things make that possible, and
-`.github/pull_request_template.md` prompts for all four.
+Every PR here is read by a human, whatever else reviews it. A readable body states the outcome,
+why, scope and non-goals, reading order, verification, and risk/rollback without becoming an
+academic paper. `.github/pull_request_template.md` prompts for each in compact form.
 
-1. **Why the change is needed, not only what changed.** State the problem it solves in enough
+1. **The outcome and why the change is needed, not only what changed.** State the intended result
+   and the problem it solves in enough
    detail that a reader can judge whether the change answers it. A list of edits is not a reason.
 2. **What is in scope, and what is deliberately not** — both stated, each with its reason. A
    non-goal without a reason reads as an oversight; with one it is a decision. This is the
@@ -25,6 +27,8 @@ Every PR here is read by a human, whatever else reviews it. Four things make tha
    to.
 3. **Where to start reading** — the one file that makes the rest legible.
 4. **Which paths to skip** — generated mirrors and mechanical churn, named explicitly.
+5. **What was verified and what could go wrong.** Name the checks run, the remaining risk, and the
+   safe rollback or containment step.
 
 **Why this binds prose PRs too.** [Code as
 Liability](../../../development/practice/code-as-liability/the-obligation.md) makes a PR adding

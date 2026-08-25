@@ -1,7 +1,7 @@
-## Why
+## Outcome and Why
 
 <!--
-The problem this PR solves, in enough detail to judge whether the change answers it.
+The intended result and problem this PR solves, in enough detail to judge whether the change answers it.
 Required on every PR, including prose-only ones. A list of edits is not a reason.
 This statement also bounds review scope — the cycle may not widen it.
 See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-body.md
@@ -40,3 +40,7 @@ See repo-governance/development/practice/code-as-liability.md
 ## Verification
 
 <!-- Gates run and their results. Name commands, not intentions. -->
+
+## Risk and Rollback
+
+<!-- What could go wrong, how the change is contained, and how to return safely. Keep it brief. -->

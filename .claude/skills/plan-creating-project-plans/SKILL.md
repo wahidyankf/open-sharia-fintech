@@ -1,6 +1,6 @@
 ---
 name: plan-creating-project-plans
-description: Project planning standards for plans/ directory including folder structure (ideas/, backlog/, in-progress/, done/), stage-aware naming convention (done uses YYYY-MM-DD__identifier/; backlog and in-progress use identifier/ with no date prefix), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, Gherkin acceptance criteria, and the mandatory structured multiple-choice grilling gates (pre-write and post-write) for resolving design decisions with the user. Essential for creating structured, executable project plans.
+description: Project planning standards for plans/ directory including folder structure (ideas/, backlog/, in-progress/, done/), stage-aware naming convention (done uses YYYY-MM-DD__identifier/; backlog and in-progress use identifier/ with no date prefix), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, Gherkin acceptance criteria, and decision grilling only when a material choice remains unresolved. Essential for creating structured, executable project plans.
 ---
 
 # Creating Project Plans
@@ -18,14 +18,14 @@ This Skill provides guidance for creating **structured project plans** in the pl
 - Structuring multi-phase projects
 - Moving plans through workflow stages
 
-**Start here — mandatory grilling**: before writing any plan content, resolve every open design
-decision through a structured multiple-choice pre-write grill; after writing, run the same
-post-write validation grill. Neither gate is optional. See
+**Start here — decision grilling**: before writing, resolve a material design decision that cannot
+be answered from repository evidence. Do not run a separate post-write grill; use the bounded
+evidence audit in the applicable plan workflow. See
 [mandatory-grilling.md](reference/mandatory-grilling.md).
 
 ## Reference Modules
 
-- [mandatory-grilling.md](reference/mandatory-grilling.md) — pre/post-write grilling (2-4 options HARD RULE)
+- [mandatory-grilling.md](reference/mandatory-grilling.md) — decision grilling for unresolved material choices
 - [plan-lifecycle-and-git-workflow.md](reference/plan-lifecycle-and-git-workflow.md) — 4-stage lifecycle + git workflow
 - [plan-folder-and-naming.md](reference/plan-folder-and-naming.md) — `plans/` folder layout + stage-aware naming
 - [plan-structure-multi-and-single-file.md](reference/plan-structure-multi-and-single-file.md) — five-document structure vs. single-file exception

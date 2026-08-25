@@ -1,8 +1,9 @@
-# Mandatory Pre-Write and Post-Write Grilling
+# Decision Grilling for Unresolved Material Choices
 
-Before writing any plan content, the calling root resolves all open design decisions through a
-structured multiple-choice pre-write grill. After writing the plan, the root runs the same
-post-write validation grill. Neither gate is optional.
+Before writing plan content, the calling root resolves only material design decisions that remain
+open after reading relevant repository evidence. A finished plan does not trigger a separate
+post-write grill: its bounded evidence audit reuses the stronger PR, check, and plan-specific
+evidence already collected.
 
 **HARD RULE — 2-4 options required**: Every grilling question MUST present **2-4 concrete,
 mutually exclusive options**. Each option MUST state its trade-off in one sentence. Exactly one
@@ -36,17 +37,7 @@ is the tiebreaker for genuinely ambiguous decisions.
   prior art, which selection + why (see
   [ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md#design-funnel-grilling-questions-ui-bearing-plans)).
 
-**Post-write grill covers** (each as a structured multiple-choice question):
-
-- Does the plan structure match the user's intent? Are all acceptance criteria captured?
-- Is Gherkin completeness sufficient (every acceptance criterion has a scenario)?
-- Is checklist granularity correct (each item is one concrete action; TDD substeps separate)?
-- Is the `## Worktree` section present?
-- Is Phase 0 (Environment Setup and Baseline) the first phase in `delivery.md`?
-- Does `delivery.md` open with the `[AI]`/`[HUMAN]` executor legend, and is every step that only a human can do tagged `[HUMAN]`?
-- Does every phase end with a `### Phase N Gate` (must-pass verification) followed by a Pause Safety note?
-
-**Do NOT proceed to writing until all pre-write branches are resolved.** A specialist with any open
+**Do NOT proceed to writing while a material pre-write branch remains unresolved.** A specialist with any open
 branch returns `## User Decisions Required` and stops; it never infers an answer. Unresolved design
 decisions force expensive rewrites.
 

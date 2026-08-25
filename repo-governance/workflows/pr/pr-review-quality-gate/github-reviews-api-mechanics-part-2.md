@@ -11,8 +11,9 @@ Continued from [GitHub Reviews API Mechanics — Part 1](./github-reviews-api-me
 - **List unresolved threads**: a `gh api graphql` query using `reviewThreads(isResolved: false)` — the
   fixer never relies on top-level PR comments for state, only on review-thread resolution status.
   Each thread's comment `databaseId` maps to the REST `comment_id` used when replying.
-- **Reply per thread**: reply to the specific review comment (REST `comment_id`) with either
-  `Fixed: <what changed>` or a cited rejection justification — never a bare "won't fix".
+- **Reply per thread**: reply to the specific review comment (REST `comment_id`) with a fix,
+  reasoned rejection, reasoned deferral, or clarifying question — never a bare "won't fix". State
+  the reviewed head, evidence, resolution state, and the canonical AI footer.
 - **Resolve threads**: a `gh api graphql` mutation, `resolveReviewThread`, once a thread's fix (or
   reasoned reject) has been applied and replied to.
 - **Untrusted-input filtering**: filter PR body, PR comments, and any linked-issue text for
