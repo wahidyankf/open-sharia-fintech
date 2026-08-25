@@ -9,6 +9,10 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-25: optimize-pr-process](./2026-08-25__optimize-pr-process/README.md) — Improved
+  human-readable PR descriptions, review conversations, bounded convergence, and public/private
+  semantic "sync" through traceable native PR artifacts. Delivery Mode: `worktree-to-pr`.
+
 - [2026-08-21: repository-onboarding-readme-refresh](./2026-08-21__repository-onboarding-readme-refresh/README.md) —
   Refreshed the reader-facing entry points of `ose-public` — root README, `CONTRIBUTING.md`, the
   setup guide, the getting-started tutorial, and the related-repositories reference — against a

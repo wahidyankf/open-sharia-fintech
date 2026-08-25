@@ -116,3 +116,11 @@ The executor reads the recorded `backlog-plan:` into `backlog_plan`, the recorde
 into `idea_search`, and the recorded `none-reason:` into `none_reason` before running the literal
 commands in the matching delivery checkbox. One entry has exactly one terminal state and never two
 durable homes.
+
+## Closure Disposition
+
+Every learning bullet above is **routed inline** to the live governance, workflow, plan, or skill
+source changed by this plan's merged PR sequence. No entry requests a code/test change or a separate
+backlog plan. Their durable evidence is the merged public/private PR history and the final live
+rules; the historical observations themselves remain here for audit rather than being copied into a
+new rule. No private-only detail was added to this public record.
