@@ -280,9 +280,12 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       before/after table and every row present, each cell in **both** columns pre-filled with the
       literal `TBD` — the placeholder the Phase 0 and Phase 10 gates grep for, which nothing else in
       this plan ever writes — acceptance: the file has exactly the eight rows named in the eight steps (B1-B8)
-      below plus §Source size, and `grep -c 'TBD' benchmark.md` returns **18** (nine rows × two
-      columns) at creation time. Without this seeding step the gates' `grep -c 'TBD' … returns 0`
-      clause passes on an untouched file and measures nothing.
+      below plus §Source size, and
+      `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **18** (nine rows × two columns) at
+      creation time. Count **occurrences**, not lines: a two-column table row carries both of its
+      `TBD` cells on one physical line, so `grep -c` would report 9 here and the clause would be
+      unfalsifiable. Without this seeding step the gates' later `returns 0` clause passes on an
+      untouched file and measures nothing.
 - [ ] [AI] **B1 — cold build**: `CARGO_TARGET_DIR=$(mktemp -d) cargo build --offline --manifest-path apps/rhino-cli/Cargo.toml`
       under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
       `benchmark.md`, not to prose.
@@ -331,7 +334,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 - [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos.
 - [ ] [AI] `benchmark.md` in each repo has a non-placeholder "before" value for all eight rows B1-B8
-      plus source size — acceptance: `grep -c 'TBD' benchmark.md` returns **9**, not 0 — the nine "after"
+      plus source size — acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **9**, not 0 — the nine "after"
       cells are still `TBD` at this phase, and every "before" cell has been overwritten with a real
       figure. A `0` here would mean the seeding step never ran; anything above 9 means a "before"
       measurement was skipped.
@@ -14617,7 +14620,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > All checks below must pass before starting Phase 11.
 
 - [ ] [AI] `benchmark.md` in each repo has a non-placeholder "after" value for all eight rows B1-B8
-      plus source size — acceptance: `grep -c 'TBD' benchmark.md` returns **0**, down from the 9 the
+      plus source size — acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **0**, down from the 9 the
       Phase 0 gate asserted — both bounds checked, so neither a never-seeded file nor a
       partially-filled one passes.
 - [ ] [AI] Every row carries a better/worse/unchanged verdict with an absolute delta.
