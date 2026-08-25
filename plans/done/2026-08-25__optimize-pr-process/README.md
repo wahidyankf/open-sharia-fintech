@@ -2,38 +2,17 @@
 
 ## Status
 
-**In Progress (private `PRIV-ADMISSION` completed in PR #64; `PRIV-A1` completed in
-PR #65 at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`; public `PUB-A2` PR #297 is the
-sole live delivery).**
-[Repo-grounded] Plan assembly merged through EXECUTION-CLOSURE in PR
-[#268](https://github.com/wahidyankf/ose-public/pull/268). Before ACTIVATE or its bounded equivalence audit,
-PRs [#269](https://github.com/wahidyankf/ose-public/pull/269),
-[#270](https://github.com/wahidyankf/ose-public/pull/270), and
-[#271](https://github.com/wahidyankf/ose-public/pull/271) retired 9 of the 19 mapped public ideas.
-Treat those merges as non-authorizing execution data points: the remaining 10 public ideas, all
-private work, and every rule/code wave stayed frozen until the reconciliation merged and the
-equivalence audit recorded the ACTIVATE pin. The former private two-path overlay landed in private
-PR #63 at `25bb1d81f53156d001f2ab25cca07d23ab8ce062`; it is no longer worktree residue. PR #273 merged the
-sole bounded amendment at `22bffb9263b020301d4ad9a6ff938c2277deef87`; PR #274 then merged, its
-AI-marked A0.P receipt was verified, and PUB-BASE completed cleanly. PR #275 supplied PUB-IDEAS-4's
-live-backlink authority, PR #276 completed PUB-IDEAS-4, and PR #277 supplied PUB-IDEAS-5's
-live-backlink authority. The plan-quality remediation merged as PR #280 at
-`7ea591ee54363c4811fb42ccef94cac898b598cc`; PUB-IDEAS-5 then completed in PR #281 at
-`e70ef47b945cbc91d23a641230a87a2b8879f75a`, whose receipt named PUB-IDEAS-6. PR #282 merged at
-`56e5fa6c5168ffe5569d21a4b685a76168dd6f13` and admitted PUB-IDEAS-6's four exact live-backlink
-repairs. PR #283 then merged at `6ecb22d0a4f7216cfb6865c502ca21801ebed70b`, recording the prior
-state and finite runbook rule. Public PRs #285, #286, and #288 subsequently retired the remaining
-public idea briefs at `5e45ae3e1969359a233ac8be2d7b176492d0531b`,
-`d440f7385aa32eadeaf224bb10a633837a31055a`, and `70dbe4187dd720d8fe344960d227c44cf3d549f5`.
-Those historical receipts supersede the former future idea-delivery forecast. Public PR #289 merged at
-`539cda50e6aa48079d347ae6131b81901120cd84`, admitting the exact A-wave paths and completing direct
-PUB-A1 size-policy edits. PR #290 merged at `1c916103e75e48c939439d381e8f3ddb9ea3dd54`, correcting
-the executable runbook; PR #291 merged at `92fb921ac9ea5b875f0a83c7a525d82c8af17e1b`, supplying the
-required reader-state receipt. GitHub remains the durable review and receipt record. Public plan
-amendment [#296](https://github.com/wahidyankf/ose-public/pull/296) merged at
-`b41fc49a4139ea196c832020ae5396b5a036f9a2`; private PR [#65](https://github.com/wahidyankf/ose-private/pull/65)
-then merged at `71c8a0f1f318bf856141f1067a31f15f307b7f3b`. Its terminal receipt releases public
-`PUB-A2` only.
+**Complete (2026-08-25).** Public delivery completed in PRs
+[#299](https://github.com/wahidyankf/ose-public/pull/299),
+[#301](https://github.com/wahidyankf/ose-public/pull/301), and
+[#302](https://github.com/wahidyankf/ose-public/pull/302); the archive itself merged in
+[#303](https://github.com/wahidyankf/ose-public/pull/303) at
+`bc122a3d978b337fb4cd32be6b0b73752e684368`. Its private semantic counterparts landed in
+[#65](https://github.com/wahidyankf/ose-private/pull/65),
+[#68](https://github.com/wahidyankf/ose-private/pull/68),
+[#70](https://github.com/wahidyankf/ose-private/pull/70), and
+[#72](https://github.com/wahidyankf/ose-private/pull/72). The merged PRs and their native review
+artifacts are the durable execution record; this archived plan preserves the rationale and route.
 
 ## Outcome
 
