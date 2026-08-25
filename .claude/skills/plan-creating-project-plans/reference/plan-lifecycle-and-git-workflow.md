@@ -14,9 +14,9 @@ sections, and new Skills for agent coverage, with its open questions and promoti
 
 ### 2. Planning (backlog/)
 
-**Gate**: The root resolves all open design decisions via pre-write grilling before the specialist
-writes plan content. A specialist returns `## User Decisions Required` and stops when any branch is
-open. See [Mandatory Pre-Write and Post-Write Grilling](mandatory-grilling.md).
+**Gate**: The root resolves only material design decisions that repository evidence cannot answer
+before the specialist writes plan content. A specialist returns `## User Decisions Required` and
+stops when such a branch is open. See [Decision Grilling](mandatory-grilling.md).
 
 **Actions**:
 
@@ -42,9 +42,9 @@ open. See [Mandatory Pre-Write and Post-Write Grilling](mandatory-grilling.md).
 
 ### 4. Completion (done/)
 
-**Gate**: The root validates the finished plan via post-write grilling before archiving. A
-specialist returns `## User Decisions Required` and stops until the root resumes it with answers.
-See [Mandatory Pre-Write and Post-Write Grilling](mandatory-grilling.md).
+**Gate**: The root validates the finished plan through its bounded evidence audit before archiving.
+Do not reopen a settled plan for a separate post-write grill; escalate only a genuinely unresolved
+material decision. See [Decision Grilling](mandatory-grilling.md).
 
 **Actions**:
 
