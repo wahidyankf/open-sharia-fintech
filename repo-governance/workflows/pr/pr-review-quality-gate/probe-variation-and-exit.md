@@ -41,7 +41,7 @@ which is [extended only per-PR](./convergence-measurement.md).
 A ceiling reached before the exit condition holds is a `blocked` PR, not a clean one. Reaching the
 ceiling never converts an unmet exit condition into a met one.
 
-That includes the case where **nothing is outstanding**: seven cycles run, the last two are clean,
+That includes the case where **nothing is outstanding**: five cycles run, the last two are clean,
 but one repeats an earlier class. The condition is unmet, so the PR is `blocked` with zero findings.
 Its only lawful resolution is a recorded per-PR ceiling extension — which is permitted here, because
 there is no finding for the extension to avoid resolving.

@@ -3,7 +3,7 @@ name: multi-plans-execution
 title: "multi-plans-execution"
 description: Schedules several ready plans together via a dependency DAG and bounded parallelism.
 when_to_use: Use when two or more gated plans should run together, not one at a time.
-goal: Execute several project plans together — resolving their dependency order, parallelizing independent delivery steps up to a bounded concurrency, driving each plan through its full per-plan lifecycle to archival, and solidifying the cross-plan learnings the executed plans produced together
+goal: Execute several plans together — resolve dependencies, parallelize independent steps within bounded concurrency, drive each plan to its terminal state, and consolidate cross-plan learnings
 termination: Every named plan reached its delivery-mode terminal state (archived to plans/done/ or a green reviewed PR handed off) or was quarantined with a reported reason, AND cross-plan learnings were consolidated and routed to durable homes
 inputs:
   - name: plans
@@ -19,7 +19,7 @@ inputs:
     required: true
   - name: parallelism
     type: number
-    description: Maximum number of delivery-step nodes allowed in flight concurrently across all plans (the "N parallel Tasks"). Overridable by the caller.
+    description: Maximum delivery-step nodes in flight across all plans. Caller-overridable.
     required: false
     default: 3
   - name: max-concurrency
@@ -56,6 +56,7 @@ A scheduling layer over `plan-execution.md`, driving several ready plans togethe
 - [Purpose & Mode](./multi-plans-execution/purpose-scope-and-execution-mode.md) — when to use, orchestrator.
 - [Relationship & Concurrency](./multi-plans-execution/relationship-and-concurrency-model.md) — inherited vs. added.
 - [Phase A — Scope](./multi-plans-execution/phase-a-scope-and-nodes.md) — A1-A3.
+- [Phase A — Frozen Scope Recovery](./multi-plans-execution/phase-a-frozen-scope-recovery.md) — durable selection and promotion state.
 - [Phase A — Edges](./multi-plans-execution/phase-a-edges-report-and-diagram.md) — A4-A7.
 - [Phase B — Tasks](./multi-plans-execution/phase-b-union-task-list.md) — B1-B5.
 - [Phase C — Scheduler](./multi-plans-execution/phase-c-ready-queue-scheduler.md) — C1-C6.

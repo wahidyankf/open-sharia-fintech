@@ -38,6 +38,9 @@ and three confirmed live-API gotchas, the four-way triage table and each path's 
 reply/resolve hard rules and repeated-finding handling across cycles, and the posting-identity
 stopgap plus mandatory pre-push gate re-run.
 
+Before triage or mutation, require the live PR head to equal the posted cycle's scout pin. A
+mismatch permits stale-evidence replies only and returns the cycle for a fresh scout.
+
 ## Reference Documentation
 
 **Project Guidance**:

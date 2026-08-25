@@ -19,9 +19,9 @@ The record makes the route auditable; it does not replace reviewer judgment or a
    counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
    thread, per the
    [Scope Guard](./scope-deferral-exit.md). The
-   default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
+   default maximum is five cycles; reaching the ceiling with any such finding is `blocked`, never
    done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
-   At the first cycle at or past six and at every convergence checkpoint after it, record sanitized nonconvergence learning in the owning plan's
+   At the configured ceiling, record sanitized nonconvergence learning in the owning plan's
    `learnings.md` (or, with no owning plan, a comment on the PR) and create or update a deduplicated
    improvement idea in `plans/ideas`.
 2. **Noneligible route** — the classifier evidence shows that the full diff is non-executing, and

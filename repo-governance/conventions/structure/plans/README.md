@@ -47,7 +47,8 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Per-Repository Delivery Mode Restrictions](./per-repository-delivery-mode-restrictions.md) — Confirming which delivery modes are actually permitted in the specific repository a plan targets.
 - [Enforcement and File Naming](./per-repository-restrictions-enforcement-and-file-naming.md) — Checking why main-to-pr is never selected, or when naming a file inside a plan folder.
 - [Key Differences from Documentation and Creating Plans](./key-differences-and-creating-plans.md) — Deciding whether new content belongs in plans/ or docs/, or when starting to author a new plan.
-- [Starting and Completing Work](./starting-and-completing-work.md) — Moving a plan from backlog/ to in-progress/, or from in-progress/ to done/.
+- [Starting and Completing Work](./starting-and-completing-work.md) — Move plans between lifecycle stages.
+- [Starting Work — Promotion Recovery](./starting-work-promotion-recovery.md) — Reconcile remote state before starting or resuming promotion.
 - [Infra-Apply Gate and Plan Index Files](./infra-apply-gate-and-plan-index-files.md) — Why pending infra-apply steps keep a plan in in-progress/, plus each subfolder's index rules.
 - [Diagrams in Plans](./diagrams-required.md) — Deciding whether a plan section needs its own Mermaid diagram.
 - [Skipping, Accessibility, and Example](./diagrams-skip-accessibility-and-example.md) — Skipping diagrams on a simple plan, or applying the accessible palette.

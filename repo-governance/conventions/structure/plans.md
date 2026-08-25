@@ -81,6 +81,7 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 
 - [Key Differences and Creating Plans](./plans/key-differences-and-creating-plans.md) — plans/ vs. docs/.
 - [Starting and Completing Work](./plans/starting-and-completing-work.md) — lifecycle moves.
+- [Promotion Recovery](./plans/starting-work-promotion-recovery.md) — remote resume.
 - [Infra-Apply Gate and Indexes](./plans/infra-apply-gate-and-plan-index-files.md) — infra hold.
 
 ## Diagrams, Links, and Reference

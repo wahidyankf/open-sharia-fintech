@@ -1,14 +1,14 @@
 ---
 title: "PR-Review Quality Gate — Notes"
-description: "Operating notes: strictly-sequential is a hard requirement, seven is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern."
+description: "Operating notes: strictly-sequential is a hard requirement, five is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern."
 when_to_use: "Use when clarifying an operating nuance not covered elsewhere — e.g. why sibling-repo PR loops shouldn't run concurrently with the source PR's."
 ---
 
 # Notes
 
-- **Seven is a ceiling, not a target**: the eligible loop exits at its
+- **Five is a ceiling, not a target**: the eligible loop exits at its
   [clean exit](./probe-variation-and-exit.md) — two consecutive clean cycles under unused probe
-  classes — and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
+  classes — and never extends past `{input.cycles}` (default 5). The ceiling bounds work; it never waives a
   code-related MEDIUM/HIGH/CRITICAL finding.
 - **AI-attribution, not a distinct bot identity**: both agents currently post under the existing
   personal `gh` identity with an explicit AI-attribution footer per comment/reply, because no

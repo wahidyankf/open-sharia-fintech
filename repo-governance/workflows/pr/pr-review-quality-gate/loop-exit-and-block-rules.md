@@ -24,13 +24,12 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   satisfaction, reasoned deviation, or one bounded correction request; a second reversal freezes
   the pair for human judgment.
 
-- **Non-convergence learning**: at the first cycle at or past six, and at every
-  [convergence checkpoint](./convergence-measurement.md) after it, **the orchestrator** appends sanitized evidence explaining why
+- **Non-convergence learning**: at the configured ceiling, **the orchestrator** appends sanitized evidence explaining why
   convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
   owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`
   entry for a systemic improvement. Never place a secret, access token,
   or copied vulnerable value in either record.
-- **Ceiling block**: reaching the configured ceiling (seven by default) without the
+- **Ceiling block**: reaching the configured ceiling (five by default) without the
   [exit condition](./probe-variation-and-exit.md) holding is `blocked`, not `done` — whether or not a
   finding is outstanding. Never
   extend the cycle count as a substitute for resolving a finding. Extending it on the evidence of

@@ -13,7 +13,7 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 - **Output**: Confirmed PR reference, behavior classification, classification evidence, maximum
   cycle count when eligible, and a reader-facing review-route record in the PR body before fan-out
 - **Success criteria**: The PR exists and is open; the classifier has recorded `eligible` or
-  `noneligible`; `cycles` is a positive integer no greater than 7 unless the caller explicitly
+  `noneligible`; `cycles` is a positive integer no greater than 5 unless the caller explicitly
   authorizes a different ceiling
 - **Route**: A noneligible PR skips Steps 1–3 and proceeds to the `pr-quality-gate.yml` verification
   in Step 4. An eligible PR proceeds through the loop.
@@ -36,6 +36,11 @@ body. This is a human-readable audit aid, not a new classifier or mechanical gat
 - **On failure**: If the scout cannot access the PR or an API call fails, retry once and record the
   blocked condition. Do not relabel the PR noneligible merely because classification evidence is
   unavailable.
+
+Before selecting the ordinal or probe, rehydrate `prior`, ceiling use, the probe register, clean
+streak, and checkpoint history from the durable PR record as required by
+[Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md). Conflicting or
+malformed history stops the cycle; it never resets to cycle 1.
 
 For a paired public/private delivery, read the predecessor's terminal handoff before this pass.
 Do not start a new sibling-repository cycle while its source PR is still being fixed or awaiting

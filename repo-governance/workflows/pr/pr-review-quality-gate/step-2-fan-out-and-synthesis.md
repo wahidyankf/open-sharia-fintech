@@ -33,6 +33,9 @@ when_to_use: "Use when checking how the fan-out is dispatched, what the coordina
   review's header records the risk tier, the specialist set fanned out, any diff-slicing applied, and
   the cycle number (N of {input.cycles}) (see the
   [PR Reviewer-Discipline Convention](../../../development/quality/pr-review-disciplines.md))
+- **Head-authority gate**: Immediately before the single review POST, compare live `headRefOid`
+  with the scout pin. On mismatch, post nothing, discard the cycle output, and restart from a fresh
+  scout under [Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md).
 - **On failure**: If a specialist or the coordinator cannot access the PR or an API call fails, retry
   once and record the blocked condition; do not silently suppress the affected lens.
 - **Standard-route trivial branch**: when Step 1 records a non-plans-only `tier: trivial` route,

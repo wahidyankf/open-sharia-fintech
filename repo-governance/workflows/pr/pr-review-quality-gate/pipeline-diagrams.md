@@ -56,16 +56,21 @@ sequenceDiagram
   participant F as pr-review-fixer
   participant CI as CI on PR
 
+  O->>GH: rehydrate cycle history and ceiling state
+  GH-->>O: reviews, dispositions, probes, checkpoints, threads
   O->>SC: cycle number N of {total}
   SC->>SC: pin head SHA, classify risk tier, select specialist set, assemble shared-context brief, read prior dismissals
   SC->>SP: fan out route-selected specialists (fed context brief)
   SC->>SY: hand context_brief (SHA, diff, plan context) directly, per Output Contract
   SP-->>SY: raw findings per discipline
   SY->>SY: dedup + re-categorize + reasonableness-filter + tool-verify
+  SY->>GH: require live head equals scout pin
   SY->>GH: post ONE consolidated review (line-anchored)
   GH->>F: unresolved review threads
+  F->>GH: require live head equals scout pin
   F->>F: 4-way triage per comment
   F->>GH: push fixes, reply, resolve
   F->>CI: trigger checks
-  CI-->>O: must be GREEN before next cycle
+  CI-->>O: GREEN for exact expected head
+  O->>GH: require live expected head; clean only if still scout pin
 ```

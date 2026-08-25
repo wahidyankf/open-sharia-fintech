@@ -13,11 +13,14 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 - **Output**: Every unresolved thread triaged, fixes pushed to the PR branch, a reply posted per
   thread, resolved threads marked via `resolveReviewThread`
 - **Depends on**: Step 2 (same cycle)
+- **Head-authority gate**: Immediately before triage or branch mutation, compare live `headRefOid`
+  with the posted cycle's scout pin. A mismatch permits only stale-evidence replies/resolution and
+  a fresh-scout restart; it permits no code change. See
+  [Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md).
 - **Success criteria**: Zero unresolved threads remain untouched; every reply carries either a fix
   reference or a cited rejection justification
-- **On failure**: a fix that cannot be applied safely gets a reasoned reject reply, never a bare
-  "won't fix". A code-related MEDIUM/HIGH/CRITICAL finding stays merge-blocking until independently
-  resolved; a reasoned reply is evidence, not permission to merge.
+- **On failure**: reply with a reasoned rejection. Code-related MEDIUM+ findings remain
+  merge-blocking until independently resolved.
 
 ## 4. Per-Cycle CI Gate (Sequential, After Each Fixer Pass, Hard Gate)
 
@@ -27,9 +30,10 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 - **Depends on**: Step 3 (same cycle)
 - **Success criteria**: Eligible PRs have no failing or pending checks; noneligible PRs have a
   successful `.github/workflows/pr-quality-gate.yml` run for the current head
-- **On failure**: investigate and fix a code failure. For queued or stalled jobs, investigate
-  runner contention and keep polling; never cancel the goal because a shared runner is busy. Do NOT
-  start the next fan-out cycle until this gate is green.
+- **Credit gate**: Require CI and the live head to match the fixer's verified pushed head, or the
+  scout pin when no fix was pushed. Only the latter can receive clean credit. Mismatch restarts.
+- **On failure**: fix code failures; investigate queued or stalled jobs and keep polling. Do not
+  start the next cycle before green.
 
 ## 5. Done-Definition Check (Sequential, After the Route Completes)
 
@@ -40,11 +44,9 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
   `{output.unresolved-threads}`
 - **Success criteria**: every item in the
   [Route-Specific Done-Definition](./route-specific-done-definition.md#route-specific-done-definition)
-- **Traceability (every cycle)**: the review post carries an `ose-pr-review:v1` block and every
-  fixer reply an `ose-pr-review-disposition:v2` block, keeping the PR a self-contained account of
-  its own review. **Those identifiers and versions are normative here**; the skill below carries
-  only field detail, and a field change altering what history recovers needs a version bump
-  recorded here. Posting without them is a defect in that cycle's output. See
+- **Traceability (every cycle)**: reviews carry `ose-pr-review:v1`; fixer replies carry
+  `ose-pr-review-disposition:v2`. These identifiers and versions are normative; a field change
+  affecting history recovery needs a version bump here. See
   [machine-readable-audit-record.md](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md).
 - **Execution safety (normative by reference)**: the fixer holds `Edit`/`Write`/`Bash` and reads
   attacker-writable text, so what it may execute is a rules surface, held in two skill modules —

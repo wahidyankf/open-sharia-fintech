@@ -28,8 +28,11 @@ level of the artifact. Name it, so a specialist can tell a fresh angle from a re
 
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
 
-Before fanning out a new cycle, read the **prior cycle's thread resolution status** on the PR —
-via `gh api` against the PR's review threads/comments — including any thread a **human explicitly
+Before choosing the ordinal or fanning out, rehydrate every cycle review, disposition, probe,
+checkpoint, clean result, and used ceiling from the PR's durable records. Stop on malformed,
+duplicate, or conflicting history; never reset an existing PR to cycle 1 or an empty `prior`.
+
+Then read the **prior cycle's thread resolution status** via the Reviews API, including any thread a **human explicitly
 dismissed** ("won't fix" / "I disagree"). A human dismissal **resolves** that thread going
 forward, mirroring `pr-review-fixer`'s own reasoned-reject on the agent side. Record this
 resolution state in the shared-context brief and feed it to the specialists (alongside the rest

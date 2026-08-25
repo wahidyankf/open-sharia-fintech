@@ -22,19 +22,20 @@ before implementation begins.
 1. **Resolve the delivery mode first.** Apply the
    [three-tier precedence](./delivery-mode-merge-authority-and-precedence.md#delivery-mode--merge-authority-and-resolution-precedence),
    then check the [per-repository restrictions](./per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
-2. **Choose the permitted landing route.** For `worktree-to-pr`, `main-to-pr`, or whenever the
-   repository forbids direct push, sync `origin/main`, create or enter the plan's dedicated
-   worktree branch, and use the PR route below. Use direct push only when the resolved mode is
-   `worktree-to-origin-main` or `main-to-origin-main` **and** the repository permits that mode;
-   perform the move from the mode's declared work location.
+2. **Reconcile remote state, then choose the landing route.** Apply the mandatory
+   [Promotion Recovery](./starting-work-promotion-recovery.md) classifier (unstarted, branch
+   pushed, PR open, merged-and-verified, or anomaly-stop) before mutation or on resume, and
+   continue from that state. `worktree-to-pr` uses the dedicated worktree; `main-to-pr` stays in
+   the synced primary checkout with no worktree. Direct-push modes use their declared work
+   location and remain available only when the repository permits them.
 3. **Make a pure move.** Move `plans/backlog/<identifier>/` to
    `plans/in-progress/<identifier>/` without a date prefix, and update only the required
    `backlog/README.md` and `in-progress/README.md` indexes. Do not include implementation or other
    ride-along changes.
-4. **Land the promotion.** On the PR route, commit and push the worktree branch, open the
-   pure-move PR, complete the [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md),
-   and merge it into `origin/main`. On a permitted direct-push route, commit and push the pure move
-   to `origin main`.
+4. **Land or resume the promotion.** Continue from the reconciled state: push a not-yet-pushed
+   branch, open a missing PR, or resume the matching PR's
+   [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md) and merge. A permitted
+   direct-push route commits and pushes the pure move to `origin main`.
 5. **Verify and continue.** Confirm the promotion exists on `origin/main`, refresh or provision the
    implementation work branch from that commit, resolve the plan at its new `plans/in-progress/`
    path, initialize the toolchain, and only then execute its delivery checklist. The promotion PR

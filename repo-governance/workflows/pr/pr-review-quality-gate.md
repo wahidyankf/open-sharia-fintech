@@ -1,7 +1,7 @@
 ---
 name: pr-review-quality-gate
 title: "pr-review-quality-gate"
-description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
+description: "Classify PR behavior, then run CI-gated sequential specialist-review cycles when eligible."
 when_to_use: "Use for every open PR before merge, to decide whether the specialist review loop applies and drive it to done or blocked."
 goal: "Classify every pull request by changed-artifact behavior, then run strictly sequential specialist-review cycles only when the PR is eligible"
 termination: every PR has a recorded behavior classification; eligible PRs target cycles 1–3, use cycles 4–5 only for focused recovery, and stop before cycle 6; noneligible PRs pass pr-quality-gate and merge without the specialist cycle
@@ -41,6 +41,7 @@ their findings into ONE posted review, a fixer resolves them, CI must be green b
 - [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/purpose-execution-mode-and-classifier.md) — sequencing rule, eligibility classifier.
 - [Participants](./pr-review-quality-gate/participants.md) — the eleven agents, and the trivial-tier branch.
 - [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode.
+- [Cycle Recovery](./pr-review-quality-gate/cycle-authority-and-restart-recovery.md) — durable history, live-head gates.
 - [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants and one-cycle diagrams.
 
 ### Steps

@@ -7,13 +7,16 @@ when_to_use: "Use when tracing the exact control flow of the review loop, or con
 # Loop Algorithm
 
 ```text
-review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, STRICTLY SEQUENTIAL
+review_pr(PR, maximum_cycles = 5):          # repository ceiling, per-PR extension only
     route = classify_changed_artifacts(PR)  # eligible | noneligible; ambiguity => eligible
     if route == noneligible:
         require pr_quality_gate_is_green(PR)
         return not-applicable
-    prior = []                              # accumulated consolidated findings + resolution state
-    for cycle in 1..=maximum_cycles:
+    history = rehydrate_PR_review_history(PR) # ordinal/ceiling, probes, findings/dispositions,
+                                              # clean streak, checkpoints
+    require_well_formed(history)
+    prior = history.findings_and_resolutions
+    for cycle in history.next_ordinal..=maximum_cycles:
         scout = fresh pr-review-scout-maker(pr = PR, cycle = cycle, total_cycles = N, prior = prior)
                        # scout pins this cycle's ONE head SHA
         write_or_refresh_pr_body_route_record(route, scout)
@@ -22,23 +25,31 @@ review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, S
         raw = fan_out(scout.specialists, context_brief = scout.context_brief, fed = prior)   # CONCURRENT within this cycle
         consolidated = synthesis_maker.synthesize(raw, dedup_against = prior)
                        # dedup + re-categorize + reasonableness-filter + tool-verify
+        require_live_head_equals(PR, scout.head_sha, boundary = before_review_post)
         post consolidated as ONE line-anchored review (Reviews API)
+        require_live_head_equals(PR, scout.head_sha, boundary = before_fixer)
         fixer = pr-review-fixer()
-        fixer.resolve(PR)                   # triage, fix, push, reply, cause-tag each disposition
+        fixed = fixer.resolve(PR)           # triage, fix, push, reply, cause-tag each disposition
                        # same-defect completion is allowed; unrelated work becomes a linked follow-up
-        wait_until CI_is_GREEN(PR)          # HARD gate before decision or next cycle
+        expected_head = fixed.pushed_head ?? scout.head_sha
+        wait_until CI_is_GREEN(PR, head = expected_head)
+        require_live_head_equals(PR, expected_head, boundary = before_CI_credit)
         prior += consolidated + their resolution state
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
         if unresolved is empty and probe_class_is_new(cycle, prior):
+            require expected_head == scout.head_sha # a fix-bearing cycle is not clean
             if previous_cycle_was_clean_under_a_new_class(prior):
                 return done             # second consecutive clean cycle; LOW findings never hold the loop open
         if cycle % 3 == 0:
             convergence_checkpoint(prior)   # continue | change fix strategy | block
-        if cycle == 6 or (cycle > 6 and cycle % 3 == 0):
+        if cycle == maximum_cycles:
             capture_nonconvergence_learning_and_idea(PR, cycle, unresolved)
     return blocked                           # ceiling reached, exit condition unmet — with or
                                              # without an outstanding finding; extend per-PR to resolve
 ```
+
+Hydration, mismatch disposition, and restart accounting are defined in
+[Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md).
 
 - Each cycle spawns **fresh** specialist instances, route-selected per
   [PR Reviewer-Discipline Convention §Risk-tier fan-out](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md#risk-tier-fan-out-d12)

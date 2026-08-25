@@ -10,8 +10,7 @@ Continued in
 [Phase A — Edges, Report, and Diagram](./phase-a-edges-report-and-diagram.md).
 
 **A1. Resolve the caller's scope to a concrete, frozen plan set.** The `plans` input is either an
-explicit list or a set-selector; both resolve here into one enumerated set that is then **frozen for
-the whole run** (never re-expanded later — a plan added to `plans/backlog/` mid-run is not pulled in).
+explicit list or a set-selector; both resolve once into one enumerated set.
 
 - **Explicit list** — for each named plan, resolve its folder (in `plans/in-progress/` or, if named
   there, `plans/backlog/`). Fail fast with a clear error if a named plan does not exist.
@@ -22,17 +21,17 @@ the whole run** (never re-expanded later — a plan added to `plans/backlog/` mi
   MUST match a plan actually in the set; a no-op exclusion (name not in scope) is a caller error —
   report it rather than silently ignoring, so a typo'd exclusion never fails open into executing a
   plan the caller meant to hold back.
-- **Echo the frozen set.** Before scheduling, print the fully-enumerated resolved plan list (and, for
-  a selector, the bucket + exclusions that produced it) so the caller can confirm scope. An empty
-  resolved set (e.g., `all-in-progress` with nothing in-progress) terminates `fail` with a clear
-  message — there is nothing to execute.
+- **Echo and persist the frozen set.** Print the fully enumerated list and selector/exclusions for
+  caller confirmation. An empty set terminates `fail`. Before any promotion, apply
+  [Frozen Scope Recovery](./phase-a-frozen-scope-recovery.md): store every member and promotion
+  state in one durable run record, then reload that record rather than re-enumerating on resume.
 - **Promote every resolved `plans/backlog/` entry before scheduling.** For each plan in the frozen
   set, resolve that plan's delivery mode and apply the canonical
   [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
   Complete and merge the pure-move worktree PR for a `*-to-pr` or direct-push-unavailable route;
   use direct push only for a selected direct-push mode that the repository permits. Schedule no
-  node until the promotion exists on `origin/main` and the plan resolves under
-  `plans/in-progress/`.
+  node until the promotion exists on `origin/main`, the plan resolves under
+  `plans/in-progress/`, and the durable run record reflects that verified state.
 
 **A2. Refuse unvetted plans.** For each plan, confirm it passed `plan-quality-gate` (a clean strict
 double-zero — check for the plan's audit trail or re-run the gate). A plan that has not been vetted
