@@ -325,7 +325,10 @@ policy.
 
 ### DD-2 — Reuse the Gherkin, replace only the harness
 
-The 71 `.feature` files are the behavior contract and are not edited. `TickSpec` 2.0.5 is already a
+The 71 `.feature` files are the behavior contract and are not edited, with the plan's two
+sanctioned exceptions: Phase 3 adds the one new `git/` lockfile feature file for a CLI surface that
+has no Gherkin today, and Phase 9a retires the scenarios whose subject is the Rust toolchain itself,
+bounded by a committed verdict table. No other phase touches `specs/apps/rhino/`. `TickSpec` 2.0.5 is already a
 production dependency in this repo [Repo-grounded —
 `apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj`], alongside `xunit.v3` 3.2.2 and `coverlet`
 8.0.1. Where TickSpec cannot express a step the Rust `cucumber` harness supported, the fallback is a
@@ -381,13 +384,23 @@ Two repo rules set the shape of this plan's delivery checklist.
 one scenario, with that scenario inlined verbatim
 [Repo-grounded — `repo-governance/conventions/structure/plans/execution-grade-clarity.md`
 §One scenario per behavior cycle, which states plainly that "long checklists are expected"]. The
-rhino spec tree holds **525 scenarios**, so `delivery.md` carries 525 cycles and 1,863 checkboxes.
+rhino spec tree holds **525 scenarios**, so `delivery.md` carries 525 cycles and 1,868 checkboxes
+[Repo-grounded — `grep -c '^ *- \[ \]' delivery.md`, which is the only figure of
+record; restate it from that command, never from memory].
 That is the rule working as designed, not an authoring accident.
 
 **Rule 2 — PR size.** At most 400 handwritten program/script lines per PR, 900 when program and
 non-program lines mix, an absolute 1,000-line ceiling, and 20 hand-authored files
-[Repo-grounded — `prs-open-at-delivery-boundaries-pr-size.md` rule 4, tightened 2026-08-25]. At
-49,460 first-party code lines to replace, the floor is roughly 124 PRs of pure implementation.
+[Repo-grounded — `prs-open-at-delivery-boundaries-pr-size.md` rule 4, tightened 2026-08-25].
+
+**Every ceiling counts added lines only; deletions count toward none of them.** The 49,460
+first-party Rust lines this plan removes therefore do **not** set the PR floor — what sets it is the
+volume of F# **added**, which this plan expects to be materially smaller (see §Why the LOC argument
+is the real one). Taking the Rust figure as an upper bound on the F# written, the implementation
+floor is **at most** roughly 124 PRs and realistically fewer; the seam below, not this arithmetic,
+is what actually decides the count. The corollary matters at the other end of the plan: Phase 9's
+crate deletion is nearly pure subtraction and is comfortably inside rule 4, so its four-PR split is
+driven by divergent failure modes, not by line count.
 
 **Decision — the seam is the feature file.** One `.feature` file is one PR. This is stated once and
 holds for the whole plan, which makes the seam mechanical rather than a judgment call at every step:
@@ -440,13 +453,24 @@ lands in the same wave, which is what makes a shim flip possible at each wave bo
 Two Phase 9c consequences that earlier drafts recorded as no-ops. Both are real changes in what the
 repository enforces, so both are decided here rather than discovered during execution.
 
-**The `deps:audit` narrowing.** `apps/rhino-cli/deny.toml` enforces three independent controls:
+**The `deps:audit` narrowing.** `apps/rhino-cli/deny.toml` declares three independent controls:
 `[advisories]` (known vulnerabilities), `[licenses]` (an allowlist of MIT, Apache-2.0, ISC,
 BSD-2-Clause, BSD-3-Clause, Unicode-3.0), and `[sources]`/`[bans]` (deny unknown registries, deny
-unknown git sources, warn on duplicate versions). The replacement command,
-`dotnet list package --vulnerable --include-transitive`, covers only the first. Keeping the target's
-name while it checks one of three things is worse than renaming it, because every caller and every
-reader takes "audit" at face value.
+unknown git sources, warn on duplicate versions). **What it declares and what it enforces are not
+the same set, and the difference inverts the conclusion.** The target does not call `cargo deny`
+directly — it runs `apps/rhino-cli/scripts/deny-check.sh`, which executes
+`cargo deny check bans licenses sources` and deliberately **skips `[advisories]`**, because upstream
+RUSTSEC-2026-0124 ships a malformed advisory that breaks database load
+[Repo-grounded — `apps/rhino-cli/project.json` `deps:audit.options.command`, and the
+`deny-check.sh` header dated 2026-06-14]. So the enforced set today is bans + licenses + sources.
+The replacement command, `dotnet list package --vulnerable --include-transitive`, covers only
+advisories — the one control that is currently **off** — and drops all three that are **on**. The
+regression is therefore larger than a reading of `deny.toml` alone suggests, not smaller. Keeping
+the target's name while it checks none of what it used to is worse than renaming it, because every
+caller and every reader takes "audit" at face value. A second hazard compounds it:
+`dotnet list package --vulnerable` **reports** rather than gates, so an unwrapped replacement may
+exit 0 on a finding; Phase 9c proves the exit code against a known-vulnerable scratch project before
+treating it as a gate.
 
 **Decision**: Phase 9c must close the gap or record it. Preferred close: a `nuget.config` under
 `apps/rhino-cli/src-fsharp/` that opens with `<clear />` and pins `packageSources` to nuget.org
@@ -484,7 +508,8 @@ apps/rhino-cli/
 ├── parity-manifest.sha256                                    [G] Phase 2 (src-fsharp/ enters the boundary) and Phase 9c (Rust leaves it)
 ├── scripts/
 │   ├── rhino-bin.sh                                          [E] Phase 2: FSHARP_NAMESPACES table, shipped empty; [E] once per wave; [E] Phase 9c: collapsed to one resolution path
-│   └── shadow-diff.sh                                        [N] Phase 2: differential runner comparing both binaries
+│   ├── shadow-diff.sh                                        [N] Phase 2: differential runner comparing both binaries
+│   └── deny-check.sh                                         [D] Phase 9c: the cargo-deny wrapper deps:audit actually runs; all four of its inputs are deleted
 └── src-fsharp/                                               [N] Phase 2, see below
 
 apps/rhino-cli/src-fsharp/
@@ -501,13 +526,13 @@ apps/rhino-cli/src-fsharp/
 .github/
 ├── workflows/pr-quality-gate.yml                             [E] Phase 2: build-rhino publishes F# alongside Rust; [E] Phase 9d: rust job, has-rust, and the Rust build all removed
 ├── workflows/rhino-cli-parity-audit.yml                      [ ] UNCHANGED — it diffs the manifest file, not the source tree
-├── workflows/validate-env.yml                                [E] Phase 9d: setup-rust removed
-├── workflows/dependency-vulnerability-audit.yml              [E] Phase 9d: setup-rust removed
-├── workflows/_reusable-www-test-local-deploy.yml             [E] Phase 9d: setup-rust removed
-├── workflows/_reusable-app-test-local-deploy-stag.yml        [E] Phase 9d: setup-rust removed
+├── workflows/validate-env.yml                                [E?] Phase 9d: per-file remove-or-retain verdict, not a pre-decided removal
+├── workflows/dependency-vulnerability-audit.yml              [E?] Phase 9d: per-file remove-or-retain verdict, not a pre-decided removal
+├── workflows/_reusable-www-test-local-deploy.yml             [E?] Phase 9d: per-file remove-or-retain verdict, not a pre-decided removal
+├── workflows/_reusable-app-test-local-deploy-stag.yml        [E?] Phase 9d: per-file remove-or-retain verdict, not a pre-decided removal
 ├── actions/setup-dotnet/action.yml                           [ ] UNCHANGED — reused as-is by build-rhino
-├── actions/setup-rust/action.yml                             [D] Phase 9d — see §CI Impact
-└── actions/README.md                                         [E] Phase 9d: setup-rust row dropped
+├── actions/setup-rust/action.yml                             [ ] UNCHANGED in ose-public — the format job still needs it for the 198 course examples; [D] in ose-private only
+└── actions/README.md                                         [ ] UNCHANGED in ose-public — the setup-rust row stays; [E] in ose-private, where the action is deleted
 
 repo-config.yml                                               [E] Phase 9d: rhino-cli gate entries rustfmt/clippy -> fantomas/F# analyzers
 docs/reference/system-architecture/{technology-stack,applications,components}.md  [E] Phase 11b: the three files under this directory matching the enumerating grep
@@ -516,7 +541,10 @@ docs/reference/{monorepo-structure,project-dependency-graph}.md  [E] Phase 11b: 
 docs/explanation/software-engineering/programming-languages/rust/  [E] Phase 11b: fourteen files whose worked example is rhino-cli; disposition recorded, not assumed
 repo-governance/development/quality/code/rust-cli-linting.md  [E] Phase 11b: describes a toolchain the repo no longer provisions
 repo-governance/workflows/infra/development-environment-setup/phase-7-rust-ecosystem.md  [E] Phase 11b: same
-specs/apps/rhino/                                             [E] Phase 9a ONLY — Rust-toolchain scenarios retired against a committed verdict table; untouched by every other phase
+specs/apps/rhino/behavior/rhino-cli/gherkin/git/<lockfile>.feature  [N] Phase 3 — the `git lockfile` surface has no Gherkin today; authored before Wave D implements it
+specs/apps/rhino/                                             [E] Phase 9a — Rust-toolchain scenarios retired against a committed verdict table; untouched by every phase except that retirement and the Phase 3 addition above
+.claude/skills/ci-standards/SKILL.md                          [E] Phase 11b: calls rhino-cli "the only Rust CLI app today"
+.agents/skills/ci-standards/SKILL.md                          [G] Phase 11b: generated mirror of the line above; regenerated by `npm run generate:bindings`, never hand-edited
 .husky/{pre-commit,pre-push,commit-msg}                       [ ] UNCHANGED — they call rhino-bin.sh, which absorbs the routing
 ```
 
@@ -544,10 +572,14 @@ on the critical path. Every wave gate re-measures it into `benchmark.md`. This i
 dual-implementation window, it is visible at every wave, and it ends at Phase 9d.
 
 **Phase 9d — the teardown.** Once the crate is deleted, `has-rust` goes permanently false, the
-`rust` quality-gate job never runs again, and `.github/actions/setup-rust` becomes dead across all
-five workflows that reference it (`pr-quality-gate.yml`, `validate-env.yml`,
-`dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`,
-`_reusable-app-test-local-deploy-stag.yml`). `build-rhino` drops the `cargo build` step and renames
+`rust` quality-gate job never runs again, and `.github/actions/setup-rust` loses its rhino-cli
+consumers. It does **not** become dead in `ose-public`: the `format` job still invokes
+`format-rustfmt` over the 198 Rust course examples under `apps/ayokoding-www/content/`, so both the
+action directory and that one in-file use survive. Phase 9d gives each of the five referencing
+workflows (`pr-quality-gate.yml`, `validate-env.yml`, `dependency-vulnerability-audit.yml`,
+`_reusable-www-test-local-deploy.yml`, `_reusable-app-test-local-deploy-stag.yml`) an explicit
+remove-or-retain verdict rather than deleting them as a set. In `ose-private`, which has zero Rust
+course examples, all six in-file uses go to zero and the action directory is deleted. `build-rhino` drops the `cargo build` step and renames
 its single remaining artifact back to `rhino-cli-gate-binary`, so consumer jobs need no further
 edit.
 
@@ -566,9 +598,11 @@ CI after re-homing proves nothing on its own — the assertion may simply have s
   Its shape is already known [Repo-grounded — the existing file names all 20 targets]: `deps:audit`
   is **retained** with its name unchanged, its command swapped from `cargo-deny` to
   `dotnet list package --vulnerable --include-transitive` — a **narrowing**, not a like-for-like
-  swap. `deny.toml` enforces three controls (`[advisories]`, `[licenses]`, `[sources]`/`[bans]`);
-  the replacement covers only advisories, so Phase 9c must either restore license and
-  source-provenance checking on the NuGet side or record the drop as an accepted regression. See
+  swap. `deny.toml` declares three controls (`[advisories]`, `[licenses]`, `[sources]`/`[bans]`) but
+  `deny-check.sh` enforces only the last two families — advisories is deliberately skipped — so the
+  replacement covers the one control already off and drops the three in force. Phase 9c must either
+  restore license and source-provenance checking on the NuGet side or record the drop as an accepted
+  regression, and must prove the replacement can fail at all. See
   [DD-8](#dd-8--the-depsaudit-narrowing-and-the-sdk-floor). `compat:min-version` is **removed**,
   but not because a .NET floor already exists — `repo-config.yml` pins
   `dotnet-global-json: apps/ose-be/global.json`, which is a **sibling** of `apps/rhino-cli/` and so

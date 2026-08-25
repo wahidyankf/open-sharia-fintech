@@ -159,7 +159,7 @@ the scaffolding, flip, retirement, benchmark, and propagation PRs.
 - [prd.md](./prd.md) — what: personas, user stories, Gherkin acceptance criteria
 - [tech-docs.md](./tech-docs.md) — how: architecture, measured baseline, CI impact, file-impact tree,
   rollback
-- [delivery.md](./delivery.md) — do: 13 phases, 1,863 checkboxes, 525 bound scenarios
+- [delivery.md](./delivery.md) — do: 13 phases, 1,868 checkboxes, 525 bound scenarios
 - [learnings.md](./learnings.md) — Knowledge Capture running log
 
 ## Dependencies

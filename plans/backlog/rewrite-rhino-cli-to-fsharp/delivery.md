@@ -116,7 +116,15 @@ the decision, and the before/after numbers are **recorded, not obeyed**. Phase 0
 **Every PR obeys the size rule**: at most 400 handwritten program/script lines, at most 900 combined
 when program and non-program lines mix, an absolute 1,000-line ceiling, and at most 20 hand-authored
 files [Repo-grounded — `repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md`
-rule 4] — with exactly one recorded exclusion, stated next. The seam is stated once and applies
+rule 4] — with exactly one recorded exclusion, stated next.
+
+**All four ceilings count _added_ lines only. Deletions count toward none of them.** This is not a
+detail for this plan — it is the difference between a landable Phase 9 and an unlandable one. The
+crate-deletion PR removes tens of thousands of Rust lines while adding almost nothing, so it sits
+far inside rule 4 on the additions that matter. Phase 9 still splits into four PRs, but for a
+different reason, stated there: the failure modes of a workflow edit and a crate deletion are
+different and must not share a revert. An executor who counts `+` and `-` together will split PRs
+that never needed splitting and will read the Phase 9 seam as a size constraint it is not. The seam is stated once and applies
 throughout: **one `.feature` file is one PR**. There are
 71 feature files carrying 525 scenarios [Repo-grounded — counted over
 `specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 71 PRs,
@@ -170,7 +178,7 @@ precisely the combination the convention's own motivating incident describes.
 
 **The initial plan-document PR is excluded from rule 4's line ceilings, and nothing else is.** That
 PR carries these six documents — of which `delivery.md` alone binds all 525 scenarios verbatim — and
-lands at roughly 15,500 lines across 7 files. It is under rule 4's 20-file cap and far over its
+lands at 15,905 added lines across 7 files [Repo-grounded — `gh pr view 305 --json additions,deletions,changedFiles`]. It is under rule 4's 20-file cap and far over its
 1,000-line ceiling.
 
 The exclusion is granted because the alternative destroys the artifact. Splitting the plan across
@@ -179,9 +187,12 @@ unreviewable (a wave's cycles with no scope, wave map, or gate to read them agai
 `delivery.md` that references phases not yet in the tree — and rule 1's "split only at a real seam"
 test is not met, because a single plan document has no seam that survives being cut. The
 countervailing risk rule 4 exists to prevent, review quality degrading on a large diff, was
-addressed instead by mechanical review: `plan-quality-gate` ran 10 strict iterations, and the
-PR-review cycle's specialists diffed all 525 transcribed scenarios against their source `.feature`
-files rather than reading the diff linearly.
+addressed instead by mechanical review rather than by a smaller diff. The plan is held to
+`plan-quality-gate` **strict mode** — zero CRITICAL/HIGH/MEDIUM findings on two consecutive passes,
+run to convergence rather than to a fixed count — and the PR-review cycle's specialists diffed all
+525 transcribed scenarios against their source `.feature` files rather than reading the diff
+linearly. Do not restate the iteration count as a finished number: the run continues past the
+initial PR, so any figure written here is stale the moment a pass finds something.
 
 **Scope of the exclusion, stated so it cannot creep:**
 
@@ -208,7 +219,9 @@ PR:
 - [ ] [AI] Measure the actual diff before opening the PR, never after — acceptance:
       `git diff --numstat origin/main... | awk '{a+=$1} END {print a}'` is recorded in the PR body
       alongside `git diff --name-only origin/main... | wc -l`, and both sit under the rule-4 ceilings
-      (400 program lines / 900 mixed / 1,000 absolute / 20 hand-authored files).
+      (400 program lines / 900 mixed / 1,000 absolute / 20 hand-authored files). `$1` is `numstat`'s
+      **added** column and `$2` its deleted column; summing `$1` alone is deliberate, because
+      deletions count toward no ceiling. Do not "correct" this to `$1+$2`.
 - [ ] [AI] Split at the scenario boundary when the measurement exceeds any ceiling — the only
       permitted deviation from the one-file-one-PR seam, per
       [tech-docs DD-7](./tech-docs.md#dd-7--one-plan-six-waves-seventy-one-pr-seams) — acceptance: the split PRs are contiguous scenario
@@ -3944,7 +3957,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ---
 
-## Phase 6: Wave D — `md`, `governance` (plus the resequenced `git-pre-commit.feature`)
+## Phase 6: Wave D — `md`, `governance`, `git` (resequenced)
 
 > **125 scenarios across 10 feature files** after the `git` resequencing — 120 across 9 before it,
 > plus whatever the new `git/` lockfile feature file adds
@@ -6170,6 +6183,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Governance.fs` formats no output itself.
 
+> **"Phase 1" and "Phase 9" in the next three scenarios are not this plan's phases.** They are
+> `update-harness-support`'s, transcribed verbatim from `governance-readme-index.feature` along with
+> the rest of each scenario body. Do not renumber them, do not treat them as forward references to
+> this checklist, and do not "fix" the apparent inconsistency — the transcription is byte-identical
+> to its source on purpose, and editing it would break the verbatim guarantee the whole wave rests
+> on. This is the only place in the document where a `Phase N` means someone else's N.
+
 - [ ] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
@@ -7131,7 +7151,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `md/` and `governance/` — in
+- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `md/`, `governance/`, and
+      `git/` — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
       either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
@@ -14263,8 +14284,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Confirm whether any project outside `apps/rhino-cli` still carries `tag:lang:rust`:
       `grep -rl '"lang:rust"' --include=project.json .` — acceptance: the result decides every
       _retain_ verdict above, and is recorded rather than assumed.
-- [ ] [AI] Apply the _retire_ verdicts as the **only** edit this plan makes under
-      `specs/apps/rhino/`, in its own PR with the verdict table in the PR body — acceptance:
+- [ ] [AI] Apply the _retire_ verdicts — the second and last of this plan's **two** sanctioned
+      edits under `specs/apps/rhino/`, the first being Phase 3's addition of the new `git/` lockfile
+      feature file, already on `main` by now — in its own PR with the verdict table in the PR body
+      — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino` lists only the files named in the
       table, and `npx nx run rhino-cli-fsharp:specs:behavior:coverage` exits 0 afterwards.
 
@@ -14289,9 +14312,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       makes this PR safe — acceptance: `test -f apps/rhino-cli/Cargo.toml` succeeds and
       `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml` exits 0 locally, even
       though CI no longer runs it.
-- [ ] [AI] Re-home the `format` job off the Rust build if it still compiles rhino from source —
-      acceptance: the `format` job either downloads `rhino-cli-gate-binary` or resolves the F# side
-      through `setup-dotnet`, and `grep -c 'cargo' <the format job's step block>` returns 0.
+- [ ] [AI] Confirm the `format` job does **not** compile rhino from source, and re-home it only if
+      it does — acceptance: measured pre-edit, the job already downloads `rhino-cli-gate-binary` and
+      its `steps:` block already contains **0** `cargo`, so this step is expected to be a **no-op**
+      and must be recorded as one rather than ticked as work.
+      **Do not scope this grep the way the two `cargo build` clauses are scoped.** Those deliberately
+      span the whole job because the `env:` comment they protect lives above `steps:`; this one must
+      span `steps:` only, or it counts that same comment and reads 1 on a correct tree. Acceptance is
+      therefore: `awk '/^    steps:/{p=1} p&&/^  [a-z]/{p=0} p'` over the `format` job's line range
+      returns 0 for `cargo`, **and** the PR body records whether the step changed anything. A clause
+      that passes on an untouched file measures nothing unless the no-op is the recorded finding.
 - [ ] [AI] Prove the decouple is real by deleting `apps/rhino-cli/Cargo.toml` **locally, uncommitted**
       and re-running the workflow's `build-rhino` step logic — acceptance: it still succeeds, which
       is the exact condition 9c depends on; restore the file immediately afterwards. If it fails,
@@ -14303,8 +14333,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 ### 9c — Delete the crate and rewire the Nx project
 
 - [ ] [AI] Delete `apps/rhino-cli/src/`, `apps/rhino-cli/tests/`, `Cargo.toml`, `Cargo.lock`,
-      `deny.toml`, and `rust-toolchain.toml` — acceptance: `find apps/rhino-cli -name '*.rs' | wc -l`
-      returns 0.
+      `deny.toml`, and `rust-toolchain.toml` — acceptance:
+      `find apps/rhino-cli -name '*.rs' -not -path './**/target/*' | wc -l` returns 0.
+      **The `target/` exclusion is load-bearing, not decorative.** 9b's own
+      `cargo build --profile gate` step repopulates `apps/rhino-cli/target/`, and serde's build
+      script writes `target/gate/build/*/out/private.rs` there — 3 files, gitignored, measured on
+      2026-08-25. Without the exclusion a _correct_ 9c fails its own acceptance clause on generated
+      output it never owned.
 - [ ] [AI] Rewire `apps/rhino-cli/project.json`: change `tags` from `lang:rust` to `lang:fsharp` and
       point every target at the F# tree — acceptance: `npx nx run rhino-cli:test:quick` exits 0 with
       no `cargo` invocation, verified by `npx nx run rhino-cli:test:quick --verbose 2>&1 | grep -c cargo`
@@ -14317,16 +14352,40 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `npx nx run rhino-cli:specs:behavior:coverage` reports **525** scenarios — not fewer, which
       would mean a wave's widening was never merged, and not more, which would mean the glob picked
       up a tree this project does not own.
-- [ ] [AI] Retain `deps:audit` under its existing name, swapping `cargo-deny` for
+- [ ] [AI] Delete `apps/rhino-cli/scripts/deny-check.sh` alongside `deny.toml` — the target does not
+      invoke `cargo deny` directly, it runs this wrapper
+      [Repo-grounded — `apps/rhino-cli/project.json`, `deps:audit.options.command` is
+      `bash apps/rhino-cli/scripts/deny-check.sh`], and the wrapper's four `inputs` are `Cargo.toml`,
+      `Cargo.lock`, `deny.toml`, and itself, every one of which 9c deletes. Acceptance:
+      `test -e apps/rhino-cli/scripts/deny-check.sh` fails and `deps:audit` declares no `inputs`
+      pointing at deleted files.
+- [ ] [AI] Retain `deps:audit` under its existing name, swapping the `cargo-deny` wrapper for
       `dotnet list package --vulnerable --include-transitive` — acceptance:
       `npx nx run rhino-cli:deps:audit` exits 0 and its command contains no `cargo`.
-      **This is a narrowing, not a like-for-like swap, and it must not be described as one.**
-      `deny.toml` enforces three independent controls [Repo-grounded — `apps/rhino-cli/deny.toml`]:
-      `[advisories]` (known vulnerabilities), `[licenses]` (an allowlist of MIT, Apache-2.0, ISC,
-      BSD-2-Clause, BSD-3-Clause, Unicode-3.0 only), and `[sources]`/`[bans]` (deny unknown
-      registries, deny unknown git sources, warn on duplicate versions). The replacement command
-      covers **only the first**. After this step the F# dependency tree has no license-compliance
-      and no source-provenance gate.
+      **This is a narrowing, not a like-for-like swap, and it must not be described as one — and the
+      narrowing is the opposite of the one the file names would suggest.** `deny.toml` declares three
+      independent controls [Repo-grounded — `apps/rhino-cli/deny.toml`]: `[advisories]` (known
+      vulnerabilities), `[licenses]` (an allowlist of MIT, Apache-2.0, ISC, BSD-2-Clause,
+      BSD-3-Clause, Unicode-3.0 only), and `[sources]`/`[bans]` (deny unknown registries, deny
+      unknown git sources, warn on duplicate versions). But what actually **runs** today is
+      `cargo deny check bans licenses sources` — `[advisories]` is deliberately skipped, because
+      upstream RUSTSEC-2026-0124 ships a malformed advisory that breaks database load
+      [Repo-grounded — `apps/rhino-cli/scripts/deny-check.sh` header, dated 2026-06-14]. So the
+      replacement covers the one control that is already **off** and drops all three that are **on**.
+      Read against enforced reality rather than against `deny.toml`, this step is a strictly larger
+      regression than a naive reading suggests. State it that way in the PR body.
+- [ ] [AI] Prove the replacement command can actually fail before treating it as a gate —
+      `dotnet list package --vulnerable` is a **reporting** command, and a reporting command that
+      exits 0 on a finding gates nothing. Acceptance: add a known-vulnerable package reference to a
+      scratch project, run the exact `deps:audit` command against it, and record the observed exit
+      code in `learnings.md`. If it is 0, the target must wrap the command so a non-empty finding
+      exits non-zero — parsing the output, or `--format json` plus a `jq` assertion — and the wrapper
+      must be re-proved against the same scratch project. Do not skip this because five other F#
+      projects in this repo (`apps/crane-cli`, `apps/ose-be`, `apps/organiclever-be`,
+      `libs/fsharp-crane-core`, `libs/fsharp-env-loader`) ship the same bare command: that is a
+      repository-wide weakness this plan inherits, not a precedent that makes it correct. If the
+      wrapper is deferred, say so in `learnings.md` and file it, rather than leaving a permanently
+      green target named "audit".
 - [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
       accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
       `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
@@ -14374,6 +14433,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       its two unique responsibilities, per
       [tech-docs §CI Impact](./tech-docs.md#ci-impact) — acceptance: the job is gone and both
       responsibilities below have a new home named in the PR body.
+- [ ] [AI] Remove `rust` from the `quality-gate` job's `needs:` list in the same commit that deletes
+      the job — a `needs:` naming a job that does not exist makes the **whole workflow** fail to
+      start, not just that edge, so this is not a tidy-up. Pre-edit the list is
+      `needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]`
+      [Repo-grounded — `.github/workflows/pr-quality-gate.yml`, the `quality-gate` job]. Acceptance:
+      `actionlint .github/workflows/pr-quality-gate.yml` exits 0 **and** the workflow actually
+      dispatches on the PR — a parse pass alone is not proof, because the failure mode is at
+      dispatch time. Do the same in `ose-private`, where the list is that repo's own.
 - [ ] [AI] Re-home the Elixir formatter-wrapper coverage: the `rust` job is the only place setting
       `RHINO_REQUIRE_ELIXIR: "1"` and provisioning `erlef/setup-beam`, which is what turns those
       assertions from a quietly-skipping opt-in into real coverage — acceptance: the F# port of
@@ -14418,6 +14485,26 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] **Retain** `setup-rust` in the `format` job, which runs `lint-staged` and therefore
       invokes `format-rustfmt` on any changed course example — acceptance: a PR that changes one
       `.rs` file under `apps/ayokoding-www/content/` is still auto-formatted by that job.
+- [ ] [AI] Give the two remaining **in-file** `setup-rust` consumers a disposition, because 9c
+      removes the Rust work they were provisioning for: the `compat-min-version` job (runs
+      `nx affected -t compat:min-version`, a target 9c deletes outright) and the `specs-structure`
+      job (runs `nx affected -t specs:structure-validation`, which becomes an F# target). Pre-edit,
+      `.github/workflows/pr-quality-gate.yml` carries **5** `setup-rust` uses in `ose-public` —
+      `format`, `build-rhino`, `rust`, `compat-min-version`, `specs-structure` — and the steps above
+      account for only three of them. Acceptance: `compat-min-version` is deleted along with the
+      target it runs (nothing else invokes it), `specs-structure` drops `setup-rust` and gains
+      `setup-dotnet`, both are removed from `quality-gate`'s `needs:` if deleted, and
+      `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns exactly **1** in
+      `ose-public` — the `format` job's, retained for the course examples.
+- [ ] [AI] Sweep `ose-private`'s **six** in-file uses to zero, because that repo has no course
+      examples to protect: `format` (line 65), `build-rhino` (97), `typescript` (178), `rust` (191),
+      `compat-min-version` (223), `specs-structure` (234)
+      [Repo-grounded — `ose-private/.github/workflows/pr-quality-gate.yml`, measured 2026-08-25].
+      The four beyond `build-rhino` and `rust` have no step above and would otherwise survive.
+      Acceptance: `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns 0 in
+      `ose-private`, `.github/actions/setup-rust/` is deleted there, and the deletion is paired with
+      the zero-`.rs` count the delta table already records. **The two repos diverge here by design**
+      — do not converge them.
 - [ ] [AI] Decide `setup-rust`'s fate in `validate-env.yml`,
       `dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`, and
       `_reusable-app-test-local-deploy-stag.yml` individually — each installed it only to build
@@ -14450,12 +14537,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 10.
 
-- [ ] [AI] No `.rs` file, `Cargo.toml`, or `rust-toolchain.toml` remains anywhere under
-      `apps/rhino-cli/` in either repo.
+- [ ] [AI] No **tracked** `.rs` file, `Cargo.toml`, or `rust-toolchain.toml` remains anywhere under
+      `apps/rhino-cli/` in either repo — acceptance:
+      `git ls-files apps/rhino-cli | grep -cE '\.rs$|Cargo\.toml$|rust-toolchain\.toml$'` returns 0.
+      Asserted over tracked files, not over `find`, so gitignored `target/` build output cannot fail
+      a correct teardown.
 - [ ] [AI] `grep -rl '"lang:rust"' --include=project.json .` returns nothing in either repo.
-- [ ] [AI] `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns 0 in `ose-private`,
-      and in `ose-public` returns exactly the number the per-file verdict table justified — never
-      "0 because it was easier".
+- [ ] [AI] `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns **0** in
+      `ose-private` — reachable only because the sweep step above disposes of all six uses, not just
+      the two the `build-rhino`/`rust` steps remove — and returns exactly **1** in `ose-public`, the
+      `format` job's, retained for the 198 course examples. Neither number is "0 because it was
+      easier", and neither is satisfied by the `build-rhino` + `rust` removals alone.
 - [ ] [AI] In `ose-public`, a PR changing one `.rs` file under `apps/ayokoding-www/content/` is
       still auto-formatted by the `format` job and still passes `format-verify-rustfmt`.
 - [ ] [AI] The Elixir formatter-wrapper assertions and the coverage threshold both run in the
@@ -14745,8 +14837,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Every behavior cycle is RED→GREEN→REFACTOR with exactly one bound Gherkin scenario
 - [ ] [AI] All 525 scenarios have a passing F# step definition in both repos
 - [ ] [AI] Every wave passed `shadow-diff.sh` before its shim flip
-- [ ] [AI] The only edit under `specs/apps/rhino/` is the Phase 9a retirement of Rust-specific
-      scenarios, with its verdict table recorded
+- [ ] [AI] Exactly two edits exist under `specs/apps/rhino/`, and no third: the Phase 3 addition of
+      the new `git/` lockfile feature file, and the Phase 9a retirement of Rust-specific scenarios
+      with its verdict table recorded. Every other phase leaves the tree untouched
 - [ ] [AI] Every PR stayed within PR-size rule 4's line and file bounds
 - [ ] [AI] `benchmark.md` has a before and an after figure for every row, each with a verdict
 - [ ] [AI] All acceptance criteria in [prd.md](./prd.md) verified
