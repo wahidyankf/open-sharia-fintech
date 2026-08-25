@@ -483,10 +483,15 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [ ] [AI] Confirm the move has already been applied to this checklist rather than re-applying it —
       the five `git-pre-commit.feature` cycles now sit under **Phase 6 (Wave D)**, retargeted to
       `tests/integration/Steps/PreCommitHookSteps.fs` and `RhinoCli.Application/Md.fs` — acceptance:
-      `grep -c 'RhinoCli.Application/Git.fs' plans/in-progress/rewrite-rhino-cli-to-fsharp/delivery.md`
-      returns 0 — grep the **file path**, not the bare module name, which this explanatory block
-      itself contains and which would therefore never return 0 — and the `git-pre-commit.feature`
-      heading appears exactly once, inside Phase 6.
+      the set of modules Phase 3's cycles name is exactly `{Convention}` — extracted, not
+      absence-grepped, because any search string this clause spells out will match this clause. Run
+      `sed -n '/^## Phase 3:/,/^## Phase 4:/p' delivery.md | grep -oE '^ +.apps/rhino-cli/src-fsharp/RhinoCli[.]Application/[A-Za-z]+[.]fs.' | sort -u`
+      — the line-anchored pattern matches only a cycle's module line, never prose mentioning the same
+      path mid-sentence, so it returns exactly one result, `Convention.fs`. The same extraction over
+      Phase 6 must return `Git.fs`, `Governance.fs`, and `Md.fs`; `Git.fs` belongs there, as the
+      module the new `git lockfile` cycles test. Also confirm the `git-pre-commit.feature` heading
+      appears exactly once, inside Phase 6.
+
 - [ ] [AI] Author Gherkin for `git lockfile` before any F# implementation of it exists, because the
       repo's specs-and-Gherkin rule binds the direct-code path as well as the plan path —
       acceptance: a new feature file under `specs/apps/rhino/behavior/rhino-cli/gherkin/git/`
@@ -503,13 +508,18 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       undercount this deferral once caused cannot recur.
 - [ ] [AI] Confirm the wave-map table already reflects the move — Wave A **11 scenarios / 3 files**
       (down from 16 / 4), Wave D **125 / 10** (up from 120 / 9), totals still 525 / 71 — and restate
-      every total that changes once the new `git lockfile` feature file is authored, everywhere it
-      appears: `delivery.md`, `README.md`, `prd.md`, and `tech-docs.md` DD-7 — acceptance: each
-      restated figure shows the old value and the delta, never a silent overwrite, **and** the
-      per-wave figures are checked by extraction rather than by absence-grep: pull the Wave A and
-      Wave D scenario/file counts out of all four tables that carry them — `delivery.md`'s wave map,
-      `delivery.md`'s Phase 3 and Phase 6 header blockquotes, `README.md`'s wave map, and
-      `tech-docs.md` DD-7 — and assert all four agree. Do **not** write this as
+      every total that changes once the new `git lockfile` feature file is authored, at each of the
+      six sites enumerated below — **not** in `prd.md`, which carries none of these figures
+      [verified: `grep -c '\b12[05]\b\|Wave [AD]' prd.md` returns 0], so listing it here would send
+      an executor looking for a restatement site that does not exist —
+      acceptance: each restated figure shows the old value and the delta, never a silent overwrite,
+      **and** the per-wave figures are checked by extraction rather than by absence-grep: pull the
+      Wave A and Wave D scenario/file counts out of each of the **six** sites that carry them —
+      (1) `delivery.md`'s wave map, (2) `delivery.md`'s Phase 3 header blockquote,
+      (3) `delivery.md`'s Phase 6 header blockquote, (4) `README.md`'s wave map,
+      (5) `tech-docs.md` DD-4, (6) `tech-docs.md` DD-7 — and assert all six agree. Count sites, not
+      documents, and never bundle two sites into one list item: the earlier "four tables" wording
+      hid Phase 3 and Phase 6 inside a single entry and undercounted. Do **not** write this as
       `grep -rn '16 scenarios'` returning 0: `env/env-restore.feature` legitimately has 16 scenarios,
       and this very checkbox would match its own text, so an absence-grep is unfalsifiable here.
       Asserting only against the top-of-file wave map is what let a partial application look green
@@ -3880,8 +3890,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > **125 scenarios across 10 feature files** after the `git` resequencing — 120 across 9 before it,
 > plus whatever the new `git/` lockfile feature file adds
 > [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`].
-> **PR seam**: one feature file is one PR, so this wave is 9 implementation PRs
-> plus one flip PR.
+> **PR seam**: one feature file is one PR, so this wave is **10** implementation PRs plus one flip
+> PR after the `git` resequencing above — 9 before it, plus one more once the `git/` lockfile
+> feature file lands.
 >
 > `md` is the single largest validator family and the one every documentation commit exercises. The shadow-diff for this wave runs over the whole repository, not a fixture.
 
@@ -7020,8 +7031,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] All 125 Wave D scenarios pass under
-      `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
+- [ ] [AI] All Wave D scenarios pass, counted across **both** test projects, because this is the one
+      wave whose scenarios span two tiers — acceptance:
+      `dotnet test apps/rhino-cli/src-fsharp/tests/unit` reports **120 plus the `git lockfile`
+      feature file's scenario count** (the `md` and `governance` files plus the new lockfile cycles),
+      and `dotnet test apps/rhino-cli/src-fsharp/tests/integration` reports **5** (the resequenced
+      `git-pre-commit.feature` scenarios, which are integration-tier by design). The two figures sum
+      to this wave's restated wave-map total. Asserting the wave total against the unit project alone
+      is unsatisfiable — those 5 scenarios never run there — and the other five waves' identical
+      bullets are correct precisely because they mix no tiers.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh md governance git` reports zero differences in both
       repos.
 - [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
@@ -7034,7 +7052,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
-> `apps/rhino-cli/scripts/shadow-diff.sh md governance`.
+> `apps/rhino-cli/scripts/shadow-diff.sh md governance git`.
 
 ---
 
