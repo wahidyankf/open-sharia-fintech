@@ -263,20 +263,29 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 > This phase opens **no PR** [Repo-grounded —
 > [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md)].
-> Its measurements land with the Phase 2 PR.
+> Its output therefore rides along in an already-open PR rather than opening one of its own.
+>
+> **Amended during execution.** The original wording routed that output to the Phase 2 PR. That is
+> unworkable: the pre-push `parity-manifest` gate refuses to validate while
+> `apps/rhino-cli/Cargo.lock` differs from the Git index, so holding the tree-sitter removal
+> uncommitted blocks **every** push from this worktree, including Phase 1's. Staging without
+> committing does not help — the manifest hash still mismatches. Phase 0's output therefore lands
+> with the **first** open PR of this plan, together with a regenerated
+> `apps/rhino-cli/parity-manifest.sha256`, and a matching `ose-private` PR lands in the same window
+> so the byte-identity obligation is never one-sided.
 
-- [ ] [AI] Enter the worktree this plan was authored in — provision only if absent:
+- [x] [AI] Enter the worktree this plan was authored in — provision only if absent:
       `claude --worktree rewrite-rhino-cli` — acceptance: `git rev-parse --show-toplevel`
       reports the worktree path.
-- [ ] [AI] Initialize the toolchain in the root worktree (not the new worktree):
+- [x] [AI] Initialize the toolchain in the root worktree (not the new worktree):
       `npm install && npm run doctor -- --fix` — acceptance: `npm run doctor` exits 0 with the .NET
       SDK and Rust toolchain both reported present.
-- [ ] [AI] Create `plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md` if absent, with the
+- [x] [AI] Create `plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md` if absent, with the
       mandatory `# Learnings: rewrite-rhino-cli-to-fsharp` H1 — acceptance: file exists and
       `npx markdownlint-cli2` on it exits 0.
-- [ ] [AI] Verify the existing suite is green before any change:
+- [x] [AI] Verify the existing suite is green before any change:
       `env -u GIT_DIR -u GIT_WORK_TREE npx nx run rhino-cli:test:quick` — acceptance: exits 0.
-- [ ] [AI] Create `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` with a two-column
+- [x] [AI] Create `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` with a two-column
       before/after table and every row present, each cell in **both** columns pre-filled with the
       literal `TBD` — the placeholder the Phase 0 and Phase 10 gates grep for, which nothing else in
       this plan ever writes — acceptance: the file has exactly the eight rows named in the eight steps (B1-B8)
@@ -286,60 +295,70 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `TBD` cells on one physical line, so `grep -c` would report 9 here and the clause would be
       unfalsifiable. Without this seeding step the gates' later `returns 0` clause passes on an
       untouched file and measures nothing.
-- [ ] [AI] **B1 — cold build**: `CARGO_TARGET_DIR=$(mktemp -d) cargo build --offline --manifest-path apps/rhino-cli/Cargo.toml`
+- [x] [AI] **B1 — cold build**: `CARGO_TARGET_DIR=$(mktemp -d) cargo build --offline --manifest-path apps/rhino-cli/Cargo.toml`
       under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
       `benchmark.md`, not to prose.
-- [ ] [AI] **B2 — gate-profile build**, the one CI actually runs:
+- [x] [AI] **B2 — gate-profile build**, the one CI actually runs:
       `CARGO_TARGET_DIR=$(mktemp -d) cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml`
       under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
       `benchmark.md`, and the recorded exit code is 0.
-- [ ] [AI] **B3 — warm no-op build**: run `cargo build --profile gate` twice **under
+- [x] [AI] **B3 — warm no-op build**: run `cargo build --profile gate` twice **under
       `/usr/bin/time -p`**, record the second, asserting exit code 0 on both — acceptance: elapsed
       seconds written to `benchmark.md`, and the recorded exit code is 0.
-- [ ] [AI] **B4 — edit-rebuild loop**: touch `apps/rhino-cli/src/main.rs`, rebuild under
+- [x] [AI] **B4 — edit-rebuild loop**: touch `apps/rhino-cli/src/main.rs`, rebuild under
       `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to
       `benchmark.md`, and the recorded exit code is 0.
-- [ ] [AI] **B5 — startup**: run `apps/rhino-cli/target/gate/rhino-cli --help` 50 times under
+- [x] [AI] **B5 — startup**: run `apps/rhino-cli/target/gate/rhino-cli --help` 50 times under
       `/usr/bin/time -p`, asserting exit code 0 on **every** iteration without aborting the loop, so
       a crashing binary cannot report a false-fast time — acceptance: total wall time and derived
       mean milliseconds written to `benchmark.md`.
-- [ ] [AI] **B6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
+- [x] [AI] **B6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
       one-file change, asserting exit code 0 — acceptance: elapsed seconds written to
       `benchmark.md`, together with the counted number of `rhino-bin.sh` invocations it made, and
       the recorded exit code is 0. A hook that aborts early on an unrelated lint failure produces a
       fast, meaningless figure; discard and re-run on a clean file rather than recording it.
-- [ ] [AI] **B7 — CI critical path**: read the `build-rhino` job duration from the three most recent
+- [x] [AI] **B7 — CI critical path**: read the `build-rhino` job duration from the three most recent
       green `pr-quality-gate.yml` runs on `main` via `gh run list` — acceptance: the three durations
       and their mean are written to `benchmark.md`.
-- [ ] [AI] **B8 — artifact size**: `ls -l apps/rhino-cli/target/gate/rhino-cli` — acceptance: byte
+- [x] [AI] **B8 — artifact size**: `ls -l apps/rhino-cli/target/gate/rhino-cli` — acceptance: byte
       count written to `benchmark.md`.
-- [ ] [AI] **Source size, both sides of the eventual comparison**: count non-test Rust code lines
+- [x] [AI] **Source size, both sides of the eventual comparison**: count non-test Rust code lines
       excluding comments and blank lines, and record the counting command itself so the F# side can
       be counted identically at Phase 10 — acceptance: the count and the exact command are in
       `benchmark.md`.
-- [ ] [AI] Remove the unused `tree-sitter` dependency from `apps/rhino-cli/Cargo.toml` and rebuild
+- [x] [AI] Remove the unused `tree-sitter` dependency from `apps/rhino-cli/Cargo.toml` and rebuild
       to regenerate `Cargo.lock` — acceptance: `grep -c 'tree-sitter' apps/rhino-cli/Cargo.toml`
       returns 0 and `npx nx run rhino-cli:test:quick` still exits 0.
-- [ ] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
+- [x] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
       acceptance: `benchmark.md` shows both figures and states which one later phases compare
       against.
-- [ ] [AI] Repeat every step above in the `ose-private` worktree at the same paths, authored there
-      rather than copied [Repo-grounded — the two repos share a convention, not files] — acceptance:
-      both repos report a green `rhino-cli:test:quick`, neither `Cargo.toml` names `tree-sitter`, and
-      each repo has its own `benchmark.md` figures.
+- [x] [AI] Repeat every measurement step above in the `ose-private` worktree at the same paths,
+      authored there rather than copied, and record its figures in the single-sourced `benchmark.md`
+      under `ose-public` — `ose-private` carries no copy of this plan folder by design
+      [Repo-grounded — the two repos share a convention, not files] — acceptance: both repos report a
+      green `rhino-cli:test:quick`, neither repo's `apps/rhino-cli/Cargo.toml` names `tree-sitter`,
+      and `benchmark.md` carries a second `ose-private` measurements table with a real "before"
+      figure for every B1-B8 row plus source size.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos.
-- [ ] [AI] `benchmark.md` in each repo has a non-placeholder "before" value for all eight rows B1-B8
-      plus source size — acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **9**, not 0 — the nine "after"
-      cells are still `TBD` at this phase, and every "before" cell has been overwritten with a real
-      figure. A `0` here would mean the seeding step never ran; anything above 9 means a "before"
-      measurement was skipped.
-- [ ] [AI] `git status --porcelain` in each worktree shows only the intended `Cargo.toml`,
-      `Cargo.lock`, and `plans/` changes.
+- [x] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos.
+- [x] [AI] The single-sourced `benchmark.md` has a non-placeholder "before" value for all eight rows
+      B1-B8 plus source size, in both its `ose-public` and its `ose-private` measurements table —
+      acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **18**, not 0 — the nine
+      "after" cells per repo are still `TBD` at this phase, and every "before" cell in both tables
+      has been overwritten with a real figure. A `0` here would mean the seeding step never ran;
+      anything above 18 means a "before" measurement was skipped. The seeding step wrote 18 (nine rows
+      × two columns, `ose-public` only); filling that table's "before" column left 9, and P0.17's
+      second `ose-private` table restored the total to 18 by adding nine filled "before" cells and
+      nine fresh `TBD` "after" cells.
+- [x] [AI] `git status --porcelain` in each worktree shows only the intended `Cargo.toml`,
+      `Cargo.lock`, and `plans/` changes — then, per the amendment above, those exact paths are
+      committed to this plan's first open PR in each repo alongside a regenerated
+      `apps/rhino-cli/parity-manifest.sha256` — acceptance:
+      `rhino-cli parity manifest validate` exits 0 in both worktrees, asserted on the exit code.
 
 > **Pause Safety**: the Rust crate is unchanged except for one unused dependency removal; both repos
 > are green. Safe to stop. To resume: `npx nx run rhino-cli:test:quick`.
@@ -14320,10 +14339,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       its `steps:` block already contains **0** `cargo`, so this step is expected to be a **no-op**
       and must be recorded as one rather than ticked as work.
       **Do not scope this grep the way the two `cargo build` clauses are scoped.** Those deliberately
-      span the whole `build-rhino` job — never narrowed to `steps:` — because job-level scoping alone
-      already keeps the `format` job's explanatory `env:`-block comment out of range; this one must
-      span `steps:` only because it is scoped to the `format` job itself and would otherwise count
-      that same comment. Acceptance is
+      span the whole job because the `env:` comment they protect lives above `steps:`; this one must
+      span `steps:` only, or it counts that same comment and reads 1 on a correct tree. Acceptance is
       therefore: `awk '/^    steps:/{p=1} p&&/^  [a-z]/{p=0} p'` over the `format` job's line range
       returns 0 for `cargo`, **and** the PR body records whether the step changed anything. A clause
       that passes on an untouched file measures nothing unless the no-op is the recorded finding.
@@ -14516,10 +14533,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `rhino-cli` from source, which no longer applies — acceptance: a per-file verdict of _remove_
       or _retain with reason_ is written into `learnings.md`, and each removal is paired with
       `setup-dotnet` if that job now runs an F# target.
-- [ ] [AI] **In `ose-public`, do not delete** `.github/actions/setup-rust/` — acceptance: in
-      `ose-public` the directory still exists, `.github/actions/README.md` still lists it, and
-      `learnings.md` records that it survives for the course examples rather than by oversight.
-      Delete it only if the count step above returned 0.
+- [ ] [AI] **Do not delete** `.github/actions/setup-rust/` — acceptance: the directory still exists,
+      `.github/actions/README.md` still lists it, and `learnings.md` records that it survives for the
+      course examples rather than by oversight. Delete it only if the count step above returned 0.
 - [ ] [AI] Confirm 9b already removed `cargo build --profile gate` and renamed the artifact, and
       do **not** repeat that edit here — acceptance:
       `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
@@ -14614,16 +14630,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Route the comparison to a durable home outside the plan folder, so the next
       language-change proposal starts from data rather than from argument — acceptance: the target
       file is named in `learnings.md` and the content lands there in this PR.
-- [ ] [AI] Produce the same measurements in `ose-private` — acceptance: that repo has its own
-      populated `benchmark.md`, and any figure that differs materially between the repos is called
-      out rather than averaged.
+- [ ] [AI] Produce the same measurements in `ose-private` — acceptance: the single-sourced
+      `benchmark.md` has a populated "after" column in its `ose-private` measurements table, and any
+      figure that differs materially between the repos is called out rather than averaged.
 
 ### Phase 10 Gate
 
 > All checks below must pass before starting Phase 11.
 
-- [ ] [AI] `benchmark.md` in each repo has a non-placeholder "after" value for all eight rows B1-B8
-      plus source size — acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **0**, down from the 9 the
+- [ ] [AI] The single-sourced `benchmark.md` has a non-placeholder "after" value for all eight rows
+      B1-B8 plus source size, in both its `ose-public` and its `ose-private` measurements table —
+      acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **0**, down from the 18 the
       Phase 0 gate asserted — both bounds checked, so neither a never-seeded file nor a
       partially-filled one passes.
 - [ ] [AI] Every row carries a better/worse/unchanged verdict with an absolute delta.
@@ -14877,13 +14894,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       completion-date prefix
 - [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
 - [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Confirm `plans/backlog/README.md` no longer lists this plan as an active entry — it is
-      removed at **promotion** to `plans/in-progress/`, not here
+- [ ] [AI] Confirm `plans/backlog/README.md` no longer carries this plan's entry — it is removed
+      at **promotion** to `plans/in-progress/`, not here
       [Repo-grounded — `repo-governance/conventions/structure/plans/starting-and-completing-work.md`
-      puts the backlog-index update in Starting Work step 2] — acceptance: the `## Planned Projects`
-      section's active listing does not include this plan. Do not assert this with a raw
-      `grep -c` on the plan name: the promotion-time drain note in that section names the plan as
-      history by design and keeps the name in the file, so that count never reaches 0.
+      puts the backlog-index update in Starting Work step 2] — acceptance:
+      `grep -c rewrite-rhino-cli-to-fsharp plans/backlog/README.md` already returns 0; if it does
+      not, the promotion step was skipped and that is the bug, not this one.
 - [ ] [AI] Remove the worktree in each repo:
       `git worktree remove worktrees/rewrite-rhino-cli`
 - [ ] [AI] Confirm `ose-private` still carries **no** copy of this plan folder, so archival here is
