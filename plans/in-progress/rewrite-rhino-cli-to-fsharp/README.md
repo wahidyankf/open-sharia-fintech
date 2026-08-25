@@ -116,7 +116,7 @@ counts both sides with the same command shape and records the real ratio, whatev
 
 ```mermaid
 flowchart TD
-  P0[Phase 0: before benchmark] --> P1[Phase 1: publish-mode spike]
+  P0[Phase 0: before benchmark] --> P1[Phase 1: dep removal + spike]
   P1 --> P2[Phase 2: scaffold, shim, CI]
   P2 --> W[Phases 3-8: six waves]
   W --> P9[Phase 9: retire Rust crate]

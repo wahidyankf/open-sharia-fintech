@@ -498,7 +498,7 @@ of **this** plan; nothing here is deferred to another plan.
 
 ```text
 apps/rhino-cli/
-├── Cargo.toml                                                [E] Phase 0: drop unused tree-sitter dep; [D] Phase 9c
+├── Cargo.toml                                                [E] Phase 1: drop unused tree-sitter dep; [D] Phase 9c
 ├── Cargo.lock                                                [E] Phase 0 regen; [D] Phase 9c
 ├── src/                                                      [D] Phase 9c, after all 13 namespaces flip
 ├── tests/                                                    [D] Phase 9c, 25 cucumber suites retired

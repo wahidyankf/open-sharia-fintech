@@ -58,7 +58,7 @@ implementation change.
 | -------- | ---------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
 | —        | Initial plan documents (this PR)               | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
 | 0        | — (baseline and "before" benchmark)            | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
-| 1        | — (publish-mode spike, findings only)          | `worktrees/rewrite-rhino-cli` | —                            | no — folds into the Phase 2 PR                                                                          |
+| 1        | `tree-sitter` removal + regenerated manifest   | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — both repos, in the same window (the spike itself folds into Phase 2)                              |
 | 2        | Scaffold, dispatch shim, CI wiring             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
 | 3        | Wave A — `convention`, `parity`                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
 | 4        | Wave B — `repo-config`, `env`                  | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
@@ -263,16 +263,15 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 > This phase opens **no PR** [Repo-grounded —
 > [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md)].
-> Its output therefore rides along in an already-open PR rather than opening one of its own.
+> It is setup and baseline only: it measures, records, and changes nothing a reviewer can review.
+> Its only artifact is `benchmark.md`, which rides the plan's first PR as a baseline artifact.
 >
-> **Amended during execution.** The original wording routed that output to the Phase 2 PR. That is
-> unworkable: the pre-push `parity-manifest` gate refuses to validate while
-> `apps/rhino-cli/Cargo.lock` differs from the Git index, so holding the tree-sitter removal
-> uncommitted blocks **every** push from this worktree, including Phase 1's. Staging without
-> committing does not help — the manifest hash still mismatches. Phase 0's output therefore lands
-> with the **first** open PR of this plan, together with a regenerated
-> `apps/rhino-cli/parity-manifest.sha256`, and a matching `ose-private` PR lands in the same window
-> so the byte-identity obligation is never one-sided.
+> **Re-scoped during execution.** An earlier draft placed the `tree-sitter` dependency removal here
+> and routed its diff into an already-open PR. That made Phase 0 change-producing, which the rule
+> names as a **mis-scoped Phase 0** rather than an exemption: "Move that work into Phase 1 (or a
+> later phase) and leave Phase 0 as setup and baseline only." The removal, its corrected **B1**
+> re-measurement, and the regenerated `apps/rhino-cli/parity-manifest.sha256` therefore belong to
+> **Phase 1**, which is where they are now written down and where their PR opens.
 
 - [x] [AI] Enter the worktree this plan was authored in — provision only if absent:
       `claude --worktree rewrite-rhino-cli` — acceptance: `git rev-parse --show-toplevel`
@@ -326,19 +325,12 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       excluding comments and blank lines, and record the counting command itself so the F# side can
       be counted identically at Phase 10 — acceptance: the count and the exact command are in
       `benchmark.md`.
-- [x] [AI] Remove the unused `tree-sitter` dependency from `apps/rhino-cli/Cargo.toml` and rebuild
-      to regenerate `Cargo.lock` — acceptance: `grep -c 'tree-sitter' apps/rhino-cli/Cargo.toml`
-      returns 0 and `npx nx run rhino-cli:test:quick` still exits 0.
-- [x] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
-      acceptance: `benchmark.md` shows both figures and states which one later phases compare
-      against.
 - [x] [AI] Repeat every measurement step above in the `ose-private` worktree at the same paths,
       authored there rather than copied, and record its figures in the single-sourced `benchmark.md`
       under `ose-public` — `ose-private` carries no copy of this plan folder by design
       [Repo-grounded — the two repos share a convention, not files] — acceptance: both repos report a
-      green `rhino-cli:test:quick`, neither repo's `apps/rhino-cli/Cargo.toml` names `tree-sitter`,
-      and `benchmark.md` carries a second `ose-private` measurements table with a real "before"
-      figure for every B1-B8 row plus source size.
+      green `rhino-cli:test:quick` and `benchmark.md` carries a second `ose-private` measurements
+      table with a real "before" figure for every B1-B8 row plus source size.
 
 ### Phase 0 Gate
 
@@ -354,29 +346,48 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       × two columns, `ose-public` only); filling that table's "before" column left 9, and P0.17's
       second `ose-private` table restored the total to 18 by adding nine filled "before" cells and
       nine fresh `TBD` "after" cells.
-- [x] [AI] `git status --porcelain` in each worktree shows only the intended `Cargo.toml`,
-      `Cargo.lock`, and `plans/` changes — then, per the amendment above, those exact paths are
-      committed to this plan's first open PR in each repo alongside a regenerated
-      `apps/rhino-cli/parity-manifest.sha256` — acceptance:
-      `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
-      worktrees, asserted on the exit code. (Bare `rhino-cli` is not on `PATH`; this is the
-      resolvable form every husky hook and `package.json` script already calls.)
+- [x] [AI] `git status --porcelain` in each worktree shows only `plans/` changes — Phase 0 touches
+      no source — acceptance: `git status --porcelain | /usr/bin/grep -cv '^.. plans/'` returns 0.
 
-> **Pause Safety**: the Rust crate is unchanged except for one unused dependency removal; both repos
-> are green. Safe to stop. To resume: `npx nx run rhino-cli:test:quick`.
+> **Pause Safety**: the Rust crate is untouched and both repos are green. Safe to stop. To resume:
+> `npx nx run rhino-cli:test:quick`.
 
 ---
 
-## Phase 1: Publish-Mode Spike
+## Phase 1: Dependency Removal and the Publish-Mode Spike
 
-> This phase opens **no PR**. All work is throwaway and lives under `local-tmp/`, which is swept
-> freely per [Plans & Temporary Files](../../../AGENTS.md#plans--temporary-files).
+> This phase opens **this plan's first PR** in each repository — the earliest phase permitted to,
+> per [Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md).
+> It carries exactly one reviewable change, the `tree-sitter` removal below, plus Phase 0's
+> `benchmark.md` baseline artifact riding along as that rule directs.
+>
+> The publish-mode spike itself produces **no** reviewable change: it is throwaway and lives under
+> `local-tmp/`, which is swept freely per
+> [Plans & Temporary Files](../../../AGENTS.md#plans--temporary-files). Its findings fold into
+> Phase 2.
 >
 > This is **not** a decision point about whether to rewrite. It selects **which** publish mode the
 > rewrite uses. Per [DD-1](./tech-docs.md#dd-1--nativeaot-is-preferred-not-mandatory) there are three
 > in preference order — NativeAOT, self-contained non-AOT, framework-dependent — and the third is
 > always available, so the phase cannot fail, only choose worse.
 
+- [x] [AI] Remove the unused `tree-sitter` dependency from `apps/rhino-cli/Cargo.toml` and rebuild
+      to regenerate `Cargo.lock` — acceptance:
+      `/usr/bin/grep -c 'tree-sitter' apps/rhino-cli/Cargo.toml` returns 0 and
+      `npx nx run rhino-cli:test:quick` still exits 0.
+- [x] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
+      acceptance: `benchmark.md` shows both figures and states which one later phases compare
+      against.
+- [x] [AI] Regenerate `apps/rhino-cli/parity-manifest.sha256` in each repo using that repo's own
+      generator, in the mandated order — `git add` the changed sources, then
+      `parity manifest generate`, then `git add` the manifest, then validate — acceptance:
+      `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
+      worktrees, asserted on the exit code. (Bare `rhino-cli` is not on `PATH`; this is the
+      resolvable form every husky hook and `package.json` script already calls.)
+- [x] [AI] Author the identical removal in the `ose-private` worktree rather than copying the file
+      across — acceptance: both repos' `apps/rhino-cli/Cargo.toml` and `Cargo.lock` are
+      byte-identical, and each repo's PR lands in the same window so the byte-identity obligation
+      is never one-sided.
 - [ ] [AI] Create a throwaway F# console project at `local-tmp/publish-spike/` targeting `net10.0`
       — acceptance: `dotnet build local-tmp/publish-spike` exits 0.
 - [ ] [AI] In `local-tmp/publish-spike/Program.fs`, exercise the four constructs the real binary
@@ -405,6 +416,10 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 > All checks below must pass before starting Phase 2.
 
+- [ ] [AI] Neither repo's `apps/rhino-cli/Cargo.toml` names `tree-sitter` — acceptance:
+      `/usr/bin/grep -c 'tree-sitter' apps/rhino-cli/Cargo.toml` returns 0 in both worktrees.
+- [ ] [AI] `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
+      worktrees, asserted on the exit code.
 - [ ] [AI] Both publish attempts have a recorded outcome — success with figures, or failure with the
       exact command output — acceptance: no mode left unattempted in `learnings.md`.
 - [ ] [AI] Present three figures side by side — AOT startup, self-contained startup, and the Phase 0
@@ -421,9 +436,9 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [ ] [AI] Delete `local-tmp/publish-spike/` once its figures are recorded — acceptance:
       `test -d local-tmp/publish-spike` returns non-zero.
 
-> **Pause Safety**: nothing outside `local-tmp/` and the plan's own files was touched; the repos are
-> in their Phase 0 state. Safe to stop. To resume: re-read the publish-mode figures in
-> `learnings.md`.
+> **Pause Safety**: the only source change is the one unused-dependency removal, and both repos are
+> green with it; nothing else outside `local-tmp/` and the plan's own files was touched. Safe to
+> stop. To resume: re-read the publish-mode figures in `learnings.md`.
 
 ---
 
