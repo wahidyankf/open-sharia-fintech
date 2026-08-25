@@ -499,13 +499,13 @@ of **this** plan; nothing here is deferred to another plan.
 ```text
 apps/rhino-cli/
 ├── Cargo.toml                                                [E] Phase 1: drop unused tree-sitter dep; [D] Phase 9c
-├── Cargo.lock                                                [E] Phase 0 regen; [D] Phase 9c
+├── Cargo.lock                                                [E] Phase 1 regen; [D] Phase 9c
 ├── src/                                                      [D] Phase 9c, after all 13 namespaces flip
 ├── tests/                                                    [D] Phase 9c, 25 cucumber suites retired
 ├── deny.toml                                                 [D] Phase 9c, cargo-deny no longer applicable
 ├── rust-toolchain.toml                                       [D] Phase 9c
 ├── project.json                                              [E] Phase 9c: tags lang:rust -> lang:fsharp, 20 targets -> 19, only compat:min-version removed
-├── parity-manifest.sha256                                    [G] Phase 2 (src-fsharp/ enters the boundary) and Phase 9c (Rust leaves it)
+├── parity-manifest.sha256                                    [G] Phase 1 (tree-sitter drop regen), Phase 2 (src-fsharp/ enters the boundary) and Phase 9c (Rust leaves it)
 ├── scripts/
 │   ├── rhino-bin.sh                                          [E] Phase 2: FSHARP_NAMESPACES table, shipped empty; [E] once per wave; [E] Phase 9c: collapsed to one resolution path
 │   ├── shadow-diff.sh                                        [N] Phase 2: differential runner comparing both binaries

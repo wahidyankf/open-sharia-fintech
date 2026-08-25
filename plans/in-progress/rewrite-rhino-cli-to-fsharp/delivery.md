@@ -58,7 +58,7 @@ implementation change.
 | -------- | ---------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
 | —        | Initial plan documents (this PR)               | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
 | 0        | — (baseline and "before" benchmark)            | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
-| 1        | `tree-sitter` removal + regenerated manifest   | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — both repos, in the same window (the spike itself folds into Phase 2)                              |
+| 1        | `tree-sitter` removal + regenerated manifest   | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead             |
 | 2        | Scaffold, dispatch shim, CI wiring             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
 | 3        | Wave A — `convention`, `parity`                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
 | 4        | Wave B — `repo-config`, `env`                  | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
@@ -70,6 +70,14 @@ implementation change.
 | 10       | The "after" benchmark and comparison           | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                       |
 | 11       | Rules propagation and documentation sweep      | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                       |
 | 12       | Knowledge capture and archival                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                       |
+
+† As planned, `ose-private` opened a dedicated Phase 1 PR (#75), in the same window as this PR; the
+publish-mode spike itself carries no reviewable change and folds into Phase 2 in both repos. In
+`ose-public` the Phase 1 reviewable change (`Cargo.toml`, `Cargo.lock`, `parity-manifest.sha256`)
+landed inside this same plan-document PR (#306) instead of a separate one — verified live:
+`gh pr list --repo wahidyankf/ose-public --search tree-sitter --state all` returns only #306. This
+is a record-accuracy note, not a re-plan: Phase 0 still opened no PR, and no rule-4 ceiling was
+breached.
 
 ## What is different in `ose-private`
 
@@ -321,8 +329,8 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       and their mean are written to `benchmark.md`.
 - [x] [AI] **B8 — artifact size**: `ls -l apps/rhino-cli/target/gate/rhino-cli` — acceptance: byte
       count written to `benchmark.md`.
-- [x] [AI] **Source size, both sides of the eventual comparison**: count non-test Rust code lines
-      excluding comments and blank lines, and record the counting command itself so the F# side can
+- [x] [AI] **Source size, both sides of the eventual comparison**: count Rust code lines (tests
+      included) excluding comments and blank lines, and record the counting command itself so the F# side can
       be counted identically at Phase 10 — acceptance: the count and the exact command are in
       `benchmark.md`.
 - [x] [AI] Repeat every measurement step above in the `ose-private` worktree at the same paths,
@@ -379,11 +387,12 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       acceptance: `benchmark.md` shows both figures and states which one later phases compare
       against.
 - [x] [AI] Regenerate `apps/rhino-cli/parity-manifest.sha256` in each repo using that repo's own
-      generator, in the mandated order — `git add` the changed sources, then
+      generator, in the mandated order — stage the two changed sources explicitly
+      (`git add apps/rhino-cli/Cargo.toml apps/rhino-cli/Cargo.lock`), then
       `parity manifest generate`, then `git add` the manifest, then validate — acceptance:
       `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
       worktrees, asserted on the exit code. (Bare `rhino-cli` is not on `PATH`; this is the
-      resolvable form every husky hook and `package.json` script already calls.)
+      resolvable form every husky hook and `lint-staged` entry already calls.)
 - [x] [AI] Author the identical removal in the `ose-private` worktree rather than copying the file
       across — acceptance: both repos' `apps/rhino-cli/Cargo.toml` and `Cargo.lock` are
       byte-identical, and each repo's PR lands in the same window so the byte-identity obligation
@@ -14640,9 +14649,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       written to row B7.
 - [ ] [AI] **A8 — artifact size**: `ls -l` the published binary — acceptance: byte count written to
       row B8.
-- [ ] [AI] **Source size**: count non-test F# code lines excluding comments and blanks using the
-      **same counting command shape** recorded at Phase 0, so the two sides are comparable —
-      acceptance: the count, the command, and the F#-to-Rust ratio are written into `benchmark.md`.
+- [ ] [AI] **Source size**: count F# code lines (tests included) excluding comments and blanks
+      using the **same counting command shape** recorded at Phase 0, so the two sides are
+      comparable — acceptance: the count, the command, and the F#-to-Rust ratio are written into
+      `benchmark.md`.
 - [ ] [AI] Complete the whole-run picture: total wall time of one CI run before and after, taken
       from the same `gh run list` sample — acceptance: both figures in `benchmark.md`.
 - [ ] [AI] Write the verdict paragraph: for each of the nine rows, state better, worse, or

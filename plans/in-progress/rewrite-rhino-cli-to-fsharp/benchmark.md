@@ -29,7 +29,7 @@ placeholder token itself is still never spelled out in prose, because doing so w
 very count these gates read.
 
 **Baseline provenance.** Only **B1** in each table below was re-measured after the tree-sitter
-dependency removal — see the [Phase 0 note](#phase-0-note) for both post-removal figures
+dependency removal — see the [B1 baseline note](#b1-baseline-note) for both post-removal figures
 (17.59 s / 73 crates in `ose-public`, 16.00 s / 73 crates in `ose-private`). Every other row —
 **B2 through B8**, in both the `ose-public` and `ose-private` tables — records a Before figure
 measured against the **pre-removal** dependency graph (79 crates, tree-sitter still linked) and
@@ -139,16 +139,15 @@ find apps/rhino-cli/src -name '*.rs' -type f -print0 | xargs -0 cat \
 ```
 
 Phase 10 runs the identical command with `-name '*.fs'` against the F# tree, which counts the same
-thing (non-blank, non-comment lines, tests included) — but only if the F# port keeps its tests
-inside `src-fsharp/`. If Phase 10 places tests in a separate project outside that path (the
-idiomatic xUnit layout), the identical command stops being comparable: the Rust figure is ~45% test
-code and the F# figure would be closer to 0%. Phase 10 must record which layout it used before
-filling this row's Verdict.
+thing (non-blank, non-comment lines, tests included). `delivery.md:455-461` (Phase 2, frozen)
+unconditionally creates both `RhinoCli.UnitTests.fsproj` and `RhinoCli.IntegrationTests.fsproj`
+inside `src-fsharp/`, so the two counts stay comparable with no open layout question for Phase 10
+to resolve.
 
-## Phase 0 note
+## B1 baseline note
 
-The Before figure for B1 was measured twice in each repository — once as found, and again after the
-unused `tree-sitter` dependency was removed from `Cargo.toml`. `ose-public` as found: **19.91 s**,
+The Before figure for B1 was measured twice in each repository — once as found, and again after
+Phase 1 removed the unused `tree-sitter` dependency from `Cargo.toml`. `ose-public` as found: **19.91 s**,
 79 crates, 21,597,224 bytes; after removal **17.59 s**, 73 crates, 21,597,000 bytes. `ose-private`
 as found: **22.39 s**, 79 crates, 21,597,240 bytes; after removal **16.00 s**, 73 crates,
 21,597,016 bytes. Both tables' **B1** row records the post-removal figure; B2 through B8 do not —
