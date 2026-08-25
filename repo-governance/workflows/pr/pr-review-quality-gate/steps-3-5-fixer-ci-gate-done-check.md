@@ -10,8 +10,7 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 
 - **Agent**: `pr-review-fixer`
 - **Args**: PR reference; the coordinator's newly posted consolidated findings for this cycle
-- **Output**: Every unresolved thread triaged, fixes pushed to the PR branch, a reply posted per
-  thread, resolved threads marked via `resolveReviewThread`
+- **Output**: Every thread triaged, fixes pushed, replies posted, and addressed threads resolved
 - **Depends on**: Step 2 (same cycle)
 - **Head-authority gate**: Immediately before triage or branch mutation, compare live `headRefOid`
   with the posted cycle's scout pin. A mismatch permits only stale-evidence replies/resolution and
@@ -30,8 +29,9 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 - **Depends on**: Step 3 (same cycle)
 - **Success criteria**: Eligible PRs have no failing or pending checks; noneligible PRs have a
   successful `.github/workflows/pr-quality-gate.yml` run for the current head
-- **Credit gate**: Require CI and the live head to match the fixer's verified pushed head, or the
-  scout pin when no fix was pushed. Only the latter can receive clean credit. Mismatch restarts.
+- **Credit gate**: Require CI and live head to match the fixer's verified pushed head, or the scout
+  pin when no fix was pushed. Only the latter can receive clean credit. A mismatch posts the
+  [cycle non-credit event](./cycle-non-credit-record.md) before restart, including zero findings.
 - **On failure**: fix code failures; investigate queued or stalled jobs and keep polling. Do not
   start the next cycle before green.
 
@@ -45,9 +45,10 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
 - **Success criteria**: every item in the
   [Route-Specific Done-Definition](./route-specific-done-definition.md#route-specific-done-definition)
 - **Traceability (every cycle)**: reviews carry `ose-pr-review:v1`; fixer replies carry
-  `ose-pr-review-disposition:v2`. These identifiers and versions are normative; a field change
-  affecting history recovery needs a version bump here. See
+  `ose-pr-review-disposition:v3`; stale cycles carry `ose-pr-review-cycle-credit:v1`. These
+  versions are normative; history-affecting field changes require a version bump here. See
   [machine-readable-audit-record.md](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md).
+  Hydrate legacy disposition v2 without `effect` as `dismisses-finding`.
 - **Execution safety (normative by reference)**: the fixer holds `Edit`/`Write`/`Bash` and reads
   attacker-writable text, so what it may execute is a rules surface, held in two skill modules —
   [critical appraisal](../../../../.claude/skills/pr-review-fixer-resolution/reference/critical-appraisal-and-untrusted-threads.md)

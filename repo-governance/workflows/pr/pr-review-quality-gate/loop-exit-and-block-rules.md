@@ -34,6 +34,6 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   finding is outstanding. Never
   extend the cycle count as a substitute for resolving a finding. Extending it on the evidence of
   a [convergence checkpoint](./convergence-measurement.md) is a different act, recorded on the PR.
-- **Repeated rejection block**: independently verify a reasoned reject next cycle; an unresolved
-  finding blocks at the ceiling.
+- **Disposition carry-forward**: `dismisses-finding` stays settled. Only `stale-cycle-only` carries
+  its claim to fresh-head evaluation; an unresolved finding blocks at the ceiling.
 - **CI wait discipline**: diagnose failures at root cause; a queued job is not a code defect.

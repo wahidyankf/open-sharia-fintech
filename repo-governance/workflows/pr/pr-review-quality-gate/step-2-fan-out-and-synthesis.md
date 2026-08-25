@@ -18,11 +18,11 @@ when_to_use: "Use when checking how the fan-out is dispatched, what the coordina
   brief every selected specialist and the coordinator both read. The coordinator never dispatches
   specialists itself — it only consumes the raw findings they and the scout hand it. Selected
   specialists run **concurrently** within the fan-out
-- **Args**: PR reference, pinned head SHA, the `specialists` and `context_brief` outputs from Step 1,
-  `prior` consolidated findings and resolution state fed from previous cycles
+- **Args**: PR reference, pinned head SHA, Step 1's `specialists`, `context_brief`, `probe_class`,
+  and `probe_previously_used`, plus prior findings and resolution state
 - **Output**: The route-selected specialists emit raw, discipline-scoped findings to the coordinator;
   the coordinator deduplicates, re-categorizes, reasonableness-filters, and tool-verifies them, then
-  posts exactly ONE consolidated review via the GitHub Reviews API (see
+  records the passed probe fields and posts exactly ONE consolidated review via the GitHub Reviews API (see
   [GitHub Reviews API Mechanics](./github-reviews-api-mechanics-part-1.md) below). The review STATE is always
   `COMMENT` — `REQUEST_CHANGES` is structurally unavailable here; blocking status lives in each
   finding's severity label, never in the review STATE

@@ -18,9 +18,9 @@ The calling context will:
 
 0. **Promote from `plans/backlog/` first, if needed**: if `plan-path` resolves inside
    `plans/backlog/`, resolve the delivery mode and repository restrictions, then land the pure move
-   through the mode-appropriate route before step 1. A `*-to-pr` or direct-push-unavailable route
-   uses a dedicated worktree branch, PR quality gate, and merge; only a permitted, explicitly
-   selected direct-push mode pushes the move to `origin main`. Follow the canonical
+   through the mode-appropriate route before step 1. `worktree-to-pr` uses its dedicated worktree
+   PR; `main-to-pr` syncs the primary checkout and opens or resumes the PR there. Only a permitted,
+   explicitly selected direct-push mode pushes the move to `origin main`. Follow the canonical
    [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work);
    never execute directly from `plans/backlog/`.
 1. **Enter the work branch** (Step 0): the work branch is whatever the user specifies at invocation (a dedicated worktree, the `main` checkout, or any existing branch); if unspecified, the plan docs win (the `## Worktree` section, defaulting to a worktree provisioned from `origin/main`) — refuse to start only when neither the user nor the plan specifies one. Then, by default, pull the latest `origin/main` into the work branch first — before any implementation — to minimize merge collisions

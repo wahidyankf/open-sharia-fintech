@@ -33,6 +33,6 @@ workflow](../../workflows/pr/pr-review-quality-gate.md) runs sequential CI-gated
 the target is resolution in cycles 1–3. Cycles 4–5 may use a changed focused probe only when the
 remaining defect family is named. This is a convergence policy, not a target count.
 
-If a blocking finding remains after cycle 5, stop before cycle 6, capture sanitized learning, and
-ask for human direction. The ceiling is never extended automatically. LOW findings retain evidence
-but are non-blocking.
+At cycle 5, capture sanitized learning and stop for human direction. Later cycles may run only when
+the PR holds a separate, explicit, durable per-PR extension record; no checkpoint or agent extends
+the ceiling. LOW findings retain evidence but are non-blocking.

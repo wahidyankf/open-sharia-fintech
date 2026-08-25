@@ -9,13 +9,13 @@ when_to_use: "Use before starting or resuming a review cycle, and at every bound
 ## Rehydrate Before Choosing a Cycle
 
 The pull request is the durable review record. On first entry and after interruption, read its
-`ose-pr-review:v1` reviews, `ose-pr-review-disposition:v2` thread replies, thread-resolution state,
-route record, and current checks before choosing the next cycle. Reconstruct:
+`ose-pr-review:v1` reviews, `ose-pr-review-disposition:v3` replies (plus legacy v2),
+`ose-pr-review-cycle-credit:v1` events, thread state, route record, and current checks. Reconstruct:
 
 - the last used cycle ordinal and configured ceiling;
 - the complete probe-class register;
 - every finding, disposition, cause, and unresolved state;
-- the consecutive-clean-cycle streak; and
+- cycle-credit eligibility and the consecutive-clean-cycle streak; and
 - every convergence checkpoint and its verdict.
 
 Derive the next ordinal and remaining ceiling from that state; never initialize an existing PR as
@@ -34,15 +34,14 @@ exact equality at three boundaries:
    live head: the fixer's verified pushed head when it changed the branch, otherwise the scout pin.
    A cycle can be clean only when that expected head still equals the scout pin.
 
-A mismatch discards the stale cycle output and starts a fresh scout from the new head; recording a
-new SHA on old results is forbidden. Before posting, discard raw/consolidated output without a
-review. After posting, the fixer performs no code change: it replies that the evidence is stale,
-resolves those obsolete threads with `effect: stale-cycle-only`, and the orchestrator records the
-cycle as non-crediting before restart. That effect rejects only stale evidence: the fresh scout
-must carry each underlying claim for evaluation on the new head rather than treat it as dismissed.
-After CI, withhold clean/done credit and restart. A posted
-cycle still consumes its ordinal and ceiling; an aborted pre-post attempt does not create or reuse
-finding IDs because none reached the durable record.
+A mismatch discards stale output and starts a fresh scout; recording a new SHA on old results is
+forbidden. Before posting, discard output without a review or ordinal. After posting, the fixer
+makes no code change and closes any obsolete threads with disposition v3
+`effect: stale-cycle-only`; the orchestrator posts the independent
+[cycle non-credit event](./cycle-non-credit-record.md), even when the review has zero threads.
+After CI, the orchestrator posts the same event at the `post-ci` boundary and restarts. Each event
+withholds clean/done credit, breaks the clean streak, and still consumes the posted ordinal and
+ceiling. `stale-cycle-only` preserves every underlying claim for fresh-head evaluation.
 
 These checks do not replace CI. They prove that routing, security review, fixes, and clean credit
 all refer to the same commit that the specialists actually reviewed.

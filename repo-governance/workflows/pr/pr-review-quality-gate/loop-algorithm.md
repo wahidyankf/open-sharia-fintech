@@ -7,33 +7,37 @@ when_to_use: "Use when tracing the exact control flow of the review loop, or con
 # Loop Algorithm
 
 ```text
-review_pr(PR, maximum_cycles = 5):          # repository ceiling, per-PR extension only
+review_pr(PR, maximum_cycles = 5):          # default ceiling; durable per-PR extension only
     route = classify_changed_artifacts(PR)  # eligible | noneligible; ambiguity => eligible
     if route == noneligible:
         require pr_quality_gate_is_green(PR)
         return not-applicable
-    history = rehydrate_PR_review_history(PR) # ordinal/ceiling, probes, findings/dispositions,
-                                              # clean streak, checkpoints
+    history = rehydrate_PR_review_history(PR) # ordinal/ceiling, probes, dispositions,
+                                              # cycle credit, clean streak, checkpoints
     require_well_formed(history)
     prior = history.findings_and_resolutions
     for cycle in history.next_ordinal..=maximum_cycles:
         scout = fresh pr-review-scout-maker(pr = PR, cycle = cycle, total_cycles = N, prior = prior)
                        # scout pins this cycle's ONE head SHA
         write_or_refresh_pr_body_route_record(route, scout)
-        synthesis_maker = fresh pr-review-synthesis-maker(state = clean, context_brief = scout.context_brief, fed = prior)
-                       # scout hands its context_brief to BOTH consumers below — see scout's Output Contract
-        raw = fan_out(scout.specialists, context_brief = scout.context_brief, fed = prior)   # CONCURRENT within this cycle
-        consolidated = synthesis_maker.synthesize(raw, dedup_against = prior)
+        synthesis_maker = fresh pr-review-synthesis-maker(
+            context_brief = scout.context_brief, probe = scout.probe, fed = prior)
+        raw = fan_out(scout.specialists, context_brief = scout.context_brief,
+                      probe = scout.probe, fed = prior) # CONCURRENT
+        consolidated = synthesis_maker.synthesize(raw, dedup_against = prior,
+                                                   probe = scout.probe)
                        # dedup + re-categorize + reasonableness-filter + tool-verify
         require_live_head_equals(PR, scout.head_sha, boundary = before_review_post)
         post consolidated as ONE line-anchored review (Reviews API)
-        require_live_head_equals(PR, scout.head_sha, boundary = before_fixer)
+        if live_head(PR) != scout.head_sha:
+            close_stale_threads(); record_non_credit(post-review); prior = rehydrate(PR); continue
         fixer = pr-review-fixer()
         fixed = fixer.resolve(PR)           # triage, fix, push, reply, cause-tag each disposition
                        # same-defect completion is allowed; unrelated work becomes a linked follow-up
         expected_head = fixed.pushed_head ?? scout.head_sha
         wait_until CI_is_GREEN(PR, head = expected_head)
-        require_live_head_equals(PR, expected_head, boundary = before_CI_credit)
+        if live_head(PR) != expected_head:
+            record_non_credit(post-ci); prior = rehydrate(PR); continue
         prior += consolidated + their resolution state
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
         if unresolved is empty and probe_class_is_new(cycle, prior):

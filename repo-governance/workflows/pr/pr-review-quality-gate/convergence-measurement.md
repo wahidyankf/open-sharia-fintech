@@ -13,7 +13,7 @@ nearly clean.
 
 ## Every Disposition Carries a Cause
 
-The `ose-pr-review-disposition:v2` block on each fixer reply names exactly one:
+The `ose-pr-review-disposition:v3` block on each fixer reply names exactly one:
 
 - `original` — a defect in the change as first written.
 - `class-escape` — the same class re-escaping after a fix closed only the instance named.
@@ -46,7 +46,8 @@ A cycle whose findings are all `fix-induced` says the change is clean and the fi
 - **Block** — original defects persist and are not falling.
 
 Cycles 4–5 are justified only by `continue` or `change fix strategy`; they use a changed focused
-probe. No verdict extends the five-cycle cap.
+probe. No verdict extends the default ceiling; only a separate, durable, human-authorized per-PR
+record can do so.
 
 ## Vary the Probe
 

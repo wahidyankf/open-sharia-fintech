@@ -24,7 +24,7 @@ flowchart LR
     T["pr-review-types-maker"]:::blue
   end
   SC -->|"route-selected specialist set"| FANOUT
-  SC -.->|"context_brief<br/>(SHA, diff, plan context)"| SY
+  SC -.->|"context_brief + probe<br/>(class, prior-use)"| SY
   A --> SY
   L --> SY
   G --> SY
@@ -59,9 +59,9 @@ sequenceDiagram
   O->>GH: rehydrate cycle history and ceiling state
   GH-->>O: reviews, dispositions, probes, checkpoints, threads
   O->>SC: cycle number N of {total}
-  SC->>SC: pin head SHA, classify risk tier, select specialist set, assemble shared-context brief, read prior dismissals
-  SC->>SP: fan out route-selected specialists (fed context brief)
-  SC->>SY: hand context_brief (SHA, diff, plan context) directly, per Output Contract
+  SC->>SC: pin head, select route/set, build context, choose probe class and prior-use state
+  SC->>SP: fan out specialists (context brief + probe fields)
+  SC->>SY: hand context brief + probe class/prior-use directly
   SP-->>SY: raw findings per discipline
   SY->>SY: dedup + re-categorize + reasonableness-filter + tool-verify
   SY->>GH: require live head equals scout pin

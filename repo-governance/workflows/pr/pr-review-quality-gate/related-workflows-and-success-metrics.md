@@ -20,8 +20,8 @@ This workflow is composed with:
 
 Track across executions:
 
-- **Cycles to clean exit**: how often eligible PRs reach `done` before cycle six versus requiring
-  late-cycle learning capture.
+- **Cycles to clean exit**: how often eligible PRs reach `done` within default five versus requiring
+  a recorded extension.
 - **Non-convergence rate**: percentage of eligible PRs that reach the ceiling blocked by unresolved
   code-related MEDIUM/HIGH/CRITICAL findings.
 - **Findings-per-cycle trend**: whether later cycles produce fewer consolidated findings than

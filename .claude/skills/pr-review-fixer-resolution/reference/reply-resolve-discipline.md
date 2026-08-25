@@ -7,7 +7,7 @@
   without inferring them from prose.
 
   ```html
-  <!-- ose-pr-review-disposition:v2
+  <!-- ose-pr-review-disposition:v3
   {"finding_id":"C3-F1","disposition":"fixed|rejected|deferred|clarify",
    "cause":"original|class-escape|fix-induced","effect":"dismisses-finding|stale-cycle-only",
    "commit":"<SHA or null>","refutation_check":"<command run and its result, or null>"}
@@ -16,9 +16,9 @@
 
   `cause` is defined in
   [Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
-  `effect` defaults to `dismisses-finding` when absent in legacy blocks; only a pinned/live-head
-  mismatch uses `stale-cycle-only`, disposing of the obsolete thread while preserving fresh-head
-  evaluation.
+  Version 3 requires `effect`. Hydrate legacy v2, which had no field, as
+  `effect: dismisses-finding`; only a pinned/live-head mismatch uses `stale-cycle-only`, closing
+  obsolete evidence while preserving fresh-head evaluation.
   `refutation_check` records the outcome of running the finding's refutation clause, which is what
   distinguishes a reasoned reject from a guess. **It carries the outcome only** — `file:line` and
   pass/fail, never file content, a secret, or a matched literal, because this posts publicly. See
@@ -59,9 +59,9 @@ gh api graphql -f query='
 
 The orchestrating
 [PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
-feeds each fresh cycle the accumulated `prior` findings and their resolution state; use it to
-detect repetition. A reasoned rejection does not erase a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md)
-MEDIUM/HIGH/CRITICAL finding: the next eligible cycle independently verifies the evidence. If it
-remains, it stays merge-blocking through the five-cycle cap. Capture sanitized learning after
-cycle five and request human direction before cycle six; see
+feeds each fresh cycle the accumulated `prior` findings and their resolution state. A fixed,
+rejected, or linked-deferred disposition with `effect: dismisses-finding` stays settled; later
+cycles do not re-litigate it. Only `effect: stale-cycle-only` carries the underlying claim to the
+fresh head, where it is independently evaluated under a new finding ID. At the configured ceiling,
+capture sanitized learning and request human direction; see
 [Loop-Exit and Block Rules](../../../../repo-governance/workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md#loop-exit-and-block-rules).

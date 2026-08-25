@@ -9,9 +9,9 @@ when_to_use: Use when resolving which branch or worktree a plan executes on befo
 **Precondition — backlog promotion already resolved `plan-path`**: if the plan being executed
 originally resolved inside `plans/backlog/`, the delivery-mode-aware
 [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work)
-MUST have landed the pure move on `origin/main` before this step begins. A `*-to-pr` or
-direct-push-unavailable route therefore completes and merges its worktree PR first; a direct push
-is valid only under a selected direct-push mode that the repository permits. `plan-path` now
+MUST have landed the pure move on `origin/main` before this step begins. `worktree-to-pr` completes
+and merges the move from its dedicated worktree; `main-to-pr` does so from the synced primary
+checkout. A direct push is valid only under a permitted selected direct-push mode. `plan-path` now
 resolves to `plans/in-progress/`. A direct caller, including
 [`multi-plans-execution.md`](../multi-plans-execution.md) with an `all-backlog` selector, MUST
 perform that same procedure for each backlog plan first. See

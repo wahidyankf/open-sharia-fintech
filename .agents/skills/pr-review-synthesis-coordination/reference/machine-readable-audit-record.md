@@ -67,6 +67,10 @@ this pipeline cannot currently learn about itself.
 Never place a secret, token, or copied vulnerable value in the block — it inherits the same
 sanitization rule as every other posted artifact.
 
+Later head drift never rewrites this record. The orchestrator posts the separate
+[cycle non-credit event](../../../../repo-governance/workflows/pr/pr-review-quality-gate/cycle-non-credit-record.md),
+which hydration reads alongside it.
+
 ## Enforcement
 
 None automated. The block is emitted by this agent and verified by reading the PR. A cycle posting

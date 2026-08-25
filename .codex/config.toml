@@ -253,7 +253,7 @@ description = "Execution-grade PR reviewer scoped to the security discipline onl
 config_file = "agents/pr-review-security-maker.toml"
 
 [agents.pr-review-synthesis-maker]
-description = "Planning-grade PR-review coordinator — the eleventh pr-review-*-maker agent and the mandatory synthesizer atop the nine sonnet-tier discipline specialists. Consumes the risk tier, specialist set, and shared PR/plan/full-diff context brief that pr-review-scout-maker assembles upstream each cycle (including the prior-cycle thread-resolution and human-dismissal read), then deduplicates, re-categorizes (owning the architecture-versus-correctness boundary), reasonableness-filters, and tool-verifies the specialists' raw findings before posting exactly ONE consolidated review via the GitHub Reviews API for pr-review-fixer to consume."
+description = "Planning-grade PR-review coordinator — the mandatory synthesizer atop nine discipline specialists. Consumes the scout's risk tier, specialist set, shared context, probe class and prior-use state, then deduplicates, re-categorizes, reasonableness-filters, tool-verifies, and posts exactly ONE consolidated review."
 config_file = "agents/pr-review-synthesis-maker.toml"
 
 [agents.pr-review-types-maker]
