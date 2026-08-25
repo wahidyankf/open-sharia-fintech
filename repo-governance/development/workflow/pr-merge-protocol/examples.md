@@ -20,7 +20,7 @@ when_to_use: Use as a reference when unsure whether a specific merge decision ma
 ```
 Agent: All five merge preconditions hold for PR #42:
 
-  (a) review route:   eligible, clean at cycle 2 of 7
+  (a) review route:   eligible, clean at cycle 2 of 5
   (b) C/H/M:          0 / 0 / 0 outstanding
   (c) branch vs main: up to date
   (d) quality gates:  all green

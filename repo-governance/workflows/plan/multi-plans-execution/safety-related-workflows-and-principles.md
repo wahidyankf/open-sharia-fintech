@@ -8,7 +8,7 @@ when_to_use: Use when verifying what safeguards a run relies on, navigating to a
 
 - **Plan-only dry run** (`mode: plan-only`) surfaces the schedule before any execution.
 - **Conservative resource inference** — ambiguous footprints serialize, never parallelize.
-- **Worktree isolation** — parallel plans never collide on disk.
+- **Work-location isolation** — worktrees isolate; a shared primary-checkout lock serializes.
 - **Byte-identity serialization** — rhino-cli-touching plans never propagate concurrently.
 - **Quarantine, not cascade** — a blocker confines to its plan + dependents.
 - **Harness-cap respect** — effective concurrency never exceeds the platform agent limit.

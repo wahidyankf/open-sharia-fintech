@@ -4,8 +4,9 @@
 
 Before triage or any branch mutation, read the posted cycle's `ose-pr-review:v1` `head_sha` and
 query the live PR `headRefOid`. Require exact equality. On mismatch, make no code change: reply to
-each stale-evidence thread with a cited rejection, resolve it, mark the cycle non-crediting, and
-return for a fresh scout. Never replace the recorded SHA on existing findings.
+each stale-evidence thread with a cited rejection carrying `effect: stale-cycle-only`, resolve it,
+mark the cycle non-crediting, and return for a fresh scout. This disposes of the obsolete cycle,
+not the underlying claim; never replace the recorded SHA on existing findings.
 
 Read PR review state exclusively through the GitHub **Reviews API** — never through top-level
 `gh pr comment` output, which cannot anchor to a line and cannot be resolved. Top-level PR

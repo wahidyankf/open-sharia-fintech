@@ -28,9 +28,10 @@ explicit list or a set-selector; both resolve once into one enumerated set.
 - **Promote every resolved `plans/backlog/` entry before scheduling.** For each plan in the frozen
   set, resolve that plan's delivery mode and apply the canonical
   [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
-  Complete and merge the pure-move worktree PR for a `*-to-pr` or direct-push-unavailable route;
-  use direct push only for a selected direct-push mode that the repository permits. Schedule no
-  node until the promotion exists on `origin/main`, the plan resolves under
+  For `worktree-to-pr`, create or resume and merge the pure-move PR from its worktree. For
+  `main-to-pr`, stay in the synced primary checkout and create or resume and merge the PR there.
+  Use direct push only for a selected permitted direct-push mode. Schedule no node until the
+  promotion exists on `origin/main`, the plan resolves under
   `plans/in-progress/`, and the durable run record reflects that verified state.
 
 **A2. Refuse unvetted plans.** For each plan, confirm it passed `plan-quality-gate` (a clean strict

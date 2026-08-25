@@ -34,7 +34,9 @@ duplicate, or conflicting history; never reset an existing PR to cycle 1 or an e
 
 Then read the **prior cycle's thread resolution status** via the Reviews API, including any thread a **human explicitly
 dismissed** ("won't fix" / "I disagree"). A human dismissal **resolves** that thread going
-forward, mirroring `pr-review-fixer`'s own reasoned-reject on the agent side. Record this
+forward, mirroring a fixer rejection whose effect is `dismisses-finding`. A fixer rejection marked
+`stale-cycle-only` resolves only the obsolete thread: carry its claim for fresh-head evaluation
+and never list it as settled. Record this
 resolution state in the shared-context brief and feed it to the specialists (alongside the rest
 of the brief) so no specialist wastes a finding re-litigating something a human has already
 settled, and so `pr-review-synthesis-maker` never re-surfaces a dismissed finding in the

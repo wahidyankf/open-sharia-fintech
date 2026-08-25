@@ -18,8 +18,8 @@ plan, unchanged. The multi-plan additions:
 2. **Gate before schedule.** Never execute a plan that has not passed `plan-quality-gate` (Phase A2).
 3. **Resource-conflict guard is mandatory.** Two in-flight nodes MUST NOT share a resource. When in
    doubt about a node's footprint, treat it as conflicting (serialize) — never guess disjoint.
-4. **Per-plan `delivery.md` is sacred.** The Atomic Sync Ritual runs against the _correct_ plan's
-   `delivery.md` in its _worktree_. Cross-plan checkbox edits are forbidden.
+4. **Per-plan `delivery.md` is sacred.** Run the Atomic Sync Ritual against the correct plan's
+   `delivery.md` in its declared work location. Cross-plan checkbox edits are forbidden.
 5. **One `in_progress` per plan; global ceiling ≤ effective concurrency.** Never self-promote above
    the harness agent cap.
 6. **Failure isolates, never cascades to independent plans.** Quarantine the failing plan (and its

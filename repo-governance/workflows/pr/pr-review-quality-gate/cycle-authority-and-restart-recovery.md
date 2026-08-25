@@ -37,8 +37,10 @@ exact equality at three boundaries:
 A mismatch discards the stale cycle output and starts a fresh scout from the new head; recording a
 new SHA on old results is forbidden. Before posting, discard raw/consolidated output without a
 review. After posting, the fixer performs no code change: it replies that the evidence is stale,
-resolves those stale-evidence threads as reasoned rejections, and the orchestrator records the
-cycle as non-crediting before restart. After CI, withhold clean/done credit and restart. A posted
+resolves those obsolete threads with `effect: stale-cycle-only`, and the orchestrator records the
+cycle as non-crediting before restart. That effect rejects only stale evidence: the fresh scout
+must carry each underlying claim for evaluation on the new head rather than treat it as dismissed.
+After CI, withhold clean/done credit and restart. A posted
 cycle still consumes its ordinal and ceiling; an aborted pre-post attempt does not create or reuse
 finding IDs because none reached the durable record.
 

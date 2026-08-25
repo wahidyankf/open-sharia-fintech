@@ -35,7 +35,8 @@ resolution/dismissal context alongside the findings it feeds you. A human's expl
 / "I disagree" reply on a consolidated-review thread **resolves** that finding for future
 cycles, exactly like `pr-review-fixer`'s own reasoned-reject. Do **not** re-raise a finding a
 human — or the fixer — has explicitly dismissed, even if your own re-review would otherwise flag
-it again.
+it again. A fixer rejection carrying `effect: stale-cycle-only` is not a dismissal: independently
+evaluate the claim on the fresh head and re-raise it when it still applies.
 
 ## External Fact Verification
 

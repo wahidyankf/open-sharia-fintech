@@ -9,7 +9,7 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 ## 0. Classify the PR and Resolve Loop Inputs (Sequential)
 
 - **Agent**: Orchestrator (the caller — `plan-execution.md` Step 8, or a direct invocation)
-- **Args**: `{input.pr}`, `{input.cycles}` (default maximum 7)
+- **Args**: `{input.pr}`, `{input.cycles}` (default maximum 5)
 - **Output**: Confirmed PR reference, behavior classification, classification evidence, maximum
   cycle count when eligible, and a reader-facing review-route record in the PR body before fan-out
 - **Success criteria**: The PR exists and is open; the classifier has recorded `eligible` or
