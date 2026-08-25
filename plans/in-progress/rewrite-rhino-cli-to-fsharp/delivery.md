@@ -14339,8 +14339,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       its `steps:` block already contains **0** `cargo`, so this step is expected to be a **no-op**
       and must be recorded as one rather than ticked as work.
       **Do not scope this grep the way the two `cargo build` clauses are scoped.** Those deliberately
-      span the whole job because the `env:` comment they protect lives above `steps:`; this one must
-      span `steps:` only, or it counts that same comment and reads 1 on a correct tree. Acceptance is
+      span the whole `build-rhino` job — never narrowed to `steps:` — because job-level scoping alone
+      already keeps the `format` job's explanatory `env:`-block comment out of range; this one must
+      span `steps:` only because it is scoped to the `format` job itself and would otherwise count
+      that same comment. Acceptance is
       therefore: `awk '/^    steps:/{p=1} p&&/^  [a-z]/{p=0} p'` over the `format` job's line range
       returns 0 for `cargo`, **and** the PR body records whether the step changed anything. A clause
       that passes on an untouched file measures nothing unless the no-op is the recorded finding.
@@ -14533,9 +14535,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `rhino-cli` from source, which no longer applies — acceptance: a per-file verdict of _remove_
       or _retain with reason_ is written into `learnings.md`, and each removal is paired with
       `setup-dotnet` if that job now runs an F# target.
-- [ ] [AI] **Do not delete** `.github/actions/setup-rust/` — acceptance: the directory still exists,
-      `.github/actions/README.md` still lists it, and `learnings.md` records that it survives for the
-      course examples rather than by oversight. Delete it only if the count step above returned 0.
+- [ ] [AI] **In `ose-public`, do not delete** `.github/actions/setup-rust/` — acceptance: in
+      `ose-public` the directory still exists, `.github/actions/README.md` still lists it, and
+      `learnings.md` records that it survives for the course examples rather than by oversight.
+      Delete it only if the count step above returned 0.
 - [ ] [AI] Confirm 9b already removed `cargo build --profile gate` and renamed the artifact, and
       do **not** repeat that edit here — acceptance:
       `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
@@ -14894,12 +14897,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       completion-date prefix
 - [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
 - [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Confirm `plans/backlog/README.md` no longer carries this plan's entry — it is removed
-      at **promotion** to `plans/in-progress/`, not here
+- [ ] [AI] Confirm `plans/backlog/README.md` no longer lists this plan as an active entry — it is
+      removed at **promotion** to `plans/in-progress/`, not here
       [Repo-grounded — `repo-governance/conventions/structure/plans/starting-and-completing-work.md`
-      puts the backlog-index update in Starting Work step 2] — acceptance:
-      `grep -c rewrite-rhino-cli-to-fsharp plans/backlog/README.md` already returns 0; if it does
-      not, the promotion step was skipped and that is the bug, not this one.
+      puts the backlog-index update in Starting Work step 2] — acceptance: the `## Planned Projects`
+      section's active listing does not include this plan. Do not assert this with a raw
+      `grep -c` on the plan name: the promotion-time drain note in that section names the plan as
+      history by design and keeps the name in the file, so that count never reaches 0.
 - [ ] [AI] Remove the worktree in each repo:
       `git worktree remove worktrees/rewrite-rhino-cli`
 - [ ] [AI] Confirm `ose-private` still carries **no** copy of this plan folder, so archival here is
