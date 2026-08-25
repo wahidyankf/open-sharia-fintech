@@ -54,22 +54,22 @@ Every change-producing phase appears in exactly one row. Both repositories use t
 name and the same branch per unit; `ose-private` has no plan folder, so its branches carry only the
 implementation change.
 
-| Phase(s) | Delivery unit                                  | Worktree                      | Branch                       | PR opens                                                                                                |
-| -------- | ---------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| —        | Initial plan documents (#305)                  | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
-| 0        | — (baseline and "before" benchmark)            | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
-| 1        | `tree-sitter` removal + regenerated manifest   | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead             |
-| 2        | Scaffold, dispatch shim, CI wiring             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
-| 3        | Wave A — `convention`, `parity`                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
-| 4        | Wave B — `repo-config`, `env`                  | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
-| 5        | Wave C — `doctor`, `test-coverage`             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-c`        | yes — one per feature file, then the flip PR                                                            |
-| 6        | Wave D — `md`, `governance`, `git`             | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-d`        | yes — one per feature file, then the flip PR                                                            |
-| 7        | Wave E — `harness`, `specs`, `repo-governance` | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-e`        | yes — one per feature file, then the flip PR                                                            |
-| 8        | Wave F — `gate`                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-f`        | yes — one per feature file, then the flip PR                                                            |
-| 9a-9d    | Retire the Rust crate                          | `worktrees/rewrite-rhino-cli` | `rhino-rust-teardown`        | yes — four PRs, in the stated order                                                                     |
-| 10       | The "after" benchmark and comparison           | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                       |
-| 11       | Rules propagation and documentation sweep      | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                       |
-| 12       | Knowledge capture and archival                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                       |
+| Phase(s) | Delivery unit                                                                 | Worktree                      | Branch                       | PR opens                                                                                                |
+| -------- | ----------------------------------------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| —        | Initial plan documents (#305)                                                 | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
+| 0        | — (baseline and "before" benchmark)                                           | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
+| 1        | `tree-sitter` removal + regenerated manifest                                  | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead             |
+| 2        | Scaffold, dispatch shim, CI wiring                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
+| 3        | Wave A — `convention`, `parity`                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
+| 4        | Wave B — `repo-config`, `env`                                                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
+| 5        | Wave C — `doctor`, `test-coverage`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-c`        | yes — one per feature file, then the flip PR                                                            |
+| 6        | Wave D — `md`, `governance`, `git`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-d`        | yes — one per feature file, then the flip PR                                                            |
+| 7        | Wave E — `harness`, `specs`, `repo-governance`                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-e`        | yes — one per feature file, then the flip PR                                                            |
+| 8        | Wave F — `gate`                                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-f`        | yes — one per feature file, then the flip PR                                                            |
+| 9a-9e    | Retire the Rust crate, then the descriptive doc sweep it stales               | `worktrees/rewrite-rhino-cli` | `rhino-rust-teardown`        | yes — five PRs, in the stated order                                                                     |
+| 10       | The "after" benchmark and comparison                                          | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                       |
+| 11       | Rules propagation (rule-bearing half only — the descriptive half moved to 9e) | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                       |
+| 12       | Knowledge capture and archival                                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                       |
 
 † As planned, `ose-private` opened a dedicated Phase 1 PR (#75), in the same window as this PR; the
 publish-mode spike itself carries no reviewable change and folds into Phase 2 in both repos. In
@@ -111,7 +111,7 @@ Wherever a step below says "land the same change in the sibling", the `ose-priva
 to be **larger**, and a step that assumes symmetry is a bug.
 
 > **Governance shard filenames differ between the repos.** Never copy a governance file across;
-> propagate the semantic delta and let each repo's own filenames stand. This applies to every
+> propagate the semantic delta and let each repo's own filenames stand. This applies to every 9e and
 > Phase 11 write.
 
 ## Scope: the whole rewrite
@@ -406,6 +406,18 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [x] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
       acceptance: `benchmark.md` shows both figures and states which one later phases compare
       against.
+- [ ] [AI] Re-run **B2 through B8 and source size** against the same post-removal Rust crate, for the
+      same reason B1 was re-run above: `benchmark.md`'s own "Baseline provenance" note marks every
+      other row's Before value `†` because it is still measured against the pre-removal, 79-crate
+      graph. This is the last point in the plan where a true apples-to-apples Rust baseline is
+      obtainable — Phase 9c deletes `apps/rhino-cli/src/` long before Phase 10 writes its verdict, so
+      a confound left open here can never be corrected later. Acceptance: `benchmark.md`'s Before
+      column for B2-B8 and source size is overwritten with the post-removal figures in both repos'
+      measurement tables, the pre-removal figures are preserved as a labelled historical note rather
+      than deleted, and the `†` markers plus the "Baseline provenance" paragraph are removed once
+      every row is on comparable terms. If this step is skipped for any reason, record that in
+      `learnings.md` so Phase 10's verdict step knows to mark the affected rows provisional rather
+      than silently treating a confounded delta as clean.
 - [x] [AI] Regenerate `apps/rhino-cli/parity-manifest.sha256` in each repo using that repo's own
       generator, in the mandated order — stage the two changed sources explicitly
       (`git add apps/rhino-cli/Cargo.toml apps/rhino-cli/Cargo.lock`), then
@@ -572,6 +584,18 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       keeps its name and swaps only its command — `install` becomes `dotnet restore`, `typecheck`
       becomes `dotnet build --no-restore`, `deps:audit` swaps per DD-8, and so on. Do not infer a
       second excluded target; there is none.
+- [ ] [AI] Prove `deps:audit`'s replacement command can actually fail **before** either Nx project
+      ships it — `dotnet list package --vulnerable --include-transitive` is a **reporting** command,
+      and a reporting command that exits 0 on a finding gates nothing. Acceptance: create a scratch
+      project referencing a known-vulnerable package, run the exact `deps:audit` command against it,
+      and record the observed exit code in `learnings.md`. If it is 0, wrap the command so a
+      non-empty finding exits non-zero — parsing the output, or `--format json` plus a `jq`
+      assertion — and re-prove the wrapper against the same scratch project before `rhino-cli-fsharp`
+      ships it above. This cannot wait for Phase 9c:
+      `.github/workflows/dependency-vulnerability-audit.yml` triggers only on `schedule` and
+      `workflow_dispatch` [Repo-grounded — no `pull_request` trigger], and no
+      `pr-quality-gate.yml` job runs `deps:audit`, so an unproven reporting command would ship green
+      on every PR from this phase through Phase 8 with nothing to catch it.
 - [ ] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
       zero tests, and no target that should do work is a silent `echo` stub — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets[].options.command'` contains no
@@ -587,13 +611,22 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       namespace's `--help` and matching it against the feature files — acceptance: a 17-row table is
       written into `tech-docs.md`, and any row that contradicts the wave map above triggers a
       correction to the wave map rather than a silent mismatch.
-- [ ] [AI] Capture the pre-edit gate output for later comparison:
-      `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group > local-tmp/gate-before.json`
-      — acceptance: the file is non-empty and valid JSON per `jq . local-tmp/gate-before.json`.
+- [ ] [AI] Capture the pre-edit gate output for later comparison, into a **tracked** path rather than
+      `local-tmp/`, because `AGENTS.md`'s Plans & Temporary Files rule permits sweeping `local-tmp/`
+      at any time and the last of this capture's consumers does not run until Phase 8, six phases and
+      six separate PRs later:
+      `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group > plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json`,
+      then `git add plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` so it
+      lands committed in this phase's PR (the `evidence/` folder is the existing convention for
+      committed testing evidence) — acceptance:
+      `git ls-files --error-unmatch plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json`
+      exits 0, and the file is non-empty, valid JSON per
+      `jq . plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json`.
 - [ ] [AI] Edit `apps/rhino-cli/scripts/rhino-bin.sh`: add a `FSHARP_NAMESPACES` array, initially
       empty, and route on `$1` before the existing three-tier resolution — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group` output
-      is byte-identical to `local-tmp/gate-before.json` per `diff`.
+      is byte-identical to
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` per `diff`.
 - [ ] [AI] Add the F#-side resolution tiers to `apps/rhino-cli/scripts/rhino-bin.sh` —
       `RHINO_CLI_FSHARP_BIN`, then `apps/rhino-cli/src-fsharp/dist/`, then `dotnet run` — per
       [tech-docs §Dispatch shim](./tech-docs.md#dispatch-shim-during-migration) — acceptance: with
@@ -640,7 +673,8 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 > All checks below must pass before starting Phase 3.
 
 - [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group`
-      matches `local-tmp/gate-before.json` byte for byte in both repos.
+      matches `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` byte for byte
+      in both repos.
 - [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos — the Rust crate is untouched.
 - [ ] [AI] `npx nx run rhino-cli-fsharp:test:quick` exits 0 in both repos.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention` reports zero differences with both
@@ -1036,8 +1070,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       flip until Wave D — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
 - [ ] [AI] Add `convention` and `parity` — **not** `git`, per the resequencing above — to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave A`. Check for an existing `after wave A` row **before** appending — this
@@ -1049,9 +1087,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave A`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -2607,8 +2649,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh repo-config env` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
 - [ ] [AI] Add `repo-config`, `env` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave B`. Check for an existing `after wave B` row **before** appending — this
@@ -2620,9 +2666,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave B`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -3979,8 +4029,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
 - [ ] [AI] Add `doctor`, `test-coverage` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave C`. Check for an existing `after wave C` row **before** appending — this
@@ -3992,9 +4046,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave C`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -7238,8 +7296,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `tests/unit/Steps/GitSteps.fs` as its step-definition home, and this wave's totals are restated
       to include them. Without this block `git` has no F# implementation and must not flip.
 - [ ] [AI] Add `md`, `governance`, **and `git`** to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave D`. Check for an existing `after wave D` row **before** appending — this
@@ -7251,9 +7313,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave D`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -12061,8 +12127,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
 - [ ] [AI] Add `harness`, `specs`, `repo-governance` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave E`. Check for an existing `after wave E` row **before** appending — this
@@ -12074,9 +12144,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave E`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -14276,8 +14350,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh gate` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
 - [ ] [AI] Add `gate` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
-      — acceptance: each flipped namespace's output through the shim is byte-identical to the
-      capture taken immediately before the flip.
+      — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
+      immediately after the flip still reports zero differences — the same shadow-diff invocation the
+      step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
+      shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
+      binary itself, which the flip does not touch, rather than a stored snapshot no step here
+      produces.
 - [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave F`. Check for an existing `after wave F` row **before** appending — this
@@ -14289,9 +14367,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
-      `gate list --surface=ci --format=json --by-group` matches `local-tmp/gate-before.json`; with
-      them restored it matches the post-flip capture. This is the falsification
-      [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose asserts but never tests.
+      `gate list --surface=ci --format=json --by-group` matches
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before.json` — the tracked capture
+      from Phase 2, never `local-tmp/`, which the repo may sweep at any time; with them restored,
+      `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
+      confirming the restore left the shim exactly where the flip left it rather than in some third
+      state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
+      asserts but never tests.
 - [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave F`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -14324,10 +14406,21 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Phase 9: Retire the Rust Crate
 
-> **PR seams**: **four** PRs, in this order — (9a) the spec disposition, (9b) the CI **decouple**,
-> (9c) the crate deletion and `project.json` rewiring, (9d) the remaining CI teardown. Splitting is
-> required, not stylistic: the crate-deletion PR removes tens of thousands of lines and must not also
-> carry a workflow change whose failure mode is different.
+> **PR seams**: **five** PRs, in this order — (9a) the spec disposition, (9b) the CI **decouple**,
+> (9c) the crate deletion and `project.json` rewiring, (9d) the remaining CI teardown, (9e) the
+> descriptive documentation sweep. Splitting is required, not stylistic: the crate-deletion PR
+> removes tens of thousands of lines and must not also carry a workflow change whose failure mode is
+> different.
+>
+> **9e sits here, immediately after 9d, rather than after Phase 10 where an earlier draft placed
+> it.** 9e is a pure documentation sweep correcting statements 9c and 9d themselves falsify — most
+> concretely, `.claude/skills/ci-standards/SKILL.md` calling `rhino-cli` "the only Rust CLI app
+> today", a claim 9c breaks by making `rhino-cli` F# and 9d breaks a second way by removing the last
+> Rust CI job. That skill is autoloaded working context for `ci-checker`/`ci-fixer`, so every
+> `ci-checker`/`ci-fixer` invocation between the sub-phase that falsifies the claim and the sub-phase
+> that fixes it works from a premise the plan has already deleted. Placing 9e after Phase 10 — as an
+> earlier draft did, folded into Phase 11's descriptive half — left that window open across an entire
+> extra phase for no reason: nothing in this sweep reads a number Phase 10 produces.
 >
 > **9b exists because the obvious three-PR ordering is unlandable.** `build-rhino` runs
 > `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml` with **no `if:` guard**
@@ -14414,14 +14507,28 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       point every target at the F# tree — acceptance: `npx nx run rhino-cli:test:quick` exits 0 with
       no `cargo` invocation, verified by `npx nx run rhino-cli:test:quick --verbose 2>&1 | grep -c cargo`
       returning 0.
-- [ ] [AI] Widen the coverage scope to the whole tree and collapse the two registry entries into
-      one, in the same commit that merges the two Nx projects — acceptance:
+- [ ] [AI] Decide and record, in `learnings.md`, whether `apps/rhino-cli/src-fsharp/project.json`'s
+      Nx project (`rhino-cli-fsharp`) merges into `apps/rhino-cli/project.json` now that both are F#,
+      or stays separate — the decision `tech-docs.md`'s Nx-project note says the plan records
+      "rather than leaving it to chance", which is not yet true of this document: nothing before
+      this step actually produces a merge. If merging: delete
+      `apps/rhino-cli/src-fsharp/project.json` in this same commit and fold its `test:unit` and
+      `test:integration` target commands into `apps/rhino-cli/project.json`'s equivalents. If staying
+      separate: record why, and note that the next step's `coverage.projects` count expectation is
+      **two** rhino entries, not one — acceptance: either
+      `git ls-files --error-unmatch apps/rhino-cli/src-fsharp/project.json` fails (merged) or it still
+      exits 0 and `learnings.md` states the entries stay separate (deferred), and either way
+      `tech-docs.md`'s Nx-project note is updated to record the actual decision rather than describing
+      it as still open.
+- [ ] [AI] Widen `rhino-cli`'s coverage scope to the whole tree — acceptance:
       `rhino-cli`'s `specs:behavior:coverage` specs-dirs argument and its `repo-config.yml`
-      `coverage.projects` glob are both back to `specs/apps/rhino/behavior/rhino-cli/**`, exactly
-      one `coverage.projects` entry names a rhino project, `repo-config validate` exits 0, and
+      `coverage.projects` glob are both back to `specs/apps/rhino/behavior/rhino-cli/**`, and
       `npx nx run rhino-cli:specs:behavior:coverage` reports **525** scenarios — not fewer, which
       would mean a wave's widening was never merged, and not more, which would mean the glob picked
-      up a tree this project does not own.
+      up a tree this project does not own. `repo-config validate` exits 0, and the number of
+      `coverage.projects` entries naming a rhino project matches the decision above — **one** if the
+      two Nx projects merged, **two** if they stayed separate — never asserted as a fixed count here,
+      because that count is exactly what the step above decides.
 - [ ] [AI] Delete `apps/rhino-cli/scripts/deny-check.sh` alongside `deny.toml` — the target does not
       invoke `cargo deny` directly, it runs this wrapper
       [Repo-grounded — `apps/rhino-cli/project.json`, `deps:audit.options.command` is
@@ -14444,18 +14551,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       replacement covers the one control that is already **off** and drops all three that are **on**.
       Read against enforced reality rather than against `deny.toml`, this step is a strictly larger
       regression than a naive reading suggests. State it that way in the PR body.
-- [ ] [AI] Prove the replacement command can actually fail before treating it as a gate —
-      `dotnet list package --vulnerable` is a **reporting** command, and a reporting command that
-      exits 0 on a finding gates nothing. Acceptance: add a known-vulnerable package reference to a
-      scratch project, run the exact `deps:audit` command against it, and record the observed exit
-      code in `learnings.md`. If it is 0, the target must wrap the command so a non-empty finding
-      exits non-zero — parsing the output, or `--format json` plus a `jq` assertion — and the wrapper
-      must be re-proved against the same scratch project. Do not skip this because five other F#
-      projects in this repo (`apps/crane-cli`, `apps/ose-be`, `apps/organiclever-be`,
-      `libs/fsharp-crane-core`, `libs/fsharp-env-loader`) ship the same bare command: that is a
-      repository-wide weakness this plan inherits, not a precedent that makes it correct. If the
-      wrapper is deferred, say so in `learnings.md` and file it, rather than leaving a permanently
-      green target named "audit".
+- [ ] [AI] Re-confirm, rather than re-derive, that `deps:audit` can actually fail — Phase 2 already
+      proved the same `dotnet list package --vulnerable --include-transitive` command against a
+      scratch project before either Nx project ever shipped it (a reporting command that exits 0 on
+      a finding gates nothing, which is why that proof could not wait until here). Acceptance: run
+      the same scratch-project command Phase 2's `learnings.md` entry names, confirm the same
+      non-zero exit code now that this rewired `rhino-cli` target carries the command too, and record
+      the re-confirmation in `learnings.md`. Do not skip this because five other F# projects in this
+      repo (`apps/crane-cli`, `apps/ose-be`, `apps/organiclever-be`, `libs/fsharp-crane-core`,
+      `libs/fsharp-env-loader`) ship the same bare command: that is a repository-wide weakness this
+      plan inherits, not a precedent that makes it correct.
 - [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
       accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
       `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
@@ -14493,6 +14598,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Decide and record whether `apps/rhino-cli/src-fsharp/` is flattened into
       `apps/rhino-cli/src/` now that no Rust tree competes for the path — acceptance: either the move
       is done with the parity manifest regenerated, or `learnings.md` records why it was deferred.
+      **Either way**, record the resulting path as `learnings.md`'s `fsharp-source-root` entry —
+      `apps/rhino-cli/src/` on the move branch, `apps/rhino-cli/src-fsharp/` on the deferred branch —
+      because Phase 9d's formatter-glob step and Phase 10's build and source-size measurements below
+      read that entry rather than a literal path, so this decision cannot silently break a downstream
+      step that assumed the other branch.
 - [ ] [AI] Regenerate the parity manifest in each repo using that repo's own generator, never
       copying the file between repos — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both.
@@ -14601,12 +14711,79 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       lives only in that target [Repo-grounded — `apps/rhino-cli/project.json` line 26] — acceptance:
       `grep -c clippy apps/rhino-cli/project.json` returns 0 and `npx nx run rhino-cli:lint` exits 0.
 - [ ] [AI] Add `format-fantomas` / `format-verify-fantomas` coverage for the new `.fs` files if the
-      existing entries' globs do not already reach `apps/rhino-cli/src-fsharp/` — acceptance: a
-      deliberately misformatted `.fs` file turns the `formatting-verify` group red.
+      existing entries' globs do not already reach the `fsharp-source-root` recorded above at 9c —
+      `apps/rhino-cli/src-fsharp/` on the deferred branch, `apps/rhino-cli/src/` on the move branch;
+      never assume the former — acceptance: a deliberately misformatted `.fs` file turns the
+      `formatting-verify` group red.
 - [ ] [AI] Land 9a, 9b, 9c, and 9d in the `ose-private` worktree as four matching PRs, authored there
       rather than copied — and note that repo's teardown is **wider**, because it has **zero** `.rs`
       files outside `apps/rhino-cli/` — acceptance: the difference between the two repos' teardown
       scope is stated in `learnings.md` rather than looking like drift.
+
+### 9e — Descriptive documentation sweep
+
+> **PR seam**: this PR touches documentation and `.claude/skills` only — no source, no workflow. It
+> runs here, immediately after 9d, rather than after Phase 10, because everything it corrects was
+> falsified by 9c or 9d and nothing in it depends on a measurement Phase 10 produces. This is an
+> ordinary documentation edit, not a rules-propagation run — a description is not a rule and would
+> fail Step 0's falsifiability test, which is why it is a separate sub-phase from 11a rather than
+> folded into it.
+
+- [ ] [AI] Enumerate the surface:
+      `grep -rlE 'rhino-cli[^.]{0,120}(Rust|cargo)|(Rust|cargo)[^.]{0,120}rhino-cli' docs repo-governance AGENTS.md CLAUDE.md README.md .claude/skills`
+      — acceptance: the file list is written into `learnings.md` with a per-file verdict of _edit_ or
+      _correct as-is_. The count measured while authoring this plan was **51** in `ose-public` over
+      `docs repo-governance AGENTS.md README.md` alone (it was 52 a day earlier — the surface moves);
+      a materially different count means the surface moved and must be re-read, not assumed.
+      **`.claude/skills` is in the sweep and must stay in it.** `SKILL.md` files are autoloaded agent
+      working context, not passive prose, so a stale sentence there is read as fact by the next agent
+      that runs. `.claude/skills/ci-standards/SKILL.md` is a known hit: it calls `rhino-cli` "the only
+      Rust CLI app today", which after Phase 9 is wrong twice over — `rhino-cli` is no longer Rust,
+      **and** no Rust CLI app remains at all, so the parenthetical's premise disappears rather than
+      just its label. Its generated mirror `.agents/skills/ci-standards/SKILL.md` carries the same
+      sentence and regenerates via `npm run generate:bindings` once the source is fixed — never
+      hand-edit the mirror.
+- [ ] [AI] Review `.claude/skills/ci-standards/SKILL.md` **whole-file**, not grep-hit-only — the
+      enumerating grep above requires the literal string `rhino-cli` near `Rust`/`cargo`, and this
+      file's target-matrix row reading `CLI app (Rust)` contains no `rhino-cli` token, so it never
+      matches the grep and would survive every future re-run of the enumerating step untouched even
+      after the prose sentence above is corrected — acceptance: that row is corrected in the same
+      edit as the prose sentence, and `learnings.md` records that this file needed a whole-file read
+      rather than a second grep hit.
+- [ ] [AI] Do **not** widen the remedy to every `.claude/skills` grep hit — several match while
+      being correct. `.claude/skills/swe-developing-applications-common/reference/checker-validation-steps.md`
+      describes `rhino-cli` as the **tool** that validates Rust coverage for any Rust project, not as
+      a Rust project itself; its verdict is _correct as-is_ — acceptance: `learnings.md` records that
+      verdict explicitly, so a later reader does not "fix" it.
+- [ ] [AI] Edit the five files that **match the grep** and assert `rhino-cli` is a Rust project —
+      `docs/reference/system-architecture/technology-stack.md` (1 hit),
+      `docs/reference/system-architecture/applications.md` (1),
+      `docs/reference/system-architecture/components.md` (3),
+      `docs/reference/monorepo-structure.md` (1), and
+      `docs/reference/project-dependency-graph.md` (1) — acceptance: each names F#, and none still
+      names `cargo` for this project.
+- [ ] [AI] Additionally edit `docs/reference/system-architecture/ci-cd.md`, which describes the CI
+      pipeline including the `rust` job but **does not match the enumerating grep** — acceptance: it
+      reflects the Phase 9d teardown, and `learnings.md` records that the grep alone would have
+      missed it, so the sweep is grep-plus-review rather than grep-only.
+- [ ] [AI] Decide the disposition of
+      `docs/explanation/software-engineering/programming-languages/rust/` — fourteen style-guide
+      files that cite `rhino-cli` as their worked example, which is no longer true. Note the series
+      itself stays relevant regardless: the 198 `.rs` course examples under
+      `apps/ayokoding-www/content/` remain Rust and remain governed by it — acceptance: a
+      recorded decision to either re-example them against another codebase, mark the series
+      historical, or retire it, with the choice and its reason in `learnings.md`. Not silently left
+      stale.
+- [ ] [AI] Update `repo-governance/development/quality/code/rust-cli-linting.md` and
+      `repo-governance/workflows/infra/development-environment-setup/phase-7-rust-ecosystem.md`,
+      which describe a toolchain the repo no longer provisions — acceptance: each is retired or
+      rewritten, and `apps/rhino-cli/scripts/rhino-bin.sh md links validate` exits 0 repo-wide.
+- [ ] [AI] Apply the **fix-the-class rule**: after the edits, re-run the enumerating grep and give a
+      per-file verdict for every remaining hit, rather than stopping at the files named in this
+      checklist — acceptance: the second grep's output is recorded and every hit has a verdict.
+- [ ] [AI] Repeat 9e in `ose-private`, authored there rather than copied — acceptance: the same
+      enumerating grep is run in that repo and its own per-file verdicts are recorded; the two repos'
+      file lists are expected to differ and that difference is stated, not reconciled.
 
 ### Phase 9 Gate
 
@@ -14630,11 +14807,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` exits 0 in both
       repos.
 - [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos.
-- [ ] [AI] `pr-quality-gate.yml` is green on all **four** Phase 9 PRs (9a, 9b, 9c, 9d) in both repos.
+- [ ] [AI] No file in either repo still describes `rhino-cli` as a Rust project without labelling
+      that statement historical — the 9e sweep's per-file verdicts are complete in both repos.
+- [ ] [AI] `pr-quality-gate.yml` is green on all **five** Phase 9 PRs (9a, 9b, 9c, 9d, 9e) in both
+      repos.
 
-> **Pause Safety**: the Rust crate is gone and every namespace runs on F#; both repos are green and
-> internally consistent. This is the last point at which reverting is a revert of four PRs.
-> Safe to stop. To resume: `npx nx affected -t test:quick`.
+> **Pause Safety**: the Rust crate is gone, every namespace runs on F#, and no repo document still
+> describes `rhino-cli` as Rust; both repos are green and internally consistent. This is the last
+> point at which reverting is a revert of five PRs. Safe to stop. To resume:
+> `npx nx affected -t test:quick`.
 
 ---
 
@@ -14645,9 +14826,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > Nothing in this phase is a gate. The numbers are the deliverable. A row where F# is worse is
 > written down exactly as plainly as a row where it is better.
 
-- [ ] [AI] **A1 — cold build**: `dotnet build apps/rhino-cli/src-fsharp/RhinoCli.Program` from a
-      cleared `obj/`+`bin/` under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed
-      seconds written to the "after" column of `benchmark.md` row B1.
+- [ ] [AI] **A1 — cold build**: `dotnet build <fsharp-source-root>/RhinoCli.Program`, where
+      `<fsharp-source-root>` is the path 9c recorded in `learnings.md`
+      (`apps/rhino-cli/src-fsharp/` if the flatten was deferred, `apps/rhino-cli/src/` if it moved —
+      never assume the former), from a cleared `obj/`+`bin/` under `/usr/bin/time -p`, asserting exit
+      code 0 — acceptance: `test -d <fsharp-source-root>` passes before the build so a stale path
+      fails loudly rather than silently, and elapsed seconds are written to the "after" column of
+      `benchmark.md` row B1.
 - [ ] [AI] **A2 — publish build**, the one CI runs, in the mode selected at Phase 1, under
       `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to row B2, and
       the recorded exit code is 0.
@@ -14669,10 +14854,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       written to row B7.
 - [ ] [AI] **A8 — artifact size**: `ls -l` the published binary — acceptance: byte count written to
       row B8.
-- [ ] [AI] **Source size**: count F# code lines under `apps/rhino-cli/src-fsharp` **excluding its
-      `tests/` subdirectory**, using the same counting command shape recorded at Phase 0 (the
-      Rust side counted `apps/rhino-cli/src` only) — acceptance: the count, the command, and the
-      F#-to-Rust ratio are written into `benchmark.md`. **Comparability caveat**: the Rust figure
+- [ ] [AI] **Source size**: count F# code lines under `<fsharp-source-root>` (9c's recorded path —
+      see A1 above) **excluding its `tests/` subdirectory**, using the same counting command shape
+      recorded at Phase 0 (the Rust side counted `apps/rhino-cli/src` only) — acceptance: the count
+      is non-zero (a zero count means `<fsharp-source-root>` resolved wrong, not that F# has no
+      code), and the count, the command, and the F#-to-Rust ratio are written into `benchmark.md`.
+      **Comparability caveat**: the Rust figure
       excludes `apps/rhino-cli/tests/` (20,540 lines at Phase 0, ~41.5% of the counted `src/`
       figure); every F# test project sits inside `src-fsharp/` (Phase 2), so running the same
       command shape against the **whole** `src-fsharp/` tree unmodified would sweep 100% of F#
@@ -14683,7 +14870,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       from the same `gh run list` sample — acceptance: both figures in `benchmark.md`.
 - [ ] [AI] Write the verdict paragraph: for each of the nine rows, state better, worse, or
       unchanged, with the absolute delta and not only the ratio — acceptance: every row has a
-      one-line verdict and no row is omitted for being unflattering.
+      one-line verdict and no row is omitted for being unflattering. **For any row whose Before value
+      still carries `benchmark.md`'s `†` pre-removal marker** — expected to be none if Phase 1's
+      B2-B8 re-measurement step landed, but checked regardless — write that row's verdict as
+      **provisional** and state the confound explicitly (the delta mixes the language change with the
+      tree-sitter removal), per `benchmark.md`'s own "Baseline provenance" instruction; do not write
+      an unqualified verdict against a `†`-marked value.
 - [ ] [AI] Fold the finished comparison into `tech-docs.md` §Measured Baseline, replacing the
       pre-execution projections with the measured outcome and marking which projections were wrong —
       acceptance: no projection from the planning phase survives unlabelled.
@@ -14711,17 +14903,19 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ---
 
-## Phase 11: Repo-Rules Propagation and Documentation Sweep
+## Phase 11: Repo-Rules Propagation
 
 > This phase runs the
 > [repo-rules-propagation workflow](../../../repo-governance/workflows/repo/repo-rules-propagation.md)
 > in `mode: strict`, `isolation: current` — this plan's own worktree, not a dedicated one. It runs
 > after Phase 10 because the measured outcome is itself one of the facts being propagated.
 >
-> The phase splits deliberately into two halves. The **rule-bearing** half goes through the
-> workflow; the **descriptive** half is an ordinary documentation edit that must not be laundered
-> through a rules workflow, because a description is not a rule and would fail Step 0's
-> falsifiability test.
+> This phase carries the **rule-bearing** half of the two halves an earlier draft grouped together.
+> The **descriptive** half — the documentation sweep correcting statements Phase 9 falsifies — now
+> runs as [9e](#9e--descriptive-documentation-sweep), immediately after the CI teardown that stales
+> it, because nothing in that sweep depends on the measured outcome this phase does. It stayed a
+> separate sub-phase from this one, rather than merging into it, because a description is not a rule
+> and would fail Step 0's falsifiability test.
 
 ### 11a — Rules that go through the propagation workflow
 
@@ -14776,57 +14970,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run **Step 9 (delivery)** and record the **sibling obligation** explicitly — acceptance:
       `learnings.md` names `ose-private` and the corresponding landing, or an explicit `none` with
       its reason.
-
-### 11b — Descriptive documentation, updated without the rules workflow
-
-- [ ] [AI] Enumerate the surface:
-      `grep -rlE 'rhino-cli[^.]{0,120}(Rust|cargo)|(Rust|cargo)[^.]{0,120}rhino-cli' docs repo-governance AGENTS.md CLAUDE.md README.md .claude/skills`
-      — acceptance: the file list is written into `learnings.md` with a per-file verdict of _edit_ or
-      _correct as-is_. The count measured while authoring this plan was **51** in `ose-public` over
-      `docs repo-governance AGENTS.md README.md` alone (it was 52 a day earlier — the surface moves);
-      a materially different count means the surface moved and must be re-read, not assumed.
-      **`.claude/skills` is in the sweep and must stay in it.** `SKILL.md` files are autoloaded agent
-      working context, not passive prose, so a stale sentence there is read as fact by the next agent
-      that runs. `.claude/skills/ci-standards/SKILL.md` is a known hit: it calls `rhino-cli` "the only
-      Rust CLI app today", which after Phase 9 is wrong twice over — `rhino-cli` is no longer Rust,
-      **and** no Rust CLI app remains at all, so the parenthetical's premise disappears rather than
-      just its label. Its generated mirror `.agents/skills/ci-standards/SKILL.md` carries the same
-      sentence and regenerates via `npm run generate:bindings` once the source is fixed — never
-      hand-edit the mirror.
-- [ ] [AI] Do **not** widen the remedy to every `.claude/skills` grep hit — several match while
-      being correct. `.claude/skills/swe-developing-applications-common/reference/checker-validation-steps.md`
-      describes `rhino-cli` as the **tool** that validates Rust coverage for any Rust project, not as
-      a Rust project itself; its verdict is _correct as-is_ — acceptance: `learnings.md` records that
-      verdict explicitly, so a later reader does not "fix" it.
-- [ ] [AI] Edit the five files that **match the grep** and assert `rhino-cli` is a Rust project —
-      `docs/reference/system-architecture/technology-stack.md` (1 hit),
-      `docs/reference/system-architecture/applications.md` (1),
-      `docs/reference/system-architecture/components.md` (3),
-      `docs/reference/monorepo-structure.md` (1), and
-      `docs/reference/project-dependency-graph.md` (1) — acceptance: each names F#, and none still
-      names `cargo` for this project.
-- [ ] [AI] Additionally edit `docs/reference/system-architecture/ci-cd.md`, which describes the CI
-      pipeline including the `rust` job but **does not match the enumerating grep** — acceptance: it
-      reflects the Phase 9d teardown, and `learnings.md` records that the grep alone would have
-      missed it, so the sweep is grep-plus-review rather than grep-only.
-- [ ] [AI] Decide the disposition of
-      `docs/explanation/software-engineering/programming-languages/rust/` — fourteen style-guide
-      files that cite `rhino-cli` as their worked example, which is no longer true. Note the series
-      itself stays relevant regardless: the 198 `.rs` course examples under
-      `apps/ayokoding-www/content/` remain Rust and remain governed by it — acceptance: a
-      recorded decision to either re-example them against another codebase, mark the series
-      historical, or retire it, with the choice and its reason in `learnings.md`. Not silently left
-      stale.
-- [ ] [AI] Update `repo-governance/development/quality/code/rust-cli-linting.md` and
-      `repo-governance/workflows/infra/development-environment-setup/phase-7-rust-ecosystem.md`,
-      which describe a toolchain the repo no longer provisions — acceptance: each is retired or
-      rewritten, and `apps/rhino-cli/scripts/rhino-bin.sh md links validate` exits 0 repo-wide.
-- [ ] [AI] Apply the **fix-the-class rule**: after the edits, re-run the enumerating grep and give a
-      per-file verdict for every remaining hit, rather than stopping at the files named in this
-      checklist — acceptance: the second grep's output is recorded and every hit has a verdict.
-- [ ] [AI] Repeat 11a and 11b in `ose-private`, authored there rather than copied — acceptance: the
-      same enumerating grep is run in that repo and its own per-file verdicts are recorded; the two
-      repos' file lists are expected to differ and that difference is stated, not reconciled.
+- [ ] [AI] Repeat 11a in `ose-private`, authored there rather than copied — acceptance: R1-R4 go
+      through the same nine-step propagation workflow in that repo and its own manifest is recorded.
+      The descriptive sweep's own `ose-private` repeat already happened at 9e and is not repeated
+      here.
 
 ### Phase 11 Gate
 
@@ -14838,12 +14985,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] `npm run validate:sync` and `npm run harness:bindings-validation` exit 0 in both repos.
 - [ ] [AI] `wc -w AGENTS.md CLAUDE.md` in each repo is below the governance word-budget FAIL
       ceiling.
-- [ ] [AI] Both the rule-bearing and the descriptive sweeps have a recorded per-file verdict, and
-      the sibling obligation is either discharged or explicitly `none`.
-- [ ] [AI] No file in either repo still describes `rhino-cli` as a Rust project without labelling
-      that statement historical.
+- [ ] [AI] The sibling obligation is either discharged or explicitly `none`. The descriptive sweep's
+      own per-file verdicts were already asserted at the Phase 9 Gate — this gate covers only the
+      rule-bearing half.
 
-> **Pause Safety**: rules and docs describe the repository's actual state; no code changed in this
+> **Pause Safety**: rules describe the repository's actual state; no code changed in this
 > phase. Safe to stop. To resume: re-read the propagation manifest.
 
 ---
