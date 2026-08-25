@@ -533,6 +533,8 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
 
+### Implementation cycles
+
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/convention/convention-audit.feature` — 1 scenario
 
 > **PR seam**: the cycles under this heading are one PR.
@@ -890,6 +892,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
+
+### Implementation cycles
 
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature` — 9 scenarios
 
@@ -2451,6 +2455,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
 
+### Implementation cycles
+
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature` — 18 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
@@ -3822,6 +3828,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
+
+### Implementation cycles
 
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature` — 11 scenarios
 
@@ -6991,6 +6999,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
+
+### Implementation cycles
 
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature` — 10 scenarios
 
@@ -11766,6 +11776,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
+
+### Implementation cycles
 
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` — 4 scenarios
 
