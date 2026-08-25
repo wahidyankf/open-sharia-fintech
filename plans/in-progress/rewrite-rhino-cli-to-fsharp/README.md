@@ -1,11 +1,12 @@
 # Rewrite rhino-cli: Rust to F# port
 
-**Status**: Backlog
+**Status**: In Progress
 **Scope**: `ose-public` **and** `ose-private` — replace `apps/rhino-cli/` (Rust) with a
 behavior-equivalent F# binary, namespace by namespace behind a dispatch shim, then retire the Rust
 crate, tear down the Rust CI surface, and re-establish the byte-identity parity boundary across both
 repos.
 **Created**: 2026-08-25
+**Started**: 2026-08-25
 **Plan docs**: single-sourced here in `ose-public`. `ose-private` carries **no** copy of this
 folder — the work lands in both repos, the document lives in one, so the two can never drift.
 
