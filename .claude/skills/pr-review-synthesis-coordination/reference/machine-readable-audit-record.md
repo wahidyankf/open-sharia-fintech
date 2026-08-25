@@ -30,7 +30,7 @@ Emit this immediately after the prose header, populated for every cycle includin
 
 ```html
 <!-- ose-pr-review:v1
-{"cycle":3,"cycles_max":7,"tier":"full","head_sha":"<40-char SHA>",
+{"cycle":3,"cycles_max":5,"tier":"full","head_sha":"<40-char SHA>",
  "diff":{"lines_changed":367,"files_changed":44,"files_hand_authored":30},
  "specialists":["architecture","logic","governance","security","integrity"],
  "raw_findings":{"architecture":2,"logic":2,"governance":3},

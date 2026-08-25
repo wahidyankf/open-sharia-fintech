@@ -1,7 +1,7 @@
 ---
 title: "PR-Review Quality Gate — Convergence Measurement"
-description: "How the loop distinguishes genuine convergence from its own exhaust: the three cause tags carried on every disposition, the two series they produce, and the every-third-cycle checkpoint that reads them."
-when_to_use: "Use at every third cycle, and whenever deciding to continue, change fix strategy, block, or extend a ceiling."
+description: "How the loop distinguishes genuine convergence from its own exhaust: cause tags, the two series, and the cycle-three recovery checkpoint."
+when_to_use: "Use at cycle three and whenever deciding whether focused recovery is justified."
 ---
 
 # Convergence Measurement
@@ -36,18 +36,17 @@ change under review — the confusion these tags exist to remove.
 A cycle whose findings are all `fix-induced` says the change is clean and the fixing is the problem
 — a different remedy from another review pass.
 
-## The Checkpoint, Every Third Cycle
+## The Cycle-Three Checkpoint
 
-**The orchestrator** stops after cycles three, six, nine …, reads both series, and records the verdict in [the cycle's audit record](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md):
+**The orchestrator** reads both series after cycle three and records the verdict in [the cycle's audit record](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md):
 
 - **Continue** — original defects are falling and the induced rate is not rising.
 - **Change fix strategy** — the induced rate is high. Attack the mechanism, not the surface — most
   often [restatement by value](./restatement-by-value.md).
 - **Block** — original defects persist and are not falling.
 
-Extending a ceiling when the checkpoint shows a falling original-defect series is a per-PR override,
-recorded on the PR and citing both series. It funds attempts and
-[never waives a finding](./notes.md).
+Cycles 4–5 are justified only by `continue` or `change fix strategy`; they use a changed focused
+probe. No verdict extends the five-cycle cap.
 
 ## Vary the Probe
 

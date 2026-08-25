@@ -26,7 +26,8 @@ is:
    sequential specialist review/fix cycles only for the eligible route; a noneligible route verifies
    the named `pr-quality-gate.yml` workflow instead.
 2. Confirm the **done-definition** is met:
-   - The eligible route stopped at its first clean cycle within the seven-cycle maximum, or the
+   - The eligible route targeted cycles 1–3 and, if needed, completed focused recovery within five
+     cycles without starting cycle 6; or the
      noneligible route has recorded classifier evidence and its `pr-quality-gate.yml` run is green.
    - Every inline review comment has a reply (resolved or explicitly addressed).
    - All quality gates are GREEN -- both local (pre-push hook) and CI.

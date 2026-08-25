@@ -18,7 +18,7 @@ Use these workflows when a pull request needs a structured specialist review bef
 
 ## Available Workflows
 
-- [pr-review-quality-gate](./pr-review-quality-gate.md) — Classify every PR by changed-artifact behavior, then run up to seven sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles. Use for every open PR before merge, to decide whether the specialist review loop applies and drive it to done or blocked.
+- [pr-review-quality-gate](./pr-review-quality-gate.md) — Classify every PR by changed-artifact behavior; eligible PRs target 1–3 cycles, use 4–5 for focused recovery, and stop before 6. Use before merge to decide the route and preserve a readable audit.
 
 ## Related Documentation
 

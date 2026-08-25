@@ -20,16 +20,14 @@ PR to be merged.
    - **PR's CI gates are green** on the current head SHA. Not green: **CRITICAL** — plan is not done,
      regardless of other criteria.
    - **Review loop ran and exited clean** — evidence of the PR-Review Maker→Fixer Cycle (strictly
-     sequential scout→fan-out→synthesis→fixer cycles under a **configurable ceiling, seven by default**) actually
-     executing. **Verify the outcome, not the cycle count.** The ceiling is not a floor: the loop
-     stops at [its clean exit](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md) — two consecutive cycles under unused probe
-     classes, each leaving zero [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL findings — so a low cycle
-     count is **correct and never a finding**. File:
+     sequential scout→fan-out→synthesis→fixer cycles, targeting 1–3 with focused recovery only in
+     4–5) actually executing. **Verify the outcome, not the count.** A green current head with no
+     blocking thread may merge; a low cycle count is correct. File:
      - No review-loop evidence at all: **CRITICAL**.
      - The last completed cycle left a code-related MEDIUM/HIGH/CRITICAL finding outstanding, or the
        loop reached its configured ceiling with one still open (status `blocked`): **CRITICAL** —
        a `blocked` route never merges, per merge preconditions (a) and (b).
-     - The loop ran past seven cycles after its clean exit: **HIGH**. When both this and the
+     - The loop started cycle 6: **HIGH**. When both this and the
        bullet above match, the **higher severity governs**: an outstanding finding is CRITICAL
        however many cycles ran, and the ceiling is never extended as a substitute for resolving
        a finding.
