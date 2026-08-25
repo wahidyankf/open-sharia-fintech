@@ -14,11 +14,19 @@ step-by-step execution record.
 
 ## Planned Projects
 
-**The backlog is currently empty.** Every candidate piece of work lives as a two-pager idea brief in
-[`../ideas/`](../ideas/README.md), sorted into Eisenhower quadrants. Promote one here when it is
-ripe — when its open questions have shrunk to ones only a full plan can answer.
+- [rewrite-rhino-cli-to-fsharp](./rewrite-rhino-cli-to-fsharp/README.md) — replace the Rust
+  `rhino-cli` with a behavior-equivalent F# implementation across all 13 namespaces and 525 Gherkin
+  scenarios, namespace by namespace behind a dispatch shim, then retire the Rust crate and tear down
+  the Rust CI surface. Lands in both `ose-public` and `ose-private`. Authored directly at maintainer
+  request rather than promoted from a two-pager. Carries **no kill gate** — the rewrite is the
+  decision, and the nine-row before/after benchmark is a record rather than a gate. Thirteen phases,
+  six waves, roughly 71 implementation PRs at one feature file per PR.
 
-Two waves emptied it:
+Everything else lives as a two-pager idea brief in [`../ideas/`](../ideas/README.md), sorted into
+Eisenhower quadrants. Promote one here when it is ripe — when its open questions have shrunk to ones
+only a full plan can answer.
+
+Two waves emptied this queue before the entry above landed:
 
 - **Demoted to two-pagers 2026-08-05** — the Ruff config, the bulk-link concurrency fix, merge-queue
   adoption, the `ayokoding-www` cost reduction, the `reuseExistingServer` audit, the Vitest glob
