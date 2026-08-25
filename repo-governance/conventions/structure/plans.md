@@ -1,6 +1,6 @@
 ---
 title: "Plans Organization Convention"
-description: Standards for organizing project planning documents in plans/ folder
+description: Standards for organizing plans/ documents
 category: explanation
 subcategory: conventions
 tags:
@@ -9,7 +9,7 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when deciding where a plan document belongs, how to name/structure it, or how it moves through the lifecycle.
+when_to_use: Use when placing, structuring, naming, or moving a plan.
 ---
 
 # Plans Organization Convention
@@ -60,10 +60,11 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [Delivery Units and Granularity](./plans/delivery-checklists-express-a-dag-continued.md) — units.
 - [Phase 0 Opens No PR](./plans/phase-0-opens-no-pr.md) — no PR at setup.
 - [Phase 0 — Rationale and Enforcement](./plans/phase-0-opens-no-pr-rationale-and-enforcement.md) — evidence.
-- [PRs Open at Delivery Boundaries — Rules](./plans/prs-open-at-delivery-boundaries-rules.md) — rules 1-4.
+- [PRs Open — Rules 1-4](./plans/prs-open-at-delivery-boundaries-rules.md) — boundary rules.
 - [PRs Open — Rules 5-7](./plans/prs-open-at-delivery-boundaries-rules-continued.md) — remaining rules.
-- [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — the test.
-- [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — size bound.
+- [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — qualification.
+- [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — surface bounds.
+- [PRs Open — Addition Limits](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — LOC caps and plan-doc exemption.
 - [PRs Open — Atomicity](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — rule 5.
 - [PRs Open — PR Body](./plans/prs-open-at-delivery-boundaries-pr-body.md) — why, entry, skip.
 - [Delivery Boundaries](./plans/delivery-boundaries-and-applicability.md) — table.

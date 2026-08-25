@@ -1,32 +1,39 @@
 ---
 title: "PR-Review Quality Gate — Participants"
-description: "Rosters the eleven pipeline agents — scout, nine discipline specialists, and the synthesis coordinator — plus the trivial-tier branch where the coordinator originates findings itself."
-when_to_use: "Use when identifying which agent owns a given review discipline, or how the trivial-tier branch changes who originates findings."
+description: "Rosters the eleven pipeline agents, including the trivial-tier and plans-only branches."
+when_to_use: "Use when identifying review participants, including the trivial-tier and plans-only branches."
 ---
 
 # Participants
 
-The retired single-maker `pr-review-maker` monolith is replaced by eleven agents — a stage-0
-`pr-review-scout-maker` that classifies risk tier and assembles shared context ahead of the fan-out,
-nine discipline-scoped specialists that fan out concurrently within each cycle, plus a mandatory
-coordinator that consolidates their raw findings — feeding the unchanged `pr-review-fixer`. See the
+Eleven agents replace the retired `pr-review-maker` monolith: a stage-0 scout that classifies risk
+and assembles context, nine concurrent discipline specialists, and a mandatory synthesis
+coordinator. They feed the unchanged `pr-review-fixer`. See the
 [PR Reviewer-Discipline Convention](../../../development/quality/pr-review-disciplines.md) for each
 specialist's full charter, owned scope, and routing rules.
 
-**Trivial-tier branch**: when the scout classifies a cycle `trivial` (DD-7), `scout.specialists` is
-the empty set — no specialist fans out. `pr-review-synthesis-maker` does not sit idle in this
-branch; it performs one consolidated generalist pass itself in place of the fan-out and originates
-findings directly, the single explicit carve-out to its otherwise-transform-only charter (see
+**Trivial-tier branch**: when the scout classifies a non-plans-only cycle `trivial` (DD-7),
+`scout.specialists` is the empty set — no specialist fans out. `pr-review-synthesis-maker` does not
+sit idle in this branch; it performs one consolidated generalist pass itself in place of the
+fan-out and originates findings directly, the single explicit carve-out to its otherwise-
+transform-only charter (see
 [`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md) and
 [`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#trivial-tier-handoff-dd-7)).
+
+**Plans-only branch**: the scout still records the ordinary tier but selects security,
+documentation, and governance plus the coordinator. See the
+[Plans-Only Review Route](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-plans-only-route.md)
+for its fresh-per-cycle test, primary secrets probe, plan-artifact review, and implementation
+suppression.
 
 - **`pr-review-scout-maker`** — pipeline stage 0, runs once at the start of each cycle before the
   specialist fan-out. Owns risk-tier classification and specialist-set selection (D12) and
   shared-context assembly (D13), and reads the prior cycle's thread-resolution/dismissal state so the
   fan-out does not re-litigate a settled thread. Defined at `.claude/agents/pr-review/pr-review-scout-maker.md`.
 - **Nine discipline specialists** — execution/sonnet-tier agents, one per discipline, run
-  **concurrently** within a cycle's tier-selected fan-out. **Even under `full` tier, the fan-out is
-  not unconditionally all nine**: the scout's Content-Type Applicability Filter (DD-10) skips
+  **concurrently** within a cycle's route-selected fan-out. The plans-only route selects its fixed
+  three-specialist set. **Even under the standard `full` route, the fan-out is not unconditionally
+  all nine**: the scout's Content-Type Applicability Filter (DD-10) skips
   `pr-review-types-maker` and `pr-review-integrity-maker` from a given cycle when their own declared
   artifact class (typed-language files; test/CI-workflow files, respectively) is verifiably absent
   from that cycle's current diff — see

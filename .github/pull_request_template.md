@@ -22,7 +22,7 @@ See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-
 
 - **Start here:**
 - **Skip these paths:** <!-- e.g. generated mirrors: .agents/, .opencode/, .codex/ -->
-- **Size:** <!-- Program/script P lines, non-program N lines, and hand-authored files. Bound: P≤400; if both categories occur P+N≤900; absolute P+N≤1,000; files≤20. -->
+- **Size:** <!-- Added lines only: code/program C≤500; other/document O≤1,000; no combined ceiling; deletions count zero; hand-authored files≤20. If claiming the narrow plan-document LOC exemption, state whether this is initial establishment or a pure backlog/in-progress move and confirm the entire hand-authored diff contains only the qualifying plan documents and required indexes. -->
 
 ## Cost/Benefit of Added Code
 

@@ -16,15 +16,21 @@ security-sensitive path, then select the specialist set accordingly:
   identity, CI/workflow files, `pr-merge-protocol.md`) → **all nine specialists, minus the
   Content-Type Applicability Filter below**.
 
-**Security-sensitive paths force `full` regardless of size** — non-negotiable, per the no-secrets
-and git-identity rules. Recompute the tier **every cycle**, since the fixer's commits can change the
-diff's size or touched paths, and record it in the shared-context brief so
-`pr-review-synthesis-maker` carries it into the Consolidated Review Header.
+## Plans-Only Route
 
-The scout records the resulting tier and every selected or skipped specialist in the PR's
-human-readable review-route record. A selected lens names the risk it addresses; a skipped lens
-names the applicable tier/filter reason. This makes a risk-selected review explainable to a
-bootcamp-graduate reader without turning the selection into mechanical enforcement.
+For a PR whose entire hand-authored diff is plan documents and required indexes, apply the fixed
+[Plans-Only Route](./plans-only-route.md). Recompute it every cycle and record the ordinary risk
+tier, but use the linked specialist set and primary probe regardless of that tier.
+
+**Security-sensitive paths force `full` regardless of size for every non-plans-only PR** —
+non-negotiable, per the no-secrets and git-identity rules. Recompute the tier and route **every
+cycle**, since the fixer's commits can change the diff's size, touched paths, or content type, and
+record both in the shared-context brief so `pr-review-synthesis-maker` carries the decision into
+the Consolidated Review Header.
+
+The scout records the resulting tier, route, and every selected or skipped specialist in the PR's
+human-readable review-route record. A selected lens names its risk; a skipped lens names its tier
+or filter reason.
 
 ## Content-Type Applicability Filter (DD-10) — `full` tier only, freshly re-derived every cycle
 

@@ -18,6 +18,8 @@ re-litigate.
 - [risk-tier-and-specialist-selection.md](./reference/risk-tier-and-specialist-selection.md) —
   the trivial/lite/full thresholds, the security-sensitive-path override, and the Content-Type
   Applicability Filter (DD-10)
+- [plans-only-route.md](./reference/plans-only-route.md) — the plans-only classification test,
+  fixed specialist set, primary secrets probe, and absent-implementation suppression
 - [shared-context-and-prior-cycle-read.md](./reference/shared-context-and-prior-cycle-read.md) —
   assembling the once-per-cycle shared-context brief (no-exclusion posture, large-diff slicing),
   and reading prior-cycle thread-resolution/human-dismissal state

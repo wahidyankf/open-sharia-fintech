@@ -70,5 +70,5 @@ Related: `pr-review-synthesis-maker` (receives this agent's output every cycle),
 ## Required Reading
 
 Before acting, read every skill listed in this file's `skills:` frontmatter —
-`pr-review-scout-classification` (all four reference modules) holds the full classification and
+`pr-review-scout-classification` (every reference module) holds the full classification and
 context-assembly protocol.

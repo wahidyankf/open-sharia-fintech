@@ -28,7 +28,8 @@ findings that span disciplines, and the coordinator pipeline's cost- and noise-c
 - [Nine Reviewer Disciplines: Table (2)](./pr-review-disciplines/the-nine-reviewer-disciplines-table-part-2.md) — Documentation through Type-soundness, plus scout/synthesis roles. Use to find which specialist owns a finding.
 - [The Boundary Tie-Breaker Rule](./pr-review-disciplines/the-boundary-tie-breaker-rule.md) — Three-step tie-breaker for a cross-discipline finding. Use when a finding spans disciplines.
 - [Seven Grey-Zone Rulings](./pr-review-disciplines/seven-grey-zone-rulings.md) — The tie-breaker pre-resolved for seven cases. Use for a recurring grey-zone question.
-- [Cost/Noise Control: Risk-Tier Fan-Out (D12)](./pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md) — Trivial/lite/full specialist fan-out. Use to determine which specialists run.
+- [Risk-Tier Fan-Out (D12)](./pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md) — Trivial/lite/full selection.
+- [Plans-Only Review Route](./pr-review-disciplines/cost-control-noise-control-mechanics-plans-only-route.md) — Fixed lenses and primary secrets probe.
 - [Cost/Noise Control: Shared-Context Extract-Once (D13)](./pr-review-disciplines/cost-control-noise-control-mechanics-shared-context-extract-once.md) — Shared PR context and large-diff handling. Use for a large-diff review.
 - [Cost/Noise Control: SUPPRESS Blocks and D14](./pr-review-disciplines/cost-control-noise-control-mechanics-suppress-blocks-and-instruction-decay-specialist.md) — SUPPRESS blocks and the instruction-decay specialist. Use when scoping a SUPPRESS block.
 - [Cost/Noise Control: Dismissal Rule and Tag-Strip](./pr-review-disciplines/cost-control-noise-control-mechanics-human-dismissal-and-boundary-tag-strip.md) — Human-dismissal respect and tag-strip hardening. Use on a re-review after a prior dismissal.

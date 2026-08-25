@@ -16,6 +16,11 @@ this is the half most easily misread — governance prose, agent definitions, an
 PR whose whole purpose is to change the rules, the rules **are** the artifact. A CRITICAL in a
 convention blocks exactly as a CRITICAL in a function does.
 
+On a plans-only PR, the plan is the shipping artifact. Review it for exposed secrets, credentials,
+or sensitive operational values as the primary mandatory probe, and for substantive document
+quality and governance conformance. Do not treat an eventual implementation artifact's absence as
+a defect in this PR; review that artifact when its implementation PR ships it.
+
 **Two things are not code-related**, and neither blocks:
 
 - **The correction record.** Prose introduced by a fixer commit after cycle 1 — what the loop
