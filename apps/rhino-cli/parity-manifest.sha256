@@ -18,7 +18,7 @@ d90521c6ede0e13f88a741783442bff345ca282a5daaaa7e04f4fdf33e62849e  apps/rhino-cli
 f7dacc8dd923488c70eebabe298843022ec5a3ba94b8b7568634a779f24b8da4  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 892d81cacb379d953f21441fde7db917f558ec07be55f270152a2cde66109e09  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 85ba308ad0a88485db55b305120d99b9a4ec328d2379536110f73e51f4797fe2  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs
-f33a028fef81f56b9c2e308188426da09edc3d4a9bb95bb8a2b1772ac439de32  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
+a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
 371c1e14d1532a1eea1214d98818c3e3da39a82b24dbb46e24cd09426e6ecc18  apps/rhino-cli/src/application/agents/bindings.rs
 0adf2fb9fb4ef5390caa25b75943505ac96aebabd0c46d966f60f66a9037f7c2  apps/rhino-cli/src/application/agents/catalog.rs
