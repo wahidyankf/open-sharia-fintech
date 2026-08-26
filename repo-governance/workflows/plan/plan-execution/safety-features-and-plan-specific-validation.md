@@ -35,7 +35,7 @@ when_to_use: Use when explaining what safety guarantees plan execution provides,
 
 - Worktree-based modes enter the plan's designated worktree (Step 0); main-based modes remain in the primary checkout and create no plan worktree
 - A plan worktree is synced with `origin/main` (ff-merge or rebase) before any implementation; dirty state or rebase conflicts stop execution for user decision
-- On `pass`, after final delivery, the orchestrator verifies the Delivery Branch Inventory and every mandatory pre-removal check — including each PR-mode branch's recorded reviewed head versus current `origin/<branch>` — then immediately removes the exact, self-created, clean worktree with non-force `git worktree remove`; no additional confirmation prompt is required
+- On `pass`, after final delivery, the orchestrator verifies the Delivery Branch Inventory and every mandatory pre-removal check — including each PR-mode branch's exact merged PR/head plus a matching live remote ref or verified GitHub automatic deletion — then immediately removes the exact, self-created, clean worktree with non-force `git worktree remove`; no additional confirmation prompt is required
 - On `partial` or `fail`, the worktree is always retained for the next execution attempt
 
 ## Plan-Specific Validation

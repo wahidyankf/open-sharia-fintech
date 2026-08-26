@@ -23,9 +23,10 @@ Continues [Worktree Specification](./worktree-specification.md).
 3. **Immediate cleanup**: when every delivery unit this plan places in a repo is confirmed delivered,
    resolve the exact path from its Provisioned Worktree Identity, reconcile it with `git worktree
 list --porcelain`, then use the Delivery Branch Inventory and canonical mandatory pre-removal checks.
-   Each PR-mode branch's current `origin/<branch>` tip and merged PR reviewed head must equal its
-   recorded reviewed-head SHA; a missing/mismatched proof retains the worktree and escalates. Only
-   then remove that self-created worktree without another prompt. Use non-force
+   Each PR-mode branch needs the canonical merged-PR/head proof plus either a matching live
+   `origin/<branch>` tip or a verified GitHub automatic-deletion event when that repository enables
+   it; any other missing/mismatched proof retains the worktree and escalates. Only then remove that
+   self-created worktree without another prompt. Use non-force
    `git worktree remove`, then canonical branch cleanup. If any check fails, retain it with evidence
    and escalate. Never remove on `partial`/`fail`. For a multi-unit plan, the shared worktree is
    removed once, after every delivery unit that used it has landed.

@@ -1,6 +1,6 @@
 ---
 title: "Finalization and Archival — Direct-Push Worktree Cleanup and PR-Mode Archival"
-description: Defines the immediate safe worktree-cleanup flow for direct-push modes and the archival-in-PR steps for *-to-pr modes.
+description: Defines safe direct-push cleanup and *-to-pr archival.
 when_to_use: Use when cleaning up a plan's worktree after a direct push, or moving a plan folder to done/ inside a delivering PR.
 ---
 
@@ -8,17 +8,17 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
    on `origin/main` and CI is green, clean up a `worktree-to-origin-main` worktree in the same
    session. `main-to-origin-main` created no plan worktree, so this step is N/A for that mode.
    1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
-      `git worktree list --porcelain`. Inventory every plan-created and current branch; the initial
-      identity branch may differ after normal delivery-unit branch switching. A missing identity,
-      path conflict, or unclassified branch blocks removal; never derive ownership from a familiar
-      path.
+      `git worktree list --porcelain`. Inventory every plan-created/current branch; the initial
+      identity branch may differ after normal switching. Missing identity, path conflict, or
+      unclassified branch blocks removal; never derive ownership from a familiar path.
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
       the exact worktree is clean and idle, every inventoried branch is pushed, and each direct-push
       delivery is present on `origin/main` with no open PR. For a PR-mode branch, its merged PR
-      reviewed head and current `origin/<branch>` must equal the inventory's recorded reviewed-head
-      SHA; retain and escalate a missing/mismatched proof. A repository root, wildcard, missing
-      identity, or another actor's worktree is never eligible.
+      reviewed head must equal the inventory's recorded reviewed-head SHA, with either a matching
+      current `origin/<branch>` or verified GitHub auto-deletion under enabled
+      `delete_branch_on_merge`; retain and escalate any other missing/mismatched proof. A repository
+      root, wildcard, missing identity, or another actor's worktree is never eligible.
    3. When every check passes, remove the exact path immediately without another confirmation
       prompt, from the repository root:
 

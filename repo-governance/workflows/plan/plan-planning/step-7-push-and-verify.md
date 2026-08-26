@@ -23,9 +23,10 @@ Commit and push the plan to the confirmed target, then remove the worktree.
    reconcile it with `git worktree list --porcelain`. Inventory every plan-created and current branch.
    Continue only if the identity matches, the exact worktree is clean and idle, no inventoried branch
    is unpushed, and each direct-push delivery reached `origin/main` with no open PR. For any PR-mode
-   branch, its merged PR reviewed head and current `origin/<branch>` must equal its recorded inventory
-   SHA; retain and escalate any missing/mismatched proof. Do not use `origin/main` ancestry for a
-   squash-merged PR branch. When every check passes, remove the exact
+   branch, its merged PR reviewed head must equal its recorded inventory SHA and either its live
+   `origin/<branch>` must match or GitHub must verify automatic deletion under an enabled
+   `delete_branch_on_merge` setting; retain and escalate any other missing/mismatched proof. Do not
+   use `origin/main` ancestry for a squash-merged PR branch. When every check passes, remove the exact
    path immediately, without a further prompt, using non-force removal:
 
    ```bash

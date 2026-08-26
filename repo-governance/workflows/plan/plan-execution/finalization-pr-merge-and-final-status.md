@@ -1,6 +1,6 @@
 ---
 title: "Finalization and Archival — PR Merge, Cleanup, and Final Status"
-description: Defines the PR-mode merge and immediate safe worktree-cleanup steps, and the final pass/partial/fail status determination.
+description: Defines PR-mode merge, immediate safe cleanup, and final status.
 when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree afterward, or determining the plan's final status.
 ---
 
@@ -18,16 +18,16 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
 3. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
-   1. Resolve the exact path from its Provisioned Worktree Identity, reconcile it with `git worktree
-list --porcelain`, and inventory plan-created/current branches. A missing identity, path
-      conflict, or unclassified branch blocks removal; never infer ownership from a familiar path.
+   1. Resolve the exact Provisioned Worktree Identity path, reconcile `git worktree list --porcelain`,
+      and inventory plan-created/current branches. Missing identity, path conflict, or unclassified
+      branch blocks removal; never infer ownership from a familiar path.
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
-      GitHub reports every PR-mode branch merged and both its PR reviewed head and current
-      `origin/<branch>` equal the inventory's recorded reviewed-head SHA. Every direct-push branch
-      must be delivered with no open PR; the exact worktree must be clean and idle, and no inventoried
-      branch may have an unpushed commit. Retain and escalate a missing/mismatched proof; do not
-      substitute commit ancestry for the PR merge check because these repositories squash-merge.
+      GitHub reports every PR-mode branch merged with the inventory's exact reviewed head, and either
+      its live `origin/<branch>` matches or its authoritative GitHub auto-deletion event proves the
+      missing ref is expected under enabled `delete_branch_on_merge`. Every direct-push branch must
+      be delivered with no open PR; the exact worktree must be clean/idle and no branch unpushed.
+      Retain and escalate any other missing/mismatched proof; squash ancestry is not PR-merge proof.
    3. When every check passes, remove the exact path immediately without another confirmation
       prompt, from the repository root:
 

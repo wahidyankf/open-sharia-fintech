@@ -1,6 +1,6 @@
 ---
 title: "Branch Cleanup"
-description: How to safely delete local and remote branches a plan created, after their PR is confirmed merged.
+description: Safely delete plan-created branches after their PR is confirmed merged.
 category: explanation
 subcategory: development
 tags:
@@ -17,11 +17,12 @@ when_to_use: Use when deleting local or remote branches after removing a repo's 
 
 Removing a shared worktree leaves one branch per delivery unit. Run this after removing the worktree.
 
-**Delete only inventory branches after rechecking delivery proof and no-unpushed state.** A `*-to-pr`
-branch needs its recorded PR `MERGED`, with both that PR's reviewed head and current
-`origin/<branch>` tip equal to the inventory's recorded reviewed-head SHA. A missing remote ref or
-any mismatch means retain the branch/worktree evidence and escalate. Direct push needs its recorded
-commit on `origin/main` and no open PR. Do not treat the provisioned initial branch as the only branch.
+**Delete only inventory branches after rechecking delivery and no-unpushed proof.** For `*-to-pr`,
+the recorded PR must be `MERGED`; its exact branch and head must equal the inventory's reviewed-head
+SHA; and its live `origin/<branch>` must equal that SHA, unless GitHub proves automatic deletion with
+`HEAD_REF_DELETED_EVENT` and enabled `delete_branch_on_merge`. Any other absent ref is unsafe. Direct
+push needs its recorded commit on `origin/main` and no open PR. Include every plan-created/current
+branch, not only the initial branch.
 
 **Local deletion uses `git branch -d`** — never `git branch -D`. For a squash-merged PR branch, make
 the merged PR the delivery proof, then fetch without pruning and verify the local and
@@ -37,27 +38,24 @@ git branch -d <branch>
 git push origin --delete <branch>
 ```
 
-Equal tips prove no local commit followed review; `git branch -d` keeps Git's merged-check against
-that upstream. `git log origin/main..<branch>` is non-empty after squash merge and proves nothing.
-Without the matching remote-tracking ref, retain and escalate; never bypass the non-force guard.
+Equal tips prove no local commit followed review; `git branch -d` retains Git's merged check.
+`git log origin/main..<branch>` proves nothing after a squash merge.
 
-**Remote deletion uses `git push origin --delete <branch>`**, only after the PR is MERGED, and only
-for branches this plan pushed. **Never delete `main`, and never delete an environment branch.** Which
-branches those are is **repo-specific**: `ose-public` defines `prod-*` and `stag-*`; `ose-private`
-currently defines none, so the rule is vacuously satisfied there. Confirm each repo's own
-set with `git branch -a` rather than assuming this pattern is universal — a plan that hardcodes one
-repo's environment-branch shape will eventually run against a repo that does not match it.
+For a GitHub-auto-deleted branch, preserve the required GitHub proof and local-head equality; do not
+recreate or delete a remote ref. Attempt only `git branch -d <branch>`. If it declines because squash
+merge leaves no upstream, retain and escalate that branch-cleanup exception; worktree removal remains
+valid. Never substitute `-D`, a fabricated tracking ref, or a direct ref delete.
 
-**Jurisdiction note.** `git push origin --delete` is remote-ref deletion, not history-rewriting
-force-push. It sits deliberately **outside** the per-instance-approval gate that covers
-`--force` / `--force-with-lease` / hook bypass, and is instead safety-gated by **this convention's
-own** merged-check requirement above. This convention is the single authority for remote branch
-deletion; the local-side forbidden-operations table and the remote-side force-push convention both
-defer here.
+**Use `git push origin --delete <branch>`** only for a plan-pushed, still-live branch after its PR is
+`MERGED`. Verified GitHub auto-deletion needs no second command. **Never delete `main` or an
+environment branch.** Environment branches are repo-specific: `ose-public` has `prod-*`/`stag-*`;
+`ose-private` currently has none. Confirm each repo with `git branch -a`.
 
-**Run `git worktree prune`** after removals so administrative worktree metadata does not accumulate.
-It touches only already-removed entries and is safe alongside other sessions.
+**Jurisdiction.** `git push origin --delete` deletes a remote ref; it is not history-rewriting
+force-push. It is governed by this convention's merged-check requirement, not the per-instance gate
+for `--force`, `--force-with-lease`, or hook bypass. Other local/remote force-push rules defer here.
 
-**Never `gc` or `prune` the object store** as part of cleanup. History maintenance is a serialization
-point on a shared machine, and carries a documented corruption risk when another process is writing
-concurrently. It stays out of the cleanup gate entirely.
+**Run `git worktree prune`** after removals; it touches only removed entries.
+
+**Never `gc` or object-store `prune`** during cleanup: shared-machine history maintenance risks
+corruption while another process writes.
