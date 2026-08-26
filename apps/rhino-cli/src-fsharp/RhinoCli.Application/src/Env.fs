@@ -35,13 +35,21 @@
 /// `force`, `confirm`, or any prompt at all — it always overwrites silently
 /// — so `restore` also takes an explicit `confirm: unit -> bool` callback
 /// with the same invoke-at-most-once-when-a-real-conflict-exists contract.
+/// This PR additionally ports the `App`-surface-kind slice of `env validate`
+/// (code↔`.env.example` drift detection) for
+/// `env-validate-app-drift.feature`'s 3 scenarios; the `terraform`/`ansible`
+/// surface validators are out of scope, reserved for a later PR7.
 module RhinoCli.Application.Env
 
 open System
+open System.Collections.Generic
 open System.IO
 open System.Text.Encodings.Web
 open System.Text.Json
 open System.Text.Json.Serialization
+open System.Text.RegularExpressions
+open YamlDotNet.Serialization
+open YamlDotNet.Serialization.NamingConventions
 
 /// Maximum file size (in bytes) that will be backed up (1 MiB) [Repo-grounded
 /// — `backup.rs::DEFAULT_MAX_SIZE`].
@@ -987,3 +995,511 @@ let restore (opts: EnvOptions) (confirm: unit -> bool) : Result<EnvOperationResu
                           WorktreeName = opts.WorktreeName
                           Cancelled = false
                           DryRun = false }
+
+// ---- validate ----
+
+/// Surface kind selecting which drift validator runs for one `env-contract:`
+/// surface entry, deserialized case-insensitively from the lowercase `kind:`
+/// value in `repo-config.yml` [Repo-grounded —
+/// `apps/rhino-cli/src/application/env/validate.rs::SurfaceKind`].
+///
+/// Only `App` is dispatched to a real validator by `validateAll` below —
+/// `Terraform`/`Ansible` surface validation is a separate, later PR7
+/// (`env-contract/iac-env-validation.feature`). Both variants are ported
+/// here anyway so this type stays complete for that later port to extend
+/// without a breaking rename, and so a surface's `kind:` YAML value
+/// round-trips correctly regardless of which kind it declares. No surface in
+/// this repo's live `env-contract:` section currently declares either.
+type SurfaceKind =
+    | App
+    | Terraform
+    | Ansible
+
+/// A single env-validate surface entry from the `env-contract:` section
+/// [Repo-grounded — `validate.rs::SurfaceConfig`].
+type SurfaceConfig =
+    {
+        Root: string
+        Kind: SurfaceKind
+        /// Source language for the app validator: `"rust"`, `"typescript"`, or
+        /// `"fsharp"`. Unused for `Terraform`/`Ansible` surfaces. Defaults to
+        /// `""` when the YAML key is absent.
+        Lang: string
+        /// Keys intentionally exempt from drift detection (framework-injected,
+        /// forward-declared-ahead-of-use, test-only, etc.).
+        Allowlist: string list
+    }
+
+/// Top-level `env-contract:` structure [Repo-grounded —
+/// `validate.rs::Contract`].
+type Contract = { Surfaces: SurfaceConfig list }
+
+/// Drift direction for a [`Finding`] [Repo-grounded —
+/// `validate.rs::DriftKind`]. Only `DeclaredButUnread`/`ReadButUndeclared`
+/// are produced by this PR's `App`-surface validator below; the remaining
+/// three variants exist so the type is complete for PR7's terraform/ansible
+/// validators to extend without a breaking rename.
+type DriftKind =
+    /// App: key present in `.env.example` but not consumed by any code in
+    /// the surface.
+    | DeclaredButUnread
+    /// App: key consumed by code but absent from `.env.example`.
+    | ReadButUndeclared
+    /// Terraform: key in `terraform.tfvars.example` with no matching
+    /// `variable` block.
+    | ExampleNotDeclared
+    /// Terraform: required variable (no `default`) missing from
+    /// `terraform.tfvars.example`.
+    | RequiredMissingFromExample
+    /// Ansible: env lookup in a playbook not declared in `.env.example`.
+    | ConsumedNotDeclared
+
+/// Human-readable labels for [`DriftKind`], matching the Rust CLI's own
+/// wording [Repo-grounded — `validate.rs::DriftKind::label`].
+module DriftKind =
+    let label (drift: DriftKind) : string =
+        match drift with
+        | DeclaredButUnread -> "declared-but-unread"
+        | ReadButUndeclared -> "read-but-undeclared"
+        | ExampleNotDeclared -> "example-not-declared"
+        | RequiredMissingFromExample -> "required-missing-from-example"
+        | ConsumedNotDeclared -> "consumed-not-declared"
+
+/// A single drift finding produced by the validator [Repo-grounded —
+/// `validate.rs::Finding`]. `Root` is a repo-relative path string (e.g.
+/// `"apps/organiclever-be"`) — Rust uses `PathBuf`, but nothing downstream
+/// here needs path-specific operations on it, so a plain string suffices.
+type Finding =
+    { Root: string
+      Drift: DriftKind
+      Key: string }
+
+/// Formats one drift finding, matching the Rust CLI's own `DRIFT root label
+/// key` output line shape [Repo-grounded — `commands/env_validate.rs`].
+let formatFinding (finding: Finding) : string =
+    sprintf "DRIFT  %s  %s  %s" finding.Root (DriftKind.label finding.Drift) finding.Key
+
+/// Raw YAML-shaped intermediate records for the `env-contract:` section. See
+/// `RepoConfig.fs`'s `OwnershipEntryDto`/etc. module doc comment for why
+/// these are deliberately NOT `private`: a `private` F# type's
+/// compiler-generated constructor is non-public even with
+/// `[<CLIMutable>]`, and YamlDotNet's default reflection-based object
+/// factory only ever calls the public-constructor `Activator.CreateInstance`
+/// overload.
+[<CLIMutable>]
+type SurfaceConfigDto =
+    { Root: string
+      Kind: string
+      Lang: string
+      Allowlist: ResizeArray<string> }
+
+[<CLIMutable>]
+type ContractDto =
+    { Surfaces: ResizeArray<SurfaceConfigDto> }
+
+[<CLIMutable>]
+type EnvContractWrapperDto = { EnvContract: ContractDto }
+
+/// Matches `repo-config.yml`'s kebab-case keys (`env-contract`) against the
+/// DTOs' PascalCase properties without per-property `[<YamlMember>]`
+/// attributes, following the exact convention established by
+/// `RepoConfig.fs`'s own `deserializer`.
+let private validateDeserializer: IDeserializer =
+    DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).IgnoreUnmatchedProperties().Build()
+
+let private toStringList (items: ResizeArray<string>) : string list =
+    match items with
+    | null -> []
+    | items -> List.ofSeq items
+
+let private toDtoList (items: ResizeArray<'a>) : 'a list =
+    match items with
+    | null -> []
+    | items -> List.ofSeq items
+
+/// Folds a list of `Result`s into a single `Result` of a list, short-
+/// circuiting on the first `Error` — mirrors `RepoConfig.fs`'s own
+/// `sequenceResults`, duplicated here rather than shared since it is small
+/// enough that a cross-module dependency would cost more than it saves.
+let rec private sequenceSurfaceResults (results: Result<'a, string> list) : Result<'a list, string> =
+    match results with
+    | [] -> Ok []
+    | Error e :: _ -> Error e
+    | Ok x :: rest ->
+        match sequenceSurfaceResults rest with
+        | Ok xs -> Ok(x :: xs)
+        | Error e -> Error e
+
+let private parseSurfaceKind (raw: string) : Result<SurfaceKind, string> =
+    match raw with
+    | null -> Error "kind: required key is missing"
+    | value ->
+        match value.ToLowerInvariant() with
+        | "app" -> Ok App
+        | "terraform" -> Ok Terraform
+        | "ansible" -> Ok Ansible
+        | other -> Error(sprintf "kind: invalid value \"%s\" (expected \"app\", \"terraform\", or \"ansible\")" other)
+
+let private normalizeLang (raw: string) : string =
+    match raw with
+    | null -> ""
+    | value -> value
+
+let private toSurfaceConfig (dto: SurfaceConfigDto) : Result<SurfaceConfig, string> =
+    parseSurfaceKind dto.Kind
+    |> Result.map (fun kind ->
+        { Root = dto.Root
+          Kind = kind
+          Lang = normalizeLang dto.Lang
+          Allowlist = toStringList dto.Allowlist })
+
+/// Parses `data` (the contents of `repo-config.yml`) into a [`Contract`],
+/// mirroring `RepoConfig.fs`'s `parseRepoConfig`'s try/with → `Error
+/// ex.Message` pattern.
+let private parseContract (data: string) (path: string) : Result<Contract, string> =
+    try
+        let wrapper = validateDeserializer.Deserialize<EnvContractWrapperDto>(data)
+
+        match box wrapper.EnvContract with
+        | null -> Error(sprintf "env-contract: section missing from repo-config.yml at %s" path)
+        | _ ->
+            wrapper.EnvContract.Surfaces
+            |> toDtoList
+            |> List.map toSurfaceConfig
+            |> sequenceSurfaceResults
+            |> Result.map (fun surfaces -> { Surfaces = surfaces })
+    with ex ->
+        Error ex.Message
+
+/// Loads and parses the `env-contract:` section from `repo-config.yml` at
+/// `repoRoot` [Repo-grounded — `validate.rs::load_contract`].
+///
+/// Follows `RepoConfig.fs`'s `load`/`parseRepoConfig` DTO-then-map
+/// convention: a wrapper DTO carries a single `env-contract` field
+/// (mirroring Rust's inline `Wrapper { #[serde(rename = "env-contract")]
+/// env_contract: Option<Contract> }`) so an absent section (`null` at
+/// runtime, despite the DTO's non-nullable-looking declared type — see
+/// `RepoConfig.fs`'s `toSpecsConfig`/`toDoctorConfig` for the same pattern)
+/// is distinguishable from a real parse failure.
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` cannot be read, is not valid
+/// YAML, or the `env-contract:` section is absent.
+let loadContract (repoRoot: string) : Result<Contract, string> =
+    let path = Path.Combine(repoRoot, "repo-config.yml")
+
+    try
+        let data = File.ReadAllText path
+        parseContract data path
+    with ex ->
+        Error(sprintf "cannot read repo-config.yml at %s: %s" path ex.Message)
+
+/// Returns `true` when `s` is a valid env var name: non-empty, and every
+/// character is an ASCII uppercase letter, ASCII digit, or underscore
+/// [Repo-grounded — `validate.rs::is_env_var_name`].
+let isEnvVarName (s: string) : bool =
+    not (String.IsNullOrEmpty s)
+    && s
+       |> Seq.forall (fun c -> (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c = '_')
+
+/// Parses declared keys from a `.env.example` file [Repo-grounded —
+/// `validate.rs::parse_declared_keys`].
+///
+/// A line is "declared" when, after trimming and stripping at most one
+/// leading `#` (then trimming again), the result is non-empty, contains
+/// `=`, and the substring before the first `=` (trimmed) passes
+/// [`isEnvVarName`]. Blank lines and pure-comment lines (no `=`) are
+/// ignored — both active (`KEY=value`) and commented-out (`# KEY=value`)
+/// declarations count as declared.
+///
+/// # Errors
+///
+/// Returns an error when the file cannot be read.
+let parseDeclaredKeys (envExample: string) : Result<string list, string> =
+    try
+        File.ReadAllLines envExample
+        |> Array.choose (fun rawLine ->
+            let trimmed = rawLine.Trim()
+
+            let effective =
+                if trimmed.StartsWith("#", StringComparison.Ordinal) then
+                    trimmed.Substring(1).Trim()
+                else
+                    trimmed
+
+            if effective = "" then
+                None
+            else
+                match effective.IndexOf('=') with
+                | -1 -> None
+                | eqPos ->
+                    let key = effective.Substring(0, eqPos).Trim()
+                    if isEnvVarName key then Some key else None)
+        |> Array.toList
+        |> Ok
+    with ex ->
+        Error(sprintf "cannot read %s: %s" envExample ex.Message)
+
+/// Recursively lists every file under `dir`, returning `[]` when `dir` does
+/// not exist (a surface with no `src` directory simply reads zero keys,
+/// matching Rust `WalkDir`'s own tolerant behaviour on a missing root).
+let rec private allFilesUnder (dir: string) : string list =
+    if not (Directory.Exists dir) then
+        []
+    else
+        let files = Directory.EnumerateFiles dir |> List.ofSeq
+        let subDirs = Directory.EnumerateDirectories dir |> List.ofSeq
+        files @ (subDirs |> List.collect allFilesUnder)
+
+let private rustEnvVarRegex =
+    Regex(@"(?:std::)?env::var\s*\(\s*""([A-Z][A-Z0-9_]*)""\s*\)", RegexOptions.Compiled)
+
+let private rustConfigStructRegex =
+    Regex(@"^\s*pub\s+struct\s+Config\b", RegexOptions.Compiled)
+
+let private rustPubFieldRegex =
+    Regex(@"^\s+pub\s+([a-z][a-z0-9_]*)\s*:", RegexOptions.Compiled)
+
+/// Scans Rust source under `root/src` for environment variable keys consumed
+/// by the code [Repo-grounded — `validate.rs::scan_rust_reads`].
+///
+/// Detects direct `(std::)?env::var("KEY")` reads plus `pub struct Config {
+/// ... }` block field names (brace-depth tracked), uppercased, as implied
+/// config keys.
+///
+/// # Errors
+///
+/// Returns an error when a source file cannot be read.
+let scanRustReads (root: string) : Result<string list, string> =
+    let srcDir = Path.Combine(root, "src")
+
+    try
+        let keys = HashSet<string>()
+
+        let rustFiles =
+            allFilesUnder srcDir
+            |> List.filter (fun p -> p.EndsWith(".rs", StringComparison.Ordinal))
+
+        for path in rustFiles do
+            let content = File.ReadAllText path
+
+            for m in rustEnvVarRegex.Matches content do
+                keys.Add(m.Groups[1].Value) |> ignore
+
+            let mutable inConfigStruct = false
+            let mutable braceDepth = 0
+
+            for line in content.Split('\n') do
+                if not inConfigStruct && rustConfigStructRegex.IsMatch line then
+                    inConfigStruct <- true
+                    braceDepth <- 0
+
+                if inConfigStruct then
+                    for ch in line do
+                        match ch with
+                        | '{' -> braceDepth <- braceDepth + 1
+                        | '}' ->
+                            braceDepth <- braceDepth - 1
+
+                            if braceDepth <= 0 then
+                                inConfigStruct <- false
+                        | _ -> ()
+
+                    if inConfigStruct && braceDepth > 0 then
+                        let fieldMatch = rustPubFieldRegex.Match line
+
+                        if fieldMatch.Success then
+                            keys.Add(fieldMatch.Groups[1].Value.ToUpperInvariant()) |> ignore
+
+        Ok(keys |> List.ofSeq)
+    with ex ->
+        Error(sprintf "cannot read source under %s: %s" srcDir ex.Message)
+
+let private tsEnvPropRegex =
+    Regex(@"\benv\.([A-Z][A-Z0-9_]+)\b", RegexOptions.Compiled)
+
+let private tsSchemaKeyRegex =
+    Regex(@"^\s+([A-Z][A-Z0-9_]+)\s*:", RegexOptions.Compiled)
+
+/// Scans TypeScript source under `root/src` for environment variable keys
+/// consumed by the code [Repo-grounded — `validate.rs::scan_ts_reads`].
+///
+/// Detects `env.KEY` property accesses in any `.ts`/`.tsx` file (skipping
+/// `.test.`/`.spec.` files — those set `process.env` for mocking, not for
+/// production reads), plus `createEnv` schema keys (`UPPER_CASE_KEY:` lines)
+/// but only inside a file literally named `env.ts`.
+///
+/// # Errors
+///
+/// Returns an error when a source file cannot be read.
+let scanTsReads (root: string) : Result<string list, string> =
+    let srcDir = Path.Combine(root, "src")
+
+    try
+        let keys = HashSet<string>()
+
+        let candidateFiles =
+            allFilesUnder srcDir
+            |> List.filter (fun p ->
+                let name = Path.GetFileName p
+
+                (name.EndsWith(".ts", StringComparison.Ordinal)
+                 || name.EndsWith(".tsx", StringComparison.Ordinal))
+                && not (name.Contains(".test.") || name.Contains(".spec.")))
+
+        for path in candidateFiles do
+            let name = Path.GetFileName path
+            let content = File.ReadAllText path
+
+            for m in tsEnvPropRegex.Matches content do
+                keys.Add(m.Groups[1].Value) |> ignore
+
+            if name = "env.ts" then
+                for line in content.Split('\n') do
+                    let m = tsSchemaKeyRegex.Match line
+
+                    if m.Success then
+                        keys.Add(m.Groups[1].Value) |> ignore
+
+        Ok(keys |> List.ofSeq)
+    with ex ->
+        Error(sprintf "cannot read source under %s: %s" srcDir ex.Message)
+
+/// Runtime-owned signals that are never application environment contract
+/// keys [Repo-grounded —
+/// `validate.rs::FRAMEWORK_OWNED_ENVIRONMENT_KEYS`].
+let frameworkOwnedEnvironmentKeys: string list = [ "DOTNET_RUNNING_IN_CONTAINER" ]
+
+let private fsharpEnvVarRegex =
+    Regex(@"(?:System\.)?Environment\.GetEnvironmentVariable\s*\(\s*""([A-Z][A-Z0-9_]*)""\s*\)", RegexOptions.Compiled)
+
+let private fsharpReaderWrapperRegex =
+    Regex(@"\breadEnvironment\s+""([A-Z][A-Z0-9_]*)""", RegexOptions.Compiled)
+
+/// Scans F# source under `root/src` for environment variable keys consumed
+/// by the code [Repo-grounded — `validate.rs::scan_fsharp_reads`].
+///
+/// Detects `(System.)?Environment.GetEnvironmentVariable("VAR_NAME")` calls
+/// plus the pure F# environment-reader wrapper pattern `readEnvironment
+/// "VAR_NAME"`. Both exclude [`frameworkOwnedEnvironmentKeys`] — supplied by
+/// the .NET runtime, not application configuration.
+///
+/// # Errors
+///
+/// Returns an error when a source file cannot be read.
+let scanFsharpReads (root: string) : Result<string list, string> =
+    let srcDir = Path.Combine(root, "src")
+
+    try
+        let keys = HashSet<string>()
+
+        let addUnlessFrameworkOwned (key: string) =
+            if not (List.contains key frameworkOwnedEnvironmentKeys) then
+                keys.Add key |> ignore
+
+        let fsharpFiles =
+            allFilesUnder srcDir
+            |> List.filter (fun p -> p.EndsWith(".fs", StringComparison.Ordinal))
+
+        for path in fsharpFiles do
+            let content = File.ReadAllText path
+
+            for m in fsharpEnvVarRegex.Matches content do
+                addUnlessFrameworkOwned m.Groups[1].Value
+
+            for m in fsharpReaderWrapperRegex.Matches content do
+                addUnlessFrameworkOwned m.Groups[1].Value
+
+        Ok(keys |> List.ofSeq)
+    with ex ->
+        Error(sprintf "cannot read source under %s: %s" srcDir ex.Message)
+
+/// Validates a single `App`-kind surface against its `.env.example`
+/// [Repo-grounded — `validate.rs::validate_app_surface`].
+///
+/// Returns zero or more drift findings, sorted by key.
+///
+/// # Errors
+///
+/// Returns an error when source files cannot be read or `surface.Lang`
+/// names an unsupported language.
+let validateAppSurface (repoRoot: string) (surface: SurfaceConfig) : Result<Finding list, string> =
+    let root = Path.Combine(repoRoot, surface.Root)
+    let envExample = Path.Combine(root, ".env.example")
+
+    match parseDeclaredKeys envExample with
+    | Error e -> Error e
+    | Ok declaredKeys ->
+        let readResult =
+            match surface.Lang with
+            | "rust" -> scanRustReads root
+            | "typescript" -> scanTsReads root
+            | "fsharp" -> scanFsharpReads root
+            | other -> Error(sprintf "unsupported lang: %s" other)
+
+        match readResult with
+        | Error e -> Error e
+        | Ok readKeys ->
+            let declared = Set.ofList declaredKeys
+            let read = Set.ofList readKeys
+            let allowlist = Set.ofList surface.Allowlist
+
+            let declaredButUnread =
+                declared
+                |> Set.filter (fun key -> not (Set.contains key read) && not (Set.contains key allowlist))
+                |> Set.toList
+                |> List.map (fun key ->
+                    { Root = surface.Root
+                      Drift = DeclaredButUnread
+                      Key = key })
+
+            let readButUndeclared =
+                read
+                |> Set.filter (fun key -> not (Set.contains key declared) && not (Set.contains key allowlist))
+                |> Set.toList
+                |> List.map (fun key ->
+                    { Root = surface.Root
+                      Drift = ReadButUndeclared
+                      Key = key })
+
+            declaredButUnread @ readButUndeclared
+            |> List.sortWith (fun a b -> String.CompareOrdinal(a.Key, b.Key))
+            |> Ok
+
+/// Validates every surface declared in `contract` [Repo-grounded —
+/// `validate.rs::validate_all`].
+///
+/// Only `App` surfaces are dispatched to a real validator: `Terraform`/
+/// `Ansible` surface validation is PR7 scope
+/// (`env-contract/iac-env-validation.feature`, porting the terraform/ansible
+/// validators at `validate.rs` lines ~430-1259). No surface in this repo's
+/// live `env-contract:` section currently declares either kind, so this
+/// raises a clear error rather than silently no-op-ing — surfacing a real
+/// gap immediately if that ever changes before PR7 lands, rather than
+/// masking it as a clean pass.
+///
+/// # Errors
+///
+/// Returns an error when any `App` surface fails validation, or a
+/// `Terraform`/`Ansible` surface is encountered before PR7 implements it.
+let validateAll (repoRoot: string) (contract: Contract) : Result<Finding list, string> =
+    let rec go (surfaces: SurfaceConfig list) (acc: Finding list) : Result<Finding list, string> =
+        match surfaces with
+        | [] -> Ok acc
+        | surface :: rest ->
+            match surface.Kind with
+            | App ->
+                match validateAppSurface repoRoot surface with
+                | Error e -> Error e
+                | Ok findings -> go rest (acc @ findings)
+            | Terraform
+            | Ansible ->
+                Error(
+                    sprintf
+                        "%s surface at \"%s\": terraform/ansible env-validate surfaces are PR7 scope, not yet implemented"
+                        (surface.Kind.ToString())
+                        surface.Root
+                )
+
+    go contract.Surfaces []
