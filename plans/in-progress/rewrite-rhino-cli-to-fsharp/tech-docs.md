@@ -199,6 +199,16 @@ flowchart LR
   CLI --> PROG[RhinoCli.Program<br/>entry point, exit-code mapping]
 ```
 
+**Source root — TBD, resolved at Phase 9c, recorded here as the durable home.** The tree starts at
+`apps/rhino-cli/src-fsharp/` (Phase 2) and Phase 9c decides whether it flattens to
+`apps/rhino-cli/src/` once no Rust tree competes for the path (`delivery.md`'s Phase 9c decision
+step). That step's own `learnings.md#fsharp-source-root` entry is the read-back source Phase 9d and
+Phase 10 depend on with no fallback — but `learnings.md` is a transient running log a future date
+may delete, per
+[the transient-log caveat](../../../repo-governance/development/quality/knowledge-capture/the-transient-log-caveat.md),
+so this line is the artifact's durable record: Phase 9c replaces "TBD" above with the final path in
+the same commit it writes the `learnings.md` entry, before Phase 12's sweep runs.
+
 ### Dispatch shim during migration
 
 `apps/rhino-cli/scripts/rhino-bin.sh` gains a namespace routing table. Its three existing
@@ -491,6 +501,30 @@ is behavioural, not existential: `dotnet --version` run from inside `apps/rhino-
 reports the pinned version. A file that exists but does not scope is the defect being fixed, so
 `test -f` alone cannot be the check.
 
+### DD-9 — `ose-private`'s cross-phase gate baseline lives in the app tree, transiently
+
+Phase 2's before/after gate-list comparison (`delivery.md:645-668`) must survive from Phase 2
+through Phase 8's Wave F check (`delivery.md:14466-14470`) — six phases, six separate PRs — so it
+cannot live in `local-tmp/` (`AGENTS.md`'s Plans & Temporary Files rule permits sweeping that at
+any time) and must be a **committed, tracked** artifact in each repo's own tree.
+
+`ose-public`'s copy follows the ordinary
+[evidence-capture convention](../../../repo-governance/development/quality/evidence-capture/the-rule.md#where-the-folder-lives):
+`plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json`, inside the
+plan's own folder, travelling to `plans/done/` on archival like any other plan evidence.
+`ose-private` cannot receive the same treatment — this plan's own Plan Archival section
+deliberately keeps `ose-private` carrying **no** copy of this plan's folder, so the plan-folder
+`evidence/` location the convention names does not exist there to receive anything.
+
+**Decision**: `ose-private`'s baseline is committed instead at
+`apps/rhino-cli/evidence/gate-before-ose-private.json` — the app tree is the only location
+committable from that repo's own worktree without a cross-repo read of `ose-public`'s plan folder.
+This is a deliberate, scoped exception to the convention's plan-folder rule, for this one artifact,
+and it is **temporary, not permanent**: Phase 8's Gate removes `apps/rhino-cli/evidence/` from
+`ose-private` immediately once the Wave F check — its last consumer — has run, so nothing survives
+into `ose-private`'s tree past that phase and nothing is left for a future reader to mistake for a
+stray misplacement.
+
 ## File-Impact Analysis
 
 Legend: `[E]` edited, `[N]` new, `[D]` deleted, `[G]` generated. Every phase number below is a phase
@@ -510,6 +544,7 @@ apps/rhino-cli/
 │   ├── rhino-bin.sh                                          [E] Phase 2: FSHARP_NAMESPACES table, shipped empty; [E] once per wave; [E] Phase 9c: collapsed to one resolution path
 │   ├── shadow-diff.sh                                        [N] Phase 2: differential runner comparing both binaries
 │   └── deny-check.sh                                         [D] Phase 9c: the cargo-deny wrapper deps:audit actually runs; all four of its inputs are deleted
+├── evidence/                                                 [N] Phase 2, `ose-private` only — see DD-9; [D] Phase 8 Gate, torn down once Wave F's check consumes it; never present in `ose-public`, where the equivalent capture lives in the plan's own `evidence/` folder instead
 └── src-fsharp/                                               [N] Phase 2, see below
 
 apps/rhino-cli/src-fsharp/

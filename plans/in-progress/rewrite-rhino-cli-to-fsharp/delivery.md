@@ -614,11 +614,19 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       through the real target's own resolution path) and require
       `npx nx run rhino-cli-fsharp:deps:audit` to exit **non-zero** — the same
       deliberate-temporary-break shape the Phase 9 Gate's "Elixir formatter-wrapper assertions and
-      the coverage threshold" check already trusts. Restore the real reference immediately afterward,
-      re-run `npx nx run rhino-cli-fsharp:deps:audit` and require it to exit **0**, additionally
-      require `git diff --exit-code -- apps/rhino-cli/src-fsharp/` to exit 0 so a partial restore is
-      caught too, and record all exit codes in `learnings.md` — recording alone is not the
-      acceptance criterion; the post-restore re-run passing is.
+      the coverage threshold" check already trusts. **The break must stay confined to the
+      uncommitted working tree** — no `git add`/`git commit` may run while the reference is broken,
+      the same confinement `:14583`'s `Cargo.toml` proof already applies. Record
+      `git rev-parse HEAD` before breaking the reference. Restore the real reference immediately
+      afterward, re-run `npx nx run rhino-cli-fsharp:deps:audit` and require it to exit **0**,
+      additionally require `git diff --exit-code -- apps/rhino-cli/src-fsharp/` to exit 0 so a
+      partial restore is caught, **and require `git rev-parse HEAD` to still match the value
+      recorded before the break**, so an intervening commit that captured the broken reference is
+      caught even when the working tree reads clean. If execution is interrupted between break and
+      restore, recover with `git checkout -- apps/rhino-cli/src-fsharp/project.json` against the
+      tracked file rather than a fresh edit, then re-run the restore checks above. Record all exit
+      codes in `learnings.md` — recording alone is not the acceptance criterion; the post-restore
+      re-run passing is.
 - [ ] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
       zero tests, and no target that should do work is a silent `echo` stub — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets[].options.command'` contains no
@@ -650,7 +658,14 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       [tech-docs §DD-5](./tech-docs.md#dd-5--both-repos-in-the-same-delivery-units) for why that
       boundary must stay byte-identical), so this per-repo-divergent file can never be pulled into
       the byte-identity check — acceptance: `git ls-files --error-unmatch` exits 0 for both paths in
-      their respective repos, and both files are non-empty, valid JSON per `jq .`.
+      their respective repos, and both files are non-empty, valid JSON per `jq .`. The
+      `ose-private` path is an app-tree location, not the plan-folder `evidence/` the convention
+      names, because `ose-private` carries no copy of this plan's folder and the Plan Archival
+      section forbids creating one — see
+      [tech-docs §DD-9](./tech-docs.md#dd-9--ose-privates-cross-phase-gate-baseline-lives-in-the-app-tree-transiently)
+      for the exception's rationale and scope. It is **transient, not permanent**: the Phase 8 Gate
+      tears it down once Wave F's check — its last consumer — has run, so nothing survives to
+      `ose-private`'s tree past that phase.
 - [ ] [AI] Edit `apps/rhino-cli/scripts/rhino-bin.sh`: add a `FSHARP_NAMESPACES` array, initially
       empty, and route on `$1` before the existing three-tier resolution — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group` output
@@ -700,9 +715,16 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [ ] [AI] Land every Phase 2 change in the `ose-private` worktree, authored there rather than
       copied — acceptance: the same `dotnet build`, `diff`, and `grep` assertions hold in that repo,
       **and** the break-and-restore `deps:audit` proof above is re-run there too, against
-      `ose-private`'s own `rhino-cli-fsharp` target: temporarily point its live reference at a
-      known-vulnerable package, require `npx nx run rhino-cli-fsharp:deps:audit` to exit non-zero,
-      restore the real reference, and require that same re-run to exit **0** afterward.
+      `ose-private`'s own `rhino-cli-fsharp` target: record `git rev-parse HEAD` first; temporarily
+      point its live reference at a known-vulnerable package, **confined to the uncommitted working
+      tree — no `git add`/`git commit` while it is broken**; require
+      `npx nx run rhino-cli-fsharp:deps:audit` to exit non-zero; restore the real reference; require
+      that same re-run to exit **0** afterward; additionally require
+      `git diff --exit-code -- apps/rhino-cli/src-fsharp/` to exit 0 and `git rev-parse HEAD` to
+      still match the recorded value, so a partial restore or an intervening commit is caught even
+      when the final working tree reads clean. If execution is interrupted between break and
+      restore, recover with `git checkout -- apps/rhino-cli/src-fsharp/project.json` against the
+      tracked file, then re-run the restore checks.
 
 ### Phase 2 Gate
 
@@ -713,7 +735,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       from that same repo's own tree, never across worktrees —
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json` in
       `ose-public`, `apps/rhino-cli/evidence/gate-before-ose-private.json` in `ose-private`. The two
-      baseline files are not expected to match each other: `delivery.md:14798-14803`'s Phase 9 Gate
+      baseline files are not expected to match each other: `delivery.md:14946-14950`'s Phase 9 Gate
       documents the two repos' `pr-quality-gate.yml` as independently divergent, so this check is a
       within-repo before/after comparison, never a cross-repo one.
 - [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos — the Rust crate is untouched.
@@ -14462,6 +14484,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
 - [ ] [AI] `benchmark.md` has an `after wave F` row for startup and for pre-commit wall time.
+- [ ] [AI] Tear down `ose-private`'s transient `apps/rhino-cli/evidence/` directory, committed —
+      per [tech-docs §DD-9](./tech-docs.md#dd-9--ose-privates-cross-phase-gate-baseline-lives-in-the-app-tree-transiently),
+      the "Land every Wave F change in the `ose-private` worktree" check immediately above is
+      `gate-before-ose-private.json`'s last consumer, so nothing later reads it — acceptance:
+      `git rm -r apps/rhino-cli/evidence/` committed in the `ose-private` worktree, and
+      `git ls-files apps/rhino-cli/evidence/` in that repo returns nothing. `ose-public`'s equivalent
+      capture is unaffected: it lives in this plan's own `evidence/` folder and travels to
+      `plans/done/` on archival, per the ordinary convention.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
@@ -14626,13 +14656,18 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       repo (`apps/crane-cli`, `apps/ose-be`, `apps/organiclever-be`, `libs/fsharp-crane-core`,
       `libs/fsharp-env-loader`) ship the same bare command: that is a repository-wide weakness this
       plan inherits, not a precedent that makes it correct. **The scratch-project re-confirmation
-      still never exercises the live `rhino-cli` target's own wiring.** Additionally, temporarily
-      point the now-rewired `rhino-cli` target's reference at the same known-vulnerable package (or
-      an equivalent stand-in reachable through the real target's own resolution path) and require
-      `npx nx run rhino-cli:deps:audit` to exit **non-zero**, then restore the real reference,
-      re-run `npx nx run rhino-cli:deps:audit` and require it to exit **0**, additionally require
-      `git diff --exit-code -- apps/rhino-cli/src-fsharp/` (or the flattened `apps/rhino-cli/src/`,
-      if 9c's move landed) to exit 0 so a partial restore is caught too, and record all exit codes
+      still never exercises the live `rhino-cli` target's own wiring.** Record `git rev-parse HEAD`
+      first. Additionally, temporarily point the now-rewired `rhino-cli` target's reference at the
+      same known-vulnerable package (or an equivalent stand-in reachable through the real target's
+      own resolution path), **confined to the uncommitted working tree — no `git add`/`git commit`
+      while it is broken**, and require `npx nx run rhino-cli:deps:audit` to exit **non-zero**, then
+      restore the real reference, re-run `npx nx run rhino-cli:deps:audit` and require it to exit
+      **0**, additionally require `git diff --exit-code -- apps/rhino-cli/src-fsharp/` (or the
+      flattened `apps/rhino-cli/src/`, if 9c's move landed) to exit 0 so a partial restore is
+      caught, **and require `git rev-parse HEAD` to still match the value recorded before the
+      break**, so an intervening commit is caught even when the working tree reads clean. If
+      execution is interrupted between break and restore, recover with `git checkout --` against
+      the tracked `project.json`, then re-run the restore checks above. Record all exit codes
       in `learnings.md`. Exiting 0 against a live vulnerable input, whether pre-break or
       post-restore, is the failure mode this whole step exists to catch.
 - [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
@@ -14644,9 +14679,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       and record the observed exit code in `learnings.md`; if that code is 0, wrap the license
       check so a known-disallowed finding exits non-zero, and re-prove the wrapper against the same
       scratch project, **then** repeat the live-target break-and-restore the vulnerability proof
-      above requires: temporarily point the live `rhino-cli` target's `deps:audit` reference at the
-      same known-disallowed-license package, require it to exit non-zero, restore the real
-      reference, and require a re-run to exit **0** — recording all four exit codes in
+      above requires, in full, not merely its exit-0 re-run: record `git rev-parse HEAD` first;
+      temporarily point the live `rhino-cli` target's `deps:audit` reference at the same
+      known-disallowed-license package, **confined to the uncommitted working tree — no
+      `git add`/`git commit` while it is broken**; require it to exit non-zero; restore the real
+      reference; require a re-run to exit **0**; additionally require
+      `git diff --exit-code -- apps/rhino-cli/src-fsharp/` (or the flattened `apps/rhino-cli/src/`)
+      to exit 0 and `git rev-parse HEAD` to still match the recorded value, so a partial restore or
+      an intervening commit is caught even when the working tree reads clean; if execution is
+      interrupted between break and restore, recover with `git checkout --` against the tracked
+      `project.json`, then re-run the restore checks — recording all four exit codes in
       `learnings.md` — **or** `learnings.md` carries a dated entry naming both dropped controls,
       stating who accepted the regression and why, and `tech-docs.md` gains a DD recording it.
       Silence is not an option here: an unchanged target name reading "audit" while auditing
@@ -14682,7 +14724,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `fsharp-source-root` as `apps/rhino-cli/src/`, **or** `learnings.md` records why the move was
       deferred **and** records `fsharp-source-root` as `apps/rhino-cli/src-fsharp/`. In both branches,
       `rg -N -F 'fsharp-source-root' learnings.md | wc -l` returns at least 1 before this step is
-      considered done. **`learnings.md` is single-sourced under `ose-public`**, like `benchmark.md`,
+      considered done. **In the same commit, replace the "TBD" in
+      [tech-docs §Target layout](./tech-docs.md#target-layout) with this same final path** —
+      `learnings.md` is a transient running log a future date may delete
+      [Repo-grounded — `repo-governance/development/quality/knowledge-capture/the-transient-log-caveat.md:27`,
+      "No process, agent, or future plan may depend on querying `learnings.md` later"], so
+      `tech-docs.md` is this decision's durable home, not `learnings.md`'s copy of it; acceptance:
+      `tech-docs.md` no longer contains the literal string `TBD` in that section. **`learnings.md`
+      is single-sourced under `ose-public`**, like `benchmark.md`,
       since `ose-private` carries no copy of this plan folder — but the move (or its deferral) lands
       in `ose-private`'s own tree too, because `apps/rhino-cli/src` is a byte-identical boundary under
       `parity-manifest.sha256`, per
@@ -14808,9 +14857,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       rather than copied — and note that repo's teardown is **wider**, because it has **zero** `.rs`
       files outside `apps/rhino-cli/` — acceptance: the difference between the two repos' teardown
       scope is stated in `learnings.md` rather than looking like drift, **and** 9c's break-and-restore
-      `deps:audit` proof is re-run in `ose-private`'s own `rhino-cli` target — temporarily broken,
-      required to exit non-zero, restored, and required to exit **0** on the post-restore re-run —
-      not merely `dotnet build`, `diff`, and `grep` re-verified.
+      `deps:audit` proof is re-run in `ose-private`'s own `rhino-cli` target, in full: record
+      `git rev-parse HEAD` first; temporarily broken, **confined to the uncommitted working tree —
+      no `git add`/`git commit` while it is broken**; required to exit non-zero; restored, and
+      required to exit **0** on the post-restore re-run; additionally required to pass
+      `git diff --exit-code -- apps/rhino-cli/src-fsharp/` (or the flattened `apps/rhino-cli/src/`,
+      if 9c's move landed) and a `git rev-parse HEAD` match against the recorded value, so a partial
+      restore or an intervening commit is caught even when the working tree reads clean — not
+      merely `dotnet build`, `diff`, and `grep` re-verified. If execution is interrupted between
+      break and restore, recover with `git checkout --` against the tracked `project.json`, then
+      re-run the restore checks.
 
 ### 9e — Descriptive documentation sweep
 
@@ -15111,7 +15167,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       in `ose-private` only; public-governance content may route to `ose-public`; never cross-route
       private content into a public repo.
 - [ ] [AI] Route each surviving entry to exactly one durable home — the benchmark comparison already
-      has one from Phase 10, so verify rather than duplicate it.
+      has one from Phase 10, so verify rather than duplicate it. `fsharp-source-root` already has one
+      too: Phase 9c's decision step writes the final path into
+      [tech-docs §Target layout](./tech-docs.md#target-layout) in the same commit as the
+      `learnings.md` entry — verify that write landed (`tech-docs.md` no longer reads "TBD" at that
+      line) rather than discarding the `learnings.md` entry as "not generalizable"; the entry is
+      protected by name for exactly this reason.
 - [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning
       into that brief instead of creating a new file.
