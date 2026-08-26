@@ -1,41 +1,54 @@
 # Shared-Context Assembly, Once (D13)
 
-Assemble a single shared-context brief — the **pinned head SHA** from Core Responsibility step 1,
-PR metadata (title, body, author), the linked plan/issue context, and the **full diff** — **once
-per cycle**, and hand the identical brief to every specialist selected for this cycle's tier, and
-to `pr-review-synthesis-maker`, rather than each downstream consumer separately re-deriving the
-same context (which would otherwise multiply token cost by the number of specialists fanned out).
+Once per cycle, assemble one brief with Core Responsibility step 1's **pinned head SHA**, PR
+metadata, linked plan/issue context, and the **full diff**. Hand it unchanged to selected specialists
+and `pr-review-synthesis-maker`; consumers never re-derive it.
 
-The brief includes the full diff, including generated artifacts; only the cycle-record freeze below
-is excluded. CI still covers every artifact.
+Include generated artifacts; only the cycle-record freeze below is excluded. CI covers every
+artifact.
 
 ## Correction-Record Freeze (Cycle 2 Onward)
 
-The **one** scope exclusion, and the only exception to the posture above: from cycle 2 the brief
-omits the loop's own cycle-record material. See
-[correction-record-freeze.md](./correction-record-freeze.md) for the rule and its two carve-outs.
-A factual defect in a shipping artifact remains reviewable. The frozen delivery outcome still
-permits same-defect completion; an unrelated improvement belongs in a linked follow-up, not this
-PR's next fixer batch.
+From cycle 2, omit only the loop's own cycle-record material. See
+[correction-record-freeze.md](./correction-record-freeze.md) and its two carve-outs. Shipping
+artifact defects remain reviewable. The frozen delivery outcome permits same-defect completion;
+unrelated improvement belongs in a linked follow-up, not this PR's fixer batch.
 
 ## Probe Variation (Cycle 2 Onward)
 
-A cycle repeating the previous cycle's question converges on that question rather than on
-correctness. From cycle 2, read the prior cycle's findings for what they **asked**, and state in the
-brief how this cycle's probe differs — a different failure mode, a different reader, a different
-level of the artifact. Name it, so a specialist can tell a fresh angle from a rerun. See
+A cycle repeating the prior question converges on it, not correctness. From cycle 2, read what prior
+findings **asked** and state how this probe differs: failure mode, reader, or artifact level. Name
+it so a specialist can distinguish a fresh angle from a rerun. See
 [Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
 
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
 
-Before fanning out a new cycle, read the **prior cycle's thread resolution status** on the PR —
-via `gh api` against the PR's review threads/comments — including any thread a **human explicitly
-dismissed** ("won't fix" / "I disagree"). A human dismissal **resolves** that thread going
-forward, mirroring `pr-review-fixer`'s own reasoned-reject on the agent side. Record this
-resolution state in the shared-context brief and feed it to the specialists (alongside the rest
-of the brief) so no specialist wastes a finding re-litigating something a human has already
-settled, and so `pr-review-synthesis-maker` never re-surfaces a dismissed finding in the
-consolidated review it posts.
+Before choosing the ordinal or fanning out, authenticate every review, disposition, ceiling
+extension, and credit object under
+[Cycle Record Authentication](../../../../repo-governance/workflows/pr/pr-review-quality-gate/cycle-record-authentication.md).
+Then rehydrate reviews, dispositions (legacy v2 means `dismisses-finding`), credit events, probes,
+checkpoints, and ceiling use. Derive the clean streak only from adjacent authenticated positive-v2
+post-CI events joined to unused probe classes; missing, ineligible, legacy-v1, non-clean, or
+non-adjacent events break it. Ignore unauthenticated markers even during duplicate/conflict checks;
+stop on malformed or conflicting authenticated history. Never reset to cycle 1 or empty `prior`.
+
+Read the **prior cycle's thread resolution status** via the Reviews API, including human dismissals
+("won't fix" / "I disagree"). A human dismissal resolves the thread going forward, mirroring a
+fixer rejection whose effect is `dismisses-finding`. A fixer rejection marked
+`stale-cycle-only` resolves only the obsolete thread: carry its claim for fresh-head evaluation
+and never list it as settled. Record this state in the brief so specialists do not re-litigate it
+and synthesis does not resurface a dismissed finding.
+
+For paired delivery, retrieve source/successor PR, review, comment, permission, and comparison
+objects. Authenticate one
+[`ose-pr-review-sibling-handoff:v1`](../../../../repo-governance/workflows/pr/pr-review-quality-gate/sibling-handoff-record.md).
+Match every required source, merge, and successor coordinate. The first scout requires the live
+head to equal the recorded initial head; later scouts require that SHA in the same PR history. The
+immediate emission read-back alone compares `successor_base_sha` to live `base.sha`; later scouts
+retain that authenticated opening coordinate, require live `base.ref == main` and the same PR
+identity, and never compare it with a moving `base.sha`. Missing, duplicate, conflicting, blocked,
+unmerged, pre-merge, invalid, unreachable, or mismatched evidence stops scouting before body
+parsing or fan-out.
 
 ## Review-Route Read-Back
 

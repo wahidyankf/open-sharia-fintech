@@ -1,6 +1,6 @@
 ---
 title: "Phase C — Ready-Queue Scheduler"
-description: Covers C1-C6 — computing the ready set, filling to the concurrency ceiling, worktree isolation, executing a node, looping, and streaming status.
+description: Covers C1-C6 — computing the ready set, filling to the concurrency ceiling, work-location isolation, executing a node, looping, and streaming status.
 when_to_use: Use when implementing or debugging the core scheduling loop that pulls ready nodes and drives each plan through its lifecycle.
 ---
 
@@ -18,15 +18,13 @@ any currently in-flight node's resource-set (the resource-conflict guard).
 max-concurrency, harness cap)` are in flight. Prefer nodes on the **critical path** (longest
 remaining chain) first, so the overall run finishes sooner; break ties by plan id for determinism.
 
-**C3. Worktree isolation makes step-level parallelism safe.** Each `*-to-pr` plan runs in **its own
-worktree** (`worktrees/<plan-id>/`), so two plans editing different files never collide on disk. The
-resource-conflict guard exists for **logical/merge-time** conflicts (two plans mutating the same
-tracked file, or both touching the byte-identity boundary), not for physical disk safety. Provision
-each plan's worktree once, on that plan's first scheduled node — A1 has already promoted any
-`plans/backlog/`-sourced plan, so every node reaching this step resolves inside `plans/in-progress/`
-— following [`plan-execution.md`
-Step 0](../plan-execution/enter-worktree-preconditions-and-work-branch.md) (including
-`npm install` + `npm run doctor -- --fix`).
+**C3. Declared work-location locks make parallelism safe.** Each `worktree-to-*` plan has its own
+`worktrees/<plan-id>/` lock. All `main-to-*` plans in one repository share the primary-checkout lock
+and therefore serialize there. File, project, and byte-identity resources still guard logical and
+merge-time conflicts. On the first node, provision a worktree or sync the primary checkout as the
+selected mode requires. A1 has already promoted backlog-sourced plans, so nodes resolve under
+`plans/in-progress/`. Follow [`plan-execution.md` Step
+0](../plan-execution/enter-worktree-preconditions-and-work-branch.md), including toolchain setup.
 
 **C4. Execute a node = one step of that plan's `plan-execution.md` lifecycle.** Delegate the node to
 its selected agent, then run the Atomic Sync Ritual (B3). When a node completes a **phase boundary**,

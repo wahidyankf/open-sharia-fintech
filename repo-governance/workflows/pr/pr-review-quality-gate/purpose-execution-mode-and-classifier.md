@@ -7,21 +7,21 @@ when_to_use: "Use to determine PR eligibility for the specialist loop, or check 
 # Purpose, Execution Mode, and PR Applicability Classifier
 
 **Purpose**: classify changed behavior, then use a bounded sequential loop for eligible PRs:
-risk-selected specialists fan out, synthesis posts one verified review, the fixer resolves, and
+route-selected specialists fan out, synthesis posts one verified review, the fixer resolves, and
 current-head CI gates the next cycle. Suspected secrets use the incident procedure.
 
 ## Execution Mode
 
-Cycles are sequential, with concurrent tier-selected fan-out and a full CI-green gate. Before
+Cycles are sequential, with concurrent route-selected fan-out and a full CI-green gate. Before
 fan-out, the PR body states the exact head and frozen
 outcome/scope, risk tier, selected and skipped lenses with reasons, current evidence, settled
 history, and changed probe. This lets a human reader understand the review route without treating
 the route as mechanical enforcement.
 
-For a public/private pair, review the source PR to a settled current-head state first, then publish
-one terminal successor handoff before a sibling cycle starts. The successor records semantic
-correspondence or a reasoned deviation from the immutable source pin; it never assumes byte
-identity or creates a concurrent review chain reaction.
+For a public/private pair, merge the source PR first, prove its merge SHA reachable from source
+`origin/main`, then publish exactly one authenticated terminal handoff pinned to source PR, final
+reviewed head, merge SHA, and unique successor repository/branch. Missing, duplicate, conflicting,
+blocked, unmerged, or pre-merge handoff evidence freezes the successor before any sibling cycle.
 
 ## PR Applicability Classifier
 

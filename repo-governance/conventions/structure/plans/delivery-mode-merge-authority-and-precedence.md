@@ -17,9 +17,10 @@ when_to_use: Use when determining which delivery mode actually applies to a plan
 Continues [Delivery Mode — main-to-origin-main Content Restriction](./delivery-mode-content-restriction.md).
 
 **[AI] merges by default.** Every PR first uses the canonical behavior classifier, not a separate
-plan-specific review path. Eligible executable work must reach its clean exit
-within the five-cycle cap and stops before cycle 6; noneligible static work requires the
-named `pr-quality-gate.yml` workflow. A PR touching `plans/**` is **always eligible** and must
+plan-specific review path. Eligible executable work must reach its clean exit within its
+authenticated configured ceiling: five by default, or the bounded value in an admitted per-PR
+human extension record. Starting an ordinal above that ceiling is forbidden. Noneligible static
+work requires the named `pr-quality-gate.yml` workflow. A PR touching `plans/**` is **always eligible** and must
 satisfy both routes unless the user waives it for that PR. A blocked eligible PR never merges. The shared hardened
 preconditions still apply: no code-related CRITICAL/HIGH/MEDIUM finding outstanding, branch current
 with `origin/main` via a non-destructive forward update, route-required quality checks green, and

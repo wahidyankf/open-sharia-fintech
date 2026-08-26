@@ -1,4 +1,4 @@
-# Untrusted-Input Handling, Trivial-Tier Handoff, and Output Contract
+# Untrusted-Input Handling, Trivial Handoff, and Output Contract
 
 ## Untrusted-Input Handling (First Ingestion Point)
 
@@ -27,21 +27,20 @@ a CI-privileged but potentially adversarial actor. Before trusting it:
 
 ## Trivial-Tier Handoff (DD-7)
 
-This agent does **not** perform the trivial-tier generalist review pass itself — its charter is
-purely classification, selection, and context assembly. When the tier resolves to `trivial`, it
-hands the brief (with the empty specialist set) to `pr-review-synthesis-maker`, which performs
-the single generalist pass itself. Keeping the reviewing with
-`pr-review-synthesis-maker` avoids handing this agent a second responsibility on top of
-classifying, which would blur the separation it exists to introduce.
+This agent never reviews. For any `trivial` route, it hands the brief and empty set to
+`pr-review-synthesis-maker` for one generalist pass. On the plans-only route, the brief requires
+the primary secrets probe and all five plan concerns. The scout remains responsible only for
+classification, selection, and context assembly.
 
 ## Output Contract
 
 This agent's output, every cycle, is exactly four things:
 
 1. **Risk tier** — `trivial` / `lite` / `full`.
-2. **Selected specialist set** — as
+2. **Route-selected specialist set** — as
    [risk-tier-and-specialist-selection.md](./risk-tier-and-specialist-selection.md) selects for the
-   tier, applicability filter included — `full` is not always nine.
+   route, with the standard route's applicability filter — `full` is not always nine; plans-only
+   is empty for `trivial` and its fixed five otherwise.
 3. **Shared-context brief** — the pinned head SHA, PR metadata, linked plan/issue context, the
    full diff (sliced if recorded), and the prior-cycle dismissal-read state.
 4. **Probe class** — the named class of question this cycle asks, and whether that class has
@@ -49,6 +48,6 @@ This agent's output, every cycle, is exactly four things:
    [a new probe](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md)
    is checkable rather than asserted.
 
-Hand all four to both the tier-selected specialist fan-out and to `pr-review-synthesis-maker`.
-This agent never originates a review finding of its own and never calls the GitHub Reviews API —
-posting stays exclusively `pr-review-synthesis-maker`'s job.
+Hand all four to the route-selected specialist fan-out and `pr-review-synthesis-maker`;
+trivial has no specialist recipient. This agent never originates findings or calls
+the GitHub Reviews API; only `pr-review-synthesis-maker` posts.

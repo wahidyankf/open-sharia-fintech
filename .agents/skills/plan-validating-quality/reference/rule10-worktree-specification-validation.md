@@ -28,7 +28,13 @@ pure-docs, single-file, trivial plans included.
    than one distinct path for this repo: **HIGH** — the cap permits exactly one worktree per
    repository per plan, reused across every delivery unit; a second distinct path is a defect even if
    each is individually well-formatted.
+6. **Identity record and initialized inventory** — `## Worktree` contains a Provisioned Worktree
+   Identity with exact path, initial branch, creator, and UTC creation time, plus a Delivery Branch
+   Inventory whose initial branch entry is `provisioned`/`active` and proves the exact creation command
+   and timestamp. Missing identity, inventory, or initial proof: **HIGH**. An inventory that omits a
+   plan-created/current branch, leaves an active entry at cleanup, or lacks a merged-PR reviewed-head
+   SHA for a `*-to-pr` delivery: **HIGH**.
 
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree
-path for this repository: **HIGH**.
+path for this repository: **HIGH**. Missing/incomplete identity or inventory: **HIGH**.

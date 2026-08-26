@@ -2,6 +2,13 @@
 
 ## Enumerating Unresolved Threads (GitHub Reviews API Only)
 
+Before triage or any branch mutation, read the posted cycle's `ose-pr-review:v1` `head_sha` and
+query the live PR `headRefOid`. Require exact equality. On mismatch, make no code change: reply to
+each stale thread with a disposition-v3 cited rejection carrying `effect: stale-cycle-only`,
+resolve it, and return for a fresh scout. The orchestrator separately posts the durable cycle
+non-credit event, including when the review has zero threads. This disposes of obsolete evidence,
+not the claim; never replace an existing finding's recorded SHA.
+
 Read PR review state exclusively through the GitHub **Reviews API** — never through top-level
 `gh pr comment` output, which cannot anchor to a line and cannot be resolved. Top-level PR
 comments are not review state and are never used to decide what remains open.

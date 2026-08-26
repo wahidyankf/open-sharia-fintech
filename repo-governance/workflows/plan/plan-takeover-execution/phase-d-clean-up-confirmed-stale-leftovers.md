@@ -1,6 +1,6 @@
 ---
 title: "Phase D — Clean Up Confirmed-Stale Leftovers"
-description: Describes the post-classification cleanup pass — the five-check pre-removal sequence, branch deletion, build-artifact scoping, and the never-remove-on-default-to-delete rule.
+description: Describes the post-classification cleanup pass — the six-check pre-removal sequence, branch deletion, build-artifact scoping, and the never-remove-on-default-to-delete rule.
 when_to_use: Use when removing a worktree, branch, or build artifact Phase A found that was not the Bucket-3 target Phase C adopted.
 ---
 
@@ -13,11 +13,11 @@ from this phase entirely; an anomaly is resolved with the user first and never a
 For every worktree/branch Phase A found that is **not** the Bucket-3 target Phase C adopted:
 
 1. Run the full [Worktree and Artifact Cleanup Convention](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md#mandatory-pre-removal-checks)
-   five-check pre-removal sequence per candidate, without shortcuts: merge-state via
-   `gh pr list --head <branch> --state all --json number,state,mergedAt` (never ancestry — squash
-   merges make ancestry report false negatives), a read of the worktree's own dirty diff, an
-   unpushed-commit check (`git log origin/<branch>..<branch>`), confirmation this workflow — not
-   another live actor — has grounds to call it idle, and only then a non-force `git worktree remove`.
+   six-check pre-removal sequence per candidate, without shortcuts: recorded identity and every
+   plan-created/current branch inventory; per-branch delivery proof via `gh pr list --head <branch>
+--state all --json number,state,mergedAt` (never squash ancestry); a read of the worktree's own
+   dirty diff; per-branch unpushed-commit checks; confirmation this workflow — not another live
+   actor — has grounds to call it idle; and only then a non-force `git worktree remove`.
 2. Branch deletion follows the same convention's [Branch
    Cleanup](../../../development/workflow/worktree-and-artifact-cleanup.md#branch-cleanup) section —
    `git branch -d` (never `-D`) locally, `git push origin --delete` remotely, and only once the check

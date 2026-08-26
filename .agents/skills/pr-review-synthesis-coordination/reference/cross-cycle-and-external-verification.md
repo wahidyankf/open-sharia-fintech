@@ -15,6 +15,10 @@ applies before fanning out each cycle; this agent respects that resolution state
 never lets a specialist's re-raised version of that same finding survive the
 reasonableness-filter.
 
+A fixer rejection carrying `effect: stale-cycle-only` resolves only an obsolete cycle's thread;
+it never suppresses the underlying finding on the fresh head. Preserve any independently verified
+version through the filter and assign it a new cycle finding ID.
+
 ## External Fact Verification
 
 You may call the [`web-researcher`](../../../agents/web/web-researcher.md) agent for external fact

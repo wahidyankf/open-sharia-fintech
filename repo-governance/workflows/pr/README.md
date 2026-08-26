@@ -18,7 +18,10 @@ Use these workflows when a pull request needs a structured specialist review bef
 
 ## Available Workflows
 
-- [pr-review-quality-gate](./pr-review-quality-gate.md) — Classify every PR by changed-artifact behavior; eligible PRs target 1–3 cycles, use 4–5 for focused recovery, and stop before 6. Use before merge to decide the route and preserve a readable audit.
+- [pr-review-quality-gate](./pr-review-quality-gate.md) — Classify every PR by changed-artifact
+  behavior; eligible PRs target 1–3 cycles, use 4–5 for focused recovery, and allow later ordinals
+  only within an authenticated per-PR configured-ceiling extension. Use before merge to decide the
+  route and preserve a readable audit.
 
 ## Related Documentation
 

@@ -11,19 +11,21 @@ archival additionally requires the
 against the plan's PR before any archival step below. This gate does not apply to the direct-push
 modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and no review cycle.
 
-- Run the workflow's strictly sequential loop: target cycles 1–3; cycles 4–5 require a named
-  recovery probe; **stop before cycle 6**. Each cycle,
+- Run the strictly sequential loop: target cycles 1–3; cycles 4–5 require a named recovery probe.
+  Five is the default ceiling; stop there for human direction, and resume later cycles only when
+  the PR holds an explicit durable per-PR extension record. Each cycle,
   `pr-review-scout-maker` classifies and briefs the diff, the tier-selected discipline specialists
   fan out, and `pr-review-synthesis-maker` posts one consolidated set of
   line-anchored findings against the PR's current head commit via the GitHub Reviews API, a
   `pr-review-fixer` triages and resolves every unresolved thread, and CI on the PR must be GREEN
-  before the next cycle starts. The cap is not a floor: stop when the current head is green and has
-  no blocking thread; do not spend an extra clean cycle merely to reach a count. See the linked workflow for
-  full Loop Algorithm, posting mechanics, and loop-exit rules.
+  before the next cycle starts. The ceiling is not a floor: stop only after two consecutive clean
+  cycles, each on the current head under a probe class unused earlier on that PR. Do not continue
+  after that exit merely to reach a target count. See the linked workflow for the full Loop
+  Algorithm, posting mechanics, and loop-exit rules.
 - **Done-definition for `*-to-pr` modes**: the workflow's own
   [Route-Specific Done-Definition](../../pr/pr-review-quality-gate/route-specific-done-definition.md)
   is normative and is not restated here — satisfy every item it lists, including archival-in-PR
-  below. A blocking finding after cycle 5 requires human direction and prevents merge.
+  below. A blocking finding at the configured ceiling requires human direction and prevents merge.
 - **Archival-in-PR**: for `*-to-pr` modes, the `git mv plans/in-progress/... plans/done/...` move
   (and the accompanying README index updates) is committed **inside the delivering PR itself**, as a
   normal commit on the PR branch pushed before the merge — not as a separate commit landed

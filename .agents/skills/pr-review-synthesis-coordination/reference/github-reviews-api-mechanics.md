@@ -6,10 +6,11 @@ Interact with the PR exclusively through the GitHub **Reviews API** — line-anc
 independently resolvable review threads. Never use `gh pr comment`, which can neither anchor a
 line nor resolve a thread later.
 
-- **Reuse the head SHA `pr-review-scout-maker` already pinned**: read it from the shared-context
-  brief rather than re-pinning it, and compute every comment's `path`/`line` from the diff **at
-  that SHA**. Anchors taken from any other read make GitHub reject the whole review with
-  `422 Path could not be resolved` — one stale anchor costs the cycle, not one finding.
+- **Anchor to the scout pin; verify it is still live before POST**: compute every comment's
+  `path`/`line` from the shared-context `head_sha`. Immediately before posting, separately query
+  live `headRefOid` and require equality. A mismatch discards the review and restarts with a fresh
+  scout; never attach old findings to a new SHA. Anchors from another commit can reject the whole
+  review with `422 Path could not be resolved`.
 - **Post exactly ONE review per cycle**: use `gh api` (REST) or `gh api graphql` (GraphQL) to
   create a single pull request review carrying the header plus one line-anchored comment per
   surviving finding — never one review per specialist, never one review per discipline.

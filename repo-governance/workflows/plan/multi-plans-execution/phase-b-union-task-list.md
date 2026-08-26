@@ -24,9 +24,9 @@ bulk creation, and silent batch-completion are forbidden exactly as in the singl
 **B3. Multi-file Atomic Sync Ritual.** The [Atomic Sync
 Ritual](../plan-execution/atomic-sync-ritual.md) applies **per plan against that plan's own
 `delivery.md`**: tick the checkbox in the correct plan's file, persist the implementation-notes block
-there, then `TaskUpdate completed`. Never edit the wrong plan's `delivery.md`. Resolve each plan's
-`delivery.md` against **its worktree**, not the primary checkout (per [Resume Reconciliation
-rule 6](../plan-execution/resume-reconciliation.md)).
+there, then `TaskUpdate completed`. Never edit the wrong plan's `delivery.md`. Resolve it against
+the plan's declared work location: its worktree for `worktree-to-*`, or the primary checkout for
+`main-to-*` (per [Resume Reconciliation rule 6](../plan-execution/resume-reconciliation.md)).
 
 **B4. Resume reconciliation across N plans (disk is truth).** On (re)start, read every named plan's
 `delivery.md` first, rebuild the union Task list from disk state, and delete any stale in-memory

@@ -17,24 +17,25 @@ when_to_use: "Use when a size split would leave main stating one rule two contra
 **Which rule 5?** This is [PR-size rule 5](./prs-open-at-delivery-boundaries-pr-size.md), not
 delivery-boundary rule 5; qualify it when citing.
 
-[Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) rule 1 splits a sweep by surface;
-rule 4 allows at most 400 handwritten program/script lines, 900 handwritten lines for a mixed PR,
-1,000 handwritten lines in every case, and 20 hand-authored files. This is the single case where
-those yield.
+[Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) rule 1 splits a sweep by surface.
+[Rule 4](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) sets addition and file caps;
+its narrow plan-document exemption waives only LOC ceilings. Atomicity is broader: any rule-4 bound
+may yield.
 
 ## The Rule
 
 **A slice must be self-consistent on `main` the moment it merges.** Surfaces split cleanly only
 when each states a rule the others do not. Where one rule is stated on two — a `repo-governance/`
 convention and the `.claude/` binding executing it — those two are **one slice**, merged together,
-even past rule 4's bound. A size bound never outranks correctness: a `main` stating one rule two
+even past any rule-4 bound. A size bound never outranks correctness: a `main` stating one rule two
 contradicting ways is worse than a large PR.
 
 ## What the Exception Does Not Carry
 
 It admits **only the paired surfaces, and only for rules this PR changes**. Nothing else rides
 along — an unrelated fix in a file the slice happens to touch is still scope creep, and rules 1-3
-still bound what enters. Rule 4 stays the bound for every other PR.
+still bound what enters. Outside atomicity and rule 4's narrow plan-document added-line exemption,
+rule 4 stays the bound.
 
 **A surface is a rule-1 category, not a directory.** Governance text is one surface however many
 subdirectories of `repo-governance/` a rule spans; agents plus their mirrors are one surface across
@@ -42,11 +43,9 @@ subdirectories of `repo-governance/` a rule spans; agents plus their mirrors are
 would make almost any change look like a many-surface sweep and read this as a blanket exemption,
 which it is not.
 
-Expect this to fire on most rule changes rather than rarely: a rule worth enforcing is usually
-stated once in governance and again in the binding executing it. That is the intended reading, not
-a loophole — the exception grows a PR only along the seam where splitting would break `main`, and
-the diff is repetitive by construction, one rule per surface, which is what makes it reviewable at
-a size rule 4 would reject.
+Expect this on many enforced rule changes: a rule often lives in governance and its executing
+binding. This is not a loophole. It grows the PR only along the seam where splitting would break
+`main`, and the cross-surface repetition keeps that oversized diff reviewable.
 
 ## Where the Split Is Safe
 
@@ -61,4 +60,6 @@ A PR relying on this exception says so in its body's `## Scope` section, names t
 surfaces, and states the size reached. An undeclared oversized PR is indistinguishable from an
 unbounded one.
 
-**Enforcement: none.** No gate checks this.
+**Enforcement disposition — unenforced by decision.** Whether two surfaces must land atomically is
+a review-time consistency judgment. A relying PR must expose the paired surfaces and reached size
+in its `## Scope` section.

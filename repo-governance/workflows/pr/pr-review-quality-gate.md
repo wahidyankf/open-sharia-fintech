@@ -1,10 +1,10 @@
 ---
 name: pr-review-quality-gate
 title: "pr-review-quality-gate"
-description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
+description: "Classify PR behavior, then run CI-gated sequential specialist-review cycles when eligible."
 when_to_use: "Use for every open PR before merge, to decide whether the specialist review loop applies and drive it to done or blocked."
 goal: "Classify every pull request by changed-artifact behavior, then run strictly sequential specialist-review cycles only when the PR is eligible"
-termination: every PR has a recorded behavior classification; eligible PRs target cycles 1–3, use cycles 4–5 only for focused recovery, and stop before cycle 6; noneligible PRs pass pr-quality-gate and merge without the specialist cycle
+termination: classification is recorded; eligible PRs target cycles 1–3, use 4–5 for recovery, and exceed default five only with human direction plus a durable per-PR extension; noneligible PRs pass pr-quality-gate
 inputs:
   - name: pr
     type: string
@@ -12,7 +12,7 @@ inputs:
     required: true
   - name: cycles
     type: number
-    description: "Maximum cycles for an eligible PR; the repository cap is five"
+    description: "Maximum cycles; default five; higher requires the PR's durable extension record"
     required: false
     default: 5
 outputs:
@@ -30,9 +30,7 @@ outputs:
 
 # PR-Review Maker→Fixer Cycle Workflow
 
-**Purpose**: Classify every pull request by the behavior its diff changes, then run a bounded,
-sequential review loop only for an eligible PR: specialists fan out, a coordinator consolidates
-their findings into ONE posted review, a fixer resolves them, CI must be green between cycles.
+**Purpose**: Classify PR behavior, then run a bounded sequential review loop for eligible PRs.
 
 ## Contents
 
@@ -41,6 +39,10 @@ their findings into ONE posted review, a fixer resolves them, CI must be green b
 - [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/purpose-execution-mode-and-classifier.md) — sequencing rule, eligibility classifier.
 - [Participants](./pr-review-quality-gate/participants.md) — the eleven agents, and the trivial-tier branch.
 - [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode.
+- [Cycle Recovery](./pr-review-quality-gate/cycle-authority-and-restart-recovery.md) — durable history, live-head gates.
+- [Cycle Record Authentication](./pr-review-quality-gate/cycle-record-authentication.md) — API provenance before hydration.
+- [Cycle Credit](./pr-review-quality-gate/cycle-non-credit-record.md) — durable clean and stale-cycle credit state.
+- [Sibling Handoff](./pr-review-quality-gate/sibling-handoff-record.md) — immutable successor record.
 - [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants and one-cycle diagrams.
 
 ### Steps

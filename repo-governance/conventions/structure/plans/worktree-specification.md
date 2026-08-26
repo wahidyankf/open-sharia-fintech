@@ -33,9 +33,42 @@ Every plan MUST declare the worktree path in its content so the executor can ver
 claude --worktree <plan-identifier>
 ```
 
-**Provision the worktree BEFORE defining the plan, and author the plan inside it.** The worktree comes first; the plan documents are written, grilled, and iterated within it, and the same worktree then carries the plan through execution. Authoring a plan outside its worktree and moving it in later is not the supported path — it splits the plan's own history across two locations and defeats the `## Worktree` declaration's purpose as a pre-execution environment check.
+## Worktree Identity Record
 
-The [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) still enters the declared worktree defensively — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not — but that is a backstop for a plan that arrived without one, not the intended sequence.
+Record this immutable block in the plan's `## Worktree` section when that section is authored.
+It is the cleanup authority; the file-touch ledger records files only.
+
+```markdown
+### Provisioned Worktree Identity
+
+- Exact path: `/absolute/repo/worktrees/<plan-identifier>`
+- Initial branch: `<plan-identifier>-base`
+- Created by: `<executor identity or session>`
+- Created at: `<ISO-8601 UTC timestamp>`
+```
+
+Record actual `git worktree add` values and never rewrite them; a missing/conflicting identity blocks
+removal. The initial branch proves provisioning, not the final checkout.
+
+### Delivery Branch Inventory
+
+Keep an append-only inventory beside the identity; add initial and plan-created branches before use:
+
+```markdown
+| Branch              | Mode             | Lifecycle state | Proof                                                |
+| ------------------- | ---------------- | --------------- | ---------------------------------------------------- |
+| `<initial-branch>`  | `provisioned`    | `active`        | `git worktree add` at `<UTC timestamp>`              |
+| `<delivery-branch>` | `worktree-to-pr` | `delivered`     | PR #`<number>` merged; reviewed head `<40-char SHA>` |
+```
+
+The initial entry is `provisioned`/`active`, proven by creation command and timestamp. Before removal,
+classify every entry as delivered, unused, or retained/escalated; active/unrecorded branches block
+cleanup. `*-to-pr` records merged PR + reviewed-head SHA; direct push records verified `origin/main`
+commit. Include `git -C <exact-path> branch --show-current`; the inventory, not file-touch ledger,
+controls branch cleanup.
+
+**Provision the worktree BEFORE defining the plan, and author inside it.** Later moves split its
+history and defeat the pre-execution check. The [Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters or auto-provisions only as a backstop.
 
 **One worktree per plan, reused across every PR the plan opens.** A plan that splits its delivery into several sequential PRs (see [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md)) does NOT provision a worktree per PR. Land one slice, fast-forward the same worktree from `origin/main`, then open the next slice from it.
 

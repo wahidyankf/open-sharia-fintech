@@ -7,15 +7,19 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
      step).
    - No sync evidence: **MEDIUM** finding (the gate may have run unrecorded; flag for manual review).
 
-2. **Worktree cleanup was offered after archival (prompted, never silent)**
-   - On `pass` with the archival commit pushed: either (a) the worktree `worktrees/<plan-identifier>/`
-     no longer exists (user approved deletion), or (b) a recorded user decline exists (e.g., the
-     `Worktree retained at worktrees/<plan-identifier>/ per user choice.` line in the execution log or
-     delivery notes).
-   - Worktree still present with NO recorded prompt/decline: **MEDIUM** finding (cleanup step skipped
-     — worktrees accumulate).
-   - Worktree deleted with NO recorded user confirmation: **HIGH** finding (deletion without explicit
-     user approval violates the prompted-cleanup rule).
+2. **Eligible worktree cleanup was immediate and precondition-gated**
+   - On `pass`, resolve the exact path and creator from the Provisioned Worktree Identity and
+     reconcile it with `git worktree list --porcelain`; the file-touch ledger is file tracking only.
+   - Inventory plan-created/current branches. Verify the worktree is clean/idle, branches have no
+     unpushed commit, and every PR-mode branch meets the canonical merged-PR/head and
+     remote-or-auto-deletion proof. A direct push needs its recorded `origin/main` commit and no
+     open PR; any other missing/mismatched proof retains and escalates.
+   - When all checks pass, require immediate non-force removal of the exact path and canonical branch
+     cleanup, without another confirmation prompt.
+   - On a failed check or removal, require retention, surfaced evidence, and escalation. `partial`
+     and `fail` likewise retain the worktree.
+   - Eligible successful delivery retained without escalation: **HIGH**. Forced removal, removal
+     without identity-proven ownership, or removal despite a failed safety check: **HIGH**.
 
 3. **Worktree cap held during execution** (enforces
    [Worktree Cap](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))
@@ -38,10 +42,12 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 
 - Plan ran without a `## Worktree` section: **CRITICAL** (Step 0 gate breach)
 - Wrong worktree-path format in plan: **HIGH**
-- Worktree deleted without recorded user confirmation: **HIGH**
+- Eligible worktree retained after successful delivery without a failed-check or removal-error
+  escalation: **HIGH**
+- Worktree force-removed, removed without identity-proven ownership, or removed despite a failed
+  pre-removal check: **HIGH**
 - No worktree evidence in git history: **MEDIUM**
 - No `origin/main` freshness-sync evidence: **MEDIUM**
-- Worktree still present with no recorded cleanup prompt or decline: **MEDIUM**
 - More than one `git worktree add` invocation for this repository within one plan: **HIGH**
 - No worktree-provisioning evidence recoverable (log lines absent and worktree already cleaned up per
   the Immediate Cleanup rule): **MEDIUM**

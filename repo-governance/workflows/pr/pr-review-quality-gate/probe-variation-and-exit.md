@@ -35,13 +35,17 @@ that PR.** One clean cycle is evidence about one question. Two clean cycles unde
 classes is the weakest available evidence that the questions have run out, and it is still weak —
 a stopping rule, not a proof of correctness.
 
+Each clean result exists only when its authenticated positive post-CI
+[Cycle Credit Record](./cycle-non-credit-record.md) exists. Restart hydration never infers either
+member of the pair from review prose, resolved threads, or a green check observed later.
+
 It does not change the cycle ceiling, which bounds effort rather than measuring convergence, and
 which is [extended only per-PR](./convergence-measurement.md).
 
 A ceiling reached before the exit condition holds is a `blocked` PR, not a clean one. Reaching the
 ceiling never converts an unmet exit condition into a met one.
 
-That includes the case where **nothing is outstanding**: seven cycles run, the last two are clean,
+That includes the case where **nothing is outstanding**: five cycles run, the last two are clean,
 but one repeats an earlier class. The condition is unmet, so the PR is `blocked` with zero findings.
 Its only lawful resolution is a recorded per-PR ceiling extension — which is permitted here, because
 there is no finding for the extension to avoid resolving.

@@ -16,8 +16,10 @@ orchestrated request instead of four manual hand-offs.
 
 This workflow composes its two constituents **by reference**: every rule of
 plan-multi-repo-parity-planning governs the planning phase, and every rule of plan-execution
-(worktree gate, Iron Rules, Atomic Sync Ritual, CI verification, archival, prompted worktree
-cleanup) governs the execution phase. This document defines only the glue: the phase gate between
+(worktree gate, Iron Rules, Atomic Sync Ritual, CI verification, archival, immediate
+precondition-gated worktree cleanup) governs the execution phase. Cleanup is immediate only after recorded identity,
+delivered/merged, clean/idle, and no-unpushed proof; failed checks retain evidence and escalate.
+This document defines only the glue: the phase gate between
 them, the third (pre-execution) grill, the composite Task list contract, and cross-repo
 finalization.
 

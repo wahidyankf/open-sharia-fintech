@@ -33,8 +33,8 @@ plan's other repos are still in flight.
 
 **No confirmation prompt is required for an exact, self-created plan worktree.** Once all mandatory
 pre-removal checks pass, the AI executor removes the exact path recorded in the plan immediately.
-This authority never extends to a repository root, a wildcard, a worktree absent from the plan's
-file-touch ledger, or any worktree created by another actor; those remain out of scope.
+This authority never extends to a repository root, wildcard, worktree absent from the plan's
+Provisioned Worktree Identity, or worktree created by another actor; those remain out of scope.
 
 ## Contents
 
@@ -42,7 +42,7 @@ file-touch ledger, or any worktree created by another actor; those remain out of
 - [Why This Is a Gate](./worktree-and-artifact-cleanup/why-this-is-a-gate.md) — Disk, ref namespace, and stale-state risk on a shared machine.
 - [The Three Artifact Classes](./worktree-and-artifact-cleanup/the-three-artifact-classes.md) — Worktrees, branches, build output.
 - [Hard Safety Rules](./worktree-and-artifact-cleanup/hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
-- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The five checks before any `git worktree remove`.
+- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The six checks before any `git worktree remove`.
 - [Branch Cleanup](./worktree-and-artifact-cleanup/branch-cleanup.md) — Deleting merged local and remote branches safely.
 - [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
 

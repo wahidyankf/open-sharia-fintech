@@ -1,14 +1,14 @@
 ---
 title: "PR-Review Quality Gate — Notes"
-description: "Operating notes: strictly-sequential is a hard requirement, seven is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern."
+description: "Operating notes for ceilings, attribution, pipeline actors, findings, and sibling-PR staleness."
 when_to_use: "Use when clarifying an operating nuance not covered elsewhere — e.g. why sibling-repo PR loops shouldn't run concurrently with the source PR's."
 ---
 
 # Notes
 
-- **Seven is a ceiling, not a target**: the eligible loop exits at its
+- **The configured ceiling is not a target**: the eligible loop exits at its
   [clean exit](./probe-variation-and-exit.md) — two consecutive clean cycles under unused probe
-  classes — and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
+  classes — and never exceeds `{input.cycles}` (default 5, or a verified per-PR extension). The ceiling bounds work; it never waives a
   code-related MEDIUM/HIGH/CRITICAL finding.
 - **AI-attribution, not a distinct bot identity**: both agents currently post under the existing
   personal `gh` identity with an explicit AI-attribution footer per comment/reply, because no
@@ -26,19 +26,19 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
   MEDIUM/HIGH/CRITICAL findings outstanding fires the
   [ceiling block](./loop-exit-and-block-rules.md#loop-exit-and-block-rules); the PR never merges on
   the strength of having spent more cycles, only on the strength of an actually-empty
-  blocking-findings list. A ceiling raised on [checkpoint](./convergence-measurement.md) evidence
-  decides how many attempts to fund; it is never a waiver.
+  blocking-findings list. A checkpoint never raises the ceiling. Only a separate durable extension
+  after human direction funds more attempts, and it is never a waiver.
 - **Paired-repository sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
   (e.g. `ose-private`), running all repos' review-cycle loops concurrently from the start
   means every fixer commit on the source PR immediately makes the siblings stale again, and each
   sibling's next cycle re-discovers "stale vs. upstream" as its top finding instead of surfacing new
   issues — a self-correcting but wasteful pattern observed to cost an extra cycle per sibling in
-  practice. Prefer running the source PR's loop to completion (CI-green at a stable head) first, then
-  starting or resuming each sibling's remaining cycles against that final head — a sibling cycle
-  already in flight when the source PR converges can still finish its current pass and resync on its
-  own next cycle, but do not deliberately kick off a NEW sibling cycle while the source PR's loop is
-  still open.
+  practice. The hard sequence is: (1) the public loop converges; (2) its PR merges and that merge is
+  reachable from the source `origin/main`; (3) the private successor PR already exists; (4) exactly
+  one authenticated post-merge source handoff passes typed readback; only then may the first private
+  scout or review begin. Do not deliberately start or resume a private cycle before those conditions
+  hold, including while the public loop remains open.
 
   The same sequencing applies to semantic counterparts, not only byte-identical mirrors. The
   counterpart records satisfaction, reasoned deviation, or one bounded correction request; in sync

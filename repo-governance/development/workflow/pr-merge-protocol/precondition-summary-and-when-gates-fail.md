@@ -30,7 +30,7 @@ Quality gates:
   CI workflows:  PASSED
 
 Preconditions:
-  (a) review route:      eligible, clean at cycle 2 of 7
+  (a) review route:      eligible, clean at cycle 2 of 5
   (b) C/H/M:             0 / 0 / 0 outstanding
   (c) branch vs main:    up to date (fast-forwarded, no rewrite)
   (d) quality gates:     all green (above)

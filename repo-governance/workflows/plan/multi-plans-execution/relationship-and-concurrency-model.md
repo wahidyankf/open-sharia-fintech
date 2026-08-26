@@ -43,6 +43,6 @@ rules win for that plan's internal work; this document governs only cross-plan s
   [Task List Discipline §Standard 6](../../../development/practice/task-list-discipline.md).
 - **Delivery is 1-PR↔1-branch↔1-delivery-unit**: each independent node gets its own branch and PR,
   opened and merged as that unit's **delivery boundary** completes — not at every phase, and not
-  batched at the end of the run. The **worktree** is capped at one per repository per plan and reused
-  across every node landing in that repo, per
+  batched at the end. For worktree modes, one worktree per repository per plan is reused across
+  every node landing there, per
   [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).

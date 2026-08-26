@@ -1,6 +1,6 @@
 ---
 title: "Mandatory Pre-Removal Checks"
-description: The five checks required before any git worktree remove, each grounded in an observed incident.
+description: Six checks required before any git worktree remove.
 category: explanation
 subcategory: development
 tags:
@@ -10,55 +10,75 @@ tags:
   - cleanup
   - parallelism
 created: 2026-07-20
-when_to_use: Use immediately before running git worktree remove, to confirm merge state, dirty diff, unpushed commits, and idleness.
+when_to_use: Use immediately before running git worktree remove, to confirm identity, branch delivery, dirty diff, unpushed commits, and idleness.
 ---
 
 # Mandatory Pre-Removal Checks
 
-Run all five before any `git worktree remove`. Each is grounded in an observed incident, not a
-hypothetical.
+Run all six before any `git worktree remove`.
 
-**1. Test merge state with `gh pr list`, never with ancestry.**
+**1. Resolve the recorded worktree and every branch it used.**
+
+Reconcile its exact path with `git worktree list --porcelain`; the initial branch may differ from the
+final checkout. Build the removal inventory from the append-only Delivery Branch Inventory plus:
 
 ```bash
-gh pr list --head <branch> --state all --json number,state,mergedAt
+git -C <worktree> branch --show-current
 ```
 
-PRs in these repos are **squash**-merged, which replays the branch as one new commit. The branch's own
-commits therefore never become ancestors of `main`, and `git merge-base --is-ancestor` reports
-NOT-MERGED for **every** merged branch. Observed live: four worktree branches all reported NOT-MERGED
-by ancestry while `gh` showed their PRs merged. Ancestry is not a conservative approximation here — it
-is wrong in the direction that blocks correct cleanup, and it would be wrong in the dangerous
-direction if anyone inverted it.
+Classify every plan-created/current branch. Missing identity, path conflict, or an unrecorded current
+branch blocks removal. The file-touch ledger is never cleanup evidence.
 
-**2. Read the worktree's dirty diff before removing it.**
+**2. Prove delivery for every inventoried branch, never by squash ancestry.**
+
+```bash
+gh pr view <recorded-pr> --json state,headRefName,headRefOid,mergedAt
+git ls-remote --exit-code --heads origin "refs/heads/<branch>"
+```
+
+For each `*-to-pr` entry, GitHub must report `MERGED` with exact `headRefName`/`headRefOid` matching
+the inventory branch/reviewed-head SHA; local branch must match. Never use squash ancestry. Classify:
+
+- **Still exists**: fetch it; `origin/<branch>` and local branch equal recorded reviewed head.
+- **GitHub auto-deleted it**: accept only with repository `delete_branch_on_merge: true` and a
+  paginated timeline `HEAD_REF_DELETED_EVENT` for exact `headRefName` at/after `mergedAt`, plus the
+  exact PR/local-head evidence above. Do not resurrect `origin/<branch>`.
+- **Otherwise absent**: retain and escalate; disabled auto-delete, no matching event, changed PR
+  head, or local mismatch is ambiguous.
+
+Without auto-deletion, live-ref proof is required and canonical cleanup deletes it. Verified GitHub
+deletion is remote cleanup: do not repeat it. Direct push needs its recorded commit on `origin/main`
+and no open PR. These repos squash-merge: PR delivery is merged PR plus pinned reviewed head, not
+`main` ancestry.
+
+**Unenforced by decision.** A static gate cannot authenticate live repository settings or timelines.
+Preserve those API results; an absent/incomplete record fails this check.
+
+**3. Read the worktree's dirty diff before removing it.**
 
 ```bash
 git -C <worktree> status --porcelain
 ```
 
-A merged PR proves the _branch_ landed, not that the _working tree_ is empty. Archival record-keeping
-in particular is written last — after the merge — and is easily left uncommitted. Observed live: a
-worktree held its plan's two terminal archival checkboxes, ticked with real commit SHAs and a merge
-timestamp, that existed **nowhere else**; every merge-state signal said "safe to delete". Recover such
-content first, or discard it explicitly with a stated reason. Never discard it silently.
+A merged PR does not prove a clean tree: archival content may follow. Recover it or record why it is
+discarded; never silently remove it.
 
-**3. Check for unpushed commits — work that exists nowhere but this machine.**
+**4. Check every inventoried branch for unpushed commits.**
 
 ```bash
-git -C <worktree> log origin/<branch>..<branch>
+git fetch origin
+git log origin/<branch>..<branch> # PR-mode branch whose remote ref still exists
+git merge-base --is-ancestor <branch> origin/main # direct-push branch
 ```
 
-Any output is a commit that has never left this disk. Unlike checks 1 and 2, there is no remote copy
-to fall back on: if the worktree goes, so does the commit.
+Output from the PR-mode check, remote-tip/reviewed-head mismatch, or failed direct-push reachability
+blocks removal. For a verified auto-deleted PR branch, check 2 local-head equality is no-unpushed
+proof; its remote is intentionally absent. Only direct pushes use `origin/main` ancestry.
 
-**4. Always use non-force `git worktree remove`.**
+**5. Always use non-force `git worktree remove`.**
 
-Never `rm -rf` a worktree — that leaves orphaned administrative state behind. The non-force command
-refuses on a dirty worktree, which is the backstop for when checks 1-3 were skipped or rushed.
-Preserving that backstop is the entire reason force is forbidden here.
+Never `rm -rf`: it leaves orphaned administration. Non-force removal rejects a dirty tree, the
+backstop when checks 1-4 were skipped or rushed; that is why force is forbidden.
 
-**5. Never remove a worktree this plan did not create** without positive evidence it is idle. On a
-shared machine, another session's live work is indistinguishable from stale state by path alone.
-Observed live: of 11 worktrees across three repos, one held five dirty files belonging to active work
-and was correctly left in place.
+**6. Never remove a worktree this plan did not create** without positive idleness evidence. On a
+shared machine, path alone cannot distinguish another session's live work from stale state.
