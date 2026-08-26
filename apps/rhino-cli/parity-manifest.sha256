@@ -7,8 +7,8 @@ b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli
 11fe7ec2e5e08b432e2d1cedae59e1a555e17e22a1f11494bd83b80c36964b5c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Convention.fs
 2f8085bcb8089f174e9548e609530471c9318c31b1bcab4a867e33880cec9e57  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Parity.fs
 fc1346c5ed931f006be550583e92d5603bdffceb270783f4b334bb5ff4d7aa3a  apps/rhino-cli/src-fsharp/RhinoCli.Cli/RhinoCli.Cli.fsproj
-6efd71e731af9cd3e6f97e95df039bd19ca86b0dfd0078fbfb9f035527f6ef8c  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs
-6b4a5f64a506020671258ec23fc684b69861cc09986cb7bd8a47edfa2da4414c  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Formatters.fs
+c3032e5f206e9eb7aded9d420e3baa0d2751e331fd3bd95947d0b5de23761b2e  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs
+beb756fa4e0e02786adeedc97ef39c7d1855a99d260b4741e83652736144245f  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Formatters.fs
 ff741ba86d69a0d44bc4b0a4165c039f5e4d53c9b05cfbce5c5223f223c0fb99  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/HelpText.fs
 d7ff185030ec8501b639875753a3bc9487e0f783c6efa593484b6199811ddff2  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/RootArgs.fs
 bb55f3c8d4d3daffa7e334ecdacff8bfd9462b12a7098e239943d84a3edf915f  apps/rhino-cli/src-fsharp/RhinoCli.Domain/RhinoCli.Domain.fsproj

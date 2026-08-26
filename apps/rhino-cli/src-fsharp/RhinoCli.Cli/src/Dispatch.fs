@@ -5,6 +5,7 @@
 /// `apps/rhino-cli/scripts/rhino-bin.sh`'s `FSHARP_NAMESPACES`.
 module RhinoCli.Cli.Dispatch
 
+open System
 open RhinoCli.Domain.Types
 open RhinoCli.Application
 
@@ -23,7 +24,7 @@ let private parseOutputFormat (args: string list) : Result<OutputFormat, string>
         match args with
         | [] -> None
         | a :: v :: _ when a = "-o" || a = "--output" -> Some v
-        | a :: _ when a.StartsWith("--output=") -> Some(a.Substring("--output=".Length))
+        | a :: _ when a.StartsWith("--output=", StringComparison.Ordinal) -> Some(a.Substring("--output=".Length))
         | _ :: rest -> find rest
 
     match find args with
@@ -52,8 +53,8 @@ let private collectPositionals (args: string list) : string list =
         match args with
         | [] -> List.rev acc
         | a :: _ :: rest when a = "-o" || a = "--output" || a = "-p" || a = "--path" -> loop rest acc
-        | a :: rest when a.StartsWith("--output=") -> loop rest acc
-        | a :: rest when a.StartsWith("-") -> loop rest acc
+        | a :: rest when a.StartsWith("--output=", StringComparison.Ordinal) -> loop rest acc
+        | a :: rest when a.StartsWith("-", StringComparison.Ordinal) -> loop rest acc
         | a :: rest -> loop rest (a :: acc)
 
     loop args []

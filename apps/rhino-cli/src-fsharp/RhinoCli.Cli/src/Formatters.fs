@@ -76,7 +76,7 @@ let toLicenseFindingJson (f: Finding) : LicenseFindingJson =
     let msg = f.Message
     let closeBracket = msg.IndexOf("] ", StringComparison.Ordinal)
 
-    if not (msg.StartsWith("[")) || closeBracket < 0 then
+    if not (msg.StartsWith("[", StringComparison.Ordinal)) || closeBracket < 0 then
         failwithf "malformed license finding message: %s" msg
 
     let kind = msg.Substring(1, closeBracket - 1)
