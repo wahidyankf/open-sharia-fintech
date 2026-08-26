@@ -614,8 +614,11 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       through the real target's own resolution path) and require
       `npx nx run rhino-cli-fsharp:deps:audit` to exit **non-zero** — the same
       deliberate-temporary-break shape the Phase 9 Gate's "Elixir formatter-wrapper assertions and
-      the coverage threshold" check already trusts. Restore the real reference immediately afterward
-      and record both exit codes in `learnings.md`.
+      the coverage threshold" check already trusts. Restore the real reference immediately afterward,
+      re-run `npx nx run rhino-cli-fsharp:deps:audit` and require it to exit **0**, additionally
+      require `git diff --exit-code -- apps/rhino-cli/src-fsharp/` to exit 0 so a partial restore is
+      caught too, and record all exit codes in `learnings.md` — recording alone is not the
+      acceptance criterion; the post-restore re-run passing is.
 - [ ] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
       zero tests, and no target that should do work is a silent `echo` stub — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets[].options.command'` contains no
@@ -634,24 +637,28 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [ ] [AI] Capture the pre-edit gate output for later comparison, into a **tracked** path rather than
       `local-tmp/`, because `AGENTS.md`'s Plans & Temporary Files rule permits sweeping `local-tmp/`
       at any time and the last of this capture's consumers does not run until Phase 8, six phases and
-      six separate PRs later. Capture **per repo**, both committed under `ose-public`'s plan
-      folder — mirroring Phase 0's single-sourced two-table pattern at line 353-357, since
-      `ose-private` carries no copy of this plan folder to commit a capture into on its own:
+      six separate PRs later. Capture **per repo, into that repo's own tree, and read it back only
+      from that same tree** — never copied or read cross-repo, since `ose-private` carries no copy of
+      this plan folder:
       `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group > plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json`
-      run in the `ose-public` worktree, and the identical command run in the `ose-private` worktree
-      with its output copied (not authored twice) into
-      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-private.json` under
-      `ose-public`, then `git add` both files so they land committed in this phase's `ose-public`
-      PR (the `evidence/` folder is the existing convention for committed testing evidence) —
-      acceptance: `git ls-files --error-unmatch` exits 0 for both paths, and both files are
-      non-empty, valid JSON per `jq .`.
+      run and committed in the `ose-public` worktree (the plan-folder `evidence/` directory, the
+      existing convention for committed testing evidence), and the identical command run in the
+      `ose-private` worktree with its output written and committed to
+      `apps/rhino-cli/evidence/gate-before-ose-private.json` **inside `ose-private`'s own tree** —
+      deliberately outside `apps/rhino-cli/parity-manifest.sha256`'s boundary paths (`src/`, `tests/`,
+      `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE` — see
+      [tech-docs §DD-5](./tech-docs.md#dd-5--both-repos-in-the-same-delivery-units) for why that
+      boundary must stay byte-identical), so this per-repo-divergent file can never be pulled into
+      the byte-identity check — acceptance: `git ls-files --error-unmatch` exits 0 for both paths in
+      their respective repos, and both files are non-empty, valid JSON per `jq .`.
 - [ ] [AI] Edit `apps/rhino-cli/scripts/rhino-bin.sh`: add a `FSHARP_NAMESPACES` array, initially
       empty, and route on `$1` before the existing three-tier resolution — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group` output
-      is byte-identical, per `diff`, to this repo's own capture from the step above —
-      `evidence/gate-before-ose-public.json` when checked in `ose-public`,
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder) when
-      checked in `ose-private`.
+      is byte-identical, per `diff`, to this repo's own capture from the step above, read from that
+      same worktree —
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json` when
+      checked in `ose-public`, `apps/rhino-cli/evidence/gate-before-ose-private.json` when checked
+      in `ose-private`.
 - [ ] [AI] Add the F#-side resolution tiers to `apps/rhino-cli/scripts/rhino-bin.sh` —
       `RHINO_CLI_FSHARP_BIN`, then `apps/rhino-cli/src-fsharp/dist/`, then `dotnet run` — per
       [tech-docs §Dispatch shim](./tech-docs.md#dispatch-shim-during-migration) — acceptance: with
@@ -691,19 +698,24 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `grep -n 'lang:fsharp' .github/workflows/pr-quality-gate.yml` shows the existing mapping and
       no new line was added.
 - [ ] [AI] Land every Phase 2 change in the `ose-private` worktree, authored there rather than
-      copied — acceptance: the same `dotnet build`, `diff`, and `grep` assertions hold in that repo.
+      copied — acceptance: the same `dotnet build`, `diff`, and `grep` assertions hold in that repo,
+      **and** the break-and-restore `deps:audit` proof above is re-run there too, against
+      `ose-private`'s own `rhino-cli-fsharp` target: temporarily point its live reference at a
+      known-vulnerable package, require `npx nx run rhino-cli-fsharp:deps:audit` to exit non-zero,
+      restore the real reference, and require that same re-run to exit **0** afterward.
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
 - [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group`
-      matches this repo's own captured baseline byte for byte, in each repo independently —
-      `evidence/gate-before-ose-public.json` in `ose-public`, `evidence/gate-before-ose-private.json`
-      (read from the `ose-public` plan folder, since `ose-private` carries no copy) in `ose-private`.
-      The two baseline files are not expected to match each other: `delivery.md:14798-14803`'s Phase
-      9 Gate documents the two repos' `pr-quality-gate.yml` as independently divergent, so this check
-      is a within-repo before/after comparison, never a cross-repo one.
+      matches this repo's own captured baseline byte for byte, in each repo independently, each read
+      from that same repo's own tree, never across worktrees —
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json` in
+      `ose-public`, `apps/rhino-cli/evidence/gate-before-ose-private.json` in `ose-private`. The two
+      baseline files are not expected to match each other: `delivery.md:14798-14803`'s Phase 9 Gate
+      documents the two repos' `pr-quality-gate.yml` as independently divergent, so this check is a
+      within-repo before/after comparison, never a cross-repo one.
 - [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos — the Rust crate is untouched.
 - [ ] [AI] `npx nx run rhino-cli-fsharp:test:quick` exits 0 in both repos.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention` reports zero differences with both
@@ -1132,9 +1144,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 3 Gate
 
@@ -2716,9 +2727,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave B change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 4 Gate
 
@@ -4101,9 +4111,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave C change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 5 Gate
 
@@ -7373,9 +7382,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave D change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 6 Gate
 
@@ -12209,9 +12217,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave E change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 7 Gate
 
@@ -14437,9 +14444,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Land every Wave F change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
-      `evidence/gate-before-ose-private.json` (read from the `ose-public` plan folder, since
-      `ose-private` carries no copy) — so `ose-private`'s rollback evidence is not `shadow-diff.sh`
-      alone.
+      `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
+      tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
 
 ### Phase 8 Gate
 
@@ -14623,9 +14629,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       still never exercises the live `rhino-cli` target's own wiring.** Additionally, temporarily
       point the now-rewired `rhino-cli` target's reference at the same known-vulnerable package (or
       an equivalent stand-in reachable through the real target's own resolution path) and require
-      `npx nx run rhino-cli:deps:audit` to exit **non-zero**, then restore the real reference and
-      record both exit codes in `learnings.md`. Exiting 0 against a live vulnerable input is the
-      failure mode this whole step exists to catch.
+      `npx nx run rhino-cli:deps:audit` to exit **non-zero**, then restore the real reference,
+      re-run `npx nx run rhino-cli:deps:audit` and require it to exit **0**, additionally require
+      `git diff --exit-code -- apps/rhino-cli/src-fsharp/` (or the flattened `apps/rhino-cli/src/`,
+      if 9c's move landed) to exit 0 so a partial restore is caught too, and record all exit codes
+      in `learnings.md`. Exiting 0 against a live vulnerable input, whether pre-break or
+      post-restore, is the failure mode this whole step exists to catch.
 - [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
       accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
       `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
@@ -14634,7 +14643,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       disallowed package, run the exact `deps:audit` command against a known-disallowed license,
       and record the observed exit code in `learnings.md`; if that code is 0, wrap the license
       check so a known-disallowed finding exits non-zero, and re-prove the wrapper against the same
-      scratch project — **or** `learnings.md` carries a dated entry naming both dropped controls,
+      scratch project, **then** repeat the live-target break-and-restore the vulnerability proof
+      above requires: temporarily point the live `rhino-cli` target's `deps:audit` reference at the
+      same known-disallowed-license package, require it to exit non-zero, restore the real
+      reference, and require a re-run to exit **0** — recording all four exit codes in
+      `learnings.md` — **or** `learnings.md` carries a dated entry naming both dropped controls,
       stating who accepted the regression and why, and `tech-docs.md` gains a DD recording it.
       Silence is not an option here: an unchanged target name reading "audit" while auditing
       one-third of what it used to is the failure mode this step exists to prevent.
@@ -14669,7 +14682,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `fsharp-source-root` as `apps/rhino-cli/src/`, **or** `learnings.md` records why the move was
       deferred **and** records `fsharp-source-root` as `apps/rhino-cli/src-fsharp/`. In both branches,
       `rg -N -F 'fsharp-source-root' learnings.md | wc -l` returns at least 1 before this step is
-      considered done.
+      considered done. **`learnings.md` is single-sourced under `ose-public`**, like `benchmark.md`,
+      since `ose-private` carries no copy of this plan folder — but the move (or its deferral) lands
+      in `ose-private`'s own tree too, because `apps/rhino-cli/src` is a byte-identical boundary under
+      `parity-manifest.sha256`, per
+      [tech-docs §DD-5](./tech-docs.md#dd-5--both-repos-in-the-same-delivery-units), and cannot
+      flatten in one repo without the other. Every downstream reader below that executes
+      in `ose-private` therefore derives `<fsharp-source-root>` by testing its **own** tree — exactly
+      one of `test -d apps/rhino-cli/src-fsharp/` or `test -d apps/rhino-cli/src/` passes — rather
+      than reading `ose-public`'s `learnings.md`, which does not exist in `ose-private`.
 - [ ] [AI] Regenerate the parity manifest in each repo using that repo's own generator, never
       copying the file between repos — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both.
@@ -14781,11 +14802,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       existing entries' globs do not already reach the `fsharp-source-root` recorded above at 9c —
       `apps/rhino-cli/src-fsharp/` on the deferred branch, `apps/rhino-cli/src/` on the move branch;
       never assume the former — acceptance: a deliberately misformatted `.fs` file turns the
-      `formatting-verify` group red.
+      `formatting-verify` group red. In `ose-private`, resolve the path per 9c's rule above
+      (`test -d` against that repo's own tree), not by reading `ose-public`'s `learnings.md`.
 - [ ] [AI] Land 9a, 9b, 9c, and 9d in the `ose-private` worktree as four matching PRs, authored there
       rather than copied — and note that repo's teardown is **wider**, because it has **zero** `.rs`
       files outside `apps/rhino-cli/` — acceptance: the difference between the two repos' teardown
-      scope is stated in `learnings.md` rather than looking like drift.
+      scope is stated in `learnings.md` rather than looking like drift, **and** 9c's break-and-restore
+      `deps:audit` proof is re-run in `ose-private`'s own `rhino-cli` target — temporarily broken,
+      required to exit non-zero, restored, and required to exit **0** on the post-restore re-run —
+      not merely `dotnet build`, `diff`, and `grep` re-verified.
 
 ### 9e — Descriptive documentation sweep
 
@@ -14878,9 +14903,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       that statement historical — the 9e sweep's per-file verdicts are complete in both repos.
 - [ ] [AI] `pr-quality-gate.yml` is green on all **five** Phase 9 PRs (9a, 9b, 9c, 9d, 9e) in both
       repos.
-- [ ] [AI] `learnings.md` carries an `fsharp-source-root` entry in both repos, and `test -d` on its
-      recorded value passes in both — acceptance: `rg -N -F 'fsharp-source-root' learnings.md | wc -l`
-      returns at least 1 in each repo, and the directory the entry names exists. This is what
+- [ ] [AI] `learnings.md` — single-sourced under `ose-public`; `ose-private` carries no copy — carries
+      **one** `fsharp-source-root` entry, and `test -d` on the directory it names passes **in both
+      repos' own trees** (a filesystem check run directly in each worktree, never a cross-repo
+      document read — see 9c's rule above) — acceptance: the entry count command from 9c
+      (`rg -N -F 'fsharp-source-root' learnings.md | wc -l`) returns at least 1, run in `ose-public`
+      where the file exists, and `test -d` on the recorded value passes when run directly against
+      each repo's own worktree. This is what
       Phase 9d's formatter-glob step and Phase 10's build and source-size steps below depend on
       having no fallback for.
 
@@ -14901,10 +14930,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] **A1 — cold build**: `dotnet build <fsharp-source-root>/RhinoCli.Program`, where
       `<fsharp-source-root>` is the path 9c recorded in `learnings.md`
       (`apps/rhino-cli/src-fsharp/` if the flatten was deferred, `apps/rhino-cli/src/` if it moved —
-      never assume the former), from a cleared `obj/`+`bin/` under `/usr/bin/time -p`, asserting exit
-      code 0 — acceptance: `test -d <fsharp-source-root>` passes before the build so a stale path
-      fails loudly rather than silently, and elapsed seconds are written to the "after" column of
-      `benchmark.md` row B1.
+      never assume the former; in `ose-private`, resolved per 9c's rule by testing that repo's own
+      tree rather than reading `ose-public`'s `learnings.md`), from a cleared `obj/`+`bin/` under
+      `/usr/bin/time -p`, asserting exit code 0 — acceptance: `test -d <fsharp-source-root>` passes
+      before the build so a stale path fails loudly rather than silently, and elapsed seconds are
+      written to the "after" column of `benchmark.md` row B1.
 - [ ] [AI] **A2 — publish build**, the one CI runs, in the mode selected at Phase 1, under
       `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to row B2, and
       the recorded exit code is 0.
