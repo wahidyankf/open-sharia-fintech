@@ -269,10 +269,10 @@ the Phase 2 gate re-measures them so a spec change during execution cannot silen
 | Wave  | Phase | Spec directories                                                           | Scenarios | Feature files | Namespaces flipped at the end of the wave |
 | ----- | ----- | -------------------------------------------------------------------------- | --------- | ------------- | ----------------------------------------- |
 | A     | 3     | `convention`                                                               | 11        | 3             | `convention`, `parity`                    |
-| B     | 4     | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 59        | 7             | `repo-config`, `env`                      |
+| B     | 4     | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 62        | 8             | `repo-config`, `env`                      |
 | C     | 5     | `system`, `test-coverage`                                                  | 53        | 6             | `doctor`, `test-coverage`                 |
 | D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 128       | 11            | `md`, `governance`, `git`                 |
-| E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 188       | 38            | `harness`, `specs`, `repo-governance`     |
+| E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 185       | 37            | `harness`, `specs`, `repo-governance`     |
 | F     | 8     | `gate`                                                                     | 89        | 7             | `gate`                                    |
 | Total |       |                                                                            | **528**   | **72**        | all 13                                    |
 
@@ -1228,9 +1228,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Phase 4: Wave B — `repo-config`, `repo-config-validate`, `env`, `env-contract`
 
-> **59 scenarios across 7 feature files**
-> [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`].
-> **PR seam**: one feature file is one PR, so this wave is 7 implementation PRs
+> **62 scenarios across 8 feature files**
+> [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`]. Includes
+> `specs/env-staged-guard.feature` (3 scenarios) — its Gherkin file sits under the `gherkin/specs/`
+> directory for historical reasons, but its CLI verb is `env staged-guard validate`, and
+> [tech-docs.md DD-4](./tech-docs.md)'s ~1,598-LOC Wave B figure already sums in
+> `env_staged_guard.rs`'s 210 lines. An earlier draft of this checklist misfiled its cycles under
+> Phase 7 (Wave E) by directory instead of by CLI namespace; relocated here to match DD-4 before
+> Wave B's flip, since `rhino-bin.sh` routes `FSHARP_NAMESPACES` on argv[0] only — flipping `env`
+> without `staged-guard` ported would silently break the pre-commit hook's real-`.env`-file guard.
+> **PR seam**: one feature file is one PR, so this wave is 8 implementation PRs
 > plus one flip PR.
 >
 > `env` touches real `.env*` files. Every fixture is a temporary directory; no scenario in this wave may read or write a real `.env` outside the fixture root.
@@ -2729,16 +2736,104 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Env.fs` formats no output itself.
 
+#### `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature` — 3 scenarios
+
+> **PR seam**: the cycles under this heading are one PR. Relocated from Phase 7 (Wave E) — see the
+> Phase 4 header note above.
+
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
+      **Gherkin (binds) →** "Committing a real .env file is rejected" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
+
+  ```gherkin
+    Scenario: Committing a real .env file is rejected
+      Given a real .env file is staged for commit
+      When the pre-commit hook runs rhino-cli env staged-guard validate
+      Then it exits non-zero and names the offending file
+      And the commit is aborted
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Env.fs` formats no output itself.
+
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
+      **Gherkin (binds) →** "Staging .env.example is allowed" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
+
+  ```gherkin
+    Scenario: Staging .env.example is allowed
+      Given only .env.example is staged for commit
+      When the pre-commit hook runs rhino-cli env staged-guard validate
+      Then it exits zero and does not block the commit
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Env.fs` formats no output itself.
+
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
+      **Gherkin (binds) →** "Staging any real env file is rejected at commit time" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
+
+  ```gherkin
+    Scenario Outline: Staging any real env file is rejected at commit time
+      Given a git index with "<file>" staged
+      When "rhino-cli env staged-guard validate" runs
+      Then the command exits non-zero
+      And the output names "<file>" as offending
+
+      Examples:
+        | file              |
+        | .env              |
+        | .env.local        |
+        | .env.test         |
+        | .env.prod         |
+        | .env.stag         |
+        | apps/x/.env.local |
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Env.fs` formats no output itself.
+
 ### Wave B integration
 
 > **PR seam**: the flip is its own PR, separate from the implementation PRs above. It is a
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `repo-config/`, `repo-config-validate/`, `env/`, and `env-contract/` — in
-      **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
-      argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
-      either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
+- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `repo-config/`,
+      `repo-config-validate/`, `env/`, and `env-contract/` — plus the one file-scoped exception
+      `specs/env-staged-guard.feature` (it lives under `gherkin/specs/`, a directory Wave E also
+      owns feature files in, so it is added by file, not by widening the whole `specs/` directory
+      early) — in **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage`
+      specs-dirs argument and its `repo-config.yml` `coverage.projects` glob. Widening one without
+      the other either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
       `npx nx run rhino-cli-fsharp:specs:behavior:coverage` exits 0 **and** reports a scenario count
       equal to this wave's count from the wave map, and temporarily deleting one **step definition** from a
       wave-B `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
@@ -2787,7 +2882,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] All 59 Wave B scenarios pass under
+- [ ] [AI] All 62 Wave B scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh repo-config env` reports zero differences in both
       repos.
@@ -7468,9 +7563,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Phase 7: Wave E — `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd`
 
-> **188 scenarios across 38 feature files**
-> [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`].
-> **PR seam**: one feature file is one PR, so this wave is 38 implementation PRs
+> **185 scenarios across 37 feature files**
+> [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`]. Excludes
+> `specs/env-staged-guard.feature` (3 scenarios), relocated to Phase 4 (Wave B) — see that phase's
+> header note.
+> **PR seam**: one feature file is one PR, so this wave is 37 implementation PRs
 > plus one flip PR.
 >
 > The largest wave, 38 feature files. `harness` generates the binding mirrors, so a defect here corrupts `.opencode/`, `.codex/`, and `.agents/`; the wave gate re-runs `npm run generate:bindings` and asserts a clean `git diff`.
@@ -10011,90 +10108,6 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature` — 3 scenarios
-
-> **PR seam**: the cycles under this heading are one PR.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
-      **Gherkin (binds) →** "Committing a real .env file is rejected" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
-
-  ```gherkin
-    Scenario: Committing a real .env file is rejected
-      Given a real .env file is staged for commit
-      When the pre-commit hook runs rhino-cli env staged-guard validate
-      Then it exits non-zero and names the offending file
-      And the commit is aborted
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Specs.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
-      **Gherkin (binds) →** "Staging .env.example is allowed" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
-
-  ```gherkin
-    Scenario: Staging .env.example is allowed
-      Given only .env.example is staged for commit
-      When the pre-commit hook runs rhino-cli env staged-guard validate
-      Then it exits zero and does not block the commit
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Specs.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
-      **Gherkin (binds) →** "Staging any real env file is rejected at commit time" — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`
-
-  ```gherkin
-    Scenario Outline: Staging any real env file is rejected at commit time
-      Given a git index with "<file>" staged
-      When "rhino-cli env staged-guard validate" runs
-      Then the command exits non-zero
-      And the output names "<file>" as offending
-
-      Examples:
-        | file              |
-        | .env              |
-        | .env.local        |
-        | .env.test         |
-        | .env.prod         |
-        | .env.stag         |
-        | apps/x/.env.local |
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Specs.fs` formats no output itself.
-
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/gherkin-cardinality.feature` — 1 scenario
 
 > **PR seam**: the cycles under this heading are one PR.
@@ -12276,7 +12289,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] All 188 Wave E scenarios pass under
+- [ ] [AI] All 185 Wave E scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` reports zero differences in both
       repos.
