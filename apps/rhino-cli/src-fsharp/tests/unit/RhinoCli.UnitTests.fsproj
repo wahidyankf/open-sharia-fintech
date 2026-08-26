@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Steps/BddState.fs" />
     <Compile Include="Steps/ConventionSteps.fs" />
-    <Compile Include="Suite.fs" />
+    <Compile Include="Steps/ConventionUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

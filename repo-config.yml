@@ -151,21 +151,21 @@ coverage:
       specs: "specs/apps/rhino/behavior/rhino-cli/**"
     # rhino-cli-fsharp (rewrite-rhino-cli-to-fsharp): registry hygiene from
     # Phase 2 onward per this registry's own "every project is listed"
-    # comment above. The glob covers exactly the feature files with landed
-    # F# step definitions — a property of implementation, not of
-    # FSHARP_NAMESPACES — so it widens with *each implementation PR*, one
-    # feature file at a time, not with the wave's later integration/flip PR:
-    # a feature file's step definitions exist (and must be provably covered)
-    # before that wave's namespace ever serves real traffic, and the
-    # coverage tool's `--shared-steps` PATHS argument accepts a single
-    # `.feature` file directly, so scope stays file-precise even mid-wave.
-    # None at Phase 2, so it matched nothing yet; Wave A's first PR
-    # (`convention-audit.feature`) widened it to that one file, per
-    # plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md's widening
-    # protocol entry.
+    # comment above. The glob covers exactly the Gherkin directories whose
+    # F# step definitions have landed — a property of implementation, not of
+    # FSHARP_NAMESPACES — so it widens with *each wave's implementation
+    # work*, not with the wave's later integration/flip PR: a namespace's
+    # step definitions exist (and must be provably covered) before that
+    # wave's namespace ever serves real traffic. Directory-level (not
+    # file-level) scope matches ose-private, since `RhinoCli.Application.
+    # Convention` binds all three of the `convention` namespace's feature
+    # files together (emoji, license, and the aggregate audit share one
+    # module) — splitting the scope per-file would not reflect how the
+    # implementation is actually structured. Wave A widened it from nothing
+    # (Phase 2) to the full `convention/` directory.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/convention/convention-audit.feature"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/convention/**"
 
     # ose domain
     - name: ose-be
