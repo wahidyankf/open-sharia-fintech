@@ -378,6 +378,11 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
+      # typecheck's `dotnet build --no-restore` requires a prior project-level restore —
+      # the NuGet package cache above only warms `~/.nuget/packages`, it does not generate
+      # each project's `obj/project.assets.json`. Every dotnet-tagged project's `install`
+      # target runs `dotnet restore`, so run it explicitly before typecheck.
+      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
