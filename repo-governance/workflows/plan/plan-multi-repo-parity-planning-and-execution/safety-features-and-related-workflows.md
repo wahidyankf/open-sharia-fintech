@@ -8,7 +8,7 @@ when_to_use: Use when verifying what protections this composite provides, or nav
 
 - **Everything its constituents guarantee**: gate-before-delivery and no-silent-deviation from
   the planning workflow; worktree isolation + freshness sync, Iron Rules, CI verification, and
-  prompted worktree cleanup from the execution workflow
+  immediate precondition-gated worktree cleanup from the execution workflow
 - **Hard phase gate**: no execution on missing, un-gated, undelivered, or worktree-less plans
 - **Sequential by default**: one repo executes at a time; cross-repo blast radius is bounded to
   the repo currently in flight

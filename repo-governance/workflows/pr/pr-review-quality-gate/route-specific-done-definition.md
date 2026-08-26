@@ -19,11 +19,12 @@ The record makes the route auditable; it does not replace reviewer judgment or a
    counting a scope-deferred finding as outstanding until its follow-up is filed and linked on the
    thread, per the
    [Scope Guard](./scope-deferral-exit.md). The
-   default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
-   done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
-   At the first cycle at or past six and at every convergence checkpoint after it, record sanitized nonconvergence learning in the owning plan's
-   `learnings.md` (or, with no owning plan, a comment on the PR) and create or update a deduplicated
-   improvement idea in `plans/ideas`.
+   default ceiling is five cycles; an authenticated bounded per-PR human extension may raise it.
+   Reaching the configured ceiling with any such finding is `blocked`, never done. LOW findings are
+   captured and deduplicated into `plans/ideas` but do not prevent this exit.
+   At the configured ceiling, freeze the blocked reviewed head, authenticate its non-convergence
+   record, and deliver sanitized learning plus one deduplicated improvement idea through the
+   separate bounded follow-up defined by [Loop-Exit and Block Rules](./loop-exit-and-block-rules.md).
 2. **Noneligible route** — the classifier evidence shows that the full diff is non-executing, and
    `.github/workflows/pr-quality-gate.yml` succeeded for the current PR head. No specialist cycle is
    required or credited for this route.

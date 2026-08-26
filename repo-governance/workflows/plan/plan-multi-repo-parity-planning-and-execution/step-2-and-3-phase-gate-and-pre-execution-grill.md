@@ -41,10 +41,10 @@ question per message; interactive multiple-choice tool when available.
 4. **`[HUMAN]` step availability**: the delivery checklists may contain `[HUMAN]` gates; is the
    invoker available to confirm them during this run, or should execution stop at the first
    `[HUMAN]` item and resume later?
-5. **Worktree cleanup preference**: after each repo's archival, plan-execution prompts before
-   deleting the plan worktree. Confirm the invoker wants the per-repo prompt (default) or wants
-   to pre-decline cleanup for all repos (worktrees retained). Pre-approving silent deletion is
-   NOT offered — deletion always requires the per-repo prompt.
+5. **Worktree cleanup evidence**: confirm each plan has a Provisioned Worktree Identity recording
+   its exact path, branch, and creator. After delivery, the executor removes only that exact worktree
+   immediately when merged/delivered, clean/idle, and no-unpushed proof all pass; a failed check
+   retains it with evidence and escalates. This is not a preference or confirmation gate.
 
 **Hard gate**: execution does not begin while any question is unresolved. On invoker abandonment,
 terminate with status `fail` — the gated plans remain in `plans/in-progress/` for a later

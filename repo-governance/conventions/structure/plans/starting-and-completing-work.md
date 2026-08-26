@@ -16,21 +16,32 @@ when_to_use: Use when moving a plan from backlog/ to in-progress/, or from in-pr
 
 ## Starting Work
 
-**Promote out of `backlog/` first — on the local `main` checkout, never inside a worktree.** A plan
-still sitting in `plans/backlog/` is never executed directly out of that folder; the promotion below
-is a mandatory precondition, not an optional courtesy, and it MUST land as a committed, pushed change
-on `origin main` before worktree provisioning or any implementation step begins. See
-[plan-execution → Execute Plan from Backlog](../../../workflows/plan/plan-execution/example-usage-and-iteration-example.md#execute-plan-from-backlog).
+Never execute a plan directly from `plans/backlog/`. Its pure promotion must reach `origin/main`
+before implementation begins.
 
-1. **Move folder** (on local `main`, before any worktree exists): Move plan folder from
-   `backlog/[identifier]/` to `in-progress/[identifier]/` — a pure move; neither stage carries a
-   date prefix.
-2. **Update index**: Update both `backlog/README.md` and `in-progress/README.md`
-3. **Git commit and push**: Commit the move and push directly to `origin main` — only after this
-   push lands does execution proceed
-4. **Provision worktree** (optional — the plan-execution Step 0 gate auto-provisions from the latest `origin/main` when missing): Run `claude --worktree <plan-identifier>` from the repo root — this creates `worktrees/<plan-identifier>/` in the repo root (not `.claude/worktrees/`). See [Worktree Path Convention](../worktree-path.md).
-5. **Initialize toolchain**: In the root worktree, run `npm install && npm run doctor -- --fix`. See [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md).
-6. **Begin execution**: Start implementing according to delivery checklist
+1. **Resolve the delivery mode first.** Apply the
+   [three-tier precedence](./delivery-mode-merge-authority-and-precedence.md#delivery-mode--merge-authority-and-resolution-precedence),
+   then check the [per-repository restrictions](./per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
+2. **Reconcile remote state, then choose the landing route.** Apply the mandatory
+   [Promotion Recovery](./starting-work-promotion-recovery.md) classifier (unstarted, branch
+   pushed, PR open, merged-and-verified, or anomaly-stop) before mutation or on resume, and
+   continue from that state. `worktree-to-pr` uses the dedicated worktree; `main-to-pr` stays in
+   the synced primary checkout with no worktree. Direct-push modes use their declared work
+   location and remain available only when the repository permits them.
+3. **Make a pure move.** Move `plans/backlog/<identifier>/` to
+   `plans/in-progress/<identifier>/` without a date prefix, and update only the required
+   `backlog/README.md` and `in-progress/README.md` indexes. Do not include implementation or other
+   ride-along changes.
+4. **Land or resume the promotion.** Continue from the reconciled state: push a not-yet-pushed
+   branch, open a missing PR, or resume the matching PR's
+   [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md) and merge. A permitted
+   direct-push route commits and pushes the pure move to `origin main`.
+5. **Verify and continue.** Confirm the promotion exists on `origin/main`, refresh or provision the
+   implementation work branch from that commit, resolve the plan at its new `plans/in-progress/`
+   path, initialize the toolchain, and only then execute its delivery checklist. The promotion PR
+   and implementation are separate delivery units.
+
+For the worked route, see [Execute Plan from Backlog](../../../workflows/plan/plan-execution/example-usage-and-iteration-example.md#execute-plan-from-backlog).
 
 ## Completing Work
 

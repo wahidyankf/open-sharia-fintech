@@ -1,32 +1,37 @@
 ---
 title: "Finalization and Archival — Direct-Push Worktree Cleanup and PR-Mode Archival"
-description: Defines the prompted worktree-cleanup flow for direct-push modes and the archival-in-PR steps for *-to-pr modes.
+description: Defines safe direct-push cleanup and *-to-pr archival.
 when_to_use: Use when cleaning up a plan's worktree after a direct push, or moving a plan folder to done/ inside a delivering PR.
 ---
 
-1. **Worktree cleanup — prompted (after archival pushed)**: once the archival commit is pushed to `origin main` and CI is green, offer to delete the plan's worktree so worktrees do not accumulate:
-   1. **Verify nothing unpushed** (safety precondition — both checks MUST pass before offering deletion):
+1. **Worktree cleanup — immediate (after archival pushed)**: once the archival commit is confirmed
+   on `origin/main` and CI is green, clean up a `worktree-to-origin-main` worktree in the same
+   session. `main-to-origin-main` created no plan worktree, so this step is N/A for that mode.
+   1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
+      `git worktree list --porcelain`. Inventory every plan-created/current branch; the initial
+      identity branch may differ after normal switching. Missing identity, path conflict, or
+      unclassified branch blocks removal; never derive ownership from a familiar path.
+   2. Apply the canonical
+      [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
+      the exact worktree is clean and idle, every inventoried branch is pushed, and each direct-push
+      delivery is present on `origin/main` with no open PR. For a PR-mode branch, its merged PR
+      reviewed head must equal the inventory's recorded reviewed-head SHA, with either a matching
+      current `origin/<branch>` or verified GitHub auto-deletion under enabled
+      `delete_branch_on_merge`; retain and escalate any other missing/mismatched proof. A repository
+      root, wildcard, missing identity, or another actor's worktree is never eligible.
+   3. When every check passes, remove the exact path immediately without another confirmation
+      prompt, from the repository root:
 
       ```bash
-      git -C worktrees/<plan-identifier> status --porcelain   # must be empty
-      git fetch origin
-      git merge-base --is-ancestor "$(git -C worktrees/<plan-identifier> rev-parse HEAD)" origin/main   # must succeed
+      git worktree remove <exact-plan-worktree-path>
       ```
 
-      If either check fails, do NOT offer deletion — surface what is uncommitted or unpushed and keep the worktree.
+      Use the non-force command only, then apply the canonical
+      [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md)
+      procedure to this plan's verified branches.
 
-   2. **Prompt the user** (interactive question — this is a sanctioned stop): `Plan complete and pushed to origin main. Delete worktree worktrees/<plan-identifier>/ and its local branch?` NEVER delete the worktree without explicit user confirmation.
-   3. **On approval**, from the repo root:
-
-      ```bash
-      git worktree remove worktrees/<plan-identifier>
-      git worktree prune
-      git branch -d <plan-identifier> 2>/dev/null || true   # safe delete; only succeeds when fully merged
-      ```
-
-      If `git worktree remove` refuses (unexpected dirty state), do NOT force — re-run the safety precondition and escalate to the user.
-
-   4. **On decline**: keep the worktree and emit one line: `Worktree retained at worktrees/<plan-identifier>/ per user choice.`
+   4. If any check or removal fails, retain the worktree, surface the evidence, and escalate. Never
+      force removal or silently discard dirty or unpushed work.
 
 **`worktree-to-pr` / `main-to-pr` (`*-to-pr` modes)** — archival-in-PR: the plan-folder move lands
 inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, before the merge

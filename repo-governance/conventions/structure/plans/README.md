@@ -30,10 +30,11 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) — Mapping a plan's DAG nodes onto delivery units, branches, and PRs.
 - [the Earliest PR Is Phase 1](./phase-0-opens-no-pr.md) — Scoping a plan's Phase 0 to confirm it contains no PR-creation or merge step.
 - [Baseline Artifacts and Enforcement](./phase-0-opens-no-pr-rationale-and-enforcement.md) — A Phase 0 step writes evidence.
-- [PRs Open at Delivery Boundaries, Not Every Phase](./prs-open-at-delivery-boundaries-rules.md) — Deciding if a phase should open a PR.
-- [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether independent work may share a PR, or whether an already-open PR may wait for a later merge.
-- [Boundary Test and Rationale](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing whether a specific phase qualifies as a delivery boundary.
+- [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md) — Deciding if a phase opens a PR.
+- [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether work may share a PR or await another merge.
+- [Boundary Test](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing a delivery boundary.
 - [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
+- [Addition Limits and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Measuring addition-only category ceilings or testing a plan-document LOC exemption.
 - [The Atomicity Exception (PR-Size Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
 - [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.
@@ -46,7 +47,8 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Per-Repository Delivery Mode Restrictions](./per-repository-delivery-mode-restrictions.md) — Confirming which delivery modes are actually permitted in the specific repository a plan targets.
 - [Enforcement and File Naming](./per-repository-restrictions-enforcement-and-file-naming.md) — Checking why main-to-pr is never selected, or when naming a file inside a plan folder.
 - [Key Differences from Documentation and Creating Plans](./key-differences-and-creating-plans.md) — Deciding whether new content belongs in plans/ or docs/, or when starting to author a new plan.
-- [Starting and Completing Work](./starting-and-completing-work.md) — Moving a plan from backlog/ to in-progress/, or from in-progress/ to done/.
+- [Starting and Completing Work](./starting-and-completing-work.md) — Move plans between lifecycle stages.
+- [Starting Work — Promotion Recovery](./starting-work-promotion-recovery.md) — Reconcile remote state before starting or resuming promotion.
 - [Infra-Apply Gate and Plan Index Files](./infra-apply-gate-and-plan-index-files.md) — Why pending infra-apply steps keep a plan in in-progress/, plus each subfolder's index rules.
 - [Diagrams in Plans](./diagrams-required.md) — Deciding whether a plan section needs its own Mermaid diagram.
 - [Skipping, Accessibility, and Example](./diagrams-skip-accessibility-and-example.md) — Skipping diagrams on a simple plan, or applying the accessible palette.

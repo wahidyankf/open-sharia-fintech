@@ -18,8 +18,12 @@ idea now lives as a plan.
 > library code, never runs a delivery checklist, and never touches `plans/in-progress/`. It produces
 > a proposal in `plans/backlog/`. The actual work happens later: the [Plan Execution
 > workflow](../plan-execution.md)'s own Step 0 promotes the backlog plan to `plans/in-progress/`
-> (commit + push to `origin main` on local `main`) as its mandatory precondition, then proceeds —
-> no separate human promotion step is required.
+> through the delivery-mode-aware
+> [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work)
+> as its mandatory precondition. `worktree-to-pr` merges the pure move from its dedicated
+> worktree; `main-to-pr` syncs the primary checkout and merges its PR from there. Only a permitted,
+> selected direct-push mode pushes directly to `origin main`.
+> No separate human promotion step is required.
 
 This is a `planning`-type workflow: a single forward procedure whose terminal deliverable is a plan
 document. It is **not** an iterative quality gate.

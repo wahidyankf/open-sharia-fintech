@@ -50,9 +50,9 @@ alone.
 
 On a [checkpoint cycle](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md)
 the block also carries `"checkpoint":{"verdict":"continue|change-fix-strategy|block","original_series":[...],"induced_rate":[...]}`.
-All three verdicts are recorded, not only the one that extends a ceiling: a checkpoint whose
-`continue` leaves no artifact is indistinguishable from a checkpoint that never ran, and a rule
-whose compliance and non-compliance look identical cannot be audited by anyone.
+Record every verdict whether or not a separate, independently authorized per-PR ceiling-extension
+record exists. A checkpoint never grants that extension itself; leaving `continue` unrecorded is
+indistinguishable from never running the checkpoint.
 
 **The counts must balance**: the `raw_findings` values sum to `posted` plus the `dropped` values,
 for this cycle alone. Every raw finding is either posted or dropped for exactly one recorded
@@ -66,6 +66,10 @@ this pipeline cannot currently learn about itself.
 
 Never place a secret, token, or copied vulnerable value in the block — it inherits the same
 sanitization rule as every other posted artifact.
+
+Later head drift never rewrites this record. After CI the orchestrator posts the separate versioned
+[cycle credit event](../../../../repo-governance/workflows/pr/pr-review-quality-gate/cycle-non-credit-record.md):
+positive for every clean cycle, ineligible for drift. Hydration reads it alongside the review.
 
 ## Enforcement
 

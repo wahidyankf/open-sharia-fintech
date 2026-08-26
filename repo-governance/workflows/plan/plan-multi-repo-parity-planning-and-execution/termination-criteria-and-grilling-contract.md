@@ -7,11 +7,12 @@ when_to_use: Use when determining the composite's final status, or confirming wh
 # Termination Criteria
 
 - **Success** (`pass`): every plan gated to double-zero, executed to zero findings, archived,
-  pushed, CI green in every repo; sibling links repaired; every worktree cleaned up or retained
-  by explicit user choice
+  pushed, CI green in every repo; sibling links repaired; every exact identity-recorded worktree
+  immediately removed after delivered/merged, clean/idle, and no-unpushed proof
 - **Partial** (`partial`): planning phase succeeded but at least one repo's execution ended
   `partial`/`fail`, or a delivery target was not reached; completed repos remain archived,
-  failing repos keep their plan in `plans/in-progress/` and their worktree intact
+  failing repos keep their plan in `plans/in-progress/` and their worktree intact with evidence
+  and escalation. A cleanup-precondition failure is never a user-choice retention or `pass` path.
 - **Failure** (`fail`): the planning phase failed, the phase gate found a repo not
   execution-ready, or the invoker abandoned any of the three grills
 
@@ -35,8 +36,9 @@ This composite is intentionally exhaustive: **three grill sessions, all hard gat
 2. **Post-research grill** (planning Step 5): research findings validated against the decisions —
    no authoring on stale assumptions.
 3. **Pre-execution grill** (composite Step 3): execution order, failure policy, open design
-   decisions, `[HUMAN]` availability, and worktree cleanup preference — no execution on
-   unconfirmed operational decisions.
+   decisions, and `[HUMAN]` availability — no execution on unconfirmed operational decisions.
+   Cleanup is not grilled: eligible exact identity-recorded worktrees are removed immediately; failed
+   preconditions retain evidence and escalate.
 
 Every question follows the
 [Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md). "We

@@ -14,7 +14,7 @@ when_to_use: Use when navigating from plan-takeover-execution to a workflow or c
 - [Multi-Plans Execution](../multi-plans-execution.md) — the sibling scheduling-layer workflow, for
   executing several distinct plans together rather than reconciling one plan's scattered state.
 - [Worktree and Artifact Cleanup Convention](../../../development/workflow/worktree-and-artifact-cleanup.md) —
-  the five-check pre-removal sequence and branch/build-artifact cleanup rules Phase D applies without
+  the six-check pre-removal sequence and branch/build-artifact cleanup rules Phase D applies without
   modification.
 - [No Destructive Git Operations Convention](../../../development/workflow/no-destructive-git-operations.md) —
   bounds every action Phase C and Phase D may take; the "verify, never assume idle" standard both

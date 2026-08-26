@@ -21,6 +21,8 @@ Two planning-side obligations follow, and they apply to every plan without excep
 - **A plan never authorizes touching paths outside its own footprint.** Encountering another actor's
   in-flight work is an expected condition, not an anomaly to tidy up: leave it, and say so.
 
+The ledger never proves worktree path, branch, or creation ownership; those belong in the plan's
+[Provisioned Worktree Identity](../../../conventions/structure/plans/worktree-specification.md#worktree-identity-record).
 The full standard — the ledger, its compaction-survival requirement, degraded mode when it is lost,
 and the rule that generated harness mirrors ship in their source's commit — is
 [File-Touch Discipline](../../../development/practice/file-touch-discipline.md).

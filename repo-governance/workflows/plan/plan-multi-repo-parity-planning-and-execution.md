@@ -1,10 +1,10 @@
 ---
 name: plan-multi-repo-parity-planning-and-execution
 title: "plan-multi-repo-parity-planning-and-execution"
-description: End-to-end composite that plans then executes a cross-repo parity objective in one run.
+description: Plans and executes a cross-repo parity objective in one run.
 when_to_use: Use when a cross-repo objective should be planned AND delivered in one continuous run.
 goal: Author aligned-but-deliberately-divergent plans across sibling repositories for a shared objective, then execute every resulting plan to zero-findings completion and archival — one end-to-end orchestration from idea to delivered parity
-termination: "Every parity plan passes plan-quality-gate (double-zero), every plan executes to zero findings via plan-execution, every plan is archived to plans/done/ in its repo with all work pushed, and every plan worktree is cleaned up (or retained by explicit user choice)"
+termination: "Every plan passes double-zero, executes to zero findings, and is archived with work pushed. Each exact identity-recorded worktree is immediately removed after delivered/merged, clean/idle, and no-unpushed proof; failure retains evidence and escalates."
 inputs:
   - name: objective
     type: string

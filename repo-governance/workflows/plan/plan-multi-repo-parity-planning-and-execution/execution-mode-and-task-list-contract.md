@@ -24,8 +24,8 @@ User: "Run plan-multi-repo-parity-planning-and-execution for objective: standard
 ## Granular Task List Contract (Composite-Wide, Non-Negotiable)
 
 The harness Task list (`TaskCreate` / `TaskUpdate`) is the user's only real-time view of this
-long-running composite. It MUST stay granular, current, and in sync from the first survey to the
-last worktree cleanup prompt.
+long-running composite. It MUST stay granular, current, and in sync from the first survey through
+each repo's immediate, precondition-gated worktree cleanup.
 
 **Composite-level tasks** (created at workflow start):
 

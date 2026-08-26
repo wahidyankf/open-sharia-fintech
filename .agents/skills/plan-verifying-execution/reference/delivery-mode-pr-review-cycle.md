@@ -20,14 +20,15 @@ PR to be merged.
    - **PR's CI gates are green** on the current head SHA. Not green: **CRITICAL** — plan is not done,
      regardless of other criteria.
    - **Review loop ran and exited clean** — evidence of the PR-Review Maker→Fixer Cycle (strictly
-     sequential scout→fan-out→synthesis→fixer cycles, targeting 1–3 with focused recovery only in
-     4–5) actually executing. **Verify the outcome, not the count.** A green current head with no
-     blocking thread may merge; a low cycle count is correct. File:
+     sequential scout→fan-out→synthesis→fixer cycles, targeting 1–3 with focused recovery in
+     4–5 and later ordinals admitted only by an authenticated configured-ceiling extension)
+     actually executing. **Verify the outcome, not the count.** Two consecutive clean current-head
+     cycles under probe classes unused earlier on that PR may merge; a low count is correct. File:
      - No review-loop evidence at all: **CRITICAL**.
      - The last completed cycle left a code-related MEDIUM/HIGH/CRITICAL finding outstanding, or the
        loop reached its configured ceiling with one still open (status `blocked`): **CRITICAL** —
        a `blocked` route never merges, per merge preconditions (a) and (b).
-     - The loop started cycle 6: **HIGH**. When both this and the
+     - The loop started an ordinal above its authenticated configured ceiling: **HIGH**. When both this and the
        bullet above match, the **higher severity governs**: an outstanding finding is CRITICAL
        however many cycles ran, and the ceiling is never extended as a substitute for resolving
        a finding.

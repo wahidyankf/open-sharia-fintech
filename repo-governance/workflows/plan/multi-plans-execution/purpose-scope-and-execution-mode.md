@@ -14,7 +14,7 @@ set, (2) builds a dependency DAG that decides
 what must be sequenced and what is safe to parallelize, (3) materializes one very-granular Task list
 covering **every** delivery-checklist item across all plans, and (4) runs a bounded ready-queue
 scheduler that pulls independent delivery-step nodes and drives each plan through its full
-per-plan lifecycle (worktree → per-phase gates → post-push CI → validation → delivery-mode
+per-plan lifecycle (declared work location → gates → CI → validation → delivery-mode
 PR-review cycle → merge/handoff → archival), exactly as `plan-execution.md` does for one plan, and
 (5) after all plans finish, runs one **cross-plan learnings solidification** pass so the recurring and
 portfolio-level signal the plans produced _together_ reaches a durable home instead of being stranded

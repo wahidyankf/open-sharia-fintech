@@ -1,7 +1,7 @@
 ---
 title: "Plan Execution Workflow"
-description: "Executes a project plan end-to-end — orchestration, delegation, quality gates, iteration, archival — split into per-topic children."
-when_to_use: "Read this index to find the right Plan Execution Workflow child document."
+description: "Indexes end-to-end plan execution across its per-topic children."
+when_to_use: "Use to locate a plan-execution child document."
 ---
 
 # Plan Execution Workflow
@@ -45,9 +45,10 @@ when_to_use: "Read this index to find the right Plan Execution Workflow child do
 - [Rule-16 API Retest Gate](./finalization-rule16-api-retest.md) — An API feature-change plan approaches archival and must run its near-end exploratory retest gate.
 - [Knowledge Capture Gate](./finalization-knowledge-capture.md) — Confirming every learnings.md entry reached a terminal state before archival.
 - [PR-Review Maker→Fixer Cycle Gate](./finalization-pr-review-gate.md) — A \*-to-pr plan approaches archival and must complete its PR review cycle before merge.
+- [Paired-Repository Terminal Handoff](./finalization-paired-repository-terminal-handoff.md) — Post-merge sibling-handoff emission and authenticated read-back before successor scouting.
 - [Status Logic, Infra-Execution Gate, and Direct-Push Archival](./finalization-status-logic-and-infra-gate.md) — The pass/partial/fail branching and the Infra-Execution Gate precondition.
 - [Direct-Push Worktree Cleanup and PR-Mode Archival](./finalization-worktree-cleanup-and-pr-archival.md) — Worktree cleanup for direct-push modes, archival-in-PR for \*-to-pr modes.
-- [PR Merge, Cleanup, and Final Status](./finalization-pr-merge-and-final-status.md) — The PR-mode merge and prompted worktree-cleanup steps, and the final pass/partial/fail status determination.
+- [PR Merge, Cleanup, and Final Status](./finalization-pr-merge-and-final-status.md) — The PR-mode merge, safe immediate worktree cleanup, and final pass/partial/fail status determination.
 - [Task Management Rules](./task-management-rules-and-termination.md) — A compact reference for task-list discipline rules and the pass/partial/fail termination criteria.
 - [Example Usage](./example-usage-and-iteration-example.md) — Learning how to invoke plan execution with different arguments, or tracing a typical execute-validate cycle.
 - [Safety Features](./safety-features-and-plan-specific-validation.md) — Explaining what safety guarantees plan execution provides, or what the checker validates.

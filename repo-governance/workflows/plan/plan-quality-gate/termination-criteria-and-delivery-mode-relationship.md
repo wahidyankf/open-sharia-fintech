@@ -42,9 +42,9 @@ pushed, all PR gates GREEN, archival committed inside the PR — before the merg
 gates the plan document pre-execution; the PR-review cycle gates the delivered change pre-merge.
 
 **The hardened merge preconditions** that gate that eventual merge — **all five** required: (a) the
-PR's route is complete — an eligible PR targets cycles 1–3, uses cycles 4–5 only for focused
-recovery, and stops before cycle 6 with no code-related MEDIUM/HIGH/CRITICAL finding; a blocking
-finding after cycle 5 requires human direction. A noneligible PR has recorded classifier evidence
+PR's route is complete — an eligible PR targets cycles 1–3 and uses cycles 4–5 only for focused
+recovery. Five is the default ceiling; later cycles require human direction and an explicit durable
+per-PR extension record. A blocking finding at the configured ceiling prevents merge. A noneligible PR has recorded classifier evidence
 and a green `pr-quality-gate.yml` run;
 (b) 0 code-related CRITICAL + 0 HIGH + 0 MEDIUM findings outstanding;
 (c) the branch **up-to-date with the latest `origin/main`**, brought forward **non-destructively**

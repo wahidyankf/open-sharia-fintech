@@ -1,17 +1,21 @@
 ---
 title: "PR-Review Maker→Fixer Cycle Workflow"
-description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
-when_to_use: "Read this index to find the right PR-Review Maker→Fixer Cycle Workflow child document."
+description: "Indexes PR specialist review and CI-gated cycle records."
+when_to_use: "Use to locate a PR-review quality-gate child document."
 ---
 
 # PR-Review Maker→Fixer Cycle Workflow
 
 - [PR-Review Quality Gate — Purpose, Execution Mode, Classifier](./purpose-execution-mode-and-classifier.md) — States the workflow's purpose, sequential execution mode, and five-rule PR eligibility classifier.
 - [PR-Review Quality Gate — Participants](./participants.md) — Rosters the eleven pipeline agents — scout, nine discipline specialists, and the synthesis coordinator — plus the trivial-tier branch where the coordinator originates findings itself.
-- [PR-Review Quality Gate — Loop Algorithm](./loop-algorithm.md) — The pseudocode for the review_pr loop and its five governing rules: fixed N-cycle ceiling, fresh specialists per cycle, full-PR re-review, the hard CI-green gate, and AI-attribution footers.
+- [PR-Review Quality Gate — Loop Algorithm](./loop-algorithm.md) — Sequential review-loop pseudocode and governing rules.
+- [PR-Review Quality Gate — Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md) — Durable history and live-head gates.
+- [PR-Review Quality Gate — Cycle Record Authentication](./cycle-record-authentication.md) — Authenticates every API object before its marker or prose may influence durable review or paired-delivery state.
+- [PR-Review Quality Gate — Sibling-Handoff Record](./sibling-handoff-record.md) — Defines the complete v1 paired-repository schema, canonical example, and typed read-back freeze.
+- [PR-Review Quality Gate — Cycle Credit Record](./cycle-non-credit-record.md) — Persists positive clean credit and stale-head non-credit.
 - [PR-Review Quality Gate — Pipeline Diagrams](./pipeline-diagrams.md) — The two Mermaid diagrams for this workflow: the Participants flowchart (scout to fan-out to coordinator to fixer to CI) and the Loop Algorithm sequence diagram for one cycle.
-- [PR-Review Quality Gate — Steps 0-1: Classify and Scout Pass](./steps-0-1-classify-and-scout.md) — Step 0 (classify the PR and resolve loop inputs) and Step 1 (the per-cycle scout pass that produces risk tier, specialist set, and shared-context brief).
-- [PR-Review Quality Gate — Step 2: Fan-Out + Synthesis Pass](./step-2-fan-out-and-synthesis.md) — How the tier-selected specialists fan out concurrently and pr-review-synthesis-maker consolidates their raw findings into exactly ONE posted review, including the trivial-tier branch.
+- [PR-Review Quality Gate — Steps 0-1: Classify and Scout Pass](./steps-0-1-classify-and-scout.md) — Scout outputs: route, set, context, probe class, prior-use.
+- [PR-Review Quality Gate — Step 2: Fan-Out + Synthesis Pass](./step-2-fan-out-and-synthesis.md) — Dispatches route-selected specialists and consolidates one review, including the trivial branch.
 - [PR-Review Quality Gate — Steps 3-5: Fixer, CI Gate, and Done-Definition Check](./steps-3-5-fixer-ci-gate-done-check.md) — Step 3 (fixer triage/push/reply/resolve), Step 4 (the hard per-cycle CI-green gate), and Step 5 (the orchestrator's done-definition check that emits final-status).
 - [PR-Review Quality Gate — GitHub Reviews API Mechanics (Part 1)](./github-reviews-api-mechanics-part-1.md) — Why the pipeline uses the line-anchored Reviews API instead of top-level comments, and the mechanics of the once-per-cycle head SHA, deriving anchors from it, and posting one consolidated review.
 - [PR-Review Quality Gate — GitHub Reviews API Mechanics (Part 2)](./github-reviews-api-mechanics-part-2.md) — The remaining Reviews API mechanics: replying and resolving threads, filtering untrusted PR-body/comment text for prompt-injection, minimal write scope, and the GraphQL casing spot-check note.
@@ -21,12 +25,12 @@ when_to_use: "Read this index to find the right PR-Review Maker→Fixer Cycle Wo
 - [PR-Review Quality Gate — Review STATE Is Never the Gate](./review-state-is-never-the-gate.md) — Why every review this workflow posts lands as COMMENT, and why blocking status is read from the finding's severity label rather than GitHub's review STATE field.
 - [PR-Review Quality Gate — Scope-Deferral Is the Only Other Exit](./scope-deferral-exit.md) — How a valid finding deferred on scope grounds leaves the outstanding ledger, so the loop can still reach a clean exit.
 - [PR-Review Quality Gate — Scope Guard: The Loop Never Widens the PR](./scope-guard-no-scope-creep.md) — Why review cycles may never enlarge the PR they review, the Why-statement anchor that makes scope falsifiable, the binding on specialists/coordinator/fixer, and the introduced-defect exception.
-- [PR-Review Quality Gate — Loop-Exit and Block Rules](./loop-exit-and-block-rules.md) — The six rules governing when the loop exits done, when it captures non-convergence learning, and when it blocks at the ceiling — including the correction-record freeze, the repeated-rejection rule, and the CI-wait rule.
+- [PR-Review Quality Gate — Loop-Exit and Block Rules](./loop-exit-and-block-rules.md) — The seven rules governing clean exit, paired delivery, non-convergence learning, and ceiling blocking — including correction-record freeze, disposition carry-forward, and CI-wait discipline.
 - [PR-Review Quality Gate — Convergence Measurement](./convergence-measurement.md) — How the loop distinguishes genuine convergence from its own exhaust: the three cause tags carried on every disposition, the two series they produce, and the every-third-cycle checkpoint that reads them.
 - [PR-Review Quality Gate — Probe Variation and What Makes a Cycle Clean](./probe-variation-and-exit.md) — The probe-class register, and the two-clean-cycle exit rule.
 - [PR-Review Quality Gate — Restatement by Value](./restatement-by-value.md) — The single largest defect class measured in this loop — one fact written in more than one place and edited in one of them — and why deleting the duplicate is the fix and syncing it is not.
 - [PR-Review Quality Gate — What Code-Related Means](./what-code-related-means.md) — Defines the code-related qualifier gating the loop's exit, its ceiling block, and merge precondition (b), so a prose-only PR is not accidentally exempt.
 - [PR-Review Quality Gate — Applicability](./applicability.md) — Confirms this workflow is mandatory for every open PR, that it never runs against a plan's Phase 0 (which opens no PR), and that it runs once per delivery boundary, not once per phase.
 - [PR-Review Quality Gate — Related Workflows and Success Metrics](./related-workflows-and-success-metrics.md) — How this workflow composes with plan-execution and plan-quality-gate, and the four success metrics tracked across executions (cycles to clean exit, non-convergence rate, findings trend, CI-green time).
-- [PR-Review Quality Gate — Notes](./notes.md) — Operating notes: strictly-sequential is a hard requirement, seven is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern.
+- [PR-Review Quality Gate — Notes](./notes.md) — Operating notes: strictly-sequential is a hard requirement, five is a ceiling not a target, AI-attribution posting identity, the eleven live pipeline agents, why extra cycles never waive a finding, and the sibling-PR staleness pattern.
 - [PR-Review Quality Gate — Principles and Conventions Implemented/Respected](./principles-and-conventions.md) — The five principles (Explicit Over Implicit, Root Cause Orientation, Accessibility First, No Time Estimates, Simplicity Over Complexity) and five conventions this workflow implements.

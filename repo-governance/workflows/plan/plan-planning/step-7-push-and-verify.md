@@ -19,12 +19,22 @@ Commit and push the plan to the confirmed target, then remove the worktree.
 4. Monitor GitHub Actions: `gh run list --limit 5` — verify all workflows triggered by the push
    complete with `completed/success` conclusion.
 5. If a CI workflow fails: diagnose root cause, fix, push a follow-up commit, re-monitor
-6. After CI passes, remove the worktree from the repo root:
+6. After CI passes, resolve the exact worktree path from the plan's Provisioned Worktree Identity and
+   reconcile it with `git worktree list --porcelain`. Inventory every plan-created and current branch.
+   Continue only if the identity matches, the exact worktree is clean and idle, no inventoried branch
+   is unpushed, and each direct-push delivery reached `origin/main` with no open PR. For any PR-mode
+   branch, its merged PR reviewed head must equal its recorded inventory SHA and either its live
+   `origin/<branch>` must match or GitHub must verify automatic deletion under an enabled
+   `delete_branch_on_merge` setting; retain and escalate any other missing/mismatched proof. Do not
+   use `origin/main` ancestry for a squash-merged PR branch. When every check passes, remove the exact
+   path immediately, without a further prompt, using non-force removal:
 
    ```bash
-   git worktree remove worktrees/<identifier>
-   git branch -d <identifier>
+   git worktree remove <exact-plan-worktree-path>
    ```
+
+   Then follow canonical branch cleanup. If any check or removal fails, retain the worktree,
+   surface the evidence, and escalate; never force removal.
 
 7. Emit a user-visible summary: plan path, quality gate status, push target, CI status
 
