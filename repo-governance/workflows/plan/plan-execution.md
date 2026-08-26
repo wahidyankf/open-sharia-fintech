@@ -1,8 +1,8 @@
 ---
 name: plan-execution
 title: "plan-execution"
-description: Executes a project plan end-to-end — orchestration, delegation, quality gates, iteration, archival — split into per-topic children.
-when_to_use: Use when executing a plan, or looking up one step (worktree entry, a quality gate, finalization) of that execution.
+description: Indexes end-to-end plan execution across per-topic children.
+when_to_use: Use when executing a plan or locating one execution step.
 goal: Execute a project plan, validate its completion and quality, then iteratively continue until all requirements are met and archive to plans/done/
 termination: Zero findings remain after validation and plan moved to done/
 inputs:
@@ -85,6 +85,7 @@ outputs:
 - [Status/Infra Gate](./plan-execution/finalization-status-logic-and-infra-gate.md) — pass/fail.
 - [Cleanup/Archival](./plan-execution/finalization-worktree-cleanup-and-pr-archival.md) — archival-in-PR.
 - [PR Merge/Status](./plan-execution/finalization-pr-merge-and-final-status.md) — merge/cleanup.
+- [Paired Handoff](./plan-execution/finalization-paired-repository-terminal-handoff.md) — successor pin.
 - [Task Rules](./plan-execution/task-management-rules-and-termination.md) — termination.
 - [Example Usage](./plan-execution/example-usage-and-iteration-example.md) — invocations.
 - [Safety Features](./plan-execution/safety-features-and-plan-specific-validation.md) — checker scope.

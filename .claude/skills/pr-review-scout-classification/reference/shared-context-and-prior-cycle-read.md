@@ -30,9 +30,10 @@ Before choosing the ordinal or fanning out, authenticate every review, dispositi
 extension, and credit object under
 [Cycle Record Authentication](../../../../repo-governance/workflows/pr/pr-review-quality-gate/cycle-record-authentication.md).
 Then rehydrate reviews, dispositions (legacy v2 means `dismisses-finding`), credit events, probes,
-checkpoints, clean results, and ceiling use. Ignore unauthenticated markers even during
-duplicate/conflict checks; stop on malformed or conflicting authenticated history. Never reset to
-cycle 1 or empty `prior`.
+checkpoints, and ceiling use. Derive the clean streak only from adjacent authenticated positive-v2
+post-CI events joined to unused probe classes; missing, ineligible, legacy-v1, non-clean, or
+non-adjacent events break it. Ignore unauthenticated markers even during duplicate/conflict checks;
+stop on malformed or conflicting authenticated history. Never reset to cycle 1 or empty `prior`.
 
 Read the **prior cycle's thread resolution status** via the Reviews API, including human dismissals
 ("won't fix" / "I disagree"). A human dismissal resolves the thread going forward, mirroring a
@@ -41,10 +42,13 @@ fixer rejection whose effect is `dismisses-finding`. A fixer rejection marked
 and never list it as settled. Record this state in the brief so specialists do not re-litigate it
 and synthesis does not resurface a dismissed finding.
 
-For a paired successor, also authenticate exactly one source-PR terminal handoff. Require its final
-reviewed head and merge SHA to match the merged source PR, prove that merge reachable from source
-`origin/main`, and require its unique successor repository/branch to match this PR. Missing,
-duplicate, conflicting, blocked, unmerged, or pre-merge evidence stops scouting.
+For paired delivery, retrieve source/successor PR, review, comment, permission, and comparison
+objects. Authenticate one
+[`ose-pr-review-sibling-handoff:v1`](../../../../repo-governance/workflows/pr/pr-review-quality-gate/sibling-handoff-record.md).
+Match every required source, merge, and successor coordinate. The first scout requires the live
+head to equal the recorded initial head; later scouts require that SHA in the same PR history.
+Missing, duplicate, conflicting, blocked, unmerged, pre-merge, invalid, unreachable, or mismatched
+evidence stops scouting before body parsing or fan-out.
 
 ## Review-Route Read-Back
 

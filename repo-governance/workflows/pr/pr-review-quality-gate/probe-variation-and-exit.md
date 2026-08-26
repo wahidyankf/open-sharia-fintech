@@ -35,6 +35,10 @@ that PR.** One clean cycle is evidence about one question. Two clean cycles unde
 classes is the weakest available evidence that the questions have run out, and it is still weak —
 a stopping rule, not a proof of correctness.
 
+Each clean result exists only when its authenticated positive post-CI
+[Cycle Credit Record](./cycle-non-credit-record.md) exists. Restart hydration never infers either
+member of the pair from review prose, resolved threads, or a green check observed later.
+
 It does not change the cycle ceiling, which bounds effort rather than measuring convergence, and
 which is [extended only per-PR](./convergence-measurement.md).
 

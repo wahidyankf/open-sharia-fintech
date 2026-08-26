@@ -10,7 +10,8 @@ when_to_use: "Use before starting or resuming a review cycle, and at every bound
 
 The pull request is the durable review record. On first entry and after interruption, read its
 `ose-pr-review:v1` reviews, `ose-pr-review-disposition:v3` replies (plus legacy v2),
-`ose-pr-review-cycle-credit:v1` events, thread state, route record, and current checks. Reconstruct:
+`ose-pr-review-cycle-credit:v2` events (plus legacy negative v1), thread state, route record, and
+current checks. Reconstruct:
 
 - the last used cycle ordinal and configured ceiling;
 - the complete probe-class register;
@@ -41,7 +42,7 @@ forbidden. Before posting, discard output without a review or ordinal. After pos
 makes no code change and closes any obsolete threads with disposition v3
 `effect: stale-cycle-only`; the orchestrator posts the independent
 [cycle non-credit event](./cycle-non-credit-record.md), even when the review has zero threads.
-After CI, the orchestrator posts the same event at the `post-ci` boundary and restarts. For
+After CI, the orchestrator posts the same `ineligible` event at the `post-ci` boundary and restarts. For
 current-head suppression, every disposition from that now-ineligible cycle is treated as
 `stale-cycle-only`, regardless of its recorded effect; the record remains immutable, but every
 affected claim returns to the fresh scout. Each event withholds clean/done credit, breaks the clean
@@ -50,3 +51,7 @@ underlying claim for fresh-head evaluation.
 
 These checks do not replace CI. They prove that routing, security review, fixes, and clean credit
 all refer to the same commit that the specialists actually reviewed.
+
+When all post-CI clean conditions hold, emit and read back the authenticated positive v2 event
+defined in [Cycle Credit Record](./cycle-non-credit-record.md) before continuing or returning done.
+Hydration derives clean streaks only from those positive events; absence of findings is not credit.

@@ -1,7 +1,7 @@
 ---
 title: "PR-Review Maker→Fixer Cycle Workflow"
-description: "Classify every PR by changed-artifact behavior, then run sequential specialist-review cycles only for an eligible PR, CI-green gated between cycles."
-when_to_use: "Read this index to find the right PR-Review Maker→Fixer Cycle Workflow child document."
+description: "Indexes PR specialist review and CI-gated cycle records."
+when_to_use: "Use to locate a PR-review quality-gate child document."
 ---
 
 # PR-Review Maker→Fixer Cycle Workflow
@@ -11,7 +11,8 @@ when_to_use: "Read this index to find the right PR-Review Maker→Fixer Cycle Wo
 - [PR-Review Quality Gate — Loop Algorithm](./loop-algorithm.md) — Sequential review-loop pseudocode and governing rules.
 - [PR-Review Quality Gate — Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md) — Durable history and live-head gates.
 - [PR-Review Quality Gate — Cycle Record Authentication](./cycle-record-authentication.md) — Authenticates every API object before its marker or prose may influence durable review or paired-delivery state.
-- [PR-Review Quality Gate — Cycle Non-Credit Record](./cycle-non-credit-record.md) — Marks posted stale-head cycles non-crediting.
+- [PR-Review Quality Gate — Sibling-Handoff Record](./sibling-handoff-record.md) — Defines the complete v1 paired-repository schema, canonical example, and typed read-back freeze.
+- [PR-Review Quality Gate — Cycle Credit Record](./cycle-non-credit-record.md) — Persists positive clean credit and stale-head non-credit.
 - [PR-Review Quality Gate — Pipeline Diagrams](./pipeline-diagrams.md) — The two Mermaid diagrams for this workflow: the Participants flowchart (scout to fan-out to coordinator to fixer to CI) and the Loop Algorithm sequence diagram for one cycle.
 - [PR-Review Quality Gate — Steps 0-1: Classify and Scout Pass](./steps-0-1-classify-and-scout.md) — Scout outputs: route, set, context, probe class, prior-use.
 - [PR-Review Quality Gate — Step 2: Fan-Out + Synthesis Pass](./step-2-fan-out-and-synthesis.md) — Dispatches route-selected specialists and consolidates one review, including the trivial branch.

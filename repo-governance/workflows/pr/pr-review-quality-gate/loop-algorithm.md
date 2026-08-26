@@ -42,6 +42,7 @@ review_pr(PR, maximum_cycles = 5):          # default ceiling; durable per-PR ex
         unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
         if unresolved is empty and probe_class_is_new(cycle, prior):
             require expected_head == scout.head_sha # a fix-bearing cycle is not clean
+            emit_and_read_back_positive_credit_v2(cycle, scout.head_sha, immutable_CI_evidence)
             if previous_cycle_was_clean_under_a_new_class(prior):
                 return done             # second consecutive clean cycle; LOW findings never hold the loop open
         if cycle % 3 == 0:

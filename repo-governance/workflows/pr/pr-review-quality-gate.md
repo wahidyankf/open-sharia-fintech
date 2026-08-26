@@ -41,7 +41,8 @@ outputs:
 - [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode.
 - [Cycle Recovery](./pr-review-quality-gate/cycle-authority-and-restart-recovery.md) — durable history, live-head gates.
 - [Cycle Record Authentication](./pr-review-quality-gate/cycle-record-authentication.md) — API provenance before hydration.
-- [Cycle Credit](./pr-review-quality-gate/cycle-non-credit-record.md) — posted-cycle credit state.
+- [Cycle Credit](./pr-review-quality-gate/cycle-non-credit-record.md) — durable clean and stale-cycle credit state.
+- [Sibling Handoff](./pr-review-quality-gate/sibling-handoff-record.md) — immutable successor record.
 - [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants and one-cycle diagrams.
 
 ### Steps

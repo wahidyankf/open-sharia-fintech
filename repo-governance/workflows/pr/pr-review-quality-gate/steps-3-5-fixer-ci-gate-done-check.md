@@ -31,22 +31,23 @@ when_to_use: "Use when checking what the fixer must do per unresolved thread, wh
   successful `.github/workflows/pr-quality-gate.yml` run for the current head
 - **Credit gate**: Require CI and live head to match the fixer's verified pushed head, or the scout
   pin when no fix was pushed. Only the latter can receive clean credit. A mismatch posts the
-  [cycle non-credit event](./cycle-non-credit-record.md) before restart, including zero findings.
+  [ineligible credit event](./cycle-non-credit-record.md) before restart. Post and read back every
+  clean cycle's positive event before continuing or `done`.
 - **On failure**: fix code failures; investigate queued or stalled jobs and keep polling. Do not
   start the next cycle before green.
 
-## 5. Done-Definition Check (Sequential, After the Route Completes)
+## 5. Done-Definition Check
 
 - **Agent**: Orchestrator
-- **Args**: Cycle count completed, thread resolution state, gate status, archival-commit presence
+- **Args**: Cycle count, thread state, gate status, archival-commit presence
   (when invoked from `plan-execution.md` Step 8)
 - **Output**: `{output.final-status}` (`done`, `blocked`, or `not-applicable`), `{output.cycles-completed}`,
   `{output.unresolved-threads}`
 - **Success criteria**: every item in the
   [Route-Specific Done-Definition](./route-specific-done-definition.md#route-specific-done-definition)
-- **Traceability (every cycle)**: reviews carry `ose-pr-review:v1`; fixer replies carry
-  `ose-pr-review-disposition:v3`; stale cycles carry `ose-pr-review-cycle-credit:v1`. These
-  versions are normative; history-affecting field changes require a version bump here. See
+- **Traceability**: reviews use `ose-pr-review:v1`; replies use
+  `ose-pr-review-disposition:v3`, and new credit events use `ose-pr-review-cycle-credit:v2`.
+  Legacy credit v1 is negative-only. History-affecting field changes require a version bump. See
   [machine-readable-audit-record.md](../../../../.claude/skills/pr-review-synthesis-coordination/reference/machine-readable-audit-record.md).
   Hydrate legacy disposition v2 without `effect` as `dismisses-finding`.
 - **Execution safety (normative by reference)**: the fixer holds `Edit`/`Write`/`Bash` and reads

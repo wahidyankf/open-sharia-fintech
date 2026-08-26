@@ -43,8 +43,10 @@ trivial-tier handoff, and the four-part output contract.
 Before handing off the brief, make sure the PR body has a current-head route record: frozen
 outcome/scope, classification evidence, risk, selected/skipped specialists with reasons, current
 checks, settled history, and a changed probe. For a paired public/private delivery, authenticate
-the source PR's sole post-merge terminal handoff and source-main reachability; freeze a missing,
-duplicate, conflicting, blocked, unmerged, pre-merge, or mismatched successor.
+the source PR's sole post-merge `ose-pr-review-sibling-handoff:v1` through typed API objects. Match
+every required source/merge and successor PR/base/head/branch field, including source-main
+reachability and first-scout initial-head equality; freeze a missing, duplicate, conflicting,
+blocked, unmerged, pre-merge, schema-invalid, unreachable, or mismatched record.
 
 ## When to Use This Agent
 

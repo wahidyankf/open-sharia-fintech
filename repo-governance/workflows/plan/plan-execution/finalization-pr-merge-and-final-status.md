@@ -10,7 +10,12 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
    that case, hand off the ready-to-merge PR and STOP instead of merging. The preconditions are
    identical in both cases; only the actor differs. See
    [Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
-2. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
+2. **Paired-repository terminal handoff (when applicable)**: after the source merge and after opening
+   the successor PR, complete the
+   [authenticated terminal-handoff procedure](./finalization-paired-repository-terminal-handoff.md)
+   before any successor scout runs.
+
+3. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
    1. Resolve the exact path and branch from the plan's file-touch ledger. Continue only when that
