@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="src/Convention.fs" />
+    <Compile Include="src/Parity.fs" />
   </ItemGroup>
 
   <ItemGroup>

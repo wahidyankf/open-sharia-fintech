@@ -70,6 +70,29 @@ green post-merge `pr-quality-gate.yml` runs exist — see the dated `learnings.m
 `†` — pre-removal baseline (79 crates, tree-sitter still linked), retained only for B7; see
 "Baseline provenance" above. All other rows are post-removal, `†`-free figures.
 
+## Interim measurement: after wave A
+
+A running checkpoint, not a Phase 10 figure — B5/B6's `After (F#)` cells above are left exactly as
+seeded until every wave has flipped. Same methodology as the Phase 0/Phase 1 measurements above: Python
+`time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against the published
+self-contained `dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures in
+either repo), `/usr/bin/time -p` for B6 (one full `.husky/pre-commit` against the same pinned
+staged set as Phase 0 — a single new `apps/rhino-cli/bench-probe.md` holding one heading and one
+paragraph, staged, hook run, then the file removed and the index reset). Taken once `convention`
+and `parity` were the only namespaces in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public | ose-private |
+| ------------------------ | ---------- | ----------- |
+| B5 — startup, mean of 50 | 33.94 ms   | 37.13 ms    |
+| B6 — full pre-commit     | 3.85 s     | 3.01 s      |
+
+Both B6 figures are markedly faster than their Phase 0 Rust baselines (14.24 s / 13.18 s) — this
+reflects only two of nine namespaces routing through the CLI-layer work this wave adds, not yet a
+directional signal on the Rust-vs-F# question Phase 10 answers; most of `.husky/pre-commit`'s own
+gates are unrelated to `rhino-cli` invocation count. Both B5 figures are 4-5x their Phase 1 spike's
+self-contained non-AOT figure (200.84 ms) — consistent with the spike's harness being uninstructive
+about a real, small dispatch surface's startup cost, not a regression.
+
 Verdict is filled at Phase 10 with `better` / `worse` / `unchanged` plus the absolute delta, per
 repository. No row is dropped for being unfavourable to F#.
 
