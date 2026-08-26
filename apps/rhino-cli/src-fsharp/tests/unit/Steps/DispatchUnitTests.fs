@@ -179,3 +179,127 @@ let ``route surfaces a parity validate failure for a non-git repoRoot`` () =
     let code, _, err = runCaptured (okRoot root) [| "parity"; "manifest"; "validate" |]
     Assert.Equal(1, code)
     Assert.StartsWith("Error: ", err)
+
+// ---- repo-config validate ----
+
+[<Fact>]
+let ``route passes repo-config validate for a schema-clean fixture`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness:\n  - name: probe\n    tier: source\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "repo-config"; "validate" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("matches the canonical schema", out)
+
+[<Fact>]
+let ``route fails repo-config validate and lists the finding`` () =
+    let root = newTempDir ()
+
+    writeFile
+        root
+        "repo-config.yml"
+        "harness:\n  - name: probe\n    tier: source\n    ownership:\n      - { path: somewhere, class: vendored, reason: \"\" }\n"
+
+    let code, out, err =
+        runCaptured (okRoot root) [| "repo-config"; "validate"; "-o"; "json" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("required non-empty value", out)
+    Assert.Contains("Error: repo-config validate: 1 schema finding(s)", err)
+
+[<Fact>]
+let ``route surfaces a repo-config validate schema failure to stderr only`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness: \"not-a-list\"\n"
+
+    let code, out, err = runCaptured (okRoot root) [| "repo-config"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Equal("", out)
+    Assert.StartsWith("Error: repo-config validate: repo-config.yml failed strict schema deserialization", err)
+
+// ---- env init ----
+
+[<Fact>]
+let ``route creates a env local file from a discovered example`` () =
+    let root = newTempDir ()
+    writeFile root "apps/foo/.env.example" "X=1\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "init" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Created: apps/foo/.env.local", out)
+    Assert.True(File.Exists(Path.Combine(root, "apps", "foo", ".env.local")))
+
+[<Fact>]
+let ``route skips an existing env local file without --force`` () =
+    let root = newTempDir ()
+    writeFile root "apps/foo/.env.example" "X=1\n"
+    writeFile root "apps/foo/.env.local" "X=0\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "init" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Skipped: apps/foo/.env.local", out)
+
+// ---- env backup / env restore ----
+
+[<Fact>]
+let ``route backs up a discovered env file to --dir`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; backupDir |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Backup complete", out)
+    Assert.True(File.Exists(Path.Combine(backupDir, ".env")))
+
+[<Fact>]
+let ``route restores a backed-up env file from --dir`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile backupDir ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "restore"; "--dir"; backupDir |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Restore complete", out)
+    Assert.True(File.Exists(Path.Combine(root, ".env")))
+
+[<Fact>]
+let ``route surfaces a env restore failure for a missing backup dir`` () =
+    let root = newTempDir ()
+    let missingDir = Path.Combine(newTempDir (), "does-not-exist")
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "env"; "restore"; "--dir"; missingDir |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("backup dir does not exist", err)
+
+// ---- env validate ----
+
+[<Fact>]
+let ``route passes env validate when the contract declares no surfaces`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "env-contract:\n  surfaces: []\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "validate" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("no drift detected", out)
+
+[<Fact>]
+let ``route surfaces a env validate contract-load failure`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness: []\n"
+
+    let code, _, err = runCaptured (okRoot root) [| "env"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("env-contract: section missing", err)

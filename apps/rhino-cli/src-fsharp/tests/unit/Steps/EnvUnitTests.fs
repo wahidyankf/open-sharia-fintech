@@ -567,6 +567,54 @@ let ``formatJson round-trips through JsonDocument`` () =
     Assert.Equal("backup", doc.RootElement.GetProperty("direction").GetString())
     Assert.Equal(2, doc.RootElement.GetProperty("copied").GetInt32())
 
+// Byte-identity with the Rust CLI's `serde(skip_serializing_if = ...)`
+// omissions [Repo-grounded — `backup.rs::JsonOut`/`JsonEntry`]: an empty
+// `errors`/`worktreeName` and a `false` `cancelled` are omitted from the
+// envelope; a zero `size`, `false` `skipped`, and empty `reason`/`source` are
+// omitted from each entry.
+[<Fact>]
+let ``formatJson omits empty errors, worktreeName, and cancelled`` () =
+    let s = formatJson (sampleResult ())
+    use doc = JsonDocument.Parse(s)
+    let root = doc.RootElement
+    Assert.False(fst (root.TryGetProperty("errors")))
+    Assert.False(fst (root.TryGetProperty("worktreeName")))
+    Assert.False(fst (root.TryGetProperty("cancelled")))
+
+[<Fact>]
+let ``formatJson includes errors, worktreeName, and cancelled when non-empty`` () =
+    let r =
+        { sampleResult () with
+            Errors = [ "copy .env: permission denied" ]
+            WorktreeName = "my-worktree"
+            Cancelled = true }
+
+    use doc = JsonDocument.Parse(formatJson r)
+    let root = doc.RootElement
+    Assert.Equal("my-worktree", root.GetProperty("worktreeName").GetString())
+    Assert.True(root.GetProperty("cancelled").GetBoolean())
+    Assert.Equal(1, root.GetProperty("errors").GetArrayLength())
+
+[<Fact>]
+let ``formatJson omits a zero size, false skipped, and empty reason and source per entry`` () =
+    let s = formatJson (sampleResult ())
+    use doc = JsonDocument.Parse(s)
+    let firstEntry = doc.RootElement.GetProperty("files").[0]
+    Assert.False(fst (firstEntry.TryGetProperty("skipped")))
+    Assert.False(fst (firstEntry.TryGetProperty("reason")))
+    Assert.False(fst (firstEntry.TryGetProperty("source")))
+
+[<Fact>]
+let ``formatJson includes a skipped entry's reason and a config entry's source`` () =
+    let s = formatJson (sampleResult ())
+    use doc = JsonDocument.Parse(s)
+    let files = doc.RootElement.GetProperty("files")
+    let skippedEntry = files.[1]
+    let configEntry = files.[2]
+    Assert.True(skippedEntry.GetProperty("skipped").GetBoolean())
+    Assert.Equal("exceeds 1 MB", skippedEntry.GetProperty("reason").GetString())
+    Assert.Equal("config", configEntry.GetProperty("source").GetString())
+
 [<Fact>]
 let ``formatMarkdown renders the report header and table`` () =
     let s = formatMarkdown (sampleResult ())

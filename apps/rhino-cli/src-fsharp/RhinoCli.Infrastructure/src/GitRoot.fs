@@ -38,3 +38,34 @@ let findRoot () : Result<string, string> =
                 Ok path
     with :? System.ComponentModel.Win32Exception as ex ->
         Error(sprintf "failed to invoke git rev-parse: %s" ex.Message)
+
+/// Runs `git diff --cached --name-only --diff-filter=AM` from `repoRoot` and
+/// returns the staged paths, one per line, blank lines dropped
+/// [Repo-grounded — `env_staged_guard.rs::run`].
+let getStagedFiles (repoRoot: string) : Result<string list, string> =
+    use proc = new Process()
+    proc.StartInfo.FileName <- "git"
+    proc.StartInfo.ArgumentList.Add("diff")
+    proc.StartInfo.ArgumentList.Add("--cached")
+    proc.StartInfo.ArgumentList.Add("--name-only")
+    proc.StartInfo.ArgumentList.Add("--diff-filter=AM")
+    proc.StartInfo.WorkingDirectory <- repoRoot
+    proc.StartInfo.RedirectStandardOutput <- true
+    proc.StartInfo.RedirectStandardError <- true
+    proc.StartInfo.UseShellExecute <- false
+
+    try
+        proc.Start() |> ignore
+        let stdout = proc.StandardOutput.ReadToEnd()
+        let stderr = proc.StandardError.ReadToEnd()
+        proc.WaitForExit()
+
+        if proc.ExitCode <> 0 then
+            Error(sprintf "git diff --cached failed: %s" (stderr.Trim()))
+        else
+            stdout.Split('\n')
+            |> Array.filter (fun line -> line <> "")
+            |> List.ofArray
+            |> Ok
+    with :? System.ComponentModel.Win32Exception as ex ->
+        Error(sprintf "failed to run git diff --cached: %s" ex.Message)
