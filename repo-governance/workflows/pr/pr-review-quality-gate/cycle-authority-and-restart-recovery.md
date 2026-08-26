@@ -18,7 +18,7 @@ The pull request is the durable review record. On first entry and after interrup
 - cycle-credit eligibility and the consecutive-clean-cycle streak; and
 - every convergence checkpoint and its verdict.
 
-Admit every review, disposition, extension, and credit object through
+Admit every review, disposition, extension, credit, non-convergence, and sibling-handoff object through
 [Cycle Record Authentication](./cycle-record-authentication.md) first. Unauthenticated marker text
 is ignored as state and during duplicate/conflict checks. Derive the next ordinal and ceiling only
 from admitted records; never initialize an existing PR as cycle 1 or `prior = []`. Stop when
@@ -41,9 +41,12 @@ forbidden. Before posting, discard output without a review or ordinal. After pos
 makes no code change and closes any obsolete threads with disposition v3
 `effect: stale-cycle-only`; the orchestrator posts the independent
 [cycle non-credit event](./cycle-non-credit-record.md), even when the review has zero threads.
-After CI, the orchestrator posts the same event at the `post-ci` boundary and restarts. Each event
-withholds clean/done credit, breaks the clean streak, and still consumes the posted ordinal and
-ceiling. `stale-cycle-only` preserves every underlying claim for fresh-head evaluation.
+After CI, the orchestrator posts the same event at the `post-ci` boundary and restarts. For
+current-head suppression, every disposition from that now-ineligible cycle is treated as
+`stale-cycle-only`, regardless of its recorded effect; the record remains immutable, but every
+affected claim returns to the fresh scout. Each event withholds clean/done credit, breaks the clean
+streak, and still consumes the posted ordinal and ceiling. `stale-cycle-only` preserves every
+underlying claim for fresh-head evaluation.
 
 These checks do not replace CI. They prove that routing, security review, fixes, and clean credit
 all refer to the same commit that the specialists actually reviewed.

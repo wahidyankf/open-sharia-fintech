@@ -1,6 +1,6 @@
 ---
 title: "Finalization and Archival — PR Merge, Cleanup, and Final Status"
-description: Defines the PR-mode merge and prompted worktree-cleanup steps, and the final pass/partial/fail status determination.
+description: Defines the PR-mode merge and immediate safe worktree-cleanup steps, and the final pass/partial/fail status determination.
 when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree afterward, or determining the plan's final status.
 ---
 
@@ -10,32 +10,29 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
    that case, hand off the ready-to-merge PR and STOP instead of merging. The preconditions are
    identical in both cases; only the actor differs. See
    [Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
-2. **Worktree cleanup — prompted (after the merge completes)**: once the PR is confirmed
-   merged, offer to delete the plan's worktree, using the same safety preconditions and
-   prompt mechanics as the direct-push path, but gated on merge completion instead of push
-   completion:
-   1. **Verify nothing unpushed and the merge landed** (safety precondition):
+2. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
+   clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
+   so this step is N/A for that mode.
+   1. Resolve the exact path and branch from the plan's file-touch ledger. Continue only when that
+      record proves this plan created the worktree; never derive ownership from a familiar path.
+   2. Apply the canonical
+      [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
+      GitHub reports the branch PR merged, the exact worktree is clean and idle, and no commit is
+      unpushed. Do not substitute commit ancestry for the PR merge check because these repositories
+      squash-merge.
+   3. When every check passes, remove the exact path immediately without another confirmation
+      prompt, from the repository root:
 
       ```bash
-      git -C worktrees/<plan-identifier> status --porcelain   # must be empty
-      git fetch origin
-      git merge-base --is-ancestor "$(git -C worktrees/<plan-identifier> rev-parse HEAD)" origin/main   # must succeed, post-merge
+      git worktree remove <exact-plan-worktree-path>
       ```
 
-      If either check fails, do NOT offer deletion — surface what is uncommitted or unmerged and keep the worktree.
+      Use the non-force command only, then apply the canonical
+      [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md)
+      procedure to this plan's verified branches.
 
-   2. **Prompt the user** (interactive question — this is a sanctioned stop): `PR merged. Delete worktree worktrees/<plan-identifier>/ and its local branch?` NEVER delete the worktree without explicit user confirmation, and never before the merge is confirmed.
-   3. **On approval**, from the repo root:
-
-      ```bash
-      git worktree remove worktrees/<plan-identifier>
-      git worktree prune
-      git branch -d <plan-identifier> 2>/dev/null || true   # safe delete; only succeeds when fully merged
-      ```
-
-      If `git worktree remove` refuses (unexpected dirty state), do NOT force — re-run the safety precondition and escalate to the user.
-
-   4. **On decline**: keep the worktree and emit one line: `Worktree retained at worktrees/<plan-identifier>/ per user choice.`
+   4. If any check or removal fails, retain the worktree, surface the evidence, and escalate. Never
+      force removal or silently discard dirty, unpushed, unmerged, or another actor's work.
 
 - If status is `partial` or `fail`: Leave plan in current location, do NOT archive, and do NOT delete the worktree — in-flight work stays available for the next execution attempt
 

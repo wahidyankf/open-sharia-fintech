@@ -18,9 +18,10 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
   fan out, and `pr-review-synthesis-maker` posts one consolidated set of
   line-anchored findings against the PR's current head commit via the GitHub Reviews API, a
   `pr-review-fixer` triages and resolves every unresolved thread, and CI on the PR must be GREEN
-  before the next cycle starts. The ceiling is not a floor: stop when the current head is green and has
-  no blocking thread; do not spend an extra clean cycle merely to reach a count. See the linked workflow for
-  full Loop Algorithm, posting mechanics, and loop-exit rules.
+  before the next cycle starts. The ceiling is not a floor: stop only after two consecutive clean
+  cycles, each on the current head under a probe class unused earlier on that PR. Do not continue
+  after that exit merely to reach a target count. See the linked workflow for the full Loop
+  Algorithm, posting mechanics, and loop-exit rules.
 - **Done-definition for `*-to-pr` modes**: the workflow's own
   [Route-Specific Done-Definition](../../pr/pr-review-quality-gate/route-specific-done-definition.md)
   is normative and is not restated here — satisfy every item it lists, including archival-in-PR

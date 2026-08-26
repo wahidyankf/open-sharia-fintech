@@ -1,6 +1,6 @@
 ---
 title: "PR-Review Quality Gate — Loop-Exit and Block Rules"
-description: "The six rules governing when the loop exits done, when it captures non-convergence learning, and when it blocks at the ceiling — including the correction-record freeze, the repeated-rejection rule, and the CI-wait rule."
+description: "The seven rules governing clean exit, paired delivery, non-convergence learning, and ceiling blocking — including correction-record freeze, disposition carry-forward, and CI-wait discipline."
 when_to_use: "Use when determining whether the loop should exit, keep iterating, or block, or when writing a non-convergence learning entry."
 ---
 
@@ -19,16 +19,17 @@ when_to_use: "Use when determining whether the loop should exit, keep iterating,
   The test is authorship, not path; the PR body remains reviewable. A shipping-artifact defect is
   never suppressed.
 
-- **Paired-repository handoff**: when a reviewed public rule has a private counterpart, the public
-  PR publishes one terminal handoff before private review. The private artifact records
-  satisfaction, reasoned deviation, or one bounded correction request; a second reversal freezes
-  the pair for human judgment.
+- **Paired-repository handoff**: private scouting starts only after the public PR is merged and its
+  merge SHA is reachable from public `origin/main`. The public PR then holds exactly one
+  authenticated terminal handoff pinned to its final reviewed head, merge SHA, and unique private
+  successor repository/branch. Missing, duplicate, conflicting, or pre-merge evidence freezes the pair.
 
-- **Non-convergence learning**: at the configured ceiling, **the orchestrator** appends sanitized evidence explaining why
-  convergence has not occurred to the active plan's `learnings.md` — or, for ad-hoc work with no
-  owning plan, to the PR itself as a comment — and create or update a deduplicated `plans/ideas`
-  entry for a systemic improvement. Never place a secret, access token,
-  or copied vulnerable value in either record.
+- **Non-convergence learning**: at the configured ceiling, keep the blocked reviewed head
+  immutable. The orchestrator opens one bounded `worktree-to-pr` follow-up from current
+  `origin/main`, limited to sanitized evidence in the owning plan's `learnings.md` (when present),
+  one deduplicated `plans/ideas` entry, and required indexes. With no owning plan, the idea carries
+  the evidence. An authenticated top-level record on the blocked PR pins its final cycle, ceiling,
+  reviewed head, and follow-up PR. Never place a secret or copied vulnerable value in either record.
 - **Ceiling block**: reaching the configured ceiling (five by default) without the
   [exit condition](./probe-variation-and-exit.md) holding is `blocked`, not `done` — whether or not a
   finding is outstanding. Never

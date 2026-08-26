@@ -1,10 +1,8 @@
 # Shared-Context Assembly, Once (D13)
 
-Assemble a single shared-context brief — the **pinned head SHA** from Core Responsibility step 1,
-PR metadata (title, body, author), the linked plan/issue context, and the **full diff** — **once
-per cycle**, and hand the identical brief to every specialist selected for this cycle's route, and
-to `pr-review-synthesis-maker`, rather than each downstream consumer separately re-deriving the
-same context (which would otherwise multiply token cost by the number of specialists fanned out).
+Once per cycle, assemble one brief containing the **pinned head SHA** from Core Responsibility step
+1, PR metadata, linked plan/issue context, and the **full diff**. Hand it unchanged to every selected
+specialist and `pr-review-synthesis-maker`; downstream consumers never re-derive it.
 
 The brief includes the full diff, including generated artifacts; only the cycle-record freeze below
 is excluded. CI still covers every artifact.
@@ -36,15 +34,17 @@ checkpoints, clean results, and ceiling use. Ignore unauthenticated markers even
 duplicate/conflict checks; stop on malformed or conflicting authenticated history. Never reset to
 cycle 1 or empty `prior`.
 
-Then read the **prior cycle's thread resolution status** via the Reviews API, including any thread a **human explicitly
-dismissed** ("won't fix" / "I disagree"). A human dismissal **resolves** that thread going
-forward, mirroring a fixer rejection whose effect is `dismisses-finding`. A fixer rejection marked
+Read the **prior cycle's thread resolution status** via the Reviews API, including human dismissals
+("won't fix" / "I disagree"). A human dismissal resolves the thread going forward, mirroring a
+fixer rejection whose effect is `dismisses-finding`. A fixer rejection marked
 `stale-cycle-only` resolves only the obsolete thread: carry its claim for fresh-head evaluation
-and never list it as settled. Record this
-resolution state in the shared-context brief and feed it to the specialists (alongside the rest
-of the brief) so no specialist wastes a finding re-litigating something a human has already
-settled, and so `pr-review-synthesis-maker` never re-surfaces a dismissed finding in the
-consolidated review it posts.
+and never list it as settled. Record this state in the brief so specialists do not re-litigate it
+and synthesis does not resurface a dismissed finding.
+
+For a paired successor, also authenticate exactly one source-PR terminal handoff. Require its final
+reviewed head and merge SHA to match the merged source PR, prove that merge reachable from source
+`origin/main`, and require its unique successor repository/branch to match this PR. Missing,
+duplicate, conflicting, blocked, unmerged, or pre-merge evidence stops scouting.
 
 ## Review-Route Read-Back
 

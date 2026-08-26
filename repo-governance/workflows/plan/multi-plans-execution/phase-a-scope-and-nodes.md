@@ -21,23 +21,24 @@ explicit list or a set-selector; both resolve once into one enumerated set.
   MUST match a plan actually in the set; a no-op exclusion (name not in scope) is a caller error —
   report it rather than silently ignoring, so a typo'd exclusion never fails open into executing a
   plan the caller meant to hold back.
-- **Echo and persist the frozen set.** Print the fully enumerated list and selector/exclusions for
-  caller confirmation. An empty set terminates `fail`. Before any promotion, apply
-  [Frozen Scope Recovery](./phase-a-frozen-scope-recovery.md): store every member and promotion
-  state in one durable run record, then reload that record rather than re-enumerating on resume.
-- **Promote every resolved `plans/backlog/` entry before scheduling.** For each plan in the frozen
-  set, resolve that plan's delivery mode and apply the canonical
-  [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
-  For `worktree-to-pr`, create or resume and merge the pure-move PR from its worktree. For
-  `main-to-pr`, stay in the synced primary checkout and create or resume and merge the PR there.
-  Use direct push only for a selected permitted direct-push mode. Schedule no node until the
-  promotion exists on `origin/main`, the plan resolves under
-  `plans/in-progress/`, and the durable run record reflects that verified state.
+- **Echo the in-memory frozen set and execution mode.** Print the list and selector/exclusions for
+  caller confirmation. An empty set terminates `fail`. `plan-only` observes current lifecycle
+  paths without creating an issue, branch, pull request, merge, or direct push. `execute` likewise
+  defers every durable mutation until A2 accepts the complete set.
 
-**A2. Refuse unvetted plans.** For each plan, confirm it passed `plan-quality-gate` (a clean strict
-double-zero — check for the plan's audit trail or re-run the gate). A plan that has not been vetted
-is **not scheduled**; report it and continue with the rest. This prevents executing a half-baked
-plan concurrently with good ones.
+**A2. Refuse unvetted plans before side effects.** Confirm every frozen member passed
+`plan-quality-gate` (a clean strict double-zero — check its audit trail or re-run the gate). If any
+member fails, report the full result and stop the run before creating recovery state or promotion
+artifacts; never promote a subset around it.
+
+**Execute-mode promotion gate.** Only after A2 accepts the complete caller-confirmed set, apply
+[Frozen Scope Recovery](./phase-a-frozen-scope-recovery.md), then promote every `plans/backlog/`
+member with the canonical
+[Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work).
+Create or resume and merge the pure-move PR from the delivery mode's declared work location; use a
+direct push only when that selected mode permits it. Schedule no node until every promotion is
+reachable from `origin/main`, resolves under `plans/in-progress/`, and is verified in the durable
+run record. `plan-only` skips this gate and parses each member at its observed path.
 
 **A3. Parse each plan's delivery checklist into nodes.** Read every plan's `delivery.md`
 top-to-bottom (disk is truth). Each `- [ ]` checkbox — **including every nested sub-bullet** —

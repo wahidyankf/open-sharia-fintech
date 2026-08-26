@@ -33,9 +33,9 @@ when_to_use: Use when explaining what safety guarantees plan execution provides,
 
 **Worktree Lifecycle**:
 
-- Execution always enters the plan's designated worktree (Step 0) — navigating to it when it exists, provisioning it from the latest `origin/main` when it does not
-- The worktree is synced with `origin/main` (ff-merge or rebase) before any implementation; dirty state or rebase conflicts stop execution for user decision
-- On `pass`, after the archival commit is pushed, the orchestrator prompts the user before deleting the worktree (Step 8 cleanup) — worktrees never accumulate silently, and are never deleted without explicit confirmation
+- Worktree-based modes enter the plan's designated worktree (Step 0); main-based modes remain in the primary checkout and create no plan worktree
+- A plan worktree is synced with `origin/main` (ff-merge or rebase) before any implementation; dirty state or rebase conflicts stop execution for user decision
+- On `pass`, after the final delivery is verified pushed or merged, the orchestrator immediately removes the exact, self-created, clean worktree with non-force `git worktree remove`; no additional confirmation prompt is required after every mandatory pre-removal check passes
 - On `partial` or `fail`, the worktree is always retained for the next execution attempt
 
 ## Plan-Specific Validation

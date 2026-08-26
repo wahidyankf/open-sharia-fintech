@@ -31,8 +31,9 @@ trivial-tier handoff, and the four-part output contract.
 
 Before handing off the brief, make sure the PR body has a current-head route record: frozen
 outcome/scope, classification evidence, risk, selected/skipped specialists with reasons, current
-checks, settled history, and a changed probe. For a paired public/private delivery,
-read the source terminal handoff; do not begin a sibling cycle while source review is unsettled.
+checks, settled history, and a changed probe. For a paired public/private delivery, authenticate
+the source PR's sole post-merge terminal handoff and source-main reachability; freeze a missing,
+duplicate, conflicting, blocked, unmerged, pre-merge, or mismatched successor.
 
 ## When to Use This Agent
 

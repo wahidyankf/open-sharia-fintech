@@ -22,7 +22,16 @@ branch, and matching pull request against remote truth. Classify exactly one sta
    expected pure diff or base, duplicate branches or pull requests match, or a reported merge is
    not reachable from `origin/main`. Stop and request reconciliation; never guess or replay.
 
-For `worktree-to-pr`, create or enter the dedicated worktree only in the unstarted state.
+For `worktree-to-pr`, resolve the plan's exact dedicated path in every resumable state. Reuse it
+only when `git worktree` registers that exact path on the verified matching branch, its upstream
+matches the verified remote branch where one exists, no duplicate checkout claims the branch, and
+the worktree is clean and conflict-free. In the unstarted state, create that path from the fetched
+base when it does not exist. In branch-pushed or pull-request-open state, restore a missing exact
+path from the verified matching remote branch, then resume there. A mismatched path, branch,
+upstream, dirty tree, conflict, or duplicate checkout is anomalous and stops recovery; never force,
+delete, or guess. Merged-and-verified needs no promotion worktree and proceeds to implementation
+provisioning.
+
 For `main-to-pr`, sync and remain in the primary checkout; never create or enter a worktree.
 Direct-push modes likewise use their declared work location. After every push, pull-request open,
 merge, or direct push, fetch and classify again before continuing.

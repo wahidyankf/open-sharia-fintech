@@ -42,6 +42,7 @@ streak, and checkpoint history from the durable PR record as required by
 [Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md). Conflicting or
 malformed history stops the cycle; it never resets to cycle 1.
 
-For a paired public/private delivery, read the predecessor's terminal handoff before this pass.
-Do not start a new sibling-repository cycle while its source PR is still being fixed or awaiting
-current-head CI: that creates stale evidence and an avoidable review chain reaction.
+For a paired public/private delivery, authenticate the predecessor's sole terminal handoff before
+this pass. Verify its source PR is merged, its final reviewed head matches, its merge SHA is
+reachable from source `origin/main`, and it uniquely names this successor repository/branch.
+Missing, duplicate, conflicting, blocked, unmerged, or pre-merge evidence freezes the sibling.
