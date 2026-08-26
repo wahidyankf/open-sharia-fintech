@@ -19,8 +19,8 @@ created: 2026-05-03
 
 When removing a worktree:
 
-1. Resolve the exact path and branch from the plan's file-touch ledger. Continue only when it proves
-   this plan created that worktree.
+1. Resolve the exact path and branch from the plan's Provisioned Worktree Identity, then reconcile
+   them with `git worktree list --porcelain`. A missing or conflicting record blocks removal.
 2. Prove the branch's PR is merged with `gh pr list --head <branch> --state all --json
 number,state,mergedAt`; do not use `origin/main` ancestry because squash merges make it false.
 3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and has no
@@ -32,7 +32,7 @@ number,state,mergedAt`; do not use `origin/main` ancestry because squash merges 
 
 For plan worktrees, the [plan-execution workflow](../../../workflows/plan/plan-execution.md) performs
 this cleanup immediately when that repo's delivery is confirmed. It never removes a root, wildcard,
-ledger-unknown, or another actor's worktree.
+identity-unknown, or another actor's worktree.
 
 **Plan delivery checklist tagging**: when any of these three commands — `git worktree add`, the push (to the PR branch under the default `worktree-to-pr`, or `git push origin main` under a direct-push mode), or `git worktree remove` — appear as steps in a plan delivery checklist, they MUST be tagged `[AI]`. Tagging them `[HUMAN]` incorrectly creates a hand-off gate where none exists. See [Plans Organization Convention §Executor Tagging](../plans/executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule) and the [Git Push Default Convention](../../../development/workflow/git-push-default.md) for the canonical rule statement and FAIL/PASS examples.
 

@@ -18,8 +18,9 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
 3. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
-   1. Resolve the exact path and branch from the plan's file-touch ledger. Continue only when that
-      record proves this plan created the worktree; never derive ownership from a familiar path.
+   1. Resolve the exact path and branch from the plan's Provisioned Worktree Identity and reconcile
+      them with `git worktree list --porcelain`. A missing or conflicting record blocks removal;
+      never derive ownership from a familiar path.
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
       GitHub reports the branch PR merged, the exact worktree is clean and idle, and no commit is

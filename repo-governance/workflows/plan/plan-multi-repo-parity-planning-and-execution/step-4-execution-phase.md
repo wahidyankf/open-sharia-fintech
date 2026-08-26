@@ -41,7 +41,7 @@ Every plan-execution rule applies unchanged, including:
 - **Archival**: move the plan to `plans/done/YYYY-MM-DD__<objective-slug>/`, update plan READMEs,
   commit and push.
 - **Immediate worktree cleanup**: when that repo's delivery is confirmed, remove its exact,
-  ledger-owned worktree in the same session after merged/delivered, clean/idle, and no-unpushed
+  identity-recorded worktree in the same session after merged/delivered, clean/idle, and no-unpushed
   proof. Never use ancestry as a squash-merge proxy. Use non-force removal with no extra prompt;
   retain, evidence, and escalate if any precondition fails.
 

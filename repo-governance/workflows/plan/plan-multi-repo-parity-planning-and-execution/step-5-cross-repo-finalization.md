@@ -22,8 +22,9 @@ After the last repo's execution completes:
    - `execution-results` — plan-execution status + iterations per repo
    - `delivery-refs` — commits pushed per repo across both phases
    - Deviation summary — "N deliberate deviations recorded; 0 silent deviations"
-   - Worktree disposition per repo — deleted (user-approved) or retained (user choice /
-     non-pass status)
+   - Worktree disposition per repo — immediately deleted after exact recorded identity,
+     delivered/merged, clean/idle, and no-unpushed proof; otherwise retained with failed-check
+     evidence and escalation (never user preference or a pass path)
 
 **Output**: Composite outcome report. Live Task list fully `completed` and matching disk truth in
 every repo.

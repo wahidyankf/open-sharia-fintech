@@ -30,5 +30,6 @@ when_to_use: Use when a plan's worktree does not yet exist and must be provision
         If the branch `<plan-identifier>-base` already exists (e.g., a prior worktree was removed but its branch kept), reuse it instead: `git worktree add worktrees/<plan-identifier> <plan-identifier>-base`.
 
      3. If `git worktree add` fails (e.g., path already exists as a stale entry), run `git worktree prune` and retry once; if it still fails, terminate with status `fail` and emit the error output verbatim.
-     4. Run `npm install && npm run doctor -- --fix` in the root repository worktree to initialize the toolchain, per [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md).
-     5. Emit a user-visible line: `Worktree provisioned at worktrees/<plan-identifier>/ — continuing execution.`
+     4. Add the immutable [Provisioned Worktree Identity](../../../conventions/structure/plans/worktree-specification.md#worktree-identity-record) to the plan using the exact path and branch returned by `git worktree add`, the executor identity, and current UTC time. A missing or conflicting record blocks later cleanup.
+     5. Run `npm install && npm run doctor -- --fix` in the root repository worktree to initialize the toolchain, per [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md).
+     6. Emit a user-visible line: `Worktree provisioned at worktrees/<plan-identifier>/ — continuing execution.`

@@ -41,8 +41,8 @@ question per message; interactive multiple-choice tool when available.
 4. **`[HUMAN]` step availability**: the delivery checklists may contain `[HUMAN]` gates; is the
    invoker available to confirm them during this run, or should execution stop at the first
    `[HUMAN]` item and resume later?
-5. **Worktree cleanup evidence**: confirm each plan records the exact path and branch in its
-   file-touch ledger. After delivery, the executor removes only that exact self-created worktree
+5. **Worktree cleanup evidence**: confirm each plan has a Provisioned Worktree Identity recording
+   its exact path, branch, and creator. After delivery, the executor removes only that exact worktree
    immediately when merged/delivered, clean/idle, and no-unpushed proof all pass; a failed check
    retains it with evidence and escalates. This is not a preference or confirmation gate.
 

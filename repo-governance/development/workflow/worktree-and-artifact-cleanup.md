@@ -33,8 +33,8 @@ plan's other repos are still in flight.
 
 **No confirmation prompt is required for an exact, self-created plan worktree.** Once all mandatory
 pre-removal checks pass, the AI executor removes the exact path recorded in the plan immediately.
-This authority never extends to a repository root, a wildcard, a worktree absent from the plan's
-file-touch ledger, or any worktree created by another actor; those remain out of scope.
+This authority never extends to a repository root, wildcard, worktree absent from the plan's
+Provisioned Worktree Identity, or worktree created by another actor; those remain out of scope.
 
 ## Contents
 
