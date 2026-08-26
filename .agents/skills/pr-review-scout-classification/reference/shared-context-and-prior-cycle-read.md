@@ -1,27 +1,24 @@
 # Shared-Context Assembly, Once (D13)
 
-Once per cycle, assemble one brief containing the **pinned head SHA** from Core Responsibility step
-1, PR metadata, linked plan/issue context, and the **full diff**. Hand it unchanged to every selected
-specialist and `pr-review-synthesis-maker`; downstream consumers never re-derive it.
+Once per cycle, assemble one brief with Core Responsibility step 1's **pinned head SHA**, PR
+metadata, linked plan/issue context, and the **full diff**. Hand it unchanged to selected specialists
+and `pr-review-synthesis-maker`; consumers never re-derive it.
 
-The brief includes the full diff, including generated artifacts; only the cycle-record freeze below
-is excluded. CI still covers every artifact.
+Include generated artifacts; only the cycle-record freeze below is excluded. CI covers every
+artifact.
 
 ## Correction-Record Freeze (Cycle 2 Onward)
 
-The **one** scope exclusion, and the only exception to the posture above: from cycle 2 the brief
-omits the loop's own cycle-record material. See
-[correction-record-freeze.md](./correction-record-freeze.md) for the rule and its two carve-outs.
-A factual defect in a shipping artifact remains reviewable. The frozen delivery outcome still
-permits same-defect completion; an unrelated improvement belongs in a linked follow-up, not this
-PR's next fixer batch.
+From cycle 2, omit only the loop's own cycle-record material. See
+[correction-record-freeze.md](./correction-record-freeze.md) and its two carve-outs. Shipping
+artifact defects remain reviewable. The frozen delivery outcome permits same-defect completion;
+unrelated improvement belongs in a linked follow-up, not this PR's fixer batch.
 
 ## Probe Variation (Cycle 2 Onward)
 
-A cycle repeating the previous cycle's question converges on that question rather than on
-correctness. From cycle 2, read the prior cycle's findings for what they **asked**, and state in the
-brief how this cycle's probe differs — a different failure mode, a different reader, a different
-level of the artifact. Name it, so a specialist can tell a fresh angle from a rerun. See
+A cycle repeating the prior question converges on it, not correctness. From cycle 2, read what prior
+findings **asked** and state how this probe differs: failure mode, reader, or artifact level. Name
+it so a specialist can distinguish a fresh angle from a rerun. See
 [Convergence Measurement](../../../../repo-governance/workflows/pr/pr-review-quality-gate/convergence-measurement.md).
 
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
@@ -46,9 +43,12 @@ For paired delivery, retrieve source/successor PR, review, comment, permission, 
 objects. Authenticate one
 [`ose-pr-review-sibling-handoff:v1`](../../../../repo-governance/workflows/pr/pr-review-quality-gate/sibling-handoff-record.md).
 Match every required source, merge, and successor coordinate. The first scout requires the live
-head to equal the recorded initial head; later scouts require that SHA in the same PR history.
-Missing, duplicate, conflicting, blocked, unmerged, pre-merge, invalid, unreachable, or mismatched
-evidence stops scouting before body parsing or fan-out.
+head to equal the recorded initial head; later scouts require that SHA in the same PR history. The
+immediate emission read-back alone compares `successor_base_sha` to live `base.sha`; later scouts
+retain that authenticated opening coordinate, require live `base.ref == main` and the same PR
+identity, and never compare it with a moving `base.sha`. Missing, duplicate, conflicting, blocked,
+unmerged, pre-merge, invalid, unreachable, or mismatched evidence stops scouting before body
+parsing or fan-out.
 
 ## Review-Route Read-Back
 

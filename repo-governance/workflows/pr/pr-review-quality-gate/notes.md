@@ -34,11 +34,11 @@ when_to_use: "Use when clarifying an operating nuance not covered elsewhere — 
   means every fixer commit on the source PR immediately makes the siblings stale again, and each
   sibling's next cycle re-discovers "stale vs. upstream" as its top finding instead of surfacing new
   issues — a self-correcting but wasteful pattern observed to cost an extra cycle per sibling in
-  practice. Prefer running the source PR's loop to completion (CI-green at a stable head) first, then
-  starting or resuming each sibling's remaining cycles against that final head — a sibling cycle
-  already in flight when the source PR converges can still finish its current pass and resync on its
-  own next cycle, but do not deliberately kick off a NEW sibling cycle while the source PR's loop is
-  still open.
+  practice. The hard sequence is: (1) the public loop converges; (2) its PR merges and that merge is
+  reachable from the source `origin/main`; (3) the private successor PR already exists; (4) exactly
+  one authenticated post-merge source handoff passes typed readback; only then may the first private
+  scout or review begin. Do not deliberately start or resume a private cycle before those conditions
+  hold, including while the public loop remains open.
 
   The same sequencing applies to semantic counterparts, not only byte-identical mirrors. The
   counterpart records satisfaction, reasoned deviation, or one bounded correction request; in sync

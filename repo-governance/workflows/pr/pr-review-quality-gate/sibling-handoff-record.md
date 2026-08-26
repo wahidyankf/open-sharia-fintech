@@ -53,9 +53,11 @@ parsing any body. Require source `merged`, final `head.sha`, and
 `merge_commit_sha == source_merge_sha`; an authenticated terminal review at that head; and exactly
 one admitted handoff. Require the open successor's repository/number,
 `head.repo.full_name`, `head.ref`, initial `head.sha`, `base.ref == main`, and initial `base.sha` to
-equal the record. On the first scout the live head still equals `successor_initial_head`; later
-scouts prove the initial SHA belongs to the same PR history instead of comparing it with the
-evolving live head.
+equal the record. That base-SHA equality is an immediate post-emission read-back only. Later scouts
+retain the authenticated opening-base record, require the live `base.ref == main` and the same PR
+identity, but never compare the historical `successor_base_sha` with moving live `base.sha`. On the
+first scout the live head still equals `successor_initial_head`; later scouts prove the initial SHA
+belongs to the same PR history instead of comparing it with the evolving live head.
 
 A missing, duplicate, conflicting, blocked, unmerged, pre-merge, schema-invalid, unreachable, or
 coordinate-mismatched record freezes the successor before scouting. PR-body text and
