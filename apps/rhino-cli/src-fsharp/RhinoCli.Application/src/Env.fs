@@ -40,7 +40,10 @@
 /// `env-validate-app-drift.feature`'s 3 scenarios. This PR (PR7) further
 /// ports the `Terraform`/`Ansible` env-contract validators
 /// (`env-contract/iac-env-validation.feature`), completing `env validate`'s
-/// three-way `SurfaceKind` dispatch.
+/// three-way `SurfaceKind` dispatch. This PR (PR8) ports `env staged-guard
+/// validate` (`specs/env-staged-guard.feature`'s 3 scenarios) — relocated
+/// into Wave B from a mis-scheduled Wave E slot, since it shares `env`'s CLI
+/// namespace and `rhino-bin.sh` routes `FSHARP_NAMESPACES` on argv[0] only.
 module RhinoCli.Application.Env
 
 open System
@@ -1792,3 +1795,45 @@ let validateAll (repoRoot: string) (contract: Contract) : Result<Finding list, s
                 | Ok result -> go rest (acc @ resultToFindings surface.Root result)
 
     go contract.Surfaces []
+
+// ---- staged-guard ----
+
+/// True when `path`'s basename looks like a real `.env*` file that is NOT
+/// `.env.example` [Repo-grounded — `env_staged_guard.rs::is_offending`]. The
+/// **commit** policy deliberately stays deny-all across every `.env*`
+/// variant, even though the read policy (`readEnvironment`, above) narrows to
+/// only `.env.prod`/`.env.stag` — the two policies are intentionally
+/// decoupled, matching the Rust reference's own doc comment on this
+/// function.
+let isEnvStagedGuardOffending (path: string) : bool =
+    let basename = Path.GetFileName(path)
+
+    basename.StartsWith(".env", StringComparison.Ordinal)
+    && basename <> ".env.example"
+
+/// Checks `stagedFiles` against the commit policy, returning every offending
+/// path in encounter order (empty when the commit is allowed) [Repo-grounded
+/// — `env_staged_guard.rs::run_with_staged_files`]. The real git shell-out
+/// (`git diff --cached --name-only --diff-filter=AM`) is a CLI-layer
+/// concern, not this pure function's — mirrors the Rust reference's own
+/// split between `run` (shells to git) and `run_with_staged_files` (pure,
+/// and what its own unit tests call directly).
+let checkStagedFiles (stagedFiles: string list) : string list =
+    stagedFiles |> List.filter isEnvStagedGuardOffending
+
+/// Renders the staged-guard failure message for `offending` — always
+/// non-empty when called, since the CLI only calls this on a non-empty
+/// result [Repo-grounded — `env_staged_guard.rs::run_with_staged_files`'s
+/// `writeln!` block].
+let formatEnvStagedGuardFailure (offending: string list) : string =
+    let sb = System.Text.StringBuilder()
+
+    sb.AppendLine("ERROR: refusing to commit real .env* files (policy: guard-env-file-access):")
+    |> ignore
+
+    for path in offending do
+        sb.AppendLine(sprintf "  %s" path) |> ignore
+
+    sb.AppendLine("Only .env.example may be committed.") |> ignore
+    sb.Append("Unstage with: git restore --staged <file>") |> ignore
+    sb.ToString()
