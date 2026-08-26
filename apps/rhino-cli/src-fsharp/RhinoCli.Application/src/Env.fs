@@ -586,7 +586,7 @@ let capitalize (s: string) : string =
     if s = "" then
         ""
     else
-        string (Char.ToUpperInvariant s.[0]) + s.Substring(1)
+        (Char.ToUpperInvariant s.[0]).ToString() + s.Substring(1)
 
 /// Formats an [`EnvOperationResult`] as human-readable text [Repo-grounded —
 /// `backup.rs::format_text`]. When `quiet` is `true`, per-file lines are
