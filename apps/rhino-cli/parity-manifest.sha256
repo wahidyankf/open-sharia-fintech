@@ -1,5 +1,5 @@
-23e9109bd73c084143dc439efbd6e227955c99ee3928819f2f584f2ec1f00cc9  apps/rhino-cli/Cargo.lock
-7ce00fd417e7e4e4a209f46bb5df72ca90b1317b11ecdd742659d8209786dfc1  apps/rhino-cli/Cargo.toml
+31cc016ae406a00ae78fcdb70e4a9046c9582fcb0389da5a8fd27876d1aa32d0  apps/rhino-cli/Cargo.lock
+23fc7e65981a1182b261c0749102e1993033b1310176a098246989caf22f4221  apps/rhino-cli/Cargo.toml
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli/project.json
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs

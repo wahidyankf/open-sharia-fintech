@@ -103,7 +103,7 @@ Scenario: The F# suite consumes the existing feature files unmodified
   Given the 525 scenarios across the 71 feature files under specs/apps/rhino/
   When the F# TickSpec suite runs via nx run rhino-cli:test:quick
   Then every one of those scenarios has a passing F# step definition
-  And no file under specs/apps/rhino/ was edited by any phase except Phase 9a
+  And no file under specs/apps/rhino/ was edited by any phase except Phase 3 and Phase 9a
 ```
 
 ### AC-4 — Dispatch shim routing (US-3)
@@ -170,7 +170,9 @@ Scenario: The quality gate stays green while CI carries both binaries
 Scenario: The quality gate stays green after the Rust surface is torn down
   Given the Rust crate has been deleted and no project carries tag:lang:rust
   When pr-quality-gate.yml runs on a pull request
-  Then no workflow references .github/actions/setup-rust
+  Then no workflow in ose-private references .github/actions/setup-rust
+  And the only ose-public reference left is the format job's, retained for the 198 Rust course
+    examples under apps/ayokoding-www/content/
   And the detect job exposes no has-rust output
   And build-rhino publishes exactly one binary under the artifact name consumer jobs already expect
 ```
@@ -203,8 +205,9 @@ teardown, the parity manifest, the before/after benchmark record, the rules prop
 `ose-private` landing of every delivery unit.
 
 **Out of scope**: new behavior of any kind; `apps/crane-cli`; the F# backends. Edits under
-`specs/apps/rhino/` are out of scope everywhere except Phase 9a, whose scope is bounded by a
-committed verdict table.
+`specs/apps/rhino/` are out of scope everywhere except two sanctioned exceptions: Phase 3, which
+adds the one `git/` lockfile feature file for a CLI surface that has no Gherkin today, and Phase 9a,
+whose scope is bounded by a committed verdict table.
 
 ## Product risks
 

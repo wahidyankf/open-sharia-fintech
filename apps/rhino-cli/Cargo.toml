@@ -24,7 +24,6 @@ walkdir = "2.5.0"
 ignore = "0.4.25"
 regex = "1.12.3"
 pulldown-cmark = "0.13.4"
-tree-sitter = "0.26.9"
 anyhow = "1.0.102"
 quick-xml = { version = "0.40.1", features = ["serialize"] }
 chrono = { version = "0.4.44", default-features = false, features = ["serde", "clock"] }
