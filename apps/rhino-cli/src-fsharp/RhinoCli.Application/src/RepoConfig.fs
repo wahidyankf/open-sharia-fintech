@@ -1,18 +1,25 @@
-/// Port of the slice of the Rust `repo_config` namespace needed by the nine
+/// Port of the slice of the Rust `repo_config` namespace needed by the
 /// scenarios in
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature`
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/repo_config/mod.rs`,
 /// `apps/rhino-cli/src/commands/repo_config_validate.rs`].
 ///
 /// Scope note: the Rust `RepoConfig` schema is a ~40-field struct covering
-/// gate wiring, ownership classes, env contracts, word budgets, and the full
-/// Doctor tool roster. This port models only `harness[].{name,tier,agent-dir,
-/// mirrors,forbid-dir}`, `gates[].{id,args}`, `specs.{ddd-areas,domain-areas}`,
-/// and `doctor.dotnet-global-json` — the fields these nine scenarios read —
-/// and deserializes with `IgnoreUnmatchedProperties` rather than Rust's
-/// `deny_unknown_fields`, so every other real `repo-config.yml` key is
-/// silently accepted rather than schema-validated. None of the nine scenarios
-/// exercises unknown-key rejection.
+/// gate wiring, env contracts, word budgets, and the full Doctor tool
+/// roster. This port models only `harness[].{name,tier,agent-dir,mirrors,
+/// forbid-dir,skills-dir,skills-mirrors,vendored,ownership}`,
+/// `gates[].{id,args}`, `specs.{ddd-areas,domain-areas}`, and
+/// `doctor.dotnet-global-json` — the fields these two feature files'
+/// scenarios read — and deserializes the rest of the document with
+/// `IgnoreUnmatchedProperties` rather than Rust's `deny_unknown_fields`, so
+/// every other real `repo-config.yml` key is silently accepted rather than
+/// schema-validated. `harness[]` and `harness[].ownership[]` are the
+/// exception: `checkNoUnknownHarnessKeys` below independently walks the raw
+/// YAML structure to reject an unknown key in either, since the
+/// repo-config-validate scenarios exercise exactly that. Widening this
+/// strictness to the rest of the schema is future work for later waves.
 module RhinoCli.Application.RepoConfig
 
 open System
@@ -28,15 +35,39 @@ type Tier =
     | Source
     | Generated
 
+/// The three ownership classes a binding path may declare in a harness
+/// entry's `ownership:` list — named `Class*` rather than reusing `Tier`'s
+/// `Source`/`Generated` case names, which would otherwise collide under a
+/// single `open RhinoCli.Application.RepoConfig`
+/// [Repo-grounded — `repo_config/mod.rs::OwnershipClass`].
+type OwnershipClass =
+    | ClassSource
+    | ClassGenerated
+    | ClassVendored
+
+/// One entry in a harness entry's `ownership:` list, declaring which of the
+/// three classes above a single binding path belongs to, and — for a
+/// `vendored` path — why it is exempt from regeneration
+/// [Repo-grounded — `repo_config/mod.rs::OwnershipEntry`].
+type OwnershipEntry =
+    { Path: string
+      Class: OwnershipClass
+      Reason: string option }
+
 /// One harness entry in the `harness:` section of `repo-config.yml`, trimmed
-/// to the fields the codex-entry and three-harness-registry scenarios read
+/// to the fields the codex-entry, three-harness-registry, and
+/// repo-config-validate scenarios read
 /// [Repo-grounded — `repo_config/mod.rs::HarnessEntry`].
 type HarnessEntry =
     { Name: string
       Tier: Tier
       AgentDir: string option
       Mirrors: string option
-      ForbidDir: string option }
+      ForbidDir: string option
+      SkillsDir: string option
+      SkillsMirrors: string option
+      Vendored: string list
+      Ownership: OwnershipEntry list }
 
 /// One entry in the `gates:` section, trimmed to the `id` and `args` fields
 /// the website-exclusion scenario reads
@@ -87,12 +118,22 @@ let empty: RepoConfig =
 /// still excluded from this module's public surface indirectly: nothing
 /// outside `parseRepoConfig` ever constructs or returns one.
 [<CLIMutable>]
+type OwnershipEntryDto =
+    { Path: string
+      Class: string
+      Reason: string | null }
+
+[<CLIMutable>]
 type HarnessEntryDto =
     { Name: string
       Tier: string
       AgentDir: string | null
       Mirrors: string | null
-      ForbidDir: string | null }
+      ForbidDir: string | null
+      SkillsDir: string | null
+      SkillsMirrors: string | null
+      Vendored: ResizeArray<string>
+      Ownership: ResizeArray<OwnershipEntryDto> }
 
 [<CLIMutable>]
 type GateEntryDto =
@@ -147,14 +188,55 @@ let private parseTier (index: int) (raw: string) : Result<Tier, string> =
     | other ->
         Error(sprintf "harness[%d].tier: invalid value \"%s\" (expected \"source\" or \"generated\")" index other)
 
+/// Parses one `ownership[].class` value
+/// [Repo-grounded — `repo_config/mod.rs::OwnershipClass`'s `Deserialize`
+/// impl].
+let private parseOwnershipClass
+    (harnessIndex: int)
+    (ownershipIndex: int)
+    (raw: string)
+    : Result<OwnershipClass, string> =
+    match raw with
+    | null -> Error(sprintf "harness[%d].ownership[%d].class: required key is missing" harnessIndex ownershipIndex)
+    | "source" -> Ok ClassSource
+    | "generated" -> Ok ClassGenerated
+    | "vendored" -> Ok ClassVendored
+    | other ->
+        Error(
+            sprintf
+                "harness[%d].ownership[%d].class: invalid value \"%s\" (expected \"source\", \"generated\", or \"vendored\")"
+                harnessIndex
+                ownershipIndex
+                other
+        )
+
+let private toOwnershipEntry
+    (harnessIndex: int)
+    (ownershipIndex: int)
+    (dto: OwnershipEntryDto)
+    : Result<OwnershipEntry, string> =
+    parseOwnershipClass harnessIndex ownershipIndex dto.Class
+    |> Result.map (fun cls ->
+        { Path = dto.Path
+          Class = cls
+          Reason = Option.ofObj dto.Reason })
+
 let private toHarnessEntry (index: int) (dto: HarnessEntryDto) : Result<HarnessEntry, string> =
     parseTier index dto.Tier
-    |> Result.map (fun tier ->
-        { Name = dto.Name
-          Tier = tier
-          AgentDir = Option.ofObj dto.AgentDir
-          Mirrors = Option.ofObj dto.Mirrors
-          ForbidDir = Option.ofObj dto.ForbidDir })
+    |> Result.bind (fun tier ->
+        toOptionList dto.Ownership
+        |> List.mapi (toOwnershipEntry index)
+        |> sequenceResults
+        |> Result.map (fun ownership ->
+            { Name = dto.Name
+              Tier = tier
+              AgentDir = Option.ofObj dto.AgentDir
+              Mirrors = Option.ofObj dto.Mirrors
+              ForbidDir = Option.ofObj dto.ForbidDir
+              SkillsDir = Option.ofObj dto.SkillsDir
+              SkillsMirrors = Option.ofObj dto.SkillsMirrors
+              Vendored = toOptionList dto.Vendored
+              Ownership = ownership }))
 
 let private toGateEntry (dto: GateEntryDto) : GateEntry =
     let args =
@@ -176,25 +258,140 @@ let private toDoctorConfig (dto: DoctorConfigDto) : DoctorConfig =
     | null -> { DotnetGlobalJson = None }
     | _ -> { DotnetGlobalJson = Option.ofObj dto.DotnetGlobalJson }
 
+/// `harness[]` entries' allowed key set, matching `HarnessEntryDto`'s fields
+/// in the kebab-case spelling `repo-config.yml` uses for them.
+let private allowedHarnessKeys: Set<string> =
+    Set.ofList
+        [ "name"
+          "tier"
+          "agent-dir"
+          "skills-dir"
+          "rules-dir"
+          "agent-name"
+          "mirrors"
+          "skills-mirrors"
+          "vendored"
+          "config"
+          "forbid-dir"
+          "shadow"
+          "instruction"
+          "catalog"
+          "ownership" ]
+
+/// `harness[].ownership[]` entries' allowed key set, matching
+/// `OwnershipEntryDto`'s fields.
+let private allowedOwnershipKeys: Set<string> =
+    Set.ofList [ "path"; "class"; "reason" ]
+
+let private asRawMap (value: obj) : IDictionary<obj, obj> option =
+    match value with
+    | :? IDictionary<obj, obj> as dict -> Some dict
+    | _ -> None
+
+let private asRawList (value: obj) : obj list option =
+    match value with
+    | :? IDictionary<obj, obj> -> None
+    | :? System.Collections.IEnumerable as items when not (value :? string) ->
+        Some(items |> Seq.cast<obj> |> List.ofSeq)
+    | _ -> None
+
+let private tryGetRawValue (dict: IDictionary<obj, obj>) (key: string) : obj option =
+    dict
+    |> Seq.tryFind (fun kv ->
+        match kv.Key with
+        | :? string as candidate -> String.Equals(candidate, key, StringComparison.Ordinal)
+        | _ -> false)
+    |> Option.map (fun kv -> kv.Value)
+
+let private unknownKeyFindings (allowed: Set<string>) (dict: IDictionary<obj, obj>) (label: string) : string list =
+    dict
+    |> Seq.choose (fun kv ->
+        match kv.Key with
+        | :? string as key when not (Set.contains key allowed) ->
+            Some(
+                sprintf
+                    "%s: unknown key \"%s\" (expected one of %s)"
+                    label
+                    key
+                    (String.concat ", " (Set.toList allowed))
+            )
+        | _ -> None)
+    |> List.ofSeq
+
+/// Independently walks `data`'s raw YAML structure (rather than the lenient
+/// `RepoConfigDto`) to reject an unknown key inside a `harness[]` entry or a
+/// `harness[].ownership[]` sub-entry, reproducing Rust's
+/// `#[serde(deny_unknown_fields)]` on `HarnessEntry`/`OwnershipEntry` for
+/// exactly these two substructures.
+///
+/// Scope note: this does NOT reproduce `deny_unknown_fields` for the rest of
+/// the ~40-field `RepoConfig` schema (`gates[]`, `specs`, `doctor`, and
+/// everything this port does not model at all) — see the module doc comment.
+/// Widening this check to more of the schema is future work for later
+/// waves, as this port grows to cover more of `repo-config.yml`.
+let private checkNoUnknownHarnessKeys (data: string) : Result<unit, string> =
+    try
+        let root = deserializer.Deserialize<obj>(data)
+
+        match asRawMap root with
+        | None -> Ok()
+        | Some rootMap ->
+            match tryGetRawValue rootMap "harness" |> Option.bind asRawList with
+            | None -> Ok()
+            | Some harnessItems ->
+                let findings =
+                    harnessItems
+                    |> List.mapi (fun i item ->
+                        match asRawMap item with
+                        | None -> []
+                        | Some entryMap ->
+                            let ownershipFindings =
+                                match tryGetRawValue entryMap "ownership" |> Option.bind asRawList with
+                                | None -> []
+                                | Some ownershipItems ->
+                                    ownershipItems
+                                    |> List.mapi (fun j oitem ->
+                                        match asRawMap oitem with
+                                        | None -> []
+                                        | Some ownedMap ->
+                                            unknownKeyFindings
+                                                allowedOwnershipKeys
+                                                ownedMap
+                                                (sprintf "harness[%d].ownership[%d]" i j))
+                                    |> List.collect id
+
+                            unknownKeyFindings allowedHarnessKeys entryMap (sprintf "harness[%d]" i)
+                            @ ownershipFindings)
+                    |> List.collect id
+
+                match findings with
+                | [] -> Ok()
+                | _ -> Error(String.concat "; " findings)
+    with ex ->
+        Error ex.Message
+
 /// Parses `data` (the contents of `repo-config.yml`) into a [`RepoConfig`]
 /// [Repo-grounded — `repo_config/mod.rs::parse_repo_config`].
 let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
-    try
-        let dto = deserializer.Deserialize<RepoConfigDto>(data)
+    match checkNoUnknownHarnessKeys data with
+    | Error message -> Error message
+    | Ok() ->
+        try
+            let dto = deserializer.Deserialize<RepoConfigDto>(data)
 
-        match box dto with
-        | null -> Ok empty
-        | _ ->
-            toOptionList dto.Harness
-            |> List.mapi toHarnessEntry
-            |> sequenceResults
-            |> Result.map (fun harness ->
-                { Harness = harness
-                  Gates = toOptionList dto.Gates |> List.map toGateEntry
-                  Specs = toSpecsConfig dto.Specs
-                  Doctor = toDoctorConfig dto.Doctor })
-    with ex ->
-        Error ex.Message
+            match box dto with
+            | null -> Ok empty
+            | _ ->
+                toOptionList dto.Harness
+                |> List.mapi toHarnessEntry
+                |> sequenceResults
+                |> Result.map (fun harness ->
+                    { Harness = harness
+                      Gates = toOptionList dto.Gates |> List.map toGateEntry
+                      Specs = toSpecsConfig dto.Specs
+                      Doctor = toDoctorConfig dto.Doctor })
+        with ex ->
+            Error ex.Message
 
 /// Loads and parses `repo-config.yml` at `repoRoot`
 /// [Repo-grounded — `repo_config/mod.rs::load`].
@@ -320,22 +517,128 @@ let confinedRepoPath (repoRoot: string) (value: string) : Result<string, string>
         with ex ->
             Error ex.Message
 
-/// Collects `repo-config validate`'s semantic findings, trimmed to the one
-/// check the leading-`./`-rejection scenario exercises
-/// [Repo-grounded — `repo_config_validate.rs::semantic_findings`].
+/// Splits a path into its non-empty components, tolerating either separator
+/// so a trailing separator does not manufacture a spurious empty component
+/// [Repo-grounded — `repo_config/mod.rs::paths_equal`/`path_is_under`'s use
+/// of `Path::components()`].
+let private pathComponents (path: string) : string list =
+    path.Split('/', '\\')
+    |> Array.filter (fun segment -> segment <> "")
+    |> List.ofArray
+
+/// Component-wise path equality — tolerates a trailing separator difference
+/// but not a real typo [Repo-grounded — `repo_config/mod.rs::paths_equal`].
+let pathsEqual (a: string) (b: string) : bool = pathComponents a = pathComponents b
+
+/// True when `path` lies under `dir` (component-wise prefix). False when
+/// `dir` is empty [Repo-grounded — `repo_config/mod.rs::path_is_under`].
+let pathIsUnder (path: string) (dir: string) : bool =
+    if String.IsNullOrEmpty dir then
+        false
+    else
+        let dirComponents = pathComponents dir
+        let pathParts = pathComponents path
+
+        dirComponents.Length <= pathParts.Length
+        && (pathParts |> List.take dirComponents.Length) = dirComponents
+
+/// Forward direction: an ownership entry declared `class: vendored` under
+/// this harness entry's `skills-dir`, with no matching `vendored[]` entry.
+/// A no-op when `skills-dir` is unset
+/// [Repo-grounded —
+/// `repo_config/mod.rs::vendored_missing_from_ownership_backed_list`].
+let vendoredMissingFromOwnershipBackedList (index: int) (entry: HarnessEntry) : string list =
+    match entry.SkillsDir with
+    | None -> []
+    | Some skillsDir ->
+        entry.Ownership
+        |> List.filter (fun owned ->
+            owned.Class = ClassVendored
+            && pathIsUnder owned.Path skillsDir
+            && not (entry.Vendored |> List.exists (fun v -> pathsEqual v owned.Path)))
+        |> List.map (fun owned ->
+            sprintf
+                "harness[%d].ownership: \"%s\" is declared class: vendored under skills-dir \"%s\" but has no matching harness[%d].vendored entry (the skills mirror will delete it on the next regeneration)"
+                index
+                owned.Path
+                skillsDir
+                index)
+
+/// Reverse direction: a `vendored[]` entry with no matching `ownership`
+/// entry declared `class: vendored`. Always checked, with no `skills-dir`
+/// gate — `vendored[]` itself only makes sense under `skills-dir`
+/// [Repo-grounded — `repo_config/mod.rs::vendored_without_ownership_entry`].
+let vendoredWithoutOwnershipEntry (index: int) (entry: HarnessEntry) : string list =
+    entry.Vendored
+    |> List.mapi (fun k vendoredPath ->
+        let declared =
+            entry.Ownership
+            |> List.exists (fun owned -> owned.Class = ClassVendored && pathsEqual owned.Path vendoredPath)
+
+        if declared then
+            None
+        else
+            Some(
+                sprintf
+                    "harness[%d].vendored[%d]: \"%s\" has no matching harness[%d].ownership entry with class: vendored (a vendored[] entry that fails to match its real directory — most commonly a typo — leaves that real directory unprotected and the skills mirror will delete it on the next regeneration)"
+                    index
+                    k
+                    vendoredPath
+                    index
+            ))
+    |> List.choose id
+
+/// Per-harness-entry semantic findings: every `class: vendored` ownership
+/// declaration must carry a non-empty `reason`, plus both cross-checks above
+/// [Repo-grounded —
+/// `repo_config_validate.rs::harness_entry_semantic_findings`].
+let harnessEntrySemanticFindings (index: int) (entry: HarnessEntry) : string list =
+    let reasonFindings =
+        entry.Ownership
+        |> List.mapi (fun j owned ->
+            let blank =
+                owned.Reason
+                |> Option.map (fun r -> r.Trim())
+                |> Option.forall (fun r -> r = "")
+
+            if owned.Class = ClassVendored && blank then
+                Some(
+                    sprintf
+                        "harness[%d].ownership[%d].reason: required non-empty value for path \"%s\" (a vendored path must record why it cannot be regenerated)"
+                        index
+                        j
+                        owned.Path
+                )
+            else
+                None)
+        |> List.choose id
+
+    reasonFindings
+    @ vendoredMissingFromOwnershipBackedList index entry
+    @ vendoredWithoutOwnershipEntry index entry
+
+/// Collects `repo-config validate`'s semantic findings
+/// [Repo-grounded — `repo_config_validate.rs::semantic_findings`,
+/// `harness_entry_semantic_findings`].
 ///
 /// Scope note: the Rust validator additionally requires non-empty `harness`/
 /// `coverage.projects`, validates every harness path field, and checks gate
-/// wiring/carve-out/duplicate-id rules — none of which this feature file's
-/// nine scenarios exercise, and none of which this trimmed `RepoConfig` type
-/// (see module doc comment) carries enough data to check.
+/// wiring/carve-out/duplicate-id rules — none of which either feature file's
+/// scenarios exercise, and none of which this trimmed `RepoConfig` type (see
+/// module doc comment) carries enough data to check.
 let semanticFindings (config: RepoConfig) : string list =
-    match config.Doctor.DotnetGlobalJson with
-    | None -> []
-    | Some path ->
-        match validateRepoRelativePath path with
-        | Ok() -> []
-        | Error message -> [ sprintf "doctor.dotnet-global-json: invalid value \"%s\" (%s)" path message ]
+    let doctorFindings =
+        match config.Doctor.DotnetGlobalJson with
+        | None -> []
+        | Some path ->
+            match validateRepoRelativePath path with
+            | Ok() -> []
+            | Error message -> [ sprintf "doctor.dotnet-global-json: invalid value \"%s\" (%s)" path message ]
+
+    let harnessFindings =
+        config.Harness |> List.mapi harnessEntrySemanticFindings |> List.collect id
+
+    doctorFindings @ harnessFindings
 
 /// Runs `repo-config validate` from a known `repoRoot`, returning whether it
 /// passed alongside the human-readable text a CLI invocation would print
