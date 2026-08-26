@@ -361,10 +361,10 @@ is already proven. Wave ordering by measured size:
 | Wave | Namespaces                            | Rust command LOC | Scenarios | Rationale                                                     |
 | ---- | ------------------------------------- | ---------------- | --------- | ------------------------------------------------------------- |
 | A    | `convention`, `parity`                | ~735             | 11        | Smallest; proves the shim, the harness, and the CI wiring     |
-| B    | `repo-config`, `env`                  | ~1,598           | 59        | Self-contained, well-specified by feature files               |
+| B    | `repo-config`, `env`                  | ~1,598           | 62        | Self-contained, well-specified by feature files               |
 | C    | `doctor`, `test-coverage`             | ~650             | 53        | External-process heavy; exercises the shell layer             |
 | D    | `md`, `governance`, `git`             | ~3,344           | 128       | Largest parser surface; also absorbs the resequenced `git`    |
-| E    | `harness`, `specs`, `repo-governance` | ~5,000           | 188       | Highest coupling to `repo-config.yml`; generates the mirrors  |
+| E    | `harness`, `specs`, `repo-governance` | ~5,000           | 185       | Highest coupling to `repo-config.yml`; generates the mirrors  |
 | F    | `gate`                                | ~6,043           | 89        | Depends on every namespace above; drives the six-group matrix |
 
 Note the ordering is by **risk and dependency**, not by scenario count — wave C is smaller than
@@ -431,10 +431,10 @@ and the Phase 2 gate re-measures them:
 | Wave      | Spec directories                                                           | Feature files | Scenarios |
 | --------- | -------------------------------------------------------------------------- | ------------- | --------- |
 | A         | `convention`                                                               | 3             | 11        |
-| B         | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 7             | 59        |
+| B         | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 8             | 62        |
 | C         | `system`, `test-coverage`                                                  | 6             | 53        |
 | D         | `md`, `governance`, `git` (resequenced)                                    | 11            | 128       |
-| E         | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 38            | 188       |
+| E         | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 37            | 185       |
 | F         | `gate`                                                                     | 7             | 89        |
 | **Total** |                                                                            | **72**        | **528**   |
 
@@ -445,6 +445,16 @@ and the Phase 2 gate re-measures them:
 > surface (`commands/git/lockfile.rs`) had no Gherkin at all; Phase 3 authored
 > `git/git-lockfile.feature` (3 scenarios) and Wave D implements it, bringing the totals from
 > 525 / 71 to 528 / 72.
+>
+> **Wave B also differs from a naive split, the other direction.** `specs/env-staged-guard.feature`
+> sits under `specs/` — a directory otherwise wholly Wave E's — but its three scenarios drive
+> `env staged-guard validate`, and `env_staged_guard.rs`'s 210 lines are already summed into this
+> row's ~1,598 above. `rhino-bin.sh` routes `FSHARP_NAMESPACES` on argv[0] only, so `env` cannot
+> flip at Wave B's integration PR without `staged-guard` ported alongside it — the pre-commit
+> hook's real-`.env`-file guard would otherwise silently route to an F# binary that does not
+> implement it. An earlier delivery.md draft filed this feature's cycles under Wave E by directory;
+> corrected during Wave B's own integration PR once the shadow-diff harness's namespace walk
+> surfaced the gap.
 
 [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`. `doctor` is specified
 under `system/` (`doctor.feature`, `cargo-target-share.feature`, `fsharp-tool-invocation.feature`),
