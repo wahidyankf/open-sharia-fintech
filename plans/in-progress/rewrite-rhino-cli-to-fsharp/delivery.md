@@ -1177,7 +1177,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       duplicates a row in the record Phases 10 and 12 treat as durable — acceptance:
       `grep -c 'after wave A' benchmark.md` returns exactly 1 after the step, whether it ran once
       or three times.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -1189,12 +1189,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       confirming the restore left the shim exactly where the flip left it rather than in some third
       state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
       asserts but never tests.
-- [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
+- [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave A`, beside the Phase 0 B6 baseline.
 - [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
-- [ ] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
