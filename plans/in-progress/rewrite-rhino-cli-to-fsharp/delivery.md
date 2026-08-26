@@ -406,7 +406,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 - [x] [AI] Re-run **B1** after the dependency removal and record it as the corrected baseline —
       acceptance: `benchmark.md` shows both figures and states which one later phases compare
       against.
-- [ ] [AI] Re-run **B2 through B8** against the same post-removal Rust crate, for the same reason B1
+- [x] [AI] Re-run **B2 through B8** against the same post-removal Rust crate, for the same reason B1
       was re-run above: `benchmark.md`'s own "Baseline provenance" note marks every other row's
       Before value `†` because it is still measured against the pre-removal, 79-crate graph. This is
       the last point in the plan where a true apples-to-apples Rust baseline is obtainable — Phase 9c
@@ -420,7 +420,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       clean. **Source size is not part of this re-measurement**: `benchmark.md`'s Size row never
       carried a `†`, because removing an unreferenced `Cargo.toml` dependency cannot change how many
       lines exist under `apps/rhino-cli/src/`, so there is no confound to remove for that row.
-- [ ] [AI] Confirm the `Size` row's Before value is unchanged at 49,460 — acceptance: re-run the same
+- [x] [AI] Confirm the `Size` row's Before value is unchanged at 49,460 — acceptance: re-run the same
       counting command Phase 0 recorded and confirm it still reports 49,460; record the confirmation
       in `learnings.md` rather than editing the Before figure.
 - [x] [AI] Regenerate `apps/rhino-cli/parity-manifest.sha256` in each repo using that repo's own
@@ -434,26 +434,26 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       across — acceptance: both repos' `apps/rhino-cli/Cargo.toml` and `Cargo.lock` are
       byte-identical, and each repo's PR lands in the same window so the byte-identity obligation
       is never one-sided.
-- [ ] [AI] Create a throwaway F# console project at `local-tmp/publish-spike/` targeting `net10.0`
+- [x] [AI] Create a throwaway F# console project at `local-tmp/publish-spike/` targeting `net10.0`
       — acceptance: `dotnet build local-tmp/publish-spike` exits 0.
-- [ ] [AI] In `local-tmp/publish-spike/Program.fs`, exercise the four constructs the real binary
+- [x] [AI] In `local-tmp/publish-spike/Program.fs`, exercise the four constructs the real binary
       needs: an `FSharp.Core` `Map`/`Set` round-trip, a discriminated-union argument parse via
       `Argu` 6.2.5, a `System.Text.Json` serialize+deserialize, and a recursive directory walk over
       `repo-governance/` — acceptance: the JIT build prints all four results and exits 0.
-- [ ] [AI] Publish with AOT:
+- [x] [AI] Publish with AOT:
       `dotnet publish local-tmp/publish-spike -c Release -r osx-arm64 -p:PublishAot=true -o local-tmp/publish-spike/out-aot`
       and again with `-r linux-x64`, because the workstation is Apple silicon and CI is not
       under `/usr/bin/time -p` — acceptance: elapsed seconds and `ls -l` binary size recorded in
       `learnings.md`, together with any ILCompiler trim or reflection error verbatim if it fails.
-- [ ] [AI] Publish self-contained without AOT:
+- [x] [AI] Publish self-contained without AOT:
       `dotnet publish local-tmp/publish-spike -c Release -r osx-arm64 --self-contained true -o local-tmp/publish-spike/out-sc`
       and again with `-r linux-x64`
       under `/usr/bin/time -p` — acceptance: elapsed seconds and `du -sh` output size recorded in
       `learnings.md`.
-- [ ] [AI] If `Argu` emits an ILCompiler trim or reflection warning, repeat the parse step with
+- [x] [AI] If `Argu` emits an ILCompiler trim or reflection warning, repeat the parse step with
       `System.CommandLine` in the same spike — acceptance: `learnings.md` records which parser is
       AOT-clean, and that choice binds [DD-2](./tech-docs.md#dd-2--reuse-the-gherkin-replace-only-the-harness).
-- [ ] [AI] Measure startup for **both** published outputs: run each 50 times under
+- [x] [AI] Measure startup for **both** published outputs: run each 50 times under
       `/usr/bin/time -p`, asserting exit code 0 on every iteration so a crashing binary cannot
       report a false-fast time — acceptance: mean per-invocation milliseconds for both modes
       recorded in `learnings.md`.
@@ -462,26 +462,26 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] Neither repo's `apps/rhino-cli/Cargo.toml` names `tree-sitter` — acceptance:
+- [x] [AI] Neither repo's `apps/rhino-cli/Cargo.toml` names `tree-sitter` — acceptance:
       `/usr/bin/grep -c 'tree-sitter' apps/rhino-cli/Cargo.toml` returns 0 in both worktrees.
-- [ ] [AI] `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
+- [x] [AI] `bash apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both
       worktrees, asserted on the exit code.
-- [ ] [AI] Both publish attempts have a recorded outcome — success with figures, or failure with the
+- [x] [AI] Both publish attempts have a recorded outcome — success with figures, or failure with the
       exact command output — acceptance: no mode left unattempted in `learnings.md`.
-- [ ] [AI] Present three figures side by side — AOT startup, self-contained startup, and the Phase 0
+- [x] [AI] Present three figures side by side — AOT startup, self-contained startup, and the Phase 0
       B5 Rust baseline, all measured on this machine in this session — acceptance: all three appear
       in `learnings.md` with their exact commands.
-- [ ] [AI] Record exactly one publish mode as the plan's binding choice, choosing the first that
+- [x] [AI] Record exactly one publish mode as the plan's binding choice, choosing the first that
       works in the order NativeAOT, self-contained, framework-dependent — acceptance: the mode and
       its measured startup are written into `learnings.md` and `benchmark.md`.
-- [ ] [AI] **Only if the selected mode is framework-dependent**: record that
+- [x] [AI] **Only if the selected mode is framework-dependent**: record that
       `./.github/actions/setup-dotnet` must be added to the eight CI jobs that currently install no
       toolchain, and add that work to Phase 2's CI wiring — acceptance: either the extra CI steps are
       written into Phase 2, or `learnings.md` states that a toolchain-free mode was selected and no
       such steps are needed.
-- [ ] [AI] Delete `local-tmp/publish-spike/` once its figures are recorded — acceptance:
+- [x] [AI] Delete `local-tmp/publish-spike/` once its figures are recorded — acceptance:
       `test -d local-tmp/publish-spike` returns non-zero.
-- [ ] [AI] The B2-B8 re-measurement step above actually completed, or its skip was recorded —
+- [x] [AI] The B2-B8 re-measurement step above actually completed, or its skip was recorded —
       acceptance: **either** `rg -N -F '†' benchmark.md | wc -l` returns **0** in both repos'
       measurement tables, meaning every row is on comparable, post-removal terms, **or**
       `learnings.md` carries a dated entry naming which rows were left confounded, matching the
