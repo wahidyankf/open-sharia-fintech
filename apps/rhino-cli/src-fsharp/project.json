@@ -112,7 +112,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin/.fsharp-flipped-none apps/rhino-cli/src-fsharp"
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin/convention apps/rhino-cli/src-fsharp"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]

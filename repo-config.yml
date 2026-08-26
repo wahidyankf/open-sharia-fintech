@@ -151,14 +151,21 @@ coverage:
       specs: "specs/apps/rhino/behavior/rhino-cli/**"
     # rhino-cli-fsharp (rewrite-rhino-cli-to-fsharp): registry hygiene from
     # Phase 2 onward per this registry's own "every project is listed"
-    # comment above. The glob covers only namespaces already flipped to F#
-    # in FSHARP_NAMESPACES — none at Phase 2, so it matches nothing yet; each
-    # wave's integration PR widens it to that wave's spec directories, per
-    # plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md's widening
-    # protocol entry.
+    # comment above. The glob covers exactly the Gherkin directories whose
+    # F# step definitions have landed — a property of implementation, not of
+    # FSHARP_NAMESPACES — so it widens with *each wave's implementation
+    # work*, not with the wave's later integration/flip PR: a namespace's
+    # step definitions exist (and must be provably covered) before that
+    # wave's namespace ever serves real traffic. Directory-level (not
+    # file-level) scope matches ose-private, since `RhinoCli.Application.
+    # Convention` binds all three of the `convention` namespace's feature
+    # files together (emoji, license, and the aggregate audit share one
+    # module) — splitting the scope per-file would not reflect how the
+    # implementation is actually structured. Wave A widened it from nothing
+    # (Phase 2) to the full `convention/` directory.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/.fsharp-flipped-none/**"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/convention/**"
 
     # ose domain
     - name: ose-be

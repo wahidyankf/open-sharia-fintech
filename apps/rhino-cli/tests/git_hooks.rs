@@ -1,12 +1,17 @@
 //! Cucumber-rs integration tests for the git pre-commit/pre-push hook chain's
-//! staged-file markdown validators: `md links validate`, `md mermaid
-//! validate`, and `md heading-hierarchy validate`.
+//! staged-file markdown validators (`md links validate`, `md mermaid
+//! validate`, `md heading-hierarchy validate`) and for `git lockfile sync`'s
+//! staged-package-manifest lockfile synchronization.
 //!
-//! Wires the behavior-contract feature file at
-//! `specs/apps/rhino/behavior/rhino-cli/gherkin/git/` to step definitions that
-//! synthesize markdown fixtures inside a fresh git-rooted temp workspace,
-//! stage them, and drive the compiled `rhino-cli` binary the same way
-//! `.husky/pre-commit` (via `lint-staged`) and `.husky/pre-push` do.
+//! Wires the behavior-contract feature files at
+//! `specs/apps/rhino/behavior/rhino-cli/gherkin/git/` to step definitions.
+//! The markdown-validator scenarios synthesize fixtures inside a fresh
+//! git-rooted temp workspace, stage them, and drive the compiled `rhino-cli`
+//! binary the same way `.husky/pre-commit` (via `lint-staged`) and
+//! `.husky/pre-push` do. The lockfile scenarios call
+//! `commands::git::lockfile::sync_at_root` directly against the same kind of
+//! fixture, since `git lockfile sync` is a library-level helper rather than a
+//! step exercised through the hook chain.
 //!
 //! `md heading-hierarchy validate` has no `--staged-only` flag — lint-staged
 //! invokes it with the staged file's path as a positional argument, which is
@@ -44,6 +49,15 @@ struct GitHooksWorld {
     /// scenario's `Given` step, asserted by `Then` steps.
     target_file: String,
     output: Option<Output>,
+    /// App directory (e.g. `apps/sample-app`) staged by a `git-lockfile`
+    /// scenario's `Given` step, and the app's package-lock.json content and
+    /// full staged-file list observed before `git lockfile sync` runs, for
+    /// later `Then`-step comparison.
+    lockfile_app_dir: String,
+    lockfile_before: String,
+    staged_before: String,
+    lockfile_result: Option<Result<(), String>>,
+    lockfile_stdout: Vec<u8>,
 }
 
 impl std::fmt::Debug for GitHooksWorld {
@@ -62,6 +76,11 @@ impl GitHooksWorld {
             work,
             target_file: String::new(),
             output: None,
+            lockfile_app_dir: String::new(),
+            lockfile_before: String::new(),
+            staged_before: String::new(),
+            lockfile_result: None,
+            lockfile_stdout: Vec::new(),
         }
     }
 
@@ -118,6 +137,18 @@ impl GitHooksWorld {
             .status
             .code()
             .unwrap_or(-1)
+    }
+
+    /// Newline-joined repo-relative paths currently staged in the fixture
+    /// workspace, used by the `git-lockfile.feature` steps to snapshot the
+    /// staged-file set before and after `git lockfile sync` runs.
+    fn git_staged_names(&self) -> String {
+        let out = std::process::Command::new("git")
+            .args(["diff", "--cached", "--name-only"])
+            .current_dir(self.work.path())
+            .output()
+            .expect("git diff --cached");
+        String::from_utf8_lossy(&out.stdout).into_owned()
     }
 }
 
@@ -297,6 +328,147 @@ fn then_links_exclusion_honored(w: &mut GitHooksWorld) {
     let out = w.stdout();
     let file = w.target_file.clone();
     assert!(!out.contains(&file), "got: {out}");
+}
+
+// ===========================================================================
+// Given/When/Then steps — git lockfile sync
+// ===========================================================================
+
+#[given("a staged app package.json whose version disagrees with its package-lock.json")]
+fn given_lockfile_stale_staged(w: &mut GitHooksWorld) {
+    let app_dir = "apps/sample-app";
+    w.write(
+        &format!("{app_dir}/package.json"),
+        "{\"name\":\"sample-app\",\"version\":\"1.1.0\"}\n",
+    );
+    w.write(
+        &format!("{app_dir}/package-lock.json"),
+        concat!(
+            "{\n",
+            "  \"name\": \"sample-app\",\n",
+            "  \"version\": \"1.0.0\",\n",
+            "  \"lockfileVersion\": 3,\n",
+            "  \"packages\": {\n",
+            "    \"\": { \"name\": \"sample-app\", \"version\": \"1.0.0\" }\n",
+            "  }\n",
+            "}\n",
+        ),
+    );
+    w.git(&["add", &format!("{app_dir}/package.json")]);
+    w.lockfile_app_dir = app_dir.to_string();
+    w.lockfile_before =
+        std::fs::read_to_string(w.work.path().join(app_dir).join("package-lock.json"))
+            .expect("read fixture lockfile");
+}
+
+#[given("a staged app package.json whose fields already agree with its package-lock.json")]
+fn given_lockfile_current_staged(w: &mut GitHooksWorld) {
+    let app_dir = "apps/current-app";
+    w.write(
+        &format!("{app_dir}/package.json"),
+        "{\"name\":\"current-app\",\"version\":\"1.1.0\"}\n",
+    );
+    w.write(
+        &format!("{app_dir}/package-lock.json"),
+        concat!(
+            "{\n",
+            "  \"name\": \"current-app\",\n",
+            "  \"version\": \"1.1.0\",\n",
+            "  \"lockfileVersion\": 3,\n",
+            "  \"packages\": {\n",
+            "    \"\": { \"name\": \"current-app\", \"version\": \"1.1.0\" }\n",
+            "  }\n",
+            "}\n",
+        ),
+    );
+    w.git(&["add", &format!("{app_dir}/package.json")]);
+    w.lockfile_app_dir = app_dir.to_string();
+    w.lockfile_before =
+        std::fs::read_to_string(w.work.path().join(app_dir).join("package-lock.json"))
+            .expect("read fixture lockfile");
+}
+
+#[given("no app package.json file is staged")]
+fn given_no_package_json_staged(w: &mut GitHooksWorld) {
+    w.write_and_stage("README.md", "staged non-package file\n");
+}
+
+#[when("the developer runs \"git lockfile sync\"")]
+fn when_lockfile_sync(w: &mut GitHooksWorld) {
+    w.staged_before = w.git_staged_names();
+    let repo_root = w.work.path().to_path_buf();
+    let mut output = Vec::new();
+    let result = rhino_cli::commands::git::lockfile::sync_at_root(&repo_root, &mut output)
+        .map_err(|error| error.to_string());
+    w.lockfile_result = Some(result);
+    w.lockfile_stdout = output;
+}
+
+#[then("the command regenerates the app's package-lock.json to match the manifest")]
+fn then_lockfile_regenerated(w: &mut GitHooksWorld) {
+    assert!(
+        w.lockfile_result.as_ref().expect("ran").is_ok(),
+        "{:?}",
+        w.lockfile_result
+    );
+    let lockfile = std::fs::read_to_string(
+        w.work
+            .path()
+            .join(&w.lockfile_app_dir)
+            .join("package-lock.json"),
+    )
+    .expect("read lockfile");
+    assert!(
+        lockfile.contains("\"version\": \"1.1.0\""),
+        "got: {lockfile}"
+    );
+}
+
+#[then("the regenerated package-lock.json is staged")]
+fn then_lockfile_staged(w: &mut GitHooksWorld) {
+    let staged = w.git_staged_names();
+    assert!(
+        staged.contains(&format!("{}/package-lock.json", w.lockfile_app_dir)),
+        "got: {staged}"
+    );
+}
+
+#[then("the command exits successfully")]
+fn then_lockfile_exits_ok(w: &mut GitHooksWorld) {
+    assert!(
+        w.lockfile_result.as_ref().expect("ran").is_ok(),
+        "{:?}",
+        w.lockfile_result
+    );
+}
+
+#[then("the output reports no lockfile was synced")]
+fn then_lockfile_no_sync_reported(w: &mut GitHooksWorld) {
+    let out = String::from_utf8_lossy(&w.lockfile_stdout);
+    assert!(!out.contains("Syncing"), "got: {out}");
+}
+
+#[then("the package-lock.json file is not modified")]
+fn then_lockfile_unmodified(w: &mut GitHooksWorld) {
+    let after = std::fs::read_to_string(
+        w.work
+            .path()
+            .join(&w.lockfile_app_dir)
+            .join("package-lock.json"),
+    )
+    .expect("read lockfile");
+    assert_eq!(after, w.lockfile_before);
+}
+
+#[then("the output is empty")]
+fn then_lockfile_output_empty(w: &mut GitHooksWorld) {
+    assert!(w.lockfile_stdout.is_empty(), "got: {:?}", w.lockfile_stdout);
+}
+
+#[then("the staged file set is unchanged")]
+fn then_lockfile_staged_unchanged(w: &mut GitHooksWorld) {
+    let after = w.git_staged_names();
+    assert_eq!(after, w.staged_before);
 }
 
 #[tokio::main]
