@@ -105,8 +105,7 @@ kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`, mirrored to `
 
 ## Plans & Temporary Files
 
-Build artifacts in `generated-reports/` and `local-tmp/` may be swept at any time — regenerate,
-never protect.
+Build artifacts in `generated-reports/` and `local-tmp/` may be swept — regenerate, never protect.
 
 **See**: [plans.md](./repo-governance/conventions/structure/plans.md)
 
@@ -117,10 +116,10 @@ Do NOT stage/commit unless explicitly instructed. License MIT — see
 
 ## Related Repositories
 
-Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private) (infra).
-`apps/rhino-cli` byte-identity spans both.
+Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private); `apps/rhino-cli` byte-identical.
+Independent/family-only: [BeaverNest](https://github.com/wahidyankf/beaver-nest); work stays there; learnings inform OSE.
 
-**See**: [Related Repositories reference](./docs/reference/related-repositories.md)
+[Details](./docs/reference/related-repositories.md)
 
 ## Platform Binding Examples
 
