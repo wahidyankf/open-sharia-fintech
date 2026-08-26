@@ -33,10 +33,16 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 ## Delivery Mode: worktree-to-pr
 
 Mandatory in `ose-public` — `main` is branch-protected including for admins. `ose-private` uses the
-same mode here for symmetry, since this is not an infrastructure-as-code plan. Every PR runs the
-[PR-Review Maker→Fixer Cycle workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
-within the five-cycle cap, stopping before cycle 6, plus `pr-quality-gate.yml`; `[AI]` merges once
-the hardened preconditions hold.
+same mode here for symmetry, since this is not an infrastructure-as-code plan.
+
+> **PR review is skipped for the remainder of this plan's execution (user directive, 2026-08-26).**
+> Every PR from Phase 2 onward merges as soon as `pr-quality-gate.yml` (CI) is green — no
+> [PR-Review Maker→Fixer Cycle](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
+> runs at all, superseding both the default five-cycle cap and this plan's earlier "lighter review,
+> cap 2 cycles, override readily" policy. `[AI]` merges directly once CI passes; no review-cycle
+> comment, no override note is required beforehand. PR #309 (`ose-public`) and PR #76
+> (`ose-private`) — mid cycle-1 review when this took effect — stop at cycle 1's already-applied
+> fixes and merge on green CI rather than starting cycle 2 or a specialist fan-out.
 
 ## Parallelization Model
 
