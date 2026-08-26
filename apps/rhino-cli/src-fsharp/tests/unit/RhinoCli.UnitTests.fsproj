@@ -29,6 +29,8 @@
     <Compile Include="Steps/EnvValidateUnitTests.fs" />
     <Compile Include="Steps/EnvContractIacSteps.fs" />
     <Compile Include="Steps/EnvContractIacUnitTests.fs" />
+    <Compile Include="Steps/EnvStagedGuardSteps.fs" />
+    <Compile Include="Steps/EnvStagedGuardUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
