@@ -500,31 +500,31 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 > inside the 400 program-line bound — and it is self-consistent on `main` because
 > `FSHARP_NAMESPACES` ships empty, so every namespace still routes to Rust.
 
-- [ ] [AI] Create the five projects under `apps/rhino-cli/src-fsharp/` per the
+- [x] [AI] Create the five projects under `apps/rhino-cli/src-fsharp/` per the
       [tech-docs File-Impact Analysis](./tech-docs.md#file-impact-analysis): `RhinoCli.Domain`,
       `RhinoCli.Infrastructure`, `RhinoCli.Application`, `RhinoCli.Cli`, `RhinoCli.Program`
       — acceptance: `dotnet build apps/rhino-cli/src-fsharp/RhinoCli.Program` exits 0.
-- [ ] [AI] Create `apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj` referencing
+- [x] [AI] Create `apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj` referencing
       `TickSpec` 2.0.5, `xunit.v3` 3.2.2, `Microsoft.NET.Test.Sdk` 18.3.0 and `coverlet` 8.0.1,
       mirroring `apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj` — acceptance:
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` exits 0 with zero tests.
-- [ ] [AI] Create `apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj`
+- [x] [AI] Create `apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj`
       for the real-filesystem fixtures the Rust `tests/` directory currently holds — acceptance:
       `dotnet test apps/rhino-cli/src-fsharp/tests/integration` exits 0 with zero tests.
-- [ ] [AI] Create `apps/rhino-cli/src-fsharp/project.json` as Nx project `rhino-cli-fsharp` with
+- [x] [AI] Create `apps/rhino-cli/src-fsharp/project.json` as Nx project `rhino-cli-fsharp` with
       tags `type:app`, `platform:cli`, `lang:fsharp`, `domain:tooling` — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.tags[]'` lists `lang:fsharp`.
-- [ ] [AI] Author the **six mandatory targets** on that project — `build`, `typecheck`, `lint`,
+- [x] [AI] Author the **six mandatory targets** on that project — `build`, `typecheck`, `lint`,
       `test:unit`, `test:quick`, `test:coverage` — per
       [Mandatory Targets](../../../repo-governance/development/infra/nx-targets/mandatory-targets-all-projects-six-and-required.md)
       — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets | keys[]' | sort` lists all six,
       and each exits 0.
-- [ ] [AI] Author `test:coverage` with the same `--fail-under-lines 90` threshold the Rust target
+- [x] [AI] Author `test:coverage` with the same `--fail-under-lines 90` threshold the Rust target
       enforces, wired through `coverlet`, so the threshold survives the language change rather than
       being re-derived at Phase 9d — acceptance: a deliberately uncovered new function drops the
       figure below 90 and turns the target red.
-- [ ] [AI] Author `specs:behavior:coverage` **scoped to only the namespaces already flipped**, not
+- [x] [AI] Author `specs:behavior:coverage` **scoped to only the namespaces already flipped**, not
       to `specs/apps/rhino/**`. This is not a stylistic choice. Both existing targets — Rust
       `rhino-cli` and the F#/TickSpec `crane-cli` — invoke
       `specs behavior-coverage validate --shared-steps <specs-dir> <app-dir>`
@@ -542,19 +542,19 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       positional specs-dir argument names only the flipped namespaces (an empty set at Phase 2, so
       the target exits 0 over zero scenarios), and temporarily widening it by one un-ported namespace
       turns it red with a `Missing steps` count, proving the target is wired rather than inert.
-- [ ] [AI] Write down the **TickSpec fallback protocol** before Wave A opens, because
+- [x] [AI] Write down the **TickSpec fallback protocol** before Wave A opens, because
       [tech-docs DD-2](./tech-docs.md) and the risk table both name it as the mitigation for
       TickSpec expressiveness gaps and no cycle anywhere operationalizes it — acceptance:
       `learnings.md` states the trigger ("a step cannot be expressed in TickSpec after one honest
       attempt"), the action (write a plain `xunit.v3` test asserting the same scenario, keeping the
       scenario itself unchanged), and the recording obligation (one `learnings.md` entry naming the
       scenario and the reason). Weakening or deleting a scenario is never the fallback.
-- [ ] [AI] Make the fallback auditable rather than invisible — acceptance: every fallback test
+- [x] [AI] Make the fallback auditable rather than invisible — acceptance: every fallback test
       carries a comment naming its feature file and scenario title, and
       `grep -rc 'TickSpec fallback' apps/rhino-cli/src-fsharp/tests/` equals the number of
       `learnings.md` fallback entries at every wave gate. A mismatch means a scenario was silently
       re-implemented rather than deliberately re-expressed.
-- [ ] [AI] Decide and record whether this project stays in **shared-steps** mode like both existing
+- [x] [AI] Decide and record whether this project stays in **shared-steps** mode like both existing
       precedents, or moves to **three-level** mode to unlock the `@covers` and runtime-execution
       checks — acceptance: the decision is written into `learnings.md` with its reason, and if
       three-level mode is chosen the plan gains explicit steps for the `--unit-dir`,
@@ -562,7 +562,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       those report files from `dotnet test`, because none of that exists anywhere in this plan
       today. Choosing three-level mode without authoring those steps would leave the target
       unrunnable.
-- [ ] [AI] Register `rhino-cli-fsharp` in `repo-config.yml`'s `coverage.projects` list, whose own
+- [x] [AI] Register `rhino-cli-fsharp` in `repo-config.yml`'s `coverage.projects` list, whose own
       comment states "One entry per Nx project (apps, libs, `*-e2e`). No convention-derived defaults
       — every project is listed" [Repo-grounded — `repo-config.yml` `coverage:` block]. Give it
       `levels: [unit, integration]` matching `rhino-cli`'s, and a `specs` glob covering only the
@@ -576,15 +576,15 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `repo_config_validate` only checks the list is non-empty and the level enums are valid — it
       does **not** cross-check the registry against the Nx project graph, so omitting this entry
       fails silently rather than loudly.
-- [ ] [AI] Record the widening protocol in `learnings.md` before Wave A opens, so six later PRs do
+- [x] [AI] Record the widening protocol in `learnings.md` before Wave A opens, so six later PRs do
       not each re-derive it — acceptance: it states that each wave's integration PR widens **both**
       the Nx target's specs-dirs argument and the `repo-config.yml` glob by exactly that wave's spec
       directories, and that Phase 9c widens to the full tree and drops the `rhino-cli` entry in the
       same commit that deletes the crate.
-- [ ] [AI] Author `test:integration` against the new integration project, or record an explicit
+- [x] [AI] Author `test:integration` against the new integration project, or record an explicit
       not-applicable verdict with its reason — acceptance: either the target runs the integration
       fsproj, or `learnings.md` states why this CLI is exempt and links the tier rule.
-- [ ] [AI] Author the remaining required-where-applicable targets the Rust project defines so no
+- [x] [AI] Author the remaining required-where-applicable targets the Rust project defines so no
       downstream caller breaks at Phase 9c — acceptance: the target-name set of `rhino-cli-fsharp`
       is a superset of `rhino-cli`'s **20 target names minus exactly one**, `compat:min-version`,
       giving **19**, verified by diffing the two `jq -r '.targets | keys[]'` outputs.
@@ -595,7 +595,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       keeps its name and swaps only its command — `install` becomes `dotnet restore`, `typecheck`
       becomes `dotnet build --no-restore`, `deps:audit` swaps per DD-8, and so on. Do not infer a
       second excluded target; there is none.
-- [ ] [AI] Prove `deps:audit`'s replacement command can actually fail **before** either Nx project
+- [x] [AI] Prove `deps:audit`'s replacement command can actually fail **before** either Nx project
       ships it — `dotnet list package --vulnerable --include-transitive` is a **reporting** command,
       and a reporting command that exits 0 on a finding gates nothing. Acceptance: create a scratch
       project referencing a known-vulnerable package, run the exact `deps:audit` command against it,
@@ -627,7 +627,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       tracked file rather than a fresh edit, then re-run the restore checks above. Record all exit
       codes in `learnings.md` — recording alone is not the acceptance criterion; the post-restore
       re-run passing is.
-- [ ] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
+- [x] [AI] Verify the whole set runs green: `npx nx run rhino-cli-fsharp:test:quick` exits 0 with
       zero tests, and no target that should do work is a silent `echo` stub — acceptance:
       `npx nx show project rhino-cli-fsharp --json | jq -r '.targets[].options.command'` contains no
       bare `echo` **other than `test:e2e`**, which is a no-op in the Rust project today
@@ -635,14 +635,14 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       project'`] and stays a no-op in F#: a CLI has no browser surface, and the mandatory-six-targets
       rule requires the target to exist even when it is inapplicable. Carrying it over unchanged is
       parity, not a stub smuggled in.
-- [ ] [AI] Re-measure the wave map against the specs tree and reconcile it against the table at the
+- [x] [AI] Re-measure the wave map against the specs tree and reconcile it against the table at the
       top of this file — acceptance: the per-directory scenario counts still sum to 525 across 71
       feature files, or the table is corrected in the same commit with the delta stated.
-- [ ] [AI] Produce the authoritative spec-directory to CLI-namespace mapping by running each
+- [x] [AI] Produce the authoritative spec-directory to CLI-namespace mapping by running each
       namespace's `--help` and matching it against the feature files — acceptance: a 17-row table is
       written into `tech-docs.md`, and any row that contradicts the wave map above triggers a
       correction to the wave map rather than a silent mismatch.
-- [ ] [AI] Capture the pre-edit gate output for later comparison, into a **tracked** path rather than
+- [x] [AI] Capture the pre-edit gate output for later comparison, into a **tracked** path rather than
       `local-tmp/`, because `AGENTS.md`'s Plans & Temporary Files rule permits sweeping `local-tmp/`
       at any time and the last of this capture's consumers does not run until Phase 8, six phases and
       six separate PRs later. Capture **per repo, into that repo's own tree, and read it back only
@@ -666,7 +666,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       for the exception's rationale and scope. It is **transient, not permanent**: the Phase 8 Gate
       tears it down once Wave F's check — its last consumer — has run, so nothing survives to
       `ose-private`'s tree past that phase.
-- [ ] [AI] Edit `apps/rhino-cli/scripts/rhino-bin.sh`: add a `FSHARP_NAMESPACES` array, initially
+- [x] [AI] Edit `apps/rhino-cli/scripts/rhino-bin.sh`: add a `FSHARP_NAMESPACES` array, initially
       empty, and route on `$1` before the existing three-tier resolution — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group` output
       is byte-identical, per `diff`, to this repo's own capture from the step above, read from that
@@ -674,16 +674,16 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json` when
       checked in `ose-public`, `apps/rhino-cli/evidence/gate-before-ose-private.json` when checked
       in `ose-private`.
-- [ ] [AI] Add the F#-side resolution tiers to `apps/rhino-cli/scripts/rhino-bin.sh` —
+- [x] [AI] Add the F#-side resolution tiers to `apps/rhino-cli/scripts/rhino-bin.sh` —
       `RHINO_CLI_FSHARP_BIN`, then `apps/rhino-cli/src-fsharp/dist/`, then `dotnet run` — per
       [tech-docs §Dispatch shim](./tech-docs.md#dispatch-shim-during-migration) — acceptance: with
       `FSHARP_NAMESPACES` empty, none of the three tiers is reached and the `diff` above still
       passes.
-- [ ] [AI] Write the differential runner at `apps/rhino-cli/scripts/shadow-diff.sh` taking one or
+- [x] [AI] Write the differential runner at `apps/rhino-cli/scripts/shadow-diff.sh` taking one or
       more namespaces and running both binaries over every documented subcommand in text, json, and
       markdown formats, comparing stdout, stderr, and exit code — acceptance: run with both sides
       pointed at the Rust binary; it reports zero differences.
-- [ ] [AI] Regenerate the parity manifest, which now covers the new `src-fsharp/` files —
+- [x] [AI] Regenerate the parity manifest, which now covers the new `src-fsharp/` files —
       acceptance: `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0.
 
 ### Phase 2 CI wiring
@@ -691,19 +691,19 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 > Per [tech-docs §CI Impact](./tech-docs.md#ci-impact). These edits land in the **same PR** as the
 > shim, because a shim that can reach a binary CI does not publish is a latent gate failure.
 
-- [ ] [AI] In `.github/workflows/pr-quality-gate.yml`, add `- uses: ./.github/actions/setup-dotnet`
+- [x] [AI] In `.github/workflows/pr-quality-gate.yml`, add `- uses: ./.github/actions/setup-dotnet`
       and a `dotnet publish` step (mode as selected at the Phase 1 gate) to the `build-rhino` job,
       keeping the existing `cargo build --profile gate` step — acceptance: the job produces both
       `apps/rhino-cli/target/gate/rhino-cli` and the published F# binary.
-- [ ] [AI] Add a second `actions/upload-artifact@v4` step to `build-rhino` named
+- [x] [AI] Add a second `actions/upload-artifact@v4` step to `build-rhino` named
       `rhino-cli-fsharp-binary` — acceptance:
       `grep -c 'rhino-cli-fsharp-binary' .github/workflows/pr-quality-gate.yml` returns at least 1
       inside the `build-rhino` job.
-- [ ] [AI] Add a matching `actions/download-artifact@v4` plus `chmod +x` plus
+- [x] [AI] Add a matching `actions/download-artifact@v4` plus `chmod +x` plus
       `RHINO_CLI_FSHARP_BIN` export to the `format`, `enumerate`, and `gate` jobs — acceptance: all
       three jobs reference `rhino-cli-fsharp-binary`, and
       `grep -c 'rhino-cli-fsharp-binary' .github/workflows/pr-quality-gate.yml` returns 4.
-- [ ] [AI] Confirm no other workflow needs an edit at this phase — `rhino-cli-parity-audit.yml`
+- [x] [AI] Confirm no other workflow needs an edit at this phase — `rhino-cli-parity-audit.yml`
       diffs the manifest file only, and `validate-env.yml`,
       `dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`, and
       `_reusable-app-test-local-deploy-stag.yml` all invoke namespaces that are still Rust —
@@ -712,7 +712,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `detect` already maps to `has-dotnet-projects` — acceptance:
       `grep -n 'lang:fsharp' .github/workflows/pr-quality-gate.yml` shows the existing mapping and
       no new line was added.
-- [ ] [AI] Land every Phase 2 change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Phase 2 change in the `ose-private` worktree, authored there rather than
       copied — acceptance: the same `dotnet build`, `diff`, and `grep` assertions hold in that repo,
       **and** the break-and-restore `deps:audit` proof above is re-run there too, against
       `ose-private`'s own `rhino-cli-fsharp` target: record `git rev-parse HEAD` first; temporarily
@@ -730,7 +730,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group`
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group`
       matches this repo's own captured baseline byte for byte, in each repo independently, each read
       from that same repo's own tree, never across worktrees —
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/evidence/gate-before-ose-public.json` in
@@ -738,11 +738,11 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       baseline files are not expected to match each other: `delivery.md:14946-14950`'s Phase 9 Gate
       documents the two repos' `pr-quality-gate.yml` as independently divergent, so this check is a
       within-repo before/after comparison, never a cross-repo one.
-- [ ] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos — the Rust crate is untouched.
-- [ ] [AI] `npx nx run rhino-cli-fsharp:test:quick` exits 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention` reports zero differences with both
+- [x] [AI] `npx nx run rhino-cli:test:quick` exits 0 in both repos — the Rust crate is untouched.
+- [x] [AI] `npx nx run rhino-cli-fsharp:test:quick` exits 0 in both repos.
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention` reports zero differences with both
       sides pointed at Rust, proving the harness itself is sound before it is trusted.
-- [ ] [AI] The re-measured wave map sums to 525 scenarios across 71 feature files, or the table at
+- [x] [AI] The re-measured wave map sums to 525 scenarios across 71 feature files, or the table at
       the top of this file has been corrected.
 - [ ] [AI] `pr-quality-gate.yml` is green on this phase's PR in both repos, and the `build-rhino`
       job's new duration is written into `benchmark.md` beside its Phase 0 B7 baseline.

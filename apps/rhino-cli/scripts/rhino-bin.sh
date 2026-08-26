@@ -4,7 +4,17 @@
 # apps/rhino-cli/Cargo.toml -- <command>` so gate invocations skip cargo's
 # per-run overhead once a binary is already available.
 #
-# Resolution order:
+# Namespace routing (rewrite-rhino-cli-to-fsharp, Phase 2 onward): before any
+# Rust resolution runs, the first argument is checked against
+# FSHARP_NAMESPACES. A namespace listed there resolves against the F# binary
+# instead, through its own three tiers below. FSHARP_NAMESPACES ships empty
+# here and gains one namespace per wave's flip PR — reverting a wave is a
+# one-line removal from this array. See
+# plans/in-progress/rewrite-rhino-cli-to-fsharp/tech-docs.md
+# §Dispatch shim during migration.
+#
+# Rust resolution order (unchanged, still the default for every
+# not-yet-flipped namespace):
 #   1. RHINO_CLI_BIN env var — if set and points to an executable file, use
 #      it directly (no build, no discovery). Lets CI/local callers pin an
 #      already-built binary explicitly.
@@ -24,6 +34,17 @@
 # still use `--release`/`target/release/`, unchanged; see
 # plans/done/2026-08-09__optimize-cis/delivery.md.
 #
+# F# resolution order (mirrors the Rust tiers above), used only for a
+# namespace listed in FSHARP_NAMESPACES:
+#   1. RHINO_CLI_FSHARP_BIN env var — explicit override, same contract as
+#      RHINO_CLI_BIN.
+#   2. apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp — the published
+#      self-contained binary (the `build` Nx target's output; also what CI's
+#      `build-rhino` job uploads and every consumer job downloads).
+#   3. Otherwise, `dotnet run` against RhinoCli.Program as a last resort —
+#      needs the .NET SDK, unlike tiers 1-2, so CI always sets
+#      RHINO_CLI_FSHARP_BIN instead of relying on this tier.
+#
 # In every case, all arguments are passed through unchanged and the script
 # exits with the resolved binary's exit code (via `exec`, so no code is
 # swallowed or remapped).
@@ -40,8 +61,32 @@ LOCKFILE="${REPO_ROOT}/apps/rhino-cli/Cargo.lock"
 TARGET_DIR="${CARGO_TARGET_DIR:-${REPO_ROOT}/apps/rhino-cli/target}"
 GATE_BIN="${TARGET_DIR}/gate/rhino-cli"
 
-# Resolve which binary to run, trying each tier in order, then execute it
-# once at the bottom — the single `exec` call keeps argument passthrough
+# Namespaces already flipped to the F# binary. Empty at Phase 2 — every wave
+# from Wave A (Phase 3) onward adds exactly its own namespaces here in that
+# wave's flip PR, per tech-docs.md DD-4's wave ordering.
+FSHARP_NAMESPACES=()
+
+if [[ $# -gt 0 ]]; then
+	for FSHARP_NAMESPACE in "${FSHARP_NAMESPACES[@]+"${FSHARP_NAMESPACES[@]}"}"; do
+		if [[ "${FSHARP_NAMESPACE}" == "$1" ]]; then
+			FSHARP_DIST_BIN="${REPO_ROOT}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp"
+			FSHARP_PROJECT="${REPO_ROOT}/apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj"
+			if [[ -n "${RHINO_CLI_FSHARP_BIN:-}" && -f "${RHINO_CLI_FSHARP_BIN}" && -x "${RHINO_CLI_FSHARP_BIN}" ]]; then
+				# Tier 1: explicit override via RHINO_CLI_FSHARP_BIN.
+				exec "${RHINO_CLI_FSHARP_BIN}" "$@"
+			elif [[ -x "${FSHARP_DIST_BIN}" ]]; then
+				# Tier 2: reuse the published self-contained binary.
+				exec "${FSHARP_DIST_BIN}" "$@"
+			else
+				# Tier 3: last resort, needs the .NET SDK.
+				exec dotnet run --project "${FSHARP_PROJECT}" -- "$@"
+			fi
+		fi
+	done
+fi
+
+# Resolve which Rust binary to run, trying each tier in order, then execute
+# it once at the bottom — the single `exec` call keeps argument passthrough
 # ("$@") and exit-code propagation defined in exactly one place.
 if [[ -n "${RHINO_CLI_BIN:-}" && -f "${RHINO_CLI_BIN}" && -x "${RHINO_CLI_BIN}" ]]; then
 	# Tier 1: explicit override via RHINO_CLI_BIN.

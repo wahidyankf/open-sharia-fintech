@@ -184,3 +184,220 @@ self-contained publish bundles the runtime and is equally toolchain-free, per
 `local-tmp/publish-spike/` was deleted once the figures above were recorded, per
 [Plans & Temporary Files](../../../AGENTS.md#plans--temporary-files) and this phase's own cleanup
 acceptance criterion.
+
+## 2026-08-26 — Phase 2: shared-steps mode (decision)
+
+`rhino-cli-fsharp` stays in **shared-steps** mode, matching both existing precedents (Rust
+`rhino-cli`, F#/TickSpec `crane-cli`). Three-level mode is not adopted: it would need the
+`--unit-dir`, `--integration-dir`, `--e2e-dir`, and `--<level>-report` arguments plus whatever
+generates those report files from `dotnet test`, and none of that exists anywhere in this plan
+today — adopting it now would leave the target unrunnable. Shared-steps mode's own check (missing
+step implementations) is sufficient for every wave this plan schedules; `@covers` markers and
+runtime-execution cross-checks are not needed until a future plan explicitly charters three-level
+mode with its own argument-wiring steps.
+
+## 2026-08-26 — Phase 2: TickSpec fallback protocol
+
+Per [tech-docs DD-2](./tech-docs.md#dd-2--reuse-the-gherkin-replace-only-the-harness) and the risk
+table, this is the protocol every wave from Wave A onward must follow:
+
+- **Trigger**: a step cannot be expressed in TickSpec after one honest attempt.
+- **Action**: write a plain `xunit.v3` test asserting the same scenario, keeping the scenario
+  itself — its Gherkin text in `specs/apps/rhino/behavior/rhino-cli/gherkin/` — unchanged.
+  Weakening or deleting a scenario is never the fallback.
+- **Recording obligation**: one `learnings.md` entry naming the scenario and the reason the step
+  could not be expressed in TickSpec.
+- **Auditability**: every fallback test carries a comment naming its feature file and scenario
+  title, and `grep -rc 'TickSpec fallback' apps/rhino-cli/src-fsharp/tests/` must equal the number
+  of `learnings.md` fallback entries at every wave gate. At Phase 2, both counts are **0** — no
+  wave has run yet, so this is the protocol's baseline, not evidence it was exercised. A mismatch
+  after a wave lands means a scenario was silently re-implemented rather than deliberately
+  re-expressed, and the wave gate must not pass until the counts agree again.
+
+## 2026-08-26 — Phase 2: widening protocol
+
+Recorded before Wave A opens, per delivery.md's own instruction, so six later integration PRs do
+not each re-derive it. Two Phase-2-authored artifacts encode "no namespace flipped yet" as the
+literal, nonexistent directory name `specs/apps/rhino/behavior/rhino-cli/gherkin/.fsharp-flipped-none`
+(confirmed empirically: `specs behavior-coverage validate --shared-steps <nonexistent-dir> apps/rhino-cli/src-fsharp`
+reports "0 specs, 0 scenarios, 0 steps — all covered" and exits 0, the same as pointing at a real
+empty directory):
+
+- `apps/rhino-cli/src-fsharp/project.json`'s `specs:behavior:coverage` target's `--shared-steps`
+  positional argument.
+- `repo-config.yml`'s `coverage.projects` `rhino-cli-fsharp` entry's `specs` glob.
+
+**Each wave's integration PR widens both of these by exactly that wave's spec directories** — Wave
+A replaces the placeholder with `specs/apps/rhino/behavior/rhino-cli/gherkin/convention` (and the
+`repo-config.yml` glob correspondingly), Wave B additionally adds `repo-config`,
+`repo-config-validate`, `env`, `env-contract`, and so on through Wave F. Phase 9c widens to the
+full tree (`specs/apps/rhino/behavior/rhino-cli/gherkin/**`) and drops the `rhino-cli` entry in the
+same commit that deletes the Rust crate — at that point exactly one entry (`rhino-cli-fsharp`)
+covers the whole spec tree, matching the pattern every other ported namespace already established.
+
+**Verified wiring, not merely inert**: temporarily pointing the `specs:behavior:coverage` command at
+`specs/apps/rhino/behavior/rhino-cli/gherkin/convention` (Wave A's real directory, one un-ported
+namespace) against the still-empty `apps/rhino-cli/src-fsharp` produced `ERROR: Found 44 step(s)
+without matching step definitions` and exited 1, proving the target is wired rather than inert. The
+widening was reverted immediately after the proof; Phase 2 ships with the placeholder.
+
+## 2026-08-26 — Phase 2: `deps:audit` reporting-vs-gating proof
+
+Per delivery.md's instruction, `dotnet list package --vulnerable --include-transitive` was proven to
+be a reporting command before either Nx project shipped it. A scratch F# console project
+(`local-tmp/deps-audit-scratch/`, deleted after this proof) referenced `Newtonsoft.Json` 12.0.1
+(GHSA-5crp-9r3c-p9vr, "High" severity) and `dotnet list Scratch.fsproj package --vulnerable
+--include-transitive` printed the finding as an `NU1903` warning and **exited 0** — confirming the
+command gates nothing on its own.
+
+**The fix**: `apps/rhino-cli/scripts/dotnet-deps-audit.sh` wraps the command, re-running it with
+`--format json` and using `jq` to detect any non-empty `vulnerabilities` array under either
+top-level or transitive packages across every framework/project in the report; a finding prints the
+human-readable table to stderr and exits 1. Re-proven against the same scratch project: the wrapper
+exited **1** against the vulnerable reference and **0** once the reference was removed.
+
+**Live-target break-and-restore, both repos**: with the scratch proof done, `RhinoCli.Program.fsproj`
+was temporarily edited to reference `Newtonsoft.Json` 12.0.1 (confined to the uncommitted working
+tree — no `git add`/`git commit` while broken), `npx nx run rhino-cli-fsharp:deps:audit` was required
+to exit non-zero (confirmed), the reference was restored, the same target was re-run and required to
+exit 0 (confirmed), `git diff --exit-code -- apps/rhino-cli/src-fsharp/` was required to exit 0
+(confirmed), and `git rev-parse HEAD` was confirmed unchanged across the whole sequence in both
+repos. All exit codes matched the required shape in both `ose-public` and `ose-private`.
+
+## 2026-08-26 — Phase 2: CI files confirmed unaffected
+
+Per delivery.md's instruction, the reasoning for each of the five named workflow files, none of
+which needed a Phase 2 edit:
+
+- `rhino-cli-parity-audit.yml` — diffs `parity-manifest.sha256` between the two repos as an opaque
+  file; it does not inspect which paths compose it, so adding `apps/rhino-cli/src-fsharp` to the
+  manifest's `BOUNDARY_PATHS` needed no change here.
+- `validate-env.yml` — invokes `env validate`, a namespace that stays on Rust at Phase 2
+  (`FSHARP_NAMESPACES` ships empty); its `rhino-bin.sh` calls fall straight through the unchanged
+  Rust tiers.
+- `dependency-vulnerability-audit.yml` — invokes rhino namespaces that also stay on Rust at Phase 2,
+  for the same reason; it is unrelated to the new `deps:audit` Nx target the F# project defines,
+  which is a different mechanism (an Nx target invoked via `nx run`/`nx affected`, not this
+  workflow's own scheduled/dispatch-triggered rhino-cli invocations).
+- `_reusable-www-test-local-deploy.yml` and `_reusable-app-test-local-deploy-stag.yml` — both invoke
+  rhino namespaces that stay on Rust at Phase 2, for the same reason as the two above.
+
+## 2026-08-26 — Phase 2: `detect` job's `has-dotnet-projects` mapping
+
+Confirmed already present and unedited in `ose-public`'s `.github/workflows/pr-quality-gate.yml`:
+`lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;` — `rhino-cli-fsharp`
+carries `tag:lang:fsharp`, so this existing mapping already routes it to the `dotnet` job with no
+new line added, exactly as delivery.md's acceptance predicted.
+
+**`ose-private` is different and needed real work, not confirmation.** Per the delta table at the
+top of this file, `ose-private` had **no** `has-dotnet-projects` output, **no** `lang:fsharp`
+mapping, and **no** `dotnet` CI job at all before Phase 2 — it never carried an F# or C# project.
+Phase 2 added all three there: the `has-dotnet-projects` output and its `lang:fsharp | lang:csharp`
+case in the `detect` job, and a new `dotnet` job mirroring `ose-public`'s (gated on
+`needs.detect.outputs.has-dotnet-projects == 'true'`). This is genuinely new CI surface in
+`ose-private`, not a like-for-like mirror of an existing job.
+
+**A gap the delta table implied but did not spell out**: `ose-private`'s `typescript` job excluded
+only `tag:lang:rust` (`ose-public`'s equivalent excludes `lang:fsharp`, `lang:csharp`, `lang:rust`,
+`lang:dart`). Left as-is, the moment `rhino-cli-fsharp` existed as an affected `lang:fsharp` project,
+this job's own `nx affected` would have swept it in and run its targets on a runner installing no
+.NET SDK. Fixed by adding `,tag:lang:fsharp` to that job's `--exclude`.
+
+**`ose-private`'s new `dotnet` job needs `setup-rust`, unlike `ose-public`'s.** `rhino-cli-fsharp`'s
+`specs:behavior:coverage`/`specs:structure-validation`/`specs:gherkin-cardinality-validation`/
+`governance-*`/`env:validation` targets shell out to `cargo run --manifest-path
+apps/rhino-cli/Cargo.toml` directly, mirroring `crane-cli`'s own existing `project.json` (the
+established precedent for this shape in this repo). `ose-public`'s `dotnet` job runs on GH-hosted
+`ubuntu-latest`, which ships a Rust toolchain preinstalled, so it has never needed an explicit
+`setup-rust` step for this. `ose-private`'s runners are `[self-hosted, linux, ose-self-hosted]`,
+which — per this repo's own `gate` job comment — have **no ambient Rust toolchain**. Its new
+`dotnet` job therefore adds `./.github/actions/setup-rust` explicitly; omitting it would have made
+every one of those five targets fail with "cargo: command not found" the first time an affected
+`lang:fsharp` project's `test:quick`/`test:specs` chain ran there.
+
+**`ose-private` had no `.config/dotnet-tools.json` or `.config/` directory at all** — no F# project
+had ever needed one there. Phase 2 created it (copied verbatim from `ose-public`'s, since it is a
+generic tool-version manifest with no repo-specific content: `fantomas` 7.0.5, `dotnet-fsharplint`
+0.26.10, `fsharp-analyzers` 0.36.0), so `rhino-cli-fsharp`'s `lint` target's `dotnet tool restore`
+step has a manifest to restore from. Verified: `dotnet tool restore` in `ose-private` now installs
+all three tools successfully.
+
+**`ose-private`'s `format` job gained a new `needs: build-rhino` dependency edge.** Unlike
+`ose-public`'s `format` job, `ose-private`'s never depended on `build-rhino` — its `rhino-bin.sh`
+calls resolved the Rust binary through tier 3 (build on demand) rather than a prebuilt artifact, and
+it carried no `RHINO_CLI_BIN` at all. Adding the F# artifact's `download-artifact`/`chmod
++x`/`RHINO_CLI_FSHARP_BIN` wiring there — required for parity with the `format`/`enumerate`/`gate`
+three-job list delivery.md names — needed a real `needs: build-rhino` edge first, since downloading
+an artifact from a job that has not necessarily finished (or run) is not reliable without one. This
+is a genuine, judgment-call CI-topology change in `ose-private` only: it adds wall-clock
+serialization between `build-rhino` and `format` that did not exist before, with no functional risk
+while `FSHARP_NAMESPACES` stays empty. `ose-public`'s `format` job already depended on `build-rhino`
+before this plan, so no equivalent change was needed there.
+
+## 2026-08-26 — Phase 2: `apps/rhino-cli/scripts/shadow-diff.sh` was not a new file
+
+Both repos already had a tracked `apps/rhino-cli/scripts/shadow-diff.sh` from the prior Go→Rust
+rewrite (`plans/done/2026-05-23__rhino-cli-rust-rewrite/` in `ose-public`), comparing a Go binary
+(`apps/rhino-cli/main.go`) against the Rust one. That Go source tree no longer exists in either repo
+(`apps/rhino-cli/main.go`: no such file), and nothing else in either repository references this
+script by path (`grep -rn 'shadow-diff.sh'` outside `plans/` returns nothing) — it was dead,
+orphaned tooling from a completed migration, never cleaned up in a prior phase. **The
+File-Impact Analysis in `tech-docs.md` marks this file `[N]` (new); it is actually `[E]` (edited) —
+a plan-documentation inaccuracy being recorded here rather than silently corrected upstream.** Phase
+2 repurposes the same path for the new Rust↔F# differential runner, replacing the Go-era content
+entirely, which is the same tool serving the same purpose for the migration now in progress.
+
+## 2026-08-26 — Phase 2: publish RID pinned to `linux-x64` (judgment call)
+
+Neither `ose-public`'s `ubuntu-latest` GH-hosted runners nor `ose-private`'s
+`[self-hosted, linux, ose-self-hosted]` runners have their CPU architecture stated anywhere in this
+plan or its workflows. `ubuntu-latest` is documented by GitHub as `x64` today, so `-r linux-x64` is
+correct there. `ose-private`'s self-hosted runner architecture is `[Unverified]` from this plan's own
+sources — `linux-x64` is used for both repos' `build-rhino` publish step as the reasonable default
+for this class of infrastructure, but this is a judgment call, not a grounded fact, and should be
+confirmed against the actual self-hosted runner hardware before this PR merges. If the self-hosted
+runner is `linux-arm64`, the publish step's `-r` flag needs a matching correction there (and only
+there — `ose-public` stays `linux-x64` either way).
+
+## 2026-08-26 — Phase 2: `RhinoCli.Program` → `RhinoCli.Cli` reference direction (judgment call)
+
+`tech-docs.md`'s architecture mermaid diagram draws `CLI --> PROG` (i.e., `RhinoCli.Cli` referencing
+`RhinoCli.Program`), which would be backwards for a conventional layered CLI: an entry-point `Exe`
+project is normally the one referencing the parser layer beneath it, not the reverse, and Argu
+parsers have no reason to depend on the process entry point. Phase 2 implements the conventional
+direction instead — `RhinoCli.Program` (`Exe`) references `RhinoCli.Cli`, which references
+`RhinoCli.Application`, which references both `RhinoCli.Domain` and `RhinoCli.Infrastructure` — on
+the judgment that the diagram's arrow direction is an artifact of its left-to-right layout choice
+rather than a literal, intended dependency contract. No wave's plan text depends on the literal
+arrow direction, so this does not block any later step, but it is recorded here as a deviation from
+the tech-docs diagram as drawn.
+
+## 2026-08-26 — Phase 2: `Severity` DU renamed from the Rust source's `Error`/`Warn`
+
+`apps/rhino-cli/src/application/severity.rs`'s two-level scale (`Error`, `Warn`) cannot be ported
+case-for-case into `RhinoCli.Domain.Types.Severity`: a case literally named `Error` collides with
+`FSharp.Core`'s own `Result.Error`, which the G-Research analyzer's `GRA-UNIONCASE-001` rule
+(treated as an error in this project's `lint` target) catches — confirmed by running the analyzer
+suite against the initial three-case draft (`Error`/`Warning`/`Info`, the last invented rather than
+grounded in the Rust source and corrected here too) before landing on the final two-case
+`Blocking`/`Advisory` naming. `RequireQualifiedAccess` alone does not silence the rule; only renaming
+the case does. Whichever wave first ports `severity.rs`'s real validators should decide whether
+`Blocking`/`Advisory` is the permanent naming or gets revisited then, since Phase 2's choice here was
+made for lint compliance on a placeholder type, not as a settled domain-naming decision.
+
+## 2026-08-26 — Phase 2: placeholder modules avoid executable `let` bindings
+
+`RhinoCli.Infrastructure.Placeholder`, `RhinoCli.Application.Placeholder`, and
+`RhinoCli.Cli.RootArgs` were each drafted first with an executable top-level `let` binding (a string
+constant, an empty list, and an Argu `IArgParserTemplate` implementation respectively) to prove each
+project builds and its `ProjectReference` edges resolve. Running `test:coverage` against that draft
+measured **0%** line coverage on all three (Domain's pure DU/record file measured 100%, since type
+declarations carry no coverable sequence point) and failed the 90%-line threshold outright — before
+any wave had shipped a single real function or test. Each was rewritten to a pure type declaration
+(a single-case marker DU, a type alias into `RhinoCli.Domain.Types.Finding`, and a bare DU with the
+`IArgParserTemplate` implementation removed, respectively), which restored `test:coverage` to 100%
+while still proving the project references are live. The threshold-breaking behavior was re-verified
+directly: temporarily adding one deliberately-uncovered function to the Infrastructure placeholder
+dropped the measured figure to 0% and turned the target red, then the addition was reverted and the
+target was re-verified green — confirming the 90% threshold itself gates correctly, per delivery.md's
+own acceptance clause for that step.

@@ -1,0 +1,67 @@
+[
+  {
+    "group": "governance",
+    "gates": [
+      "repo-config-schema",
+      "convention-emoji",
+      "env-validate",
+      "parity-manifest",
+      "vendor-independence",
+      "vendor-independence-agents-md",
+      "convention-license",
+      "harness-bindings",
+      "harness-ownership",
+      "harness-catalog",
+      "governance-word-budget",
+      "governance-readme-completeness"
+    ],
+    "doctor_tools": []
+  },
+  {
+    "group": "formatting-verify",
+    "gates": [
+      "format-verify-prettier",
+      "format-verify-rustfmt",
+      "format-verify-fantomas",
+      "format-verify-ruff",
+      "format-verify-gofmt",
+      "format-verify-elixir",
+      "format-verify-csharpier",
+      "format-verify-dart",
+      "format-verify-shfmt",
+      "format-verify-tofu",
+      "format-verify-stylua",
+      "format-verify-clang",
+      "format-verify-buildifier"
+    ],
+    "doctor_tools": ["clang-format", "npm", "shfmt", "tofu"]
+  },
+  {
+    "group": "markdown",
+    "gates": [
+      "markdownlint",
+      "md-mermaid",
+      "md-heading-hierarchy",
+      "md-naming",
+      "md-frontmatter",
+      "md-links",
+      "governance-readme-index"
+    ],
+    "doctor_tools": ["npm"]
+  },
+  {
+    "group": "shell-docker-actions",
+    "gates": ["actionlint", "shellcheck", "hadolint", "docker-compose-config"],
+    "doctor_tools": ["actionlint", "docker", "hadolint", "shellcheck"]
+  },
+  {
+    "group": "specs",
+    "gates": ["specs-gherkin-cardinality"],
+    "doctor_tools": []
+  },
+  {
+    "group": "harness",
+    "gates": ["harness-duplication"],
+    "doctor_tools": []
+  }
+]
