@@ -9,6 +9,7 @@
 /// distinct `EmojiFinding`/`LicenseFinding` structs.
 module RhinoCli.Cli.Formatters
 
+open System
 open System.Text.Json
 open System.Text.Json.Serialization
 open System.Text.Encodings.Web
@@ -73,14 +74,14 @@ let toEmojiFindingJson (f: Finding) : EmojiFindingJson =
 /// from `Finding.Path` directly rather than re-parsed from the message.
 let toLicenseFindingJson (f: Finding) : LicenseFindingJson =
     let msg = f.Message
-    let closeBracket = msg.IndexOf("] ")
+    let closeBracket = msg.IndexOf("] ", StringComparison.Ordinal)
 
     if not (msg.StartsWith("[")) || closeBracket < 0 then
         failwithf "malformed license finding message: %s" msg
 
     let kind = msg.Substring(1, closeBracket - 1)
     let afterKind = msg.Substring(closeBracket + 2)
-    let sepIdx = afterKind.IndexOf(" — ")
+    let sepIdx = afterKind.IndexOf(" — ", StringComparison.Ordinal)
 
     if sepIdx < 0 then
         failwithf "malformed license finding message: %s" msg

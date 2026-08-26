@@ -232,7 +232,7 @@ let private parseManifest (manifest: string) : Result<Map<string, string>, strin
         match lines with
         | [] -> Ok acc
         | line :: rest ->
-            let sepIdx = line.IndexOf("  ")
+            let sepIdx = line.IndexOf("  ", StringComparison.Ordinal)
 
             if sepIdx < 0 then
                 Error(sprintf "%s:%d: expected '<sha256>  <repository-relative path>'" ManifestPath lineNumber)

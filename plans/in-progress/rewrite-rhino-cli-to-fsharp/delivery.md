@@ -1150,7 +1150,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `convention/` only, **not**
+- [x] [AI] Widen the coverage scope by exactly this wave's spec directories — `convention/` only, **not**
       `git/`, whose scenarios moved to Wave D — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
@@ -1160,17 +1160,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       wave-A `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
       Deleting a `@covers` marker would **not** turn it red in shared-steps mode — that check is
       opt-in to three-level mode.
-- [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh convention parity` — **not** `git`, which does not
+- [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh convention parity` — **not** `git`, which does not
       flip until Wave D — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
-- [ ] [AI] Add `convention` and `parity` — **not** `git`, per the resequencing above — to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
+- [x] [AI] Add `convention` and `parity` — **not** `git`, per the resequencing above — to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
       immediately after the flip still reports zero differences — the same shadow-diff invocation the
       step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
       shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
       binary itself, which the flip does not touch, rather than a stored snapshot no step here
       produces.
-- [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
+- [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave A`. Check for an existing `after wave A` row **before** appending — this
       integration section can be retried after a partial failure, and an unguarded append silently
