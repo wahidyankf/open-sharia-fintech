@@ -19,6 +19,8 @@
     <Compile Include="Steps/RepoConfigUnitTests.fs" />
     <Compile Include="Steps/RepoConfigValidateSteps.fs" />
     <Compile Include="Steps/RepoConfigValidateUnitTests.fs" />
+    <Compile Include="Steps/EnvSteps.fs" />
+    <Compile Include="Steps/EnvUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

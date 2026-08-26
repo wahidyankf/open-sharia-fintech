@@ -14,6 +14,7 @@
     <Compile Include="src/Convention.fs" />
     <Compile Include="src/Parity.fs" />
     <Compile Include="src/RepoConfig.fs" />
+    <Compile Include="src/Env.fs" />
   </ItemGroup>
 
   <ItemGroup>
