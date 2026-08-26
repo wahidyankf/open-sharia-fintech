@@ -243,9 +243,15 @@ jobs:
       # non-AOT per the Phase 1 publish-mode decision
       # (learnings.md#publish-mode-decision) — bundles the .NET runtime so
       # the eight consumer jobs below stay toolchain-free, unlike a
-      # framework-dependent publish.
+      # framework-dependent publish. Invokes the Nx `build` target itself
+      # (never a hand-written `dotnet publish` duplicate) so there is exactly
+      # one source of truth for the publish command; `--rid` overrides the
+      # target's `--use-current-runtime` default with the pinned RID judgment
+      # call recorded in
+      # learnings.md#2026-08-26--phase-2-publish-rid-pinned-to-linux-x64-judgment-call.
+      - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
-      - run: dotnet publish apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj -c Release -r linux-x64 --self-contained true -o apps/rhino-cli/src-fsharp/dist
+      - run: npx nx run rhino-cli-fsharp:build --rid="-r linux-x64"
       - uses: actions/upload-artifact@v4
         with:
           name: rhino-cli-fsharp-binary
@@ -375,6 +381,10 @@ jobs:
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
+      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli-fsharp's
+      # coverlet `/p:Threshold=90 /p:ThresholdType=line`). Without this step the threshold is
+      # declared but never enforced by CI — mirrors the rust job's identical split below.
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
 
   rust:
     name: Rust quality gate

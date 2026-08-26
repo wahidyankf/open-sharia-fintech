@@ -196,7 +196,8 @@ flowchart LR
   CLI[RhinoCli.Cli<br/>Argu parsers, DU command tree] --> APP[RhinoCli.Application<br/>validators and reporters]
   APP --> DOM[RhinoCli.Domain<br/>severity, finding, format DUs]
   APP --> INF[RhinoCli.Infrastructure<br/>file IO, process spawn, git]
-  CLI --> PROG[RhinoCli.Program<br/>entry point, exit-code mapping]
+  PROG[RhinoCli.Program<br/>entry point, exit-code mapping]
+  PROG --> CLI
 ```
 
 **Source root — TBD, resolved at Phase 9c, recorded here as the durable home.** The tree starts at
@@ -632,13 +633,13 @@ this plan owns all three.
 `rhino-bin.sh` needs the F# binary too, or it falls back to compiling on demand inside a job that
 installs no SDK. The change is confined to `pr-quality-gate.yml`:
 
-| Job           | Line (today)                                | Phase 2 change                                                                                                                          |
-| ------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `build-rhino` | `cargo build --profile gate`                | Keep it, add `./.github/actions/setup-dotnet`, a `dotnet publish` step, and a second `upload-artifact` named `rhino-cli-fsharp-binary`. |
-| `format`      | downloads `rhino-cli-gate-binary`           | Add a second `download-artifact`; export `RHINO_CLI_FSHARP_BIN` alongside `RHINO_CLI_BIN`.                                              |
-| `enumerate`   | downloads `rhino-cli-gate-binary`           | Same. `gate list` stays Rust until wave F, but the shim must be able to resolve both.                                                   |
-| `gate`        | downloads `rhino-cli-gate-binary`           | Same, across all six matrix groups.                                                                                                     |
-| `detect`      | maps `lang:fsharp` to `has-dotnet-projects` | No edit — the new `rhino-cli-fsharp` Nx project is already `lang:fsharp`, so the existing `dotnet` job picks up its tests.              |
+| Job           | Line (today)                                | Phase 2 change                                                                                                                                                                                                                                                                                                              |
+| ------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `build-rhino` | `cargo build --profile gate`                | Keep it, add `./.github/actions/setup-dotnet`, a `dotnet publish` step, and a second `upload-artifact` named `rhino-cli-fsharp-binary`.                                                                                                                                                                                     |
+| `format`      | downloads `rhino-cli-gate-binary`           | Add a second `download-artifact`; export `RHINO_CLI_FSHARP_BIN` alongside `RHINO_CLI_BIN`.                                                                                                                                                                                                                                  |
+| `enumerate`   | downloads `rhino-cli-gate-binary`           | Same. `gate list` stays Rust until wave F, but the shim must be able to resolve both.                                                                                                                                                                                                                                       |
+| `gate`        | downloads `rhino-cli-gate-binary`           | Same, across all six matrix groups.                                                                                                                                                                                                                                                                                         |
+| `detect`      | maps `lang:fsharp` to `has-dotnet-projects` | `ose-public`: no edit — the mapping already exists, so the existing `dotnet` job picks up the new project's tests. `ose-private`: not true there — that repo's `detect` job had no `has-dotnet-projects` output or `lang:fsharp`/`lang:csharp` case at all, so both were added new (see `delivery.md`'s Phase 2 checklist). |
 
 `build-rhino` measured 69-74 s and gates every other job, so the added publish step lands directly
 on the critical path. Every wave gate re-measures it into `benchmark.md`. This is the cost of a

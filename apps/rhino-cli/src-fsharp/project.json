@@ -9,7 +9,8 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet publish apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj -c Release --self-contained true --use-current-runtime -o apps/rhino-cli/src-fsharp/dist"
+        "command": "dotnet publish apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj -c Release --self-contained true {args.rid} -o apps/rhino-cli/src-fsharp/dist",
+        "rid": "--use-current-runtime"
       },
       "outputs": ["{projectRoot}/dist"],
       "cache": true,

@@ -53,6 +53,33 @@ fi
 COMPARED=0
 DIFFERENCES=0
 
+# Strips fields whose value is expected to vary between two otherwise-identical
+# invocations — wall-clock timestamps and elapsed-time measurements — so
+# `compare_invocation` proves dispatch/output-shape identity rather than
+# accidental timing identity. Field shapes are pinned to the emitting Rust
+# source, not guessed:
+#   - `ran_at=...`      : repo_governance/audit_orchestrator.rs (text/markdown)
+#   - `"ran_at": "..."` : same struct, JSON
+#   - `"timestamp": "..."` and `**Generated**: ...` : doctor/reporter.rs
+#   - `Duration: ...`, `- **Duration**: ...`, and `"duration_ms": N` : every
+#     `harness` leaf (agents/reporter.rs)
+# Edited in place; each stream is a private mktemp file already, so no backup
+# file is left behind.
+mask_volatile_fields() {
+	local f="$1"
+	sed -i.bak \
+		-e 's/ran_at=[^,)"]*/ran_at=<MASKED>/g' \
+		-e 's/"ran_at": *"[^"]*"/"ran_at": "<MASKED>"/g' \
+		-e 's/"timestamp": *"[^"]*"/"timestamp": "<MASKED>"/g' \
+		-e 's/\*\*Generated\*\*: .*/**Generated**: <MASKED>/' \
+		-e 's/^Generated: .*/Generated: <MASKED>/' \
+		-e 's/^Duration: .*/Duration: <MASKED>/' \
+		-e 's/\*\*Duration\*\*: .*/**Duration**: <MASKED>/' \
+		-e 's/"duration_ms": *[0-9][0-9]*/"duration_ms": <MASKED>/g' \
+		"${f}"
+	rm -f "${f}.bak"
+}
+
 # Runs one argument vector through both binaries and compares stdout,
 # stderr, and exit code. Never lets a nonzero leaf exit code trip `set -e`.
 compare_invocation() {
@@ -71,6 +98,11 @@ compare_invocation() {
 	"${FSHARP_BIN}" "${args[@]}" >"${fsharp_stdout}" 2>"${fsharp_stderr}"
 	fsharp_exit=$?
 	set -e
+
+	mask_volatile_fields "${rust_stdout}"
+	mask_volatile_fields "${rust_stderr}"
+	mask_volatile_fields "${fsharp_stdout}"
+	mask_volatile_fields "${fsharp_stderr}"
 
 	COMPARED=$((COMPARED + 1))
 
