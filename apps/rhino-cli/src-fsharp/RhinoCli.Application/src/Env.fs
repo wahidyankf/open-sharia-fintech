@@ -3,15 +3,18 @@
 /// `apps/rhino-cli/src/application/env/backup.rs`,
 /// `apps/rhino-cli/src/commands/env_backup.rs`].
 ///
-/// Scope: this module ports `backup` and `env init`, plus the helpers each
-/// (and their respective feature files' scenarios) needs. `restore` and
-/// `env validate-app-drift` are separate later waves in this same namespace;
+/// Scope: this module ports `backup`, `env init`, and `restore`, plus the
+/// helpers each (and their respective feature files' scenarios) needs. `env
+/// validate-app-drift` is a separate later wave in this same namespace;
 /// `discoverConfig`, `findExisting`, and `detectWorktree` are written here
-/// because `backup` needs them, and are expected to be reused unchanged once
-/// `restore` lands. `env init`'s own scan (`collectEnvExamples`) does not
-/// share `backup`'s `discover`/`walkDir` machinery — it is deliberately
-/// simpler: two fixed root directories, no skip-dirs list, and no file-size
-/// ceiling.
+/// because `backup` needs them, and are reused unchanged by `restore`. `env
+/// init`'s own scan (`collectEnvExamples`) does not share `backup`'s
+/// `discover`/`walkDir` machinery — it is deliberately simpler: two fixed
+/// root directories, no skip-dirs list, and no file-size ceiling. `restore`
+/// does share `discover`, but scans narrower than `backup`'s own scan: only
+/// `.git` is skipped (not the full `defaultSkipDirs` list), matching
+/// `backup.rs::restore`'s own
+/// `Options { skip_dirs: vec![".git".to_string()], ..Default::default() }`.
 ///
 /// Design decision — confirmation is real here, not a silent no-op: grepping
 /// the Rust reference shows `Options.force` is threaded from the CLI args
@@ -26,7 +29,12 @@
 /// is itself a pure function of `Options` and `findExisting`'s result — the
 /// callback is the one deliberately impure seam — so tests can assert both
 /// the decision made and that the callback fires exactly when (and only
-/// when) a real decision is needed, without touching `Console.In`.
+/// when) a real decision is needed, without touching `Console.In`. `restore`
+/// (below) closes the identical gap for its own `@env-restore-confirm`
+/// scenarios: grepping `backup.rs::restore` shows zero references to
+/// `force`, `confirm`, or any prompt at all — it always overwrites silently
+/// — so `restore` also takes an explicit `confirm: unit -> bool` callback
+/// with the same invoke-at-most-once-when-a-real-conflict-exists contract.
 module RhinoCli.Application.Env
 
 open System
@@ -864,3 +872,118 @@ let formatEnvInitText (r: EnvInitResult) : string =
     |> ignore
 
     sb.ToString()
+
+// ---- restore ----
+
+/// Copies `.env*` files (and optionally config files) from a backup
+/// directory back into the repository [Repo-grounded — `backup.rs::restore`].
+///
+/// Scans the source directory with [`discover`], but narrower than
+/// `backup`'s own scan — see the module doc comment for why only `.git` is
+/// skipped here rather than the full `defaultSkipDirs` list.
+///
+/// `confirm` is invoked at most once, and only when the destination already
+/// contains at least one of the restore candidates and `opts.Force` is
+/// `false` — see the module doc comment for why this is a real decision here
+/// rather than the confirm/force gap `backup.rs::restore` never has at all.
+/// Dry-run never invokes `confirm`: there is nothing to write, so the
+/// per-entry copy loop is skipped outright rather than reaching a real
+/// decision point.
+///
+/// # Errors
+///
+/// Returns an error when the source directory (`opts.BackupDir`, joined with
+/// `opts.WorktreeName` when `opts.WorktreeAware` is set) does not exist.
+let restore (opts: EnvOptions) (confirm: unit -> bool) : Result<EnvOperationResult, string> =
+    match expandTilde opts.BackupDir with
+    | Error message -> Error message
+    | Ok expandedBackupDir ->
+        let srcRoot =
+            if opts.WorktreeAware && opts.WorktreeName <> "" then
+                Path.Combine(expandedBackupDir, opts.WorktreeName)
+            else
+                expandedBackupDir
+
+        if not (Directory.Exists srcRoot) then
+            Error(sprintf "backup dir does not exist: %s" srcRoot)
+        else
+            let maxSize = if opts.MaxSize <= 0L then DefaultMaxSize else opts.MaxSize
+
+            let discoverOpts: EnvOptions =
+                { RepoRoot = srcRoot
+                  BackupDir = ""
+                  SkipDirs = [ ".git" ]
+                  MaxSize = maxSize
+                  WorktreeAware = false
+                  WorktreeName = ""
+                  Force = false
+                  IncludeConfig = false
+                  DryRun = false }
+
+            let discovered = discover discoverOpts
+
+            let entries =
+                if opts.IncludeConfig then
+                    let tagged =
+                        discovered
+                        |> List.map (fun e -> if e.Source = "" then { e with Source = "env" } else e)
+
+                    let configEntries = discoverConfig srcRoot defaultConfigPatterns maxSize
+
+                    tagged @ configEntries
+                    |> List.sortWith (fun a b -> String.CompareOrdinal(a.RelPath, b.RelPath))
+                else
+                    discovered
+
+            // Mirrors `backup.rs::restore`'s per-entry `if e.source != "config"
+            // && !is_secret_file(...) { continue; }` check: entries from
+            // `discover` are already secret-shaped (it pre-filters), so this
+            // matters only for `discoverConfig` entries, which bypass
+            // `isSecretFile` entirely.
+            let restoreCandidates =
+                entries
+                |> List.filter (fun e ->
+                    let baseName = Path.GetFileName e.RelPath
+                    e.Source = "config" || isSecretFile e.RelPath baseName)
+
+            if opts.DryRun then
+                Ok
+                    { Direction = "restore"
+                      Dir = expandedBackupDir
+                      Files = restoreCandidates
+                      Copied = 0
+                      Skipped = restoreCandidates |> List.filter (fun e -> e.Skipped) |> List.length
+                      Errors = []
+                      WorktreeName = opts.WorktreeName
+                      Cancelled = false
+                      DryRun = true }
+            else
+                let existing = findExisting restoreCandidates opts.RepoRoot
+                let proceed = opts.Force || List.isEmpty existing || confirm ()
+
+                if not proceed then
+                    Ok
+                        { Direction = "restore"
+                          Dir = expandedBackupDir
+                          Files = restoreCandidates
+                          Copied = 0
+                          Skipped = 0
+                          Errors = []
+                          WorktreeName = opts.WorktreeName
+                          Cancelled = true
+                          DryRun = false }
+                else
+                    let finalAcc =
+                        restoreCandidates
+                        |> List.fold (copyOne opts.RepoRoot) { Copied = 0; Skipped = 0; Errors = [] }
+
+                    Ok
+                        { Direction = "restore"
+                          Dir = expandedBackupDir
+                          Files = restoreCandidates
+                          Copied = finalAcc.Copied
+                          Skipped = finalAcc.Skipped
+                          Errors = finalAcc.Errors
+                          WorktreeName = opts.WorktreeName
+                          Cancelled = false
+                          DryRun = false }

@@ -23,6 +23,8 @@
     <Compile Include="Steps/EnvUnitTests.fs" />
     <Compile Include="Steps/EnvInitSteps.fs" />
     <Compile Include="Steps/EnvInitUnitTests.fs" />
+    <Compile Include="Steps/EnvRestoreSteps.fs" />
+    <Compile Include="Steps/EnvRestoreUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
