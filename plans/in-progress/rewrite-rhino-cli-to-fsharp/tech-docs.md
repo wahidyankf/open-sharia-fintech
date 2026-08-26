@@ -399,7 +399,7 @@ volume of F# **added**, which this plan expects to be materially smaller (see §
 is the real one). Taking the Rust figure as an upper bound on the F# written, the implementation
 floor is **at most** roughly 124 PRs and realistically fewer; the seam below, not this arithmetic,
 is what actually decides the count. The corollary matters at the other end of the plan: Phase 9's
-crate deletion is nearly pure subtraction and is comfortably inside rule 4, so its four-PR split is
+crate deletion is nearly pure subtraction and is comfortably inside rule 4, so its five-PR split is
 driven by divergent failure modes, not by line count.
 
 **Decision — the seam is the feature file.** One `.feature` file is one PR. This is stated once and
@@ -646,6 +646,7 @@ CI after re-homing proves nothing on its own — the assertion may simply have s
 | A whole wave has to be withdrawn            | Revert that wave's flip PR and leave the implementation PRs in place. The F# code is inert while its namespaces are unflipped, so nothing needs deleting to make `main` correct again.                                                   |
 | Phase 9a retires the wrong scenario         | Revert 9a alone. It is deliberately a separate PR from the crate deletion precisely so a spec mistake is not entangled with a 65,858-line removal.                                                                                       |
 | Phase 9b (CI decouple) goes wrong           | Cheapest rollback in Phase 9: revert one workflow-only PR. The Rust crate is untouched and still builds, so `main` returns to the dual-binary steady state with nothing else to unwind. This is precisely why 9b exists as its own seam. |
-| Phase 9c or 9d goes wrong                   | The first genuinely expensive rollback: reverting restores the whole Rust crate. This is why Phase 9 is last, why it is four separate PRs, and why every namespace must already be flipped and green before it starts.                   |
+| Phase 9c or 9d goes wrong                   | The first genuinely expensive rollback: reverting restores the whole Rust crate. This is why Phase 9 is last, why it is five separate PRs, and why every namespace must already be flipped and green before it starts.                   |
+| 9e goes wrong                               | Cheapest rollback in Phase 9, cheaper even than 9b: 9e touches documentation and `.claude/skills` only — no source, no workflow — so reverting it is an ordinary doc-PR revert with no build, gate, or crate-state implications at all.  |
 | Phase 9d re-homing turns out to be a no-op  | Caught before the `rust` job is deleted, because the gate requires a deliberate temporary break to turn CI red. If it stays green, the re-homed assertion is not running and the deletion does not proceed.                              |
 | Parity divergence between repos             | `rhino-cli parity` validation fails loudly on both `main` branches; fix forward by re-running the generator in the lagging repo.                                                                                                         |
