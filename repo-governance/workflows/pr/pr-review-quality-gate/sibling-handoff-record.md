@@ -49,9 +49,9 @@ gh api "repos/${SOURCE_REPOSITORY}/compare/${SOURCE_MERGE_SHA}...main"
 ```
 
 Apply the common [admission gate](./cycle-record-authentication.md#common-admission-gate) before
-parsing any body. Require source `merged`, final `head.sha`, and `merge_commit_sha`; an
-authenticated terminal review at that head; `merge_base_commit.sha == source_merge_sha`; and
-exactly one admitted handoff. Require the open successor's repository/number,
+parsing any body. Require source `merged`, final `head.sha`, and
+`merge_commit_sha == source_merge_sha`; an authenticated terminal review at that head; and exactly
+one admitted handoff. Require the open successor's repository/number,
 `head.repo.full_name`, `head.ref`, initial `head.sha`, `base.ref == main`, and initial `base.sha` to
 equal the record. On the first scout the live head still equals `successor_initial_head`; later
 scouts prove the initial SHA belongs to the same PR history instead of comparing it with the
