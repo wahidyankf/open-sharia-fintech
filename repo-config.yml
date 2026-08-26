@@ -157,19 +157,21 @@ coverage:
     # work*, not with the wave's later integration/flip PR: a namespace's
     # step definitions exist (and must be provably covered) before that
     # wave's namespace ever serves real traffic. Directory-level scope
-    # matches ose-private when a whole directory lands in one PR (Wave A's
-    # `convention/`, since `RhinoCli.Application.Convention` binds all
-    # three of its feature files together). When a directory's feature
-    # files are split across several PRs — Wave B's `env/`, ported one
-    # file per PR — the glob is file-scoped instead: widening to the whole
-    # directory before every sibling file is implemented would require
-    # `@wip`-tagging the not-yet-ported scenarios, which also exempts them
-    # from `rhino-cli`'s own one-to-one coverage check even though the
-    # Rust implementation already covers them — so file-scoping is the only
-    # option that does not regress the still-canonical Rust side.
+    # matches ose-private once every feature file under a directory has
+    # landed (Wave A's `convention/`, since `RhinoCli.Application.Convention`
+    # binds all three of its feature files together). While a directory's
+    # feature files are still being split across several PRs — as `env/`
+    # was for Wave B, ported one file per PR — the glob is file-scoped
+    # instead: widening to the whole directory before every sibling file is
+    # implemented would require `@wip`-tagging the not-yet-ported scenarios,
+    # which also exempts them from `rhino-cli`'s own one-to-one coverage
+    # check even though the Rust implementation already covers them. Once
+    # the last sibling file lands (Wave B's integration/flip PR, after all
+    # of `env/`'s 4 files and `env-contract/`'s 1 file were ported), the
+    # glob widens to directory-level like `convention/` did.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/env-backup.feature,env/env-init.feature,env/env-restore.feature,env/env-validate-app-drift.feature,env-contract/iac-env-validation.feature,specs/env-staged-guard.feature}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature}"
 
     # ose domain
     - name: ose-be
