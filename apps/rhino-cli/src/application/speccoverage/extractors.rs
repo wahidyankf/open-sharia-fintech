@@ -127,19 +127,30 @@ fn fs_step_attr_re() -> &'static Regex {
     RE.get_or_init(|| Regex::new(r"\[<(?:Given|When|Then|And|But)>]").expect("valid regex"))
 }
 
-/// Matches an F# inline step: `let [<Given>] ``step text`` () =`.
+/// Matches an F# inline step: `let [<Given>] ``step text`` () =`, or
+/// `TickSpec`'s instance-member equivalent, `[<Given>] member _.``step
+/// text``() =`, on a single line.
 fn fs_step_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r"let\s+(?:\[<(?:Given|When|Then|And|But)>\]\s*)?``((?:[^`]|`[^`])*)``")
-            .expect("valid regex")
+        Regex::new(
+            r"(?:let\s+(?:\[<(?:Given|When|Then|And|But)>\]\s*)?|\[<(?:Given|When|Then|And|But)>\]\s*member\s+\S+\s*\.\s*)``((?:[^`]|`[^`])*)``",
+        )
+        .expect("valid regex")
     })
 }
 
-/// Matches an F# `let ``backtick name`` …` binding used for multi-line step style.
+/// Matches an F# `let ``backtick name`` …` binding, or `TickSpec`'s
+/// instance-member equivalent `member _.``backtick name``…`, both used for
+/// multi-line step style (step attribute on the previous line). The two
+/// forms bind steps identically at runtime — module-level `let` and a
+/// class's `member` are just different scoping choices for the same `TickSpec`
+/// step-definition mechanism.
 fn fs_let_backtick_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"let\s+``((?:[^`]|`[^`])*)``").expect("valid regex"))
+    RE.get_or_init(|| {
+        Regex::new(r"(?:let\s+|member\s+\S+\s*\.\s*)``((?:[^`]|`[^`])*)``").expect("valid regex")
+    })
 }
 
 // ============================================================
@@ -306,12 +317,15 @@ pub fn extract_csharp_step_texts(
 
 /// Extracts step definitions from an F# `TickSpec` source file.
 ///
-/// Handles two layout styles:
+/// Handles two layout styles, each in both `let` (module-level) and
+/// `member` (instance-level, for a class-based step-definition container)
+/// form:
 ///
 /// 1. **Inline** — attribute and backtick name on the same line:
-///    `let [<Given>] ``step text`` () =`.
-/// 2. **Multi-line** — attribute on one line, `let ``step text`` () =` on the
-///    next.
+///    `let [<Given>] ``step text`` () =` or
+///    `[<Given>] member _.``step text``() =`.
+/// 2. **Multi-line** — attribute on one line, `let ``step text`` () =` or
+///    `member _.``step text``() =` on the next.
 ///
 /// The extracted name is normalised and wrapped in `^…$` anchors before
 /// compilation as a regex pattern (F# backtick names act as patterns in
@@ -567,6 +581,32 @@ mod tests {
             tmp.path(),
             "Steps.fs",
             "[<Given>]\nlet ``user logs in`` () = ()\n",
+        );
+        let mut sm = StepMatcher::new();
+        extract_fsharp_step_texts(&p, &mut sm).unwrap();
+        assert!(sm.matches("user logs in"));
+    }
+
+    #[test]
+    fn fsharp_member_inline_step() {
+        let tmp = TempDir::new().unwrap();
+        let p = write(
+            tmp.path(),
+            "Steps.fs",
+            "[<Given>] member _.``user logs in``() = ()\n",
+        );
+        let mut sm = StepMatcher::new();
+        extract_fsharp_step_texts(&p, &mut sm).unwrap();
+        assert!(sm.matches("user logs in"));
+    }
+
+    #[test]
+    fn fsharp_member_multiline_step() {
+        let tmp = TempDir::new().unwrap();
+        let p = write(
+            tmp.path(),
+            "Steps.fs",
+            "type Steps() =\n    [<Given>]\n    member _.``user logs in``() = ()\n",
         );
         let mut sm = StepMatcher::new();
         extract_fsharp_step_texts(&p, &mut sm).unwrap();
