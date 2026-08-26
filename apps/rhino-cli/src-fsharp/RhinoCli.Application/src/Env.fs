@@ -3,11 +3,15 @@
 /// `apps/rhino-cli/src/application/env/backup.rs`,
 /// `apps/rhino-cli/src/commands/env_backup.rs`].
 ///
-/// Scope: this module ports `backup` and the helpers it (and this feature
-/// file's scenarios) need. `restore`, `env init`, and `env validate-app-drift`
-/// are separate later waves in this same namespace; `discoverConfig`,
-/// `findExisting`, and `detectWorktree` are written here because `backup`
-/// needs them, and are expected to be reused unchanged once `restore` lands.
+/// Scope: this module ports `backup` and `env init`, plus the helpers each
+/// (and their respective feature files' scenarios) needs. `restore` and
+/// `env validate-app-drift` are separate later waves in this same namespace;
+/// `discoverConfig`, `findExisting`, and `detectWorktree` are written here
+/// because `backup` needs them, and are expected to be reused unchanged once
+/// `restore` lands. `env init`'s own scan (`collectEnvExamples`) does not
+/// share `backup`'s `discover`/`walkDir` machinery — it is deliberately
+/// simpler: two fixed root directories, no skip-dirs list, and no file-size
+/// ceiling.
 ///
 /// Design decision — confirmation is real here, not a silent no-op: grepping
 /// the Rust reference shows `Options.force` is threaded from the CLI args
@@ -751,3 +755,112 @@ let formatMarkdown (r: EnvOperationResult) : string =
                 sb.Append(sprintf "- %s\n" e) |> ignore
 
         sb.ToString()
+
+// ---- env init ----
+
+/// Directories under a repo root that `env init` scans for `.env.example`
+/// files [Repo-grounded — `env_init.rs::SCAN_ROOTS`]. Deliberately not
+/// `backup`'s `discover`/`walkDir`: this scan is two fixed roots, with no
+/// skip-dirs list and no file-size ceiling — see the module doc comment.
+let envInitScanRoots: string list = [ "infra/dev"; "apps" ]
+
+/// The tier `env init` bootstraps: local development, never committed
+/// [Repo-grounded — `env_init.rs::ENV_TIER_DEFAULT`].
+[<Literal>]
+let EnvInitTargetTier: string = ".env.local"
+
+/// Recursively finds every `.env.example` file under `dir`.
+let rec private walkForExamples (dir: string) : string list =
+    let here =
+        Directory.EnumerateFiles dir
+        |> Seq.filter (fun f -> Path.GetFileName f = ".env.example")
+        |> List.ofSeq
+
+    let nested =
+        Directory.EnumerateDirectories dir |> Seq.collect walkForExamples |> List.ofSeq
+
+    here @ nested
+
+/// Collects every `.env.example` file found under `envInitScanRoots` inside
+/// `repoRoot` [Repo-grounded — `env_init.rs::collect_examples`].
+let collectEnvExamples (repoRoot: string) : string list =
+    envInitScanRoots
+    |> List.collect (fun root ->
+        let scanDir = Path.Combine(repoRoot, root)
+
+        if Directory.Exists scanDir then
+            walkForExamples scanDir
+        else
+            [])
+
+/// Computes the `.env.local` path that sits alongside `examplePath`, in the
+/// same directory [Repo-grounded — `env_init.rs::target_env_path`]. Unlike
+/// the Rust original this returns a plain `string` rather than an `Option`:
+/// every `examplePath` this module passes in comes from `collectEnvExamples`
+/// walking real files on disk, so it always has a parent directory.
+let targetEnvPath (examplePath: string) : string =
+    Path.Combine(Path.GetDirectoryName examplePath, EnvInitTargetTier)
+
+/// One discovered `.env.example` file's copy outcome [Repo-grounded —
+/// `env_init.rs::run`'s per-file `println!` branches].
+type EnvInitFileOutcome =
+    | EnvInitCreated of relPath: string * exampleFileName: string
+    | EnvInitSkipped of relPath: string
+
+/// Outcome of an `env init` operation [Repo-grounded — `env_init.rs::run`].
+type EnvInitResult =
+    { Files: EnvInitFileOutcome list
+      Created: int
+      Skipped: int }
+
+/// Copies every `.env.example` file found under `repoRoot` to its sibling
+/// `.env.local`, skipping files that already exist unless `force` is `true`
+/// [Repo-grounded — `env_init.rs::run`]. Unlike `backup`, this has no
+/// `Result` wrapper: `env_init.rs::run`'s only failure mode is git-root
+/// discovery, which this port's callers (mirroring `backup`'s `EnvOptions`)
+/// handle by passing `repoRoot` in directly rather than looking it up here.
+let runEnvInit (repoRoot: string) (force: bool) : EnvInitResult =
+    let outcomes =
+        collectEnvExamples repoRoot
+        |> List.map (fun examplePath ->
+            let envPath = targetEnvPath examplePath
+            let rel = Path.GetRelativePath(repoRoot, envPath).Replace('\\', '/')
+
+            if not force && (File.Exists envPath || Directory.Exists envPath) then
+                EnvInitSkipped rel
+            else
+                File.Copy(examplePath, envPath, true)
+                EnvInitCreated(rel, Path.GetFileName examplePath))
+
+    let created =
+        outcomes
+        |> List.filter (function
+            | EnvInitCreated _ -> true
+            | EnvInitSkipped _ -> false)
+        |> List.length
+
+    let skipped = List.length outcomes - created
+
+    { Files = outcomes
+      Created = created
+      Skipped = skipped }
+
+/// Formats an [`EnvInitResult`] as human-readable text [Repo-grounded —
+/// `env_init.rs::run`'s `println!` calls]. `env init` has no JSON/Markdown
+/// Gherkin scenario, so unlike `backup`'s `formatText`/`formatJson`/
+/// `formatMarkdown` trio this is the only formatter it needs.
+let formatEnvInitText (r: EnvInitResult) : string =
+    let sb = Text.StringBuilder()
+
+    for f in r.Files do
+        match f with
+        | EnvInitCreated(rel, exampleFileName) ->
+            sb.Append(sprintf "Created: %s (from %s)\n" rel exampleFileName) |> ignore
+        | EnvInitSkipped rel ->
+            sb.Append(sprintf "Skipped: %s (already exists, use --force to overwrite)\n" rel)
+            |> ignore
+
+    sb.Append(sprintf "\nSummary: %d created, %d skipped\n" r.Created r.Skipped)
+    |> ignore
+
+    sb.ToString()

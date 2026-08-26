@@ -169,7 +169,7 @@ coverage:
     # option that does not regress the still-canonical Rust side.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/env-backup.feature}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/env-backup.feature,env/env-init.feature}"
 
     # ose domain
     - name: ose-be
