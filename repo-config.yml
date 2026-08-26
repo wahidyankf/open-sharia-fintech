@@ -151,14 +151,21 @@ coverage:
       specs: "specs/apps/rhino/behavior/rhino-cli/**"
     # rhino-cli-fsharp (rewrite-rhino-cli-to-fsharp): registry hygiene from
     # Phase 2 onward per this registry's own "every project is listed"
-    # comment above. The glob covers only namespaces already flipped to F#
-    # in FSHARP_NAMESPACES — none at Phase 2, so it matches nothing yet; each
-    # wave's integration PR widens it to that wave's spec directories, per
+    # comment above. The glob covers exactly the feature files with landed
+    # F# step definitions — a property of implementation, not of
+    # FSHARP_NAMESPACES — so it widens with *each implementation PR*, one
+    # feature file at a time, not with the wave's later integration/flip PR:
+    # a feature file's step definitions exist (and must be provably covered)
+    # before that wave's namespace ever serves real traffic, and the
+    # coverage tool's `--shared-steps` PATHS argument accepts a single
+    # `.feature` file directly, so scope stays file-precise even mid-wave.
+    # None at Phase 2, so it matched nothing yet; Wave A's first PR
+    # (`convention-audit.feature`) widened it to that one file, per
     # plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md's widening
     # protocol entry.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/.fsharp-flipped-none/**"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/convention/convention-audit.feature"
 
     # ose domain
     - name: ose-be

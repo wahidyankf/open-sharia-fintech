@@ -14,7 +14,7 @@ ef7a917953a2b981576d89950c7afe01e5a445c51aaa24436b7c4676fd55de38  apps/rhino-cli
 631376afb9e4d7c5192d38f51b533c18b64cca83c18ed5c50982ba9acce51d74  apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj
 660d64b96e8dac5f69dbce55646bffbda84f79e77e6ae9e5312620c7c65df5b0  apps/rhino-cli/src-fsharp/RhinoCli.Program/src/Program.fs
 822f6ec8446562a4de9a3b1a2481af50fac01bbedc32e1963142709e5f48ec13  apps/rhino-cli/src-fsharp/fsharplint.json
-ccb56dba70b5aab620caf986d84d1c3a8b76cb058262621f0b7249cdd236f487  apps/rhino-cli/src-fsharp/project.json
+8fcec404819159f6197c349cc7155753a6af48a1fba2b7a9bb76c80d56e5ce82  apps/rhino-cli/src-fsharp/project.json
 f7dacc8dd923488c70eebabe298843022ec5a3ba94b8b7568634a779f24b8da4  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 7d28b5a600ed4e91f4f8f370197cf5a5edfec7670c352b2fbe0096fcc128a5e0  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 5ccb669aa21787ec60bf349ad7f9a9144f0202f3f6c3e3d3306a90e029b801a7  apps/rhino-cli/src-fsharp/tests/unit/Steps/BddState.fs
@@ -253,7 +253,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli
 90a14ced042f94074025e5aefcdfb15fe831b669fe6585742cb162bb5aac8dee  apps/rhino-cli/tests/gate_dispatch.rs
 2024f0fdb973fe9cb8d78510dd4b8063f2ff9a4f53a888ba154b9d2b68f422b6  apps/rhino-cli/tests/gate_format_verify_wrappers.rs
 a44fbe1fef19be0f5b6f46dbdb6b0be1b8785e5fd156e1aec48a6a85b9162f45  apps/rhino-cli/tests/gate_specs.rs
-8d718301f583b660b8da28dfced1f8ee18387850d8a025c83d91a5e908568c79  apps/rhino-cli/tests/git_hooks.rs
+2a335d3a7f353623ee8d0952a524badda383c98f3cce308a4418ab2a8d1fb737  apps/rhino-cli/tests/git_hooks.rs
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/convention-audit.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/convention-audit.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/convention-audit.stdout
