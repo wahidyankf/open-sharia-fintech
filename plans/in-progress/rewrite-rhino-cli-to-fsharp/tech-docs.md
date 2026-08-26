@@ -363,7 +363,7 @@ is already proven. Wave ordering by measured size:
 | A    | `convention`, `parity`                | ~735             | 11        | Smallest; proves the shim, the harness, and the CI wiring     |
 | B    | `repo-config`, `env`                  | ~1,598           | 59        | Self-contained, well-specified by feature files               |
 | C    | `doctor`, `test-coverage`             | ~650             | 53        | External-process heavy; exercises the shell layer             |
-| D    | `md`, `governance`, `git`             | ~3,344           | 125       | Largest parser surface; also absorbs the resequenced `git`    |
+| D    | `md`, `governance`, `git`             | ~3,344           | 128       | Largest parser surface; also absorbs the resequenced `git`    |
 | E    | `harness`, `specs`, `repo-governance` | ~5,000           | 188       | Highest coupling to `repo-config.yml`; generates the mirrors  |
 | F    | `gate`                                | ~6,043           | 89        | Depends on every namespace above; drives the six-group matrix |
 
@@ -415,7 +415,7 @@ driven by divergent failure modes, not by line count.
 
 **Decision — the seam is the feature file.** One `.feature` file is one PR. This is stated once and
 holds for the whole plan, which makes the seam mechanical rather than a judgment call at every step:
-71 feature files, 71 implementation PRs, plus one flip PR per wave and the scaffolding, retirement,
+72 feature files, 72 implementation PRs, plus one flip PR per wave and the scaffolding, retirement,
 benchmark, and propagation PRs. A feature file whose cycles would exceed the line ceiling splits
 further at the scenario boundary, and that is the only permitted deviation.
 
@@ -433,18 +433,18 @@ and the Phase 2 gate re-measures them:
 | A         | `convention`                                                               | 3             | 11        |
 | B         | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 7             | 59        |
 | C         | `system`, `test-coverage`                                                  | 6             | 53        |
-| D         | `md`, `governance`, `git` (resequenced)                                    | 10            | 125       |
+| D         | `md`, `governance`, `git` (resequenced)                                    | 11            | 128       |
 | E         | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 38            | 188       |
 | F         | `gate`                                                                     | 7             | 89        |
-| **Total** |                                                                            | **71**        | **525**   |
+| **Total** |                                                                            | **72**        | **528**   |
 
 > **Waves A and D differ from a naive spec-directory split.** `git/git-pre-commit.feature` sits
 > under `git/` but its five scenarios drive `md` commands — its own header records that the
 > `git pre-commit` CLI command was removed in 2026-06-26 — so those cycles were resequenced into
 > Wave D as integration-tier tests, and `git` flips there rather than in Wave A. The real `git`
-> surface (`commands/git/lockfile.rs`) has no Gherkin at all; Phase 3 requires authoring it and
-> Wave D implements it. Totals stay 525 / 71 until that new feature file lands, at which point every
-> figure here is restated with its delta.
+> surface (`commands/git/lockfile.rs`) had no Gherkin at all; Phase 3 authored
+> `git/git-lockfile.feature` (3 scenarios) and Wave D implements it, bringing the totals from
+> 525 / 71 to 528 / 72.
 
 [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`. `doctor` is specified
 under `system/` (`doctor.feature`, `cargo-target-share.feature`, `fsharp-tool-invocation.feature`),
@@ -467,25 +467,25 @@ each leaf's behavior against the corresponding feature file's `When`/`Then` step
 seventeen directories share their CLI namespace's name outright; the other six — flagged
 `[Unverified]` above — resolve as follows, each grounded in the cited source:
 
-| Spec directory         | CLI namespace     | Grounding                                                                                                                                                                                                                               |
-| ---------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `contracts`            | `specs`           | `contracts/contracts-dart-scaffold.feature`'s "runs contracts dart-scaffold" step is `specs scaffold dart` [Repo-grounded — `cli.rs:548-550`, `SpecsScaffoldCommands::Dart`].                                                           |
-| `convention`           | `convention`      | Name match.                                                                                                                                                                                                                             |
-| `ddd`                  | `specs`           | `ddd-bc.feature`/`ddd-ul.feature`'s bounded-context/ubiquitous-language checks are Layers 4-5 of `specs structure validate`, gated on `is_ddd_area` [Repo-grounded — `commands/specs_structure_validate.rs:112-115`].                   |
-| `env`                  | `env`             | Name match.                                                                                                                                                                                                                             |
-| `env-contract`         | `env`             | `iac-env-validation.feature`'s "When env validate runs" step names the namespace directly.                                                                                                                                              |
-| `gate`                 | `gate`            | Name match.                                                                                                                                                                                                                             |
-| `git`                  | `git`             | Name match — but see the Wave A/D note above: this directory's one committed feature file (`git-pre-commit.feature`) is the resequenced `md`-surface one; the real `git lockfile` command has no feature file yet (Phase 3 authors it). |
-| `governance`           | `governance`      | Name match.                                                                                                                                                                                                                             |
-| `harness`              | `harness`         | Name match.                                                                                                                                                                                                                             |
-| `md`                   | `md`              | Name match.                                                                                                                                                                                                                             |
-| `repo-config`          | `repo-config`     | Name match.                                                                                                                                                                                                                             |
-| `repo-config-validate` | `repo-config`     | `repo-config-validate.feature`'s subject is the `repo-config validate` subcommand — same namespace, distinct spec-directory name for legacy reasons.                                                                                    |
-| `repo-governance`      | `repo-governance` | Name match.                                                                                                                                                                                                                             |
-| `spec-coverage`        | `specs`           | `spec-coverage-validate.feature`'s "runs spec-coverage validate" is `specs behavior-coverage validate`, implemented in `commands/specs_coverage.rs` (module comment: "Port of `cmd/spec_coverage_validate.go`").                        |
-| `specs`                | `specs`           | Name match.                                                                                                                                                                                                                             |
-| `system`               | `doctor`          | Already stated above: `system/` holds `doctor.feature`, `cargo-target-share.feature`, `fsharp-tool-invocation.feature` — all `doctor` namespace scenarios.                                                                              |
-| `test-coverage`        | `test-coverage`   | Name match.                                                                                                                                                                                                                             |
+| Spec directory         | CLI namespace     | Grounding                                                                                                                                                                                                                                                           |
+| ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `contracts`            | `specs`           | `contracts/contracts-dart-scaffold.feature`'s "runs contracts dart-scaffold" step is `specs scaffold dart` [Repo-grounded — `cli.rs:548-550`, `SpecsScaffoldCommands::Dart`].                                                                                       |
+| `convention`           | `convention`      | Name match.                                                                                                                                                                                                                                                         |
+| `ddd`                  | `specs`           | `ddd-bc.feature`/`ddd-ul.feature`'s bounded-context/ubiquitous-language checks are Layers 4-5 of `specs structure validate`, gated on `is_ddd_area` [Repo-grounded — `commands/specs_structure_validate.rs:112-115`].                                               |
+| `env`                  | `env`             | Name match.                                                                                                                                                                                                                                                         |
+| `env-contract`         | `env`             | `iac-env-validation.feature`'s "When env validate runs" step names the namespace directly.                                                                                                                                                                          |
+| `gate`                 | `gate`            | Name match.                                                                                                                                                                                                                                                         |
+| `git`                  | `git`             | Name match — but see the Wave A/D note above: this directory's one committed feature file (`git-pre-commit.feature`) is the resequenced `md`-surface one; the real `git lockfile` command's behavior is now covered by `git-lockfile.feature`, authored in Phase 3. |
+| `governance`           | `governance`      | Name match.                                                                                                                                                                                                                                                         |
+| `harness`              | `harness`         | Name match.                                                                                                                                                                                                                                                         |
+| `md`                   | `md`              | Name match.                                                                                                                                                                                                                                                         |
+| `repo-config`          | `repo-config`     | Name match.                                                                                                                                                                                                                                                         |
+| `repo-config-validate` | `repo-config`     | `repo-config-validate.feature`'s subject is the `repo-config validate` subcommand — same namespace, distinct spec-directory name for legacy reasons.                                                                                                                |
+| `repo-governance`      | `repo-governance` | Name match.                                                                                                                                                                                                                                                         |
+| `spec-coverage`        | `specs`           | `spec-coverage-validate.feature`'s "runs spec-coverage validate" is `specs behavior-coverage validate`, implemented in `commands/specs_coverage.rs` (module comment: "Port of `cmd/spec_coverage_validate.go`").                                                    |
+| `specs`                | `specs`           | Name match.                                                                                                                                                                                                                                                         |
+| `system`               | `doctor`          | Already stated above: `system/` holds `doctor.feature`, `cargo-target-share.feature`, `fsharp-tool-invocation.feature` — all `doctor` namespace scenarios.                                                                                                          |
+| `test-coverage`        | `test-coverage`   | Name match.                                                                                                                                                                                                                                                         |
 
 `parity` (Wave A's second namespace) has no dedicated spec directory, as already noted — it is
 exercised through the shadow-diff harness and the `parity manifest validate` gate entry, not through
@@ -495,7 +495,7 @@ exercised through the shadow-diff harness and the `parity manifest validate` gat
 same wave the directory itself was assigned to (e.g. `system` → `doctor` is Wave C, matching
 `doctor, test-coverage`; `spec-coverage`/`contracts`/`ddd` → `specs` are all Wave E, matching
 `harness, specs, ...`; `repo-config-validate` → `repo-config` is Wave B, matching `repo-config, env`),
-so no correction to the wave map or the 525/71 totals is triggered by this mapping.
+so no correction to the wave map or the 528/72 totals is triggered by this mapping.
 
 ### DD-8 — The `deps:audit` narrowing and the SDK floor
 

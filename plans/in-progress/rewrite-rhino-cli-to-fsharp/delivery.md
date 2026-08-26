@@ -51,7 +51,7 @@ and a later wave's shadow-diff runs against a binary the earlier flips already c
 waves in flight at once would make a byte-identity failure unattributable. One worktree per
 repository, one delivery unit at a time, per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
-Within a wave, the ~71 feature-file PRs are independent of each other and may be opened
+Within a wave, the ~72 feature-file PRs are independent of each other and may be opened
 back-to-back, but each still lands before the wave's integration and flip steps run.
 
 ### Delivery Boundaries
@@ -140,8 +140,8 @@ different reason, stated there: the failure modes of a workflow edit and a crate
 different and must not share a revert. An executor who counts `+` and `-` together will split PRs
 that never needed splitting and will read the Phase 9 seam as a size constraint it is not. The seam is stated once and applies
 throughout: **one `.feature` file is one PR**. There are
-71 feature files carrying 525 scenarios [Repo-grounded — counted over
-`specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 71 PRs,
+72 feature files carrying 528 scenarios [Repo-grounded — counted over
+`specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 72 PRs,
 plus the scaffolding, retirement, benchmark, propagation, and archival PRs.
 
 ### Fixture isolation is a per-cycle acceptance condition
@@ -271,18 +271,18 @@ the Phase 2 gate re-measures them so a spec change during execution cannot silen
 | A     | 3     | `convention`                                                               | 11        | 3             | `convention`, `parity`                    |
 | B     | 4     | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 59        | 7             | `repo-config`, `env`                      |
 | C     | 5     | `system`, `test-coverage`                                                  | 53        | 6             | `doctor`, `test-coverage`                 |
-| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 125       | 10            | `md`, `governance`, `git`                 |
+| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 128       | 11            | `md`, `governance`, `git`                 |
 | E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 188       | 38            | `harness`, `specs`, `repo-governance`     |
 | F     | 8     | `gate`                                                                     | 89        | 7             | `gate`                                    |
-| Total |       |                                                                            | **525**   | **71**        | all 13                                    |
+| Total |       |                                                                            | **528**   | **72**        | all 13                                    |
 
 `parity` has no feature directory of its own; it is proved by the shadow-diff harness and the
 `parity manifest validate` gate entry rather than by scenarios, which is why wave A flips two
 namespaces on 11 scenarios. **Wave A and Wave D differ from a naive spec-directory split**:
 `git/git-pre-commit.feature` sits under `git/` but drives `md` commands, so its 5 scenarios were
-moved into Wave D and `git` flips there — see the resequencing block in Phase 3. The 525/71 totals
-are unchanged by the move itself; they change only when the new `git lockfile` feature file Phase 3
-requires is authored, and that step restates them. Wave F is last because `gate` is the registry every other CI job reads —
+moved into Wave D and `git` flips there — see the resequencing block in Phase 3. Phase 3 also
+authored `git/git-lockfile.feature` (3 scenarios) for the real `git lockfile` CLI surface, which had
+no Gherkin before it, bringing the totals from 525/71 to 528/72. Wave F is last because `gate` is the registry every other CI job reads —
 per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 ---
@@ -803,13 +803,13 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 >
 > **Do this instead, in this order:**
 
-- [ ] [AI] Re-verify the finding before acting on it, since it is the kind of claim that rots —
+- [x] [AI] Re-verify the finding before acting on it, since it is the kind of claim that rots —
       acceptance: `/bin/ls specs/apps/rhino/behavior/rhino-cli/gherkin/git/` still shows only
       `git-pre-commit.feature` and `README.md`;
       `grep -c 'md links validate\|md mermaid validate\|md heading-hierarchy validate' specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature`
       returns non-zero; and
       `grep -rl lockfile specs/apps/rhino/behavior/rhino-cli/gherkin/git/` returns nothing.
-- [ ] [AI] Confirm the move has already been applied to this checklist rather than re-applying it —
+- [x] [AI] Confirm the move has already been applied to this checklist rather than re-applying it —
       the five `git-pre-commit.feature` cycles now sit under **Phase 6 (Wave D)**, retargeted to
       `tests/integration/Steps/PreCommitHookSteps.fs` and `RhinoCli.Application/Md.fs` — acceptance:
       the set of modules Phase 3's cycles name is exactly `{Convention}` — extracted, not
@@ -821,7 +821,7 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       module the new `git lockfile` cycles test. Also confirm the `git-pre-commit.feature` heading
       appears exactly once, inside Phase 6.
 
-- [ ] [AI] Author Gherkin for `git lockfile` before any F# implementation of it exists, because the
+- [x] [AI] Author Gherkin for `git lockfile` before any F# implementation of it exists, because the
       repo's specs-and-Gherkin rule binds the direct-code path as well as the plan path —
       acceptance: a new feature file under `specs/apps/rhino/behavior/rhino-cli/gherkin/git/`
       describes the lockfile helpers' observable behaviour, **its cycles are added to Phase 6
@@ -830,13 +830,14 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       the 525 and 71 totals corrected, and the addition is landed in **both** repos. Note
       this is an addition under `specs/apps/rhino/`, which every other phase forbids — record it as
       the deliberate, scoped exception it is, alongside Phase 9a's retirement.
-- [ ] [AI] Do **not** add `git` to `FSHARP_NAMESPACES` in this wave's integration step — acceptance:
+- [x] [AI] Do **not** add `git` to `FSHARP_NAMESPACES` in this wave's integration step — acceptance:
       the flip list for Wave A is `convention` and `parity` only. `git` flips in **Wave D**, in the same
       integration step as `md` and `governance`, once the `git lockfile` file above exists and its
       cycles have been implemented there — that step names `git` explicitly, so the twelve-namespace
       undercount this deferral once caused cannot recur.
-- [ ] [AI] Confirm the wave-map table already reflects the move — Wave A **11 scenarios / 3 files**
-      (down from 16 / 4), Wave D **125 / 10** (up from 120 / 9), totals still 525 / 71 — and restate
+- [x] [AI] Confirm the wave-map table already reflects the move — Wave A **11 scenarios / 3 files**
+      (down from 16 / 4), Wave D **128 / 11** (up from 120 / 9 pre-resequencing, 125 / 10 after
+      resequencing but before this addition), totals now 528 / 72 — and restate
       every total that changes once the new `git lockfile` feature file is authored, at each of the
       six sites enumerated below — **not** in `prd.md`, which carries none of these figures
       [verified: `grep -c '\b12[05]\b\|Wave [AD]' prd.md` returns 0], so listing it here would send
@@ -853,11 +854,14 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       and this very checkbox would match its own text, so an absence-grep is unfalsifiable here.
       Asserting only against the top-of-file wave map is what let a partial application look green
       once already.
-- [ ] [AI] Sweep the other five waves for the same defect class, since even `git` — not among the
+- [x] [AI] Sweep the other five waves for the same defect class, since even `git` — not among the
       six directories [tech-docs](./tech-docs.md) already flags as `[Unverified]` mappings — mapped
       wrongly — acceptance: for each of the seventeen spec directories, the CLI namespace its
       scenarios actually invoke is recorded against the namespace the wave map assumes, with a
-      per-directory verdict rather than a summary.
+      per-directory verdict rather than a summary. Satisfied by [tech-docs.md](./tech-docs.md)
+      DD-7's "Spec-directory to CLI-namespace mapping (Phase 2, authoritative)" table, which already
+      covers all 17 directories with a grounded per-row verdict and its own closing line confirms no
+      row contradicts the wave map — `git` was the sole mapping defect, already corrected above.
 
 Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.feature` file, per
 [Execution-Grade Clarity §One scenario per behavior cycle](../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md).
@@ -4187,12 +4191,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Phase 6: Wave D — `md`, `governance`, `git` (resequenced)
 
-> **125 scenarios across 10 feature files** after the `git` resequencing — 120 across 9 before it,
-> plus whatever the new `git/` lockfile feature file adds
+> **128 scenarios across 11 feature files** after the `git` resequencing and Phase 3's `git/`
+> lockfile addition — 120 across 9 before either change
 > [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`].
-> **PR seam**: one feature file is one PR, so this wave is **10** implementation PRs plus one flip
-> PR after the `git` resequencing above — 9 before it, plus one more once the `git/` lockfile
-> feature file lands.
+> **PR seam**: one feature file is one PR, so this wave is **11** implementation PRs plus one flip
+> PR after the `git` resequencing and lockfile addition above — 9 before either change.
 >
 > `md` is the single largest validator family and the one every documentation commit exercises. The shadow-diff for this wave runs over the whole repository, not a fixture.
 >
@@ -14645,7 +14648,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Widen `rhino-cli`'s coverage scope to the whole tree — acceptance:
       `rhino-cli`'s `specs:behavior:coverage` specs-dirs argument and its `repo-config.yml`
       `coverage.projects` glob are both back to `specs/apps/rhino/behavior/rhino-cli/**`, and
-      `npx nx run rhino-cli:specs:behavior:coverage` reports **525** scenarios — not fewer, which
+      `npx nx run rhino-cli:specs:behavior:coverage` reports **528** scenarios — not fewer, which
       would mean a wave's widening was never merged, and not more, which would mean the glob picked
       up a tree this project does not own. `repo-config validate` exits 0, and the number of
       `coverage.projects` entries naming a rhino project matches the decision above — **one** if the
@@ -15259,7 +15262,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 ## Validation Checklist
 
 - [ ] [AI] Every behavior cycle is RED→GREEN→REFACTOR with exactly one bound Gherkin scenario
-- [ ] [AI] All 525 scenarios have a passing F# step definition in both repos
+- [ ] [AI] All 528 scenarios have a passing F# step definition in both repos
 - [ ] [AI] Every wave passed `shadow-diff.sh` before its shim flip
 - [ ] [AI] Exactly two edits exist under `specs/apps/rhino/`, and no third: the Phase 3 addition of
       the new `git/` lockfile feature file, and the Phase 9a retirement of Rust-specific scenarios

@@ -94,7 +94,7 @@ counts both sides with the same command shape and records the real ratio, whatev
 
 - New F# implementation of all 13 namespaces: `convention`, `parity`, `git`, `repo-config`, `env`,
   `doctor`, `test-coverage`, `md`, `governance`, `harness`, `specs`, `repo-governance`, `gate`
-- All **525 Gherkin scenarios** across **71 feature files**, one RED→GREEN→REFACTOR cycle each
+- All **528 Gherkin scenarios** across **72 feature files**, one RED→GREEN→REFACTOR cycle each
   [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`]
 - Dispatch shim in `apps/rhino-cli/scripts/rhino-bin.sh` routing per namespace during migration, and
   a `shadow-diff.sh` differential runner proving byte-identity before each flip
@@ -137,21 +137,21 @@ reaches `main`.
 | A     | 3     | `convention`                                                               | 11        | 3             | `convention`, `parity`                |
 | B     | 4     | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 59        | 7             | `repo-config`, `env`                  |
 | C     | 5     | `system`, `test-coverage`                                                  | 53        | 6             | `doctor`, `test-coverage`             |
-| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 125       | 10            | `md`, `governance`, `git`             |
+| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 128       | 11            | `md`, `governance`, `git`             |
 | E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 188       | 38            | `harness`, `specs`, `repo-governance` |
 | F     | 8     | `gate`                                                                     | 89        | 7             | `gate`                                |
-| Total |       |                                                                            | **525**   | **71**        | all 13                                |
+| Total |       |                                                                            | **528**   | **72**        | all 13                                |
 
 > **Waves A and D differ from a naive spec-directory split.** `git/git-pre-commit.feature` sits
 > under `git/` but its five scenarios drive `md` commands — its own header records that the
 > `git pre-commit` CLI command was removed in 2026-06-26 — so those cycles were resequenced into
 > Wave D as integration-tier tests, and `git` flips there rather than in Wave A. The real `git`
-> surface (`commands/git/lockfile.rs`) has no Gherkin at all; Phase 3 requires authoring it and
-> Wave D implements it. Totals stay 525 / 71 until that new feature file lands, at which point every
-> figure here is restated with its delta.
+> surface (`commands/git/lockfile.rs`) had no Gherkin at all; Phase 3 authored
+> `git/git-lockfile.feature` (3 scenarios) and Wave D implements it, bringing the totals from
+> 525 / 71 to 528 / 72.
 
 `gate` is last because it is the registry every CI job reads. The PR seam is stated once and holds
-throughout: **one feature file is one PR**, so the six waves are roughly 71 implementation PRs plus
+throughout: **one feature file is one PR**, so the six waves are roughly 72 implementation PRs plus
 the scaffolding, flip, retirement, benchmark, and propagation PRs.
 
 ## Navigation
