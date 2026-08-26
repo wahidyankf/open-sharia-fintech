@@ -44,6 +44,16 @@ lives. It used to be developed here as `apps/beavernest-app` (Flutter Web) and `
 Compose stack, and two deployer agents. **All of that was removed from `ose-public`**; the product
 was rebuilt on Phoenix LiveView and Elixir in its own repository.
 
+BeaverNest is a continuously used, family-only production product. Its scope ends at the family
+boundary: "production" means real ongoing family use, not public or general-purpose availability.
+It targets one continuously available family environment rather than separate staged environments;
+Phoenix LiveView is the current fit for that operating model.
+It also serves as an applied lab for learning how AI-assisted coding can support everyday family
+activities and development with a
+[dynamically typed language such as Elixir](https://hexdocs.pm/elixir/typespecs.html). Useful
+learnings can flow back selectively into `ose-public` and other OSE products; this knowledge
+transfer creates no parity or automatic propagation obligation.
+
 It carries no `rhino-cli` at all, so there is nothing for the byte-identity boundary to cover, and
 `rhino-cli`'s parity gate asserts that the boundary never names it — see
 `apps/rhino-cli/src/application/parity.rs`.
@@ -51,6 +61,9 @@ It carries no `rhino-cli` at all, so there is nothing for the byte-identity boun
 If you are looking for BeaverNest code, issues, or plans, go to that repository. Anything still
 naming BeaverNest here is a historical record — an archived plan under [`plans/done/`](../../plans/done/README.md)
 or a published update post — not live work.
+
+This routing is **unenforced by decision**: determining whether proposed work belongs to the
+family product requires human product judgment.
 
 ## Shared boundaries
 
