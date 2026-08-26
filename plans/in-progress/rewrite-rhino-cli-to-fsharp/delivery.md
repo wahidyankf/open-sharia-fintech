@@ -708,10 +708,14 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       `dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`, and
       `_reusable-app-test-local-deploy-stag.yml` all invoke namespaces that are still Rust —
       acceptance: the reasoning is written into `learnings.md` naming each of those five files.
-- [ ] [AI] Confirm the `detect` job needs no edit — `rhino-cli-fsharp` carries `lang:fsharp`, which
-      `detect` already maps to `has-dotnet-projects` — acceptance:
-      `grep -n 'lang:fsharp' .github/workflows/pr-quality-gate.yml` shows the existing mapping and
-      no new line was added.
+- [x] [AI] Confirm the `detect` job's `lang:fsharp` → `has-dotnet-projects` mapping — **true as
+      assumed in `ose-public`** (`grep -n 'lang:fsharp' .github/workflows/pr-quality-gate.yml`
+      shows the mapping pre-existing, no new line needed there), **false in `ose-private`**: that
+      repo's `detect` job had no `has-dotnet-projects` output or `lang:fsharp`/`lang:csharp` case at
+      all, so both were added new — acceptance (corrected, per-repo): each repo's `detect` job now
+      has exactly one `lang:fsharp | lang:csharp) echo "has-dotnet-projects=true"` case, confirmed
+      by `grep -c 'lang:fsharp | lang:csharp' .github/workflows/pr-quality-gate.yml` returning 1 in
+      both repos.
 - [x] [AI] Land every Phase 2 change in the `ose-private` worktree, authored there rather than
       copied — acceptance: the same `dotnet build`, `diff`, and `grep` assertions hold in that repo,
       **and** the break-and-restore `deps:audit` proof above is re-run there too, against
