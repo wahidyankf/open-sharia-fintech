@@ -21,10 +21,11 @@ Continues [Worktree Specification](./worktree-specification.md).
 1. **Enter or provision**: execution always happens inside the declared worktree. The executor navigates to it if it exists, or provisions it from the latest `origin/main` (`git fetch origin && git worktree add -b <plan-identifier> worktrees/<plan-identifier> origin/main`) if it does not. When the plan produces more than one delivery unit in this repo, the SAME worktree is reused for every one of them (see [Worktree Cap](./worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below) — never provision a second worktree for a repo the plan already has one open in.
 2. **Freshness sync**: before any implementation, the worktree is synced with the latest `origin/main` (ff-merge, or rebase when the worktree carries local commits). Dirty state or rebase conflicts stop execution for an explicit user decision. Starting a new delivery unit inside an already-provisioned worktree runs this same sync before branching off it.
 3. **Immediate cleanup**: when every delivery unit this plan places in a repo is confirmed delivered,
-   resolve the exact path and branch from its Provisioned Worktree Identity, reconcile them with
-   `git worktree list --porcelain`, then remove that self-created worktree without another prompt
-   only after it is clean and idle, has no unpushed commits, and each PR is confirmed merged (never
-   infer this from ancestry after a squash merge). Use non-force
+   resolve the exact path from its Provisioned Worktree Identity, reconcile it with `git worktree
+list --porcelain`, then inventory every plan-created and current branch. Remove that self-created
+   worktree without another prompt only after it is clean and idle, every branch has no unpushed
+   commit, and each PR is confirmed merged (never infer this from ancestry after a squash merge).
+   Use non-force
    `git worktree remove`, then canonical branch cleanup. If any check fails, retain it with evidence
    and escalate. Never remove on `partial`/`fail`. For a multi-unit plan, the shared worktree is
    removed once, after every delivery unit that used it has landed.

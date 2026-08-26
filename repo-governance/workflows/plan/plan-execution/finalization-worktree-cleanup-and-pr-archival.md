@@ -7,14 +7,16 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
 1. **Worktree cleanup — immediate (after archival pushed)**: once the archival commit is confirmed
    on `origin/main` and CI is green, clean up a `worktree-to-origin-main` worktree in the same
    session. `main-to-origin-main` created no plan worktree, so this step is N/A for that mode.
-   1. Resolve the exact path and branch from the plan's Provisioned Worktree Identity and reconcile
-      them with `git worktree list --porcelain`. A missing or conflicting record blocks removal;
-      never derive ownership from a familiar path.
+   1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
+      `git worktree list --porcelain`. Inventory every plan-created and current branch; the initial
+      identity branch may differ after normal delivery-unit branch switching. A missing identity,
+      path conflict, or unclassified branch blocks removal; never derive ownership from a familiar
+      path.
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
-      the exact worktree is clean and idle, every commit is pushed, and the direct-push delivery is
-      present on `origin/main`. A repository root, wildcard, missing ledger entry, or another
-      actor's worktree is never eligible.
+      the exact worktree is clean and idle, every inventoried branch is pushed, and each direct-push
+      delivery is present on `origin/main` with no open PR. A repository root, wildcard, missing
+      identity, or another actor's worktree is never eligible.
    3. When every check passes, remove the exact path immediately without another confirmation
       prompt, from the repository root:
 

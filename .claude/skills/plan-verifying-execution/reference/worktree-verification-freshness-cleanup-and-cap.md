@@ -8,16 +8,17 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
    - No sync evidence: **MEDIUM** finding (the gate may have run unrecorded; flag for manual review).
 
 2. **Eligible worktree cleanup was immediate and precondition-gated**
-   - On `pass`, resolve the exact path and branch from the file-touch ledger and require proof this
-     plan created the worktree.
-   - Verify the registered worktree is clean and idle with no unpushed commit, and that its branch PR
-     merged or its direct push reached `origin/main`.
+   - On `pass`, resolve the exact path and creator from the Provisioned Worktree Identity and
+     reconcile it with `git worktree list --porcelain`; the file-touch ledger is file tracking only.
+   - Inventory every plan-created and current branch. Verify the registered worktree is clean and
+     idle, every inventoried branch has no unpushed commit, and each branch PR merged or its direct
+     push reached `origin/main` with no open PR.
    - When all checks pass, require immediate non-force removal of the exact path and canonical branch
      cleanup, without another confirmation prompt.
    - On a failed check or removal, require retention, surfaced evidence, and escalation. `partial`
      and `fail` likewise retain the worktree.
    - Eligible successful delivery retained without escalation: **HIGH**. Forced removal, removal
-     without ledger-proven ownership, or removal despite a failed safety check: **HIGH**.
+     without identity-proven ownership, or removal despite a failed safety check: **HIGH**.
 
 3. **Worktree cap held during execution** (enforces
    [Worktree Cap](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))
@@ -42,7 +43,7 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 - Wrong worktree-path format in plan: **HIGH**
 - Eligible worktree retained after successful delivery without a failed-check or removal-error
   escalation: **HIGH**
-- Worktree force-removed, removed without ledger-proven ownership, or removed despite a failed
+- Worktree force-removed, removed without identity-proven ownership, or removed despite a failed
   pre-removal check: **HIGH**
 - No worktree evidence in git history: **MEDIUM**
 - No `origin/main` freshness-sync evidence: **MEDIUM**

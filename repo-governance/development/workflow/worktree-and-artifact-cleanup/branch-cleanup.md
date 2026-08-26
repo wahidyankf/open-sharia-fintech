@@ -15,21 +15,28 @@ when_to_use: Use when deleting local or remote branches after removing a repo's 
 
 # Branch Cleanup
 
-Removing a worktree leaves its branches behind. Under the 1-PR ↔ 1-branch mapping, a multi-phase plan
-accumulates one branch per **delivery unit** in a repo, even though it shares a single worktree across
-all of them — so a plan that cleans its (one) worktree but not refs still leaves stale local and
-remote branches on every repo it touched. Run this after removing a repo's worktree.
+Removing a shared worktree leaves one branch per delivery unit. Run this after removing the worktree.
 
-**Delete only branches this plan created**, and only after the branch's PR is confirmed MERGED by the
-same `gh pr list --head <branch> --state all --json number,state,mergedAt` test used in check 1.
-Ancestry tests are useless here for the same squash-merge reason.
+**Delete only inventory branches after rechecking delivery proof and no-unpushed state.** A `*-to-pr`
+branch needs a MERGED PR; direct push needs its recorded commit on `origin/main` and no open PR. Do
+not treat the provisioned initial branch as the only branch.
 
-**Local deletion uses `git branch -d`** — never `git branch -D`. The merged-check that `-d` retains is
-the point: it refuses on an unmerged branch, which is the intended backstop. If `-d` refuses on a
-branch whose PR reports MERGED, that is the **squash-merge shape, not lost work** — confirm the
-content landed with `git log origin/main..<branch>`, then delete with an explicit stated reason. Do
-not reflexively reach for `-D`; force-deletion is on the forbidden-operations list precisely because
-it silences the signal you would want in the case where the content genuinely had not landed.
+**Local deletion uses `git branch -d`** — never `git branch -D`. For a squash-merged PR branch, make
+the merged PR the delivery proof, then fetch without pruning and verify the local and
+`origin/<branch>` tips are identical. Set that matching remote ref as the branch upstream if needed,
+then use the ordinary non-force delete:
+
+```bash
+git fetch origin
+test "$(git rev-parse <branch>)" = "$(git rev-parse origin/<branch>)"
+git branch --set-upstream-to=origin/<branch> <branch>
+git branch -d <branch>
+git push origin --delete <branch>
+```
+
+Equal tips prove no local commit followed review; `git branch -d` keeps Git's merged-check against
+that upstream. `git log origin/main..<branch>` is non-empty after squash merge and proves nothing.
+Without the matching remote-tracking ref, retain and escalate; never bypass the non-force guard.
 
 **Remote deletion uses `git push origin --delete <branch>`**, only after the PR is MERGED, and only
 for branches this plan pushed. **Never delete `main`, and never delete an environment branch.** Which

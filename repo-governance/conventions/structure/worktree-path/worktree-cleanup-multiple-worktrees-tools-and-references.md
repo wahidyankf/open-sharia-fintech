@@ -19,12 +19,15 @@ created: 2026-05-03
 
 When removing a worktree:
 
-1. Resolve the exact path and branch from the plan's Provisioned Worktree Identity, then reconcile
-   them with `git worktree list --porcelain`. A missing or conflicting record blocks removal.
-2. Prove the branch's PR is merged with `gh pr list --head <branch> --state all --json
-number,state,mergedAt`; do not use `origin/main` ancestry because squash merges make it false.
-3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and has no
-   unpushed commit (`git -C <exact-path> log origin/<branch>..<branch>`).
+1. Resolve the exact path from the plan's Provisioned Worktree Identity, then reconcile it with
+   `git worktree list --porcelain`. Inventory every plan-created and current branch from the Delivery
+   Branch Inventory and `git -C <exact-path> branch --show-current`; a missing identity, path
+   conflict, or unclassified branch blocks removal.
+2. For each inventoried branch, prove its PR merged, or for a direct-push entry prove its recorded
+   commit reached `origin/main` and no PR remains open. Do not use `origin/main` ancestry for a
+   squash-merged PR branch.
+3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and every
+   inventoried branch has no unpushed commit.
 4. When every check passes, immediately run non-force `git worktree remove <exact-path>`, then the
    canonical [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md).
    `git worktree prune` may follow. If any check or removal fails, retain the worktree, preserve the

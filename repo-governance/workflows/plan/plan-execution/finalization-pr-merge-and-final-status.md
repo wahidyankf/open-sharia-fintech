@@ -18,13 +18,16 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
 3. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
-   1. Resolve the exact path and branch from the plan's Provisioned Worktree Identity and reconcile
-      them with `git worktree list --porcelain`. A missing or conflicting record blocks removal;
-      never derive ownership from a familiar path.
+   1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
+      `git worktree list --porcelain`. Inventory every plan-created and current branch; the initial
+      identity branch may differ after normal delivery-unit branch switching. A missing identity,
+      path conflict, or unclassified branch blocks removal; never derive ownership from a familiar
+      path.
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
-      GitHub reports the branch PR merged, the exact worktree is clean and idle, and no commit is
-      unpushed. Do not substitute commit ancestry for the PR merge check because these repositories
+      GitHub reports every PR-mode branch merged (and every direct-push branch delivered with no
+      open PR), the exact worktree is clean and idle, and no inventoried branch has an unpushed
+      commit. Do not substitute commit ancestry for the PR merge check because these repositories
       squash-merge.
    3. When every check passes, remove the exact path immediately without another confirmation
       prompt, from the repository root:

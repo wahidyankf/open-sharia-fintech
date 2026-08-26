@@ -42,7 +42,7 @@ Provisioned Worktree Identity, or worktree created by another actor; those remai
 - [Why This Is a Gate](./worktree-and-artifact-cleanup/why-this-is-a-gate.md) — Disk, ref namespace, and stale-state risk on a shared machine.
 - [The Three Artifact Classes](./worktree-and-artifact-cleanup/the-three-artifact-classes.md) — Worktrees, branches, build output.
 - [Hard Safety Rules](./worktree-and-artifact-cleanup/hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
-- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The five checks before any `git worktree remove`.
+- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The six checks before any `git worktree remove`.
 - [Branch Cleanup](./worktree-and-artifact-cleanup/branch-cleanup.md) — Deleting merged local and remote branches safely.
 - [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
 

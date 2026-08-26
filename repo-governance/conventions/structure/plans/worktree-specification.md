@@ -35,24 +35,32 @@ claude --worktree <plan-identifier>
 
 ## Worktree Identity Record
 
-Record this immutable block in the plan's `## Worktree` section when
-that section is authored. Provisioning preserves the exact `git worktree add` values; it is the
-cleanup authority, while the file-touch ledger records files only.
+Record this immutable block in the plan's `## Worktree` section when that section is authored.
+It is the cleanup authority; the file-touch ledger records files only.
 
 ```markdown
 ### Provisioned Worktree Identity
 
 - Exact path: `/absolute/repo/worktrees/<plan-identifier>`
-- Branch: `<plan-identifier>-base`
+- Initial branch: `<plan-identifier>-base`
 - Created by: `<executor identity or session>`
 - Created at: `<ISO-8601 UTC timestamp>`
 ```
 
-Record the actual path and branch returned by `git worktree add`, not a convention-derived guess.
-Never rewrite the four fields after creation. Cleanup must reconcile them with `git worktree list
---porcelain`; a missing or conflicting record blocks removal.
+Record actual `git worktree add` values and never rewrite them. Cleanup reconciles the exact path
+with `git worktree list --porcelain`; a missing or conflicting identity blocks removal. The initial
+branch proves provisioning, not the final checkout.
 
-**Provision the worktree BEFORE defining the plan, and author the plan inside it.** The worktree comes first; the plan documents are written, grilled, and iterated within it, and the same worktree then carries the plan through execution. Authoring a plan outside its worktree and moving it in later is not the supported path — it splits the plan's own history across two locations and defeats the `## Worktree` declaration's purpose as a pre-execution environment check.
+### Delivery Branch Inventory
+
+Keep an append-only inventory beside the identity. Add the initial and every plan-created delivery
+branch before use, retaining cleaned entries. Each records branch, mode, and proof: merged PR for
+`*-to-pr`, or verified `origin/main` commit for direct push. At removal, include
+`git -C <exact-path> branch --show-current`; an unrecorded current branch blocks cleanup. This
+inventory, not the file-touch ledger, controls branch cleanup.
+
+**Provision the worktree BEFORE defining the plan, and author inside it.** Moving a plan in later
+splits its history and defeats the `## Worktree` pre-execution check.
 
 The [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) still enters the declared worktree defensively — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not — but that is a backstop for a plan that arrived without one, not the intended sequence.
 
