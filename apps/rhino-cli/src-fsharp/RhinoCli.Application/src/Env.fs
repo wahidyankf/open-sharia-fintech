@@ -37,8 +37,10 @@
 /// with the same invoke-at-most-once-when-a-real-conflict-exists contract.
 /// This PR additionally ports the `App`-surface-kind slice of `env validate`
 /// (code↔`.env.example` drift detection) for
-/// `env-validate-app-drift.feature`'s 3 scenarios; the `terraform`/`ansible`
-/// surface validators are out of scope, reserved for a later PR7.
+/// `env-validate-app-drift.feature`'s 3 scenarios. This PR (PR7) further
+/// ports the `Terraform`/`Ansible` env-contract validators
+/// (`env-contract/iac-env-validation.feature`), completing `env validate`'s
+/// three-way `SurfaceKind` dispatch.
 module RhinoCli.Application.Env
 
 open System
@@ -1003,13 +1005,9 @@ let restore (opts: EnvOptions) (confirm: unit -> bool) : Result<EnvOperationResu
 /// value in `repo-config.yml` [Repo-grounded —
 /// `apps/rhino-cli/src/application/env/validate.rs::SurfaceKind`].
 ///
-/// Only `App` is dispatched to a real validator by `validateAll` below —
-/// `Terraform`/`Ansible` surface validation is a separate, later PR7
-/// (`env-contract/iac-env-validation.feature`). Both variants are ported
-/// here anyway so this type stays complete for that later port to extend
-/// without a breaking rename, and so a surface's `kind:` YAML value
-/// round-trips correctly regardless of which kind it declares. No surface in
-/// this repo's live `env-contract:` section currently declares either.
+/// All three variants dispatch to a real validator in `validateAll` below:
+/// `App` to `validateAppSurface`, `Terraform` to `validateTerraform`, and
+/// `Ansible` to `validateAnsible`.
 type SurfaceKind =
     | App
     | Terraform
@@ -1035,10 +1033,10 @@ type SurfaceConfig =
 type Contract = { Surfaces: SurfaceConfig list }
 
 /// Drift direction for a [`Finding`] [Repo-grounded —
-/// `validate.rs::DriftKind`]. Only `DeclaredButUnread`/`ReadButUndeclared`
-/// are produced by this PR's `App`-surface validator below; the remaining
-/// three variants exist so the type is complete for PR7's terraform/ansible
-/// validators to extend without a breaking rename.
+/// `validate.rs::DriftKind`]. `DeclaredButUnread`/`ReadButUndeclared` are
+/// produced by the `App`-surface validator below; `ExampleNotDeclared`/
+/// `RequiredMissingFromExample` are produced by `validateTerraform`, and
+/// `ConsumedNotDeclared` by `validateAnsible`.
 type DriftKind =
     /// App: key present in `.env.example` but not consumed by any code in
     /// the surface.
@@ -1467,22 +1465,313 @@ let validateAppSurface (repoRoot: string) (surface: SurfaceConfig) : Result<Find
             |> List.sortWith (fun a b -> String.CompareOrdinal(a.Key, b.Key))
             |> Ok
 
-/// Validates every surface declared in `contract` [Repo-grounded —
-/// `validate.rs::validate_all`].
-///
-/// Only `App` surfaces are dispatched to a real validator: `Terraform`/
-/// `Ansible` surface validation is PR7 scope
-/// (`env-contract/iac-env-validation.feature`, porting the terraform/ansible
-/// validators at `validate.rs` lines ~430-1259). No surface in this repo's
-/// live `env-contract:` section currently declares either kind, so this
-/// raises a clear error rather than silently no-op-ing — surfacing a real
-/// gap immediately if that ever changes before PR7 lands, rather than
-/// masking it as a clean pass.
+// ---- iac validators ----
+
+/// Aggregated drift for a `Terraform` or `Ansible` surface [Repo-grounded —
+/// `validate.rs::ValidationResult`]. App-surface drift is reported directly
+/// through [`Finding`]/[`DriftKind`] by `validateAppSurface`; this record
+/// backs the IaC validators below and is converted into [`Finding`]s by
+/// [`resultToFindings`] for uniform reporting alongside app-surface findings.
+/// `DeclaredNotRead`/`ReadNotDeclared` exist for record completeness (the
+/// fields an app-surface result would populate in the Rust
+/// `#[derive(Default)]` struct this ports) but are never set by
+/// `validateTerraform`/`validateAnsible` below.
+type ValidationResult =
+    { SurfaceRoot: string
+      DeclaredNotRead: string list
+      ReadNotDeclared: string list
+      ExampleNotDeclared: string list
+      RequiredMissingFromExample: string list
+      ConsumedNotDeclared: string list }
+
+/// `true` when a [`ValidationResult`] carries no drift of any kind
+/// [Repo-grounded — `validate.rs::ValidationResult::is_clean`].
+module ValidationResult =
+    let isClean (result: ValidationResult) : bool =
+        List.isEmpty result.DeclaredNotRead
+        && List.isEmpty result.ReadNotDeclared
+        && List.isEmpty result.ExampleNotDeclared
+        && List.isEmpty result.RequiredMissingFromExample
+        && List.isEmpty result.ConsumedNotDeclared
+
+/// Converts a Terraform/Ansible [`ValidationResult`] into [`Finding`]s rooted
+/// at `surfaceRoot`, sorted by key [Repo-grounded —
+/// `validate.rs::result_to_findings`].
+let resultToFindings (surfaceRoot: string) (result: ValidationResult) : Finding list =
+    let exampleNotDeclared =
+        result.ExampleNotDeclared
+        |> List.map (fun key ->
+            { Root = surfaceRoot
+              Drift = ExampleNotDeclared
+              Key = key })
+
+    let requiredMissingFromExample =
+        result.RequiredMissingFromExample
+        |> List.map (fun key ->
+            { Root = surfaceRoot
+              Drift = RequiredMissingFromExample
+              Key = key })
+
+    let consumedNotDeclared =
+        result.ConsumedNotDeclared
+        |> List.map (fun key ->
+            { Root = surfaceRoot
+              Drift = ConsumedNotDeclared
+              Key = key })
+
+    exampleNotDeclared @ requiredMissingFromExample @ consumedNotDeclared
+    |> List.sortWith (fun a b -> String.CompareOrdinal(a.Key, b.Key))
+
+let private terraformVariableBlockRegex =
+    Regex(@"^\s*variable\s+""([A-Za-z_][A-Za-z0-9_]*)""\s*\{", RegexOptions.Compiled)
+
+let private terraformDefaultAssignmentRegex =
+    Regex(@"^\s*default\s*=", RegexOptions.Compiled)
+
+/// Counts the occurrences of `target` in `line`.
+let private countChar (target: char) (line: string) : int =
+    line |> Seq.filter (fun c -> c = target) |> Seq.length
+
+/// Scans every `*.tf` file recursively under `root` for `variable "KEY" { }`
+/// blocks, returning `(allDeclared, requiredOnly)` — `requiredOnly` is the
+/// subset of `allDeclared` whose block has no `default = ...` line anywhere
+/// inside it [Repo-grounded — `validate.rs::scan_terraform_variables`].
 ///
 /// # Errors
 ///
-/// Returns an error when any `App` surface fails validation, or a
-/// `Terraform`/`Ansible` surface is encountered before PR7 implements it.
+/// Returns an error when a `*.tf` file cannot be read.
+let scanTerraformVariables (root: string) : Result<Set<string> * Set<string>, string> =
+    try
+        let tfFiles =
+            allFilesUnder root
+            |> List.filter (fun p -> p.EndsWith(".tf", StringComparison.Ordinal))
+
+        let mutable allDeclared = Set.empty
+        let mutable required = Set.empty
+
+        for path in tfFiles do
+            let lines = File.ReadAllLines path
+            let mutable i = 0
+
+            while i < lines.Length do
+                let line = lines.[i]
+                let m = terraformVariableBlockRegex.Match line
+
+                if m.Success then
+                    let key = m.Groups.[1].Value
+                    allDeclared <- Set.add key allDeclared
+
+                    let mutable braceDepth = max 0 (countChar '{' line - countChar '}' line)
+                    let mutable hasDefault = false
+                    i <- i + 1
+
+                    while i < lines.Length && braceDepth > 0 do
+                        let inner = lines.[i]
+                        braceDepth <- max 0 (braceDepth + countChar '{' inner - countChar '}' inner)
+
+                        if terraformDefaultAssignmentRegex.IsMatch inner then
+                            hasDefault <- true
+
+                        i <- i + 1
+
+                    if not hasDefault then
+                        required <- Set.add key required
+                else
+                    i <- i + 1
+
+        Ok(allDeclared, required)
+    with ex ->
+        Error(sprintf "cannot read *.tf files under %s: %s" root ex.Message)
+
+let private tfvarsKeyRegex =
+    Regex(@"^([A-Za-z_][A-Za-z0-9_]*)\s*=", RegexOptions.Compiled)
+
+/// Parses `root/terraform.tfvars.example` for `KEY = ...` declarations,
+/// returning an empty set (not an error) when the file does not exist
+/// [Repo-grounded — `validate.rs::parse_tfvars_example`].
+///
+/// # Errors
+///
+/// Returns an error when the file exists but cannot be read.
+let parseTfvarsExample (root: string) : Result<Set<string>, string> =
+    let path = Path.Combine(root, "terraform.tfvars.example")
+
+    if not (File.Exists path) then
+        Ok Set.empty
+    else
+        try
+            File.ReadAllLines path
+            |> Array.filter (fun line ->
+                let trimmed = line.Trim()
+                trimmed <> "" && not (trimmed.StartsWith("#", StringComparison.Ordinal)))
+            |> Array.choose (fun line ->
+                let m = tfvarsKeyRegex.Match line
+                if m.Success then Some m.Groups.[1].Value else None)
+            |> Set.ofArray
+            |> Ok
+        with ex ->
+            Error(sprintf "cannot read %s: %s" path ex.Message)
+
+/// Validates a `Terraform`-kind surface: keys in `terraform.tfvars.example`
+/// with no matching `variable` block are [`ExampleNotDeclared`]; required
+/// variables (no `default`) missing from `terraform.tfvars.example` are
+/// [`RequiredMissingFromExample`] [Repo-grounded —
+/// `validate.rs::validate_terraform`]. Scans `root` directly (not
+/// `root/src`) — unlike the `App`-surface scanners above, a
+/// Terraform/Ansible surface's files live at its root.
+///
+/// # Errors
+///
+/// Returns an error when a `*.tf` file or `terraform.tfvars.example` cannot
+/// be read.
+let validateTerraform (root: string) (allowlist: string list) : Result<ValidationResult, string> =
+    match scanTerraformVariables root with
+    | Error e -> Error e
+    | Ok(declaredKeys, requiredKeys) ->
+        match parseTfvarsExample root with
+        | Error e -> Error e
+        | Ok exampleKeys ->
+            let allow = Set.ofList allowlist
+
+            let exampleNotDeclared =
+                Set.difference exampleKeys declaredKeys
+                |> Set.filter (fun key -> not (Set.contains key allow))
+                |> Set.toList
+                |> List.sortWith (fun a b -> String.CompareOrdinal(a, b))
+
+            let requiredMissingFromExample =
+                Set.difference requiredKeys exampleKeys
+                |> Set.filter (fun key -> not (Set.contains key allow))
+                |> Set.toList
+                |> List.sortWith (fun a b -> String.CompareOrdinal(a, b))
+
+            Ok
+                { SurfaceRoot = root
+                  DeclaredNotRead = []
+                  ReadNotDeclared = []
+                  ExampleNotDeclared = exampleNotDeclared
+                  RequiredMissingFromExample = requiredMissingFromExample
+                  ConsumedNotDeclared = [] }
+
+let private ansibleBuiltinLookupRegex =
+    Regex(@"lookup\(\s*'ansible\.builtin\.env'\s*,\s*'([A-Z_][A-Z0-9_]*)'\s*\)", RegexOptions.Compiled)
+
+let private ansibleShortLookupRegex =
+    Regex(@"lookup\(\s*'env'\s*,\s*'([A-Z_][A-Z0-9_]*)'\s*\)", RegexOptions.Compiled)
+
+/// Scans every `playbook-*.yml` file recursively under `root` for
+/// `lookup('ansible.builtin.env', 'KEY')` and `lookup('env', 'KEY')` calls
+/// [Repo-grounded — `validate.rs::scan_ansible_playbooks`].
+///
+/// # Errors
+///
+/// Returns an error when a playbook file cannot be read.
+let scanAnsiblePlaybooks (root: string) : Result<Set<string>, string> =
+    try
+        let playbookFiles =
+            allFilesUnder root
+            |> List.filter (fun p ->
+                let name = Path.GetFileName p
+
+                name.StartsWith("playbook-", StringComparison.Ordinal)
+                && name.EndsWith(".yml", StringComparison.Ordinal))
+
+        let keys = HashSet<string>()
+
+        for path in playbookFiles do
+            let content = File.ReadAllText path
+
+            for m in ansibleBuiltinLookupRegex.Matches content do
+                keys.Add(m.Groups.[1].Value) |> ignore
+
+            for m in ansibleShortLookupRegex.Matches content do
+                keys.Add(m.Groups.[1].Value) |> ignore
+
+        Ok(Set.ofSeq keys)
+    with ex ->
+        Error(sprintf "cannot read playbook files under %s: %s" root ex.Message)
+
+/// Parses `root/.env.example` for declared keys, treating a commented-out
+/// declaration (`# KEY=value`) as declared and returning an empty set (not
+/// an error) when the file does not exist [Repo-grounded —
+/// `validate.rs::parse_env_example_with_comments`]. Deliberately more
+/// permissive than [`parseDeclaredKeys`] above — no [`isEnvVarName`]
+/// filtering — ported separately because `validate.rs` itself keeps the two
+/// parsers distinct.
+///
+/// # Errors
+///
+/// Returns an error when the file exists but cannot be read.
+let parseEnvExampleWithComments (root: string) : Result<Set<string>, string> =
+    let path = Path.Combine(root, ".env.example")
+
+    if not (File.Exists path) then
+        Ok Set.empty
+    else
+        try
+            File.ReadAllLines path
+            |> Array.filter (fun line -> line.Trim() <> "")
+            |> Array.choose (fun line ->
+                let trimmed = line.Trim()
+
+                let effective =
+                    if trimmed.StartsWith("#", StringComparison.Ordinal) then
+                        trimmed.TrimStart('#').Trim()
+                    else
+                        trimmed
+
+                match effective.IndexOf('=') with
+                | -1 -> None
+                | eqPos ->
+                    let key = effective.Substring(0, eqPos).Trim()
+                    if key = "" then None else Some key)
+            |> Set.ofArray
+            |> Ok
+        with ex ->
+            Error(sprintf "cannot read %s: %s" path ex.Message)
+
+/// Validates an `Ansible`-kind surface: an env-var lookup in a playbook with
+/// no matching declaration in `.env.example` is [`ConsumedNotDeclared`]
+/// [Repo-grounded — `validate.rs::validate_ansible`]. Scans `root` directly,
+/// same rationale as [`validateTerraform`].
+///
+/// # Errors
+///
+/// Returns an error when a playbook or `.env.example` file cannot be read.
+let validateAnsible (root: string) (allowlist: string list) : Result<ValidationResult, string> =
+    match scanAnsiblePlaybooks root with
+    | Error e -> Error e
+    | Ok consumed ->
+        match parseEnvExampleWithComments root with
+        | Error e -> Error e
+        | Ok declared ->
+            let allow = Set.ofList allowlist
+
+            let consumedNotDeclared =
+                Set.difference consumed declared
+                |> Set.filter (fun key -> not (Set.contains key allow))
+                |> Set.toList
+                |> List.sortWith (fun a b -> String.CompareOrdinal(a, b))
+
+            Ok
+                { SurfaceRoot = root
+                  DeclaredNotRead = []
+                  ReadNotDeclared = []
+                  ExampleNotDeclared = []
+                  RequiredMissingFromExample = []
+                  ConsumedNotDeclared = consumedNotDeclared }
+
+/// Validates every surface declared in `contract`, dispatching on each
+/// surface's [`SurfaceKind`]: `App` surfaces run the code↔`.env.example`
+/// drift scan, `Terraform` and `Ansible` surfaces run the real IaC drift
+/// validators above [Repo-grounded — `validate.rs::validate_all`]. A repo
+/// that declares no `Terraform`/`Ansible` surfaces simply never invokes
+/// those validators — the no-op is driven by data (which surfaces are
+/// declared), not by a source stub.
+///
+/// # Errors
+///
+/// Returns an error when any surface fails validation.
 let validateAll (repoRoot: string) (contract: Contract) : Result<Finding list, string> =
     let rec go (surfaces: SurfaceConfig list) (acc: Finding list) : Result<Finding list, string> =
         match surfaces with
@@ -1493,13 +1782,13 @@ let validateAll (repoRoot: string) (contract: Contract) : Result<Finding list, s
                 match validateAppSurface repoRoot surface with
                 | Error e -> Error e
                 | Ok findings -> go rest (acc @ findings)
-            | Terraform
+            | Terraform ->
+                match validateTerraform (Path.Combine(repoRoot, surface.Root)) surface.Allowlist with
+                | Error e -> Error e
+                | Ok result -> go rest (acc @ resultToFindings surface.Root result)
             | Ansible ->
-                Error(
-                    sprintf
-                        "%s surface at \"%s\": terraform/ansible env-validate surfaces are PR7 scope, not yet implemented"
-                        (surface.Kind.ToString())
-                        surface.Root
-                )
+                match validateAnsible (Path.Combine(repoRoot, surface.Root)) surface.Allowlist with
+                | Error e -> Error e
+                | Ok result -> go rest (acc @ resultToFindings surface.Root result)
 
     go contract.Surfaces []
