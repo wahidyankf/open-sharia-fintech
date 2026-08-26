@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="src/Convention.fs" />
     <Compile Include="src/Parity.fs" />
+    <Compile Include="src/RepoConfig.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <PackageReference Include="G-Research.FSharp.Analyzers" Version="0.22.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="YamlDotNet" Version="18.1.0" />
   </ItemGroup>
 
   <ItemGroup>
