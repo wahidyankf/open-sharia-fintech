@@ -22,8 +22,10 @@ Commit and push the plan to the confirmed target, then remove the worktree.
 6. After CI passes, resolve the exact worktree path from the plan's Provisioned Worktree Identity and
    reconcile it with `git worktree list --porcelain`. Inventory every plan-created and current branch.
    Continue only if the identity matches, the exact worktree is clean and idle, no inventoried branch
-   is unpushed, and each direct-push delivery reached `origin/main` with no open PR. Do not use
-   `origin/main` ancestry for a squash-merged PR branch. When every check passes, remove the exact
+   is unpushed, and each direct-push delivery reached `origin/main` with no open PR. For any PR-mode
+   branch, its merged PR reviewed head and current `origin/<branch>` must equal its recorded inventory
+   SHA; retain and escalate any missing/mismatched proof. Do not use `origin/main` ancestry for a
+   squash-merged PR branch. When every check passes, remove the exact
    path immediately, without a further prompt, using non-force removal:
 
    ```bash

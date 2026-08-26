@@ -15,8 +15,7 @@ when_to_use: Use immediately before running git worktree remove, to confirm iden
 
 # Mandatory Pre-Removal Checks
 
-Run all six before any `git worktree remove`. Each is grounded in an observed incident, not a
-hypothetical.
+Run all six before any `git worktree remove`.
 
 **1. Resolve the recorded worktree and every branch it used.**
 
@@ -34,13 +33,21 @@ unrecorded current branch blocks removal. The file-touch ledger is never cleanup
 **2. Prove delivery for every inventoried branch, never by squash ancestry.**
 
 ```bash
-gh pr list --head <branch> --state all --json number,state,mergedAt
+gh pr view <recorded-pr> --json state,headRefOid
 ```
 
-For each `*-to-pr` entry, its recorded PR must report `MERGED`. For a direct-push entry, fetch first,
-verify its recorded delivery commit is reachable from `origin/main`, and confirm no PR for that branch
-remains open. PRs in these repos are **squash**-merged, so a branch's commits do not become ancestors
-of `main`; GitHub's merged-PR result is the delivery proof for PR-mode branches.
+For each `*-to-pr` entry, its recorded PR must report `MERGED`, and the inventory's reviewed-head SHA
+must equal the current remote branch tip:
+
+```bash
+git fetch origin
+test "$(git rev-parse origin/<branch>)" = "<recorded-reviewed-head-SHA>"
+```
+
+A missing remote ref, mismatch, or changed review head blocks removal and branch deletion: retain and
+escalate. A direct-push entry needs its recorded commit reachable from `origin/main` and no open PR.
+These repos **squash**-merge, so PR-mode delivery is the merged PR plus pinned reviewed head, never
+branch ancestry on `main`.
 
 **3. Read the worktree's dirty diff before removing it.**
 
@@ -59,10 +66,9 @@ git log origin/<branch>..<branch> # PR-mode branch
 git merge-base --is-ancestor <branch> origin/main # direct-push branch
 ```
 
-Any output from the PR-mode check, or a failed direct-push reachability check, blocks removal. Unlike
-the delivery check, this protects against a local commit added after the recorded delivery. Do not use
-`origin/main` ancestry for a squash-merged PR branch; it is valid only for the direct-push entry whose
-recorded commit was pushed there directly.
+Any output from the PR-mode check, a remote-tip/reviewed-head mismatch, or failed direct-push
+reachability blocks removal. This protects against a local commit added after delivery. Do not use
+`origin/main` ancestry for squash-merged PR branches; only direct pushes use it.
 
 **5. Always use non-force `git worktree remove`.**
 

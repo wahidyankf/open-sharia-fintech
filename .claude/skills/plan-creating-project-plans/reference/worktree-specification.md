@@ -27,6 +27,24 @@ claude --worktree <plan-identifier>
 
 The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — capped at one per repository per plan and reused across every delivery unit landed there — is removed immediately once the plan is done using this repo, not deferred to archival.
 
+### Provisioned Worktree Identity
+
+- Exact path: `/absolute/repo/worktrees/<plan-identifier>`
+- Initial branch: `<plan-identifier>-base`
+- Created by: `<executor identity or session>`
+- Created at: `<ISO-8601 UTC timestamp>`
+
+### Delivery Branch Inventory
+
+| Branch                   | Mode          | Lifecycle state | Proof                                            |
+| ------------------------ | ------------- | --------------- | ------------------------------------------------ |
+| `<plan-identifier>-base` | `provisioned` | `active`        | `git worktree add` at `<ISO-8601 UTC timestamp>` |
+
+Append every plan-created delivery branch before use. A `*-to-pr` entry records its merged PR and
+40-character reviewed-head SHA; direct push records its verified `origin/main` commit. Before
+removal, classify every entry as delivered, unused, or retained/escalated; active or unrecorded
+branches block cleanup.
+
 See [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 ````
 

@@ -23,9 +23,10 @@ When removing a worktree:
    `git worktree list --porcelain`. Inventory every plan-created and current branch from the Delivery
    Branch Inventory and `git -C <exact-path> branch --show-current`; a missing identity, path
    conflict, or unclassified branch blocks removal.
-2. For each inventoried branch, prove its PR merged, or for a direct-push entry prove its recorded
-   commit reached `origin/main` and no PR remains open. Do not use `origin/main` ancestry for a
-   squash-merged PR branch.
+2. Apply the canonical [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md): each PR-mode branch's recorded merged PR and its
+   reviewed-head SHA must both equal current `origin/<branch>`; direct-push entries need their
+   recorded commit on `origin/main` and no open PR. Any missing/mismatched proof retains and
+   escalates; do not use `origin/main` ancestry for a squash-merged PR branch.
 3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and every
    inventoried branch has no unpushed commit.
 4. When every check passes, immediately run non-force `git worktree remove <exact-path>`, then the

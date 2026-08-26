@@ -22,10 +22,10 @@ Continues [Worktree Specification](./worktree-specification.md).
 2. **Freshness sync**: before any implementation, the worktree is synced with the latest `origin/main` (ff-merge, or rebase when the worktree carries local commits). Dirty state or rebase conflicts stop execution for an explicit user decision. Starting a new delivery unit inside an already-provisioned worktree runs this same sync before branching off it.
 3. **Immediate cleanup**: when every delivery unit this plan places in a repo is confirmed delivered,
    resolve the exact path from its Provisioned Worktree Identity, reconcile it with `git worktree
-list --porcelain`, then inventory every plan-created and current branch. Remove that self-created
-   worktree without another prompt only after it is clean and idle, every branch has no unpushed
-   commit, and each PR is confirmed merged (never infer this from ancestry after a squash merge).
-   Use non-force
+list --porcelain`, then use the Delivery Branch Inventory and canonical mandatory pre-removal checks.
+   Each PR-mode branch's current `origin/<branch>` tip and merged PR reviewed head must equal its
+   recorded reviewed-head SHA; a missing/mismatched proof retains the worktree and escalates. Only
+   then remove that self-created worktree without another prompt. Use non-force
    `git worktree remove`, then canonical branch cleanup. If any check fails, retain it with evidence
    and escalate. Never remove on `partial`/`fail`. For a multi-unit plan, the shared worktree is
    removed once, after every delivery unit that used it has landed.

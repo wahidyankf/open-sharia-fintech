@@ -15,7 +15,9 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
    2. Apply the canonical
       [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md):
       the exact worktree is clean and idle, every inventoried branch is pushed, and each direct-push
-      delivery is present on `origin/main` with no open PR. A repository root, wildcard, missing
+      delivery is present on `origin/main` with no open PR. For a PR-mode branch, its merged PR
+      reviewed head and current `origin/<branch>` must equal the inventory's recorded reviewed-head
+      SHA; retain and escalate a missing/mismatched proof. A repository root, wildcard, missing
       identity, or another actor's worktree is never eligible.
    3. When every check passes, remove the exact path immediately without another confirmation
       prompt, from the repository root:

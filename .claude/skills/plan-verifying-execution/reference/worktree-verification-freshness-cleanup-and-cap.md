@@ -10,9 +10,10 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 2. **Eligible worktree cleanup was immediate and precondition-gated**
    - On `pass`, resolve the exact path and creator from the Provisioned Worktree Identity and
      reconcile it with `git worktree list --porcelain`; the file-touch ledger is file tracking only.
-   - Inventory every plan-created and current branch. Verify the registered worktree is clean and
-     idle, every inventoried branch has no unpushed commit, and each branch PR merged or its direct
-     push reached `origin/main` with no open PR.
+   - Inventory plan-created/current branches. Verify the worktree is clean/idle, branches have no
+     unpushed commit, and each PR-mode branch's merged PR reviewed head plus current
+     `origin/<branch>` equal its SHA. A direct push needs its recorded `origin/main` commit
+     and no open PR; missing/mismatched proof retains and escalates.
    - When all checks pass, require immediate non-force removal of the exact path and canonical branch
      cleanup, without another confirmation prompt.
    - On a failed check or removal, require retention, surfaced evidence, and escalation. `partial`

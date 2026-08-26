@@ -34,6 +34,4 @@ The calling context will:
 9. Show git status with modified files
 10. Wait for user commit approval
 11. After the final delivery for each repository is pushed or merged, run the exact-path worktree
-    cleanup immediately. Verify the worktree is recorded as self-created for this plan, clean, and
-    fully pushed/merged; then use non-force `git worktree remove <exact-path>` without a confirmation
-    prompt. Never remove a repository root, wildcard path, or another actor's worktree.
+    cleanup immediately. Build the [Delivery Branch Inventory](../../../conventions/structure/plans/worktree-specification.md#delivery-branch-inventory), then perform every canonical [mandatory pre-removal check](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md), including the recorded PR reviewed-head SHA versus current `origin/<branch>` comparison for each `*-to-pr` branch and the no-unpushed check. Only then use non-force `git worktree remove <exact-path>` without a confirmation prompt. Retain and escalate any mismatch; never remove a repository root, wildcard path, or another actor's worktree.

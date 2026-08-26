@@ -18,8 +18,10 @@ when_to_use: Use when deleting local or remote branches after removing a repo's 
 Removing a shared worktree leaves one branch per delivery unit. Run this after removing the worktree.
 
 **Delete only inventory branches after rechecking delivery proof and no-unpushed state.** A `*-to-pr`
-branch needs a MERGED PR; direct push needs its recorded commit on `origin/main` and no open PR. Do
-not treat the provisioned initial branch as the only branch.
+branch needs its recorded PR `MERGED`, with both that PR's reviewed head and current
+`origin/<branch>` tip equal to the inventory's recorded reviewed-head SHA. A missing remote ref or
+any mismatch means retain the branch/worktree evidence and escalate. Direct push needs its recorded
+commit on `origin/main` and no open PR. Do not treat the provisioned initial branch as the only branch.
 
 **Local deletion uses `git branch -d`** — never `git branch -D`. For a squash-merged PR branch, make
 the merged PR the delivery proof, then fetch without pruning and verify the local and
@@ -28,6 +30,7 @@ then use the ordinary non-force delete:
 
 ```bash
 git fetch origin
+test "$(git rev-parse origin/<branch>)" = "<recorded-reviewed-head-SHA>"
 test "$(git rev-parse <branch>)" = "$(git rev-parse origin/<branch>)"
 git branch --set-upstream-to=origin/<branch> <branch>
 git branch -d <branch>

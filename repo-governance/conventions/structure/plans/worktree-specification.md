@@ -47,22 +47,28 @@ It is the cleanup authority; the file-touch ledger records files only.
 - Created at: `<ISO-8601 UTC timestamp>`
 ```
 
-Record actual `git worktree add` values and never rewrite them. Cleanup reconciles the exact path
-with `git worktree list --porcelain`; a missing or conflicting identity blocks removal. The initial
-branch proves provisioning, not the final checkout.
+Record actual `git worktree add` values and never rewrite them; a missing/conflicting identity blocks
+removal. The initial branch proves provisioning, not the final checkout.
 
 ### Delivery Branch Inventory
 
-Keep an append-only inventory beside the identity. Add the initial and every plan-created delivery
-branch before use, retaining cleaned entries. Each records branch, mode, and proof: merged PR for
-`*-to-pr`, or verified `origin/main` commit for direct push. At removal, include
-`git -C <exact-path> branch --show-current`; an unrecorded current branch blocks cleanup. This
-inventory, not the file-touch ledger, controls branch cleanup.
+Keep an append-only inventory beside the identity; add initial and plan-created branches before use:
 
-**Provision the worktree BEFORE defining the plan, and author inside it.** Moving a plan in later
-splits its history and defeats the `## Worktree` pre-execution check.
+```markdown
+| Branch              | Mode             | Lifecycle state | Proof                                                |
+| ------------------- | ---------------- | --------------- | ---------------------------------------------------- |
+| `<initial-branch>`  | `provisioned`    | `active`        | `git worktree add` at `<UTC timestamp>`              |
+| `<delivery-branch>` | `worktree-to-pr` | `delivered`     | PR #`<number>` merged; reviewed head `<40-char SHA>` |
+```
 
-The [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) still enters the declared worktree defensively — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not — but that is a backstop for a plan that arrived without one, not the intended sequence.
+The initial entry is `provisioned`/`active`, proven by creation command and timestamp. Before removal,
+classify every entry as delivered, unused, or retained/escalated; active/unrecorded branches block
+cleanup. `*-to-pr` records merged PR + reviewed-head SHA; direct push records verified `origin/main`
+commit. Include `git -C <exact-path> branch --show-current`; the inventory, not file-touch ledger,
+controls branch cleanup.
+
+**Provision the worktree BEFORE defining the plan, and author inside it.** Later moves split its
+history and defeat the pre-execution check. The [Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters or auto-provisions only as a backstop.
 
 **One worktree per plan, reused across every PR the plan opens.** A plan that splits its delivery into several sequential PRs (see [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md)) does NOT provision a worktree per PR. Land one slice, fast-forward the same worktree from `origin/main`, then open the next slice from it.
 
