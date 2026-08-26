@@ -1,11 +1,12 @@
 # Rewrite rhino-cli: Rust to F# port
 
-**Status**: Backlog
+**Status**: In Progress
 **Scope**: `ose-public` **and** `ose-private` — replace `apps/rhino-cli/` (Rust) with a
 behavior-equivalent F# binary, namespace by namespace behind a dispatch shim, then retire the Rust
 crate, tear down the Rust CI surface, and re-establish the byte-identity parity boundary across both
 repos.
 **Created**: 2026-08-25
+**Started**: 2026-08-25
 **Plan docs**: single-sourced here in `ose-public`. `ose-private` carries **no** copy of this
 folder — the work lands in both repos, the document lives in one, so the two can never drift.
 
@@ -115,7 +116,7 @@ counts both sides with the same command shape and records the real ratio, whatev
 
 ```mermaid
 flowchart TD
-  P0[Phase 0: before benchmark] --> P1[Phase 1: publish-mode spike]
+  P0[Phase 0: before benchmark] --> P1[Phase 1: dep removal + spike]
   P1 --> P2[Phase 2: scaffold, shim, CI]
   P2 --> W[Phases 3-8: six waves]
   W --> P9[Phase 9: retire Rust crate]
@@ -159,7 +160,7 @@ the scaffolding, flip, retirement, benchmark, and propagation PRs.
 - [prd.md](./prd.md) — what: personas, user stories, Gherkin acceptance criteria
 - [tech-docs.md](./tech-docs.md) — how: architecture, measured baseline, CI impact, file-impact tree,
   rollback
-- [delivery.md](./delivery.md) — do: 13 phases, 1,859 checkboxes, 525 bound scenarios
+- [delivery.md](./delivery.md) — do: 13 phases, 1,868 checkboxes, 525 bound scenarios
 - [learnings.md](./learnings.md) — Knowledge Capture running log
 
 ## Dependencies
