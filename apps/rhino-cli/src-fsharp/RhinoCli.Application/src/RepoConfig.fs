@@ -300,7 +300,7 @@ let confinedRepoPath (repoRoot: string) (value: string) : Result<string, string>
             | None -> Error "configured path has no existing repository ancestor"
             | Some existingAncestor ->
                 let canonicalAncestor = Path.GetFullPath existingAncestor
-                let rootWithSeparator = canonicalRoot + string Path.DirectorySeparatorChar
+                let rootWithSeparator = canonicalRoot + Path.DirectorySeparatorChar.ToString()
 
                 if
                     not (
