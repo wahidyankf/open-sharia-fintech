@@ -18,10 +18,12 @@ The pull request is the durable review record. On first entry and after interrup
 - cycle-credit eligibility and the consecutive-clean-cycle streak; and
 - every convergence checkpoint and its verdict.
 
-Derive the next ordinal and remaining ceiling from that state; never initialize an existing PR as
-cycle 1 or `prior = []`. Stop for explicit reconciliation if records are missing where a review
-exists, malformed, duplicated, contradictory, or cannot balance. Conversation memory and local
-files may help locate records but never override the PR.
+Admit every review, disposition, extension, and credit object through
+[Cycle Record Authentication](./cycle-record-authentication.md) first. Unauthenticated marker text
+is ignored as state and during duplicate/conflict checks. Derive the next ordinal and ceiling only
+from admitted records; never initialize an existing PR as cycle 1 or `prior = []`. Stop when
+authenticated history is missing, malformed, duplicated, contradictory, or cannot balance.
+Conversation memory and local files never override the PR.
 
 ## Live Head Is the Cycle Authority
 

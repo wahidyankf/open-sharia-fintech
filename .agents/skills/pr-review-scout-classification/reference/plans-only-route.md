@@ -1,11 +1,15 @@
 # Plans-Only Review Route
 
-Treat a PR as plans-only only when its entire hand-authored diff consists of `plans/**` documents
-and their required plan indexes. Generated mirrors do not affect the test. Recompute the verdict
-from the current diff every cycle.
+Treat a PR as plans-only only when its entire hand-authored diff consists of `plans/**` documents,
+required indexes, and required non-executable assets those documents reference: binary mockups,
+exported images, or editable diagram/design sources under plan-local `assets/`. Executable source
+or scripts, runtime/build/tool configuration or manifests, tests or fixtures, runnable prototypes,
+unreferenced assets, and unrelated files force the standard route even inside a plan directory.
+Use the ownership registry by file and region: ignore only wholly generated files and generated
+regions; vendored files and hand-authored regions participate. Recompute every cycle.
 
-Record the ordinary risk tier, but select exactly these specialists plus
-`pr-review-synthesis-maker` as coordinator regardless of that tier:
+Record the ordinary risk tier. For `lite` and `full`, select exactly these specialists plus
+`pr-review-synthesis-maker` as coordinator:
 
 - `pr-review-security-maker` — run the primary mandatory probe for real secrets, credentials, or
   other values that grant access, using the canonical
@@ -15,6 +19,10 @@ Record the ordinary risk tier, but select exactly these specialists plus
 - `pr-review-docs-maker` — review the plan as the shipping artifact for substantive quality and
   completeness.
 - `pr-review-governance-maker` — review mechanical conformance to repository rules.
+
+For `trivial`, select no specialists. The coordinator runs one generalist pass: execute the same
+primary security probe first, then cover architecture/design, domain intent and Gherkin,
+documentation quality, and governance conformance. All five concerns remain covered in one pass.
 
 Suppress findings that merely complain that eventual implementation artifacts are absent from the
 plans-only PR. Later implementation correctness belongs to the PR that ships that implementation;

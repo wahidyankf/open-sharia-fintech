@@ -37,9 +37,10 @@ accordingly:
   identity, CI/workflow, `pr-merge-protocol`) → all nine specialists plus the coordinator, minus the
   Content-Type Applicability Filter (DD-10).
 
-The [Plans-Only Review Route](./cost-control-noise-control-mechanics-plans-only-route.md) overrides
-specialist selection, not tier classification: every cycle records its ordinary tier. The linked
-rule defines the fixed specialist set, exact primary secret probe, and suppressions.
+The [Plans-Only Review Route](./cost-control-noise-control-mechanics-plans-only-route.md) modifies
+specialist selection, not tier classification: trivial stays coordinator-only with five concerns;
+lite/full use the fixed five. The linked rule defines the artifact test, primary probe, and
+suppressions.
 
 **Why 50 lines, not 100.** Risk asymmetry decides it: too low overspends; too high sends degrading
 diffs to fewer specialists. Weak supporting evidence only —

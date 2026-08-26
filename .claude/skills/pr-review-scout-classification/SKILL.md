@@ -26,7 +26,7 @@ re-litigate.
 - [correction-record-freeze.md](./reference/correction-record-freeze.md) — omitting the loop's own
   `plans/**` prose from cycle 2, and the plans-only and security carve-outs that survive it
 - [untrusted-input-and-output-contract.md](./reference/untrusted-input-and-output-contract.md) —
-  this agent's first-ingestion-point untrusted-input handling, the standard-route trivial-tier
+  this agent's first-ingestion-point untrusted-input handling, the trivial-tier
   handoff, and the four-part output contract
 
 ## Core Principles

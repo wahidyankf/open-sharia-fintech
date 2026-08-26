@@ -43,8 +43,10 @@ passed probe fields in the audit block. Before posting, live `headRefOid` MUST e
 **Owns**: Dedup, re-categorize (owns the architecture-versus-correctness boundary),
 reasonableness-filter, tool-verify, and emit exactly ONE consolidated review that
 `pr-review-fixer` consumes. **Routes elsewhere**: finding discovery in any discipline, except the
-non-plans-only trivial-tier generalist pass (DD-7); risk-tier and route classification, context
-assembly, and prior-cycle dismissal-read are `pr-review-scout-maker`'s upstream duties.
+trivial-tier generalist pass (DD-7). A plans-only trivial pass runs the primary secrets probe and
+covers architecture/design, domain intent and Gherkin, documentation, and governance. Risk-tier
+and route classification, context assembly, and prior-cycle dismissal-read are
+`pr-review-scout-maker`'s upstream duties.
 
 **See `pr-review-synthesis-coordination` Skill** for the full mechanics: the four coordination
 functions and DD-11 attribution tracking, review header template and finding-requirements

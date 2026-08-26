@@ -29,9 +29,12 @@ Count handwritten **added** lines and hand-authored files:
 Code/program-type files include source, scripts, configuration, data, and manifests, including
 `.ts`, `.fs`, and `.json`. Other/document-type files include `.md`.
 
-Generated mirrors under `.agents/`, `.opencode/`, and `.codex/` enter no addition or file count.
-They are byte-generated from `.claude/`, synchronization-gated, and not reviewed as independent
-source.
+Apply the binding ownership registry's longest matching declaration; directory names never decide
+authorship. Exclude every added line and the file count only for a wholly `generated` file. Count
+wholly `source` and `vendored` files as hand-authored. For a vendored file with a delimited
+generated region, exclude only added lines inside the markers; count every outside addition and
+the file itself. Thus `.codex/config.toml` always enters the file count, while only its generated
+region is line-exempt.
 
 ## Narrow Plan-Document LOC Exemption
 
@@ -41,6 +44,14 @@ Waive only the two added-line ceilings when the **entire hand-authored diff** is
   the required target index update.
 - A pure move between `plans/backlog/` and `plans/in-progress/` in either direction, plus the
   required index updates.
+
+For either case, qualifying artifacts are the plan's Markdown documents and indexes plus required,
+non-executable assets referenced by those documents: high-fidelity binary mockups, exported
+images, and editable diagram/design sources under the plan's `assets/`. Binary assets add zero
+lines but remain hand-authored files. Executable source or scripts, runtime/build/tool
+configuration or manifests, automated tests or fixtures, runnable prototypes, unreferenced assets,
+and unrelated files revoke the exemption even when stored below the plan directory. Apply this
+same taxonomy to initial establishment and pure moves.
 
 Later plan edits, moves involving `plans/ideas/` or `plans/done/`, non-plan content, and ride-along
 changes restore both ceilings. The 20-file cap, the 300-file machine ceiling, and PR-size rules 1-3

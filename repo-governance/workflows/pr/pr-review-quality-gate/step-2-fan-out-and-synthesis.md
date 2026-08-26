@@ -1,7 +1,7 @@
 ---
 title: "PR-Review Quality Gate — Step 2: Fan-Out + Synthesis Pass"
-description: "How route-selected specialists fan out concurrently and pr-review-synthesis-maker consolidates their raw findings into exactly ONE posted review, including the standard-route trivial branch."
-when_to_use: "Use when checking how the fan-out is dispatched, what the coordinator's output contract is, or how the standard-route trivial tier changes this step."
+description: "Dispatches route-selected specialists and consolidates one review, including the trivial branch."
+when_to_use: "Use when dispatching fan-out or the trivial coordinator branch."
 ---
 
 # Step 2 — Per-Cycle Fan-Out + Synthesis Pass
@@ -38,10 +38,11 @@ when_to_use: "Use when checking how the fan-out is dispatched, what the coordina
   scout under [Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md).
 - **On failure**: If a specialist or the coordinator cannot access the PR or an API call fails, retry
   once and record the blocked condition; do not silently suppress the affected lens.
-- **Standard-route trivial branch**: when Step 1 records a non-plans-only `tier: trivial` route,
+- **Trivial branch**: when Step 1 records `tier: trivial`,
   `specialists` is empty and there is no fan-out to dispatch. `pr-review-synthesis-maker` instead performs one consolidated generalist
   pass over the full PR context itself, originating the findings that in every other tier the
-  specialists would have raised, then runs the same four coordination functions and posts the same
-  single consolidated review. This is the sole condition under which the coordinator originates a
-  finding no specialist raised (see the carve-out in
+  specialists would have raised, then runs the same four coordination functions and posts one
+  review. For plans-only, it runs the primary secrets probe first and covers architecture/design,
+  domain intent and Gherkin, documentation, and governance. This is the sole condition under which
+  the coordinator originates a finding no specialist raised (see the carve-out in
   [`pr-review-synthesis-maker.md`](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md)).

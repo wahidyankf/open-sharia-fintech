@@ -12,27 +12,26 @@ coordinator. They feed the unchanged `pr-review-fixer`. See the
 [PR Reviewer-Discipline Convention](../../../development/quality/pr-review-disciplines.md) for each
 specialist's full charter, owned scope, and routing rules.
 
-**Trivial-tier branch**: when the scout classifies a non-plans-only cycle `trivial` (DD-7),
+**Trivial-tier branch**: when the scout classifies a cycle `trivial` (DD-7),
 `scout.specialists` is the empty set — no specialist fans out. `pr-review-synthesis-maker` does not
 sit idle in this branch; it performs one consolidated generalist pass itself in place of the
 fan-out and originates findings directly, the single explicit carve-out to its otherwise-
 transform-only charter (see
 [`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md) and
-[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#standard-route-trivial-tier-handoff-dd-7)).
+[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/untrusted-input-and-output-contract.md#trivial-tier-handoff-dd-7)).
 
-**Plans-only branch**: the scout still records the ordinary tier but selects the linked fixed
-five-specialist set plus the coordinator. See the
+**Plans-only branch**: the scout records the ordinary tier. Trivial uses the coordinator alone;
+lite/full use the linked five-specialist set. See the
 [Plans-Only Review Route](../../../development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-plans-only-route.md)
-for its fresh-per-cycle test, primary secrets probe, plan-artifact review, and implementation
-suppression.
+for its artifact test, primary probe, preserved five concerns, and suppression.
 
 - **`pr-review-scout-maker`** — pipeline stage 0, runs once at the start of each cycle before the
   specialist fan-out. Owns risk-tier classification and specialist-set selection (D12) and
   shared-context assembly (D13), and reads the prior cycle's thread-resolution/dismissal state so the
   fan-out does not re-litigate a settled thread. Defined at `.claude/agents/pr-review/pr-review-scout-maker.md`.
 - **Nine discipline specialists** — execution/sonnet-tier agents, one per discipline, run
-  **concurrently** within a cycle's route-selected fan-out. The plans-only route selects its fixed
-  five-specialist set. **Even under the standard `full` route, the fan-out is not unconditionally
+  **concurrently** within a cycle's route-selected fan-out. Plans-only lite/full selects five;
+  plans-only trivial selects none. **Even under the standard `full` route, fan-out is not always
   all nine**: the scout's Content-Type Applicability Filter (DD-10) skips
   `pr-review-types-maker` and `pr-review-integrity-maker` from a given cycle when their own declared
   artifact class (typed-language files; test/CI-workflow files, respectively) is verifiably absent

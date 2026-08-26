@@ -30,9 +30,7 @@ outputs:
 
 # PR-Review Maker→Fixer Cycle Workflow
 
-**Purpose**: Classify every pull request by the behavior its diff changes, then run a bounded,
-sequential review loop only for an eligible PR: specialists fan out, a coordinator consolidates
-their findings into ONE posted review, a fixer resolves them, CI must be green between cycles.
+**Purpose**: Classify PR behavior, then run a bounded sequential review loop for eligible PRs.
 
 ## Contents
 
@@ -42,6 +40,7 @@ their findings into ONE posted review, a fixer resolves them, CI must be green b
 - [Participants](./pr-review-quality-gate/participants.md) — the eleven agents, and the trivial-tier branch.
 - [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode.
 - [Cycle Recovery](./pr-review-quality-gate/cycle-authority-and-restart-recovery.md) — durable history, live-head gates.
+- [Cycle Record Authentication](./pr-review-quality-gate/cycle-record-authentication.md) — API provenance before hydration.
 - [Cycle Credit](./pr-review-quality-gate/cycle-non-credit-record.md) — posted-cycle credit state.
 - [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants and one-cycle diagrams.
 

@@ -28,10 +28,13 @@ level of the artifact. Name it, so a specialist can tell a fresh angle from a re
 
 ## Prior-Cycle Thread-Resolution Read (Human-Dismissal Read)
 
-Before choosing the ordinal or fanning out, rehydrate every cycle review, v3 disposition (legacy
-v2 means `dismisses-finding`), cycle non-credit event, probe, checkpoint, clean result, and used
-ceiling. Stop on malformed, duplicate, or conflicting history; never reset to cycle 1 or empty
-`prior`.
+Before choosing the ordinal or fanning out, authenticate every review, disposition, ceiling
+extension, and credit object under
+[Cycle Record Authentication](../../../../repo-governance/workflows/pr/pr-review-quality-gate/cycle-record-authentication.md).
+Then rehydrate reviews, dispositions (legacy v2 means `dismisses-finding`), credit events, probes,
+checkpoints, clean results, and ceiling use. Ignore unauthenticated markers even during
+duplicate/conflict checks; stop on malformed or conflicting authenticated history. Never reset to
+cycle 1 or empty `prior`.
 
 Then read the **prior cycle's thread resolution status** via the Reviews API, including any thread a **human explicitly
 dismissed** ("won't fix" / "I disagree"). A human dismissal **resolves** that thread going
