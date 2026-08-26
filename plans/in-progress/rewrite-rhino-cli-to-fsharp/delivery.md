@@ -1150,7 +1150,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `convention/` only, **not**
+- [x] [AI] Widen the coverage scope by exactly this wave's spec directories — `convention/` only, **not**
       `git/`, whose scenarios moved to Wave D — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
@@ -1160,24 +1160,24 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       wave-A `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
       Deleting a `@covers` marker would **not** turn it red in shared-steps mode — that check is
       opt-in to three-level mode.
-- [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh convention parity` — **not** `git`, which does not
+- [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh convention parity` — **not** `git`, which does not
       flip until Wave D — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
-- [ ] [AI] Add `convention` and `parity` — **not** `git`, per the resequencing above — to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
+- [x] [AI] Add `convention` and `parity` — **not** `git`, per the resequencing above — to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
       immediately after the flip still reports zero differences — the same shadow-diff invocation the
       step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
       shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
       binary itself, which the flip does not touch, rather than a stored snapshot no step here
       produces.
-- [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
+- [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave A`. Check for an existing `after wave A` row **before** appending — this
       integration section can be retried after a partial failure, and an unguarded append silently
       duplicates a row in the record Phases 10 and 12 treat as durable — acceptance:
       `grep -c 'after wave A' benchmark.md` returns exactly 1 after the step, whether it ran once
       or three times.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -1189,12 +1189,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       confirming the restore left the shim exactly where the flip left it rather than in some third
       state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
       asserts but never tests.
-- [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
+- [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave A`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
-- [ ] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
@@ -1204,21 +1204,21 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] All 11 Wave A scenarios pass under
+- [x] [AI] All 11 Wave A scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention parity` reports zero differences in both
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention parity` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] The **only** file added under `specs/apps/rhino/` is the new `git/` lockfile feature file
+- [x] [AI] The **only** file added under `specs/apps/rhino/` is the new `git/` lockfile feature file
       this phase requires, and nothing else there was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino` lists exactly that one path and no
       other. A flat `wc -l` returning 0 would be **wrong** here: this phase deliberately adds a
       spec file, which every other wave gate forbids. Phases 4-8 keep the stricter `returns 0`
       form; Phase 9a is the only other sanctioned exception.
-- [ ] [AI] `benchmark.md` has an `after wave A` row for startup and for pre-commit wall time.
+- [x] [AI] `benchmark.md` has an `after wave A` row for startup and for pre-commit wall time.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:

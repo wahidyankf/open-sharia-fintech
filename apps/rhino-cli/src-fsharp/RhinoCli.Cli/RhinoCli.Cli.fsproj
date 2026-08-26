@@ -12,6 +12,9 @@
 
   <ItemGroup>
     <Compile Include="src/RootArgs.fs" />
+    <Compile Include="src/HelpText.fs" />
+    <Compile Include="src/Formatters.fs" />
+    <Compile Include="src/Dispatch.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,5 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../RhinoCli.Application/RhinoCli.Application.fsproj" />
+    <ProjectReference Include="../RhinoCli.Infrastructure/RhinoCli.Infrastructure.fsproj" />
   </ItemGroup>
 </Project>

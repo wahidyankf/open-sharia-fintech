@@ -11,6 +11,10 @@
   <ItemGroup>
     <Compile Include="Steps/ConventionSteps.fs" />
     <Compile Include="Steps/ConventionUnitTests.fs" />
+    <Compile Include="Steps/FormattersUnitTests.fs" />
+    <Compile Include="Steps/GitRootUnitTests.fs" />
+    <Compile Include="Steps/DispatchUnitTests.fs" />
+    <Compile Include="Steps/ParityUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
