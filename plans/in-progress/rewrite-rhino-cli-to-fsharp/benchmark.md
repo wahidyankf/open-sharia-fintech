@@ -28,27 +28,29 @@ when it has measured nothing. Always run the full `PH=...; grep ...` command tog
 placeholder token itself is still never spelled out in prose, because doing so would inflate the
 very count these gates read.
 
-**Baseline provenance.** Only **B1** in each table below was re-measured after the tree-sitter
-dependency removal — see the [B1 baseline note](#b1-baseline-note) for both post-removal figures
-(17.59 s / 73 crates in `ose-public`, 16.00 s / 73 crates in `ose-private`). Every other row —
-**B2 through B8**, in both the `ose-public` and `ose-private` tables — records a Before figure
-measured against the **pre-removal** dependency graph (79 crates, tree-sitter still linked) and
-has not been re-measured since; each such value is marked `†` below. Read every `†`-marked Before
-value as a pre-removal baseline until it is re-measured, and account for that when Phase 10 fills
-the After column and Verdict for those rows.
+**Baseline provenance.** All rows **B1 through B6 and B8** were re-measured after the tree-sitter
+dependency removal, in both repos — see the [B1 baseline note](#b1-baseline-note) and the
+[Post-removal B2-B8 re-measurement note](#post-removal-b2-b8-re-measurement-note) below. **B7 is the
+one exception**: it reads job durations from the three most recent green `pr-quality-gate.yml` runs
+on `main`, and as of this re-measurement `main` in both repositories still carries the pre-removal
+`Cargo.toml` (tree-sitter still listed) — no post-removal CI run of that job exists yet in either
+repo, because this removal has not merged to `main`. B7's Before figure below is therefore still the
+pre-removal one and remains marked `†`; every other row's `†` is removed because it is now on
+comparable, post-removal terms. B7 must be re-measured again once this PR merges to `main` and three
+green post-merge `pr-quality-gate.yml` runs exist — see the dated `learnings.md` entry.
 
 ## Measurements — ose-public
 
 | Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
 | ---- | --------------------------- | ------------- | ---------- | ------- |
 | B1   | Cold build                  | 17.59 s       | TBD        | —       |
-| B2   | Gate-profile build          | 34.44 s †     | TBD        | —       |
-| B3   | Warm no-op build            | 0.24 s †      | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.43 s †      | TBD        | —       |
-| B5   | Startup, mean of 50         | 11.2 ms †     | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 5.24 s †      | TBD        | —       |
+| B2   | Gate-profile build          | 21.09 s       | TBD        | —       |
+| B3   | Warm no-op build            | 0.18 s        | TBD        | —       |
+| B4   | Edit-rebuild loop           | 0.37 s        | TBD        | —       |
+| B5   | Startup, mean of 50         | 7.47 ms       | TBD        | —       |
+| B6   | Full `.husky/pre-commit`    | 14.24 s       | TBD        | —       |
 | B7   | CI critical path, build job | 70.67 s †     | TBD        | —       |
-| B8   | Artifact size               | 4,489,616 B † | TBD        | —       |
+| B8   | Artifact size               | 4,489,568 B   | TBD        | —       |
 | Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
 
 ## Measurements — ose-private
@@ -56,16 +58,17 @@ the After column and Verdict for those rows.
 | Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
 | ---- | --------------------------- | ------------- | ---------- | ------- |
 | B1   | Cold build                  | 16.00 s       | TBD        | —       |
-| B2   | Gate-profile build          | 35.57 s †     | TBD        | —       |
-| B3   | Warm no-op build            | 0.17 s †      | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.35 s †      | TBD        | —       |
-| B5   | Startup, mean of 50         | 15.3 ms †     | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 3.38 s †      | TBD        | —       |
+| B2   | Gate-profile build          | 19.27 s       | TBD        | —       |
+| B3   | Warm no-op build            | 0.16 s        | TBD        | —       |
+| B4   | Edit-rebuild loop           | 0.37 s        | TBD        | —       |
+| B5   | Startup, mean of 50         | 8.35 ms       | TBD        | —       |
+| B6   | Full `.husky/pre-commit`    | 13.18 s       | TBD        | —       |
 | B7   | CI critical path, build job | 88.67 s †     | TBD        | —       |
-| B8   | Artifact size               | 4,489,616 B † | TBD        | —       |
+| B8   | Artifact size               | 4,489,568 B   | TBD        | —       |
 | Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
 
-`†` — pre-removal baseline (79 crates, tree-sitter still linked); see "Baseline provenance" above.
+`†` — pre-removal baseline (79 crates, tree-sitter still linked), retained only for B7; see
+"Baseline provenance" above. All other rows are post-removal, `†`-free figures.
 
 Verdict is filled at Phase 10 with `better` / `worse` / `unchanged` plus the absolute delta, per
 repository. No row is dropped for being unfavourable to F#.
@@ -153,10 +156,63 @@ The Before figure for B1 was measured twice in each repository — once as found
 Phase 1 removed the unused `tree-sitter` dependency from `Cargo.toml`. `ose-public` as found: **19.91 s**,
 79 crates, 21,597,224 bytes; after removal **17.59 s**, 73 crates, 21,597,000 bytes. `ose-private`
 as found: **22.39 s**, 79 crates, 21,597,240 bytes; after removal **16.00 s**, 73 crates,
-21,597,016 bytes. Both tables' **B1** row records the post-removal figure; B2 through B8 do not —
-see "Baseline provenance" above the measurement tables.
+21,597,016 bytes. Both tables' **B1** row records the post-removal figure — see "Baseline
+provenance" above the measurement tables, and the note below for B2 through B8.
 
 `rhino-cli:test:quick` exits 0 after the removal in both repositories, so each baseline is a working
 one. In `ose-private` the target was also run before the removal, uncached, at 441.72 s, and after
 it at 363.06 s; the first `ose-private` run of the day returned a full Nx cache hit in 1.99 s, which
 is why every recorded figure here uses `--skip-nx-cache`.
+
+## Post-removal B2-B8 re-measurement note
+
+Re-measured in Phase 1 against the post-removal `Cargo.toml`/`Cargo.lock` in both worktrees, using
+the same Python `time.time()`-around-`subprocess.run` methodology as the rest of this page, each
+timed invocation asserting exit code 0.
+
+- **B2** — `cargo build --profile gate` into a fresh throwaway `CARGO_TARGET_DIR`. `ose-public`
+  **21.09 s**; `ose-private` **19.27 s**. Both faster than their pre-removal B2 figures (34.44 s /
+  35.57 s), consistent with a smaller, tree-sitter-free dependency graph.
+- **B3** — the same build run twice against the warm target from B2; the second run is the figure.
+  `ose-public` 0.31 s then **0.18 s**; `ose-private` 0.24 s then **0.16 s**.
+- **B4** — touch `apps/rhino-cli/src/main.rs`, rebuild: **0.37 s** in both repositories. The honest
+  second shape — touching `src/commands/gate/validate.rs` (2,766 lines) — costs **9.77 s** in
+  `ose-public` and **11.17 s** in `ose-private`; both recorded here in prose, matching how the
+  pre-removal B4 dual shape was documented above.
+- **B5** — 50 invocations of `--help` against the freshly built `gate`-profile binary, exit code
+  asserted per iteration, zero failures in either repo. `ose-public` total 0.374 s, mean **7.47 ms**;
+  `ose-private` total 0.418 s, mean **8.35 ms**.
+- **B6** — one full `.husky/pre-commit` against the same pinned staged set as the original
+  measurement (a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph),
+  staged, hook run, then the file removed and the index reset. `ose-public` **14.24 s**,
+  `ose-private` **13.18 s**, both exit 0, both restored to their exact prior `git status --porcelain`.
+  These figures are markedly higher than the pre-removal 5.24 s / 3.38 s; the difference is
+  attributable to hook-internal work unrelated to the Rust build itself (this run's hook output shows
+  a `harness-bindings-generate` step re-syncing agents, which the earlier run's output did not
+  exercise in the same way) rather than to the dependency removal, since B2-B5 all moved in the
+  faster direction. Recorded as observed rather than adjusted.
+- **B7** — **not re-measured**; see "Baseline provenance" above. `main` in both repositories still
+  carries the pre-removal `Cargo.toml` as of this measurement, so no post-removal
+  `pr-quality-gate.yml` run exists to sample.
+- **B8** — byte count of the `gate`-profile binary built for B2: **4,489,568** bytes in both
+  repositories, equal in size to each other and 48 bytes smaller than the pre-removal 4,489,616 —
+  consistent with removing an unused, unlinked dependency having a negligible effect on the final
+  binary.
+
+## Phase 1 publish-mode spike — decision
+
+Full findings, verbatim errors, and per-construct results are in `learnings.md`. Summary recorded
+here per the Phase 1 Gate's own requirement that the binding choice land in both files:
+
+| Binary                                    | Mean startup (50 runs, `osx-arm64`) |
+| ----------------------------------------- | ----------------------------------- |
+| NativeAOT                                 | 15.23 ms                            |
+| Self-contained, non-AOT                   | 200.84 ms                           |
+| Rust, Phase 0 B5 baseline (`ose-public`)  | 11.2 ms                             |
+| Rust, Phase 0 B5 baseline (`ose-private`) | 15.3 ms                             |
+
+**Selected publish mode: self-contained, non-AOT.** NativeAOT is faster to start but fails at
+runtime for two of the four required constructs (a DU argument parse via `Argu`, and
+`System.Text.Json`'s default reflection serializer) without out-of-scope additional work; see
+`learnings.md`'s "Publish-mode decision" section for the full reasoning. Self-contained is
+toolchain-free like AOT would have been, so no CI toolchain steps are added to Phase 2.

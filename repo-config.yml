@@ -149,6 +149,16 @@ coverage:
     - name: rhino-cli
       levels: [unit, integration]
       specs: "specs/apps/rhino/behavior/rhino-cli/**"
+    # rhino-cli-fsharp (rewrite-rhino-cli-to-fsharp): registry hygiene from
+    # Phase 2 onward per this registry's own "every project is listed"
+    # comment above. The glob covers only namespaces already flipped to F#
+    # in FSHARP_NAMESPACES — none at Phase 2, so it matches nothing yet; each
+    # wave's integration PR widens it to that wave's spec directories, per
+    # plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md's widening
+    # protocol entry.
+    - name: rhino-cli-fsharp
+      levels: [unit, integration]
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/.fsharp-flipped-none/**"
 
     # ose domain
     - name: ose-be

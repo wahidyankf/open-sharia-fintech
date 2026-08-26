@@ -19,6 +19,7 @@ pub const MANIFEST_PATH: &str = "apps/rhino-cli/parity-manifest.sha256";
 /// Git pathspecs defining the byte-identical Rhino CLI boundary.
 const BOUNDARY_PATHS: &[&str] = &[
     "apps/rhino-cli/src",
+    "apps/rhino-cli/src-fsharp",
     "apps/rhino-cli/tests",
     "apps/rhino-cli/Cargo.toml",
     "apps/rhino-cli/Cargo.lock",
