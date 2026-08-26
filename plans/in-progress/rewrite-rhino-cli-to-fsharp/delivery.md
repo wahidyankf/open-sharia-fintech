@@ -1191,7 +1191,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       asserts but never tests.
 - [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave A`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
 - [x] [AI] Land every Wave A change in the `ose-private` worktree, authored there rather than
@@ -1204,21 +1204,21 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] All 11 Wave A scenarios pass under
+- [x] [AI] All 11 Wave A scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention parity` reports zero differences in both
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh convention parity` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] The **only** file added under `specs/apps/rhino/` is the new `git/` lockfile feature file
+- [x] [AI] The **only** file added under `specs/apps/rhino/` is the new `git/` lockfile feature file
       this phase requires, and nothing else there was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino` lists exactly that one path and no
       other. A flat `wc -l` returning 0 would be **wrong** here: this phase deliberately adds a
       spec file, which every other wave gate forbids. Phases 4-8 keep the stricter `returns 0`
       form; Phase 9a is the only other sanctioned exception.
-- [ ] [AI] `benchmark.md` has an `after wave A` row for startup and for pre-commit wall time.
+- [x] [AI] `benchmark.md` has an `after wave A` row for startup and for pre-commit wall time.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
