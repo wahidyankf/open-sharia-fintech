@@ -162,11 +162,11 @@ coverage:
     # files together (emoji, license, and the aggregate audit share one
     # module) — splitting the scope per-file would not reflect how the
     # implementation is actually structured. Wave A widened it from nothing
-    # (Phase 2) to the full `convention/` directory. Wave B's first PR adds
-    # `repo-config/` as a sibling entry in the same brace-list glob.
+    # (Phase 2) to the full `convention/` directory. Wave B widens it PR by
+    # PR, one sibling directory at a time, in the same brace-list glob.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention,repo-config}/**"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention,repo-config,repo-config-validate}/**"
 
     # ose domain
     - name: ose-be
