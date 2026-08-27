@@ -51,6 +51,7 @@ open System.Collections.Generic
 open System.IO
 open System.Text.Encodings.Web
 open System.Text.Json
+open System.Text.Json.Nodes
 open System.Text.Json.Serialization
 open System.Text.RegularExpressions
 open YamlDotNet.Serialization
@@ -662,67 +663,58 @@ let formatText (r: EnvOperationResult) (verbose: bool) (quiet: bool) : string =
         sb.Append('\n') |> ignore
         sb.ToString()
 
-/// JSON shape of one file entry [Repo-grounded — `backup.rs::JsonEntry`].
-/// Scope note: unlike Rust's `#[serde(skip_serializing_if = ...)]`, every
-/// field is always emitted here (no omission of zero/empty values) — this
-/// port's `formatJson` only needs to satisfy "the JSON includes ..."
-/// (env-backup.feature), not byte-identical CLI JSON output; that
-/// byte-identical requirement belongs to the later CLI-wiring wave.
-///
-/// Not `private`: `System.Text.Json`'s default reflection-based resolver
-/// silently reflects into zero members of a non-visible (`private`) type —
-/// it neither throws nor logs, it just serializes `{}` — the same pitfall
-/// `RepoConfig.fs`'s module doc comment warns about for a `private` YamlDotNet
-/// DTO, reproduced here for `System.Text.Json` instead. This type is still
-/// excluded from this module's public surface indirectly: nothing outside
-/// `formatJson` ever constructs or returns one.
-type JsonFileEntry =
-    { relPath: string
-      size: int64
-      skipped: bool
-      reason: string
-      source: string }
-
-/// JSON shape of the top-level envelope [Repo-grounded —
-/// `backup.rs::JsonOut`]. See `JsonFileEntry`'s scope note for why this is
-/// not `private`.
-type JsonEnvelope =
-    { direction: string
-      dir: string
-      files: JsonFileEntry list
-      copied: int
-      skipped: int
-      errors: string list
-      worktreeName: string
-      cancelled: bool }
-
 let private jsonOptions: JsonSerializerOptions =
     let opts = JsonSerializerOptions()
     opts.WriteIndented <- true
     opts.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     opts
 
-/// Serialises an [`EnvOperationResult`] to a pretty-printed JSON string
-/// [Repo-grounded — `backup.rs::format_json`].
+/// Serialises an [`EnvOperationResult`] to a pretty-printed JSON string,
+/// byte-identical to the Rust CLI's own output [Repo-grounded —
+/// `backup.rs::format_json`, `JsonOut`, `JsonEntry`]. Built field-by-field on
+/// a `JsonObject` (which preserves insertion order) rather than through
+/// `System.Text.Json`'s reflection-based record serializer, because Rust's
+/// `#[serde(skip_serializing_if = ...)]` omits several fields when they carry
+/// their zero/empty value — `System.Text.Json`'s built-in
+/// `JsonIgnoreCondition.WhenWritingDefault`/`WhenWritingNull` do not treat an
+/// empty string as "default" for a reference type, so matching Rust's
+/// omissions exactly requires constructing the tree by hand.
 let formatJson (r: EnvOperationResult) : string =
-    let toJsonEntry (f: EnvFileEntry) : JsonFileEntry =
-        { relPath = f.RelPath
-          size = f.Size
-          skipped = f.Skipped
-          reason = f.Reason
-          source = f.Source }
+    let entryNode (f: EnvFileEntry) : JsonNode =
+        let node = JsonObject()
+        node.["relPath"] <- JsonValue.Create(f.RelPath)
 
-    let env: JsonEnvelope =
-        { direction = r.Direction
-          dir = r.Dir
-          files = r.Files |> List.map toJsonEntry
-          copied = r.Copied
-          skipped = r.Skipped
-          errors = r.Errors
-          worktreeName = r.WorktreeName
-          cancelled = r.Cancelled }
+        if f.Size <> 0L then
+            node.["size"] <- JsonValue.Create(f.Size)
 
-    JsonSerializer.Serialize(env, jsonOptions)
+        if f.Skipped then
+            node.["skipped"] <- JsonValue.Create(f.Skipped)
+
+        if f.Reason <> "" then
+            node.["reason"] <- JsonValue.Create(f.Reason)
+
+        if f.Source <> "" then
+            node.["source"] <- JsonValue.Create(f.Source)
+
+        node :> JsonNode
+
+    let root = JsonObject()
+    root.["direction"] <- JsonValue.Create(r.Direction)
+    root.["dir"] <- JsonValue.Create(r.Dir)
+    root.["files"] <- JsonArray(r.Files |> List.map entryNode |> Array.ofList)
+    root.["copied"] <- JsonValue.Create(r.Copied)
+    root.["skipped"] <- JsonValue.Create(r.Skipped)
+
+    if not (List.isEmpty r.Errors) then
+        root.["errors"] <- JsonArray(r.Errors |> List.map (fun e -> JsonValue.Create(e) :> JsonNode) |> Array.ofList)
+
+    if r.WorktreeName <> "" then
+        root.["worktreeName"] <- JsonValue.Create(r.WorktreeName)
+
+    if r.Cancelled then
+        root.["cancelled"] <- JsonValue.Create(r.Cancelled)
+
+    root.ToJsonString(jsonOptions)
 
 /// Formats an [`EnvOperationResult`] as a Markdown report [Repo-grounded —
 /// `backup.rs::format_markdown`].
@@ -790,17 +782,26 @@ let envInitScanRoots: string list = [ "infra/dev"; "apps" ]
 [<Literal>]
 let EnvInitTargetTier: string = ".env.local"
 
-/// Recursively finds every `.env.example` file under `dir`.
+/// Recursively finds every `.env.example` file under `dir`, in a single pass
+/// over the raw filesystem listing rather than files-then-subdirectories
+/// [Repo-grounded — `env_init.rs::collect_examples`'s use of `WalkDir`, whose
+/// default traversal recurses into each directory entry immediately upon
+/// encountering it in `readdir()` order, rather than deferring every
+/// directory until every file at the same level is visited]. A prior version
+/// of this function enumerated files before subdirectories, which is a
+/// stronger ordering guarantee than either language's underlying walk
+/// actually provides, and diverged from the Rust CLI's real output order
+/// whenever a directory's native `readdir()` listing put a subdirectory
+/// entry ahead of a file entry — observed for `apps/ayokoding-www` in this
+/// checkout, whose `.env.example` sorts alphabetically before `content/` but
+/// is returned after it by both runtimes' unsorted directory enumeration.
 let rec private walkForExamples (dir: string) : string list =
-    let here =
-        Directory.EnumerateFiles dir
-        |> Seq.filter (fun f -> Path.GetFileName f = ".env.example")
-        |> List.ofSeq
-
-    let nested =
-        Directory.EnumerateDirectories dir |> Seq.collect walkForExamples |> List.ofSeq
-
-    here @ nested
+    Directory.EnumerateFileSystemEntries dir
+    |> Seq.collect (fun entry ->
+        if Directory.Exists entry then walkForExamples entry
+        elif Path.GetFileName entry = ".env.example" then [ entry ]
+        else [])
+    |> List.ofSeq
 
 /// Collects every `.env.example` file found under `envInitScanRoots` inside
 /// `repoRoot` [Repo-grounded — `env_init.rs::collect_examples`].

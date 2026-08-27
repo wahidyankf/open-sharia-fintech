@@ -96,6 +96,29 @@ about a real, small dispatch surface's startup cost, not a regression.
 Verdict is filled at Phase 10 with `better` / `worse` / `unchanged` plus the absolute delta, per
 repository. No row is dropped for being unfavourable to F#.
 
+## Interim measurement: after wave B
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+A" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A — a
+single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged, hook
+run, then the file removed and the index reset). Taken with `convention`, `parity`,
+`repo-config`, `env` in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 39.15 ms   |
+| B6 — full pre-commit     | 3.68 s     |
+
+B5 rose modestly from the after-wave-A figure (33.94 ms) — a wider dispatch surface (6 more
+leaves) parsing more argument shapes before matching, still far below the Phase 1 spike's
+uninstructive 200.84 ms. B6 is in the same band as after-wave-A's 3.85 s, both still well under
+the Phase 0 Rust baseline (14.24 s) for the reason stated above: most of `.husky/pre-commit`'s
+gates are unrelated to `rhino-cli` invocation count, and only four of the CLI's namespaces route
+through F# at this point.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed

@@ -179,3 +179,310 @@ let ``route surfaces a parity validate failure for a non-git repoRoot`` () =
     let code, _, err = runCaptured (okRoot root) [| "parity"; "manifest"; "validate" |]
     Assert.Equal(1, code)
     Assert.StartsWith("Error: ", err)
+
+// ---- repo-config validate ----
+
+[<Fact>]
+let ``route passes repo-config validate for a schema-clean fixture`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness:\n  - name: probe\n    tier: source\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "repo-config"; "validate" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("matches the canonical schema", out)
+
+[<Fact>]
+let ``route fails repo-config validate and lists the finding`` () =
+    let root = newTempDir ()
+
+    writeFile
+        root
+        "repo-config.yml"
+        "harness:\n  - name: probe\n    tier: source\n    ownership:\n      - { path: somewhere, class: vendored, reason: \"\" }\n"
+
+    let code, out, err =
+        runCaptured (okRoot root) [| "repo-config"; "validate"; "-o"; "json" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("required non-empty value", out)
+    Assert.Contains("Error: repo-config validate: 1 schema finding(s)", err)
+
+[<Fact>]
+let ``route surfaces a repo-config validate schema failure to stderr only`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness: \"not-a-list\"\n"
+
+    let code, out, err = runCaptured (okRoot root) [| "repo-config"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Equal("", out)
+    Assert.StartsWith("Error: repo-config validate: repo-config.yml failed strict schema deserialization", err)
+
+// ---- env init ----
+
+[<Fact>]
+let ``route creates a env local file from a discovered example`` () =
+    let root = newTempDir ()
+    writeFile root "apps/foo/.env.example" "X=1\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "init" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Created: apps/foo/.env.local", out)
+    Assert.True(File.Exists(Path.Combine(root, "apps", "foo", ".env.local")))
+
+[<Fact>]
+let ``route skips an existing env local file without --force`` () =
+    let root = newTempDir ()
+    writeFile root "apps/foo/.env.example" "X=1\n"
+    writeFile root "apps/foo/.env.local" "X=0\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "init" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Skipped: apps/foo/.env.local", out)
+
+// ---- env backup / env restore ----
+
+[<Fact>]
+let ``route backs up a discovered env file to --dir`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; backupDir |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Backup complete", out)
+    Assert.True(File.Exists(Path.Combine(backupDir, ".env")))
+
+[<Fact>]
+let ``route restores a backed-up env file from --dir`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile backupDir ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "restore"; "--dir"; backupDir |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Restore complete", out)
+    Assert.True(File.Exists(Path.Combine(root, ".env")))
+
+[<Fact>]
+let ``route surfaces a env restore failure for a missing backup dir`` () =
+    let root = newTempDir ()
+    let missingDir = Path.Combine(newTempDir (), "does-not-exist")
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "env"; "restore"; "--dir"; missingDir |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("backup dir does not exist", err)
+
+// ---- env validate ----
+
+[<Fact>]
+let ``route passes env validate when the contract declares no surfaces`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "env-contract:\n  surfaces: []\n"
+
+    let code, out, _ = runCaptured (okRoot root) [| "env"; "validate" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("no drift detected", out)
+
+[<Fact>]
+let ``route surfaces a env validate contract-load failure`` () =
+    let root = newTempDir ()
+    writeFile root "repo-config.yml" "harness: []\n"
+
+    let code, _, err = runCaptured (okRoot root) [| "env"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("env-contract: section missing", err)
+
+[<Fact>]
+let ``route fails env validate and lists a declared-but-unread finding`` () =
+    let root = newTempDir ()
+
+    writeFile
+        root
+        "repo-config.yml"
+        "env-contract:\n  surfaces:\n    - root: surface\n      kind: app\n      lang: rust\n      allowlist: []\n"
+
+    writeFile root "surface/.env.example" "UNREAD_KEY=some-value\n"
+    writeFile root "surface/src/main.rs" "fn main() {}\n"
+
+    let code, _, err = runCaptured (okRoot root) [| "env"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("DRIFT  surface  declared-but-unread  UNREAD_KEY", err)
+    Assert.Contains("Error: env validate: 1 finding(s)", err)
+
+[<Fact>]
+let ``route passes env validate in warn-only mode despite findings`` () =
+    let root = newTempDir ()
+
+    writeFile
+        root
+        "repo-config.yml"
+        "env-contract:\n  surfaces:\n    - root: surface\n      kind: app\n      lang: rust\n      allowlist: []\n"
+
+    writeFile root "surface/.env.example" "UNREAD_KEY=some-value\n"
+    writeFile root "surface/src/main.rs" "fn main() {}\n"
+
+    let code, _, err = runCaptured (okRoot root) [| "env"; "validate"; "--warn-only" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("warn-only mode, not failing", err)
+
+// ---- env backup / env restore: worktree-aware, resolve-dir, json/markdown output ----
+
+let private runGit (cwd: string) (args: string list) : unit =
+    use proc = new Diagnostics.Process()
+    proc.StartInfo.FileName <- "git"
+    args |> List.iter proc.StartInfo.ArgumentList.Add
+    proc.StartInfo.WorkingDirectory <- cwd
+    proc.StartInfo.RedirectStandardOutput <- true
+    proc.StartInfo.RedirectStandardError <- true
+    proc.StartInfo.UseShellExecute <- false
+    proc.StartInfo.EnvironmentVariables.Remove("GIT_DIR")
+    proc.StartInfo.EnvironmentVariables.Remove("GIT_WORK_TREE")
+    proc.Start() |> ignore
+    let stderr = proc.StandardError.ReadToEnd()
+    proc.WaitForExit()
+
+    if proc.ExitCode <> 0 then
+        failwithf "git %s failed in %s: %s" (String.concat " " args) cwd stderr
+
+let private newGitRepoFixture () : string =
+    let dir = newTempDir ()
+    runGit dir [ "init"; "-q"; "-b"; "main" ]
+    runGit dir [ "config"; "user.name"; "Rhino CLI Test" ]
+    runGit dir [ "config"; "user.email"; "rhino-cli-test@example.invalid" ]
+    dir
+
+let private withHome (value: string option) (body: unit -> unit) =
+    let original = Environment.GetEnvironmentVariable("HOME")
+
+    try
+        Environment.SetEnvironmentVariable("HOME", (value |> Option.defaultValue null))
+        body ()
+    finally
+        Environment.SetEnvironmentVariable("HOME", original)
+
+[<Fact>]
+let ``route applies --worktree-aware for env backup at a real git root`` () =
+    let root = newGitRepoFixture ()
+    let backupDir = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; backupDir; "--worktree-aware" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Backup complete", out)
+
+[<Fact>]
+let ``route surfaces a env backup worktree detection failure`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; backupDir; "--worktree-aware" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("worktree detection failed", err)
+
+[<Fact>]
+let ``route surfaces a env backup failure when --dir is inside the repo root`` () =
+    let root = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+    let insideDir = Path.Combine(root, "backup")
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; insideDir |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("is inside repo root", err)
+
+[<Fact>]
+let ``route surfaces a env backup resolve-dir failure when HOME is unset`` () =
+    let root = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    withHome None (fun () ->
+        let code, _, err = runCaptured (okRoot root) [| "env"; "backup" |]
+        Assert.Equal(1, code)
+        Assert.Contains("HOME not set", err))
+
+[<Fact>]
+let ``route surfaces a env restore resolve-dir failure when HOME is unset`` () =
+    let root = newTempDir ()
+
+    withHome None (fun () ->
+        let code, _, err = runCaptured (okRoot root) [| "env"; "restore" |]
+        Assert.Equal(1, code)
+        Assert.Contains("HOME not set", err))
+
+[<Fact>]
+let ``route prints json output for env backup`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile root ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "backup"; "--dir"; backupDir; "-o"; "json" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("\"direction\": \"backup\"", out)
+
+[<Fact>]
+let ``route prints markdown output for env restore`` () =
+    let root = newTempDir ()
+    let backupDir = newTempDir ()
+    writeFile backupDir ".env" "SECRET=1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "env"; "restore"; "--dir"; backupDir; "-o"; "markdown" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("## Restore Report", out)
+
+// ---- env staged-guard validate ----
+
+[<Fact>]
+let ``route blocks env staged-guard validate when a real .env file is staged`` () =
+    let root = newGitRepoFixture ()
+    writeFile root ".env" "SECRET=1\n"
+    runGit root [ "add"; ".env" ]
+
+    let code, out, err =
+        runCaptured (okRoot root) [| "env"; "staged-guard"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains(".env", out)
+    Assert.Contains("offending .env file(s) staged", err)
+
+[<Fact>]
+let ``route passes env staged-guard validate when only .env.example is staged`` () =
+    let root = newGitRepoFixture ()
+    writeFile root ".env.example" "X=1\n"
+    runGit root [ "add"; ".env.example" ]
+
+    let code, _, _ = runCaptured (okRoot root) [| "env"; "staged-guard"; "validate" |]
+
+    Assert.Equal(0, code)
+
+[<Fact>]
+let ``route surfaces a env staged-guard validate failure for a non-git repoRoot`` () =
+    let root = newTempDir ()
+
+    let code, _, err = runCaptured (okRoot root) [| "env"; "staged-guard"; "validate" |]
+
+    Assert.Equal(1, code)
+    Assert.StartsWith("Error: ", err)
