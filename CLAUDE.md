@@ -16,8 +16,9 @@ Prettier + markdownlint pipeline (requires `jq`).
 
 ### Working with `.claude/` and `.opencode/`
 
-Edit both with normal `Write`/`Edit` tools — pre-authorized in `.claude/settings.json`, no approval
-prompt fires.
+Normal `Write`/`Edit` access to both roots is pre-authorized in `.claude/settings.json`, so no
+approval prompt fires. Authorization does not override the path-level ownership in
+`repo-config.yml`: edit `source` or `vendored` paths only, and regenerate `generated` paths.
 
 - `.claude/agents/<role-subfolder>/*.md` — agent definitions, nested into role subfolders
 - `.claude/skills/*/SKILL.md` — source of truth for both Claude Code and OpenCode (OpenCode reads

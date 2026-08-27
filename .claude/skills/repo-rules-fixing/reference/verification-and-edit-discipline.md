@@ -2,8 +2,11 @@
 
 ## File Operations
 
-`.claude/` and `.opencode/` edits are pre-authorized (see `CLAUDE.md` §Working with `.claude/`
-and `.opencode/` directories) — use `Write`/`Edit` directly, no Bash heredoc workaround needed.
+Normal file-editing tools are pre-authorized for binding paths (see `CLAUDE.md` §Working with
+`.claude/` and `.opencode/`), but authorization does not override path ownership. Use `Write`/`Edit`
+only on paths that `repo-config.yml` declares `source` or `vendored`; never hand-edit a generated
+mirror or generated delimited region. After changing `.claude/` sources, run
+`npm run generate:bindings` and keep every changed mirror in the same commit.
 
 ## Post-Fix Verification (MANDATORY)
 
