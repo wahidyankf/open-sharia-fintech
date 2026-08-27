@@ -12,7 +12,7 @@ Determine whether to continue fixing or finalize.
 
 **Logic**:
 
-- Re-run checker (step 2) to get fresh report
+- Re-run checker (step 2) with Step 0 delegated IDs and Step 4's updated lifecycle evidence
 - Count findings based on mode level (same as Step 3)
 - Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
 - If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization — double-zero confirmed)
@@ -28,7 +28,11 @@ Determine whether to continue fixing or finalize.
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, `{guides-count}`, `{production-coverage}`, final reports
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, `{guides-count}`,
+`{production-coverage}`, final reports
+
+Derive `lifecycle-status` separately from the latest lifecycle evidence (`verified`, `pending`, or
+`not-applicable`). It never changes domain `final-status`.
 
 **Status determination**:
 

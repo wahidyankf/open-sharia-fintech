@@ -37,8 +37,7 @@ concurrent actor's uncommitted work, and never remove a worktree or branch you d
 [No Destructive Git Operations](../../../development/workflow/no-destructive-git-operations.md) and
 [Worktree and Artifact Cleanup](../../../development/workflow/worktree-and-artifact-cleanup.md).
 
-**Status cadence**: while checklist items are active or background agents are in flight, update the
-user every **5 minutes** for generic work and every **3 minutes** for GitHub-CI-related work (mixed
-batches take the tighter 3-minute cadence), anchored to meaningful state changes rather than a timer.
-This is a reporting cadence and does not change the 2-minute CI-polling floor. See
+**Status heartbeat**: when the main thread has no useful work left and only polls non-CI
+background work, update the user every **5 minutes**, even when no state changed. Ordinary work
+uses milestone updates; CI keeps its separate 2-minute status-read cadence. See
 [Task List Discipline §Standard 6](../../../development/practice/task-list-discipline.md).

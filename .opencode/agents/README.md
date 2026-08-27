@@ -24,5 +24,5 @@ and implemented by `apps/rhino-cli/src/internal/agents/converter.rs`.
 
 The cross-vendor behavioral-parity contract that keeps this directory in sync
 with `.claude/agents/` is documented in
-[`repo-governance/workflows/repo/`](../../repo-governance/workflows/repo/) (the parity
+[`repo-governance/workflows/rules/`](../../repo-governance/workflows/rules/) (the parity
 quality-gate workflow lands as part of the cross-vendor-agent-parity plan).

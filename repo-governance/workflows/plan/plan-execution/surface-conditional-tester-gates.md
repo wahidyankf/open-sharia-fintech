@@ -9,8 +9,8 @@ when_to_use: Use when determining which tester gates a plan's shipped surface re
 Which quality gates this execution must run depends on **what surface the plan ships**. The rule
 binds here at execution, exactly as it bound at authoring time (see
 [plan-planning §Surface-Conditional Tester Gates](../plan-planning/surface-conditional-tester-gates.md#surface-conditional-tester-gates)),
-and again as a merge precondition — clause (e) of the
-[PR Review Quality Gate](../../pr/pr-review-quality-gate.md)'s hardened preconditions.
+and again as merge precondition (e) in the
+[PR Merge Protocol](../../../development/workflow/pr-merge-protocol/the-rule.md).
 
 - **UI-bearing plan** → run **both** [`ui/ui-quality-gate.md`](../../ui/ui-quality-gate.md) (static)
   and [`web/web-ux-test-fixing-planning.md`](../../web/web-ux-test-fixing-planning.md) (running triad).

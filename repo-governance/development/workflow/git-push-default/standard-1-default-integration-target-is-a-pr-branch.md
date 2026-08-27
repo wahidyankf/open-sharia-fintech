@@ -39,7 +39,7 @@ This is the correct behavior in all of the following situations, absent an expli
 **The one exception inside a plan: Phase 0 pushes nothing and opens no PR.** A plan's Phase 0 is
 Environment Setup and Baseline — `npm install`, `npm run doctor -- --fix`, a recorded baseline, and
 preexisting-failure resolution. It produces no reviewable change, so it has no integration target at
-all: no `git push origin <plan-id>`, no `gh pr create`, no review cycle, no merge. The sequence above
+all: no `git push origin <plan-id>`, no `gh pr create`, no PR CI or semantic review, no merge. The sequence above
 begins at **Phase 1**, which is the earliest phase that may open a PR; any evidence file Phase 0 wrote
 rides that first PR. This is not a mode override — it holds under every one of the four delivery
 modes. See

@@ -11,10 +11,8 @@ confidence framework governing when a fix auto-applies versus escalates.
 
 ## Read First
 
-`reference/01-merge-step-guard.md` — the merge-step structural guard MUST be read before any other
-reference module. It states what it protects (a merge step's human gate) rather than enumerating
-tags/verbs/modes, because two prior enumeration-style guards were each defeated by an axis nobody had
-named. Every other reference module's recipes are subordinate to this guard.
+Read `reference/01-merge-step-guard.md` before every other module. Its protection of a merge step's
+human gate governs every recipe, tag, verb, and delivery mode.
 
 ## Reference Modules
 
@@ -39,8 +37,7 @@ named. Every other reference module's recipes are subordinate to this guard.
   plans).
 - `reference/12-worktree-and-delivery-mode-scaffolding-fixes.md` — worktree specification fixes,
   delivery mode fixes.
-- `reference/13-pr-review-cycle-and-merge-tag-fixes.md` — PR-Review Maker→Fixer Cycle scaffolding,
-  the merge-tag mismatch recipe.
+- `reference/pr-ci-and-merge-tag-fixes.md` — exact-head PR-CI scaffolding and the merge-tag recipe.
 - `reference/14-execution-grade-clarity-fixes.md` — execution-grade clarity fixes (HARD RULE).
 - `reference/15-executor-tagging-and-phase-gate-fixes-part1.md` and
   `reference/16-executor-tagging-and-phase-gate-fixes-part2.md` — executor-tagging/phase-gate fixes.
@@ -57,6 +54,20 @@ Knowledge Capture, phase gates) inserts placeholders for the author to fill, nev
 **Re-validate before applying.** Every fix confirms the finding still exists (the file may have
 changed since audit) before acting. **A more-plausible-sounding hallucination is the worst outcome**
 of an anti-hallucination fix — refuse rather than replace one wrong claim with another.
+
+## Quality-Gate Lifecycle Handoff
+
+When given `delegated-gate-ids` and an evidence ledger, preserve both and skip exact delegated
+predicates. Never revalidate, infer, or fix delegated work; missing or stale evidence remains
+pending. Plan-domain findings remain actionable. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+After edits, invalidate evidence whose registered scope intersects changed files.
+
+## Missing Minimal-Sufficiency Rationale
+
+For a lasting mechanism missing concrete-need and existing-mechanism rationale, add only two
+`[AUTHOR INPUT REQUIRED]` scaffolds: the requirement/risk, and why evaluated mechanisms are
+insufficient. Grill for both; never infer answers or mark unresolved placeholders fixed.
 
 ## Related
 

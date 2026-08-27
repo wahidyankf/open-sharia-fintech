@@ -42,6 +42,20 @@ a **running** REST or GraphQL API — the API-surface counterpart to the web tes
   or `.feature` scenario.
 - **Non-destructive by default** — read-only unless per-run authorized; redact every credential.
 
+## Quality-Gate Lifecycle Handoff
+
+When the API quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
+registry IDs or predicates connected through `verifies`. Preserve the ledger and pending state;
+never rerun or infer delegated work. The live contract, authorization, edge, and runtime sweeps stay
+in scope. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
+The API gate uses the complete methodology once for discovery. After its single fix and
+rebuild/redeployment pass, verification reproduces only the original in-threshold findings and
+smoke-tests affected API behavior. It does not repeat mandatory full-discovery sweeps or probe
+unrelated endpoints. A clean discovery passes immediately; no result automatically starts another
+run.
+
 ## Related Skills
 
 - `web-testing-exploratory-methodology` — rendered-UI counterpart (disjoint surface).

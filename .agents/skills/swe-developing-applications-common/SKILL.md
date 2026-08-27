@@ -22,7 +22,10 @@ Nx manages the monorepo: apps in `apps/[app-name]` never import other apps; libr
 
 ## Git Workflow
 
-All development targets `main` via Conventional Commits (`<type>(<scope>): <description>`), split by domain per commit. Never stage or commit unless explicitly instructed. See [Git Workflow](./reference/git-workflow.md) for branch strategy, commit types, and git discipline rules.
+All development targets `main` via Conventional Commits (`<type>(<scope>): <description>`). Never
+stage or commit without explicit authorization of the named change set; once authorized, use the
+fewest build-valid, independently reviewable/revertible thematic commits. See
+[Git Workflow](./reference/git-workflow.md) for branch strategy, composition, and git discipline.
 
 ## Pre-commit Automation
 
@@ -30,7 +33,11 @@ Husky + lint-staged auto-run Prettier, markdown lint, and link validation on com
 
 ## Development Environment Setup
 
-Verify the toolchain before implementing anything: `npm run doctor` (add `-- --fix` to auto-install). `rhino-cli` manages `.env` files. Run both `npm install` and `npm run doctor -- --fix` right after creating or entering a worktree. See [Development Environment Setup](./reference/development-environment-setup.md) for the full command reference and when-to-run guidance.
+Verify the toolchain before implementing anything: `rtk npm run doctor` (add `-- --fix` to
+auto-install). `rhino-cli` manages `.env` files. Run both `rtk npm install` and
+`rtk npm run doctor -- --fix` right after creating a worktree; re-entry alone does not trigger
+setup. See [Development Environment Setup](./reference/development-environment-setup.md) for the
+full command reference and when-to-run guidance.
 
 ## Development Workflow Pattern
 

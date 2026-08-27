@@ -19,7 +19,7 @@ Use these workflows when an API needs to be checked as a real client experiences
 
 ## Available Workflows
 
-- [api-quality-gate](./api-quality-gate.md) — Exercises a running REST or GraphQL API against its contract and Gherkin specs, fixing every defect via a tester-driven loop until none remain. Use when a plan ships an API/backend surface needing contract, functional, and security validation against a live deployment.
+- [api-quality-gate](./api-quality-gate.md) — Runs one live discovery, at most one fix pass, one rebuild/redeployment, and one scoped verification over original findings and affected-API regressions. Use when a plan ships an API/backend surface needing contract, functional, and security validation.
 
 Unlike the checker/fixer gates elsewhere in this directory tree, the API gate is **tester-driven**:
 `api-exploratory-tester` emits `AET-###` findings against a live endpoint, and the `swe-*-dev` agent
@@ -30,6 +30,6 @@ matching the service's implementing language applies the fixes. There is no `api
 
 - [UI Workflows](../ui/README.md) — The static component-source counterpart to this category
 - [Web Workflows](../web/README.md) — The running-UI tester triad, this category's UI-side analogue
-- [PR Review Quality Gate](../pr/pr-review-quality-gate.md) — Consumes the API gate as merge precondition clause (e)
+- [PR Merge Protocol](../../development/workflow/pr-merge-protocol.md) — Keeps applicable surface gates merge-blocking
 - [Manual Behavioral Verification](../../development/quality/manual-behavioral-verification.md) — Standards these workflows enforce
 - [Workflows Index](../README.md) — All available workflows

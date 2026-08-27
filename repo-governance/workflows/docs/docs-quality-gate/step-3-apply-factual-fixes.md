@@ -10,8 +10,11 @@ Fix factual errors, outdated information, technical inaccuracies, and contradict
 
 **Agent**: `docs-fixer`
 
-- **Args**: `report: {step1.outputs.docs-report-N}, approved: all, mode: {input.mode}`
-- **Output**: `{factual-fixes-applied}` - Fix report with same UUID chain as source audit
+- **Args**: `report: {step1.outputs.docs-report-N}, approved: all, mode: {input.mode},
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{factual-fixes-applied}`, `{updated-lifecycle-evidence}` after intersecting changed
+  files with delegated scopes
 - **Condition**: Factual findings exist from step 2
 - **Depends on**: Step 2 completion
 

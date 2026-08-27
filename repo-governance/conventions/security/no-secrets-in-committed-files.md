@@ -25,3 +25,10 @@ is the only reliable remediation after a leak.
 in this repository; renamed by the `standardize-secrets-and-env` plan for alignment with ose-private).
 
 See: [`secrets-and-env-standards.md`](./secrets-and-env-standards.md)
+
+## Principles Implemented/Respected
+
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) —
+  committed secret material is prohibited without relying on contributor inference.
+- [Reproducibility](../../principles/software-engineering/reproducibility.md) — tracked files remain
+  safe to clone and use without machine-specific credentials.

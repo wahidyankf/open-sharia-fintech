@@ -5,9 +5,9 @@
 //! three-tier threshold, and optionally resolves the transitive `@`-import
 //! tree to check aggregate size.
 //!
-//! Word count is the raw whole-file count of whitespace-separated tokens
-//! (`tech-docs.md` §1.2) — identical to `wc -w`. Frontmatter, fenced code,
-//! Mermaid, tables, and URLs all count.
+//! Word count is the raw whole-file count of Rust Unicode-whitespace-separated
+//! tokens (`tech-docs.md` §1.2). Frontmatter, fenced code, Mermaid, tables,
+//! and URLs all count; the validator's result is authoritative.
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
@@ -144,8 +144,8 @@ const PROGRESSIVE_DISCLOSURE_REF: &str =
 // word_count
 // ---------------------------------------------------------------------------
 
-/// Raw whole-file word count: the number of whitespace-separated tokens in
-/// `contents` — identical to `wc -w`.
+/// Raw whole-file word count: the number of Rust Unicode-whitespace-separated
+/// tokens in `contents`.
 ///
 /// Frontmatter, fenced code, Mermaid, tables, and URLs all count; there is no
 /// "prose-only" carve-out (`tech-docs.md` §1.2). Byte-safe for non-ASCII
@@ -832,22 +832,22 @@ resolved_tree:
 
     #[test]
     fn scenario_file_within_target_passes_silently() {
-        let content = n_words(380);
+        let content = n_words(650);
         assert_eq!(
-            classify(word_count(&content), 400, 500, 500),
+            classify(word_count(&content), 650, 750, 750),
             Severity::Ok,
-            "FR-1.2: 380 words must classify Ok against a 400-word target"
+            "FR-1.2: 650 words must classify Ok against a 650-word target"
         );
     }
 
     #[test]
     fn scenario_file_between_target_and_fail_warns_without_blocking() {
-        let content = n_words(450);
+        let content = n_words(750);
         assert_eq!(
-            classify(word_count(&content), 400, 500, 500),
+            classify(word_count(&content), 650, 750, 750),
             Severity::Warn,
-            "FR-1.2: 450 words must classify Warn (between the 400-word target and the \
-             500-word fail ceiling)"
+            "FR-1.2: 750 words must classify Warn (between the 650-word target and the \
+             750-word fail ceiling)"
         );
     }
 
@@ -856,22 +856,22 @@ resolved_tree:
         let content = n_words(14_720);
         assert_eq!(word_count(&content), 14_720);
         assert_eq!(
-            classify(word_count(&content), 400, 500, 500),
+            classify(word_count(&content), 650, 750, 750),
             Severity::Fail,
-            "FR-1.2: 14720 words must classify Fail over the 500-word ceiling"
+            "FR-1.2: 14720 words must classify Fail over the 750-word ceiling"
         );
     }
 
     #[test]
     fn scenario_non_prose_content_counts_toward_the_budget() {
-        // 200 prose words + a fenced "mermaid" block: 398 body words plus the
+        // 200 prose words + a fenced "mermaid" block: 598 body words plus the
         // two fence-marker tokens ("```mermaid" and "```", each one
-        // whitespace-delimited token) sum to exactly 600, matching prd.md's
+        // whitespace-delimited token) sum to exactly 800, matching the
         // "Non-prose content counts toward the budget" scenario.
-        let content = format!("{}\n\n```mermaid\n{}\n```\n", n_words(200), n_words(398));
+        let content = format!("{}\n\n```mermaid\n{}\n```\n", n_words(200), n_words(598));
         assert_eq!(
             word_count(&content),
-            600,
+            800,
             "FR-1.1: fenced Mermaid block content must count toward the budget, not be excluded"
         );
     }
@@ -903,9 +903,9 @@ resolved_tree:
             if seen_globs.insert(glob) {
                 surfaces.push(Surface {
                     glob: (*glob).to_string(),
-                    target: 400,
-                    warn: 500,
-                    fail: 500,
+                    target: 650,
+                    warn: 750,
+                    fail: 750,
                 });
             }
         }
@@ -953,9 +953,9 @@ resolved_tree:
         let config = BudgetConfig {
             surfaces: vec![Surface {
                 glob: "repo-governance/**/*.md".to_string(),
-                target: 400,
-                warn: 500,
-                fail: 500,
+                target: 650,
+                warn: 750,
+                fail: 750,
             }],
             resolved_tree: ResolvedTree {
                 root: "CLAUDE.md".to_string(),
@@ -992,9 +992,9 @@ resolved_tree:
         let config = BudgetConfig {
             surfaces: vec![Surface {
                 glob: ".opencode/**/*.md".to_string(),
-                target: 400,
-                warn: 500,
-                fail: 500,
+                target: 650,
+                warn: 750,
+                fail: 750,
             }],
             resolved_tree: ResolvedTree {
                 root: "CLAUDE.md".to_string(),
@@ -1229,22 +1229,22 @@ resolved_tree:
     #[test]
     fn check_instruction_sizes_selects_winning_surface_before_classifying_warn_case() {
         let tmp = TempDir::new().unwrap();
-        // 850 words: over the general surface's 500-word fail ceiling, but only
-        // Warn against the more-specific README surface's 900-word fail ceiling.
-        fs::write(tmp.path().join("README.md"), n_words(850)).unwrap();
+        // 1000 words: over the general surface's 750-word fail ceiling, but only
+        // Warn against the more-specific README surface's 1000-word fail ceiling.
+        fs::write(tmp.path().join("README.md"), n_words(1_000)).unwrap();
         let config = BudgetConfig {
             surfaces: vec![
                 Surface {
                     glob: "*.md".to_string(),
-                    target: 400,
-                    warn: 500,
-                    fail: 500,
+                    target: 650,
+                    warn: 750,
+                    fail: 750,
                 },
                 Surface {
                     glob: "README.md".to_string(),
-                    target: 700,
-                    warn: 900,
-                    fail: 900,
+                    target: 900,
+                    warn: 1_000,
+                    fail: 1_000,
                 },
             ],
             resolved_tree: ResolvedTree {
@@ -1263,32 +1263,32 @@ resolved_tree:
         );
         let f = &findings[0];
         assert_eq!(f.severity, Severity::Warn);
-        assert_eq!(f.target, 700);
-        assert_eq!(f.warn, 900);
-        assert_eq!(f.fail, 900);
+        assert_eq!(f.target, 900);
+        assert_eq!(f.warn, 1_000);
+        assert_eq!(f.fail, 1_000);
     }
 
     #[test]
     fn check_instruction_sizes_selects_winning_surface_before_classifying_ok_case() {
         let tmp = TempDir::new().unwrap();
-        // 670 words: over the general surface's 500-word fail ceiling, but Ok
-        // against the more-specific README surface's own 700-word target — the
+        // 900 words: over the general surface's 750-word fail ceiling, but Ok
+        // against the more-specific README surface's own 900-word target — the
         // winning surface's Ok verdict must suppress the general surface's Fail
         // candidate entirely, not merely outrank it.
-        fs::write(tmp.path().join("README.md"), n_words(670)).unwrap();
+        fs::write(tmp.path().join("README.md"), n_words(900)).unwrap();
         let config = BudgetConfig {
             surfaces: vec![
                 Surface {
                     glob: "*.md".to_string(),
-                    target: 400,
-                    warn: 500,
-                    fail: 500,
+                    target: 650,
+                    warn: 750,
+                    fail: 750,
                 },
                 Surface {
                     glob: "README.md".to_string(),
-                    target: 700,
-                    warn: 900,
-                    fail: 900,
+                    target: 900,
+                    warn: 1_000,
+                    fail: 1_000,
                 },
             ],
             resolved_tree: ResolvedTree {

@@ -31,21 +31,23 @@ This agent's write scope on the PR stays limited to: pushing commits to the PR b
 review comments, resolving review threads, and editing the PR description for escalation — no
 other repository-write action is exercised from this role.
 
-## Re-Run Quality Gates Before Every Push
+## Lifecycle Evidence Around a Fix Push
 
-Before pushing any fix to the PR branch, re-run the local quality gates relevant to whatever this
-agent touched (for example `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, or
-the narrower per-project target set when the fix is scoped to one project). Never push a fix that
-breaks a check that was previously green — a fix that trades one finding for a CI regression is
-not a fix. If a gate fails after applying a fix, resolve the root cause before pushing, per the
-repository's Root Cause Orientation principle; do not push and hope CI catches it.
+Within `pr-review-cycle`, consume Step 0's exact delegated IDs and lifecycle evidence.
+After a fix, invalidate only evidence whose predicate inputs changed and return that updated
+ledger. Do not rerun, tool-imitate, or AI-rederive delegated predicates before pushing; mark them
+`pending`. The workflow then requires successful aggregate PR CI for the pushed head and
+applicable base before covered predicates can restore `verified` or another cycle can begin.
+
+Outside that quality-gate invocation, retain the existing behavior: run relevant local quality
+gates before pushing and resolve failures at root cause.
 
 ## Maker-Checker-Fixer Framing (Two-Role Variant)
 
 This agent is the **fixer** half of a fan-out→synthesize→fixer loop paired with the stage-0
 `pr-review-scout-maker`, the nine discipline specialists, and `pr-review-synthesis-maker`,
 orchestrated end-to-end by the
-[PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
+[PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-cycle.md).
 It follows the same separation-of-concerns spirit as the repository's standard three-stage
 [Maker-Checker-Fixer Pattern](../../../../repo-governance/development/pattern/maker-checker-fixer.md),
 but is a **two-role variant**: there is no separate checker stage between maker and fixer. The

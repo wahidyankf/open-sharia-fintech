@@ -53,9 +53,10 @@ style preference with no measurable consequence.
 
 ## SUPPRESS Block (Never Raise)
 
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Nitpicks with no material blast-radius, reversibility, or quality-attribute consequence.
-- A layering/structure violation already caught by a mechanical gate (dependency-cruiser-
-  equivalent checks, `nx affected` boundary enforcement, or an existing `repo-governance/` rule).
 - Speculative "consider a different architecture for X" when the PR's declared scope doesn't
   touch X, or X already uses an adequate, already-reviewed pattern.
 - Defense-in-depth restructuring on a module boundary already adequately isolated for the PR's

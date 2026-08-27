@@ -16,7 +16,7 @@ title: "Reference"
 - [10 Learning Bearing Syllabus Scaffolding Fixes](./learning-bearing-syllabus-scaffolding-fixes.md) — repair recipes for scaffolding a missing learning-bearing syllabus artefact
 - [11 Diagram Format Fixes](./diagram-format-fixes.md) — repair recipes for converting ASCII art to Mermaid and other diagram-format findings
 - [12 Worktree And Delivery Mode Scaffolding Fixes](./worktree-and-delivery-mode-scaffolding-fixes.md) — repair recipes for missing worktree specification and delivery-mode scaffolding
-- [13 Pr Review Cycle And Merge Tag Fixes](./pr-review-cycle-and-merge-tag-fixes.md) — how to fix a worktree-to-pr plan missing the PR-review maker→fixer cycle
+- [PR CI and Merge Tag Fixes](./pr-ci-and-merge-tag-fixes.md) — repair exact-head PR-CI steps and merge-tag mismatches
 - [14 Execution Grade Clarity Fixes](./execution-grade-clarity-fixes.md) — repair recipes when a delivery checkbox lacks explicit paths, commands, or acceptance criteria
 - [15 Executor Tagging And Phase Gate Fixes Part1](./executor-tagging-and-phase-gate-fixes-part1.md) — first half of the executor-tagging and phase-gate repair recipes
 - [16 Executor Tagging And Phase Gate Fixes Part2](./executor-tagging-and-phase-gate-fixes-part2.md) — remaining executor-tagging and phase-gate repair recipes, including missing human-gate handoff signals

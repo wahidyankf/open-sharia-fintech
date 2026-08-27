@@ -1,6 +1,6 @@
 # Operational Readiness (Mandatory Delivery Sections)
 
-Every delivery plan MUST include these operational readiness sections. Plans missing them are considered incomplete regardless of other quality.
+Every delivery plan MUST include these sections; otherwise it is incomplete.
 
 ## Local Quality Gates (Before Push)
 
@@ -41,7 +41,8 @@ Every plan must start with environment setup steps:
 ### Environment Setup
 
 - [ ] Enter the worktree this plan was authored in — provision only if absent: `claude --worktree <plan-identifier>` (`worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md))
-- [ ] Initialize toolchain in the root worktree (not the new worktree): `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md))
+- [ ] At the worktree root, install dependencies and hooks, then converge tooling:
+      `rtk npm install && rtk npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md))
 - [ ] [Add project-specific setup: env vars, DB, Docker, etc.]
 - [ ] Verify dev server starts: `nx dev [project-name]`
 - [ ] Verify existing tests pass before making changes
@@ -64,8 +65,11 @@ Every plan must include commit guidance:
 ```markdown
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits
+- [ ] Do not stage or commit until the user explicitly authorizes the named change set
+- [ ] Once authorized, use the fewest build-valid, independently reviewable and revertible commits,
+      one coherent purpose each; no extra boundary prompt unless the user prescribed one
 - [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
-- [ ] Split different domains/concerns into separate commits
-- [ ] Do NOT bundle unrelated fixes into a single commit
+- [ ] Keep required tests, docs, specs, references, migrations/rollback, and generated mirrors with
+      the change they complete; split independent concerns
+- [ ] Do not extend a commit beyond the user-authorized change set
 ```

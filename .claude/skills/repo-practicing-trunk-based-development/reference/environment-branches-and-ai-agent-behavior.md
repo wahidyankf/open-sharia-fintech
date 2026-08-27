@@ -71,7 +71,8 @@ rationale: "ose-private infrastructure-as-code plan updating a single Terraform 
 
 **When creating plans**:
 
-- `plan-maker` defaults to `worktree-to-pr` and emits the worktree, PR, review-cycle, and merge steps
+- `plan-maker` defaults to `worktree-to-pr` and emits the worktree, PR, exact-head CI, applicable
+  surface-gate, and merge steps; semantic review appears only on explicit user request
 - Tags every git-mechanical step `[AI]` — worktree create/remove and the push
 - Tags the merge `[AI]` by default; emits a `[HUMAN]` merge step only where the plan opts into that gate
 

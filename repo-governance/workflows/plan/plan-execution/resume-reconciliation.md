@@ -8,7 +8,9 @@ when_to_use: Use when resuming plan execution in a new conversation, or when the
 
 When execution begins (or re-begins in a new conversation), disk state wins:
 
-1. Read delivery.md top-to-bottom FIRST.
+1. Re-read canonical instructions, restore every active user-established repository-rule decision
+   from durable continuation state, and reconcile statement, scope, source, and status. Stop on any
+   unresolved conflict. Then read delivery.md top-to-bottom.
 2. For every `- [x]` — skip, count as done.
 3. For every `- [ ]` — `TaskCreate` one task in reading order.
 4. If stale tasks from a prior run disagree with disk (e.g., task `completed` but checkbox `- [ ]`), delete the stale list and rebuild from current delivery.md.

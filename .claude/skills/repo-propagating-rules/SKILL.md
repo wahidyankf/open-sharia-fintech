@@ -1,13 +1,13 @@
 ---
 name: repo-propagating-rules
-description: Run the repo-rules-propagation workflow whenever a repository rule is being created, updated, superseded, or deleted. TRIGGERS on "add rule", "new rule", "update the rule", "change the convention", "adjust the rule", "delete that rule", "make it a rule that…", "from now on we should…", "we should always/never…", or any request that would edit repo-governance/, AGENTS.md, CLAUDE.md, an agent or skill definition, repo-config.yml, a hook, or a CI workflow. Load it BEFORE editing any of those surfaces, not after.
+description: Run the rules-propagation workflow whenever a repository rule is being created, updated, superseded, or deleted. TRIGGERS on "add rule", "new rule", "update the rule", "change the convention", "adjust the rule", "delete that rule", "make it a rule that…", "from now on we should…", "we should always/never…", or any request that would edit repo-governance/, AGENTS.md, CLAUDE.md, an agent or skill definition, repo-config.yml, a hook, or a CI workflow. Load it BEFORE editing any of those surfaces, not after.
 when_to_use: Use the moment a request implies rule work, and before the first edit to any repo-rules surface.
 ---
 
 # Propagating Repository Rules
 
 Rule work does not go in through an ad-hoc edit. It goes through
-[repo-rules-propagation](../../../repo-governance/workflows/repo/repo-rules-propagation.md), which
+[rules-propagation](../../../repo-governance/workflows/rules/rules-propagation.md), which
 exists because placing a rule badly is invisible at review time and expensive later.
 
 ## Recognising Rule Work
@@ -39,6 +39,10 @@ deliberately does not restate.
 
 - Do not edit a rule surface first and reconcile it afterwards. The conflict scan is a **pre**-write
   step because a contradiction found after the write often means the wrong rule was edited.
+- Do not finish Step 6 without classifying every subject-scoped rule and discoverability surface as
+  keep, amend, merge, delete, relocate, or supersede. Merge or delete only after every distinct
+  obligation and necessary discoverability path survives at the canonical home; a kept duplicate
+  needs a rationale.
 - Do not soften an unfalsifiable rule into "guidance" so it can be written. That is a halt.
 - Do not raise a word budget to make a rule fit.
 

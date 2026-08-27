@@ -10,7 +10,9 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
 
 1. **Fix ALL failures** — including preexisting ones (Iron Rule 3)
 2. Re-run failing checks to confirm resolution
-3. Commit thematically (Iron Rule 7) — separate plan work from preexisting fixes
+3. Commit thematically (Iron Rule 7) — within the explicitly authorized change set, use the fewest
+   build-valid, independently reviewable/revertible commits and keep each purpose's required
+   completion artifacts together
 4. Push to the resolved delivery mode's target (Iron Rule 5), only after ALL local quality gates pass. The push target depends on the delivery mode resolved in Step 0:
    - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): push directly to `origin main`.
    - **`worktree-to-pr`**: push the delivery unit's branch from the plan's one provisioned

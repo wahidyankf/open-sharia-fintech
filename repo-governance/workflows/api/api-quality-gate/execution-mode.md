@@ -15,7 +15,10 @@ Read/Write/Edit when Agent Delegation is unavailable.
 
 **How to Execute**:
 
-```
+```text
 User: "Run API quality gate for http://localhost:8302 against apps/ose-be/openapi.yaml"
 User: "Run API quality gate for the organiclever-be GraphQL endpoint"
 ```
+
+Each invocation is one bounded run. A `partial` or `fail` result requires a separately started run;
+the workflow never re-enters itself.

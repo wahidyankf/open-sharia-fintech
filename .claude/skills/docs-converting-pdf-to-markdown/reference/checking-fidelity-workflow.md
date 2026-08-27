@@ -2,6 +2,13 @@
 
 ## Validation Workflow
 
+**Lifecycle filter**: When exact ID `md-mermaid` is delegated, do not run `crane check-all` or
+Step 7 because both execute the owned syntax predicate; use the non-Mermaid per-dimension commands.
+For delegated `markdownlint`, `format-verify-prettier`, `md-heading-hierarchy`, `md-frontmatter`,
+`md-links`, or `md-naming`, omit only generic Markdown mechanics. Retain all source-comparison
+checks, including PDF-corresponding heading depth/order and figure representation. Omitted
+`delegated-gate-ids` means standalone full validation.
+
 **Step 0 — Initialize report**: `crane report --init "$PDF_FILE" --md "$MD_FILE" --scope pdf-to-md`
 creates a UUID-chained, UTC+7-timestamped report at
 `generated-reports/pdf-to-md__{uuid-chain}__{timestamp}__audit.md`.
@@ -35,16 +42,16 @@ spot-check 3-5 cell values. Missing table entirely → CRITICAL; wrong cell data
 representation (no Mermaid, no placeholder) → HIGH; placeholder-only when type was determinable →
 MEDIUM.
 
-**Step 7 — Mermaid syntax validation**: `crane mermaid --validate "$MD_FILE"` — validates 18 known
+**Step 7 — Mermaid syntax validation (unless delegated)**: `crane mermaid --validate "$MD_FILE"` — validates 18 known
 diagram type keywords, balanced brackets/parentheses, non-empty blocks. Invalid block → HIGH.
 
 **Step 8 — OCR quality** (if applicable): `crane ocr --quality "$MD_FILE"` on `<!-- OCR: ... -->`
 tagged sections, using 4 error patterns (non-ASCII runs, repeated l/I/1, repeated 0/O, long
 concatenated words). Error rate >10% → CRITICAL, 5-10% → HIGH, 2-5% → MEDIUM.
 
-**Step 9 — Structural integrity**: MD starts with an H1; major PDF sections present as headings;
-section ordering matches PDF reading order; no content before the H1. Inverted order → HIGH; missing
-H1 → MEDIUM.
+**Step 9 — Structural fidelity**: major PDF sections are present as headings and section ordering
+matches PDF reading order. Inverted order → HIGH. Generic H1/hierarchy mechanics are omitted when
+`md-heading-hierarchy` is delegated.
 
 **Step 10 — Finalize**: update status "In Progress" → "Complete"; add a summary (pages checked,
 findings by criticality, dimensions checked, pass/needs-fixes recommendation).

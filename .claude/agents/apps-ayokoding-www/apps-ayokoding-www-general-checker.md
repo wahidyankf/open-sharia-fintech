@@ -15,6 +15,12 @@ skills:
 
 # General Content Checker for ayokoding-web
 
+## Lifecycle Handoff
+
+Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Suppress only an exact
+ID/`verifies` match; empty or omitted delegation suppresses nothing. Preserve the evidence in the
+audit. Bilingual completeness and semantic content quality remain active.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)

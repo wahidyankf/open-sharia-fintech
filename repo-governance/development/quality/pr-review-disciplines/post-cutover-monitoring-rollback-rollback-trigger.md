@@ -44,8 +44,8 @@ operation**, never a history rewrite:
 1. `git revert` (or `git checkout` of the pre-deletion commit) the change that removed
    `.claude/agents/pr-review/pr-review-maker.md` and its register/catalog entries, reintroducing them as a new
    commit on top of the current branch.
-2. Run `npm run generate:bindings` to resynchronize `.opencode/`, `.codex/` and `.agents/` against the restored
-   `.claude/` source of truth.
+2. Run `npm run generate:bindings` to resynchronize every registry-declared generated agent path
+   against the restored `.claude/` source while preserving vendored paths.
 
 No force-push and no history rewrite happen at any step — restoring the monolith is a forward commit
 that reintroduces a previously deleted file, exactly like reverting any other change, per the

@@ -56,6 +56,19 @@ criterion must be checked against both the pre-violation and post-violation stat
 **Conditional rules skip cleanly**: Harness-Neutrality (13), Learning-Bearing Syllabus (20), and Vercel
 MCP (21) are scope-gated — record the exemption explicitly rather than silently omitting the check.
 
+**Minimal sufficiency is reviewed contextually**: treat the outcome, non-goals and out-of-scope
+items, acceptance criteria, every applicable repository rule, and required lifecycle obligations
+and gates as the stop condition. A plan introducing a lasting mechanism must name its concrete need
+and explain why existing mechanisms are insufficient; scope outside that boundary or mandatory
+safeguards omitted in the name of minimalism is a finding.
+
+## Quality-Gate Lifecycle Handoff
+
+When the plan quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
+registry IDs or predicates connected through `verifies`. Preserve pending state; never rerun or
+infer delegated work. Plan structure, semantics, evidence, and executability remain in scope. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Related
 
 `repo-generating-validation-reports` (report format, Convergence Safeguards), `repo-applying-maker-checker-fixer`

@@ -39,7 +39,7 @@ This convention implements the following core principles:
 
 - Does this convention embody our core principles?
 - Which principle does it support?
-- Does it create unnecessary complexity? (violates Simplicity Over Complexity)
+- Does an existing mechanism suffice? (applies Simplicity Over Complexity)
 - Is it explicit and understandable? (violates Explicit Over Implicit)
 - Is it accessible to all users? (violates Accessibility First)
 - Can it be automated? (supports Automation Over Manual)
@@ -73,6 +73,12 @@ After creating a new convention or practice document:
 4. **Use repo-rules-fixer** if issues found (after user review)
 
 **Workflow**: docs-maker (create) → repo-rules-maker (propagate) → repo-rules-checker (validate) → repo-rules-fixer (fix if needed)
+
+## Vision Supported
+
+Applying principles consistently keeps repository decisions aligned with the
+[Open Sharia Enterprise Vision](../vision/open-sharia-enterprise.md) instead of treating that vision
+as disconnected introductory prose.
 
 ## When Reviewing Changes
 

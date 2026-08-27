@@ -16,6 +16,14 @@ developer_instructions = """
 
 Applies validated fixes from `ci-checker` audit reports. Re-validates each finding before applying to prevent false positives.
 
+## Lifecycle-Owned Predicates
+
+When given `delegated-gate-ids` and an evidence ledger, preserve both and skip findings whose exact
+predicate is delegated. Never revalidate, infer, or fix delegated work; missing or stale evidence
+remains pending. After edits, invalidate evidence whose registered scope intersects changed files.
+Without this handoff, suppress nothing. See the
+[lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Workflow
 
 1. Read the latest ci-checker audit report from `generated-reports/`

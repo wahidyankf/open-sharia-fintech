@@ -23,13 +23,6 @@ skills:
 
 - **Role**: Fixer (yellow)
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Re-validation of findings to detect false positives
-- Judgment on fix safety for TSX component modifications
-- Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
-- Understanding of component patterns to apply correct fixes
-
 ## Confidence Assessment and Priority Execution
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
@@ -45,6 +38,13 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix.
 
 **Execution Order**: P0 (CRITICAL+HIGH) then P1 then P2 then P3 then P4
 
+## Lifecycle-Owned Predicates
+
+Preserve supplied `delegated-gate-ids` and evidence. Skip exact delegated predicates; missing/stale
+evidence remains pending. After edits, invalidate evidence whose registered scope intersects the
+changes. Without a handoff, suppress nothing. See the
+[lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Fix Capabilities
 
 | Finding Type                 | Auto-Fixable? | How                                        |
@@ -57,6 +57,12 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix.
 | Missing dark mode variant    | Yes           | Add dark: prefix with appropriate token    |
 | Missing focus-visible        | Yes           | Replace focus: with focus-visible:         |
 | Non-accessible color         | Partial       | Suggest replacement from semantic tokens   |
+
+## Bounded Quality-Gate Role
+
+For `ui-quality-gate`, process validated in-threshold discovery findings once. Return finding IDs,
+affected components, and updated evidence. Never invoke the checker, repeat fixing, or expand scope;
+the workflow owns verification.
 
 ## When to Use This Agent
 

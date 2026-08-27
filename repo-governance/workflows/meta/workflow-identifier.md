@@ -45,6 +45,7 @@ and body structure, step execution patterns, state/error handling, composability
 - [\*-check-fix Pattern — Consecutive Pass Requirement](./workflow-identifier/check-fix-consecutive-pass-requirement.md) — double-zero confirmation.
 - [\*-check-fix Pattern — Safety and Strictness](./workflow-identifier/check-fix-safety-and-strictness.md) — loop guards and mode levels.
 - [\*-check-fix Pattern — Example and Differences](./workflow-identifier/check-fix-example-and-differences.md) — canonical example, comparison table.
+- [\*-quality-gate Lifecycle Validation Ownership](./workflow-identifier/check-fix-lifecycle-validation-ownership.md) — registry-owned check delegation.
 - [Example Workflow Structure](./workflow-identifier/example-workflow-structure.md) — a full worked example.
 - [Documentation Requirements](./workflow-identifier/documentation-requirements.md) — the required sections.
 - [Future Enhancements](./workflow-identifier/future-enhancements.md) — not-yet-implemented features.

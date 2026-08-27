@@ -8,12 +8,10 @@ and as `governance-word-budget` in the `repo-governance audit` preflight, once a
 live only in the `governance-word-budget:` section of `repo-config.yml` — never restate them here,
 since a second copy drifts from config and produces contradictory verdicts.
 
-If `governance-word-budget` preflight is available: skip word counting entirely; read the preflight
-findings and check only qualitative concerns the mechanical gate can't measure (verbose sections
-where a one-line summary + `See` link would suffice, duplicate content reachable via a link,
-all-at-once-complexity structure anti-patterns). If preflight is absent (fallback): read the
-monitored surfaces, count words, classify against `repo-config.yml` thresholds, emit a finding for
-any surface over the `fail` ceiling and an advisory for the `warn` zone.
+Under `rules-quality-gate`, word counting is delegated by exact gate ID. Record evidence in the
+lifecycle ledger; if it is missing/stale, mark `pending` and do not count words. Continue only
+qualitative concerns a mechanical gate cannot measure (needless restatement, duplicate reachable
+content, or all-at-once complexity). Standalone invocation retains its configured fallback.
 
 **Remediation guidance**: the only sanctioned fix is progressive disclosure (inline content →
 one-line summary + `See` link) — call out forbidden anti-fixes (deleting rules, dense compression,
@@ -22,12 +20,10 @@ splitting into another auto-loaded file) if observed. See
 
 ## Step 7: Rules Governance Validation
 
-**Preflight skip annotations**: skip the traceability sub-portion if preflight covered
-`traceability-audit`; skip the cross-doc layer-numbering sub-portion if preflight covered
-`layer-coherence`; skip the vendor-neutrality terminology sub-portion if preflight covered
-`vendor-audit`. License presence is enforced by the deterministic `rhino-cli convention license`
-gate, not this preflight — never AI-re-derive it. Re-evaluate only contradictions, inaccuracies,
-semantic inconsistencies, and terminology alignment.
+**Ownership annotations**: consume retained traceability and layer-coherence findings without
+AI-rederiving them. Delegate vendor-neutrality and license presence when their exact registry IDs
+are supplied. Re-evaluate contradictions, inaccuracies, semantic inconsistencies, and terminology
+alignment because those remain domain judgement.
 
 **Scope**: all governance layers (`vision/`, `principles/`, `conventions/`, `development/`,
 `workflows/`, `.claude/agents/**/*.md` content/cross-layer consistency only — frontmatter
@@ -47,3 +43,7 @@ shape/naming/mirror parity belong to `rhino-cli harness` and `repo-harness-compa
    sections; every Workflow needs correct agent references.
 5. **Layer Coherence**: Vision→Principles→Conventions/Development→Agents→Workflows, each layer
    properly governing/implementing the layer(s) below.
+6. **Propagation Consolidation**: for each changed rule subject, verify every rule and
+   discoverability surface has a keep, amend, merge, delete, relocate, or supersede verdict and a
+   surviving canonical home. A kept redundancy needs a rationale; merge/delete must preserve every
+   distinct obligation and necessary discovery path. Do not demand repository-wide cleanup.

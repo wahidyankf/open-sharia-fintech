@@ -363,8 +363,8 @@ is already proven. Wave ordering by measured size:
 | A    | `convention`, `parity`                | ~735             | 11        | Smallest; proves the shim, the harness, and the CI wiring     |
 | B    | `repo-config`, `env`                  | ~1,598           | 62        | Self-contained, well-specified by feature files               |
 | C    | `doctor`, `test-coverage`             | ~650             | 53        | External-process heavy; exercises the shell layer             |
-| D    | `md`, `governance`, `git`             | ~3,344           | 128       | Largest parser surface; also absorbs the resequenced `git`    |
-| E    | `harness`, `specs`, `repo-governance` | ~5,000           | 185       | Highest coupling to `repo-config.yml`; generates the mirrors  |
+| D    | `md`, `governance`, `git`             | ~3,344           | 130       | Largest parser surface; also absorbs the resequenced `git`    |
+| E    | `harness`, `specs`, `repo-governance` | ~5,000           | 179       | Highest coupling to `repo-config.yml`; generates the mirrors  |
 | F    | `gate`                                | ~6,043           | 89        | Depends on every namespace above; drives the six-group matrix |
 
 Note the ordering is by **risk and dependency**, not by scenario count — wave C is smaller than
@@ -415,7 +415,7 @@ driven by divergent failure modes, not by line count.
 
 **Decision — the seam is the feature file.** One `.feature` file is one PR. This is stated once and
 holds for the whole plan, which makes the seam mechanical rather than a judgment call at every step:
-72 feature files, 72 implementation PRs, plus one flip PR per wave and the scaffolding, retirement,
+70 feature files, 70 implementation PRs, plus one flip PR per wave and the scaffolding, retirement,
 benchmark, and propagation PRs. A feature file whose cycles would exceed the line ceiling splits
 further at the scenario boundary, and that is the only permitted deviation.
 
@@ -433,18 +433,19 @@ and the Phase 2 gate re-measures them:
 | A         | `convention`                                                               | 3             | 11        |
 | B         | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 8             | 62        |
 | C         | `system`, `test-coverage`                                                  | 6             | 53        |
-| D         | `md`, `governance`, `git` (resequenced)                                    | 11            | 128       |
-| E         | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 37            | 185       |
+| D         | `md`, `governance`, `git` (resequenced)                                    | 11            | 130       |
+| E         | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 35            | 179       |
 | F         | `gate`                                                                     | 7             | 89        |
-| **Total** |                                                                            | **72**        | **528**   |
+| **Total** |                                                                            | **70**        | **524**   |
 
 > **Waves A and D differ from a naive spec-directory split.** `git/git-pre-commit.feature` sits
 > under `git/` but its five scenarios drive `md` commands — its own header records that the
 > `git pre-commit` CLI command was removed in 2026-06-26 — so those cycles were resequenced into
 > Wave D as integration-tier tests, and `git` flips there rather than in Wave A. The real `git`
 > surface (`commands/git/lockfile.rs`) had no Gherkin at all; Phase 3 authored
-> `git/git-lockfile.feature` (3 scenarios) and Wave D implements it, bringing the totals from
-> 525 / 71 to 528 / 72.
+> `git/git-lockfile.feature` (3 scenarios) and Wave D implements it. The current measured baseline
+> is 524 scenarios across 70 feature files after later governance-spec consolidation and the
+> split-document traceability regression case.
 >
 > **Wave B also differs from a naive split, the other direction.** `specs/env-staged-guard.feature`
 > sits under `specs/` — a directory otherwise wholly Wave E's — but its three scenarios drive
@@ -505,7 +506,7 @@ exercised through the shadow-diff harness and the `parity manifest validate` gat
 same wave the directory itself was assigned to (e.g. `system` → `doctor` is Wave C, matching
 `doctor, test-coverage`; `spec-coverage`/`contracts`/`ddd` → `specs` are all Wave E, matching
 `harness, specs, ...`; `repo-config-validate` → `repo-config` is Wave B, matching `repo-config, env`),
-so no correction to the wave map or the 528/72 totals is triggered by this mapping.
+so no correction to the wave map is triggered by this mapping.
 
 ### DD-8 — The `deps:audit` narrowing and the SDK floor
 

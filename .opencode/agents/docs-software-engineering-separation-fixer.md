@@ -34,6 +34,13 @@ read `docs-software-engineering-separation-checker` audit reports, re-validate e
 against current file state, and apply only HIGH-confidence fixes. You never blindly trust checker
 findings — always re-verify before editing.
 
+## Input Parameters
+
+- `delegated-gate-ids` (optional) — exact lifecycle gate IDs. When it contains `md-links`, do not
+  re-validate or fix internal path/fragment findings. Omitted preserves standalone full behavior.
+- `lifecycle-evidence` (optional) — Step 0 evidence ledger. After edits, intersect changed files
+  with delegated scopes and return `updated-lifecycle-evidence`, invalidating only affected entries.
+
 ## Core Responsibility
 
 Apply validated fixes for missing prerequisite statements, wrong AyoKoding path references,

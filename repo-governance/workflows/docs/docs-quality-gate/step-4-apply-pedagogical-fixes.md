@@ -10,8 +10,11 @@ Fix pedagogical issues, tutorial structure problems, narrative flow issues, and 
 
 **Agent**: `docs-tutorial-fixer`
 
-- **Args**: `report: {step1.outputs.tutorial-report-N}, approved: all, mode: {input.mode}`
-- **Output**: `{tutorial-fixes-applied}` - Fix report with same UUID chain as source audit
+- **Args**: `report: {step1.outputs.tutorial-report-N}, approved: all, mode: {input.mode},
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence}`
+- **Output**: `{tutorial-fixes-applied}`, `{updated-lifecycle-evidence}` after intersecting changed
+  files with delegated scopes
 - **Condition**: Tutorial findings exist from step 2
 - **Depends on**: Step 3 completion
 

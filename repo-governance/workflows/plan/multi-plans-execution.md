@@ -51,6 +51,11 @@ outputs:
 
 A scheduling layer over `plan-execution.md`, driving several ready plans together.
 
+## Agent References
+
+Each plan retains its normal specialist ownership; final implementation verification uses
+[plan-execution-checker](../../../.claude/agents/plan/plan-execution-checker.md).
+
 ## Contents
 
 - [Purpose & Mode](./multi-plans-execution/purpose-scope-and-execution-mode.md) — when to use, orchestrator.

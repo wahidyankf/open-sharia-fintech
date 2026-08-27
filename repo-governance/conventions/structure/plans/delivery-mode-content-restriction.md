@@ -38,10 +38,12 @@ reconcile when a plan folder's push includes non-markdown evidence files.
 **below, which is the current binding rule** — read that subsection before relying on either
 condition above.
 
-The `*-to-pr` modes additionally run the
-PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
-the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps at the plan's
-**delivery boundaries** only — never at every phase, per
+The `*-to-pr` modes require the exact-current-head/base `Quality gate` plus one authenticated clean
+current-head [`pr-leak-review`](../../../workflows/pr/pr-leak-review.md) before merge. Broad
+semantic review is absent by default and may
+appear only when the user explicitly requests [`pr-review`](../../../workflows/pr/pr-review.md) or
+[`pr-review-cycle`](../../../workflows/pr/pr-review-cycle.md). Selecting a `*-to-pr` mode authorizes
+PR steps at the plan's **delivery boundaries** only — never at every phase, per
 [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), and
 never at Phase 0 under any mode, per
 [Phase 0 Opens No PR](./phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).

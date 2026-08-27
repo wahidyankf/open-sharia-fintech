@@ -7,8 +7,11 @@ generation, progressive writing, UTC+7 timestamp format. Report filename:
 `harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. Write the execution chain UUID to
 `generated-reports/.execution-chain-harness-compat` before spawning any `web-researcher` tasks.
 
-**Step 1 — Run Phase 0**: run all five invariants via Bash, write findings under
-`## Phase 0 — Cross-Vendor Parity Invariants` as discovered. If any HIGH-criticality invariant
+**Step 1 — Run Phase 0**: for a standalone invocation, run the full invariant inventory. For a
+quality-gate invocation, consume `delegated-gate-ids` and lifecycle evidence first, omit each
+exactly owned predicate, and record verified/pending/not-applicable in a separate lifecycle
+ledger. Never use a local run or AI imitation to replace missing evidence. Write retained findings
+under `## Phase 0 — Cross-Vendor Parity Invariants`. If any HIGH-criticality retained invariant
 fails, note it prominently in the summary — but continue to Phase 1 regardless, do not
 short-circuit.
 
@@ -52,6 +55,8 @@ write D6 findings progressively.
 **Phase 0 (parity invariants)**: N findings (HIGH: N, MEDIUM: N)
 **Phase 1 (external drift)**: N findings (CRITICAL: N, HIGH: N, MEDIUM: N, LOW: N)
 **Total findings**: N
+
+**Lifecycle status**: verified | pending | not-applicable
 
 **By harness** (Phase 1):
 

@@ -32,3 +32,10 @@ you're here, also fix X" is out of bounds unless X is inside the PR's own scope 
 genuinely separate improvement belongs in its own follow-up plan or issue. This scope guard
 stacks with the discipline charter: a finding must be both in-scope for the PR **and**
 in-charter for this discipline before it is postable.
+
+## Focused Leak-Only Invocation
+
+`pr-leak-review` bypasses the ordinary semantic scope guard only to inspect its exact three leak
+predicates across the aggregate diff and delivery-controlled metadata. It never broadens into the
+security agent's other charter. Broad passes consume authenticated current-head leak evidence and
+suppress those predicates rather than repeating them.

@@ -44,7 +44,7 @@ when_to_use: "Use to locate a plan-execution child document."
 - [Pre-Archival Gates](./finalization-pre-archival-gates.md) — A UI-bearing or web-UI feature-change plan approaches archival and must run its pre-archival visual and retest gates.
 - [Rule-16 API Retest Gate](./finalization-rule16-api-retest.md) — An API feature-change plan approaches archival and must run its near-end exploratory retest gate.
 - [Knowledge Capture Gate](./finalization-knowledge-capture.md) — Confirming every learnings.md entry reached a terminal state before archival.
-- [PR-Review Maker→Fixer Cycle Gate](./finalization-pr-review-gate.md) — A \*-to-pr plan approaches archival and must complete its PR review cycle before merge.
+- [Exact-Head PR CI Gate](./finalization-pr-ci-gate.md) — A \*-to-pr plan approaches archival and must prove current-head/base CI plus applicable surface evidence before merge.
 - [Paired-Repository Terminal Handoff](./finalization-paired-repository-terminal-handoff.md) — Post-merge sibling-handoff emission and authenticated read-back before successor scouting.
 - [Status Logic, Infra-Execution Gate, and Direct-Push Archival](./finalization-status-logic-and-infra-gate.md) — The pass/partial/fail branching and the Infra-Execution Gate precondition.
 - [Direct-Push Worktree Cleanup and PR-Mode Archival](./finalization-worktree-cleanup-and-pr-archival.md) — Worktree cleanup for direct-push modes, archival-in-PR for \*-to-pr modes.

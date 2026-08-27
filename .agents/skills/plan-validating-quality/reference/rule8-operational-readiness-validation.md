@@ -15,15 +15,16 @@ entirely missing, since plans lacking them are incomplete regardless of other qu
    against the plan's declared delivery target (the PR's check run under `*-to-pr`; `origin main`
    under direct-push modes — hardcoding `main` while declaring `*-to-pr` is itself a finding);
    specifies which workflows to monitor; instructs watching for and fixing failures.
-3. **Development Environment Setup** — steps set up the dev/execution environment (dependency
-   install, env vars, database setup, dev server startup as needed), specific enough for someone
-   unfamiliar to follow.
+3. **Development Environment Setup** — before any work in every selected worktree, new or existing,
+   steps run `rtk npm install` at its root and `rtk npm run doctor -- --fix`; only then cover env
+   vars, database, and dev-server setup. Instructions are specific enough for a newcomer.
 4. **Fix-All-Issues Instruction** — instructs fixing ALL issues found during quality gates, even
    unrelated to current changes (root-cause orientation), explicitly: "Fix all failures, not just
    those caused by your changes."
-5. **Thematic Commit Guidance** — instructs committing thematically (logically cohesive groups),
-   references Conventional Commits, instructs splitting different domains/concerns, forbids bundling
-   unrelated fixes into one commit.
+5. **Thematic Commit Guidance** — preserves explicit authorization for a named change set, then
+   selects the fewest build-valid, independently reviewable/revertible commits; keeps required
+   completion artifacts with their change, splits independent concerns, references Conventional
+   Commits, and forbids exceeding authorized scope.
 
 **Finding severity**: missing ALL items: **CRITICAL**. Missing an individual item (1-5): **HIGH**
 per missing item. Present but vague/incomplete: **MEDIUM**.

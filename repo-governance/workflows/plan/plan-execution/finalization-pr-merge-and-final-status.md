@@ -4,8 +4,8 @@ description: Defines PR-mode merge, immediate safe cleanup, and final status.
 when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree afterward, or determining the plan's final status.
 ---
 
-1. **Merge — `[AI]` by default**: once the done-definition is fully satisfied and the hardened
-   merge preconditions (a)-(e) hold, surface the PR URL and the done-definition checklist, then
+1. **Merge — `[AI]` by default**: once exact-current-head/base PR CI, applicable surface gates,
+   archival-in-PR, and the hardened merge preconditions (a)-(e) hold, surface the PR URL and checklist, then
    merge. A `[HUMAN]` merge gate applies only where the plan's own step says so explicitly — in
    that case, hand off the ready-to-merge PR and STOP instead of merging. The preconditions are
    identical in both cases; only the actor differs. See

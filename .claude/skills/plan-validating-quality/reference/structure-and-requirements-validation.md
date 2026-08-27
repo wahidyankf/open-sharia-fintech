@@ -45,3 +45,12 @@ KPIs) in `prd.md`; user stories or Gherkin in `brd.md`; personas in `brd.md`; af
 **Internet-citation compliance**: a plan citing external data must inline the specific
 excerpt/number/quote plus URL and access date — URL-only citations are a finding (links rot, future
 readers must verify claims from the plan alone).
+
+**Minimal-sufficiency boundary (HIGH)**: read the requested outcome, explicit Non-Goals and
+out-of-scope items, Gherkin acceptance criteria, every applicable repository rule, and required
+lifecycle obligations and quality gates together as the plan's stop condition. Delivery or
+technical scope is permitted when traceable either to the requested outcome or acceptance criteria,
+or to a named applicable rule or required lifecycle obligation; flag scope with no such
+traceability. Also flag any attempt to remove mandatory tests, specifications, regression coverage,
+accessibility, security, documentation, governance propagation, or required gates in the name of
+minimalism.

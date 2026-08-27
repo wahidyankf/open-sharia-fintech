@@ -30,11 +30,11 @@ issue — surface it to the invoker before proceeding with delivery of the passi
 Commit and deliver per the selected mode.
 
 **Commit guidance** (per [Commit Messages Convention](../../../development/workflow/commit-messages.md)):
-Use Conventional Commits format. Split thematically — plan files and rationale docs may be
-separate commits. Never commit secrets. Respect each repo's pre-commit and pre-push hooks; do not
-bypass them.
+Use Conventional Commits format. After authorization, apply the thematic boundary test: keep a
+plan and required rationale together when they complete one purpose; split only independently
+reviewable/revertible concerns. Never commit secrets or bypass hooks.
 
-Example commit messages:
+Examples:
 
 ```
 chore(plans): add <objective-slug> parity plan (ose-public)
@@ -68,7 +68,7 @@ Report outcomes.
 - `gate-results`: plan-quality-gate status per plan (pass / partial / fail)
 - `delivery-refs`: Commit SHAs pushed to `origin main` (main modes) or PR URLs (worktree-to-pr)
 - Deviation count summary: "N deliberate deviations recorded; 0 silent deviations"
+- Parity identity assertion: actual worktree basename and corresponding branch per repository match
+  the common record, with every `not applicable` entry justified by mode or repo-only scope
 
-The deviation count summary is the key quality signal. A workflow run that produces zero
-deliberate deviations and zero silent deviations has done nothing useful. A run with N deliberate
-deviations and zero silent deviations has done exactly what this workflow exists to do.
+The deviation count is the key quality signal: every difference is deliberate, none silent.

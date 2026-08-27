@@ -88,30 +88,28 @@ behavior/rhino-cli/gherkin/
 
 | File                              | Command(s)                         | Scenarios |
 | --------------------------------- | ---------------------------------- | --------- |
-| `governance-word-budget.feature`  | `governance word-budget validate`  | 20        |
+| `governance-word-budget.feature`  | `governance word-budget validate`  | 22        |
 | `governance-readme-index.feature` | `governance readme-index validate` | 19        |
 
 ### harness
 
-| File                                        | Command(s)                                                     | Scenarios |
-| ------------------------------------------- | -------------------------------------------------------------- | --------- |
-| `agents-bindings.feature`                   | `harness bindings validate`/`generate`                         | 10        |
-| `agents-detect-duplication.feature`         | `harness duplication validate`                                 | 4         |
-| `agents-skills-mirror.feature`              | `harness bindings generate`/`validate` (skills mirror)         | 5         |
-| `agents-sync.feature`                       | `harness sync validate`                                        | 8         |
-| `agents-validate-claude.feature`            | `harness claude validate`                                      | 5         |
-| `codex-binding.feature`                     | `harness bindings generate` (Codex)                            | 3         |
-| `governance-word-budget-agents-md.feature`  | `governance word-budget validate`                              | 3         |
-| `governance-word-budget-pre-push.feature`   | `governance word-budget validate`                              | 3         |
-| `governance-word-budget-rule.feature`       | `governance word-budget validate`                              | 5         |
-| `governance-word-budget-thresholds.feature` | `governance word-budget validate`                              | 6         |
-| `harness-audit.feature`                     | `harness audit`                                                | 1         |
-| `harness-catalog.feature`                   | `harness catalog generate`/`validate`                          | 2         |
-| `harness-ownership.feature`                 | `harness ownership validate`                                   | 5         |
-| `harness-sync-triage.feature`               | `harness sync triage`/`promote`                                | 12        |
-| `opencode-conformance.feature`              | n/a (catalog-content and ideas-tree invariant)                 | 2         |
-| `opencode-skills-removal.feature`           | `governance word-budget validate` (content-deletion invariant) | 2         |
-| `vendored-skill-preservation.feature`       | `harness bindings generate`/`validate`, `repo-config validate` | 2         |
+| File                                      | Command(s)                                                     | Scenarios |
+| ----------------------------------------- | -------------------------------------------------------------- | --------- |
+| `agents-bindings.feature`                 | `harness bindings validate`/`generate`                         | 10        |
+| `agents-detect-duplication.feature`       | `harness duplication validate`                                 | 4         |
+| `agents-skills-mirror.feature`            | `harness bindings generate`/`validate` (skills mirror)         | 5         |
+| `agents-sync.feature`                     | `harness sync validate`                                        | 8         |
+| `agents-validate-claude.feature`          | `harness claude validate`                                      | 5         |
+| `codex-binding.feature`                   | `harness bindings generate` (Codex)                            | 3         |
+| `governance-word-budget-pre-push.feature` | `governance word-budget validate`                              | 4         |
+| `governance-word-budget-rule.feature`     | `governance word-budget validate`                              | 5         |
+| `harness-audit.feature`                   | `harness audit`                                                | 1         |
+| `harness-catalog.feature`                 | `harness catalog generate`/`validate`                          | 2         |
+| `harness-ownership.feature`               | `harness ownership validate`                                   | 5         |
+| `harness-sync-triage.feature`             | `harness sync triage`/`promote`                                | 12        |
+| `opencode-conformance.feature`            | n/a (catalog-content and ideas-tree invariant)                 | 2         |
+| `opencode-skills-removal.feature`         | `governance word-budget validate` (content-deletion invariant) | 2         |
+| `vendored-skill-preservation.feature`     | `harness bindings generate`/`validate`, `repo-config validate` | 2         |
 
 ### md
 
@@ -143,7 +141,7 @@ behavior/rhino-cli/gherkin/
 | -------------------------------------------- | ------------------------------------------ | --------- |
 | `repo-governance-audit.feature`              | `repo-governance audit`                    | 6         |
 | `repo-governance-layer-coherence.feature`    | `repo-governance layer-coherence validate` | 3         |
-| `repo-governance-traceability-audit.feature` | `repo-governance traceability validate`    | 5         |
+| `repo-governance-traceability-audit.feature` | `repo-governance traceability validate`    | 8         |
 | `repo-governance-vendor-audit.feature`       | `repo-governance vendor validate`          | 12        |
 
 ### spec-coverage

@@ -1,6 +1,6 @@
 ---
 title: "Commit Ordering Best Practices"
-description: How to order a sequence of related commits — create before update, refactor before fix, and a natural type progression.
+description: Order already-independent thematic commits by dependency without creating incomplete intermediate states.
 category: explanation
 subcategory: development
 tags:
@@ -14,17 +14,16 @@ when_to_use: Use when a change requires multiple commits and you need to decide 
 
 # Commit Ordering Best Practices
 
-When you have multiple commits, order them logically:
+After the thematic boundary test establishes multiple independent commits, order them logically:
 
-1. **Create before update** - Create new files before updating references to them
-2. **Refactor before fix** - Refactor code before fixing bugs in the refactored code
-3. **Type progression** - Follow a natural flow: `feat` → `refactor` → `docs` → `test` → `fix`
+1. **Dependencies first** — a later independent purpose may rely on an earlier one.
+2. **Preserve validity** — every boundary builds, reviews, and reverts safely on its own.
+3. **Order by purpose, not type** — Conventional Commit types describe commits; they do not create
+   an artificial `feat` → `docs` → `test` sequence.
 
 **Example of good commit ordering:**
 
 ```
-1. feat(agents): add docs-link-checker agent          # Create new file
-2. refactor(agents): rename agents for consistency    # Rename existing files
-3. docs(agents): update all references to renamed agents  # Update references
-4. fix(docs): align frontmatter date                  # Fix issues discovered
+1. feat(agents): add documented docs-link-checker agent  # Includes required index and tests
+2. fix(docs): align unrelated frontmatter date           # Independent repair
 ```

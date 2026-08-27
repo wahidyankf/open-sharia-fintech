@@ -16,8 +16,9 @@ Prettier + markdownlint pipeline (requires `jq`).
 
 ### Working with `.claude/` and `.opencode/`
 
-Edit both with normal `Write`/`Edit` tools — pre-authorized in `.claude/settings.json`, no approval
-prompt fires.
+Normal `Write`/`Edit` access to both roots is pre-authorized in `.claude/settings.json`, so no
+approval prompt fires. Authorization does not override the path-level ownership in
+`repo-config.yml`: edit `source` or `vendored` paths only, and regenerate `generated` paths.
 
 - `.claude/agents/<role-subfolder>/*.md` — agent definitions, nested into role subfolders
 - `.claude/skills/*/SKILL.md` — source of truth for both Claude Code and OpenCode (OpenCode reads
@@ -39,11 +40,15 @@ agents are ordinary `.claude/agents/pr-review/*.md` files under this binding.
 Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Codex CLI. The
 `harness:` registry in `repo-config.yml` is authoritative; adding a fourth is one entry there.
 
-- **`.claude/`**: source of truth (PRIMARY)
-- **`.opencode/`**, **`.codex/`**, **`.agents/`**: auto-generated (SECONDARY) via
-  `npm run generate:bindings`, landing in the **same commit** as the `.claude/` source.
-  `npm run validate:sync` verifies only the OpenCode agent mirror and the `.agents/skills/` mirror;
-  `npm run harness:bindings-validation` additionally verifies `.codex/agents/` and the
+- **`.claude/`**: source binding (PRIMARY)
+- **Generated mirrors**: `.opencode/agents/`, `.codex/agents/`, the delimited agent region in
+  `.codex/config.toml`, and non-vendored paths under `.agents/skills/`; regenerate them with
+  `npm run generate:bindings` and land them in the **same commit** as their `.claude/` source.
+- **Vendored exceptions**: secondary configuration files and plugin subtrees declared by
+  `repo-config.yml`; maintain these in place because they have no generated source.
+  `npm run validate:sync` verifies only the OpenCode agent mirror and non-vendored Skill mirrors
+  under `.agents/skills/`; `npm run harness:bindings-validation` additionally verifies
+  `.codex/agents/` and the
   `.codex/config.toml` generated region. Never hand-edit a mirror — except a path a harness entry's
   `ownership:` list declares `vendored` (e.g. `.codex/config.toml`'s hand-authored tables outside
   its delimited region), which is hand-maintained by design (see
@@ -53,8 +58,9 @@ Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Code
 Claude Code uses tool arrays and named colors; OpenCode uses a `permission` object and theme tokens
 (translated by `rhino-cli harness bindings generate`). Model tiers map to concrete vendor IDs — see
 [model-selection.md](./repo-governance/development/agents/model-selection.md). OpenCode reads
-`.claude/skills/{name}/SKILL.md` natively; Codex reads the `.agents/skills/` mirror. Only use skills
-from trusted sources; all skills here are maintained by the project team.
+`.claude/skills/{name}/SKILL.md` natively; Codex reads generated and vendored Skills under
+`.agents/skills/`. Only use skills from trusted sources; all skills here are maintained by the
+project team.
 
 **See**: [Platform Binding Color Translation](./repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
 
@@ -71,23 +77,6 @@ Nx tooling guidelines, generator usage, and `nx_docs` policy are documented in
 [AGENTS.md](./AGENTS.md) and apply identically here.
 
 <!-- nx configuration end-->
-
-<!-- rtk-instructions v2 -->
-
-### RTK (Rust Token Killer)
-
-Token-optimized CLI wrapper filtering AI output. See
-[github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk). Always prefix commands with `rtk`; it
-passes through unchanged when no dedicated filter exists.
-
-```bash
-rtk gain              # Show token savings analytics
-rtk gain --history    # Show command usage history with savings
-rtk discover          # Analyze Claude Code history for missed opportunities
-rtk proxy <cmd>       # Execute raw command without filtering (for debugging)
-```
-
-<!-- /rtk-instructions -->
 
 ### caveman — Token Compression
 

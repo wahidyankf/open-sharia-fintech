@@ -16,7 +16,9 @@ for the current binding rule. The historical description below is kept for conte
 
 A change touching **only** `plans/**`, with no `apps/` or `libs/` code, previously could push direct
 to `main`. This **plan-docs-only** carve-out stood on its own footing as a general convention: such a
-change ships no runtime behaviour, so the PR review cycle has no code surface to review.
+change ships no runtime behaviour. The retired rationale predated the current rule that broad
+semantic review is explicit-only for every PR; exact-head PR CI and the focused leak review still
+apply to plan-only PRs.
 
 It is stated here in its own right and is **not** derived from DD-11 of any individual plan, which
 disclaims being a general precedent.

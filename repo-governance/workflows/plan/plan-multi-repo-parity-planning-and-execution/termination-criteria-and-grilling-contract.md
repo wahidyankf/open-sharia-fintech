@@ -20,10 +20,10 @@ when_to_use: Use when determining the composite's final status, or confirming wh
 repo depending on that repo's resolved
 [`## Delivery Mode`](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) — a direct push of the
 archival commit to `origin main` for the direct-push modes (`worktree-to-origin-main`,
-`main-to-origin-main`), or a green, fully-reviewed PR with the archival move committed inside it,
+`main-to-origin-main`), or a green exact-head-CI/leak-reviewed PR with the archival move committed inside it,
 awaiting the merge outside the AI done-boundary, for the `*-to-pr` modes
 (`worktree-to-pr`, `main-to-pr`) — see the
-[PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) done-definition. Because each
+[PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md). Because each
 repo resolves its delivery mode independently, a single composite run may end with some repos
 merged directly and others handed off as open PRs.
 

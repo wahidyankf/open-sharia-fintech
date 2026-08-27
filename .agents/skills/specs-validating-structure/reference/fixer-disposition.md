@@ -15,8 +15,11 @@ files); Category 3 feature file naming (kebab-case via `git mv`); Category 5 C4 
 broken cross-references (fix relative paths from actual file locations); Category 8 directory
 structure violations (move feature files to correct nesting via `git mv`, per
 [Specs Directory Structure Convention](../../../../repo-governance/conventions/structure/specs-directory-structure.md));
-allowlist-gate findings from `nx run rhino-cli:validate:specs-counts`/`-links` (create missing
-folder + `README.md` + placeholder spec; repair or remove a broken link).
+non-delegated `specs structure validate` findings (create missing folder + `README.md` + placeholder
+spec) and non-delegated `md links validate` findings (repair or remove a broken link).
+
+When the corresponding gate ID is delegated, these findings never enter the audit and the fixer
+must not reconstruct them.
 
 **Requires Review (MEDIUM confidence)**: Category 1 missing user-story blocks (template
 generatable, content needs human review); Category 4 cross-folder coverage gaps, contradictions

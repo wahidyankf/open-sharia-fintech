@@ -21,6 +21,11 @@ skills:
 
 # Primer Tutorial Fixer for ayokoding-web
 
+## Lifecycle Handoff
+
+Accept optional delegated IDs/evidence. Skip only exact predicates; absent delegation suppresses
+nothing. After edits, return `updated-lifecycle-evidence`, invalidating scope-intersecting entries.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

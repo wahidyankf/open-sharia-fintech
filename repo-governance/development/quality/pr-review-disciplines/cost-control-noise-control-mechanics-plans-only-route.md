@@ -45,10 +45,10 @@ review-route record.
 
 ## Review Focus
 
-Security runs the **primary mandatory probe**: whether the diff exposes real secrets, credentials,
-or other values that grant access under the canonical
-[system-secret boundary](../../../conventions/security/secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md).
-Architecture reviews architecture and design decisions made by the plan. Logic reviews domain
+The separate mandatory [`pr-leak-review`](../../../workflows/pr/pr-leak-review.md) owns real
+secrets, protected environment properties, and machine-specific paths for every exact PR head.
+The optional plans-only semantic route consumes that authenticated evidence and does not repeat the
+predicate. Architecture reviews architecture and design decisions made by the plan. Logic reviews domain
 intent and Gherkin acceptance-criteria completeness. Documentation reviews the plan as the shipping
 artifact for substantive quality and completeness. Governance reviews mechanical conformance.
 
@@ -62,13 +62,12 @@ standard full-tier Content-Type Applicability Filter also remains unchanged.
 
 ## Enforcement
 
-**Enforcement disposition — covered.** The PR-Review Quality Gate invokes a fresh
-`pr-review-scout-maker` every cycle. Its review-route record exposes the ordinary tier, plans-only
-verdict, primary probe, and every selected or skipped specialist.
+**Enforcement disposition — split.** `pr-leak-review` provides mandatory current-head evidence.
+Explicit `pr-review` routes a plans-only pass and records every selected or skipped specialist.
 
 ## Related
 
 - [Risk-Tier Fan-Out](./cost-control-noise-control-mechanics-risk-tier-fan-out.md) — standard tier
   calculation and specialist selection.
-- [What Code-Related Means](../../../workflows/pr/pr-review-quality-gate/what-code-related-means.md)
+- [What Code-Related Means](../../../workflows/pr/pr-review-cycle/what-code-related-means.md)
   — why the plan remains a blocking shipping artifact.

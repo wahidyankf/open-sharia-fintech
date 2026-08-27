@@ -38,6 +38,5 @@ topic (e.g., `#authentication`, `#api`, `#setup`, `#configuration`).
    live (link), why it matters (1 sentence, if critical). Detailed examples, comprehensive
    explanations, and complete rule lists belong in convention docs instead.
 5. **Size awareness**: `AGENTS.md` is held to the Governance Word-Budget Convention, whose
-   thresholds live in `repo-config.yml` and are enforced at pre-push and in CI. The file runs close
-   to its ceiling, so every addition must be minimal and essential — when in doubt, link rather
-   than duplicate.
+   thresholds live in `repo-config.yml` and are enforced at pre-push and in CI. Every addition must
+   remain minimal and essential — when in doubt, link rather than duplicate.

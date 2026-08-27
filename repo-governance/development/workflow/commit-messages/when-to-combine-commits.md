@@ -1,6 +1,6 @@
 ---
-title: "When to Combine Commits"
-description: The two cases where multiple files belong in one atomic commit — a single logical change, and tightly coupled changes.
+title: "What Belongs in One Commit"
+description: Keep every artifact required to complete one coherent, build-valid, revertible purpose together.
 category: explanation
 subcategory: development
 tags:
@@ -12,11 +12,13 @@ created: 2025-11-24
 when_to_use: Use when deciding whether related changes across multiple files should land in one commit instead of several.
 ---
 
-# When to Combine Commits
+# What Belongs in One Commit
 
-Combine related changes into a single commit when:
+After explicit commit authorization, combine files when they complete one coherent purpose. The
+commit must build, make sense in review, and revert safely without a later companion commit.
 
-**Single logical change** - Multiple files that together form one atomic feature or fix:
+**Completion artifacts belong together** — include required implementation, tests, documentation,
+specifications, references, migrations and rollback, and generated mirrors:
 
 ```
 PASS: Good:
@@ -30,7 +32,7 @@ FAIL: Bad:
 4. feat(auth): update routes.js
 ```
 
-**Tightly coupled changes** - Changes that don't make sense separately or would break the build if separated:
+**Tightly coupled changes** — changes that do not make sense or would break the build separately:
 
 ```
 PASS: Good:
@@ -42,3 +44,6 @@ FAIL: Bad:
 2. refactor(api): update call sites
    (This would break the build between commits)
 ```
+
+Do not split merely because files have different extensions, directories, scopes, or Conventional
+Commit types. Split only an independently reviewable and revertible concern.

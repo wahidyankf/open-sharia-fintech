@@ -27,7 +27,7 @@ inputs:
     default: 7
   - name: max-concurrency
     type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
+    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
     required: false
     default: 3
   - name: auto-fix-level
@@ -41,6 +41,10 @@ outputs:
     type: enum
     values: [excellent, needs-improvement, failing]
     description: Final tutorial quality status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -71,6 +75,7 @@ Iterative Maker-Checker-Fixer quality gate for Primer ("Just Enough X") tutorial
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode](./ayokoding-web-primer-quality-gate/execution-mode.md) — Agent Delegation vs. manual fallback.
 - [Workflow Overview and Research Delegation](./ayokoding-web-primer-quality-gate/workflow-overview-and-research-delegation.md) — flow diagram, research delegation.
 - [Steps 1-2: Maker and Checker](./ayokoding-web-primer-quality-gate/step-1-and-2-maker-and-checker.md) — create examples, validate quality.

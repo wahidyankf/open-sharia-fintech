@@ -23,19 +23,20 @@ structure intact, record each touched file in the fix summary.
 ## Process Summary
 
 1. Initialize fix report (`repo-generating-validation-reports` skill).
-2. Read the checker's audit report.
+2. Read the checker's audit report. In a quality-gate invocation, also read
+   `delegated-gate-ids`; do not process findings for those exact predicates. Missing/stale
+   lifecycle evidence remains pending and is not repair work for this fixer.
 3. For each finding, in criticality × confidence priority order (P0 first): re-read the target
    file to verify drift still exists, check the source confidence tag, apply (HIGH confidence
    only) or skip with reason, verify the fix was applied, write the result progressively.
-4. After all Invariant 3 fixes: confirm `npm run generate:bindings` is idempotent.
-5. After all `.claude/agents/` edits: run `npm run generate:bindings`.
-6. Re-run binding validation (`apps/rhino-cli/scripts/rhino-bin.sh agents validate-bindings`) —
-   pass logs VALIDATED, fail surfaces failing files and exits non-zero.
-7. Re-run vendor audit (`apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/`)
-   — pass logs VALIDATED, fail surfaces violations and exits non-zero.
-8. Capture changed files: `git diff --name-only HEAD`.
-9. Write FALSE_POSITIVE carry-forward entries.
-10. Recommend re-running `repo-harness-compatibility-checker` to verify.
+4. Standalone only: after Invariant 3 fixes, confirm `rtk npm run generate:bindings` is idempotent.
+5. After `.claude/agents/` edits, run `rtk npm run generate:bindings` as the required mutation.
+6. Standalone only: re-run binding and vendor validation. In quality-gate context, never rerun
+   these delegated predicates.
+7. Capture changed files with `rtk git diff --name-only HEAD`. In quality-gate context, intersect
+   them with delegated scopes, invalidate only affected evidence, and return the updated ledger.
+8. Write FALSE_POSITIVE carry-forward entries.
+9. Recommend re-running `repo-harness-compatibility-checker` to verify domain findings.
 
 **Focus on safety**: better to skip an uncertain fix than silently corrupt a binding file
 multiple harnesses depend on.

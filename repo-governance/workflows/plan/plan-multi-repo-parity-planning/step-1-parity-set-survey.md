@@ -6,6 +6,12 @@ when_to_use: Use when starting a parity run, to build the per-repo state invento
 
 # Step 1 — Parity-Set Survey (Per Repo, Parallelizable)
 
+Before any mutation, derive the objective slug and record the common worktree basename and
+corresponding short-lived branch mapping under
+[Cross-Repository Parity Identity](../../../development/workflow/cross-repository-parity-identity.md).
+Probe every intended identity in every target repository. If unavailable, prove the existing
+identity belongs to this delivery or choose one common alternative for the full parity set.
+
 Survey each target repo's current state relevant to the objective. Work empirically: read the
 configs, grep the files, run the tools — do not trust docs alone.
 
@@ -40,7 +46,7 @@ A target repo's package baseline, environment scanner, test-target isolation, or
 git topology can all change between survey and execution; a mechanically correct copy step built on a
 stale inventory can revert newer work on the target or fail before establishing its own baseline.
 
-**Output**: A per-repo state inventory. Every dimension the objective touches is inventoried for
+**Output**: A per-repo state inventory plus the parity identity record. Every dimension the objective touches is inventoried for
 every repo. Document what exists, what is absent, and any repo-specific constraint that will
 affect what the plan must contain.
 

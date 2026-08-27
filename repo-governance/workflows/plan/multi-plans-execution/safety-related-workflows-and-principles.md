@@ -1,6 +1,6 @@
 ---
 title: "Safety Features, Related Workflows, and Principles"
-description: The guardrails bounding a multi-plan run, links to plan-execution.md and the PR-review cycle, and the five general principles this design maps to.
+description: The guardrails bounding a multi-plan run, links to plan-execution.md and the focused PR leak gate, and the five general principles this design maps to.
 when_to_use: Use when verifying what safeguards a run relies on, navigating to a composed workflow, or checking which principles a rule implements.
 ---
 
@@ -22,8 +22,10 @@ when_to_use: Use when verifying what safeguards a run relies on, navigating to a
   single-plan case.
 - [`plan-quality-gate.md`](../plan-quality-gate.md) — the pre-execution gate every named plan must
   pass before it is eligible (Phase A2).
-- [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) — the per-plan pre-merge gate run for
-  each `*-to-pr` plan (D1).
+- [PR Leak Review](../../pr/pr-leak-review.md) — the mandatory exact-current-head leak gate for each
+  `*-to-pr` plan (D1).
+- [PR Review Cycle](../../pr/pr-review-cycle.md) — an optional semantic cycle, run only when the
+  user explicitly requests it.
 - [`plan-multi-repo-parity-planning-and-execution.md`](../plan-multi-repo-parity-planning-and-execution.md)
   — the distinct concern of propagating one change byte-identically across the three bound repos
   (a plan whose scope this scheduler treats as a single serialized unit).

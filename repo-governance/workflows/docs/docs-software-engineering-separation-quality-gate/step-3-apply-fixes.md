@@ -10,8 +10,11 @@ Apply all validated fixes from the audit report.
 
 **Agent**: `docs-software-engineering-separation-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
-- **Output**: `{fixes-applied}`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{fixes-applied}`, `{updated-lifecycle-evidence}` after intersecting changed files
+  with delegated scopes
 - **Condition**: Findings exist from step 2
 - **Depends on**: Step 2 completion
 
@@ -25,3 +28,4 @@ Apply all validated fixes from the audit report.
 - Adds missing prerequisite statements
 - Removes duplicated educational content from style guides
 - Ensures docs/explanation focuses on repository-specific conventions
+- A skipped fixer carries Step 0 lifecycle evidence forward unchanged

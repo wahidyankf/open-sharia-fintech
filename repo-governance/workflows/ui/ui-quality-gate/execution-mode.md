@@ -12,7 +12,10 @@ when_to_use: Use when starting the UI quality gate, to decide between Agent Dele
 
 **How to Execute**:
 
-```
+```text
 User: "Run UI quality gate workflow for libs/web-ui/"
 User: "Run UI quality gate for apps/organiclever-app-web/src/components/ui/"
 ```
+
+Each invocation is one bounded run. A `partial` or `fail` result requires a separately started run;
+the workflow never re-enters itself.

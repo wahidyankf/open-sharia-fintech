@@ -42,9 +42,9 @@ gap that would confuse but not actively mislead; `LOW` = minor polish with no ma
 
 ## SUPPRESS Block (Never Raise)
 
-- Heading-hierarchy, linking, Mermaid-validity, or naming issues already caught by this repo's
-  mechanical gates (markdownlint-cli2, Prettier, `rhino-cli md mermaid validate`,
-  `md links validate`, `md heading-hierarchy validate`) — governance's territory per ruling (f).
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../.claude/skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Stylistic wording preferences with no substantive clarity or completeness impact.
 - Suggesting content that already exists elsewhere in the diff/document — verify absence first.
 - Time-based framing complaints already covered by

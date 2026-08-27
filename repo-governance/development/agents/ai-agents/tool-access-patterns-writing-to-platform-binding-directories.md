@@ -14,12 +14,18 @@ when_to_use: Use when an agent's frontmatter tools list needs to support writing
 
 # Tool Access Patterns — Writing to Platform Binding Directories
 
-Use the normal `Write` / `Edit` tools for files in `.claude/` and `.opencode/`. Both paths are pre-authorized in the platform settings (`Write(.claude/**)`, `Edit(.claude/**)`, `Write(.opencode/**)`, `Edit(.opencode/**)`), so no approval prompts fire. `Bash` heredoc and `sed` remain appropriate for bulk mechanical substitutions across many files, but there is no restriction on direct edits.
+Use normal file-editing tools for paths that `repo-config.yml` classifies as `source` or `vendored`.
+Platform authorization permits the operation; it does not override ownership. Never hand-edit a
+`generated` path or generated delimited region. Use bulk substitution only for mechanical changes
+within editable paths.
 
 **Applies to**:
 
-- Creating or updating agent files in `.claude/agents/` or `.opencode/agents/`
-- Creating or updating skill files in `.claude/skills/*/SKILL.md` or `.claude/skills/*/SKILL.md`
-- Updating the corresponding `README.md` index files
+- Creating or updating canonical agents in `.claude/agents/`
+- Creating or updating canonical skills and references in `.claude/skills/`
+- Updating source-owned indexes
+- Maintaining an exact registry-declared vendored path in place
 
-**Sync requirement**: After editing `.claude/` sources, run `npm run generate:bindings` to regenerate all secondary binding artifacts (`.opencode/agents/`, `.codex/agents/`, `.agents/skills/`). The pre-commit hook validates both formats.
+**Sync requirement**: After editing `.claude/` sources, run `npm run generate:bindings` and commit
+every changed generated mirror with its source. The generator preserves registry-declared vendored
+paths.

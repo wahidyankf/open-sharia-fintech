@@ -28,7 +28,13 @@ files outside that scope. Re-validates each finding before applying, to prevent 
 Generates fix reports tracking what was changed.
 
 **Input**: audit report path, mode parameter (lax/normal/strict/ocd), optional
-`approved: all` or specific finding IDs.
+`approved: all` or specific finding IDs, and optional exact `delegated-gate-ids`.
+
+In a quality-gate invocation, do not re-validate or fix predicates owned by delegated
+`governance-readme-index`, `md-links`, `specs-gherkin-cardinality`, or `specs-structure`. Such
+findings should not enter the audit. Omitted delegation preserves standalone full fixer behavior.
+Accept optional `lifecycle-evidence`; after edits, scope-intersect changed files and return
+`updated-lifecycle-evidence`, invalidating only affected entries.
 
 **See `specs-validating-structure` Skill's Fixer Mechanics reference module** for the full
 mechanics: which of the nine validation categories are auto-fixable vs. Requires Review vs.

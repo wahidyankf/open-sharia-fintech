@@ -37,8 +37,8 @@ Apply all validated fixes from the audit report.
 
 **Agent**: `plan-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
-- **Output**: `{fixes-applied}`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{fixes-applied}`, `{updated-lifecycle-evidence}` after scope-based invalidation
 - **Condition**: Findings exist from step 2
 - **Depends on**: Step 2 completion
 
@@ -61,5 +61,6 @@ a `## User Decisions Required` envelope as failure.
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
+- Fixer preserves the lifecycle ledger and never revalidates or fixes delegated predicates
 - Fixes ALL criticality levels: CRITICAL (blocking), HIGH (objective), MEDIUM (structural), LOW (style/formatting)
 - Achieves perfect plan quality with zero findings

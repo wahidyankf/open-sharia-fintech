@@ -29,6 +29,12 @@ Validate that completed plan implementation:
 
 - Implementation follows documented architecture
 - Design decisions are reflected in code
+- Every delivered code path, dependency, abstraction, validator, automation, infrastructure path,
+  or other lasting mechanism maps to the plan's approved concrete requirement, correctness/safety
+  obligation, or demonstrated recurring risk and its explanation of why existing mechanisms were
+  insufficient. Flag an undeclared mechanism, a mechanism whose rationale was never approved, or
+  one for which the approved existing mechanism would have satisfied the need; do not accept a
+  retrospective delivery-note rationale as plan approval.
 - Dependencies are properly integrated
 - Testing strategy is executed
 - Delivered paths reconcile to `tech-docs.md`'s annotated File-Impact Analysis tree and their

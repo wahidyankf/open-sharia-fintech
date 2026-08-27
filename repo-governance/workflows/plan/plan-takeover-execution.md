@@ -42,6 +42,11 @@ outputs:
 **Purpose**: Find whether a plan is worked anywhere, reconcile it, adopt in-flight work, clean up
 leftovers, then hand off to [`plan-execution.md`](../plan/plan-execution.md).
 
+## Agent References
+
+The takeover keeps any existing specialist ownership; final implementation verification uses
+[plan-execution-checker](../../../.claude/agents/plan/plan-execution-checker.md).
+
 ## Contents
 
 - [When to Use, Relationship](./plan-takeover-execution/when-to-use-and-relationship.md) — scope.

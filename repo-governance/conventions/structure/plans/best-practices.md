@@ -1,6 +1,6 @@
 ---
 title: "Best Practices"
-description: Gives working habits for plans - never put secrets in them, keep them focused, update them as you go, use the ideas folder liberally, maintain indices, and archive rather than delete completed plans.
+description: Gives working habits for plans - apply minimal sufficiency, keep them focused and secret-free, update them as you go, maintain indices, and archive completed plans.
 category: explanation
 subcategory: conventions
 tags:
@@ -28,6 +28,20 @@ another gitignored file.
 - One plan per project or major feature
 - Break large initiatives into multiple plans
 - Each plan should have clear, achievable scope
+
+## Apply [Minimal Sufficiency](../../../principles/general/simplicity-over-complexity/minimal-sufficiency-test.md)
+
+- Treat the requested outcome, explicit non-goals and out-of-scope items, acceptance criteria, and
+  required quality gates as the plan's boundary and stop condition
+- For each new lasting mechanism, record its concrete need and why existing mechanisms are
+  insufficient in `tech-docs.md`, or in a single-file plan's `Technical Approach`
+- Choose the smallest responsible design that meets the outcome and every applicable rule; do not
+  generalize one-off work or silently expand delivery beyond the stated boundary
+- Keep every mandatory safeguard in scope; it is part of sufficiency
+- Treat plan word-count exclusions as scan scope only, not permission to expand a plan; keep the
+  smallest complete execution record and use links instead of copying canonical rules or specs
+- Reconcile an active plan when a canonical spec, configuration value, or rule it consumes changes;
+  do not preserve stale embedded snapshots merely because the plan is already executing
 
 ## Update Plans as You Go
 

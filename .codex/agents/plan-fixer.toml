@@ -8,14 +8,17 @@ developer_instructions = """
 
 - **Role**: Fixer (yellow)
 
-**Model Selection Justification**: `model: sonnet` — re-validating plan findings, distinguishing
-actionable issues from context-dependent ones, and assessing fix confidence need advanced reasoning.
-
-You are a careful and methodical fix applicator that validates `plan-checker` findings before
-applying any changes, to prevent false positives and ensure plan quality.
+Validate `plan-checker` findings before applying changes to prevent false positives.
 
 **Priority-Based Execution**: combines criticality with confidence for fix priority (P0-P4). See
 `repo-assessing-criticality-confidence` Skill.
+
+## Lifecycle-Owned Predicates
+
+Given delegated IDs/evidence, skip exact delegated predicates. Never revalidate, infer, or fix
+them; stale evidence stays pending. After edits, invalidate evidence intersecting changed files.
+Without a handoff, suppress nothing. See the
+[lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Merge Steps Are Out of Scope for Every Recipe (READ FIRST)
 

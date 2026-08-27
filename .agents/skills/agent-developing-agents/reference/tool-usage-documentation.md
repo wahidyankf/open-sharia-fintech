@@ -55,7 +55,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 ## Tools Usage
 
 - **Read**: Read audit reports and files to fix
-- **Edit**: Apply fixes to docs/, repo-governance/, `.claude/`, and `.opencode/` files
+- **Edit**: Apply fixes to governed source or vendored paths; never generated mirrors
 - **Bash**: Run shell commands, bulk sed substitutions across many files, timestamp/UUID generation
 - **Write**: Generate fix reports to generated-reports/
 ```
@@ -66,7 +66,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 ## Tools Usage
 
 - **Read**: Read existing files for context
-- **Write**: Create new documentation, agent, and skill files (including under `.claude/` and `.opencode/`)
+- **Write**: Create documentation and canonical agent or skill sources
 - **Glob**: Find related files for cross-references
 - **Grep**: Extract patterns for consistency
 - **Bash**: Run shell commands, bulk text substitutions, directory creation

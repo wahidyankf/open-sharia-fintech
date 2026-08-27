@@ -19,13 +19,15 @@ Continues [Notes and Execution Mode](./notes-and-execution-mode.md).
 3. **State the concrete next step**, not just the current position — "resume `delivery.md` at
    _[named step]_", not merely "Phase 6 in progress". A handover that describes where things stand but
    not what to do next still forces the reader to re-derive the plan.
-4. **Capture non-obvious gotchas learned this session** that are not already written into the plan's
+4. **Write the active user-established rule-decision record.** Include every unsuperseded decision
+   constraining the current work with its operative statement, scope, source, and status. Then
+   capture non-obvious learned constraints that are not already written into the plan's
    own `tech-docs.md`/`learnings.md` — a surprising tool behavior, a governance rule that only bites at
    a specific step, a decision the user made live that isn't yet reflected in the plan's committed
    docs. Write the _why_, not just the _what_, exactly as
    [Feedback memory guidance](../../../development/quality/knowledge-capture.md) already asks of
    `learnings.md` entries — a future reader needs to judge whether the gotcha still applies, not just
-   that it once did.
+   that it once did. The decision record is mandatory; learned constraints do not substitute for it.
 5. **Write the document** to `local-tmp/handovers/<date>__<plan-identifier>-implementation.md`.
    `local-tmp/` is gitignored — this is a **local, single-machine handoff artifact**, not a
    cross-clone or cross-machine one; it exists to accelerate the _next session on this same disk_, per

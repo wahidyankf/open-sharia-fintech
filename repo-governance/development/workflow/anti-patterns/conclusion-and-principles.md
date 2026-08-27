@@ -21,7 +21,7 @@ when_to_use: Use when checking which principles and conventions the anti-pattern
 | **Premature Optimization**  | Wasted effort                | Work → right → fast             |
 | **Unpinned Dependencies**   | Inconsistent builds          | Lock versions, commit lock file |
 | **Ignoring Broken CI**      | Blocks team                  | Fix or revert immediately       |
-| **Mixed Concerns**          | Confusing commits            | Split by domain                 |
+| **Mixed Concerns**          | Confusing commits            | Split independent purposes      |
 | **Hardcoded Config**        | Security issues, inflexible  | Environment variables           |
 | **Skipping Local Tests**    | Slow feedback                | Test before pushing             |
 | **Pushing Without Pulling** | Push failures, merge commits | Pull with rebase before pushing |
@@ -45,7 +45,7 @@ When implementing workflows, ask: **Am I adding collaboration or friction?** If 
 
 ## Principles Implemented/Respected
 
-- **Simplicity Over Complexity**: Single branch, small commits, simple workflow
+- **Simplicity Over Complexity**: Single branch, fewest qualifying commits, simple workflow
 - **Automation Over Manual**: CI enforcement, automated testing
 - **Reproducibility First**: Pinned dependencies, environment config
 - **Explicit Over Implicit**: Clear commit messages, documented workflow

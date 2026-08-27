@@ -21,6 +21,13 @@ The Checker's 5-step process (Initialize → Validate → Finalize) is detailed 
 
 The Fixer's 6-step process is detailed across [Fixer Role, Priority, and Report Discovery](./reference/fixer-role-and-detection.md), [Fixer Mode Parameter Handling and Fix Application](./reference/fixer-mode-and-application.md) (lax/normal/strict/ocd), and [Fix Report Structure and Trust Model](./reference/fixer-reporting-and-trust.md) (why fixers lack web tools).
 
+## Lifecycle-Owned Validation
+
+Before any quality-gate checker, fixer, or recheck invocation, apply the canonical
+[lifecycle ownership Step 0](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Exclude registry-owned predicates from prompts and report them through `lifecycle-status`; keep
+`final-status` domain-only.
+
 ## Common Workflows and Agent Families
 
 See [Common Workflows and Agent Families](./reference/common-workflows-and-agent-families.md) for the basic and iterative maker→checker→fixer sequences and the repository-wide list of agent families using this pattern.
@@ -60,7 +67,3 @@ The pattern integrates with:
 - `repo-assessing-criticality-confidence` - Deep dive into criticality/confidence levels and priority matrix
 - `repo-generating-validation-reports` - UUID chain generation, report format, progressive writing
 - `repo-understanding-repository-architecture` - Understanding the six-layer governance and where patterns fit
-
----
-
-**Note**: This Skill provides comprehensive action-oriented guidance combining pattern overview with detailed execution workflows. The authoritative convention document contains complete implementation details, examples, and all seven agent families.

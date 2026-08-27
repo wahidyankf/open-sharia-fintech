@@ -31,7 +31,8 @@ about how a plan executes once its worktree is resolved — [Step 0's freshness
 gate](../plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate), the [Task-Checklist
 Synchronization model](../plan-execution.md#task-checklist-synchronization), the [Atomic Sync
 Ritual](../plan-execution.md#atomic-sync-ritual), [Resume Reconciliation](../plan-execution/resume-reconciliation.md#resume-reconciliation-disk-is-truth),
-the [Iron Rules](../plan-execution/iron-rules-1-5.md#iron-rules-non-negotiable), the PR-review cycle, and archival —
+the [Iron Rules](../plan-execution/iron-rules-1-5.md#iron-rules-non-negotiable), exact-head PR CI,
+the focused PR leak review, applicable surface gates, and archival —
 is inherited verbatim once handoff happens (Phase E). This document specifies only what a scattered,
 possibly-multi-repo, possibly-already-started plan needs before that: a wider-than-single-worktree
 search (Phase A), a reconciliation decision procedure (Phase B), takeover of what's found (Phase C),

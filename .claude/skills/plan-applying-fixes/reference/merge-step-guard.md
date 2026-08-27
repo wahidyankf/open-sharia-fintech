@@ -10,7 +10,7 @@ You may not remove it, retag it, reword it into a scripted command, split it, ab
 step, or delete it to resolve an unverified claim inside it — in any Delivery Mode, at any confidence
 level, under any finding type, by any verb. If a finding appears to require one of those, the finding
 is a false positive on this line: classify MEDIUM and report it. The only section that may alter a
-merge step's tag is [How to Fix a Merge-Tag Mismatch](./pr-review-cycle-and-merge-tag-fixes.md#how-to-fix-a-merge-tag-mismatch),
+merge step's tag is [How to Fix a Merge-Tag Mismatch](./pr-ci-and-merge-tag-fixes.md#how-to-fix-a-merge-tag-mismatch),
 and that section never retags a merge step away from `[HUMAN]` — its only tag change is one the user
 explicitly selects when the existing tag is unrecognized.
 

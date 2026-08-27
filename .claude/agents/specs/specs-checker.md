@@ -37,12 +37,24 @@ their subfolders — nothing else. Each folder validates independently for Categ
 Category 4 (cross-folder consistency) runs only when 2+ folders are listed. Folders not in the list
 are ignored even if referenced by listed folders.
 
+## Lifecycle Delegation
+
+In a quality-gate invocation, neither run nor AI-rederive these `delegated-gate-ids`:
+
+- `governance-readme-index`: README existence/index membership
+- `md-links`: internal path and fragment resolution
+- `specs-gherkin-cardinality`: repeated primary Given/When/Then cardinality
+- `specs-structure`: adoption, tree shape, and registered counts
+
+Retain narrative/domain, README, cross-folder, diagram, and implementation judgment. Preserve
+optional `lifecycle-evidence`; omitted delegation means standalone full validation.
+
 ## Validation Methodology
 
 See `specs-validating-structure` Skill for the complete nine-category rule set (Structural
 Completeness, Feature File Inventory Accuracy, Gherkin Format Compliance, Cross-Folder Consistency,
 C4 Diagram Consistency, Cross-Reference Integrity, Spec-to-Implementation Alignment, Spec Tree
-Shape Compliance, Adoption Gaps), the four deterministic `rhino-cli`/`nx` drift-detection targets,
+Shape Compliance, Adoption Gaps), the current deterministic `rhino-cli`/Nx checks,
 the six-step execution pattern, and the full audit report template.
 
 ## Convergence Safeguards
@@ -54,7 +66,8 @@ all apply as written.
 ## What This Agent Does NOT Do
 
 Does not modify any files (read-only + report generation); does not validate folders outside the
-explicit list; does not validate test code/step definitions (`rhino-cli specs coverage`); does not
+explicit list; does not validate test code/step definitions (`rhino-cli specs behavior-coverage
+validate`); does not
 validate governance docs (`repo-rules-checker`); does not run tests (CI).
 
 ## Principles Implemented

@@ -12,7 +12,8 @@ Run checker again to verify fixes resolved issues and no new issues introduced.
 
 **Agent**: `specs-checker`
 
-- **Args**: `folders: {input.folders}`
+- **Args**: `folders: {input.folders}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence}`
 - **Output**: `{audit-report-N}` — Verification audit report
 - **Depends on**: Step 3 completion
 
@@ -51,7 +52,10 @@ Determine whether to continue fixing or terminate.
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, `{final-report}`
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, `{final-report}`
+
+Derive `lifecycle-status` separately from the latest lifecycle evidence (`verified`, `pending`, or
+`not-applicable`). It never changes domain `final-status`.
 
 **Status determination**:
 

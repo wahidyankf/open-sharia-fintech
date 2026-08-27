@@ -40,8 +40,8 @@ work the agent is about to do on its own next tick.
 
 ## Going Silent While Background Agents Run
 
-**Problem**: The main agent launches a background batch and posts no status update to the user until the batch completes, regardless of how long that takes.
+**Problem**: The main thread has no useful work left, polls a non-CI background batch, and posts no status update until the batch completes.
 
-**Why it fails**: A batch running longer than the applicable interval (3 minutes for CI-related work, 5 minutes for generic work) with no visible update looks identical to the main agent stalling. The user has no way to distinguish "still working" from "stuck" without asking.
+**Why it fails**: More than five minutes of otherwise-idle polling with no visible heartbeat looks identical to the main agent stalling. The user cannot distinguish "still working" from "stuck" without asking.
 
-**Fix**: Post a status update at the interval matched to the kind of work in flight — every 3 minutes when any CI-related item is in flight (mixed batches take the tighter cadence), every 5 minutes for purely generic work (see Standard 5).
+**Fix**: While the main thread remains otherwise idle, post a brief status heartbeat every five minutes even when nothing changed. Do not start this timer while useful main-thread work continues or for CI monitoring (see Standard 5).

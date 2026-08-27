@@ -10,7 +10,8 @@ Determine whether to continue fixing or finalize.
 
 **Logic**:
 
-- Re-run all checkers (step 1) to get fresh reports
+- Re-run all checkers (step 1) with `{step4.outputs.updated-lifecycle-evidence}`; keep delegated
+  predicates filtered
 - Count findings based on mode level (same as Step 2):
   - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
