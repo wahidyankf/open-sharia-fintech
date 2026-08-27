@@ -16,6 +16,7 @@
     <Compile Include="src/RepoConfig.fs" />
     <Compile Include="src/Env.fs" />
     <Compile Include="src/Doctor.fs" />
+    <Compile Include="src/TestCoverage.fs" />
   </ItemGroup>
 
   <ItemGroup>
