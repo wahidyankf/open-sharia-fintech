@@ -13,7 +13,7 @@ Trunk-Based Dev on `main`. Node.js 24 (Volta), npm.
 
 ## Glossary
 
-These terms carry exactly these meanings everywhere.
+Terms are repository-wide.
 
 - **Repo rules** — every normative surface, not one directory: `repo-governance/`, `AGENTS.md`,
   `CLAUDE.md`, `.claude/` + mirrors, `repo-config.yml`, enforcement machinery, SE style guides.
@@ -34,9 +34,9 @@ Filenames: lowercase kebab-case.
 ## Build, Test, Lint
 
 ```bash
-npm install                     # deps + doctor
-nx run [project]:test:quick     # pre-push gate
-nx affected -t build,test:quick,lint
+rtk npm install                     # deps + doctor
+rtk nx run [project]:test:quick     # pre-push gate
+rtk nx affected -t build,test:quick,lint
 ```
 
 **See**: [nx-targets.md](./repo-governance/development/infra/nx-targets.md)
@@ -85,7 +85,8 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 Maintain task list. Plan non-trivial work. Preserve
 user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
-file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. Poll CI every 2
+file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. New worktree: run
+`rtk npm install` at its root. Poll CI every 2
 minutes; never `gh run watch`. If main only polls non-CI background work, update user every 5 minutes.
 
 **See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
@@ -105,13 +106,13 @@ kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`, mirrored to `
 
 ## Plans & Temporary Files
 
-Build artifacts in `generated-reports/` and `local-tmp/` may be swept — regenerate, never protect.
+Regenerate swept `generated-reports/` and `local-tmp/` artifacts; never protect.
 
 **See**: [plans.md](./repo-governance/conventions/structure/plans.md)
 
 ## Important Notes
 
-Do NOT stage/commit unless explicitly instructed. License MIT — see
+Stage/commit only when explicitly instructed. License MIT — see
 [LICENSING-NOTICE.md](./LICENSING-NOTICE.md).
 
 ## Related Repositories
@@ -123,7 +124,7 @@ Independent/family-only: [BeaverNest](https://github.com/wahidyankf/beaver-nest)
 
 ## Platform Binding Examples
 
-Vendor-specific; the audit scanner skips this section. `repo-config.yml` `harness:` is authoritative.
+Vendor-specific; audits skip this section. `repo-config.yml` `harness:` is authoritative.
 
 **See**: [platform catalog](./docs/reference/platform-bindings.md)
 

@@ -18,9 +18,9 @@ when_to_use: Use when deciding whether a given worktree entry needs the two-step
 
 # When This Applies
 
-Run both steps in the root worktree after any of the following:
+Run both steps from the affected worktree's root after any of the following:
 
-1. Running `git worktree add` to create a new worktree.
+1. Running `rtk git worktree add` to create a new worktree.
 2. Using the `EnterWorktree` tool in the coding agent, which creates a worktree automatically.
 3. An AI agent with `isolation: "worktree"` spawning a new worktree for isolated work.
 4. A human `cd`-ing into an existing worktree to continue or resume work in a new session.

@@ -1,6 +1,6 @@
 ---
 title: Worktree Toolchain Initialization
-description: Practice for initializing the full polyglot toolchain (npm install + doctor --fix) in the root repository worktree after creating or entering a git worktree
+description: Practice for initializing dependencies, hooks, and the polyglot toolchain in each worktree's root after creating or entering it
 category: explanation
 subcategory: development
 tags:
@@ -13,17 +13,22 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
-when_to_use: Use immediately after creating or entering any git worktree, before running any Nx command in it.
+when_to_use: Use immediately after creating or entering any git worktree, before Git mutations or Nx commands in it.
 ---
 
 # Worktree Toolchain Initialization
 
-After creating or entering a git worktree in this repository, always initialize the full polyglot toolchain in the **root repository worktree** with a mandatory two-step sequence:
+After creating or entering a git worktree, initialize dependencies, Git hooks, and the polyglot
+toolchain from the **root directory of that worktree** with a mandatory two-step sequence:
 
-1. Run `npm install` in the root repository worktree.
-2. Run `npm run doctor -- --fix` in the root repository worktree.
+1. Run `rtk npm install` at that worktree root. Besides dependencies, `prepare` activates Husky hooks.
+2. Run `rtk npm run doctor -- --fix` at the same worktree root.
 
-Both steps are required. The first ensures the Nx workspace and its Node/TypeScript dependencies remain functional; the second actively converges the polyglot toolchains (Rust, .NET/F#, TypeScript/Node) managed by `rhino-cli doctor` so that any language task the worktree's work touches resolves against a healthy toolchain.
+Both steps are required. The first makes that checkout's hooks and Node/Nx dependencies usable;
+the second converges the native toolchains managed by `rhino-cli doctor`.
+
+In a repository without npm, use its declared root bootstrap only when it installs local
+dependencies and Git hooks; never invent or infer an equivalent command.
 
 ## Contents
 

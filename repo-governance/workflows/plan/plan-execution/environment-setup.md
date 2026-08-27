@@ -8,7 +8,7 @@ when_to_use: Use when running or auditing a plan's Phase 0 (environment setup an
 
 Before implementing anything, ensure the development environment is ready.
 
-**Note**: The first phase of every delivery checklist must be **Phase 0: Environment Setup and Baseline**, executed by the `repo-setup-manager` agent. Phase 0 covers `npm install`, `npm run doctor -- --fix`, a baseline test run, and preexisting failure resolution. If the delivery checklist contains a Phase 0, delegate it to `repo-setup-manager` before proceeding to Step 2. The steps below are the orchestrator-level mirror of Phase 0 — they describe what must be true before any plan work begins.
+**Note**: The first phase of every delivery checklist must be **Phase 0: Environment Setup and Baseline**, executed by the `repo-setup-manager` agent. Phase 0 covers `rtk npm install`, `rtk npm run doctor -- --fix`, a baseline test run, and preexisting failure resolution. If the delivery checklist contains a Phase 0, delegate it to `repo-setup-manager` before proceeding to Step 2. The steps below are the orchestrator-level mirror of Phase 0 — they describe what must be true before any plan work begins.
 
 **Phase 0 opens no PR (HARD RULE)**: it ends at its own gate — a recorded clean baseline — and hands straight to Phase 1. No branch push, no `gh pr create`, no PR-Review Maker→Fixer Cycle, no merge, no CI run, under **any** delivery mode. The earliest phase that may open a PR is **Phase 1**; Phase 0's evidence artifacts ride that first PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
@@ -16,10 +16,10 @@ Before implementing anything, ensure the development environment is ready.
 
 **Orchestrator action**:
 
-- Run `npm install` **inside the worktree**, not only the primary checkout — a worktree with no
-  `node_modules` of its own silently resolves some tools from a global cache and fails on the
-  first TypeScript-touching `nx affected` run, phases later
-- Run `npm run doctor` to verify all tooling is installed
+- Run `rtk npm install` **at the selected worktree root**, not only the primary checkout. This installs
+  its `node_modules` and activates Husky hooks through `prepare`; without it, later Git or Nx work
+  can fail despite another checkout being initialized
+- Run `rtk npm run doctor -- --fix` to converge all tooling
 - Set up project-specific requirements (env vars, DB, Docker, etc.) as specified in the plan
 - Verify dev server starts for affected projects
 - Run existing quality gates to establish a baseline: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (includes `nx affected -t test:quick`)

@@ -49,7 +49,8 @@ preexisting ...`)
 
 6. **Environment Setup Was Performed**
    - Verify the plan included environment setup steps and they were completed
-   - Check that `npm install` and `npm run doctor` were run (or equivalent)
+   - Check that `rtk npm install` and then `rtk npm run doctor -- --fix` ran at the selected
+     worktree root before any work; another checkout or inferred equivalent does not count
    - Missing setup evidence: MEDIUM finding
 
 ### Finding Severity

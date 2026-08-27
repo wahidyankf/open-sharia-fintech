@@ -14,4 +14,12 @@ when_to_use: Use when an agent has just created or entered a git worktree and ne
 
 # Information Accuracy and Verification — Git Worktree Awareness: Toolchain Initialization Rule
 
-1. **Initialize the full toolchain in the root worktree after creating or entering a worktree — two steps, in order** — When an agent creates a worktree via `git worktree add`, the `EnterWorktree` tool, or an `isolation: "worktree"` configuration, or when an agent begins a session inside an existing worktree, it MUST immediately run BOTH of the following in the root repository worktree, in order: (a) `npm install` to keep `node_modules/` consistent with `package-lock.json` (ensures Nx task caching, builds, tests, and linting function correctly across all worktrees), and (b) `npm run doctor -- --fix` to actively converge the polyglot toolchains managed by `rhino-cli doctor` (Rust, .NET/F#, TypeScript/Node). Doing only the first step is NOT sufficient: `package.json`'s `postinstall` hook runs `npm run doctor || true`, and the trailing `|| true` deliberately swallows toolchain drift so that `npm install` can complete while the native toolchain is broken. The explicit `npm run doctor -- --fix` invocation is the only action that guarantees convergence. The rule is triggered by execution mode (any worktree entry), not by intent (even "docs-only" worktree sessions go through both steps, because the pre-push hook (`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`) can fan out to arbitrary language tasks via its affected-projects-scoped gates, e.g. `nx affected -t test:quick`, whose internal chain touches typecheck/lint/build/coverage per project). See [Worktree Toolchain Initialization](../../workflow/worktree-setup.md) for the full rationale, procedure, and relationship to [Native-First Toolchain Management](../../workflow/native-first-toolchain.md).
+1. **Initialize each worktree at its own root — two steps, in order** — After creating with
+   `rtk git worktree add` (or entering by another supported mechanism),
+   immediately run `rtk npm install` and then `rtk npm run doctor -- --fix` from its
+   root. The install creates its ignored `node_modules/` and runs `prepare`, activating Husky hooks;
+   another checkout's install is not a substitute. The explicit doctor call converges native
+   toolchains because `postinstall` deliberately tolerates doctor drift. This applies to every
+   session, including docs-only work, because commit and pre-push hooks still execute repository
+   tooling. See [Worktree Toolchain Initialization](../../workflow/worktree-setup.md) for the full
+   procedure and [Native-First Toolchain Management](../../workflow/native-first-toolchain.md).
