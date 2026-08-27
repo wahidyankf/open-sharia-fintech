@@ -21,6 +21,14 @@
 /// above, calls straight into this module's pure functions rather than a
 /// wired-up `doctor` verb.
 ///
+/// Below the "F# lint-target Fantomas tool-invocation check" banner comment,
+/// this file also carries an F#-native meta-check with no Rust equivalent
+/// (`apps/rhino-cli/src` never invoked Fantomas) for
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`'s
+/// 1 scenario: every locally discovered Nx `project.json` `lint` target that
+/// invokes Fantomas must restore the local `.NET` tool manifest first and
+/// must never invoke a bare global `fantomas` binary.
+///
 /// # Deviation from the Rust source's ambient-environment reads
 ///
 /// Mirroring `target_share.rs`'s own module-level "Deviation" note: every
@@ -37,6 +45,7 @@ open System.IO
 open System.Runtime.InteropServices
 open System.Text.Json
 open System.Text.Json.Nodes
+open RhinoCli.Domain.Types
 
 // ---------------------------------------------------------------------------
 // CI detection
@@ -2008,3 +2017,194 @@ let formatDoctorJson (result: DoctorResult) : string =
     let serializeOptions = JsonSerializerOptions()
     serializeOptions.WriteIndented <- true
     root.ToJsonString(serializeOptions)
+
+// ---------------------------------------------------------------------------
+// F# lint-target Fantomas tool-invocation check [F#-native meta-check — no
+// Rust equivalent; `apps/rhino-cli/src` never invoked Fantomas] for
+// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`'s
+// 1 scenario.
+// ---------------------------------------------------------------------------
+
+/// One `project.json` file whose `lint` target's `commands` array invokes
+/// Fantomas at least once, together with that array for evaluation.
+type FsharpLintTarget =
+    { ProjectJsonPath: string
+      Commands: string list }
+
+/// Directory names a `project.json` scan never descends into: build output,
+/// dependency, and VCS directories that are never themselves project
+/// boundaries.
+let private excludedProjectJsonDirNames: Set<string> =
+    Set.ofList [ "node_modules"; "obj"; "bin"; ".git"; ".nx"; "dist" ]
+
+/// Recursively walks `dir`, skipping [`excludedProjectJsonDirNames`],
+/// returning every `project.json` file path found at any depth — deeper than
+/// [`discoverCrates`]'s single-level walk, since an F# Nx project can nest a
+/// `project.json` below its app directory (e.g.
+/// `apps/rhino-cli/src-fsharp/project.json`).
+let rec private findProjectJsonFiles (dir: string) : string list =
+    if not (Directory.Exists dir) then
+        []
+    else
+        let here =
+            let candidate = Path.Combine(dir, "project.json")
+            if File.Exists candidate then [ candidate ] else []
+
+        let nested =
+            Directory.GetDirectories dir
+            |> Array.filter (fun d -> not (Set.contains (Path.GetFileName(d: string)) excludedProjectJsonDirNames))
+            |> Array.toList
+            |> List.collect findProjectJsonFiles
+
+        here @ nested
+
+/// Extracts the `targets.lint.options.commands` JSON string array from the
+/// `project.json` at `projectJsonPath`, returning an empty list when the
+/// file is missing, malformed, or lacks that path.
+let private readLintCommands (projectJsonPath: string) : string list =
+    try
+        use doc = JsonDocument.Parse(File.ReadAllText projectJsonPath)
+
+        match doc.RootElement.TryGetProperty "targets" with
+        | false, _ -> []
+        | true, targetsEl ->
+            match targetsEl.TryGetProperty "lint" with
+            | false, _ -> []
+            | true, lintEl ->
+                match lintEl.TryGetProperty "options" with
+                | false, _ -> []
+                | true, optionsEl ->
+                    match optionsEl.TryGetProperty "commands" with
+                    | true, commandsEl when commandsEl.ValueKind = JsonValueKind.Array ->
+                        commandsEl.EnumerateArray()
+                        |> Seq.choose (fun c ->
+                            if c.ValueKind = JsonValueKind.String then
+                                Some(c.GetString())
+                            else
+                                None)
+                        |> Seq.toList
+                    | _ -> []
+    with _ ->
+        []
+
+/// Returns `true` when `command` invokes Fantomas in any form.
+let private commandInvokesFantomas (command: string) : bool = command.Contains("fantomas")
+
+/// Returns `true` when `command` restores the local `.NET` tool manifest
+/// declared in `.config/dotnet-tools.json`.
+let private commandRestoresToolManifest (command: string) : bool = command.Contains("dotnet tool restore")
+
+/// Returns `true` when `command` invokes Fantomas through the pinned local
+/// tool manifest (`dotnet tool run fantomas`) or the equivalent
+/// `dotnet fantomas` driver form, rather than a bare global `fantomas`
+/// binary call.
+let private commandInvokesFantomasViaLocalTool (command: string) : bool =
+    command.Contains("dotnet tool run fantomas")
+    || command.Contains("dotnet fantomas")
+
+/// Discovers every `project.json` under `repoRoot/apps` and `repoRoot/libs`
+/// (at any depth) whose `lint` target's `commands` array invokes Fantomas at
+/// least once, sorted by repo-relative path for deterministic iteration
+/// order [F#-native meta-check].
+///
+/// Gherkin (binds) — "Every locally discovered F# lint target uses the
+/// pinned local Fantomas tool":
+///   Given the local F# lint targets are discovered
+let discoverFsharpLintTargets (repoRoot: string) : FsharpLintTarget list =
+    [ "apps"; "libs" ]
+    |> List.collect (fun top -> findProjectJsonFiles (Path.Combine(repoRoot, top)))
+    |> List.choose (fun path ->
+        let commands = readLintCommands path
+
+        if commands |> List.exists commandInvokesFantomas then
+            let relative =
+                Path.GetRelativePath(repoRoot, path).Replace(Path.DirectorySeparatorChar, '/')
+
+            Some
+                { ProjectJsonPath = relative
+                  Commands = commands }
+        else
+            None)
+    |> List.sortBy (fun t -> t.ProjectJsonPath)
+
+/// Returns `true` when `commands` runs `dotnet tool restore` at some point
+/// strictly before the first command invoking Fantomas — proving the local
+/// tool manifest is consulted before Fantomas runs. `false` when either
+/// command is absent.
+let private restoresManifestBeforeFantomas (commands: string list) : bool =
+    let fantomasIdx = commands |> List.tryFindIndex commandInvokesFantomas
+    let restoreIdx = commands |> List.tryFindIndex commandRestoresToolManifest
+
+    match restoreIdx, fantomasIdx with
+    | Some r, Some f -> r < f
+    | _ -> false
+
+/// Returns `true` when at least one command invokes Fantomas via a bare
+/// global `fantomas` binary call rather than through the pinned local tool.
+let private invokesFantomasGlobally (commands: string list) : bool =
+    commands
+    |> List.exists (fun c -> commandInvokesFantomas c && not (commandInvokesFantomasViaLocalTool c))
+
+/// Result of evaluating one [`FsharpLintTarget`]: the target itself plus
+/// every [`Finding`] describing a Fantomas-invocation compliance violation
+/// (empty when the target is fully compliant). Reuses the shared `Finding`
+/// record from `RhinoCli.Domain.Types` rather than a bespoke type, following
+/// `Convention.fs`'s "shared Finding over bespoke per-validator types"
+/// precedent.
+type FsharpToolInvocationCheck =
+    { Target: FsharpLintTarget
+      Findings: Finding list }
+
+/// Evaluates one [`FsharpLintTarget`], returning every [`Finding`]
+/// describing a Fantomas-invocation compliance violation.
+let private evaluateOneFsharpLintTarget (target: FsharpLintTarget) : FsharpToolInvocationCheck =
+    let findings =
+        [ if not (restoresManifestBeforeFantomas target.Commands) then
+              { Severity = Severity.Blocking
+                Message = "does not restore the local .NET tool manifest (dotnet tool restore) before running Fantomas"
+                Path = Some target.ProjectJsonPath }
+          if invokesFantomasGlobally target.Commands then
+              { Severity = Severity.Blocking
+                Message =
+                  "invokes the global Fantomas app host directly instead of the pinned local tool (dotnet tool run fantomas / dotnet fantomas)"
+                Path = Some target.ProjectJsonPath } ]
+
+    { Target = target; Findings = findings }
+
+/// Evaluates every locally discovered F# lint target for compliant Fantomas
+/// invocation, returning one [`FsharpToolInvocationCheck`] per target — the
+/// same count as `targets`, whether or not each target is compliant
+/// [F#-native meta-check].
+///
+/// Gherkin (binds) — "Every locally discovered F# lint target uses the
+/// pinned local Fantomas tool":
+///   When every locally discovered F# lint target is evaluated
+///   Then every discovered F# lint target is evaluated
+///   And each target restores its local .NET tool manifest before running Fantomas
+///   And no target invokes the global Fantomas app host directly
+let evaluateFsharpToolInvocation (targets: FsharpLintTarget list) : FsharpToolInvocationCheck list =
+    targets |> List.map evaluateOneFsharpLintTarget
+
+/// Injectable single-file Fantomas format-check probe: given a source-file
+/// path, reports whether Fantomas considers it already formatted, or
+/// `Error` when the probe itself could not run.
+type UnformattedSampleProbe = string -> Result<bool, string>
+
+/// Probes `sampleFile` for Fantomas-detectable formatting drift via `probe`,
+/// but only when at least one F# lint target was discovered — a checkout
+/// with zero F# lint targets never invokes the probe, so an environment
+/// missing the local Fantomas tool never becomes a false failure when there
+/// is no F# code to check in the first place [F#-native meta-check].
+///
+/// Gherkin (binds) — "Every locally discovered F# lint target uses the
+/// pinned local Fantomas tool":
+///   And an unformatted source file is checked only when F# lint targets exist
+let checkUnformattedSample
+    (targets: FsharpLintTarget list)
+    (sampleFile: string)
+    (probe: UnformattedSampleProbe)
+    : Result<bool, string> option =
+    if List.isEmpty targets then
+        None
+    else
+        Some(probe sampleFile)

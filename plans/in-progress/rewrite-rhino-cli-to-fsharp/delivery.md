@@ -3859,8 +3859,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/DoctorSteps.fs`
+- [x] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/FsharpToolInvocationSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Doctor` does not implement it.
       **Gherkin (binds) →** "Every locally discovered F# lint target uses the pinned local Fantomas tool" — `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`
@@ -3875,13 +3875,20 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And an unformatted source file is checked only when F# lint targets exist
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+  Deviation from this heading's own file-path template: bound in a new
+  `FsharpToolInvocationSteps.fs` rather than the already-taken
+  `DoctorSteps.fs` (bound to `cargo-target-share.feature`), following
+  `DoctorToolCheckSteps.fs`'s own documented "one Steps file per feature
+  file" precedent.
+
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Doctor.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      the shared `RhinoCli.Domain.Types.Finding` record (`RhinoCli.Domain/src/Types.fs`
+      — `Finding.fs` was never split out as its own file)
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Doctor.fs` formats no output itself.
 
