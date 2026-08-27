@@ -24,7 +24,9 @@ open time.
 **Lifecycle**:
 
 1. **Draft opened** -- `[AI]` runs `gh pr create --draft --base main ...`. No precondition gate yet. CI may still run on the draft.
-2. **Iterate on the branch** -- `[AI]` pushes additional commits and runs the PR-Review Maker→Fixer Cycle. The PR stays in draft status throughout iteration. No precondition gate yet.
+2. **Iterate on the branch** -- `[AI]` pushes additional commits and drives exact-current-head PR
+   CI plus applicable finite surface gates to green. A semantic review runs only on explicit user
+   request. The PR stays in draft status throughout iteration. No merge precondition gate yet.
 3. **`[AI]` flips to ready** -- once the done-definition is met, `[AI]` runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol precondition gate fires.** The agent must:
    - Verify all quality gates have passed (see Quality Gates above).
    - Verify all five preconditions in [The Rule](./the-rule.md#the-rule) hold.

@@ -18,7 +18,7 @@ After pushing app or library code — to the PR branch under `*-to-pr` modes, or
 
 1. **Identify which apps and libs were changed.** Use `git diff HEAD~1 --name-only` or `nx affected --base=HEAD~1` to determine the blast radius.
 2. **Trigger the relevant CI workflows.** Use `gh workflow run` for each workflow that covers the changed apps or libs.
-3. **Monitor until completion.** Use `gh run list` to find the run ID, then use `ScheduleWakeup` + a single `gh run view <run-id>` call on wakeup for standard CI jobs (10–35 min). Reserve `gh run watch <run-id>` for jobs expected to complete in under 5 minutes only.
+3. **Monitor until completion.** Use `gh run list` to find the run ID, then schedule a wakeup and make one `gh run view <run-id>` call every 2 minutes. Never use `gh run watch`.
 4. **If any workflow fails**, investigate the root cause and fix it per the [CI Blocker Resolution Convention](../../quality/ci-blocker-resolution.md). Do not declare the work done until all relevant workflows pass.
 
 ## Workflow Mapping

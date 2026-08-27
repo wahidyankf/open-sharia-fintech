@@ -24,6 +24,6 @@ Companion documents for the [Multi-Harness Binding Convention](../multi-harness-
 - [Governance Vendor-Independence Convention](../governance-vendor-independence.md) — Companion rule
   requiring all governance prose (including this file) to be vendor-neutral; defines the
   `binding-example` fence and "Platform Binding Examples" allowlist mechanisms.
-- [repo-harness-compatibility-quality-gate.md](../../../workflows/repo/repo-harness-compatibility-quality-gate.md)
+- [harness-compatibility-quality-gate.md](../../../workflows/harness/harness-compatibility-quality-gate.md)
   — Periodic workflow for detecting external upstream convention drift (web-research-backed; distinct
   from the deterministic pre-push parity guard).

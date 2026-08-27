@@ -18,9 +18,11 @@ when_to_use: Use whenever you edit a file under the primary binding directory, o
 
 ## Standard 9 — Generated Mirrors Belong on the Ledger and in the Same Commit
 
-`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.codex/`, and `.agents/`
-are generated from it mechanically. Editing one agent definition therefore modifies **four** files,
-three of which you never opened — and all four are yours.
+`.claude/agents/` and `.claude/skills/` are the canonical hand-authored agent and Skill sources.
+Secondary binding roots mix generated outputs with registry-declared vendored paths;
+`repo-config.yml` is authoritative at path and region level. Editing one canonical definition can
+therefore modify several generated files you never opened — all of those generated changes are
+yours, while unrelated vendored paths are not.
 
 rhino-cli provides the generators, and this repository already automates them:
 
@@ -47,9 +49,10 @@ automation does _not_ protect you:
    [No Destructive Git Operations Convention](../../workflow/no-destructive-git-operations.md).
 4. **Verify rather than assume.** `npm run harness:bindings-validation` is the all-harness check;
    `validate:sync` skips `.codex/`. Run it after any `.claude/` edit not committed through the hook.
-5. **Never hand-edit a generated mirror.** An edit under `.opencode/`, `.codex/`, or `.agents/` is
-   silently overwritten by the next generate — except a registry-declared `class: vendored` path,
-   which covers two structurally different subclasses; see [the two vendored
+5. **Never hand-edit a generated mirror.** A direct edit to a registry-declared `class: generated`
+   path or generated delimited region is overwritten by the next generate. A registry-declared
+   `class: vendored` path is maintained in place and covers two structurally different subclasses;
+   see [the two vendored
    subclasses](../../../glossary/vendored-exception-subclasses.md)
    for which one applies before hand-editing.
 

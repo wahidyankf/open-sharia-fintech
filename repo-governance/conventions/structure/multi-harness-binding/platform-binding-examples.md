@@ -40,10 +40,12 @@ The following file name is known to be ranked above `AGENTS.md` by a supported h
   `.claude/agents/` to `.opencode/agents/` by `rhino-cli harness bindings generate`; agent skill
   files are read natively from `.claude/skills/`.
 - **OpenAI Codex CLI** — reads `AGENTS.md` natively since April 2025. Agent definitions are
-  generated at `.codex/agents/` from `.claude/agents/`, and skills are mirrored to `.agents/skills/`,
-  both by `rhino-cli harness bindings generate`.
+  generated at `.codex/agents/` from `.claude/agents/`, and non-vendored skills are mirrored under
+  `.agents/skills/`, both by `rhino-cli harness bindings generate`. Registry-declared plugin
+  subtrees under the same skills root are vendored and preserved in place.
 
-There is no `native` tier and no `source-config` tier: a harness is either the single source of
-truth or a mechanically regenerated mirror of it. The authoritative list of supported harnesses and
-their tiers is the `harness:` registry in `repo-config.yml` — this document describes the model, the
+There is no `native` tier and no `source-config` tier: a harness is either the single source tier or
+a generated tier. That harness-level tier does not replace path-level ownership; generated-tier
+roots may contain vendored paths. The authoritative list of supported harnesses, tiers, and path
+ownership is the `harness:` registry in `repo-config.yml` — this document describes the model, the
 registry decides the membership.

@@ -43,8 +43,9 @@ Resolve ALL of the following:
    explicitly in the plan's `## Delivery Mode` field; an unmarked field falls through to the
    three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) resolved
    later by [plan-execution.md Step 0](../plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate).
-   Choosing a `*-to-pr` mode means the plan's own execution runs the
-   [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) before archival.
+   Choosing a `*-to-pr` mode means the plan requires exact-head/base PR CI, one clean current-head
+   [`pr-leak-review`](../../pr/pr-leak-review.md), and applicable finite surface gates before merge;
+   broad semantic review appears only on direct user request.
 9. **Definition of done**: What must the finished plan contain for the user to consider it ready?
 10. **Research needed**: Are there external claims (library versions, third-party best practices,
     API behavior) that require verification before writing?

@@ -15,6 +15,8 @@ when_to_use: Use when you need the working definitions this convention uses.
 
 **Simplicity** means:
 
+- Smallest responsible change that satisfies the outcome and all applicable rules
+- Existing mechanisms reused when they satisfy the concrete need
 - Minimum abstraction needed to solve the problem
 - Direct, straightforward solutions
 - Flat structures over deep hierarchies
@@ -23,6 +25,8 @@ when_to_use: Use when you need the working definitions this convention uses.
 
 **Complexity** means:
 
+- Lasting mechanisms without a concrete unmet need
+- Work continuing beyond the achieved outcome and required checks
 - Premature abstraction "for future flexibility"
 - Over-engineered frameworks and layers
 - Deep nesting and indirection

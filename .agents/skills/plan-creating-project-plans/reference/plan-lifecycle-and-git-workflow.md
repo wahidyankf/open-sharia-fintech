@@ -60,7 +60,7 @@ material decision. See [Decision Grilling](mandatory-grilling.md).
 **`worktree-to-pr` (Default)**:
 
 - Short-lived plan branch in a disposable worktree
-- Draft PR against `main`; PR-Review Maker→Fixer Cycle before merge
+- Draft PR against `main`; exact-current-head/base PR CI and applicable surface gates before merge
 - Small, frequent commits; merge `[AI]` once the hardened preconditions hold
 
 **Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`) — `ose-private` infrastructure-as-code plans only**:

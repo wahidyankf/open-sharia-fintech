@@ -31,7 +31,8 @@ disciplines, the tie-breaker, the grey zones, and the cost/noise mechanics those
 
 ## Related Documentation
 
-- [PR Review Quality Gate workflow](../../../workflows/pr/pr-review-quality-gate.md) - Orchestrates
+- [PR Leak Review workflow](../../../workflows/pr/pr-leak-review.md) - Mandatory exact-head leak-only review.
+- [PR Review Cycle workflow](../../../workflows/pr/pr-review-cycle.md) - Optionally orchestrates
   the fan-out → synthesize → fixer loop this convention's disciplines and tie-breaker feed
 - [PR Merge Protocol Convention](../../workflow/pr-merge-protocol.md) - The five hardened merge
   preconditions that gate on this pipeline's review-cycle completion

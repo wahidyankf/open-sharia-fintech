@@ -23,7 +23,7 @@ This practice respects the following core principles:
 
 - **[Root Cause Orientation](../../../principles/general/root-cause-orientation.md)**: When quality gates fail, the correct response is to investigate and fix the root cause, not to bypass the gate and merge anyway. This convention ensures that failing gates are treated as problems to solve, not obstacles to circumvent.
 
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Merge authority must rest on explicit, checkable state. "The review cycles felt thorough enough" -- an agent's implicit readiness judgment substituting for the stated preconditions -- is the silent assumption this convention forbids. The merge actor is likewise explicit: `[AI]` by default, `[HUMAN]` only where a plan says so.
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Merge authority rests on exact-head/base CI, branch currency, conversation state, surface-gate evidence, and secret hygiene rather than subjective review-loop convergence. The merge actor is likewise explicit: `[AI]` by default, `[HUMAN]` only where a plan says so.
 
 - **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Quality gates (typecheck, lint, test:quick, specs:coverage, CI workflows) run automatically, and the merge decision is derived from their outcome rather than re-litigated by hand each time. Encoding readiness as preconditions is what makes automating the merge safe.
 

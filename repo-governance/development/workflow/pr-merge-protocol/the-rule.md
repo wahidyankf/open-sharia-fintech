@@ -15,22 +15,25 @@ when_to_use: Use immediately before merging any pull request, to confirm all fiv
 
 # The Rule
 
-**AI agents and automation MUST NOT merge a pull request until the hardened preconditions hold.**
+**AI agents and automation MUST NOT merge a pull request until all five hardened preconditions
+hold.**
 
-A PR merges only when **all five** hold:
-
-- **(a)** the PR's behavior route is complete — an eligible PR reached
-  [its clean exit](../../../workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md) within
-  its configured ceiling,
-  while a noneligible PR has recorded classifier evidence and a green
-  `.github/workflows/pr-quality-gate.yml` run. A `blocked` route status prevents merge;
-- **(b)** 0 code-related CRITICAL, HIGH, and MEDIUM findings are outstanding;
-- **(c)** the branch is up-to-date with the latest `origin/main`, brought forward
-  **non-destructively** if behind (never a shared-history rewrite);
-- **(d)** the route-required quality gate is green: all applicable local and CI gates for an eligible
-  PR; `.github/workflows/pr-quality-gate.yml` for a noneligible PR;
-- **(e)** the surface-conditional tester gates have been run and their defect findings resolved for
-  an eligible PR. A noneligible PR has no reachable behavior and does not run those tester gates.
+- **(a) Exact-head PR CI** — the `Quality gate` check from
+  `.github/workflows/pr-quality-gate.yml` is green for the PR's current head SHA and current base
+  branch. A run for an earlier head or different base does not count.
+- **(b) Leak review** — one authenticated `ose-pr-leak-review:v1` pass covers the exact current
+  head and reports no violation of [committed-secret](../../../conventions/security/secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md),
+  [protected-environment](../anti-patterns/hardcoded-environment-configuration.md), or
+  [machine-specific-path](../../quality/no-machine-specific-commits.md) rules. Missing, stale,
+  failed, or findings-bearing evidence blocks merge. A fix that
+  changes the head requires one new pass, never a clean streak.
+- **(c) Branch currency** — the branch is up to date with the latest target branch, brought forward
+  non-destructively when behind, and GitHub reports no merge conflict.
+- **(d) Conversations** — every review conversation is resolved or explicitly dismissed by the
+  user. Semantic review is optional, but conversations created by an invoked review still bind.
+- **(e) Applicable surface gates** — every UI, API, or other reachable-behavior gate required by
+  the changed surface has a passing terminal result. A genuinely unreachable surface carries an
+  explicit exemption.
 
 For every PR merge -- without exception -- the agent must:
 
@@ -38,8 +41,9 @@ For every PR merge -- without exception -- the agent must:
 2. Surface the PR status, including which gates passed and how each precondition was satisfied.
 3. Execute the merge -- `[AI]` is the default actor.
 
-`[AI]` is the merge actor once the preconditions hold, unless a separate, explicitly authorized
-exception says otherwise. This convergence plan has no human review or merge gate.
+`[AI]` is the merge actor once the preconditions hold, unless the plan's merge step explicitly
+selects a human gate. Neither `pr-review` nor `pr-review-cycle` is a default precondition; both run
+only when the user explicitly requests them.
 
 **Preconditions are evaluated per merge.** Satisfying them for one PR says nothing about the next;
 each PR is assessed from zero against the full set.

@@ -13,11 +13,19 @@ Comprehensive guidance for creating AI agents following repository conventions.
 - Name must match filename exactly
 - Non-empty skills field required
 
-## File Operations in .claude/ and .opencode/ Directories
+## File Operations in Binding Directories
 
-Use the normal `Write` / `Edit` tools to create and modify files under `.claude/` and `.opencode/`. Both paths are pre-authorized in `.claude/settings.json`, so no approval prompts fire. `Bash` heredoc and `sed` remain appropriate for bulk mechanical substitutions across many files.
+Use normal file-editing tools only on paths that `repo-config.yml` classifies as `source` or
+`vendored`. Platform authorization permits access; it does not override ownership. Never hand-edit
+a `generated` path or generated delimited region. Bulk substitution is appropriate only for
+mechanical changes within editable paths.
 
-This applies to `.claude/agents/*.md`, `.claude/skills/*/SKILL.md` and `reference/*.md`, and their generated mirrors (`.opencode/agents/*.md`, `.codex/agents/*.toml`, `.agents/skills/`). After editing `.claude/` sources, run `npm run generate:bindings` so every mirror stays aligned — the regenerated mirrors are part of your change and MUST land in the **same commit** as the `.claude/` source. Verify with `npm run harness:bindings-validation`, which covers every harness including `.codex/`; `npm run validate:sync` does not. Every generated mirror MUST NOT be hand-edited — except a path an entry's `ownership:` list declares `vendored`, which covers two structurally different subclasses; see [the two vendored subclasses](../../../repo-governance/glossary/vendored-exception-subclasses.md) for which one applies before hand-editing. See also [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md).
+Canonical agent and skill sources live under `.claude/agents/` and `.claude/skills/`. After editing
+them, run `npm run generate:bindings`; every changed mirror MUST land in the **same commit** as its
+source. Verify with `npm run harness:bindings-validation`, which covers all registered harnesses.
+Edit a vendored path in place only when the registry assigns that class; see
+[the two vendored subclasses](../../../repo-governance/glossary/vendored-exception-subclasses.md).
+See also [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md).
 
 ## References
 

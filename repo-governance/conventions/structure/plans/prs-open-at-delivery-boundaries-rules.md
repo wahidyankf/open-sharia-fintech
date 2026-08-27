@@ -27,7 +27,7 @@ every delivery unit landed there, never provisioned fresh per unit — per
 
 1. **A PR opens only at a delivery boundary.** Phases inside a delivery unit that are not its
    boundary commit to the unit's branch and must still pass their own `### Phase N Gate`, but they
-   open no PR, run no PR-Review Maker→Fixer Cycle, and merge nothing. Pushing the branch to `origin`
+   open no PR, run no PR CI or semantic review, and merge nothing. Pushing the branch to `origin`
    for durability is permitted and opens nothing.
 2. **Every plan declares its delivery boundaries explicitly** — see the required declaration format
    in [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md).

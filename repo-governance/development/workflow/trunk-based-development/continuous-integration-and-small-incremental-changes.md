@@ -38,22 +38,21 @@ when_to_use: Use before pushing, to run the pre-push checklist, or when planning
 - [ ] Feature flags hide incomplete work
 - [ ] Commit message follows [Conventional Commits](../commit-messages.md)
 
-## Small, Incremental Changes
+## Small, Thematic Changes
 
-**TBD requires breaking work into small chunks**:
+TBD favors the fewest build-valid, independently reviewable and revertible commits that express one
+coherent purpose each. “Small” does not mean separating required completion artifacts.
 
 PASS: **Good incremental changes**:
 
-- Add a utility function (commit 1)
-- Add tests for the function (commit 2)
-- Use function in one component (commit 3)
-- Extend function for new use case (commit 4)
+- Add a utility function with its required tests (commit 1)
+- Use and extend it for one independently revertible feature (commit 2)
 
 FAIL: **Bad large changes**:
 
 - Rewrite entire authentication system in one commit
 - Implement 5 features together in one PR
-- Refactor + add features in same commit
+- Refactor + an independent feature in the same commit
 
 **Benefits of small changes**:
 
@@ -66,7 +65,7 @@ FAIL: **Bad large changes**:
 **How to break down work**:
 
 1. **Identify smallest deliverable**: What's the tiniest useful piece?
-2. **Commit that piece**: push it to the delivery target for the declared mode (the PR branch by default)
+2. **Complete that piece**: include required tests, docs, specs, references, and generated artifacts
 3. **Repeat**: Build on top of previous work
 4. **Use feature flags**: Hide incomplete full features
 
@@ -78,10 +77,9 @@ Commit 2: feat(auth): add password hashing utility
 Commit 3: feat(auth): add login endpoint (feature flag OFF)
 Commit 4: feat(auth): add login UI component (feature flag OFF)
 Commit 5: feat(auth): connect UI to endpoint (feature flag OFF)
-Commit 6: test(auth): add integration tests for login
-Commit 7: feat(auth): enable login feature flag in staging
-Commit 8: feat(auth): enable login feature flag in production
-Commit 9: refactor(auth): remove old login code and feature flag
+Commit 6: feat(auth): enable login feature flag in staging
+Commit 7: feat(auth): enable login feature flag in production
+Commit 8: refactor(auth): remove old login code and feature flag
 ```
 
-Each commit is small, tested, and doesn't break `main`.
+Each commit includes the tests and documentation required for its purpose and does not break `main`.

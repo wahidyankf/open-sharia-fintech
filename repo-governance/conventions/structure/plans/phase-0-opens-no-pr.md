@@ -1,6 +1,6 @@
 ---
 title: "Phase 0 Opens No PR — the Earliest PR Is Phase 1 (HARD RULE)"
-description: States that Phase 0 (environment setup and baseline) never opens a PR, pushes a branch, or runs a review cycle under any delivery mode.
+description: States that Phase 0 never opens a PR, pushes a branch, runs PR CI, or merges under any delivery mode.
 category: explanation
 subcategory: conventions
 tags:
@@ -20,7 +20,7 @@ Phase 0 is [Environment Setup and Baseline](./phases-as-natural-pauses.md#phases
 
 - opens **no** PR — `gh pr create` never appears in a Phase 0 step or gate;
 - pushes **no** branch to `origin`;
-- runs **no** PR-Review Maker→Fixer Cycle;
+- runs **no** PR CI or optional semantic review;
 - merges **nothing**; and
 - has **no** CI run of its own to monitor.
 

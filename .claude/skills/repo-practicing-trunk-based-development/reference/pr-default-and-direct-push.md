@@ -2,7 +2,8 @@
 
 **The repo-wide default delivery mode is `worktree-to-pr`.** Work happens on a short-lived plan
 branch inside a disposable worktree, is pushed to a draft PR opened against `main`, and is driven
-through the review cycle and CI to a fully green state before it merges.
+through exact-current-head/base PR CI and applicable surface gates to a fully green state before it
+merges.
 
 ## Resolving the Delivery Mode
 
@@ -17,9 +18,10 @@ Never silently coerce an invalid non-empty value; treat it as a question for the
 ## What This Means for Plans
 
 **Plan delivery checklists SHOULD include the PR steps** under the two `*-to-pr` modes — opening the
-draft PR, running the PR-Review Maker→Fixer Cycle, and the merge step itself. What they must not
-contain is a `[HUMAN]` "review the diff and approve push" gate: pushing to a PR branch is not a
-merge, and the push is always `[AI]`.
+draft PR, verifying exact-head/base PR CI and applicable surface gates, and the merge step itself.
+They include `pr-review` or `pr-review-cycle` only when the user explicitly requested it, at that PR
+boundary. They must not contain a `[HUMAN]` "review the diff and approve push" gate: pushing to a PR
+branch is not a merge, and the push is always `[AI]`.
 
 ## What This Means for AI Agents
 

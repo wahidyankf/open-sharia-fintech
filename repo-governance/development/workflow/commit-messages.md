@@ -36,9 +36,9 @@ This document explains the commit message convention used in the open-sharia-ent
 - [How It's Enforced](./commit-messages/how-its-enforced.md) — Commitlint, the Husky hook, and the workflow.
 - [Common Errors and Fixes](./commit-messages/common-errors-and-fixes.md) — Fixing the most common Commitlint rejections.
 - [Best Practices](./commit-messages/best-practices.md) — Habits beyond the mechanical format rules.
-- [Commit Granularity and When to Split Commits](./commit-messages/commit-granularity-and-when-to-split-commits.md) — Why and when to split work into multiple commits.
-- [When to Combine Commits](./commit-messages/when-to-combine-commits.md) — When multiple files belong in one commit.
-- [Commit Ordering Best Practices](./commit-messages/commit-ordering-best-practices.md) — Ordering a sequence of related commits.
+- [Thematic Commit Composition and Boundaries](./commit-messages/commit-granularity-and-when-to-split-commits.md) — Authorization and the fewest build-valid, reviewable, revertible boundaries.
+- [What Belongs in One Commit](./commit-messages/when-to-combine-commits.md) — Required completion artifacts stay with one coherent purpose.
+- [Commit Ordering Best Practices](./commit-messages/commit-ordering-best-practices.md) — Dependency ordering for already-independent thematic commits.
 - [Atomic Commits](./commit-messages/atomic-commits.md) — What makes a commit atomic.
 - [Commit Granularity: Real-World Examples](./commit-messages/commit-granularity-real-world-examples.md) — Three worked granularity examples.
 - [Benefits of Proper Commit Granularity](./commit-messages/benefits-of-proper-commit-granularity.md) — Why granularity discipline pays off.
@@ -50,6 +50,12 @@ This document explains the commit message convention used in the open-sharia-ent
 - [Code Quality Convention](../quality/code.md) - Automated tools and git hooks for code formatting and commit validation
 - [Development Index](../README.md) - Overview of development conventions
 - [Conventions Index](../../conventions/README.md) - Documentation conventions
+
+## Enforcement Disposition
+
+**Unenforced by decision.** Commitlint validates message syntax, not whether a commit is semantically
+cohesive, independently revertible, or the fewest valid partition of an authorized change set.
+Reviewers assess composition against the thematic boundary test.
 
 ## External Resources
 

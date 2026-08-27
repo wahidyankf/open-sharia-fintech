@@ -36,6 +36,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -61,6 +65,7 @@ updating style guide or AyoKoding content, before major releases, or periodicall
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode](./docs-software-engineering-separation-quality-gate/execution-mode.md) — delegation vs. manual mode.
 
 ### Steps

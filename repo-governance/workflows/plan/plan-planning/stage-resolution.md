@@ -26,4 +26,4 @@ is promoted to `in-progress/` (a pure move — neither stage carries a date pref
 - When research is needed before writing a plan (library versions, best practices, prior art)
 - When the user wants the full plan-creation lifecycle orchestrated automatically
 - When a parent workflow needs a validated plan produced into a specific stage — e.g.
-  `repo-dependency-bump-planning` calls this with `target-stage=backlog`
+  `dependency-bump-planning` calls this with `target-stage=backlog`

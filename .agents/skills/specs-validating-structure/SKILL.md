@@ -14,6 +14,17 @@ Validate **only** explicitly listed folders and their subfolders — never impli
 Cross-folder consistency (Category 4) runs only when 2+ folders are listed; it's skipped for a
 single folder. Subfolders are always included automatically.
 
+## Lifecycle Delegation
+
+Quality-gate invocations may pass exact `delegated-gate-ids` under
+[Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Do not run, re-derive, report, or fix the matching predicates: `governance-readme-index` owns
+README existence/index membership; `md-links` owns internal path/fragment resolution;
+`specs-gherkin-cardinality` owns primary-keyword cardinality; `specs-structure` owns adoption,
+tree shape, and registered counts. Keep semantic and cross-folder judgment. Omitted delegation
+preserves standalone full behavior. Accept `lifecycle-evidence`: checkers preserve it; fixers
+scope-intersect changed files and return `updated-lifecycle-evidence`.
+
 ## The Nine Validation Categories
 
 See [reference/validation-categories-1-4.md](reference/validation-categories-1-4.md) for
@@ -21,13 +32,12 @@ Structural Completeness (README coverage), Feature File Inventory Accuracy, Gher
 Compliance, and Cross-Folder Consistency, and
 [reference/validation-categories-5-9.md](reference/validation-categories-5-9.md) for C4
 Diagram Consistency, Cross-Reference Integrity, Spec-to-Implementation Alignment, Spec Tree Shape
-Compliance (deterministic via `rhino-cli specs validate-tree`), and Adoption Gaps (deterministic
-via `rhino-cli specs validate-adoption`).
+Compliance and Adoption Gaps (deterministic via `rhino-cli specs structure validate`).
 
 ## Drift Detection, Execution Pattern, and Report Format
 
 See [reference/drift-detection-and-reporting.md](reference/drift-detection-and-reporting.md)
-for the four `nx run rhino-cli:validate:specs-*` deterministic targets, the six-step execution
+for current deterministic commands, lifecycle filtering, the six-step execution
 pattern, and the full audit report template.
 
 ## Fixer Mechanics
@@ -39,8 +49,8 @@ execution pattern, fix report format, safety rules, and changed-file capture.
 
 ## What This Methodology Does NOT Cover
 
-Test code or step definitions (`rhino-cli specs coverage`), governance docs (`repo-rules-checker`),
-running tests (CI). This methodology is read-only — no file modification.
+Test code or step definitions (`rhino-cli specs behavior-coverage validate`), governance docs
+(`repo-rules-checker`), running tests (CI). This methodology is read-only — no file modification.
 
 ## Related
 

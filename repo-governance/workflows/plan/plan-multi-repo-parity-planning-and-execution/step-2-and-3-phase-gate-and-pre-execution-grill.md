@@ -45,6 +45,9 @@ question per message; interactive multiple-choice tool when available.
    its exact path, branch, and creator. After delivery, the executor removes only that exact worktree
    immediately when merged/delivered, clean/idle, and no-unpushed proof all pass; a failed check
    retains it with evidence and escalates. This is not a preference or confirmation gate.
+6. **Cross-repository parity identity**: confirm every plan carries the same objective slug and
+   worktree basename, and that corresponding short-lived branch names match. Probe ownership and
+   stop on an unavailable or silently divergent identity before execution mutation.
 
 **Hard gate**: execution does not begin while any question is unresolved. On invoker abandonment,
 terminate with status `fail` — the gated plans remain in `plans/in-progress/` for a later

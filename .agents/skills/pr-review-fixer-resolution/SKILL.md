@@ -18,7 +18,7 @@ findings itself, only resolves what the nine discipline specialists and
 [reference/README.md](./reference/README.md) is the authoritative annotated index of the set — it
 governs which modules exist and what each one covers. This file deliberately does not restate that
 list: a second copy of it went stale the first time a module was added, which is the failure
-[restatement-by-value.md](../../../repo-governance/workflows/pr/pr-review-quality-gate/restatement-by-value.md)
+[restatement-by-value.md](../../../repo-governance/workflows/pr/pr-review-cycle/restatement-by-value.md)
 describes.
 
 The `refutation-clause-*` modules are one rule split across a word budget. Read them together
@@ -41,8 +41,10 @@ or not at all — the execution shapes are meaningless without the invariants th
    verified against the PR's own head) or well-founded rejections get resolved.
 1. **A stale term/count fix requires a repo-wide grep**, not just the cited occurrence — this
    class of miss has recurred across dogfood cycles.
-1. **Never push a fix that breaks a previously-green gate** — re-run relevant quality gates before
-   every push.
+1. **Preserve lifecycle ownership.** In PR quality-gate invocation, do not rerun exact delegated
+   predicates before push. Invalidate affected evidence, return the updated ledger, and let
+   current-head aggregate PR CI replace `pending`. Outside that workflow, retain the existing
+   relevant-gate pre-push verification behavior.
 
 ## Related Agents
 

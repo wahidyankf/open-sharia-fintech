@@ -17,6 +17,13 @@ skills:
 
 # Documentation Fixer Agent
 
+## Lifecycle Handoff
+
+Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Do not re-validate or fix an exact
+delegated predicate; empty or omitted delegation suppresses nothing. After edits, intersect changed
+files with delegated scopes and return `updated-lifecycle-evidence`, invalidating only affected
+entries.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating factual-accuracy claims against a

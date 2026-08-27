@@ -23,18 +23,16 @@ When all preconditions hold, the agent presents a clear summary, then merges:
 PR #42: feat(auth): add email validation
 
 Quality gates:
-  typecheck:     PASSED
-  lint:          PASSED
-  test:quick:    PASSED
-  specs:coverage: PASSED
-  CI workflows:  PASSED
+  Quality gate:  PASSED (current head/base)
+  leak review:   PASSED (current head)
+  surface gates: PASSED / explicitly exempt
 
 Preconditions:
-  (a) review route:      eligible, clean at cycle 2 of 5
-  (b) C/H/M:             0 / 0 / 0 outstanding
-  (c) branch vs main:    up to date (fast-forwarded, no rewrite)
-  (d) quality gates:     all green (above)
-  (e) tester gates:      run, findings resolved
+  (a) PR CI:             exact current head/base green
+  (b) leak review:       authenticated current-head pass
+  (c) branch vs main:    up to date (non-destructive update)
+  (d) conversations:     resolved
+  (e) surface gates:     passed / explicitly exempt
 
 Merging PR #42.
 ```
@@ -53,10 +51,8 @@ If any quality gate fails, the agent must:
 PR #42: feat(auth): add email validation
 
 Quality gates:
-  typecheck:     PASSED
-  lint:          FAILED (3 errors in auth-validator.ts)
-  test:quick:    PASSED
-  specs:coverage: PASSED
+  Quality gate:  FAILED (lint errors in auth-validator.ts)
+  surface gates: PENDING
 
 I will investigate and fix the lint errors before merging.
 ```

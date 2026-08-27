@@ -40,7 +40,11 @@ Provide a self-contained handoff prompt per repo covering:
    [Plans Organization Convention §Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
    for the authoritative restriction, which governs this field independently of the restriction
    [Modes](./invocation-point-and-modes-overview.md) above places on this workflow's own 3-value vocabulary. A repo whose plan
-   resolves to a `*-to-pr` mode additionally runs the
-   [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) during its own execution.
+   resolves to a `*-to-pr` mode additionally requires exact-head/base PR CI, one clean current-head
+   [`pr-leak-review`](../../pr/pr-leak-review.md), and applicable surface gates during execution.
+9. **Cross-repository parity identity record** — objective slug, common worktree basename, and the
+   corresponding short-lived branch mapping for every target repository. Instruct `plan-maker` to
+   reproduce the same record in each plan's `## Worktree` section, using `not applicable` only where
+   the repo's resolved mode has no worktree or short-lived branch.
 
 **Continues in** [Step 6 — Plan Authoring (Required Contents)](./step-6-plan-authoring-required-contents.md).

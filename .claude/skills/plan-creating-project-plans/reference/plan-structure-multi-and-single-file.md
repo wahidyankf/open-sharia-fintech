@@ -18,7 +18,8 @@ plans/in-progress/complex-feature/
 - **`brd.md`** — WHY: business goal, impact, affected roles, business-level success metrics, business-scope Non-Goals, business risks. Solo-maintainer repo — no sign-off / sponsor / stakeholder ceremony language.
 - **`prd.md`** — WHAT: product overview, personas, user stories, Gherkin acceptance criteria, product scope (in + out), product risks.
 - **`tech-docs.md`** — HOW: architecture, design decisions with rationale, an annotated file-impact tree,
-  dependencies, rollback. Its `## File-Impact Analysis` is a root-relative fenced `text` tree with
+  dependencies, rollback. Every new lasting mechanism names its concrete need and explains why
+  existing mechanisms are insufficient. Its `## File-Impact Analysis` is a root-relative fenced `text` tree with
   `[E]`/`[N]`/`[D]`/`[G]` markers as the primary scope view. Add `### More Detail` directly below it
   only for non-obvious mechanics, ordering, discovery criteria, or archival follow-up; it never
   replaces the tree or contains delivery checkboxes. See [Plans Organization Convention §File-Impact
@@ -42,7 +43,8 @@ plans/in-progress/simple-feature/
 2. **Scope** — in-scope + out-of-scope; affected apps named
 3. **Business Rationale (condensed BRD)** — why + affected roles + success metrics (gut-based reasoning OK when logic supports it; fabricated KPIs forbidden)
 4. **Product Requirements (condensed PRD)** — user stories + Gherkin acceptance criteria + product scope
-5. **Technical Approach** — architecture, design decisions
+5. **Technical Approach** — architecture, design decisions; every new lasting mechanism names its
+   concrete need and explains why existing mechanisms are insufficient
 6. **Delivery Checklist** — phased `- [ ]` items; opens with the `[AI]`/`[HUMAN]` executor legend; every phase ends with a `### Phase N Gate` and a Pause Safety note
 7. **Quality Gates** — local + CI gates
 8. **Verification** — how to confirm done

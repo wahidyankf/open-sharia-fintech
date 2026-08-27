@@ -59,6 +59,11 @@ outputs:
 Sweeps one or more repos' `plans/ideas/` and converges them into a deduplicated,
 Eisenhower-quadrant-organized, correctly-resident set of two-pagers — backlog grooming for ideas.
 
+## Agent References
+
+When grooming promotes a ready idea into a full plan, hand authoring to
+[plan-maker](../../../.claude/agents/plan/plan-maker.md).
+
 ## Contents
 
 - [Purpose and When to Use](./plan-ideas-grooming/purpose-and-when-to-use.md) — what it does; the recurrence trigger.

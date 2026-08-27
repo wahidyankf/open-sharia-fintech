@@ -51,3 +51,10 @@ of scope — but the moment one is quoted in a plan, a gate, or a PR, it is in s
   applied to rules rather than numbers.
 - [CI Monitoring](../workflow/ci-monitoring.md) — where CI figures come from and how to read a run.
 - [Evidence Capture](../quality/evidence-capture.md) — where a recorded measurement belongs.
+
+## Conventions Implemented/Respected
+
+- [Factual Validation](../../conventions/writing/factual-validation.md) — a reported measurement is
+  a factual claim whose command, scope, and responsiveness need evidence.
+- [Dynamic Collection References](../../conventions/writing/dynamic-collection-references.md) —
+  measured inventories must derive from the live collection rather than a copied list.

@@ -21,6 +21,17 @@ Use this Skill when:
 
 ## Link Validation Principles
 
+### Lifecycle Delegation
+
+Quality-gate invocations may pass `delegated-gate-ids` from
+[Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Match exact IDs only. If `md-links` is present, do not resolve, re-check, fix, or AI-rederive
+internal paths and fragments. Continue external HTTP reachability and cache maintenance. If the
+parameter is omitted, preserve standalone full validation.
+
+Also accept `lifecycle-evidence`: checkers preserve it unchanged; fixers scope-intersect changed
+files and return `updated-lifecycle-evidence`, invalidating only affected entries.
+
 ### Why Link Validation Matters
 
 **Broken links**:

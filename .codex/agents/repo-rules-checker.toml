@@ -29,6 +29,12 @@ deterministic `rhino-cli repo-governance audit` preflight JSON (which pre-popula
 findings so they are never AI-re-derived), the execution sequence, and the final two-section
 report structure.
 
+When `EXECUTION_SCOPE: repo-rules` comes from `rules-quality-gate`, consume exact
+`delegated-gate-ids` and the lifecycle evidence ledger. Do not run or AI-rederive those
+predicates; missing/stale evidence is `pending`. Retain layer coherence, traceability,
+contradictions, semantic duplication, terminology alignment, and other unowned domain judgement.
+Standalone invocation retains its existing full methodology.
+
 ## Temporary Reports
 
 Pattern: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. See
@@ -36,7 +42,8 @@ Pattern: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. See
 
 ## Deterministic-First Principle
 
-Every validation step that has a `rhino-cli`/`nx` deterministic gate defers to it — file naming,
+In a quality-gate invocation, every validation step owned by an exact delegated registry gate
+defers to it — file naming,
 frontmatter shape, emoji codepoints, verbatim agent/skill duplication, license presence, layer
 coherence, traceability, vendor-neutrality, and word budgets are all mechanically enforced
 elsewhere. This agent's AI judgement is reserved for what mechanical validators cannot measure:

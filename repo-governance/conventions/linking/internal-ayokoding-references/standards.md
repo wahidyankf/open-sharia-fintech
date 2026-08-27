@@ -118,7 +118,8 @@ content/en/learn/software-engineering/programming-languages/typescript/     (dow
 
 ## Language Selection
 
-AyoKoding content is bilingual (English and Indonesian). When linking from `docs/` (English-only), use the **English path** (`/en/`):
+AyoKoding content is bilingual (English and Indonesian). When linking from an English-language
+page under `docs/`, use the **English path** (`/en/`):
 
 **Pattern:**
 
@@ -132,7 +133,10 @@ apps/ayokoding-www/content/en/learn/[topic-path]/
 apps/ayokoding-www/content/id/learn/[topic-path]/ ← Indonesian version
 ```
 
-**Rationale:** Documentation in `docs/` is written in English, so references should point to English educational content for consistency.
+**Rationale:** The [Repository Working Language Convention](../../writing/repository-working-language.md)
+makes English the default while permitting intentionally localized or language-native documents.
+An English document should therefore point to English educational content for consistency; a
+permitted non-English document may link to the matching language when available.
 
 ## Link Text Guidelines
 

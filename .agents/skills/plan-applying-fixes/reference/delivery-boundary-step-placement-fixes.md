@@ -2,7 +2,7 @@
 
 Per
 [Plans Organization Convention §Phase 0 Opens No PR](../../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule):
-when a PR-creation/branch-push/PR-Review-Cycle/merge/`gh pr ready`/post-push-CI-verification step is
+when a PR-creation/branch-push/semantic-review/merge/`gh pr ready`/post-push-CI step is
 flagged **inside `## Phase 0`**, the fix is mode-independent — the mode-reconciliation recipe above
 does NOT apply here:
 
@@ -22,7 +22,7 @@ Verify by re-running the checker's Phase 0 detection command and reading `0`.
 
 ## PR Steps Outside a Delivery Boundary
 
-When a PR-creation/PR-Review-Cycle/`gh pr ready`/merge/post-push-CI-verification step is flagged in a
+When a PR-creation/semantic-review/`gh pr ready`/merge/post-push-CI step is flagged in a
 phase not declared a delivery boundary, the work is **relocated**, not deleted — a PR opens once per
 delivery unit, at the unit's boundary.
 

@@ -35,8 +35,8 @@ git diff <old-local-sha>..HEAD
 
 ## Agent Responsibilities
 
-| Agent / Workflow        | Responsibility                                                                                                                    |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| All AI agents           | Read the full incoming diff and reassess in-flight work impact after every rebase, pull, merge, or cherry-pick before continuing. |
-| plan-execution workflow | Treat an integration event mid-phase as a checkpoint: pause, review, adjust the remaining delivery steps if needed, then resume.  |
-| Developer (human)       | Same expectation — this convention is not agent-specific.                                                                         |
+| Actor / Workflow        | Responsibility                                                                                                                     |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| All contributors        | Read the full incoming diff and reconcile task, plan, assumptions, ledger, and verification before the next action.                |
+| plan-execution workflow | Treat integration as a checkpoint; revise affected remaining steps and rerun completed verification invalidated by the new `HEAD`. |
+| Plan resume/takeover    | Apply this checkpoint after its freshness integration and before rebuilding or continuing execution state.                         |

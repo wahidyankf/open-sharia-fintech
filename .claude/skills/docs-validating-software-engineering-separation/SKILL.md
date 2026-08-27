@@ -20,6 +20,14 @@ Use this Skill when:
 
 ## Validation Scope
 
+### Lifecycle Delegation
+
+For a quality-gate handoff, accept exact `delegated-gate-ids` and `lifecycle-evidence`. When
+`md-links` is delegated, do not resolve, re-check, fix, or AI-rederive paths/fragments; retain the
+semantic correctness of prerequisite relationships and all separation checks. Checkers preserve
+the ledger; fixers return a scope-intersected `updated-lifecycle-evidence`. Omitted delegation
+preserves standalone full behavior.
+
 **CRITICAL**: Only validate relationships **explicitly listed** in the Software Design Reference prerequisite table.
 
 **Authoritative Source**: [Software Design Reference - Specific Prerequisites](../../../docs/explanation/software-engineering/software-design-reference.md#specific-prerequisites)

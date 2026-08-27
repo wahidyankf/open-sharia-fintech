@@ -16,7 +16,10 @@ when_to_use: Use only when ScheduleWakeup is unavailable and a manual poll loop 
 
 **Do not use `gh run watch`** — stream-watching is prohibited for CI monitoring. If `ScheduleWakeup` is not available, use a manual poll loop with a minimum 2-minute sleep between checks.
 
-**Why `gh run watch` is prohibited:** It streams output by polling internally every ~3 seconds. This (1) ties up a foreground tool slot for the entire duration of the run, (2) exhausts the API rate limit on any job longer than ~5 minutes (~3 calls/min × 30 min = 90 calls just for watching), and (3) produces verbose unstructured output that must be parsed. A single `gh run view --json status,conclusion` per wakeup is cheaper, parseable, and non-blocking.
+**Why `gh run watch` is prohibited:** Its default 3-second refresh cadence performs about 20
+refreshes per minute, ties up a foreground tool slot, and produces verbose streaming output. A
+single `gh run view --json status,conclusion` per 2-minute wakeup is bounded, parseable, and
+non-blocking.
 
 **Canonical poll-loop pattern (when `ScheduleWakeup` is unavailable):**
 
@@ -47,4 +50,6 @@ done
 gh run watch <run-id>
 ```
 
-The tight-loop pattern can issue 500+ API calls in minutes. `gh run watch` exhausts the quota on any job longer than ~5 minutes. There is no scenario in which either of these patterns is acceptable for CI monitoring.
+The tight-loop pattern can issue hundreds of status reads in minutes. Stream watching performs
+about 40 times as many refreshes as the required 2-minute cadence. There is no scenario in which
+either pattern is acceptable for CI monitoring.

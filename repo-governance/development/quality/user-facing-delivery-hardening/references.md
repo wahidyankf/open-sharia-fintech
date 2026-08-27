@@ -33,7 +33,7 @@ when_to_use: "Use when you need a related workflow or convention document."
 - [Web UX Test-Fixing Planning](../../../workflows/web/web-ux-test-fixing-planning.md) — workflow that runs the three-tester near-end retest (Rule 15).
 - [API Quality Gate](../../../workflows/api/api-quality-gate.md) — workflow that runs the near-end `api-exploratory-tester` round (Rule 16); the API counterpart to the web triad.
 - [UI Quality Gate](../../../workflows/ui/ui-quality-gate.md) — static component-source gate a UI-bearing plan runs alongside the Rule 15 triad.
-- [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md) — enforces the surface-conditional gates as merge precondition clause (e).
+- [PR Merge Protocol](../../workflow/pr-merge-protocol.md) — keeps applicable surface gates merge-blocking.
 
 **Agents:**
 

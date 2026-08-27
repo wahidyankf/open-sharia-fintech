@@ -50,9 +50,9 @@ measurable runtime consequence.
 
 ## SUPPRESS Block (Never Raise)
 
-- A compile/build failure — CI already reds it.
-- A style nit a project's own linter already enforces mechanically (e.g. a configured
-  `no-explicit-any` rule).
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - A speculative "consider a stricter type" without having traced the control-flow narrowing that
   already makes the looser type sound at that point.
 - Type laxity inside test-only fixture/mock files the project's own testing convention accepts.

@@ -13,8 +13,8 @@ This workflow can be composed with:
 - Content creation workflows (validate plans before creating content)
 - Execution workflows (validate before starting implementation)
 - Release workflows (validate plan completeness before release planning)
-- [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) — the complementary
-  post-execution gate for plans resolving to a `*-to-pr` delivery mode; see
+- [PR Leak Review](../../pr/pr-leak-review.md) — the mandatory current-head focused gate for
+  `*-to-pr` delivery; broad semantic review remains explicit-only; see
   [Relationship to Delivery-Mode Done-Definition](./termination-criteria-and-delivery-mode-relationship.md#relationship-to-delivery-mode-done-definition)
   above
 

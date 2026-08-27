@@ -45,5 +45,5 @@ This convention defines which categories live in which layer, the JSON envelope 
 
 ## Related
 
-- [Repository Rules Quality Gate Workflow](../../workflows/repo/repo-rules-quality-gate.md) — the workflow that orchestrates preflight + AI checker.
+- [Repository Rules Quality Gate Workflow](../../workflows/rules/rules-quality-gate.md) — the workflow that orchestrates preflight + AI checker.
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) — three-stage validation flow that this split sits inside.

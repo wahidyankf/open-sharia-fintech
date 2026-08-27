@@ -16,8 +16,9 @@ when_to_use: "Use when a large diff needs shared-context handling."
 # Shared-context extract-once + large-diff handling (D13)
 
 **D13 chose NO generated-file exclusion.** Reviewers see the **full diff**, including regenerated
-output such as `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**`, lock files, and minified/source-map
-assets — nothing is silently filtered out before a specialist reviews it, and **CI still runs over
+output such as `.opencode/agents/**`, `.codex/agents/**`, generated mirrors under
+`.agents/skills/**`, `generated/**`, lock files, and minified/source-map assets — nothing is silently
+filtered out before a specialist reviews it, and **CI still runs over
 everything regardless** of what any reviewer chooses to skim. This is a deliberate reversal of the
 alternative (auto-detecting and excluding generated files): the rationale is explicitness — a
 hand-edited "generated" file is never silently missed because nothing is silently excluded. One
@@ -29,7 +30,7 @@ wrote last cycle. The **PR body stays in the brief** — it is what a human read
 plans-only PR the plan itself is the shipping surface and stays too. This is not generated-file filtering by another name: those files are
 excluded because the **loop itself authored them**, not because a tool emitted them, and cycle 1
 still reviews them in full. See
-[Loop-Exit and Block Rules](../../../workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md)
+[Loop-Exit and Block Rules](../../../workflows/pr/pr-review-cycle/loop-exit-and-block-rules.md)
 for the rule and the PR #239 evidence behind it.
 
 Two mechanics keep this full-diff posture tractable rather than merely expensive:

@@ -35,6 +35,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: "Final validation status"
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: "Number of check-fix cycles executed"
@@ -64,6 +68,7 @@ fixes iteratively until all issues are resolved.
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode and Scope](./specs-quality-gate/execution-mode-and-scope.md) — agent delegation, how to invoke, and what this workflow does/doesn't validate.
 - [Validation Dimensions](./specs-quality-gate/validation-dimensions.md) — the nine categories and deterministic rhino-cli offload.
 - [Steps — Initial Validation and Fixes](./specs-quality-gate/steps-initial-validation-and-fixes.md) — steps 1-3 of the check-fix loop.

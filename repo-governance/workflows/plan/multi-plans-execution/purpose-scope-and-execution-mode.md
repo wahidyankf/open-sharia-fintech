@@ -14,8 +14,8 @@ set, (2) builds a dependency DAG that decides
 what must be sequenced and what is safe to parallelize, (3) materializes one very-granular Task list
 covering **every** delivery-checklist item across all plans, and (4) runs a bounded ready-queue
 scheduler that pulls independent delivery-step nodes and drives each plan through its full
-per-plan lifecycle (declared work location → gates → CI → validation → delivery-mode
-PR-review cycle → merge/handoff → archival), exactly as `plan-execution.md` does for one plan, and
+per-plan lifecycle (declared work location → gates → CI → validation → current-head leak review →
+merge/handoff → archival), exactly as `plan-execution.md` does for one plan, and
 (5) after all plans finish, runs one **cross-plan learnings solidification** pass so the recurring and
 portfolio-level signal the plans produced _together_ reaches a durable home instead of being stranded
 in each archived plan folder.
@@ -50,6 +50,6 @@ agent via the Agent tool, using the **identical Agent Selection rules** defined 
 annotation → project/app → file extension → content type → framework → direct execution).
 
 The orchestrator invokes `plan-execution-checker` as a delegated agent for each plan's independent
-validation, and runs the PR-review cycle (`pr-review-scout-maker` → nine specialists → `pr-review-synthesis-maker` →
-`pr-review-fixer`) for each `*-to-pr` plan — again, unchanged from the single-plan workflow. The only thing this workflow adds is the **scheduling of
+validation, and requires one exact-current-head `pr-leak-review` pass for each `*-to-pr` plan;
+broad semantic review remains explicit-only. The only thing this workflow adds is the **scheduling of
 those per-plan steps across plans**.

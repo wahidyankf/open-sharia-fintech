@@ -38,6 +38,9 @@ Glob `docs/**/*.md`. Extract external URLs with `https?://[^\s\)]+`; extract int
 
 ## Validation Workflow
 
+When `delegated-gate-ids` contains exact ID `md-links`, omit the Internal branch below. External
+validation and mandatory cache bookkeeping still run. Omitted delegation preserves both branches.
+
 **External** (cache-integrated): load cache → for each URL, check per-link expiry (6 months since
 its own `lastChecked`) → skip if fresh, else WebFetch with redirect tracking → handle 403s
 (Wikipedia/government sites commonly block automation — treat as inconclusive, not broken) →

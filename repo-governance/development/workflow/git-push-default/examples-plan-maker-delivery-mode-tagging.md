@@ -56,7 +56,7 @@ where a plan's own step says so explicitly. These are mis-tags per
 
 - [ ] [AI] Create worktree: `git worktree add worktrees/feature-z -b feature-z`
 - [ ] [AI] Commit, push, and open a draft PR against `main`
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle until the done-definition is met, then flip to ready
+- [ ] [AI] Verify `Quality gate` is green for the exact current PR head and base, then flip to ready
 - [ ] [AI] Merge the PR once the hardened preconditions hold
 - [ ] [AI] Remove the worktree: `git worktree remove worktrees/feature-z`
 ```

@@ -37,4 +37,4 @@ What this convention covers and what it deliberately leaves to other documents. 
 - The platform-bindings catalog entries themselves (see
   [docs/reference/platform-bindings.md](../../../../docs/reference/platform-bindings.md)).
 - The periodic compatibility-audit workflow that detects external upstream drift (see
-  [repo-harness-compatibility-quality-gate.md](../../../workflows/repo/repo-harness-compatibility-quality-gate.md)).
+  [harness-compatibility-quality-gate.md](../../../workflows/harness/harness-compatibility-quality-gate.md)).

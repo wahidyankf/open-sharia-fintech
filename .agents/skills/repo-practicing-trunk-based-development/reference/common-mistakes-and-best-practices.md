@@ -22,9 +22,11 @@
 
 ### ❌ Mistake 4: Large, infrequent commits
 
-**Wrong**: One commit after 3 days with 1000 lines changed
+**Wrong**: One commit bundles independent purposes, or many tiny commits split one purpose's
+required completion artifacts
 
-**Right**: 10-15 small commits over 3 days, each < 200 lines
+**Right**: After explicit authorization, compose the fewest build-valid, independently reviewable,
+and revertible commits; use no fixed line-count or commits-per-day quota
 
 ### ❌ Mistake 5: Committing broken code to main
 
@@ -38,8 +40,10 @@
 
 Before pushing to `main`:
 
-- [ ] Commit is small (< 200 lines changed)
+- [ ] The user explicitly authorized the named change set before staging or committing
+- [ ] Boundaries are the fewest that remain build-valid, reviewable, and revertible
 - [ ] Commit is atomic (complete, working unit)
+- [ ] Required tests, docs, specs, references, migrations, and mirrors stay with their purpose
 - [ ] Tests pass for this commit
 - [ ] Commit message follows Conventional Commits
 - [ ] Feature incomplete? Hidden behind feature flag
@@ -50,7 +54,8 @@ Before pushing to `main`:
 
 **Ask these questions**:
 
-1. **Can I break this into smaller commits?** → If yes, do it
+1. **Does each proposed boundary pass the thematic test?** → Keep only independently reviewable
+   and revertible purposes separate
 2. **Is the change small and obviously safe?** → If yes, a direct-push mode is a reasonable choice
 3. **Can I hide incomplete work behind a feature flag?** → If yes, do so regardless of mode
 4. **Have I declared the mode in the plan?** → If no, the default `worktree-to-pr` applies

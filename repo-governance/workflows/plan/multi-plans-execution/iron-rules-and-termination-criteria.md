@@ -35,7 +35,8 @@ plan, unchanged. The multi-plan additions:
 ## Termination Criteria
 
 - **`pass`**: every named plan reached its clean terminal state (archived to `plans/done/` — the
-  default path, since `[AI]` merges once the hardened preconditions hold; or a green fully-reviewed
+  default path, since `[AI]` merges once the hardened preconditions hold; or a green exact-head-CI
+  and leak-reviewed
   PR handed off, which applies only to a plan whose own step explicitly opts into a `[HUMAN]` merge
   gate) **and**
   cross-plan learnings were solidified (Phase D5 — every cross-cutting theme routed to a durable home).

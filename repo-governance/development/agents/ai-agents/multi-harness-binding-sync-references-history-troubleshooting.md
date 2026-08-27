@@ -23,21 +23,25 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 - `npm run generate:bindings` - Full sync, every generated-tier harness
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch the
-  `.agents/skills/` real-file mirror
-- `npm run validate:sync` - `.opencode/agents/` and `.agents/skills/`; does **not** cover
-  `.codex/agents/`
+- `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch generated
+  mirrors under `.agents/skills/`
+- `npm run validate:sync` - `.opencode/agents/` and non-vendored mirrors under `.agents/skills/`;
+  does **not** cover `.codex/agents/`
 - `npm run harness:bindings-validation` - every generated-tier binding including `.codex/`; this is
   what the pre-push gate runs
 
 **Conversion Logic**:
 
-- **Agents**: Primary format → secondary format (tool arrays → permission object, model mapping)
-- **Agent skills**: one harness reads `.claude/skills/` natively; the other gets a real-file
-  byte-copy mirror at `.agents/skills/`
-- **Validation**: three mirror trees now, not two — `.opencode/agents/`, `.codex/agents/` (plus
-  `.codex/config.toml`), and `.agents/skills/`. `harness:bindings-validation` checks all three;
-  `validate:sync` checks only the first and third.
+- **`.opencode/agents/`**: canonical Markdown/YAML → Markdown/YAML permission object plus model
+  mapping
+- **`.codex/agents/`**: canonical metadata/body → TOML `name`, `description`, and
+  `developer_instructions`; tool/model frontmatter is omitted, and the generator also owns the
+  delimited agent-table region in `.codex/config.toml`
+- **Agent skills**: one harness reads `.claude/skills/` natively; the other gets non-vendored
+  real-file byte-copy mirrors under `.agents/skills/`; vendored plugin subtrees are preserved
+- **Validation**: three generated sets now, not two — `.opencode/agents/`, `.codex/agents/` (plus
+  the generated region in `.codex/config.toml`), and non-vendored mirrors under `.agents/skills/`.
+  `harness:bindings-validation` checks all three; `validate:sync` checks only the first and third.
 
 ## Documentation References
 
@@ -56,13 +60,13 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 ## Best Practices
 
-1. **Always edit `.claude/` first** - Never edit a `class: generated` file under `.opencode/` or
-   `.codex/` directly (changes will be overwritten). Exception: a path an entry's `ownership:` list
-   declares `vendored` — e.g. `.opencode/opencode.json`, `.codex/config.toml`'s undelimited
-   region — is hand-maintained by design and MUST be edited directly.
+1. **Edit the declared source** - Never edit a `class: generated` file directly; changes will be
+   overwritten. Edit registry-declared vendored paths such as `.opencode/opencode.json` or the
+   undelimited region of `.codex/config.toml` in place.
 2. **Run sync after changes** - Ensure every generated-tier binding stays synchronized
-3. **Test both platforms** - Verify agents work in all supported platforms after major changes
-4. **Document sync status** - Keep README files updated in both directories
+3. **Test every platform** - Verify agents work in all supported platforms after major changes
+4. **Document sync status** - Keep canonical README indexes current, then regenerate every
+   registry-declared mirror
 5. **Security policy** - Only use skills from trusted sources (all platforms)
 
 ## Troubleshooting
@@ -76,7 +80,7 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 **Problem**: agent skills missing in one directory
 **Solution**: Verify skills exist in `.claude/skills/`, then run `npm run generate:bindings` (not
 `npm run sync:skills` — that command only touches the no-op secondary-harness path and never
-writes the other secondary harness's `.agents/skills/` mirror)
+writes the other secondary harness's non-vendored mirrors under `.agents/skills/`)
 
 ---
 

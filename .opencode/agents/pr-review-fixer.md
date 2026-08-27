@@ -1,5 +1,5 @@
 ---
-description: Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-quality-gate.md`), never standalone.
+description: Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the explicit PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-cycle.md`), never standalone.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -19,11 +19,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — the 4-way triage is bounded classification
-  over an already-cited finding, and fix implementation targets concrete evidence someone else
-  already gathered; opus/planning-grade reasoning belongs to the coordinator tier
-  (`pr-review-scout-maker`, `pr-review-synthesis-maker`), not this resolution step. Mirrors the
-  sonnet-tier profile of sibling fixers `ci-fixer`, `plan-fixer`.
+- **Role**: Fixer (yellow). **Model**: `sonnet` — evidence-based triage and implementation.
 
 ## Core Responsibility
 
@@ -36,10 +32,13 @@ while any thread remains both unresolved and unanswered.
 **See `pr-review-fixer-resolution` Skill** for the full mechanics: the GraphQL enumeration query
 and three confirmed live-API gotchas, the four-way triage table and each path's requirements, the
 reply/resolve hard rules and repeated-finding handling across cycles, and the posting-identity
-stopgap plus mandatory pre-push gate re-run.
+stopgap plus lifecycle-evidence handling.
 
 Before triage or mutation, require the live PR head to equal the posted cycle's scout pin. A
 mismatch permits stale-evidence replies only and returns the cycle for a fresh scout.
+
+Under the PR gate, consume Step 0's exact IDs/evidence without reruns. Return selectively
+invalidated evidence; current-head CI replaces only predicates it records as covered.
 
 ## Reference Documentation
 
@@ -56,7 +55,7 @@ mismatch permits stale-evidence replies only and returns the cycle for a fresh s
 - `pr-review-scout-maker` - Pipeline stage 0; classifies risk tier and specialist set
 - The nine `pr-review-*-maker` discipline specialists - Raw findings this agent resolves, via
   `pr-review-synthesis-maker`'s consolidation
-- [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md) -
+- [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-cycle.md) -
   Orchestrates the strictly sequential N-cycle loop this agent participates in
 - `web-researcher` - Delegate target for external fact verification while triaging a finding
 - `plan-fixer`, `ci-fixer` - Sibling fixer agents in the standard three-stage pattern

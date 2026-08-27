@@ -12,7 +12,8 @@ Determine whether to continue fixing or move to finalization.
 
 **Logic**:
 
-- Re-run all checkers (step 1) to get fresh reports
+- Re-run all checkers (step 1) with `{step4.outputs.updated-lifecycle-evidence}` and the Step 0
+  delegated IDs
 - Count ALL findings (CRITICAL, HIGH, MEDIUM, LOW) across all new reports
 - Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
 - If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Final Validation — double-zero confirmed)
@@ -41,7 +42,9 @@ Run all checkers one final time to confirm zero issues remain.
 - apps-ayokoding-www-facts-checker
 - apps-ayokoding-www-link-checker
 
-**Args**: `scope: {input.scope}, expect: zero-issues`
+**Args**: `scope: {input.scope}, expect: zero-issues,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step4.outputs.updated-lifecycle-evidence}`
 
 **Output**: Final audit reports for all dimensions
 
@@ -55,7 +58,10 @@ Run all checkers one final time to confirm zero issues remain.
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, all final reports
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, all final reports
+
+Derive `lifecycle-status` separately from the latest lifecycle evidence (`verified`, `pending`, or
+`not-applicable`). It never changes domain `final-status`.
 
 **Status determination**:
 

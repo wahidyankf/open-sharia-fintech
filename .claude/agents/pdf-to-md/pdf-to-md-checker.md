@@ -33,6 +33,18 @@ and technical validity (Mermaid syntax, OCR quality).
 - `pdf-file` (required) — path to source PDF (source of truth)
 - `md-file` (optional) — path to Markdown to validate; default: same dir/name as PDF with `.md`
 - `EXECUTION_SCOPE` (optional) — UUID chain scope; default: `pdf-to-md`
+- `delegated-gate-ids` (optional) — exact lifecycle gate IDs. Suppress only their predicates;
+  omitted preserves standalone full validation.
+- `lifecycle-evidence` (optional) — Step 0 evidence ledger; preserve it in the audit unchanged.
+
+## Lifecycle Delegation
+
+Follow [Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+When `md-mermaid` is delegated, do not run Mermaid syntax validation or `crane check-all` (which
+includes it); use non-delegated per-dimension checks. Delegated `markdownlint`,
+`format-verify-prettier`, `md-heading-hierarchy`, `md-frontmatter`, `md-links`, or `md-naming`
+remove only generic Markdown mechanics. Always retain PDF/source text fidelity, source-corresponding
+heading depth and order, nesting, tables, OCR, and figure representation.
 
 ## Validation Workflow
 

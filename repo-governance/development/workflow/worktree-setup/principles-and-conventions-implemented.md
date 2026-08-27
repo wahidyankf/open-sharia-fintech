@@ -22,7 +22,7 @@ when_to_use: Use when tracing why the two-step worktree init exists back to the 
 
 This practice respects the following core principles:
 
-- **[Reproducibility First](../../../principles/software-engineering/reproducibility.md)**: Every worktree operates with a consistent, verified toolchain state. Running both `npm install` and `npm run doctor -- --fix` eliminates divergence between the root worktree's `node_modules/`, the current `package-lock.json`, and the installed native toolchain — making builds deterministic regardless of which worktree is active.
+- **[Reproducibility First](../../../principles/software-engineering/reproducibility.md)**: Every worktree operates with a consistent, verified toolchain state. Running both `npm install` and `npm run doctor -- --fix` at its root aligns that worktree's hooks, `node_modules/`, lockfile, and native toolchain.
 
 - **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: The toolchain init is an explicit, required two-step action rather than an assumed side effect of worktree creation. The `postinstall` hook in `package.json` does run `npm run doctor || true`, but the trailing `|| true` deliberately swallows doctor failures so `npm install` can complete even when the polyglot toolchain is broken. That tolerance is the right default for `npm install`, but it means the explicit `npm run doctor -- --fix` invocation is the only thing that guarantees convergence. Developers and agents must perform the second step deliberately.
 

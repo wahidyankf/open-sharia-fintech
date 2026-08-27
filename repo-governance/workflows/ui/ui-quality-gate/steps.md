@@ -1,69 +1,87 @@
 ---
 title: "Steps"
-description: The six sequential steps of the UI quality gate's check-fix-recheck loop, from initial validation through finalization.
+description: The bounded UI quality gate steps, from discovery through optional fixing, scoped verification, and finalization.
 when_to_use: Use when executing or auditing the UI quality gate's step-by-step logic.
 ---
 
 # Steps
 
-## Step 1: Initial Validation
+## Step 0: Lifecycle Ownership Filter
+
+Apply the
+[lifecycle validation ownership policy](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Record exact `delegated-gate-ids` and evidence. Delegate a UI dimension only when the registry
+assigns the same predicate.
+
+## Step 1: Discovery
 
 **Agent**: `swe-ui-checker`
 
-**Action**: Run full validation against all seven check dimensions (token compliance, accessibility, color contrast, component patterns, dark mode, responsive, anti-patterns).
+**Action**: Validate all seven dimensions (tokens, accessibility, contrast, component patterns,
+dark mode, responsive design, anti-patterns), omitting exact delegated predicates.
+
+**Args**: `quality-gate-phase: discovery, scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 
 **Output**: Audit report in `generated-reports/swe-ui__{uuid}__{timestamp}__audit.md`
 
-## Step 2: Check for Findings
+Technical checker or report-generation errors go directly to Step 5 with `final-status: fail`.
 
-**Action**: Count all findings from Step 1 report.
+## Step 2: Triage Findings
+
+**Action**: Apply the `mode` threshold. Preserve below-threshold findings without fixing them.
 
 **Routing**:
 
-- Zero findings → Go to Step 5 (Confirmation Check)
-- Findings exist → Go to Step 3
+- Zero in-threshold findings → Go to Step 5 with `final-status: pass`
+- In-threshold findings exist → Go to Step 3
 
 ## Step 3: Apply Fixes
 
 **Agent**: `swe-ui-fixer`
 
-**Action**: Process audit report, re-validate each finding, apply fixes where confidence is HIGH.
+**Action**: Run once. Revalidate in-threshold findings and fix those with HIGH confidence.
+
+**Args**: Preserve `delegated-gate-ids`; never fix or re-derive delegated predicates. After edits,
+invalidate only evidence whose registered scope intersects the changed files.
+
+**Output**: `{updated-lifecycle-evidence}` plus the ordinary fix report.
 
 **Rules**:
 
-- Re-read each file before fixing (may have changed)
+- Re-read each file before fixing
 - Skip FALSE_POSITIVE findings
 - Skip MEDIUM confidence findings (flag for manual review)
-- Apply fixes in priority order: P0 first, then P1, P2, P3, P4
+- Apply fixes from P0 through P4
+- Do not invoke the fixer again during this run
 
-## Step 4: Re-validate
+If the fixer cannot complete because of a technical error, go to Step 5 with `final-status: fail`.
+
+## Step 4: Scoped Verification
 
 **Agent**: `swe-ui-checker`
 
-**Action**: Re-run validation scoped to files changed by Step 3.
+**Action**: Run once to reproduce original in-threshold findings and smoke-test affected components
+and interactions. Preserve delegation and selectively invalidated evidence. Do not repeat discovery
+or expand to unrelated components.
+
+**Args**: `quality-gate-phase: verification, original-finding-ids: {step2.outputs.in-threshold-finding-ids}, affected-components: {step3.outputs.affected-components}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence}`
 
 **Routing**:
 
-- Zero findings → Go to Step 5 (Confirmation Check)
-- Findings remain → Check iteration count
-  - Below max-iterations → Go to Step 3
-  - At max-iterations → Go to Step 6 (Finalization) with status "partial"
+- Every original in-threshold finding resolves and smoke checks pass → Go to Step 5 with `pass`
+- Any original finding remains or a smoke check exposes a regression → Go to Step 5 with `partial`
+- The checker cannot complete → Go to Step 5 with `fail`
 
-## Step 5: Confirmation Check
+The workflow never starts another fixer or verification pass.
 
-**Action**: Run one more validation to confirm zero findings (double-zero confirmation).
+## Step 5: Finalization
 
-**Routing**:
+**Action**: Carry evidence forward. Report domain status and `lifecycle-status` (`verified`,
+`pending`, or `not-applicable`). Pending evidence creates no UI finding or rerun; its owner still
+blocks delivery. Merge readiness requires `pass` plus `verified` or `not-applicable` lifecycle.
 
-- Still zero → Go to Step 6 with status "pass"
-- Findings appeared → Go to Step 3
-
-## Step 6: Finalization
-
-**Action**: Report final status.
-
-| Status  | Meaning                                           |
-| ------- | ------------------------------------------------- |
-| pass    | Zero findings confirmed on two consecutive checks |
-| partial | Some findings remain after max-iterations         |
-| fail    | Critical errors that could not be resolved        |
+| Status  | Meaning                                                                  |
+| ------- | ------------------------------------------------------------------------ |
+| pass    | Discovery is clean, or scoped verification resolves originals cleanly    |
+| partial | An original finding remains or affected-component smoke finds regression |
+| fail    | A checker, fixer, or report-generation step cannot complete              |

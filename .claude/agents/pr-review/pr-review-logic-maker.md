@@ -51,8 +51,10 @@ ambiguity with no material behavioral consequence.
 
 ## SUPPRESS Block (Never Raise)
 
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Nitpicks about code style with no behavioral consequence.
-- A missing spec-file-presence finding (governance's mechanical check, ruling (d)).
 - A structural module-boundary question dressed up as "correctness" (architecture's territory).
 - Speculative "consider also handling X" when X is already handled elsewhere or outside the PR's
   declared scope.

@@ -45,6 +45,6 @@ this convention governs the push mechanics for each mode.
 
 - [Trunk Based Development Convention](../workflow/trunk-based-development.md) — `main` as the trunk.
 - [Git Push Safety Convention](../workflow/git-push-safety.md) — Force-push and `--no-verify` approval.
-- [PR Merge Protocol Convention](../workflow/pr-merge-protocol.md) — The review cycle and done-definition.
+- [PR Merge Protocol Convention](../workflow/pr-merge-protocol.md) — Exact-head CI and the hardened merge preconditions.
 - [CI Post-Push Verification Convention](../workflow/ci-post-push-verification.md) — Post-push CI checks.
 - [Proactive Preexisting Error Resolution](../practice/proactive-preexisting-error-resolution.md) — Fixing discovered violations.

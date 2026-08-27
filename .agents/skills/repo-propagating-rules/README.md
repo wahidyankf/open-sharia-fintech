@@ -1,6 +1,6 @@
 ---
 title: "Propagating Repository Rules"
-description: "Run the repo-rules-propagation workflow whenever a repository rule is created, updated, superseded, or deleted."
+description: "Run the rules-propagation workflow whenever a repository rule is created, updated, superseded, or deleted."
 when_to_use: "Read this index to find the Propagating Repository Rules skill content."
 ---
 

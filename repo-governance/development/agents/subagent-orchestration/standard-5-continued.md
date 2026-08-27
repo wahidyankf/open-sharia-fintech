@@ -1,6 +1,6 @@
 ---
-title: "Standard 5 — Status-Update Cadence (Continued)"
-description: "Continues Standard 5 with the rationale for the split, how it refines prior guidance, and worked examples."
+title: "Standard 5 — Idle-Polling Status Heartbeat (Continued)"
+description: "Clarifies the narrow idle-main trigger and provides concise examples for the five-minute non-CI heartbeat."
 category: explanation
 subcategory: development
 tags:
@@ -9,26 +9,25 @@ tags:
   - orchestration
   - development
 created: 2025-11-23
-when_to_use: Use when justifying why the status-update cadence differs from the stuck-detection polling cadence.
+when_to_use: Use when distinguishing the idle-polling heartbeat from ordinary milestone reporting and CI monitoring.
 ---
 
-# Standard 5 — Status-Update Cadence (Continued)
+# Standard 5 — Idle-Polling Status Heartbeat (Continued)
 
-## Rationale for the Split
+The heartbeat exists for one blind spot: the main thread has no useful work left and would
+otherwise remain silent while it only polls a non-CI background agent or process. In that state,
+post a brief update every five minutes even when nothing changed.
 
-CI state changes fast and a failure blocks delivery immediately, so it earns the tighter 3-minute cadence — the user needs to know quickly if a check goes red. Generic background work (subagent batches, refactors, doc sweeps) moves more slowly and rarely turns urgent between one poll and the next, so a more frequent update would be pure noise.
-
-## Refines, Does Not Replace, the Prior Guidance
-
-This Standard replaces the previously vague "every 3-5 minutes, not faster" guidance by **assigning** the two ends of that range to specific kinds of work — 3 minutes for CI-related batches, 5 minutes for generic batches — rather than leaving the choice open to judgment call. It is a refinement, not a contradiction: both values sit inside the old range.
+Do not apply this timer while the main thread still performs useful work, and do not invent a
+separate CI reporting cadence. Ordinary milestone commentary and the CI Monitoring Convention cover
+those cases.
 
 ## Examples
 
 ```
-PASS: CI-related batch → report at 3-min intervals while polling CI status every 2 min
-PASS: Generic subagent batch (no CI items) → report at 5-min intervals
-PASS: Mixed batch (one CI item, three generic items) → report at 3-min intervals
-FAIL: Agents in flight for 20 minutes with no status update to the user
+PASS: Main is otherwise idle and polls a non-CI subagent → heartbeat every 5 minutes
+PASS: Main keeps doing useful work while a subagent runs → report milestones normally
+PASS: CI is pending → follow CI monitoring; no second reporting timer
+FAIL: Idle non-CI polling continues for 20 minutes with no status heartbeat
 FAIL: Main agent posts a status update every 30 seconds → excessive chatter
-FAIL: Mixed CI+generic batch reported at 5-min intervals → CI item's tighter cadence ignored
 ```

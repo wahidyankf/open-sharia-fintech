@@ -1,6 +1,6 @@
 ---
 title: "Summary"
-description: One-paragraph recap - minimal, no speculation, trust, inline first, question complexity.
+description: Short recap of the smallest-responsible-change rule, its stop condition, and its safeguards.
 category: explanation
 subcategory: principles
 tags:
@@ -12,12 +12,9 @@ when_to_use: Use for the shortest possible recap of this principle.
 
 # Summary
 
-Simplicity Over Complexity means:
-
-- **Minimal** code that solves the current problem
-- **No speculation** about future requirements
-- **Trust** type systems and framework guarantees
-- **Inline** first, abstract when patterns emerge
-- **Question** complexity at every step
-
-The right amount of complexity is the **minimum needed** for the current task.
+Choose the smallest responsible change that satisfies the requested outcome and every applicable
+rule. Reuse existing mechanisms; add a lasting mechanism only for a concrete unmet requirement,
+safety or correctness obligation, or demonstrated recurring risk. Stop when the outcome and
+required checks are complete. Required tests, specifications, accessibility, security,
+documentation, governance propagation, and quality gates are part of sufficiency, never optional
+work to remove.

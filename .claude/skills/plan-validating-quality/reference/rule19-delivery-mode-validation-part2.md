@@ -19,14 +19,16 @@ cross-references elsewhere cite them as "rule 19 item 8"/"item 9").
      state-changing infra work needing the primary checkout's real credentials/state) — read the
      plan's stated scope, don't rely on a bare self-declared label.
 
-**Finding severity**: invalid non-empty value: **HIGH**. `*-to-pr` mode missing PR-Review
-Maker→Fixer Cycle steps before merge: **HIGH**. Merge step tagged with anything other than `[AI]`,
+**Finding severity**: invalid non-empty value: **HIGH**. `*-to-pr` mode missing exact-current-head/base
+`Quality gate` verification or current-head leak-review pass before merge: **HIGH**. A broad
+semantic-review step without a direct user
+request: **HIGH**. Merge step tagged with anything other than `[AI]`,
 `[HUMAN]`, `[AI+HUMAN]`: **HIGH** (a `[HUMAN]` merge step is always valid, never itself a finding).
 Completion criteria conflating "done"/"merged" on `*-to-pr`: **MEDIUM**. Missing or post-merge-deferred
 archival-in-PR on an applicable `*-to-pr` plan: **HIGH**. Freshly-authored plan missing the Delivery
 Mode declaration entirely: **LOW**. Any PR/push/review/merge/CI-verification step inside Phase 0 (any
 mode): **HIGH**. Per-Phase Integration Protocol block not scoped to Phase 1 onward: **HIGH**.
-PR-creation/review-cycle/merge/CI-verification step in a non-boundary phase: **HIGH**.
+PR-creation/semantic-review/merge/CI-verification step in a non-boundary phase: **HIGH**.
 Change-producing phase absent from `### Delivery Boundaries`: **HIGH**. Non-boundary final
 change-producing phase: **HIGH**. Missing `### Delivery Boundaries` table on a non-trivial plan:
 **MEDIUM**. Single end-of-plan boundary on a plan declaring independent parallel nodes: **MEDIUM**.

@@ -18,7 +18,8 @@ when_to_use: Use when deciding how verbose an agent's instructions or a single e
 
 ## Why Unlimited Budget Mindset
 
-- **Reliable compaction mechanism**: The AI coding agent handles context management through proven compaction
+- **Compaction is transport, not authority**: preserve active rule decisions, task state, and file
+  ownership explicitly; never assume a summary retained them
 - **Quality is king**: Execution thoroughness matters more than token efficiency
 - **No artificial constraints**: Agents should complete their work properly, not cut corners to save tokens
 - **Workflow orchestration**: Multi-step workflows naturally require more tokens - this is expected and acceptable
@@ -34,11 +35,12 @@ When working with agents:
 - FAIL: **Don't**: Reduce validation scope due to token concerns
 - FAIL: **Don't**: Avoid iteration loops because of token budget fears
 
-## Compaction Handles Scale
+## Durable State Handles Scale
 
-- Large repository audits → Compaction preserves key findings
-- Multi-iteration workflows → Compaction maintains essential state
+- Large repository audits → Progressive files preserve key findings
+- Multi-iteration workflows → Task and continuation records preserve essential state
 - Comprehensive reports → Written to files, conversation can be compacted
 - Long validation runs → Progressive writing ensures nothing is lost
 
-**Bottom line**: Trust the compaction mechanism. Execute quality work. Token budget is effectively unlimited for agent and workflow operations.
+**Bottom line**: Execute quality work without cutting scope for token concerns, and make essential
+state durable before compaction. On continuation, reconcile that state with current canonical rules.

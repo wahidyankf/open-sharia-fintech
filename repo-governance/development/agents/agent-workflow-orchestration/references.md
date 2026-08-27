@@ -30,7 +30,7 @@ when_to_use: Use when looking for further reading on agent workflow orchestratio
 - [Skill Context Architecture](../skill-context-architecture.md) - Inline vs fork skills for delegated agent invocation
 - [Subagent Orchestration Convention](../subagent-orchestration.md) - Concurrency cap (max 2 simultaneous background Agent-tool spawns) and 3-minute stuck-detection polling for background subagents; specializes the delegated agent model for background execution
 - [CI Post-Push Verification Convention](../../workflow/ci-post-push-verification.md) - Trigger and monitor CI after every push; required final step in plan execution
-- [CI Monitoring Convention](../../workflow/ci-monitoring.md) - Check every 2-5 min via ScheduleWakeup; `gh run watch` only for <5 min jobs; rate-limit recovery uses `ScheduleWakeup(delaySeconds=2100)`
+- [CI Monitoring Convention](../../workflow/ci-monitoring.md) - Check once every 2 minutes via a scheduled wakeup; never use `gh run watch`; rate-limit recovery uses `ScheduleWakeup(delaySeconds=2100)`
 
 **Related Agents / Workflows:**
 

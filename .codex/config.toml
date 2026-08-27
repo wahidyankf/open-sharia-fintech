@@ -17,7 +17,7 @@ description = "Creates new AI agent files in .claude/agents/ following AI Agents
 config_file = "agents/agent-maker.toml"
 
 [agents.api-exploratory-tester]
-description = "Performs spec-aware, contract-aware session-based exploratory testing of a live API — REST or GraphQL — given an endpoint/base-URL and a testing goal, then files findings as a new backlog plan a developer can pick up and fix. Hunts edge cases and boundary conditions (payloads, status codes, error envelopes, auth, pagination, idempotency, GraphQL nullability/partial-errors/depth), not just the happy path. Compares live responses against the API contract and existing specs/** Gherkin, proposing scenarios for correct behaviours lacking coverage. Never drives a browser — for rendered UI use the web tester triad. Output destination selectable via output-mode — plan (default), delivery, or local-tmp."
+description = "Tests live REST/GraphQL APIs against contracts and specs, then writes reproducible findings to a plan, delivery record, or local-tmp. Never drives a browser or fixes defects."
 config_file = "agents/api-exploratory-tester.toml"
 
 [agents.apps-ayokoding-www-annotated-concept-checker]
@@ -157,7 +157,7 @@ description = "Applies validated fixes from docs-checker audit reports. Re-valid
 config_file = "agents/docs-fixer.toml"
 
 [agents.docs-link-checker]
-description = "Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health."
+description = "Validates internal and external documentation links. Always uses docs/metadata/external-links-status.yaml as its sole cache, prunes it, and updates lastFullScan on every invocation. Use for dead links, URL reachability, internal references, or link-health audits."
 config_file = "agents/docs-link-checker.toml"
 
 [agents.docs-maker]
@@ -221,7 +221,7 @@ description = "Execution-grade PR reviewer scoped to the documentation-quality d
 config_file = "agents/pr-review-docs-maker.toml"
 
 [agents.pr-review-fixer]
-description = "Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-quality-gate.md`), never standalone."
+description = "Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the explicit PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-cycle.md`), never standalone."
 config_file = "agents/pr-review-fixer.toml"
 
 [agents.pr-review-governance-maker]
@@ -245,11 +245,11 @@ description = "Execution-grade PR reviewer scoped to the performance discipline 
 config_file = "agents/pr-review-performance-maker.toml"
 
 [agents.pr-review-scout-maker]
-description = "Planning-grade PR-review pipeline stage 0 — the tenth pr-review-*-maker agent, running before every cycle's specialist fan-out. Owns risk-tier classification (trivial/lite/full), route-specific specialist selection, shared-context assembly, and probe-class selection. Never discovers or posts findings itself — its four outputs are the risk tier, route-selected specialist set, shared-context brief, and probe class handed to the fan-out and pr-review-synthesis-maker."
+description = "Planning-grade PR-review pass stage 0. Pins one head, selects the risk-routed specialist set, assembles shared context, and records the probe before one fan-out. Never discovers or posts findings."
 config_file = "agents/pr-review-scout-maker.toml"
 
 [agents.pr-review-security-maker]
-description = "Execution-grade PR reviewer scoped to the security discipline only — secrets in diffs, injection, untrusted-input handling, git-fixture isolation, and unsafe git/FS operations. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
+description = "Reviews injection and unsafe git/FS behavior in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths."
 config_file = "agents/pr-review-security-maker.toml"
 
 [agents.pr-review-synthesis-maker]
@@ -293,7 +293,7 @@ description = "Creates repository rules and conventions in repo-governance/ dire
 config_file = "agents/repo-rules-maker.toml"
 
 [agents.repo-setup-manager]
-description = "Executes Phase 0 of any plan delivery checklist: installs dependencies, converges the polyglot toolchain via npm run doctor, runs baseline tests for projects in scope, and resolves all preexisting failures before plan work begins. Use at the start of every plan execution to establish a clean, known-good baseline."
+description = "Executes Phase 0 of any plan delivery checklist: installs dependencies/hooks, converges the polyglot toolchain via npm run doctor, runs baseline tests for projects in scope, and resolves all preexisting failures before plan work begins. Use at the start of every plan execution to establish a clean, known-good baseline."
 config_file = "agents/repo-setup-manager.toml"
 
 [agents.repo-workflow-checker]

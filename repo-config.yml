@@ -100,10 +100,11 @@ harness:
       - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
+      - RTK.md
     catalog:
       platform: OpenAI Codex CLI
       reads-agents-md: "Yes (since Apr 2025)"
-      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
+      instruction-surface: "`AGENTS.md`, `RTK.md`, `AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
       mcp-config: "`.codex/config.toml` `[mcp_servers]`[^mcp]"
       agent-surface: "`.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents]"
       skills-surface: "`.agents/skills/`[^skills]"
@@ -114,6 +115,7 @@ harness:
       - { path: .codex/config.toml, class: vendored, reason: Nx tooling config; emitter owns the delimited region only }
       - { path: .codex/ci-monitor-subagent.toml, class: vendored, reason: Nx tooling file config.toml points at }
       - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
+      - { path: RTK.md, class: source, reason: upstream Codex RTK instruction surface }
       - { path: .agents/skills/cavecrew, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/caveman, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/caveman-commit, class: vendored, reason: third-party plugin skill; no in-repo source }
@@ -129,7 +131,7 @@ harness-catalog:
   # a generated timestamp would change on every run and make the drift guard
   # fire on its own output.
   document: docs/reference/platform-bindings.md
-  verified: 2026-08-19
+  verified: 2026-08-26
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
@@ -282,55 +284,62 @@ specs:
 # FR-1.5: no exempt/allow/ignore/waiver/override key is ever permitted in this
 # block, enforced by BudgetConfig's deny_unknown_fields schema.
 #
-# The seven instruction surfaces repeat the same 400/500/500 triple. That
+# The eight instruction surfaces repeat the same 650/750/750 triple. That
 # repetition is deliberate, not an oversight: YAML merge keys (`<<: *anchor`)
 # are NOT an option here — serde_norway does not expand them, so
 # `- <<: *instruction-budget` deserializes as `surfaces[N]: missing field
 # `target``. Verified at Phase 11 of plans/in-progress/update-harness-support by
 # applying exactly that shape and running `rhino-cli repo-config validate`.
+# Calibrated on 2026-08-27 from 400/500/500 after the live gate accumulated 938
+# non-blocking warnings, making its early-warning signal non-actionable. The
+# resolved-tree ceiling stays unchanged as the aggregate startup-context guard.
 governance-word-budget:
   surfaces:
     - glob: "repo-governance/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".claude/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".codex/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".opencode/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     # Added at Phase 11 of plans/in-progress/update-harness-support: the Codex
     # skills mirror is a live instruction surface Codex reads, so it is measured
     # at the same ceiling as its `.claude/skills/` source. The eight vendored
     # third-party skill directories under it are excluded by name on the gate
     # entry below — this repository can neither shorten nor regenerate them.
     - glob: ".agents/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: "AGENTS.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: "CLAUDE.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
+    - glob: "RTK.md"
+      target: 650
+      warn: 750
+      fail: 750
     # Declared last so the select-then-classify overlap rule
     # (application::governance::word_budget::check_instruction_sizes) picks
     # this more-specific surface over the general repo-governance/**/*.md
     # surface above for every README.md, per FR-1.6/FR-3.15.
     - glob: "**/README.md"
-      target: 700
-      warn: 900
-      fail: 900
+      target: 900
+      warn: 1000
+      fail: 1000
   resolved_tree:
     root: "CLAUDE.md"
     target: 1200
@@ -857,6 +866,8 @@ gates:
       exempt:
         - "*__linkedin__*.md"
         - "CONTRIBUTING.md"
+        - "pull_request_template.md"
+        - "RTK.md"
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
@@ -1021,10 +1032,12 @@ gates:
   # content restructure. Those two trees therefore get structural enforcement
   # only; annotation stays scoped to the conforming trees below.
   #
-  # The generated harness mirrors (`.opencode/`, `.codex/`) are
-  # absent by design: they are emitted by `harness bindings generate` from
-  # `.claude/`, are never hand-edited, and an index written into them would be
-  # regenerated away. `.claude/` — their source of truth — is covered instead.
+  # Secondary binding roots are absent by design: the gate covers
+  # repository-authored governance content, not generated mirrors or vendored
+  # third-party payloads. Generated paths are emitted by
+  # `harness bindings generate` from `.claude/` and never hand-edited;
+  # vendored paths retain their upstream documentation. `.claude/` — the
+  # canonical source for generated agents and Skills — is covered instead.
   - id: governance-readme-index
     type: check
     command: governance readme-index validate
@@ -1232,19 +1245,15 @@ gates:
         # .agents/**/*.md surface. This repository neither authors nor
         # regenerates them, so an over-budget vendored SKILL.md cannot be
         # shortened at any source we own. Excluded as a whole set for
-        # uniformity — four exceed the 500-word fail ceiling and four do not.
-        # Counts are the validator's own split_whitespace measure (which differs
-        # slightly from `wc -w`), verified at Phase 11 by removing each of the
-        # four over-ceiling prefixes in turn and confirming a [FAIL] finding
-        # naming that file, then restoring it and confirming exit 0.
-        - .agents/skills/cavecrew/ # caveman plugin — 566 words, over the ceiling
-        - .agents/skills/caveman/ # caveman plugin — 534 words, over the ceiling
-        - .agents/skills/caveman-commit/ # caveman plugin — 368 words, under the ceiling
-        - .agents/skills/caveman-compress/ # caveman plugin — 668 words, over the ceiling
-        - .agents/skills/caveman-help/ # caveman plugin — 298 words, under the ceiling
-        - .agents/skills/caveman-review/ # caveman plugin — 432 words, under the ceiling
-        - .agents/skills/caveman-stats/ # caveman plugin — 89 words, under the ceiling
-        - .agents/skills/compress/ # caveman plugin — 660 words, over the ceiling
+        # uniformity. Their exclusion follows ownership, not current size.
+        - .agents/skills/cavecrew/
+        - .agents/skills/caveman/
+        - .agents/skills/caveman-commit/
+        - .agents/skills/caveman-compress/
+        - .agents/skills/caveman-help/
+        - .agents/skills/caveman-review/
+        - .agents/skills/caveman-stats/
+        - .agents/skills/compress/
     surfaces:
       pre-push: &word-budget-triggers
         scope: path-gated
@@ -1256,6 +1265,7 @@ gates:
           - .agents/
           - AGENTS.md
           - CLAUDE.md
+          - RTK.md
           - repo-config.yml
       ci: *word-budget-triggers
 

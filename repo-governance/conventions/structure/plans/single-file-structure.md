@@ -25,7 +25,8 @@ when_to_use: Use when authoring a plan that meets all single-file exception crit
 2. **Scope** — in-scope + out-of-scope; affected subrepos / apps named explicitly
 3. **Business rationale (condensed BRD)** — why this matters, business goals, affected roles, success metrics (gut-based reasoning OK; judgment calls labeled; fabricated KPIs forbidden; internet citations inline with excerpt + URL + access date)
 4. **Product requirements (condensed PRD)** — user stories (`As a … I want … So that …`), Gherkin acceptance criteria, product scope
-5. **Technical approach** — architecture, design decisions, implementation approach
+5. **Technical approach** — architecture, design decisions, implementation approach; every new
+   lasting mechanism names its concrete need and why existing mechanisms are insufficient
 6. **Worktree** — declared worktree path (`worktrees/<plan-identifier>/`) and provisioning command (see [Worktree Specification](./worktree-specification.md#worktree-specification))
 7. **Delivery checklist** — phased `- [ ]` items with one concrete action per checkbox; opens with the `[AI]`/`[HUMAN]` executor legend; every phase ends with a `### Phase N Gate` and a Pause Safety note (see Executor Tagging and Phases as Natural Pauses With Clear Gates above)
 8. **Quality gates** — local gates + CI gates that must pass

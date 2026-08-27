@@ -26,7 +26,8 @@ Triggering CI:
 
 Monitoring:
   gh run list --workflow=organiclever-app-test-local-deploy-stag.yml --limit=3
-  gh run watch 12345678
+  # [scheduled wakeup after 2 minutes]
+  gh run view 12345678 --json conclusion,status,jobs
 
 Result: All steps passed. Work is complete.
 ```

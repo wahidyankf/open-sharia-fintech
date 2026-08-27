@@ -9,14 +9,14 @@ reflexively deleting:
 PR`, `Open PR`, `Submit PR`, or equivalent) is present with no explicit PR requirement documented →
   remove the line (HIGH confidence) and verify the checklist remains sequential.
 - If the PR step is actually wanted, correct the declared mode instead: rewrite `## Delivery Mode:`
-  to `worktree-to-pr`/`main-to-pr` and scaffold the missing PR-Review Maker→Fixer Cycle steps (see
+  to `worktree-to-pr`/`main-to-pr` and scaffold exact-head/base PR-CI steps (see
   `12-worktree-and-delivery-mode-scaffolding-fixes.md`) rather than stripping the step and leaving the plan
   mode-inconsistent.
 - A `*-to-pr` plan's PR step is never itself a finding — only its absence or a mismatched mode is.
 - **Never apply "remove the line" to a merge step, under any Delivery Mode.** "PR creation step"
   means the step that opens the PR — never the step that merges it; a merge step is out of scope for
   this recipe entirely and stays governed exclusively by
-  [How to Fix a Merge-Tag Mismatch](./pr-review-cycle-and-merge-tag-fixes.md#how-to-fix-a-merge-tag-mismatch).
+  [How to Fix a Merge-Tag Mismatch](./pr-ci-and-merge-tag-fixes.md#how-to-fix-a-merge-tag-mismatch).
   "Or equivalent" resolves only to other PR-_creation_ phrasings — never a merge phrasing — and a
   direct-push mode does not loosen that boundary: a stray merge step under a direct-push mode is a
   separate finding to surface, not license to delete it here.
@@ -32,7 +32,7 @@ Mode Reconciliation above and takes a different fix:
 - Always rewrite the resolved mode to `worktree-to-pr` (or `main-to-pr` if the plan's work location
   genuinely requires the primary checkout). Never merely delete the offending step — the mode itself
   is illegal for the repo, not the step.
-- After rewriting, scaffold the missing PR-Review Maker→Fixer Cycle steps so the plan is executable
+- After rewriting, scaffold the missing exact-head/base PR-CI steps so the plan is executable
   under the corrected mode.
 - **One narrow exception**: a genuinely infrastructure-as-code plan targeting `ose-private` may keep
   a direct-push mode — verify the plan's stated scope actually is infrastructure-as-code before

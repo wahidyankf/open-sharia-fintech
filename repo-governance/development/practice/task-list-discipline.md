@@ -45,6 +45,7 @@ The following structural convention also informs this practice:
 
 - [Purpose and Scope](./task-list-discipline/purpose-and-scope.md) — the two failure modes this practice prevents, and what it covers.
 - [Standards 1-5](./task-list-discipline/standards-1-to-5.md) — create the list first, mark in-progress/completed accurately, add discovered tasks, one task per outcome.
-- [Standard 6 — Bounded Status-Update Cadence](./task-list-discipline/standard-6.md) — the 5-minute generic / 3-minute CI-related reporting cadence.
+- [Standard 6 — Idle-Polling Status Heartbeat](./task-list-discipline/standard-6.md) — the five-minute heartbeat required only while the main thread is otherwise idle and polling non-CI background work.
+- [Standard 7 — Continuation State](./task-list-discipline/standard-7-continuation-state.md) — preserve and reconcile active user-established repository-rule decisions.
 - [Anti-Patterns](./task-list-discipline/anti-patterns.md) — five common failure patterns and their fixes.
 - [For AI Agents and Related Documentation](./task-list-discipline/for-ai-agents-and-related-documentation.md) — the five-point agent checklist and links to related conventions.

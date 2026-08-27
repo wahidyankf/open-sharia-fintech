@@ -21,6 +21,12 @@ skills:
 
 # Tutorial Quality Validator Agent
 
+## Lifecycle Handoff
+
+Accept optional `delegated-gate-ids` and `lifecycle-evidence` from a quality gate. Suppress only an
+exact ID/`verifies` match; empty or omitted delegation suppresses nothing. Preserve the evidence in
+the audit. Pedagogical, narrative, visual-necessity, and hands-on judgments remain active.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)

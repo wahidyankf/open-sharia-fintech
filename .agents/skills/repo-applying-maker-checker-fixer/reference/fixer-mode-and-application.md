@@ -51,7 +51,9 @@ Support `mode` parameter for quality-gate workflows:
 - Skip MEDIUM_CONFIDENCE findings (flag for manual review)
 - Skip FALSE_POSITIVE findings (report to improve checker)
 - Use the right tool for the edit shape:
-  - Single-file targeted edits: `Edit` tool (including under `.claude/`, `.opencode/`, `docs/`, `repo-governance/`)
+- Single-file targeted edits: `Edit` tool (including registry-declared `source` or `vendored`
+  paths under binding roots, plus `docs/` and `repo-governance/`); never edit a generated binding
+  path or generated delimited region directly
   - Bulk mechanical substitutions across many files: `Bash` with `sed` / `awk`
   - New file creation: `Write` tool
 

@@ -34,6 +34,11 @@ gate-surface rule change, update the registry-managed documentation to use `gate
 registry with `gate validate`, update affected workflow and hook documentation plus their indexes,
 then regenerate harness bindings from the canonical `.claude/` source.
 
+During rules-propagation Step 6, inventory every rule and discoverability surface in the classified
+subject. Record keep, amend, merge, delete, relocate, or supersede plus the surviving canonical
+home; keep needs a rationale. Consolidate redundancy only when every distinct obligation and
+necessary discovery path survives. Never widen this tidy into repository-wide cleanup.
+
 For any portable governance, agent, or skill rule, inventory every canonical consumer first and
 propagate it manually across `ose-public` and immediately to `ose-private`. No other repository is a
 propagation target. Verify the declared portable manifest byte-for-byte and record only

@@ -3,6 +3,13 @@
 Architecture documented; design decisions justified; implementation approach clear; dependencies
 listed; testing strategy defined.
 
+**Minimal-sufficiency rationale (HIGH)**: when the plan adds code, a dependency, abstraction,
+validator, automation, infrastructure, or another lasting mechanism, `tech-docs.md` must name the
+concrete requirement, correctness or safety obligation, or demonstrated recurring risk it addresses
+and explain why existing mechanisms are insufficient. For a single-file plan, require the same
+rationale in `Technical Approach`. Flag a missing rationale, a speculative future need, or a new
+mechanism when the documented existing mechanism already satisfies the stated need.
+
 **File-impact tree (HARD RULE)**: `tech-docs.md` has a `## File-Impact Analysis` whose primary view
 is a root-relative fenced `text` tree; each planned path or bounded pattern carries `[E]`, `[N]`,
 `[D]`, or `[G]` — the tree, not prose bullets, is the scan-first scope. Flag a missing tree, missing

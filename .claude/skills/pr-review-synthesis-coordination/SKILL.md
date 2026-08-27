@@ -29,8 +29,7 @@ tool-verified before posting exactly ONE consolidated review.
 - [cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —
   full-PR re-review each cycle, human-dismissal respect, and when to delegate to `web-researcher`
 - [machine-readable-audit-record.md](./reference/machine-readable-audit-record.md) — the stable
-  post title, the `C<cycle>-F<n>` finding IDs, and the `ose-pr-review:v1` record block every cycle
-  must emit
+  post title, pass-local finding IDs, and the authenticated `ose-pr-review-pass:v1` record
 
 ## Core Principles
 
@@ -38,7 +37,7 @@ tool-verified before posting exactly ONE consolidated review.
 2. **This agent owns the architecture-versus-correctness re-categorization boundary** — the
    highest-risk of the tie-breaker outcomes; no specialist self-adjudicates its own verdict once
    reviewed here.
-3. **Exactly ONE consolidated review per cycle** — never one review per specialist or discipline.
+3. **Exactly ONE consolidated review per pass** — never one review per specialist or discipline.
    **Post it through the Reviews API as line-anchored inline threads, one per finding — NEVER
    `gh pr comment`.** A top-level comment cannot be anchored, replied to as a thread, or resolved,
    so the loop's thread-resolution query reads it as **zero findings**. A review is a conversation

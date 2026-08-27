@@ -7,7 +7,8 @@ description: Workflow pattern standards for creating multi-agent orchestrations 
 
 ## Purpose
 
-This Skill provides comprehensive guidance for **defining workflows** - multi-agent orchestrations that coordinate multiple agents in sequence, parallel, or conditionally to accomplish complex tasks. Workflows enable reusable, validated processes.
+Guidance for **defining workflows**: reusable, validated multi-agent orchestrations with sequential,
+parallel, or conditional coordination.
 
 **When to use this Skill:**
 
@@ -72,7 +73,7 @@ description: "Workflow name: detailed description"
 **Examples**:
 
 - `plan-quality-gate.md` - Plan quality gate workflow
-- `repo-rules-quality-gate.md` - Repo rules quality gate workflow
+- `rules-quality-gate.md` - Repo rules quality gate workflow
 
 ## Quality Checklist
 
@@ -84,6 +85,7 @@ Before publishing workflow:
 - [ ] termination criteria defined (success/failure)
 - [ ] All inputs documented (type, required, default)
 - [ ] All outputs documented (type, pattern for file outputs)
+- [ ] Every `*-quality-gate` applies lifecycle ownership Step 0 and emits `lifecycle-status`
 - [ ] Execution phases clearly defined
 - [ ] Dependencies explicit (sequential vs parallel)
 - [ ] Success criteria in Gherkin format

@@ -67,15 +67,15 @@ Typical execution flow (folders: `[specs/apps/organiclever, specs/apps/ose]`):
 ```
 Iteration 1:
   Check organiclever → 4 findings (1 CRITICAL, 2 HIGH, 1 MEDIUM)
-    Examples: "Spec Tree Shape: missing containers/ folder [HIGH]",
-              "Adoption Gaps: journal context has no Gherkin specs [HIGH]"
+    Examples: "Adoption rationale does not explain why the journal context lacks Gherkin [HIGH]",
+              "Feature terminology contradicts the bounded-context glossary [HIGH]"
   Check ose → 3 findings (0 CRITICAL, 2 HIGH, 1 LOW)
-    Examples: "Drift Detection: routes-and-screens.md lists /stats but no matching route in app code [HIGH]"
+    Example: "Implementation Alignment: routes-and-screens.md names an unsupported user journey [HIGH]"
   Cross-folder check → 5 findings (0 CRITICAL, 3 HIGH, 1 MEDIUM, 1 LOW)
   Total: 12 findings (1 CRITICAL, 7 HIGH, 2 MEDIUM, 2 LOW)
   [normal mode] Fix 8 (1 CRITICAL + 7 HIGH)
-    Note: Spec Tree Shape and Drift Detection findings → shell out to rhino-cli to confirm
-          before applying fix; Adoption Gaps findings → LLM applies narrative fix
+    Note: Fix only retained semantic findings; delegated lifecycle predicates remain outside the
+          finding loop and keep their current verified or pending ledger state
   Re-check → 4 findings (0 CRITICAL, 1 HIGH, 2 MEDIUM, 1 LOW)
 
 Iteration 2:

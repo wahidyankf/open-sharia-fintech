@@ -33,8 +33,9 @@ before implementation begins.
    `backlog/README.md` and `in-progress/README.md` indexes. Do not include implementation or other
    ride-along changes.
 4. **Land or resume the promotion.** Continue from the reconciled state: push a not-yet-pushed
-   branch, open a missing PR, or resume the matching PR's
-   [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md) and merge. A permitted
+   branch, open a missing PR, or drive the matching PR's exact-current-head/base
+   `Quality gate` green and merge under the
+   [PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md). A permitted
    direct-push route commits and pushes the pure move to `origin main`.
 5. **Verify and continue.** Confirm the promotion exists on `origin/main`, refresh or provision the
    implementation work branch from that commit, resolve the plan at its new `plans/in-progress/`

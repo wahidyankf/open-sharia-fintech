@@ -1,6 +1,6 @@
 ---
 title: "Resolving Merge Conflicts in Generated Files"
-description: Why a CONFLICTING state after a clean review cycle is not necessarily a PR defect, and why a conflict inside a marker-owned or generated file must be resolved at its source and regenerated.
+description: Why a CONFLICTING state after green CI is not necessarily a PR defect, and why a generated-file conflict is resolved at its source.
 category: explanation
 subcategory: development
 tags:
@@ -16,7 +16,7 @@ when_to_use: Use when a PR shows a merge conflict against the target branch, esp
 # Resolving Merge Conflicts in Generated Files
 
 Precondition (c) requires resolving any conflict against the target branch before merging. A
-`CONFLICTING` state after an otherwise-clean review cycle does not mean the PR's own work is
+`CONFLICTING` state after an otherwise-green PR run does not mean the PR's own work is
 wrong — it can be pure divergence from unrelated concurrent activity on the target branch,
 resolvable by a normal rebase or merge.
 

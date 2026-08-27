@@ -14,6 +14,10 @@ when_to_use: Use when you need the exact git commit invocation for a one-line, b
 
 # Making Commits
 
+Do not stage or commit until the user explicitly authorizes a named change set. After authorization,
+apply the [thematic boundary test](./commit-granularity-and-when-to-split-commits.md) without another
+prompt unless the user prescribed boundaries or a split would exceed that authorization.
+
 ## Interactive Workflow
 
 ```bash

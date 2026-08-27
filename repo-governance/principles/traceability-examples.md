@@ -90,3 +90,8 @@ tools: Read, Glob, Grep
 
 - [Core Principles Index](./README.md) - All foundational principles
 - [Using These Principles](./using-principles.md) - How to apply principles when creating conventions or making decisions
+
+## Vision Supported
+
+These examples make the [Open Sharia Enterprise Vision](../vision/open-sharia-enterprise.md)
+auditable by showing how vision-aligned principles reach concrete repository mechanisms.

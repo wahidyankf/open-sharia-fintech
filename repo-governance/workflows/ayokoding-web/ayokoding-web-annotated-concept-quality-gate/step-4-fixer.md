@@ -15,7 +15,7 @@ when_to_use: Use when running or interpreting the fixer step of the Annotated-co
 ```bash
 # Invoke via Task tool with audit report and mode parameter
 subagent_type: apps-ayokoding-www-annotated-concept-fixer
-prompt: "Apply fixes from generated-reports/ayokoding-web-annotated-concept__a1b2c3__2026-07-13--14-30__audit.md with mode={input.mode}"
+prompt: "Apply fixes from generated-reports/ayokoding-web-annotated-concept__a1b2c3__2026-07-13--14-30__audit.md with mode={input.mode}; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Fix application strategy**:
@@ -52,6 +52,8 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-annotated-concept__a1b
   `generated-reports/ayokoding-web-annotated-concept__{uuid-chain}__{timestamp}__fix.md` (uses
   same UUID chain as source audit)
 - List of deferred issues requiring user decision
+- Updated lifecycle evidence after scope-intersection invalidation; carry Step 0 evidence forward
+  unchanged when no files change
 
 **Depends on**: Step 3 approval
 

@@ -18,13 +18,13 @@ integration target and merge authority.
    (`worktree-to-pr`); don't flag omission. `plan-maker` always authors the section explicitly (see
    `.claude/agents/plan/plan-maker.md` Step 7) — flag a freshly-authored plan missing it entirely at
    **LOW** (best-practice gap, not correctness defect).
-3. **Every PR carries the behavior classifier** — when the resolved mode produces a PR, `delivery.md`
-   records the canonical classifier: eligible executable work runs sequential CI-green-gated
-   specialist cycles to its clean exit within its configured ceiling; ineligible work requires
-   the named `pr-quality-gate.yml` workflow, per the
-   [PR Review Quality Gate workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md),
-   positioned before the PR-merge step. A `*-to-pr` plan jumping straight from PR creation to merge
-   with no review-cycle steps is missing required steps.
+3. **Every PR carries exact-head/base CI** — when the resolved mode produces a PR, `delivery.md`
+   requires `.github/workflows/pr-quality-gate.yml`'s `Quality gate` for the exact current head and
+   base before merge, one authenticated clean current-head `pr-leak-review`, plus applicable finite
+   surface gates. Missing/stale/failed/findings leak evidence blocks merge; a head-changing fix
+   requires one new pass, never two. Absence of broad semantic review is valid. A `pr-review` or
+   `pr-review-cycle` step is valid only when the user explicitly requested it and it
+   appears at that PR delivery boundary.
 4. **Merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step defaults to `[AI]`; a
    `[HUMAN]` tag IS the plan's opt-in into human merge judgment, per
    [Delivery Mode](../../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
@@ -35,14 +35,12 @@ integration target and merge authority.
    in `reference/05-pr-step-authorization-check.md`; its "unsolicited PR step" framing
    applies only to `*-to-origin-main`-mode plans, since a PR step is expected under `*-to-pr` modes).
 5. **"Done" is not "merged"** — a `*-to-pr` plan's completion/Gate criteria must not require the PR to
-   actually be merged; a green, fully-reviewed PR awaiting merge is a valid done state. Flag
+   actually be merged; a green, ready PR awaiting merge is a valid done state. Flag
    conflation.
 6. **Archival-in-PR present** — for `*-to-pr` modes (plan folder tracked in-repo), the checklist
    includes an archival step (`git mv` to `plans/done/`, README/index updates) committed **inside the
    delivering PR**, not deferred to a follow-up commit/PR. Missing or deferred archival: flag it. N/A
-   for repos where the plan folder isn't tracked (see the
-   [PR Review Quality Gate workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md)'s
-   three-repo nuance).
+   for repos where the plan folder is not tracked.
 7. **Phase 0 carries no PR/push/review/merge step** — run the Phase 0 detection command from
    `reference/05-pr-step-authorization-check.md` and confirm it returns `0`, under every
    mode including direct-push ones. An unscoped Per-Phase Integration Protocol block is the same

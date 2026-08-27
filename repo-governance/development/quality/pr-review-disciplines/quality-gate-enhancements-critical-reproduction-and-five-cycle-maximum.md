@@ -29,7 +29,7 @@ diff is also high-risk, until a reproduction is attached.
 ## Five-Cycle Maximum
 
 For an eligible PR, the [PR Review Quality Gate
-workflow](../../workflows/pr/pr-review-quality-gate.md) runs sequential CI-gated cycles only until
+workflow](../../../workflows/pr/pr-review-cycle.md) runs sequential CI-gated passes only until
 the target is resolution in cycles 1–3. Cycles 4–5 may use a changed focused probe only when the
 remaining defect family is named. This is a convergence policy, not a target count.
 

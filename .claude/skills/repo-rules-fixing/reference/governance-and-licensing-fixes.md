@@ -5,6 +5,8 @@
 Five categories, each re-validated against current file state before fixing (never trust the
 audit report's snapshot):
 
+Quality-gate filtering follows [Lifecycle Delegation](./lifecycle-delegation.md).
+
 **Contradictions** — two governance documents state incompatible rules for the same situation.
 Confidence HIGH only when both passages are quoted verbatim in the finding and genuinely
 irreconcilable (not merely differently scoped). Fix: align the newer/more-specific doc's wording
@@ -25,6 +27,12 @@ human judgment if the missing piece requires new authoring (not just linking).
 **Layer Coherence** — content lives at the wrong governance layer (e.g., a workflow-specific
 detail stated in a repo-wide convention). Fix: move the content to its correct layer, leave a
 pointer at the original location.
+
+**Validated Consolidation** — for any `Propagation Consolidation` finding, reconstruct the full
+subject-scoped inventory of rule and discoverability surfaces. For each surface, record its
+canonical home and exactly one verdict: keep, amend, merge, delete, relocate, or supersede. Then act
+on every verdict while preserving each distinct obligation and necessary discoverability path;
+record the rationale for keep. This never permits deleting a document to resolve a contradiction.
 
 ## Important Guidelines for Rules Fixes
 
