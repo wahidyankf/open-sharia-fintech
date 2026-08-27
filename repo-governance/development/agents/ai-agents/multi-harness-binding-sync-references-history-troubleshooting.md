@@ -61,8 +61,9 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
    declares `vendored` — e.g. `.opencode/opencode.json`, `.codex/config.toml`'s undelimited
    region — is hand-maintained by design and MUST be edited directly.
 2. **Run sync after changes** - Ensure every generated-tier binding stays synchronized
-3. **Test both platforms** - Verify agents work in all supported platforms after major changes
-4. **Document sync status** - Keep README files updated in both directories
+3. **Test every platform** - Verify agents work in all supported platforms after major changes
+4. **Document sync status** - Keep canonical README indexes current, then regenerate every
+   registry-declared mirror
 5. **Security policy** - Only use skills from trusted sources (all platforms)
 
 ## Troubleshooting
