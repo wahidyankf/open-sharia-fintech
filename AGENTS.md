@@ -99,7 +99,8 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 ## AI Agents
 
 [Agent catalog](./.claude/agents/README.md) is authoritative; filenames follow the ordinary
-kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`, mirrored to `.agents/skills/`.
+kebab-case rule. Agent skills authored at `.claude/skills/<name>/SKILL.md` have non-vendored mirrors
+under `.agents/skills/`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 

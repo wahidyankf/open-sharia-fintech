@@ -1032,11 +1032,12 @@ gates:
   # content restructure. Those two trees therefore get structural enforcement
   # only; annotation stays scoped to the conforming trees below.
   #
-  # Secondary binding roots are absent by design: their current Markdown
-  # content is registry-declared generated output, while their vendored
-  # configuration is non-Markdown. Generated paths are emitted by
+  # Secondary binding roots are absent by design: the gate covers
+  # repository-authored governance content, not generated mirrors or vendored
+  # third-party payloads. Generated paths are emitted by
   # `harness bindings generate` from `.claude/` and never hand-edited;
-  # `.claude/` — their source of truth — is covered instead.
+  # vendored paths retain their upstream documentation. `.claude/` — the
+  # canonical source for generated agents and Skills — is covered instead.
   - id: governance-readme-index
     type: check
     command: governance readme-index validate

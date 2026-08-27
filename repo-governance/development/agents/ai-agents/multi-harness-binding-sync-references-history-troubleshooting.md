@@ -23,10 +23,10 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 - `npm run generate:bindings` - Full sync, every generated-tier harness
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch the
-  `.agents/skills/` real-file mirror
-- `npm run validate:sync` - `.opencode/agents/` and `.agents/skills/`; does **not** cover
-  `.codex/agents/`
+- `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch generated
+  mirrors under `.agents/skills/`
+- `npm run validate:sync` - `.opencode/agents/` and non-vendored mirrors under `.agents/skills/`;
+  does **not** cover `.codex/agents/`
 - `npm run harness:bindings-validation` - every generated-tier binding including `.codex/`; this is
   what the pre-push gate runs
 
@@ -37,11 +37,11 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 - **`.codex/agents/`**: canonical metadata/body → TOML `name`, `description`, and
   `developer_instructions`; tool/model frontmatter is omitted, and the generator also owns the
   delimited agent-table region in `.codex/config.toml`
-- **Agent skills**: one harness reads `.claude/skills/` natively; the other gets a real-file
-  byte-copy mirror at `.agents/skills/`
-- **Validation**: three mirror trees now, not two — `.opencode/agents/`, `.codex/agents/` (plus
-  `.codex/config.toml`), and `.agents/skills/`. `harness:bindings-validation` checks all three;
-  `validate:sync` checks only the first and third.
+- **Agent skills**: one harness reads `.claude/skills/` natively; the other gets non-vendored
+  real-file byte-copy mirrors under `.agents/skills/`; vendored plugin subtrees are preserved
+- **Validation**: three generated sets now, not two — `.opencode/agents/`, `.codex/agents/` (plus
+  the generated region in `.codex/config.toml`), and non-vendored mirrors under `.agents/skills/`.
+  `harness:bindings-validation` checks all three; `validate:sync` checks only the first and third.
 
 ## Documentation References
 
@@ -80,7 +80,7 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 **Problem**: agent skills missing in one directory
 **Solution**: Verify skills exist in `.claude/skills/`, then run `npm run generate:bindings` (not
 `npm run sync:skills` — that command only touches the no-op secondary-harness path and never
-writes the other secondary harness's `.agents/skills/` mirror)
+writes the other secondary harness's non-vendored mirrors under `.agents/skills/`)
 
 ---
 

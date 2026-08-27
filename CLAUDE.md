@@ -46,8 +46,9 @@ Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Code
   `npm run generate:bindings` and land them in the **same commit** as their `.claude/` source.
 - **Vendored exceptions**: secondary configuration files and plugin subtrees declared by
   `repo-config.yml`; maintain these in place because they have no generated source.
-  `npm run validate:sync` verifies only the OpenCode agent mirror and the `.agents/skills/` mirror;
-  `npm run harness:bindings-validation` additionally verifies `.codex/agents/` and the
+  `npm run validate:sync` verifies only the OpenCode agent mirror and non-vendored Skill mirrors
+  under `.agents/skills/`; `npm run harness:bindings-validation` additionally verifies
+  `.codex/agents/` and the
   `.codex/config.toml` generated region. Never hand-edit a mirror — except a path a harness entry's
   `ownership:` list declares `vendored` (e.g. `.codex/config.toml`'s hand-authored tables outside
   its delimited region), which is hand-maintained by design (see
@@ -57,8 +58,9 @@ Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Code
 Claude Code uses tool arrays and named colors; OpenCode uses a `permission` object and theme tokens
 (translated by `rhino-cli harness bindings generate`). Model tiers map to concrete vendor IDs — see
 [model-selection.md](./repo-governance/development/agents/model-selection.md). OpenCode reads
-`.claude/skills/{name}/SKILL.md` natively; Codex reads the `.agents/skills/` mirror. Only use skills
-from trusted sources; all skills here are maintained by the project team.
+`.claude/skills/{name}/SKILL.md` natively; Codex reads generated and vendored Skills under
+`.agents/skills/`. Only use skills from trusted sources; all skills here are maintained by the
+project team.
 
 **See**: [Platform Binding Color Translation](./repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
 
