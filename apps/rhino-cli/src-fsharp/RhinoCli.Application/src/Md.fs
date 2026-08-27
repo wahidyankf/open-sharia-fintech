@@ -31,11 +31,38 @@
 /// `Doctor.fs` until a scenario needs it: none of these feature files'
 /// scenarios assert on rendered output, only on the structured `Finding`
 /// list.
+///
+/// Wave D PR4 additionally ports the `docs validate-mermaid` validator
+/// [Repo-grounded — `apps/rhino-cli/src/domain/mermaid/{types,diagram,
+/// flowchart,graph,state,validator}.rs`,
+/// `apps/rhino-cli/src/infrastructure/mermaid/reporter.rs`,
+/// `apps/rhino-cli/src/commands/md_validate_mermaid.rs`] for
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-mermaid.feature`'s
+/// 39 scenarios. Unlike the three validators above, several of this
+/// feature's scenarios assert on rendered JSON/Markdown/text output and on
+/// parser internals (edge counts, rank depth) directly, so this section
+/// introduces real domain types (`MermaidViolation`/`MermaidWarning`/
+/// `MermaidValidationResult`) mirroring the Rust source's own
+/// `types.rs`/`validator.rs` split instead of folding findings into the
+/// shared `Finding` record — the JSON scenario's structured field
+/// assertions (`kind`/`filePath`/`blockIndex`/`nodeId`) have no equivalent
+/// on `Finding`, and the Markdown-table scenario needs a `Kind`/`Severity`
+/// split `Finding` cannot express. `--staged-only`/`--changed-only` take
+/// their file lists as explicit `string list option` parameters — the same
+/// pattern `LinkScanOptions.StagedFiles` established above — rather than
+/// shelling out to git, and this section drops the Rust source's
+/// empty-changed-list-falls-back-to-a-full-repo-scan quirk (no scenario
+/// here exercises that fallback path, and reproducing it would make the
+/// `--changed-only` scenario's fixture ambiguous between "nothing changed"
+/// and "scan everything").
 module RhinoCli.Application.Md
 
 open System
 open System.Collections.Generic
 open System.IO
+open System.Text.Encodings.Web
+open System.Text.Json
+open System.Text.Json.Nodes
 open System.Text.RegularExpressions
 open YamlDotNet.Serialization
 open RhinoCli.Domain.Types
@@ -1077,3 +1104,1336 @@ let validateDocsLinks (opts: LinkScanOptions) : Finding list =
     getMarkdownLinkFiles opts
     |> List.collect (fun path -> validateFileLinks opts.RepoRoot path (extractLinks path))
     |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+
+// ---------------------------------------------------------------------------
+// docs validate-mermaid
+// ---------------------------------------------------------------------------
+
+/// Flow direction of a Mermaid flowchart/state diagram [Repo-grounded — `types.rs::Direction`].
+type MermaidDirection =
+    | MermaidTB
+    | MermaidTD
+    | MermaidBT
+    | MermaidLR
+    | MermaidRL
+
+/// Parses a direction string from a `flowchart`/`graph`/`direction` header.
+/// Unknown strings default to `MermaidTB` [Repo-grounded — `types.rs::Direction::parse`].
+let private parseMermaidDirection (s: string) : MermaidDirection =
+    match s with
+    | "TD" -> MermaidTD
+    | "BT" -> MermaidBT
+    | "LR" -> MermaidLR
+    | "RL" -> MermaidRL
+    | _ -> MermaidTB
+
+/// Category of a Mermaid diagram block [Repo-grounded — `types.rs::DiagramKind`].
+type private MermaidDiagramKind =
+    | FlowchartKind
+    | StateKind
+    | OtherKind
+
+/// Category of a validation violation [Repo-grounded — `types.rs::ViolationKind`].
+type MermaidViolationKind =
+    | MermaidLabelTooLong
+    | MermaidWidthExceeded
+    | MermaidMultipleDiagrams
+
+/// Returns the stable string code for a violation kind
+/// [Repo-grounded — `types.rs::ViolationKind::code`].
+let mermaidViolationKindCode (k: MermaidViolationKind) : string =
+    match k with
+    | MermaidLabelTooLong -> "label_too_long"
+    | MermaidWidthExceeded -> "width_exceeded"
+    | MermaidMultipleDiagrams -> "multiple_diagrams"
+
+/// Category of a validation warning [Repo-grounded — `types.rs::WarningKind`].
+type MermaidWarningKind =
+    | MermaidComplexDiagram
+    | MermaidSubgraphDense
+
+/// Returns the stable string code for a warning kind
+/// [Repo-grounded — `types.rs::WarningKind::code`].
+let mermaidWarningKindCode (k: MermaidWarningKind) : string =
+    match k with
+    | MermaidComplexDiagram -> "complex_diagram"
+    | MermaidSubgraphDense -> "subgraph_density"
+
+/// A raw Mermaid code block extracted from a Markdown file
+/// [Repo-grounded — `types.rs::MermaidBlock`].
+type MermaidBlock =
+    { FilePath: string
+      BlockIndex: int
+      Source: string
+      StartLine: int }
+
+/// A node in a parsed Mermaid diagram [Repo-grounded — `types.rs::Node`].
+type MermaidNode = { Id: string; Label: string }
+
+/// A directed edge between two nodes [Repo-grounded — `types.rs::Edge`].
+type MermaidEdge =
+    { From: string
+      To: string
+      Label: string }
+
+/// A `subgraph` block parsed from a flowchart [Repo-grounded — `types.rs::Subgraph`].
+type MermaidSubgraph =
+    { Id: string
+      Label: string
+      NodeIds: string list
+      StartLine: int }
+
+/// A fully parsed Mermaid diagram with its structural metadata
+/// [Repo-grounded — `types.rs::ParsedDiagram`].
+type ParsedMermaidDiagram =
+    { Block: MermaidBlock
+      Direction: MermaidDirection
+      Nodes: MermaidNode list
+      Edges: MermaidEdge list
+      Subgraphs: MermaidSubgraph list }
+
+/// A single validation violation that blocks the check
+/// [Repo-grounded — `types.rs::Violation`].
+type MermaidViolation =
+    { Kind: MermaidViolationKind
+      FilePath: string
+      BlockIndex: int
+      StartLine: int
+      NodeId: string
+      LabelText: string
+      LabelLen: int
+      MaxLabelLen: int
+      ActualWidth: int
+      MaxWidth: int }
+
+/// A non-blocking advisory about a diagram's complexity
+/// [Repo-grounded — `types.rs::Warning`].
+type MermaidWarning =
+    { Kind: MermaidWarningKind
+      FilePath: string
+      BlockIndex: int
+      StartLine: int
+      ActualWidth: int
+      ActualDepth: int
+      MaxWidth: int
+      MaxDepth: int
+      SubgraphLabel: string
+      SubgraphNodeCount: int
+      MaxSubgraphNodes: int }
+
+/// Tunable thresholds for Mermaid diagram validation
+/// [Repo-grounded — `types.rs::ValidateOptions`].
+type MermaidValidateOptions =
+    { MaxLabelLen: int
+      MaxWidth: int
+      MaxDepth: int
+      MaxSubgraphNodes: int }
+
+/// Aggregated result of a `validateMermaidBlocks` call
+/// [Repo-grounded — `types.rs::ValidationResult`].
+type MermaidValidationResult =
+    { FilesScanned: int
+      BlocksScanned: int
+      Violations: MermaidViolation list
+      Warnings: MermaidWarning list }
+
+/// The default validation options used by the CLI when no flags are
+/// specified: `MaxLabelLen = 30`, `MaxWidth = 4`, `MaxDepth = Int32.MaxValue`
+/// (the CLI's `0 = unlimited` sentinel, mapped once at the call site rather
+/// than threaded as a magic `0` through the comparison logic below),
+/// `MaxSubgraphNodes = 6`
+/// [Repo-grounded — `validator.rs::default_validate_options`].
+let defaultMermaidValidateOptions: MermaidValidateOptions =
+    { MaxLabelLen = 30
+      MaxWidth = 4
+      MaxDepth = Int32.MaxValue
+      MaxSubgraphNodes = 6 }
+
+/// Extracts all ` ```mermaid ` / `~~~mermaid` code blocks from `content`, one
+/// `MermaidBlock` per fenced block in document order. An unclosed block at
+/// the end of the file is silently ignored
+/// [Repo-grounded — `flowchart.rs::extract_blocks`].
+let extractMermaidBlocks (filePath: string) (content: string) : MermaidBlock list =
+    let lines = content.Split('\n')
+    let blocks = ResizeArray<MermaidBlock>()
+    let mutable inBlock = false
+    let mutable sourceLines = ResizeArray<string>()
+    let mutable blockIndex = 0
+    let mutable startLine = 0
+
+    for i in 0 .. lines.Length - 1 do
+        let line = lines.[i]
+        let trimmed = line.Trim()
+
+        if not inBlock then
+            if
+                line.StartsWith("```mermaid", StringComparison.Ordinal)
+                || line.StartsWith("~~~mermaid", StringComparison.Ordinal)
+            then
+                inBlock <- true
+                sourceLines <- ResizeArray<string>()
+                startLine <- i + 1
+        elif trimmed = "```" || trimmed = "~~~" then
+            blocks.Add
+                { FilePath = filePath
+                  BlockIndex = blockIndex
+                  Source = String.Join("\n", sourceLines)
+                  StartLine = startLine }
+
+            blockIndex <- blockIndex + 1
+            inBlock <- false
+        else
+            sourceLines.Add line
+
+    blocks |> List.ofSeq
+
+/// Detects the kind of a Mermaid diagram from its raw source. Blank lines and
+/// `%%` comment lines (including `%%{init: ...}%%` directives) above the type
+/// directive are skipped; the first remaining line is the header
+/// [Repo-grounded — `diagram.rs::detect_kind`].
+let private detectMermaidKind (source: string) : MermaidDiagramKind =
+    let lines = source.Replace("\r\n", "\n").Split('\n')
+
+    let rec loop i =
+        if i >= lines.Length then
+            OtherKind
+        else
+            let t = lines.[i].Trim()
+
+            if t = "" || t.StartsWith("%%", StringComparison.Ordinal) then
+                loop (i + 1)
+            elif
+                t.StartsWith("flowchart", StringComparison.Ordinal)
+                || t.StartsWith("graph ", StringComparison.Ordinal)
+                || t = "graph"
+            then
+                FlowchartKind
+            elif
+                t.StartsWith("stateDiagram-v2", StringComparison.Ordinal)
+                || t.StartsWith("stateDiagram", StringComparison.Ordinal)
+            then
+                StateKind
+            else
+                OtherKind
+
+    loop 0
+
+/// Matches a `flowchart`/`graph` header line, capturing the optional
+/// direction in group 3 — `RegexOptions.Multiline` makes `^`/`$` match line
+/// boundaries within a whole block's source, mirroring the Rust regex's
+/// `(?m)` flag [Repo-grounded — `flowchart.rs::flowchart_re`].
+let private mermaidFlowchartLineRegex =
+    Regex(@"^\s*(flowchart|graph)(\s+(TB|TD|BT|LR|RL))?\s*$", RegexOptions.Multiline ||| RegexOptions.Compiled)
+
+/// Matches a `subgraph` header line [Repo-grounded — `flowchart.rs::subgraph_re`].
+let private mermaidSubgraphHeaderRegex =
+    Regex("^subgraph(?:\\s+([^\\s\\[\"]+))?(?:\\s*\\[\\s*\"?([^\"\\]]*)\"?\\s*\\])?\\s*$", RegexOptions.Compiled)
+
+/// Matches Mermaid arrow/edge connectors [Repo-grounded — `flowchart.rs::arrow_re`].
+let private mermaidArrowRegex =
+    Regex(@"-->|---|-\.->|==>|--o|--x|<-->", RegexOptions.Compiled)
+
+/// Matches edge labels of the form `-- text -->`
+/// [Repo-grounded — `flowchart.rs::link_text_re`].
+let private mermaidLinkTextRegex = Regex(@"--[^->\n]+?-->", RegexOptions.Compiled)
+
+/// Matches a pipe-delimited edge label immediately following an arrow
+/// (`-->|text|`) [Repo-grounded — `flowchart.rs::pipe_label_re`].
+let private mermaidPipeLabelRegex =
+    Regex(@"(-->|---|-\.->|==>|--o|--x|<-->)\s*\|[^|\n]*\|", RegexOptions.Compiled)
+
+/// Matches a bare node identifier (word characters only)
+/// [Repo-grounded — `flowchart.rs::node_id_re`].
+let private mermaidNodeIdRegex = Regex(@"^(\w+)$", RegexOptions.Compiled)
+
+/// All Mermaid node shape syntaxes, in match-priority order. Each pattern
+/// captures `(id, label)` in groups 1 and 2
+/// [Repo-grounded — `flowchart.rs::node_shape_patterns`].
+let private mermaidNodeShapePatterns: Regex list =
+    [ Regex(@"^(\w+)\(\(\(([^)]*)\)\)\)", RegexOptions.Compiled)
+      Regex(@"^(\w+)\(\[([^\]]*)\]\)", RegexOptions.Compiled)
+      Regex(@"^(\w+)\(\(([^)]*)\)\)", RegexOptions.Compiled)
+      Regex(@"^(\w+)\[\[([^\]]*)\]\]", RegexOptions.Compiled)
+      Regex(@"^(\w+)\[\(([^)]*)\)\]", RegexOptions.Compiled)
+      Regex(@"^(\w+)\(([^)]*)\)", RegexOptions.Compiled)
+      Regex(@"^(\w+)\{\{([^}]*)\}\}", RegexOptions.Compiled)
+      Regex(@"^(\w+)\{([^}]*)\}", RegexOptions.Compiled)
+      Regex(@"^(\w+)>([^\]]*)\]", RegexOptions.Compiled)
+      Regex(@"^(\w+)\[/([^/]*)/\]", RegexOptions.Compiled)
+      Regex(@"^(\w+)\[\\([^\\]*)\\]", RegexOptions.Compiled)
+      Regex(@"^(\w+)\[([^\]]*)\]", RegexOptions.Compiled)
+      Regex("^(\\w+)@\\{\\s*[^}]*label:\\s*\"([^\"]*)\"\\s*[^}]*\\}", RegexOptions.Compiled) ]
+
+/// Strips surrounding quote characters (`"`, `'`, or `` ` ``) from a label
+/// string [Repo-grounded — `flowchart.rs::normalize_label`].
+let private normalizeMermaidLabel (s: string) : string =
+    let s = s.Trim()
+
+    if s.Length >= 2 then
+        let first = s.[0]
+        let last = s.[s.Length - 1]
+
+        if
+            (first = '"' && last = '"')
+            || (first = '\'' && last = '\'')
+            || (first = '`' && last = '`')
+        then
+            s.Substring(1, s.Length - 2)
+        else
+            s
+    else
+        s
+
+/// Inserts a new node or updates an existing node's label in `nodeMap`,
+/// keyed by position in `nodeIndex` [Repo-grounded — `flowchart.rs::upsert_node`].
+let private upsertMermaidNode
+    (nodeMap: ResizeArray<string * string>)
+    (nodeIndex: Dictionary<string, int>)
+    (id: string)
+    (label: string)
+    =
+    match nodeIndex.TryGetValue id with
+    | true, idx -> nodeMap.[idx] <- (id, label)
+    | false, _ ->
+        nodeIndex.[id] <- nodeMap.Count
+        nodeMap.Add(id, label)
+
+/// Extracts the node identifier from a single (non-`&`) segment. Returns an
+/// empty string when no known shape pattern or bare identifier is recognised
+/// [Repo-grounded — `flowchart.rs::extract_node_id_from_segment`].
+let private extractMermaidNodeIdFromSegment (seg: string) : string =
+    let seg = seg.Trim()
+
+    if seg = "" then
+        ""
+    else
+        let matched =
+            mermaidNodeShapePatterns
+            |> List.tryPick (fun re ->
+                let m = re.Match(seg)
+                if m.Success then Some m else None)
+
+        match matched with
+        | Some m -> m.Groups.[1].Value
+        | None ->
+            let m = mermaidNodeIdRegex.Match(seg)
+            if m.Success then m.Groups.[1].Value else ""
+
+/// Extracts node identifiers from a segment that may contain `&`-separated
+/// groups [Repo-grounded — `flowchart.rs::extract_node_ids_from_segment`].
+let private extractMermaidNodeIdsFromSegment (seg: string) : string list =
+    seg.Split('&')
+    |> Array.choose (fun sub ->
+        let id = extractMermaidNodeIdFromSegment sub
+        if id = "" then None else Some id)
+    |> Array.toList
+
+/// Extracts all node identifiers mentioned on `line`, handling both edge
+/// lines (splitting on arrows) and standalone node lines
+/// [Repo-grounded — `flowchart.rs::extract_all_node_ids`].
+let private extractAllMermaidNodeIds (line: string) : string list =
+    if mermaidArrowRegex.IsMatch line then
+        mermaidArrowRegex.Split(line)
+        |> Array.toList
+        |> List.collect extractMermaidNodeIdsFromSegment
+    else
+        extractMermaidNodeIdsFromSegment line
+
+/// Parses a standalone node declaration line (no arrow) and upserts it into
+/// `nodeMap` [Repo-grounded — `flowchart.rs::extract_standalone_node`].
+let private extractStandaloneMermaidNode
+    (line: string)
+    (nodeMap: ResizeArray<string * string>)
+    (nodeIndex: Dictionary<string, int>)
+    =
+    let line = line.Trim()
+
+    let matched =
+        mermaidNodeShapePatterns
+        |> List.tryPick (fun re ->
+            let m = re.Match(line)
+            if m.Success then Some m else None)
+
+    match matched with
+    | Some m -> upsertMermaidNode nodeMap nodeIndex m.Groups.[1].Value (normalizeMermaidLabel m.Groups.[2].Value)
+    | None ->
+        let m = mermaidNodeIdRegex.Match(line)
+
+        if m.Success && not (nodeIndex.ContainsKey m.Groups.[1].Value) then
+            upsertMermaidNode nodeMap nodeIndex m.Groups.[1].Value ""
+
+/// Extracts a node identifier (and optional label) from `seg`, upserts it,
+/// and returns the identifier string. Returns an empty string when
+/// unrecognised
+/// [Repo-grounded — `flowchart.rs::extract_node_id_and_label`].
+let private extractMermaidNodeIdAndLabel
+    (seg: string)
+    (nodeMap: ResizeArray<string * string>)
+    (nodeIndex: Dictionary<string, int>)
+    : string =
+    let matched =
+        mermaidNodeShapePatterns
+        |> List.tryPick (fun re ->
+            let m = re.Match(seg)
+            if m.Success then Some m else None)
+
+    match matched with
+    | Some m ->
+        upsertMermaidNode nodeMap nodeIndex m.Groups.[1].Value (normalizeMermaidLabel m.Groups.[2].Value)
+        m.Groups.[1].Value
+    | None ->
+        let m = mermaidNodeIdRegex.Match(seg)
+
+        if m.Success then
+            if not (nodeIndex.ContainsKey m.Groups.[1].Value) then
+                upsertMermaidNode nodeMap nodeIndex m.Groups.[1].Value ""
+
+            m.Groups.[1].Value
+        else
+            ""
+
+/// Parses one arrow-separated segment which may contain `&`-separated node
+/// references, upserts each node, and returns the list of identifiers
+/// [Repo-grounded — `flowchart.rs::extract_node_group`].
+let private extractMermaidNodeGroup
+    (part: string)
+    (nodeMap: ResizeArray<string * string>)
+    (nodeIndex: Dictionary<string, int>)
+    : string list =
+    part.Split('&')
+    |> Array.choose (fun seg ->
+        let seg = seg.Trim()
+
+        if seg = "" then
+            None
+        else
+            let id = extractMermaidNodeIdAndLabel seg nodeMap nodeIndex
+            if id = "" then None else Some id)
+    |> Array.toList
+
+/// Parses an edge line (containing at least one arrow), upserts all
+/// referenced nodes, and appends cartesian-product edges for each `&`-group
+/// pair [Repo-grounded — `flowchart.rs::extract_edge_line`].
+let private extractMermaidEdgeLine
+    (line: string)
+    (nodeMap: ResizeArray<string * string>)
+    (nodeIndex: Dictionary<string, int>)
+    (edges: ResizeArray<MermaidEdge>)
+    =
+    let line = mermaidLinkTextRegex.Replace(line, "-->")
+    let line = mermaidPipeLabelRegex.Replace(line, "$1")
+    let parts = mermaidArrowRegex.Split(line)
+
+    if parts.Length >= 2 then
+        let groups =
+            parts
+            |> Array.choose (fun p ->
+                let ids = extractMermaidNodeGroup p nodeMap nodeIndex
+                if List.isEmpty ids then None else Some ids)
+
+        for i in 0 .. groups.Length - 2 do
+            for f in groups.[i] do
+                for t in groups.[i + 1] do
+                    edges.Add { From = f; To = t; Label = "" }
+
+/// Extracts `(id, label)` from a `subgraph` header line. Falls back to an
+/// empty id and the trimmed remainder as label when the regex does not match
+/// [Repo-grounded — `flowchart.rs::parse_subgraph_header`].
+let private parseMermaidSubgraphHeader (line: string) : string * string =
+    let m = mermaidSubgraphHeaderRegex.Match(line)
+
+    if m.Success then
+        let id = if m.Groups.[1].Success then m.Groups.[1].Value else ""
+        let label = if m.Groups.[2].Success then m.Groups.[2].Value else ""
+        id, label
+    else
+        let rest = line.Substring("subgraph".Length).Trim().Trim('"')
+        "", rest
+
+/// Returns `ids` with duplicates removed, preserving first-occurrence order
+/// [Repo-grounded — `flowchart.rs::dedup_order`].
+let private dedupMermaidOrder (ids: string list) : string list =
+    let seen = HashSet<string>()
+    ids |> List.filter seen.Add
+
+/// Collects node identifiers from `source` in the order they first appear,
+/// filtered to only those present in `nodeIndex`
+/// [Repo-grounded — `flowchart.rs::collect_node_order`].
+let private collectMermaidNodeOrder (source: string) (nodeIndex: Dictionary<string, int>) : string list =
+    let seen = HashSet<string>()
+    let order = ResizeArray<string>()
+
+    for raw in source.Split('\n') do
+        let line = raw.Trim()
+
+        if
+            line <> ""
+            && not (line.StartsWith("subgraph", StringComparison.Ordinal))
+            && line <> "end"
+            && not (mermaidFlowchartLineRegex.IsMatch line)
+        then
+            for id in extractAllMermaidNodeIds line do
+                if nodeIndex.ContainsKey id && seen.Add id then
+                    order.Add id
+
+    for k in nodeIndex.Keys do
+        if seen.Add k then
+            order.Add k
+
+    order |> List.ofSeq
+
+/// Parses a `MermaidBlock` into a `ParsedMermaidDiagram` and the number of
+/// `flowchart`/`graph` headers found in the block. A count of `0` means the
+/// block is not a flowchart; a count `> 1` indicates multiple diagrams
+/// packed into one block, which is a violation
+/// [Repo-grounded — `flowchart.rs::parse_diagram`].
+let parseMermaidDiagram (block: MermaidBlock) : ParsedMermaidDiagram * int =
+    let matches =
+        mermaidFlowchartLineRegex.Matches(block.Source) |> Seq.cast<Match> |> List.ofSeq
+
+    let count = matches.Length
+
+    if count = 0 then
+        { Block = block
+          Direction = MermaidTB
+          Nodes = []
+          Edges = []
+          Subgraphs = [] },
+        0
+    else
+        let first = matches.[0]
+
+        let dir =
+            if first.Groups.[3].Success && first.Groups.[3].Value.Trim() <> "" then
+                parseMermaidDirection (first.Groups.[3].Value.Trim())
+            else
+                MermaidTB
+
+        let nodeMap = ResizeArray<string * string>()
+        let nodeIndex = Dictionary<string, int>()
+        let edges = ResizeArray<MermaidEdge>()
+        let subgraphs = ResizeArray<MermaidSubgraph>()
+        let stack = ResizeArray<MermaidSubgraph>()
+        let lines = block.Source.Split('\n')
+
+        for lineIdx in 0 .. lines.Length - 1 do
+            let line = lines.[lineIdx].Trim()
+
+            if line <> "" then
+                if line.StartsWith("subgraph", StringComparison.Ordinal) then
+                    let id, label = parseMermaidSubgraphHeader line
+
+                    stack.Add
+                        { Id = id
+                          Label = label
+                          NodeIds = []
+                          StartLine = lineIdx + 1 }
+                elif line = "end" then
+                    if stack.Count > 0 then
+                        let top = stack.[stack.Count - 1]
+                        stack.RemoveAt(stack.Count - 1)
+                        subgraphs.Add top
+                elif mermaidFlowchartLineRegex.IsMatch line then
+                    ()
+                else
+                    let before = HashSet<string>(nodeIndex.Keys)
+
+                    if mermaidArrowRegex.IsMatch line then
+                        extractMermaidEdgeLine line nodeMap nodeIndex edges
+                    else
+                        extractStandaloneMermaidNode line nodeMap nodeIndex
+
+                    let newIds =
+                        nodeIndex.Keys |> Seq.filter (fun k -> not (before.Contains k)) |> List.ofSeq
+
+                    if not (List.isEmpty newIds) && stack.Count > 0 then
+                        let topIdx = stack.Count - 1
+                        let top = stack.[topIdx]
+                        let mutable nodeIds = top.NodeIds
+
+                        for id in dedupMermaidOrder newIds do
+                            if not (List.contains id nodeIds) then
+                                nodeIds <- nodeIds @ [ id ]
+
+                        stack.[topIdx] <- { top with NodeIds = nodeIds }
+
+        while stack.Count > 0 do
+            let top = stack.[stack.Count - 1]
+            stack.RemoveAt(stack.Count - 1)
+            subgraphs.Add top
+
+        let order = collectMermaidNodeOrder block.Source nodeIndex
+        let nodeMapList = nodeMap |> List.ofSeq
+
+        let nodes =
+            order
+            |> List.map (fun id ->
+                let label =
+                    nodeMapList
+                    |> List.tryFind (fun (k, _) -> k = id)
+                    |> Option.map snd
+                    |> Option.defaultValue ""
+
+                { Id = id; Label = label })
+
+        { Block = block
+          Direction = dir
+          Nodes = nodes
+          Edges = edges |> List.ofSeq
+          Subgraphs = subgraphs |> List.ofSeq },
+        count
+
+/// Returns the effective display length of `label` after normalising
+/// line-break tokens (`<br/>`, `<BR/>`, `<br>`, `<BR>`, `\n`) to actual
+/// newlines — the maximum character count across all resulting lines
+/// [Repo-grounded — `graph.rs::effective_label_len`].
+let effectiveMermaidLabelLen (label: string) : int =
+    if label = "" then
+        0
+    else
+        let normalized =
+            label
+                .Replace("<br/>", "\n")
+                .Replace("<BR/>", "\n")
+                .Replace("<br>", "\n")
+                .Replace("<BR>", "\n")
+                .Replace("\\n", "\n")
+
+        normalized.Split('\n') |> Array.map String.length |> Array.max
+
+/// Assigns a rank (depth level) to each node using a topological-sort-based
+/// longest-path algorithm. Cycles are handled by first removing back edges
+/// (detected via an iterative DFS in node-declaration order), then ranking
+/// the remaining DAG. Disconnected nodes are assigned rank `0`. Returns an
+/// empty map when `nodes` is empty
+/// [Repo-grounded — `graph.rs::rank_assign`].
+let private mermaidRankAssign (nodes: MermaidNode list) (edges: MermaidEdge list) : Dictionary<string, int64> =
+    let rank = Dictionary<string, int64>()
+
+    if List.isEmpty nodes then
+        rank
+    else
+        let nodeSet = HashSet<string>(nodes |> List.map (fun n -> n.Id))
+        let adj = Dictionary<string, ResizeArray<string>>()
+
+        for n in nodes do
+            adj.[n.Id] <- ResizeArray<string>()
+
+        for e in edges do
+            if nodeSet.Contains e.From && nodeSet.Contains e.To then
+                adj.[e.From].Add e.To
+
+        // Pass 1: detect back edges via iterative DFS
+        // (0/absent=white, 1=gray, 2=black), visiting unvisited nodes in
+        // declaration order so the result is deterministic.
+        let color = Dictionary<string, int>()
+        let backEdges = HashSet<string * string>()
+
+        for start in nodes do
+            let startColor = if color.ContainsKey start.Id then color.[start.Id] else 0
+
+            if startColor = 0 then
+                let stack = ResizeArray<string * int>()
+                stack.Add(start.Id, 0)
+                color.[start.Id] <- 1
+
+                while stack.Count > 0 do
+                    let cur, idx = stack.[stack.Count - 1]
+                    stack.RemoveAt(stack.Count - 1)
+
+                    let neighbors =
+                        if adj.ContainsKey cur then
+                            adj.[cur]
+                        else
+                            ResizeArray<string>()
+
+                    if idx < neighbors.Count then
+                        let next = neighbors.[idx]
+                        stack.Add(cur, idx + 1)
+                        let nextColor = if color.ContainsKey next then color.[next] else 0
+
+                        if nextColor = 1 then
+                            backEdges.Add(cur, next) |> ignore
+                        elif nextColor = 0 then
+                            color.[next] <- 1
+                            stack.Add(next, 0)
+                    else
+                        color.[cur] <- 2
+
+        // Pass 2: Kahn's longest-path ranking on the DAG that remains after
+        // dropping the back edges.
+        let inDegree = Dictionary<string, int>()
+
+        for n in nodes do
+            inDegree.[n.Id] <- 0
+
+        for kv in adj do
+            for t in kv.Value do
+                if not (backEdges.Contains(kv.Key, t)) then
+                    inDegree.[t] <- (if inDegree.ContainsKey t then inDegree.[t] else 0) + 1
+
+        let visited = HashSet<string>()
+        let queue = Queue<string>()
+
+        for n in nodes do
+            if inDegree.[n.Id] = 0 then
+                queue.Enqueue n.Id
+                rank.[n.Id] <- 0L
+
+        while queue.Count > 0 do
+            let cur = queue.Dequeue()
+            visited.Add cur |> ignore
+            let curRank = if rank.ContainsKey cur then rank.[cur] else 0L
+
+            let neighbors =
+                if adj.ContainsKey cur then
+                    adj.[cur]
+                else
+                    ResizeArray<string>()
+
+            for next in neighbors do
+                if not (backEdges.Contains(cur, next)) then
+                    let existing = if rank.ContainsKey next then rank.[next] else 0L
+
+                    if curRank + 1L > existing then
+                        rank.[next] <- curRank + 1L
+
+                    inDegree.[next] <- inDegree.[next] - 1
+
+                    if inDegree.[next] = 0 then
+                        queue.Enqueue next
+
+        for n in nodes do
+            if not (visited.Contains n.Id) && not (rank.ContainsKey n.Id) then
+                rank.[n.Id] <- 0L
+
+        rank
+
+/// Returns the maximum number of nodes sharing the same rank (diagram
+/// width). Returns `0` when there are no nodes
+/// [Repo-grounded — `graph.rs::max_width`].
+let mermaidMaxWidth (nodes: MermaidNode list) (edges: MermaidEdge list) : int =
+    if List.isEmpty nodes then
+        0
+    else
+        let ranks = mermaidRankAssign nodes edges
+        ranks.Values |> Seq.countBy id |> Seq.map snd |> Seq.max
+
+/// Returns the number of distinct rank levels in the diagram (diagram
+/// depth). Returns `0` when there are no nodes
+/// [Repo-grounded — `graph.rs::depth`].
+let mermaidDepth (nodes: MermaidNode list) (edges: MermaidEdge list) : int =
+    if List.isEmpty nodes then
+        0
+    else
+        let ranks = mermaidRankAssign nodes edges
+        ranks.Values |> Seq.distinct |> Seq.length
+
+/// Parses `FROM --> TO` or `FROM --> TO : label`, returning
+/// `(from, to, label)`. Returns `None` when either side is empty after
+/// trimming or when the line has no `-->` arrow
+/// [Repo-grounded — `state.rs::parse_arrow`].
+let private parseMermaidStateArrow (line: string) : (string * string * string) option =
+    let idx = line.IndexOf("-->", StringComparison.Ordinal)
+
+    if idx < 0 then
+        None
+    else
+        let from = line.Substring(0, idx).Trim()
+        let rhs = line.Substring(idx + 3).Trim()
+
+        let toPart, label =
+            let spaceColonSpace = rhs.IndexOf(" : ", StringComparison.Ordinal)
+
+            if spaceColonSpace >= 0 then
+                rhs.Substring(0, spaceColonSpace).Trim(), rhs.Substring(spaceColonSpace + 3).Trim()
+            else
+                let colonSpace = rhs.IndexOf(": ", StringComparison.Ordinal)
+
+                if colonSpace >= 0 then
+                    rhs.Substring(0, colonSpace).Trim(), rhs.Substring(colonSpace + 2).Trim()
+                else
+                    rhs, ""
+
+        if from = "" || toPart = "" then
+            None
+        else
+            Some(from, toPart, label)
+
+/// Parses a `stateDiagram-v2`/`stateDiagram` block into a
+/// `ParsedMermaidDiagram`. Handles: header skip, `%%`/`#` comment skip,
+/// `direction` keyword, and `FROM --> TO`/`FROM --> TO : label` edges — the
+/// only state-diagram constructs this port's Gherkin scenarios exercise;
+/// composite `state X { }` blocks, `state "label" as ID` aliases,
+/// pseudostate stereotypes, and notes are Rust-source features with no
+/// scenario coverage here, so they are intentionally not ported
+/// [Repo-grounded — `state.rs::parse_state`].
+let private parseMermaidState (block: MermaidBlock) : ParsedMermaidDiagram =
+    let mutable direction = MermaidTB
+    let nodeOrder = ResizeArray<string>()
+    let nodeLabels = Dictionary<string, string>()
+    let edges = ResizeArray<MermaidEdge>()
+
+    let ensureNode (id: string) (label: string) =
+        if not (nodeLabels.ContainsKey id) then
+            nodeOrder.Add id
+            nodeLabels.[id] <- label
+
+    for raw in block.Source.Split('\n') do
+        let line = raw.Trim()
+
+        if line <> "" then
+            if
+                line.StartsWith("stateDiagram-v2", StringComparison.Ordinal)
+                || line.StartsWith("stateDiagram", StringComparison.Ordinal)
+            then
+                ()
+            elif
+                line.StartsWith("%%", StringComparison.Ordinal)
+                || line.StartsWith("#", StringComparison.Ordinal)
+            then
+                ()
+            elif line = "--" then
+                ()
+            elif line.StartsWith("direction ", StringComparison.Ordinal) then
+                let rest = line.Substring("direction ".Length).Trim()
+
+                direction <-
+                    match rest with
+                    | "LR" -> MermaidLR
+                    | "RL" -> MermaidRL
+                    | "BT" -> MermaidBT
+                    | _ -> MermaidTB
+            elif line.Contains("-->") then
+                match parseMermaidStateArrow line with
+                | Some(from, toId, label) ->
+                    ensureNode from from
+                    ensureNode toId toId
+
+                    edges.Add
+                        { From = from
+                          To = toId
+                          Label = label }
+                | None -> ()
+
+    let nodes =
+        nodeOrder
+        |> Seq.map (fun id -> { Id = id; Label = nodeLabels.[id] })
+        |> List.ofSeq
+
+    { Block = block
+      Direction = direction
+      Nodes = nodes
+      Edges = edges |> List.ofSeq
+      Subgraphs = [] }
+
+/// Checks node and edge labels for length violations
+/// [Repo-grounded — `validator.rs::check_labels`].
+let private checkMermaidLabels
+    (diagram: ParsedMermaidDiagram)
+    (opts: MermaidValidateOptions)
+    (fp: string)
+    (bi: int)
+    (sl: int)
+    : MermaidViolation list =
+    let nodeViolations =
+        diagram.Nodes
+        |> List.choose (fun node ->
+            let len = effectiveMermaidLabelLen node.Label
+
+            if len > opts.MaxLabelLen then
+                Some
+                    { Kind = MermaidLabelTooLong
+                      FilePath = fp
+                      BlockIndex = bi
+                      StartLine = sl
+                      NodeId = node.Id
+                      LabelText = node.Label
+                      LabelLen = len
+                      MaxLabelLen = opts.MaxLabelLen
+                      ActualWidth = 0
+                      MaxWidth = 0 }
+            else
+                None)
+
+    let edgeViolations =
+        diagram.Edges
+        |> List.choose (fun edge ->
+            if edge.Label = "" then
+                None
+            else
+                let len = effectiveMermaidLabelLen edge.Label
+
+                if len > opts.MaxLabelLen then
+                    Some
+                        { Kind = MermaidLabelTooLong
+                          FilePath = fp
+                          BlockIndex = bi
+                          StartLine = sl
+                          NodeId = sprintf "%s-->%s" edge.From edge.To
+                          LabelText = edge.Label
+                          LabelLen = len
+                          MaxLabelLen = opts.MaxLabelLen
+                          ActualWidth = 0
+                          MaxWidth = 0 }
+                else
+                    None)
+
+    nodeViolations @ edgeViolations
+
+/// Checks a parsed diagram's width/depth against `opts`, returning the
+/// `WidthExceeded` violation or `ComplexDiagram` warning (mutually
+/// exclusive: the warning wins when both thresholds are exceeded)
+/// [Repo-grounded — `validator.rs::validate_one_block`'s span/depth branch].
+let private checkMermaidWidthAndDepth
+    (diagram: ParsedMermaidDiagram)
+    (opts: MermaidValidateOptions)
+    (fp: string)
+    (bi: int)
+    (sl: int)
+    : MermaidViolation list * MermaidWarning list =
+    let span = mermaidMaxWidth diagram.Nodes diagram.Edges
+    let dep = mermaidDepth diagram.Nodes diagram.Edges
+
+    let horizontal, vertical =
+        match diagram.Direction with
+        | MermaidLR
+        | MermaidRL -> dep, span
+        | _ -> span, dep
+
+    if horizontal > opts.MaxWidth && vertical > opts.MaxDepth then
+        [],
+        [ { Kind = MermaidComplexDiagram
+            FilePath = fp
+            BlockIndex = bi
+            StartLine = sl
+            ActualWidth = horizontal
+            ActualDepth = vertical
+            MaxWidth = opts.MaxWidth
+            MaxDepth = opts.MaxDepth
+            SubgraphLabel = ""
+            SubgraphNodeCount = 0
+            MaxSubgraphNodes = 0 } ]
+    elif horizontal > opts.MaxWidth then
+        [ { Kind = MermaidWidthExceeded
+            FilePath = fp
+            BlockIndex = bi
+            StartLine = sl
+            NodeId = ""
+            LabelText = ""
+            LabelLen = 0
+            MaxLabelLen = 0
+            ActualWidth = horizontal
+            MaxWidth = opts.MaxWidth } ],
+        []
+    else
+        [], []
+
+/// Validates a single `MermaidBlock`, returning its violations and warnings
+/// [Repo-grounded — `validator.rs::validate_one_block`].
+let private validateOneMermaidBlock
+    (block: MermaidBlock)
+    (opts: MermaidValidateOptions)
+    : MermaidViolation list * MermaidWarning list =
+    let fp = block.FilePath
+    let bi = block.BlockIndex
+    let sl = block.StartLine
+
+    match detectMermaidKind block.Source with
+    | OtherKind -> [], []
+    | FlowchartKind ->
+        let diagram, count = parseMermaidDiagram block
+
+        let multiViolation =
+            if count > 1 then
+                [ { Kind = MermaidMultipleDiagrams
+                    FilePath = fp
+                    BlockIndex = bi
+                    StartLine = sl
+                    NodeId = ""
+                    LabelText = ""
+                    LabelLen = 0
+                    MaxLabelLen = 0
+                    ActualWidth = 0
+                    MaxWidth = 0 } ]
+            else
+                []
+
+        if count = 0 then
+            [], []
+        else
+            let labelViolations = checkMermaidLabels diagram opts fp bi sl
+            let widthViolations, warnings = checkMermaidWidthAndDepth diagram opts fp bi sl
+
+            let subgraphWarnings =
+                if opts.MaxSubgraphNodes > 0 then
+                    diagram.Subgraphs
+                    |> List.choose (fun sg ->
+                        if sg.NodeIds.Length > opts.MaxSubgraphNodes then
+                            Some
+                                { Kind = MermaidSubgraphDense
+                                  FilePath = fp
+                                  BlockIndex = bi
+                                  StartLine = sl + sg.StartLine
+                                  ActualWidth = 0
+                                  ActualDepth = 0
+                                  MaxWidth = 0
+                                  MaxDepth = 0
+                                  SubgraphLabel = sg.Label
+                                  SubgraphNodeCount = sg.NodeIds.Length
+                                  MaxSubgraphNodes = opts.MaxSubgraphNodes }
+                        else
+                            None)
+                else
+                    []
+
+            multiViolation @ labelViolations @ widthViolations, warnings @ subgraphWarnings
+    | StateKind ->
+        let diagram = parseMermaidState block
+        let labelViolations = checkMermaidLabels diagram opts fp bi sl
+        let widthViolations, warnings = checkMermaidWidthAndDepth diagram opts fp bi sl
+        labelViolations @ widthViolations, warnings
+
+/// Validates all `blocks` against `opts` and returns an aggregated
+/// `MermaidValidationResult`. `FilesScanned` counts unique file paths across
+/// `blocks` — a file that yielded zero blocks never appears here, matching
+/// the Rust source's `file_set` (files that produced at least one block)
+/// [Repo-grounded — `validator.rs::validate_blocks`].
+let validateMermaidBlocks (blocks: MermaidBlock list) (opts: MermaidValidateOptions) : MermaidValidationResult =
+    let filesSeen = HashSet<string>(blocks |> List.map (fun b -> b.FilePath))
+
+    let violations, warnings =
+        blocks
+        |> List.fold
+            (fun (accV, accW) block ->
+                let v, w = validateOneMermaidBlock block opts
+                accV @ v, accW @ w)
+            ([], [])
+
+    { FilesScanned = filesSeen.Count
+      BlocksScanned = blocks.Length
+      Violations = violations
+      Warnings = warnings }
+
+/// Directory names skipped during the mermaid validator's recursive markdown
+/// file collection — the standardized cross-repo noise-skip set shared by
+/// the markdown gate validators (mermaid, links, heading-hierarchy) in the
+/// Rust source, though each validator's own constant lists a slightly
+/// different subset — this one matches `md_validate_mermaid.rs::SKIP_DIRS`
+/// exactly rather than reusing `linksSkipDirs` above
+/// [Repo-grounded — `md_validate_mermaid.rs::SKIP_DIRS`].
+let private mermaidSkipDirs: Set<string> =
+    Set.ofList
+        [ "node_modules"
+          "dist"
+          "target"
+          ".next"
+          "coverage"
+          "generated-reports"
+          "local-tmp"
+          "archived"
+          "apps-labs"
+          "worktrees"
+          ".terraform"
+          "generated-contracts"
+          ".nx"
+          ".git" ]
+
+/// Options controlling `validateMermaidDocs`'s file-selection behavior.
+/// `Paths`, when non-empty, restricts the scan to those repository-relative
+/// (or absolute) subtrees — mirrors `md_validate_mermaid.rs::collect_md_files`.
+/// `StagedFiles`/`ChangedFiles`, when `Some`, are the literal repository-
+/// relative paths to scan in place of a walk, following `LinkScanOptions`'s
+/// precedent of taking the file list as a pure parameter rather than
+/// shelling out to git
+/// [Repo-grounded — `md_validate_mermaid.rs::run`, `ValidateMermaidArgs`].
+type MermaidScanOptions =
+    { RepoRoot: string
+      Paths: string list
+      StagedFiles: string list option
+      ChangedFiles: string list option
+      ExcludePrefixes: string list
+      Options: MermaidValidateOptions }
+
+/// Filters `files` to those whose repository-relative path does not start
+/// with any of the `exclude` prefixes. An empty `exclude` list, or an
+/// individual empty prefix within it, excludes nothing
+/// [Repo-grounded — `md_validate_mermaid.rs::apply_excludes`].
+let private applyMermaidExcludes (repoRoot: string) (files: string list) (exclude: string list) : string list =
+    if List.isEmpty exclude then
+        files
+    else
+        files
+        |> List.filter (fun f ->
+            let rel = Path.GetRelativePath(repoRoot, f).Replace('\\', '/')
+
+            not (
+                exclude
+                |> List.exists (fun e ->
+                    let prefix = e.TrimEnd('/')
+
+                    if prefix = "" then
+                        false
+                    else
+                        rel = prefix || rel.StartsWith(prefix + "/", StringComparison.Ordinal))
+            ))
+
+/// Selects the absolute paths of markdown files to scan per `opts`: the
+/// literal staged/changed list when set, `opts.Paths`-restricted subtrees
+/// when non-empty, otherwise a full repository walk
+/// [Repo-grounded — `md_validate_mermaid.rs::run`'s file-selection `if`/`else`
+/// chain].
+let private collectMermaidFiles (opts: MermaidScanOptions) : string list =
+    match opts.StagedFiles, opts.ChangedFiles with
+    | Some staged, _ ->
+        staged
+        |> List.filter (fun f -> f.EndsWith(".md", StringComparison.Ordinal))
+        |> List.map (fun f -> Path.Combine(opts.RepoRoot, f))
+    | None, Some changed ->
+        changed
+        |> List.filter (fun f -> f.EndsWith(".md", StringComparison.Ordinal))
+        |> List.map (fun f -> Path.Combine(opts.RepoRoot, f))
+    | None, None when not (List.isEmpty opts.Paths) ->
+        opts.Paths
+        |> List.collect (fun p ->
+            let abs =
+                if Path.IsPathRooted p then
+                    p
+                else
+                    Path.Combine(opts.RepoRoot, p)
+
+            collectFilesSkipping mermaidSkipDirs abs)
+        |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+    | None, None ->
+        collectFilesSkipping mermaidSkipDirs opts.RepoRoot
+        |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+
+/// Validates every Mermaid diagram block reachable from `opts`, per its
+/// path/staged/changed/exclude filters
+/// [Repo-grounded — `md_validate_mermaid.rs::run`].
+///
+/// Gherkin (binds) — this function backs all of
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-mermaid.feature`'s
+/// 39 scenarios; see `MdSteps.fs`'s `docs-validate-mermaid.feature` section
+/// for the per-scenario step-definition bindings.
+let validateMermaidDocs (opts: MermaidScanOptions) : MermaidValidationResult =
+    let files =
+        applyMermaidExcludes opts.RepoRoot (collectMermaidFiles opts) opts.ExcludePrefixes
+
+    let blocks =
+        files
+        |> List.collect (fun f ->
+            if File.Exists f then
+                extractMermaidBlocks f (File.ReadAllText f)
+            else
+                [])
+
+    validateMermaidBlocks blocks opts.Options
+
+/// Returns a human-readable description of a single violation
+/// [Repo-grounded — `reporter.rs::violation_detail`].
+let private mermaidViolationDetail (v: MermaidViolation) : string =
+    match v.Kind with
+    | MermaidLabelTooLong ->
+        sprintf
+            "[%s] node \"%s\" label \"%s\" is %d chars (max %d)"
+            (mermaidViolationKindCode v.Kind)
+            v.NodeId
+            v.LabelText
+            v.LabelLen
+            v.MaxLabelLen
+    | MermaidWidthExceeded ->
+        sprintf "[%s] span %d exceeds max-width %d" (mermaidViolationKindCode v.Kind) v.ActualWidth v.MaxWidth
+    | MermaidMultipleDiagrams ->
+        sprintf "[%s] block contains multiple flowchart/graph headers" (mermaidViolationKindCode v.Kind)
+
+/// Returns a human-readable description of a single warning
+/// [Repo-grounded — `reporter.rs::warning_detail`].
+let private mermaidWarningDetail (w: MermaidWarning) : string =
+    match w.Kind with
+    | MermaidSubgraphDense ->
+        let label =
+            if w.SubgraphLabel = "" then
+                "(unnamed)"
+            else
+                w.SubgraphLabel
+
+        sprintf
+            "[%s] subgraph \"%s\" has %d children; recommend \u2264 %d for mobile rendering"
+            (mermaidWarningKindCode w.Kind)
+            label
+            w.SubgraphNodeCount
+            w.MaxSubgraphNodes
+    | MermaidComplexDiagram ->
+        sprintf
+            "[%s] span %d (max %d) and depth %d (max %d) both exceeded"
+            (mermaidWarningKindCode w.Kind)
+            w.ActualWidth
+            w.MaxWidth
+            w.ActualDepth
+            w.MaxDepth
+
+/// Formats a `MermaidValidationResult` as human-readable text. When `quiet`
+/// is `true` and there are no findings, returns an empty string. Per-file
+/// detail lines are included when `verbose` is `true` or there are findings
+/// [Repo-grounded — `reporter.rs::format_text`].
+let formatMermaidText (result: MermaidValidationResult) (verbose: bool) (quiet: bool) : string =
+    let hasFindings =
+        not (List.isEmpty result.Violations) || not (List.isEmpty result.Warnings)
+
+    if quiet && not hasFindings then
+        ""
+    else
+        let sb = Text.StringBuilder()
+
+        if verbose || hasFindings then
+            let fileViolations =
+                result.Violations |> List.groupBy (fun v -> v.FilePath) |> Map.ofList
+
+            let fileWarnings =
+                result.Warnings |> List.groupBy (fun w -> w.FilePath) |> Map.ofList
+
+            let fileSet =
+                Set.union
+                    (fileViolations |> Map.toList |> List.map fst |> Set.ofList)
+                    (fileWarnings |> Map.toList |> List.map fst |> Set.ofList)
+
+            for fp in fileSet do
+                let vs = fileViolations |> Map.tryFind fp |> Option.defaultValue []
+                let ws = fileWarnings |> Map.tryFind fp |> Option.defaultValue []
+
+                if not (List.isEmpty vs) then
+                    sb.Append(sprintf "[FAIL] %s\n" fp) |> ignore
+                elif not (List.isEmpty ws) then
+                    sb.Append(sprintf "[WARN] %s\n" fp) |> ignore
+                else
+                    sb.Append(sprintf "[OK] %s\n" fp) |> ignore
+
+                for v in vs do
+                    sb.Append(sprintf "  block %d (line %d): %s\n" v.BlockIndex v.StartLine (mermaidViolationDetail v))
+                    |> ignore
+
+                for w in ws do
+                    sb.Append(sprintf "  block %d (line %d): %s\n" w.BlockIndex w.StartLine (mermaidWarningDetail w))
+                    |> ignore
+
+        sb.Append(
+            sprintf
+                "Found %d violation(s) and %d warning(s) in %d file(s) (%d block(s) scanned).\n"
+                result.Violations.Length
+                result.Warnings.Length
+                result.FilesScanned
+                result.BlocksScanned
+        )
+        |> ignore
+
+        sb.ToString()
+
+/// Formats the validation result as a Markdown table. Returns a single-line
+/// "all passed" message when there are no findings
+/// [Repo-grounded — `reporter.rs::format_markdown`].
+let formatMermaidMarkdown (result: MermaidValidationResult) : string =
+    if List.isEmpty result.Violations && List.isEmpty result.Warnings then
+        sprintf "All %d block(s) in %d file(s) passed mermaid validation.\n" result.BlocksScanned result.FilesScanned
+    else
+        let sb = Text.StringBuilder()
+        sb.Append("| File | Block | Line | Severity | Kind | Detail |\n") |> ignore
+        sb.Append("|------|-------|------|----------|------|--------|\n") |> ignore
+
+        for v in result.Violations do
+            sb.Append(
+                sprintf
+                    "| %s | %d | %d | error | %s | %s |\n"
+                    v.FilePath
+                    v.BlockIndex
+                    v.StartLine
+                    (mermaidViolationKindCode v.Kind)
+                    (mermaidViolationDetail v)
+            )
+            |> ignore
+
+        for w in result.Warnings do
+            sb.Append(
+                sprintf
+                    "| %s | %d | %d | warning | %s | %s |\n"
+                    w.FilePath
+                    w.BlockIndex
+                    w.StartLine
+                    (mermaidWarningKindCode w.Kind)
+                    (mermaidWarningDetail w)
+            )
+            |> ignore
+
+        sb.ToString()
+
+/// Serialises the validation result to a pretty-printed JSON string, one
+/// object per violation/warning with `camelCase` field names
+/// [Repo-grounded — `reporter.rs::format_json`].
+let formatMermaidJson (result: MermaidValidationResult) : string =
+    let violationNode (v: MermaidViolation) : JsonNode =
+        let node = JsonObject()
+        node.["kind"] <- JsonValue.Create(mermaidViolationKindCode v.Kind)
+        node.["filePath"] <- JsonValue.Create(v.FilePath)
+        node.["blockIndex"] <- JsonValue.Create(v.BlockIndex)
+        node.["startLine"] <- JsonValue.Create(v.StartLine)
+
+        if v.NodeId <> "" then
+            node.["nodeId"] <- JsonValue.Create(v.NodeId)
+
+        if v.LabelText <> "" then
+            node.["labelText"] <- JsonValue.Create(v.LabelText)
+
+        if v.LabelLen <> 0 then
+            node.["labelLen"] <- JsonValue.Create(v.LabelLen)
+
+        if v.MaxLabelLen <> 0 then
+            node.["maxLabelLen"] <- JsonValue.Create(v.MaxLabelLen)
+
+        if v.ActualWidth <> 0 then
+            node.["actualWidth"] <- JsonValue.Create(v.ActualWidth)
+
+        if v.MaxWidth <> 0 then
+            node.["maxWidth"] <- JsonValue.Create(v.MaxWidth)
+
+        node :> JsonNode
+
+    let warningNode (w: MermaidWarning) : JsonNode =
+        let node = JsonObject()
+        node.["kind"] <- JsonValue.Create(mermaidWarningKindCode w.Kind)
+        node.["filePath"] <- JsonValue.Create(w.FilePath)
+        node.["blockIndex"] <- JsonValue.Create(w.BlockIndex)
+        node.["startLine"] <- JsonValue.Create(w.StartLine)
+
+        if w.ActualWidth <> 0 then
+            node.["actualWidth"] <- JsonValue.Create(w.ActualWidth)
+
+        if w.ActualDepth <> 0 then
+            node.["actualDepth"] <- JsonValue.Create(w.ActualDepth)
+
+        if w.MaxWidth <> 0 then
+            node.["maxWidth"] <- JsonValue.Create(w.MaxWidth)
+
+        if w.MaxDepth <> 0 then
+            node.["maxDepth"] <- JsonValue.Create(w.MaxDepth)
+
+        if w.SubgraphLabel <> "" then
+            node.["subgraphLabel"] <- JsonValue.Create(w.SubgraphLabel)
+
+        if w.SubgraphNodeCount <> 0 then
+            node.["subgraphNodeCount"] <- JsonValue.Create(w.SubgraphNodeCount)
+
+        if w.MaxSubgraphNodes <> 0 then
+            node.["maxSubgraphNodes"] <- JsonValue.Create(w.MaxSubgraphNodes)
+
+        node :> JsonNode
+
+    let root = JsonObject()
+    root.["filesScanned"] <- JsonValue.Create(result.FilesScanned)
+    root.["blocksScanned"] <- JsonValue.Create(result.BlocksScanned)
+    root.["violations"] <- JsonArray(result.Violations |> List.map violationNode |> Array.ofList)
+    root.["warnings"] <- JsonArray(result.Warnings |> List.map warningNode |> Array.ofList)
+
+    let options = JsonSerializerOptions()
+    options.WriteIndented <- true
+    options.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    root.ToJsonString(options)
