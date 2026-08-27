@@ -2,11 +2,16 @@
 /// that have no dedicated Gherkin scenario, or are exercised only
 /// indirectly there — mirrors the rationale `DoctorUnitTests.fs`'s module
 /// doc comment states for its own split from `DoctorSteps.fs`. Ported from
-/// `apps/rhino-cli/src/application/testcoverage/exclude.rs`'s and
-/// `apps/rhino-cli/src/application/testcoverage/merge.rs`'s
+/// `apps/rhino-cli/src/application/testcoverage/exclude.rs`'s,
+/// `apps/rhino-cli/src/application/testcoverage/merge.rs`'s,
+/// `apps/rhino-cli/src/application/testcoverage/detect.rs`'s,
+/// `apps/rhino-cli/src/application/testcoverage/go_coverage.rs`'s,
+/// `apps/rhino-cli/src/application/testcoverage/cobertura.rs`'s, and
+/// `apps/rhino-cli/src/application/testcoverage/reporter.rs`'s
 /// `#[cfg(test)] mod tests`.
 module RhinoCli.Tests.Unit.Steps.TestCoverageUnitTests
 
+open System
 open System.IO
 open Xunit
 open RhinoCli.Application.TestCoverage
@@ -375,3 +380,351 @@ let ``toCoverageMapLcov round-trips through mergeCoverageMaps and writeLcov`` ()
     Assert.Contains("SF:a.fs", content)
     Assert.Contains("SF:b.fs", content)
     Assert.Contains("end_of_record", content)
+
+// ---- formatCode ----
+
+[<Fact>]
+let ``formatCode returns the lowercase code for every format`` () =
+    Assert.Equal("go", formatCode Format.Go)
+    Assert.Equal("lcov", formatCode Format.Lcov)
+    Assert.Equal("jacoco", formatCode Format.Jacoco)
+    Assert.Equal("cobertura", formatCode Format.Cobertura)
+    Assert.Equal("diff", formatCode Format.Diff)
+
+// ---- detectFormat ----
+
+[<Fact>]
+let ``detectFormat recognizes lcov by filename`` () =
+    Assert.Equal(Format.Lcov, detectFormat "/tmp/coverage.info")
+    Assert.Equal(Format.Lcov, detectFormat "/tmp/lcov-report.dat")
+
+[<Fact>]
+let ``detectFormat recognizes jacoco and cobertura xml by filename`` () =
+    Assert.Equal(Format.Jacoco, detectFormat "/tmp/jacoco.xml")
+    Assert.Equal(Format.Cobertura, detectFormat "/tmp/cobertura.xml")
+
+[<Fact>]
+let ``detectFormat falls back to Go when the file is missing`` () =
+    Assert.Equal(Format.Go, detectFormat "/nonexistent/file")
+
+[<Fact>]
+let ``detectFormat detects go by mode preamble`` () =
+    let path = Path.GetTempFileName()
+    File.WriteAllText(path, "mode: set\nfoo.go:1.1,2.2 1 1\n")
+    Assert.Equal(Format.Go, detectFormat path)
+
+[<Fact>]
+let ``detectFormat detects lcov by SF or TN preamble`` () =
+    let sfPath = Path.GetTempFileName()
+    File.WriteAllText(sfPath, "SF:src/foo.rs\nDA:1,1\nend_of_record\n")
+    Assert.Equal(Format.Lcov, detectFormat sfPath)
+
+    let tnPath = Path.GetTempFileName()
+    File.WriteAllText(tnPath, "TN:foo\nSF:bar.rs\n")
+    Assert.Equal(Format.Lcov, detectFormat tnPath)
+
+[<Fact>]
+let ``detectFormat detects jacoco and cobertura by xml root element`` () =
+    let jacocoPath = Path.GetTempFileName()
+    File.WriteAllText(jacocoPath, "<?xml version=\"1.0\"?>\n<report>\n</report>")
+    Assert.Equal(Format.Jacoco, detectFormat jacocoPath)
+
+    let cobPath = Path.GetTempFileName()
+    File.WriteAllText(cobPath, "<?xml version=\"1.0\"?>\n<coverage>\n</coverage>")
+    Assert.Equal(Format.Cobertura, detectFormat cobPath)
+
+[<Fact>]
+let ``detectFormat detects the root element on the same line as the xml declaration`` () =
+    let path = Path.GetTempFileName()
+    File.WriteAllText(path, "<?xml version=\"1.0\"?><report></report>")
+    Assert.Equal(Format.Jacoco, detectFormat path)
+
+[<Fact>]
+let ``detectFormat skips DOCTYPE and blank lines before deciding`` () =
+    let path = Path.GetTempFileName()
+    File.WriteAllText(path, "\n<!DOCTYPE html>\n<coverage>\n</coverage>")
+    Assert.Equal(Format.Cobertura, detectFormat path)
+
+[<Fact>]
+let ``detectFormat falls back to Go for unrecognized content`` () =
+    let path = Path.GetTempFileName()
+    File.WriteAllText(path, "unknown content\n")
+    Assert.Equal(Format.Go, detectFormat path)
+
+// ---- computeGoResult ----
+
+[<Fact>]
+let ``computeGoResult reports file not found for a missing cover.out`` () =
+    match computeGoResult "/nonexistent/cover.out" 50.0 with
+    | Error message -> Assert.Contains("file not found", message)
+    | Ok _ -> failwith "expected an error"
+
+[<Fact>]
+let ``computeGoResult classifies a partial line as neither covered nor missed`` () =
+    let path = Path.GetTempFileName()
+
+    File.WriteAllText(path, "mode: set\nexample.com/proj/foo.go:3.1,3.2 1 1\nexample.com/proj/foo.go:3.1,3.2 1 0\n")
+
+    let result = computeGoResult path 50.0 |> Result.defaultWith (fun e -> failwith e)
+    Assert.Equal(1, result.Partial)
+    Assert.Equal(0, result.Covered)
+
+[<Fact>]
+let ``computeGoResult skips non-code lines when the source file is available`` () =
+    let dir =
+        Path.Combine(Path.GetTempPath(), "rhino-cli-testcoverage-go-" + Guid.NewGuid().ToString("N"))
+
+    Directory.CreateDirectory(dir) |> ignore
+    File.WriteAllText(Path.Combine(dir, "foo.go"), "package foo\n}\nfunc Foo() {}\n")
+    let coverPath = Path.Combine(dir, "cover.out")
+    File.WriteAllText(coverPath, "mode: set\nfoo.go:2.1,2.2 1 0\n")
+
+    let result =
+        computeGoResult coverPath 50.0 |> Result.defaultWith (fun e -> failwith e)
+
+    Assert.Equal(0, result.Total)
+    Assert.True(result.Passed)
+
+// ---- computeCoberturaResult / parseBranchCoverage ----
+
+[<Fact>]
+let ``computeCoberturaResult reports file not found for a missing file`` () =
+    match computeCoberturaResult "/nonexistent/cob.xml" 50.0 with
+    | Error message -> Assert.Contains("file not found", message)
+    | Ok _ -> failwith "expected an error"
+
+[<Fact>]
+let ``computeCoberturaResult reports invalid xml for malformed content`` () =
+    let path = Path.GetTempFileName()
+    File.WriteAllText(path, "not xml at all <<<")
+
+    match computeCoberturaResult path 50.0 with
+    | Error message -> Assert.Contains("invalid Cobertura XML", message)
+    | Ok _ -> failwith "expected an error"
+
+[<Fact>]
+let ``computeCoberturaResult treats full branch coverage as covered`` () =
+    let path = Path.GetTempFileName()
+
+    File.WriteAllText(
+        path,
+        "<?xml version=\"1.0\"?><coverage><packages><package name=\"pkg\"><classes><class filename=\"src/foo.py\"><lines><line number=\"10\" hits=\"5\" branch=\"true\" condition-coverage=\"100% (2/2)\"/></lines></class></classes></package></packages></coverage>"
+    )
+
+    let result =
+        computeCoberturaResult path 50.0 |> Result.defaultWith (fun e -> failwith e)
+
+    Assert.Equal(1, result.Covered)
+    Assert.Equal(0, result.Partial)
+
+[<Fact>]
+let ``parseBranchCoverage parses a typical condition-coverage attribute`` () =
+    Assert.Equal((1, 2), parseBranchCoverage "50% (1/2)")
+    Assert.Equal((4, 4), parseBranchCoverage "100% (4/4)")
+    Assert.Equal((0, 3), parseBranchCoverage "0% (0/3)")
+
+[<Fact>]
+let ``parseBranchCoverage returns zero for malformed input`` () =
+    Assert.Equal((0, 0), parseBranchCoverage "")
+    Assert.Equal((0, 0), parseBranchCoverage "50%")
+    Assert.Equal((0, 0), parseBranchCoverage "(invalid)")
+
+// ---- applyExclude ----
+
+let private sampleCoverageResult: CoverageResult =
+    { File = "x"
+      Format = Format.Go
+      Covered = 10
+      Partial = 0
+      Missed = 5
+      Total = 15
+      Pct = 66.67
+      Threshold = 80.0
+      Passed = false
+      Files =
+        [ { Path = "src/test_mock.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 5
+            Total = 5
+            Pct = 0.0 }
+          { Path = "src/real.rs"
+            Covered = 10
+            Partial = 0
+            Missed = 0
+            Total = 10
+            Pct = 100.0 } ] }
+
+[<Fact>]
+let ``applyExclude drops matching files and recomputes aggregate counts`` () =
+    let result = applyExclude [ "src/test_*.rs" ] sampleCoverageResult
+    Assert.Equal(1, List.length result.Files)
+    Assert.Equal("src/real.rs", result.Files.[0].Path)
+    Assert.Equal(10, result.Covered)
+    Assert.Equal(0, result.Missed)
+    Assert.Equal(10, result.Total)
+    Assert.True(abs (result.Pct - 100.0) < 0.001)
+    Assert.True(result.Passed)
+
+[<Fact>]
+let ``applyExclude with no patterns returns the result unchanged`` () =
+    let unchanged = applyExclude [] sampleCoverageResult
+    Assert.Equal(sampleCoverageResult.Covered, unchanged.Covered)
+    Assert.Equal(sampleCoverageResult.Total, unchanged.Total)
+    Assert.Equal(2, List.length unchanged.Files)
+
+// ---- reporter: filterAndSortFiles / formatText / formatTextPerFile / formatJson ----
+
+[<Fact>]
+let ``filterAndSortFiles sorts ascending by percentage`` () =
+    let files =
+        [ { Path = "a.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 0
+            Total = 0
+            Pct = 80.0 }
+          { Path = "b.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 0
+            Total = 0
+            Pct = 50.0 }
+          { Path = "c.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 0
+            Total = 0
+            Pct = 95.0 } ]
+
+    let sorted = filterAndSortFiles files 0.0
+    Assert.Equal("b.rs", sorted.[0].Path)
+    Assert.Equal("a.rs", sorted.[1].Path)
+    Assert.Equal("c.rs", sorted.[2].Path)
+
+[<Fact>]
+let ``filterAndSortFiles excludes files at or above belowThreshold`` () =
+    let files =
+        [ { Path = "low.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 0
+            Total = 0
+            Pct = 70.0 }
+          { Path = "high.rs"
+            Covered = 0
+            Partial = 0
+            Missed = 0
+            Total = 0
+            Pct = 95.0 } ]
+
+    let filtered = filterAndSortFiles files 80.0
+    Assert.Equal(1, List.length filtered)
+    Assert.Equal("low.rs", filtered.[0].Path)
+
+[<Fact>]
+let ``formatText matches the exact Go-style pass string`` () =
+    let r =
+        { File = "apps/rhino-cli/cover.out"
+          Format = Format.Go
+          Covered = 2411
+          Partial = 141
+          Missed = 249
+          Total = 2801
+          Pct = 86.08
+          Threshold = 85.0
+          Passed = true
+          Files = [] }
+
+    Assert.Equal(
+        "Line coverage: 86.08% (2411 covered, 141 partial, 249 missed, 2801 total)\nPASS: 86.08% >= 85% threshold\n",
+        formatText r
+    )
+
+[<Fact>]
+let ``formatText renders FAIL when the result did not pass`` () =
+    let r =
+        { File = "x"
+          Format = Format.Go
+          Covered = 0
+          Partial = 0
+          Missed = 1
+          Total = 1
+          Pct = 0.0
+          Threshold = 85.0
+          Passed = false
+          Files = [] }
+
+    Assert.Contains("FAIL: 0.00% < 85% threshold", formatText r)
+
+[<Fact>]
+let ``formatTextPerFile reports no files when the list is empty`` () =
+    let r =
+        { File = "x"
+          Format = Format.Go
+          Covered = 0
+          Partial = 0
+          Missed = 0
+          Total = 0
+          Pct = 100.0
+          Threshold = 0.0
+          Passed = true
+          Files = [] }
+
+    Assert.Equal("No files to report.\n", formatTextPerFile r 0.0)
+
+[<Fact>]
+let ``formatJson reports success status and omits empty files`` () =
+    let r =
+        { File = "cover.out"
+          Format = Format.Go
+          Covered = 1
+          Partial = 0
+          Missed = 0
+          Total = 1
+          Pct = 100.0
+          Threshold = 85.0
+          Passed = true
+          Files = [] }
+
+    let json = formatJson r false 0.0
+    use doc = System.Text.Json.JsonDocument.Parse(json)
+    let root = doc.RootElement
+    let mutable filesElement = Unchecked.defaultof<System.Text.Json.JsonElement>
+    Assert.Equal("success", root.GetProperty("status").GetString())
+    Assert.Equal("go", root.GetProperty("format").GetString())
+    Assert.Equal(100, root.GetProperty("pct").GetInt32())
+    Assert.False(root.TryGetProperty("files", &filesElement))
+
+// ---- validate ----
+
+[<Fact>]
+let ``validate rejects jacoco coverage files`` () =
+    let path = Path.GetTempFileName() + ".xml"
+    File.WriteAllText(path, "<?xml version=\"1.0\"?><report jacoco=\"true\"></report>")
+
+    let opts: ValidateOptions =
+        { CoverageFile = path
+          Threshold = 50.0
+          PerFile = false
+          BelowThreshold = 0.0
+          Exclude = []
+          Json = false }
+
+    match validate opts with
+    | Error message -> Assert.Contains("jacoco", message)
+    | Ok _ -> failwith "expected jacoco to be rejected"
+
+[<Fact>]
+let ``validate reports file not found for a missing lcov file`` () =
+    let opts: ValidateOptions =
+        { CoverageFile = "/nonexistent/coverage.info"
+          Threshold = 50.0
+          PerFile = false
+          BelowThreshold = 0.0
+          Exclude = []
+          Json = false }
+
+    match validate opts with
+    | Error message -> Assert.Contains("not found", message)
+    | Ok _ -> failwith "expected an error"

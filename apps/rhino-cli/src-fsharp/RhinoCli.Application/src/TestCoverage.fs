@@ -47,6 +47,10 @@ module RhinoCli.Application.TestCoverage
 
 open System
 open System.IO
+open System.Text.Json
+open System.Text.Json.Nodes
+open System.Text.RegularExpressions
+open System.Xml.Linq
 
 // ---------------------------------------------------------------------------
 // Core types [Repo-grounded — `types.rs`]
@@ -613,3 +617,661 @@ let toCoverageMapLcov (filename: string) : CoverageMap =
 
     parseLcov filename
     |> List.fold (fun (acc: CoverageMap) f -> Map.add f.Path (convertFile f) acc) Map.empty
+
+// ---------------------------------------------------------------------------
+// Format code + detection [Repo-grounded — `types.rs::Format::code`,
+// `detect.rs::detect_format`]
+// ---------------------------------------------------------------------------
+
+/// Lowercase string code for a [`Format`], used in JSON output
+/// [Repo-grounded — `types.rs::Format::code`].
+let formatCode (fmt: Format) : string =
+    match fmt with
+    | Format.Go -> "go"
+    | Format.Lcov -> "lcov"
+    | Format.Jacoco -> "jacoco"
+    | Format.Cobertura -> "cobertura"
+    | Format.Diff -> "diff"
+
+/// Detects the coverage format of `filename` from its name, then — when the
+/// name gives no answer — its content. Falls back to [`Format.Go`]
+/// [Repo-grounded — `detect.rs::detect_format`].
+let detectFormat (filename: string) : Format =
+    let lower = filename.ToLowerInvariant()
+
+    if lower.EndsWith(".info", StringComparison.Ordinal) || lower.Contains("lcov") then
+        Format.Lcov
+    elif lower.EndsWith(".xml", StringComparison.Ordinal) && lower.Contains("jacoco") then
+        Format.Jacoco
+    elif lower.EndsWith(".xml", StringComparison.Ordinal) && lower.Contains("cobertura") then
+        Format.Cobertura
+    elif not (File.Exists filename) then
+        Format.Go
+    else
+        let rec scan (lines: string list) : Format =
+            match lines with
+            | [] -> Format.Go
+            | line :: rest ->
+                let s = line.Trim()
+
+                if s = "" then
+                    scan rest
+                elif s.StartsWith("mode:", StringComparison.Ordinal) then
+                    Format.Go
+                elif
+                    s.StartsWith("SF:", StringComparison.Ordinal)
+                    || s.StartsWith("TN:", StringComparison.Ordinal)
+                then
+                    Format.Lcov
+                elif s.StartsWith("<!DOCTYPE", StringComparison.Ordinal) then
+                    scan rest
+                elif s.StartsWith("<?xml", StringComparison.Ordinal) then
+                    match s.IndexOf("?>", StringComparison.Ordinal) with
+                    | -1 -> scan rest
+                    | idx ->
+                        let restOfLine = s.Substring(idx + 2).Trim()
+
+                        if restOfLine = "" then
+                            scan rest
+                        elif restOfLine.StartsWith("<report", StringComparison.Ordinal) then
+                            Format.Jacoco
+                        elif restOfLine.StartsWith("<coverage", StringComparison.Ordinal) then
+                            Format.Cobertura
+                        else
+                            Format.Go
+                elif s.StartsWith("<report", StringComparison.Ordinal) then
+                    Format.Jacoco
+                elif s.StartsWith("<coverage", StringComparison.Ordinal) then
+                    Format.Cobertura
+                else
+                    Format.Go
+
+        File.ReadAllLines(filename) |> List.ofArray |> scan
+
+// ---------------------------------------------------------------------------
+// Go cover.out parsing and result computation [Repo-grounded —
+// `go_coverage.rs`]
+// ---------------------------------------------------------------------------
+
+/// One coverage block parsed from a `cover.out` line
+/// [Repo-grounded — `go_coverage.rs::CoverBlock`].
+type private CoverBlock =
+    { Filepath: string
+      StartLine: int
+      EndLine: int
+      Count: int }
+
+/// Mirrors Go's `coverBlockRe` — capture groups: filepath, start line, end
+/// line, count [Repo-grounded — `go_coverage.rs::cover_block_re`].
+let private coverBlockRegex = Regex(@"^(.+):(\d+)\.\d+,(\d+)\.\d+ \d+ (\d+)$")
+
+/// Returns `true` when `content` is executable Go code: not blank, not a
+/// `//`-comment line, and not a brace-only line. `(`/`)` are NOT excluded
+/// [Repo-grounded — `go_coverage.rs::is_go_code_line`].
+let private isGoCodeLine (content: string) : bool =
+    let s = content.Trim()
+
+    if s = "" then false
+    elif s.StartsWith("//", StringComparison.Ordinal) then false
+    elif s = "{" || s = "}" then false
+    else true
+
+/// Reads `go.mod` in `dir` and returns the module path, or `""` when absent
+/// [Repo-grounded — `go_coverage.rs::get_module_name_from`].
+let private getModuleNameFrom (dir: string) : string =
+    let path = Path.Combine(dir, "go.mod")
+
+    if not (File.Exists path) then
+        ""
+    else
+        File.ReadAllLines(path)
+        |> Array.tryPick (fun line ->
+            let parts = line.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries)
+
+            if parts.Length >= 2 && parts.[0] = "module" then
+                Some parts.[1]
+            else
+                None)
+        |> Option.defaultValue ""
+
+/// Returns line number (1-based) → content for a source file resolved
+/// relative to `baseDir`, or `None` when the file cannot be opened
+/// [Repo-grounded — `go_coverage.rs::get_source_lines_from`].
+let private getSourceLinesFrom (baseDir: string) (relPath: string) : Map<int, string> option =
+    let path = Path.Combine(baseDir, relPath)
+
+    if not (File.Exists path) then
+        None
+    else
+        File.ReadAllLines(path)
+        |> Array.mapi (fun idx line -> idx + 1, line)
+        |> Map.ofArray
+        |> Some
+
+/// Parses a Go `cover.out` file into its coverage blocks
+/// [Repo-grounded — `go_coverage.rs::parse_cover_out`].
+let private parseCoverOut (filename: string) : Result<CoverBlock list, string> =
+    if not (File.Exists filename) then
+        Error(sprintf "file not found: %s" filename)
+    else
+        File.ReadAllLines(filename)
+        |> Array.choose (fun line ->
+            let trimmed = line.Trim()
+
+            if trimmed.StartsWith("mode:", StringComparison.Ordinal) || trimmed = "" then
+                None
+            else
+                let m = coverBlockRegex.Match(trimmed)
+
+                if not m.Success then
+                    None
+                else
+                    Some
+                        { Filepath = m.Groups.[1].Value
+                          StartLine = int m.Groups.[2].Value
+                          EndLine = int m.Groups.[3].Value
+                          Count = int m.Groups.[4].Value })
+        |> List.ofArray
+        |> Ok
+
+/// Computes line coverage from a Go `cover.out` file using the standard
+/// line-based algorithm. Source files are resolved relative to the
+/// `cover.out`'s directory; when a source file cannot be found, every line
+/// recorded for it is counted without the non-code-line skip
+/// [Repo-grounded — `go_coverage.rs::compute_go_result`].
+///
+/// Gherkin (binds) — see [`validate`]'s doc comment for the scenarios this
+/// function jointly satisfies.
+let computeGoResult (filename: string) (threshold: float) : Result<CoverageResult, string> =
+    parseCoverOut filename
+    |> Result.map (fun blocks ->
+        let projectDir =
+            match Path.GetDirectoryName(filename) with
+            | null
+            | "" -> "."
+            | d -> d
+
+        let moduleName = getModuleNameFrom projectDir
+
+        let perFile =
+            blocks
+            |> List.groupBy (fun b -> b.Filepath)
+            |> List.map (fun (fp, fblocks) ->
+                let relPath =
+                    if moduleName <> "" && fp.StartsWith(moduleName + "/", StringComparison.Ordinal) then
+                        fp.Substring(moduleName.Length + 1)
+                    else
+                        fp
+
+                let source = getSourceLinesFrom projectDir relPath
+
+                let lineCounts =
+                    (Map.empty, fblocks)
+                    ||> List.fold (fun acc b ->
+                        ([ b.StartLine .. b.EndLine ], acc)
+                        ||> List.foldBack (fun lineNo acc2 ->
+                            let existing = Map.tryFind lineNo acc2 |> Option.defaultValue []
+                            Map.add lineNo (b.Count :: existing) acc2))
+
+                let fc, fp2, fm =
+                    lineCounts
+                    |> Map.toList
+                    |> List.fold
+                        (fun (fc, fp2, fm) (lineNo, counts) ->
+                            let skip =
+                                match source with
+                                | None -> false
+                                | Some src ->
+                                    match Map.tryFind lineNo src with
+                                    | None -> true
+                                    | Some content -> not (isGoCodeLine content)
+
+                            if skip then
+                                fc, fp2, fm
+                            else
+                                let hasCovered = counts |> List.exists (fun c -> c > 0)
+                                let hasMissed = counts |> List.exists (fun c -> c = 0)
+
+                                if hasCovered && not hasMissed then fc + 1, fp2, fm
+                                elif hasCovered && hasMissed then fc, fp2 + 1, fm
+                                else fc, fp2, fm + 1)
+                        (0, 0, 0)
+
+                let ft = fc + fp2 + fm
+                let fpct = if ft > 0 then 100.0 * float fc / float ft else 100.0
+
+                fc,
+                fp2,
+                fm,
+                { Path = fp
+                  Covered = fc
+                  Partial = fp2
+                  Missed = fm
+                  Total = ft
+                  Pct = fpct })
+
+        let covered, partial, missed, files =
+            (perFile, (0, 0, 0, []))
+            ||> List.foldBack (fun (fc, fp2, fm, fr) (c, p, m, files) -> c + fc, p + fp2, m + fm, fr :: files)
+
+        let total = covered + partial + missed
+
+        let pct =
+            if total > 0 then
+                100.0 * float covered / float total
+            else
+                100.0
+
+        { File = filename
+          Format = Format.Go
+          Covered = covered
+          Partial = partial
+          Missed = missed
+          Total = total
+          Pct = pct
+          Threshold = threshold
+          Passed = pct >= threshold
+          Files = files })
+
+// ---------------------------------------------------------------------------
+// Cobertura XML parsing and result computation [Repo-grounded —
+// `cobertura.rs`]
+// ---------------------------------------------------------------------------
+
+/// Extracts `(covered, total)` from a `condition-coverage` attribute such as
+/// `"50% (1/2)"` [Repo-grounded — `cobertura.rs::parse_branch_coverage`].
+let parseBranchCoverage (condCov: string) : int * int =
+    let openIdx = condCov.IndexOf('(')
+    let closeIdx = condCov.IndexOf(')')
+
+    if openIdx = -1 || closeIdx = -1 || closeIdx <= openIdx then
+        0, 0
+    else
+        let fraction = condCov.Substring(openIdx + 1, closeIdx - openIdx - 1)
+        let parts = fraction.Split([| '/' |], 2)
+
+        if parts.Length <> 2 then
+            0, 0
+        else
+            match Int32.TryParse(parts.[0]), Int32.TryParse(parts.[1]) with
+            | (true, c), (true, t) -> c, t
+            | _ -> 0, 0
+
+/// Reads and parses a Cobertura XML file [Repo-grounded —
+/// `cobertura.rs::parse_cobertura`].
+let private parseCobertura (filename: string) : Result<XDocument, string> =
+    if not (File.Exists filename) then
+        Error(sprintf "file not found: %s" filename)
+    else
+        try
+            Ok(XDocument.Load(filename))
+        with ex ->
+            Error(sprintf "invalid Cobertura XML: %s" ex.Message)
+
+/// Parses `filename` as a Cobertura XML report and computes aggregated
+/// coverage [Repo-grounded — `cobertura.rs::compute_cobertura_result`].
+///
+/// Gherkin (binds) — see [`validate`]'s doc comment for the scenarios this
+/// function jointly satisfies.
+let computeCoberturaResult (filename: string) (threshold: float) : Result<CoverageResult, string> =
+    parseCobertura filename
+    |> Result.map (fun doc ->
+        let name (n: string) = XName.Get(n)
+
+        let attrString (el: XElement) (n: string) : string =
+            match el.Attribute(name n) with
+            | null -> ""
+            | a -> a.Value
+
+        let attrInt64 (el: XElement) (n: string) : int64 =
+            match el.Attribute(name n) with
+            | null -> 0L
+            | a ->
+                match Int64.TryParse(a.Value) with
+                | true, v -> v
+                | false, _ -> 0L
+
+        let attrBool (el: XElement) (n: string) : bool = attrString el n = "true"
+
+        let lineRows =
+            doc.Descendants(name "class")
+            |> Seq.collect (fun cls ->
+                let path = attrString cls "filename"
+
+                cls.Descendants(name "line")
+                |> Seq.map (fun line ->
+                    path, attrInt64 line "hits", attrBool line "branch", attrString line "condition-coverage"))
+            |> List.ofSeq
+
+        let perFile =
+            lineRows
+            |> List.groupBy (fun (path, _, _, _) -> path)
+            |> List.sortBy fst
+            |> List.map (fun (path, lines) ->
+                let fc, fp2, fm =
+                    lines
+                    |> List.fold
+                        (fun (c, p, m) (_, hits, branch, condCov) ->
+                            if hits > 0L then
+                                if branch then
+                                    let brCov, brTotal = parseBranchCoverage condCov
+
+                                    if brTotal > 0 && brCov < brTotal then
+                                        c, p + 1, m
+                                    else
+                                        c + 1, p, m
+                                else
+                                    c + 1, p, m
+                            else
+                                c, p, m + 1)
+                        (0, 0, 0)
+
+                let ft = fc + fp2 + fm
+                let fpct = if ft > 0 then 100.0 * float fc / float ft else 100.0
+
+                fc,
+                fp2,
+                fm,
+                { Path = path
+                  Covered = fc
+                  Partial = fp2
+                  Missed = fm
+                  Total = ft
+                  Pct = fpct })
+
+        let covered, partial, missed, files =
+            (perFile, (0, 0, 0, []))
+            ||> List.foldBack (fun (fc, fp2, fm, fr) (c, p, m, files) -> c + fc, p + fp2, m + fm, fr :: files)
+
+        let total = covered + partial + missed
+
+        let pct =
+            if total > 0 then
+                100.0 * float covered / float total
+            else
+                100.0
+
+        { File = filename
+          Format = Format.Cobertura
+          Covered = covered
+          Partial = partial
+          Missed = missed
+          Total = total
+          Pct = pct
+          Threshold = threshold
+          Passed = pct >= threshold
+          Files = files })
+
+// ---------------------------------------------------------------------------
+// Exclude-pattern application [Repo-grounded —
+// `test_coverage_validate.rs::apply_exclude`]
+// ---------------------------------------------------------------------------
+
+/// Drops `FileResult` entries whose path matches any of `patterns` and
+/// recomputes the aggregate counts. Reuses [`matchesAnyExcludePattern`]'s
+/// Go-`filepath.Match` semantics rather than porting the `glob` crate
+/// separately — the scope this function serves (a handful of
+/// exact-name/simple-wildcard exclusions) does not need the two matchers'
+/// differing edge-case behavior to diverge [Repo-grounded —
+/// `test_coverage_validate.rs::apply_exclude`].
+let applyExclude (patterns: string list) (result: CoverageResult) : CoverageResult =
+    if List.isEmpty patterns then
+        result
+    else
+        let files =
+            result.Files
+            |> List.filter (fun f -> not (matchesAnyExcludePattern f.Path patterns))
+
+        let covered, partial, missed =
+            (files, (0, 0, 0))
+            ||> List.foldBack (fun f (c, p, m) -> c + f.Covered, p + f.Partial, m + f.Missed)
+
+        let total = covered + partial + missed
+
+        let pct =
+            if total > 0 then
+                100.0 * float covered / float total
+            else
+                100.0
+
+        { result with
+            Files = files
+            Covered = covered
+            Partial = partial
+            Missed = missed
+            Total = total
+            Pct = pct
+            Passed = pct >= result.Threshold }
+
+// ---------------------------------------------------------------------------
+// Text/JSON reporting [Repo-grounded — `reporter.rs`]
+// ---------------------------------------------------------------------------
+
+/// Filters `files` to those below `belowThreshold` (all files when
+/// `belowThreshold` is `0.0`), then sorts ascending by `Pct`
+/// [Repo-grounded — `reporter.rs::filter_and_sort_files`].
+let filterAndSortFiles (files: FileResult list) (belowThreshold: float) : FileResult list =
+    files
+    |> List.filter (fun f -> not (belowThreshold > 0.0 && f.Pct >= belowThreshold))
+    |> List.sortBy (fun f -> f.Pct)
+
+/// Human-readable coverage summary — byte-for-byte match of Go/Rust's
+/// output shape [Repo-grounded — `reporter.rs::format_text`].
+let formatText (r: CoverageResult) : string =
+    let statusLine =
+        if r.Passed then
+            sprintf "PASS: %.2f%% >= %.0f%% threshold\n" r.Pct r.Threshold
+        else
+            sprintf "FAIL: %.2f%% < %.0f%% threshold\n" r.Pct r.Threshold
+
+    sprintf
+        "Line coverage: %.2f%% (%d covered, %d partial, %d missed, %d total)\n"
+        r.Pct
+        r.Covered
+        r.Partial
+        r.Missed
+        r.Total
+    + statusLine
+
+/// Per-file coverage table as plain text [Repo-grounded —
+/// `reporter.rs::format_text_per_file`].
+let formatTextPerFile (r: CoverageResult) (belowThreshold: float) : string =
+    let files = filterAndSortFiles r.Files belowThreshold
+
+    if List.isEmpty files then
+        "No files to report.\n"
+    else
+        let header = sprintf "\nPer-file coverage (%d files):\n" (List.length files)
+
+        let rows =
+            files
+            |> List.map (fun f ->
+                sprintf "  %6.2f%%  %s (%d covered, %d partial, %d missed)\n" f.Pct f.Path f.Covered f.Partial f.Missed)
+            |> String.concat ""
+
+        header + rows
+
+/// Serialises a `float` the way Go's `encoding/json` does: whole-number
+/// floats render without a trailing `.0` [Repo-grounded —
+/// `reporter.rs::serialize_f64_gostyle`].
+let private jsonFloat (v: float) : JsonNode =
+    if Double.IsFinite v && v = Math.Truncate v && Math.Abs v < 1e15 then
+        JsonValue.Create(int64 v) :> JsonNode
+    else
+        JsonValue.Create(v) :> JsonNode
+
+let private fileResultNode (f: FileResult) : JsonNode =
+    let node = JsonObject()
+    node.["path"] <- JsonValue.Create(f.Path)
+    node.["covered"] <- JsonValue.Create(f.Covered)
+    node.["partial"] <- JsonValue.Create(f.Partial)
+    node.["missed"] <- JsonValue.Create(f.Missed)
+    node.["total"] <- JsonValue.Create(f.Total)
+    node.["pct"] <- jsonFloat f.Pct
+    node :> JsonNode
+
+/// Formats `r` as a pretty-printed JSON string. Includes a per-file
+/// breakdown, filtered to files below `belowThreshold`, only when `perFile`
+/// is `true` and `r.Files` is non-empty [Repo-grounded —
+/// `reporter.rs::format_json`].
+let formatJson (r: CoverageResult) (perFile: bool) (belowThreshold: float) : string =
+    let status = if r.Passed then "success" else "failure"
+
+    let files =
+        if perFile && not (List.isEmpty r.Files) then
+            filterAndSortFiles r.Files belowThreshold
+            |> List.map fileResultNode
+            |> Array.ofList
+        else
+            [||]
+
+    let root = JsonObject()
+    root.["status"] <- JsonValue.Create(status)
+    root.["timestamp"] <- JsonValue.Create(DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz"))
+    root.["file"] <- JsonValue.Create(r.File)
+    root.["format"] <- JsonValue.Create(formatCode r.Format)
+    root.["covered"] <- JsonValue.Create(r.Covered)
+    root.["partial"] <- JsonValue.Create(r.Partial)
+    root.["missed"] <- JsonValue.Create(r.Missed)
+    root.["total"] <- JsonValue.Create(r.Total)
+    root.["pct"] <- jsonFloat r.Pct
+    root.["threshold"] <- jsonFloat r.Threshold
+    root.["passed"] <- JsonValue.Create(r.Passed)
+
+    if files.Length > 0 then
+        root.["files"] <- JsonArray(files)
+
+    let options = JsonSerializerOptions()
+    options.WriteIndented <- true
+    root.ToJsonString(options)
+
+// ---------------------------------------------------------------------------
+// `test-coverage validate` entry point [Repo-grounded —
+// `test_coverage_validate.rs::run`] for
+// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-validate.feature`'s
+// 10 scenarios
+// ---------------------------------------------------------------------------
+
+/// CLI-argument-shaped options for `test-coverage validate`
+/// [Repo-grounded — `test_coverage_validate.rs::ValidateArgs`].
+type ValidateOptions =
+    { CoverageFile: string
+      Threshold: float
+      PerFile: bool
+      BelowThreshold: float
+      Exclude: string list
+      Json: bool }
+
+/// The rendered report plus whether coverage met the threshold. Unlike the
+/// Rust command wrapper — which prints the report and then separately
+/// returns a threshold-failure `Err` — [`validate`] always returns `Ok` once
+/// the coverage file parses, carrying `Passed` for the caller to translate
+/// into an exit code; `Result.Error` is reserved for cases where no report
+/// could be produced at all (missing file, invalid XML, unsupported format)
+/// [Repo-grounded — `test_coverage_validate.rs::run`].
+type ValidateOutcome = { Output: string; Passed: bool }
+
+/// Validates a coverage report file against `opts.Threshold`, auto-detecting
+/// its format (Go, LCOV, or Cobertura — `JaCoCo` and `Diff` are rejected,
+/// matching this port's declared scope) and rendering it as text or JSON.
+///
+/// Gherkin (binds) — "A Go coverage file above the threshold reports success":
+///   Given a Go coverage file recording 90% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits successfully
+///   And the output reports the measured coverage percentage
+///   And the output indicates the coverage passes the threshold
+///
+/// Gherkin (binds) — "A Go coverage file below the threshold reports failure":
+///   Given a Go coverage file recording 70% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits with a failure code
+///   And the output indicates the coverage fails the threshold
+///
+/// Gherkin (binds) — "An LCOV file above the threshold reports success":
+///   Given an LCOV coverage file recording 90% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits successfully
+///   And the output indicates the coverage passes the threshold
+///
+/// Gherkin (binds) — "Coverage at exactly the threshold passes":
+///   Given a Go coverage file recording 85% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits successfully
+///
+/// Gherkin (binds) — "JSON output includes structured coverage metrics":
+///   Given a Go coverage file recording 90% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold requesting JSON output
+///   Then the command exits successfully
+///   And the output is valid JSON
+///   And the JSON includes the coverage percentage and pass/fail status
+///
+/// Gherkin (binds) — "Per-file flag shows individual file coverage":
+///   Given an LCOV coverage file with multiple source files
+///   When the developer runs test-coverage validate with an 85% threshold and per-file flag
+///   Then the command exits successfully
+///   And the output contains per-file coverage breakdown
+///
+/// Gherkin (binds) — "A Cobertura XML file above the threshold reports success":
+///   Given a Cobertura XML coverage file recording 90% line coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits successfully
+///   And the output indicates the coverage passes the threshold
+///
+/// Gherkin (binds) — "A Cobertura XML file with partial branches classifies correctly":
+///   Given a Cobertura XML coverage file with partial branch coverage
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits with a failure code
+///   And the output indicates the coverage fails the threshold
+///
+/// Gherkin (binds) — "Exclude flag removes files from coverage calculation":
+///   Given an LCOV coverage file with multiple source files
+///   When the developer runs test-coverage validate with exclusion of a source file
+///   Then the command exits successfully
+///   And the output does not contain the excluded file
+///
+/// Gherkin (binds) — "A non-existent coverage file reports an error":
+///   Given no coverage file exists at the specified path
+///   When the developer runs test-coverage validate with an 85% threshold
+///   Then the command exits with a failure code
+///   And the output describes the missing file
+let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
+    let format = detectFormat opts.CoverageFile
+
+    let computed =
+        match format with
+        | Format.Lcov ->
+            if not (File.Exists opts.CoverageFile) then
+                Error(sprintf "file not found: %s" opts.CoverageFile)
+            else
+                Ok
+                    { resultFromCoverageMap (toCoverageMapLcov opts.CoverageFile) opts.Threshold with
+                        File = opts.CoverageFile }
+        | Format.Go -> computeGoResult opts.CoverageFile opts.Threshold
+        | Format.Cobertura -> computeCoberturaResult opts.CoverageFile opts.Threshold
+        | Format.Jacoco -> Error "jacoco coverage files are not supported by this command"
+        | Format.Diff -> Error "diff format is not a valid input format for validate"
+
+    computed
+    |> Result.mapError (sprintf "coverage check failed: %s")
+    |> Result.map (fun result ->
+        let filtered =
+            if List.isEmpty opts.Exclude then
+                result
+            else
+                applyExclude opts.Exclude result
+
+        let output =
+            if opts.Json then
+                formatJson filtered opts.PerFile opts.BelowThreshold
+            else
+                let perFileText =
+                    if opts.PerFile then
+                        formatTextPerFile filtered opts.BelowThreshold
+                    else
+                        ""
+
+                formatText filtered + perFileText
+
+        { Output = output
+          Passed = filtered.Passed })
