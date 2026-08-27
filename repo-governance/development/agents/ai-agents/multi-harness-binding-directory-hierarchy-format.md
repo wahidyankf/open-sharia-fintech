@@ -104,7 +104,7 @@ Content...
 **Required fields**: `name` (must match directory name), `description`
 **Optional fields**: `context` (inline or fork)
 
-Skills need no format conversion for OpenCode, which reads `.claude/skills/{name}/SKILL.md`
-natively. The binding generator also mirrors canonical `.claude/skills/` content byte-for-byte to
-`.agents/skills/` for Codex and other cross-harness consumers, while preserving directories that
-`repo-config.yml` explicitly classifies as vendored.
+Agent skills need no format conversion when a registry-declared binding reads
+`.claude/skills/{name}/SKILL.md` natively. The binding generator also mirrors canonical
+`.claude/skills/` content byte-for-byte to registry-declared generated skill directories while
+preserving directories that `repo-config.yml` explicitly classifies as vendored.
