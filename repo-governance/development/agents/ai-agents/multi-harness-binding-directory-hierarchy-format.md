@@ -87,9 +87,9 @@ OpenCode:
   model: opencode-go/minimax-m3 # fast equivalent
 ```
 
-### Agent skills Format
+### Agent skills format
 
-**Identical for both platforms** — agent skills use the same SKILL.md format:
+Every registry-declared skill surface uses the same canonical `SKILL.md` format:
 
 ```yaml
 ---
