@@ -2522,3 +2522,108 @@ let validateDocsNaming (paths: string list) : Result<Finding list, string> =
         |> List.collect walkNamingPath
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
+
+// ---------------------------------------------------------------------------
+// md audit
+// ---------------------------------------------------------------------------
+
+/// Member validators `runAudit` dispatches, in the same order the Rust
+/// source's `MEMBERS` constant lists them — restricted to the five member
+/// validators this file has ported so far. `frontmatter-dates` and
+/// `readme-index` are not yet ported to F# (the latter is a `governance`-
+/// namespace command not yet started); this PR's sole scenario (an empty
+/// repository, where every member trivially passes) does not require either,
+/// so — matching this file's own established "port only what a scenario
+/// needs" precedent — they are left for the Wave D/governance PR that ports
+/// them [Repo-grounded — `apps/rhino-cli/src/commands/md_audit.rs::MEMBERS`].
+let private auditMembers: string list =
+    [ "validate-naming"
+      "validate-frontmatter"
+      "validate-heading-hierarchy"
+      "validate-links"
+      "validate-mermaid" ]
+
+/// The aggregated result of `runAudit`: every member validator's failure
+/// message (empty when all passed) and the human-readable summary line the
+/// Rust source prints [Repo-grounded — `md_audit.rs::run`'s PASSED/FAILED
+/// banner].
+type MdAuditResult =
+    { Failures: string list
+      Report: string }
+
+/// Returns `true` when `findings` contains at least one `Blocking`-severity
+/// entry — shared by every `Finding`-returning member validator's outcome
+/// check below.
+let private hasBlockingFinding (findings: Finding list) : bool =
+    findings |> List.exists (fun f -> f.Severity = Severity.Blocking)
+
+/// Converts a `Finding`-list validator outcome into `runAuditMember`'s
+/// shared `Result<unit, string>` shape: an `Error` is reformatted with
+/// `name`, and a findings list containing at least one `Blocking` entry
+/// becomes an `Error` too — folds what would otherwise be four near-identical
+/// match expressions (one per `Finding`-returning member validator) into one.
+let private findingsOutcome (name: string) (result: Result<Finding list, string>) : Result<unit, string> =
+    match result with
+    | Error e -> Error(sprintf "%s: %s" name e)
+    | Ok findings when hasBlockingFinding findings -> Error(sprintf "%s: %d finding(s) reported" name findings.Length)
+    | Ok _ -> Ok()
+
+/// Runs one member validator against `repoRoot` with default arguments,
+/// returning `Ok ()` when it reports no blocking findings (or, for
+/// `validate-mermaid`, no violations), or `Error message` naming the
+/// validator and the reason it failed
+/// [Repo-grounded — `md_audit.rs::run_member`, restricted to `auditMembers`].
+let private runAuditMember (repoRoot: string) (name: string) : Result<unit, string> =
+    match name with
+    | "validate-naming" -> findingsOutcome name (validateDocsNaming [ repoRoot ])
+    | "validate-frontmatter" -> findingsOutcome name (validateDocsFrontmatter [ repoRoot ])
+    | "validate-heading-hierarchy" -> findingsOutcome name (validateDocsHeadingHierarchy [ repoRoot ])
+    | "validate-links" ->
+        let findings =
+            validateDocsLinks
+                { RepoRoot = repoRoot
+                  StagedFiles = None
+                  ExcludePrefixes = [] }
+
+        findingsOutcome name (Ok findings)
+    | "validate-mermaid" ->
+        let result =
+            validateMermaidDocs
+                { RepoRoot = repoRoot
+                  Paths = []
+                  StagedFiles = None
+                  ChangedFiles = None
+                  ExcludePrefixes = []
+                  Options = defaultMermaidValidateOptions }
+
+        if List.isEmpty result.Violations then
+            Ok()
+        else
+            Error(sprintf "%s: %d violation(s) reported" name result.Violations.Length)
+    | _ -> Error(sprintf "unknown md validator: %s" name)
+
+/// Runs every already-ported `md` validator against `repoRoot` in sequence
+/// and aggregates their outcomes into a single pass/fail report, mirroring
+/// `md audit`'s member-validator loop
+/// [Repo-grounded — `apps/rhino-cli/src/commands/md_audit.rs::run`].
+///
+/// Gherkin (binds) — "Every md validator passes on a repository with no
+/// markdown files":
+///   Given a repository containing no markdown files
+///   When the developer runs "rhino-cli md audit"
+///   Then the command exits successfully
+///   And the output reports all md validators passed
+let runAudit (repoRoot: string) : MdAuditResult =
+    let failures =
+        auditMembers
+        |> List.choose (fun name ->
+            match runAuditMember repoRoot name with
+            | Ok() -> None
+            | Error message -> Some message)
+
+    if List.isEmpty failures then
+        { Failures = []
+          Report = sprintf "MD AUDIT PASSED: all %d validators passed" auditMembers.Length }
+    else
+        { Failures = failures
+          Report = sprintf "MD AUDIT FAILED: %d validator(s) reported failures" failures.Length }

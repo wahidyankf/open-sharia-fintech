@@ -41,6 +41,16 @@
 /// intent. The three mermaid-parser-only scenarios ("the parser processes
 /// the file") call `extractMermaidBlocks`/`parseMermaidDiagram` directly,
 /// mirroring `docs.rs`'s own direct-parser step group.
+///
+/// Also binds `md-audit.feature`'s 1 scenario to
+/// `RhinoCli.Application.Md.runAudit`
+/// [Repo-grounded —
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/md-audit.feature`,
+/// `apps/rhino-cli/src/commands/md_audit.rs`]. `runAudit` only dispatches the
+/// five member validators this file has ported so far (`frontmatter-dates`
+/// and `readme-index` are not yet ported — see `runAudit`'s doc comment in
+/// `Md.fs`), which this feature's sole scenario (an empty repository, where
+/// every member trivially passes) does not need to distinguish.
 module RhinoCli.Tests.Unit.Steps.MdSteps
 
 open System
@@ -71,6 +81,9 @@ type MdSteps() =
     let mutable mermaidFileB: string option = None
     let mutable mermaidParsedEdges: (string * string) list = []
     let mutable mermaidParsedDepth: int = 0
+
+    // ---- md-audit.feature state ----
+    let mutable mdAuditResult: MdAuditResult option = None
 
     let root () =
         match rootDir with
@@ -687,6 +700,11 @@ type MdSteps() =
         rootDir <- Some(newTempDir ())
         writeDoc "docs/nested/README.md" "# Nested\n"
 
+    // ---- Given (md-audit.feature) ----
+
+    [<Given>]
+    member _.``a repository containing no markdown files``() = rootDir <- Some(newTempDir ())
+
     // ---- When ----
 
     [<When>]
@@ -964,6 +982,12 @@ type MdSteps() =
     member _.``the developer runs docs validate-naming``() =
         outcome <- Some(validateDocsNaming [ root () ])
 
+    // ---- When (md-audit.feature) ----
+
+    [<When>]
+    member _.``the developer runs "rhino-cli md audit"``() =
+        mdAuditResult <- Some(runAudit (root ()))
+
     [<When>]
     member _.``the parser processes the file``() =
         let content = File.ReadAllText(Path.Combine(root (), "docs/parser.md"))
@@ -976,26 +1000,30 @@ type MdSteps() =
     // ---- Then ----
 
     /// Shared across every `md` sub-feature's exit-code assertions. The
-    /// mermaid scenarios populate `mermaidResult` instead of the generic
-    /// `Finding`-based `outcome` (see this file's module doc comment), so
-    /// this step checks `mermaidResult` first and falls back to `outcome`
-    /// for every other validator.
+    /// md-audit scenario populates `mdAuditResult`, the mermaid scenarios
+    /// populate `mermaidResult` instead of the generic `Finding`-based
+    /// `outcome` (see this file's module doc comment), so this step checks
+    /// `mdAuditResult` first, then `mermaidResult`, and falls back to
+    /// `outcome` for every other validator.
     [<Then>]
     member _.``the command exits successfully``() =
-        match mermaidResult with
-        | Some result ->
-            Assert.True(
-                List.isEmpty result.Violations,
-                sprintf "expected no mermaid violations, got %A" result.Violations
-            )
+        match mdAuditResult with
+        | Some result -> Assert.Empty(result.Failures)
         | None ->
-            match theOutcome () with
-            | Ok findings ->
-                Assert.False(
-                    findings |> List.exists (fun f -> f.Severity = Severity.Blocking),
-                    "expected no fail-level findings"
+            match mermaidResult with
+            | Some result ->
+                Assert.True(
+                    List.isEmpty result.Violations,
+                    sprintf "expected no mermaid violations, got %A" result.Violations
                 )
-            | Error message -> failwith (sprintf "expected the md command to succeed, got error: %s" message)
+            | None ->
+                match theOutcome () with
+                | Ok findings ->
+                    Assert.False(
+                        findings |> List.exists (fun f -> f.Severity = Severity.Blocking),
+                        "expected no fail-level findings"
+                    )
+                | Error message -> failwith (sprintf "expected the md command to succeed, got error: %s" message)
 
     [<Then>]
     member _.``the command exits with a failure code``() =
@@ -1304,6 +1332,16 @@ type MdSteps() =
     [<Then>]
     member _.``the output identifies the offending filename and its rule violation``() =
         assertHasBlockingFindingInPathWithMessage "FooBar.md" "violates lowercase-kebab-case rule"
+
+    // ---- Then (md-audit.feature) ----
+
+    [<Then>]
+    member _.``the output reports all md validators passed``() =
+        let result =
+            mdAuditResult
+            |> Option.defaultWith (fun () -> failwith "no md audit command has been run by a When step")
+
+        Assert.Contains("MD AUDIT PASSED", result.Report)
 
     [<AfterScenario>]
     member _.Cleanup() =
@@ -1741,3 +1779,7 @@ let ``File with uppercase characters fails`` () =
 [<Fact>]
 let ``README.md is exempt and passes regardless of placement`` () =
     FeatureRunner.run "docs-validate-naming.feature" "README.md is exempt and passes regardless of placement"
+
+[<Fact>]
+let ``Every md validator passes on a repository with no markdown files`` () =
+    FeatureRunner.run "md-audit.feature" "Every md validator passes on a repository with no markdown files"
