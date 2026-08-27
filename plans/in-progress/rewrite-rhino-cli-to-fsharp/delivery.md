@@ -319,14 +319,16 @@ bind here either.
 ### Governance-word-budget split-ceiling exception (Wave D PR9 only)
 
 **`governance/governance-word-budget.feature` (21 scenario/outline cycles, 22 per the feature
-heading's expanded-example count) lands as one PR despite exceeding the rule-4 ceilings — 1,256
+heading's expanded-example count) lands as one PR despite exceeding the rule-4 ceilings — 1,262
 added lines and 67 deleted lines across 5 files
 [Repo-grounded — `git diff --numstat "$(git merge-base HEAD origin/main)"`, measured on
-`rhino-fsharp-wave-d-pr9-governance-word-budget` after rebasing onto the upstream rewrite of this
-same feature file (thresholds 400/500/500 → 650/750/750, a new `RTK.md` surface, and a new
-"A configured glob matching no file is a no-op" scenario): `RhinoCli.Application/src/Governance.fs`
+`rhino-fsharp-wave-d-pr9-governance-word-budget` after two rebases onto sibling Wave D PRs that
+landed while this PR was open — one rewrote this same feature file upstream (thresholds
+400/500/500 → 650/750/750, a new `RTK.md` surface, and a new "A configured glob matching no file is
+a no-op" scenario), the other (`git-pre-commit.feature`, Wave D PR11) appended its own coverage-tool
+argument to the same `project.json` line this PR also extends: `RhinoCli.Application/src/Governance.fs`
 +521, `tests/unit/Steps/GovernanceSteps.fs` +639, `project.json` +1/-1,
-`parity-manifest.sha256` +3/-3, `delivery.md` +92/-63].** Scope: this one feature file only — it
+`parity-manifest.sha256` +3/-3, `delivery.md` +98/-63].** Scope: this one feature file only — it
 does not generalize to any other flagged file in the nine-file list above, and per the non-precedent
 clause on the rule-4 exclusion, a future PR wanting the same treatment records its own exception with
 its own reasoning.
@@ -344,7 +346,7 @@ identically here. Re-attempting the same three configurations against
 immediately above; a second live attempt was not run for that reason. The single-shot implementation
 was built RED-before-GREEN per scenario — 21 cycles, each with its own `[<Fact>]` against a sliced
 `Background:` + `Scenario:` fixture — and is fully green under `test:quick`
-(`typecheck`, `lint`, `test:unit` at 746/746, `test:specs` reporting full coverage) and under the
+(`typecheck`, `lint`, `test:unit` at 753/753, `test:specs` reporting full coverage) and under the
 whole-tree `specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli`
 check the `rust` CI quality gate runs (525 scenarios, all covered) before the ceiling was measured.
 PR-review cycles are already waived for this plan's remaining execution (user-granted
