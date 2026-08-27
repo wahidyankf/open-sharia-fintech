@@ -31,6 +31,8 @@
     <Compile Include="Steps/EnvContractIacUnitTests.fs" />
     <Compile Include="Steps/EnvStagedGuardSteps.fs" />
     <Compile Include="Steps/EnvStagedGuardUnitTests.fs" />
+    <Compile Include="Steps/DoctorSteps.fs" />
+    <Compile Include="Steps/DoctorUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
