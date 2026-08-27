@@ -27,6 +27,11 @@ outputs:
 Captures an in-progress, multi-session, possibly-multi-repo plan's state into one document before
 stepping away, so the next agent or session can resume from fact rather than re-discovery.
 
+## Agent References
+
+No specialist owns the handover itself. When the resumed plan reaches final verification, use
+[plan-execution-checker](../../../.claude/agents/plan/plan-execution-checker.md).
+
 ## Contents
 
 - [Purpose, Scope, and Relationship](./plan-handover-execution/purpose-scope-and-relationship.md) — when (not) to use it; ties to plan-takeover-execution.md.

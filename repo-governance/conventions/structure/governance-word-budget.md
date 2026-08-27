@@ -25,20 +25,30 @@ is a raw whole-file `split_whitespace()` word count, not bytes, with no in-file 
 Configured in the `governance-word-budget:` section of `repo-config.yml`; enforced by
 `rhino-cli governance word-budget validate`.
 
-| Surface                                                             | Target (✅) | Warn (⚠️)  | Fail (❌)  |
-| ------------------------------------------------------------------- | ----------- | ---------- | ---------- |
-| `repo-governance/**/*.md`                                           | 400 words   | 500 words  | 500 words  |
-| `AGENTS.md` / `CLAUDE.md` / `RTK.md`                                | 400 words   | 500 words  | 500 words  |
-| Every harness binding directory in the `harness:` registry (`*.md`) | 400         | 500        | 500        |
-| `**/README.md`                                                      | 700 words   | 900 words  | 900 words  |
-| Resolved tree (`CLAUDE.md` + imports)                               | 1200 words  | 1500 words | 1500 words |
+| Surface                                                             | Budget class  |
+| ------------------------------------------------------------------- | ------------- |
+| `repo-governance/**/*.md`                                           | Instruction   |
+| `AGENTS.md` / `CLAUDE.md` / `RTK.md`                                | Instruction   |
+| Every harness binding directory in the `harness:` registry (`*.md`) | Instruction   |
+| `**/README.md`                                                      | README        |
+| Resolved tree (`CLAUDE.md` + imports)                               | Resolved tree |
+
+The live `target`, `warn`, and `fail` values exist only in `repo-config.yml`. A file at or below
+its target produces no finding; a file above target through the fail value warns; a file above the
+fail value blocks the gate. These values are capacity ceilings, not desired lengths or permission
+to fill the available space. Authors still apply the
+[Minimal Sufficiency Test](../../principles/general/simplicity-over-complexity/minimal-sufficiency-test.md)
+and progressive disclosure; a warning is a prompt to simplify or split reachable detail before the
+file becomes blocking.
 
 `repo-governance/**/*.md` is the largest surface by file count.
 
-**A surface is its glob minus the registered exclude prefixes** — the thirteen `args.exclude` path
+**A surface is its glob minus the registered exclude prefixes** — the `args.exclude` path
 prefixes on the gate are part of the published rule, not an implementation detail. `plans/`,
-`docs/`, and `specs/` are among them, so a `plans/` README of any length passes. The full list is
-in the Excluded Prefixes child below.
+`docs/`, and `specs/` are among them, so a `plans/` README does not produce a word-budget finding.
+That scan exclusion is not an exemption from minimal sufficiency: active plans remain focused and
+must be reconciled when their canonical specs, configuration, or rules change. The full list is in
+the Excluded Prefixes child below.
 
 When a path matches more than one surface glob, the **last-declared** surface wins (select, then
 classify). This is a declaration-order invariant, not a glob-specificity comparison: a
@@ -59,11 +69,14 @@ compression, splitting into another auto-loaded file, or an incomplete `See`-lin
 
 ## Updating Thresholds
 
-Edit the `governance-word-budget:` section of `repo-config.yml`, record the rationale as a YAML
-comment, and run `npx nx run rhino-cli:governance-word-budget:validation` to confirm. Never adjust
-a threshold to paper over a bloated file.
+Threshold changes are class-wide policy recalibrations, never remediation for one file. Require
+evidence that the existing signal is broadly non-actionable or that harness capacity or repository
+policy changed; preserve minimal sufficiency, record the rationale as a YAML comment, edit the
+`governance-word-budget:` section of `repo-config.yml`, and run
+`npx nx run rhino-cli:governance-word-budget:validation`. Never adjust a threshold to paper over a
+bloated file or a specific change.
 
 ## Children
 
 - [Vision and Principles](./governance-word-budget/vision-and-principles.md) — vision alignment, principles implemented, and related conventions.
-- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The thirteen path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.
+- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.

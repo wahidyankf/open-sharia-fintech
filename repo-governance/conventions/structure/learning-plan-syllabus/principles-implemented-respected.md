@@ -13,7 +13,7 @@ tags:
 created: 2026-07-22
 ---
 
-# Learning-Plan Syllabus: Principles Implemented/Respected
+# Principles Implemented/Respected
 
 Part of the [Learning-Plan `syllabus/` Folder Convention](../learning-plan-syllabus.md).
 

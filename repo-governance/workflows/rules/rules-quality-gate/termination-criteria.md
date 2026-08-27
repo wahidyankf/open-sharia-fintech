@@ -25,4 +25,5 @@ when_to_use: Use when checking whether a completed run's status is correctly det
 mode threshold. Vendor, word-budget, and other exact delegated lifecycle predicates are absent
 from this domain count and use `lifecycle-status` instead.
 
-**Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).
+**Note**: Below-threshold findings are reported in the final audit but do not prevent success.
+Success requires two consecutive validations with zero findings at or above the selected threshold.

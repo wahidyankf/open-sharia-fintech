@@ -60,8 +60,11 @@ index carries order. See [Ordinal Filename Prefixes](./ordinal-filename-prefixes
 Guardrail, and environment-branch rules trim **last and only via a complete target** — never by
 dropping cases or dense-prose compression.
 
-If none of the above applies, open a plan requesting a threshold adjustment with a documented
-rationale and harness-source citation.
+If progressive disclosure cannot make one file sufficient, the file remains over budget; do not
+raise its class ceiling to make it fit. A threshold recalibration is a separate, class-wide policy
+change. It requires evidence that the existing signal is broadly non-actionable or that harness
+capacity or repository policy changed, a documented rationale, and validation of the whole class.
+The new value remains a capacity ceiling, not a content target.
 
 ## Vision Supported
 
@@ -73,6 +76,8 @@ parent convention does: reliable instruction delivery across the multi-harness a
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: this document
   is itself an application of the principle — detail split from its parent to respect a word
   ceiling.
+- **[Minimal Sufficiency](../../principles/general/simplicity-over-complexity/minimal-sufficiency-test.md)**:
+  thresholds bound necessary content; they do not justify adding or retaining unnecessary content.
 
 ## Related Conventions
 

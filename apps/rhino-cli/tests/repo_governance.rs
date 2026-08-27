@@ -375,6 +375,22 @@ fn given_split_child_plain_kebab_case(w: &mut GovernanceWorld) {
     );
 }
 
+#[given("a split convention whose indexed child carries the required traceability section")]
+fn given_split_convention_with_child_traceability(w: &mut GovernanceWorld) {
+    w.write(
+        "repo-governance/conventions/c.md",
+        "# C\n\nSee [Principles](./c/principles.md).\n",
+    );
+    w.write(
+        "repo-governance/conventions/c/README.md",
+        "# C\n\n- [Principles](./principles.md) — traceability.\n",
+    );
+    w.write(
+        "repo-governance/conventions/c/principles.md",
+        "# Principles Implemented/Respected\n\nBody.\n",
+    );
+}
+
 #[given("a repository with an indexed category directory that has no same-named parent document")]
 fn given_indexed_category_dir(w: &mut GovernanceWorld) {
     // A category directory carries a README.md index but no same-named sibling

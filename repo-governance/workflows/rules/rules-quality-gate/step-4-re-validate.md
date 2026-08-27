@@ -27,7 +27,7 @@ The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path i
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence || step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-N}` - Verification audit report
-- **Depends on**: Step 3 completion
+- **Depends on**: Step 2 completion, after Step 3 when fixes were required
 
 Re-validation reruns retained domain predicates only. Relevant edits invalidate delegated evidence,
 so lifecycle status becomes `pending` until its owner supplies exact current evidence. Missing

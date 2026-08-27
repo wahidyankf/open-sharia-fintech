@@ -12,8 +12,8 @@ Report final status and summary.
 
 **Status determination**:
 
-- **Success** (`pass`): Zero findings after validation
-- **Partial** (`partial`): Findings remain after max-iterations
+- **Success** (`pass`): Zero threshold-level domain findings on two consecutive validations
+- **Partial** (`partial`): Threshold-level domain findings remain after max-iterations
 - **Failure** (`fail`): Technical errors during check or fix
 
 `final-status` covers retained rules-domain predicates only. `lifecycle-status` is `verified`

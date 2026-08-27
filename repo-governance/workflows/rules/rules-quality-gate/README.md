@@ -1,6 +1,6 @@
 ---
 title: "Repository Rules Validation Workflow"
-description: "Orchestrated quality gate that runs repo-rules-checker iteratively until zero findings, then applies fixes and re-validates."
+description: "Orchestrated quality gate that fixes findings at the selected threshold and re-validates to a bounded double-clean result."
 when_to_use: "Read this index to find the right Repository Rules Validation Workflow child document."
 ---
 

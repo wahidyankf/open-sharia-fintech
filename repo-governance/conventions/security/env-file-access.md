@@ -30,3 +30,10 @@ stays denied. Each repo maintains its own list of excluded content trees; see
 [§9 Content-fixture exclusion](./secrets-and-env-standards/content-fixture-exclusion.md).
 
 See: [`secrets-and-env-standards.md`](./secrets-and-env-standards.md)
+
+## Principles Implemented/Respected
+
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — names
+  the only two restricted environment-file tiers and the exact content-fixture boundary.
+- [Reproducibility](../../principles/software-engineering/reproducibility.md) — keeps agent access
+  behavior consistent across machines and harnesses.

@@ -97,7 +97,7 @@ Out of scope (for now):
 
 ## Risks & open questions
 
-- **Both conventions already sit near the 500-word FAIL cap.** Adding the missing content almost
+- **Both conventions already consume much of the instruction-file budget.** Adding the missing content may
   certainly overflows, so the shard boundary has to be chosen up front rather than discovered
   mid-edit. Where that boundary falls is unresolved. (open)
 - **What is the collision verdict?** Keep the ordinal as a disambiguator, re-stem the files, or widen

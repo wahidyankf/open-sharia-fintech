@@ -1,10 +1,10 @@
 ---
 name: rules-quality-gate
 title: "rules-quality-gate"
-description: "Orchestrated quality gate that runs repo-rules-checker iteratively until zero findings, then applies fixes and re-validates."
+description: "Orchestrated quality gate that checks repository rules, fixes threshold-level findings, and re-validates to a bounded double-clean result."
 when_to_use: "Use after changing conventions/principles/development practices, before major releases, periodically for repo health, or after adding/modifying agents."
-goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
+goal: Validate repository consistency across all layers and resolve findings at or above the selected mode threshold
+termination: "Zero threshold-level domain findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: mode
     type: enum
@@ -41,7 +41,7 @@ outputs:
   - name: final-report
     type: file
     pattern: generated-reports/repo-rules__*__*__audit.md
-    description: Final audit report (4-part format with UUID chain)
+    description: Final audit report (three top-level sections with UUID chain)
   - name: execution-scope
     type: string
     description: Scope identifier for UUID chain tracking (default "repo-rules")
@@ -52,7 +52,9 @@ outputs:
 
 Automatically validates repository consistency across principles, conventions, development
 practices, agent/skill source definitions, and subdirectory README files, then applies fixes
-iteratively until all issues are resolved. Validates source only (`repo-governance/`,
+iteratively until no finding at or above the selected threshold remains. The preferred checker and
+fixer are [repo-rules-checker](../../../.claude/agents/repo/repo-rules-checker.md) and
+[repo-rules-fixer](../../../.claude/agents/repo/repo-rules-fixer.md). Validates source only (`repo-governance/`,
 `.claude/agents/`, `.claude/skills/`, `docs/explanation/` partially) — see the Purpose and Scope
 child below for the full validates/skips breakdown.
 

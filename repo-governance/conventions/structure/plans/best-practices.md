@@ -38,6 +38,10 @@ another gitignored file.
 - Choose the smallest responsible design that meets the outcome and every applicable rule; do not
   generalize one-off work or silently expand delivery beyond the stated boundary
 - Keep every mandatory safeguard in scope; it is part of sufficiency
+- Treat plan word-count exclusions as scan scope only, not permission to expand a plan; keep the
+  smallest complete execution record and use links instead of copying canonical rules or specs
+- Reconcile an active plan when a canonical spec, configuration value, or rule it consumes changes;
+  do not preserve stale embedded snapshots merely because the plan is already executing
 
 ## Update Plans as You Go
 

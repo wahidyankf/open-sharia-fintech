@@ -40,3 +40,10 @@ This practice respects the following core principles:
 - [Prior Art In This Repository](./mechanize-cross-file-invariants/prior-art-in-this-repository.md) — four cross-cutting invariants this pattern already governs.
 - [Examples](./mechanize-cross-file-invariants/examples.md) — a PASS and a FAIL worked example.
 - [Scope and Related Documentation](./mechanize-cross-file-invariants/scope-and-related-documentation.md) — where this practice applies, and links to related conventions.
+
+## Conventions Implemented/Respected
+
+- [Multi-Harness Binding](../../conventions/structure/multi-harness-binding.md) — generated
+  bindings exemplify one source plus deterministic validation across multiple files.
+- [Dynamic Collection References](../../conventions/writing/dynamic-collection-references.md) —
+  derived inventories must come from the live source rather than hand-maintained copies.

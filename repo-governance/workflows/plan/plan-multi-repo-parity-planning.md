@@ -60,6 +60,12 @@ outputs:
 
 Authors one plan per sibling repo, grilling every cross-repo gap first.
 
+## Agent References
+
+Plan authoring and validation use [plan-maker](../../../.claude/agents/plan/plan-maker.md),
+[plan-checker](../../../.claude/agents/plan/plan-checker.md), and
+[plan-fixer](../../../.claude/agents/plan/plan-fixer.md).
+
 ## Contents
 
 - [Purpose & Scope](./plan-multi-repo-parity-planning/purpose-scope-and-when-to-use.md) — why this exists.

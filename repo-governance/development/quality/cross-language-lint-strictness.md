@@ -26,3 +26,18 @@ cross-language lint gates and the policy that binds them.
 - [Rationale and history](./cross-language-lint-strictness/rationale-and-history.md) — Where the cross-repository lint-strictness decision log lives, and related documents. Use when you need the historical rationale for why a specific lint rule is fixed or waived.
 
 **See also**: [markdown.md](../quality/markdown.md), [repository-validation.md](../quality/repository-validation.md).
+
+## Principles Implemented/Respected
+
+- [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) — lint
+  policy is enforced by hooks and CI rather than reviewer memory.
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — every
+  artifact type uses a declared warning-and-above threshold.
+- [Reproducibility](../../principles/software-engineering/reproducibility.md) — local and CI lint
+  behavior use the same checked-in tool configuration.
+
+## Conventions Implemented/Respected
+
+- [Indentation](../../conventions/formatting/indentation.md) and
+  [Markdown Formatting](markdown.md) supply formatting rules that their language-appropriate
+  deterministic gates enforce.
