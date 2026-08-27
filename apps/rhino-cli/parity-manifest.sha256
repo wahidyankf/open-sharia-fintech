@@ -3,10 +3,11 @@
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli/project.json
 22b1d0652e8937a20c83841966e4f8b1c451d671d34dd27fb5fa13f11d340a4d  apps/rhino-cli/src-fsharp/.gitignore
-5fc5c20f9e2467a943d7ff76246326a03d1a87b74e31eeb18beb5891c5f62139  apps/rhino-cli/src-fsharp/RhinoCli.Application/RhinoCli.Application.fsproj
+752b29a8a74b5c46c856f7549c808e722f52af3c43be99f32395f9e6cfe1d011  apps/rhino-cli/src-fsharp/RhinoCli.Application/RhinoCli.Application.fsproj
 11fe7ec2e5e08b432e2d1cedae59e1a555e17e22a1f11494bd83b80c36964b5c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Convention.fs
 015c281c498a64930d705b4806ef139de008a78fcd1197f8a7851cea7586cd85  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Doctor.fs
 ba223d446b461cce0e427e278e340a87330ed423885f92a674c5039fd755cb5b  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Env.fs
+c9bcab647bfa6b7f7f07db8da416708ab87728a71e5dd24bb3d9d85b871367e0  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Git.fs
 0cfb53817179294a31ed646bb680a22097fd21760c7d4e60935e88318ff42844  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Governance.fs
 5527f7437beb3406071315fa09bf52515393549fde745e1c715da636456b4d99  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Md.fs
 2f8085bcb8089f174e9548e609530471c9318c31b1bcab4a867e33880cec9e57  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Parity.fs
@@ -25,10 +26,10 @@ ea9c28fc3b1c41add46abd4de607b27e0b3b985b0d9825ad6763e2341892f91a  apps/rhino-cli
 631376afb9e4d7c5192d38f51b533c18b64cca83c18ed5c50982ba9acce51d74  apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj
 153a226f5ef1d6916aa6e6425b278a606a48659fcba9623c9d01e5cf3b2589a5  apps/rhino-cli/src-fsharp/RhinoCli.Program/src/Program.fs
 822f6ec8446562a4de9a3b1a2481af50fac01bbedc32e1963142709e5f48ec13  apps/rhino-cli/src-fsharp/fsharplint.json
-1d763b0a284d861fdca07c4e0ca3f901e0795c239f4e7bbd8d5f00ec73d6704a  apps/rhino-cli/src-fsharp/project.json
+663a609219ebe456c3ee53d177a7fa3ae8ce49dda96eb3ee2676a0b415a2bca3  apps/rhino-cli/src-fsharp/project.json
 aca5d109fdc277b6f4c6695a1265b163fac319b66d6201b32b85e5571a29d3ea  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 51bbb1298cd542e36b0f98320c3ef762d37f78e5fca2a7889c66811a4110c277  apps/rhino-cli/src-fsharp/tests/integration/Steps/PreCommitHookSteps.fs
-ac039bdd65e9d22f2afcfa86892d3fb9a5cdb523f3b8e7db2560401c6c9514c2  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
+757ece161fa70844927ff0cd1796c9aed8eea9875f3f148cb0a546f7d3d27fd6  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 85ba308ad0a88485db55b305120d99b9a4ec328d2379536110f73e51f4797fe2  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs
 a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
 e7ef73e5c7ced17c7c47813e81fd4b78060de7d765c584b791256cfd6a00b68f  apps/rhino-cli/src-fsharp/tests/unit/Steps/DispatchUnitTests.fs
@@ -53,6 +54,7 @@ c1bad6d9e8c58c49466c48af26563acfb5ba01e3ff6b89dd0bffe3d4d3b8e18f  apps/rhino-cli
 c99dc72ba90a55126c8f080d98b2ce2cc80037d936398ff42a93353ab7cdc481  apps/rhino-cli/src-fsharp/tests/unit/Steps/FsharpToolInvocationSteps.fs
 df2d2403e3dbf9b7cde5eae9ff273fb26d62ee0841ba72bbbf81c91ed8c8527d  apps/rhino-cli/src-fsharp/tests/unit/Steps/FsharpToolInvocationUnitTests.fs
 413baab2577c13102e7eb36979cbea9d75735929a5c429591a05ca85cf69cbec  apps/rhino-cli/src-fsharp/tests/unit/Steps/GitRootUnitTests.fs
+f8001cb2ebc6ae2184962f56d8224caacdc67d1ae6647b32960c092972b21eba  apps/rhino-cli/src-fsharp/tests/unit/Steps/GitSteps.fs
 88973990d3cb584c6da4769af25e9a202fc5d66a1fc04bfc82f1aeaecf6c48fb  apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs
 ae657d69f14610a7fa31ea57a6e3e24b74961a8ea3da944ad96b409c232c4c67  apps/rhino-cli/src-fsharp/tests/unit/Steps/MdSteps.fs
 b8a8fbf79e78dee93f32944d3bbae2daccf33876ce5988ae31b1259c2f5ce201  apps/rhino-cli/src-fsharp/tests/unit/Steps/ParityUnitTests.fs

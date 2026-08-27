@@ -7850,6 +7850,89 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/integration`
       — acceptance: all tests still pass and `Md.fs` formats no output itself.
 
+#### `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature` — 3 scenarios
+
+> Unlike `git-pre-commit.feature` above, this file's Rust counterpart
+> (`apps/rhino-cli/src/commands/git/lockfile.rs`) is a regular command module, not an
+> integration-tier binary-shelling test, so these three cycles are unit-tier here too, driving
+> `RhinoCli.Application.Git` directly rather than the shim.
+>
+> **PR seam**: the cycles under this heading are one PR.
+
+- [x] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/GitSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Git` does not implement it.
+      **Gherkin (binds) →** "A staged package manifest with a stale lockfile is regenerated and staged" — `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature`
+
+  ```gherkin
+    Scenario: A staged package manifest with a stale lockfile is regenerated and staged
+      Given a staged app package.json whose version disagrees with its package-lock.json
+      When the developer runs "git lockfile sync"
+      Then the command regenerates the app's package-lock.json to match the manifest
+      And the regenerated package-lock.json is staged
+  ```
+
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Git.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Git.fs` formats no output itself.
+
+- [x] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/GitSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Git` does not implement it.
+      **Gherkin (binds) →** "A staged package manifest whose lockfile is already current is left untouched" — `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature`
+
+  ```gherkin
+    Scenario: A staged package manifest whose lockfile is already current is left untouched
+      Given a staged app package.json whose fields already agree with its package-lock.json
+      When the developer runs "git lockfile sync"
+      Then the command exits successfully
+      And the output reports no lockfile was synced
+      And the package-lock.json file is not modified
+  ```
+
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Git.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Git.fs` formats no output itself.
+
+- [x] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/GitSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Git` does not implement it.
+      **Gherkin (binds) →** "No staged app package.json means no lockfile work" — `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature`
+
+  ```gherkin
+    Scenario: No staged app package.json means no lockfile work
+      Given no app package.json file is staged
+      When the developer runs "git lockfile sync"
+      Then the command exits successfully
+      And the output is empty
+      And the staged file set is unchanged
+  ```
+
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Git.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Git.fs` formats no output itself.
+
 ### Wave D integration
 
 > **PR seam**: the flip is its own PR, separate from the implementation PRs above. It is a

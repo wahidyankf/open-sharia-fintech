@@ -42,6 +42,7 @@
     <Compile Include="Steps/MdSteps.fs" />
     <Compile Include="Steps/FindingUnitTests.fs" />
     <Compile Include="Steps/GovernanceSteps.fs" />
+    <Compile Include="Steps/GitSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
