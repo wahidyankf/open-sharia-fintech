@@ -14,9 +14,9 @@ running out, not the rule ending. If it still changes behavior a user or caller 
 library, a hook, a CI workflow), it exercises that behavior through its own interface and records
 what was run. Exemption belongs only to a plan with no reachable behavioral delta at all, and it
 **states that exemption explicitly** in its `tech-docs.md` rather than leaving it implicit. See
-[precondition (e)](../../pr/pr-review-quality-gate/hardened-merge-preconditions-a-e.md) and
+[PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md) and
 [Surface-Conditional Tester Gates](../../plan/plan-planning/surface-conditional-tester-gates.md#surface-conditional-tester-gates), which
 this paragraph must stay congruent with.
 
-It is also a **merge precondition** — clause (e) of the hardened preconditions in the
-[PR Review Quality Gate](../../pr/pr-review-quality-gate.md).
+It is also a **merge precondition** for every applicable API-bearing delivery. A `partial`, `fail`,
+or pending lifecycle result blocks merge under the [PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md).

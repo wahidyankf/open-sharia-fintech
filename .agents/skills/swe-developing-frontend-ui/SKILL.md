@@ -50,6 +50,11 @@ infer, revalidate, or fix delegated work. The seven semantic UI dimensions remai
 [lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 Fixers invalidate evidence whose registered scope intersects their changed files.
 
+The UI gate has two checker roles: one full discovery and, only after its single fixer invocation,
+one verification limited to the original in-threshold findings plus regression smoke over affected
+components. A clean discovery passes immediately. Verification never becomes another full audit,
+and no result automatically starts another pass.
+
 **Canonical reference**:
 [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 — covers all test levels (unit, snapshot/visual, a11y, E2E, manual verification) and the full

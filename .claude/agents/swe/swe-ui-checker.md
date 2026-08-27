@@ -23,14 +23,13 @@ reports.
 
 ## Core Responsibility
 
-Validate UI components across seven dimensions, producing audit reports in `generated-reports/` using the standard `swe-ui__{uuid}__{timestamp}__audit.md` pattern.
+Validate seven UI dimensions and emit `generated-reports/swe-ui__{uuid}__{timestamp}__audit.md`.
 
 ## Lifecycle-Owned Predicates
 
-When a quality gate supplies `delegated-gate-ids` and its evidence ledger, omit only exact registry
-IDs or predicates linked through `verifies`. Carry the ledger unchanged; never execute, infer, or
-report delegated predicates. Missing or stale evidence remains pending. Without this handoff,
-suppress nothing. See the
+When a gate supplies `delegated-gate-ids` and evidence, omit only exact registered predicates.
+Carry evidence unchanged; never execute or report delegated work. Missing/stale evidence remains
+pending; without a handoff, suppress nothing. See the
 [lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Check Dimensions
@@ -47,20 +46,24 @@ suppress nothing. See the
 
 ## Workflow
 
-1. **Discover**: Glob for `.tsx` files in the target scope
-2. **Read**: Read each component file and its associated globals.css
-3. **Check**: Apply all seven dimensions to each file
-4. **Classify**: Assign criticality (CRITICAL/HIGH/MEDIUM/LOW) and confidence (HIGH/MEDIUM/FALSE_POSITIVE)
-5. **Report**: Write progressive audit report to `generated-reports/`
+1. Discover scoped `.tsx` files and associated CSS.
+2. Apply all dimensions.
+3. Classify criticality and confidence.
+4. Write the progressive audit report.
+
+## Bounded Quality-Gate Roles
+
+For `ui-quality-gate`, `discovery` audits all dimensions once. `verification` reproduces supplied
+original findings and smoke-tests affected components only. Return resolved/unresolved IDs,
+regressions, changed scope, and errors; never repeat discovery or request another pass.
 
 ## When to Use This Agent
 
 **Use when**:
 
-- Auditing existing UI components before a release
-- After creating new components with swe-ui-maker
-- As part of the ui-quality-gate workflow
-- Reviewing UI changes in a PR
+- Auditing existing or newly created UI components
+- Running `ui-quality-gate`
+- Reviewing PR UI changes
 
 **Do NOT use for**:
 

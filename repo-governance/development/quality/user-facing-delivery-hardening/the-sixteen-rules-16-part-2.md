@@ -22,10 +22,13 @@ when_to_use: "Use when mapping a plan's surface to its required tester gate, or 
     and Rule 16's API round by
     [`workflows/api/api-quality-gate.md`](../../../workflows/api/api-quality-gate.md); a UI-bearing plan
     additionally runs the static [`workflows/ui/ui-quality-gate.md`](../../../workflows/ui/ui-quality-gate.md).
+    Each quality gate is finite: one discovery, at most one fix pass, and one scoped verification of
+    original findings plus affected-surface regression smoke. A clean discovery passes immediately;
+    unresolved findings, regressions, or technical failures never trigger an automatic rerun.
     The surface-to-gate mapping is stated once in
     [plan-planning §Surface-Conditional Tester Gates](../../../workflows/plan/plan-planning/surface-conditional-tester-gates.md#surface-conditional-tester-gates),
-    re-applied at execution, and enforced as **merge precondition clause (e)** in the
-    [PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate.md). A plan bearing neither
+    re-applied at execution, and enforced by the
+    [PR Merge Protocol](../../workflow/pr-merge-protocol.md). A plan bearing neither
     of those two surfaces is **not thereby exempt** — if it still changes behavior a user or caller
     can reach (a CLI, a library, a hook, a CI workflow) it exercises that behavior through its own
     interface and records what was run; only a plan with no reachable behavioral delta at all is
