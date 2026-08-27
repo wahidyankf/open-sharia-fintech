@@ -1,10 +1,15 @@
-/// TickSpec step definitions binding
-/// `docs-validate-frontmatter.feature`'s 11 scenarios to
-/// `RhinoCli.Application.Md.validateDocsFrontmatter`
+/// TickSpec step definitions binding `docs-validate-frontmatter.feature`'s 11
+/// scenarios to `RhinoCli.Application.Md.validateDocsFrontmatter` and
+/// `docs-validate-heading-hierarchy.feature`'s 12 scenarios to
+/// `RhinoCli.Application.Md.validateDocsHeadingHierarchy`/
+/// `validateDocsHeadingHierarchyAllowlisted`
 /// [Repo-grounded —
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature`,
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`,
 /// `apps/rhino-cli/src/application/docs/frontmatter.rs`,
-/// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`].
+/// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`,
+/// `apps/rhino-cli/src/application/docs/heading_hierarchy.rs`,
+/// `apps/rhino-cli/src/commands/md_validate_heading_hierarchy.rs`].
 ///
 /// Follows `ConventionSteps.fs`'s/`TestCoverageSteps.fs`'s per-scenario
 /// slicing convention: each xunit `[<Fact>]` below runs exactly one scenario,
@@ -12,8 +17,15 @@
 /// `FSHARP_NAMESPACES` (that flip is later, separate Wave D integration
 /// work), so — matching `TestCoverageSteps.fs`'s own precedent for
 /// `test-coverage validate` before its Wave C flip — every scenario below
-/// calls `RhinoCli.Application.Md.validateDocsFrontmatter` directly with a
-/// path list built by hand rather than parsing an argv string.
+/// calls one of `RhinoCli.Application.Md`'s validators directly with a path
+/// list (or a repo root standing in for it) built by hand rather than
+/// parsing an argv string. The heading-hierarchy scenarios that exercise the
+/// prose allowlist (`docs`/`.claude`/`plans/done`/`specs`/`apps`/`libs`
+/// trees) set the `useAllowlist` instance field from their `Given` step so
+/// the single shared "the developer runs docs validate-heading-hierarchy"
+/// `When` step — reused verbatim by both the plain-tree and the
+/// allowlist-tree scenarios — knows which of the two validator entry points
+/// to call.
 module RhinoCli.Tests.Unit.Steps.MdSteps
 
 open System
@@ -30,11 +42,27 @@ open RhinoCli.Domain.Types
 type MdSteps() =
     let mutable rootDir: string option = None
     let mutable outcome: Result<Finding list, string> option = None
+    let mutable useAllowlist = false
 
     let root () =
         match rootDir with
         | Some dir -> dir
         | None -> failwith "no repository root has been prepared by a Given step"
+
+    /// Returns the scenario's shared temp-dir root, creating it on first
+    /// use — lets a scenario with more than one `Given`/`And` fixture step
+    /// (e.g. heading-hierarchy's "exclude-flag-suppresses-tree") write into
+    /// the same tree instead of each step getting its own temp dir.
+    let ensureRoot () =
+        match rootDir with
+        | Some dir -> dir
+        | None ->
+            let dir =
+                Path.Combine(Path.GetTempPath(), "rhino-cli-md-" + Guid.NewGuid().ToString("N"))
+
+            Directory.CreateDirectory(dir) |> ignore
+            rootDir <- Some dir
+            dir
 
     let theOutcome () : Result<Finding list, string> =
         outcome
@@ -43,18 +71,12 @@ type MdSteps() =
     let theFindings () : Finding list =
         match theOutcome () with
         | Ok findings -> findings
-        | Error message ->
-            failwith (sprintf "expected docs validate-frontmatter to produce findings, got error: %s" message)
+        | Error message -> failwith (sprintf "expected the md validator to produce findings, got error: %s" message)
 
-    let newTempDir () =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-md-frontmatter-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory(dir) |> ignore
-        dir
+    let newTempDir () = ensureRoot ()
 
     let writeDoc (relativePath: string) (content: string) =
-        let full = Path.Combine(root (), relativePath)
+        let full = Path.Combine(ensureRoot (), relativePath)
         Directory.CreateDirectory(Path.GetDirectoryName(full)) |> ignore
         File.WriteAllText(full, content)
 
@@ -66,6 +88,57 @@ type MdSteps() =
             fun (f: Finding) ->
                 f.Severity = Severity.Blocking
                 && f.Message.Contains(needle, StringComparison.Ordinal)
+        )
+
+    /// Substring unique to `analyzeHeadings`'s duplicate-H1 finding message
+    /// (e.g. `"markdown file has 2 H1 headings (first at line 1); ..."`) —
+    /// distinct from the missing-H1 message's "documented file must have
+    /// exactly one H1" wording.
+    let duplicateH1Needle = "H1 headings (first at line"
+
+    /// Substring unique to `analyzeHeadings`'s skipped-level finding
+    /// message.
+    let skippedLevelNeedle = "heading levels must not skip"
+
+    let assertHasBlockingFindingWithMessageAndPath (messageNeedle: string) =
+        let findings = theFindings ()
+
+        Assert.Contains(
+            findings,
+            fun (f: Finding) ->
+                f.Severity = Severity.Blocking
+                && f.Message.Contains(messageNeedle, StringComparison.Ordinal)
+                && (f.Path |> Option.isSome)
+        )
+
+    let assertHasBlockingFindingInPathWithMessage (pathNeedle: string) (messageNeedle: string) =
+        let findings = theFindings ()
+
+        Assert.Contains(
+            findings,
+            fun (f: Finding) ->
+                f.Severity = Severity.Blocking
+                && f.Message.Contains(messageNeedle, StringComparison.Ordinal)
+                && (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains(pathNeedle, StringComparison.Ordinal)
+        )
+
+    let assertHasBlockingFindingInPath (pathNeedle: string) =
+        let findings = theFindings ()
+
+        Assert.Contains(
+            findings,
+            fun (f: Finding) ->
+                f.Severity = Severity.Blocking
+                && (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains(pathNeedle, StringComparison.Ordinal)
+        )
+
+    let assertNoFindingInPath (pathNeedle: string) =
+        let findings = theFindings ()
+
+        Assert.DoesNotContain(
+            findings,
+            fun (f: Finding) ->
+                (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains(pathNeedle, StringComparison.Ordinal)
         )
 
     // ---- Given ----
@@ -167,11 +240,84 @@ type MdSteps() =
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: software\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
+    // ---- Given (docs-validate-heading-hierarchy.feature) ----
+
+    [<Given>]
+    member _.``a documentation tree where every markdown file has exactly one H1 and no skipped heading levels``() =
+        writeDoc "a.md" "# Title\n\n## Section\n\n### Sub\n\n## Section Two\n"
+        writeDoc "sub/b.md" "# Other\n\n## X\n"
+
+    [<Given>]
+    member _.``a documentation tree containing a markdown file with two H1 headings``() =
+        writeDoc "a.md" "# First\n\n# Second\n"
+
+    [<Given>]
+    member _.``a documentation tree containing a markdown file with an H2 followed directly by an H4``() =
+        writeDoc "a.md" "## Two\n\n#### Four\n"
+
+    [<Given>]
+    member _.``a documentation tree containing a single-line markdown file with no headings``() =
+        writeDoc "a.md" "just a single line\n"
+
+    [<Given>]
+    member _.``a docs directory containing a markdown file with two H1 headings``() =
+        useAllowlist <- true
+        writeDoc "docs/page.md" "# First\n\n# Second\n"
+
+    [<Given>]
+    member _.``a .claude/agents directory containing a markdown file with no H1 heading``() =
+        useAllowlist <- true
+        writeDoc ".claude/agents/my-agent.md" "## Not H1\n\n### Also not H1\n"
+
+    [<Given>]
+    member _.``a plans/done directory containing a markdown file with a skipped heading level``() =
+        useAllowlist <- true
+        writeDoc "plans/done/2024-01-01__old-plan/delivery.md" "# T\n\n### Skip\n"
+
+    [<Given>]
+    member _.``a repo-governance directory containing a markdown file with two H1 headings``() =
+        useAllowlist <- true
+        writeDoc "repo-governance/rule.md" "# X\n\n# Y\n"
+
+    [<Given>]
+    member _.``a specs directory containing a markdown file with two H1 headings``() =
+        useAllowlist <- true
+        writeDoc "specs/apps/foo/overview.md" "# A\n\n# B\n"
+
+    [<Given>]
+    member _.``an apps/example directory whose README.md contains a skipped heading level``() =
+        useAllowlist <- true
+        writeDoc "apps/example/README.md" "# App\n\n### Skip\n"
+
+    [<Given>]
+    member _.``an apps/example/src directory containing a markdown file with no H1 heading``() =
+        useAllowlist <- true
+        writeDoc "apps/example/src/notes.md" "## No H1\n"
+
+    [<Given>]
+    member _.``a libs/example/docs directory containing a markdown file with two H1 headings``() =
+        useAllowlist <- true
+        writeDoc "libs/example/docs/guide.md" "# A\n\n# B\n"
+
     // ---- When ----
 
     [<When>]
     member _.``the developer runs docs validate-frontmatter``() =
         outcome <- Some(validateDocsFrontmatter [ root () ])
+
+    [<When>]
+    member _.``the developer runs docs validate-heading-hierarchy``() =
+        outcome <-
+            Some(
+                if useAllowlist then
+                    Ok(validateDocsHeadingHierarchyAllowlisted (root ()) [])
+                else
+                    validateDocsHeadingHierarchy [ root () ]
+            )
+
+    [<When>]
+    member _.``the developer runs docs validate-heading-hierarchy with --exclude docs``() =
+        outcome <- Some(Ok(validateDocsHeadingHierarchyAllowlisted (root ()) [ "docs" ]))
 
     // ---- Then ----
 
@@ -183,7 +329,7 @@ type MdSteps() =
                 findings |> List.exists (fun f -> f.Severity = Severity.Blocking),
                 "expected no fail-level findings"
             )
-        | Error message -> failwith (sprintf "expected docs validate-frontmatter to succeed, got error: %s" message)
+        | Error message -> failwith (sprintf "expected the md command to succeed, got error: %s" message)
 
     [<Then>]
     member _.``the command exits with a failure code``() =
@@ -222,20 +368,59 @@ type MdSteps() =
     member _.``the frontmatter output identifies the missing description field``() =
         assertHasBlockingFindingContaining "\"description\" is missing"
 
+    // ---- Then (docs-validate-heading-hierarchy.feature) ----
+
+    [<Then>]
+    member _.``the output reports zero docs heading hierarchy findings``() = Assert.Empty(theFindings ())
+
+    [<Then>]
+    member _.``the output identifies the offending file and the duplicate H1 violation``() =
+        assertHasBlockingFindingWithMessageAndPath duplicateH1Needle
+
+    [<Then>]
+    member _.``the output identifies the offending file and the skipped heading level``() =
+        assertHasBlockingFindingWithMessageAndPath skippedLevelNeedle
+
+    [<Then>]
+    member _.``the output identifies the duplicate H1 violation in the docs file``() =
+        assertHasBlockingFindingInPathWithMessage "/docs/" duplicateH1Needle
+
+    [<Then>]
+    member _.``the output does not mention the docs file``() = assertNoFindingInPath "/docs/"
+
+    [<Then>]
+    member _.``the output identifies the repo-governance file``() =
+        assertHasBlockingFindingInPath "/repo-governance/"
+
+    [<Then>]
+    member _.``the output identifies the duplicate H1 violation in the specs file``() =
+        assertHasBlockingFindingInPathWithMessage "/specs/" duplicateH1Needle
+
+    [<Then>]
+    member _.``the output identifies the skipped heading level in the app README``() =
+        assertHasBlockingFindingInPathWithMessage "apps/example/README.md" skippedLevelNeedle
+
+    [<Then>]
+    member _.``the output identifies the duplicate H1 violation in the lib docs file``() =
+        assertHasBlockingFindingInPathWithMessage "/libs/example/docs/" duplicateH1Needle
+
     [<AfterScenario>]
     member _.Cleanup() =
         match rootDir with
         | Some dir when Directory.Exists dir -> Directory.Delete(dir, true)
         | _ -> ()
 
-/// Reads one named `Scenario:` block out of the real, frozen
-/// `docs-validate-frontmatter.feature` file (leaving the file itself
-/// untouched) and runs it through TickSpec bound only against `MdSteps` —
-/// see `ConventionSteps.fs`'s `FeatureRunner` for why this is per-scenario
-/// rather than per-file.
+/// Reads one named `Scenario:` block out of a real, frozen `*.feature` file
+/// under the `md` Gherkin directory (leaving the file itself untouched) and
+/// runs it through TickSpec bound only against `MdSteps` — see
+/// `ConventionSteps.fs`'s `FeatureRunner` for why this is per-scenario
+/// rather than per-file. Parameterised over the feature file name (rather
+/// than one module per feature file) because `MdSteps` already binds more
+/// than one feature file's scenarios; splitting this module per file would
+/// duplicate `extractScenario`/`run` for no behavioral difference.
 module private FeatureRunner =
 
-    let private featurePath: string =
+    let private featureDir: string =
         Path.GetFullPath(
             Path.Combine(
                 __SOURCE_DIRECTORY__,
@@ -251,8 +436,7 @@ module private FeatureRunner =
                 "behavior",
                 "rhino-cli",
                 "gherkin",
-                "md",
-                "docs-validate-frontmatter.feature"
+                "md"
             )
         )
 
@@ -279,9 +463,11 @@ module private FeatureRunner =
 
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
-    /// Runs the single scenario named `scenarioTitle` from
-    /// `docs-validate-frontmatter.feature`, bound against `MdSteps`.
-    let run (scenarioTitle: string) : unit =
+    /// Runs the single scenario named `scenarioTitle` from `featureFileName`
+    /// (a `*.feature` file under the `md` Gherkin directory), bound against
+    /// `MdSteps`.
+    let run (featureFileName: string) (scenarioTitle: string) : unit =
+        let featurePath = Path.Combine(featureDir, featureFileName)
         let allLines = File.ReadAllLines featurePath
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<MdSteps> |])
@@ -291,44 +477,128 @@ module private FeatureRunner =
 
 [<Fact>]
 let ``Software-engineering doc with all required frontmatter fields passes`` () =
-    FeatureRunner.run "Software-engineering doc with all required frontmatter fields passes"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with all required frontmatter fields passes"
 
 [<Fact>]
 let ``Software-engineering doc missing title fails`` () =
-    FeatureRunner.run "Software-engineering doc missing title fails"
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Software-engineering doc missing title fails"
 
 [<Fact>]
 let ``Software-engineering doc missing category field fails`` () =
-    FeatureRunner.run "Software-engineering doc missing category field fails"
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Software-engineering doc missing category field fails"
 
 [<Fact>]
 let ``Software-engineering doc with category other than software fails`` () =
-    FeatureRunner.run "Software-engineering doc with category other than software fails"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with category other than software fails"
 
 [<Fact>]
 let ``Governance doc with only title fails once when_to_use and description are armed`` () =
-    FeatureRunner.run "Governance doc with only title fails once when_to_use and description are armed"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Governance doc with only title fails once when_to_use and description are armed"
 
 [<Fact>]
 let ``Governance doc with title, description, and when_to_use passes the lighter schema`` () =
-    FeatureRunner.run "Governance doc with title, description, and when_to_use passes the lighter schema"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Governance doc with title, description, and when_to_use passes the lighter schema"
 
 [<Fact>]
 let ``Software-engineering doc with Diataxis tutorial category passes`` () =
-    FeatureRunner.run "Software-engineering doc with Diataxis tutorial category passes"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with Diataxis tutorial category passes"
 
 [<Fact>]
 let ``Software-engineering doc with Diataxis how-to category passes`` () =
-    FeatureRunner.run "Software-engineering doc with Diataxis how-to category passes"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with Diataxis how-to category passes"
 
 [<Fact>]
 let ``Software-engineering doc with Diataxis reference category passes`` () =
-    FeatureRunner.run "Software-engineering doc with Diataxis reference category passes"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with Diataxis reference category passes"
 
 [<Fact>]
 let ``Software-engineering doc with Diataxis explanation category passes`` () =
-    FeatureRunner.run "Software-engineering doc with Diataxis explanation category passes"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with Diataxis explanation category passes"
 
 [<Fact>]
 let ``Software-engineering doc with deprecated software category emits warn not fail`` () =
-    FeatureRunner.run "Software-engineering doc with deprecated software category emits warn not fail"
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Software-engineering doc with deprecated software category emits warn not fail"
+
+[<Fact>]
+let ``Tree where every .md has exactly one H1 and no skipped levels passes`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "Tree where every .md has exactly one H1 and no skipped levels passes"
+
+[<Fact>]
+let ``File with two H1 headings fails`` () =
+    FeatureRunner.run "docs-validate-heading-hierarchy.feature" "File with two H1 headings fails"
+
+[<Fact>]
+let ``File with H2 followed directly by H4 (skipping H3) fails`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "File with H2 followed directly by H4 (skipping H3) fails"
+
+[<Fact>]
+let ``Single-line file with no headings is ignored (passes)`` () =
+    FeatureRunner.run "docs-validate-heading-hierarchy.feature" "Single-line file with no headings is ignored (passes)"
+
+[<Fact>]
+let ``prose-allowlist-runs — docs file triggers a heading finding`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "prose-allowlist-runs — docs file triggers a heading finding"
+
+[<Fact>]
+let ``agent-skill-file-exempt — no finding for agent or skill files`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "agent-skill-file-exempt — no finding for agent or skill files"
+
+[<Fact>]
+let ``plans-done-excluded — no finding for plans/done files`` () =
+    FeatureRunner.run "docs-validate-heading-hierarchy.feature" "plans-done-excluded — no finding for plans/done files"
+
+[<Fact>]
+let ``exclude-flag-suppresses-tree — --exclude docs suppresses docs findings`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "exclude-flag-suppresses-tree — --exclude docs suppresses docs findings"
+
+[<Fact>]
+let ``specs-allowlisted — specs tree triggers a heading finding`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "specs-allowlisted — specs tree triggers a heading finding"
+
+[<Fact>]
+let ``app-readme-allowlisted — project-root README triggers a heading finding`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "app-readme-allowlisted — project-root README triggers a heading finding"
+
+[<Fact>]
+let ``app-internals-default-deny — deep app files yield no finding`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "app-internals-default-deny — deep app files yield no finding"
+
+[<Fact>]
+let ``project-docs-subtree-allowlisted — app and lib docs trees trigger findings`` () =
+    FeatureRunner.run
+        "docs-validate-heading-hierarchy.feature"
+        "project-docs-subtree-allowlisted — app and lib docs trees trigger findings"
