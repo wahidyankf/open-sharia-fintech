@@ -5,7 +5,7 @@ b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli
 22b1d0652e8937a20c83841966e4f8b1c451d671d34dd27fb5fa13f11d340a4d  apps/rhino-cli/src-fsharp/.gitignore
 eb108ed1244727bd09b23be089eafdec40cae8ee44e6f142df9414140a310a04  apps/rhino-cli/src-fsharp/RhinoCli.Application/RhinoCli.Application.fsproj
 11fe7ec2e5e08b432e2d1cedae59e1a555e17e22a1f11494bd83b80c36964b5c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Convention.fs
-87d864f30bb0c42c5ac9791663ddb98f9245bcc7cfbf823a72796996a7360198  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Doctor.fs
+fefd8633322b668b7482b4ad0aca832ce5458ab20d64646be9a7fe47c3278e7a  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Doctor.fs
 ba223d446b461cce0e427e278e340a87330ed423885f92a674c5039fd755cb5b  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Env.fs
 2f8085bcb8089f174e9548e609530471c9318c31b1bcab4a867e33880cec9e57  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Parity.fs
 d4bdb1646d8e18a40245bbd3fb2ac96ac1acf1adf38355a0b567d7b8d4cc6e48  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/RepoConfig.fs
@@ -21,9 +21,9 @@ bb55f3c8d4d3daffa7e334ecdacff8bfd9462b12a7098e239943d84a3edf915f  apps/rhino-cli
 631376afb9e4d7c5192d38f51b533c18b64cca83c18ed5c50982ba9acce51d74  apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj
 153a226f5ef1d6916aa6e6425b278a606a48659fcba9623c9d01e5cf3b2589a5  apps/rhino-cli/src-fsharp/RhinoCli.Program/src/Program.fs
 822f6ec8446562a4de9a3b1a2481af50fac01bbedc32e1963142709e5f48ec13  apps/rhino-cli/src-fsharp/fsharplint.json
-bc9a44342c0ae76cb4d0dedd8c865192d91e1e6ff507d6a1ac63ddd2f2b79a94  apps/rhino-cli/src-fsharp/project.json
+ec617779c17cbfae9d884fa3ac30216cc3c623acbd984971c7f1648f82ee9181  apps/rhino-cli/src-fsharp/project.json
 f7dacc8dd923488c70eebabe298843022ec5a3ba94b8b7568634a779f24b8da4  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
-6c0e3bb480e2e07e63b1a6da44cecbb3ef387e7df3c6dcb4d74856aa8167d754  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
+9f0d116c98e5f3f86c7663e3ae1134c3bde22f4707579e5eab16669514b7424a  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 85ba308ad0a88485db55b305120d99b9a4ec328d2379536110f73e51f4797fe2  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs
 a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
 30802281ed9b0bab54acba75ee2da33d47048045a1daab5e14aa59402635e13e  apps/rhino-cli/src-fsharp/tests/unit/Steps/DispatchUnitTests.fs
@@ -44,6 +44,8 @@ b49f1f9d865ea485480137d33fbf7a02570ad99b941f7bf6d15bbfa8c96185fe  apps/rhino-cli
 d43395cc8b45ab5197772682e18ba229bba6194507ca40c77053bf3ccd0929a9  apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvValidateSteps.fs
 469970513250f3b199e0efee57fe2279c6e5609ef58e198a64f4b53a29e54c23  apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvValidateUnitTests.fs
 66215f95f2afe48729422ebccadf068687c87bc5538fee88dfa7364da2f08028  apps/rhino-cli/src-fsharp/tests/unit/Steps/FormattersUnitTests.fs
+c99dc72ba90a55126c8f080d98b2ce2cc80037d936398ff42a93353ab7cdc481  apps/rhino-cli/src-fsharp/tests/unit/Steps/FsharpToolInvocationSteps.fs
+df2d2403e3dbf9b7cde5eae9ff273fb26d62ee0841ba72bbbf81c91ed8c8527d  apps/rhino-cli/src-fsharp/tests/unit/Steps/FsharpToolInvocationUnitTests.fs
 618efe0b847d0ba54cf58206596663a4470d3032f12c7dabbbf5cc26fb972864  apps/rhino-cli/src-fsharp/tests/unit/Steps/GitRootUnitTests.fs
 b8a8fbf79e78dee93f32944d3bbae2daccf33876ce5988ae31b1259c2f5ce201  apps/rhino-cli/src-fsharp/tests/unit/Steps/ParityUnitTests.fs
 76ee39dfa9f270aeffdbee896cf4f521f8685dea723f8ec41acb24d3f80abf47  apps/rhino-cli/src-fsharp/tests/unit/Steps/RepoConfigSteps.fs
