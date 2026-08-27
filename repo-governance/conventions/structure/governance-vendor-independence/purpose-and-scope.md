@@ -36,8 +36,8 @@ This convention separates **vendor-neutral governance** (the rules) from **platf
 
 **Out of scope** (vendor terms are intentionally present here):
 
-- `.claude/` — Claude Code platform binding directory (the source tier).
-- `.opencode/` — OpenCode platform binding directory (generated).
-- `.codex/`, `.agents/` — OpenAI Codex CLI platform binding directories (generated).
+- `.claude/`, `.opencode/`, `.codex/`, `.agents/` — platform-binding roots with path-level
+  `source`, `generated`, or `vendored` ownership declared by `repo-config.yml`; vendor terms are
+  expected throughout these roots regardless of ownership class.
 - `docs/reference/platform-bindings.md` — catalog of all platform bindings; references them by necessity.
 - `plans/` — planning documents; may reference vendor specifics when discussing implementation details.

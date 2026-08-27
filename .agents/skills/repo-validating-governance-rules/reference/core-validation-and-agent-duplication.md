@@ -12,8 +12,9 @@ caught mechanically.
 `docs/**/*.md`, root instruction surfaces (`AGENTS.md`, `CLAUDE.md`, `README.md`), active plans
 (`plans/in-progress/**/*.md`, `plans/backlog/**/*.md`). **Exempt**: website content
 (`apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-www/`, `apps/wahidyankf-www/`),
-`plans/done/` (immutable archive), generated mirrors (`.opencode/`, `.codex/`, `.agents/`),
-`generated-reports/`, `local-tmp/`, `worktrees/`.
+`plans/done/` (immutable archive), registry-declared generated binding paths and regions,
+`generated-reports/`, `local-tmp/`, `worktrees/`. Mixed-ownership binding roots are not exempt as
+a whole; source and vendored paths remain in scope when another scope rule includes them.
 
 Validates: file naming (**including ordinal prefixes** — AI-only; no gate decides whether an `NN-`
 prefix marks a real step, per

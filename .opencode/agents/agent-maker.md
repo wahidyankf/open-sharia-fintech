@@ -41,7 +41,8 @@ Create new AI agent files following AI Agents Convention.
 3. Document core responsibility
 4. Define workflow
 5. Reference conventions and Skills
-6. Use Bash tools for .opencode folder writes
+6. Regenerate secondary agent bindings with `npm run generate:bindings`; never hand-edit a
+   generated mirror
 
 ## Reference Documentation
 
