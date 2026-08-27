@@ -33,6 +33,11 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix a
 
 Validate workflow-checker findings before applying fixes.
 
+For `*-quality-gate` findings, preserve the canonical
+[lifecycle validation ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md):
+add Step 0 and separate `lifecycle-status`, remove exact delegated predicates from all prompt paths,
+and never replace missing lifecycle evidence with local validation.
+
 ## Core
 
 `repo-applying-maker-checker-fixer`: mode logic, report discovery

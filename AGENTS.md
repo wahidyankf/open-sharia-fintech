@@ -1,11 +1,11 @@
 # AGENTS.md
 
-> Canonical instruction file for any AI agent or human contributor. Aligned with the
+> Canonical instructions for agents and contributors, aligned with the
 > [AGENTS.md standard](https://agents.md/).
 
 ## Repository Overview
 
-**open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha.
+**open-sharia-enterprise** — Sharia-compliant Nx monorepo, pre-alpha.
 Trunk-Based Dev on `main`. Node.js 24 (Volta), npm.
 
 **See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md) (app naming),
@@ -83,10 +83,10 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 ### Agent Workflow Orchestration
 
-Open task list before each task; keep live. Plan non-trivial work. Preserve active
+Maintain task list. Plan non-trivial work. Preserve
 user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
 file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. Poll CI every 2
-minutes; never `gh run watch`.
+minutes; never `gh run watch`. If main only polls non-CI background work, update user every 5 minutes.
 
 **See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
 

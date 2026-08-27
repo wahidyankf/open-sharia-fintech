@@ -59,9 +59,9 @@ deviation; `LOW` = a cosmetic preference with no enforceable rule behind it.
 
 ## SUPPRESS Block (Never Raise)
 
-- Any nitpick already caught and auto-fixed by a mechanical pre-commit/pre-push/CI gate
-  (Prettier, markdownlint-cli2, `rhino-cli md mermaid validate`, `md links validate`,
-  `md heading-hierarchy validate`, shellcheck, hadolint, actionlint, `fantomas --check`).
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../.claude/skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Whether a new governance rule should exist (architecture's territory).
 - Domain-scenario completeness inside a spec file (logic's territory).
 - Instruction-doc staleness against a changed toolchain (instruction's territory).

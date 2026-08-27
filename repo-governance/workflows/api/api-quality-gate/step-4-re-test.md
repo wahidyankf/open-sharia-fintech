@@ -7,4 +7,5 @@ when_to_use: Use when verifying a fix after Step 3 has been applied.
 # Step 4: Re-Test
 
 Rebuild and redeploy the service, then re-run step 1 against the **current** build. A fix verified
-only against source, never against a live response, does not count as verified.
+only against source, never against a live response, does not count as verified. Preserve Step 0's
+delegation set; invalid lifecycle evidence remains pending instead of being rerun during the test.

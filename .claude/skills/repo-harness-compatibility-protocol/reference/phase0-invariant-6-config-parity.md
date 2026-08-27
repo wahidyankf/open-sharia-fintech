@@ -7,6 +7,9 @@ Scope is the `config:` path declared on each `harness:` entry in `repo-config.ym
 those configs reference — hook scripts, subagent definitions, plugin modules. Generated trees are
 out of scope; Invariant 3 already covers them.
 
+This semantic intent comparison remains active in a quality-gate invocation unless the registry
+later declares an exact gate ID (or `verifies` relationship) for it.
+
 - **Tools**: read every `harness:` entry's `config:` from `repo-config.yml`; for the diff under
   review, determine which declared configs changed; for each changed config, check the others for
   a corresponding change or a recorded absence in

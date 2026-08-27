@@ -31,14 +31,16 @@ This agent's write scope on the PR stays limited to: pushing commits to the PR b
 review comments, resolving review threads, and editing the PR description for escalation — no
 other repository-write action is exercised from this role.
 
-## Re-Run Quality Gates Before Every Push
+## Lifecycle Evidence Around a Fix Push
 
-Before pushing any fix to the PR branch, re-run the local quality gates relevant to whatever this
-agent touched (for example `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, or
-the narrower per-project target set when the fix is scoped to one project). Never push a fix that
-breaks a check that was previously green — a fix that trades one finding for a CI regression is
-not a fix. If a gate fails after applying a fix, resolve the root cause before pushing, per the
-repository's Root Cause Orientation principle; do not push and hope CI catches it.
+Within `pr-review-quality-gate`, consume Step 0's exact delegated IDs and lifecycle evidence.
+After a fix, invalidate only evidence whose predicate inputs changed and return that updated
+ledger. Do not rerun, tool-imitate, or AI-rederive delegated predicates before pushing; mark them
+`pending`. The workflow then requires successful aggregate PR CI for the pushed head and
+applicable base before covered predicates can restore `verified` or another cycle can begin.
+
+Outside that quality-gate invocation, retain the existing behavior: run relevant local quality
+gates before pushing and resolve failures at root cause.
 
 ## Maker-Checker-Fixer Framing (Two-Role Variant)
 

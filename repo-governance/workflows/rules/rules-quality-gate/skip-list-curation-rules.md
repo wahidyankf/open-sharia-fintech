@@ -27,7 +27,7 @@ key that survives renaming, and re-verify entries after any sweep.
 **Per-category triage priority**:
 
 1. CRITICAL findings first — fix or escalate, never skip
-2. Vendor-audit findings second — fix at source or skip with explicit rationale
+2. Traceability findings second — fix at source or skip with explicit rationale
 3. Everything else last — curate by category
 
 ## Deterministic findings → skip-list pipeline

@@ -25,6 +25,8 @@ agent had this content duplicated 2-3x across its own sections.
   coherence), licensing convention fixes
 - [software-documentation-fixes.md](reference/software-documentation-fixes.md) — the 8
   software-documentation sub-patterns, re-validation strategy, execution order, tool selection
+- [lifecycle-delegation.md](reference/lifecycle-delegation.md) — quality-gate exact-ID filtering
+  and selective evidence invalidation
 
 ## Core Principles
 
@@ -37,6 +39,10 @@ agent had this content duplicated 2-3x across its own sections.
   current file state before applying, never apply blind from the report text.
 - **FALSE_POSITIVE carry-forward is mandatory.** Every skipped finding is persisted with a stable
   key so re-runs don't re-flag it.
+- **Quality-gate delegation is authoritative.** When `delegated-gate-ids` is supplied, never
+  revalidate or fix those predicates. Pending evidence belongs to its lifecycle owner. Standalone
+  invocation retains the complete fixer protocol. After edits, intersect changed files with
+  delegated scopes and return a ledger invalidating only affected evidence.
 
 ## Related Agents
 

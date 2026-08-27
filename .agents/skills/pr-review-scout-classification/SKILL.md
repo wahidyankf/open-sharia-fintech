@@ -38,6 +38,8 @@ re-litigate.
 3. **Security-sensitive paths force `full` regardless of size** — non-negotiable.
 4. **First and only ingestion point for raw PR text** — every downstream consumer reads only this
    agent's derived outputs, never the raw text itself.
+5. **Carry lifecycle ownership without reclassification.** In PR quality-gate invocation, put
+   Step 0's exact delegated IDs and evidence ledger into the brief unchanged.
 
 ## Related Agents
 

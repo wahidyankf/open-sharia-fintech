@@ -1,6 +1,6 @@
 ---
 title: "Step 2: Check for Findings"
-description: Counts AI-only findings against the mode threshold, and how deterministic preflight findings are reported but excluded from the threshold count.
+description: Counts retained deterministic and AI-only domain findings without mixing in delegated lifecycle evidence.
 when_to_use: Use when determining, from an audit report, whether the workflow proceeds to fixing or to a confirmation re-check.
 ---
 
@@ -17,14 +17,16 @@ Analyze audit report to determine if fixes are needed.
 
 **Below-threshold findings**: Report but don't block success
 
-These below-threshold rules apply to AI-only findings; deterministic findings from preflight follow the separate visibility-only rule defined above in the Step 2 Condition Check (deterministic findings are reported in the `## Deterministic Findings (rhino-cli preflight)` section of the audit but NEVER count toward the mode threshold regardless of their criticality).
+These thresholds apply to retained deterministic domain findings and AI-only findings. Delegated
+lifecycle predicates never enter the domain finding count.
 
 - **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
 - **ocd**: All findings counted
 
-Deterministic findings (those from the rhino-cli preflight) are reported in the audit but do NOT count toward the mode threshold. They are managed via the `generated-reports/.known-false-positives.md` skip-list outside the iteration loop. Only AI-only findings count toward the mode threshold.
+Layer-coherence and traceability preflight findings count because this workflow owns them.
+Lifecycle evidence is reported in its separate ledger and status.
 
 **Decision**:
 

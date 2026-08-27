@@ -1,38 +1,39 @@
 # Step 0.5: Consume Deterministic Preflight
 
-**Input**: `preflight-report` argument — path to `generated-reports/repo-governance-audit__*.json`,
+**Inputs**: `preflight-report` plus, for `rules-quality-gate`, exact `delegated-gate-ids` and the
+lifecycle evidence ledger. The report path points to `generated-reports/repo-governance-audit__*.json`,
 produced by the orchestrating workflow (`repo-governance/workflows/rules/rules-quality-gate.md`)
 running `./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json`.
 
 **Procedure**:
 
 1. Read the preflight JSON.
-2. Validate envelope: confirm `schema` equals `rhino-cli/repo-governance-audit/v1`. If missing/
-   different, treat preflight as absent and run all Steps 1-8 in full (defensive fallback).
+2. Validate envelope: confirm `schema` equals `rhino-cli/repo-governance-audit/v1`. In
+   quality-gate context, missing/different schema is a technical domain failure. Standalone
+   invocation retains the defensive full-scan fallback.
 3. Extract findings: parse `result.categories[]` (`name`, `command`, `passed`, `findings[]`) and
    `result.skipped_false_positives[]`.
-4. Populate the deterministic skip set. The orchestrator emits exactly four categories, each
-   marking a step/sub-step already covered by `rhino-cli` and never re-evaluated by the AI checker:
+4. Populate the ownership sets. In `rules-quality-gate`, the preflight is already filtered to
+   retain layer coherence and traceability; they are domain findings. Vendor and word-budget
+   predicates arrive only through exact delegated IDs and remain outside the audit finding count.
 
-   | Preflight category       | Step covered (skip)                                                   |
-   | ------------------------ | --------------------------------------------------------------------- |
-   | `layer-coherence`        | Step 7 layer-coherence portion                                        |
-   | `traceability-audit`     | Step 7 traceability portion (Vision/Principles/Conventions)           |
-   | `vendor-audit`           | Step 7 vendor-neutrality portion (governance prose terminology)       |
-   | `governance-word-budget` | Step 6 word-count portion (never re-derive sizes; defer to preflight) |
+   | Retained category    | Domain portion                                    |
+   | -------------------- | ------------------------------------------------- |
+   | `layer-coherence`    | Step 7 layer coherence                            |
+   | `traceability-audit` | Step 7 Vision/Principles/Conventions traceability |
 
    **Not in this envelope**: file naming, frontmatter shape, emoji codepoints, heading hierarchy,
    README index integrity, license presence, and agent/skill verbatim duplication run under the
    sibling `rhino-cli md`, `convention`, and `harness` subcommands (pre-commit/CI gates) — the
    per-step "deterministic-gate annotation" notes say which gate owns each.
 
-5. Embed preflight findings verbatim under a new `## Deterministic Findings (rhino-cli preflight)`
-   section, before `## AI-Only Findings`. Each renders with the same key/severity/criticality/
-   file/line/message shape as a regular finding.
+5. Embed retained findings under `## Deterministic Domain Findings`; they count at their declared
+   criticality. Record delegated IDs/evidence in a separate lifecycle ledger, never as findings.
 6. Re-validation optimization: compute `sha256(preflight-json-bytes)`. If identical to the prior
    iteration's hash (stored at `generated-reports/.preflight-hash-<uuid-chain>`), reuse the prior
    deterministic-findings section unchanged and only re-evaluate AI-only categories; store the new
    hash for next time.
 
-**On failure** (argument missing, file absent, or schema mismatch): log a `[WARN]` explaining
-preflight was unavailable, then run Steps 1-8 in full as fallback.
+**On failure in quality-gate context**: retained preflight failure is a technical domain failure.
+Missing/stale lifecycle evidence is `pending`. Never substitute a local rerun or AI imitation.
+**Standalone context** retains the previous defensive full-scan fallback.

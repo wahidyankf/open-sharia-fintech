@@ -36,6 +36,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -59,6 +63,7 @@ Fully automated workflow that validates all ayokoding-web content (quality, fact
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode and Research Delegation](./ayokoding-web-general-quality-gate/execution-mode-and-research-delegation.md) — Agent Delegation vs. manual, research delegation.
 - [Steps 1-2: Parallel Validation and Aggregate Findings](./ayokoding-web-general-quality-gate/step-1-and-2-parallel-validation-and-aggregate-findings.md) — run checkers, count findings.
 - [Steps 3-4: Apply Content and Facts Fixes](./ayokoding-web-general-quality-gate/03-apply-fixes.md) — the two fixer steps.

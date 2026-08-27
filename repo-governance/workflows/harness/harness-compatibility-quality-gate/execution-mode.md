@@ -24,12 +24,14 @@ User: "Run repo harness compatibility quality gate workflow"
 
 The orchestrator will:
 
-1. Invoke `repo-harness-compatibility-checker` via the Agent tool (runs 5 deterministic
-   parity invariants in Phase 0, then delegates per-harness web research to
+1. Resolve delegated registry IDs and lifecycle evidence, then invoke
+   `repo-harness-compatibility-checker` via the Agent tool (runs unowned semantic parity in Phase 0,
+   then delegates per-harness web research to
    `web-researcher` in Phase 1, writes a combined drift audit report)
 2. Invoke `repo-harness-compatibility-fixer` via the Agent tool (reads audit, applies fixes
    to parity drift, catalog rows, binding files, and specs as needed)
-3. Iterate until zero findings achieved on two consecutive validations
+3. Iterate until zero domain findings are achieved on two consecutive validations; lifecycle
+   evidence is reported separately and never rerun here
 4. Show git status with modified files
 5. Wait for user commit approval
 

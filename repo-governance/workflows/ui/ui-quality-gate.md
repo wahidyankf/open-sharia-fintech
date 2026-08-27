@@ -36,6 +36,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -51,6 +55,7 @@ outputs:
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode](./ui-quality-gate/execution-mode.md) — preferred/fallback execution, how to invoke.
 - [Steps](./ui-quality-gate/steps.md) — the six-step check-fix-recheck loop.
 - [Safety Features](./ui-quality-gate/safety-features.md) — the four loop safeguards.

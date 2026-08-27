@@ -34,6 +34,11 @@ skills:
 
 Validate workflow documentation quality.
 
+For every `*-quality-gate`, enforce the canonical
+[lifecycle validation ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md):
+Step 0 filters exact registry-owned predicates from checker/fixer/recheck prompts, reports a separate
+`lifecycle-status`, and never converts missing evidence into a local rerun or domain finding.
+
 ## Temporary Reports
 
 Pattern: `repo-workflow__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`

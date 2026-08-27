@@ -28,7 +28,7 @@ inputs:
     default: 7
   - name: max-concurrency
     type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
+    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
     required: false
     default: 3
 outputs:
@@ -36,6 +36,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -60,6 +64,7 @@ breaking change, as a scheduled hygiene audit, or when onboarding a new harness.
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode](./harness-compatibility-quality-gate/execution-mode.md) — invocation.
 - [Complementary Anti-Drift Gates](./harness-compatibility-quality-gate/complementary-anti-drift-gates.md) — gates vs. workflow.
 - [Research Delegation](./harness-compatibility-quality-gate/research-delegation.md) — web-researcher use.

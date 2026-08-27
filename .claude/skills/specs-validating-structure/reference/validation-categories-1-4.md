@@ -1,28 +1,31 @@
 # Validation Categories 1-4: Structural, Inventory, Format, Cross-Folder
 
-## Category 1: Structural Completeness (README Coverage) [LLM]
+## Category 1: README Content Quality [LLM]
 
-Every directory within listed folders must have a `README.md`: the five top-level folders
+When `governance-readme-index` is delegated, do not check or infer README existence/index
+membership. For READMEs that exist, retain semantic assessment of useful overview and contents.
+Without delegation, the lifecycle command owns existence for the five top-level folders
 (`product/`, `system-context/`, `containers/`, `components/`, `behavior/`), per-surface subfolders
 (`components/be|web|cli/`, `behavior/<product>-<surface>/gherkin/`), all domain subdirectories
 under `behavior/<product>-<surface>/gherkin/<domain>/` (required for every surface), DDD
 subdirectories (`ddd/`, `ddd/ubiquitous-language/`), and `containers/contracts/` when present.
-Check recursively. **CRITICAL**: missing README.md. **HIGH**: README exists but is empty or lacks
-required sections (overview, contents listing).
+Check semantic quality recursively. **HIGH**: README exists but is empty or lacks required
+overview/contents information.
 
 ## Category 2: Feature File Inventory Accuracy [LLM]
 
-For each listed folder with gherkin specs: count actual `.feature` files recursively, count
-`Scenario:`/`Scenario Outline:` lines per feature, list actual domain directories, compare against
-README claims. **CRITICAL**: README claims N scenarios but actual count differs. **HIGH**: README
-claims N feature files but actual count differs; README lists a domain with no corresponding
-directory/feature. **MEDIUM**: domain directory exists but README doesn't mention it.
+When `specs-structure` is delegated, do not recount registered folders/files or infer numeric
+mismatches. Retain narrative assessment that described domains and responsibilities are coherent.
+Without delegation, use current structure/count commands rather than LLM counting.
 
 ## Category 3: Gherkin Format Compliance [LLM]
 
 **CRITICAL**: feature file missing `Feature:` header. **HIGH**: missing user story block (As a / I
 want / So that); Background step inconsistent within a folder. **MEDIUM**: filename not
 kebab-case. **LOW**: scenario names not sentence case.
+
+Repeated primary Given/When/Then cardinality belongs to `specs-gherkin-cardinality`; never
+re-derive it when that exact ID is delegated.
 
 ## Category 4: Cross-Folder Consistency [LLM] — 2+ folders only
 

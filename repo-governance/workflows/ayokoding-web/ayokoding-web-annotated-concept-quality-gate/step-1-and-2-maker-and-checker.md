@@ -6,6 +6,12 @@ when_to_use: Use when creating or updating Annotated-concept tutorial content, o
 
 # Steps 1-2: Maker and Checker
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass Step 0's `delegated-gate-ids` and `lifecycle-evidence` to
+checker and fixer prompts; exact delegated predicates cannot become findings or enter the fix loop.
+
 ## 1. Maker - Create/Update Worked Examples (Manual/AI-Assisted)
 
 **Objective**: Create or update Annotated-concept tutorial content, in the correct mode (standard
@@ -48,7 +54,7 @@ Annotated-concept standards
 ```bash
 # Invoke via Task tool
 subagent_type: apps-ayokoding-www-annotated-concept-checker
-prompt: "Validate apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/ for compliance with Annotated-concept standards"
+prompt: "Validate apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/ for Annotated-concept standards; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Validation areas**:

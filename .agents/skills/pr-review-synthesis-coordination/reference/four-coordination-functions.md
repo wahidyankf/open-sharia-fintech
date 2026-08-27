@@ -20,10 +20,13 @@ finding is postable:
    "more agents = more raw findings without more value," and it is also the collective backstop
    for every specialist's own `SUPPRESS` block: a finding that slipped past one specialist's own
    suppression discipline still does not survive this filter.
+   During PR quality-gate invocation, apply
+   [lifecycle-owned mechanical suppression](../../pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md)
+   using Step 0's exact delegated IDs and evidence ledger before any finding can survive.
 4. **Tool-verify** — when uncertain about a finding, re-read the cited source (and, if needed,
    delegate to `web-researcher` for anything requiring multi-page research) rather than passing
    an unverified finding through. Never post a finding on the strength of agreement-counting
-   alone.
+   alone. Never tool-verify a delegated lifecycle predicate; missing/stale evidence is `pending`.
 
 A finding survives all four functions before it is eligible for the consolidated review; a
 finding that fails any one of them is dropped, recategorized-and-re-evaluated, or held for

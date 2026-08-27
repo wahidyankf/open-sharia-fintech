@@ -24,7 +24,9 @@ Determine whether to continue fixing or terminate.
 
 **Below-threshold findings**: Continue to be reported in audit but don't affect iteration logic
 
-Deterministic findings (those from the rhino-cli preflight) are reported in the audit but do NOT count toward the mode threshold. They are managed via the `generated-reports/.known-false-positives.md` skip-list outside the iteration loop. Only AI-only findings count toward the mode threshold.
+Retained layer-coherence and traceability findings count toward the domain threshold. Delegated
+lifecycle predicates never enter this loop; their evidence is carried separately as
+`verified`/`pending`/`not-applicable`.
 
 **Depends on**: Step 4 completion
 

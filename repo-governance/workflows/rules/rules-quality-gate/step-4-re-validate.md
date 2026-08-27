@@ -6,24 +6,32 @@ when_to_use: Use when re-checking after a fix cycle in a repo-rules quality-gate
 
 # Step 4: Re-validate (Sequential)
 
-Re-run the deterministic preflight (Step 0.5) first, then invoke the AI checker. If the preflight JSON SHA-256 is unchanged from the prior iteration, the checker reuses the deterministic findings section unchanged and only re-evaluates AI-only categories.
+Re-run the retained domain preflight (Step 0.5), then invoke the AI checker. If its JSON SHA-256
+is unchanged, reuse the retained findings section and re-evaluate AI-only domain categories.
 
 **Preflight re-run**:
 
 ```bash
-mkdir -p generated-reports
-./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json
+rtk mkdir -p generated-reports
+rtk ./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json \
+  --skip vendor-audit --skip governance-word-budget \
+  > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json
 ```
 
-The binary must be built first via `nx build rhino-cli`; the prebuilt path is `apps/rhino-cli/dist/rhino-cli`.
+The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path is
+`apps/rhino-cli/dist/rhino-cli`.
 
 **Agent**: `repo-rules-checker`
 
-- **Args**: `scope: all, preflight-report: {step4.preflight.outputs.preflight-report}`
+- **Args**: `scope: all, preflight-report: {step4.preflight.outputs.preflight-report},
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence || step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-N}` - Verification audit report
 - **Depends on**: Step 3 completion
 
-**Note on preflight unavailability**: If the `preflight-report` argument is missing, the file does not exist, or the JSON fails schema validation, the AI checker falls back to full Steps 1-8 evaluation per its own Step 0.5 graceful-degradation rule (`.claude/agents/repo/repo-rules-checker.md`). This is NOT a workflow failure — the checker logs a `[WARN]` in the audit report and the workflow proceeds. Only an Exit 2 from rhino-cli itself (broken binary, missing dependency) terminates the workflow with `fail`.
+Re-validation reruns retained domain predicates only. Relevant edits invalidate delegated evidence,
+so lifecycle status becomes `pending` until its owner supplies exact current evidence. Missing
+retained preflight output is a technical domain failure, not an AI fallback.
 
 **Success criteria**: Checker completes validation.
 

@@ -10,8 +10,12 @@ Apply validated fixes from the checker audit report.
 
 **Agent**: `pdf-to-md-fixer`
 
-- **Args**: `report: {step2.outputs.pdf-to-md-report-N}, pdf-file: {input.pdf-file}, md-file: {input.md-file}, mode: {input.mode}`
-- **Output**: `{pdf-to-md-fix-report-N}` — fix application report with same UUID chain
+- **Args**: `report: {step2.outputs.pdf-to-md-report-N}, pdf-file: {input.pdf-file},
+md-file: {input.md-file}, mode: {input.mode},
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{pdf-to-md-fix-report-N}`, `{updated-lifecycle-evidence}` after intersecting changed
+  files with delegated scopes
 - **Condition**: Threshold-level findings > 0 from step 3
 
 **Fix scope by mode**:
@@ -32,6 +36,7 @@ Apply validated fixes from the checker audit report.
 - MEDIUM_CONFIDENCE fixes skipped (flagged for manual review)
 - FALSE_POSITIVE findings persisted to `generated-reports/.known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
+- A skipped fixer carries Step 0 lifecycle evidence forward unchanged
 
 **Confidence Downgrade Rules**:
 

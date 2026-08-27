@@ -5,6 +5,15 @@ description: Universal markdown content quality standards for active voice, head
 
 # Applying Content Quality Standards
 
+## Quality-Gate Lifecycle Handoff
+
+Checker/fixer invocations may receive `delegated-gate-ids` and `lifecycle-evidence` from
+[Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Suppress only predicates matched by an exact gate ID or declared `verifies` relationship; an empty
+set suppresses nothing. Checkers return the evidence unchanged. After edits, fixers intersect
+changed files with delegated gate scopes and return `updated-lifecycle-evidence`, invalidating only
+affected entries. Omitted handoff preserves standalone full behavior.
+
 ## Purpose
 
 This Skill provides comprehensive guidance for applying **universal content quality standards** to all markdown content in the repository. It ensures consistent writing quality, accessibility compliance, and professional presentation across documentation, web sites, planning documents, and root files.

@@ -6,23 +6,34 @@ when_to_use: Use when running or interpreting the first two steps of the general
 
 # Steps 1-2: Parallel Validation and Aggregate Findings
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass Step 0's `delegated-gate-ids` and `lifecycle-evidence` to
+every checker and fixer; exact delegated predicates cannot become findings or enter the fix loop.
+Link checking keeps external HTTP/cache validation while `md-links` owns internal path and
+fragment resolution.
+
 ## 1. Parallel Validation (Parallel)
 
 Run all ayokoding validators concurrently to identify all issues across different quality dimensions.
 
 **Agent 1a**: `apps-ayokoding-www-general-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{content-report-N}` - Content quality, bilingual consistency
 
 **Agent 1b**: `apps-ayokoding-www-facts-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{facts-report-N}` - Factual accuracy, code examples, tutorial sequences
 
 **Agent 1c**: `apps-ayokoding-www-link-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{links-report-N}` - Internal/external link validation
 
 **Success criteria**: All checkers complete and generate audit reports.

@@ -41,8 +41,10 @@ or not at all — the execution shapes are meaningless without the invariants th
    verified against the PR's own head) or well-founded rejections get resolved.
 1. **A stale term/count fix requires a repo-wide grep**, not just the cited occurrence — this
    class of miss has recurred across dogfood cycles.
-1. **Never push a fix that breaks a previously-green gate** — re-run relevant quality gates before
-   every push.
+1. **Preserve lifecycle ownership.** In PR quality-gate invocation, do not rerun exact delegated
+   predicates before push. Invalidate affected evidence, return the updated ledger, and let
+   current-head aggregate PR CI replace `pending`. Outside that workflow, retain the existing
+   relevant-gate pre-push verification behavior.
 
 ## Related Agents
 

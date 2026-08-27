@@ -28,3 +28,11 @@ Track across executions:
   earlier ones (a healthy trend), tracked as an observability signal, not a loop-exit condition.
 - **Time to CI-green per cycle**: how many fix-and-push attempts each cycle needs to clear the
   CI-green gate.
+
+## Lifecycle Evidence Scenarios
+
+- Exact current repository/head and applicable-base green aggregate PR CI yields `verified`.
+- A head/base change or relevant fixer edit yields `pending` until a matching green aggregate
+  replaces the stale evidence.
+- Missing evidence never triggers a specialist, synthesis, or fixer rerun of registered checks.
+- Semantic specialist review and surface-conditional runtime/manual tester gates remain active.

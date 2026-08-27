@@ -37,6 +37,8 @@ and tool-verified before a human or `pr-review-fixer` ever sees it.
 prior-use state once per cycle; do not re-derive them. Work begins after those outputs and the
 route-selected specialists' findings exist (or the DD-7 trivial generalist pass). Record the
 passed probe fields in the audit block. Before posting, live `headRefOid` MUST equal the pin.
+Under the PR gate, consume Step 0's exact IDs/evidence; filter owned predicates without
+tool-reverification. Pending evidence never becomes a finding.
 
 ## Charter: Produces Exactly ONE Consolidated Review
 

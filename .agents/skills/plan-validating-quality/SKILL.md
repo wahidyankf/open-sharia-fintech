@@ -62,6 +62,13 @@ and gates as the stop condition. A plan introducing a lasting mechanism must nam
 and explain why existing mechanisms are insufficient; scope outside that boundary or mandatory
 safeguards omitted in the name of minimalism is a finding.
 
+## Quality-Gate Lifecycle Handoff
+
+When the plan quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
+registry IDs or predicates connected through `verifies`. Preserve pending state; never rerun or
+infer delegated work. Plan structure, semantics, evidence, and executability remain in scope. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Related
 
 `repo-generating-validation-reports` (report format, Convergence Safeguards), `repo-applying-maker-checker-fixer`

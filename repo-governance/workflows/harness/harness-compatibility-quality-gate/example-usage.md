@@ -14,7 +14,8 @@ User: "Run repo harness compatibility quality gate workflow"
 
 The orchestrator invokes specialized agents:
 
-- `repo-harness-compatibility-checker` runs Phase 0 (5 parity invariants) then Phase 1
+- `repo-harness-compatibility-checker` consumes lifecycle evidence, runs unowned Phase 0 parity,
+  then Phase 1
   (fetches current upstream conventions for all supported harnesses and diffs against the
   catalog and committed binding files)
 - `repo-harness-compatibility-fixer` applies in-scope parity fixes (CRITICAL/HIGH/MEDIUM)
@@ -28,7 +29,8 @@ The orchestrator invokes specialized agents:
 User: "Run repo harness compatibility quality gate workflow with scope=codex-cli"
 ```
 
-Scopes Phase 1 to a single harness — Phase 0 always runs in full regardless of scope.
+Scopes Phase 1 to a single harness. Unowned Phase 0 semantics still run; delegated predicates
+remain filtered regardless of scope.
 
 ## With Iteration Bounds
 

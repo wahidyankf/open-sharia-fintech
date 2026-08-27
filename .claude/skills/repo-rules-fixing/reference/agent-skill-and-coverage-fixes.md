@@ -30,5 +30,6 @@ and no existing Skill covers it:
    pointers, Core Principles, Related Agents).
 3. Rewrite each of the 3+ agent files to remove the duplicated content and point at the new Skill
    via `skills:` frontmatter and a `## Required Reading` pointer.
-4. Verify every rewritten agent still passes the word-budget gate (`rhino-cli governance
-word-budget validate`) and that the new Skill's `SKILL.md` itself stays ≤500 words.
+4. Standalone: verify rewritten agents with the configured word-budget gate. Under
+   `rules-quality-gate`, do not rerun a delegated word-budget predicate; invalidate its evidence
+   for rewritten files and return it as `pending`.

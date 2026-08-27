@@ -12,8 +12,11 @@ Fix convention violations, frontmatter issues, and content quality problems.
 
 **Agent**: `apps-ayokoding-www-general-fixer`
 
-- **Args**: `report: {step1.outputs.content-report-N}, approved: all`
-- **Output**: `{content-fixes-applied}`
+- **Args**: `report: {step1.outputs.content-report-N}, approved: all,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{content-fixes-applied}`, `{updated-lifecycle-evidence}` after scope-intersection
+  invalidation
 - **Condition**: Content findings exist from step 2
 - **Depends on**: Step 2 completion
 
@@ -27,8 +30,11 @@ Fix factual errors, outdated information, and incorrect code examples.
 
 **Agent**: `apps-ayokoding-www-facts-fixer`
 
-- **Args**: `report: {step1.outputs.facts-report-N}, approved: all`
-- **Output**: `{facts-fixes-applied}`
+- **Args**: `report: {step1.outputs.facts-report-N}, approved: all,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence}`
+- **Output**: `{facts-fixes-applied}`, `{updated-lifecycle-evidence}` after scope-intersection
+  invalidation
 - **Condition**: Facts findings exist from step 2
 - **Depends on**: Step 3 completion
 
@@ -41,3 +47,4 @@ Fix factual errors, outdated information, and incorrect code examples.
 - Uses web verification to ensure accuracy
 - Re-validates findings before applying
 - Preserves educational content intent
+- A skipped conditional fixer carries the latest lifecycle evidence forward unchanged

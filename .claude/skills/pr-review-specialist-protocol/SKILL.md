@@ -26,6 +26,9 @@ discipline.
 - [Findings Handoff and Cross-Cycle Behavior](reference/findings-handoff-cross-cycle-external-facts.md) —
   why specialists never post directly, re-review scope each cycle, and external fact
   verification via `web-researcher`
+- [Lifecycle-Owned Mechanical Suppression](reference/lifecycle-owned-mechanical-suppression.md) —
+  exact-ID suppression and evidence handling during PR quality-gate invocation, while preserving
+  standalone behavior
 
 ## Core Principles
 
@@ -37,6 +40,8 @@ discipline.
   the actual diff determine what you post.
 - **This specialist is a finding producer, not a poster** — `pr-review-synthesis-maker` is the
   sole poster of record.
+- **Quality-gate lifecycle ownership is exact** — suppress only delegated exact IDs or declared
+  `verifies` relationships; pending evidence never triggers a duplicate check.
 
 ## Related Skills / Agents
 

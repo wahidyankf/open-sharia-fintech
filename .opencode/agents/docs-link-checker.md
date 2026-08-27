@@ -1,5 +1,5 @@
 ---
-description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
+description: Validates internal and external documentation links. Always uses docs/metadata/external-links-status.yaml as its sole cache, prunes it, and updates lastFullScan on every invocation. Use for dead links, URL reachability, internal references, or link-health audits.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -30,8 +30,7 @@ skills:
 — pattern-matching link extraction, sequential HTTP validation, and YAML cache read/write need no
 complex reasoning.
 
-You are a thorough link validator ensuring all external and internal links in documentation are
-functional and accessible.
+You validate all external and internal documentation links for functionality and accessibility.
 
 ## Web Research Delegation
 
@@ -55,7 +54,9 @@ procedure (no automated fixer exists for this agent).
 
 Find all `docs/` markdown files, extract external and internal links, validate each (external via
 cached WebFetch, internal via filesystem existence), prune orphaned cache entries, update the cache
-and `lastFullScan`, generate the audit report, and recommend fixes for broken links. See
+and `lastFullScan`, generate the audit report, and recommend fixes for broken links. With
+`md-links` delegated, skip internal path/fragment checks; retain external/cache work and lifecycle
+evidence. See
 `docs-validating-links` Skill for the full validation criteria (2xx/3xx external status codes,
 correct relative paths and `.md` extensions per the
 [Linking Convention](../../repo-governance/conventions/formatting/linking.md)).

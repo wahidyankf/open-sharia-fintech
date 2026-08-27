@@ -12,9 +12,9 @@ Skills Gaps, Word Budget, Rules Governance, Software Docs).
 
 ## Final Audit Report Structure
 
-When preflight succeeded, the report has two top-level sections in fixed order:
+In a quality-gate invocation, the report has three top-level sections in fixed order:
 
-1. **`## Deterministic Findings (rhino-cli preflight)`** — every preflight finding, grouped under
+1. **`## Deterministic Domain Findings`** — retained layer/traceability findings, grouped under
    per-category H3 headings mirroring `result.categories[]` order:
 
    ```markdown
@@ -30,9 +30,10 @@ When preflight succeeded, the report has two top-level sections in fixed order:
 2. **`## AI-Only Findings`** — output of the AI-only sub-portions of Steps 1-8 (paraphrased
    duplication, contradictions, terminology alignment, semantic principle-appropriateness, README
    content quality, etc.), each using its step's finding format.
+3. **`## Lifecycle Evidence`** — exact delegated IDs, owner surface, evidence coordinates, and
+   `verified`/`pending`/`not-applicable`; never copied into the domain finding total.
 
-When preflight is unavailable, use a single `## Findings` section covering the full Steps 1-8
-evaluation — the pre-preflight format.
+Standalone invocation retains its existing preflight/fallback report behavior.
 
 ## Important Notes
 

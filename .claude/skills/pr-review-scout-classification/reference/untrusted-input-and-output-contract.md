@@ -42,7 +42,8 @@ This agent's output, every cycle, is exactly four things:
    route, with the standard route's applicability filter — `full` is not always nine; plans-only
    is empty for `trivial` and its fixed five otherwise.
 3. **Shared-context brief** — the pinned head SHA, PR metadata, linked plan/issue context, the
-   full diff (sliced if recorded), and the prior-cycle dismissal-read state.
+   full diff (sliced if recorded), prior-cycle dismissal-read state, and, in quality-gate context,
+   Step 0's exact delegated IDs and lifecycle evidence ledger.
 4. **Probe class** — the named class of question this cycle asks, and whether that class has
    been used on this PR before. The coordinator records it, so
    [a new probe](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md)

@@ -10,7 +10,8 @@ Run checker again to verify fixes resolved issues and no new issues introduced.
 
 **Agent**: `docs-software-engineering-separation-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence}`
 - **Output**: `{audit-report-N}` - Verification audit report
 - **Depends on**: Step 3 completion
 

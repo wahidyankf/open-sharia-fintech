@@ -10,8 +10,12 @@ Apply validated fixes from the audit report based on mode level.
 
 **Agent**: `repo-rules-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode}, EXECUTION_SCOPE: repo-rules`
-- **Output**: `{fixes-applied}` - Fix report with same UUID chain as source audit
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode},
+EXECUTION_SCOPE: repo-rules,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {current-lifecycle-evidence}`
+- **Output**: `{fixes-applied}` plus `{updated-lifecycle-evidence}` with only predicates affected
+  by changed files invalidated
 - **Condition**: Threshold-level findings exist from step 2
 - **Depends on**: Step 2 completion
 
@@ -28,3 +32,5 @@ Apply validated fixes from the audit report based on mode level.
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
   - **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
+- Delegated lifecycle predicates are never fixer work in this invocation
+- Applied fixes invalidate affected evidence; the fixer never reruns a delegated check to restore it

@@ -34,9 +34,7 @@ which derives its warm-target list from the same `gate list --surface=pre-push` 
 projection rather than a hardcoded target list — then push again; cached results make the second
 run fast.
 
-The registry set includes path-gated entries (e.g. `governance-word-budget` and
-`governance-readme-completeness` fire only when a governance surface such as `repo-governance/`,
-`.claude/`, or `repo-config.yml` changed) that carry their own trigger lists and are skipped when
-their triggers miss, so no-op pushes pay near-zero cost. The CI quality-gate workflow runs the
-equivalent checks unconditionally on every PR against `main` to catch drift from hand-edited files
-that bypassed the local hook.
+Registry entries carry their own scope and triggers, so a missed trigger is a declared
+`not-applicable` result rather than an implicit pass. PR CI evaluates the `ci` projection against
+the PR's actual changed paths and records evidence for that exact repository, head, and base. It
+does not run every pre-push predicate unconditionally, and evidence from an earlier head is stale.

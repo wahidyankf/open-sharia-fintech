@@ -1,7 +1,7 @@
 # Phase 0: Cross-Vendor Parity Invariants (Deterministic)
 
-Run all five before Phase 1, always in full even when Phase 1 is scoped to one harness, so the
-fixer clears deterministic drift before spending time on web research.
+Run the full standalone inventory before Phase 1. Quality-gate filtering is defined in
+[Phase 0 Quality-Gate Filter](./phase0-quality-gate-filter.md).
 
 ## Invariant 1 — Governance prose vendor-neutrality
 

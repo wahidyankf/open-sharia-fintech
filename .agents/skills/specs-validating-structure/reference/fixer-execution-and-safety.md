@@ -8,10 +8,13 @@
    lax/normal/strict/ocd logic.
 4. Sort by priority: P0 (CRITICAL/HIGH confidence) → P1 (CRITICAL/MEDIUM) → P2 (HIGH/HIGH) → etc.
 5. Re-validate each finding — confirm the issue still exists before fixing.
-6. Apply — Edit for markdown, `git mv` via Bash for renames,
-   `nx run rhino-cli:validate:specs-{counts,links}` output for missing-folder/broken-link fixes.
+6. Apply — Edit for Markdown, `rtk git mv` via Bash for renames, and use non-delegated
+   `specs structure validate`/`specs counts validate` or `md links validate` evidence for structural
+   and broken-link fixes.
 7. Post-fix verify — read the modified file to confirm the fix is correct.
 8. Generate the fix report.
+9. Scope-intersect changed files with delegated predicates and return
+   `updated-lifecycle-evidence`; invalidate only intersecting entries.
 
 ## Fix Report Format
 

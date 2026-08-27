@@ -6,8 +6,15 @@ when_to_use: Use when running the first step of the API quality gate loop.
 
 # Step 1: Test (Agent Delegation)
 
+Before invoking the tester, apply the
+[lifecycle validation ownership filter](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Pass any exact `delegated-gate-ids` and the resulting evidence ledger to the tester. The filter may
+delegate repository mechanics; it never delegates the live API contract, authorization, boundary,
+or runtime behaviours exercised here.
+
 Invoke `api-exploratory-tester` with the `scope` input and `output-mode: delivery` when running
-inside a plan, or `local-tmp` for a throwaway pass.
+inside a plan, or `local-tmp` for a throwaway pass. The tester must omit only predicates identified
+by an exact delegated gate ID or its declared `verifies` relationship.
 
 The tester exercises, at minimum: contract conformance (status codes, response shapes, error
 envelopes), auth/authz boundaries, pagination, idempotency, boundary and edge-case payloads, and —

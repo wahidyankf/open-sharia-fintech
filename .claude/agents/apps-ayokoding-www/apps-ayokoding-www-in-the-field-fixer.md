@@ -16,6 +16,12 @@ skills:
 
 # In-the-Field Tutorial Fixer for ayokoding-web
 
+## Lifecycle Handoff
+
+Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Skip only exact delegated
+predicates; empty or omitted delegation suppresses nothing. After edits, scope-intersect changed
+files and return `updated-lifecycle-evidence`, invalidating only affected entries.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

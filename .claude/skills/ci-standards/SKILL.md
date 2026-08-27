@@ -67,3 +67,11 @@ All testable projects must consume Gherkin specs at ALL test levels. Unit tests 
 ## Workflow Requirements
 
 Each demo backend/frontend must have a per-variant test workflow (`test-{app-name}.yml`) calling reusable workflows with CRON schedule (2x daily at WIB 06:00 and 18:00).
+
+## Quality-Gate Lifecycle Handoff
+
+When the CI quality gate provides `delegated-gate-ids` and an evidence ledger, audit the standards
+and declarations but omit exact registry-owned predicates or those connected through `verifies`.
+Preserve pending state; never execute, imitate, revalidate, or fix delegated work. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Fixers invalidate evidence whose registered scope intersects their changed files.

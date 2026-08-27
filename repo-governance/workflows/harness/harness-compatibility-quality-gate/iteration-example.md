@@ -1,20 +1,19 @@
 ---
 title: "Iteration Example"
-description: Two worked traces — a typical sync-drift-only run reaching double-zero success, and an out-of-scope finding reaching partial.
+description: Worked traces for pending lifecycle evidence and an out-of-scope external-drift finding.
 when_to_use: Use when you want a concrete trace of how iterations, fixes, and re-validation play out.
 ---
 
 # Iteration Example
 
-Typical execution flow when the only outstanding issue is parity sync drift:
+Typical execution flow when domain checks are clean but delegated evidence is stale:
 
 ```
-Step 1: Initial validation (Phase 0)
-  Invariant 3 → 1 finding (sync drift)
+Step 0: Resolve lifecycle ownership
+  Binding predicate → pending (evidence head is stale)
 
-Step 3: Apply fixes
-  Fixer runs npm run generate:bindings → agents regenerated
-  Stages .opencode/agents/<changed>.md
+Step 1: Initial validation
+  Unowned semantic parity and external drift → 0 domain findings
 
 Step 4: Re-validate
   Iteration 2 → 0 findings (consecutive_zero: 1)
@@ -24,7 +23,7 @@ Step 5: Iteration control → loop to re-validate
 Step 4: Re-validate
   Iteration 3 → 0 findings (consecutive_zero: 2 — double-zero confirmed)
 
-Result: SUCCESS (3 iterations)
+Result: final-status PASS; lifecycle-status PENDING
 ```
 
 Typical flow when out-of-scope findings are present:

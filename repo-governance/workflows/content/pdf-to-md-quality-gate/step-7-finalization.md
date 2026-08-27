@@ -8,7 +8,10 @@ when_to_use: "Use when implementing or debugging the workflow's final reporting 
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, `{pdf-to-md-report}`
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, `{pdf-to-md-report}`
+
+Derive `lifecycle-status` separately from the latest lifecycle evidence (`verified`, `pending`, or
+`not-applicable`). It never changes domain `final-status`.
 
 **Status determination**:
 

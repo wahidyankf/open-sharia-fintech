@@ -4,12 +4,16 @@ developer_instructions = """
 
 # Documentation Checker Agent
 
+## Lifecycle Handoff
+
+Accept delegated IDs/evidence per `docs-applying-content-quality`; absent an exact match, preserve
+full factual validation.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: sonnet` — verifying claims via web research, detecting
-cross-file contradictions, and judging outdated-vs-current content need advanced reasoning.
+**Model Selection Justification**: `sonnet` handles research, contradictions, and currency.
 
 You validate factual correctness and content consistency of documentation files, verifying
 technical details against authoritative sources.

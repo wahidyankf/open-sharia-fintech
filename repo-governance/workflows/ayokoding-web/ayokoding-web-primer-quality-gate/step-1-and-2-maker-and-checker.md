@@ -6,6 +6,12 @@ when_to_use: Use when creating or updating Primer tutorial content, or when runn
 
 # Steps 1-2: Maker and Checker
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass Step 0's `delegated-gate-ids` and `lifecycle-evidence` to
+checker and fixer prompts; exact delegated predicates cannot become findings or enter the fix loop.
+
 ## 1. Maker - Create/Update Examples (Manual/AI-Assisted)
 
 **Objective**: Create or update Primer tutorial content, scoped to "just enough to be productive"
@@ -45,7 +51,7 @@ when_to_use: Use when creating or updating Primer tutorial content, or when runn
 ```bash
 # Invoke via Task tool
 subagent_type: apps-ayokoding-www-primer-checker
-prompt: "Validate apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/just-enough-go/learning/ for compliance with Primer standards"
+prompt: "Validate apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/just-enough-go/learning/ for Primer standards; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Validation areas**:

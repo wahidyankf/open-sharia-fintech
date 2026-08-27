@@ -32,10 +32,11 @@ review_pr(PR, maximum_cycles = 5):          # default ceiling; durable per-PR ex
         if live_head(PR) != scout.head_sha:
             close_stale_threads(); record_non_credit(post-review); prior = rehydrate(PR); continue
         fixer = pr-review-fixer()
-        fixed = fixer.resolve(PR)           # triage, fix, push, reply, cause-tag each disposition
+        fixed = fixer.resolve(PR, delegated_gate_ids, lifecycle_evidence) # selectively invalidate
                        # same-defect completion is allowed; unrelated work becomes a linked follow-up
         expected_head = fixed.pushed_head ?? scout.head_sha
-        wait_until CI_is_GREEN(PR, head = expected_head)
+        wait_until aggregate_PR_CI_is_GREEN(PR, head = expected_head, base = applicable_base)
+        lifecycle_evidence = exact_head_evidence_or_pending(PR)
         if live_head(PR) != expected_head:
             record_non_credit(post-ci); prior = rehydrate(PR); continue
         prior += consolidated + their resolution state
@@ -63,8 +64,8 @@ Hydration, mismatch disposition, and restart accounting are defined in
 - `pr-review-synthesis-maker` reviews the **full PR each cycle** (deduplicating against
   already-posted comments) and MUST explicitly re-review the fixer's new commits from the previous
   cycle, to catch fix-induced regressions.
-- **Full CI must be GREEN after the fixer's push** before the next fan-out cycle starts — this is a
-  hard gate, not a soft check.
+- **Aggregate PR CI must be GREEN for the exact head/base** before the next cycle; never duplicate
+  it locally.
 - Every agent ends every comment/reply with the AI-attribution footer in its canonical shape — see
   [Identity and Quality Gates](../../../../.claude/skills/pr-review-fixer-resolution/reference/identity-and-quality-gates.md) —
   since no dedicated bot/GitHub App identity is provisioned; any agent may call `web-researcher` for

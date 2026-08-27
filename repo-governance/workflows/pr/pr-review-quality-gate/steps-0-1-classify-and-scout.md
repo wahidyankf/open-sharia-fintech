@@ -12,7 +12,8 @@ when_to_use: "Use when checking the args/outputs/success criteria for the classi
 - **Args**: `{input.pr}`, `{input.cycles}` (default ceiling 5; higher only from the PR's durable,
   explicitly human-authorized extension record)
 - **Output**: Confirmed PR reference, behavior classification, classification evidence, maximum
-  cycle count when eligible, and a reader-facing review-route record in the PR body before fan-out
+  cycle count, `{step0.outputs.delegated-gate-ids}`, `{step0.outputs.lifecycle-evidence}`, and a
+  reader-facing review-route record in the PR body before fan-out
 - **Success criteria**: The PR is open; classification is recorded; `cycles` is positive and no
   greater than 5 unless hydration verified an explicit durable per-PR extension record
 - **Route**: A noneligible PR skips Steps 1–3 and proceeds to the `pr-quality-gate.yml` verification
@@ -26,7 +27,8 @@ body. This is a human-readable audit aid, not a new classifier or mechanical gat
 ## 1. Per-Cycle Scout Pass (Sequential, Repeats for cycle = 1..N)
 
 - **Agent**: `pr-review-scout-maker` (fresh state each cycle)
-- **Args**: PR reference, `prior` state (prior-cycle thread-resolution/dismissal state)
+- **Args**: PR reference, `prior` state, `{step0.outputs.delegated-gate-ids}`, and
+  `{step0.outputs.lifecycle-evidence}`
 - **Output**: Pinned head SHA, risk tier, review route, route-selected specialist set,
   shared-context brief, dismissal state, probe class, and whether that class was previously used
 - **Depends on**: Step 0 (cycle 1); the previous cycle's CI-green gate (cycle > 1)

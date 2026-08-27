@@ -8,15 +8,16 @@ when_to_use: Use when tracing the check-fix loop's re-validation, iteration-cont
 
 ## 4. Re-validate (Sequential)
 
-Run checker again to verify fixes resolved issues and no new issues introduced.
+Run checker to verify fixes resolved issues and no new issues appeared.
 
 **Agent**: `plan-checker`
 
-- **Args**: `scope: {input.scope}, uuid-chain: {previous-uuid-chain}, fix-report: {step3.outputs.fix-report}`
+- **Args**: `scope: {input.scope}, uuid-chain: {previous-uuid-chain}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step3.outputs.updated-lifecycle-evidence if step3 ran; otherwise step0.outputs.lifecycle-evidence}`. Add `fix-report: {step3.outputs.fix-report}` only when Step 3 ran.
 - **Output**: `{audit-report-N}` - Verification audit report
-- **Depends on**: Step 3 completion
+- **Depends on**: Step 2 completion and, when invoked, Step 3 completion
 
-**Re-validation mode**: The UUID chain signals re-validation mode to the checker. The fix report provides the changed files list for scoped re-validation. The checker validates only changed plan files and reuses iteration 1's codebase inspection scope.
+**Re-validation mode**: The UUID chain signals re-validation mode. The fix report scopes changed
+plan files. Reuse iteration 1's inspection and lifecycle evidence; never rerun a delegated check.
 
 **Success criteria**: Checker completes validation.
 
@@ -56,12 +57,15 @@ Determine whether to continue fixing or terminate.
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, `{final-report}`
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, `{final-report}`
 
 **Status determination**:
 
 - **Success** (`pass`): Zero findings after validation
 - **Partial** (`partial`): Findings remain after max-iterations
 - **Failure** (`fail`): Technical errors during check or fix
+
+`lifecycle-status` is `verified`, `pending`, or `not-applicable`. Pending lifecycle evidence stays
+separate from the plan result and is enforced later by its owning hook or CI gate.
 
 **Depends on**: Reaching this step from step 2, 4, or 5

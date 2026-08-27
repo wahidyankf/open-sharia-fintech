@@ -40,6 +40,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -55,6 +59,7 @@ outputs:
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode](./plan-quality-gate/execution-mode.md) — agent delegation vs. manual orchestration.
 - [Research Delegation](./plan-quality-gate/research-delegation.md) — when plan-checker delegates to web-researcher.
 - [Step 1 — Initial Validation](./plan-quality-gate/step-1-initial-validation.md) — full validation scope.

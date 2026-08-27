@@ -12,7 +12,7 @@ Determine whether to continue fixing or finalize.
 
 **Logic**:
 
-- Re-run checker (step 2) to get fresh report
+- Re-run checker (step 2) with Step 0 delegated IDs and Step 4's updated lifecycle evidence
 - Count findings based on mode level (same as Step 3):
   - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
@@ -64,7 +64,11 @@ graph LR
 
 Report final status and summary.
 
-**Output**: `{final-status}`, `{iterations-completed}`, `{examples-count}`, `{coverage-percentage}`, final reports
+**Output**: `{final-status}`, `{lifecycle-status}`, `{iterations-completed}`, `{examples-count}`,
+`{coverage-percentage}`, final reports
+
+Derive `lifecycle-status` separately from the latest lifecycle evidence (`verified`, `pending`, or
+`not-applicable`). It never changes domain `final-status`.
 
 **Status determination**:
 
