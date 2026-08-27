@@ -39,9 +39,12 @@ agents are ordinary `.claude/agents/pr-review/*.md` files under this binding.
 Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Codex CLI. The
 `harness:` registry in `repo-config.yml` is authoritative; adding a fourth is one entry there.
 
-- **`.claude/`**: source of truth (PRIMARY)
-- **`.opencode/`**, **`.codex/`**, **`.agents/`**: auto-generated (SECONDARY) via
-  `npm run generate:bindings`, landing in the **same commit** as the `.claude/` source.
+- **`.claude/`**: source binding (PRIMARY)
+- **Generated mirrors**: `.opencode/agents/`, `.codex/agents/`, the delimited agent region in
+  `.codex/config.toml`, and non-vendored paths under `.agents/skills/`; regenerate them with
+  `npm run generate:bindings` and land them in the **same commit** as their `.claude/` source.
+- **Vendored exceptions**: secondary configuration files and plugin subtrees declared by
+  `repo-config.yml`; maintain these in place because they have no generated source.
   `npm run validate:sync` verifies only the OpenCode agent mirror and the `.agents/skills/` mirror;
   `npm run harness:bindings-validation` additionally verifies `.codex/agents/` and the
   `.codex/config.toml` generated region. Never hand-edit a mirror — except a path a harness entry's

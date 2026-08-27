@@ -59,7 +59,9 @@ agent mirrors are generated, while registry-declared configuration and plugin pa
 - **Secondary mirrors (Generated)**: Synced from the primary using `npm run generate:bindings`
 - **Secondary exceptions (Vendored)**: Maintained in place as declared by `repo-config.yml`
 
-**Workflow**: Always edit the primary platform binding directory first, then run the sync script to regenerate secondary directories.
+**Workflow**: For a generated mirror, edit its declared source and run the binding generator. For a
+vendored path with no in-repository source, edit that path in place. `repo-config.yml` decides which
+case applies.
 
 **See**: [CLAUDE.md](../../../../CLAUDE.md) and [AGENTS.md](../../../../AGENTS.md) for platform-specific documentation.
 
