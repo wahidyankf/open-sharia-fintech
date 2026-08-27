@@ -16,13 +16,15 @@ This workflow validates **source definitions only**. Source includes governance 
 
 - PASS: **Validates**: `repo-governance/` (principles, conventions, development practices, workflows, vision)
 - PASS: **Validates**: `.claude/agents/` (primary agent source definitions — agent-to-agent duplication, agent-Skill duplication, frontmatter compliance)
-- PASS: **Validates**: `.claude/skills/` (primary agent-skill source — agent-skill-to-agent-skill consolidation opportunities, agent-skill content quality). Agent skills are NOT mirrored to secondary bindings — primary binding skill packages are read natively by all supporting coding-agent platforms, so `.claude/skills/` IS the source of truth and IS in scope.
-- PASS: **Validates (partial)**: `docs/explanation/` (Diátaxis tree — preflight frontmatter audit covers tutorial / how-to / reference / explanation per the Diátaxis schema; software-engineering subtree validated by Step 8 in the AI checker for principle alignment, README index accuracy, and version documentation) and `docs/explanation/README.md` (Diátaxis explanation index — Step 1 Rules Governance scope) and `docs/explanation/software-engineering/` (~265 files / 345k lines — Step 8 dedicated validation: governance-principle alignment, cross-reference completeness, file naming, document structure, template completeness, diagram accessibility, README index accuracy, version documentation).
+- PASS: **Validates**: `.claude/skills/` (primary agent-skill source — agent-skill-to-agent-skill consolidation opportunities and content quality). Generated skill mirrors, including `.agents/skills/`, are rebuilt by `npm run generate:bindings`; `.claude/skills/` remains the authored source.
+- PASS: **Validates (partial)**: `docs/explanation/` through the AI checker for rules-governance and software-engineering alignment. The retained deterministic preflight covers only layer coherence and traceability; lifecycle-owned documentation predicates, including frontmatter checks, are consumed as exact external evidence rather than rerun here.
 - FAIL: **Skips**: the rest of `docs/` (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`, `docs/explanation/` non-software-engineering subtrees, `docs/metadata/`) — out of scope for this workflow today; validated by the specialized `docs/` agent family (`docs-checker`, `docs-tutorial-checker`, `docs-link-checker`, `docs-software-engineering-separation-checker`). Extending coverage to all of `docs/` is a backlog item — see [Backlog](./backlog.md).
   - **One carve-out to that skip**: Gherkin step-keyword cardinality (Step 7 sub-check 9) applies to
     ` ```gherkin ` fences **anywhere** in `docs/`, including the otherwise-skipped subtrees. The skip
     above is about document-level validation, not about that one cross-cutting fence rule.
-- FAIL: **Skips**: secondary platform binding agent directories (e.g., `.opencode/agents/`) — auto-generated from `.claude/agents/` via `npm run generate:bindings`. Validate via the sync script + `cross-vendor:parity-validation` Nx target, not this workflow.
+- FAIL: **Skips**: generated platform bindings (for example `.opencode/agents/` and
+  `.agents/skills/`) — rebuild them with `npm run generate:bindings`, then validate them with
+  `rhino-cli harness bindings validate` / `npm run harness:bindings-validation`, not this workflow.
 
 **Generated Output Validation**: Use CLI validation commands for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
 

@@ -8,9 +8,15 @@ when_to_use: Use once verification is clean, to ship the run and record what it 
 
 ## Commit
 
-Stage the ledger's paths explicitly and commit restricted to them, so a formatting hook cannot
-widen the commit into neighbouring work. Follow the repository's commit-message convention:
-imperative mood, no trailing period, conventional type and scope.
+Do not stage or commit until the user explicitly authorizes the named change set. A request to run
+this workflow is not commit authority, and authorization does not expand beyond the paths and
+changes it names.
+
+After authorization, partition the ledger at real thematic boundaries. Use the fewest commits that
+remain independently build-valid, reviewable, and revertible; never force the whole propagation
+into one ledger commit or fragment one purpose into file-by-file commits. Stage each commit's paths
+explicitly so a formatting hook cannot widen it into neighbouring work. Follow the repository's
+commit-message convention: imperative mood, no trailing period, conventional type and scope.
 
 Keep the body free of bare issue-number references — a `#`-prefixed number in a commit body parses
 as a footer and trips the message gate.

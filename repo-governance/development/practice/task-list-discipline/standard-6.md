@@ -1,6 +1,6 @@
 ---
-title: "Task List Discipline — Standard 6: Bounded Status-Update Cadence"
-description: The 5-minute generic / 3-minute CI-related progress-reporting cadence, how mixed batches take the tighter cadence, and how reporting cadence differs from polling cadence
+title: "Task List Discipline — Standard 6: Idle-Polling Status Heartbeat"
+description: The five-minute user heartbeat required only while the main thread has no useful work beyond polling non-CI background work
 category: explanation
 subcategory: development
 tags:
@@ -10,40 +10,23 @@ tags:
   - ai-agents
   - discipline
 created: 2026-06-23
-when_to_use: Use while any task-list item or background agent is in flight, to decide how often to give the user a progress update.
+when_to_use: Use when the main thread is idle except for polling a non-CI background agent or process.
 ---
 
-# Standard 6: Bounded Status-Update Cadence (5 Minutes Generic, 3 Minutes CI-Related)
+# Standard 6: Idle-Polling Status Heartbeat
 
-While task-list items are active — or while any background agent is in flight — give the user a
-progress update in the main thread on an interval set by the **kind of work being awaited**:
+When the main thread has no useful work left and is doing nothing except polling a non-CI
+background agent or process, post a visible status update every **5 minutes** until that work
+finishes or the main thread resumes useful work. The heartbeat is required even when the external
+state has not changed; say briefly that the work remains in progress and what is being awaited.
 
-| Awaited work                                                                                  | Update interval     |
-| --------------------------------------------------------------------------------------------- | ------------------- |
-| **GitHub-CI-related** — Actions runs, PR checks, workflow conclusions, post-push verification | every **3 minutes** |
-| **Generic** — everything else: subagent batches, refactors, doc sweeps, test runs             | every **5 minutes** |
+This heartbeat does **not** apply merely because a task-list item or background agent exists. If the
+main thread is still doing useful work, report meaningful milestones and blockers through ordinary
+commentary without starting a second timer.
 
-**Mixed batches take the tighter cadence.** If any in-flight item is CI-related, the whole batch
-reports at 3 minutes — the CI item is the one that can go red and block delivery.
+CI monitoring has its own 2-minute status-read cadence in the
+[CI Monitoring Convention](../../workflow/ci-monitoring.md). This Standard does not add a separate
+timer for user-facing CI updates.
 
-This **assigns** the two ends of the former "3-5 minutes" range rather than leaving the choice open;
-both values sit inside the old bound, so it is a refinement, not a reversal.
-
-**Reporting cadence is not polling cadence.** This Standard governs how often the agent _speaks to
-the user_. It changes nothing about how often it _checks_ anything: the never-faster-than-2-minutes
-CI polling floor ([CI Monitoring Convention](../../workflow/ci-monitoring.md)) and the 3-minute
-subagent stuck-detection poll ([Subagent Orchestration Convention](../../agents/subagent-orchestration.md))
-both stand unchanged. Polling more often than you report is normal and expected.
-
-The bound runs in both directions, and both matter:
-
-- **Not slower.** Long silent stretches leave the user unable to tell progress from a stall. The task
-  list is the primary observability surface; if it goes quiet, there is nothing else to read.
-- **Not faster.** A status update per micro-event is update-storming: it buries the signal that
-  something actually changed under a stream of noise, which costs the user more attention than
-  silence would. Batch the small stuff into the next scheduled update.
-
-Anchor updates to **meaningful state changes** — a checkbox ticked, a gate turning green or red, a
-phase boundary crossed, a blocker surfacing — rather than to a timer alone. The 5-minute (generic)
-and 3-minute (CI-related) intervals are the pacing bound, not an instruction to emit an update on a
-schedule when nothing has changed.
+State changes such as completion, failure, or a newly discovered blocker should be reported when
+they occur; do not delay them until the heartbeat.

@@ -4523,7 +4523,7 @@ compared, 0 difference(s)`, exit 0. `apps/rhino-cli/scripts/rhino-bin.sh gate li
 > All checks below must pass before starting Phase 6.
 
 - [x] [AI] All 53 Wave C scenarios pass under
-      `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
+      `rtk dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
       **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
       none beyond the implementation/flip commits already listed. The 53 Wave C scenarios were
       cross-referenced by summing `Scenario:` counts across
@@ -4550,7 +4550,7 @@ Total: 625`. Re-running the `[<Fact>]` cross-reference in `ose-private` today (i
       none. `shadow-diff: 10 invocation(s) compared, 0 difference(s)`, exit code 0. `ose-private`
       (fresh branch off `origin/main` at `c550300115`): identical result — `shadow-diff: 10
 invocation(s) compared, 0 difference(s)`, exit code 0.
-- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+- [x] [AI] `rtk nx run rhino-cli:test:quick`, `rtk nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
       **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
       none. All three commands run with a cold Nx cache
@@ -15306,8 +15306,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run **Step 7 (enforcement disposition)**: give every rule one of the three outcomes —
       automated (name the gate), manual (name the reviewer step), or explicitly unenforced (say
       why) — acceptance: no rule left without a disposition in the manifest.
-- [ ] [AI] Run **Step 8 (verification)**: `npm run generate:bindings`, `npm run validate:sync`,
-      `npm run harness:bindings-validation`, then the `rules-quality-gate` — acceptance: all
+- [ ] [AI] Run **Step 8 (verification)**: `rtk npm run generate:bindings`,
+      `rtk npm run validate:sync`, `rtk npm run harness:bindings-validation`, then the
+      `rules-quality-gate` — acceptance: all
       four exit 0 and the quality gate converges to zero findings.
 - [ ] [AI] Reconcile the Step 1 ledger against reality as part of Step 8 — acceptance:
       `git status --porcelain` and the ledger agree exactly; an unledgered modified file is either
@@ -15327,7 +15328,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] The propagation manifest exists at
       `generated-reports/rules-propagation__*__manifest.md` with a surface, layer, and
       disposition for each of R1-R4.
-- [ ] [AI] `npm run validate:sync` and `npm run harness:bindings-validation` exit 0 in both repos.
+- [ ] [AI] `rtk npm run validate:sync` and `rtk npm run harness:bindings-validation` exit 0 in both repos.
 - [ ] [AI] `wc -w AGENTS.md CLAUDE.md` in each repo is below the governance word-budget FAIL
       ceiling.
 - [ ] [AI] The sibling obligation is either discharged or explicitly `none`. The descriptive sweep's
@@ -15382,10 +15383,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Local Quality Gates (Before Push)
 
-- [ ] [AI] Run affected typecheck: `npx nx affected -t typecheck`
-- [ ] [AI] Run affected linting: `npx nx affected -t lint`
-- [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick`
-- [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:behavior:coverage`
+- [ ] [AI] Run affected typecheck: `rtk nx affected -t typecheck`
+- [ ] [AI] Run affected linting: `rtk nx affected -t lint`
+- [ ] [AI] Run affected quick tests: `rtk nx affected -t test:quick`
+- [ ] [AI] Run affected spec coverage: `rtk nx affected -t specs:behavior:coverage`
 - [ ] [AI] Fix ALL failures found — including preexisting issues not caused by your changes
 - [ ] [AI] Verify all checks pass before pushing
 
@@ -15406,6 +15407,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Commit Guidelines
 
+- [ ] [AI] Do not stage or commit until the user explicitly authorizes the named change set; a
+      delivery checklist is not commit authority, and authorization does not extend beyond its
+      stated scope
 - [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits
 - [ ] [AI] Follow Conventional Commits format: `<type>(<scope>): <description>`
 - [ ] [AI] Split different domains/concerns into separate commits — scaffolding, per-scenario

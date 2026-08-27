@@ -24,9 +24,10 @@ word ceiling (progressive disclosure applied to itself).
    changed paths touching a monitored surface.
 2. **PR quality gate (CI)**: `npx nx run rhino-cli:governance-word-budget:validation` runs on every
    PR and push to `main`.
-3. **Deterministic preflight**: `rhino-cli repo-governance audit` includes the category alongside
-   `layer-coherence`, `traceability-audit`, and `vendor-audit`, so `repo-rules-checker` consumes the
-   findings rather than re-deriving them.
+3. **Standalone deterministic audit**: `rhino-cli repo-governance audit` can include this category
+   alongside `layer-coherence`, `traceability-audit`, and `vendor-audit`. The rules quality gate
+   delegates word-budget enforcement to pre-push/CI and passes exact lifecycle evidence to
+   `repo-rules-checker`; the checker does not consume or rederive word-budget findings there.
 
 No pre-commit surface is declared for this gate (FR-1.14): a whole-tree scan on every commit buys
 no additional coverage over the pre-push/CI enforcement points above, and
