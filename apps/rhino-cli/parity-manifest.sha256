@@ -7,7 +7,7 @@ b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli
 11fe7ec2e5e08b432e2d1cedae59e1a555e17e22a1f11494bd83b80c36964b5c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Convention.fs
 015c281c498a64930d705b4806ef139de008a78fcd1197f8a7851cea7586cd85  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Doctor.fs
 ba223d446b461cce0e427e278e340a87330ed423885f92a674c5039fd755cb5b  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Env.fs
-36080e917668b6833f07772c2bd895e47affb4e1c0d57361d8a33512d263d0ad  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Governance.fs
+9995707469b8a3e7bb85a8e92ea34fc297ff7a7f52e9b324a06e5634cfd9cf1c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Governance.fs
 d6444dd71836d812c5933c2b391e56bfe9aa4475b4f4b3ad45832beee975a08d  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Md.fs
 2f8085bcb8089f174e9548e609530471c9318c31b1bcab4a867e33880cec9e57  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Parity.fs
 d4bdb1646d8e18a40245bbd3fb2ac96ac1acf1adf38355a0b567d7b8d4cc6e48  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/RepoConfig.fs

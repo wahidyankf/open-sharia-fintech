@@ -482,7 +482,7 @@ let private isRepoGovernance (path: string) : bool =
 let private titleCaseFromStem (stem: string) : string =
     stem.Split([| '-'; '_' |])
     |> Array.filter (fun w -> w <> "")
-    |> Array.map (fun w -> string (Char.ToUpperInvariant w.[0]) + w.Substring(1))
+    |> Array.map (fun w -> (Char.ToUpperInvariant w.[0]).ToString() + w.Substring(1))
     |> String.concat " "
 
 /// Derives a human-readable fallback title from a sibling-target `name`
@@ -588,7 +588,11 @@ let private generateIndexFile (indexPath: string) (targetDir: string) (linkPrefi
             let updatedLines = before @ missing @ after
 
             let updated =
-                String.Join("\n", updatedLines) + (if content.EndsWith("\n") then "\n" else "")
+                String.Join("\n", updatedLines)
+                + (if content.EndsWith("\n", StringComparison.Ordinal) then
+                       "\n"
+                   else
+                       "")
 
             File.WriteAllText(indexPath, updated)
     else
