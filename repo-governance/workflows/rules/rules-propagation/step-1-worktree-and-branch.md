@@ -17,7 +17,11 @@ isolation buys.
 | `current`   | Work in the tree the caller is already in. The default.                                                                                      |
 | `dedicated` | Create a worktree and branch for this run. Use when the rule change is large, or when the current tree holds work that must ship separately. |
 
-Either way the run ends at a PR. `current` changes where the work happens, not how it is delivered.
+Both modes end at a PR.
+
+Both modes MUST initialize selected worktree root before mutation:
+`rtk npm install && rtk npm run doctor -- --fix`. For `dedicated`, do this immediately after
+creation. Setup elsewhere does not count; the install activates Git hooks.
 
 ## Portable-Rule Parity Identity
 

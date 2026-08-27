@@ -6,16 +6,16 @@ Before implementing any changes, ensure the development environment is ready. Th
 
 ```bash
 # Verify all tools are installed and at correct versions
-npm run doctor
+rtk npm run doctor
 
 # If tools are missing, auto-install them
-npm run doctor -- --fix
+rtk npm run doctor -- --fix
 
 # Preview what would be installed (dry run)
-npm run doctor -- --fix --dry-run
+rtk npm run doctor -- --fix --dry-run
 
 # Check only core tools (git, volta, node, npm, go, docker, jq)
-npm run doctor -- --scope minimal
+rtk npm run doctor -- --scope minimal
 ```
 
 ## Environment File Management (rhino-cli)
@@ -24,25 +24,28 @@ The repository uses `rhino-cli` for environment file management:
 
 ```bash
 # Initialize .env files from .env.example templates
-apps/rhino-cli/scripts/rhino-bin.sh env init
+rtk apps/rhino-cli/scripts/rhino-bin.sh env init
 
 # Backup current .env files
-apps/rhino-cli/scripts/rhino-bin.sh env backup
+rtk apps/rhino-cli/scripts/rhino-bin.sh env backup
 
 # Restore .env files from backup
-apps/rhino-cli/scripts/rhino-bin.sh env restore --force
+rtk apps/rhino-cli/scripts/rhino-bin.sh env restore --force
 
 # Restore including config files (AI tool settings, Docker overrides, etc.)
-apps/rhino-cli/scripts/rhino-bin.sh env restore --force --include-config
+rtk apps/rhino-cli/scripts/rhino-bin.sh env restore --force --include-config
 ```
 
 ## When to Run Environment Setup
 
-- **Immediately after creating or entering a git worktree** — run BOTH `npm install` AND `npm run doctor -- --fix` in the root repository worktree, in that order. This is a mandatory two-step init; the `postinstall` hook's implicit `doctor || true` does NOT substitute for the explicit `doctor --fix` call. See [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md)
+- **Immediately after creating or entering a git worktree** — from that worktree's root, run BOTH
+  `rtk npm install` (dependencies plus Husky hook activation) AND `rtk npm run doctor -- --fix`, in order.
+  Another checkout's setup and `postinstall`'s tolerant `doctor || true` are not substitutes. See
+  [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md)
 - **Before starting any implementation work** — verify tools and env files are ready
 - **After pulling changes** that modify `package.json`, `go.mod`, `.tool-versions`, or other version config
 - **After switching between projects** that use different toolchains
-- **When any build/test/lint command fails with a "not found" or version error** — run `npm run doctor` first
+- **When any build/test/lint command fails with a "not found" or version error** — run `rtk npm run doctor` first
 
 ## Full Setup Guide
 

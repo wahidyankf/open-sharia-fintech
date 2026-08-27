@@ -1,5 +1,5 @@
 ---
-description: "Executes Phase 0 of any plan delivery checklist: installs dependencies, converges the polyglot toolchain via npm run doctor, runs baseline tests for projects in scope, and resolves all preexisting failures before plan work begins. Use at the start of every plan execution to establish a clean, known-good baseline."
+description: "Executes Phase 0 of any plan delivery checklist: installs dependencies/hooks, converges the polyglot toolchain via npm run doctor, runs baseline tests for projects in scope, and resolves all preexisting failures before plan work begins. Use at the start of every plan execution to establish a clean, known-good baseline."
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -23,16 +23,17 @@ Execute the steps below in order; each must pass before the next, so every plan 
 > is a plan defect — report it for `plan-fixer`, do not execute it. See
 > [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-**Step 1 — Install Dependencies**: `npm install`. Acceptance: exits 0, `node_modules/` synced.
+**Step 1 — Install Dependencies and Hooks**: Run `rtk npm install` at the selected worktree root.
+Acceptance: exit 0 and Husky `prepare` completed.
 
-**Step 2 — Converge Polyglot Toolchain**: `npm run doctor -- --fix`. Acceptance: exits 0, no
-unresolved drift — if drift remains, report which tools couldn't auto-fix and stop. Doctor spans
+**Step 2 — Converge Polyglot Toolchain**: `rtk npm run doctor -- --fix`. Acceptance: exit 0 with no
+unresolved drift; otherwise report unfixable tools and stop. Doctor spans
 more languages than this repo builds: `apps/` and `libs/` ship **TypeScript, Rust, F#, and Dart**
 only; the rest format `apps/ayokoding-www/content/**` katas and never block a non-content plan.
 
 **Step 3 — Baseline Test Run**: run the full suite for projects in scope (`nx affected` for a
-subset, `nx run-many -t test:unit` for a full baseline). Record exact pass/fail/skip counts and
-known preexisting failures as user-visible output — this is the acceptance.
+subset, `nx run-many -t test:unit` for a full baseline). Record pass/fail/skip counts and known
+preexisting failures as user-visible output.
 
 **Step 4 — Resolve Preexisting Failures**: for each Step 3 failure, find root cause, classify —
 **in-scope**: fix before Phase 1; **out-of-scope**: document as "known, out-of-scope," don't fix
@@ -55,7 +56,7 @@ the full probe procedure, outcome table, capability boundary, and degraded mode.
 [Reproducible Environments](../../repo-governance/development/workflow/reproducible-environments.md),
 [Deliberate Problem-Solving](../../repo-governance/principles/general/deliberate-problem-solving.md).
 [Worktree Setup](../../repo-governance/development/workflow/worktree-setup.md) — toolchain init
-after `git worktree add`. [Plan Execution Workflow](../../repo-governance/workflows/plan/plan-execution.md).
+after `rtk git worktree add`. [Plan Execution Workflow](../../repo-governance/workflows/plan/plan-execution.md).
 [plan-maker Agent](plan-maker.md) — delivery template includes Phase 0.
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -

@@ -1,6 +1,6 @@
 ---
 title: "Worktree Toolchain Initialization"
-description: "Practice for initializing the full polyglot toolchain (npm install + doctor --fix) in the root repository worktree after creating or entering a git worktree"
+description: "Practice for initializing dependencies, hooks, and the polyglot toolchain in each worktree's root after creating or entering it"
 when_to_use: "Read this index to find the right Worktree Toolchain Initialization child document."
 ---
 
