@@ -159,7 +159,7 @@ type DoctorToolCheckSteps() =
             let sb = Text.StringBuilder()
 
             if jsonFlag then
-                sb.Append(formatDoctorJson result) |> ignore
+                sb.Append(formatDoctorJson result 0L) |> ignore
             else
                 sb.Append(formatDoctorText result false) |> ignore
 

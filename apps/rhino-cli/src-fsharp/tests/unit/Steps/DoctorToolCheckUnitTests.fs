@@ -822,7 +822,7 @@ let ``formatDoctorJson round-trips through JsonDocument`` () =
           MissingCount = 1
           Scope = FullScope }
 
-    use doc = JsonDocument.Parse(formatDoctorJson result)
+    use doc = JsonDocument.Parse(formatDoctorJson result 0L)
     let root = doc.RootElement
     Assert.Equal("missing", root.GetProperty("status").GetString())
     Assert.Equal(1, root.GetProperty("ok_count").GetInt32())
@@ -837,7 +837,7 @@ let ``formatDoctorJson prioritizes missing over warning over ok`` () =
           MissingCount = 0
           Scope = FullScope }
 
-    use doc = JsonDocument.Parse(formatDoctorJson warningOnly)
+    use doc = JsonDocument.Parse(formatDoctorJson warningOnly 0L)
     Assert.Equal("warning", doc.RootElement.GetProperty("status").GetString())
 
     let okOnly =
@@ -846,5 +846,5 @@ let ``formatDoctorJson prioritizes missing over warning over ok`` () =
             WarnCount = 0
             OkCount = 1 }
 
-    use doc2 = JsonDocument.Parse(formatDoctorJson okOnly)
+    use doc2 = JsonDocument.Parse(formatDoctorJson okOnly 0L)
     Assert.Equal("ok", doc2.RootElement.GetProperty("status").GetString())

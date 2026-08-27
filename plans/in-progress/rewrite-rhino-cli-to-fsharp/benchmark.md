@@ -119,6 +119,29 @@ the Phase 0 Rust baseline (14.24 s) for the reason stated above: most of `.husky
 gates are unrelated to `rhino-cli` invocation count, and only four of the CLI's namespaces route
 through F# at this point.
 
+## Interim measurement: after wave C
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+B" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A/Wave
+B — a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged,
+hook run, then the file removed and the index reset). Taken with `convention`, `parity`,
+`repo-config`, `env`, `doctor`, `test-coverage` in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 37.71 ms   |
+| B6 — full pre-commit     | 3.70 s     |
+
+Both figures are in the same band as after-wave-B (39.15 ms / 3.68 s) — `doctor` and
+`test-coverage validate` add real tool-check/coverage-parsing work to two leaves rather than
+widening the argument-shape-matching surface every leaf pays for, so B5 does not rise the way it
+did from wave A to wave B. B6 remains well under the Phase 0 Rust baseline (14.24 s) for the same
+reason stated above: most of `.husky/pre-commit`'s gates are unrelated to `rhino-cli` invocation
+count, and only six of the CLI's namespaces route through F# at this point.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed

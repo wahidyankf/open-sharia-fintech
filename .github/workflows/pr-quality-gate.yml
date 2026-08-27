@@ -255,7 +255,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: rhino-cli-fsharp-binary
-          path: apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          path: apps/rhino-cli/src-fsharp/dist
 
   enumerate:
     name: Enumerate registry CI gate groups

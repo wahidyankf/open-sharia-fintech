@@ -168,6 +168,65 @@ let ``getStagedFiles fails when the git binary cannot be invoked at all`` () =
     finally
         Environment.SetEnvironmentVariable("PATH", original)
 
+// ---- findCommonDir ----
+
+[<Fact>]
+let ``findCommonDir succeeds against this repo's own worktree`` () =
+    match findRoot () with
+    | Error message -> Assert.Fail(sprintf "expected findRoot Ok, got Error %s" message)
+    | Ok repoRoot ->
+        match findCommonDir repoRoot with
+        | Ok commonDir -> Assert.True(Directory.Exists(commonDir))
+        | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``findCommonDir fails when git rev-parse exits non-zero`` () =
+    let root = newGitFixture ()
+    let fakeGitDir = newFakeGitDir 1 ""
+
+    withPath fakeGitDir (fun () ->
+        match findCommonDir root with
+        | Error message -> Assert.Contains("git rev-parse --git-common-dir failed", message)
+        | Ok commonDir -> Assert.Fail(sprintf "expected Error, got Ok %s" commonDir))
+
+[<Fact>]
+let ``findCommonDir fails when git rev-parse exits successfully with empty output`` () =
+    let root = newGitFixture ()
+    let fakeGitDir = newFakeGitDir 0 ""
+
+    withPath fakeGitDir (fun () ->
+        match findCommonDir root with
+        | Error message -> Assert.Equal("git rev-parse --git-common-dir returned empty path", message)
+        | Ok commonDir -> Assert.Fail(sprintf "expected Error, got Ok %s" commonDir))
+
+[<Fact>]
+let ``findCommonDir fails when the git binary cannot be invoked at all`` () =
+    let original = Environment.GetEnvironmentVariable("PATH")
+    let root = newGitFixture ()
+
+    try
+        Environment.SetEnvironmentVariable("PATH", "")
+
+        match findCommonDir root with
+        | Error message -> Assert.Contains("failed to invoke git rev-parse --git-common-dir", message)
+        | Ok commonDir -> Assert.Fail(sprintf "expected Error, got Ok %s" commonDir)
+    finally
+        Environment.SetEnvironmentVariable("PATH", original)
+
+[<Fact>]
+let ``findCommonDir fails when repoRoot is not a git repository`` () =
+    let outsideRepo =
+        Path.Combine(Path.GetTempPath(), "rhino-cli-gitroot-commondir-outside-" + Guid.NewGuid().ToString("N"))
+
+    Directory.CreateDirectory(outsideRepo) |> ignore
+
+    try
+        match findCommonDir outsideRepo with
+        | Error message -> Assert.Contains("git rev-parse --git-common-dir failed", message)
+        | Ok commonDir -> Assert.Fail(sprintf "expected Error, got Ok %s" commonDir)
+    finally
+        Directory.Delete(outsideRepo, true)
+
 [<Fact>]
 let ``findRoot fails when the working directory is outside any git repository`` () =
     let original = Environment.CurrentDirectory

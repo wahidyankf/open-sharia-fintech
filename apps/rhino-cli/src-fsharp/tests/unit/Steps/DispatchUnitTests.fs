@@ -486,3 +486,314 @@ let ``route surfaces a env staged-guard validate failure for a non-git repoRoot`
 
     Assert.Equal(1, code)
     Assert.StartsWith("Error: ", err)
+
+// ---- doctor ----
+
+[<Fact>]
+let ``route rejects an unknown doctor tool selection before probing`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "doctor"; "--tools"; "bogus-tool-xyz" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("Error: unknown Doctor tool", err)
+
+[<Fact>]
+let ``route reports doctor json output for a minimal-scope single-tool selection`` () =
+    let root = newTempDir ()
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "doctor"; "-o"; "json"; "--scope"; "minimal"; "--tools"; "git" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("\"status\"", out)
+    Assert.Contains("\"scope\": \"minimal\"", out)
+
+[<Fact>]
+let ``route reports doctor markdown output for a minimal-scope single-tool selection`` () =
+    let root = newTempDir ()
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "doctor"; "-o"; "markdown"; "--scope"; "minimal"; "--tools"; "git" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("## Doctor Report", out)
+
+[<Fact>]
+let ``route reports doctor text output without a target-share section outside a git repository`` () =
+    let root = newTempDir ()
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "doctor"; "--scope"; "minimal"; "--tools"; "git" |]
+
+    Assert.Equal(0, code)
+    Assert.DoesNotContain("Target-share:", out)
+
+[<Fact>]
+let ``route runs the target-share step against a real git repository root`` () =
+    match RhinoCli.Infrastructure.GitRoot.findRoot () with
+    | Error message -> Assert.Fail(sprintf "expected findRoot Ok, got Error %s" message)
+    | Ok realRepoRoot ->
+        let code, out, _ =
+            runCaptured (okRoot realRepoRoot) [| "doctor"; "--scope"; "minimal"; "--tools"; "git" |]
+
+        Assert.Equal(0, code)
+        Assert.Contains("Target-share:", out)
+
+[<Fact>]
+let ``route runs doctor with no --tools selection at all`` () =
+    let root = newTempDir ()
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "doctor"; "-o"; "json"; "--scope"; "minimal" |]
+
+    Assert.True(code = 0 || code = 1, sprintf "expected exit 0 or 1, got %d" code)
+    Assert.Contains("\"status\"", out)
+
+[<Fact>]
+let ``route runs doctor --fix --prune-cargo-cache --dry-run against a crate-free git repo`` () =
+    // A fresh `git init` fixture has neither `apps/` nor `libs/`, so
+    // `discoverCrates` finds zero crates — `Doctor.fixTargetShares` is then
+    // a guaranteed no-op (nothing to symlink) and `pruneOrphans`/`sweepStale`
+    // only ever look under this fixture's own never-before-seen repo-name
+    // namespace in the shared cache, so this exercises the doctor `--fix` /
+    // `--prune-cargo-cache` target-share wiring without mutating anything
+    // outside this temp directory.
+    let root = newGitRepoFixture ()
+
+    let code, out, _ =
+        runCaptured
+            (okRoot root)
+            [| "doctor"
+               "--scope"
+               "minimal"
+               "--tools"
+               "git"
+               "--fix"
+               "--prune-cargo-cache"
+               "--dry-run" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("Target-share:", out)
+    Assert.Contains("Target-share fix:", out)
+    Assert.Contains("Nothing to fix", out)
+
+// ---- test-coverage validate ----
+
+[<Fact>]
+let ``route reports the clap-style missing-arguments error for bare test-coverage validate`` () =
+    let root = newTempDir ()
+    let code, _, err = runCaptured (okRoot root) [| "test-coverage"; "validate" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("<COVERAGE_FILE>", err)
+    Assert.Contains("<THRESHOLD>", err)
+    Assert.Contains("Usage: rhino-cli test-coverage validate <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route echoes --help in the missing-arguments usage line`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "--help" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("Usage: rhino-cli test-coverage validate --help <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route echoes --output <OUTPUT> in the missing-arguments usage line`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "-o"; "json" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("Usage: rhino-cli test-coverage validate --output <OUTPUT> <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route echoes --verbose in the missing-arguments usage line`` () =
+    let root = newTempDir ()
+    let code, _, err = runCaptured (okRoot root) [| "test-coverage"; "validate"; "-v" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("Usage: rhino-cli test-coverage validate --verbose <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route echoes --quiet in the missing-arguments usage line`` () =
+    let root = newTempDir ()
+    let code, _, err = runCaptured (okRoot root) [| "test-coverage"; "validate"; "-q" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("Usage: rhino-cli test-coverage validate --quiet <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route echoes --no-color in the missing-arguments usage line`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "--no-color" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("Usage: rhino-cli test-coverage validate --no-color <COVERAGE_FILE> <THRESHOLD>", err)
+
+[<Fact>]
+let ``route reports only the missing threshold when the coverage file positional is already given`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out" |]
+
+    Assert.Equal(2, code)
+    Assert.DoesNotContain("  <COVERAGE_FILE>\n", err)
+    Assert.Contains("  <THRESHOLD>\n", err)
+
+[<Fact>]
+let ``route surfaces a repo-root lookup failure for test-coverage validate`` () =
+    let code, _, err =
+        runCaptured (errRoot "boom") [| "test-coverage"; "validate"; "cover.out"; "50" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("Error: failed to find git repository root: boom", err)
+
+[<Fact>]
+let ``route rejects a non-numeric threshold`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out"; "not-a-number" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("Error: invalid threshold \"not-a-number\"", err)
+
+[<Fact>]
+let ``route surfaces a TestCoverage.validate error for a missing coverage file`` () =
+    let root = newTempDir ()
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "does-not-exist.out"; "50" |]
+
+    Assert.Equal(1, code)
+    Assert.StartsWith("Error: ", err)
+
+[<Fact>]
+let ``route passes test-coverage validate text output for coverage at the threshold`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out"; "50" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("100.00%", out)
+
+[<Fact>]
+let ``route passes test-coverage validate json output`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "-o"; "json"; "cover.out"; "50" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("\"pct\"", out)
+
+[<Fact>]
+let ``route passes test-coverage validate markdown output`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "-o"; "markdown"; "cover.out"; "50" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("## Coverage Report", out)
+
+[<Fact>]
+let ``route passes test-coverage validate with per-file and exclude flags`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\nbar.go:1.1,2.2 1 1\n"
+
+    let code, out, _ =
+        runCaptured
+            (okRoot root)
+            [| "test-coverage"
+               "validate"
+               "--per-file"
+               "--exclude"
+               "nomatch/**"
+               "cover.out"
+               "50" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("100.00%", out)
+
+[<Fact>]
+let ``route passes test-coverage validate with a valid below-threshold filter`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, _, _ =
+        runCaptured
+            (okRoot root)
+            [| "test-coverage"
+               "validate"
+               "--per-file"
+               "--below-threshold"
+               "10"
+               "cover.out"
+               "50" |]
+
+    Assert.Equal(0, code)
+
+[<Fact>]
+let ``route ignores an unparseable below-threshold value`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, _, _ =
+        runCaptured
+            (okRoot root)
+            [| "test-coverage"
+               "validate"
+               "--below-threshold"
+               "not-a-number"
+               "cover.out"
+               "50" |]
+
+    Assert.Equal(0, code)
+
+[<Fact>]
+let ``route fails test-coverage validate when coverage is below the threshold`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 0\n"
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out"; "50" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("Error: coverage 0.00% is below threshold 50%", err)
+    Assert.StartsWith("Error: ", err)
+
+[<Fact>]
+let ``route prints help for test-coverage validate when positionals are already satisfied`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out"; "50"; "--help" |]
+
+    Assert.Equal(0, code)
+    Assert.Equal(RhinoCli.Cli.HelpText.Text, out)
+
+[<Fact>]
+let ``route rejects an unknown output format for test-coverage validate`` () =
+    let root = newTempDir ()
+    writeFile root "cover.out" "mode: set\nfoo.go:1.1,2.2 1 1\n"
+
+    let code, _, err =
+        runCaptured (okRoot root) [| "test-coverage"; "validate"; "cover.out"; "50"; "-o"; "xml" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("unknown output format", err)

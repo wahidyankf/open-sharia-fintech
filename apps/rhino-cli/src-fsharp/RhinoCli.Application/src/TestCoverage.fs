@@ -47,6 +47,7 @@ module RhinoCli.Application.TestCoverage
 
 open System
 open System.IO
+open System.Text.Encodings.Web
 open System.Text.Json
 open System.Text.Json.Nodes
 open System.Text.RegularExpressions
@@ -1143,7 +1144,43 @@ let formatJson (r: CoverageResult) (perFile: bool) (belowThreshold: float) : str
 
     let options = JsonSerializerOptions()
     options.WriteIndented <- true
+    options.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     root.ToJsonString(options)
+
+/// Formats `r` as a Markdown coverage report: a summary metric table always,
+/// plus a per-file breakdown table when `perFile` is `true` and `r.Files` is
+/// non-empty [Repo-grounded — `reporter.rs::format_markdown`].
+let formatMarkdown (r: CoverageResult) (perFile: bool) (belowThreshold: float) : string =
+    let status = if r.Passed then "PASS" else "FAIL"
+
+    let sb = Text.StringBuilder()
+
+    sb.Append("## Coverage Report\n\n") |> ignore
+    sb.Append("| Metric | Value |\n") |> ignore
+    sb.Append("| --- | --- |\n") |> ignore
+    sb.Append(sprintf "| File | %s |\n" r.File) |> ignore
+    sb.Append(sprintf "| Format | %s |\n" (formatCode r.Format)) |> ignore
+    sb.Append(sprintf "| Line Coverage | %.2f%% |\n" r.Pct) |> ignore
+    sb.Append(sprintf "| Threshold | %.0f%% |\n" r.Threshold) |> ignore
+    sb.Append(sprintf "| Covered | %d |\n" r.Covered) |> ignore
+    sb.Append(sprintf "| Partial | %d |\n" r.Partial) |> ignore
+    sb.Append(sprintf "| Missed | %d |\n" r.Missed) |> ignore
+    sb.Append(sprintf "| Total | %d |\n" r.Total) |> ignore
+    sb.Append(sprintf "| Status | **%s** |\n" status) |> ignore
+
+    if perFile && not (List.isEmpty r.Files) then
+        let files = filterAndSortFiles r.Files belowThreshold
+
+        if not (List.isEmpty files) then
+            sb.Append("\n### Per-File Breakdown\n\n") |> ignore
+            sb.Append("| Coverage | File | Covered | Partial | Missed |\n") |> ignore
+            sb.Append("| --- | --- | --- | --- | --- |\n") |> ignore
+
+            for f in files do
+                sb.Append(sprintf "| %.2f%% | %s | %d | %d | %d |\n" f.Pct f.Path f.Covered f.Partial f.Missed)
+                |> ignore
+
+    sb.ToString()
 
 // ---------------------------------------------------------------------------
 // `test-coverage validate` entry point [Repo-grounded —
@@ -1160,7 +1197,8 @@ type ValidateOptions =
       PerFile: bool
       BelowThreshold: float
       Exclude: string list
-      Json: bool }
+      Json: bool
+      Markdown: bool }
 
 /// The rendered report plus whether coverage met the threshold. Unlike the
 /// Rust command wrapper — which prints the report and then separately
@@ -1168,8 +1206,15 @@ type ValidateOptions =
 /// the coverage file parses, carrying `Passed` for the caller to translate
 /// into an exit code; `Result.Error` is reserved for cases where no report
 /// could be produced at all (missing file, invalid XML, unsupported format)
-/// [Repo-grounded — `test_coverage_validate.rs::run`].
-type ValidateOutcome = { Output: string; Passed: bool }
+/// [Repo-grounded — `test_coverage_validate.rs::run`]. `Pct`/`Threshold`
+/// (the filtered, post-exclude values) let the CLI-wiring layer reconstruct
+/// Rust's `"coverage {pct:.2}% is below threshold {threshold:.0}%"` failure
+/// message without recomputing anything itself.
+type ValidateOutcome =
+    { Output: string
+      Passed: bool
+      Pct: float
+      Threshold: float }
 
 /// Validates a coverage report file against `opts.Threshold`, auto-detecting
 /// its format (Go, LCOV, or Cobertura — `JaCoCo` and `Diff` are rejected,
@@ -1264,6 +1309,8 @@ let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
         let output =
             if opts.Json then
                 formatJson filtered opts.PerFile opts.BelowThreshold
+            elif opts.Markdown then
+                formatMarkdown filtered opts.PerFile opts.BelowThreshold
             else
                 let perFileText =
                     if opts.PerFile then
@@ -1274,4 +1321,6 @@ let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
                 formatText filtered + perFileText
 
         { Output = output
-          Passed = filtered.Passed })
+          Passed = filtered.Passed
+          Pct = filtered.Pct
+          Threshold = filtered.Threshold })

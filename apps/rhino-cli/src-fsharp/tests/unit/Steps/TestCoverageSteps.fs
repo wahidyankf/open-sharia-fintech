@@ -160,7 +160,8 @@ type TestCoverageSteps() =
                       PerFile = validatePerFile
                       BelowThreshold = validateBelowThreshold
                       Exclude = validateExclude
-                      Json = validateJson }
+                      Json = validateJson
+                      Markdown = false }
             )
 
     let theValidateOutcome () : Result<ValidateOutcome, string> =
