@@ -38,10 +38,12 @@ rtk apps/rhino-cli/scripts/rhino-bin.sh env restore --force --include-config
 
 ## When to Run Environment Setup
 
-- **Immediately after creating or entering a git worktree** — from that worktree's root, run BOTH
+- **Immediately after creating a git worktree** — from that new worktree's root, run BOTH
   `rtk npm install` (dependencies plus Husky hook activation) AND `rtk npm run doctor -- --fix`, in order.
   Another checkout's setup and `postinstall`'s tolerant `doctor || true` are not substitutes. See
   [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md)
+- **Not merely after re-entering an existing worktree** — rerun setup only when missing or drifted
+  dependencies are actually observed
 - **Before starting any implementation work** — verify tools and env files are ready
 - **After pulling changes** that modify `package.json`, `go.mod`, `.tool-versions`, or other version config
 - **After switching between projects** that use different toolchains

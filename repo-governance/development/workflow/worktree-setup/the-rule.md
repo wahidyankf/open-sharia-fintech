@@ -13,13 +13,13 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
-when_to_use: Use as the exact commands to run, in order, right after creating or entering a worktree.
+when_to_use: Use as the exact commands to run, in order, right after creating a worktree.
 ---
 
 # The Rule
 
-**After every `rtk git worktree add`, `EnterWorktree` invocation, or other worktree entry, run BOTH
-commands from the root directory of that new or active worktree, in order:**
+**After every operation that creates a worktree—whether `rtk git worktree add`, an `EnterWorktree`
+invocation, or another creation mechanism—run BOTH commands from that new worktree's root, in order:**
 
 ```bash
 # Set the active worktree root as the command workdir.

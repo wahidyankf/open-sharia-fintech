@@ -1,6 +1,6 @@
 ---
 title: Worktree Toolchain Initialization
-description: Practice for initializing dependencies, hooks, and the polyglot toolchain in each worktree's root after creating or entering it
+description: Practice for initializing dependencies, hooks, and the polyglot toolchain in each new worktree's root immediately after creation
 category: explanation
 subcategory: development
 tags:
@@ -13,12 +13,12 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
-when_to_use: Use immediately after creating or entering any git worktree, before Git mutations or Nx commands in it.
+when_to_use: Use immediately after creating a git worktree, before Git mutations or Nx commands in it.
 ---
 
 # Worktree Toolchain Initialization
 
-After creating or entering a git worktree, initialize dependencies, Git hooks, and the polyglot
+After creating a git worktree, initialize dependencies, Git hooks, and the polyglot
 toolchain from the **root directory of that worktree** with a mandatory two-step sequence:
 
 1. Run `rtk npm install` at that worktree root. Besides dependencies, `prepare` activates Husky hooks.
@@ -35,7 +35,7 @@ dependencies and Git hooks; never invent or infer an equivalent command.
 - [Principles and Conventions Implemented](./worktree-setup/principles-and-conventions-implemented.md) — Why this practice exists.
 - [The Rule](./worktree-setup/the-rule.md) — The exact two-step command sequence, and the shared cargo cache it provisions.
 - [Independent Drift Layers and the `postinstall` Hook](./worktree-setup/independent-drift-layers-and-the-postinstall-hook.md) — Why both steps are independently required.
-- [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/dependency-isolation-language-breadth-and-idempotency.md) — Why every worktree entry needs the init.
+- [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/dependency-isolation-language-breadth-and-idempotency.md) — Why every new worktree needs the init.
 - [What Goes Wrong Without Both Steps](./worktree-setup/what-goes-wrong-and-nx-node-modules-dependency.md) — Build/test/lint/cache failure modes.
 - [Per-Project Dependency Restoration](./worktree-setup/per-project-dependency-restoration.md) — The F#/.NET `dotnet restore` gap.
 - [Sibling-Repo Relative Paths From Inside a Worktree](./worktree-setup/sibling-repo-relative-paths.md) — Correct path nesting in multi-repo plans.

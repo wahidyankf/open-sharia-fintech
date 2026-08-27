@@ -19,9 +19,11 @@ isolation buys.
 
 Both modes end at a PR.
 
-Both modes MUST initialize selected worktree root before mutation:
-`rtk npm install && rtk npm run doctor -- --fix`. For `dedicated`, do this immediately after
-creation. Setup elsewhere does not count; the install activates Git hooks.
+`dedicated` mode MUST initialize the new worktree root immediately after creation and before
+mutation: `rtk npm install && rtk npm run doctor -- --fix`. `current` mode does not create a
+worktree, so it relies on the caller's existing setup; merely entering an existing worktree never
+triggers this sequence. Setup in another checkout does not initialize a newly created worktree
+because the install activates hooks for the selected worktree.
 
 ## Portable-Rule Parity Identity
 

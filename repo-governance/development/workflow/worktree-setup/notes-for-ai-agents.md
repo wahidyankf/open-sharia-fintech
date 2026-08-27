@@ -13,15 +13,17 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
-when_to_use: Use when an agent creates or enters a worktree, or discovers missing dependencies/build output mid-session.
+when_to_use: Use when an agent creates a worktree or discovers missing dependencies/build output mid-session.
 ---
 
 # Notes for AI Agents
 
-Agents that create or enter worktrees via `rtk git worktree add`, the `EnterWorktree` tool, or an
+Agents that create worktrees via `rtk git worktree add`, the `EnterWorktree` tool, or an
 `isolation: "worktree"` configuration MUST immediately run BOTH `rtk npm install` AND
 `rtk npm run doctor -- --fix` from that worktree's root, in order. The install activates Husky hooks as
 well as dependencies. Doing only one step is a rule violation.
+
+Merely entering an existing worktree does not trigger the sequence again.
 
 Re-run both steps whenever a worktree's dependencies or build output turn out to be missing mid-session. The [Build-Artifact Sweeper Convention](../../infra/build-artifact-sweeper.md) makes that an expected occurrence — the worktree itself is intact, so the response is re-running this two-step init (plus any needed `nx build`), never re-provisioning the worktree or investigating a defect.
 
