@@ -13,7 +13,7 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
-when_to_use: Use when explaining why every worktree entry needs the two-step init regardless of stated task scope.
+when_to_use: Use when explaining why every new worktree needs the two-step init regardless of stated task scope.
 ---
 
 # Dependency Isolation, Language Breadth, and Idempotency
@@ -32,4 +32,4 @@ Even worktree sessions whose stated intent is "I'm just editing docs" should run
 
 ## `doctor --fix` Is Idempotent and Fast When Healthy
 
-Per [Native-First Toolchain Management](../native-first-toolchain.md), every package manager backing `doctor --fix` (`brew`, `volta`, `asdf`, `pyenv`, `cargo install`, `rustup`, etc.) is idempotent. When the toolchain is already healthy, `doctor --fix` is a no-op pass; when it has drifted, it actively converges. The cost of running it unconditionally on every worktree entry is very low; the cost of skipping it and hitting drift later is high.
+Per [Native-First Toolchain Management](../native-first-toolchain.md), every package manager backing `doctor --fix` (`brew`, `volta`, `asdf`, `pyenv`, `cargo install`, `rustup`, etc.) is idempotent. When the toolchain is already healthy, `doctor --fix` is a no-op pass; when it has drifted, it actively converges. The cost of running it when creating every worktree is very low; the cost of skipping it and hitting drift later is high.

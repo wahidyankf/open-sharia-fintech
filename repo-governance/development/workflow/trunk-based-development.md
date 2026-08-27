@@ -24,11 +24,13 @@ when_to_use: Use when deciding how a change reaches main, choosing a delivery mo
      .codex/ carry auto-generated mirrors, never hand-edited)
   4. repo-governance/workflows/plan/plan-execution.md (context for plan execution — orchestrated by the calling context)
   5. .claude/skills/repo-practicing-trunk-based-development/SKILL.md (operator-facing invocable
-     entry point; not mirrored — OpenCode reads .claude/skills/ natively)
+     entry point)
   6. .claude/skills/plan-creating-project-plans/SKILL.md (plan-authoring skill's own Delivery Mode
-     summary; not mirrored)
+     summary)
   7. .claude/skills/plan-grooming-idea-briefs/SKILL.md (plan-ideas-grooming workflow's invocable
-     entry point; not mirrored)
+     entry point)
+  Skill sources remain in .claude/skills/: OpenCode reads them natively, while the binding
+  generator mirrors them to .agents/skills/ for Codex. Never hand-edit the generated mirror.
   When updating, synchronize all seven locations.
 -->
 
@@ -63,7 +65,7 @@ TBD works best combined with CI and Feature Flags (above), Automated Testing, an
 - [PR Merge Protocol](../workflow/pr-merge-protocol.md) — merge preconditions and the done-boundary.
 - [Git Push Default Convention](../workflow/git-push-default.md) — PR-branch-as-default push target.
 - [CI Post-Push Verification](../workflow/ci-post-push-verification.md) — verification after every push.
-- [Worktree Toolchain Initialization](../workflow/worktree-setup.md) — two-step init after worktree entry.
+- [Worktree Toolchain Initialization](../workflow/worktree-setup.md) — two-step init after worktree creation.
 
 ## References and Further Reading
 

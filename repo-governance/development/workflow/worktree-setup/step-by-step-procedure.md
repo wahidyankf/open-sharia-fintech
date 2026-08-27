@@ -18,7 +18,7 @@ when_to_use: Use as a walkthrough when creating a worktree and running its toolc
 
 # Step-by-Step Procedure
 
-1. Create or enter the worktree using your preferred method:
+1. Create the worktree using your preferred method:
 
    ```bash
    rtk git worktree add worktrees/my-feature-branch my-feature-branch
@@ -26,7 +26,7 @@ when_to_use: Use as a walkthrough when creating a worktree and running its toolc
 
    This repo overrides the upstream coding-agent default worktree path — worktrees land at repo-root `worktrees/<name>/`, not under the platform binding directory. See [worktree-path.md](../../../conventions/structure/worktree-path.md) for the convention and the `WorktreeCreate` hook that enforces it.
 
-2. Enter the root directory of the worktree just created or selected.
+2. Enter the root directory of the worktree just created.
 
 3. Install its dependencies and activate Husky hooks:
 

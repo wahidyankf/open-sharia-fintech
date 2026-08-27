@@ -33,7 +33,11 @@ Husky + lint-staged auto-run Prettier, markdown lint, and link validation on com
 
 ## Development Environment Setup
 
-Verify the toolchain before implementing anything: `npm run doctor` (add `-- --fix` to auto-install). `rhino-cli` manages `.env` files. Run both `npm install` and `npm run doctor -- --fix` right after creating or entering a worktree. See [Development Environment Setup](./reference/development-environment-setup.md) for the full command reference and when-to-run guidance.
+Verify the toolchain before implementing anything: `rtk npm run doctor` (add `-- --fix` to
+auto-install). `rhino-cli` manages `.env` files. Run both `rtk npm install` and
+`rtk npm run doctor -- --fix` right after creating a worktree; re-entry alone does not trigger
+setup. See [Development Environment Setup](./reference/development-environment-setup.md) for the
+full command reference and when-to-run guidance.
 
 ## Development Workflow Pattern
 

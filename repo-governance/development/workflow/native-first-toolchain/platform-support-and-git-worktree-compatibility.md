@@ -41,4 +41,9 @@ All commands work correctly from git worktrees. `findGitRoot()` uses `os.Stat` t
 
 This is important because the repository uses git worktrees heavily for AI agent isolation (`.claude/worktrees/`).
 
-Per the [Worktree Toolchain Initialization](../worktree-setup.md) practice, `npm run doctor -- --fix` is required as the second step of a mandatory two-step init (after `npm install`) whenever a worktree is created or entered. Doctor's idempotency (documented in the Rationale section above) is what makes running it unconditionally at worktree entry cheap enough to codify as a rule — when the toolchain is healthy, `doctor --fix` is a no-op pass; when it has drifted, it actively converges.
+Per the [Worktree Toolchain Initialization](../worktree-setup.md) practice,
+`npm run doctor -- --fix` is required as the second step of a mandatory two-step init (after
+`npm install`) whenever a worktree is created. Doctor's idempotency (documented in the Rationale
+section above) makes running it for every new worktree cheap enough to codify as a rule—when the
+toolchain is healthy, `doctor --fix` is a no-op pass; when it has drifted, it actively converges.
+Mere re-entry does not trigger setup.
