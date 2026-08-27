@@ -261,6 +261,53 @@ PR:
       leaves `test:quick` green; a split that ships scenarios without their step definitions is a
       rule-4 violation dressed as compliance, not a split.
 
+### Governance-readme-index split-ceiling exception (Wave D PR8 only)
+
+**`governance/governance-readme-index.feature` (19 scenarios) lands as one PR despite exceeding the
+rule-4 ceilings — 1,548 added lines across 10 files
+[Repo-grounded — `git diff --numstat origin/main... | awk '{a+=$1} END {print a}'` and
+`git diff --name-only origin/main... | wc -l`, measured on `rhino-fsharp-wave-d-pr8-governance-readme-index-audit`].**
+Scope: this one feature file only — it does not generalize to any other flagged file in the nine-file
+list above, and per the non-precedent clause on the rule-4 exclusion, a future PR wanting the same
+treatment records its own exception with its own reasoning.
+
+**Justification.** A scenario-boundary split was attempted (three PRs: audit scenarios 1-9, flags
+scenarios 10-14, generate/rewrite-paths scenarios 15-19) and abandoned after CI evidence showed the
+`specs:behavior:coverage` tool cannot support a partial-file split of a single Gherkin feature.
+The tool's `--shared-steps` mode matches step text against whichever `.feature` files are listed as
+positional arguments to the F# project's coverage command, with no per-scenario or per-project
+scoping. Three configurations were tried, all fail:
+
+1. Wire the feature file into F#'s coverage args only in the last split PR (the original design).
+   Result: the first split PR's new step definitions (for the scenarios it does implement) have no
+   Gherkin file in scope to match against, so they are reported as orphan step implementations —
+   confirmed on PR#342 (`ose-public`), 17 orphans.
+2. Wire the whole feature file in immediately. Result: scenarios not yet implemented in that split
+   PR have no matching F# step, reported as step gaps — the same failure under a different name.
+3. Wire the file in immediately and tag the not-yet-implemented scenarios `@wip` (the tool's
+   documented exemption for declared-but-unimplemented scenarios). Result: `@wip` removes a
+   scenario's Gherkin text from the coverage tool's matcher entirely, project-agnostically. Since
+   Rust's `rhino-cli` coverage target scans the same canonical spec file and already has complete,
+   working step implementations for those same scenarios, tagging them `@wip` strips the Gherkin
+   text those Rust implementations match against — verified locally via
+   `npx nx run rhino-cli:specs:behavior:coverage`, which reported 35 new orphan step implementations
+   in `apps/rhino-cli/tests/governance.rs` that were covered before the tag was added. A split-PR
+   convenience for the F# port cannot be purchased by silently blinding the Rust reference
+   implementation's own coverage gate.
+
+No configuration of the coverage tool's arguments supports "this scenario is fully implemented in
+Rust and not yet in F#" as a real state — every option either fabricates an orphan/gap or removes
+real coverage. Physically fragmenting the canonical `.feature` file into three files was considered
+and rejected: it would have been safe for the coverage tool (matching is by step text, not file
+path) but cascades into the plan's own measured totals (Wave D's 11-feature-file count, the
+nine-flagged-files list, the 528/72 grand total), trading one localized exception for edits across
+the plan document with no reduction in actual scenario count or implementation risk. The single-shot
+implementation was already built, RED-before-GREEN per scenario, and fully green under
+`test:quick` before the split was attempted — the exception costs nothing beyond the ceiling number
+itself, and PR-review cycles are already waived for this plan's remaining execution (user-granted
+automerge-on-green-CI, no specialist review), so the ceiling's reviewability rationale does not
+bind here either.
+
 ### Wave map
 
 Every scenario in the repository is assigned to exactly one wave. The counts below are measured, and
