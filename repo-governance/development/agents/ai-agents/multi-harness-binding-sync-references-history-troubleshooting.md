@@ -32,7 +32,11 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 **Conversion Logic**:
 
-- **Agents**: Primary format → secondary format (tool arrays → permission object, model mapping)
+- **`.opencode/agents/`**: canonical Markdown/YAML → Markdown/YAML permission object plus model
+  mapping
+- **`.codex/agents/`**: canonical metadata/body → TOML `name`, `description`, and
+  `developer_instructions`; tool/model frontmatter is omitted, and the generator also owns the
+  delimited agent-table region in `.codex/config.toml`
 - **Agent skills**: one harness reads `.claude/skills/` natively; the other gets a real-file
   byte-copy mirror at `.agents/skills/`
 - **Validation**: three mirror trees now, not two — `.opencode/agents/`, `.codex/agents/` (plus
@@ -56,10 +60,9 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 ## Best Practices
 
-1. **Always edit `.claude/` first** - Never edit a `class: generated` file under `.opencode/` or
-   `.codex/` directly (changes will be overwritten). Exception: a path an entry's `ownership:` list
-   declares `vendored` — e.g. `.opencode/opencode.json`, `.codex/config.toml`'s undelimited
-   region — is hand-maintained by design and MUST be edited directly.
+1. **Edit the declared source** - Never edit a `class: generated` file directly; changes will be
+   overwritten. Edit registry-declared vendored paths such as `.opencode/opencode.json` or the
+   undelimited region of `.codex/config.toml` in place.
 2. **Run sync after changes** - Ensure every generated-tier binding stays synchronized
 3. **Test every platform** - Verify agents work in all supported platforms after major changes
 4. **Document sync status** - Keep canonical README indexes current, then regenerate every
