@@ -43,6 +43,7 @@ open System
 open System.Diagnostics
 open System.IO
 open System.Runtime.InteropServices
+open System.Text.Encodings.Web
 open System.Text.Json
 open System.Text.Json.Nodes
 open RhinoCli.Domain.Types
@@ -1470,10 +1471,19 @@ let installPlaywright (_req: string) (platform: string) : InstallStep list =
 /// [Repo-grounded — `tools.rs::build_tool_defs`].
 let buildToolDefs (repoRoot: string) : ToolDef list =
     let packageJsonPath = Path.Combine(repoRoot, "package.json")
-    let globalJsonPath = Path.Combine(repoRoot, "global.json")
 
     let rustToolchainTomlPath =
         Path.Combine(repoRoot, "apps", "rhino-cli", "rust-toolchain.toml")
+
+    // `doctor.dotnet-global-json` in `repo-config.yml` overrides the .NET SDK
+    // config-file location (defaulting to the root `global.json`) — this repo
+    // configures `apps/ose-be/global.json` — mirroring
+    // `tools.rs::configured_dotnet_global_json`'s repo-config lookup, which a
+    // hardcoded root-relative path cannot reproduce.
+    let dotnetToolDef =
+        RhinoCli.Application.RepoConfig.buildDotnetToolDef
+            repoRoot
+            (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot)
 
     [ { Name = "git"
         Binary = "git"
@@ -1531,12 +1541,12 @@ let buildToolDefs (repoRoot: string) : ToolDef list =
         InstallCmd = Some installCargoLlvmCov }
       { Name = "dotnet"
         Binary = "dotnet"
-        Source = "doctor.dotnet-global-json → sdk.version"
+        Source = dotnetToolDef.Source
         Args = [ "--version" ]
         UseStderr = false
         ParseVer = parseDotnetVersion
         Compare = compareMajorGte
-        ReadReq = (fun () -> readDotnetVersion globalJsonPath |> Option.defaultValue "")
+        ReadReq = dotnetToolDef.ReadReq
         InstallCmd = Some installDotnet }
       { Name = "docker"
         Binary = "docker"
@@ -1971,13 +1981,21 @@ let formatDoctorText (result: DoctorResult) (quiet: bool) : string =
 /// Serialises `result` to a pretty-printed JSON string
 /// [Repo-grounded — `reporter.rs::format_json`].
 ///
+/// `durationMs` is the caller-measured wall-clock duration of the check run
+/// in milliseconds — `DoctorResult` itself carries no timing field (this
+/// port's `checkAll` is synchronous and pure-enough that callers time it
+/// externally), matching `reporter.rs::format_json`'s always-present
+/// `duration_ms`/`timestamp` fields byte-for-byte for `shadow-diff.sh`
+/// (both are masked as volatile before comparison, so the exact value never
+/// needs to match — only the field's presence, position, and JSON shape do).
+///
 /// Gherkin (binds) — "JSON output lists all tool check results":
 ///   Given all required development tools are present with matching versions
 ///   When the developer runs the doctor command with JSON output
 ///   Then the command exits successfully
 ///   And the output is valid JSON
 ///   And the JSON lists every checked tool with its status
-let formatDoctorJson (result: DoctorResult) : string =
+let formatDoctorJson (result: DoctorResult) (durationMs: int64) : string =
     let toolNode (c: ToolCheck) : JsonNode =
         let node = JsonObject()
         node.["name"] <- JsonValue.Create(c.Name)
@@ -2005,18 +2023,62 @@ let formatDoctorJson (result: DoctorResult) : string =
 
     let root = JsonObject()
     root.["status"] <- JsonValue.Create(overallStatus)
-
-    if result.Scope = MinimalScope then
-        root.["scope"] <- JsonValue.Create(doctorScopeCode result.Scope)
-
+    // `Scope::code()` never returns an empty string (`"full"` or `"minimal"`),
+    // so `reporter.rs::format_json`'s `skip_serializing_if = "str::is_empty"`
+    // on this field never actually skips it — always present.
+    root.["scope"] <- JsonValue.Create(doctorScopeCode result.Scope)
+    root.["timestamp"] <- JsonValue.Create(DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz"))
     root.["ok_count"] <- JsonValue.Create(result.OkCount)
     root.["warn_count"] <- JsonValue.Create(result.WarnCount)
     root.["missing_count"] <- JsonValue.Create(result.MissingCount)
+    root.["duration_ms"] <- JsonValue.Create(durationMs)
     root.["tools"] <- JsonArray(result.Checks |> List.map toolNode |> Array.ofList)
 
     let serializeOptions = JsonSerializerOptions()
     serializeOptions.WriteIndented <- true
+    serializeOptions.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     root.ToJsonString(serializeOptions)
+
+/// Formats `result` as a Markdown report with a summary table and a per-tool
+/// table [Repo-grounded — `reporter.rs::format_markdown`]. `durationMs` is
+/// unused here — the Markdown report has no duration field, only
+/// `**Generated**` (masked as volatile by `shadow-diff.sh`, same as the JSON
+/// formatter's `timestamp`).
+let formatDoctorMarkdown (result: DoctorResult) : string =
+    let sb = Text.StringBuilder()
+    sb.Append("## Doctor Report\n\n") |> ignore
+
+    sb.Append(sprintf "**Generated**: %s\n\n" (DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz")))
+    |> ignore
+
+    let total = result.OkCount + result.WarnCount + result.MissingCount
+    sb.Append("### Summary\n\n") |> ignore
+    sb.Append("| Metric | Value |\n") |> ignore
+    sb.Append("|--------|-------|\n") |> ignore
+    sb.Append(sprintf "| OK | %d |\n" result.OkCount) |> ignore
+    sb.Append(sprintf "| Warning | %d |\n" result.WarnCount) |> ignore
+    sb.Append(sprintf "| Missing | %d |\n" result.MissingCount) |> ignore
+    sb.Append(sprintf "| Total | %d |\n" total) |> ignore
+    sb.Append("\n") |> ignore
+
+    sb.Append("### Tools\n\n") |> ignore
+    sb.Append("| Tool | Status | Installed | Required | Note |\n") |> ignore
+    sb.Append("|------|--------|-----------|----------|------|\n") |> ignore
+
+    for c in result.Checks do
+        sb.Append(
+            sprintf
+                "| %s | %s %s | %s | %s | %s |\n"
+                c.Name
+                (symbolFor c.Status)
+                (toolStatusCode c.Status)
+                (displayVersion c)
+                c.RequiredVersion
+                c.Note
+        )
+        |> ignore
+
+    sb.ToString()
 
 // ---------------------------------------------------------------------------
 // F# lint-target Fantomas tool-invocation check [F#-native meta-check — no

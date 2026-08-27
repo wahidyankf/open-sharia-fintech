@@ -709,7 +709,8 @@ let ``validate rejects jacoco coverage files`` () =
           PerFile = false
           BelowThreshold = 0.0
           Exclude = []
-          Json = false }
+          Json = false
+          Markdown = false }
 
     match validate opts with
     | Error message -> Assert.Contains("jacoco", message)
@@ -723,7 +724,8 @@ let ``validate reports file not found for a missing lcov file`` () =
           PerFile = false
           BelowThreshold = 0.0
           Exclude = []
-          Json = false }
+          Json = false
+          Markdown = false }
 
     match validate opts with
     | Error message -> Assert.Contains("not found", message)

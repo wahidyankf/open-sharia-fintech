@@ -39,6 +39,41 @@ let findRoot () : Result<string, string> =
     with :? System.ComponentModel.Win32Exception as ex ->
         Error(sprintf "failed to invoke git rev-parse: %s" ex.Message)
 
+/// Runs `git rev-parse --path-format=absolute --git-common-dir` from
+/// `repoRoot` and returns the trimmed absolute path to the git common
+/// directory — the **main** repository's `.git`, not the calling
+/// worktree's own path, so every linked worktree of the same repo resolves
+/// to the same value [Repo-grounded —
+/// `infrastructure/git/common_dir.rs::find_common_dir_from`].
+let findCommonDir (repoRoot: string) : Result<string, string> =
+    use proc = new Process()
+    proc.StartInfo.FileName <- "git"
+    proc.StartInfo.ArgumentList.Add("rev-parse")
+    proc.StartInfo.ArgumentList.Add("--path-format=absolute")
+    proc.StartInfo.ArgumentList.Add("--git-common-dir")
+    proc.StartInfo.WorkingDirectory <- repoRoot
+    proc.StartInfo.RedirectStandardOutput <- true
+    proc.StartInfo.RedirectStandardError <- true
+    proc.StartInfo.UseShellExecute <- false
+
+    try
+        proc.Start() |> ignore
+        let stdout = proc.StandardOutput.ReadToEnd()
+        let stderr = proc.StandardError.ReadToEnd()
+        proc.WaitForExit()
+
+        if proc.ExitCode <> 0 then
+            Error(sprintf "git rev-parse --git-common-dir failed: %s" (stderr.Trim()))
+        else
+            let path = stdout.Trim()
+
+            if path = "" then
+                Error "git rev-parse --git-common-dir returned empty path"
+            else
+                Ok path
+    with :? System.ComponentModel.Win32Exception as ex ->
+        Error(sprintf "failed to invoke git rev-parse --git-common-dir: %s" ex.Message)
+
 /// Runs `git diff --cached --name-only --diff-filter=AM` from `repoRoot` and
 /// returns the staged paths, one per line, blank lines dropped
 /// [Repo-grounded — `env_staged_guard.rs::run`].

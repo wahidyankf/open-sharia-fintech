@@ -497,29 +497,355 @@ let private runEnvStagedGuardValidateLeaf (repoRoot: string) : int =
 
             1
 
+// ---------------------------------------------------------------------------
+// Wave C: doctor, test-coverage
+// ---------------------------------------------------------------------------
+
+/// Parsed shape of `doctor`'s own flags
+/// [Repo-grounded — `commands/doctor.rs::DoctorArgs`].
+type private DoctorArgsParsed =
+    { Scope: string
+      Tools: string list option
+      Fix: bool
+      DryRun: bool
+      PruneCargoCache: bool
+      Quiet: bool }
+
+/// Collects every `--tools value[,value...]` occurrence, comma-splitting
+/// each and flattening in order, `None` when the flag never appears
+/// [Repo-grounded — `DoctorArgs.tools`'s `value_delimiter = ','` plus
+/// clap's repeat-to-append behavior for `Vec` args].
+let private collectDoctorToolsFlag (args: string list) : string list option =
+    let rec loop (args: string list) (acc: string list) : string list =
+        match args with
+        | [] -> List.rev acc
+        | a :: v :: rest when a = "--tools" -> loop rest ((v.Split(',') |> Array.toList |> List.rev) @ acc)
+        | _ :: rest -> loop rest acc
+
+    match loop args [] with
+    | [] -> None
+    | values -> Some values
+
+let private parseDoctorArgs (args: string list) : DoctorArgsParsed =
+    { Scope = stringFlag [ "--scope" ] args |> Option.defaultValue "full"
+      Tools = collectDoctorToolsFlag args
+      Fix = hasFlag [ "--fix" ] args
+      DryRun = hasFlag [ "--dry-run" ] args
+      PruneCargoCache = hasFlag [ "--prune-cargo-cache" ] args
+      Quiet = hasFlag [ "--quiet"; "-q" ] args }
+
+/// Validates every explicitly-selected `--tools` name up front, mirroring
+/// `commands/doctor.rs::parse_doctor_tool_name`'s value-parser rejection —
+/// approximated as a plain domain error (exit `1`) rather than clap's own
+/// exit-`2` value-parser shape, since no `shadow-diff.sh` probe exercises
+/// `--tools` (only bare/`--help`/`-o` forms do) and the Gherkin scenario this
+/// underpins already asserts against `Doctor.parseDoctorToolName` directly at
+/// the application layer.
+let private validateSelectedTools (tools: string list option) : Result<string list option, string> =
+    match tools with
+    | None -> Ok None
+    | Some names ->
+        names
+        |> List.fold
+            (fun acc name ->
+                match acc with
+                | Error _ -> acc
+                | Ok _ ->
+                    match Doctor.parseDoctorToolName name with
+                    | Error message -> Error message
+                    | Ok _ -> acc)
+            (Ok())
+        |> Result.map (fun () -> Some names)
+
+/// Runs the cargo shared-target-directory check (and, when requested, the
+/// fix/prune/sweep steps), printing the same plain-text report
+/// `commands/doctor.rs::run_target_share_step` does — restricted to `Text`
+/// output by the caller, matching Rust's own restriction. A missing/failed
+/// git-common-dir lookup or an empty repo name silently skips the whole step,
+/// mirroring `run_target_share_step`'s early `return`/empty-name guard.
+let private runDoctorTargetShareStep (repoRoot: string) (parsed: DoctorArgsParsed) : unit =
+    match RhinoCli.Infrastructure.GitRoot.findCommonDir repoRoot with
+    | Error _ -> ()
+    | Ok commonDir ->
+        let name = Doctor.repoName commonDir
+
+        if name <> "" then
+            let ci = Doctor.isCiAmbient ()
+            let cacheRoot = Doctor.cacheRootAmbient ()
+
+            let unshared = Doctor.checkTargetShares repoRoot cacheRoot name ci
+            printfn "%s" (Doctor.formatCheckReport unshared ci)
+
+            if parsed.Fix then
+                let outcome = Doctor.fixTargetShares repoRoot cacheRoot name ci
+                printfn "%s" (Doctor.formatFixReport outcome)
+
+            if parsed.PruneCargoCache then
+                let prune = Doctor.pruneOrphans repoRoot cacheRoot name parsed.DryRun ci
+                printfn "%s" (Doctor.formatPruneReport prune parsed.DryRun)
+
+                let sweep =
+                    Doctor.sweepStale cacheRoot name parsed.DryRun (Doctor.cargoSweepPresent ()) ci
+
+                let sweepReport = Doctor.formatSweepReport sweep
+
+                if sweepReport <> "" then
+                    printfn "%s" sweepReport
+
+/// `doctor` [Repo-grounded — `commands/doctor.rs::run`]. Has no required
+/// positional arguments, so the blanket `wantsHelp` shortcut in `route`
+/// already handles `-h`/`--help` correctly before this leaf ever runs.
+let private runDoctorLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
+    let parsed = parseDoctorArgs rawArgs
+
+    match validateSelectedTools parsed.Tools with
+    | Error message ->
+        eprintfn "Error: %s" message
+        1
+    | Ok selectedTools ->
+        let scope =
+            Doctor.parseDoctorScope parsed.Scope |> Option.defaultValue Doctor.FullScope
+
+        let opts: Doctor.CheckOptions =
+            { RepoRoot = repoRoot
+              Runner = None
+              Scope = scope
+              SelectedTools = selectedTools }
+
+        let stopwatch = System.Diagnostics.Stopwatch.StartNew()
+        let result = Doctor.checkAll opts
+        stopwatch.Stop()
+
+        // `commands/doctor.rs::run` prints Text/Markdown via `print!` (their
+        // formatters already end in `\n`) but JSON via `println!` (`format_json`
+        // does not) — mirrored here exactly, matching `Env.fs`'s
+        // `printEnvOperationResult` precedent for the same Text/Json asymmetry.
+        match format with
+        | Text -> printf "%s" (Doctor.formatDoctorText result parsed.Quiet)
+        | Json -> printfn "%s" (Doctor.formatDoctorJson result stopwatch.ElapsedMilliseconds)
+        | Markdown -> printf "%s" (Doctor.formatDoctorMarkdown result)
+
+        // Target-share reporting is plain, unstructured text — restricted to
+        // the default text output so it never corrupts `-o json`/`-o
+        // markdown`'s machine-/document-oriented shape, matching
+        // `commands/doctor.rs::run`'s own `matches!(output, Text)` guard.
+        if format = Text then
+            runDoctorTargetShareStep repoRoot parsed
+
+        let exitAfterFixAttempt: int option =
+            if parsed.Fix && Doctor.hasRemediationWork result then
+                let fr =
+                    Doctor.fixAll
+                        result
+                        opts
+                        { DryRun = parsed.DryRun
+                          Runner = None }
+                        (printf "%s")
+
+                printf "%s" (Doctor.formatFixSummary fr)
+
+                if fr.Failed > 0 then
+                    eprintfn "Error: %d tool(s) failed to install" fr.Failed
+                    Some 1
+                elif not parsed.DryRun && fr.Fixed > 0 then
+                    Some 0
+                else
+                    None
+            elif parsed.Fix && not (Doctor.hasRemediationWork result) then
+                printf "%s" Doctor.formatNothingToFix
+                None
+            else
+                None
+
+        match exitAfterFixAttempt with
+        | Some code -> code
+        | None ->
+            if result.MissingCount > 0 then
+                eprintfn "Error: %d tool(s) not found in PATH" result.MissingCount
+                1
+            else
+                0
+
+/// Extracts `test-coverage validate`'s two required positionals
+/// (`COVERAGE_FILE`, `THRESHOLD`), skipping this leaf's own recognized flags
+/// and their values as well as the shared global flags every leaf accepts
+/// [Repo-grounded — `test_coverage_validate.rs::ValidateArgs`, `cli.rs::Cli`].
+let private collectTestCoverageValidatePositionals (args: string list) : string list =
+    let rec loop (args: string list) (acc: string list) : string list =
+        match args with
+        | [] -> List.rev acc
+        | a :: _ :: rest when
+            a = "-o"
+            || a = "--output"
+            || a = "--below-threshold"
+            || a = "--exclude"
+            || a = "--say"
+            ->
+            loop rest acc
+        | a :: rest when a.StartsWith("--output=", StringComparison.Ordinal) -> loop rest acc
+        | a :: rest when
+            a = "--per-file"
+            || a = "-h"
+            || a = "--help"
+            || a = "-v"
+            || a = "--verbose"
+            || a = "-q"
+            || a = "--quiet"
+            || a = "--no-color"
+            ->
+            loop rest acc
+        | a :: rest when a.StartsWith("-", StringComparison.Ordinal) -> loop rest acc
+        | a :: rest -> loop rest (a :: acc)
+
+    loop args []
+
+/// Collects every `--exclude <PATTERN>` occurrence, in order.
+let private collectExcludeFlags (args: string list) : string list =
+    let rec loop (args: string list) (acc: string list) : string list =
+        match args with
+        | [] -> List.rev acc
+        | a :: v :: rest when a = "--exclude" -> loop rest (v :: acc)
+        | _ :: rest -> loop rest acc
+
+    loop args []
+
+/// Approximates clap's "already-recognized-argument" echo in the `Usage:`
+/// line of its missing-required-arguments error — captured empirically
+/// against the real Rust binary for exactly the shapes `shadow-diff.sh`
+/// exercises: bare, `-h`/`--help`, and each `-o`/`--output` value. A
+/// combination of several flags at once (not a shape any probe or documented
+/// real invocation produces) falls back to the bare form.
+let private echoedTestCoverageValidateFlag (args: string list) : string option =
+    if hasFlag [ "-h"; "--help" ] args then
+        Some "--help"
+    else
+        match stringFlag [ "-o"; "--output" ] args with
+        | Some _ -> Some "--output <OUTPUT>"
+        | None ->
+            if hasFlag [ "-v"; "--verbose" ] args then Some "--verbose"
+            elif hasFlag [ "-q"; "--quiet" ] args then Some "--quiet"
+            elif hasFlag [ "--no-color" ] args then Some "--no-color"
+            else None
+
+/// Reproduces clap's exact `error: the following required arguments were
+/// not provided: ...` message for `test-coverage validate` byte-for-byte
+/// [Repo-grounded — empirically captured from
+/// `apps/rhino-cli/target/gate/rhino-cli test-coverage validate` with 0 or 1
+/// positional arguments].
+let private testCoverageValidateMissingArgsError (positionals: string list) (args: string list) : string =
+    let placeholders = [ "<COVERAGE_FILE>"; "<THRESHOLD>" ]
+    let alreadyGiven = min (List.length positionals) (List.length placeholders)
+    let missing = placeholders |> List.skip alreadyGiven
+    let missingLines = missing |> List.map (sprintf "  %s") |> String.concat "\n"
+
+    let usageFlag =
+        match echoedTestCoverageValidateFlag args with
+        | Some f -> f + " "
+        | None -> ""
+
+    sprintf
+        "error: the following required arguments were not provided:\n%s\n\nUsage: rhino-cli test-coverage validate %s<COVERAGE_FILE> <THRESHOLD>\n"
+        missingLines
+        usageFlag
+
+/// `test-coverage validate` [Repo-grounded —
+/// `test_coverage_validate.rs::run`]. Unlike every other currently-routed
+/// leaf, this one has required positional arguments, so clap validates their
+/// presence **before** the app ever reads a `--help`/`-o` flag — `route`
+/// calls this leaf ahead of the blanket `wantsHelp` shortcut for exactly that
+/// reason; a `--help` (or any other recognized flag) alongside missing
+/// positionals still produces the missing-arguments error, never help text.
+let private runTestCoverageValidateLeaf (repoRoot: string) (rawArgs: string list) : int =
+    let positionals = collectTestCoverageValidatePositionals rawArgs
+
+    if List.length positionals < 2 then
+        eprintf "%s" (testCoverageValidateMissingArgsError positionals rawArgs)
+        2
+    elif wantsHelp (List.toArray rawArgs) then
+        printf "%s" HelpText.Text
+        0
+    else
+        match parseOutputFormat rawArgs with
+        | Error message ->
+            eprintfn "Error: %s" message
+            1
+        | Ok format ->
+            let coverageFile = positionals.[0]
+            let thresholdRaw = positionals.[1]
+
+            match Double.TryParse(thresholdRaw, System.Globalization.CultureInfo.InvariantCulture) with
+            | false, _ ->
+                eprintfn "Error: invalid threshold \"%s\": must be a number (e.g. 85)" thresholdRaw
+                1
+            | true, threshold ->
+                let absPath = IO.Path.Combine(repoRoot, coverageFile)
+
+                let opts: TestCoverage.ValidateOptions =
+                    { CoverageFile = absPath
+                      Threshold = threshold
+                      PerFile = hasFlag [ "--per-file" ] rawArgs
+                      BelowThreshold =
+                        stringFlag [ "--below-threshold" ] rawArgs
+                        |> Option.bind (fun v ->
+                            match Double.TryParse(v, System.Globalization.CultureInfo.InvariantCulture) with
+                            | true, parsed -> Some parsed
+                            | false, _ -> None)
+                        |> Option.defaultValue 0.0
+                      Exclude = collectExcludeFlags rawArgs
+                      Json = (format = Json)
+                      Markdown = (format = Markdown) }
+
+                match TestCoverage.validate opts with
+                | Error message ->
+                    eprintfn "Error: %s" message
+                    1
+                | Ok outcome ->
+                    printf "%s" outcome.Output
+
+                    if outcome.Passed then
+                        0
+                    else
+                        eprintfn "Error: coverage %.2f%% is below threshold %.0f%%" outcome.Pct outcome.Threshold
+
+                        1
+
 /// Routes `argv` to the leaf it names, resolving the repository root via
 /// `getRepoRoot` — injected so tests can point at a fixture directory
 /// instead of shelling out to the real `git` in this checkout.
 let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
-    if wantsHelp argv then
+    let argvList = List.ofArray argv
+
+    let path, rest =
+        match argvList with
+        | "convention" :: "emoji" :: "validate" :: rest -> Some "emoji", rest
+        | "convention" :: "license" :: "validate" :: rest -> Some "license", rest
+        | "convention" :: "audit" :: rest -> Some "audit", rest
+        | "parity" :: "manifest" :: "generate" :: rest -> Some "generate", rest
+        | "parity" :: "manifest" :: "validate" :: rest -> Some "validate", rest
+        | "repo-config" :: "validate" :: rest -> Some "repo-config-validate", rest
+        | "env" :: "init" :: rest -> Some "env-init", rest
+        | "env" :: "backup" :: rest -> Some "env-backup", rest
+        | "env" :: "restore" :: rest -> Some "env-restore", rest
+        | "env" :: "validate" :: rest -> Some "env-validate", rest
+        | "env" :: "staged-guard" :: "validate" :: rest -> Some "env-staged-guard-validate", rest
+        | "doctor" :: rest -> Some "doctor", rest
+        | "test-coverage" :: "validate" :: rest -> Some "test-coverage-validate", rest
+        | _ -> None, []
+
+    // `test-coverage validate` has required positional arguments, whose
+    // absence must win over `--help` (see `runTestCoverageValidateLeaf`'s
+    // doc comment) — checked ahead of the blanket `wantsHelp` shortcut every
+    // other (positional-argument-free) leaf relies on.
+    if path = Some "test-coverage-validate" then
+        match getRepoRoot () with
+        | Error message ->
+            eprintfn "Error: failed to find git repository root: %s" message
+            1
+        | Ok repoRoot -> runTestCoverageValidateLeaf repoRoot rest
+    elif wantsHelp argv then
         printf "%s" HelpText.Text
         0
     else
-        let path, rest =
-            match List.ofArray argv with
-            | "convention" :: "emoji" :: "validate" :: rest -> Some "emoji", rest
-            | "convention" :: "license" :: "validate" :: rest -> Some "license", rest
-            | "convention" :: "audit" :: rest -> Some "audit", rest
-            | "parity" :: "manifest" :: "generate" :: rest -> Some "generate", rest
-            | "parity" :: "manifest" :: "validate" :: rest -> Some "validate", rest
-            | "repo-config" :: "validate" :: rest -> Some "repo-config-validate", rest
-            | "env" :: "init" :: rest -> Some "env-init", rest
-            | "env" :: "backup" :: rest -> Some "env-backup", rest
-            | "env" :: "restore" :: rest -> Some "env-restore", rest
-            | "env" :: "validate" :: rest -> Some "env-validate", rest
-            | "env" :: "staged-guard" :: "validate" :: rest -> Some "env-staged-guard-validate", rest
-            | _ -> None, []
-
         match path with
         | None ->
             eprintfn "rhino-cli-fsharp: unrecognized or not-yet-routed invocation: %s" (String.concat " " argv)
@@ -547,4 +873,5 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "env-restore" -> runEnvRestoreLeaf repoRoot format rest
                     | "env-validate" -> runEnvValidateLeaf repoRoot rest
                     | "env-staged-guard-validate" -> runEnvStagedGuardValidateLeaf repoRoot
+                    | "doctor" -> runDoctorLeaf repoRoot format rest
                     | _ -> 2

@@ -4331,7 +4331,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `system/` and `test-coverage/` — in
+- [x] [AI] Widen the coverage scope by exactly this wave's spec directories — `system/` and `test-coverage/` — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
       either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
@@ -4340,23 +4340,59 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       wave-C `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
       Deleting a `@covers` marker would **not** turn it red in shared-steps mode — that check is
       opt-in to three-level mode.
-- [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` — acceptance: zero byte
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**:
+      `apps/rhino-cli/src-fsharp/project.json`, `repo-config.yml` (both widened from the six
+      file-scoped Wave C entries to `system/**`/`test-coverage/**`). `npx nx run
+    rhino-cli-fsharp:specs:behavior:coverage` exits 0, reporting `17 specs, 126 scenarios, 541
+    steps — all covered`. Temporarily removing a `DoctorToolCheckSteps.fs` step definition turned
+      the check red with a `Missing steps` count naming the exact scenario/step, restored afterwards
+      with a clean `git diff`.
+- [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
-- [ ] [AI] Add `doctor`, `test-coverage` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**:
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Doctor.fs` (dotnet-tool-version repo-config
+      lookup, always-present JSON `scope` field, unsafe-relaxed JSON unicode escaping, missing
+      Markdown formatter), `apps/rhino-cli/src-fsharp/RhinoCli.Application/src/TestCoverage.fs`
+      (unsafe-relaxed JSON unicode escaping, missing Markdown formatter),
+      `apps/rhino-cli/src-fsharp/RhinoCli.Infrastructure/src/GitRoot.fs` (new `findCommonDir`),
+      `apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs` (new `doctor`/`test-coverage validate`
+      routing — see Wave C implementation cycles above). `apps/rhino-cli/scripts/shadow-diff.sh
+    doctor test-coverage` → `shadow-diff: 10 invocation(s) compared, 0 difference(s)`. Four genuine
+      mismatches were found and fixed first (all against the real Rust binary, not assumed): the F#
+      `dotnet` tool check ignored `repo-config.yml`'s `doctor.dotnet-global-json` override; `doctor
+    -o json`'s `"scope"` field was conditionally omitted where Rust's `Scope::code()` never
+      returns an empty string so the field is always present; `System.Text.Json`'s default encoder
+      escaped non-ASCII characters (`→`, `≥`) that `serde_json` emits raw; and `doctor -o json` was
+      missing its trailing newline (`println!` in Rust vs. this port's initial uniform `printf`).
+- [x] [AI] Add `doctor`, `test-coverage` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
       immediately after the flip still reports zero differences — the same shadow-diff invocation the
       step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
       shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
       binary itself, which the flip does not touch, rather than a stored snapshot no step here
       produces.
-- [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**: `apps/rhino-cli/scripts/rhino-bin.sh`
+      (`FSHARP_NAMESPACES=("convention" "parity" "repo-config" "env" "doctor" "test-coverage")`).
+      Post-flip `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` again reports
+      `10 invocation(s) compared, 0 difference(s)`. `bash -x apps/rhino-cli/scripts/rhino-bin.sh
+    doctor --scope minimal --tools git` shows `exec .../src-fsharp/dist/rhino-cli-fsharp doctor
+    --scope minimal --tools git`, confirming `doctor`/`test-coverage` now route to the published
+      F# binary end-to-end.
+- [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave C`. Check for an existing `after wave C` row **before** appending — this
       integration section can be retried after a partial failure, and an unguarded append silently
       duplicates a row in the record Phases 10 and 12 treat as durable — acceptance:
       `grep -c 'after wave C' benchmark.md` returns exactly 1 after the step, whether it ran once
       or three times.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**:
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` (new "Interim measurement: after
+      wave C" section). `grep -c 'after wave C' benchmark.md` confirmed exactly 1. Rebuilt
+      `dist/rhino-cli-fsharp` via `nx run rhino-cli-fsharp:build` first so the measured binary
+      carries this wave's leaves, then 50 `--help` invocations via Python `time.time()`-around-
+      `subprocess.run`: mean **37.71 ms**, 0 non-zero exits — in the same band as after-wave-B's
+      39.15 ms.
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -4368,11 +4404,40 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       confirming the restore left the shim exactly where the flip left it rather than in some third
       state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
       asserts but never tests.
-- [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**: none (proof only; the edit to
+      `apps/rhino-cli/scripts/rhino-bin.sh` was made then reverted in place, leaving the file
+      identical to its post-flip state). With `FSHARP_NAMESPACES=("convention" "parity"
+    "repo-config" "env")` (Wave C entries removed), `apps/rhino-cli/scripts/shadow-diff.sh doctor
+    test-coverage` still reports `10 invocation(s) compared, 0 difference(s)` — shadow-diff always
+      compares the two binaries directly regardless of the shim's routing state, and separately `bash
+    -x apps/rhino-cli/scripts/rhino-bin.sh doctor --scope minimal --tools git` confirmed the shim
+      itself now `exec`s the Rust `target/gate/rhino-cli` binary instead. `gate list --surface=ci
+    --format=json --by-group` against the removed-entries shim differs from
+      `evidence/gate-before-ose-public.json` only in JSON array line-wrapping (the tracked file was
+      prettier-formatted after capture); a Python `json.load` structural comparison of the two
+      confirms the content is semantically identical. With `FSHARP_NAMESPACES` restored to include
+      `doctor`/`test-coverage`, `bash -x rhino-bin.sh doctor ...` again shows the shim `exec`ing the
+      F# `dist/rhino-cli-fsharp` binary, confirming the restore is exact.
+- [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave C`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**:
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` (same "after wave C" section as
+      the row above). Staged a single throwaway `apps/rhino-cli/bench-probe.md` (one heading, one
+      paragraph, the same pinned-staged-set protocol as Phase 0/Wave A/Wave B), ran `/usr/bin/time
+    -p .husky/pre-commit`: exit 0, `real 3.70`. Removed the probe file and `git reset --` it
+      afterward; `git status --porcelain` returned to its exact pre-step state, confirming no
+      residue.
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**: none (verification only).
+      `grep -n "dotnet run\|dotnet build" .github/workflows/*.yml` returns exactly one hit: the same
+      code comment inside the unrelated `.NET quality gate` job Wave B's equivalent check already
+      found — not an invocation, and not in a job that executes a flipped namespace. Every job that
+      shells to `rhino-bin.sh` for a gate command sets `RHINO_CLI_FSHARP_BIN:
+    ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp` and `needs:
+    build-rhino` (directly or transitively), so `doctor`/`test-coverage` invocations in CI always
+      run `build-rhino`'s uploaded artifact, never a from-source rebuild.
 - [ ] [AI] Land every Wave C change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
@@ -4383,17 +4448,45 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] All 53 Wave C scenarios pass under
+- [x] [AI] All 53 Wave C scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` reports zero differences in both
+      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
+      PR — this PR does not touch that repo, see the unticked "Land every Wave C change" item
+      above). **Files Changed**: none beyond the implementation/flip commits already listed. The 53
+      Wave C scenarios were cross-referenced by summing `Scenario:` counts across
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/{system,test-coverage}/*.feature`
+      (53) against the `[<Fact>]` count in `DoctorSteps.fs` (18) + `DoctorToolCheckSteps.fs` (17) +
+      `FsharpToolInvocationSteps.fs` (1) + `TestCoverageSteps.fs` (17) = 53. Full suite:
+      `dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj` — `Passed! -
+    Failed: 0, Passed: 625, Skipped: 0, Total: 625`.
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
+      PR). **Files Changed**: none. `shadow-diff: 10 invocation(s) compared, 0 difference(s)`, exit
+      code 0.
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
+      PR). **Files Changed**: none. All three commands run with a cold Nx cache
+      (`--skip-nx-cache`): `rhino-cli:test:quick` exit 0 (72 specs, 531 scenarios, 2165 steps — all
+      covered); `rhino-cli-fsharp:test:quick` exit 0 (typecheck clean, fantomas/fsharplint/
+      fsharp-analyzers clean, 625 unit tests passed, 17 specs/126 scenarios/541 steps — all
+      covered); `.husky/pre-commit` exit 0 against this wave's real staged changes (see the commit
+      this PR carries).
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
+      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
+      PR). **Files Changed**: `apps/rhino-cli/parity-manifest.sha256` (regenerated as its own
+      commit). Exit code `0`, output `apps/rhino-cli/parity-manifest.sha256 is current`.
+- [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
-- [ ] [AI] `benchmark.md` has an `after wave C` row for startup and for pre-commit wall time.
+      **Date**: 2026-08-27. **Status**: done (`ose-public` only; the `ose-private` half of this
+      check is not asserted here — this PR does not touch that repo). **Files Changed**: none.
+      `git diff --name-only origin/main -- specs/apps/rhino | wc -l` → `0`.
+- [x] [AI] `benchmark.md` has an `after wave C` row for startup and for pre-commit wall time.
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**:
+      `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` (see the two items above; both
+      B5 and B6 rows are present under "Interim measurement: after wave C").
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
