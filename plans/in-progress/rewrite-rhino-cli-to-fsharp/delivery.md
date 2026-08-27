@@ -2947,14 +2947,33 @@ ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp`, and al
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] All 62 Wave B scenarios pass under
+- [x] [AI] All 62 Wave B scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh repo-config env` reports zero differences in both
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. `dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj`: `ose-public`
+      — `Passed! - Failed: 0, Passed: 494, Skipped: 0, Total: 494` (494 includes the
+      already-merged Wave C PR2 doctor tests ahead of Wave B on that repo's `main`); `ose-private`
+      — `Passed! - Failed: 0, Passed: 354, Skipped: 0, Total: 354`. The 62 Wave B scenarios were
+      cross-referenced by summing `Scenario:` counts in the 8 Wave B feature files
+      (9 + 5 + 21 + 4 + 16 + 3 + 1 + 3 = 62) against the `[<Fact>]` count in each corresponding
+      `Steps/*.fs` file in both worktrees, which also sums to 62 in both repos.
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh repo-config env` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. Both repos: `shadow-diff: 30 invocation(s) compared, 0 difference(s)`, exit code 0.
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. All three commands run with a cold Nx cache (`--skip-nx-cache`) where applicable:
+      `rhino-cli:test:quick` exit 0 in both repos; `rhino-cli-fsharp:test:quick` exit 0 in both
+      repos; `bash .husky/pre-commit` exit 0 in both repos (with nothing staged, so the
+      lint-staged-gated steps report `Skipping gate ...` and only `env-staged-guard` and
+      `harness-bindings-generate` actually ran — both succeeded, and `git status --short` showed
+      no resulting diff in either repo).
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. Both repos: exit code `0`, output `apps/rhino-cli/parity-manifest.sha256 is current`.
 - [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
       **Date**: 2026-08-27. **Status**: done (`ose-public` only; the `ose-private` half of this
