@@ -33,6 +33,8 @@
     <Compile Include="Steps/EnvStagedGuardUnitTests.fs" />
     <Compile Include="Steps/DoctorSteps.fs" />
     <Compile Include="Steps/DoctorUnitTests.fs" />
+    <Compile Include="Steps/DoctorToolCheckSteps.fs" />
+    <Compile Include="Steps/DoctorToolCheckUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

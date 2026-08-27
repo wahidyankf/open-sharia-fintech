@@ -9,12 +9,17 @@
 /// so every git worktree of the same repo shares one physical build
 /// directory per crate.
 ///
-/// Scope: this PR ports only the pure, testable `target_share.rs` slice
-/// (discovery, cache-root/shared-path resolution, worktree enumeration,
-/// check/fix/prune/sweep, and their text formatters) — the general `doctor`
-/// tool-check command and its CLI wiring
-/// (`specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`) are
-/// a separate, later PR in this same wave.
+/// Scope: the first PR to touch this file ported only the pure, testable
+/// `target_share.rs` slice above (discovery, cache-root/shared-path
+/// resolution, worktree enumeration, check/fix/prune/sweep, and their text
+/// formatters). This file now also carries the tool-check engine —
+/// `checker.rs`/`fixer.rs`/`reporter.rs`/`tools.rs` — for
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s 17
+/// scenarios, below the "Tool-check engine" banner comment. CLI argument
+/// parsing and dispatch wiring (`commands/doctor.rs::run`) remain out of
+/// scope for both features — every scenario here, like the target-share ones
+/// above, calls straight into this module's pure functions rather than a
+/// wired-up `doctor` verb.
 ///
 /// # Deviation from the Rust source's ambient-environment reads
 ///
@@ -29,6 +34,9 @@ module RhinoCli.Application.Doctor
 open System
 open System.Diagnostics
 open System.IO
+open System.Runtime.InteropServices
+open System.Text.Json
+open System.Text.Json.Nodes
 
 // ---------------------------------------------------------------------------
 // CI detection
@@ -593,3 +601,1410 @@ let formatSweepReport (outcome: SweepOutcome) : string =
         "Sweep: cargo-sweep not installed — skipped."
     else
         ""
+
+// ---------------------------------------------------------------------------
+// Tool-check engine [Repo-grounded — `application/doctor/mod.rs`,
+// `checker.rs`, `fixer.rs`, `reporter.rs`, `tools.rs`] for
+// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s 17
+// scenarios.
+// ---------------------------------------------------------------------------
+
+/// Health status of one tool check [Repo-grounded — `mod.rs::ToolStatus`].
+/// Named `Passing` rather than the Rust source's `Ok` to avoid colliding with
+/// `FSharp.Core`'s `Result.Ok` case — see
+/// `RhinoCli.Domain.Types.Severity`'s doc comment for the same
+/// GRA-UNIONCASE-001 rationale.
+type ToolStatus =
+    | Passing
+    | Warning
+    | Missing
+
+/// Stable wire/status code for `status`: `"ok"`, `"warning"`, or `"missing"`.
+let toolStatusCode (status: ToolStatus) : string =
+    match status with
+    | Passing -> "ok"
+    | Warning -> "warning"
+    | Missing -> "missing"
+
+/// Controls which tools [`checkAll`] probes [Repo-grounded — `mod.rs::Scope`].
+type DoctorScope =
+    | FullScope
+    | MinimalScope
+
+/// Stable code for `scope`: `"full"` or `"minimal"`.
+let doctorScopeCode (scope: DoctorScope) : string =
+    match scope with
+    | FullScope -> "full"
+    | MinimalScope -> "minimal"
+
+/// Parses a scope string: `""`/`"full"` maps to [`FullScope`],
+/// `"minimal"` to [`MinimalScope`], anything else to `None`
+/// [Repo-grounded — `mod.rs::Scope::parse`].
+///
+/// Gherkin (binds) — "Full scope is the default behavior":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports each tool as passing
+let parseDoctorScope (s: string) : DoctorScope option =
+    match s with
+    | ""
+    | "full" -> Some FullScope
+    | "minimal" -> Some MinimalScope
+    | _ -> None
+
+/// The minimal core tool set every environment needs
+/// [Repo-grounded — `mod.rs::is_minimal_tool`].
+///
+/// Gherkin (binds) — "Minimal scope checks only core tools":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command with minimal scope
+///   Then the command exits successfully
+///   And the output checks only the minimal tool set
+let isMinimalTool (name: string) : bool =
+    List.contains name [ "git"; "volta"; "node"; "npm"; "docker"; "jq" ]
+
+/// Every Doctor tool name `--tools` may select
+/// [Repo-grounded — `repo_config/mod.rs::DOCTOR_TOOL_INVENTORY`].
+let doctorToolInventory: string list =
+    [ "git"
+      "volta"
+      "node"
+      "npm"
+      "rust"
+      "cargo-llvm-cov"
+      "dotnet"
+      "docker"
+      "jq"
+      "shellcheck"
+      "hadolint"
+      "actionlint"
+      "playwright"
+      "shfmt"
+      "tofu"
+      "clang-format" ]
+
+/// Rejects a blank or unrecognized `--tools` selection before any tool is
+/// probed [Repo-grounded — `commands/doctor.rs::parse_doctor_tool_name`].
+///
+/// Gherkin (binds) — "An unknown selected tool is rejected before
+/// environment checks":
+///   Given an unknown Doctor tool is selected
+///   When the developer runs the doctor command
+///   Then the command exits with a failure code
+///   And the invalid selection is rejected before any tool is probed
+let parseDoctorToolName (value: string) : Result<string, string> =
+    let name = value.Trim()
+
+    if name = "" then
+        Error "Doctor tool name must not be blank"
+    elif not (List.contains name doctorToolInventory) then
+        Error(sprintf "unknown Doctor tool \"%s\"" name)
+    else
+        Ok name
+
+/// Result of checking one tool [Repo-grounded — `mod.rs::ToolCheck`].
+type ToolCheck =
+    { Name: string
+      Binary: string
+      Status: ToolStatus
+      InstalledVersion: string
+      RequiredVersion: string
+      Source: string
+      Note: string }
+
+/// Aggregated results from a full doctor run
+/// [Repo-grounded — `mod.rs::DoctorResult`].
+type DoctorResult =
+    { Checks: ToolCheck list
+      OkCount: int
+      WarnCount: int
+      MissingCount: int
+      Scope: DoctorScope }
+
+/// Output of a command invocation: `Ok (stdout, stderr, exitCode)`, or
+/// `Error` when the binary was not found in `PATH`
+/// [Repo-grounded — `mod.rs::CommandOutput`].
+type CommandOutput = Result<string * string * int, string>
+
+/// Injectable command runner used for testing
+/// [Repo-grounded — `mod.rs::CommandRunner`].
+type CommandRunner = string -> string list -> CommandOutput
+
+/// One step in an auto-install sequence
+/// [Repo-grounded — `tools.rs::InstallStep`].
+type InstallStep =
+    { Description: string
+      Command: string
+      Args: string list }
+
+/// Complete specification for checking (and optionally fixing) one tool
+/// [Repo-grounded — `tools.rs::ToolDef`].
+type ToolDef =
+    { Name: string
+      Binary: string
+      Source: string
+      Args: string list
+      UseStderr: bool
+      ParseVer: string -> string
+      Compare: string -> string -> ToolStatus * string
+      ReadReq: unit -> string
+      InstallCmd: (string -> string -> InstallStep list) option }
+
+/// Configuration for [`checkAll`]/[`fixAll`]
+/// [Repo-grounded — `mod.rs::CheckOptions`].
+type CheckOptions =
+    { RepoRoot: string
+      Runner: CommandRunner option
+      Scope: DoctorScope
+      SelectedTools: string list option }
+
+// --- Comparators [Repo-grounded — `checker.rs`'s "Comparators" section] ---
+
+/// Strips a leading `v` from a version string.
+let normalizeSimpleVersion (s: string) : string =
+    if s.StartsWith("v", StringComparison.Ordinal) then
+        s.Substring(1)
+    else
+        s
+
+/// Compares two version strings for exact equality (after stripping a
+/// leading `v`). `Passing` immediately when `required` is empty
+/// [Repo-grounded — `checker.rs::compare_exact`].
+///
+/// Gherkin (binds) — "A tool is installed but its version does not match the
+/// requirement":
+///   Given a required development tool is installed with a non-matching version
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports the tool as a warning rather than a failure
+let compareExact (installed: string) (required: string) : ToolStatus * string =
+    if required = "" then
+        Passing, "no version requirement"
+    else
+        let inst = normalizeSimpleVersion installed
+        let req = normalizeSimpleVersion required
+
+        if inst = req then
+            Passing, sprintf "required: %s" required
+        else
+            Warning, sprintf "required: %s, version mismatch" required
+
+/// Parses a semver-style string into `(major, minor, patch)`, returning
+/// `None` when any component fails to parse as an integer
+/// [Repo-grounded — `checker.rs::parse_version_parts`].
+let parseVersionParts (s: string) : (int64 * int64 * int64) option =
+    let parts = (normalizeSimpleVersion s).Split('.') |> Array.truncate 3
+    let nums = Array.create 3 0L
+    let mutable ok = true
+
+    parts
+    |> Array.iteri (fun i p ->
+        match Int64.TryParse(p) with
+        | true, n -> nums.[i] <- n
+        | false, _ -> ok <- false)
+
+    if ok then Some(nums.[0], nums.[1], nums.[2]) else None
+
+/// Checks the installed version is `>=` the required version by full semver
+/// comparison. Falls back to [`compareExact`] when either version fails to
+/// parse. `Passing` immediately when `required` is empty
+/// [Repo-grounded — `checker.rs::compare_gte`].
+let compareGte (installed: string) (required: string) : ToolStatus * string =
+    if required = "" then
+        Passing, "no version requirement"
+    else
+        match parseVersionParts installed, parseVersionParts required with
+        | Some(iMaj, iMin, iPat), Some(rMaj, rMin, rPat) ->
+            if
+                iMaj > rMaj
+                || (iMaj = rMaj && iMin > rMin)
+                || (iMaj = rMaj && iMin = rMin && iPat >= rPat)
+            then
+                Passing, sprintf "required: ≥%s" required
+            else
+                Warning, sprintf "required: ≥%s, version too old" required
+        | _ -> compareExact installed required
+
+/// Checks the installed major version is `>=` the required major version.
+/// Falls back to [`compareExact`] when either major component fails to
+/// parse. `Passing` immediately when `required` is empty
+/// [Repo-grounded — `checker.rs::compare_major_gte`].
+let compareMajorGte (installed: string) (required: string) : ToolStatus * string =
+    if required = "" then
+        Passing, "no version requirement"
+    else
+        let inst = normalizeSimpleVersion installed
+        let req = normalizeSimpleVersion required
+        let iMajorStr = inst.Split('.').[0]
+        let rMajorStr = req.Split('.').[0]
+
+        match Int64.TryParse(iMajorStr), Int64.TryParse(rMajorStr) with
+        | (true, iMaj), (true, rMaj) ->
+            if iMaj >= rMaj then
+                Passing, sprintf "required: ≥%s (major)" required
+            else
+                Warning, sprintf "required: ≥%s (major), version too old" required
+        | _ -> compareExact installed required
+
+// --- Output parsers [Repo-grounded — `checker.rs`'s "Parsers for tool
+// output" section] ---
+
+/// Trims then strips a leading `v`.
+let parseTrimVersion (s: string) : string = normalizeSimpleVersion (s.Trim())
+
+/// Returns the `wordIdx`-th space-separated token from the first line
+/// starting with `linePrefix` (after trimming), stripping `tokenPrefix` from
+/// the matched token when non-empty [Repo-grounded —
+/// `checker.rs::parse_line_word`].
+let parseLineWord (output: string) (linePrefix: string) (wordIdx: int) (tokenPrefix: string) : string =
+    output.Split('\n')
+    |> Array.tryPick (fun line ->
+        let trimmed = line.Trim()
+
+        if trimmed.StartsWith(linePrefix, StringComparison.Ordinal) then
+            let parts = trimmed.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries)
+
+            if wordIdx < parts.Length then
+                let word = parts.[wordIdx]
+
+                if tokenPrefix <> "" && word.StartsWith(tokenPrefix, StringComparison.Ordinal) then
+                    Some(word.Substring(tokenPrefix.Length))
+                else
+                    Some word
+            else
+                None
+        else
+            None)
+    |> Option.defaultValue ""
+
+let parseGitVersion (s: string) : string = parseLineWord s "git version " 2 ""
+
+/// Extracts the `OpenTofu` version from `tofu --version` output
+/// [Repo-grounded — `tools.rs::parse_tofu_version`].
+///
+/// Gherkin (binds) — "Fix dry-run previews a verified, platform-safe
+/// OpenTofu release archive":
+///   Given the tofu tool is not found in the system PATH
+///   When the developer runs the doctor command with fix and dry-run flags
+///   Then the command exits with a failure code
+///   And the output handles verified OpenTofu remediation safely
+let parseTofuVersion (s: string) : string = parseLineWord s "OpenTofu " 1 "v"
+
+let parseRustVersion (out: string) : string = parseLineWord out "rustc " 1 ""
+
+let parseCargoLlvmCovVersion (out: string) : string =
+    parseLineWord out "cargo-llvm-cov " 1 ""
+
+let parseDotnetVersion (out: string) : string = out.Trim()
+
+let parseDockerVersion (out: string) : string =
+    out.Split('\n')
+    |> Array.tryPick (fun line ->
+        let t = line.Trim()
+
+        if t.StartsWith("Docker version", StringComparison.Ordinal) then
+            let fields = t.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries)
+
+            if fields.Length >= 3 then
+                Some(fields.[2].TrimEnd(','))
+            else
+                None
+        else
+            None)
+    |> Option.defaultValue ""
+
+let parseShellcheckVersion (out: string) : string =
+    out.Split('\n')
+    |> Array.tryPick (fun line ->
+        let t = line.Trim()
+
+        if t.StartsWith("version:", StringComparison.Ordinal) then
+            Some(t.Substring("version:".Length).Trim())
+        else
+            None)
+    |> Option.defaultValue ""
+
+let parseHadolintVersion (out: string) : string =
+    parseLineWord out "Haskell Dockerfile Linter" 3 ""
+
+let parseActionlintVersion (out: string) : string =
+    match out.Split('\n') with
+    | [||] -> ""
+    | lines -> lines.[0].Trim()
+
+let parseJqVersion (out: string) : string =
+    let t = out.Trim()
+
+    if t.StartsWith("jq-", StringComparison.Ordinal) then
+        t.Substring(3)
+    else
+        t
+
+let parsePlaywrightVersion (out: string) : string = parseLineWord out "Version " 1 ""
+
+let parseClangFormatVersion (out: string) : string =
+    out.Split('\n')
+    |> Array.tryPick (fun line ->
+        let words = line.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries)
+
+        words
+        |> Array.tryFindIndex (fun w -> w = "version")
+        |> Option.bind (fun idx ->
+            if idx + 1 < words.Length then
+                Some words.[idx + 1]
+            else
+                None))
+    |> Option.defaultValue ""
+
+// --- Version readers [Repo-grounded — `checker.rs`'s "Version readers"
+// section] ---
+
+/// Reads a string property at `propertyPath` out of the JSON file at `path`,
+/// returning `None` when the file is missing, malformed, or lacks that path.
+let private readJsonStringProperty (path: string) (propertyPath: string list) : string option =
+    try
+        use doc = JsonDocument.Parse(File.ReadAllText path)
+
+        let rec walk (element: JsonElement) (remaining: string list) : string option =
+            match remaining with
+            | [] ->
+                if element.ValueKind = JsonValueKind.String then
+                    Some(element.GetString())
+                else
+                    None
+            | head :: tail ->
+                match element.TryGetProperty head with
+                | true, next -> walk next tail
+                | false, _ -> None
+
+        walk doc.RootElement propertyPath
+    with _ ->
+        None
+
+/// Reads the `volta.node` version from a `package.json` file
+/// [Repo-grounded — `checker.rs::read_node_version`].
+let readNodeVersion (path: string) : string option =
+    readJsonStringProperty path [ "volta"; "node" ]
+
+/// Reads the `volta.npm` version from a `package.json` file
+/// [Repo-grounded — `checker.rs::read_npm_version`].
+let readNpmVersion (path: string) : string option =
+    readJsonStringProperty path [ "volta"; "npm" ]
+
+/// Reads the .NET SDK version from a `global.json` file
+/// [Repo-grounded — `checker.rs::read_dotnet_version`].
+let readDotnetVersion (path: string) : string option =
+    readJsonStringProperty path [ "sdk"; "version" ]
+
+/// Reads the pinned `channel` from a `rust-toolchain.toml` file
+/// [Repo-grounded — `checker.rs::read_rust_toolchain_channel`].
+///
+/// Gherkin (binds) — "doctor compares rustc against the toolchain that
+/// builds":
+///   Given the installed rustc differs from the pinned rust-toolchain.toml channel
+///   When "npm run doctor" runs
+///   Then it reports the Rust toolchain as mismatched
+///   And it names the pinned channel as the expected value
+let readRustToolchainChannel (path: string) : string option =
+    try
+        File.ReadAllLines(path)
+        |> Array.tryPick (fun line ->
+            let t = line.Trim()
+
+            if t.StartsWith("channel", StringComparison.Ordinal) then
+                match t.IndexOf('=') with
+                | -1 -> None
+                | idx -> Some(t.Substring(idx + 1).Trim().Trim('"'))
+            else
+                None)
+    with _ ->
+        None
+
+/// Components every pinned Rust toolchain must declare so lint gates can run
+/// [Repo-grounded — `checker.rs::REQUIRED_RUST_TOOLCHAIN_COMPONENTS`].
+let requiredRustToolchainComponents: string list = [ "rustfmt"; "clippy" ]
+
+/// Enumerates repo-relative `rust-toolchain.toml` paths, workspace root
+/// first, then sorted `apps/*` and `libs/*` project directories
+/// [Repo-grounded — `checker.rs::rust_toolchain_manifests`].
+let rustToolchainManifests (repoRoot: string) : string list =
+    let fileName = "rust-toolchain.toml"
+
+    let rootFile =
+        if File.Exists(Path.Combine(repoRoot, fileName)) then
+            [ fileName ]
+        else
+            []
+
+    let underParent (parent: string) : string list =
+        let dir = Path.Combine(repoRoot, parent)
+
+        if Directory.Exists(dir) then
+            Directory.GetDirectories(dir)
+            |> Array.filter (fun d -> File.Exists(Path.Combine(d, fileName)))
+            |> Array.map (fun d -> sprintf "%s/%s/%s" parent (Path.GetFileName(d: string)) fileName)
+            |> Array.sort
+            |> Array.toList
+        else
+            []
+
+    rootFile @ underParent "apps" @ underParent "libs"
+
+/// Strips a trailing `#` comment from one line.
+let private stripTrailingComment (line: string) : string =
+    match line.IndexOf('#') with
+    | -1 -> line
+    | idx -> line.Substring(0, idx)
+
+/// Splits a comma-separated array segment into trimmed, unquoted entries,
+/// recognizing both TOML basic (`"clippy"`) and literal (`'clippy'`) strings.
+let private parseComponentEntries (segment: string) : string list =
+    segment.Split(',')
+    |> Array.map (fun e -> e.Trim())
+    |> Array.filter (fun e -> e <> "")
+    |> Array.map (fun e -> e.Trim('"').Trim('\''))
+    |> Array.filter (fun e -> e <> "")
+    |> Array.toList
+
+/// Extracts the `components` array declared under `[toolchain]` in a
+/// `rust-toolchain.toml` body [Repo-grounded —
+/// `checker.rs::read_rust_toolchain_components`].
+let readRustToolchainComponents (contents: string) : string list =
+    let rec loop (lines: string list) (inArray: bool) (acc: string list) : string list =
+        match lines with
+        | [] -> acc
+        | raw :: rest ->
+            let line = stripTrailingComment raw
+
+            if not inArray then
+                let trimmedLine = line.Trim()
+
+                match trimmedLine.IndexOf('=') with
+                | -1 -> loop rest false acc
+                | eqIdx ->
+                    let key = trimmedLine.Substring(0, eqIdx).Trim()
+
+                    if key <> "components" then
+                        loop rest false acc
+                    else
+                        let rhs = trimmedLine.Substring(eqIdx + 1).Trim()
+
+                        if not (rhs.StartsWith("[", StringComparison.Ordinal)) then
+                            loop rest false acc
+                        else
+                            let afterOpen = rhs.Substring(1)
+
+                            match afterOpen.IndexOf(']') with
+                            | -1 -> loop rest true (acc @ parseComponentEntries afterOpen)
+                            | closeIdx -> acc @ parseComponentEntries (afterOpen.Substring(0, closeIdx))
+            else
+                match line.IndexOf(']') with
+                | -1 -> loop rest true (acc @ parseComponentEntries line)
+                | closeIdx -> acc @ parseComponentEntries (line.Substring(0, closeIdx))
+
+    loop (contents.Replace("\r\n", "\n").Split('\n') |> Array.toList) false []
+
+/// Builds one [`ToolCheck`] per scanned `rust-toolchain.toml` that omits a
+/// required lint component, reported as [`Warning`] rather than [`Missing`]
+/// [Repo-grounded — `checker.rs::rust_toolchain_lint_component_checks`].
+///
+/// Gherkin (binds) — "A pinned Rust toolchain without lint components is
+/// reported as a warning" and "A pinned Rust toolchain declaring only one
+/// lint component names just the missing one":
+///   Given a rust-toolchain.toml pins a channel and declares no lint components
+///   When "npm run doctor" runs
+///   Then the command exits successfully
+///   And it reports the toolchain component check as a warning naming rustfmt and clippy
+let rustToolchainLintComponentChecks (repoRoot: string) : ToolCheck list =
+    rustToolchainManifests repoRoot
+    |> List.choose (fun relative ->
+        let fullPath =
+            Path.Combine(repoRoot, relative.Replace('/', Path.DirectorySeparatorChar))
+
+        try
+            let declared = readRustToolchainComponents (File.ReadAllText fullPath)
+
+            let missing =
+                requiredRustToolchainComponents
+                |> List.filter (fun required -> not (List.contains required declared))
+
+            if List.isEmpty missing then
+                None
+            else
+                let note =
+                    sprintf
+                        "%s pins a Rust toolchain but does not declare the %s component(s); a lint gate running cargo fmt/clippy under that channel fails whenever rustup installed it with --profile minimal"
+                        relative
+                        (String.concat ", " missing)
+
+                Some
+                    { Name = "rust-toolchain-components"
+                      Binary = ""
+                      Status = Warning
+                      InstalledVersion = String.concat ", " declared
+                      RequiredVersion = String.concat ", " requiredRustToolchainComponents
+                      Source = relative
+                      Note = note }
+        with _ ->
+            None)
+
+// --- Playwright browser detection [Repo-grounded — `checker.rs`'s
+// "Playwright browser detection" section] ---
+
+/// Returns `true` when at least one Chromium Playwright browser bundle is
+/// found under `home`'s platform-specific Playwright cache directory.
+let checkPlaywrightBrowsersAt (home: string option) : bool =
+    match home with
+    | None -> false
+    | Some h ->
+        let cacheDir =
+            if RuntimeInformation.IsOSPlatform(OSPlatform.OSX) then
+                Path.Combine(h, "Library", "Caches", "ms-playwright")
+            else
+                Path.Combine(h, ".cache", "ms-playwright")
+
+        try
+            Directory.Exists(cacheDir)
+            && Directory.GetDirectories(cacheDir)
+               |> Array.exists (fun d -> Path.GetFileName(d: string).StartsWith("chromium-", StringComparison.Ordinal))
+        with _ ->
+            false
+
+/// Reads the real `HOME` environment variable and returns
+/// [`checkPlaywrightBrowsersAt`]'s verdict for the current process.
+let checkPlaywrightBrowsersAmbient () : bool =
+    match Environment.GetEnvironmentVariable("HOME") with
+    | null
+    | "" -> checkPlaywrightBrowsersAt None
+    | home -> checkPlaywrightBrowsersAt (Some home)
+
+/// Checks whether Playwright browsers are installed, ignoring version
+/// strings [Repo-grounded — `checker.rs::compare_playwright`].
+let comparePlaywright (_installed: string) (_required: string) : ToolStatus * string =
+    if not (checkPlaywrightBrowsersAmbient ()) then
+        Warning, "browsers not installed — run: npx playwright install"
+    else
+        Passing, "no version requirement"
+
+// --- Install-step builders [Repo-grounded — `tools.rs`'s "Install commands"
+// section] ---
+
+let private noReq () : string = ""
+
+let installGit (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install Xcode Command Line Tools"
+            Command = "xcode-select"
+            Args = [ "--install" ] } ]
+    else
+        [ { Description = "Install git"
+            Command = "sudo"
+            Args = [ "apt-get"; "install"; "-y"; "git" ] } ]
+
+let installVolta (_req: string) (_platform: string) : InstallStep list =
+    [ { Description = "Install Volta"
+        Command = "bash"
+        Args = [ "-c"; "curl https://get.volta.sh | bash" ] } ]
+
+let installNode (req: string) (_platform: string) : InstallStep list =
+    [ { Description = sprintf "Install Node.js %s via Volta" req
+        Command = "volta"
+        Args = [ "install"; sprintf "node@%s" req ] } ]
+
+let installNpm (req: string) (_platform: string) : InstallStep list =
+    [ { Description = sprintf "Install npm %s via Volta" req
+        Command = "volta"
+        Args = [ "install"; sprintf "npm@%s" req ] } ]
+
+let installRust (_req: string) (_platform: string) : InstallStep list =
+    [ { Description = "Install Rust via rustup"
+        Command = "bash"
+        Args =
+          [ "-c"
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y" ] } ]
+
+let installCargoLlvmCov (_req: string) (_platform: string) : InstallStep list =
+    [ { Description = "Install cargo-llvm-cov"
+        Command = "bash"
+        Args = [ "-c"; "source \"$HOME/.cargo/env\" && cargo install cargo-llvm-cov" ] } ]
+
+let private dotnetDefaultChannel = "10.0"
+
+/// Extracts the `major.minor` release channel from a full SDK version
+/// string, rejecting any non-digit character in either segment as a
+/// shell-injection guard [Repo-grounded — `tools.rs::dotnet_channel`].
+let dotnetChannel (req: string) : string =
+    let parts = req.Split('.')
+
+    if
+        parts.Length >= 2
+        && parts.[0] <> ""
+        && parts.[1] <> ""
+        && parts.[0] |> Seq.forall Char.IsDigit
+        && parts.[1] |> Seq.forall Char.IsDigit
+    then
+        sprintf "%s.%s" parts.[0] parts.[1]
+    else
+        dotnetDefaultChannel
+
+let private dotnetInstallShGpgFingerprint =
+    "2B930AB1228D11D5D7F6B6ACB9CF1A51FC7D3ACF"
+
+let installDotnet (req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install .NET via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "dotnet" ] } ]
+    else
+        let channel = dotnetChannel req
+
+        let script =
+            String.concat
+                "\n"
+                [ "set -eu"
+                  "temp_dir=$(mktemp -d)"
+                  "trap 'rm -rf \"$temp_dir\"' EXIT"
+                  "curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sh -o \"$temp_dir/dotnet-install.sh\""
+                  "curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sig -o \"$temp_dir/dotnet-install.sig\""
+                  "curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.asc -o \"$temp_dir/dotnet-install.asc\""
+                  "export GNUPGHOME=\"$temp_dir/gnupg\""
+                  "mkdir -m 700 \"$GNUPGHOME\""
+                  "gpg --batch --import \"$temp_dir/dotnet-install.asc\" >/dev/null 2>&1"
+                  "actual_fingerprint=$(gpg --batch --with-colons --fingerprint | awk -F: '/^fpr:/ {print $10; exit}')"
+                  sprintf "if [ \"$actual_fingerprint\" != \"%s\" ]; then" dotnetInstallShGpgFingerprint
+                  sprintf
+                      "  echo \"dotnet-install.sh signing key fingerprint mismatch: expected %s, got $actual_fingerprint\" >&2"
+                      dotnetInstallShGpgFingerprint
+                  "  exit 1"
+                  "fi"
+                  "gpg --batch --verify \"$temp_dir/dotnet-install.sig\" \"$temp_dir/dotnet-install.sh\""
+                  "sudo mkdir -p /usr/share/dotnet"
+                  "sudo chown \"$(id -u):$(id -g)\" /usr/share/dotnet"
+                  sprintf "bash \"$temp_dir/dotnet-install.sh\" --channel %s --install-dir /usr/share/dotnet" channel
+                  "sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet" ]
+
+        [ { Description = sprintf "Install .NET %s via the official install script" channel
+            Command = "bash"
+            Args = [ "-c"; script ] } ]
+
+let installDocker (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        []
+    else
+        [ { Description = "Install Docker"
+            Command = "sudo"
+            Args = [ "apt-get"; "install"; "-y"; "docker.io"; "docker-compose-v2" ] } ]
+
+let installJq (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install jq via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "jq" ] } ]
+    else
+        [ { Description = "Install jq"
+            Command = "sudo"
+            Args = [ "apt-get"; "install"; "-y"; "jq" ] } ]
+
+let installShellcheck (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install shellcheck via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "shellcheck" ] } ]
+    else
+        [ { Description = "Install shellcheck"
+            Command = "sudo"
+            Args = [ "apt-get"; "install"; "-y"; "shellcheck" ] } ]
+
+let installActionlint (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install actionlint via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "actionlint" ] } ]
+    else
+        [ { Description = "Install actionlint via the official download script"
+            Command = "sudo"
+            Args =
+              [ "bash"
+                "-c"
+                "curl -sSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash | bash -s -- 1.7.12 /usr/local/bin" ] } ]
+
+let installHadolint (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install hadolint via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "hadolint" ] } ]
+    else
+        [ { Description = "Download hadolint binary"
+            Command = "sudo"
+            Args =
+              [ "curl"
+                "-sSL"
+                "-o"
+                "/usr/local/bin/hadolint"
+                "https://github.com/hadolint/hadolint/releases/download/v2.14.0/hadolint-Linux-x86_64" ] }
+          { Description = "Make hadolint executable"
+            Command = "sudo"
+            Args = [ "chmod"; "+x"; "/usr/local/bin/hadolint" ] } ]
+
+let installShfmt (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install shfmt via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "shfmt" ] } ]
+    else
+        [ { Description = "Download shfmt binary"
+            Command = "sudo"
+            Args =
+              [ "curl"
+                "-sSL"
+                "-o"
+                "/usr/local/bin/shfmt"
+                "https://github.com/mvdan/sh/releases/download/v3.13.1/shfmt_v3.13.1_linux_amd64" ] }
+          { Description = "Make shfmt executable"
+            Command = "sudo"
+            Args = [ "chmod"; "+x"; "/usr/local/bin/shfmt" ] } ]
+
+/// Exact `OpenTofu` version installed by the macOS and Linux doctor
+/// bootstrappers [Repo-grounded — `tools.rs::OPENTOFU_VERSION`].
+let private openTofuVersion = "1.12.3"
+
+let private openTofuReleaseBaseUrl =
+    "https://github.com/opentofu/opentofu/releases/download/v1.12.3"
+
+let private openTofuDarwinAmd64Sha256 =
+    "0898350dcc5b2ae31ad104cf4882228d08f858ba28f4e8bea693b51d1b267c57"
+
+let private openTofuDarwinArm64Sha256 =
+    "2b81c065cdcf5e573cfb5d9e0c663ac4cfc32512927078b645b58ef81cec2474"
+
+let private openTofuLinuxAmd64Sha256 =
+    "46b48c3438c65cf479fc076c9281422ffa2f493548d1e813d154c835c5986a08"
+
+let private openTofuLinuxArm64Sha256 =
+    "b2110d1ce46e366ce861b7f53d293dad99080075629aed7fb50d7328916d91c2"
+
+let private readTofuVersion () : string = openTofuVersion
+
+/// Returns install steps for `tofu` (`OpenTofu`): a pinned official release
+/// archive whose checksum is authenticated against the hash committed
+/// alongside this installer, never a mutable shell script fetched and
+/// executed from the network [Repo-grounded — `tools.rs::install_tofu`].
+///
+/// Gherkin (binds) — "Fix dry-run previews a verified, platform-safe
+/// OpenTofu release archive":
+///   Given the tofu tool is not found in the system PATH
+///   When the developer runs the doctor command with fix and dry-run flags
+///   Then the command exits with a failure code
+///   And the output handles verified OpenTofu remediation safely
+let installTofu (_req: string) (platform: string) : InstallStep list =
+    let checksums =
+        match platform with
+        | "darwin" -> Some("darwin", "shasum -a 256", openTofuDarwinAmd64Sha256, openTofuDarwinArm64Sha256)
+        | "linux" -> Some("linux", "sha256sum", openTofuLinuxAmd64Sha256, openTofuLinuxArm64Sha256)
+        | _ -> None
+
+    match checksums with
+    | None -> []
+    | Some(os, checksumCommand, amd64Checksum, arm64Checksum) ->
+        let script =
+            String.concat
+                "\n"
+                [ "set -eu"
+                  "case \"$(uname -m)\" in"
+                  sprintf "  x86_64) arch=amd64; expected_checksum=%s ;;" amd64Checksum
+                  sprintf "  arm64|aarch64) arch=arm64; expected_checksum=%s ;;" arm64Checksum
+                  "  *) echo \"Unsupported OpenTofu architecture: $(uname -m)\" >&2; exit 1 ;;"
+                  "esac"
+                  sprintf "artifact=tofu_%s_%s_${arch}.zip" openTofuVersion os
+                  "temp_dir=$(mktemp -d)"
+                  "trap 'rm -rf \"$temp_dir\"' EXIT"
+                  sprintf
+                      "curl --proto '=https' --tlsv1.2 -fsSL %s/\"$artifact\" -o \"$temp_dir/$artifact\""
+                      openTofuReleaseBaseUrl
+                  sprintf "actual_checksum=$(%s \"$temp_dir/$artifact\" | awk '{print $1}')" checksumCommand
+                  "if [ \"$actual_checksum\" != \"$expected_checksum\" ]; then"
+                  "  echo \"OpenTofu archive checksum mismatch\" >&2"
+                  "  exit 1"
+                  "fi"
+                  "unzip -q \"$temp_dir/$artifact\" -d \"$temp_dir/extract\""
+                  "sudo install -m 0755 \"$temp_dir/extract/tofu\" /usr/local/bin/tofu" ]
+
+        [ { Description = "Install verified OpenTofu release archive"
+            Command = "bash"
+            Args = [ "-c"; script ] } ]
+
+let installClangFormat (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install clang-format via Homebrew"
+            Command = "brew"
+            Args = [ "install"; "clang-format" ] } ]
+    else
+        [ { Description = "Install clang-format"
+            Command = "sudo"
+            Args = [ "apt-get"; "install"; "-y"; "clang-format" ] } ]
+
+let installPlaywright (_req: string) (platform: string) : InstallStep list =
+    if platform = "darwin" then
+        [ { Description = "Install Playwright browsers"
+            Command = "npx"
+            Args = [ "playwright"; "install" ] } ]
+    else
+        [ { Description = "Install Playwright browsers"
+            Command = "npx"
+            Args = [ "playwright"; "install" ] }
+          { Description = "Install Playwright system deps"
+            Command = "npx"
+            Args = [ "playwright"; "install-deps" ] } ]
+
+/// Builds the ordered list of tool defs for `repoRoot`
+/// [Repo-grounded — `tools.rs::build_tool_defs`].
+let buildToolDefs (repoRoot: string) : ToolDef list =
+    let packageJsonPath = Path.Combine(repoRoot, "package.json")
+    let globalJsonPath = Path.Combine(repoRoot, "global.json")
+
+    let rustToolchainTomlPath =
+        Path.Combine(repoRoot, "apps", "rhino-cli", "rust-toolchain.toml")
+
+    [ { Name = "git"
+        Binary = "git"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseGitVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installGit }
+      { Name = "volta"
+        Binary = "volta"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseTrimVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installVolta }
+      { Name = "node"
+        Binary = "node"
+        Source = "package.json → volta.node"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseTrimVersion
+        Compare = compareExact
+        ReadReq = (fun () -> readNodeVersion packageJsonPath |> Option.defaultValue "")
+        InstallCmd = Some installNode }
+      { Name = "npm"
+        Binary = "npm"
+        Source = "package.json → volta.npm"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseTrimVersion
+        Compare = compareExact
+        ReadReq = (fun () -> readNpmVersion packageJsonPath |> Option.defaultValue "")
+        InstallCmd = Some installNpm }
+      { Name = "rust"
+        Binary = "rustc"
+        Source = "apps/rhino-cli/rust-toolchain.toml → channel"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseRustVersion
+        Compare = compareExact
+        ReadReq = (fun () -> readRustToolchainChannel rustToolchainTomlPath |> Option.defaultValue "")
+        InstallCmd = Some installRust }
+      { Name = "cargo-llvm-cov"
+        Binary = "cargo"
+        Source = "(no config file)"
+        Args = [ "llvm-cov"; "--version" ]
+        UseStderr = false
+        ParseVer = parseCargoLlvmCovVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installCargoLlvmCov }
+      { Name = "dotnet"
+        Binary = "dotnet"
+        Source = "doctor.dotnet-global-json → sdk.version"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseDotnetVersion
+        Compare = compareMajorGte
+        ReadReq = (fun () -> readDotnetVersion globalJsonPath |> Option.defaultValue "")
+        InstallCmd = Some installDotnet }
+      { Name = "docker"
+        Binary = "docker"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseDockerVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installDocker }
+      { Name = "jq"
+        Binary = "jq"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseJqVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installJq }
+      { Name = "shellcheck"
+        Binary = "shellcheck"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseShellcheckVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installShellcheck }
+      { Name = "hadolint"
+        Binary = "hadolint"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseHadolintVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installHadolint }
+      { Name = "actionlint"
+        Binary = "actionlint"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseActionlintVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installActionlint }
+      { Name = "playwright"
+        Binary = "npx"
+        Source = "node_modules (npx playwright)"
+        Args = [ "playwright"; "--version" ]
+        UseStderr = false
+        ParseVer = parsePlaywrightVersion
+        Compare = comparePlaywright
+        ReadReq = noReq
+        InstallCmd = Some installPlaywright }
+      { Name = "shfmt"
+        Binary = "shfmt"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseTrimVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installShfmt }
+      { Name = "tofu"
+        Binary = "tofu"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseTofuVersion
+        Compare = compareGte
+        ReadReq = readTofuVersion
+        InstallCmd = Some installTofu }
+      { Name = "clang-format"
+        Binary = "clang-format"
+        Source = "(no config file)"
+        Args = [ "--version" ]
+        UseStderr = false
+        ParseVer = parseClangFormatVersion
+        Compare = compareExact
+        ReadReq = noReq
+        InstallCmd = Some installClangFormat } ]
+
+/// Builds the tool definitions selected by scope, explicit selection, and the
+/// repository's `doctor.skip-tools` configuration
+/// [Repo-grounded — `mod.rs::selected_tool_defs`].
+///
+/// Gherkin (binds) — "An explicit tool selection probes and reports only
+/// that tool" and "A repo-config-declared tool is skipped from the check":
+///   Given all required development tools are present with matching versions
+///   And the unselected shellcheck tool is not found in the system PATH
+///   And only the tofu tool is selected
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports only the selected tofu tool
+let selectedToolDefs (options: CheckOptions) : ToolDef list =
+    let scoped =
+        buildToolDefs options.RepoRoot
+        |> List.filter (fun d -> options.Scope <> MinimalScope || isMinimalTool d.Name)
+
+    let explicitlySelected =
+        match options.SelectedTools with
+        | None -> scoped
+        | Some selected -> scoped |> List.filter (fun d -> List.contains d.Name selected)
+
+    let skipTools =
+        (RhinoCli.Application.RepoConfig.loadOrDefault options.RepoRoot).Doctor.SkipTools
+
+    explicitlySelected
+    |> List.filter (fun d -> not (List.contains d.Name skipTools))
+
+// --- Runner [Repo-grounded — `checker.rs`'s "Runner" section] ---
+
+/// Mirrors `exec.LookPath`/`binary_in_path`: walks `PATH` for an executable
+/// file named `name`, or checks the path directly when it contains a
+/// separator.
+let private binaryInPath (name: string) : bool =
+    if name.Contains('/') then
+        File.Exists(name)
+    else
+        match Environment.GetEnvironmentVariable("PATH") with
+        | null -> false
+        | pathVar ->
+            pathVar.Split(Path.PathSeparator)
+            |> Array.exists (fun dir -> dir <> "" && File.Exists(Path.Combine(dir, name)))
+
+/// Executes `name` with `args` and returns `(stdout, stderr, exitCode)`.
+/// Returns `Error` when `name` is not found in `PATH` (no process is
+/// started) [Repo-grounded — `checker.rs::real_runner`].
+let realRunner: CommandRunner =
+    fun name args ->
+        if not (binaryInPath name) then
+            Error(sprintf "binary not found in PATH: %s" name)
+        else
+            try
+                use proc = new Process()
+                proc.StartInfo.FileName <- name
+                args |> List.iter proc.StartInfo.ArgumentList.Add
+                proc.StartInfo.RedirectStandardOutput <- true
+                proc.StartInfo.RedirectStandardError <- true
+                proc.StartInfo.UseShellExecute <- false
+                proc.Start() |> ignore
+                let stdout = proc.StandardOutput.ReadToEnd()
+                let stderr = proc.StandardError.ReadToEnd()
+                proc.WaitForExit()
+                Ok(stdout, stderr, proc.ExitCode)
+            with ex ->
+                Error ex.Message
+
+/// Executes a single [`ToolDef`] check using `runner` and returns a
+/// [`ToolCheck`]. When `runner` returns `Error` (binary not found), the check
+/// is immediately recorded as [`Missing`] without calling any parser or
+/// comparator [Repo-grounded — `checker.rs::run_one_def`].
+///
+/// Gherkin (binds) — "A required tool is missing from the environment":
+///   Given a required development tool is not found in the system PATH
+///   When the developer runs the doctor command
+///   Then the command exits with a failure code
+///   And the output identifies the missing tool
+let runOneDef (runner: CommandRunner) (def: ToolDef) : ToolCheck =
+    let requiredVersion = def.ReadReq()
+
+    match runner def.Binary def.Args with
+    | Error _ ->
+        { Name = def.Name
+          Binary = def.Binary
+          Status = Missing
+          InstalledVersion = ""
+          RequiredVersion = requiredVersion
+          Source = def.Source
+          Note = "not found in PATH" }
+    | Ok(stdout, stderr, _code) ->
+        let output = if def.UseStderr then stderr else stdout
+        let installed = def.ParseVer output
+        let status, note = def.Compare installed requiredVersion
+
+        { Name = def.Name
+          Binary = def.Binary
+          Status = status
+          InstalledVersion = installed
+          RequiredVersion = requiredVersion
+          Source = def.Source
+          Note = note }
+
+/// Runs all tool checks described in `options` and returns aggregated
+/// results [Repo-grounded — `checker.rs::check_all`].
+///
+/// Gherkin (binds) — "All required tools are installed and versions match":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports each tool as passing
+let checkAll (options: CheckOptions) : DoctorResult =
+    let runner = options.Runner |> Option.defaultValue realRunner
+    let defs = selectedToolDefs options
+    let baseChecks = defs |> List.map (runOneDef runner)
+
+    let checks =
+        if defs |> List.exists (fun d -> d.Name = "rust") then
+            baseChecks @ rustToolchainLintComponentChecks options.RepoRoot
+        else
+            baseChecks
+
+    let ok, warn, missing =
+        checks
+        |> List.fold
+            (fun (okAcc, warnAcc, missingAcc) c ->
+                match c.Status with
+                | Passing -> okAcc + 1, warnAcc, missingAcc
+                | Warning -> okAcc, warnAcc + 1, missingAcc
+                | Missing -> okAcc, warnAcc, missingAcc + 1)
+            (0, 0, 0)
+
+    { Checks = checks
+      OkCount = ok
+      WarnCount = warn
+      MissingCount = missing
+      Scope = options.Scope }
+
+// --- Fixer [Repo-grounded — `fixer.rs`] ---
+
+/// Returns whether a Doctor check needs an installation/remediation attempt:
+/// missing tools always, and a version warning only for `tofu`, whose
+/// minimum version is a security requirement
+/// [Repo-grounded — `fixer.rs::needs_remediation`].
+let needsRemediation (check: ToolCheck) : bool =
+    check.Status = Missing || (check.Status = Warning && check.Name = "tofu")
+
+/// `true` when at least one check in `result` needs remediation
+/// [Repo-grounded — `commands/doctor.rs::has_remediation_work`].
+///
+/// Gherkin (binds) — "Fix reports nothing to fix when all tools are present":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command with the fix flag
+///   Then the command exits successfully
+///   And the output reports nothing to fix
+let hasRemediationWork (result: DoctorResult) : bool =
+    result.Checks |> List.exists needsRemediation
+
+let private currentPlatform () : string =
+    if RuntimeInformation.IsOSPlatform(OSPlatform.OSX) then
+        "darwin"
+    elif RuntimeInformation.IsOSPlatform(OSPlatform.Linux) then
+        "linux"
+    else
+        "other"
+
+/// Summary of a completed fix run [Repo-grounded — `fixer.rs::FixResult`].
+type FixResult =
+    { Fixed: int
+      Failed: int
+      AlreadyOk: int
+      Skipped: int }
+
+let private zeroFixResult =
+    { Fixed = 0
+      Failed = 0
+      AlreadyOk = 0
+      Skipped = 0 }
+
+/// Executes a single install-command step; `Error` on non-zero exit or spawn
+/// failure [Repo-grounded — `fixer.rs::FixRunnerFunc`].
+type FixRunner = string -> string list -> Result<unit, string>
+
+/// Default fix runner: executes `command` with `args`, inheriting
+/// stdout/stderr [Repo-grounded — `fixer.rs::real_fix_runner`].
+let realFixRunner: FixRunner =
+    fun command args ->
+        try
+            use proc = new Process()
+            proc.StartInfo.FileName <- command
+            args |> List.iter proc.StartInfo.ArgumentList.Add
+            proc.StartInfo.UseShellExecute <- false
+            proc.Start() |> ignore
+            proc.WaitForExit()
+
+            if proc.ExitCode = 0 then
+                Ok()
+            else
+                Error(sprintf "exit %d" proc.ExitCode)
+        with ex ->
+            Error ex.Message
+
+/// Options controlling a fix run [Repo-grounded — `fixer.rs::FixOptions`].
+type FixOptions =
+    { DryRun: bool
+      Runner: FixRunner option }
+
+/// Attempts to install actionable tools from a pre-built `defs` list,
+/// emitting progress messages via `printf`. When `options.DryRun` is `true`,
+/// steps are printed but not executed and [`FixResult.Fixed`] stays zero
+/// [Repo-grounded — `fixer.rs::fix`].
+///
+/// Gherkin (binds) — "Fix installs missing tools" and "Fix with dry-run
+/// previews without executing":
+///   Given a required development tool is not found in the system PATH
+///   When the developer runs the doctor command with the fix flag
+///   Then the output contains fix progress
+let fix (result: DoctorResult) (defs: ToolDef list) (options: FixOptions) (printf: string -> unit) : FixResult =
+    let platform = currentPlatform ()
+    let runner = options.Runner |> Option.defaultValue realFixRunner
+    let defsArray = List.toArray defs
+
+    let rec runSteps (name: string) (steps: InstallStep list) : bool =
+        match steps with
+        | [] -> false
+        | step :: rest ->
+            if options.DryRun then
+                printf (sprintf "Would install: %s via %s %s\n" name step.Command (String.concat " " step.Args))
+                runSteps name rest
+            else
+                printf (sprintf "Installing %s: %s\n" name step.Description)
+
+                match runner step.Command step.Args with
+                | Error e ->
+                    printf (sprintf "  Failed: %s\n" e)
+                    true
+                | Ok() -> runSteps name rest
+
+    result.Checks
+    |> List.indexed
+    |> List.fold
+        (fun acc (i, check) ->
+            if not (needsRemediation check) then
+                { acc with
+                    AlreadyOk = acc.AlreadyOk + 1 }
+            else
+                let installCmd =
+                    if i < defsArray.Length then
+                        defsArray.[i].InstallCmd
+                    else
+                        None
+
+                match installCmd with
+                | None ->
+                    printf (sprintf "Skip: %s — no auto-install available\n" check.Name)
+                    { acc with Skipped = acc.Skipped + 1 }
+                | Some installFn ->
+                    let steps = installFn check.RequiredVersion platform
+
+                    if List.isEmpty steps then
+                        printf (sprintf "Skip: %s — no install steps for platform %s\n" check.Name platform)
+                        { acc with Skipped = acc.Skipped + 1 }
+                    else
+                        let failed = runSteps check.Name steps
+
+                        if options.DryRun then acc
+                        elif failed then { acc with Failed = acc.Failed + 1 }
+                        else { acc with Fixed = acc.Fixed + 1 })
+        zeroFixResult
+
+/// Builds tool definitions from `options` and then delegates to [`fix`]
+/// [Repo-grounded — `fixer.rs::fix_all`].
+///
+/// Gherkin (binds) — "A selected missing tool has only its remediation
+/// previewed":
+///   Given the tofu tool is not found in the system PATH
+///   And only the tofu tool is selected
+///   When the developer runs the doctor command with fix and dry-run flags
+///   Then the command exits with a failure code
+///   And the selected tofu dry run previews only its remediation
+let fixAll
+    (result: DoctorResult)
+    (options: CheckOptions)
+    (fixOptions: FixOptions)
+    (printf: string -> unit)
+    : FixResult =
+    fix result (selectedToolDefs options) fixOptions printf
+
+/// Returns a one-line human-readable summary of a [`FixResult`]
+/// [Repo-grounded — `fixer.rs::format_fix_summary`].
+let formatFixSummary (fr: FixResult) : string =
+    sprintf "\nFix summary: %d fixed, %d failed, %d already OK\n" fr.Fixed fr.Failed fr.AlreadyOk
+
+/// The plain text `doctor --fix` prints when every check already passes
+/// [Repo-grounded — `commands/doctor.rs::run`'s
+/// `"\nNothing to fix — all tools are installed."` branch].
+let formatNothingToFix: string = "\nNothing to fix — all tools are installed.\n"
+
+// --- Reporter [Repo-grounded — `reporter.rs`] ---
+
+let private symbolFor (status: ToolStatus) : string =
+    match status with
+    | Passing -> "\u2713" // check mark
+    | Warning -> "\u26A0" // warning sign
+    | Missing -> "\u2717" // ballot X
+
+let private displayVersion (c: ToolCheck) : string =
+    if c.Status = Missing then "not found"
+    elif c.InstalledVersion = "" then "(unknown)"
+    else sprintf "v%s" c.InstalledVersion
+
+/// Formats `result` as human-readable text [Repo-grounded —
+/// `reporter.rs::format_text`].
+///
+/// Gherkin (binds) — "Full scope is the default behavior":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports each tool as passing
+let formatDoctorText (result: DoctorResult) (quiet: bool) : string =
+    let sb = Text.StringBuilder()
+
+    if not quiet then
+        sb.Append("Doctor Report\n").Append("=============\n\n") |> ignore
+
+    for check in result.Checks do
+        sb.Append(sprintf "%s %-10s %-14s (%s)\n" (symbolFor check.Status) check.Name (displayVersion check) check.Note)
+        |> ignore
+
+    let total = result.OkCount + result.WarnCount + result.MissingCount
+
+    let scopeSuffix =
+        if result.Scope = MinimalScope then
+            " (scope: minimal)"
+        else
+            ""
+
+    sb.Append(
+        sprintf
+            "\nSummary: %d/%d tools OK, %d warning, %d missing%s\n"
+            result.OkCount
+            total
+            result.WarnCount
+            result.MissingCount
+            scopeSuffix
+    )
+    |> ignore
+
+    sb.ToString()
+
+/// Serialises `result` to a pretty-printed JSON string
+/// [Repo-grounded — `reporter.rs::format_json`].
+///
+/// Gherkin (binds) — "JSON output lists all tool check results":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command with JSON output
+///   Then the command exits successfully
+///   And the output is valid JSON
+///   And the JSON lists every checked tool with its status
+let formatDoctorJson (result: DoctorResult) : string =
+    let toolNode (c: ToolCheck) : JsonNode =
+        let node = JsonObject()
+        node.["name"] <- JsonValue.Create(c.Name)
+        node.["binary"] <- JsonValue.Create(c.Binary)
+        node.["status"] <- JsonValue.Create(toolStatusCode c.Status)
+
+        if c.InstalledVersion <> "" then
+            node.["installed_version"] <- JsonValue.Create(c.InstalledVersion)
+
+        if c.RequiredVersion <> "" then
+            node.["required_version"] <- JsonValue.Create(c.RequiredVersion)
+
+        if c.Source <> "" then
+            node.["source"] <- JsonValue.Create(c.Source)
+
+        if c.Note <> "" then
+            node.["note"] <- JsonValue.Create(c.Note)
+
+        node :> JsonNode
+
+    let overallStatus =
+        if result.MissingCount > 0 then "missing"
+        elif result.WarnCount > 0 then "warning"
+        else "ok"
+
+    let root = JsonObject()
+    root.["status"] <- JsonValue.Create(overallStatus)
+
+    if result.Scope = MinimalScope then
+        root.["scope"] <- JsonValue.Create(doctorScopeCode result.Scope)
+
+    root.["ok_count"] <- JsonValue.Create(result.OkCount)
+    root.["warn_count"] <- JsonValue.Create(result.WarnCount)
+    root.["missing_count"] <- JsonValue.Create(result.MissingCount)
+    root.["tools"] <- JsonArray(result.Checks |> List.map toolNode |> Array.ofList)
+
+    let serializeOptions = JsonSerializerOptions()
+    serializeOptions.WriteIndented <- true
+    root.ToJsonString(serializeOptions)
