@@ -104,4 +104,7 @@ Content...
 **Required fields**: `name` (must match directory name), `description`
 **Optional fields**: `context` (inline or fork)
 
-Agent skills are **not mirrored** — the secondary harness reads `.claude/skills/{name}/SKILL.md` natively (no copy or conversion needed).
+Skills need no format conversion for OpenCode, which reads `.claude/skills/{name}/SKILL.md`
+natively. The binding generator also mirrors canonical `.claude/skills/` content byte-for-byte to
+`.agents/skills/` for Codex and other cross-harness consumers, while preserving directories that
+`repo-config.yml` explicitly classifies as vendored.
