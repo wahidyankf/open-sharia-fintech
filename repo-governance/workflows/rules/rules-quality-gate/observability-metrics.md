@@ -15,7 +15,7 @@ Track across executions:
   domain predicate worth encoding; delegated lifecycle results are excluded
 - **Iterations-to-convergence per mode**: How many check-fix cycles needed per mode level
 - **Average iterations to completion**: How many cycles typically needed
-- **Success rate**: Percentage reaching zero findings
+- **Success rate**: Percentage reaching zero findings at the selected threshold
 - **Common finding categories**: What issues appear most often
 - **Fix success rate**: Percentage of fixes applied without errors
 

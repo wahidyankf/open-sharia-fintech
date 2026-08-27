@@ -77,3 +77,10 @@ annotations — see [README Completeness](./governance-readme-completeness.md).
 - [File Naming](./file-naming.md) — the kebab-case base rule.
 - [Word-Budget Remediation](./governance-word-budget-remediation.md) — splits are the largest source
   of non-step ordinals.
+
+## Principles Implemented/Respected
+
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — an
+  ordinal communicates a real execution order only when its filename passes both questions.
+- [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md) — topic
+  shards use plain names and leave ordering to their index.

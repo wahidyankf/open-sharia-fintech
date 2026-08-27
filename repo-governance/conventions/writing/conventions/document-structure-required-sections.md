@@ -54,6 +54,10 @@ Brief overview explaining what this convention covers and why it exists.
 
 ## 3. Principles Implemented/Respected Section (H2)
 
+Keep this section as H2 when it remains in the convention's parent file. When progressive
+disclosure moves the whole section to an indexed child document, that child's document title is
+the equivalent H1; do not repeat an empty H2 in the parent merely to satisfy a mechanical check.
+
 ```markdown
 ## Principles Implemented/Respected
 

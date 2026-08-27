@@ -89,3 +89,19 @@ conformance failure.
 
 See [SDLC Gate Standard](../../../docs/reference/sdlc-gate-standard.md) for the governing rule and
 [CI blocker resolution](../quality/ci-blocker-resolution.md) for investigation procedure.
+
+## Principles Implemented/Respected
+
+- [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) — hooks
+  and CI run the declared checks automatically.
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — the
+  registry owns gate IDs, ordering, scope, and lifecycle surfaces.
+- [Reproducibility](../../principles/software-engineering/reproducibility.md) — local and CI
+  projections derive from the same declaration.
+
+## Conventions Implemented/Respected
+
+- [Specs Directory Structure](../../conventions/structure/specs-directory-structure.md) — its
+  structural and Gherkin checks are projected through this lifecycle.
+- [Governance Word Budget](../../conventions/structure/governance-word-budget.md) — its pre-push and
+  CI enforcement points are registry-owned.

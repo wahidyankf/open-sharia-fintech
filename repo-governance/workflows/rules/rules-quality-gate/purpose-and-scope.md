@@ -6,7 +6,9 @@ when_to_use: Use when checking whether a specific directory or file family is in
 
 # Purpose and Scope
 
-**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agent and skill source definitions, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
+**Purpose**: Automatically validate repository consistency across principles, conventions,
+development practices, agent and skill source definitions, and subdirectory README files, then
+apply fixes iteratively until no finding at or above the selected mode threshold remains.
 
 **IMPORTANT - Scope Clarification**:
 

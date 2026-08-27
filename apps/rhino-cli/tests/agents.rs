@@ -754,8 +754,8 @@ fn then_no_catalog_row_required_for_absent_dirs(w: &mut AgentsWorld) {
 // ===========================================================================
 
 /// Writes a `repo-config.yml` with an `instruction-size:` section covering
-/// `AGENTS.md` (with the given `target`/`fail`, `warn` interpolated between
-/// them) and, unless `single_surface` is set, `.codex/**/*.md`
+/// `AGENTS.md` (with the given `target`/`fail` and `warn` equal to the fail
+/// ceiling) and, unless `single_surface` is set, `.codex/**/*.md`
 /// too, plus a `resolved_tree` rooted at `CLAUDE.md` matching the real
 /// convention doc's thresholds
 /// (`repo-governance/conventions/structure/governance-word-budget.md`).
@@ -764,7 +764,7 @@ fn then_no_catalog_row_required_for_absent_dirs(w: &mut AgentsWorld) {
 /// still names was folded into this `repo-config.yml` section — see
 /// `application/repo_config/mod.rs`).
 fn write_word_budget_config_scoped(w: &AgentsWorld, target: u64, fail: u64, single_surface: bool) {
-    let warn = target + fail.saturating_sub(target) / 2;
+    let warn = fail;
     let mut yaml = format!(
         "harness: []\n\
          coverage:\n  projects: []\n\
@@ -779,9 +779,9 @@ fn write_word_budget_config_scoped(w: &AgentsWorld, target: u64, fail: u64, sing
     if !single_surface {
         yaml.push_str(
             "\x20   - glob: \".codex/**/*.md\"\n\
-             \x20     target: 400\n\
-             \x20     warn: 450\n\
-             \x20     fail: 500\n",
+             \x20     target: 650\n\
+             \x20     warn: 750\n\
+             \x20     fail: 750\n",
         );
     }
     yaml.push_str(
@@ -817,145 +817,6 @@ fn real_repo_root() -> PathBuf {
         .join("../..")
         .canonicalize()
         .expect("repo root resolvable")
-}
-
-// ===========================================================================
-// AGENTS.md word-budget audit (governance-agents-md-word-budget.feature)
-// governance word-budget validate, scoped to a 400-word target / 500-word
-// fail ceiling matching this feature's own scenario titles.
-// ===========================================================================
-
-#[given(regex = r"^a repository containing an AGENTS\.md file of (\d+) words$")]
-fn given_agents_md_file_of_n_words(w: &mut AgentsWorld, n: String) {
-    write_word_budget_config(w, 400, 500);
-    let n: usize = n.parse().expect("word count");
-    w.write("AGENTS.md", &n_words(n));
-}
-
-#[when("the developer runs governance word-budget validate")]
-fn when_word_budget_validate(w: &mut AgentsWorld) {
-    w.exec(&["governance", "word-budget", "validate"]);
-}
-
-#[then("the output reports the AGENTS.md size as within target")]
-fn then_reports_within_target(w: &mut AgentsWorld) {
-    // Ok-severity surfaces are intentionally excluded from findings output
-    // (progressive-disclosure quiet-success design — see
-    // `check_instruction_sizes`'s doc comment); the observable signal is the
-    // generic "all surfaces within budget" pass banner.
-    let out = w.stdout();
-    assert!(out.contains("WORD BUDGET: PASSED"), "got: {out}");
-}
-
-#[then("the output identifies AGENTS.md as over the target size")]
-fn then_identifies_over_target(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("[WARN]"), "got: {out}");
-    assert!(out.contains("AGENTS.md"), "got: {out}");
-}
-
-#[then("the output identifies AGENTS.md as over the hard limit")]
-fn then_identifies_over_hard_limit(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("[FAIL]"), "got: {out}");
-    assert!(out.contains("AGENTS.md"), "got: {out}");
-}
-
-// ===========================================================================
-// Governance word-budget gate (governance-word-budget-thresholds.feature)
-// ===========================================================================
-
-#[given(
-    "a committed \"governance-word-budget.yaml\" mapping instruction-file globs to target, warn, and fail word thresholds"
-)]
-fn given_word_budget_committed(w: &mut AgentsWorld) {
-    write_word_budget_config(w, 400, 500);
-}
-
-#[given(regex = r#"^"AGENTS\.md" is (\d+) words$"#)]
-fn given_agents_md_is_n_words(w: &mut AgentsWorld, n: String) {
-    let n: usize = n.parse().expect("word count");
-    w.write("AGENTS.md", &n_words(n));
-}
-
-#[given(regex = r"^its target is (\d+) and its fail ceiling is (\d+)$")]
-fn given_target_and_fail_ceiling(w: &mut AgentsWorld, target: String, fail: String) {
-    write_word_budget_config(
-        w,
-        target.parse().expect("target"),
-        fail.parse().expect("fail"),
-    );
-}
-
-#[given(regex = r"^its fail ceiling is (\d+)$")]
-fn given_fail_ceiling(w: &mut AgentsWorld, fail: String) {
-    // No explicit target in this scenario — reuse the Background's default.
-    write_word_budget_config(w, 400, fail.parse().expect("fail"));
-}
-
-#[given(r#"no file exists at ".codex/agents/example.md""#)]
-fn given_no_codex_agent_file(_w: &mut AgentsWorld) {
-    // Intentionally a no-op: `write_word_budget_config` already configures
-    // this glob as a surface, but the file itself is never written — the
-    // glob simply matches nothing.
-}
-
-#[given(r#""CLAUDE.md" imports "AGENTS.md" via "@AGENTS.md""#)]
-fn given_claude_md_imports_agents_md(w: &mut AgentsWorld) {
-    // AGENTS.md stays within its own 400-word surface target (Ok, silently
-    // excluded from surface-level findings) so only the resolved-tree
-    // finding is expected to fire in this scenario.
-    w.write("AGENTS.md", &n_words(390));
-    w.write("CLAUDE.md", &format!("@AGENTS.md\n{}", n_words(1600)));
-}
-
-#[given("the sum of \"CLAUDE.md\" plus the imported files exceeds the 1500-word tree ceiling")]
-fn given_sum_exceeds_tree_ceiling(_w: &mut AgentsWorld) {
-    // No-op: the prior step already sized CLAUDE.md (~1600 words) + AGENTS.md
-    // (~390 words) well over the Background's 1500-word resolved-tree fail
-    // ceiling.
-}
-
-#[then(regex = r#"^the file is reported with severity "(ok|warn|fail)"$"#)]
-fn then_file_reported_with_severity(w: &mut AgentsWorld, severity: String) {
-    let out = w.stdout();
-    match severity.as_str() {
-        // Ok findings are excluded from output by design — see
-        // `then_reports_within_target` above for the same reasoning.
-        "ok" => assert!(out.contains("WORD BUDGET: PASSED"), "got: {out}"),
-        "warn" => {
-            assert!(out.contains("[WARN]"), "got: {out}");
-            assert!(out.contains("AGENTS.md"), "got: {out}");
-        }
-        "fail" => {
-            assert!(out.contains("[FAIL]"), "got: {out}");
-            assert!(out.contains("AGENTS.md"), "got: {out}");
-        }
-        other => panic!("unexpected severity {other}"),
-    }
-}
-
-#[then(r#"no finding is emitted for ".codex/agents/example.md""#)]
-fn then_no_finding_for_codex_agent(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(!out.contains(".codex/agents/example.md"), "got: {out}");
-}
-
-#[then(r#"a finding with key "resolved-tree" is reported with severity "fail""#)]
-fn then_resolved_tree_finding_fail(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("[FAIL] resolved-tree"), "got: {out}");
-}
-
-#[when("the developer runs harness instruction-size validate")]
-fn when_legacy_instruction_size_command(w: &mut AgentsWorld) {
-    w.exec(&["harness", "instruction-size", "validate"]);
-}
-
-#[then("the output reports an unknown subcommand")]
-fn then_reports_unknown_subcommand(w: &mut AgentsWorld) {
-    let out = w.combined_output();
-    assert!(out.contains("unrecognized subcommand"), "got: {out}");
 }
 
 // ===========================================================================
@@ -1056,12 +917,15 @@ fn then_file_exists_under_lookup_dir(w: &mut AgentsWorld, filename: String) {
     w.lookup_file_content = std::fs::read_to_string(&path).expect("read looked-up file");
 }
 
-#[then("the file lists the monitored file class, per-file budgets, and enforcement points")]
+#[then(
+    "the file lists the monitored file classes, configured threshold source, and enforcement points"
+)]
 fn then_file_lists_class_budgets_enforcement(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
     assert!(content.contains("Monitored Surfaces"), "got: {content}");
-    assert!(content.contains("Target"), "got: {content}");
-    assert!(content.contains("Fail"), "got: {content}");
+    assert!(content.contains("repo-config.yml"), "got: {content}");
+    assert!(content.contains("target"), "got: {content}");
+    assert!(content.contains("fail"), "got: {content}");
     assert!(content.contains("Enforcement Points"), "got: {content}");
 }
 
@@ -1074,7 +938,7 @@ fn when_repo_rules_checker_runs_step_6(w: &mut AgentsWorld) {
 fn then_reports_qualitative_bloat(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
     assert!(
-        content.contains("qualitative concerns the mechanical gate can't measure"),
+        content.contains("qualitative concerns a mechanical gate cannot measure"),
         "checker must own the qualitative half of the budget rule"
     );
     assert!(
@@ -1101,13 +965,14 @@ fn when_i_read(w: &mut AgentsWorld, path: String) {
     w.lookup_file_content = read_document_tree(&path);
 }
 
-#[then(r#""governance-word-budget" is named among the Step 0.5 categories"#)]
-fn then_word_budget_named_in_step_0_5(w: &mut AgentsWorld) {
+#[then(r#""governance-word-budget" is skipped locally and delegated from Step 0.5"#)]
+fn then_word_budget_delegated_from_step_0_5(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
-    let found = content
-        .lines()
-        .any(|line| line.contains("Step 0.5") && line.contains("governance-word-budget"));
-    assert!(found, "got: {content}");
+    assert!(
+        content.contains("governance-word-budget` skipped"),
+        "got: {content}"
+    );
+    assert!(content.contains("`delegated-gate-ids`"), "got: {content}");
 }
 
 #[given("a repo with instruction files within the configured budgets")]
@@ -1145,9 +1010,9 @@ fn then_result_categories_contains_word_budget(w: &mut AgentsWorld) {
     );
 }
 
-#[given(r#"a preflight JSON contains a "governance-word-budget" category with findings"#)]
-fn given_preflight_json_has_word_budget_findings(_w: &mut AgentsWorld) {
-    // No-op: this asserts static Step 0.5 processing-rule prose in
+#[given(r#"lifecycle evidence contains a current "governance-word-budget" result"#)]
+fn given_lifecycle_evidence_has_word_budget_result(_w: &mut AgentsWorld) {
+    // No-op: this asserts static lifecycle processing-rule prose in
     // repo-rules-checker.md (read by the `When "repo-rules-checker" runs
     // Step 0.5` step below), not runnable CLI behavior.
 }
@@ -1157,34 +1022,26 @@ fn when_repo_rules_checker_runs_step_0_5(w: &mut AgentsWorld) {
     w.lookup_file_content = read_agent_surface(".claude/agents/repo/repo-rules-checker.md");
 }
 
-#[then(r#"it populates the deterministic skip set with "governance-word-budget""#)]
-fn then_populates_deterministic_skip_set(w: &mut AgentsWorld) {
+#[then(r#"it consumes the exact delegated gate ID "governance-word-budget""#)]
+fn then_consumes_delegated_word_budget_gate(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
+    assert!(content.contains("`delegated-gate-ids`"), "got: {content}");
     assert!(
-        content.contains("`governance-word-budget`"),
+        content.contains("word budgets are all mechanically enforced"),
         "got: {content}"
-    );
-    assert!(
-        content.contains("Step 6 word-count portion"),
-        "got: {content}"
-    );
-}
-
-#[then(r#"it embeds the preflight findings verbatim under "Deterministic Findings""#)]
-fn then_embeds_preflight_findings_verbatim(w: &mut AgentsWorld) {
-    assert!(
-        w.lookup_file_content.contains("## Deterministic Findings"),
-        "got: {}",
-        w.lookup_file_content
     );
 }
 
 #[then("it does not re-derive word counts in Step 6")]
 fn then_does_not_rederive_word_counts(w: &mut AgentsWorld) {
+    let normalized = w
+        .lookup_file_content
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
     assert!(
-        w.lookup_file_content
-            .contains("never re-derive sizes; defer to preflight"),
-        "checker must defer word counting to the preflight rather than redoing it"
+        normalized.contains("Do not run or AI-rederive those predicates"),
+        "checker must defer word counting to lifecycle-gate evidence rather than redoing it"
     );
 }
 
@@ -1227,6 +1084,11 @@ fn given_push_range_modifies_agents_md(w: &mut AgentsWorld) {
     w.push_range_files = vec!["AGENTS.md".to_string()];
 }
 
+#[given(r#"my push range modifies "RTK.md""#)]
+fn given_push_range_modifies_rtk_md(w: &mut AgentsWorld) {
+    w.push_range_files = vec!["RTK.md".to_string()];
+}
+
 #[given(r#"my push range modifies only "apps/ose-www/src/page.tsx""#)]
 fn given_push_range_modifies_unrelated_file(w: &mut AgentsWorld) {
     w.push_range_files = vec!["apps/ose-www/src/page.tsx".to_string()];
@@ -1234,13 +1096,13 @@ fn given_push_range_modifies_unrelated_file(w: &mut AgentsWorld) {
 
 #[given(r#""AGENTS.md" exceeds its fail ceiling"#)]
 fn given_agents_md_exceeds_fail_ceiling(w: &mut AgentsWorld) {
-    write_word_budget_config(w, 400, 500);
-    w.write("AGENTS.md", &n_words(600));
+    write_word_budget_config(w, 650, 750);
+    w.write("AGENTS.md", &n_words(800));
 }
 
 #[given(r#""AGENTS.md" is within its fail ceiling"#)]
 fn given_agents_md_within_fail_ceiling(w: &mut AgentsWorld) {
-    write_word_budget_config(w, 400, 500);
+    write_word_budget_config(w, 650, 750);
     w.write("AGENTS.md", &n_words(200));
 }
 
@@ -1268,11 +1130,8 @@ fn then_word_budget_target_runs(w: &mut AgentsWorld) {
         w.output.is_some(),
         "expected `governance word-budget validate` to have executed"
     );
-    // Phase 9 arms `governance-word-budget` in the `gates:` registry with
-    // this same trigger set (mirroring the removed `instruction-size`
-    // entry's `pre-push: { scope: path-gated, trigger: [...] }` shape) — not
-    // yet true at Phase 1, so there is no live registry entry to assert
-    // against here (see module doc comment above).
+    // The trigger decision above reads the live gate registry, so this proves
+    // the current pre-push declaration invokes the validator.
 }
 
 #[then("the push is aborted with a non-zero exit")]

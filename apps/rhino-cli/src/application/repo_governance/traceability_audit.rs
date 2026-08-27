@@ -26,41 +26,43 @@ pub struct TraceabilityFinding {
 }
 
 /// Finding kind: a principle document is missing the required
-/// `## Vision Supported` heading.
+/// `Vision Supported` traceability section.
 pub const KIND_MISSING_VISION_SUPPORTED: &str = "missing-vision-supported";
 /// Finding kind: a convention or development document is missing the required
-/// `## Principles Implemented/Respected` heading.
+/// `Principles Implemented/Respected` traceability section.
 pub const KIND_MISSING_PRINCIPLES_IMPLEMENTED: &str = "missing-principles-implemented";
 /// Finding kind: a development document is missing the required
-/// `## Conventions Implemented/Respected` heading.
+/// `Conventions Implemented/Respected` traceability section.
 pub const KIND_MISSING_CONVENTIONS_IMPLEMENTED: &str = "missing-conventions-implemented";
 /// Finding kind: a workflow document does not reference any
 /// `.claude/agents/<name>.md` file.
 pub const KIND_MISSING_AGENT_REFERENCE: &str = "missing-agent-reference";
 
-/// Returns a compiled `Regex` that matches the `## Vision Supported` ATX
-/// heading.
+/// Returns a compiled `Regex` that matches the traceability heading as an H2
+/// in a parent or an H1 in a progressively disclosed child.
 fn vision_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"(?m)^##\s+Vision Supported\s*$").expect("valid hardcoded regex"))
+    RE.get_or_init(|| {
+        Regex::new(r"(?m)^#{1,2}\s+Vision Supported\s*$").expect("valid hardcoded regex")
+    })
 }
 
 /// Returns a compiled `Regex` that matches the
-/// `## Principles Implemented/Respected` ATX heading.
+/// `Principles Implemented/Respected` ATX heading.
 fn principles_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r"(?m)^##\s+Principles Implemented/Respected\s*$")
+        Regex::new(r"(?m)^#{1,2}\s+Principles Implemented/Respected\s*$")
             .expect("valid hardcoded regex")
     })
 }
 
 /// Returns a compiled `Regex` that matches the
-/// `## Conventions Implemented/Respected` ATX heading.
+/// `Conventions Implemented/Respected` ATX heading.
 fn conventions_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r"(?m)^##\s+Conventions Implemented/Respected\s*$")
+        Regex::new(r"(?m)^#{1,2}\s+Conventions Implemented/Respected\s*$")
             .expect("valid hardcoded regex")
     })
 }
@@ -85,12 +87,13 @@ const META_EXEMPT: &[&str] = &["meta/execution-modes.md", "meta/workflow-identif
 
 /// Audits traceability across four governance document families.
 ///
-/// - `repo-governance/principles/` — each file must have `## Vision Supported`.
-/// - `repo-governance/conventions/` — each file must have
-///   `## Principles Implemented/Respected`.
-/// - `repo-governance/development/` — each file must have both
-///   `## Principles Implemented/Respected` and
-///   `## Conventions Implemented/Respected`.
+/// - `repo-governance/principles/` — each document family must have a
+///   `Vision Supported` traceability section.
+/// - `repo-governance/conventions/` — each document family must have a
+///   `Principles Implemented/Respected` traceability section.
+/// - `repo-governance/development/` — each document family must have both
+///   `Principles Implemented/Respected` and
+///   `Conventions Implemented/Respected` traceability sections.
 /// - `repo-governance/workflows/` — each non-exempt file must reference at
 ///   least one `.claude/agents/<name>.md` path.
 ///
@@ -139,15 +142,13 @@ fn audit_principles(
     let files = list_governance_markdown(fs, root)?;
     let mut findings = Vec::new();
     for path in files {
-        let data = fs
-            .read_to_string(Path::new(&path))
-            .with_context(|| format!("read {path}"))?;
+        let data = read_document_family(fs, Path::new(&path))?;
         if !vision_re().is_match(&data) {
             findings.push(TraceabilityFinding {
                 path: path.clone(),
                 line: 1,
                 kind: KIND_MISSING_VISION_SUPPORTED.to_string(),
-                message: "principle is missing required \"## Vision Supported\" heading"
+                message: "principle is missing its required Vision Supported traceability section"
                     .to_string(),
             });
         }
@@ -168,17 +169,14 @@ fn audit_conventions(
     let files = list_governance_markdown(fs, root)?;
     let mut findings = Vec::new();
     for path in files {
-        let data = fs
-            .read_to_string(Path::new(&path))
-            .with_context(|| format!("read {path}"))?;
+        let data = read_document_family(fs, Path::new(&path))?;
         if !principles_re().is_match(&data) {
             findings.push(TraceabilityFinding {
                 path: path.clone(),
                 line: 1,
                 kind: KIND_MISSING_PRINCIPLES_IMPLEMENTED.to_string(),
-                message:
-                    "convention is missing required \"## Principles Implemented/Respected\" heading"
-                        .to_string(),
+                message: "convention is missing its required Principles Implemented/Respected traceability section"
+                    .to_string(),
             });
         }
     }
@@ -199,15 +197,13 @@ fn audit_development(
     let files = list_governance_markdown(fs, root)?;
     let mut findings = Vec::new();
     for path in files {
-        let data = fs
-            .read_to_string(Path::new(&path))
-            .with_context(|| format!("read {path}"))?;
+        let data = read_document_family(fs, Path::new(&path))?;
         if !principles_re().is_match(&data) {
             findings.push(TraceabilityFinding {
                 path: path.clone(),
                 line: 1,
                 kind: KIND_MISSING_PRINCIPLES_IMPLEMENTED.to_string(),
-                message: "development doc is missing required \"## Principles Implemented/Respected\" heading"
+                message: "development doc is missing its required Principles Implemented/Respected traceability section"
                     .to_string(),
             });
         }
@@ -216,7 +212,7 @@ fn audit_development(
                 path: path.clone(),
                 line: 1,
                 kind: KIND_MISSING_CONVENTIONS_IMPLEMENTED.to_string(),
-                message: "development doc is missing required \"## Conventions Implemented/Respected\" heading"
+                message: "development doc is missing its required Conventions Implemented/Respected traceability section"
                     .to_string(),
             });
         }
@@ -246,9 +242,7 @@ fn audit_workflows(
         if META_EXEMPT.contains(&rel.as_str()) {
             continue;
         }
-        let data = fs
-            .read_to_string(Path::new(&path))
-            .with_context(|| format!("read {path}"))?;
+        let data = read_document_family(fs, Path::new(&path))?;
         if !agent_ref_re().is_match(&data) {
             let line = first_non_empty_line(&data);
             findings.push(TraceabilityFinding {
@@ -273,6 +267,47 @@ fn first_non_empty_line(data: &str) -> usize {
         }
     }
     1
+}
+
+/// Reads a whole progressively disclosed document as one traceability unit.
+///
+/// The parent remains the finding location, while an indexed same-named child
+/// directory may carry the required traceability section. This matches the
+/// repository's progressive-disclosure layout without exempting ordinary
+/// documents inside category directories.
+fn read_document_family(fs: &dyn Fs, parent: &Path) -> std::result::Result<String, Error> {
+    let mut data = fs
+        .read_to_string(parent)
+        .with_context(|| format!("read {}", parent.display()))?;
+
+    let Some(stem) = parent.file_stem() else {
+        return Ok(data);
+    };
+    let child_dir = parent.with_file_name(stem);
+    if !is_file(fs, &child_dir.join("README.md")) {
+        return Ok(data);
+    }
+
+    let mut children: Vec<_> = fs
+        .walk_files(&child_dir, &[])
+        .into_iter()
+        .filter(|path| {
+            path.file_name().is_some_and(|name| {
+                let name = name.to_string_lossy();
+                name.ends_with(".md") && name != "README.md"
+            })
+        })
+        .collect();
+    children.sort();
+
+    for child in children {
+        data.push('\n');
+        data.push_str(
+            &fs.read_to_string(&child)
+                .with_context(|| format!("read {}", child.display()))?,
+        );
+    }
+    Ok(data)
 }
 
 /// Returns a sorted list of paths to all `.md` files under `root`, excluding
@@ -302,14 +337,15 @@ fn list_governance_markdown(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec
 
 /// Reports whether `path` is a progressive-disclosure split child.
 ///
-/// Splitting a governance document produces `<name>.md` (the parent, which
-/// keeps the traceability headings) plus a `<name>/` directory of children
-/// indexed by a sibling `README.md`. A child carries one section of the parent
-/// and structurally cannot repeat the parent's
+/// Splitting a governance document produces `<name>.md` plus a `<name>/`
+/// directory of children indexed by a sibling `README.md`. The required
+/// traceability headings may live in the parent or one indexed child. A child
+/// carries one section of the parent and structurally cannot repeat the family
 /// `## Principles Implemented/Respected` / `## Conventions Implemented/Respected`
 /// / `## Vision Supported` headings, so requiring them of every child would
-/// make the audit report thousands of unfixable findings. The parent is still
-/// checked — the requirement is enforced exactly once per document.
+/// make the audit report thousands of unfixable findings. The parent and its
+/// indexed children are checked together — the requirement is enforced exactly
+/// once per progressively disclosed document family.
 ///
 /// A child is recognised by its *position*, not its filename: it sits in a
 /// directory that both carries a `README.md` index and has a same-named
@@ -394,6 +430,26 @@ mod tests {
         write(
             &tmp.path().join("repo-governance/conventions/c/one.md"),
             "# One\n\nno heading here\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert!(findings.is_empty(), "got {findings:?}");
+    }
+
+    #[test]
+    fn split_document_may_keep_traceability_heading_in_an_indexed_child() {
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path().join("repo-governance/conventions/c.md"),
+            "# C\n\nSee [Principles](./c/principles.md).\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/conventions/c/README.md"),
+            "# C\n\n- [Principles](./principles.md) — traceability.\n",
+        );
+        write(
+            &tmp.path()
+                .join("repo-governance/conventions/c/principles.md"),
+            "# Principles Implemented/Respected\n\nx\n",
         );
         let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
         assert!(findings.is_empty(), "got {findings:?}");

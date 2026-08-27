@@ -69,3 +69,12 @@ pre-commit — a whole-tree scan per commit adds no coverage over pre-push/CI.
 
 Edit `args.paths`/`args.exclude`/`trigger` on the relevant `gates:` entry in `repo-config.yml`,
 recording the rationale as a YAML comment.
+
+## Principles Implemented/Respected
+
+- [Documentation First](../../principles/content/documentation-first.md) — every governance
+  directory remains discoverable through a maintained index.
+- [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) —
+  sibling coverage and annotations are mechanically declared instead of inferred.
+- [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) — the
+  registry gates detect missing, orphaned, ghost, and unannotated entries.

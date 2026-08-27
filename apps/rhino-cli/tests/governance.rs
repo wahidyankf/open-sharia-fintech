@@ -265,37 +265,41 @@ fn n_words(n: usize) -> String {
 const WORD_BUDGET_CONFIG: &str = r#"governance-word-budget:
   surfaces:
     - glob: "repo-governance/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".claude/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".opencode/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".codex/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: ".agents/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: "AGENTS.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
     - glob: "CLAUDE.md"
-      target: 400
-      warn: 500
-      fail: 500
+      target: 650
+      warn: 750
+      fail: 750
+    - glob: "RTK.md"
+      target: 650
+      warn: 750
+      fail: 750
     - glob: "**/README.md"
-      target: 700
-      warn: 900
-      fail: 900
+      target: 900
+      warn: 1000
+      fail: 1000
   resolved_tree:
     root: "CLAUDE.md"
     target: 1200
@@ -312,7 +316,7 @@ fn given_word_budget_section(w: &mut GovWorld) {
     w.write("repo-config.yml", WORD_BUDGET_CONFIG);
 }
 
-#[given("the section sets target 400, warn 500, fail 500")]
+#[given("the section sets target 650, warn 750, fail 750")]
 fn given_word_budget_thresholds(_w: &mut GovWorld) {
     // No-op: `given_word_budget_section` already writes these exact
     // thresholds for the general surfaces — this step is the Background's
@@ -338,16 +342,20 @@ fn given_file_contains_n_prose_words(w: &mut GovWorld, path: String, n: String) 
 }
 
 #[given(regex = r"^it contains a Mermaid block of (\d+) words$")]
-fn given_mermaid_block_of_n_words(w: &mut GovWorld, _n: String) {
+fn given_mermaid_block_of_n_words(w: &mut GovWorld, n: String) {
     // Calibrated (like `check_finds_fail_...`'s sibling unit test,
     // `word_budget.rs`'s Mermaid fixture) so prose(200) + fence-marker
-    // tokens (2) + block(398) totals exactly 600 — the fixed total this
-    // scenario's `Then` step asserts, rather than the Gherkin's nominal
-    // (pre-fence-token) "400".
+    // tokens (2) + block body totals the requested Mermaid word count. The
+    // Gherkin count includes the fence markers because the production
+    // validator counts every whitespace-delimited token.
+    let mermaid_words: usize = n.parse().expect("Mermaid word count");
+    let body_words = mermaid_words
+        .checked_sub(2)
+        .expect("Mermaid fixture needs room for two fence-marker tokens");
     let content = format!(
         "{}\n\n```mermaid\n{}\n```\n",
         n_words(w.prose_words),
-        n_words(398)
+        n_words(body_words)
     );
     w.write(&w.last_path.clone(), &content);
 }
@@ -355,6 +363,11 @@ fn given_mermaid_block_of_n_words(w: &mut GovWorld, _n: String) {
 #[given(regex = r#"^a file "([^"]+)" contains (\d+) words$"#)]
 fn given_a_file_contains_n_words(w: &mut GovWorld, path: String, n: String) {
     given_file_contains_n_words(w, path, n);
+}
+
+#[given(regex = r#"^no file exists at "([^"]+)"$"#)]
+fn given_no_file_exists_at(_w: &mut GovWorld, _path: String) {
+    // No-op: the configured glob exists, but the named fixture is never written.
 }
 
 // ===========================================================================
@@ -380,6 +393,12 @@ fn then_no_finding_for_that_file(w: &mut GovWorld) {
 fn then_no_finding_naming_that_file(w: &mut GovWorld) {
     let out = w.stdout();
     assert!(!out.contains(&w.last_path), "got: {out}");
+}
+
+#[then(regex = r#"^no finding is emitted for "([^"]+)"$"#)]
+fn then_no_finding_is_emitted_for(w: &mut GovWorld, path: String) {
+    let out = w.stdout();
+    assert!(!out.contains(&path), "got: {out}");
 }
 
 #[then(regex = r#"^the output contains a "(ok|warn|fail)" finding naming that file$"#)]
@@ -517,7 +536,7 @@ fn then_contains_no_instruction_size_section(w: &mut GovWorld) {
 /// [`then_readme_glob_is_declared_last`]) because only ONE ordering constraint
 /// is load-bearing — the `**/README.md` glob overlaps every other surface, and
 /// the select-then-classify overlap rule picks the LAST matching surface. The
-/// relative order of the seven instruction surfaces carries no meaning, so
+/// relative order of the eight instruction surfaces carries no meaning, so
 /// pinning it here would fail a harmless reordering.
 const EXPECTED_SURFACE_GLOBS: &[&str] = &[
     "repo-governance/**/*.md",
@@ -527,6 +546,7 @@ const EXPECTED_SURFACE_GLOBS: &[&str] = &[
     ".agents/**/*.md",
     "AGENTS.md",
     "CLAUDE.md",
+    "RTK.md",
     "**/README.md",
 ];
 

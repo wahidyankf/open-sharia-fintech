@@ -14,7 +14,8 @@ Run repository-wide consistency check to identify all issues.
 preflight-report: {step0_5.outputs.preflight-report},
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
+- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (three top-level
+  sections: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
 
 **UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../../development/infra/temporary-files/uuid-chain-generation.md#uuid-generation) for details.
 

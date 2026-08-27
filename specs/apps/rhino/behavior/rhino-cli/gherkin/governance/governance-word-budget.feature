@@ -7,16 +7,16 @@ Feature: Governance word budget
 
   Background:
     Given repo-config.yml declares a governance-word-budget section
-    And the section sets target 400, warn 500, fail 500
+    And the section sets target 650, warn 750, fail 750
 
   Scenario: A file within target passes silently
-    Given "repo-governance/conventions/formatting/linking.md" contains 380 words
+    Given "repo-governance/conventions/formatting/linking.md" contains 650 words
     When the developer runs governance word-budget validate
     Then the command exits successfully
     And the output contains no finding for that file
 
   Scenario: A file between target and fail warns without blocking
-    Given "repo-governance/conventions/formatting/linking.md" contains 450 words
+    Given "repo-governance/conventions/formatting/linking.md" contains 750 words
     When the developer runs governance word-budget validate
     Then the command exits successfully
     And the output contains a "warn" finding naming that file
@@ -26,7 +26,7 @@ Feature: Governance word budget
     When the developer runs governance word-budget validate
     Then the command exits with a failure code
     And the output contains a "fail" finding naming that file
-    And the finding states the word count 14720 and the ceiling 500
+    And the finding states the word count 14720 and the ceiling 750
     And the finding links the governance word budget convention
 
   Scenario Outline: Every covered surface is scanned
@@ -45,18 +45,24 @@ Feature: Governance word budget
       | .agents/skills/example/SKILL.md          |
       | AGENTS.md                                |
       | CLAUDE.md                                |
+      | RTK.md                                   |
 
   Scenario: The covered surfaces are exactly the live entry points of the supported harnesses
     When I read repo-config.yml
     Then the covered surface globs are exactly the harness entry points and the README glob
     And the README glob is declared last
 
-  Scenario Outline: A root entry point keeps the unchanged 500-word ceiling
-    Given a file "<path>" contains 515 words
+  Scenario: A configured glob matching no file is a no-op
+    Given no file exists at ".codex/agents/example.md"
+    When the developer runs governance word-budget validate
+    Then no finding is emitted for ".codex/agents/example.md"
+
+  Scenario Outline: A root entry point uses the ordinary 750-word ceiling
+    Given a file "<path>" contains 751 words
     When the developer runs governance word-budget validate
     Then the command exits with a failure code
     And the output contains a "fail" finding naming "<path>"
-    And the finding states the word count 515 and the ceiling 500
+    And the finding states the word count 751 and the ceiling 750
 
     Examples:
       | path      |
@@ -64,30 +70,30 @@ Feature: Governance word budget
       | CLAUDE.md |
 
   Scenario: A README.md file under the specific-surface target produces zero findings
-    Given "repo-governance/development/quality/README.md" contains 670 words
+    Given "repo-governance/development/quality/README.md" contains 900 words
     When the developer runs governance word-budget validate
     Then the command exits successfully
     And the output contains no finding naming that file
-    And this holds even though 670 words exceeds the general surface's 500-word fail ceiling, because the winning README-specific surface classifies 670 words as "ok" against its own 700-word target
+    And this holds even though 900 words exceeds the general surface's 750-word fail ceiling, because the winning README-specific surface classifies 900 words as "ok" against its own 900-word target
 
   Scenario: A README.md file uses the wider README-specific glob threshold
-    Given "repo-governance/development/quality/README.md" contains 850 words
+    Given "repo-governance/development/quality/README.md" contains 1000 words
     When the developer runs governance word-budget validate
     Then the command exits successfully
     And the output contains a "warn" finding naming that file, not a "fail" finding
 
   Scenario: A README.md file over the wider ceiling still fails
-    Given "repo-governance/development/quality/README.md" contains 950 words
+    Given "repo-governance/development/quality/README.md" contains 1001 words
     When the developer runs governance word-budget validate
     Then the command exits with a failure code
     And the output contains a "fail" finding naming that file
 
   Scenario: Non-prose content counts toward the budget
     Given "repo-governance/conventions/formatting/diagrams.md" contains 200 prose words
-    And it contains a Mermaid block of 400 words
+    And it contains a Mermaid block of 600 words
     When the developer runs governance word-budget validate
     Then the command exits with a failure code
-    And the reported word count is 600
+    And the reported word count is 800
 
   Scenario: An out-of-scope file is never scanned
     Given "apps/ayokoding-www/content/lesson.md" contains 5000 words

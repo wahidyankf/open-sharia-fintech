@@ -6,9 +6,8 @@ when_to_use: Use when a rule has passed the admission test's necessity condition
 
 # Step 5: Eviction Protocol
 
-The instruction surface is a fixed-size cache. It is normal for it to be full, and every admission
-to a full surface displaces something. This step runs only when Step 4 admitted a rule on necessity
-and found no room.
+The instruction surface is a fixed-size cache. When it is full, every admission displaces
+something. This step runs only when Step 4 admitted a rule on necessity and found no room.
 
 ## Choose the Eviction
 

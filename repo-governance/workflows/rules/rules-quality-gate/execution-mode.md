@@ -28,7 +28,7 @@ The AI will:
 rhino-cli`) and run the filtered domain preflight (Step 0.5).
 1. Invoke `repo-rules-checker` via the Agent tool (reads governance files, writes audit)
 2. Invoke `repo-rules-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
-3. Iterate until zero domain findings are achieved; report lifecycle status separately
+3. Iterate until zero threshold-level domain findings are achieved; report lifecycle status separately
 4. Show git status with modified files
 5. Wait for user commit approval
 

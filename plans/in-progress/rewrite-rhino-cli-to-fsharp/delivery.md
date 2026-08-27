@@ -52,7 +52,7 @@ and a later wave's shadow-diff runs against a binary the earlier flips already c
 waves in flight at once would make a byte-identity failure unattributable. One worktree per
 repository, one delivery unit at a time, per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
-Within a wave, the ~72 feature-file PRs are independent of each other and may be opened
+Within a wave, the ~70 feature-file PRs are independent of each other and may be opened
 back-to-back, but each still lands before the wave's integration and flip steps run.
 
 ### Delivery Boundaries
@@ -141,8 +141,9 @@ different reason, stated there: the failure modes of a workflow edit and a crate
 different and must not share a revert. An executor who counts `+` and `-` together will split PRs
 that never needed splitting and will read the Phase 9 seam as a size constraint it is not. The seam is stated once and applies
 throughout: **one `.feature` file is one PR**. There are
-72 feature files carrying 528 scenarios [Repo-grounded — counted over
-`specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 72 PRs,
+70 feature files carrying 524 scenarios [Repo-grounded — measured by
+`rhino-cli specs behavior-coverage validate` over
+`specs/apps/rhino/behavior/rhino-cli/gherkin/`], so the six implementation waves are roughly 70 PRs,
 plus the scaffolding, retirement, benchmark, propagation, and archival PRs.
 
 ### Fixture isolation is a per-cycle acceptance condition
@@ -238,7 +239,7 @@ The two-consecutive-clean exit rule remains the real exit condition.
 default seam, not a licence to exceed the ceiling. Measured over this delivery checklist, the
 scenario counts per feature file are: `md/docs-validate-mermaid.feature` **39**,
 `gate/gate-execution.feature` **30**, `gate/gate-validation.feature` **26**,
-`env/env-backup.feature` **21**, `governance/governance-word-budget.feature` **20**,
+`env/env-backup.feature` **21**, `governance/governance-word-budget.feature` **22**,
 `governance/governance-readme-index.feature` **19**, `system/cargo-target-share.feature` **18**,
 `system/doctor.feature` **17**, and `env/env-restore.feature` **16** — every file at **15 scenarios
 or more** is presumed over budget until measured otherwise. `md/docs-validate-links.feature` is
@@ -313,16 +314,19 @@ bind here either.
 
 Every scenario in the repository is assigned to exactly one wave. The counts below are measured, and
 the Phase 2 gate re-measures them so a spec change during execution cannot silently drop coverage.
+Canonical `.feature` files remain authoritative while this plan executes: before opening a cycle,
+reconcile its embedded packet and wave counts with the live feature instead of implementing a stale
+snapshot. Keep only the execution detail needed to bind RED, GREEN, and REFACTOR work.
 
 | Wave  | Phase | Spec directories                                                           | Scenarios | Feature files | Namespaces flipped at the end of the wave |
 | ----- | ----- | -------------------------------------------------------------------------- | --------- | ------------- | ----------------------------------------- |
 | A     | 3     | `convention`                                                               | 11        | 3             | `convention`, `parity`                    |
 | B     | 4     | `repo-config`, `repo-config-validate`, `env`, `env-contract`               | 62        | 8             | `repo-config`, `env`                      |
 | C     | 5     | `system`, `test-coverage`                                                  | 53        | 6             | `doctor`, `test-coverage`                 |
-| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 128       | 11            | `md`, `governance`, `git`                 |
-| E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 185       | 37            | `harness`, `specs`, `repo-governance`     |
+| D     | 6     | `md`, `governance`, `git` (resequenced)                                    | 130       | 11            | `md`, `governance`, `git`                 |
+| E     | 7     | `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd` | 179       | 35            | `harness`, `specs`, `repo-governance`     |
 | F     | 8     | `gate`                                                                     | 89        | 7             | `gate`                                    |
-| Total |       |                                                                            | **528**   | **72**        | all 13                                    |
+| Total |       |                                                                            | **524**   | **70**        | all 13                                    |
 
 `parity` has no feature directory of its own; it is proved by the shadow-diff harness and the
 `parity manifest validate` gate entry rather than by scenarios, which is why wave A flips two
@@ -330,7 +334,9 @@ namespaces on 11 scenarios. **Wave A and Wave D differ from a naive spec-directo
 `git/git-pre-commit.feature` sits under `git/` but drives `md` commands, so its 5 scenarios were
 moved into Wave D and `git` flips there — see the resequencing block in Phase 3. Phase 3 also
 authored `git/git-lockfile.feature` (3 scenarios) for the real `git lockfile` CLI surface, which had
-no Gherkin before it, bringing the totals from 525/71 to 528/72. Wave F is last because `gate` is the registry every other CI job reads —
+no Gherkin before it. The current baseline is 524/70 after later governance-spec consolidation and
+the split-document traceability regression case.
+Wave F is last because `gate` is the registry every other CI job reads —
 per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
 
 ---
@@ -883,9 +889,11 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       integration step as `md` and `governance`, once the `git lockfile` file above exists and its
       cycles have been implemented there — that step names `git` explicitly, so the twelve-namespace
       undercount this deferral once caused cannot recur.
-- [x] [AI] Confirm the wave-map table already reflects the move — Wave A **11 scenarios / 3 files**
-      (down from 16 / 4), Wave D **128 / 11** (up from 120 / 9 pre-resequencing, 125 / 10 after
-      resequencing but before this addition), totals now 528 / 72 — and restate
+- [x] [AI] Confirm the wave-map table already reflected the historical lockfile move — Wave A
+      **11 scenarios / 3 files**, Wave D **128 / 11**, and total **528 / 72** immediately after that
+      addition. Later governance-spec consolidation and traceability coverage established the
+      current measured 524 / 70 map
+      above. Restate
       every total that changes once the new `git lockfile` feature file is authored, at each of the
       six sites enumerated below — **not** in `prd.md`, which carries none of these figures
       [verified: `grep -c '\b12[05]\b\|Wave [AD]' prd.md` returns 0], so listing it here would send
@@ -4586,7 +4594,7 @@ is current` — already current, no regeneration needed there.
 
 ## Phase 6: Wave D — `md`, `governance`, `git` (resequenced)
 
-> **128 scenarios across 11 feature files** after the `git` resequencing and Phase 3's `git/`
+> **130 scenarios across 11 feature files** after the `git` resequencing, Phase 3's `git/`
 > lockfile addition — 120 across 9 before either change
 > [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`].
 > **PR seam**: one feature file is one PR, so this wave is **11** implementation PRs plus one flip
@@ -7058,7 +7066,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Governance.fs` formats no output itself.
 
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature` — 20 scenarios
+#### `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature` — 22 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
 
@@ -7071,10 +7079,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A file within target passes silently
-      Given "repo-governance/conventions/formatting/linking.md" contains 380 words
+      Given "repo-governance/conventions/formatting/linking.md" contains 650 words
       When the developer runs governance word-budget validate
       Then the command exits successfully
       And the output contains no finding for that file
@@ -7099,10 +7107,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A file between target and fail warns without blocking
-      Given "repo-governance/conventions/formatting/linking.md" contains 450 words
+      Given "repo-governance/conventions/formatting/linking.md" contains 750 words
       When the developer runs governance word-budget validate
       Then the command exits successfully
       And the output contains a "warn" finding naming that file
@@ -7127,14 +7135,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A file over the ceiling fails the gate
       Given "repo-governance/development/agents/ai-agents.md" contains 14720 words
       When the developer runs governance word-budget validate
       Then the command exits with a failure code
       And the output contains a "fail" finding naming that file
-      And the finding states the word count 14720 and the ceiling 500
+      And the finding states the word count 14720 and the ceiling 750
       And the finding links the governance word budget convention
   ```
 
@@ -7157,7 +7165,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario Outline: Every covered surface is scanned
       Given a file "<path>" contains 900 words
@@ -7175,6 +7183,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         | .agents/skills/example/SKILL.md          |
         | AGENTS.md                                |
         | CLAUDE.md                                |
+        | RTK.md                                   |
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7196,7 +7205,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The covered surfaces are exactly the live entry points of the supported harnesses
       When I read repo-config.yml
@@ -7218,19 +7227,46 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Governance` does not implement it.
-      **Gherkin (binds) →** "A root entry point keeps the unchanged 500-word ceiling" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
+      **Gherkin (binds) →** "A configured glob matching no file is a no-op" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
 
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
-    Scenario Outline: A root entry point keeps the unchanged 500-word ceiling
-      Given a file "<path>" contains 515 words
+    Scenario: A configured glob matching no file is a no-op
+      Given no file exists at ".codex/agents/example.md"
+      When the developer runs governance word-budget validate
+      Then no finding is emitted for ".codex/agents/example.md"
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Governance.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Governance.fs` formats no output itself.
+
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Governance` does not implement it.
+      **Gherkin (binds) →** "A root entry point uses the ordinary 750-word ceiling" — `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`
+
+  ```gherkin
+    Background:
+      Given repo-config.yml declares a governance-word-budget section
+      And the section sets target 650, warn 750, fail 750
+
+    Scenario Outline: A root entry point uses the ordinary 750-word ceiling
+      Given a file "<path>" contains 751 words
       When the developer runs governance word-budget validate
       Then the command exits with a failure code
       And the output contains a "fail" finding naming "<path>"
-      And the finding states the word count 515 and the ceiling 500
+      And the finding states the word count 751 and the ceiling 750
 
       Examples:
         | path      |
@@ -7257,14 +7293,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A README.md file under the specific-surface target produces zero findings
-      Given "repo-governance/development/quality/README.md" contains 670 words
+      Given "repo-governance/development/quality/README.md" contains 900 words
       When the developer runs governance word-budget validate
       Then the command exits successfully
       And the output contains no finding naming that file
-      And this holds even though 670 words exceeds the general surface's 500-word fail ceiling, because the winning README-specific surface classifies 670 words as "ok" against its own 700-word target
+      And this holds even though 900 words exceeds the general surface's 750-word fail ceiling, because the winning README-specific surface classifies 900 words as "ok" against its own 900-word target
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -7286,10 +7322,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A README.md file uses the wider README-specific glob threshold
-      Given "repo-governance/development/quality/README.md" contains 850 words
+      Given "repo-governance/development/quality/README.md" contains 1000 words
       When the developer runs governance word-budget validate
       Then the command exits successfully
       And the output contains a "warn" finding naming that file, not a "fail" finding
@@ -7314,10 +7350,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A README.md file over the wider ceiling still fails
-      Given "repo-governance/development/quality/README.md" contains 950 words
+      Given "repo-governance/development/quality/README.md" contains 1001 words
       When the developer runs governance word-budget validate
       Then the command exits with a failure code
       And the output contains a "fail" finding naming that file
@@ -7342,7 +7378,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: Non-prose content counts toward the budget
       Given "repo-governance/conventions/formatting/diagrams.md" contains 200 prose words
@@ -7371,7 +7407,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: An out-of-scope file is never scanned
       Given "apps/ayokoding-www/content/lesson.md" contains 5000 words
@@ -7399,7 +7435,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The config schema rejects an exemption key
       Given repo-config.yml adds "exempt: [AGENTS.md]" under governance-word-budget
@@ -7426,7 +7462,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The old command is gone
       When the developer runs harness instruction-size validate
@@ -7453,7 +7489,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The old config block is gone
       When I read repo-config.yml
@@ -7480,7 +7516,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The old gate id is replaced by the armed word-budget gate
       When the developer runs gate list with surface pre-push and format text
@@ -7507,7 +7543,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: The resolved tree is measured in words
       Given "CLAUDE.md" contains 480 words
@@ -7537,7 +7573,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: An oversized resolved tree fails
       Given the resolved CLAUDE.md tree totals 1600 words
@@ -7565,7 +7601,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: Import cycles terminate
       Given "CLAUDE.md" imports "AGENTS.md"
@@ -7594,7 +7630,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: A generated mirror is still subject to the word budget
       Given ".opencode/agents/plan-checker.md" contains 900 words
@@ -7622,7 +7658,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Background:
       Given repo-config.yml declares a governance-word-budget section
-      And the section sets target 400, warn 500, fail 500
+      And the section sets target 650, warn 750, fail 750
 
     Scenario: No inbound link to the renamed convention is left broken
       When the developer runs md links validate
@@ -7863,7 +7899,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 ## Phase 7: Wave E — `harness`, `specs`, `spec-coverage`, `contracts`, `repo-governance`, `ddd`
 
-> **185 scenarios across 37 feature files**
+> **179 scenarios across 35 feature files**
 > [Repo-grounded — counted over `specs/apps/rhino/behavior/rhino-cli/gherkin/`]. Excludes
 > `specs/env-staged-guard.feature` (3 scenarios), relocated to Phase 4 (Wave B) — see that phase's
 > header note.
@@ -8743,7 +8779,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
 
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-agents-md.feature` — 3 scenarios
+#### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature` — 4 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
 
@@ -8751,86 +8787,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "AGENTS.md within target size passes the audit" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-agents-md.feature`
+      **Gherkin (binds) →** "Pushing an over-budget instruction file is blocked" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`
 
   ```gherkin
-    Scenario: AGENTS.md within target size passes the audit
-      Given a repository containing an AGENTS.md file of 350 words
-      When the developer runs governance word-budget validate
-      Then the command exits successfully
-      And the output reports the AGENTS.md size as within target
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "AGENTS.md over the target size emits a warn finding" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-agents-md.feature`
-
-  ```gherkin
-    Scenario: AGENTS.md over the target size emits a warn finding
-      Given a repository containing an AGENTS.md file of 450 words
-      When the developer runs governance word-budget validate
-      Then the command exits successfully
-      And the output identifies AGENTS.md as over the target size
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "AGENTS.md over the hard limit fails the command" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-agents-md.feature`
-
-  ```gherkin
-    Scenario: AGENTS.md over the hard limit fails the command
-      Given a repository containing an AGENTS.md file of 600 words
-      When the developer runs governance word-budget validate
-      Then the command exits with a failure code
-      And the output identifies AGENTS.md as over the hard limit
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature` — 3 scenarios
-
-> **PR seam**: the cycles under this heading are one PR.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "Pushing an over-budget instruction file will be blocked once armed" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`
-
-  ```gherkin
-    Scenario: Pushing an over-budget instruction file will be blocked once armed
+    Scenario: Pushing an over-budget instruction file is blocked
       Given my push range modifies "AGENTS.md"
       And "AGENTS.md" exceeds its fail ceiling
       When the pre-push hook runs
@@ -8896,6 +8856,29 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
 
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
+      **Gherkin (binds) →** "Pushing an RTK-only change invokes its configured gate" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`
+
+  ```gherkin
+    Scenario: Pushing an RTK-only change invokes its configured gate
+      Given my push range modifies "RTK.md"
+      When the pre-push hook runs
+      Then the word-budget gate runs
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
+
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature` — 5 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
@@ -8911,7 +8894,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Given the plan is complete
       When I look under "repo-governance/conventions/structure/"
       Then "governance-word-budget.md" exists
-      And the file lists the monitored file class, per-file budgets, and enforcement points
+      And the file lists the monitored file classes, configured threshold source, and enforcement points
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8952,13 +8935,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "The quality-gate workflow lists the validator as a fourth preflight category" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
+      **Gherkin (binds) →** "The quality-gate workflow delegates the validator by exact gate ID" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
 
   ```gherkin
-    Scenario: The quality-gate workflow lists the validator as a fourth preflight category
+    Scenario: The quality-gate workflow delegates the validator by exact gate ID
       Given the plan is complete
       When I read "repo-governance/workflows/rules/rules-quality-gate.md"
-      Then "governance-word-budget" is named among the Step 0.5 categories
+      Then "governance-word-budget" is skipped locally and delegated from Step 0.5
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -8999,182 +8982,14 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "The AI checker defers to the deterministic preflight finding" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
+      **Gherkin (binds) →** "The AI checker defers to lifecycle-gate evidence" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
 
   ```gherkin
-    Scenario: The AI checker defers to the deterministic preflight finding
-      Given a preflight JSON contains a "governance-word-budget" category with findings
+    Scenario: The AI checker defers to lifecycle-gate evidence
+      Given lifecycle evidence contains a current "governance-word-budget" result
       When "repo-rules-checker" runs Step 0.5
-      Then it populates the deterministic skip set with "governance-word-budget"
-      And it embeds the preflight findings verbatim under "Deterministic Findings"
+      Then it consumes the exact delegated gate ID "governance-word-budget"
       And it does not re-derive word counts in Step 6
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature` — 6 scenarios
-
-> **PR seam**: the cycles under this heading are one PR.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "A file within target passes silently" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: A file within target passes silently
-      Given "AGENTS.md" is 400 words
-      And its target is 400 and its fail ceiling is 500
-      When the developer runs governance word-budget validate
-      Then the command exits successfully
-      And the file is reported with severity "ok"
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "A file over target but under the ceiling warns without failing" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: A file over target but under the ceiling warns without failing
-      Given "AGENTS.md" is 450 words
-      And its target is 400 and its fail ceiling is 500
-      When the developer runs governance word-budget validate
-      Then the command exits successfully
-      And the file is reported with severity "warn"
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "A file over its hard ceiling fails the command" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: A file over its hard ceiling fails the command
-      Given "AGENTS.md" is 600 words
-      And its fail ceiling is 500
-      When the developer runs governance word-budget validate
-      Then the command exits with a failure code
-      And the file is reported with severity "fail"
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "A configured glob matching no file is a no-op" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: A configured glob matching no file is a no-op
-      Given no file exists at ".codex/agents/example.md"
-      When the developer runs governance word-budget validate
-      Then no finding is emitted for ".codex/agents/example.md"
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "The resolved tree is checked against the fail ceiling" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: The resolved tree is checked against the fail ceiling
-      Given "CLAUDE.md" imports "AGENTS.md" via "@AGENTS.md"
-      And the sum of "CLAUDE.md" plus the imported files exceeds the 1500-word tree ceiling
-      When the developer runs governance word-budget validate
-      Then a finding with key "resolved-tree" is reported with severity "fail"
-  ```
-
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
-      `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario passes and no previously passing scenario breaks.
-
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: all tests still pass and `Harness.fs` formats no output itself.
-
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
-      `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
-      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
-      — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
-      **Gherkin (binds) →** "The legacy registry-merge alias no longer exists" — `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`
-
-  ```gherkin
-    Background:
-      Given a committed "governance-word-budget.yaml" mapping instruction-file globs to target, warn, and fail word thresholds
-
-    Scenario: The legacy registry-merge alias no longer exists
-      When the developer runs harness instruction-size validate
-      Then the command exits with a usage error
-      And the output reports an unknown subcommand
   ```
 
 - [ ] [AI] **GREEN**: Implement only what this scenario requires in
@@ -11586,7 +11401,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `RepoGovernance.fs` formats no output itself.
 
-#### `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-traceability-audit.feature` — 7 scenarios
+#### `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-traceability-audit.feature` — 8 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
 
@@ -11719,6 +11534,30 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Scenario: A progressive-disclosure split child is exempt regardless of its filename
       Given a repository with a governance document split into a child directory whose children carry plain kebab-case names
+      When the developer runs repo-governance traceability validate
+      Then the command exits successfully
+      And the traceability output reports zero findings
+  ```
+
+- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+      `apps/rhino-cli/src-fsharp/RhinoCli.Application/RepoGovernance.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario passes and no previously passing scenario breaks.
+
+- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: all tests still pass and `RepoGovernance.fs` formats no output itself.
+
+- [ ] [AI] **RED**: Add the step definitions for this scenario in
+      `apps/rhino-cli/src-fsharp/tests/unit/Steps/RepoGovernanceSteps.fs`
+      — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
+      — acceptance: this scenario fails because `RhinoCli.Application.RepoGovernance` does not implement it.
+      **Gherkin (binds) →** "A split document may keep its traceability section in an indexed child" — `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-traceability-audit.feature`
+
+  ```gherkin
+    Scenario: A split document may keep its traceability section in an indexed child
+      Given a split convention whose indexed child carries the required traceability section
       When the developer runs repo-governance traceability validate
       Then the command exits successfully
       And the traceability output reports zero findings
@@ -12589,7 +12428,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] All 185 Wave E scenarios pass under
+- [ ] [AI] All 179 Wave E scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
 - [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` reports zero differences in both
       repos.
@@ -14961,7 +14800,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Widen `rhino-cli`'s coverage scope to the whole tree — acceptance:
       `rhino-cli`'s `specs:behavior:coverage` specs-dirs argument and its `repo-config.yml`
       `coverage.projects` glob are both back to `specs/apps/rhino/behavior/rhino-cli/**`, and
-      `npx nx run rhino-cli:specs:behavior:coverage` reports **528** scenarios — not fewer, which
+      `npx nx run rhino-cli:specs:behavior:coverage` reports **524** scenarios — not fewer, which
       would mean a wave's widening was never merged, and not more, which would mean the glob picked
       up a tree this project does not own. `repo-config validate` exits 0, and the number of
       `coverage.projects` entries naming a rhino project matches the decision above — **one** if the
@@ -15456,7 +15295,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Run **Step 4 (placement)**: place each rule on the narrowest surface that binds. The
       instruction surface (`AGENTS.md`, `CLAUDE.md`) is a fixed-size cache — acceptance: no rule is
       admitted there without a recorded eviction, and `wc -w AGENTS.md CLAUDE.md` is checked against
-      the 500-word FAIL ceiling **before** committing
+      the 750-word FAIL ceiling **before** committing
       [Repo-grounded — `repo-governance/conventions/structure/governance-word-budget.md`].
 - [ ] [AI] Run **Step 5 (eviction)** only if Step 4 admitted a rule to the instruction surface —
       acceptance: either an eviction is recorded, or an explicit "no admission, no eviction needed".
@@ -15576,7 +15415,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 ## Validation Checklist
 
 - [ ] [AI] Every behavior cycle is RED→GREEN→REFACTOR with exactly one bound Gherkin scenario
-- [ ] [AI] All 528 scenarios have a passing F# step definition in both repos
+- [ ] [AI] All 524 scenarios have a passing F# step definition in both repos
 - [ ] [AI] Every wave passed `shadow-diff.sh` before its shim flip
 - [ ] [AI] Exactly two edits exist under `specs/apps/rhino/`, and no third: the Phase 3 addition of
       the new `git/` lockfile feature file, and the Phase 9a retirement of Rust-specific scenarios

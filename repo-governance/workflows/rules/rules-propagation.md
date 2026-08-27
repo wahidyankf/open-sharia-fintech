@@ -56,9 +56,10 @@ narrowest surface that binds, checked against existing rules under layer-aware p
 consolidation-reviewed within their subject, and dispositioned for enforcement. The run works in the
 caller's current tree by default.
 
-The instruction surface is a **fixed-size cache**: admission requires eviction, because the
-canonical instruction file and its binding shim both sit within single-digit words of their budget
-ceiling. A threshold is never raised to make room.
+The instruction surface is a **fixed-size cache**: an admission without enough headroom requires
+eviction. A threshold is never raised to make room for a placement. A separately justified,
+class-wide policy recalibration follows the governance word-budget convention and is not an
+eviction substitute.
 
 Agents composed: `.claude/agents/repo/repo-rules-maker.md`, `repo-rules-checker`,
 `repo-rules-fixer`. `rules-quality-gate` verifies at Step 8.
