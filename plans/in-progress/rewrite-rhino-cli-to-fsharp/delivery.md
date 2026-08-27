@@ -2844,8 +2844,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       pre-existing `2d1197e39` commit for `repo-config/`, `repo-config-validate/`, `env/**`,
       `env-contract/**`; this PR's rebase onto PR#323 (#323) added the merge-conflict-resolved
       `specs/env-staged-guard.feature` file-scoped entry to both). `npx nx run
-  rhino-cli-fsharp:specs:behavior:coverage` exits 0, reporting `11 specs, 73 scenarios, 331
-  steps — all covered`. Temporarily renaming
+rhino-cli-fsharp:specs:behavior:coverage` exits 0, reporting `11 specs, 73 scenarios, 331
+steps — all covered`. Temporarily renaming
       `EnvStagedGuardSteps.fs`'s `a real .env file is staged for commit` step turned the check
       red with `Missing steps (1)` naming the exact scenario/step, restored afterwards with a clean
       `git diff`.
@@ -2878,7 +2878,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `HOME=<scratch-dir> apps/rhino-cli/scripts/shadow-diff.sh repo-config env` again reports
       `30 invocation(s) compared, 0 difference(s)`. Additionally exercised the shim itself (not just
       shadow-diff's own direct binary comparison): `bash -x apps/rhino-cli/scripts/rhino-bin.sh env
-  validate` shows `exec .../src-fsharp/dist/rhino-cli-fsharp env validate`, confirming
+validate` shows `exec .../src-fsharp/dist/rhino-cli-fsharp env validate`, confirming
       `repo-config`/`env` now route to the published F# binary end-to-end.
 - [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
@@ -2910,7 +2910,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       identical to its post-flip state). With `FSHARP_NAMESPACES=("convention" "parity")` (entries
       removed), `apps/rhino-cli/scripts/shadow-diff.sh repo-config env` reports
       `30 invocation(s) compared, 0 difference(s)` — routed to Rust. `gate list --surface=ci
-  --format=json --by-group` against the removed-entries shim differs from
+--format=json --by-group` against the removed-entries shim differs from
       `evidence/gate-before-ose-public.json` only in JSON array line-wrapping (the tracked file was
       prettier-formatted after capture); a Python `json.load` structural comparison of the two
       confirms `SEMANTICALLY EQUAL`. With `FSHARP_NAMESPACES` restored to
@@ -2931,10 +2931,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Date**: 2026-08-27. **Status**: done. **Files Changed**: none (verification only).
       `grep -n "dotnet run\|dotnet build" .github/workflows/*.yml` returns exactly one hit: a code
       comment inside the unrelated `.NET quality gate` (`dotnet`) job explaining a `dotnet build
-  --no-restore` prerequisite for that job's own `typecheck` target — not an invocation, and not
+--no-restore` prerequisite for that job's own `typecheck` target — not an invocation, and not
       in a job that executes a flipped namespace. Every job that shells to `rhino-bin.sh` for a gate
       command (`gate`, `format`) sets `RHINO_CLI_FSHARP_BIN:
-  ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp`, and all such jobs
+${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp`, and all such jobs
       `needs: build-rhino` (directly or transitively via `enumerate`), so the binary those jobs run
       is always `build-rhino`'s uploaded artifact, never a from-source rebuild.
 - [ ] [AI] Land every Wave B change in the `ose-private` worktree, authored there rather than
@@ -2965,7 +2965,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Date**: 2026-08-27. **Status**: done (`ose-public` only; `benchmark.md` is per-repo and this
       PR does not touch `ose-private`). **Files Changed**:
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md`. `grep -c 'after wave B'
-  benchmark.md` returns `1`; that one section contains both the B5 (startup) and B6
+benchmark.md` returns `1`; that one section contains both the B5 (startup) and B6
       (pre-commit) rows.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
