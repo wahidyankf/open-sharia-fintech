@@ -669,6 +669,24 @@ type MdSteps() =
     member _.``a markdown file with a flowchart forming the cycle A --> B --> C --> A``() =
         writeDoc "docs/d.md" (mermaidBlock "flowchart TD\n    A --> B\n    B --> C\n    C --> A")
 
+    // ---- Given (docs-validate-naming.feature) ----
+
+    [<Given>]
+    member _.``a documentation tree where every markdown file uses lowercase kebab-case``() =
+        rootDir <- Some(newTempDir ())
+        writeDoc "docs/foo-bar.md" "# Foo Bar\n"
+        writeDoc "docs/nested/another-file.md" "# Another File\n"
+
+    [<Given>]
+    member _.``a documentation tree containing a markdown file whose basename has uppercase characters``() =
+        rootDir <- Some(newTempDir ())
+        writeDoc "docs/FooBar.md" "# Foo Bar\n"
+
+    [<Given>]
+    member _.``a documentation tree where a nested directory contains only a README.md file``() =
+        rootDir <- Some(newTempDir ())
+        writeDoc "docs/nested/README.md" "# Nested\n"
+
     // ---- When ----
 
     [<When>]
@@ -939,6 +957,12 @@ type MdSteps() =
                       ExcludePrefixes = [ "" ]
                       Options = defaultMermaidValidateOptions }
             )
+
+    // ---- When (docs-validate-naming.feature) ----
+
+    [<When>]
+    member _.``the developer runs docs validate-naming``() =
+        outcome <- Some(validateDocsNaming [ root () ])
 
     [<When>]
     member _.``the parser processes the file``() =
@@ -1271,6 +1295,15 @@ type MdSteps() =
     member _.``no width violation is reported for the cycle members``() =
         let result = theMermaidResult ()
         Assert.DoesNotContain(result.Violations, fun (v: MermaidViolation) -> v.Kind = MermaidWidthExceeded)
+
+    // ---- Then (docs-validate-naming.feature) ----
+
+    [<Then>]
+    member _.``the output reports zero docs naming findings``() = Assert.Empty(theFindings ())
+
+    [<Then>]
+    member _.``the output identifies the offending filename and its rule violation``() =
+        assertHasBlockingFindingInPathWithMessage "FooBar.md" "violates lowercase-kebab-case rule"
 
     [<AfterScenario>]
     member _.Cleanup() =
@@ -1696,3 +1729,15 @@ let ``A pipe-labeled edge is parsed as an edge`` () =
 [<Fact>]
 let ``A cyclic flowchart ranks as its underlying chain`` () =
     FeatureRunner.run "docs-validate-mermaid.feature" "A cyclic flowchart ranks as its underlying chain"
+
+[<Fact>]
+let ``Tree where every markdown file uses lowercase kebab-case passes`` () =
+    FeatureRunner.run "docs-validate-naming.feature" "Tree where every markdown file uses lowercase kebab-case passes"
+
+[<Fact>]
+let ``File with uppercase characters fails`` () =
+    FeatureRunner.run "docs-validate-naming.feature" "File with uppercase characters fails"
+
+[<Fact>]
+let ``README.md is exempt and passes regardless of placement`` () =
+    FeatureRunner.run "docs-validate-naming.feature" "README.md is exempt and passes regardless of placement"

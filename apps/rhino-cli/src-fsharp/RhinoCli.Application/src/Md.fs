@@ -2437,3 +2437,88 @@ let formatMermaidJson (result: MermaidValidationResult) : string =
     options.WriteIndented <- true
     options.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     root.ToJsonString(options)
+
+// ---------------------------------------------------------------------------
+// docs validate-naming
+// ---------------------------------------------------------------------------
+
+/// Regex accepting valid lowercase-kebab-case markdown filenames
+/// [Repo-grounded — `naming.rs::kebab_case_re`].
+let private kebabCaseRegex = Regex(@"^[a-z0-9-]+\.md$", RegexOptions.Compiled)
+
+/// Basenames always exempt from the kebab-case rule, matching
+/// ecosystem-standard or structurally-required filenames dictated by
+/// external convention (GitHub directory indexes, the Claude Code Agent
+/// Skills spec, the agents.md standard, Hugo's `_index.md` section-page
+/// convention, GitHub's contributing-guide convention, etc.) rather than a
+/// naming choice this repo's kebab-case rule governs. The Rust source's
+/// additional `exempt_globs` CLI-flag override is left unported — no
+/// scenario in `docs-validate-naming.feature` exercises `--exempt`, and
+/// `md` is not yet wired to CLI argv parsing (see this file's module doc
+/// comment) [Repo-grounded — `naming.rs::is_naming_exempt`'s `matches!`
+/// literal set].
+let private alwaysExemptNamingBasenames: Set<string> =
+    Set.ofList
+        [ "README.md"
+          "SKILL.md"
+          "AGENTS.md"
+          "CLAUDE.md"
+          "_index.md"
+          "CONTRIBUTING.md"
+          "LICENSING-NOTICE.md"
+          "ROADMAP.md"
+          "SECURITY.md" ]
+
+/// Builds the lowercase-kebab-case violation message for `basename`
+/// [Repo-grounded — `naming.rs::walk_naming_path`'s finding `message`].
+let private namingViolationMessage (basename: string) : string =
+    sprintf
+        "filename \"%s\" violates lowercase-kebab-case rule (^[a-z0-9-]+\\.md$); rename to lowercase-kebab-case or add an exemption"
+        basename
+
+/// Walks `root` recursively and collects naming findings for non-compliant
+/// files. Returns an empty list when `root` does not exist on the filesystem
+/// [Repo-grounded — `naming.rs::walk_naming_path`].
+let private walkNamingPath (root: string) : Finding list =
+    collectFilesSkipping namingSkipDirs root
+    |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+    |> List.choose (fun path ->
+        let basename = Path.GetFileName path
+
+        if Set.contains basename alwaysExemptNamingBasenames then
+            None
+        elif kebabCaseRegex.IsMatch basename then
+            None
+        else
+            Some(mkFail path (namingViolationMessage basename)))
+
+/// Validates the lowercase-kebab-case filename convention for every markdown
+/// file reachable from `paths`. The returned list is sorted by file path,
+/// then by message [Repo-grounded — `naming.rs::validate_docs_naming`].
+///
+/// Gherkin (binds) — "Tree where every markdown file uses lowercase
+/// kebab-case passes":
+///   Given a documentation tree where every markdown file uses lowercase kebab-case
+///   When the developer runs docs validate-naming
+///   Then the command exits successfully
+///   And the output reports zero docs naming findings
+///
+/// Gherkin (binds) — "File with uppercase characters fails":
+///   Given a documentation tree containing a markdown file whose basename has uppercase characters
+///   When the developer runs docs validate-naming
+///   Then the command exits with a failure code
+///   And the output identifies the offending filename and its rule violation
+///
+/// Gherkin (binds) — "README.md is exempt and passes regardless of placement":
+///   Given a documentation tree where a nested directory contains only a README.md file
+///   When the developer runs docs validate-naming
+///   Then the command exits successfully
+///   And the output reports zero docs naming findings
+let validateDocsNaming (paths: string list) : Result<Finding list, string> =
+    if List.isEmpty paths then
+        Error "at least one path is required"
+    else
+        paths
+        |> List.collect walkNamingPath
+        |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+        |> Ok
