@@ -76,9 +76,14 @@ type GateEntry =
     { Id: string
       Args: Map<string, string list> }
 
-/// The `doctor:` section, trimmed to the .NET SDK path scenario's field
+/// The `doctor:` section, trimmed to the .NET SDK path scenario's field plus
+/// `skip-tools` (needed by
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s "A
+/// repo-config-declared tool is skipped from the check" scenario)
 /// [Repo-grounded — `repo_config/mod.rs::DoctorConfig`].
-type DoctorConfig = { DotnetGlobalJson: string option }
+type DoctorConfig =
+    { DotnetGlobalJson: string option
+      SkipTools: string list }
 
 /// The `specs:` section, trimmed to the data-driven-behaviour scenario's
 /// fields [Repo-grounded — `repo_config/mod.rs::SpecsConfig`].
@@ -101,7 +106,9 @@ let empty: RepoConfig =
     { Harness = []
       Gates = []
       Specs = { DddAreas = []; DomainAreas = [] }
-      Doctor = { DotnetGlobalJson = None } }
+      Doctor =
+        { DotnetGlobalJson = None
+          SkipTools = [] } }
 
 /// Raw YAML-shaped intermediate records. `[<CLIMutable>]` gives each record a
 /// parameterless constructor and settable properties, which is what lets
@@ -141,7 +148,9 @@ type GateEntryDto =
       Args: Dictionary<string, ResizeArray<string>> }
 
 [<CLIMutable>]
-type DoctorConfigDto = { DotnetGlobalJson: string | null }
+type DoctorConfigDto =
+    { DotnetGlobalJson: string | null
+      SkipTools: ResizeArray<string> }
 
 [<CLIMutable>]
 type SpecsConfigDto =
@@ -255,8 +264,12 @@ let private toSpecsConfig (dto: SpecsConfigDto) : SpecsConfig =
 
 let private toDoctorConfig (dto: DoctorConfigDto) : DoctorConfig =
     match box dto with
-    | null -> { DotnetGlobalJson = None }
-    | _ -> { DotnetGlobalJson = Option.ofObj dto.DotnetGlobalJson }
+    | null ->
+        { DotnetGlobalJson = None
+          SkipTools = [] }
+    | _ ->
+        { DotnetGlobalJson = Option.ofObj dto.DotnetGlobalJson
+          SkipTools = toOptionList dto.SkipTools }
 
 /// `harness[]` entries' allowed key set, matching `HarnessEntryDto`'s fields
 /// in the kebab-case spelling `repo-config.yml` uses for them.
