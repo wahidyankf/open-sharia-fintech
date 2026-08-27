@@ -1,36 +1,52 @@
-/// Port of `rhino-cli test-coverage diff` — coverage restricted to lines
-/// changed in a git diff [Repo-grounded —
+/// Port of `rhino-cli test-coverage diff` and `rhino-cli test-coverage
+/// merge` — coverage restricted to lines changed in a git diff, and
+/// coverage-map merging/LCOV serialization, respectively [Repo-grounded —
 /// `apps/rhino-cli/src/application/testcoverage/diff.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/types.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/exclude.rs`,
-/// `apps/rhino-cli/src/application/testcoverage/merge.rs`] for
+/// `apps/rhino-cli/src/application/testcoverage/merge.rs`,
+/// `apps/rhino-cli/src/application/testcoverage/lcov.rs`] for
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-diff.feature`'s
-/// 4 scenarios.
+/// 4 scenarios and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-merge.feature`'s
+/// 3 scenarios.
 ///
-/// Scope: this first PR against the test-coverage subsystem ports only the
+/// Scope: the first PR against the test-coverage subsystem ported only the
 /// pieces `compute_diff_coverage` itself needs: the coverage-report result
 /// shapes (`types.rs`'s `Format`/`FileResult`/`Result`), the
 /// `CoverageMap`/`LineCoverage`/`BranchCoverage` shapes and
 /// `has_missed_branch` — the slice of `merge.rs` `diff.rs` calls directly.
-/// The LCOV/JaCoCo/Cobertura/Go format parsers and the actual
-/// map-merge/LCOV-serialization functions stay out of scope until the
-/// `test-coverage-merge.feature`/`test-coverage-validate.feature` PRs need
-/// them (they extend this same file). Also ports the Go-`filepath.Match`
-/// -semantics exclude matcher (`exclude.rs`) and `compute_diff_coverage`'s
-/// own line-intersection algorithm.
+/// This PR adds `merge.rs`'s own map-merge (`merge_coverage_maps`) and
+/// LCOV-serialization (`format_lcov_string`/`write_lcov`) functions, its
+/// `result_from_coverage_map` line-based aggregator, and the LCOV-specific
+/// slice of `lcov.rs`'s `parse_lcov` plus `merge.rs`'s
+/// `to_coverage_map_lcov` needed to turn a real `.info` file into a
+/// `CoverageMap`. The JaCoCo/Cobertura/Go format parsers/converters and
+/// `lcov.rs`'s own `compute_lcov_result` stay out of scope until the
+/// `test-coverage-validate.feature` PR needs them. Also ports the
+/// Go-`filepath.Match`-semantics exclude matcher (`exclude.rs`) and
+/// `compute_diff_coverage`'s own line-intersection algorithm.
 ///
-/// No Rust command wrapper exists for `test-coverage diff` under
-/// `apps/rhino-cli/src/commands/` (only `test_coverage_validate.rs` is
-/// wired to a CLI verb) to bind argument shapes against, so — matching this
-/// plan's established `Doctor.fs` precedent for a feature with no wired-up
-/// CLI verb yet — every scenario calls [`computeDiffCoverage`] directly.
-/// `get_git_diff`'s real `git diff` invocation and `parse_git_diff`'s
-/// unified-diff text parsing are both deferred to whichever future PR wires
-/// a real `test-coverage diff` CLI verb: each scenario's changed-line set is
-/// supplied directly as a [`DiffHunk`] list, and each scenario's
-/// coverage-report contents are supplied directly as a [`CoverageMap`]
-/// rather than round-tripped through a not-yet-ported file parser.
+/// No Rust command wrapper exists for either `test-coverage diff` or
+/// `test-coverage merge` under `apps/rhino-cli/src/commands/` (only
+/// `test_coverage_validate.rs` is wired to a CLI verb) to bind argument
+/// shapes against, so — matching this plan's established `Doctor.fs`
+/// precedent for a feature with no wired-up CLI verb yet — every scenario
+/// calls [`computeDiffCoverage`]/[`mergeCoverageMaps`]/[`writeLcov`]/
+/// [`resultFromCoverageMap`] directly. `get_git_diff`'s real `git diff`
+/// invocation and `parse_git_diff`'s unified-diff text parsing are both
+/// deferred to whichever future PR wires a real `test-coverage diff` CLI
+/// verb: each scenario's changed-line set is supplied directly as a
+/// [`DiffHunk`] list, and each diff scenario's coverage-report contents are
+/// supplied directly as a [`CoverageMap`] rather than round-tripped through
+/// a not-yet-ported file parser. The merge scenarios, in contrast, do
+/// round-trip through real temp LCOV files on disk via [`toCoverageMapLcov`]
+/// and [`writeLcov`], because one merge scenario itself asserts that the
+/// merged output file exists in LCOV format.
 module RhinoCli.Application.TestCoverage
+
+open System
+open System.IO
 
 // ---------------------------------------------------------------------------
 // Core types [Repo-grounded — `types.rs`]
@@ -320,3 +336,280 @@ let computeDiffCoverage
           Threshold = threshold
           Passed = threshold = 0.0 || pct >= threshold
           Files = files }
+
+// ---------------------------------------------------------------------------
+// CoverageMap merging and LCOV serialization [Repo-grounded — `merge.rs`]
+// ---------------------------------------------------------------------------
+
+/// Merges two branch lists, taking the maximum `HitCount` per
+/// `(BlockId, BranchId)` key [Repo-grounded — `merge.rs::merge_branches`].
+let private mergeBranches (a: BranchCoverage list) (b: BranchCoverage list) : BranchCoverage list =
+    let byKey =
+        (Map.empty, a)
+        ||> List.fold (fun acc br -> Map.add (br.BlockId, br.BranchId) br.HitCount acc)
+
+    let merged =
+        (byKey, b)
+        ||> List.fold (fun acc br ->
+            let key = br.BlockId, br.BranchId
+            let current = Map.tryFind key acc |> Option.defaultValue 0L
+
+            if br.HitCount > current then
+                Map.add key br.HitCount acc
+            else
+                acc)
+
+    merged
+    |> Map.toList
+    |> List.map (fun ((blockId, branchId), hitCount) ->
+        { BlockId = blockId
+          BranchId = branchId
+          HitCount = hitCount })
+
+/// Unions multiple `CoverageMap`s. Max hit count per line; branches unioned
+/// by `(BlockId, BranchId)` [Repo-grounded — `merge.rs::merge_coverage_maps`].
+let mergeCoverageMaps (maps: CoverageMap list) : CoverageMap =
+    let mergeLine (existing: LineCoverage option) (incoming: LineCoverage) : LineCoverage =
+        match existing with
+        | None -> incoming
+        | Some ex ->
+            { HitCount = max ex.HitCount incoming.HitCount
+              Branches = mergeBranches ex.Branches incoming.Branches }
+
+    let mergeOne (acc: CoverageMap) (m: CoverageMap) : CoverageMap =
+        (acc, Map.toList m)
+        ||> List.fold (fun acc2 (filePath, lines) ->
+            let existingLines = Map.tryFind filePath acc2 |> Option.defaultValue Map.empty
+
+            let mergedLines =
+                (existingLines, Map.toList lines)
+                ||> List.fold (fun linesAcc (lineNo, lc) ->
+                    let merged = mergeLine (Map.tryFind lineNo linesAcc) lc
+                    Map.add lineNo merged linesAcc)
+
+            Map.add filePath mergedLines acc2)
+
+    (Map.empty, maps) ||> List.fold mergeOne
+
+/// Formats a `CoverageMap` as LCOV text. Deterministic order via F#'s
+/// sorted `Map` [Repo-grounded — `merge.rs::format_lcov_string`].
+let formatLcovString (cm: CoverageMap) : string =
+    let sb = System.Text.StringBuilder()
+
+    for KeyValue(filePath, lines) in cm do
+        sb.Append("TN:\n") |> ignore
+        sb.Append(sprintf "SF:%s\n" filePath) |> ignore
+
+        // BRDA records first.
+        for KeyValue(lineNo, lc) in lines do
+            for br in lc.Branches do
+                sb.Append(sprintf "BRDA:%d,%d,%d,%d\n" lineNo br.BlockId br.BranchId br.HitCount)
+                |> ignore
+
+        // Then DA records.
+        for KeyValue(lineNo, lc) in lines do
+            sb.Append(sprintf "DA:%d,%d\n" lineNo lc.HitCount) |> ignore
+
+        sb.Append("end_of_record\n") |> ignore
+
+    sb.ToString()
+
+/// Writes `cm` serialized as LCOV text to `outPath`
+/// [Repo-grounded — `merge.rs::write_lcov`].
+let writeLcov (outPath: string) (cm: CoverageMap) : unit =
+    File.WriteAllText(outPath, formatLcovString cm)
+
+/// Computes a [`CoverageResult`] from a `CoverageMap` using the standard
+/// line-based algorithm [Repo-grounded — `merge.rs::result_from_coverage_map`].
+let resultFromCoverageMap (cm: CoverageMap) (threshold: float) : CoverageResult =
+    let fileResult (filePath: string) (lines: Map<int64, LineCoverage>) : int * int * int * FileResult =
+        let fc, fp, fm =
+            lines
+            |> Map.toList
+            |> List.fold
+                (fun (fc, fp, fm) (_, lc: LineCoverage) ->
+                    if lc.HitCount > 0L then
+                        if hasMissedBranch lc.Branches then
+                            fc, fp + 1, fm
+                        else
+                            fc + 1, fp, fm
+                    else
+                        fc, fp, fm + 1)
+                (0, 0, 0)
+
+        let ft = fc + fp + fm
+        let fpct = if ft > 0 then 100.0 * float fc / float ft else 100.0
+
+        fc,
+        fp,
+        fm,
+        { Path = filePath
+          Covered = fc
+          Partial = fp
+          Missed = fm
+          Total = ft
+          Pct = fpct }
+
+    let covered, partial, missed, files =
+        cm
+        |> Map.toList
+        |> List.fold
+            (fun (c, p, m, files) (filePath, lines) ->
+                let fc, fp, fm, fr = fileResult filePath lines
+                c + fc, p + fp, m + fm, files @ [ fr ])
+            (0, 0, 0, [])
+
+    let total = covered + partial + missed
+
+    let pct =
+        if total > 0 then
+            100.0 * float covered / float total
+        else
+            100.0
+
+    { File = ""
+      Format = Format.Lcov
+      Covered = covered
+      Partial = partial
+      Missed = missed
+      Total = total
+      Pct = pct
+      Threshold = threshold
+      Passed = pct >= threshold
+      Files = files }
+
+// ---------------------------------------------------------------------------
+// LCOV parsing → CoverageMap [Repo-grounded — `lcov.rs::parse_lcov`,
+// `merge.rs::to_coverage_map_lcov`]
+// ---------------------------------------------------------------------------
+
+/// Parsed data for a single source file recorded in an LCOV info file
+/// [Repo-grounded — `lcov.rs::LcovFile`].
+type private LcovFile =
+    { Path: string
+      DaLines: Map<int64, int64>
+      BrdaData: Map<int64, int64 list> }
+
+let private emptyLcovFile: LcovFile =
+    { Path = ""
+      DaLines = Map.empty
+      BrdaData = Map.empty }
+
+/// Parses the portion of a `DA:` record after the prefix and updates
+/// `current`. Expected format: `<lineNo>,<count>[,<checksum>]`. Silently
+/// ignores malformed records. When the same line number appears more than
+/// once, keeps only the maximum count (matching the Rust/Go implementation)
+/// [Repo-grounded — `lcov.rs::parse_da`].
+let private parseDa (rest: string) (current: LcovFile) : LcovFile =
+    let parts = rest.Split(',', 3)
+
+    if parts.Length < 2 then
+        current
+    else
+        match System.Int64.TryParse(parts.[0]), System.Int64.TryParse(parts.[1]) with
+        | (true, lineNo), (true, count) ->
+            match Map.tryFind lineNo current.DaLines with
+            | Some existing when count <= existing -> current
+            | _ ->
+                { current with
+                    DaLines = Map.add lineNo count current.DaLines }
+        | _ -> current
+
+/// Parses the portion of a `BRDA:` record after the prefix and updates
+/// `current`. Expected format: `<lineNo>,<block>,<branch>,<taken>` where
+/// `<taken>` may be `"-"` (never executed). Silently ignores malformed
+/// records [Repo-grounded — `lcov.rs::parse_brda`].
+let private parseBrda (rest: string) (current: LcovFile) : LcovFile =
+    let parts = rest.Split(',', 4)
+
+    if parts.Length < 4 then
+        current
+    else
+        match System.Int64.TryParse(parts.[0]) with
+        | false, _ -> current
+        | true, lineNo ->
+            let countStr = parts.[3]
+
+            let count =
+                if countStr = "-" || countStr = "" then
+                    0L
+                else
+                    match System.Int64.TryParse(countStr) with
+                    | true, v -> v
+                    | false, _ -> 0L
+
+            let existing = Map.tryFind lineNo current.BrdaData |> Option.defaultValue []
+
+            { current with
+                BrdaData = Map.add lineNo (existing @ [ count ]) current.BrdaData }
+
+/// Reads and parses an LCOV info file from `filename`, one [`LcovFile`] per
+/// `end_of_record` section [Repo-grounded — `lcov.rs::parse_lcov`].
+let private parseLcov (filename: string) : LcovFile list =
+    let lines = File.ReadAllLines(filename)
+
+    let files, _ =
+        ((List.empty, emptyLcovFile), lines)
+        ||> Array.fold (fun (files, current) line ->
+            let trimmed = line.Trim()
+
+            if trimmed.StartsWith("SF:", StringComparison.Ordinal) then
+                files,
+                { current with
+                    Path = trimmed.Substring(3) }
+            elif trimmed.StartsWith("DA:", StringComparison.Ordinal) then
+                files, parseDa (trimmed.Substring(3)) current
+            elif trimmed.StartsWith("BRDA:", StringComparison.Ordinal) then
+                files, parseBrda (trimmed.Substring(5)) current
+            elif trimmed = "end_of_record" then
+                files @ [ current ], emptyLcovFile
+            else
+                files, current)
+
+    files
+
+/// Converts an LCOV info file into a [`CoverageMap`]
+/// [Repo-grounded — `merge.rs::to_coverage_map_lcov`].
+let toCoverageMapLcov (filename: string) : CoverageMap =
+    let convertFile (f: LcovFile) : Map<int64, LineCoverage> =
+        let daEntries =
+            f.DaLines
+            |> Map.toList
+            |> List.map (fun (lineNo, count) ->
+                let branches =
+                    Map.tryFind lineNo f.BrdaData
+                    |> Option.defaultValue []
+                    |> List.mapi (fun i hits ->
+                        { BlockId = 0L
+                          BranchId = int64 i
+                          HitCount = hits })
+
+                lineNo,
+                { HitCount = count
+                  Branches = branches })
+
+        // BRDA-only lines: no DA record recorded this line, so classify and
+        // derive the hit count from the branch data alone.
+        let brdaOnlyEntries =
+            f.BrdaData
+            |> Map.toList
+            |> List.filter (fun (lineNo, _) -> not (Map.containsKey lineNo f.DaLines))
+            |> List.map (fun (lineNo, branchHits) ->
+                let branches =
+                    branchHits
+                    |> List.mapi (fun i hits ->
+                        { BlockId = 0L
+                          BranchId = int64 i
+                          HitCount = hits })
+
+                let hitCount =
+                    branchHits |> List.tryFind (fun h -> h > 0L) |> Option.defaultValue 0L
+
+                lineNo,
+                { HitCount = hitCount
+                  Branches = branches })
+
+        (daEntries @ brdaOnlyEntries) |> Map.ofList
+
+    parseLcov filename
+    |> List.fold (fun (acc: CoverageMap) f -> Map.add f.Path (convertFile f) acc) Map.empty

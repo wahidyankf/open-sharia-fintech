@@ -1,21 +1,29 @@
 /// TickSpec step definitions binding `test-coverage-diff.feature`'s 4
-/// scenarios to `RhinoCli.Application.TestCoverage`'s diff-coverage port
-/// [Repo-grounded —
+/// scenarios and `test-coverage-merge.feature`'s 3 scenarios to
+/// `RhinoCli.Application.TestCoverage`'s diff-coverage and merge-coverage
+/// ports [Repo-grounded —
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-diff.feature`,
-/// `apps/rhino-cli/src/application/testcoverage/diff.rs`].
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-merge.feature`,
+/// `apps/rhino-cli/src/application/testcoverage/diff.rs`,
+/// `apps/rhino-cli/src/application/testcoverage/merge.rs`,
+/// `apps/rhino-cli/src/application/testcoverage/lcov.rs`].
 ///
 /// Follows `EnvValidateSteps.fs`'s per-scenario slicing convention: each
 /// xunit `[<Fact>]` below runs exactly one scenario, extracted from the
-/// real, frozen feature file. No Rust command wrapper exists for
-/// `test-coverage diff` under `apps/rhino-cli/src/commands/` (only
-/// `test_coverage_validate.rs` is wired to a CLI verb there) to bind
-/// argument shapes against, so — matching `TestCoverage.fs`'s own module doc
-/// comment — every scenario below calls `computeDiffCoverage` directly with
-/// a `CoverageMap`/`DiffHunk list` fixture built in this file, rather than
-/// shelling a real `git diff` or round-tripping through a coverage-report
-/// file parser.
+/// real, frozen feature file. Neither `test-coverage diff` nor
+/// `test-coverage merge` has a Rust command wrapper under
+/// `apps/rhino-cli/src/commands/` (only `test_coverage_validate.rs` is wired
+/// to a CLI verb there) to bind argument shapes against, so — matching
+/// `TestCoverage.fs`'s own module doc comment — every scenario below calls
+/// `computeDiffCoverage`/`toCoverageMapLcov`/`mergeCoverageMaps`/`writeLcov`/
+/// `resultFromCoverageMap` directly rather than shelling a real CLI verb.
+/// The merge scenarios do write real temp LCOV files to disk (rather than
+/// building `CoverageMap` fixtures in memory like the diff scenarios do)
+/// because "the merged output file exists in LCOV format" is itself part of
+/// what the first merge scenario asserts.
 module RhinoCli.Tests.Unit.Steps.TestCoverageSteps
 
+open System
 open System.IO
 open TickSpec
 open Xunit
@@ -40,6 +48,9 @@ type TestCoverageSteps() =
     let mutable excludePatterns: string list = []
     let mutable threshold: float = 0.0
     let mutable result: CoverageResult option = None
+    let mutable lcovFilePaths: string list = []
+    let mutable mergedCoverageMap: CoverageMap = Map.empty
+    let mutable outputFilePath: string = ""
 
     let runDiff () =
         result <- Some(computeDiffCoverage "coverage.info" coverageMap hunks excludePatterns threshold)
@@ -47,6 +58,21 @@ type TestCoverageSteps() =
     let theResult () : CoverageResult =
         result
         |> Option.defaultWith (fun () -> failwith "no command has been run by a When step")
+
+    let newTempDir () =
+        let dir =
+            Path.Combine(Path.GetTempPath(), "rhino-cli-test-coverage-merge-" + Guid.NewGuid().ToString("N"))
+
+        Directory.CreateDirectory(dir) |> ignore
+        dir
+
+    let writeLcovFixture (dir: string) (fileName: string) (content: string) : string =
+        let path = Path.Combine(dir, fileName)
+        File.WriteAllText(path, content)
+        path
+
+    let runMerge () =
+        mergedCoverageMap <- lcovFilePaths |> List.map toCoverageMapLcov |> mergeCoverageMaps
 
     // ---- Given ----
 
@@ -84,6 +110,30 @@ type TestCoverageSteps() =
               { FilePath = "generated/skip.fs"
                 ChangedLines = [ 1L; 2L ] } ]
 
+    [<Given>]
+    member _.``two LCOV coverage files with different source files``() =
+        let dir = newTempDir ()
+
+        lcovFilePaths <-
+            [ writeLcovFixture dir "a.info" "SF:src/a.fs\nDA:1,1\nDA:2,1\nend_of_record\n"
+              writeLcovFixture dir "b.info" "SF:src/b.fs\nDA:1,1\nDA:2,0\nend_of_record\n" ]
+
+    [<Given>]
+    member _.``two LCOV coverage files with high coverage``() =
+        let dir = newTempDir ()
+
+        lcovFilePaths <-
+            [ writeLcovFixture dir "a.info" "SF:src/a.fs\nDA:1,1\nDA:2,1\nend_of_record\n"
+              writeLcovFixture dir "b.info" "SF:src/b.fs\nDA:1,1\nDA:2,1\nend_of_record\n" ]
+
+    [<Given>]
+    member _.``two LCOV coverage files with low coverage``() =
+        let dir = newTempDir ()
+
+        lcovFilePaths <-
+            [ writeLcovFixture dir "a.info" "SF:src/a.fs\nDA:1,0\nDA:2,0\nend_of_record\n"
+              writeLcovFixture dir "b.info" "SF:src/b.fs\nDA:1,0\nDA:2,1\nend_of_record\n" ]
+
     // ---- When ----
 
     [<When>]
@@ -110,6 +160,24 @@ type TestCoverageSteps() =
         excludePatterns <- [ "generated/*" ]
         runDiff ()
 
+    [<When>]
+    member _.``the developer runs test-coverage merge with an output file``() =
+        runMerge ()
+        let dir = Path.GetDirectoryName(List.head lcovFilePaths)
+        outputFilePath <- Path.Combine(dir, "merged.info")
+        writeLcov outputFilePath mergedCoverageMap
+        result <- Some(resultFromCoverageMap mergedCoverageMap 0.0)
+
+    [<When>]
+    member _.``the developer runs test-coverage merge with validation at 80% threshold``() =
+        runMerge ()
+        result <- Some(resultFromCoverageMap mergedCoverageMap 80.0)
+
+    [<When>]
+    member _.``the developer runs test-coverage merge with validation at 95% threshold``() =
+        runMerge ()
+        result <- Some(resultFromCoverageMap mergedCoverageMap 95.0)
+
     // ---- Then ----
 
     [<Then>]
@@ -122,20 +190,31 @@ type TestCoverageSteps() =
     member _.``the command exits with a failure code``() = Assert.False((theResult ()).Passed)
 
     [<Then>]
+    member _.``the merged output file exists in LCOV format``() =
+        Assert.True(File.Exists(outputFilePath))
+        let content = File.ReadAllText(outputFilePath)
+        Assert.Contains("SF:", content)
+        Assert.Contains("end_of_record", content)
+
+    [<Then>]
     member _.``the excluded files do not affect the diff coverage result``() =
         let r = theResult ()
         Assert.DoesNotContain(r.Files, fun (f: FileResult) -> f.Path = "generated/skip.fs")
         Assert.Equal(100.0, r.Pct)
         Assert.Equal(2, r.Total)
 
-/// Reads one named `Scenario:` block out of the real, frozen
-/// `test-coverage-diff.feature` file (leaving the file itself untouched) and
-/// runs it through TickSpec bound only against `TestCoverageSteps` — see
-/// `EnvSteps.fs`'s `FeatureRunner` for why this is per-scenario rather than
-/// per-file.
+/// Reads one named `Scenario:` block out of a real, frozen feature file
+/// under this namespace's `test-coverage/` spec directory (leaving the file
+/// itself untouched) and runs it through TickSpec bound only against
+/// `TestCoverageSteps` — see `EnvSteps.fs`'s `FeatureRunner` for why this is
+/// per-scenario rather than per-file. Parameterized over the feature-file
+/// name (rather than the diff-only-hardcoded path this module started with)
+/// so this one runner serves both `test-coverage-diff.feature` and
+/// `test-coverage-merge.feature`, matching this file's own module doc
+/// comment on why one Steps file spans multiple feature files here.
 module private FeatureRunner =
 
-    let private featurePath: string =
+    let private featureDir: string =
         Path.GetFullPath(
             Path.Combine(
                 __SOURCE_DIRECTORY__,
@@ -151,8 +230,7 @@ module private FeatureRunner =
                 "behavior",
                 "rhino-cli",
                 "gherkin",
-                "test-coverage",
-                "test-coverage-diff.feature"
+                "test-coverage"
             )
         )
 
@@ -180,8 +258,10 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     /// Runs the single scenario named `scenarioTitle` from
-    /// `test-coverage-diff.feature`, bound against `TestCoverageSteps`.
-    let run (scenarioTitle: string) : unit =
+    /// `featureFileName` (a file directly inside `test-coverage/`), bound
+    /// against `TestCoverageSteps`.
+    let run (featureFileName: string) (scenarioTitle: string) : unit =
+        let featurePath = Path.Combine(featureDir, featureFileName)
         let allLines = File.ReadAllLines featurePath
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<TestCoverageSteps> |])
@@ -191,16 +271,28 @@ module private FeatureRunner =
 
 [<Fact>]
 let ``No changed lines reports 100% coverage`` () =
-    FeatureRunner.run "No changed lines reports 100% coverage"
+    FeatureRunner.run "test-coverage-diff.feature" "No changed lines reports 100% coverage"
 
 [<Fact>]
 let ``Changed lines with full coverage pass threshold`` () =
-    FeatureRunner.run "Changed lines with full coverage pass threshold"
+    FeatureRunner.run "test-coverage-diff.feature" "Changed lines with full coverage pass threshold"
 
 [<Fact>]
 let ``Changed lines with missing coverage fail threshold`` () =
-    FeatureRunner.run "Changed lines with missing coverage fail threshold"
+    FeatureRunner.run "test-coverage-diff.feature" "Changed lines with missing coverage fail threshold"
 
 [<Fact>]
 let ``Excluded files are not counted in diff coverage`` () =
-    FeatureRunner.run "Excluded files are not counted in diff coverage"
+    FeatureRunner.run "test-coverage-diff.feature" "Excluded files are not counted in diff coverage"
+
+[<Fact>]
+let ``Merging two LCOV files produces correct combined coverage`` () =
+    FeatureRunner.run "test-coverage-merge.feature" "Merging two LCOV files produces correct combined coverage"
+
+[<Fact>]
+let ``Merging with validation passes when coverage meets threshold`` () =
+    FeatureRunner.run "test-coverage-merge.feature" "Merging with validation passes when coverage meets threshold"
+
+[<Fact>]
+let ``Merging with validation fails when coverage is below threshold`` () =
+    FeatureRunner.run "test-coverage-merge.feature" "Merging with validation fails when coverage is below threshold"

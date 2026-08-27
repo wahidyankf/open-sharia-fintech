@@ -171,7 +171,7 @@ coverage:
     # glob widens to directory-level like `convention/` did.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/cargo-target-share.feature,system/doctor.feature,system/fsharp-tool-invocation.feature,test-coverage/test-coverage-diff.feature}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/cargo-target-share.feature,system/doctor.feature,system/fsharp-tool-invocation.feature,test-coverage/test-coverage-diff.feature,test-coverage/test-coverage-merge.feature}"
 
     # ose domain
     - name: ose-be
