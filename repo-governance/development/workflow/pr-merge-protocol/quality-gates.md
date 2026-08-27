@@ -1,6 +1,6 @@
 ---
 title: "Quality Gates"
-description: The local and CI gates an eligible or noneligible PR must pass, the universal secret check, and the no-bypass-without-permission rule.
+description: The exact-head PR CI, applicable surface gates, universal secret check, and no-bypass rule.
 category: explanation
 subcategory: development
 tags:
@@ -15,26 +15,43 @@ when_to_use: Use when confirming which gates a PR must pass before merge, or whe
 
 # Quality Gates
 
-An **eligible** PR must pass the applicable local and CI gates below. A **noneligible** PR requires
-only a successful `.github/workflows/pr-quality-gate.yml` run for its current head; it does not run
-the specialist cycle or surface tester gates. Both routes still require the shared preconditions,
-including the universal secret check.
+Every PR requires the `Quality gate` check emitted by
+`.github/workflows/pr-quality-gate.yml`. Verify that GitHub associates the successful run with the
+PR's exact current head SHA and current base branch; stale evidence never authorizes merge. This is
+the sole default automated PR gate. Do not rerun locally or imitate predicates already owned by
+pre-commit, pre-push, or PR CI merely to satisfy this protocol.
 
-| Gate               | Tool           | What It Validates                                  |
-| ------------------ | -------------- | -------------------------------------------------- |
-| **typecheck**      | Nx affected    | Type correctness across affected projects          |
-| **lint**           | Nx affected    | Static analysis, formatting, accessibility         |
-| **test:quick**     | Nx affected    | Unit tests, build smoke tests, coverage thresholds |
-| **specs:coverage** | Nx affected    | Gherkin step definitions match feature files       |
-| **CI workflows**   | GitHub Actions | All configured CI checks for the repository        |
+Changed reachable behavior may also require a finite surface gate:
 
-## Universal Secret Check
+| Surface                  | Required result                                              |
+| ------------------------ | ------------------------------------------------------------ |
+| UI                       | The applicable static and running-UI gates pass              |
+| API                      | The API quality gate passes against the running endpoint     |
+| Other reachable behavior | Its interface is exercised and the result recorded           |
+| No reachable behavior    | An explicit exemption identifies why no surface gate applies |
 
-Before merging either route, inspect the PR diff and review evidence for a suspected secret exposure.
-If one exists, stop normal merge handling, contain and rotate the credential, then follow the full
+Every PR also runs one focused [`pr-leak-review`](../../../workflows/pr/pr-leak-review.md) against
+its exact current head. Only authenticated `ose-pr-leak-review:v1` `pass` evidence counts. Missing,
+stale, failed, or findings-bearing evidence blocks merge; a fix triggers one new pass, never a
+two-clean streak. Its scope is defined by the canonical
+[committed-secret](../../../conventions/security/secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md),
+[protected-environment](../anti-patterns/hardcoded-environment-configuration.md), and
+[machine-specific-path](../../quality/no-machine-specific-commits.md) rules.
+
+`pr-leak-review` is the only universal nondeterministic agent gate. Surface gates remain
+conditional on changed reachable behavior; broad semantic review remains optional.
+
+These gates complement PR CI; they do not create a broad semantic-review requirement. Optional
+[`pr-review`](../../../workflows/pr/pr-review.md) and
+[`pr-review-cycle`](../../../workflows/pr/pr-review-cycle.md) runs are user-invoked review tools,
+not merge gates by default.
+
+## Leak Finding Remediation
+
+When leak review suspects a secret exposure, stop normal merge handling, contain and rotate the credential, then follow the full
 reachable-ref history-rewrite and replacement-PR procedure in
 [Secrets and Environment Standards](../../../conventions/security/secrets-and-env-standards.md). A
-green quality gate, a noneligible classifier result, or a resolved review thread never authorizes
+green quality gate, a resolved review thread, or an older leak pass never authorizes
 merging a contaminated PR.
 
 ## No Bypass Without Explicit Permission

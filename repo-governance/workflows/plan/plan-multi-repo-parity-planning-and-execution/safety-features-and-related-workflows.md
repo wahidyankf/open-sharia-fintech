@@ -27,5 +27,7 @@ when_to_use: Use when verifying what protections this composite provides, or nav
 - [Plan Quality Gate](../plan-quality-gate.md) — nested inside the planning phase per plan
 - [Plan Planning](../plan-planning.md) — the single-repo analogue of the
   planning phase
-- [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) — nested inside
-  plan-execution's Step 8 for any repo whose plan resolves to a `*-to-pr` delivery mode
+- [PR Leak Review](../../pr/pr-leak-review.md) — nested inside plan execution for any repo whose
+  plan resolves to a `*-to-pr` delivery mode
+- [PR Review Cycle](../../pr/pr-review-cycle.md) — an optional iterative semantic review, nested
+  only when the user explicitly requests it

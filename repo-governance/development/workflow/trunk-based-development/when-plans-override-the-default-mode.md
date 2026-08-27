@@ -24,8 +24,7 @@ Specify a non-default `## Delivery Mode` field in a plan if:
   modes remain available only for `ose-private` infrastructure-as-code plans. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 - **External integration**: Working with a third party that requires a specific branch/PR shape.
-- **Compliance**: A regulatory requirement changes the review process beyond the standard PR-review
-  cycle.
+- **Compliance**: A regulatory requirement adds a review process beyond the standard PR CI gate.
 
 **Example plan overriding the default** -- recast here as an `ose-private` infrastructure-as-code
 plan, the case this repo's convention treats as the only one where a direct-push mode is genuinely
@@ -40,7 +39,7 @@ repo's own `plan-checker` gate on sight, because neither mode has an executable 
 
 **Justification**: This `ose-private` infrastructure-as-code plan updates a single Terraform
 resource tag and needs the primary checkout's local secrets/state access. The change is trivial and
-well-understood; a full PR-review cycle is unnecessary overhead. Not executable in `ose-public`
+well-understood; the PR route is unavailable for the required local state operation. Not executable in `ose-public`
 -- see
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 ```

@@ -64,6 +64,6 @@ file type; see
 [`pr-review-scout-maker.md`'s own filter definition](../../../../.claude/skills/pr-review-scout-classification/reference/risk-tier-and-specialist-selection.md#risk-tier-classification--specialist-set-selection-d12)
 for the full rule and its fresh-per-cycle re-evaluation requirement.
 
-**Enforcement disposition — covered.** The PR-Review Quality Gate invokes a fresh
+**Enforcement disposition — covered when invoked.** The optional PR review workflow invokes a fresh
 `pr-review-scout-maker` every cycle, and its human-readable review-route record exposes the ordinary
 tier, plans-only verdict, primary probe, and every selected or skipped specialist.

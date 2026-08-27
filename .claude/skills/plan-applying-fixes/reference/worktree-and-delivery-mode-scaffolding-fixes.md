@@ -31,7 +31,7 @@ Sibling scaffold to Worktree Specification Fixes above — see
 [Plans Organization Convention §Delivery Mode](../../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
 
 **Confidence**: **HIGH** — section entirely missing on a freshly-authored plan, or a `*-to-pr` plan
-is missing its PR-Review Maker→Fixer Cycle steps (mechanical once the intended mode is known — a
+is missing exact-current-head/base PR-CI steps (mechanical once the intended mode is known — a
 `[HUMAN]`-tagged merge step is never itself a finding, so never in scope for this fix, nor is any
 other merge-step tag value). **MEDIUM → grill first** — the declared mode value is invalid/
 unrecognized, or the merge step carries a tag other than `[AI]`/`[HUMAN]`/`[AI+HUMAN]`. Do NOT guess

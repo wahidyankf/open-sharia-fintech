@@ -11,7 +11,7 @@ successor PR, then capture its exact repository, PR number, initial head, destin
 branch before any successor scout runs. Admit all existing source-PR `IssueComment` objects first.
 Reuse one valid handoff; stop on any invalid or conflicting admitted record. Only when none exists,
 post exactly one top-level comment on the merged source PR using the
-[`ose-pr-review-sibling-handoff:v1` schema](../../pr/pr-review-quality-gate/sibling-handoff-record.md):
+[`ose-pr-review-sibling-handoff:v1` schema](../../pr/pr-review-cycle/sibling-handoff-record.md):
 
 ```bash
 HANDOFF_JSON="$(jq -cn \
@@ -37,7 +37,7 @@ gh api "repos/${SOURCE_REPOSITORY}/issues/comments/${HANDOFF_COMMENT_ID}"
 ```
 
 Immediately run the canonical
-[typed read-back](../../pr/pr-review-quality-gate/sibling-handoff-record.md#typed-read-back-and-freeze),
+[typed read-back](../../pr/pr-review-cycle/sibling-handoff-record.md#typed-read-back-and-freeze),
 including the paginated uniqueness check. Freeze the successor until that exact returned comment
 and every immutable source/successor coordinate authenticate. Emission failure or an ambiguous
 retry never authorizes a second post.

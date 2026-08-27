@@ -16,6 +16,6 @@ title: "Reference"
 - [10 Anti Hallucination Verification](./anti-hallucination-verification.md) — post-execution anti-hallucination validation (Step 5f)
 - [11 Knowledge Capture Terminal States](./knowledge-capture-terminal-states.md) — verifying Knowledge Capture routing terminal states and secret/sensitivity gates (Step 5h)
 - [12 Knowledge Capture Audit And Severity](./knowledge-capture-audit-and-severity.md) — verifying repo-relevance, audit procedure, and severity for Knowledge Capture routing (Step 5h continued)
-- [13 Delivery Mode Pr Review Cycle](./delivery-mode-pr-review-cycle.md) — verifying delivery mode and the PR-review cycle were followed (Step 5i)
+- [Delivery Mode PR CI](./delivery-mode-pr-ci.md) — verifying delivery mode, exact-head PR CI, applicable surface gates, and optional review (Step 5i)
 - [14 Delivery Mode Phase0 And Boundaries](./delivery-mode-phase0-and-boundaries.md) — verifying Phase 0 opened no PR and delivery boundaries were respected (Step 5i continued)
   </content>

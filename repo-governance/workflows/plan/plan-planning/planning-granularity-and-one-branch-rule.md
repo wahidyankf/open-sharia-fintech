@@ -37,7 +37,7 @@ licence to fold independent nodes together to reduce PR count.
 **Phase 0 is not one of these nodes — the earliest PR is Phase 1 (HARD RULE)**. Phase 0 is
 Environment Setup and Baseline: it installs dependencies, converges the toolchain, records the
 baseline, and clears preexisting failures. It produces nothing reviewable, so it opens no PR, pushes
-no branch, runs no review cycle, and merges nothing — under **every** delivery mode, the default
+no branch, runs no PR CI or review, and merges nothing — under **every** delivery mode, the default
 `worktree-to-pr` included. Author it as a local, gate-terminated phase whose evidence artifacts ride
 the Phase 1 PR. A Phase 0 that genuinely produces reviewable changes is mis-scoped: move that work
 into Phase 1. See

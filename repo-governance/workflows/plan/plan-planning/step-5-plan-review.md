@@ -19,12 +19,12 @@ Read the created plan files and verify structural completeness before the qualit
    `<identifier>/` with no date prefix; only `done/` carries the `<YYYY-MM-DD>__` prefix) per the
    confirmed `target-stage`
 6. Verify delivery checklist starts with **Phase 0: Environment Setup and Baseline**, and that
-   Phase 0 contains **no** PR-creation, PR-review-cycle, push, or merge step — the earliest phase
+   Phase 0 contains **no** PR-creation, PR CI/review, push, or merge step — the earliest phase
    that may open a PR is Phase 1
    ([§Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
 7. Verify the `## Parallelization Model` carries a `### Delivery Boundaries` table mapping **every**
    change-producing phase to a delivery unit, that the last change-producing phase is a boundary,
-   and that PR-creation, review-cycle, and merge steps appear **only** in boundary phases — a PR per
+   and that PR-creation, CI/leak-review, any explicitly requested semantic-review, and merge steps appear **only** in boundary phases — a PR per
    phase is a defect
    ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`

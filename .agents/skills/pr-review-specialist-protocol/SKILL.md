@@ -27,7 +27,7 @@ discipline.
   why specialists never post directly, re-review scope each cycle, and external fact
   verification via `web-researcher`
 - [Lifecycle-Owned Mechanical Suppression](reference/lifecycle-owned-mechanical-suppression.md) —
-  exact-ID suppression and evidence handling during PR quality-gate invocation, while preserving
+  exact-ID suppression when a caller supplies lifecycle ownership, while preserving
   standalone behavior
 
 ## Core Principles
@@ -42,6 +42,9 @@ discipline.
   sole poster of record.
 - **Quality-gate lifecycle ownership is exact** — suppress only delegated exact IDs or declared
   `verifies` relationships; pending evidence never triggers a duplicate check.
+- **Leak review has one owner** — `pr-leak-review` invokes `pr-review-security-maker` in exact
+  leak-only mode. Broad `pr-review` passes consume its authenticated current-head evidence and do
+  not duplicate secrets, protected-environment-property, or machine-path predicates.
 
 ## Related Skills / Agents
 

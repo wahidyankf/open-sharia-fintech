@@ -1,6 +1,6 @@
 ---
 name: pr-review-fixer
-description: Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-quality-gate.md`), never standalone.
+description: Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the explicit PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-cycle.md`), never standalone.
 tools: Read, Edit, Write, Bash, Grep, Glob
 model: sonnet
 color: yellow
@@ -50,7 +50,7 @@ invalidated evidence; current-head CI replaces only predicates it records as cov
 - `pr-review-scout-maker` - Pipeline stage 0; classifies risk tier and specialist set
 - The nine `pr-review-*-maker` discipline specialists - Raw findings this agent resolves, via
   `pr-review-synthesis-maker`'s consolidation
-- [PR-Review Maker→Fixer Cycle workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md) -
+- [PR-Review Maker→Fixer Cycle workflow](../../../repo-governance/workflows/pr/pr-review-cycle.md) -
   Orchestrates the strictly sequential N-cycle loop this agent participates in
 - `web-researcher` - Delegate target for external fact verification while triaging a finding
 - `plan-fixer`, `ci-fixer` - Sibling fixer agents in the standard three-stage pattern

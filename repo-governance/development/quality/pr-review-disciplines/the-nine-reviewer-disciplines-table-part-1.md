@@ -21,7 +21,7 @@ prove the finding wrong**, CRITICAL/HIGH/MEDIUM/LOW severity, every finding
 line-anchored with `file:line` plus a link to the specific `repo-governance/` rule it cites,
 anti-sycophantic framing, legibility to a junior engineer (see
 [Review as Teaching](./review-as-teaching.md)), the
-[Scope Guard](../../../workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md), and
+[Scope Guard](../../../workflows/pr/pr-review-cycle/scope-guard-no-scope-creep.md), and
 untrusted-input filtering of PR body/comment/linked-issue text. What differs per specialist is its
 **owned discipline** and the **scope it explicitly routes elsewhere** rather than raising itself:
 

@@ -37,8 +37,7 @@ human gate governs every recipe, tag, verb, and delivery mode.
   plans).
 - `reference/12-worktree-and-delivery-mode-scaffolding-fixes.md` — worktree specification fixes,
   delivery mode fixes.
-- `reference/13-pr-review-cycle-and-merge-tag-fixes.md` — PR-Review Maker→Fixer Cycle scaffolding,
-  the merge-tag mismatch recipe.
+- `reference/pr-ci-and-merge-tag-fixes.md` — exact-head PR-CI scaffolding and the merge-tag recipe.
 - `reference/14-execution-grade-clarity-fixes.md` — execution-grade clarity fixes (HARD RULE).
 - `reference/15-executor-tagging-and-phase-gate-fixes-part1.md` and
   `reference/16-executor-tagging-and-phase-gate-fixes-part2.md` — executor-tagging/phase-gate fixes.

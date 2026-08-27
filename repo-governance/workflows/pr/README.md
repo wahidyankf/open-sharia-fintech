@@ -1,7 +1,7 @@
 ---
 title: "PR Review Workflows"
-description: Orchestrated workflows for reviewing and finishing off pull requests before merge
-when_to_use: Use when routing to a workflow that runs the specialist review cycle against an open pull request.
+description: Optional semantic pull-request review workflows
+when_to_use: Use when a user explicitly requests semantic PR review.
 category: explanation
 subcategory: workflows
 tags:
@@ -14,17 +14,22 @@ created: 2026-08-14
 
 # PR Review Workflows
 
-Use these workflows when a pull request needs a structured specialist review before it merges. They classify the PR, run the appropriate review depth, and drive every thread to resolution.
+Broad semantic PR review is explicit-only. Every PR separately requires one focused, authenticated
+current-head leak review plus exact-head/base `pr-quality-gate.yml`.
 
 ## Available Workflows
 
-- [pr-review-quality-gate](./pr-review-quality-gate.md) — Classify every PR by changed-artifact
-  behavior; eligible PRs target 1–3 cycles, use 4–5 for focused recovery, and allow later ordinals
-  only within an authenticated per-PR configured-ceiling extension. Use before merge to decide the
-  route and preserve a readable audit.
+- [`pr-leak-review`](./pr-leak-review.md) — Mandatory one-pass review of only real sensitive
+  values, protected environment properties, and machine-specific absolute paths.
+- [`pr-review`](./pr-review.md) — Runs one pinned, risk-routed semantic review; posts exactly one
+  `COMMENT` review; never fixes, waits for CI, retries, or controls merge readiness.
+- [`pr-review-cycle`](./pr-review-cycle.md) — Explicitly requested bounded maker-to-fixer loop that
+  composes `pr-review` passes with fixer and exact-head CI steps.
 
 ## Related Documentation
 
-- [API Workflows](../api/README.md) — The API gate the pr-review-quality-gate consumes as a merge precondition
-- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) — Core workflow pattern
-- [Workflows Index](../README.md) — All available workflows
+- [PR Reviewer Disciplines](../../development/quality/pr-review-disciplines.md) — Semantic review
+  boundaries and routing.
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) — Pattern used by
+  the optional cycle.
+- [Workflows Index](../README.md) — All available workflows.

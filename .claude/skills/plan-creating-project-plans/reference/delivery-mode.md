@@ -23,6 +23,13 @@ is actually available.
 
 **Declare it explicitly**: `## Delivery Mode: worktree-to-pr` (or one of the other three modes, subject to the restriction above), placed immediately alongside the `## Worktree` declaration. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`) per the three-tier precedence algorithm (invocation argument → plan field → default).
 
-**Every PR uses the behavior classifier**: for `worktree-to-pr` and `main-to-pr`, the delivery checklist records the [PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md). Eligible executable work runs the sequential reviewer pipeline to its clean exit within its configured ceiling; noneligible static work requires the named `pr-quality-gate.yml` workflow. A PR touching `plans/**` is **always eligible** — plan documents run the specialist loop AND the quality gate by default, waived only by an explicit user instruction on that PR. The merge sits outside this done-boundary and `[AI]` merges once hardened preconditions hold.
+**Every PR uses exact-head/base CI**: for `worktree-to-pr` and `main-to-pr`, the delivery checklist
+requires the `Quality gate` from `.github/workflows/pr-quality-gate.yml` for the PR's exact current
+head and base, one authenticated clean current-head `pr-leak-review`, plus applicable finite surface
+gates. Broad semantic review is absent by default. Include
+[`pr-review`](../../../../repo-governance/workflows/pr/pr-review.md) or
+[`pr-review-cycle`](../../../../repo-governance/workflows/pr/pr-review-cycle.md) only when the user
+explicitly requested it, and place it at that PR delivery boundary. The merge remains outside the
+done-boundary and `[AI]` merges once hardened preconditions hold.
 
 **Invalid values are a finding, never silently coerced**: a delivery-mode value that is not one of the four modes above is a `plan-checker` HIGH finding, not a silent fallback to the default.

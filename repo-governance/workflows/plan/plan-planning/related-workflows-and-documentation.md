@@ -24,5 +24,6 @@ when_to_use: Use when navigating from plan-establishment to plan-quality-gate, p
   created by this workflow
 - [Plans Organization Convention §Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) —
   the four-mode vocabulary and three-tier precedence confirmed in Step 1 item 8
-- [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) — the review loop that runs
-  during execution when the plan's confirmed delivery mode is `worktree-to-pr` or `main-to-pr`
+- [PR Leak Review](../../pr/pr-leak-review.md) — the mandatory single-pass current-head leak gate;
+  broad [`pr-review`](../../pr/pr-review.md) and [`pr-review-cycle`](../../pr/pr-review-cycle.md) are
+  explicit-only

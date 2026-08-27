@@ -31,7 +31,7 @@ never the boundary of the rule — a surface absent from it does not become exem
   exists to prevent.
 
 This wording is congruent with merge precondition (e) in
-[the PR Review Quality Gate](../../pr/pr-review-quality-gate/hardened-merge-preconditions-a-e.md); the two
+[the PR Merge Protocol](../../../development/workflow/pr-merge-protocol/the-rule.md); the two
 must be edited together. An earlier revision let this authoring-time list stay in the
 enumerate-then-exempt shape after the merge-time clause was fixed, so a plan could be authored exempt
 and only discover at merge that it was not.

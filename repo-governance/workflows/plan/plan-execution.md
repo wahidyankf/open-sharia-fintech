@@ -81,7 +81,7 @@ outputs:
 - [Pre-Archival Gates](./plan-execution/finalization-pre-archival-gates.md) — rule-15.
 - [Rule-16 Retest](./plan-execution/finalization-rule16-api-retest.md) — API retest.
 - [Knowledge Capture](./plan-execution/finalization-knowledge-capture.md) — learnings.md.
-- [PR-Review Gate](./plan-execution/finalization-pr-review-gate.md) — done-definition.
+- [PR CI Gate](./plan-execution/finalization-pr-ci-gate.md) — exact-head/base evidence and optional review.
 - [Status/Infra Gate](./plan-execution/finalization-status-logic-and-infra-gate.md) — pass/fail.
 - [Cleanup/Archival](./plan-execution/finalization-worktree-cleanup-and-pr-archival.md) — archival-in-PR.
 - [PR Merge/Status](./plan-execution/finalization-pr-merge-and-final-status.md) — merge/cleanup.

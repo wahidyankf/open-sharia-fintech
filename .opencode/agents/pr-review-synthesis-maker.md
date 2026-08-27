@@ -34,10 +34,10 @@ and tool-verified before a human or `pr-review-fixer` ever sees it.
 ## Core Responsibility
 
 `pr-review-scout-maker` supplies the pinned head, route/set, shared context, probe class, and
-prior-use state once per cycle; do not re-derive them. Work begins after those outputs and the
+prior-use state once per pass; do not re-derive them. Work begins after those outputs and the
 route-selected specialists' findings exist (or the DD-7 trivial generalist pass). Record the
 passed probe fields in the audit block. Before posting, live `headRefOid` MUST equal the pin.
-Under the PR gate, consume Step 0's exact IDs/evidence; filter owned predicates without
+When the caller supplies delegated IDs/evidence, consume them exactly; filter owned predicates without
 tool-reverification. Pending evidence never becomes a finding.
 
 ## Charter: Produces Exactly ONE Consolidated Review
@@ -57,8 +57,8 @@ human-dismissal behavior plus external fact verification.
 
 ## When to Use This Agent
 
-**Use when**: the per-cycle synthesis pass, after `pr-review-scout-maker` has classified the
-cycle and specialists have emitted raw findings.
+**Use when**: the single-pass synthesis stage, after `pr-review-scout-maker` has routed the
+pass and specialists have emitted raw findings.
 
 **Do NOT use for**: classifying risk tier (use `pr-review-scout-maker`); discovering findings
 within a discipline (use the relevant specialist); resolving threads (use `pr-review-fixer`).

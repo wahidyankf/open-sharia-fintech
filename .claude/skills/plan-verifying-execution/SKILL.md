@@ -30,9 +30,8 @@ implementation matches what was promised, and that every execution-time gate act
 - `reference/11-knowledge-capture-terminal-states.md` and
   `reference/12-knowledge-capture-audit-and-severity.md` — Step 5h (Knowledge Capture Routing,
   blocking gate) verification.
-- `reference/13-delivery-mode-pr-review-cycle.md` and
-  `reference/14-delivery-mode-phase0-and-boundaries.md` — Step 5i (Delivery Mode and PR-Review
-  Cycle) verification.
+- `reference/delivery-mode-pr-ci.md` and `reference/delivery-mode-phase0-and-boundaries.md` — Step
+  5i delivery-mode, exact-head PR-CI, optional-review, Phase 0, and boundary verification.
 
 ## Core Principles
 

@@ -29,7 +29,7 @@ noted below — this section is the summary layer):
   merge-worthy non-pause phase: **MEDIUM**. Full detail in
   `reference/16-rule15-phase-gate-and-natural-pause-validation.md` (Step 5i).
 - **Phase 0 opens no PR (HARD RULE)**: Phase 0 (Environment Setup and Baseline) carries no
-  PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step
+  PR-creation, branch-push, optional semantic-review, merge, `gh pr ready`, or post-push CI step
   under any Delivery Mode — earliest PR-opening phase is Phase 1. Flag violations, and any unscoped
   Per-Phase Integration Protocol block, **HIGH**. Full detail below (PR Step Authorization Check) and
   `reference/20-rule19-delivery-mode-validation-part1.md` rule 19 item 7. See

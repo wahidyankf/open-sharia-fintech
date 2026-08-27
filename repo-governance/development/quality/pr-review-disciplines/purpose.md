@@ -30,6 +30,6 @@ monolith into nine discipline-scoped specialists plus a coordinator only works i
    are documented alongside the disciplines they govern, not left as an unstated assumption.
 
 Audience: the eleven `pr-review-*-maker.md` agent definitions, the
-[PR Review Quality Gate workflow](../../../workflows/pr/pr-review-quality-gate.md) that orchestrates
+[PR Review Cycle workflow](../../../workflows/pr/pr-review-cycle.md) that optionally orchestrates
 them, and any future contributor deciding whether a new class of finding needs its own discipline
 or fits inside an existing one.

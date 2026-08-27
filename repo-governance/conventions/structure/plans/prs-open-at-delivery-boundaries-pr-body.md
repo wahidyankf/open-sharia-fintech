@@ -23,7 +23,8 @@ academic paper. `.github/pull_request_template.md` prompts for each in compact f
    detail that a reader can judge whether the change answers it. A list of edits is not a reason.
 2. **What is in scope, and what is deliberately not** — both stated, each with its reason. A
    non-goal without a reason reads as an oversight; with one it is a decision. This is the
-   boundary the review loop is held to, so leaving it implicit means there is nothing to hold it
+   boundary any invoked review and every human reader use, so leaving it implicit removes the
+   reference point
    to.
 3. **Where to start reading** — the one file that makes the rest legible.
 4. **Which paths to skip** — generated mirrors and mechanical churn, named explicitly.
@@ -40,14 +41,14 @@ this one are separate: a code PR carries both.
 
 **Reviewers may ask.** A missing, vague, or self-contradicting scope statement is a legitimate
 finding, not pedantry — it is the one thing the
-[Scope Guard](../../../workflows/pr/pr-review-quality-gate/scope-guard-no-scope-creep.md) measures
+[Scope Guard](../../../workflows/pr/pr-review-cycle/scope-guard-no-scope-creep.md) measures
 against. Raise it as `clarify` and answer it by editing the body.
 
-**Review scope.** The PR description is in scope every cycle.
+**Review scope.** The PR description is in scope whenever semantic review is explicitly invoked.
 [`pr-review-docs-maker`](../../../../.claude/agents/pr-review/pr-review-docs-maker.md) owns whether
 the body accurately describes the diff it ships — a body contradicted by the diff is doc drift.
 [`pr-review-governance-maker`](../../../../.claude/agents/pr-review/pr-review-governance-maker.md)
 owns whether the required sections are present at all. The body is never frozen by the
 correction-record freeze.
 
-**Enforcement**: none automated. The template prompts; the two reviewers check.
+**Enforcement**: the template prompts universally; the two reviewers check when invoked.
