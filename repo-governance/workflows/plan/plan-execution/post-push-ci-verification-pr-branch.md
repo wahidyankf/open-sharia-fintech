@@ -12,10 +12,7 @@ when_to_use: Use when monitoring CI after a push under worktree-to-pr or main-to
 
 1. Identify the PR: `gh pr view <PR> --json number,url,headRefName` (the PR opened in Step 2b for this plan's branch)
 2. Check status: `gh pr checks <PR>` — lists every required check and its conclusion for the PR's current head commit
-3. Monitor to completion using the correct approach for the job duration:
-   - **Standard jobs (10–35 min, required default)**: `ScheduleWakeup(delaySeconds=120)` (2 min), check with one `gh pr checks <PR>` call, repeat every 2-5 min until every check reports a conclusion
-   - **Short jobs (<5 min only)**: poll `gh pr checks <PR>` at short intervals — do NOT use for 20–35 min CI jobs
-   - Never tight-loop `gh pr checks` without a sleep interval — it exhausts the GitHub API rate limit the same way `gh run watch` does
+3. Monitor to completion by scheduling a wakeup every 2 minutes, then making one `gh pr checks <PR>` status read. Never short-poll or tight-loop, regardless of expected job duration.
 4. If ANY check fails:
    - Pull failure logs for the failing run (`gh run view <run-id> --log-failed`, with `<run-id>` found via the failing check's linked run in `gh pr checks <PR>` output)
    - Fix locally (including preexisting CI failures — Iron Rule 3)

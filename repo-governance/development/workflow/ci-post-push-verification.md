@@ -27,7 +27,7 @@ After pushing app or library code, you MUST manually trigger all related GitHub 
 
 ## Related Documentation
 
-- [CI Monitoring Convention](../workflow/ci-monitoring.md) — Safe monitoring mechanics: ScheduleWakeup every 2-5 min as default, `gh run watch` only for <5 min jobs, trigger discipline, rate-limit recovery.
+- [CI Monitoring Convention](../workflow/ci-monitoring.md) — Safe monitoring mechanics: one scheduled status read every 2 minutes, never `gh run watch`, trigger discipline, and rate-limit recovery.
 - [CI Blocker Resolution Convention](../quality/ci-blocker-resolution.md) — How to investigate and fix CI failures found during verification.
 - [Trunk Based Development Convention](../workflow/trunk-based-development.md) — Why `main` must remain releasable at all times.
 - [Git Push Default Convention](../workflow/git-push-default.md) — Default push behavior (a PR branch under the default `worktree-to-pr`; direct to `origin main` under the explicitly-selected direct-push modes, which have no PR buffer).
