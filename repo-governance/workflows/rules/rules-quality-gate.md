@@ -31,6 +31,10 @@ outputs:
     type: enum
     values: [pass, partial, fail]
     description: Final validation status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -54,6 +58,7 @@ child below for the full validates/skips breakdown.
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Purpose and Scope](./rules-quality-gate/purpose-and-scope.md) — what's validated vs. skipped.
 - [Execution Mode](./rules-quality-gate/execution-mode.md) — Agent Delegation, invocation.
 - [Step 0.5: Preflight — Overview](./rules-quality-gate/step-0-5-deterministic-preflight.md) — what the audit orchestrator does.

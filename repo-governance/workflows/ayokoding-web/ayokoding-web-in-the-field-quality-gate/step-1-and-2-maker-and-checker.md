@@ -6,6 +6,12 @@ when_to_use: Use when creating or updating in-the-field production guides, or wh
 
 # Steps 1-2: Maker and Checker
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass Step 0's `delegated-gate-ids` and `lifecycle-evidence` to
+checker and fixer prompts; exact delegated predicates cannot become findings or enter the fix loop.
+
 ## 1. Maker - Create/Update Guides (Manual/AI-Assisted)
 
 **Objective**: Create or update in-the-field production guides
@@ -44,7 +50,7 @@ when_to_use: Use when creating or updating in-the-field production guides, or wh
 ```bash
 # Invoke via Task tool
 subagent_type: apps-ayokoding-www-in-the-field-checker
-prompt: "Validate apps/ayokoding-www/content/en/learn/software-engineering/programming-language/java/in-the-field/ for compliance with in-the-field standards"
+prompt: "Validate apps/ayokoding-www/content/en/learn/software-engineering/programming-language/java/in-the-field/ for in-the-field standards; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Validation areas**:

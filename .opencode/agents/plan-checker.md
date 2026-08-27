@@ -39,6 +39,14 @@ You are a project plan quality validator ensuring plans are complete, clear, and
 **Criticality Categorization**: findings use standardized CRITICAL/HIGH/MEDIUM/LOW levels — see
 `repo-assessing-criticality-confidence` Skill.
 
+## Lifecycle-Owned Predicates
+
+When a quality gate supplies `delegated-gate-ids` and its evidence ledger, omit only exact registry
+IDs or predicates linked through `verifies`. Carry the ledger unchanged; never execute, infer, or
+report delegated predicates. Missing or stale evidence remains pending. Without this handoff,
+suppress nothing. See the
+[lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Temporary Report Files
 
 Pattern: `plan__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. See

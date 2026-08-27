@@ -38,6 +38,12 @@ alters documented CLI behavior. This agent does NOT do its own web research — 
 checker's cited findings, downgrading confidence and skipping the fix when a cited source is
 `[Needs Verification]` or `[Unverified]`.
 
+Under `harness-compatibility-quality-gate`, ignore findings whose predicates are named by exact
+IDs in `delegated-gate-ids`; their owning lifecycle surface resolves them. A delegated predicate
+with missing or stale evidence remains `pending`, never a reason to run or imitate that check.
+After edits, intersect changed files with delegated scopes, invalidate only affected evidence, and
+return the updated ledger. Standalone fixing retains the full protocol.
+
 **See `repo-harness-compatibility-protocol` Skill** for the full mechanics: which invariants and
 dimensions are auto-fixable vs. human-required, the confidence re-validation procedure, fix
 patterns (catalog row update, frontmatter field removal, post-edit sync, post-fix verification),

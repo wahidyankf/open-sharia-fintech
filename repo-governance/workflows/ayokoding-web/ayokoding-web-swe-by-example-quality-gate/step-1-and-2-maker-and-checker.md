@@ -6,6 +6,11 @@ when_to_use: Use when creating or updating by-example tutorial content, or when 
 
 # Steps 1-2: Maker and Checker
 
+## 0. Lifecycle Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md);
+pass its IDs and evidence to checker/fixer prompts.
+
 ## 1. Maker - Create/Update Examples (Manual/AI-Assisted)
 
 **Objective**: Create or update by-example tutorial content
@@ -44,7 +49,7 @@ when_to_use: Use when creating or updating by-example tutorial content, or when 
 ```bash
 # Invoke via Task tool
 subagent_type: apps-ayokoding-www-by-example-checker
-prompt: "Validate apps/ayokoding-www/content/en/learn/software-engineering/programming-language/golang/tutorials/by-example/ for compliance with by-example standards"
+prompt: "Validate {input.scope}; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Validation areas**:
@@ -77,10 +82,7 @@ prompt: "Validate apps/ayokoding-www/content/en/learn/software-engineering/progr
 **Outputs**:
 
 - Audit report: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
-- Executive summary with overall status
-- Detailed findings with confidence levels
-- Specific line numbers for issues
-- Actionable recommendations
+- Overall status and actionable findings with confidence and line numbers
 
 **UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../../../development/infra/temporary-files.md#uuid-chain-generation) for details.
 

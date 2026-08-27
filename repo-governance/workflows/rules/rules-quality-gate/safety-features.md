@@ -15,7 +15,9 @@ when_to_use: Use when auditing this workflow's guardrails against runaway iterat
 
 **Convergence Safeguards**:
 
-- Preflight SHA-256 hash reuse: when `RHINO_AUDIT_NOW` is pinned per the Step 0.5 recommendation, identical repo state across iterations produces identical preflight JSON. The checker detects this and skips re-evaluating deterministic categories (reuses prior iteration's `## Deterministic Findings` section verbatim) — concentrates AI-token spend on AI-only categories.
+- Retained-preflight SHA-256 reuse: identical domain state reuses the prior
+  `## Deterministic Domain Findings` section. Delegated lifecycle evidence follows its own
+  repository/head/base invalidation rules.
 - Checker loads `.known-false-positives.md` skip list at start of each iteration
 - Fixer persists new FALSE_POSITIVEs to skip list after each run
 - Re-validation uses scoped scan (changed files only) to prevent scope expansion

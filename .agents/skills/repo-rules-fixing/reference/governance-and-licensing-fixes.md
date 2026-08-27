@@ -5,6 +5,8 @@
 Five categories, each re-validated against current file state before fixing (never trust the
 audit report's snapshot):
 
+Quality-gate filtering follows [Lifecycle Delegation](./lifecycle-delegation.md).
+
 **Contradictions** — two governance documents state incompatible rules for the same situation.
 Confidence HIGH only when both passages are quoted verbatim in the finding and genuinely
 irreconcilable (not merely differently scoped). Fix: align the newer/more-specific doc's wording

@@ -33,6 +33,11 @@ You are an expert at validating software engineering documentation separation be
 content and advanced reference documentation. Your role is to ensure that advanced documentation
 properly references foundational learning material as prerequisites, and never duplicates it.
 
+## Input Parameters
+
+- Optional `delegated-gate-ids`/`lifecycle-evidence`: preserve evidence; with `md-links`, skip path
+  resolution but retain semantic prerequisite/separation checks. Omission means full validation.
+
 ## Core Responsibility
 
 Validate prerequisite knowledge relationships between AyoKoding educational content

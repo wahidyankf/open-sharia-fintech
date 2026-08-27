@@ -41,6 +41,10 @@ outputs:
     type: enum
     values: [excellent, needs-improvement, failing]
     description: Final tutorial quality status
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: iterations-completed
     type: number
     description: Number of check-fix cycles executed
@@ -70,6 +74,7 @@ Iterative Maker-Checker-Fixer quality gate for in-the-field production guides.
 
 ## Contents
 
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 - [Execution Mode, Workflow Overview, and Research Delegation](./ayokoding-web-in-the-field-quality-gate/execution-mode-workflow-overview-and-research-delegation.md) — how to run, flow diagram.
 - [Steps 1-2: Maker and Checker](./ayokoding-web-in-the-field-quality-gate/step-1-and-2-maker-and-checker.md) — create guides, validate quality.
 - [Step 3: User Review](./ayokoding-web-in-the-field-quality-gate/03-user-review.md) — human decision point.

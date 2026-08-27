@@ -42,8 +42,8 @@ The record makes the route auditable; it does not replace reviewer judgment or a
 
    "All threads resolved" is never sufficient evidence that all findings are fixed.
 
-4. **All applicable PR quality gates are GREEN** — both the local gates and CI on the PR, as of the PR's current
-   head commit.
+4. **All applicable PR quality gates are GREEN** — aggregate CI matches the exact
+   repository/head/base; never require duplicate local proof.
 5. **Archival-in-PR is committed** _(applicable when this workflow is invoked from
    `plan-execution.md` Step 8)_ — the plan-to-done archival move
    (`git mv plans/in-progress/<plan> plans/done/YYYY-MM-DD__<plan>` plus README index updates) is

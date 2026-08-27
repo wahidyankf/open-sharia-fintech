@@ -6,13 +6,22 @@ when_to_use: "Use when tracing exactly what happens in the first half of a specs
 
 # Steps — Initial Validation and Fixes
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass Step 0's `delegated-gate-ids` and `lifecycle-evidence` to
+checker and fixer invocations; delegated predicates cannot become findings or enter the fix loop.
+Retain narrative, domain, cross-folder, diagram-semantic, and implementation-alignment judgment.
+
 ## 1. Initial Validation (Sequential)
 
 Run specs-wide consistency check to identify all issues.
 
 **Agent**: `specs-checker`
 
-- **Args**: `folders: {input.folders}, EXECUTION_SCOPE: specs`
+- **Args**: `folders: {input.folders}, EXECUTION_SCOPE: specs,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-1}` — Initial audit report in `generated-reports/`
   (4-part format: `specs__{uuid-chain}__{timestamp}__audit.md`)
 
@@ -56,8 +65,12 @@ Apply validated fixes from the audit report based on mode level.
 
 **Agent**: `specs-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, folders: {input.folders}, approved: all, mode: {input.mode}, EXECUTION_SCOPE: specs`
-- **Output**: `{fixes-applied}` — Fix report with same UUID chain as source audit
+- **Args**: `report: {step1.outputs.audit-report-1}, folders: {input.folders}, approved: all,
+mode: {input.mode}, EXECUTION_SCOPE: specs,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
+- **Output**: `{fixes-applied}`, `{updated-lifecycle-evidence}` after intersecting changed files
+  with delegated scopes
 - **Condition**: Threshold-level findings exist from step 2
 - **Depends on**: Step 2 completion
 
@@ -74,3 +87,4 @@ Apply validated fixes from the audit report based on mode level.
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
   - **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
+- A skipped fixer carries Step 0 lifecycle evidence forward unchanged

@@ -43,6 +43,9 @@ safety check; `MEDIUM` = an untrusted-input-handling gap with no demonstrated ex
 
 ## SUPPRESS Block (Never Raise)
 
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../.claude/skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Defense-in-depth suggestions where primary defenses are already adequate (e.g. \"also validate
   here\" when the input is already validated upstream).
 - General convention non-conformance unrelated to security (governance's territory).

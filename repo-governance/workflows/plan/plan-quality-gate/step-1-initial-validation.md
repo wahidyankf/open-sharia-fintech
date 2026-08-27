@@ -6,11 +6,18 @@ when_to_use: Use when checking exactly what plan-checker validates on the initia
 
 # Step 1. Initial Validation (Sequential)
 
+## 0. Lifecycle Ownership Filter
+
+First apply the
+[lifecycle validation ownership policy](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Record exact `delegated-gate-ids` and their evidence ledger. Plan semantics remain in scope; only
+registry-owned predicates are removed from checker prompts.
+
 Run plan validation to identify completeness, accuracy, and hallucination issues.
 
 **Agent**: `plan-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
 
 **Validation scope** (per `plan-checker` Steps 0-7 + 5b/5c/5d/5e/5f/5g/5h/5i/5j/5k/5n):

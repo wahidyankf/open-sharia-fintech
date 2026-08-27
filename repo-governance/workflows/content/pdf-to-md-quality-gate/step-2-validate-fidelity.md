@@ -6,11 +6,20 @@ when_to_use: "Use when implementing or debugging the fidelity-validation step of
 
 # 2. Validate Fidelity (Sequential)
 
+## 0. Lifecycle Validation Filter
+
+Apply [Lifecycle Validation Ownership](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+before composing checker prompts. Pass the resulting exact gate IDs as
+`delegated-gate-ids` and `lifecycle-evidence`; delegated Markdown mechanics cannot become fidelity
+findings.
+
 Validate the Markdown file against the source PDF across all dimensions.
 
 **Agent**: `pdf-to-md-checker`
 
-- **Args**: `pdf-file: {input.pdf-file}, md-file: {input.md-file}, EXECUTION_SCOPE: pdf-to-md`
+- **Args**: `pdf-file: {input.pdf-file}, md-file: {input.md-file}, EXECUTION_SCOPE: pdf-to-md,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{pdf-to-md-report-N}` — fidelity audit report
 
 **Success criteria**: Checker completes and generates audit report.
@@ -28,7 +37,8 @@ Validate the Markdown file against the source PDF across all dimensions.
   structure; nested bullets and numbered lists carry the correct level into Markdown
 - **Table integrity** — all tables present with correct data
 - **Figure coverage** — every figure has Mermaid or placeholder
-- **Mermaid validity** — all Mermaid blocks have valid syntax
+- **Mermaid fidelity** — Mermaid figures remain complete and faithful; syntax is delegated when
+  `md-mermaid` appears in `delegated-gate-ids`
 - **OCR quality** — image-only pages have acceptable error rate (<10%)
 - **Structural order** — sections appear in PDF reading order
 

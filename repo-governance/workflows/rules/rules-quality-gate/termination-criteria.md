@@ -1,6 +1,6 @@
 ---
 title: "Termination Criteria"
-description: Pass/partial/fail conditions by mode level, and how deterministic preflight findings relate to the two-consecutive-zero requirement.
+description: Pass/partial/fail conditions by mode level, including retained domain findings and separate lifecycle status.
 when_to_use: Use when checking whether a completed run's status is correctly determined.
 ---
 
@@ -21,6 +21,8 @@ when_to_use: Use when checking whether a completed run's status is correctly det
 
 - Technical errors during check or fix
 
-**Note on deterministic findings**: Deterministic findings from preflight are reported in the audit's `## Deterministic Findings (rhino-cli preflight)` section but do NOT count toward any mode threshold per Step 2's visibility-only rule. Two consecutive zero-finding validations refers to AI-only findings only.
+**Retained deterministic findings**: layer-coherence and traceability findings count toward the
+mode threshold. Vendor, word-budget, and other exact delegated lifecycle predicates are absent
+from this domain count and use `lifecycle-status` instead.
 
 **Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).

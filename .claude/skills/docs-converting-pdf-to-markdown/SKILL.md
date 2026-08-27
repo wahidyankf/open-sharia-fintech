@@ -12,6 +12,14 @@ every passage, table, heading level, list-nesting depth, figure, and diagram pre
 
 Auto-loads for `pdf-to-md-maker`, `pdf-to-md-checker`, and `pdf-to-md-fixer`.
 
+## Lifecycle Delegation
+
+Quality-gate invocations may pass exact `delegated-gate-ids` under
+[Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Checker and fixer omit only matching generic Markdown predicates. PDF/source fidelity remains
+authoritative. Accept `lifecycle-evidence`: checkers preserve it; fixers scope-intersect changed
+files and return `updated-lifecycle-evidence`. Omitted delegation preserves standalone full behavior.
+
 ## Reference Modules
 
 - [checking-fidelity-criticality-and-format.md](./reference/checking-fidelity-criticality-and-format.md)

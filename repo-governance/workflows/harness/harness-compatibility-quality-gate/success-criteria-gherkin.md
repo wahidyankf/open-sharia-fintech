@@ -1,25 +1,32 @@
 ---
 title: "Success Criteria (Gherkin) — Part 1"
-description: The first four Gherkin scenarios — Phase 0/Phase 1 ordering, auto-fixed sync drift, cited research, and catalog updates.
+description: Gherkin scenarios for lifecycle delegation, external research, evidence invalidation, and catalog updates.
 when_to_use: Use when verifying or testing this workflow's Phase 0/Phase 1 and fixer-update behavior against its acceptance criteria.
 ---
 
 # Success Criteria (Gherkin) — Part 1
 
 ```gherkin
-Scenario: Phase 0 parity invariants pass before external drift check
-  Given the five deterministic parity invariants are configured
+Scenario: Registered parity predicates are delegated before external drift check
+  Given exact registry gate IDs and lifecycle evidence are supplied
   When repo-harness-compatibility-checker runs Phase 0
-  Then it invokes rhino-cli vendor-audit for governance prose and root instruction surfaces
-  And it verifies the binding sync no-op, agent inventory parity, and translation-map coverage
-  And only after all five invariants pass does it proceed to Phase 1 web research
+  Then it does not rerun vendor, binding, ownership, catalog, or duplication predicates they own
+  And it retains genuinely unregistered semantic parity
+  And it proceeds to Phase 1 web research independently of lifecycle status
 
-Scenario: Phase 0 binding sync drift is auto-fixed
-  Given Phase 0 detects Invariant 3 drift (sync produced changes in .opencode/)
-  When repo-harness-compatibility-fixer processes the finding
-  Then it re-runs npm run generate:bindings
-  And stages the updated .opencode/agents/ files
-  And verifies the second sync run produces no further changes
+Scenario: Missing delegated evidence remains pending
+  Given an applicable delegated gate has no exact current evidence
+  When the harness compatibility gate completes with no domain findings
+  Then final-status is pass
+  And lifecycle-status is pending
+  And no local rerun or AI imitation is used as fallback
+
+Scenario: A harness fix invalidates only affected lifecycle evidence
+  Given an external-drift fix changes files within a delegated binding gate's scope
+  When repo-harness-compatibility-fixer completes
+  Then that gate's lifecycle evidence becomes pending
+  And unaffected delegated evidence is preserved
+  And the fixer does not rerun the delegated gate
 
 Scenario: Checker delegates web research and produces a cited drift audit
   Given the workflow runs with scope "all"

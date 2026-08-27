@@ -10,15 +10,17 @@ Apply validated fixes from the audit report based on mode level.
 
 **Agent**: `repo-harness-compatibility-fixer`
 
-- **Args**: `report: {audit-report-N}, approved: all, mode: {input.mode}, EXECUTION_SCOPE: harness-compat`
-- **Output**: `{fix-report-N}` — Fix report with the same UUID chain as the source audit
+- **Args**: `report: {audit-report-N}, approved: all, mode: {input.mode},
+EXECUTION_SCOPE: harness-compat,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {current-lifecycle-evidence}`
+- **Output**: `{fix-report-N}` plus `{updated-lifecycle-evidence}` with only predicates affected
+  by changed files invalidated
 - **Condition**: Threshold-level findings exist from step 2
 - **Depends on**: Step 2 completion
 
 **Auto-fixable scope** (fixer applies at HIGH confidence):
 
-- **Parity Invariant 3**: binding sync drift — re-runs `npm run generate:bindings`
-  and stages the changed `.opencode/agents/` files
 - Catalog field updates where web-research evidence is unambiguous (e.g., a harness ships
   native `AGENTS.md` support and the catalog still marks it Tier 2)
 - Tier reclassification (Tier 2 → Tier 1) backed by a dated, cited web source
@@ -31,6 +33,9 @@ Apply validated fixes from the audit report based on mode level.
   with the catalog and binding changes
 
 **Out-of-scope for automated fixing** (fixer flags and surfaces for human resolution):
+
+- Every predicate named by an exact delegated gate ID, including registered vendor, binding,
+  ownership, catalog-conformance, and duplication checks
 
 - **Parity Invariants 1, 2** (governance prose, AGENTS.md/CLAUDE.md vendor-audit violations):
   rewriting load-bearing prose requires human judgment per the convention's Migration Guidance
@@ -55,3 +60,6 @@ status; do not loop further until the human resolves.
 are surfaced clearly.
 
 **On failure**: Log errors, proceed to step 4 for verification.
+
+After every applied fix, compare changed files with the ledger's predicate inputs and invalidate
+only affected evidence. Do not rerun a delegated check to restore it.

@@ -19,7 +19,7 @@ when_to_use: "Use when dispatching fan-out or the trivial coordinator branch."
   specialists itself — it only consumes the raw findings they and the scout hand it. Selected
   specialists run **concurrently** within the fan-out
 - **Args**: PR reference, pinned head SHA, Step 1's `specialists`, `context_brief`, `probe_class`,
-  and `probe_previously_used`, plus prior findings and resolution state
+  and `probe_previously_used`, prior resolution state, and Step 0's delegated IDs/evidence
 - **Output**: The route-selected specialists emit raw, discipline-scoped findings to the coordinator;
   the coordinator deduplicates, re-categorizes, reasonableness-filters, and tool-verifies them, then
   records the passed probe fields and posts exactly ONE consolidated review via the GitHub Reviews API (see
@@ -36,6 +36,8 @@ when_to_use: "Use when dispatching fan-out or the trivial coordinator branch."
 - **Head-authority gate**: Immediately before the single review POST, compare live `headRefOid`
   with the scout pin. On mismatch, post nothing, discard the cycle output, and restart from a fresh
   scout under [Cycle Authority and Restart Recovery](./cycle-authority-and-restart-recovery.md).
+- **Lifecycle suppression**: omit exact delegated predicates; `pending` evidence never triggers a
+  rerun or imitation.
 - **On failure**: If a specialist or the coordinator cannot access the PR or an API call fails, retry
   once and record the blocked condition; do not silently suppress the affected lens.
 - **Trivial branch**: when Step 1 records `tier: trivial`,

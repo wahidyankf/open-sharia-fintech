@@ -11,7 +11,10 @@ Run the checker again to verify fixes resolved issues and no new issues were int
 **Agent**: `pdf-to-md-checker`
 
 - **Args**: `pdf-file: {input.pdf-file}, md-file: {input.md-file}, EXECUTION_SCOPE: pdf-to-md,
-uuid-chain: {previous-uuid-chain}, fix-report: {step4.outputs.pdf-to-md-fix-report-N}`
+uuid-chain: {previous-uuid-chain}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step4.outputs.updated-lifecycle-evidence if step4 ran; otherwise
+step0.outputs.lifecycle-evidence}`. Add
+  `fix-report: {step4.outputs.pdf-to-md-fix-report-N}` only when Step 4 ran.
 - **Output**: `{pdf-to-md-report-N}` — re-validation audit report
 - **Depends on**: Step 3 completion (when confirming a first-zero pass) or Step 4 completion
   (when verifying fixes were applied correctly)

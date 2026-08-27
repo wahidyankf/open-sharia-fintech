@@ -1,32 +1,33 @@
 ---
 title: "Step 1: Initial Validation"
-description: Runs the combined check — five deterministic parity invariants (Phase 0) then per-harness external drift detection (Phase 1) — and writes the first audit report.
+description: Filters lifecycle-owned parity, runs retained semantic parity and external drift detection, and writes the first audit report.
 when_to_use: Use when running the first checker pass of a harness-compatibility quality-gate iteration.
 ---
 
 # Step 1: Initial Validation (Sequential)
 
-Run a combined check: five deterministic parity invariants (Phase 0) then per-harness
-external drift detection (Phase 1).
+Run the unowned parity checks (Phase 0), then per-harness external drift detection (Phase 1).
+Lifecycle-owned predicates are delegated under the shared
+[validation-ownership rule](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 **Agent**: `repo-harness-compatibility-checker`
 
-- **Args**: `scope: {input.scope}, mode: {input.mode}, EXECUTION_SCOPE: harness-compat`
+- **Args**: `scope: {input.scope}, mode: {input.mode}, EXECUTION_SCOPE: harness-compat,
+delegated-gate-ids: {step0.outputs.delegated-gate-ids},
+lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-1}` — Initial audit report in
   `generated-reports/harness-compat__{uuid-chain}__{timestamp}__audit.md`
 
 **What the checker does**:
 
-**Phase 0 — Deterministic parity invariants** (offline, Bash-based, runs first):
+**Phase 0 — Local semantic parity** (offline, runs first):
 
-1. Governance prose vendor-neutrality — runs `rhino-cli repo-governance vendor validate repo-governance/`
-2. Root instruction surface vendor-neutrality — runs vendor-audit on `AGENTS.md` and `CLAUDE.md`
-3. Binding sync no-op — runs `npm run generate:bindings && git diff --quiet .opencode/ .codex/ .agents/`
-4. Agent inventory parity — compares the two directories' filename sets, so equal counts with
-   mismatched names still fail (`.claude/agents/` is nested into role subfolders,
-   `.opencode/agents/` is flat, and the `.claude/agents/README.md` index is not an agent)
-5. Translation-map coverage — checks all distinct `color:` and `model:` frontmatter values
-   appear in the color-translation table and tier map
+1. Use only exact registry IDs in `delegated-gate-ids`. Record their evidence without rerunning
+   vendor-independence, binding sync/ownership, catalog, or duplication predicates.
+2. Mark missing, stale, or mismatched delegated evidence `pending`; never replace it with an AI
+   approximation or a local lifecycle-gate run.
+3. Run genuinely unregistered semantic parity, including translation-map intent and hand-authored
+   config parity. Do not duplicate a predicate merely because it is inexpensive.
 
 **Phase 1 — External harness drift** (web-research-backed):
 
@@ -42,6 +43,7 @@ For each harness listed in the platform-binding catalog:
 `generated-reports/.execution-chain-harness-compat` before spawning `web-researcher`
 tasks. See the Temporary Files Convention for details.
 
-**Success criteria**: Checker completes and generates audit report.
+**Success criteria**: Checker completes, generates the domain audit, and returns the lifecycle
+ledger separately.
 
 **On failure**: Terminate workflow with status `fail`.

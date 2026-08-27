@@ -26,8 +26,8 @@ skills:
 - **Termination**: Reports findings — does not auto-fix; pairs with
   `repo-harness-compatibility-fixer`
 
-Run two phases of validation and emit a combined audit report: **Phase 0** — five deterministic
-cross-vendor parity invariants (offline, Bash-based, fast); **Phase 1** — for each harness in
+Run two phases of validation and emit a combined audit report: **Phase 0** — cross-vendor parity;
+**Phase 1** — for each harness in
 `docs/reference/platform-bindings.md`, fetch its current upstream conventions via delegated web
 research, diff against the catalog row and committed binding files. Emit every finding with dual
 labels (criticality × confidence) per `repo-assessing-criticality-confidence` skill. This agent
@@ -37,6 +37,11 @@ does NOT modify files — validates only.
 invariants (tool/pass/fail/criticality), the seven Phase 1 drift dimensions (D1–D7), this
 agent's own workflow (report init → Phase 0 → catalog read → research delegation → diff → D6
 binding-file conformance → finalize), and the finding format template.
+
+When invoked by `harness-compatibility-quality-gate`, consume `delegated-gate-ids` and its
+lifecycle evidence ledger. Do not rerun or AI-rederive an exact registered predicate; missing or
+stale evidence is `pending`. Continue unregistered semantic parity and upstream web drift. This
+conditional delegation does not change a standalone invocation's full protocol.
 
 ## When to Use This Agent
 

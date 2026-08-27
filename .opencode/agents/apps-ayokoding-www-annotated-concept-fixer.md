@@ -21,6 +21,11 @@ skills:
 
 # Annotated-Concept Tutorial Fixer for ayokoding-web
 
+## Lifecycle Handoff
+
+Accept the optional lifecycle handoff per `docs-applying-content-quality`; return scope-intersected
+`updated-lifecycle-evidence` after edits.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

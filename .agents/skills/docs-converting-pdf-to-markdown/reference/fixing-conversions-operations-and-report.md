@@ -22,7 +22,7 @@ list with correct nesting. HIGH_CONFIDENCE only when the PDF shows clear stepped
 **Missing Table (CRITICAL)**: re-validate via `crane table --check`; extract the table page, parse
 column-aligned content, convert to a Markdown table, insert at the correct location.
 
-**Invalid Mermaid Syntax (HIGH)**: locate the block, identify the syntax error (unknown type,
+**Invalid Mermaid Syntax (HIGH; non-delegated)**: locate the block, identify the syntax error (unknown type,
 unclosed bracket, invalid arrow), apply a targeted fix — do NOT redesign the diagram, fix syntax
 only.
 

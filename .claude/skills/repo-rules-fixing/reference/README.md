@@ -4,6 +4,8 @@ title: "Reference"
 
 # Reference
 
+- [Lifecycle Delegation](./lifecycle-delegation.md) — quality-gate exact-ID filtering and selective evidence invalidation
+
 - [01 Verification And Edit Discipline](./verification-and-edit-discipline.md) — file-operation verification and edit discipline for applying rules fixes
 - [02 Agent Skill And Coverage Fixes](./agent-skill-and-coverage-fixes.md) — agent-skill duplication and coverage-gap fixes
 - [03 Governance And Licensing Fixes](./governance-and-licensing-fixes.md) — rules governance and licensing-convention fixes

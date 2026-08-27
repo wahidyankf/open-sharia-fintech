@@ -4,6 +4,9 @@ Once per cycle, assemble one brief with Core Responsibility step 1's **pinned he
 metadata, linked plan/issue context, and the **full diff**. Hand it unchanged to selected specialists
 and `pr-review-synthesis-maker`; consumers never re-derive it.
 
+Under the PR gate, carry Step 0's delegated IDs/evidence unchanged; never reinterpret coverage or
+replace `pending` evidence.
+
 Include generated artifacts; only the cycle-record freeze below is excluded. CI covers every
 artifact.
 

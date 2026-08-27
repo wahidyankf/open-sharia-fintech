@@ -11,10 +11,8 @@ confidence framework governing when a fix auto-applies versus escalates.
 
 ## Read First
 
-`reference/01-merge-step-guard.md` — the merge-step structural guard MUST be read before any other
-reference module. It states what it protects (a merge step's human gate) rather than enumerating
-tags/verbs/modes, because two prior enumeration-style guards were each defeated by an axis nobody had
-named. Every other reference module's recipes are subordinate to this guard.
+Read `reference/01-merge-step-guard.md` before every other module. Its protection of a merge step's
+human gate governs every recipe, tag, verb, and delivery mode.
 
 ## Reference Modules
 
@@ -58,14 +56,19 @@ Knowledge Capture, phase gates) inserts placeholders for the author to fill, nev
 changed since audit) before acting. **A more-plausible-sounding hallucination is the worst outcome**
 of an anti-hallucination fix — refuse rather than replace one wrong claim with another.
 
+## Quality-Gate Lifecycle Handoff
+
+When given `delegated-gate-ids` and an evidence ledger, preserve both and skip exact delegated
+predicates. Never revalidate, infer, or fix delegated work; missing or stale evidence remains
+pending. Plan-domain findings remain actionable. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+After edits, invalidate evidence whose registered scope intersects changed files.
+
 ## Missing Minimal-Sufficiency Rationale
 
-When a checker finds a lasting mechanism without its concrete-need and existing-mechanism
-rationale, add only a clearly marked scaffold in `tech-docs.md` or the single-file plan's
-`Technical Approach`: `[AUTHOR INPUT REQUIRED] Concrete requirement, correctness/safety obligation,
-or demonstrated recurring risk`; `[AUTHOR INPUT REQUIRED] Existing mechanisms evaluated and why
-they are insufficient`. Grill the author for both answers. Never infer them from the proposed
-implementation, and never mark the finding fixed while either placeholder remains unresolved.
+For a lasting mechanism missing concrete-need and existing-mechanism rationale, add only two
+`[AUTHOR INPUT REQUIRED]` scaffolds: the requirement/risk, and why evaluated mechanisms are
+insufficient. Grill for both; never infer answers or mark unresolved placeholders fixed.
 
 ## Related
 

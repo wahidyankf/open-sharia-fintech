@@ -25,6 +25,14 @@ skills:
 
 Validates all projects in the repository against CI/CD standards defined in `repo-governance/development/infra/ci-conventions.md`.
 
+## Lifecycle-Owned Predicates
+
+When a quality gate supplies `delegated-gate-ids` and its evidence ledger, omit only exact registry
+IDs or predicates linked through `verifies`. Carry the ledger unchanged; never execute, imitate, or
+report a delegated predicate. Missing or stale evidence remains pending. Without this handoff,
+suppress nothing. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+
 ## Validation Checks
 
 For each project in `apps/` and `libs/`:

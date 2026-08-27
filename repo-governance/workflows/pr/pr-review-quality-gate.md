@@ -19,7 +19,11 @@ outputs:
   - name: final-status
     type: enum
     values: [done, blocked, not-applicable]
-    description: Whether the PR met its route-specific done-definition, is blocked by unresolved code-related findings, or does not need the specialist cycle
+    description: "Domain review result: done, blocked, or specialist cycle not applicable"
+  - name: lifecycle-status
+    type: enum
+    values: [verified, pending, not-applicable]
+    description: Lifecycle evidence state, separate from final-status
   - name: cycles-completed
     type: number
     description: Number of fan-out-to-fixer cycles actually executed
@@ -33,6 +37,8 @@ outputs:
 **Purpose**: Classify PR behavior, then run a bounded sequential review loop for eligible PRs.
 
 ## Contents
+
+- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
 
 ### Core Flow
 

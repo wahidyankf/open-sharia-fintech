@@ -35,5 +35,6 @@ Record the current-head classification evidence before specialist review.
 4. If evidence is ambiguous or mixed, mark it **eligible**.
 5. Check both routes for secrets and invoke history remediation when exposure is suspected.
 
-For a noneligible PR, verify current-head quality gates and ordinary merge preconditions. Eligible
-PRs use the bounded loop.
+For a noneligible PR, use exact current repository/head and applicable-base aggregate PR CI as the
+lifecycle evidence, then verify ordinary merge preconditions. Do not duplicate those checks
+locally. Eligible PRs use the bounded semantic-review loop and the same evidence rule.

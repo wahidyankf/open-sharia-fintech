@@ -8,16 +8,20 @@ developer_instructions = """
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: sonnet` — pattern recognition across TSX/CSS/config files,
-judgment calls on accessibility and design quality, and criticality/confidence classification all
-need more than mechanical matching.
-
 Audits frontend components against `repo-governance/development/frontend/` and produces violation
 reports.
 
 ## Core Responsibility
 
 Validate UI components across seven dimensions, producing audit reports in `generated-reports/` using the standard `swe-ui__{uuid}__{timestamp}__audit.md` pattern.
+
+## Lifecycle-Owned Predicates
+
+When a quality gate supplies `delegated-gate-ids` and its evidence ledger, omit only exact registry
+IDs or predicates linked through `verifies`. Carry the ledger unchanged; never execute, infer, or
+report delegated predicates. Missing or stale evidence remains pending. Without this handoff,
+suppress nothing. See the
+[lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Check Dimensions
 

@@ -17,10 +17,14 @@ when_to_use: Use when tracing how typecheck, lint, and test:quick run at pre-pus
 
 ## Quality Gates (pre-push enforcement)
 
-`typecheck`, `lint`, and `test:quick` run at three identical checkpoints: locally before push, in
-the PR gate, and at main merge. `test:quick` is a sequential 5-step composition
-(typecheck → lint → test:unit → test:coverage → test:specs) so the specs gate is already
-folded in — there is no separate `specs:behavior:coverage` step at pre-push or PR.
+Pre-push and PR CI execute their registry-declared projections; they are complementary lifecycle
+surfaces, not three hardcoded identical checkpoints. Discover each live projection with `gate
+list --surface=<surface>`. A successful PR aggregate is evidence for the exact repository, head,
+and applicable base it reports; it does not prove a later head.
+
+For ordinary projects, `test:quick` composes typecheck, lint, unit tests, coverage, and specs. The
+registry determines where that target and any additional checks run, so this page does not copy a
+gate inventory.
 
 **One documented exception — `rhino-cli`**: its `test:quick` is a 4-step composition
 (typecheck → lint → test:unit → test:specs). `test:coverage` was lifted out of the local chain
@@ -63,7 +67,8 @@ flowchart TD
 
 Deeper tests run outside the pre-push/PR cycle — on a schedule or triggered explicitly.
 
-Scheduled CRON workflows run 5 parallel tracks: lint, typecheck, test:quick (with coverage), specs:behavior:coverage, and integration→e2e (sequential chain).
+Scheduled workflows run deeper suites outside the push/PR feedback path. Their workflow files and
+registry wiring are authoritative for the current tracks.
 
 ```mermaid
 flowchart TD

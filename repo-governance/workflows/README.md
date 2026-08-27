@@ -56,7 +56,9 @@ Workflows support two execution modes and standard inputs (`mode`, `max-concurre
 - [UI Workflows](ui/README.md) — Orchestrated processes for UI component quality validation and remediation. Use when routing to a workflow that audits or fixes UI component quality.
 - [Web Workflows](web/README.md) — Orchestrated workflows that test a live running website and turn the findings into a fix plan. Use when routing to a workflow that tests a live running site and turns findings into a fix plan.
 
-All `*-quality-gate` workflows follow the check-fix Workflow Pattern (see Workflow Meta Documentation above) which fixes every finding and iterates until zero remain.
+All `*-quality-gate` workflows follow the check-fix pattern and its
+[lifecycle validation ownership](meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md)
+Step 0, which delegates registry-owned checks before domain validation.
 
 ## Naming
 

@@ -42,6 +42,9 @@ bounded, moderate cost increase; `LOW` = a minor efficiency opportunity with neg
 
 ## SUPPRESS Block (Never Raise)
 
+During PR quality-gate invocation, first apply the shared
+[lifecycle-owned mechanical suppression](../../.claude/skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
+
 - Purely theoretical/micro-optimization concerns with no evidence the code sits on an
   actually-exercised hot path.
 - A deliberate performance/simplicity tradeoff already recorded as a decision in the PR's own

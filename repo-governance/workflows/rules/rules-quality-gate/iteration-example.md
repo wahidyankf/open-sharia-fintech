@@ -1,6 +1,6 @@
 ---
 title: "Iteration Example"
-description: A worked four-iteration trace from cold preflight through double-zero AI-only confirmation.
+description: A worked trace combining retained domain checks with separate lifecycle evidence.
 when_to_use: Use when you want a concrete trace of how the preflight cache and check-fix cycles play out together.
 ---
 
@@ -9,10 +9,11 @@ when_to_use: Use when you want a concrete trace of how the preflight cache and c
 Typical execution flow:
 
 ```
-Step 0.5: Preflight (cold) → 4 governance categories scanned (layer-coherence, traceability-audit, vendor-audit, governance-word-budget); any deterministic findings emitted to generated-reports/ (visibility only)
+Step 0: Vendor and word-budget predicates delegated → lifecycle evidence recorded
+Step 0.5: Layer-coherence and traceability retained → domain findings recorded
 
 Iteration 1:
-  Step 0.5: Preflight (cached, RHINO_AUDIT_NOW=...) → same deterministic findings (SHA-256 hash match, skip re-eval)
+  Step 0.5: Retained preflight → domain findings included in threshold count
   Step 1: AI checks → 5 AI-only findings
   Steps 2-5: Fixer addresses 3 findings
 
@@ -29,5 +30,5 @@ Iteration 4:
   Step 0.5: Preflight (cached) → same deterministic findings
   Step 1: AI checks → 0 AI-only findings (consecutive_zero=2)
 
-Result: PASS (double-zero AI-only; any deterministic findings fixed at source or documented in skip-list)
+Result: final-status PASS after double-zero domain checks; lifecycle-status reported separately
 ```

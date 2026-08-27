@@ -42,6 +42,14 @@ TDD applies to UI component and page work. Write the failing check before writin
 
 Mini-TDD passes work well for UI: one Red→Green→Refactor cycle per variant, state, or interaction.
 
+## Quality-Gate Lifecycle Handoff
+
+When the UI quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
+registry IDs or predicates connected through `verifies`. Preserve pending state; never rerun,
+infer, revalidate, or fix delegated work. The seven semantic UI dimensions remain in scope. See the
+[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
+Fixers invalidate evidence whose registered scope intersects their changed files.
+
 **Canonical reference**:
 [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 — covers all test levels (unit, snapshot/visual, a11y, E2E, manual verification) and the full

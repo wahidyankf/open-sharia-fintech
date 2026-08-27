@@ -23,7 +23,8 @@ following hold:
   and never `reset --hard` or a force-push (see the
   [No Destructive Git Operations Convention](../../../development/workflow/no-destructive-git-operations.md)
   and the [Git Push Safety Convention](../../../development/workflow/git-push-safety.md)).
-- **(d)** **All PR quality gates are green** — local gates and CI on the PR, as of its current head.
+- **(d)** **All PR quality gates are green** — aggregate CI covers the exact repository/head/base;
+  no separate local proof is required.
 - **(e)** The **surface-conditional tester gates have been run and their defect findings resolved.**
   The rule this clause enforces is: **every PR that changes behavior a user or caller can reach must
   be exercised through that behavior before it merges.** The surface list below is a routing table for

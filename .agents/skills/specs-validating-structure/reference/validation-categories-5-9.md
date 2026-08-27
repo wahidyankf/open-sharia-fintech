@@ -9,11 +9,11 @@ diagram files that don't exist; diagram references undefined actors/containers/c
 Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080); actor names inconsistent across
 context/container/component levels. **LOW**: no `classDef` styling.
 
-## Category 6: Cross-Reference Integrity [LLM]
+## Category 6: Cross-Reference Semantics [LLM]
 
-**CRITICAL**: markdown link to a non-existent file. **HIGH**: README "Related" section references
-a missing file. **MEDIUM**: wrong relative path depth. Only links originating FROM listed folders
-are checked; links pointing outside are checked for existence only, not target content.
+Assess whether references are conceptually appropriate and current. If `md-links` is delegated,
+do not resolve paths/fragments or infer broken-link findings. Without delegation, use `rhino-cli md
+links validate`; do not substitute LLM path arithmetic.
 
 ## Category 7: Spec-to-Implementation Alignment [LLM]
 
@@ -23,7 +23,8 @@ area doesn't mention it.
 
 ## Category 8: Spec Tree Shape Compliance [Deterministic via rhino-cli]
 
-Shell out to `rhino-cli specs validate-tree <app>`, parse JSONL. **HIGH**: top-level folder isn't
+Outside delegated quality-gate runs, shell out to `rhino-cli specs structure validate <app>`, parse
+JSONL. **HIGH**: top-level folder isn't
 one of the five canonical folders; a flat-root artifact exists (`be/`, `web/`, `cli/`, `c4/`,
 `contracts/` at app root); a BE/web/CLI feature file sits directly under
 `behavior/<surface>/gherkin/` without a domain subdirectory (all surfaces require domain subdirs —
@@ -33,7 +34,8 @@ domain subdirectory contains only one feature file named differently than the di
 
 ## Category 9: Adoption Gaps (BDD/DDD/Contracts) [Deterministic via rhino-cli]
 
-Shell out to `rhino-cli specs validate-adoption <app>`, parse JSONL, per
+Outside delegated quality-gate runs, use `rhino-cli specs structure validate <app>` for structural
+adoption evidence, then apply narrative judgment per
 [App README vs Specs Convention](../../../../repo-governance/conventions/structure/app-readme-vs-specs.md)
 Standard 6:
 

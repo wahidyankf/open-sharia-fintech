@@ -24,10 +24,11 @@ User: "Run repository rules quality gate workflow in normal mode"
 
 The AI will:
 
-0. Build the rhino-cli binary if missing (`nx build rhino-cli`), then run deterministic preflight (Step 0.5) capturing the JSON envelope to `generated-reports/`.
+0. Resolve lifecycle ownership/evidence, then build rhino-cli if missing (`rtk nx build
+rhino-cli`) and run the filtered domain preflight (Step 0.5).
 1. Invoke `repo-rules-checker` via the Agent tool (reads governance files, writes audit)
 2. Invoke `repo-rules-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
-3. Iterate until zero findings achieved
+3. Iterate until zero domain findings are achieved; report lifecycle status separately
 4. Show git status with modified files
 5. Wait for user commit approval
 

@@ -53,6 +53,11 @@ is deterministic URL replacement with no reasoning required:
 
 You validate link-checker findings before applying fixes.
 
+## Input Parameters
+
+- Optional lifecycle handoff: with `md-links`, skip internal path/fragment fixes; after edits return
+  scope-intersected `updated-lifecycle-evidence`. Omission preserves standalone behavior.
+
 ## Web Research Delegation
 
 This agent has `WebFetch` and `WebSearch` tools but invokes **both Exception 2 (fixer
@@ -72,7 +77,7 @@ The `repo-applying-maker-checker-fixer` Skill provides mode logic.
 ## How This Works
 
 1. Report Discovery: `repo-applying-maker-checker-fixer` Skill
-2. Validation: Re-check links
+2. Validation: Re-check only non-delegated link predicates
 3. Fix Application: HIGH confidence only
 4. Fix Report: `repo-generating-validation-reports` Skill
 

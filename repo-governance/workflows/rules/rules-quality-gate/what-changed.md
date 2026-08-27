@@ -6,6 +6,10 @@ when_to_use: Use when tracing why the deterministic preflight step exists or whe
 
 # What changed
 
+Lifecycle ownership filtering added 2026-08-27. The quality gate now delegates registered vendor
+and word-budget predicates, retains layer coherence and traceability as domain findings, and never
+uses missing evidence as permission for an AI fallback.
+
 Step 0.5 added 2026-05-12 referencing the archived `2026-05-12__optimize-rules-quality-gate-with-rhino-cli` plan. Hardening edits (broken-command fix, visibility-only codification, hash-reuse documentation, arg-name unification, exit-2 recovery, Skip-list Curation Rules section, Observability Metrics section, Step-0.5 numbering rationale, operator hatch) added by `plans/done/2026-05-12__complete-repo-rules-zero-findings/`.
 
 Ordinal-prefix judgement added 2026-08-18 as an **AI-only** category under Core Repository

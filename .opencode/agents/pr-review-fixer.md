@@ -19,11 +19,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — the 4-way triage is bounded classification
-  over an already-cited finding, and fix implementation targets concrete evidence someone else
-  already gathered; opus/planning-grade reasoning belongs to the coordinator tier
-  (`pr-review-scout-maker`, `pr-review-synthesis-maker`), not this resolution step. Mirrors the
-  sonnet-tier profile of sibling fixers `ci-fixer`, `plan-fixer`.
+- **Role**: Fixer (yellow). **Model**: `sonnet` — evidence-based triage and implementation.
 
 ## Core Responsibility
 
@@ -36,10 +32,13 @@ while any thread remains both unresolved and unanswered.
 **See `pr-review-fixer-resolution` Skill** for the full mechanics: the GraphQL enumeration query
 and three confirmed live-API gotchas, the four-way triage table and each path's requirements, the
 reply/resolve hard rules and repeated-finding handling across cycles, and the posting-identity
-stopgap plus mandatory pre-push gate re-run.
+stopgap plus lifecycle-evidence handling.
 
 Before triage or mutation, require the live PR head to equal the posted cycle's scout pin. A
 mismatch permits stale-evidence replies only and returns the cycle for a fresh scout.
+
+Under the PR gate, consume Step 0's exact IDs/evidence without reruns. Return selectively
+invalidated evidence; current-head CI replaces only predicates it records as covered.
 
 ## Reference Documentation
 
