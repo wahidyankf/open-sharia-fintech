@@ -39,6 +39,7 @@
     <Compile Include="Steps/FsharpToolInvocationUnitTests.fs" />
     <Compile Include="Steps/TestCoverageSteps.fs" />
     <Compile Include="Steps/TestCoverageUnitTests.fs" />
+    <Compile Include="Steps/MdSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
