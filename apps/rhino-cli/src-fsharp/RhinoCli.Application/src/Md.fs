@@ -36,6 +36,7 @@ module RhinoCli.Application.Md
 open System
 open System.Collections.Generic
 open System.IO
+open System.Text.RegularExpressions
 open YamlDotNet.Serialization
 open RhinoCli.Domain.Types
 
@@ -484,16 +485,18 @@ let private parseHeadingLevel (s: string) : int option =
                 let rest = s.Substring(level + 1).Trim()
                 if rest = "" then None else Some level
 
-/// Parses all ATX headings from `content`, skipping lines inside fenced code
-/// blocks. A line that opens or closes a fence is itself never treated as a
-/// heading candidate, matching the Rust source's `continue`-before-heading-
-/// check ordering [Repo-grounded — `heading_hierarchy.rs::collect_headings`].
-let private collectHeadings (content: string) : Heading list =
+/// Collects all ATX heading titles from `content` (fence-aware) as
+/// `(line, level, title)` tuples. Shared by `collectHeadings` below (which
+/// only needs `line`/`level`) and the links validator's anchor-slug logic
+/// further down (which also needs `title`) — folding what would otherwise
+/// be two near-identical fence-tracking loops into one
+/// [Repo-grounded — `links.rs::collect_atx_headings`].
+let private collectAtxHeadingTitles (content: string) : (int * int * string) list =
     let lines = content.Split('\n')
     let mutable inFence = false
     let mutable fenceChar = ' '
     let mutable fenceLen = 0
-    let headings = ResizeArray<Heading>()
+    let out = ResizeArray<int * int * string>()
 
     for i in 0 .. lines.Length - 1 do
         let lineNum = i + 1
@@ -512,10 +515,22 @@ let private collectHeadings (content: string) : Heading list =
         | None ->
             if not inFence then
                 match parseHeadingLevel trimmed with
-                | Some level -> headings.Add { Line = lineNum; Level = level }
+                | Some level ->
+                    let title = trimmed.Substring(level + 1).Trim()
+
+                    if title <> "" then
+                        out.Add(lineNum, level, title)
                 | None -> ()
 
-    headings |> List.ofSeq
+    out |> List.ofSeq
+
+/// Parses all ATX headings from `content`, skipping lines inside fenced code
+/// blocks. A line that opens or closes a fence is itself never treated as a
+/// heading candidate, matching the Rust source's `continue`-before-heading-
+/// check ordering [Repo-grounded — `heading_hierarchy.rs::collect_headings`].
+let private collectHeadings (content: string) : Heading list =
+    collectAtxHeadingTitles content
+    |> List.map (fun (line, level, _) -> { Line = line; Level = level })
 
 /// Applies the H1-uniqueness and no-level-skipping rules to a file's parsed
 /// headings. Returns an empty list when `headings` is empty (the file has no
@@ -666,3 +681,399 @@ let validateDocsHeadingHierarchy (paths: string list) : Result<Finding list, str
         |> List.collect walkHeadingHierarchyPath
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
+
+// ---------------------------------------------------------------------------
+// docs validate-links
+// ---------------------------------------------------------------------------
+
+/// Directories skipped by the links validator's full-repo walk — the
+/// cross-repo noise-skip set shared by the markdown gate validators
+/// (mermaid, links, heading-hierarchy) in the Rust source, a superset of
+/// both `skipDirs` and `namingSkipDirs` above
+/// [Repo-grounded — `links.rs::FULL_REPO_SKIP_DIRS`].
+let private linksSkipDirs: Set<string> =
+    Set.ofList
+        [ "node_modules"
+          "dist"
+          "build"
+          "target"
+          ".next"
+          "coverage"
+          "generated-reports"
+          "local-tmp"
+          "archived"
+          "apps-labs"
+          "worktrees"
+          ".terraform"
+          "generated-contracts"
+          ".nx"
+          ".fvm-cache"
+          ".git"
+          "deps"
+          "_build"
+          "cover" ]
+
+/// Path fragments identifying a skill tree, whose files are exempt from link
+/// validation. `.agents/skills/` holds a byte-for-byte mirror of
+/// `.claude/skills/`, so a rule keyed on the canonical path alone would
+/// validate the copy while exempting the original
+/// [Repo-grounded — `links.rs::SKILL_TREE_MARKERS`].
+let private skillTreeMarkers: string list = [ ".claude/skills/"; ".agents/skills/" ]
+
+/// One relative markdown link parsed out of a source line, before
+/// validation [Repo-grounded — `links.rs::LinkInfo`].
+type private LinkInfo = { LineNumber: int; Url: string }
+
+/// Matches `[text](url)` markdown link syntax [Repo-grounded — `links.rs::link_re`].
+let private linkRegex = Regex(@"\[([^\]]+)\]\(([^)]+)\)", RegexOptions.Compiled)
+
+/// Matches bracket-style placeholder tokens such as `[placeholder-name]`
+/// [Repo-grounded — `links.rs::bracket_placeholder_re`].
+let private bracketPlaceholderRegex = Regex(@"\[[\w-]+\]", RegexOptions.Compiled)
+
+/// Replaces inline code spans (`` `...` `` / ` ``...`` `) with spaces,
+/// preserving character offsets so regex match positions remain valid
+/// [Repo-grounded — `links.rs::strip_inline_code_spans`].
+let private stripInlineCodeSpans (line: string) : string =
+    let chars = line.ToCharArray()
+    let len = chars.Length
+    let mutable i = 0
+
+    while i < len do
+        if chars.[i] = '`' then
+            let tickCount = if i + 1 < len && chars.[i + 1] = '`' then 2 else 1
+            let start = i
+            i <- i + tickCount
+            let mutable found = false
+
+            while i < len && not found do
+                if tickCount = 2 && i + 1 < len && chars.[i] = '`' && chars.[i + 1] = '`' then
+                    i <- i + 2
+                    found <- true
+                elif tickCount = 1 && chars.[i] = '`' then
+                    i <- i + 1
+                    found <- true
+                else
+                    i <- i + 1
+
+            if found then
+                for j in start .. i - 1 do
+                    chars.[j] <- ' '
+        else
+            i <- i + 1
+
+    String(chars)
+
+/// Returns `true` when `link` matches a known placeholder or documentation-
+/// example pattern that must not be validated against the filesystem
+/// [Repo-grounded — `links.rs::should_skip_link`].
+let shouldSkipLink (link: string) : bool =
+    if link.StartsWith("/", StringComparison.Ordinal) then
+        true
+    elif link.Contains("{{<") || link.Contains("{{%") then
+        true
+    else
+        let placeholders =
+            [ "path.md"
+              "target"
+              "link"
+              "./path/to/"
+              "../path/to/"
+              "path/to/convention.md"
+              "path/to/practice.md"
+              "path/to/rule.md"
+              "./relative/path/to/" ]
+
+        if placeholders |> List.exists link.Contains then
+            true
+        elif bracketPlaceholderRegex.IsMatch(link) then
+            true
+        elif link = "path" || link = "target" || link = "link" then
+            true
+        elif
+            link.Contains("/images/")
+            && not (link.StartsWith("../", StringComparison.Ordinal))
+        then
+            true
+        else
+            let examplePatterns =
+                [ "./overview"
+                  "./guide.md"
+                  "./examples.md"
+                  "./reference.md"
+                  "./diagram.png"
+                  "./image.png"
+                  "./screenshots/"
+                  "./auth-guide.md"
+                  "by-concept/beginner"
+                  "./by-example/beginner"
+                  "swe/prog-lang/"
+                  "../parent"
+                  "./ai/"
+                  "../swe/"
+                  "../../advanced/"
+                  "url"
+                  "./LICENSE"
+                  "../../features.md"
+                  "../../.opencode/" ]
+
+            examplePatterns |> List.exists link.Contains
+
+/// Extracts every relative markdown link from `path`, skipping fenced code
+/// blocks (a bare-`` ``` ``-prefix toggle, deliberately simpler than
+/// `parseFenceOpen`'s tilde/length-aware tracking above — this mirrors the
+/// Rust source's own, separate fence check rather than reusing the
+/// heading-hierarchy one) and inline code spans, discarding external URLs,
+/// `mailto:` links, and known placeholder patterns
+/// [Repo-grounded — `links.rs::extract_links`].
+let private extractLinks (path: string) : LinkInfo list =
+    let lines = (File.ReadAllText path).Split('\n')
+    let mutable inCodeBlock = false
+    let links = ResizeArray<LinkInfo>()
+
+    for i in 0 .. lines.Length - 1 do
+        let lineNum = i + 1
+        let line = lines.[i]
+
+        if line.TrimStart().StartsWith("```", StringComparison.Ordinal) then
+            inCodeBlock <- not inCodeBlock
+        elif not inCodeBlock then
+            let stripped = stripInlineCodeSpans line
+
+            for m in linkRegex.Matches(stripped) do
+                let url = m.Groups.[2].Value.TrimStart('<').TrimEnd('>')
+
+                let isExternal =
+                    url.StartsWith("http://", StringComparison.Ordinal)
+                    || url.StartsWith("https://", StringComparison.Ordinal)
+                    || url.StartsWith("mailto:", StringComparison.Ordinal)
+
+                if not isExternal && not (shouldSkipLink url) then
+                    links.Add { LineNumber = lineNum; Url = url }
+
+    links |> List.ofSeq
+
+/// Converts a heading title string to a GitHub-flavoured markdown anchor
+/// slug. Rules: lowercase, remove all chars that are not alphanumeric,
+/// underscore, space, or hyphen, then replace spaces with hyphens (no
+/// collapsing). Verified against the `github-slugger` v2 reference
+/// implementation — underscores and Unicode letters/digits are kept
+/// [Repo-grounded — `links.rs::github_slug`].
+let githubSlug (title: string) : string =
+    title.ToLowerInvariant()
+    |> Seq.choose (fun c ->
+        if Char.IsLetterOrDigit c || c = '-' || c = '_' then Some c
+        elif c = ' ' then Some '-'
+        else None)
+    |> Seq.toArray
+    |> String
+
+/// Builds a `Set` of all GitHub-slugified anchor names (with duplicate
+/// collision suffixes applied in heading order) for `content`
+/// [Repo-grounded — `links.rs::slugs_from_content`].
+let private slugsFromContent (content: string) : Set<string> =
+    let headings = collectAtxHeadingTitles content
+    let mutable counts: Map<string, int> = Map.empty
+    let mutable result = Set.empty
+
+    for _, _, title in headings do
+        let baseSlug = githubSlug title
+        let count = counts |> Map.tryFind baseSlug |> Option.defaultValue 0
+
+        let slug =
+            if count = 0 then
+                baseSlug
+            else
+                sprintf "%s-%d" baseSlug count
+
+        counts <- counts |> Map.add baseSlug (count + 1)
+        result <- Set.add slug result
+
+    result
+
+/// Splits a link's URL into its path part and an optional anchor fragment
+/// (everything after the first `#`) [Repo-grounded — `links.rs::validate_file`'s
+/// `hash_pos` split].
+let private splitUrlFragment (url: string) : string * string option =
+    match url.IndexOf('#') with
+    | -1 -> url, None
+    | idx -> url.Substring(0, idx), Some(url.Substring(idx + 1))
+
+/// Resolves a relative `link` against the directory containing
+/// `sourceFile`. An empty `link` (pure anchor) returns `sourceFile`
+/// unchanged [Repo-grounded — `links.rs::resolve_link`/`clean_path`].
+let private resolveLink (sourceFile: string) (link: string) : string =
+    if link = "" then
+        sourceFile
+    else
+        let parent =
+            Path.GetDirectoryName(sourceFile) |> Option.ofObj |> Option.defaultValue ""
+
+        Path.GetFullPath(Path.Combine(parent, link))
+
+/// Options controlling `validateDocsLinks`'s file-selection behavior.
+/// `StagedFiles`, when `Some`, is the literal list of repository-relative
+/// staged paths to scan in place of a full recursive walk — mirrors
+/// `checkStagedFiles`'s precedent (see `Env.fs`) of taking the staged-file
+/// list as a pure function parameter rather than shelling out to git from
+/// application code; the real `git diff --cached` call is a CLI-layer
+/// concern for later [Repo-grounded — `links.rs::ScanOptions`].
+type LinkScanOptions =
+    { RepoRoot: string
+      StagedFiles: string list option
+      ExcludePrefixes: string list }
+
+/// Selects the absolute paths of markdown files to scan: `opts.StagedFiles`
+/// (filtered to `.md`) when `Some`, otherwise every `.md` file reachable
+/// from `opts.RepoRoot` via `linksSkipDirs`-filtered recursion; either way,
+/// `opts.ExcludePrefixes` is then applied against each file's
+/// repository-relative path [Repo-grounded — `links.rs::get_markdown_files`,
+/// `links.rs::filter_skip_paths`].
+let private getMarkdownLinkFiles (opts: LinkScanOptions) : string list =
+    let files =
+        match opts.StagedFiles with
+        | Some staged ->
+            staged
+            |> List.filter (fun f -> f.EndsWith(".md", StringComparison.Ordinal))
+            |> List.map (fun f -> Path.Combine(opts.RepoRoot, f))
+        | None ->
+            collectFilesSkipping linksSkipDirs opts.RepoRoot
+            |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+
+    if List.isEmpty opts.ExcludePrefixes then
+        files
+    else
+        files
+        |> List.filter (fun f ->
+            let rel = Path.GetRelativePath(opts.RepoRoot, f).Replace('\\', '/')
+
+            opts.ExcludePrefixes
+            |> List.forall (fun skip -> not (rel.StartsWith(skip, StringComparison.Ordinal))))
+
+/// Validates every extracted `links` entry against the filesystem, relative
+/// to `filePath`. Files inside a skill tree (see `skillTreeMarkers`) are
+/// unconditionally exempt. After confirming a non-anchor-only link's target
+/// exists, any anchor fragment is validated against the target's (or, for a
+/// pure `#fragment` link, the source file's) heading slugs
+/// [Repo-grounded — `links.rs::validate_file`].
+let private validateFileLinks (repoRoot: string) (filePath: string) (links: LinkInfo list) : Finding list =
+    let normalizedPath = filePath.Replace('\\', '/')
+
+    if skillTreeMarkers |> List.exists normalizedPath.Contains then
+        []
+    else
+        let rel = Path.GetRelativePath(repoRoot, filePath).Replace('\\', '/')
+
+        links
+        |> List.collect (fun link ->
+            let pathPart, fragment = splitUrlFragment link.Url
+
+            if pathPart = "" then
+                match fragment with
+                | Some frag when frag <> "" ->
+                    let slugs = slugsFromContent (File.ReadAllText filePath)
+
+                    if Set.contains frag slugs then
+                        []
+                    else
+                        [ mkFail
+                              rel
+                              (sprintf "link \"#%s\" in %s does not match any heading anchor in this file" frag rel) ]
+                | _ -> []
+            else
+                let target = resolveLink filePath pathPart
+
+                if not (File.Exists target || Directory.Exists target) then
+                    [ mkFail rel (sprintf "link \"%s\" in %s points to a non-existent file: %s" link.Url rel target) ]
+                else
+                    match fragment with
+                    | Some frag when frag <> "" ->
+                        let slugs = slugsFromContent (File.ReadAllText target)
+
+                        if Set.contains frag slugs then
+                            []
+                        else
+                            let targetRel = Path.GetRelativePath(repoRoot, target).Replace('\\', '/')
+
+                            [ mkFail
+                                  rel
+                                  (sprintf
+                                      "link \"#%s\" in %s does not match any heading anchor in %s"
+                                      frag
+                                      rel
+                                      targetRel) ]
+                    | _ -> [])
+
+/// Validates every relative markdown link (and anchor fragment) reachable
+/// from `opts.RepoRoot`, per `opts`'s staged-file and exclude-prefix
+/// filters. The returned list is sorted by file path, then by message
+/// [Repo-grounded — `links.rs::validate_all_links`].
+///
+/// Gherkin (binds) — "A document set with all valid internal links passes
+/// validation":
+///   Given markdown files where all internal links point to existing files
+///   When the developer runs docs validate-links
+///   Then the command exits successfully
+///   And the output reports no broken links found
+///
+/// Gherkin (binds) — "A broken internal link is detected and reported":
+///   Given a markdown file with a link pointing to a non-existent file
+///   When the developer runs docs validate-links
+///   Then the command exits with a failure code
+///   And the output identifies the file containing the broken link
+///
+/// Gherkin (binds) — "External URLs are not validated":
+///   Given a markdown file containing only external HTTPS links
+///   When the developer runs docs validate-links
+///   Then the command exits successfully
+///   And the output reports no broken links found
+///
+/// Gherkin (binds) — "With --staged-only only staged files are checked":
+///   Given a markdown file with a broken link that has not been staged in git
+///   When the developer runs docs validate-links with the --staged-only flag
+///   Then the command exits successfully
+///
+/// Gherkin (binds) — "exclude flag skips the named subtree":
+///   Given a markdown file under plans/done with a broken internal link
+///   And a markdown file under docs with a different broken internal link
+///   When the developer runs docs validate-links with --exclude plans/done
+///   Then the command exits with a failure code
+///   And the output does not mention the plans/done file
+///   But the output does mention the docs file
+///
+/// Gherkin (binds) — "repo-wide scan finds broken link outside original
+/// three-directory scope":
+///   Given a markdown file under libs with a broken internal link
+///   When the developer runs docs validate-links
+///   Then the command exits with a failure code
+///   And the output identifies the libs file containing the broken link
+///
+/// Gherkin (binds) — "valid anchor link passes validation":
+///   Given a markdown file that links to an existing heading anchor in another file
+///   When the developer runs docs validate-links
+///   Then the command exits successfully
+///   And the output reports no broken links found
+///
+/// Gherkin (binds) — "broken anchor link produces a broken-anchor finding":
+///   Given a markdown file that links to a non-existent heading anchor in an existing file
+///   When the developer runs docs validate-links
+///   Then the command exits with a failure code
+///   And the output identifies the broken anchor
+///
+/// Gherkin (binds) — "same-file anchor with no matching heading produces a
+/// broken-anchor finding":
+///   Given a markdown file containing a same-file anchor link that has no matching heading
+///   When the developer runs docs validate-links
+///   Then the command exits with a failure code
+///   And the output identifies the broken same-file anchor
+///
+/// Gherkin (binds) — "anchor slugs keep underscores per the GitHub
+/// reference algorithm":
+///   Given a markdown file that links to the anchor "#snake_case" of a file whose heading is "snake_case"
+///   When the developer runs docs validate-links
+///   Then the command exits successfully
+///   And the output reports no broken links found
+let validateDocsLinks (opts: LinkScanOptions) : Finding list =
+    getMarkdownLinkFiles opts
+    |> List.collect (fun path -> validateFileLinks opts.RepoRoot path (extractLinks path))
+    |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
