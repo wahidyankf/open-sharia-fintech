@@ -6,6 +6,6 @@ when_to_use: Use when looking for the complementary governance workflow to this 
 
 # Related Workflows
 
-- [Repository Rules Validation](../repo-rules-quality-gate.md) — validates internal
+- [Repository Rules Validation](../../rules/rules-quality-gate.md) — validates internal
   consistency across principles, conventions, development practices, agent definitions, and
   skill packages; complementary to this workflow (internal governance vs. binding correctness)

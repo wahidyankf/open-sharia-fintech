@@ -22,9 +22,14 @@ push, rebase rather than merge:
 ```bash
 # If remote has new commits since last pull, rebase first
 git pull --rebase origin <target-branch>
+# If commits landed, complete Integration Diff Review before continuing
 # Then push
 git push origin <target-branch>
 ```
+
+When the pull introduces commits absent from the pre-pull branch, the
+[Integration Diff Review Convention](../integration-diff-review.md) requires a full-diff impact
+checkpoint and any invalidated verification rerun before the push.
 
 Never create merge commits when pushing to `main` or to a PR branch. A merge commit in the history
 violates this standard. If a merge commit appears locally, squash or rebase it before pushing. When a

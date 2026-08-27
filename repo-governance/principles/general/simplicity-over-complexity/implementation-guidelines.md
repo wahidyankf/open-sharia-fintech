@@ -1,6 +1,6 @@
 ---
 title: "Implementation Guidelines"
-description: Five rules for minimum code with maximum clarity, plus the senior engineer test.
+description: Applies the minimal-sufficiency test to lasting mechanisms, completion, and mandatory safeguards.
 category: explanation
 subcategory: principles
 tags:
@@ -8,14 +8,16 @@ tags:
   - simplicity
   - over-engineering
 created: 2025-12-15
-when_to_use: Use when writing new code and avoiding speculative features.
+when_to_use: Use when choosing an implementation or deciding when work is complete.
 ---
 
 # Implementation Guidelines
 
-## Minimum Code, Maximum Clarity
+## Smallest Responsible Change
 
-Write the minimum code that solves the problem. Nothing speculative.
+Apply the canonical [Minimal Sufficiency Test](./minimal-sufficiency-test.md#minimal-sufficiency-test).
+Start from the outcome and applicable rules, inspect existing mechanisms, and add only what the
+responsible solution requires.
 
 **Core Rules:**
 
@@ -29,10 +31,11 @@ Write the minimum code that solves the problem. Nothing speculative.
    - Don't create helpers for one-time operations
    - Don't design for hypothetical reuse
 
-3. **No unnecessary configurability**
+3. **No unnecessary lasting mechanisms**
    - Don't add configuration options that weren't requested
-   - Hard-code when appropriate
-   - Avoid feature flags for non-existent use cases
+   - Reuse an existing dependency, validator, workflow, automation, or infrastructure path when it
+     satisfies the need
+   - Name the concrete requirement or demonstrated risk before adding a new mechanism
 
 4. **No error handling for impossible scenarios**
    - Trust internal code and framework guarantees
@@ -43,6 +46,15 @@ Write the minimum code that solves the problem. Nothing speculative.
    - If you write 200 lines and it could be 50, rewrite it
    - More code = more bugs, more maintenance
    - Brevity is a virtue when clarity is maintained
+
+## Completion and Safeguards
+
+- Treat the requested outcome plus applicable rules as the completion boundary
+- Keep verification proportional to the change and its risk
+- Stop when that outcome is achieved and every required check passes
+- Do not expand a one-off change into generalized machinery without a demonstrated recurring need
+- Never use minimal sufficiency to skip TDD, specifications, regression tests, accessibility,
+  security, documentation, governance propagation, or required quality gates
 
 ## The Senior Engineer Test
 
@@ -58,3 +70,5 @@ If yes, simplify. Keep asking until the answer is no.
 - Error handling for impossible conditions
 - "Flexibility" that adds complexity without clear benefit
 - Code doing more than requested
+- Work continuing after the outcome and required checks are complete
+- A new lasting mechanism whose concrete need cannot be named

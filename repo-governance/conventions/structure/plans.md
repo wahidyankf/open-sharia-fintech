@@ -90,5 +90,5 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [Diagrams — Skipping and Accessibility](./plans/diagrams-skip-accessibility-and-example.md) — escape hatch.
 - [Relative Link Paths in Plan Files](./plans/relative-link-paths.md) — depth rule.
 - [Related Documentation](./plans/related-documentation.md) — cross-references.
-- [Best Practices](./plans/best-practices.md) — working habits.
+- [Best Practices](./plans/best-practices.md) — minimal-sufficiency habits.
 - [Examples](./plans/examples.md) — worked examples.

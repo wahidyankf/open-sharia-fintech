@@ -6,11 +6,9 @@ when_to_use: Use as the template for a handover's section structure.
 
 # Required Document Structure
 
-Every handover document uses this exact section shape, in this order — not a suggestion, a contract.
-The read side ([`plan-takeover-execution.md`](../plan-takeover-execution.md) A0.5) is a human or an
-agent skimming under time pressure; a fixed, predictable shape is what makes a handover **fast** to
-consume instead of just informative. A handover missing a required section is incomplete — go back and
-fill it in rather than shipping a partial document.
+Every handover uses this exact section order. The
+[`plan-takeover-execution.md`](../plan-takeover-execution.md) read side depends on that predictable
+shape. A missing required section makes the handover incomplete.
 
 ```markdown
 # Handover: <plan-identifier>
@@ -45,12 +43,15 @@ exact command to run first (e.g. a fetch/rebase), and any setup not yet done (e.
 not been run in this worktree"). A reader should be able to start executing from this section without
 re-reading anything else in the document.>
 
-## Key gotchas learned this session
+## Active user-established rule decisions
 
-<Each gotcha: what happened, why it happened (the mechanism, not just the symptom), and what to do
-differently next time. Omit anything already captured in the plan's own tech-docs.md/learnings.md —
-this section is for what is NOT yet written down anywhere durable. If nothing non-obvious was
-learned, state that explicitly rather than omitting the section.>
+<Every active repository-rule decision: operative statement, scope, source, and status. Write
+`None` only after checking the session record; a generic reminder does not satisfy this section.>
+
+## Learned constraints and gotchas
+
+<Record uncaptured constraints: what happened, the mechanism, and the future response. Keep them
+separate from active decisions. State `None` when there are no new constraints.>
 
 ## Files this session touched (ledger)
 

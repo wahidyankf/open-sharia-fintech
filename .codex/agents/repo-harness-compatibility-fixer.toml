@@ -39,7 +39,7 @@ rules fixes (use `repo-rules-fixer`).
 [Multi-Harness Binding Convention](../../repo-governance/conventions/structure/multi-harness-binding.md),
 [Platform Bindings Catalog](../../docs/reference/platform-bindings.md),
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md),
-[repo-harness-compatibility-quality-gate workflow](../../repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md).
+[harness-compatibility-quality-gate workflow](../../repo-governance/workflows/harness/harness-compatibility-quality-gate.md).
 Related: `repo-harness-compatibility-checker` (generates the audit reports this agent
 processes), `repo-rules-fixer` (different scope).
 

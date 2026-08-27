@@ -1,9 +1,9 @@
 ---
 name: plan-multi-repo-parity-planning
 title: "plan-multi-repo-parity-planning"
-description: Authors aligned-but-divergent plans across sibling repos, grilling every deviation to a decision.
+description: Authors sibling-repo parity plans, deciding every deviation.
 when_to_use: Use when a change spans sibling repos and drift between them must not be silent.
-goal: Author aligned-but-deliberately-divergent plans across multiple sibling repositories for a shared objective, with every cross-repo deviation grilled, decided, and durably documented
+goal: Author sibling-repository plans for one objective, with every deviation decided and recorded
 termination: "One plan per target repo exists, each passes plan-quality-gate (double-zero), every deviation-matrix cell carries a recorded decision, research findings are incorporated or skipped with justification, and delivery completed per the selected mode"
 inputs:
   - name: objective
@@ -48,6 +48,9 @@ outputs:
   - name: gate-results
     type: string
     description: "plan-quality-gate final status per plan (pass/partial/fail)"
+  - name: parity-identity-record
+    type: string
+    description: "Shared objective, worktree basename, and branch mapping"
   - name: delivery-refs
     type: string
     description: "Commits pushed to origin main (main-push modes) or PR URLs (worktree-to-pr)"
@@ -61,18 +64,18 @@ Authors one plan per sibling repo, grilling every cross-repo gap first.
 
 - [Purpose & Scope](./plan-multi-repo-parity-planning/purpose-scope-and-when-to-use.md) — why this exists.
 - [Execution Mode](./plan-multi-repo-parity-planning/execution-mode.md) — orchestrator steps.
-- [Propagation & Safety](./plan-multi-repo-parity-planning/propagation-delivery-and-machine-safety.md) — fan-out, PR shape.
-- [Invocation & Modes](./plan-multi-repo-parity-planning/invocation-point-and-modes-overview.md) — anchor repo, direct-push modes.
+- [Propagation & Safety](./plan-multi-repo-parity-planning/propagation-delivery-and-machine-safety.md) — fan-out and PR shape.
+- [Invocation & Modes](./plan-multi-repo-parity-planning/invocation-point-and-modes-overview.md) — anchor and modes.
 - [`worktree-to-pr` Default](./plan-multi-repo-parity-planning/modes-worktree-to-pr-default.md) — default mode.
 - [Delivery Mode Relationship](./plan-multi-repo-parity-planning/relationship-to-delivery-mode.md) — vs. plan's own mode.
 - [Step 1 — Survey](./plan-multi-repo-parity-planning/step-1-parity-set-survey.md) — state inventory.
 - [Step 2 — Matrix](./plan-multi-repo-parity-planning/step-2-gap-and-deviation-matrix.md) — deviation matrix.
 - [Step 3 — Grill](./plan-multi-repo-parity-planning/step-3-first-grill.md) — resolve every row.
 - [Step 3 — Meta-Questions](./plan-multi-repo-parity-planning/step-3-first-grill-meta-questions.md) — mandatory asks.
-- [Steps 4-5 — Research & Grill](./plan-multi-repo-parity-planning/step-4-and-5-research-and-second-grill.md) — validate direction.
+- [Steps 4-5 — Research & Grill](./plan-multi-repo-parity-planning/step-4-and-5-research-and-second-grill.md) — validate.
 - [Step 6 — Authoring](./plan-multi-repo-parity-planning/step-6-plan-authoring.md) — plan-maker handoff.
 - [Step 6 — Required Contents](./plan-multi-repo-parity-planning/step-6-plan-authoring-required-contents.md) — matrix, links.
-- [Steps 7-8 — Gate & Delivery](./plan-multi-repo-parity-planning/step-7-and-8-quality-gate-and-delivery.md) — gate, deliver.
+- [Steps 7-8 — Gate & Delivery](./plan-multi-repo-parity-planning/step-7-and-8-quality-gate-and-delivery.md) — deliver.
 - [Termination & Grilling](./plan-multi-repo-parity-planning/termination-criteria-and-grilling-contract.md) — outcomes.
 - [Example Usage](./plan-multi-repo-parity-planning/example-usage.md) — worked runs.
 - [Safety & Related](./plan-multi-repo-parity-planning/safety-features-and-related-workflows.md) — guarantees, links.

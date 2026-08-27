@@ -65,7 +65,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 > color-translation map and capability-tier map coverage) and external harness drift
 > (Phase 1: per-harness web-research-backed comparison against upstream docs). They
 > are orchestrated by the
-> [`repo-harness-compatibility-quality-gate` workflow](../../../workflows/repo/repo-harness-compatibility-quality-gate.md).
+> [`harness-compatibility-quality-gate` workflow](../../../workflows/harness/harness-compatibility-quality-gate.md).
 > The fixer auto-remediates only Phase 0 sync drift and unambiguous catalog updates;
 > all other invariant violations and ambiguous findings are surfaced for human
 > resolution.

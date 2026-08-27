@@ -11,7 +11,7 @@ when_to_use: Use when auditing this workflow for traceability back to other repo
   no-shadowing rule; it keeps both internal parity and the platform-binding catalog true to
   current upstream conventions
 - **[File Naming Convention](../../../conventions/structure/file-naming.md)**: workflow file
-  uses plain kebab-case in the correct subdirectory (`repo-governance/workflows/repo/`)
+  uses plain kebab-case in the correct subdirectory (`repo-governance/workflows/harness/`)
 - **[Linking Convention](../../../conventions/formatting/linking.md)**: all cross-references
   use GitHub-compatible markdown with `.md` extensions and relative paths
 - **[Content Quality Principles](../../../conventions/writing/quality.md)**: active voice,

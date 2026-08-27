@@ -28,7 +28,7 @@ Configured in the `governance-word-budget:` section of `repo-config.yml`; enforc
 | Surface                                                             | Target (✅) | Warn (⚠️)  | Fail (❌)  |
 | ------------------------------------------------------------------- | ----------- | ---------- | ---------- |
 | `repo-governance/**/*.md`                                           | 400 words   | 500 words  | 500 words  |
-| `AGENTS.md` / `CLAUDE.md`                                           | 400 words   | 500 words  | 500 words  |
+| `AGENTS.md` / `CLAUDE.md` / `RTK.md`                                | 400 words   | 500 words  | 500 words  |
 | Every harness binding directory in the `harness:` registry (`*.md`) | 400         | 500        | 500        |
 | `**/README.md`                                                      | 700 words   | 900 words  | 900 words  |
 | Resolved tree (`CLAUDE.md` + imports)                               | 1200 words  | 1500 words | 1500 words |

@@ -16,14 +16,14 @@ when_to_use: Use when looking for the recommended pattern for a workflow decisio
 
 - [Overview and Purpose](./best-practices/overview-and-purpose.md) — Why this document exists.
 - [Practice 1: Integrate Continuously via Short-Lived Branches](./best-practices/practice-1-integrate-continuously-via-short-lived-branches.md) — Merge to main at least daily.
-- [Practice 2: Make Small, Frequent Commits](./best-practices/practice-2-make-small-frequent-commits.md) — Atomic commits, multiple times per day.
+- [Practice 2: Make Small, Frequent Commits](./best-practices/practice-2-make-small-frequent-commits.md) — Fewest build-valid atomic commits.
 - [Practice 3: Use Conventional Commits](./best-practices/practice-3-use-conventional-commits.md) — type(scope): description format.
 - [Practice 4: Use Feature Flags Instead of Long-Lived Branches](./best-practices/practice-4-use-feature-flags-instead-of-long-lived-branches.md) — Merge behind a flag, toggle later.
 - [Practice 5: Implement in Three Stages](./best-practices/practice-5-implement-in-three-stages.md) — Work, then right, then fast.
 - [Practice 6: Pin Dependencies for Reproducibility](./best-practices/practice-6-pin-dependencies-for-reproducibility.md) — Exact versions, lockfiles committed.
 - [Practice 7: Keep CI Green at All Times](./best-practices/practice-7-keep-ci-green-at-all-times.md) — Fix or revert immediately on red.
 - [Practice 8: Use Environment-Specific Configuration](./best-practices/practice-8-use-environment-specific-configuration.md) — No hardcoded environment values.
-- [Practice 9: Split Commits by Domain](./best-practices/practice-9-split-commits-by-domain.md) — One concern per commit.
+- [Practice 9: Split Independent Concerns](./best-practices/practice-9-split-independent-purposes.md) — Purpose, not file domain, defines the boundary.
 - [Practice 10: Test Before Committing](./best-practices/practice-10-test-before-committing.md) — Run the suite locally first.
 - [Practice 11: Pull with Rebase Before Pushing](./best-practices/practice-11-pull-with-rebase-before-pushing.md) — Keep history linear.
 - [When to Use Merge vs Rebase](./best-practices/when-to-use-merge-vs-rebase.md) — Default rebase, and five conditions for merge instead.

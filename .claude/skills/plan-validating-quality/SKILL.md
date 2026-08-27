@@ -56,6 +56,12 @@ criterion must be checked against both the pre-violation and post-violation stat
 **Conditional rules skip cleanly**: Harness-Neutrality (13), Learning-Bearing Syllabus (20), and Vercel
 MCP (21) are scope-gated — record the exemption explicitly rather than silently omitting the check.
 
+**Minimal sufficiency is reviewed contextually**: treat the outcome, non-goals and out-of-scope
+items, acceptance criteria, every applicable repository rule, and required lifecycle obligations
+and gates as the stop condition. A plan introducing a lasting mechanism must name its concrete need
+and explain why existing mechanisms are insufficient; scope outside that boundary or mandatory
+safeguards omitted in the name of minimalism is a finding.
+
 ## Related
 
 `repo-generating-validation-reports` (report format, Convergence Safeguards), `repo-applying-maker-checker-fixer`

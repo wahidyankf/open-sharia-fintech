@@ -19,7 +19,7 @@ These budgets bound how agents spend two scarce resources — external API rate 
 
 ## Authoring and Propagating Repository Rules
 
-Rule work runs through the [repo-rules-propagation workflow](../../../workflows/repo/repo-rules-propagation.md), which is entered automatically the moment a request implies a rule is being created, updated, superseded, or deleted — however that request is phrased, and including any edit to a repo-rules surface. The workflow composes the agents rather than replacing them: `repo-rules-maker` remains the canonical maker for `repo-governance/` content, `repo-rules-checker` validates, and `repo-rules-fixer` applies validated fixes. Invoking the maker directly skips the normalization, conflict scan, placement, and enforcement-disposition steps, which is the failure this routing exists to prevent.
+Rule work runs through the [rules-propagation workflow](../../../workflows/rules/rules-propagation.md), which is entered automatically the moment a request implies a rule is being created, updated, superseded, or deleted — however that request is phrased, and including any edit to a repo-rules surface. The workflow composes the agents rather than replacing them: `repo-rules-maker` remains the canonical maker for `repo-governance/` content, `repo-rules-checker` validates, and `repo-rules-fixer` applies validated fixes. Invoking the maker directly skips the normalization, conflict scan, placement, and enforcement-disposition steps, which is the failure this routing exists to prevent.
 
 **Enforcement disposition — unenforced by decision.** Two mechanisms make an ad-hoc rule edit
 unlikely: an agent skill that fires on rule-shaped phrasing, and a pre-write reminder that fires on

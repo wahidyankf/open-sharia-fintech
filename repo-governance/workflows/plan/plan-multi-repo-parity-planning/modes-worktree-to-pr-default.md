@@ -10,6 +10,9 @@ Same worktree provisioning as `worktree-to-origin-main`, but commit to a branch
 `plan/<objective-slug>` and push that branch. Create a PR per repo with `gh pr create` only if no
 open PR for that branch exists yet; otherwise push to the existing PR branch:
 
+The `plan/<objective-slug>` branch name and worktree basename are identical across corresponding
+repositories. Probe ownership first; reuse an existing identity only with same-delivery proof.
+
 ```bash
 # Check for existing PR
 gh pr list --head plan/<objective-slug>

@@ -1,7 +1,7 @@
 # Step 0.5: Consume Deterministic Preflight
 
 **Input**: `preflight-report` argument — path to `generated-reports/repo-governance-audit__*.json`,
-produced by the orchestrating workflow (`repo-governance/workflows/repo/repo-rules-quality-gate.md`)
+produced by the orchestrating workflow (`repo-governance/workflows/rules/rules-quality-gate.md`)
 running `./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json`.
 
 **Procedure**:

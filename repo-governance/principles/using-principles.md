@@ -39,7 +39,7 @@ This convention implements the following core principles:
 
 - Does this convention embody our core principles?
 - Which principle does it support?
-- Does it create unnecessary complexity? (violates Simplicity Over Complexity)
+- Does an existing mechanism suffice? (applies Simplicity Over Complexity)
 - Is it explicit and understandable? (violates Explicit Over Implicit)
 - Is it accessible to all users? (violates Accessibility First)
 - Can it be automated? (supports Automation Over Manual)

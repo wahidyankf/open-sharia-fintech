@@ -1,37 +1,41 @@
 ---
 title: "Anti-Pattern: Mixed Concerns in Single Commit"
-description: Combining unrelated changes in one commit produces confusing, hard-to-revert history.
+description: Combining independently reviewable purposes in one commit produces confusing, hard-to-revert history.
 category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
-when_to_use: Use when a single commit would otherwise bundle unrelated changes across different domains.
+when_to_use: Use after explicit authorization when a commit would bundle independently reviewable and revertible purposes.
 ---
 
 # Anti-Pattern: Mixed Concerns in Single Commit
 
-**Problem**: Combining unrelated changes in one commit.
+**Problem**: Combining independent purposes in one commit, or splitting one purpose merely because
+its completion artifacts cross file domains.
 
 **Bad Example:**
 
 ```bash
 git commit -m "feat: add user dashboard and fix typos and update docs"
-# Changed: API code, UI code, documentation, tests, configs
-# All different domains in one commit!
+# Changed: one dashboard feature plus unrelated README typo fixes
+# Two independently reviewable purposes are bundled.
 ```
 
 **Solution:**
 
 ```bash
-git commit -m "feat(api): add user endpoints"
-git commit -m "feat(ui): add user dashboard"
-git commit -m "docs(api): document user endpoints"
+git commit -m "feat(user): add user dashboard"
+# Includes its API, UI, tests, and documentation.
 git commit -m "fix(docs): correct typos in README"
 ```
 
 **Rationale:**
 
-- Easier to review
-- Easier to revert specific changes
-- Clear history by domain
+- Keeps each boundary build-valid and complete
+- Easier to review and revert an independent purpose
+- Keeps required tests, docs, specs, references, migrations, and mirrors with their change
 - Better git log
+
+Use the [thematic boundary test](../commit-messages/commit-granularity-and-when-to-split-commits.md)
+to choose the fewest qualifying commits. File type, directory, scope, or Conventional Commit type
+does not independently require a split.

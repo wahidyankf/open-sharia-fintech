@@ -8,7 +8,8 @@ when_to_use: Use when checking whether a stated rule is in scope for propagation
 
 **Purpose**: Take one or more rules that have already been decided and write them into the
 repository so they bind — on the narrowest surface that reaches their audience, contradicting no
-existing rule, duplicating no existing statement, and carrying a recorded enforcement disposition.
+existing rule, retaining no duplicate without a recorded keep rationale, and carrying a recorded
+enforcement disposition.
 
 ## In Scope
 
@@ -24,7 +25,7 @@ guides.
   input is normalized or rejected at Step 0, never guessed at.
 - **The wide sweep.** Tidying is subject-scoped. Repository-wide duplication, contradiction, and
   traceability findings belong to the composed
-  [repo-rules-quality-gate](../repo-rules-quality-gate.md), which runs at Step 8.
+  [rules-quality-gate](../rules-quality-gate.md), which runs at Step 8.
 - **Enforcement implementation.** The workflow declares and arms a gate; it does not write the
   validator behind one. That is application work under its own specs.
 - **The sibling repository.** One run touches one repository. The sibling obligation is recorded,

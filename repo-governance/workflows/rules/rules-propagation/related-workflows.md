@@ -8,7 +8,7 @@ when_to_use: Use when deciding whether propagation is the right workflow, or wha
 
 ## Composed By This Workflow
 
-- **[repo-rules-quality-gate](../repo-rules-quality-gate.md)** — runs at Step 8 as the verifier.
+- **[rules-quality-gate](../rules-quality-gate.md)** — runs at Step 8 as the verifier.
   It owns repository-wide duplication, contradiction, and traceability detection; this workflow
   deliberately does not duplicate that scope.
 
@@ -16,7 +16,7 @@ when_to_use: Use when deciding whether propagation is the right workflow, or wha
 
 - **A grilling or design session.** Propagation places a decided rule. Deciding it is upstream
   work, and a rule arriving here still under debate will halt at Step 0.
-- **[repo-harness-compatibility-quality-gate](./../repo-harness-compatibility-quality-gate.md)** —
+- **[harness-compatibility-quality-gate](../../harness/harness-compatibility-quality-gate.md)** —
   where a rule change is expected to affect bindings, running compatibility first establishes a
   clean baseline, so Step 8 findings are attributable to this run.
 
@@ -24,7 +24,7 @@ when_to_use: Use when deciding whether propagation is the right workflow, or wha
 
 - **The sibling repository's own propagation.** Step 9 records the obligation; discharging it is a
   separate run in that repository, not a continuation of this one.
-- **[repo-rules-quality-gate](../repo-rules-quality-gate.md), scheduled.** The composed run at
+- **[rules-quality-gate](../rules-quality-gate.md), scheduled.** The composed run at
   Step 8 is scoped to the run's `mode`; the periodic full sweep remains the repository's standing
   health check.
 

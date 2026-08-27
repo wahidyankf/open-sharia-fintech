@@ -72,23 +72,6 @@ Nx tooling guidelines, generator usage, and `nx_docs` policy are documented in
 
 <!-- nx configuration end-->
 
-<!-- rtk-instructions v2 -->
-
-### RTK (Rust Token Killer)
-
-Token-optimized CLI wrapper filtering AI output. See
-[github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk). Always prefix commands with `rtk`; it
-passes through unchanged when no dedicated filter exists.
-
-```bash
-rtk gain              # Show token savings analytics
-rtk gain --history    # Show command usage history with savings
-rtk discover          # Analyze Claude Code history for missed opportunities
-rtk proxy <cmd>       # Execute raw command without filtering (for debugging)
-```
-
-<!-- /rtk-instructions -->
-
 ### caveman — Token Compression
 
 Compresses agent output ~75% via terse caveman-speak; stacks with RTK for compounded savings.

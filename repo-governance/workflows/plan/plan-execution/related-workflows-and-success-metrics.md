@@ -12,14 +12,14 @@ This workflow can be composed with:
 - **[plan-multi-repo-parity-planning-and-execution](../plan-multi-repo-parity-planning-and-execution.md)**: composite that nests this workflow per repo after a multi-repo parity planning phase
 - Content creation workflows: Execute content-focused plans
 - Release workflows: Execute release plans with deployment
-- **repo-rules-quality-gate**: Validate repository consistency after plan execution
+- **rules-quality-gate**: Validate repository consistency after plan execution
 
 **Recommended Workflow Sequence**:
 
 ```
 1. plan-quality-gate → Validate plan completeness and accuracy
 2. plan-execution    → Execute validated plan
-3. repo-rules-quality-gate → Ensure repository consistency
+3. rules-quality-gate → Ensure repository consistency
 ```
 
 ## Success Metrics

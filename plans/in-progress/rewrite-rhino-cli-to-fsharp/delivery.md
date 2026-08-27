@@ -8956,7 +8956,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
   ```gherkin
     Scenario: The quality-gate workflow lists the validator as a fourth preflight category
       Given the plan is complete
-      When I read "repo-governance/workflows/repo/repo-rules-quality-gate.md"
+      When I read "repo-governance/workflows/rules/rules-quality-gate.md"
       Then "governance-word-budget" is named among the Step 0.5 categories
   ```
 
@@ -15411,7 +15411,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 ## Phase 11: Repo-Rules Propagation
 
 > This phase runs the
-> [repo-rules-propagation workflow](../../../repo-governance/workflows/repo/repo-rules-propagation.md)
+> [rules-propagation workflow](../../../repo-governance/workflows/rules/rules-propagation.md)
 > in `mode: strict`, `isolation: current` — this plan's own worktree, not a dedicated one. It runs
 > after Phase 10 because the measured outcome is itself one of the facts being propagated.
 >
@@ -15440,7 +15440,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       sentence it justifies, and the two agree. A rule that overstates the repository's state is a
       worse outcome than no rule.
 - [ ] [AI] Run **Step 1 (working tree)**, which the earlier draft of this phase skipped entirely
-      [Repo-grounded — `repo-governance/workflows/repo/repo-rules-propagation/step-1-worktree-and-branch.md`]:
+      [Repo-grounded — `repo-governance/workflows/rules/rules-propagation/step-1-worktree-and-branch.md`]:
       open a **file-touch ledger** before the first write, listing every path this propagation will
       touch — acceptance: the ledger exists in `learnings.md` before any Step 6 write, and Step 8
       below reconciles it against `git status --porcelain`. `mode: strict` gives no licence to skip a
@@ -15467,7 +15467,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       automated (name the gate), manual (name the reviewer step), or explicitly unenforced (say
       why) — acceptance: no rule left without a disposition in the manifest.
 - [ ] [AI] Run **Step 8 (verification)**: `npm run generate:bindings`, `npm run validate:sync`,
-      `npm run harness:bindings-validation`, then the `repo-rules-quality-gate` — acceptance: all
+      `npm run harness:bindings-validation`, then the `rules-quality-gate` — acceptance: all
       four exit 0 and the quality gate converges to zero findings.
 - [ ] [AI] Reconcile the Step 1 ledger against reality as part of Step 8 — acceptance:
       `git status --porcelain` and the ledger agree exactly; an unledgered modified file is either
@@ -15485,7 +15485,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > All checks below must pass before starting Phase 12.
 
 - [ ] [AI] The propagation manifest exists at
-      `generated-reports/repo-rules-propagation__*__manifest.md` with a surface, layer, and
+      `generated-reports/rules-propagation__*__manifest.md` with a surface, layer, and
       disposition for each of R1-R4.
 - [ ] [AI] `npm run validate:sync` and `npm run harness:bindings-validation` exit 0 in both repos.
 - [ ] [AI] `wc -w AGENTS.md CLAUDE.md` in each repo is below the governance word-budget FAIL

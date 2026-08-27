@@ -82,7 +82,7 @@ less than that.
 In scope: both conventions under `repo-governance/conventions/structure/` in both repos, plus any
 child shard the word budget forces; every rules-machinery surface restating either rule
 (`repo-rules-checker`/`-fixer`/`-maker`, the `repo-validating-governance-rules` and `repo-rules-fixing`
-skills, the `repo-rules-quality-gate` workflow shards); the `md-naming` gate registry entry; and the
+skills, the `rules-quality-gate` workflow shards); the `md-naming` gate registry entry; and the
 split emitter's collision refusal — the only code change.
 
 Out of scope (for now):

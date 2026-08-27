@@ -24,7 +24,7 @@ Understanding common mistakes in development workflows helps teams build more ef
 - [Anti-Pattern: Premature Optimization](./anti-patterns/premature-optimization.md) — Optimizing before it works wastes effort. Use when planning optimization before a working implementation exists.
 - [Anti-Pattern: Unpinned Dependencies](./anti-patterns/unpinned-dependencies.md) — Unlocked versions cause inconsistent builds. Use when adding a dependency or configuring pinning.
 - [Anti-Pattern: Ignoring Broken CI](./anti-patterns/ignoring-broken-ci.md) — Deferring a CI fix blocks the team. Use when CI fails and there's a temptation to defer the fix.
-- [Anti-Pattern: Mixed Concerns in Single Commit](./anti-patterns/mixed-concerns-in-single-commit.md) — Unrelated changes bundled in one commit. Use when a commit would mix unrelated domains.
+- [Anti-Pattern: Mixed Concerns in Single Commit](./anti-patterns/mixed-concerns-in-single-commit.md) — Independent purposes bundled together or completion artifacts split apart. Use after authorization when applying the thematic boundary test.
 - [Anti-Pattern: Hardcoded Environment Configuration](./anti-patterns/hardcoded-environment-configuration.md) — Hardcoded prod values create security and portability issues. Use when about to hardcode a URL, key, or env value.
 - [Anti-Pattern: Skipping Local Testing](./anti-patterns/skipping-local-testing.md) — Relying on CI alone wastes time. Use when about to push without running tests and lint locally.
 - [Anti-Pattern: Pushing Without Pulling Latest Main](./anti-patterns/pushing-without-pulling-latest-main.md) — Pushing without pulling first causes rejections and messy merges. Use when about to push without pulling with rebase first.

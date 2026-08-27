@@ -15,22 +15,25 @@ Write the normalized statement into the destination decided at Step 4, matching 
 document's existing voice, density, and structure. A rule that reads as a foreign insertion invites
 a later editor to "clean it up" into something weaker.
 
-## Tidy the Subject
+## Consolidate the Subject
 
-Enumerate every surface stating the subject — not only the ones the conflict scan surfaced — and
-for each, apply exactly one outcome:
+Enumerate every rule and discoverability surface stating the Step 2 subject — not only the ones the
+conflict scan surfaced. Record its surviving canonical home and exactly one verdict:
 
-| Situation                                    | Outcome                                 |
-| -------------------------------------------- | --------------------------------------- |
-| States the rule identically                  | Delete, leave a link to the new home    |
-| States it partially or in weaker words       | Amend to match the normalized statement |
-| Superseded per Step 3                        | Retire, with the supersession recorded  |
-| States an adjacent rule that now reads oddly | Amend for coherence, never for scope    |
+| Verdict   | Apply when and action                                                           |
+| --------- | ------------------------------------------------------------------------------- |
+| Keep      | Distinct, correctly placed; retain with a recorded rationale                    |
+| Amend     | Partial, weak, or incoherent; align it without widening scope                   |
+| Merge     | Fragmented or redundant; move its distinct substance into the canonical home    |
+| Delete    | Fully redundant; remove it and preserve any necessary link or index path        |
+| Relocate  | Correct obligation, wrong layer or surface; move it and leave needed navigation |
+| Supersede | Replaced under Step 3; retire it and record the replacement                     |
 
-Fix the **class**, not the sites a single search happened to name. Enumerate every surface per
-directory and record a verdict for each, including "no change needed" — an unexamined surface and
-an examined-and-unchanged surface are indistinguishable afterwards, and the difference is the whole
-point of the sweep.
+Apply merge or delete only when the surviving canonical material preserves every distinct
+obligation and necessary discoverability path. Fix the **class**, not the sites one search happened
+to name. A known redundant or unnecessary statement may remain only with a recorded keep rationale;
+an unexamined surface and an examined-and-kept surface are otherwise indistinguishable.
+Write this complete inventory to the placement manifest.
 
 ## Reindex
 

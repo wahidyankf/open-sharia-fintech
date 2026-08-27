@@ -1,6 +1,6 @@
 ---
-title: "Commit Granularity and When to Split Commits"
-description: Why splitting work into logical commits matters, and the five situations that call for separate commits.
+title: "Thematic Commit Composition and Boundaries"
+description: Choose the fewest build-valid, independently reviewable and revertible commits after explicit authorization.
 category: explanation
 subcategory: development
 tags:
@@ -9,70 +9,44 @@ tags:
   - development
   - code-quality
 created: 2025-11-24
-when_to_use: Use when deciding whether a set of changes should be split into multiple commits.
+when_to_use: Use after the user authorizes committing a named change set and before staging it.
 ---
 
-# Commit Granularity and When to Split Commits
+# Thematic Commit Composition and Boundaries
 
-When making changes to the codebase, it's essential to split your work into multiple logical commits rather than creating one large commit with many unrelated changes. This practice improves code review, makes git history more navigable, and enables easier debugging with tools like `git bisect`.
+Staging and committing remain unauthorized until the user explicitly authorizes a named change set.
+Once authorized, choose its commit boundaries without another prompt unless the user prescribed the
+boundaries or a proposed split would exceed the authorized scope.
 
-## When to Split Commits
+## Boundary Test
 
-Split your work into multiple commits when:
+Partition the authorized change set into the **fewest** commits that each satisfy all of these tests:
 
-**Different commit types** - Changes that fall under different conventional commit types should be separate commits:
+- **Build-valid**: required local checks pass at that commit boundary.
+- **Independently reviewable**: the commit states one coherent purpose without relying on a later
+  commit to explain or complete it.
+- **Independently revertible**: reverting it does not strand references, migrations, generated
+  bindings, or other required completion artifacts.
 
-```
-PASS: Good:
-1. feat(agents): add docs-link-checker agent
-2. docs(agents): update agent index with new agent
+Keep required tests, documentation, specifications, references, migrations with rollback, and
+generated mirrors in the commit containing the change they complete. Different file types, scopes,
+or conventional types do not by themselves justify a split.
 
-FAIL: Bad:
-1. feat(agents): add docs-link-checker agent and update agent index
-```
+Split independent concerns that pass these tests separately. A new feature and an unrelated lint
+repair are separate; a renamed symbol and all required call-site updates are one atomic change.
 
-**Creating vs updating** - Creating new files and updating references to them should be separate commits:
+## Authorization Examples
 
-```
-PASS: Good:
-1. feat(auth): add user authentication module
-2. refactor(api): integrate authentication module
+```text
+PASS: User authorizes “commit the authentication change.”
+      Agent selects one commit containing implementation, tests, docs, and references.
 
-FAIL: Bad:
-1. feat(auth): add user authentication module and integrate it
-```
+PASS: User authorizes “commit these changes as implementation and migration commits.”
+      Agent follows those prescribed boundaries.
 
-**Renaming vs updating references** - Renaming files and updating all references should be separate commits:
+FAIL: User has not authorized a commit.
+      Agent stages files because the work appears complete.
 
-```
-PASS: Good:
-1. refactor(agents): rename agents for consistency
-2. docs(agents): update all references to renamed agents
-
-FAIL: Bad:
-1. refactor(agents): rename agents and update all references
-```
-
-**Different domains** - Changes to different parts of the codebase should be separate commits:
-
-```
-PASS: Good:
-1. feat(api): add user endpoint
-2. docs: document user API
-3. test(api): add user endpoint tests
-
-FAIL: Bad:
-1. feat(api): add user endpoint with docs and tests
-```
-
-**Independent changes** - Changes that could be reviewed or reverted separately should be separate commits:
-
-```
-PASS: Good:
-1. fix(validation): handle empty strings correctly
-2. perf(db): optimize user query
-3. docs: update API reference
-
-FAIL: Bad:
-1. fix: various improvements to validation, database, and docs
+FAIL: User authorizes one named change set.
+      Agent adds an unrelated cleanup to make a preferred split.
 ```

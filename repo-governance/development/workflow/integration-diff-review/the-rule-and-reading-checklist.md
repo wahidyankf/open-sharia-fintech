@@ -1,6 +1,6 @@
 ---
 title: "The Rule and Reading Checklist"
-description: The five-step rule for reviewing an incoming diff before resuming in-flight work, and what to look for while reading it.
+description: The integration checkpoint for reviewing an incoming diff and reconciling active work before the next action.
 category: explanation
 subcategory: development
 tags:
@@ -19,8 +19,7 @@ when_to_use: Use immediately after a rebase, pull, merge, cherry-pick, or fast-f
 ## The Rule
 
 Immediately after any `git rebase`, `git pull`, `git merge`, `git cherry-pick`, or fast-forward that
-introduces commits you did not author in this session, and before resuming or continuing any
-in-flight task:
+introduces commits not previously present on the current branch, and before the next task action:
 
 1. **Identify the incoming range.** Use `git log --oneline <old-ref>..<new-ref>` (for a rebase, the
    pre-rebase ref is available via `git reflog`) or `git log --oneline ORIG_HEAD..HEAD` immediately
@@ -28,18 +27,19 @@ in-flight task:
 2. **Read the full diff, not just the commit list.** Use `git diff <old-ref>..<new-ref>` — or `git
 show` per commit for a large range — and actually read it. A file list is not a substitute for
    reading the changed lines.
-3. **Cross-reference against your current work.** Check every file you have uncommitted changes in,
-   every file your current plan step names, and every function/type/config your next action depends
-   on, against the files touched by the incoming diff.
-4. **Judge impact, not just overlap.** A rename, a signature change, a config default flip, a removed
-   file, or a changed convention can invalidate your plan even when git reports zero line-level
-   conflict with your own uncommitted edits.
-5. **Adjust before continuing.** If the incoming diff changes an assumption your current work depends
-   on, update the plan step, re-run affected tests, or re-read the changed file before proceeding —
-   do not continue the original approach unmodified out of inertia.
+3. **Assess the complete active state.** Reconcile the diff against the current task, the whole
+   plan, every active assumption, the actor-owned file-touch ledger, and all completed and remaining
+   verification. Semantic effects matter even without path overlap.
+4. **Preserve ledger ownership.** Incoming paths do not become actor-owned merely because they
+   landed. Add a path to the ledger only when the actor subsequently mutates it for the current work.
+5. **Adjust every affected item.** Update the task or plan, replace invalid assumptions, revise
+   remaining verification, and rerun completed checks whose evidence depended on the old `HEAD`.
+   Record that reconciliation before continuing.
 
-A rebase/pull/merge that introduces zero foreign commits (e.g., `git pull` that reports "Already up to
-date") is a no-op for this convention — there is nothing to review.
+An integration that introduces no commits absent from the pre-operation branch (for example, a pull
+that reports "Already up to date") is a no-op for this convention. Commit authorship is irrelevant:
+a commit is incoming when branch membership changed, including one the current actor authored in
+another branch or session.
 
 ## Reading Checklist
 
@@ -52,3 +52,5 @@ When reading the incoming diff, look specifically for:
 - Dependency, lockfile, or toolchain version changes that could invalidate an assumption your task
   made about available tools or APIs
 - Test files that now cover — or now conflict with — the behavior your current task is changing
+- Completed verification whose result depended on files, configuration, dependencies, or the old
+  `HEAD` changed by the incoming range

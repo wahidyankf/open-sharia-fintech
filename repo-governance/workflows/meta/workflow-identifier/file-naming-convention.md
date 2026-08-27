@@ -27,7 +27,7 @@ All workflow files follow the plain-name pattern (no prefix), organized by subdi
 
 **Examples**:
 
-- `repo-rules-quality-gate.md` (in `repo-governance/workflows/repo/`)
+- `rules-quality-gate.md` (in `repo-governance/workflows/rules/`)
 - `plan-quality-gate.md` (in `repo-governance/workflows/plan/`)
 - `docs-quality-gate.md` (in `repo-governance/workflows/docs/`)
 

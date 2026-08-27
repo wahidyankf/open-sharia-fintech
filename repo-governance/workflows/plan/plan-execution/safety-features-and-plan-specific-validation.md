@@ -53,6 +53,7 @@ The plan-execution-checker validates:
   - **CI/CD fully green**: All GitHub Actions workflows passed after every push — no exceptions
   - **Preexisting issues fixed**: All encountered failures were fixed, including those not caused by the plan's changes (root cause orientation)
   - **Delivery.md updated progressively**: Checkboxes ticked sequentially with implementation notes, not batch-ticked at the end (verified via git history)
-  - **Thematic commits**: Changes committed in logically cohesive groups following Conventional Commits, not monolithic dumps
+  - **Thematic commits**: Authorized changes use the fewest build-valid, independently reviewable
+    and revertible coherent commits, with required completion artifacts kept together
   - **Environment setup performed**: Evidence that dev environment was set up before implementation began
   - **Manual behavioral assertions**: Playwright MCP was used to verify web UI changes (navigation, DOM, console errors, screenshots); curl was used to verify API changes (status codes, response shapes, error cases). Documented in delivery.md.

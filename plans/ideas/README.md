@@ -325,7 +325,7 @@ declines are recorded, not just the merges):
 - `mermaid-validator-does-not-check-syntax` ↔ `mermaid-state-label-render-clipping-warn` — same
   command, opposite problems: one is that the validator parses no syntax at all, the other adds a
   render-clipping heuristic the second brief argues **no** text validator can observe. Declined.
-- `plan-quality-gate-convergence` ↔ `repo-rules-quality-gate-convergence` — same shape (a
+- `plan-quality-gate-convergence` ↔ `rules-quality-gate-convergence` — same shape (a
   maker-checker-fixer loop over-running its stated iteration budget) and a shared research base, but
   different workflows with different proposed mechanisms. Merging would produce one plan touching two
   unrelated gates. Declined.

@@ -20,8 +20,12 @@ when_to_use: Use when checking whether a push sequence kept linear history, or w
 ```bash
 # Remote moved forward — rebase first
 git pull --rebase origin <target-branch>
+# Read the incoming diff and reconcile its impact; rerun invalidated checks
 git push origin <target-branch>
 ```
+
+The middle step follows the [Integration Diff Review Convention](../integration-diff-review.md);
+the pull and push alone do not make this example pass.
 
 ## FAIL: Merge commit created on push
 

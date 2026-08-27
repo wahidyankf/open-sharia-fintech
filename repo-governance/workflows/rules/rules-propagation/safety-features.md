@@ -11,9 +11,9 @@ bound that authority.
 
 ## Nothing Vanishes Silently
 
-Every removal is either a **relocation** with a recorded destination or a **supersession** with a
-recorded replacement. A rule that leaves the repository with neither is a defect, whatever the diff
-looks like. The manifest, not the diff, is the record.
+Every removal is classified as **merge**, **delete**, **relocate**, or **supersede**. The manifest
+names the surviving canonical home or replacement and confirms that every distinct obligation and
+necessary discoverability path remains. Erasing either is a defect, whatever the diff looks like.
 
 ## The Budget Is Not Negotiable
 

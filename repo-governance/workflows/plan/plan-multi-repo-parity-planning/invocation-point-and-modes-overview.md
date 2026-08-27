@@ -39,6 +39,11 @@ npm install
 npm run doctor -- --fix
 ```
 
+Use the same `<objective-slug>` basename in every target repository. Before creation, probe all
+targets and record the common identity; do not silently choose a repo-specific suffix when one name
+is unavailable. Follow
+[Cross-Repository Parity Identity](../../../development/workflow/cross-repository-parity-identity.md).
+
 Worktrees land at `worktrees/<objective-slug>/` per the
 [Worktree Path Convention](../../../conventions/structure/worktree-path.md). The two-step toolchain
 initialization (`npm install` then `npm run doctor -- --fix`) is required per the

@@ -28,6 +28,11 @@ exactly the moment that estimate is least reliable.
    and has been confirmed — not that it ought to be done by now.
 4. **Add discovered tasks on the spot.** A follow-up that is not recorded is invisible.
 5. **One task per concrete outcome.** Split bundled work before starting it.
+6. **Preserve active rule decisions.** Immediately record every unsuperseded user-established
+   repository-rule decision constraining the work with its operative statement, scope, source, and
+   status. Reproduce active entries in every compaction summary and handoff. Before the first action
+   after restored context or continuation, re-read canonical instructions and reconcile the record;
+   stop and report any unresolved conflict.
 
 ## What Does Not Satisfy This
 
@@ -44,4 +49,6 @@ and status-update tools, those tools are the list; the obligation is the same ei
 
 - [Task List Discipline](../../../repo-governance/development/practice/task-list-discipline.md) —
   the governing practice, including the status-update cadence and the anti-patterns catalog.
+- [Continuation-State Integrity](../../../repo-governance/development/agents/agent-workflow-orchestration/continuation-state-integrity.md) —
+  the durable active-decision record and before-resume reconciliation gate.
 - `repo-understanding-shared-vocabulary` — what counts as one delivery unit when scoping entries.

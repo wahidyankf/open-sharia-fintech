@@ -21,9 +21,10 @@ entirely missing, since plans lacking them are incomplete regardless of other qu
 4. **Fix-All-Issues Instruction** — instructs fixing ALL issues found during quality gates, even
    unrelated to current changes (root-cause orientation), explicitly: "Fix all failures, not just
    those caused by your changes."
-5. **Thematic Commit Guidance** — instructs committing thematically (logically cohesive groups),
-   references Conventional Commits, instructs splitting different domains/concerns, forbids bundling
-   unrelated fixes into one commit.
+5. **Thematic Commit Guidance** — preserves explicit authorization for a named change set, then
+   selects the fewest build-valid, independently reviewable/revertible commits; keeps required
+   completion artifacts with their change, splits independent concerns, references Conventional
+   Commits, and forbids exceeding authorized scope.
 
 **Finding severity**: missing ALL items: **CRITICAL**. Missing an individual item (1-5): **HIGH**
 per missing item. Present but vague/incomplete: **MEDIUM**.
