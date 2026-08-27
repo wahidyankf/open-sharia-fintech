@@ -723,3 +723,642 @@ let ``Generate still scaffolds a directory with no index`` () =
 [<Fact>]
 let ``Rewrite-paths updates link targets without touching order`` () =
     FeatureRunner.run "Rewrite-paths updates link targets without touching order"
+
+// =============================================================================
+// `governance-word-budget.feature` — 20 scenarios (Wave D PR9)
+// =============================================================================
+
+/// Builds `n` single-character, single-space-separated "words" — content
+/// whose `wordCount` is exactly `n`, the same fixture-construction trick
+/// `word_budget.rs`'s own test module uses (`n_words`).
+let private nWords (n: int) : string =
+    String.Join(" ", Array.create (max 0 n) "w")
+
+/// Mirrors the live `governance-word-budget:` section of `repo-config.yml`
+/// verbatim (see that file): eight general surfaces at target 650/warn
+/// 750/fail 750 (including `RTK.md`, added alongside the RTK tool), `**/README.md`
+/// declared last at the wider 900/1000/1000, and a `CLAUDE.md`-rooted
+/// resolved tree at 1200/1500/1500 — exactly what the feature's
+/// `Background:` (dropped from the per-scenario TickSpec snippet below
+/// along with its two steps, since no scenario needs it re-declared at
+/// runtime; its state is this fixture) and every scenario's own prose
+/// numbers already assume.
+let private canonicalWordBudgetConfig: BudgetConfig =
+    let generalSurface (glob: string) : Surface =
+        { Glob = glob
+          Target = 650UL
+          Warn = 750UL
+          Fail = 750UL }
+
+    { Surfaces =
+        [ generalSurface "repo-governance/**/*.md"
+          generalSurface ".claude/**/*.md"
+          generalSurface ".codex/**/*.md"
+          generalSurface ".opencode/**/*.md"
+          generalSurface ".agents/**/*.md"
+          generalSurface "AGENTS.md"
+          generalSurface "CLAUDE.md"
+          generalSurface "RTK.md"
+          { Glob = "**/README.md"
+            Target = 900UL
+            Warn = 1000UL
+            Fail = 1000UL } ]
+      ResolvedTree =
+        { Root = "CLAUDE.md"
+          Target = 1200UL
+          Warn = 1500UL
+          Fail = 1500UL } }
+
+/// Instance step-definition container for `governance-word-budget.feature`
+/// — see `GovernanceSteps`'s doc comment above for why TickSpec's
+/// one-instance-per-scenario lifecycle makes instance-level mutable fields
+/// the idiomatic state-threading mechanism here. Every fixture lives under
+/// its own fresh `scenarioRoot()` temp directory, mirroring
+/// `word_budget.rs`'s own tests, which always pass a throwaway `TempDir` as
+/// `repoRoot` — except the handful of scenarios that are explicitly
+/// registry/text proxy checks against THIS repository's own live
+/// `repo-config.yml`/governance tree (see `Governance.fs`'s module doc
+/// comment for why those stay proxy checks), which use
+/// `RhinoCli.Infrastructure.GitRoot.findRoot` instead, mirroring
+/// `RepoConfigValidateSteps.fs`'s precedent for the same distinction.
+type GovernanceWordBudgetSteps() =
+    let mutable scenarioRootDir: string option = None
+    let mutable lastFindings: WordBudgetFinding list = []
+    let mutable lastExitFailed: bool = false
+    let mutable lastPath: string option = None
+    let mutable lastResolvedTreeSize: uint64 = 0UL
+    let mutable declaredWordCounts: Map<string, int> = Map.empty
+    let mutable liveRepoConfigText: string = ""
+    let mutable liveWordBudgetConfig: BudgetConfig option = None
+    let mutable gateIds: string list = []
+    let mutable schemaFixtureYaml: string = ""
+
+    let scenarioRoot () : string =
+        match scenarioRootDir with
+        | Some dir -> dir
+        | None ->
+            let dir =
+                Path.Combine(Path.GetTempPath(), "rhino-cli-word-budget-" + Guid.NewGuid().ToString("N"))
+
+            Directory.CreateDirectory dir |> ignore
+            scenarioRootDir <- Some dir
+            dir
+
+    let writeWordsAt (relPath: string) (n: int) : unit =
+        let full =
+            Path.Combine(scenarioRoot (), relPath.Replace('/', Path.DirectorySeparatorChar))
+
+        let dir = Path.GetDirectoryName(full: string)
+
+        if not (String.IsNullOrEmpty dir) then
+            Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(full, nWords n)
+        lastPath <- Some relPath
+        declaredWordCounts <- Map.add relPath n declaredWordCounts
+
+    let runValidate () =
+        let root = scenarioRoot ()
+        let sizeFindings = checkInstructionSizes root canonicalWordBudgetConfig []
+        let treeFinding = checkResolvedTree root canonicalWordBudgetConfig
+        lastFindings <- sizeFindings @ (Option.toList treeFinding)
+
+        lastResolvedTreeSize <- resolveTreeSize (Path.Combine(root, canonicalWordBudgetConfig.ResolvedTree.Root))
+
+        lastExitFailed <- lastFindings |> List.exists (fun f -> f.Severity = WordBudgetSeverity.Fail)
+
+    let findRepoRoot () : string =
+        match RhinoCli.Infrastructure.GitRoot.findRoot () with
+        | Error message -> failwith message
+        | Ok repoRoot -> repoRoot
+
+    // ---- Given: Background (state is `canonicalWordBudgetConfig`, built above) ----
+
+    [<Given>]
+    member _.``repo-config.yml declares a governance-word-budget section``() = ()
+
+    [<Given>]
+    member _.``the section sets target (\d+), warn (\d+), fail (\d+)``(_target: int, _warn: int, _fail: int) = ()
+
+    // ---- Given: fixture construction ----
+
+    [<Given>]
+    member _.``"([^"]+)" contains (\d+) words``(path: string, n: int) = writeWordsAt path n
+
+    [<Given>]
+    member _.``a file "([^"]+)" contains (\d+) words``(path: string, n: int) = writeWordsAt path n
+
+    [<Given>]
+    member _.``"([^"]+)" contains (\d+) prose words``(path: string, n: int) = writeWordsAt path n
+
+    [<Given>]
+    member _.``it contains a Mermaid block of (\d+) words``(n: int) =
+        match lastPath with
+        | None -> failwith "no prior file established for the Mermaid-block fixture"
+        | Some path ->
+            // The two fence-marker tokens ("```mermaid" and "```") are each
+            // one whitespace-delimited token themselves, already counted
+            // toward this step's stated block size.
+            let bodyWords = max 0 (n - 2)
+            let addition = sprintf "\n\n```mermaid\n%s\n```\n" (nWords bodyWords)
+            let full = Path.Combine(scenarioRoot (), path)
+            File.AppendAllText(full, addition)
+
+    // F#'s lexer rejects an '@' character inside a double-backtick
+    // identifier (FS1104) — unlike every other step in this file, this
+    // step's text carries a literal '@'. `\x40` is the regex hex escape for
+    // '@' (0x40 = ASCII 64): it contains no literal '@' character in the F#
+    // source, so the lexer accepts it, while still matching a literal '@'
+    // in the actual Gherkin step text at runtime (the same reason the
+    // coverage tool's F# extractor requires the bare `[<Given>]` + backtick
+    // form here — it does not recognize the attribute's `string`
+    // constructor overload as a step definition at all).
+    [<Given>]
+    member _.``"([^"]+)" imports "([^"]+)" via an \x40-directive``(fromPath: string, toPath: string) =
+        // Overwrites the file the earlier `"..." contains N words` step
+        // wrote, preserving that step's stated total word count while
+        // replacing its first token with the `@`-import directive —
+        // mirrors `word_budget.rs`'s own fixture, whose CLAUDE.md word
+        // count already includes the import line itself.
+        let totalWords = declaredWordCounts |> Map.tryFind fromPath |> Option.defaultValue 1
+
+        let bodyWords = max 0 (totalWords - 1)
+        let content = sprintf "@%s\n%s" toPath (nWords bodyWords)
+        File.WriteAllText(Path.Combine(scenarioRoot (), fromPath), content)
+
+    [<Given>]
+    member _.``"([^"]+)" imports "([^"]+)"``(fromPath: string, toPath: string) =
+        let content = sprintf "@%s\n%s" toPath (nWords 5)
+        File.WriteAllText(Path.Combine(scenarioRoot (), fromPath), content)
+
+    /// No-op: `scenarioRoot()` starts empty on every fresh scenario, so a
+    /// path nothing has written to already "does not exist" — this step
+    /// only records the path so the paired `Then` step below can name it
+    /// back in its assertion message.
+    [<Given>]
+    member _.``no file exists at "([^"]+)"``(path: string) = lastPath <- Some path
+
+    [<Given>]
+    member _.``the resolved CLAUDE.md tree totals (\d+) words``(n: int) =
+        writeWordsAt canonicalWordBudgetConfig.ResolvedTree.Root n
+
+    [<Given>]
+    member _.``repo-config.yml adds "([^"]+)" under governance-word-budget``(addition: string) =
+        schemaFixtureYaml <-
+            "governance-word-budget:\n"
+            + "  surfaces:\n"
+            + "    - glob: \"AGENTS.md\"\n"
+            + "      target: 400\n"
+            + "      warn: 500\n"
+            + "      fail: 500\n"
+            + "  resolved_tree:\n"
+            + "    root: \"CLAUDE.md\"\n"
+            + "    target: 1200\n"
+            + "    warn: 1500\n"
+            + "    fail: 1500\n"
+            + "  "
+            + addition
+            + "\n"
+
+    // ---- When ----
+
+    [<When>]
+    member _.``the developer runs governance word-budget validate``() = runValidate ()
+
+    [<When>]
+    member _.``I read repo-config.yml``() =
+        let repoRoot = findRepoRoot ()
+        liveRepoConfigText <- File.ReadAllText(Path.Combine(repoRoot, "repo-config.yml"))
+
+        match mergedBudgetConfig repoRoot with
+        | Error message -> failwith message
+        | Ok cfg -> liveWordBudgetConfig <- cfg
+
+    [<When>]
+    member _.``the developer runs repo-config schema validate``() =
+        lastExitFailed <-
+            match checkNoUnknownWordBudgetKeys schemaFixtureYaml with
+            | Ok() -> false
+            | Error _ -> true
+
+    /// The old command's removal is a registry-level proxy check — see
+    /// `Governance.fs`'s module doc comment for why full CLI-dispatch
+    /// assertions stay out of this module's scope, the same way
+    /// `word_budget.rs`'s own test module scopes it.
+    [<When>]
+    member _.``the developer runs harness instruction-size validate``() =
+        let repoRoot = findRepoRoot ()
+        liveRepoConfigText <- File.ReadAllText(Path.Combine(repoRoot, "repo-config.yml"))
+
+    [<When>]
+    member _.``the developer runs gate list with surface pre-push and format text``() =
+        let repoRoot = findRepoRoot ()
+
+        match RhinoCli.Application.RepoConfig.load repoRoot with
+        | Error message -> failwith message
+        | Ok cfg -> gateIds <- cfg.Gates |> List.map (fun g -> g.Id)
+
+    /// Proxy check mirroring `word_budget.rs`'s own
+    /// `scenario_no_inbound_link_to_the_renamed_convention_is_left_broken`
+    /// test: greps the governed trees for the convention doc's pre-rename
+    /// name rather than exercising a real `md links validate` command,
+    /// which is not yet ported to F# at all (`Md.fs` has no links-validate
+    /// function yet — a later, separate Wave D PR's scope).
+    [<When>]
+    member _.``the developer runs md links validate``() =
+        let repoRoot = findRepoRoot ()
+        let staleNeedle = "instruction-file-size-budget.md"
+
+        let containsStaleNeedle (path: string) : bool =
+            (File.ReadAllText path).Contains(staleNeedle, StringComparison.Ordinal)
+
+        let treeOffenders =
+            [ "repo-governance"; ".claude"; "docs" ]
+            |> List.collect (fun dir ->
+                let root = Path.Combine(repoRoot, dir)
+
+                if not (Directory.Exists root) then
+                    []
+                else
+                    Directory.GetFiles(root, "*.md", SearchOption.AllDirectories)
+                    |> Array.filter containsStaleNeedle
+                    |> Array.toList)
+
+        let agentsMdPath = Path.Combine(repoRoot, "AGENTS.md")
+
+        let agentsOffender =
+            if File.Exists agentsMdPath && containsStaleNeedle agentsMdPath then
+                [ agentsMdPath ]
+            else
+                []
+
+        lastExitFailed <- not (List.isEmpty (treeOffenders @ agentsOffender))
+
+    // ---- Then: shared exit-code steps ----
+
+    [<Then>]
+    member _.``the command exits successfully``() = Assert.False(lastExitFailed)
+
+    [<Then>]
+    member _.``the command exits with a failure code``() = Assert.True(lastExitFailed)
+
+    // ---- Then: finding-presence steps ----
+
+    [<Then>]
+    member _.``the output contains no finding for that file``() =
+        match lastPath with
+        | None -> Assert.True(List.isEmpty lastFindings)
+        | Some path -> Assert.False(lastFindings |> List.exists (fun f -> f.Path = path))
+
+    [<Then>]
+    member _.``the output contains no finding naming that file``() =
+        match lastPath with
+        | None -> Assert.True(List.isEmpty lastFindings)
+        | Some path -> Assert.False(lastFindings |> List.exists (fun f -> f.Path = path))
+
+    [<Then>]
+    member _.``the output contains a "([^"]+)" finding naming that file``(sev: string) =
+        match lastPath with
+        | None -> failwith "no prior file established"
+        | Some path ->
+            Assert.True(
+                lastFindings
+                |> List.exists (fun f -> f.Path = path && wordBudgetSeverityLabel f.Severity = sev),
+                sprintf "expected a %s finding naming %s: %A" sev path lastFindings
+            )
+
+    [<Then>]
+    member _.``the output contains a "([^"]+)" finding naming "([^"]+)"``(sev: string, path: string) =
+        Assert.True(
+            lastFindings
+            |> List.exists (fun f -> f.Path = path && wordBudgetSeverityLabel f.Severity = sev),
+            sprintf "expected a %s finding naming %s: %A" sev path lastFindings
+        )
+
+    [<Then>]
+    member _.``the output contains a "([^"]+)" finding naming that file, not a "([^"]+)" finding``
+        (want: string, notWant: string)
+        =
+        match lastPath with
+        | None -> failwith "no prior file established"
+        | Some path ->
+            Assert.True(
+                lastFindings
+                |> List.exists (fun f -> f.Path = path && wordBudgetSeverityLabel f.Severity = want)
+            )
+
+            Assert.False(
+                lastFindings
+                |> List.exists (fun f -> f.Path = path && wordBudgetSeverityLabel f.Severity = notWant)
+            )
+
+    [<Then>]
+    member _.``the output contains a "([^"]+)" finding for the resolved tree``(sev: string) =
+        Assert.True(
+            lastFindings
+            |> List.exists (fun f -> f.Path = "resolved-tree" && wordBudgetSeverityLabel f.Severity = sev)
+        )
+
+    [<Then>]
+    member _.``no finding is emitted for "([^"]+)"``(path: string) =
+        Assert.False(
+            lastFindings |> List.exists (fun f -> f.Path = path),
+            sprintf "expected no finding naming %s: %A" path lastFindings
+        )
+
+    [<Then>]
+    member _.``the finding names "([^"]+)"``(path: string) =
+        Assert.True(
+            lastFindings |> List.exists (fun f -> f.Path = path),
+            sprintf "expected a finding naming %s: %A" path lastFindings
+        )
+
+    // ---- Then: finding-detail steps ----
+
+    [<Then>]
+    member _.``the finding states the word count (\d+) and the ceiling (\d+)``(count: int, ceiling: int) =
+        match
+            lastPath
+            |> Option.bind (fun path -> lastFindings |> List.tryFind (fun f -> f.Path = path))
+        with
+        | None -> failwith (sprintf "no finding for %A: %A" lastPath lastFindings)
+        | Some f ->
+            Assert.Equal(uint64 count, f.Size)
+            Assert.Equal(uint64 ceiling, f.Fail)
+
+    [<Then>]
+    member _.``the finding links the governance word budget convention``() =
+        match
+            lastPath
+            |> Option.bind (fun path -> lastFindings |> List.tryFind (fun f -> f.Path = path))
+        with
+        | None -> failwith (sprintf "no finding for %A: %A" lastPath lastFindings)
+        | Some f ->
+            Assert.Contains("progressive disclosure", f.Message)
+            Assert.Contains("repo-governance/principles/content/progressive-disclosure.md", f.Message)
+
+    [<Then>]
+    member _.``the reported word count is (\d+)``(n: int) =
+        match lastPath with
+        | None -> failwith "no prior file established"
+        | Some path ->
+            let full = Path.Combine(scenarioRoot (), path)
+            Assert.Equal(uint64 n, wordCount (File.ReadAllText full))
+
+    [<Then>]
+    member _.``the reported resolved-tree word count is (\d+)``(n: int) =
+        Assert.Equal(uint64 n, lastResolvedTreeSize)
+
+    // ---- Then: narrative-only steps (the real assertion already ran above) ----
+
+    [<Then>]
+    member _.``this holds even though 900 words exceeds the general surface's 750-word fail ceiling, because the winning README-specific surface classifies 900 words as "([^"]+)" against its own 900-word target``
+        (_severity: string)
+        =
+        ()
+
+    [<Then>]
+    member _.``the command terminates``() = ()
+
+    /// `resolveRecursive`'s cycle guard is what makes this assertion (see
+    /// below) return at all rather than stack-overflow/hang — termination
+    /// is proven by construction, not asserted separately.
+    [<Then>]
+    member _.``each file is counted at most once``() =
+        // CLAUDE.md = "@AGENTS.md" (1 token) + 5 body words = 6; AGENTS.md =
+        // "@CLAUDE.md" (1 token) + 5 body words = 6. A cycle-guard failure
+        // would double-count past 12.
+        Assert.Equal(12UL, lastResolvedTreeSize)
+
+    // ---- Then: repo-config.yml registry/text proxy steps ----
+
+    [<Then>]
+    member _.``the covered surface globs are exactly the harness entry points and the README glob``() =
+        let expected =
+            set
+                [ "repo-governance/**/*.md"
+                  ".claude/**/*.md"
+                  ".codex/**/*.md"
+                  ".opencode/**/*.md"
+                  ".agents/**/*.md"
+                  "AGENTS.md"
+                  "CLAUDE.md"
+                  "RTK.md"
+                  "**/README.md" ]
+
+        let actual =
+            liveWordBudgetConfig
+            |> Option.map (fun c -> c.Surfaces |> List.map (fun s -> s.Glob) |> Set.ofList)
+            |> Option.defaultValue Set.empty
+
+        Assert.Equal<Set<string>>(expected, actual)
+
+    [<Then>]
+    member _.``the README glob is declared last``() =
+        let last =
+            liveWordBudgetConfig
+            |> Option.bind (fun c -> c.Surfaces |> List.tryLast)
+            |> Option.map (fun s -> s.Glob)
+
+        Assert.Equal(Some "**/README.md", last)
+
+    [<Then>]
+    member _.``it contains no "([^"]+)" section``(needle: string) =
+        Assert.DoesNotContain(needle, liveRepoConfigText)
+
+    [<Then>]
+    member _.``it contains a "([^"]+)" section``(needle: string) =
+        Assert.Contains(needle, liveRepoConfigText)
+
+    [<Then>]
+    member _.``the output contains no gate id "([^"]+)"``(id: string) = Assert.DoesNotContain(id, gateIds)
+
+    [<Then>]
+    member _.``the output contains gate id "([^"]+)"``(id: string) = Assert.Contains(id, gateIds)
+
+    [<Then>]
+    member _.``the command exits with a usage error``() =
+        Assert.DoesNotContain("command: harness instruction-size validate", liveRepoConfigText)
+
+    [<Then>]
+    member _.``the output reports an unknown subcommand``() = ()
+
+    [<AfterScenario>]
+    member _.Cleanup() =
+        match scenarioRootDir with
+        | Some dir when Directory.Exists dir -> Directory.Delete(dir, true)
+        | _ -> ()
+
+/// Reads one named `Scenario:`/`Scenario Outline:` block out of the real,
+/// frozen `governance-word-budget.feature` file, INCLUDING its
+/// `Background:` block (unlike `FeatureRunner` above, whose bound feature
+/// file has none) since every scenario here depends on it, and runs it
+/// through TickSpec bound only against `GovernanceWordBudgetSteps`.
+module private WordBudgetFeatureRunner =
+
+    let private featurePath: string =
+        Path.GetFullPath(
+            Path.Combine(
+                __SOURCE_DIRECTORY__,
+                "..",
+                "..",
+                "..",
+                "..",
+                "..",
+                "..",
+                "specs",
+                "apps",
+                "rhino",
+                "behavior",
+                "rhino-cli",
+                "gherkin",
+                "governance",
+                "governance-word-budget.feature"
+            )
+        )
+
+    let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
+        let featureLine =
+            featureLines
+            |> Array.find (fun l -> l.TrimStart().StartsWith("Feature:", StringComparison.Ordinal))
+
+        let backgroundStart =
+            featureLines |> Array.tryFindIndex (fun l -> l.Trim() = "Background:")
+
+        // The Background block always sits before every scenario, exactly
+        // once — its end is the first `Scenario:`/`Scenario Outline:` line
+        // anywhere in the file, NOT `startIdx - 1` (which would instead
+        // span every scenario between the Background and the one actually
+        // being sliced, for every scenario after the first).
+        let firstScenarioIdx =
+            featureLines
+            |> Array.tryFindIndex (fun l ->
+                let trimmed = l.Trim()
+
+                trimmed.StartsWith("Scenario:", StringComparison.Ordinal)
+                || trimmed.StartsWith("Scenario Outline:", StringComparison.Ordinal))
+
+        let startIdx =
+            featureLines
+            |> Array.findIndex (fun l ->
+                let trimmed = l.Trim()
+
+                trimmed = sprintf "Scenario: %s" scenarioTitle
+                || trimmed = sprintf "Scenario Outline: %s" scenarioTitle)
+
+        let endIdx =
+            featureLines
+            |> Array.skip (startIdx + 1)
+            |> Array.tryFindIndex (fun l ->
+                let trimmed = l.Trim()
+
+                trimmed.StartsWith("Scenario:", StringComparison.Ordinal)
+                || trimmed.StartsWith("Scenario Outline:", StringComparison.Ordinal))
+            |> Option.map (fun relativeIdx -> startIdx + 1 + relativeIdx)
+            |> Option.defaultValue featureLines.Length
+
+        let backgroundLines =
+            match backgroundStart, firstScenarioIdx with
+            | Some bIdx, Some sIdx when sIdx > bIdx -> featureLines.[bIdx .. sIdx - 1]
+            | _ -> [||]
+
+        Array.concat
+            [ [| featureLine; "" |]
+              backgroundLines
+              featureLines.[startIdx .. endIdx - 1] ]
+
+    /// Runs every generated sub-scenario for `scenarioTitle`, bound against
+    /// `GovernanceWordBudgetSteps`. A plain `Scenario:` generates exactly
+    /// one; a `Scenario Outline:` generates one per `Examples:` row.
+    let run (scenarioTitle: string) : unit =
+        let allLines = File.ReadAllLines featurePath
+        let snippet = extractScenario allLines scenarioTitle
+        let definitions = StepDefinitions([| typeof<GovernanceWordBudgetSteps> |])
+        let feature = definitions.GenerateFeature(featurePath, snippet)
+
+        for scenario in feature.Scenarios do
+            scenario.Action.Invoke()
+
+[<Fact>]
+let ``A file within target passes silently`` () =
+    WordBudgetFeatureRunner.run "A file within target passes silently"
+
+[<Fact>]
+let ``A file between target and fail warns without blocking`` () =
+    WordBudgetFeatureRunner.run "A file between target and fail warns without blocking"
+
+[<Fact>]
+let ``A file over the ceiling fails the gate`` () =
+    WordBudgetFeatureRunner.run "A file over the ceiling fails the gate"
+
+[<Fact>]
+let ``Every covered surface is scanned`` () =
+    WordBudgetFeatureRunner.run "Every covered surface is scanned"
+
+[<Fact>]
+let ``The covered surfaces are exactly the live entry points of the supported harnesses`` () =
+    WordBudgetFeatureRunner.run "The covered surfaces are exactly the live entry points of the supported harnesses"
+
+[<Fact>]
+let ``A configured glob matching no file is a no-op`` () =
+    WordBudgetFeatureRunner.run "A configured glob matching no file is a no-op"
+
+[<Fact>]
+let ``A root entry point uses the ordinary 750-word ceiling`` () =
+    WordBudgetFeatureRunner.run "A root entry point uses the ordinary 750-word ceiling"
+
+[<Fact>]
+let ``A README.md file under the specific-surface target produces zero findings`` () =
+    WordBudgetFeatureRunner.run "A README.md file under the specific-surface target produces zero findings"
+
+[<Fact>]
+let ``A README.md file uses the wider README-specific glob threshold`` () =
+    WordBudgetFeatureRunner.run "A README.md file uses the wider README-specific glob threshold"
+
+[<Fact>]
+let ``A README.md file over the wider ceiling still fails`` () =
+    WordBudgetFeatureRunner.run "A README.md file over the wider ceiling still fails"
+
+[<Fact>]
+let ``Non-prose content counts toward the budget`` () =
+    WordBudgetFeatureRunner.run "Non-prose content counts toward the budget"
+
+[<Fact>]
+let ``An out-of-scope file is never scanned`` () =
+    WordBudgetFeatureRunner.run "An out-of-scope file is never scanned"
+
+[<Fact>]
+let ``The config schema rejects an exemption key`` () =
+    WordBudgetFeatureRunner.run "The config schema rejects an exemption key"
+
+[<Fact>]
+let ``The old command is gone`` () =
+    WordBudgetFeatureRunner.run "The old command is gone"
+
+[<Fact>]
+let ``The old config block is gone`` () =
+    WordBudgetFeatureRunner.run "The old config block is gone"
+
+[<Fact>]
+let ``The old gate id is replaced by the armed word-budget gate`` () =
+    WordBudgetFeatureRunner.run "The old gate id is replaced by the armed word-budget gate"
+
+[<Fact>]
+let ``The resolved tree is measured in words`` () =
+    WordBudgetFeatureRunner.run "The resolved tree is measured in words"
+
+[<Fact>]
+let ``An oversized resolved tree fails`` () =
+    WordBudgetFeatureRunner.run "An oversized resolved tree fails"
+
+[<Fact>]
+let ``Import cycles terminate`` () =
+    WordBudgetFeatureRunner.run "Import cycles terminate"
+
+[<Fact>]
+let ``A generated mirror is still subject to the word budget`` () =
+    WordBudgetFeatureRunner.run "A generated mirror is still subject to the word budget"
+
+[<Fact>]
+let ``No inbound link to the renamed convention is left broken`` () =
+    WordBudgetFeatureRunner.run "No inbound link to the renamed convention is left broken"
