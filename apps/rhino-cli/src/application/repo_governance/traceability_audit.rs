@@ -347,26 +347,28 @@ fn list_governance_markdown(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec
 /// indexed children are checked together — the requirement is enforced exactly
 /// once per progressively disclosed document family.
 ///
-/// A child is recognised by its *position*, not its filename: it sits in a
-/// directory that both carries a `README.md` index and has a same-named
-/// sibling parent document. An earlier version keyed off an `NN-` filename
-/// prefix, but `repo-governance/conventions/structure/ordinal-filename-prefixes.md`
-/// strips that prefix from every split child that is not a real step in an
-/// ordered sequence, so the prefix test silently stopped matching most of the
-/// corpus and the category reported thousands of false positives.
+/// A child is recognised by its *position*, not its filename: it sits anywhere
+/// below a directory that both carries a `README.md` index and has a
+/// same-named sibling parent document. Nested disclosure directories are still
+/// part of that parent family because [`read_document_family`] walks them
+/// recursively. An earlier version checked only the immediate directory,
+/// causing nested fragments to be audited both through their parent family and
+/// again as standalone documents.
 fn is_split_child(fs: &dyn Fs, path: &Path) -> bool {
-    let Some(dir) = path.parent() else {
-        return false;
-    };
-    if !is_file(fs, &dir.join("README.md")) {
-        return false;
+    let mut ancestor = path.parent();
+    while let Some(dir) = ancestor {
+        if is_file(fs, &dir.join("README.md"))
+            && let (Some(dir_name), Some(grandparent)) = (dir.file_name(), dir.parent())
+        {
+            let mut parent_doc = dir_name.to_os_string();
+            parent_doc.push(".md");
+            if is_file(fs, &grandparent.join(parent_doc)) {
+                return true;
+            }
+        }
+        ancestor = dir.parent();
     }
-    let (Some(dir_name), Some(grandparent)) = (dir.file_name(), dir.parent()) else {
-        return false;
-    };
-    let mut parent_doc = dir_name.to_os_string();
-    parent_doc.push(".md");
-    is_file(fs, &grandparent.join(parent_doc))
+    false
 }
 
 /// Reports whether `path` exists and is a regular file (not a directory).
@@ -430,6 +432,30 @@ mod tests {
         write(
             &tmp.path().join("repo-governance/conventions/c/one.md"),
             "# One\n\nno heading here\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert!(findings.is_empty(), "got {findings:?}");
+    }
+
+    #[test]
+    fn nested_split_descendants_are_exempt() {
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path().join("repo-governance/workflows/w.md"),
+            "# W\n\nSee `.claude/agents/plan/plan-maker.md`.\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/workflows/w/README.md"),
+            "# W\n\n- [Phase](./phase/README.md) — x\n",
+        );
+        write(
+            &tmp.path()
+                .join("repo-governance/workflows/w/phase/README.md"),
+            "# Phase\n\n- [Step](./step.md) — x\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/workflows/w/phase/step.md"),
+            "# Step\n\nno standalone agent reference\n",
         );
         let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
         assert!(findings.is_empty(), "got {findings:?}");

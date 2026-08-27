@@ -375,6 +375,26 @@ fn given_split_child_plain_kebab_case(w: &mut GovernanceWorld) {
     );
 }
 
+#[given("a repository with a governance document split across nested indexed child directories")]
+fn given_nested_split_fragments(w: &mut GovernanceWorld) {
+    w.write(
+        "repo-governance/workflows/w.md",
+        "# W\n\nSee `.claude/agents/plan/plan-maker.md`.\n",
+    );
+    w.write(
+        "repo-governance/workflows/w/README.md",
+        "# W\n\n- [Phase](./phase/README.md) — phase index.\n",
+    );
+    w.write(
+        "repo-governance/workflows/w/phase/README.md",
+        "# Phase\n\n- [Step](./step.md) — nested fragment.\n",
+    );
+    w.write(
+        "repo-governance/workflows/w/phase/step.md",
+        "# Step\n\nNo standalone agent reference.\n",
+    );
+}
+
 #[given("a split convention whose indexed child carries the required traceability section")]
 fn given_split_convention_with_child_traceability(w: &mut GovernanceWorld) {
     w.write(

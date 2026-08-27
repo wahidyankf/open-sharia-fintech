@@ -17,4 +17,7 @@ Validation: no deterministic gate decides whether a leading `NN-` ordinal marks 
 `repo-rules-checker` judges it against
 [Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md).
 
-Resynced 2026-06-22 after the `rhino-cli` command-surface refactor (`refactor(rhino-cli)!: regroup by scope + uniform verb-first subcommand surface`): Step 0.5 now documents the real three-category `repo-governance audit` orchestrator (`layer-coherence`, `traceability-audit`, `vendor-audit`) instead of a stale nine-category list, and the `vendor-audit` category was fixed to scan only `repo-governance/` + `AGENTS.md` + `CLAUDE.md` (it previously walked the whole repo — build caches, worktrees, app content, generated reports — emitting ~20k noise findings). The operator hatch, exit-2 debug hint, and Iteration Example were corrected to match.
+Resynced 2026-08-27 with the four-category `repo-governance audit` orchestrator. This workflow
+retains `layer-coherence` and `traceability-audit`; lifecycle owners supply exact evidence for
+`vendor-audit` and `governance-word-budget`. The vendor category scans only `repo-governance/`,
+`AGENTS.md`, and `CLAUDE.md`, avoiding build caches, worktrees, app content, and generated reports.

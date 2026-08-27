@@ -41,6 +41,12 @@ Feature: Governance Traceability Audit
     Then the command exits successfully
     And the traceability output reports zero findings
 
+  Scenario: A nested progressive-disclosure fragment is audited through its parent family
+    Given a repository with a governance document split across nested indexed child directories
+    When the developer runs repo-governance traceability validate
+    Then the command exits successfully
+    And the traceability output reports zero findings
+
   Scenario: A split document may keep its traceability section in an indexed child
     Given a split convention whose indexed child carries the required traceability section
     When the developer runs repo-governance traceability validate
