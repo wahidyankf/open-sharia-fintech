@@ -37,6 +37,8 @@
     <Compile Include="Steps/DoctorToolCheckUnitTests.fs" />
     <Compile Include="Steps/FsharpToolInvocationSteps.fs" />
     <Compile Include="Steps/FsharpToolInvocationUnitTests.fs" />
+    <Compile Include="Steps/TestCoverageSteps.fs" />
+    <Compile Include="Steps/TestCoverageUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

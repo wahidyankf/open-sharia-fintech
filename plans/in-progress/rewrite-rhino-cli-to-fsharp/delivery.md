@@ -3896,7 +3896,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.TestCoverage` does not implement it.
@@ -3910,17 +3910,20 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports 100% coverage
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/TestCoverage.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      the shared `RhinoCli.Domain.Types.Finding` record (`RhinoCli.Domain/src/Types.fs`
+      — `Finding.fs` was never split out as its own file); none was needed —
+      `CoverageResult`/`FileResult` do not share `Finding`'s severity/message/path
+      shape
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `TestCoverage.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.TestCoverage` does not implement it.
@@ -3933,17 +3936,20 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits successfully
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/TestCoverage.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      the shared `RhinoCli.Domain.Types.Finding` record (`RhinoCli.Domain/src/Types.fs`
+      — `Finding.fs` was never split out as its own file); none was needed —
+      `CoverageResult`/`FileResult` do not share `Finding`'s severity/message/path
+      shape
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `TestCoverage.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.TestCoverage` does not implement it.
@@ -3956,17 +3962,20 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the command exits with a failure code
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/TestCoverage.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      the shared `RhinoCli.Domain.Types.Finding` record (`RhinoCli.Domain/src/Types.fs`
+      — `Finding.fs` was never split out as its own file); none was needed —
+      `CoverageResult`/`FileResult` do not share `Finding`'s severity/message/path
+      shape
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `TestCoverage.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.TestCoverage` does not implement it.
@@ -3979,13 +3988,16 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the excluded files do not affect the diff coverage result
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/TestCoverage.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
-      `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+      the shared `RhinoCli.Domain.Types.Finding` record (`RhinoCli.Domain/src/Types.fs`
+      — `Finding.fs` was never split out as its own file); none was needed —
+      `CoverageResult`/`FileResult` do not share `Finding`'s severity/message/path
+      shape
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `TestCoverage.fs` formats no output itself.
 
