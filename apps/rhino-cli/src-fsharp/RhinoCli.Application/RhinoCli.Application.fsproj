@@ -18,6 +18,7 @@
     <Compile Include="src/Doctor.fs" />
     <Compile Include="src/TestCoverage.fs" />
     <Compile Include="src/Md.fs" />
+    <Compile Include="src/Governance.fs" />
   </ItemGroup>
 
   <ItemGroup>
