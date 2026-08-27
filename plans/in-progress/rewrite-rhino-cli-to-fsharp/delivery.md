@@ -44,6 +44,12 @@ same mode here for symmetry, since this is not an infrastructure-as-code plan.
 > comment, no override note is required beforehand. PR #309 (`ose-public`) and PR #76
 > (`ose-private`) — mid cycle-1 review when this took effect — stop at cycle 1's already-applied
 > fixes and merge on green CI rather than starting cycle 2 or a specialist fan-out.
+>
+> **RTK execution rule for every still-unchecked step:** every shell invocation an agent executes
+> for the remainder of this plan MUST begin with `rtk`; compound commands route each external
+> invocation through `rtk` where applicable. Bare tokens retained below are literal configured
+> commands, search strings, file paths, forbidden examples, or historical evidence—not exceptions
+> to this runtime rule and not targets for mechanical rewriting.
 
 ## Parallelization Model
 
