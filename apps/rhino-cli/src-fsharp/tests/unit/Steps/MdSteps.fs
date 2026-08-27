@@ -43,6 +43,7 @@ type MdSteps() =
     let mutable rootDir: string option = None
     let mutable outcome: Result<Finding list, string> option = None
     let mutable useAllowlist = false
+    let mutable stagedFiles: string list = []
 
     let root () =
         match rootDir with
@@ -299,6 +300,85 @@ type MdSteps() =
         useAllowlist <- true
         writeDoc "libs/example/docs/guide.md" "# A\n\n# B\n"
 
+    // ---- Given (docs-validate-links.feature) ----
+
+    [<Given>]
+    member _.``markdown files where all internal links point to existing files``() =
+        writeDoc "source.md" "See [destination](./destination.md) for details.\n"
+        writeDoc "destination.md" "# Destination\n"
+
+    [<Given>]
+    member _.``a markdown file with a link pointing to a non-existent file``() =
+        writeDoc "broken-source.md" "See [missing](./does-not-exist.md) for details.\n"
+
+    [<Given>]
+    member _.``a markdown file containing only external HTTPS links``() =
+        writeDoc "external-only.md" "See [a](https://example.com) and [b](https://example.org/page).\n"
+
+    [<Given>]
+    member _.``a markdown file with a broken link that has not been staged in git``() =
+        writeDoc "unstaged-broken.md" "See [missing](./does-not-exist.md) for details.\n"
+
+    [<Given>]
+    member _.``a markdown file under plans/done with a broken internal link``() =
+        writeDoc "plans/done/2024-01-01__example/delivery.md" "See [missing](./does-not-exist.md).\n"
+
+    [<Given>]
+    member _.``a markdown file under docs with a different broken internal link``() =
+        writeDoc "docs/reference/page.md" "See [missing](./also-missing.md).\n"
+
+    [<Given>]
+    member _.``a markdown file under libs with a broken internal link``() =
+        writeDoc "libs/example/README.md" "See [missing](./does-not-exist.md).\n"
+
+    [<Given>]
+    member _.``a markdown file that links to an existing heading anchor in another file``() =
+        writeDoc "anchor-source.md" "See [section](./anchor-doc.md#section).\n"
+        writeDoc "anchor-doc.md" "# Title\n\n## Section\n"
+
+    [<Given>]
+    member _.``a markdown file that links to a non-existent heading anchor in an existing file``() =
+        writeDoc "broken-anchor-source.md" "See [section](./broken-anchor-doc.md#missing).\n"
+        writeDoc "broken-anchor-doc.md" "# Title\n"
+
+    [<Given>]
+    member _.``a markdown file containing a same-file anchor link that has no matching heading``() =
+        writeDoc "same-file-anchor.md" "# Title\n\nSee [missing](#missing) below.\n"
+
+    /// This scenario's Gherkin `Given` line reads (verbatim, from the frozen
+    /// feature file): `a markdown file that links to the anchor
+    /// "#snake_case" of a file whose heading is "snake_case"`. TickSpec's
+    /// own Gherkin line-lexer treats `#` as a comment marker even inside a
+    /// quoted string — unlike `rhino-cli specs behavior-coverage validate`'s
+    /// Rust parser, which (correctly, per the Gherkin spec) only treats a
+    /// `#` that *starts* a trimmed line as a comment — so by the time
+    /// TickSpec tries to match a step against this line, everything from the
+    /// `#` onward has already been stripped, leaving only `a markdown file
+    /// that links to the anchor "` (a dangling, unterminated quote) as the
+    /// text step matching actually sees at runtime — verified via the
+    /// `[FAIL] Missing step definition` message that truncated text produced
+    /// before this method's pattern covered it.
+    ///
+    /// Both `TickSpec` and `specs behavior-coverage validate` treat a
+    /// backtick-quoted step name as a raw (unescaped) regex rather than a
+    /// literal string — the existing `` a git index with "(.*)" staged ``
+    /// step elsewhere in this file already relies on that. This method's
+    /// name below exploits the same mechanism, spelling out a
+    /// `(?:full|truncated)` alternation so ONE step pattern satisfies both
+    /// checkers at once: `specs behavior-coverage validate` matches the
+    /// first alternative against the frozen feature file's real,
+    /// untruncated line (no "missing step" gap), while `TickSpec` matches
+    /// the second alternative against the truncated text it actually
+    /// presents at runtime (so the fixture body below really does run, and
+    /// the step is not an "orphan" the coverage tool can only find via the
+    /// first alternative).
+    [<Given>]
+    member _.``(?:a markdown file that links to the anchor "#snake_case" of a file whose heading is "snake_case"|a markdown file that links to the anchor ")``
+        ()
+        =
+        writeDoc "snake-source.md" "See [snake](./snake-doc.md#snake_case).\n"
+        writeDoc "snake-doc.md" "# snake_case\n"
+
     // ---- When ----
 
     [<When>]
@@ -318,6 +398,44 @@ type MdSteps() =
     [<When>]
     member _.``the developer runs docs validate-heading-hierarchy with --exclude docs``() =
         outcome <- Some(Ok(validateDocsHeadingHierarchyAllowlisted (root ()) [ "docs" ]))
+
+    // ---- When (docs-validate-links.feature) ----
+
+    [<When>]
+    member _.``the developer runs docs validate-links``() =
+        outcome <-
+            Some(
+                Ok(
+                    validateDocsLinks
+                        { RepoRoot = root ()
+                          StagedFiles = None
+                          ExcludePrefixes = [] }
+                )
+            )
+
+    [<When>]
+    member _.``the developer runs docs validate-links with the --staged-only flag``() =
+        outcome <-
+            Some(
+                Ok(
+                    validateDocsLinks
+                        { RepoRoot = root ()
+                          StagedFiles = Some stagedFiles
+                          ExcludePrefixes = [] }
+                )
+            )
+
+    [<When>]
+    member _.``the developer runs docs validate-links with --exclude plans/done``() =
+        outcome <-
+            Some(
+                Ok(
+                    validateDocsLinks
+                        { RepoRoot = root ()
+                          StagedFiles = None
+                          ExcludePrefixes = [ "plans/done" ] }
+                )
+            )
 
     // ---- Then ----
 
@@ -403,6 +521,34 @@ type MdSteps() =
     [<Then>]
     member _.``the output identifies the duplicate H1 violation in the lib docs file``() =
         assertHasBlockingFindingInPathWithMessage "/libs/example/docs/" duplicateH1Needle
+
+    // ---- Then (docs-validate-links.feature) ----
+
+    [<Then>]
+    member _.``the output reports no broken links found``() = Assert.Empty(theFindings ())
+
+    [<Then>]
+    member _.``the output identifies the file containing the broken link``() =
+        assertHasBlockingFindingInPath "broken-source.md"
+
+    [<Then>]
+    member _.``the output does not mention the plans/done file``() = assertNoFindingInPath "plans/done"
+
+    [<Then>]
+    member _.``the output does mention the docs file``() =
+        assertHasBlockingFindingInPath "docs/reference/page.md"
+
+    [<Then>]
+    member _.``the output identifies the libs file containing the broken link``() =
+        assertHasBlockingFindingInPath "libs/example/README.md"
+
+    [<Then>]
+    member _.``the output identifies the broken anchor``() =
+        assertHasBlockingFindingWithMessageAndPath "does not match any heading anchor"
+
+    [<Then>]
+    member _.``the output identifies the broken same-file anchor``() =
+        assertHasBlockingFindingInPathWithMessage "same-file-anchor.md" "does not match any heading anchor in this file"
 
     [<AfterScenario>]
     member _.Cleanup() =
@@ -602,3 +748,47 @@ let ``project-docs-subtree-allowlisted — app and lib docs trees trigger findin
     FeatureRunner.run
         "docs-validate-heading-hierarchy.feature"
         "project-docs-subtree-allowlisted — app and lib docs trees trigger findings"
+
+[<Fact>]
+let ``A document set with all valid internal links passes validation`` () =
+    FeatureRunner.run "docs-validate-links.feature" "A document set with all valid internal links passes validation"
+
+[<Fact>]
+let ``A broken internal link is detected and reported`` () =
+    FeatureRunner.run "docs-validate-links.feature" "A broken internal link is detected and reported"
+
+[<Fact>]
+let ``External URLs are not validated`` () =
+    FeatureRunner.run "docs-validate-links.feature" "External URLs are not validated"
+
+[<Fact>]
+let ``With --staged-only only staged files are checked`` () =
+    FeatureRunner.run "docs-validate-links.feature" "With --staged-only only staged files are checked"
+
+[<Fact>]
+let ``exclude flag skips the named subtree`` () =
+    FeatureRunner.run "docs-validate-links.feature" "exclude flag skips the named subtree"
+
+[<Fact>]
+let ``repo-wide scan finds broken link outside original three-directory scope`` () =
+    FeatureRunner.run
+        "docs-validate-links.feature"
+        "repo-wide scan finds broken link outside original three-directory scope"
+
+[<Fact>]
+let ``valid anchor link passes validation`` () =
+    FeatureRunner.run "docs-validate-links.feature" "valid anchor link passes validation"
+
+[<Fact>]
+let ``broken anchor link produces a broken-anchor finding`` () =
+    FeatureRunner.run "docs-validate-links.feature" "broken anchor link produces a broken-anchor finding"
+
+[<Fact>]
+let ``same-file anchor with no matching heading produces a broken-anchor finding`` () =
+    FeatureRunner.run
+        "docs-validate-links.feature"
+        "same-file anchor with no matching heading produces a broken-anchor finding"
+
+[<Fact>]
+let ``anchor slugs keep underscores per the GitHub reference algorithm`` () =
+    FeatureRunner.run "docs-validate-links.feature" "anchor slugs keep underscores per the GitHub reference algorithm"
