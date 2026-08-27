@@ -27,6 +27,41 @@
 /// `--fail-kinds` list, and includes it once a caller names it explicitly —
 /// there is no separate "Phase 9 armed" flag anywhere in the source, in
 /// Rust or here).
+///
+/// Also ports the `governance word-budget` gate
+/// [Repo-grounded — `apps/rhino-cli/src/application/governance/word_budget.rs`,
+/// `apps/rhino-cli/src/commands/governance_validate_word_budget.rs`] for
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`'s
+/// 20 scenarios (Wave D PR9). Findings use a bespoke `WordBudgetFinding`
+/// record carrying a three-tier `WordBudgetSeverity`
+/// (`Within`/`Warn`/`Fail`, named to avoid the `Ok` case literal — see
+/// `RhinoCli.Domain.Types.Severity`'s doc comment for why a case named `Ok`
+/// or `Error` collides with `FSharp.Core`'s own `Result` cases under
+/// GRA-UNIONCASE-001), not `ReadmeIndexFindingKind`'s two-tier severity
+/// string or the shared `RhinoCli.Domain.Types.Finding` record.
+///
+/// `check_instruction_sizes` globs for covered surfaces using `glob`
+/// (crates.io) in Rust; this port implements a small `**`-aware segment
+/// matcher instead of pulling in a NuGet glob package, since every real
+/// `governance-word-budget.surfaces` glob in `repo-config.yml` is one of
+/// three shapes: a literal root file (`AGENTS.md`), a `<dir>/**/*.md`
+/// recursive-descent pattern, or the `**/README.md` catch-all — `*` never
+/// appears mid-segment other than the trailing `*.md`/`*` wildcard, so a
+/// single-`*`-per-segment matcher plus `**` segment-skipping is sufficient;
+/// widening it is future work if a more elaborate glob is ever configured.
+///
+/// Like `governance` readme-index, `word-budget` is not yet listed in
+/// `FSHARP_NAMESPACES`, so `checkInstructionSizes`/`checkResolvedTree` are
+/// called directly by step definitions against an explicit `repoRoot`,
+/// never through CLI argv parsing. Four scenarios ("The old command is
+/// gone", "The old config block is gone", "The old gate id is replaced...",
+/// "No inbound link to the renamed convention is left broken") are
+/// registry/text proxy checks against this repository's own live
+/// `repo-config.yml`/governance tree, mirroring `word_budget.rs`'s own test
+/// module comment that "full CLI-dispatch and gate-registry-list assertions
+/// belong to cli.rs/gate tests, out of this module's scope" — the F# port
+/// has no `cli.rs`/`gate` equivalent yet either, so these stay proxy checks
+/// here too rather than exercising a CLI dispatcher that does not exist.
 module RhinoCli.Application.Governance
 
 open System
@@ -760,3 +795,489 @@ let rewriteIndexPaths (repoRoot: string) (paths: string list) (renames: (string 
                 None)
         |> List.distinct
         |> List.sort
+
+// ===========================================================================
+// `governance word-budget`
+// [Repo-grounded — `word_budget.rs`, `governance_validate_word_budget.rs`]
+// ===========================================================================
+
+/// Budget thresholds for a single glob surface
+/// [Repo-grounded — `word_budget.rs::Surface`].
+type Surface =
+    { Glob: string
+      Target: uint64
+      Warn: uint64
+      Fail: uint64 }
+
+/// Budget thresholds for the fully-resolved transitive `@`-import tree
+/// [Repo-grounded — `word_budget.rs::ResolvedTree`].
+type ResolvedTree =
+    { Root: string
+      Target: uint64
+      Warn: uint64
+      Fail: uint64 }
+
+/// Parsed `governance-word-budget:` section of `repo-config.yml`
+/// [Repo-grounded — `word_budget.rs::BudgetConfig`].
+type BudgetConfig =
+    { Surfaces: Surface list
+      ResolvedTree: ResolvedTree }
+
+/// Three-tier severity for a word-budget finding, named `Within`/`Warn`/
+/// `Fail` rather than Rust's `Ok`/`Warn`/`Fail` — an F# union case literally
+/// named `Ok` collides with `FSharp.Core`'s own `Result.Ok` under
+/// GRA-UNIONCASE-001, the same pitfall `RhinoCli.Domain.Types.Severity`'s
+/// doc comment already documents for `Error`
+/// [Repo-grounded — `word_budget.rs::Severity`].
+[<RequireQualifiedAccess>]
+type WordBudgetSeverity =
+    | Within
+    | Warn
+    | Fail
+
+/// Human-readable label for a [`WordBudgetSeverity`]
+/// [Repo-grounded — `word_budget.rs::severity_label`].
+let wordBudgetSeverityLabel (severity: WordBudgetSeverity) : string =
+    match severity with
+    | WordBudgetSeverity.Within -> "ok"
+    | WordBudgetSeverity.Warn -> "warn"
+    | WordBudgetSeverity.Fail -> "fail"
+
+/// One finding produced by [`checkInstructionSizes`] or [`checkResolvedTree`]
+/// [Repo-grounded — `word_budget.rs::Finding`].
+type WordBudgetFinding =
+    { Path: string
+      Size: uint64
+      Target: uint64
+      Warn: uint64
+      Fail: uint64
+      Severity: WordBudgetSeverity
+      Message: string }
+
+/// Reference text appended to every `Fail` finding message — both
+/// "progressive disclosure" and the full governance path must appear so a
+/// caller can verify them with a plain substring check
+/// [Repo-grounded — `word_budget.rs::PROGRESSIVE_DISCLOSURE_REF`].
+let private progressiveDisclosureRef: string =
+    "progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md"
+
+/// Raw whole-file word count: the number of whitespace-separated tokens in
+/// `contents`, identical to `wc -w`. Frontmatter, fenced code, Mermaid,
+/// tables, and URLs all count — there is no "prose-only" carve-out
+/// [Repo-grounded — `word_budget.rs::word_count`].
+let wordCount (contents: string) : uint64 =
+    contents.Split((null: char[]), StringSplitOptions.RemoveEmptyEntries)
+    |> Array.length
+    |> uint64
+
+/// Classifies a word `size` against three-tier budget thresholds. `warn` is
+/// used only by the message builders below, not by this classification
+/// itself — both "over target" and "over warn threshold" map to `Warn`
+/// [Repo-grounded — `word_budget.rs::classify`].
+let classify (size: uint64) (target: uint64) (_warn: uint64) (fail: uint64) : WordBudgetSeverity =
+    if size <= target then WordBudgetSeverity.Within
+    elif size <= fail then WordBudgetSeverity.Warn
+    else WordBudgetSeverity.Fail
+
+/// Builds a human-readable message for a surface finding
+/// [Repo-grounded — `word_budget.rs::surface_message`].
+let private surfaceMessage
+    (path: string)
+    (size: uint64)
+    (target: uint64)
+    (warn: uint64)
+    (fail: uint64)
+    (severity: WordBudgetSeverity)
+    : string =
+    match severity with
+    | WordBudgetSeverity.Within -> sprintf "%s is %d words (within %d-word target)" path size target
+    | WordBudgetSeverity.Warn when size <= warn -> sprintf "%s is %d words (over %d-word target)" path size target
+    | WordBudgetSeverity.Warn -> sprintf "%s is %d words (over %d-word warn threshold)" path size warn
+    | WordBudgetSeverity.Fail ->
+        sprintf "%s is %d words (over %d-word fail limit); apply %s" path size fail progressiveDisclosureRef
+
+/// Builds a human-readable message for the resolved-tree finding
+/// [Repo-grounded — `word_budget.rs::resolved_tree_message`].
+let private resolvedTreeMessage (size: uint64) (rt: ResolvedTree) (severity: WordBudgetSeverity) : string =
+    match severity with
+    | WordBudgetSeverity.Within -> sprintf "resolved tree (%s) is %d words (ok)" rt.Root size
+    | WordBudgetSeverity.Warn when size <= rt.Warn ->
+        sprintf "resolved tree (%s) is %d words (over %d-word target)" rt.Root size rt.Target
+    | WordBudgetSeverity.Warn ->
+        sprintf "resolved tree (%s) is %d words (over %d-word warn threshold)" rt.Root size rt.Warn
+    | WordBudgetSeverity.Fail ->
+        sprintf
+            "resolved tree (%s) is %d words (over %d-word fail limit); apply %s"
+            rt.Root
+            size
+            rt.Fail
+            progressiveDisclosureRef
+
+// ---- glob matching: `**`-aware, single `*` per segment (see module doc) ----
+
+/// Matches one path segment (no `/`) against a pattern segment carrying at
+/// most one `*` wildcard — every real `governance-word-budget.surfaces`
+/// glob only ever uses `*.md`, never a multi-star or character-class
+/// pattern within a segment [Repo-grounded — `word_budget.rs` relies on the
+/// `glob` crate's fuller semantics; this port narrows to what the live
+/// config actually uses].
+let private singleSegmentMatches (pattern: string) (name: string) : bool =
+    match pattern.IndexOf('*') with
+    | -1 -> String.Equals(pattern, name, StringComparison.Ordinal)
+    | starIdx ->
+        let prefix = pattern.Substring(0, starIdx)
+        let suffix = pattern.Substring(starIdx + 1)
+
+        name.Length >= prefix.Length + suffix.Length
+        && name.StartsWith(prefix, StringComparison.Ordinal)
+        && name.EndsWith(suffix, StringComparison.Ordinal)
+
+/// Matches a `/`-split pattern-segment list against a `/`-split name-segment
+/// list, where a bare `**` segment consumes zero or more name segments.
+let rec private globSegmentsMatch (patternSegs: string list) (nameSegs: string list) : bool =
+    match patternSegs with
+    | [] -> List.isEmpty nameSegs
+    | [ "**" ] -> true
+    | "**" :: prest ->
+        let rec tryConsume (remaining: string list) : bool =
+            if globSegmentsMatch prest remaining then
+                true
+            else
+                match remaining with
+                | _ :: rest -> tryConsume rest
+                | [] -> false
+
+        tryConsume nameSegs
+    | pseg :: prest ->
+        match nameSegs with
+        | nseg :: nrest when singleSegmentMatches pseg nseg -> globSegmentsMatch prest nrest
+        | _ -> false
+
+/// Matches a forward-slash `pattern` against a forward-slash repo-relative
+/// `relPath` [Repo-grounded — `word_budget.rs::check_instruction_sizes`'s
+/// use of `glob::glob`].
+let private globMatchesRelPath (pattern: string) (relPath: string) : bool =
+    globSegmentsMatch (pattern.Split('/') |> Array.toList) (relPath.Split('/') |> Array.toList)
+
+/// Recursively collects every file reachable from `dir`, skipping
+/// [`skipDirs`] (the same vendored/generated exclusion list `readme-index`
+/// already uses) [Repo-grounded — `word_budget.rs::SKIP_DIRS`,
+/// `is_in_skipped_dir`].
+let rec private collectAllFilesRec (dir: string) : string list =
+    if not (Directory.Exists dir) then
+        []
+    else
+        Directory.GetFileSystemEntries dir
+        |> Array.sort
+        |> Array.toList
+        |> List.collect (fun entry ->
+            if Directory.Exists entry then
+                if skipDirs.Contains(Path.GetFileName entry) then
+                    []
+                else
+                    collectAllFilesRec entry
+            else
+                [ entry ])
+
+/// Checks every instruction-file surface against its budget.
+///
+/// **Select-then-classify overlap precedence**: when a path matches more
+/// than one surface, the *last-declared* matching surface wins — Pass 1
+/// glob-matches every surface in `config.Surfaces` declaration order,
+/// recording the most recently matched surface per resolved path; Pass 2
+/// classifies each winning `(path, surface)` pair exactly once. `excludes`
+/// holds repo-relative path **prefixes** matched via `str.StartsWith`, not
+/// globs [Repo-grounded — `word_budget.rs::check_instruction_sizes`].
+let checkInstructionSizes (repoRoot: string) (config: BudgetConfig) (excludes: string list) : WordBudgetFinding list =
+    let allFiles = collectAllFilesRec repoRoot
+
+    let relOf (full: string) : string =
+        Path.GetRelativePath(repoRoot, full).Replace('\\', '/')
+
+    let mutable winners: Map<string, Surface> = Map.empty
+
+    for surface in config.Surfaces do
+        for full in allFiles do
+            let rel = relOf full
+
+            if globMatchesRelPath surface.Glob rel then
+                let excluded =
+                    excludes
+                    |> List.exists (fun prefix -> rel.StartsWith(prefix, StringComparison.Ordinal))
+
+                if not excluded then
+                    winners <- Map.add rel surface winners
+
+    winners
+    |> Map.toList
+    |> List.sortBy fst
+    |> List.choose (fun (rel, surface) ->
+        let full = Path.Combine(repoRoot, rel.Replace('/', Path.DirectorySeparatorChar))
+        let contents = if File.Exists full then File.ReadAllText full else ""
+        let size = wordCount contents
+        let severity = classify size surface.Target surface.Warn surface.Fail
+
+        if severity = WordBudgetSeverity.Within then
+            None
+        else
+            let message =
+                surfaceMessage rel size surface.Target surface.Warn surface.Fail severity
+
+            Some
+                { Path = rel
+                  Size = size
+                  Target = surface.Target
+                  Warn = surface.Warn
+                  Fail = surface.Fail
+                  Severity = severity
+                  Message = message })
+
+// ---- resolved `@`-import tree ----
+
+/// Recursive helper for [`resolveTreeSize`]. Returns `0UL` when the `depth`
+/// limit (4) is exceeded or `path` was already visited (cycle guard)
+/// [Repo-grounded — `word_budget.rs::resolve_recursive`].
+let rec private resolveRecursive (path: string) (depth: int) (visited: HashSet<string>) : uint64 =
+    if depth > 4 then
+        0UL
+    else
+        let canonical =
+            try
+                Path.GetFullPath path
+            with _ ->
+                path
+
+        if not (visited.Add canonical) then
+            0UL
+        else
+            let content = if File.Exists path then File.ReadAllText path else ""
+            let size = wordCount content
+
+            let parent =
+                match Path.GetDirectoryName(path: string) with
+                | null
+                | "" -> "."
+                | p -> p
+
+            let imported =
+                content.Replace("\r\n", "\n").Split('\n')
+                |> Array.filter (fun line -> line.StartsWith("@", StringComparison.Ordinal))
+                |> Array.sumBy (fun line ->
+                    let importPath = line.Substring(1).Trim()
+                    resolveRecursive (Path.Combine(parent, importPath)) (depth + 1) visited)
+
+            size + imported
+
+/// Computes the total word count of `root` and all transitively imported
+/// files. Files declare imports via lines starting with `@`; cycles are
+/// detected via a set of canonicalized absolute paths, and a cycle returns
+/// `0UL` for the repeated node
+/// [Repo-grounded — `word_budget.rs::resolve_tree_size`].
+let resolveTreeSize (root: string) : uint64 =
+    resolveRecursive root 0 (HashSet<string>())
+
+/// Checks the resolved import tree of `config.ResolvedTree.Root` (relative
+/// to `repoRoot`) against its budget. Returns `None` when within target
+/// [Repo-grounded — `word_budget.rs::check_resolved_tree`].
+let checkResolvedTree (repoRoot: string) (config: BudgetConfig) : WordBudgetFinding option =
+    let rootPath = Path.Combine(repoRoot, config.ResolvedTree.Root)
+    let size = resolveTreeSize rootPath
+    let rt = config.ResolvedTree
+    let severity = classify size rt.Target rt.Warn rt.Fail
+
+    if severity = WordBudgetSeverity.Within then
+        None
+    else
+        Some
+            { Path = "resolved-tree"
+              Size = size
+              Target = rt.Target
+              Warn = rt.Warn
+              Fail = rt.Fail
+              Severity = severity
+              Message = resolvedTreeMessage size rt severity }
+
+// ---- `governance-word-budget:` section of `repo-config.yml` ----
+
+let private toWordBudgetList (items: ResizeArray<'a>) : 'a list =
+    match items with
+    | null -> []
+    | items -> List.ofSeq items
+
+let private asRawYamlMap (value: obj) : IDictionary<obj, obj> option =
+    match value with
+    | :? IDictionary<obj, obj> as dict -> Some dict
+    | _ -> None
+
+let private asRawYamlList (value: obj) : obj list option =
+    match value with
+    | :? IDictionary<obj, obj> -> None
+    | :? Collections.IEnumerable as items when not (value :? string) -> Some(items |> Seq.cast<obj> |> List.ofSeq)
+    | _ -> None
+
+let private tryGetRawYamlValue (dict: IDictionary<obj, obj>) (key: string) : obj option =
+    dict
+    |> Seq.tryFind (fun kv ->
+        match kv.Key with
+        | :? string as s -> String.Equals(s, key, StringComparison.Ordinal)
+        | _ -> false)
+    |> Option.map (fun kv -> kv.Value)
+
+let private unknownYamlKeys (allowed: Set<string>) (dict: IDictionary<obj, obj>) (label: string) : string list =
+    dict
+    |> Seq.choose (fun kv ->
+        match kv.Key with
+        | :? string as key when not (Set.contains key allowed) -> Some(sprintf "%s: unknown key \"%s\"" label key)
+        | _ -> None)
+    |> List.ofSeq
+
+let private allowedWordBudgetTopKeys: Set<string> =
+    set [ "surfaces"; "resolved_tree" ]
+
+let private allowedWordBudgetSurfaceKeys: Set<string> =
+    set [ "glob"; "target"; "warn"; "fail" ]
+
+let private allowedWordBudgetResolvedTreeKeys: Set<string> =
+    set [ "root"; "target"; "warn"; "fail" ]
+
+/// Rejects an unrecognized key inside the `governance-word-budget:` section
+/// of a repo-config.yml-shaped `data` string (FR-1.5) — no `exempt`,
+/// `allow`, `ignore`, `waiver`, `override`, or any other unrecognized key is
+/// admitted, mirroring `word_budget.rs`'s
+/// `#[serde(deny_unknown_fields)]` on `BudgetConfig`/`Surface`/
+/// `ResolvedTree`, reproduced here the same way `RepoConfig.fs`'s
+/// `checkNoUnknownHarnessKeys` reproduces it for `harness[]`: an
+/// independent walk of the raw YAML structure, since YamlDotNet has no
+/// built-in `deny_unknown_fields` equivalent
+/// [Repo-grounded — `word_budget.rs::BudgetConfig`].
+let checkNoUnknownWordBudgetKeys (data: string) : Result<unit, string> =
+    try
+        let root = rawFrontmatterDeserializer.Deserialize<obj>(data)
+
+        match asRawYamlMap root with
+        | None -> Ok()
+        | Some rootMap ->
+            match tryGetRawYamlValue rootMap "governance-word-budget" |> Option.bind asRawYamlMap with
+            | None -> Ok()
+            | Some section ->
+                let topFindings =
+                    unknownYamlKeys allowedWordBudgetTopKeys section "governance-word-budget"
+
+                let surfaceFindings =
+                    match tryGetRawYamlValue section "surfaces" |> Option.bind asRawYamlList with
+                    | None -> []
+                    | Some items ->
+                        items
+                        |> List.mapi (fun i item ->
+                            match asRawYamlMap item with
+                            | None -> []
+                            | Some m ->
+                                unknownYamlKeys
+                                    allowedWordBudgetSurfaceKeys
+                                    m
+                                    (sprintf "governance-word-budget.surfaces[%d]" i))
+                        |> List.collect id
+
+                let resolvedTreeFindings =
+                    match tryGetRawYamlValue section "resolved_tree" |> Option.bind asRawYamlMap with
+                    | None -> []
+                    | Some m ->
+                        unknownYamlKeys allowedWordBudgetResolvedTreeKeys m "governance-word-budget.resolved_tree"
+
+                match topFindings @ surfaceFindings @ resolvedTreeFindings with
+                | [] -> Ok()
+                | findings -> Error(String.concat "; " findings)
+    with ex ->
+        Error ex.Message
+
+/// Raw YAML-shaped intermediate DTOs. Deliberately NOT `private` — see
+/// `RepoConfig.fs`'s identically-motivated DTOs' doc comment: a `private`
+/// F# type's compiler-generated constructor is non-public even with
+/// `[<CLIMutable>]`, and YamlDotNet's default reflection-based object
+/// factory only ever calls `Activator.CreateInstance(type)` (the
+/// public-constructor overload) — a `private` version of these types builds
+/// and passes in an `dotnet fsi` script (which never marks the type
+/// private) but throws `MissingMethodException` at deserialization time
+/// once actually compiled into this assembly. These DTOs stay out of this
+/// module's public surface anyway: nothing outside `mergedBudgetConfig`
+/// ever constructs or returns one.
+[<CLIMutable>]
+type SurfaceDto =
+    { [<YamlMember(Alias = "glob")>]
+      Glob: string
+      [<YamlMember(Alias = "target")>]
+      Target: uint64
+      [<YamlMember(Alias = "warn")>]
+      Warn: uint64
+      [<YamlMember(Alias = "fail")>]
+      Fail: uint64 }
+
+[<CLIMutable>]
+type ResolvedTreeDto =
+    { [<YamlMember(Alias = "root")>]
+      Root: string
+      [<YamlMember(Alias = "target")>]
+      Target: uint64
+      [<YamlMember(Alias = "warn")>]
+      Warn: uint64
+      [<YamlMember(Alias = "fail")>]
+      Fail: uint64 }
+
+[<CLIMutable>]
+type BudgetConfigDto =
+    { [<YamlMember(Alias = "surfaces")>]
+      Surfaces: ResizeArray<SurfaceDto>
+      [<YamlMember(Alias = "resolved_tree")>]
+      ResolvedTree: ResolvedTreeDto }
+
+[<CLIMutable>]
+type RepoConfigWordBudgetDto =
+    { [<YamlMember(Alias = "governance-word-budget")>]
+      GovernanceWordBudget: BudgetConfigDto }
+
+let private wordBudgetDeserializer: IDeserializer =
+    DeserializerBuilder().IgnoreUnmatchedProperties().Build()
+
+let private toSurface (dto: SurfaceDto) : Surface =
+    { Glob = dto.Glob
+      Target = dto.Target
+      Warn = dto.Warn
+      Fail = dto.Fail }
+
+let private toResolvedTreeConfig (dto: ResolvedTreeDto) : ResolvedTree =
+    { Root = dto.Root
+      Target = dto.Target
+      Warn = dto.Warn
+      Fail = dto.Fail }
+
+let private toBudgetConfig (dto: BudgetConfigDto) : BudgetConfig =
+    { Surfaces = toWordBudgetList dto.Surfaces |> List.map toSurface
+      ResolvedTree = toResolvedTreeConfig dto.ResolvedTree }
+
+/// Loads the `governance-word-budget:` section of `repoRoot`'s
+/// `repo-config.yml`. Returns `Ok None` when `repo-config.yml` is absent or
+/// declares no such section; returns `Error` for an unreadable/unparseable
+/// file or a section carrying an unrecognized key (FR-1.5)
+/// [Repo-grounded — `word_budget.rs::merged_budget_config`].
+let mergedBudgetConfig (repoRoot: string) : Result<BudgetConfig option, string> =
+    let path = Path.Combine(repoRoot, "repo-config.yml")
+
+    if not (File.Exists path) then
+        Ok None
+    else
+        let data = File.ReadAllText path
+
+        match checkNoUnknownWordBudgetKeys data with
+        | Error message -> Error message
+        | Ok() ->
+            try
+                let dto = wordBudgetDeserializer.Deserialize<RepoConfigWordBudgetDto>(data)
+
+                match box dto with
+                | null -> Ok None
+                | _ ->
+                    match box dto.GovernanceWordBudget with
+                    | null -> Ok None
+                    | _ -> Ok(Some(toBudgetConfig dto.GovernanceWordBudget))
+            with ex ->
+                Error ex.Message
