@@ -36,7 +36,9 @@ responsibilities.
 
 ## Workflows
 
-- [rules-quality-gate](./rules-quality-gate.md) — Orchestrated quality gate that runs repo-rules-checker iteratively until zero findings, then applies fixes and re-validates. Use after changing conventions/principles/development practices, before major releases, periodically for repo health, or after adding/modifying agents.
+- [rules-quality-gate](./rules-quality-gate.md) — Bounded checker–fixer iterations: check,
+  apply validated fixes while in-scope findings remain, and revalidate until two consecutive checker
+  passes are clean or the iteration ceiling stops the run. Use after changing rules or agent sources.
 - [rules-propagation](./rules-propagation.md) — Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, and arming enforcement. Use when a decided rule must be written into the repository, or an existing rule superseded.
 
 ## Related Documentation
