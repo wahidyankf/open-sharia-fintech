@@ -21,6 +21,10 @@ Each commit should be **atomic** - meaning:
 - **Single purpose**: The commit has one clear, well-defined purpose
 - **Reversible**: The commit can be reverted without breaking other changes
 
+Atomicity follows the purpose, not the file type. Required tests, docs, specs, references,
+migration rollback, and generated mirrors complete the purpose and stay in the same commit. Choose
+the fewest commits satisfying these properties after the user authorizes the named change set.
+
 **Example of atomic commits:**
 
 ```

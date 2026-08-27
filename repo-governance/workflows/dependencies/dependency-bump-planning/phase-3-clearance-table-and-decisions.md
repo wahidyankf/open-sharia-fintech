@@ -17,7 +17,7 @@ Record the cutoff computation from Phase 0. Mark any KEV Fast-Track escalations 
 (e.g., `Path B → Path C (KEV Fast-Track)`) so the human checkpoint can review them first.
 
 Write all of this progressively to
-`generated-reports/repo-dependency-bump-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
+`generated-reports/dependency-bump-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
 (the `clearance-report` output) per the [Temporary Files convention](../../../development/infra/temporary-files.md).
 
 **Output**: `clearance-report` written. Bump table + clearance statuses finalized.

@@ -30,8 +30,10 @@ git pull --rebase origin main
 # If there are remote changes, Git replays your commits on top
 # Linear history: no merge commits
 
-# Review the result
-git log --oneline --graph -10
+# Identify and read the incoming range, then reconcile its task impact
+git log --oneline ORIG_HEAD..HEAD
+git diff ORIG_HEAD..HEAD
+# See Integration Diff Review Convention; rerun invalidated checks before push
 
 # Now push your changes
 git push origin main
@@ -63,3 +65,6 @@ git pull origin main
 - **Easier bisect**: `git bisect` works better with linear history
 - **Simpler to understand**: Each commit applies directly on top of previous
 - **Professional appearance**: Enterprise projects favor linear commit history
+
+Pulling with rebase establishes topology only. When commits landed, complete the
+[Integration Diff Review checkpoint](../integration-diff-review.md) before continuing or pushing.

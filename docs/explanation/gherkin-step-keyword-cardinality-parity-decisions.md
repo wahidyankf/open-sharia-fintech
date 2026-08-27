@@ -87,9 +87,9 @@ propagates identically through both skill packages in every repo.
 ### Row 6 — Quality-Gate Preflight (Deliberate Deviation)
 
 **Decision**: ose-public adds the `gherkin-keyword-cardinality` category to the existing
-Step 0.5 deterministic-preflight enumeration in `repo-rules-quality-gate.md`. ose-private
+Step 0.5 deterministic-preflight enumeration in `rules-quality-gate.md`. ose-private
 first ports the Step 0.5 deterministic-preflight section into its own
-`repo-rules-quality-gate.md`, then enumerates the new category.
+`rules-quality-gate.md`, then enumerates the new category.
 
 **Why the deviation is acceptable**: The sibling repo's quality-gate workflow predates the
 Step 0.5 preflight pattern (introduced in ose-public after the sibling repo was last

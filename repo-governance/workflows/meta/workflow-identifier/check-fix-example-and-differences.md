@@ -16,7 +16,7 @@ when_to_use: Use when comparing a proposed workflow against the *-check-fix patt
 
 ## Example Implementation
 
-See [Repository Rules Validation Workflow](../../repo/repo-rules-quality-gate.md) for canonical implementation.
+See [Repository Rules Validation Workflow](../../rules/rules-quality-gate.md) for canonical implementation.
 
 ## Key Differences from Basic Validation Workflow
 

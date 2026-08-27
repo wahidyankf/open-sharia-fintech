@@ -59,7 +59,7 @@ compatibility drift (use `repo-harness-compatibility-fixer`); README-specific fi
 ## Reference Documentation
 
 [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md),
-[repo-rules-quality-gate workflow](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md).
+[rules-quality-gate workflow](../../../repo-governance/workflows/rules/rules-quality-gate.md).
 Related: `repo-rules-checker` (generates the audit reports this agent processes), `repo-rules-maker`.
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -

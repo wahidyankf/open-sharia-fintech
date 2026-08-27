@@ -52,19 +52,23 @@ refactor(utils): simplify date formatting logic
 test(auth): add integration tests for login flow
 ```
 
-**Split Commits by Domain**:
+**Thematic Commit Composition**:
 
-- Different types → separate commits
-- Different scopes → separate commits
-- Different concerns → separate commits
+- Do not stage or commit until the user explicitly authorizes a named change set.
+- Once authorized, choose boundaries without another prompt unless the user prescribed them or a
+  split would exceed the authorized scope.
+- Use the fewest build-valid, independently reviewable and revertible commits, one coherent purpose
+  each.
+- Keep required tests, docs, specs, references, migrations and rollback, and generated mirrors with
+  the change they complete. Split only independent concerns.
 
-**Example** (wrong):
+**Example** (wrong — unrelated purposes):
 
 ```bash
 git commit -m "feat(auth): add login + fix(api): fix bug + docs: update readme"
 ```
 
-**Example** (correct):
+**Example** (correct — independent purposes):
 
 ```bash
 git commit -m "feat(auth): add OAuth2 login support"
@@ -84,13 +88,13 @@ git commit -m "docs(readme): update installation instructions"
 
 **Commit Permission**:
 
-- One-time only (not continuous)
-- User says "commit these changes" → you commit once
-- User does NOT say "commit everything I ask you to do" → don't assume
+- Authorization is scoped to the named change set, not continuous.
+- After authorization, the agent owns thematic boundaries unless the user prescribes them.
+- A boundary may not pull in work beyond the authorized scope.
 
 **Why This Matters**:
 
 - User controls git history
 - Prevents unwanted commits
-- User decides commit boundaries
+- User may prescribe commit boundaries; otherwise the agent applies the thematic boundary test
 - Respects user's workflow preferences

@@ -41,8 +41,10 @@ preexisting ...`)
 5. **Thematic Commits Were Made**
    - Review git log for the plan execution period
    - Verify commits follow Conventional Commits format
-   - Verify different concerns are in separate commits (not one giant commit)
-   - Giant monolithic commits: HIGH finding
+   - Verify each commit has one coherent purpose, is build-valid and independently revertible, and
+     includes its required tests/docs/specs/references/migrations/generated mirrors
+   - Verify independent concerns are separate without categorical splitting by file type or domain
+   - Monolithic independent concerns or incomplete intermediate commits: HIGH finding
    - Missing conventional commit format: MEDIUM finding
 
 6. **Environment Setup Was Performed**
@@ -56,6 +58,6 @@ preexisting ...`)
 - CI not passing: **CRITICAL**
 - Delivery items not ticked: **CRITICAL**
 - Preexisting issues not fixed: **HIGH**
-- Monolithic commits: **HIGH**
+- Monolithic independent concerns or incomplete intermediate commits: **HIGH**
 - Missing implementation notes: **MEDIUM**
 - Missing setup evidence: **MEDIUM**

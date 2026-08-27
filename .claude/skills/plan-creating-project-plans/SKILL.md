@@ -23,6 +23,16 @@ be answered from repository evidence. Do not run a separate post-write grill; us
 evidence audit in the applicable plan workflow. See
 [mandatory-grilling.md](reference/mandatory-grilling.md).
 
+## Minimal Sufficiency in Plans
+
+Treat the requested outcome, explicit non-goals and out-of-scope items, acceptance criteria, and
+required quality gates as the plan's boundary and stop condition. When a plan introduces code, a
+dependency, abstraction, validator, automation, infrastructure, or another lasting mechanism,
+`tech-docs.md` (or a single-file plan's `Technical Approach`) must name its concrete need and explain
+why existing mechanisms are insufficient. Choose the smallest responsible design that satisfies
+every applicable rule; mandatory safeguards remain part of sufficiency. See
+[Plans Best Practices](../../../repo-governance/conventions/structure/plans/best-practices.md#apply-minimal-sufficiency).
+
 ## Reference Modules
 
 - [mandatory-grilling.md](reference/mandatory-grilling.md) — decision grilling for unresolved material choices

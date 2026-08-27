@@ -37,13 +37,20 @@ than a failing gate. Look for the thread before re-running anything.
 
 One run touches one repository. Where the propagated rule is portable — governance, agent, or skill
 guidance rather than something specific to this repository's contents — the run **records** an
-obligation naming the sibling repository, in the PR body and as a durable note.
+obligation naming the sibling repository, in the PR body and as a durable note. The obligation also
+records the parity objective slug, shared worktree basename, and corresponding short-lived branch
+name (or mode-based `not applicable`) established at Step 1. The sibling run reuses those
+names. If an identity has become unavailable, it proves an existing identity belongs to the same
+delivery or selects one common alternative across both repositories before mutation.
 
 Recorded, not executed. The sibling's propagation is its own delivery, and a rule half-applied
 across two repositories is worse than a rule applied to one and known to be owed to the other.
 
 Where the rule is genuinely local, record `sibling-obligation: none` with the reason. Silence here
 is indistinguishable from an obligation that was overlooked.
+
+Before delivery, assert that the current worktree basename and branch match the recorded identity.
+This check remains one-run/one-repository and does not mutate the sibling.
 
 ## After the Merge
 

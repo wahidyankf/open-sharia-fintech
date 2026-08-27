@@ -34,7 +34,7 @@ These principles define **WHY we value fundamental approaches** that transcend s
 ## Principles Implemented/Respected
 
 - [Deliberate Problem-Solving](./deliberate-problem-solving.md) — Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them Use when about to implement a solution and need to check whether assumptions, alternatives, or confusion have been surfaced first.
-- [Simplicity Over Complexity](./simplicity-over-complexity.md) — Favor minimum viable abstraction and avoid over-engineering - start simple, add complexity only when proven necessary Use when deciding how much abstraction, configuration, or structure a solution needs before writing it.
+- [Simplicity Over Complexity](./simplicity-over-complexity.md) — Choose the smallest responsible change that satisfies the outcome and all applicable rules without unnecessary lasting mechanisms. Use when deciding whether a mechanism is needed, choosing its shape, or deciding when work is complete.
 - [Root Cause Orientation](./root-cause-orientation.md) — Find root causes and fix them properly - no temporary fixes, no laziness, senior engineer standards Use when diagnosing a bug or planning a fix and need to check whether the change addresses the actual cause with minimal, senior-engineer-approved scope.
 
 ## Related Documentation

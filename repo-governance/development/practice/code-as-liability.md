@@ -23,8 +23,9 @@ outlast the person who had it, written where the next reader will find it.
 
 ## Principles Implemented/Respected
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: that
-  principle governs the _shape_ of code; this practice governs whether it should exist at all.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: its
+  minimal-sufficiency test governs whether any lasting mechanism is necessary; this practice is
+  the code-specific obligation for recording why added executable code earned its maintenance cost.
 - **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: the
   cheapest fix for maintenance cost is the code never written, which requires deciding before typing.
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: the

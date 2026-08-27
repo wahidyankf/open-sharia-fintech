@@ -1,6 +1,6 @@
 ---
 title: "Integration Diff Review Convention"
-description: Read the full incoming diff and assess its impact on in-flight work whenever foreign commits land on the current branch.
+description: Read every newly integrated commit's full diff and reconcile its impact before the next task action.
 category: explanation
 subcategory: development
 tags:
@@ -11,17 +11,16 @@ tags:
   - merge
   - review
 created: 2026-08-06
-when_to_use: Use immediately after a rebase, pull, merge, cherry-pick, or fast-forward lands commits you did not author.
+when_to_use: Use immediately after a rebase, pull, merge, cherry-pick, or fast-forward introduces commits not previously on the current branch.
 ---
 
 # Integration Diff Review Convention
 
-Any operation that brings commits from another branch or remote into the branch you are currently
-working on — `git rebase`, `git pull`, `git merge`, `git cherry-pick`, or a fast-forward of local
-`main` after a sibling worktree pushed ahead of it — changes the ground you are standing on. A clean
-merge with zero textual conflicts is not evidence that the incoming changes are safe to ignore. Before
-continuing the interrupted work, you MUST read the incoming diff in full and think hard about what
-changed and what it means for what you were doing — not just check that git reports no conflict markers.
+Any Git integration that introduces commits not previously present on the current branch changes the
+ground under the active task. Branch membership, not authorship, defines an incoming commit. A clean
+integration with zero textual conflicts does not prove that the incoming changes are irrelevant.
+Before the next task action, identify the incoming range, read its full diff, and reconcile its effect
+on the current task, whole plan, active assumptions, file-touch ledger, and verification state.
 
 ## Contents
 
@@ -38,3 +37,10 @@ changed and what it means for what you were doing — not just check that git re
   assumption that makes concurrent, unreviewed integration events likely.
 - [CI Post-Push Verification Convention](../workflow/ci-post-push-verification.md) — the parallel
   post-push discipline: verify after you push out, review after you pull in.
+
+## Enforcement Disposition
+
+**Unenforced by decision.** Git can expose the incoming range, but a repository-local check cannot
+observe whether a contributor understood its semantic impact or adjusted every affected assumption,
+plan step, ledger boundary, and verification claim. Review and workflow checkpoints enforce this
+judgment obligation.

@@ -19,7 +19,7 @@ Feature: Governance of the word-budget rule
 
   Scenario: The quality-gate workflow lists the validator as a fourth preflight category
     Given the plan is complete
-    When I read "repo-governance/workflows/repo/repo-rules-quality-gate.md"
+    When I read "repo-governance/workflows/rules/rules-quality-gate.md"
     Then "governance-word-budget" is named among the Step 0.5 categories
 
   Scenario: The preflight envelope carries the governance-word-budget category

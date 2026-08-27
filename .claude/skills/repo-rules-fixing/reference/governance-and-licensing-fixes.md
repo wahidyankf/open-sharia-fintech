@@ -26,6 +26,12 @@ human judgment if the missing piece requires new authoring (not just linking).
 detail stated in a repo-wide convention). Fix: move the content to its correct layer, leave a
 pointer at the original location.
 
+**Validated Consolidation** — for any `Propagation Consolidation` finding, reconstruct the full
+subject-scoped inventory of rule and discoverability surfaces. For each surface, record its
+canonical home and exactly one verdict: keep, amend, merge, delete, relocate, or supersede. Then act
+on every verdict while preserving each distinct obligation and necessary discoverability path;
+record the rationale for keep. This never permits deleting a document to resolve a contradiction.
+
 ## Important Guidelines for Rules Fixes
 
 - Never delete a governance document to resolve a contradiction — reconcile the wording instead.

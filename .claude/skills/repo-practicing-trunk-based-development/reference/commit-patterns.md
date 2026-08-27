@@ -2,7 +2,9 @@
 
 ## Small, Frequent Commits
 
-**Target**: Multiple commits per day, each < 200 lines changed
+After the user explicitly authorizes a named change set, compose the **fewest** commits that are
+each build-valid, independently reviewable, and independently revertible. There is no commits-per-day
+or line-count quota.
 
 **Rationale**: Small commits are:
 
@@ -11,31 +13,29 @@
 - Easier to understand in git history
 - Lower risk of conflicts
 
-**Example workflow**:
+Keep required implementation, tests, documentation, specifications, references, migrations and
+rollback, and generated mirrors in the commit containing the purpose they complete.
+
+**Example workflow** (one authorized change set containing two independent purposes):
 
 ```bash
-# Commit 1: Add data model
-git add src/models/user.ts
-git commit -m "feat(models): add User data model"
+# Commit 1: Complete user-profile purpose, including its completion artifacts
+git add src/models/user.ts src/models/user.test.ts docs/user-profile.md
+git commit -m "feat(user): add user profile model"
 git push origin <plan-branch>
 
-# Commit 2: Add repository interface
-git add src/repositories/user-repository.ts
-git commit -m "feat(repositories): add UserRepository interface"
-git push origin <plan-branch>
-
-# Commit 3: Add service layer
-git add src/services/user-service.ts
-git commit -m "feat(services): add UserService with CRUD operations"
+# Commit 2: Independent date-format repair
+git add src/utils/date.ts src/utils/date.test.ts
+git commit -m "fix(date): handle daylight-saving transition"
 git push origin <plan-branch>
 ```
 
 **NOT**:
 
 ```bash
-# Bad: One massive commit after 3 days
+# Bad: unrelated purposes bundled only to reduce commit count
 git add src/*
-git commit -m "feat(user): add complete user management system"
+git commit -m "feat: add user profile and fix date formatting"
 git push origin <plan-branch>
 ```
 
@@ -46,10 +46,11 @@ git push origin <plan-branch>
 **Rules**:
 
 - ✅ Commit compiles and passes tests
-- ✅ Commit includes related changes only
+- ✅ Commit contains one coherent purpose and every required completion artifact
 - ✅ Commit message describes change clearly
 - ❌ Commit breaks build (fails tests)
 - ❌ Commit mixes unrelated changes
+- ❌ Commit splits by file type, directory, or Conventional Commit type alone
 - ❌ Commit message is vague
 
 ## Conventional Commits

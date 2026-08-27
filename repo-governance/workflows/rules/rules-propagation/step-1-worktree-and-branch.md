@@ -19,6 +19,16 @@ isolation buys.
 
 Either way the run ends at a PR. `current` changes where the work happens, not how it is delivered.
 
+## Portable-Rule Parity Identity
+
+When Step 2 will classify the rule as portable to the parity sibling, record the parity objective
+slug, shared worktree basename, and corresponding short-lived branch mapping before mutation. Reuse
+the current run's names in the sibling obligation. If a name is unavailable in either repository,
+prove an existing identity belongs to the same delivery or choose one common alternative before
+writing. Preserve the one-run/one-repository boundary: this run records the sibling's names but does
+not create or mutate its worktree or branch. See
+[Cross-Repository Parity Identity](../../../development/workflow/cross-repository-parity-identity.md).
+
 ## Discipline That Makes `current` Safe
 
 Working beside unrelated changes is safe only when the run can prove which changes are its own.

@@ -45,5 +45,6 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 
 - [Self-Improvement Loop](./agent-workflow-orchestration/self-improvement-loop.md) — lessons file.
 - [Task Management](./agent-workflow-orchestration/task-management.md) — planning, tracking, granular items.
+- [Continuation-State Integrity](./agent-workflow-orchestration/continuation-state-integrity.md) — preserves active user-established rule decisions across compaction and handoff.
 - [Anti-Patterns](./agent-workflow-orchestration/anti-patterns.md) — orchestration mistakes.
 - [References](./agent-workflow-orchestration/references.md) — related conventions.

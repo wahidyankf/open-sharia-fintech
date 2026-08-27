@@ -30,7 +30,7 @@ run's paths are absent from the failure set. A pre-existing failure is not this 
 
 ## 3. Composed Quality Gate
 
-Run [repo-rules-quality-gate](../repo-rules-quality-gate.md) at the run's `mode`. This is where
+Run [rules-quality-gate](../rules-quality-gate.md) at the run's `mode`. This is where
 repository-wide duplication, contradiction, and traceability findings surface — the ones Step 6's
 subject-scoped sweep deliberately did not look for.
 

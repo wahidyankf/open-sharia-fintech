@@ -47,3 +47,7 @@ shape/naming/mirror parity belong to `rhino-cli harness` and `repo-harness-compa
    sections; every Workflow needs correct agent references.
 5. **Layer Coherence**: Vision→Principles→Conventions/Development→Agents→Workflows, each layer
    properly governing/implementing the layer(s) below.
+6. **Propagation Consolidation**: for each changed rule subject, verify every rule and
+   discoverability surface has a keep, amend, merge, delete, relocate, or supersede verdict and a
+   surviving canonical home. A kept redundancy needs a rationale; merge/delete must preserve every
+   distinct obligation and necessary discovery path. Do not demand repository-wide cleanup.

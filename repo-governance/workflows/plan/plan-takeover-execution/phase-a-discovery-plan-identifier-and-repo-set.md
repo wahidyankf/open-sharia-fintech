@@ -6,6 +6,12 @@ when_to_use: Use when starting discovery for a plan-takeover-execution run, befo
 
 # Phase A — Discover Every Trace of This Plan: Plan-Identifier and Repo Set (Sequential per Repo, Hard Gate)
 
+**Continuation-state gate (before A0).** Before delivery state or any resumed action, every takeover
+and continuation — handover or not — re-reads canonical instructions and reconciles active rule
+decisions under
+[Continuation-State Integrity](../../../development/agents/agent-workflow-orchestration/continuation-state-integrity.md).
+Stop on unresolved conflicts.
+
 **A0. Resolve the plan-identifier.** `plan-path` may point at `plans/backlog/<slug>/`,
 `plans/in-progress/<slug>/`, a dated `plans/done/<date>__<slug>/`, or — if no local folder exists at
 all in the current repo — a bare slug/plan-identifier string. The plan-identifier is the folder's
@@ -27,6 +33,9 @@ be stale the moment another actor has touched the plan since it was written, so 
 for A2's own ground-truth verification. Nothing found here is itself evidence; treat it exactly as you
 would a colleague's verbal summary — useful context, independently checked before acting on it. Absence
 of a handover document is a non-event, not an anomaly — most plans will never have one.
+
+Add handover rule decisions to this record and reconcile again before A1; a handover never triggers
+or replaces the gate.
 
 **A1. Resolve the candidate repo set.** Always include: the current repo, plus `ose-private`
 whenever it exists as a sibling checkout reachable from the same parent directory as

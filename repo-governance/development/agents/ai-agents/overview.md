@@ -22,7 +22,7 @@ AI agents in this project are specialized AI assistants defined in the platform 
 - **Defined tool permissions** limiting what operations it can perform
 - **Clear responsibilities** to avoid overlap with other agents
 - **Integration with project conventions** through references to AGENTS.md and convention documents
-- **Unlimited token budget** - Focus on execution quality, not token usage (reliable compaction mechanism handles context management)
+- **Durable execution state** - Focus on quality while persisting active decisions and progress across compaction
 
 ## Why We Need Agent Conventions
 

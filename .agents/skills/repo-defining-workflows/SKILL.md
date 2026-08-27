@@ -72,7 +72,7 @@ description: "Workflow name: detailed description"
 **Examples**:
 
 - `plan-quality-gate.md` - Plan quality gate workflow
-- `repo-rules-quality-gate.md` - Repo rules quality gate workflow
+- `rules-quality-gate.md` - Repo rules quality gate workflow
 
 ## Quality Checklist
 

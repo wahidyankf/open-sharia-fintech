@@ -51,9 +51,9 @@ a word budget; READMEs need annotated indexes.
 
 ## Git Workflow
 
-`main` is the sole integration target; `prod-*`/`stag-*` deploy targets, never committed
-directly. Conventional Commits, imperative, no period. After a rebase/pull/merge lands foreign
-commits, read the full diff first.
+`main` is the sole integration target; never commit directly to `prod-*`/`stag-*`. Conventional
+Commits: imperative, no period. After new commits land, read their full diff; reconcile task, plan,
+assumptions, ledger, and verification before acting.
 
 **See**: [commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
 
@@ -67,12 +67,12 @@ none.
 
 ## Conventions
 
-Deliberate Problem-Solving, Simplicity Over Complexity, Root Cause Orientation, Accessibility
-First, No Time Estimates. TDD required. Specs & Gherkin required for code changes. Every bug fix
-carries a regression test; every plan ends with Knowledge Capture. New code states its
-cost/benefit in the PR body; tests exempt.
+Follow the [Principles Index](./repo-governance/principles/README.md). Code changes require TDD and
+Specs/Gherkin; bug fixes require regression tests. Plans end with Knowledge Capture. PR bodies
+state new-code cost/benefit; tests exempt.
 
-**See**: [Principles Index](./repo-governance/principles/README.md)
+Use English for repository-authored material and developer-facing source text; declared localized
+content and user-facing values are exempt. See [Working Language](./repo-governance/conventions/writing/repository-working-language.md).
 
 ### Reproducible Environments
 
@@ -83,10 +83,10 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 ### Agent Workflow Orchestration
 
-Open the harness-native task list before any task, conversational included; keep it live. Plan
-mode for non-trivial tasks. N+1 agents (default N=3). File-touch ledger reconciled against
-`git status`. `.claude/` hand-authored; mirrors via `npm run generate:bindings`, same commit. Poll
-CI every 2 minutes, never `gh run watch`.
+Open task list before each task; keep live. Plan non-trivial work. Preserve active
+user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
+file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. Poll CI every 2
+minutes; never `gh run watch`.
 
 **See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
 
@@ -126,3 +126,5 @@ Independent/family-only: [BeaverNest](https://github.com/wahidyankf/beaver-nest)
 Vendor-specific; the audit scanner skips this section. `repo-config.yml` `harness:` is authoritative.
 
 **See**: [platform catalog](./docs/reference/platform-bindings.md)
+
+@RTK.md

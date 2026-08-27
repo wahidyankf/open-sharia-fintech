@@ -62,6 +62,14 @@ For any task, agents MUST maintain the harness's native task list to track progr
 
 This provides real-time progress tracking that survives context compaction and makes the agent's work observable to the user without needing to read files.
 
+## Preserve Active Rule Decisions
+
+Immediately add every unsuperseded user-established repository-rule decision constraining the work
+to durable task or continuation state. Record its operative statement, scope, source, and status;
+reproduce active entries in every compaction summary and handoff. Before acting after continuation,
+re-read canonical instructions and reconcile the restored entries under
+[Continuation-State Integrity](./continuation-state-integrity.md).
+
 ## Document Results
 
 Add a review section to `local-tmp/todo.md` after completing the task. The review captures:

@@ -48,11 +48,13 @@ Customize based on the plan's target projects and tech stacks.
 ```markdown
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits
+- [ ] Do not stage or commit until the user explicitly authorizes the named change set
+- [ ] Once authorized, use the fewest build-valid, independently reviewable and revertible commits,
+      one coherent purpose each; no extra boundary prompt unless the user prescribed one
 - [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
-- [ ] Split different domains/concerns into separate commits
-- [ ] Do NOT bundle unrelated fixes into a single commit
-- [ ] Example: separate `fix(lint): ...` from `feat(api): ...` commits
+- [ ] Keep required tests, docs, specs, references, migrations/rollback, and generated mirrors with
+      the change they complete; split independent concerns
+- [ ] Do not extend a commit beyond the user-authorized change set
 ```
 
 ### Confidence Assessment

@@ -16,8 +16,8 @@ Every rule in the batch satisfies **all** of:
 - Normalized into a falsifiable statement with both observations recorded.
 - Placed on a decided surface, with the placement recorded.
 - Free of unresolved contradiction; every supersession recorded.
-- Subject-scoped tidy complete, with a verdict recorded for every surface examined — including the
-  surfaces that needed no change.
+- Subject-scoped consolidation complete: every rule surface has a keep, amend, merge, delete,
+  relocate, or supersede verdict, plus a surviving canonical home and any keep rationale.
 - Carrying one of the three enforcement dispositions.
 - Verification clean and the ledger reconciled.
 - PR open with its checks green.

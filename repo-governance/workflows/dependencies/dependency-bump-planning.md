@@ -1,6 +1,6 @@
 ---
-name: repo-dependency-bump-planning
-title: "repo-dependency-bump-planning"
+name: dependency-bump-planning
+title: "dependency-bump-planning"
 description: "Surveys monorepo dependency manifests, classifies bumps per the Dependency Bump Policy, and produces a validated backlog plan — never edits a manifest itself."
 when_to_use: "Use for a dependency-hygiene sweep, a pre-release bump snapshot, or an LTS-line upgrade."
 goal: >
@@ -44,7 +44,7 @@ inputs:
 outputs:
   - name: clearance-report
     type: file
-    pattern: generated-reports/repo-dependency-bump-planning__*__report.md
+    pattern: generated-reports/dependency-bump-planning__*__report.md
     description: Inventory + Security & Functional Clearance Status table + cutoff computation. Always written.
   - name: plan-path
     type: string
@@ -69,16 +69,16 @@ delivery checklist.
 
 ## Contents
 
-- [Execution Mode](./repo-dependency-bump-planning/execution-mode.md) — Direct Orchestration.
-- [When to Use](./repo-dependency-bump-planning/when-to-use.md) — the three trigger scenarios.
-- [Phase 0: Pre-flight](./repo-dependency-bump-planning/phase-0-pre-flight.md) — clean tree, cutoff, scope.
-- [Phase 1: Inventory](./repo-dependency-bump-planning/phase-1-inventory.md) — enumerate every manifest.
-- [Phase 2: Candidate Discovery](./repo-dependency-bump-planning/phase-2-candidate-discovery-and-classification.md) — path/CVE/KEV/EPSS research.
-- [Phase 3: Clearance Table](./repo-dependency-bump-planning/phase-3-clearance-table-and-decisions.md) — assemble and write the report.
-- [Phase 4: Human Checkpoint](./repo-dependency-bump-planning/phase-4-human-checkpoint.md) — the hard approval gate.
-- [Phase 5: Backlog Plan Establishment](./repo-dependency-bump-planning/phase-5-backlog-plan-establishment.md) — invoke plan-planning.
-- [Phase 6: Hand-back](./repo-dependency-bump-planning/phase-6-hand-back.md) — final summary, re-run reminder.
-- [Gherkin Success Criteria](./repo-dependency-bump-planning/gherkin-success-criteria.md) — the three scenarios.
-- [Related Documents](./repo-dependency-bump-planning/related-documents.md) — policy, workflows, agents, registers.
-- [Principles Implemented/Respected](./repo-dependency-bump-planning/principles-implemented-respected.md) — traceability.
-- [Conventions Implemented/Respected](./repo-dependency-bump-planning/conventions-implemented-respected.md) — traceability.
+- [Execution Mode](./dependency-bump-planning/execution-mode.md) — Direct Orchestration.
+- [When to Use](./dependency-bump-planning/when-to-use.md) — the three trigger scenarios.
+- [Phase 0: Pre-flight](./dependency-bump-planning/phase-0-pre-flight.md) — clean tree, cutoff, scope.
+- [Phase 1: Inventory](./dependency-bump-planning/phase-1-inventory.md) — enumerate every manifest.
+- [Phase 2: Candidate Discovery](./dependency-bump-planning/phase-2-candidate-discovery-and-classification.md) — path/CVE/KEV/EPSS research.
+- [Phase 3: Clearance Table](./dependency-bump-planning/phase-3-clearance-table-and-decisions.md) — assemble and write the report.
+- [Phase 4: Human Checkpoint](./dependency-bump-planning/phase-4-human-checkpoint.md) — the hard approval gate.
+- [Phase 5: Backlog Plan Establishment](./dependency-bump-planning/phase-5-backlog-plan-establishment.md) — invoke plan-planning.
+- [Phase 6: Hand-back](./dependency-bump-planning/phase-6-hand-back.md) — final summary, re-run reminder.
+- [Gherkin Success Criteria](./dependency-bump-planning/gherkin-success-criteria.md) — the three scenarios.
+- [Related Documents](./dependency-bump-planning/related-documents.md) — policy, workflows, agents, registers.
+- [Principles Implemented/Respected](./dependency-bump-planning/principles-implemented-respected.md) — traceability.
+- [Conventions Implemented/Respected](./dependency-bump-planning/conventions-implemented-respected.md) — traceability.

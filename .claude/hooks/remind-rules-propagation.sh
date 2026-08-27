@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PreToolUse reminder: a write to any repo-rules surface should go through the
-# repo-rules-propagation workflow rather than an ad-hoc edit.
+# rules-propagation workflow rather than an ad-hoc edit.
 #
 # WARN-ONLY BY DESIGN. This hook never denies and never grants: it exits 0 on every path so it
 # cannot deadlock the propagation workflow's own Step 6 writes, and it emits no permission
@@ -87,9 +87,9 @@ if is_rule_surface "$rel"; then
 	# regardless of quoting or newlines in the text.
 	reminder="$(
 		cat <<'TXT'
-[repo-rules-propagation] this write targets a repo-rules surface.
+[rules-propagation] this write targets a repo-rules surface.
 
-Rule work runs through repo-governance/workflows/repo/repo-rules-propagation.md, not an ad-hoc
+Rule work runs through repo-governance/workflows/rules/rules-propagation.md, not an ad-hoc
 edit: normalize the rule so it is falsifiable, scan for contradictions under layer-aware
 precedence before writing, place it on the narrowest surface that binds (evicting from the
 instruction surface if admitted there), tidy every other surface stating its subject, and record

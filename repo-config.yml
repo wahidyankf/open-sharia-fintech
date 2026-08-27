@@ -100,10 +100,11 @@ harness:
       - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
+      - RTK.md
     catalog:
       platform: OpenAI Codex CLI
       reads-agents-md: "Yes (since Apr 2025)"
-      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
+      instruction-surface: "`AGENTS.md`, `RTK.md`, `AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
       mcp-config: "`.codex/config.toml` `[mcp_servers]`[^mcp]"
       agent-surface: "`.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents]"
       skills-surface: "`.agents/skills/`[^skills]"
@@ -114,6 +115,7 @@ harness:
       - { path: .codex/config.toml, class: vendored, reason: Nx tooling config; emitter owns the delimited region only }
       - { path: .codex/ci-monitor-subagent.toml, class: vendored, reason: Nx tooling file config.toml points at }
       - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
+      - { path: RTK.md, class: source, reason: upstream Codex RTK instruction surface }
       - { path: .agents/skills/cavecrew, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/caveman, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/caveman-commit, class: vendored, reason: third-party plugin skill; no in-repo source }
@@ -129,7 +131,7 @@ harness-catalog:
   # a generated timestamp would change on every run and make the drift guard
   # fire on its own output.
   document: docs/reference/platform-bindings.md
-  verified: 2026-08-19
+  verified: 2026-08-26
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
@@ -282,7 +284,7 @@ specs:
 # FR-1.5: no exempt/allow/ignore/waiver/override key is ever permitted in this
 # block, enforced by BudgetConfig's deny_unknown_fields schema.
 #
-# The seven instruction surfaces repeat the same 400/500/500 triple. That
+# The eight instruction surfaces repeat the same 400/500/500 triple. That
 # repetition is deliberate, not an oversight: YAML merge keys (`<<: *anchor`)
 # are NOT an option here — serde_norway does not expand them, so
 # `- <<: *instruction-budget` deserializes as `surfaces[N]: missing field
@@ -320,6 +322,10 @@ governance-word-budget:
       warn: 500
       fail: 500
     - glob: "CLAUDE.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: "RTK.md"
       target: 400
       warn: 500
       fail: 500
@@ -857,6 +863,8 @@ gates:
       exempt:
         - "*__linkedin__*.md"
         - "CONTRIBUTING.md"
+        - "pull_request_template.md"
+        - "RTK.md"
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }

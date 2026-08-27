@@ -22,6 +22,8 @@ when_to_use: Use when checking whether a resumed task actually reviewed its inco
 - Treating "no conflict markers" as proof the integration is safe to ignore.
 - Reading only the commit subject lines (`git log --oneline`) and skipping the actual diff content.
 - Assuming a fast-forward is inherently safe because it involved no merge commit.
+- Adding every incoming path to the actor-owned file-touch ledger without subsequently mutating it.
+- Trusting verification completed against the old `HEAD` after its inputs changed.
 
 ## Examples
 
@@ -36,8 +38,8 @@ Reading diff:
 Found: repo-governance/development/quality/code.md now requires an additional
 pre-commit check that my current task's new script doesn't yet satisfy.
 
-Adjusting: updating the script before continuing the original task, rather
-than pushing straight to a failing hook.
+Adjusting: updating the plan step and script, leaving untouched incoming paths
+off my ledger, and rerunning the invalidated governance check before continuing.
 ```
 
 ### FAIL: Resuming on autopilot after a clean rebase
@@ -64,3 +66,14 @@ file already uses.
 
 Adjusting: updating the import in my new file before committing.
 ```
+
+### FAIL: Pulling then pushing without impact reconciliation
+
+```text
+Agent: Pulled with rebase and the history is linear.
+
+Pushing now.
+```
+
+The linear history proves topology only. It does not prove that the incoming diff preserved the
+task's assumptions or the validity of checks run against the previous `HEAD`.

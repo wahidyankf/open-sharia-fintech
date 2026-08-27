@@ -20,7 +20,7 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **When to use**:
 
-- Repository-wide validation (repo-rules-quality-gate)
+- Repository-wide validation (rules-quality-gate)
 - Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
 - Pre-release quality gates
 - Periodic health checks

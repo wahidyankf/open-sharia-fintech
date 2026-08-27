@@ -12,7 +12,7 @@ Feature: repository dependency bump planning
 Scenario: Planning sweep produces a backlog plan without touching manifests
   Given the ose-public working tree is clean
   When the workflow runs to completion
-  Then a clearance report appears under generated-reports/repo-dependency-bump-planning__*__report.md
+  Then a clearance report appears under generated-reports/dependency-bump-planning__*__report.md
   And a plan exists at plans/backlog/dependency-bump/
   And the backlog plan passes plan-quality-gate at strict mode
   And no package.json, Cargo.toml, rust-toolchain.toml, go.mod, *.fsproj, Dockerfile, docker-compose*.yml, .github/ action.yml/workflow, or lockfile is modified

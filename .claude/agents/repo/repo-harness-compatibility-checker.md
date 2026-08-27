@@ -43,7 +43,7 @@ binding-file conformance → finalize), and the finding format template.
 **Use when**: after creating/modifying agents in `.claude/agents/`; after modifying governance
 prose, `AGENTS.md`, or `CLAUDE.md`; after modifying binding-sync logic; periodically checking
 catalog accuracy; after a harness publishes a breaking config change; as part of the
-`repo-harness-compatibility-quality-gate` workflow.
+`harness-compatibility-quality-gate` workflow.
 
 **Do NOT use for**: fixing drift (use `repo-harness-compatibility-fixer`); repository-wide rules
 consistency (use `repo-rules-checker`); general web research unrelated to harness config (use
@@ -55,7 +55,7 @@ consistency (use `repo-rules-checker`); general web research unrelated to harnes
 [Platform Bindings Catalog](../../../docs/reference/platform-bindings.md),
 [Governance Vendor-Independence](../../../repo-governance/conventions/structure/governance-vendor-independence.md),
 [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md),
-[repo-harness-compatibility-quality-gate workflow](../../../repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md).
+[harness-compatibility-quality-gate workflow](../../../repo-governance/workflows/harness/harness-compatibility-quality-gate.md).
 Related: `repo-harness-compatibility-fixer`, `web-researcher`, `repo-rules-checker`.
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -

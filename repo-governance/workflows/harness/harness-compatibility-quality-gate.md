@@ -1,6 +1,6 @@
 ---
-name: repo-harness-compatibility-quality-gate
-title: "repo-harness-compatibility-quality-gate"
+name: harness-compatibility-quality-gate
+title: "harness-compatibility-quality-gate"
 description: "Validates internal cross-vendor parity and external harness-conformance drift, then fixes iteratively until zero findings."
 when_to_use: "Use after modifying agents, governance prose, or binding-sync logic; after a harness breaking change; or as a scheduled hygiene audit."
 goal: "Validate internal cross-vendor parity invariants and external harness-conformance drift, then fix iteratively until zero findings achieved"
@@ -60,23 +60,23 @@ breaking change, as a scheduled hygiene audit, or when onboarding a new harness.
 
 ## Contents
 
-- [Execution Mode](./repo-harness-compatibility-quality-gate/execution-mode.md) — invocation.
-- [Complementary Anti-Drift Gates](./repo-harness-compatibility-quality-gate/complementary-anti-drift-gates.md) — gates vs. workflow.
-- [Research Delegation](./repo-harness-compatibility-quality-gate/research-delegation.md) — web-researcher use.
-- [Step 1: Initial Validation](./repo-harness-compatibility-quality-gate/step-1-initial-validation.md) — Phase 0/1 checks.
-- [Step 2: Check for Findings](./repo-harness-compatibility-quality-gate/step-2-check-for-findings.md) — threshold counting.
-- [Step 3: Apply Fixes](./repo-harness-compatibility-quality-gate/step-3-apply-fixes.md) — auto vs. human scope.
-- [Step 4: Re-Validate](./repo-harness-compatibility-quality-gate/step-4-re-validate.md) — confirms fixes.
-- [Step 5: Iteration Control](./repo-harness-compatibility-quality-gate/step-5-iteration-control.md) — loop logic.
-- [Step 6: Finalization](./repo-harness-compatibility-quality-gate/step-6-finalization.md) — status reporting.
-- [Termination Criteria](./repo-harness-compatibility-quality-gate/termination-criteria.md) — pass/partial/fail.
-- [Success Criteria — Part 1](./repo-harness-compatibility-quality-gate/success-criteria-gherkin.md) — Phase 0/1, sync fix.
-- [Success Criteria — Part 2](./repo-harness-compatibility-quality-gate/success-criteria-gherkin-continued.md) — escalation, budget.
-- [Example Usage](./repo-harness-compatibility-quality-gate/example-usage.md) — invocation examples.
-- [Iteration Example](./repo-harness-compatibility-quality-gate/iteration-example.md) — worked traces.
-- [Safety Features](./repo-harness-compatibility-quality-gate/safety-features.md) — loop and fix safeguards.
-- [Related Workflows](./repo-harness-compatibility-quality-gate/related-workflows.md) — Repository Rules Validation.
-- [Notes](./repo-harness-compatibility-quality-gate/notes.md) — cadence, guard distinction.
-- [Principles Implemented/Respected](./repo-harness-compatibility-quality-gate/principles-implemented-respected.md) — traceability.
-- [Conventions Implemented/Respected](./repo-harness-compatibility-quality-gate/conventions-implemented-respected.md) — traceability.
-- [Agents](./repo-harness-compatibility-quality-gate/agents.md) — checker and fixer definitions.
+- [Execution Mode](./harness-compatibility-quality-gate/execution-mode.md) — invocation.
+- [Complementary Anti-Drift Gates](./harness-compatibility-quality-gate/complementary-anti-drift-gates.md) — gates vs. workflow.
+- [Research Delegation](./harness-compatibility-quality-gate/research-delegation.md) — web-researcher use.
+- [Step 1: Initial Validation](./harness-compatibility-quality-gate/step-1-initial-validation.md) — Phase 0/1 checks.
+- [Step 2: Check for Findings](./harness-compatibility-quality-gate/step-2-check-for-findings.md) — threshold counting.
+- [Step 3: Apply Fixes](./harness-compatibility-quality-gate/step-3-apply-fixes.md) — auto vs. human scope.
+- [Step 4: Re-Validate](./harness-compatibility-quality-gate/step-4-re-validate.md) — confirms fixes.
+- [Step 5: Iteration Control](./harness-compatibility-quality-gate/step-5-iteration-control.md) — loop logic.
+- [Step 6: Finalization](./harness-compatibility-quality-gate/step-6-finalization.md) — status reporting.
+- [Termination Criteria](./harness-compatibility-quality-gate/termination-criteria.md) — pass/partial/fail.
+- [Success Criteria — Part 1](./harness-compatibility-quality-gate/success-criteria-gherkin.md) — Phase 0/1, sync fix.
+- [Success Criteria — Part 2](./harness-compatibility-quality-gate/success-criteria-gherkin-continued.md) — escalation, budget.
+- [Example Usage](./harness-compatibility-quality-gate/example-usage.md) — invocation examples.
+- [Iteration Example](./harness-compatibility-quality-gate/iteration-example.md) — worked traces.
+- [Safety Features](./harness-compatibility-quality-gate/safety-features.md) — loop and fix safeguards.
+- [Related Workflows](./harness-compatibility-quality-gate/related-workflows.md) — Repository Rules Validation.
+- [Notes](./harness-compatibility-quality-gate/notes.md) — cadence, guard distinction.
+- [Principles Implemented/Respected](./harness-compatibility-quality-gate/principles-implemented-respected.md) — traceability.
+- [Conventions Implemented/Respected](./harness-compatibility-quality-gate/conventions-implemented-respected.md) — traceability.
+- [Agents](./harness-compatibility-quality-gate/agents.md) — checker and fixer definitions.

@@ -25,6 +25,8 @@ After the last repo's execution completes:
    - Worktree disposition per repo — immediately deleted after exact recorded identity,
      delivered/merged, clean/idle, and no-unpushed proof; otherwise retained with failed-check
      evidence and escalation (never user preference or a pass path)
+   - Parity identity assertion — actual worktree basename and corresponding short-lived branch per
+     repo match the common record; every `not applicable` entry has a mode or repo-only reason
 
 **Output**: Composite outcome report. Live Task list fully `completed` and matching disk truth in
 every repo.

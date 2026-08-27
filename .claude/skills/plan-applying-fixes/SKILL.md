@@ -58,6 +58,15 @@ Knowledge Capture, phase gates) inserts placeholders for the author to fill, nev
 changed since audit) before acting. **A more-plausible-sounding hallucination is the worst outcome**
 of an anti-hallucination fix — refuse rather than replace one wrong claim with another.
 
+## Missing Minimal-Sufficiency Rationale
+
+When a checker finds a lasting mechanism without its concrete-need and existing-mechanism
+rationale, add only a clearly marked scaffold in `tech-docs.md` or the single-file plan's
+`Technical Approach`: `[AUTHOR INPUT REQUIRED] Concrete requirement, correctness/safety obligation,
+or demonstrated recurring risk`; `[AUTHOR INPUT REQUIRED] Existing mechanisms evaluated and why
+they are insufficient`. Grill the author for both answers. Never infer them from the proposed
+implementation, and never mark the finding fixed while either placeholder remains unresolved.
+
 ## Related
 
 `plan-validating-quality` (the checker methodology this fixer's recipes repair), `plan-creating-project-plans`

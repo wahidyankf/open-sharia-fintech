@@ -1,7 +1,7 @@
 ---
 title: "Success Criteria"
-description: Gherkin scenarios covering placement, admission, eviction, precedence, enforcement disposition, and the sibling obligation.
-when_to_use: Use when validating that a propagation run behaved correctly, or when extending the workflow.
+description: Gherkin scenarios for rules-propagation outcomes.
+when_to_use: Use to validate or extend this workflow.
 ---
 
 # Success Criteria
@@ -10,13 +10,11 @@ when_to_use: Use when validating that a propagation run behaved correctly, or wh
 Feature: Repository rules propagation
 
   Scenario: A rule that must be read unprompted is admitted by evicting a weaker resident
-    Given a normalized rule whose audience is everyone before any file is opened
-    And the canonical instruction surface has no budget headroom
+    Given a normalized rule must be read before files are opened
+    And the instruction surface is full
     When the workflow runs
-    Then the rule is written to the canonical instruction surface
-    And one resident entry is relocated into the governance layer owning its subject
-    And the eviction and the admission land in the same pull request
-    And no word-budget threshold is changed
+    Then the rule is admitted by relocating a resident to its owning governance layer
+    And both changes land together without changing a word-budget threshold
 
   Scenario: A rule reachable by activity is placed in a governance layer
     Given a normalized rule whose audience reaches it through the activity it governs
@@ -49,13 +47,30 @@ Feature: Repository rules propagation
     Then every rule carries exactly one of covered, gated, or unenforced-by-decision
     And every unenforced rule carries a recorded reason
 
+  Scenario: Subject consolidation preserves rules
+    Given a rule reaches Step 6
+    When surfaces are reviewed
+    Then each has a keep, amend, merge, delete, relocate, or supersede verdict
+    And each names its canonical home
+    And merge/delete preserves distinct obligations and necessary discovery paths
+    And redundancy remains only with a keep rationale
+
   Scenario: A portable rule records what the sibling repository is owed
     Given a propagated rule that is portable governance guidance
     When the pull request is opened
     Then a sibling obligation naming the other repository is recorded
+    And the obligation records the common objective slug and reusable worktree and branch identities
+    And the current repository's actual identities match that record
     And the sibling repository is not modified by this run
+
+  Scenario: A parity identity is unavailable before mutation
+    Given a portable rule whose intended worktree basename or branch name is unavailable in one repository
+    When the workflow performs its parity-identity preflight
+    Then it proves an existing identity belongs to the same delivery or selects one common alternative
+    And it does not silently diverge or commandeer a foreign identity
+    And no sibling repository is modified by this run
 ```
 
-## Related Documents
+## Related
 
-- [Termination Criteria](./termination-criteria.md) — the prose form of these scenarios.
+[Termination Criteria](./termination-criteria.md) gives the prose form.

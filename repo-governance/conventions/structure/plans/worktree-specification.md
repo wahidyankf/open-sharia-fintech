@@ -14,7 +14,7 @@ when_to_use: Use when writing a plan's Worktree section or resolving worktree en
 
 # Worktree Specification
 
-Every plan MUST declare the worktree path in its content so the executor can verify the execution environment before reading the delivery checklist.
+Every plan declares its worktree path before the executor reads the delivery checklist.
 
 **Where to declare**:
 
@@ -47,8 +47,14 @@ It is the cleanup authority; the file-touch ledger records files only.
 - Created at: `<ISO-8601 UTC timestamp>`
 ```
 
-Record actual `git worktree add` values and never rewrite them; a missing/conflicting identity blocks
-removal. The initial branch proves provisioning, not the final checkout.
+Record actual `git worktree add` values immutably. Missing or conflicting identity blocks removal;
+the initial branch proves provisioning, not final checkout.
+
+For a declared multi-repository parity objective, also include the common objective slug, worktree
+basename, and corresponding branch mapping defined by
+[Cross-Repository Parity Identity](../../../development/workflow/cross-repository-parity-identity.md).
+Every repository using a worktree records the same basename; every corresponding short-lived branch
+records the same name. Modes without either identity record `not applicable` with a reason.
 
 ### Delivery Branch Inventory
 
@@ -61,15 +67,16 @@ Keep an append-only inventory beside the identity; add initial and plan-created 
 | `<delivery-branch>` | `worktree-to-pr` | `delivered`     | PR #`<number>` merged; reviewed head `<40-char SHA>` |
 ```
 
-The initial entry is `provisioned`/`active`, proven by creation command and timestamp. Before removal,
-classify every entry as delivered, unused, or retained/escalated; active/unrecorded branches block
-cleanup. `*-to-pr` records merged PR + reviewed-head SHA; direct push records verified `origin/main`
-commit. Include `git -C <exact-path> branch --show-current`; the inventory, not file-touch ledger,
-controls branch cleanup.
+Before removal, classify every entry as delivered, unused, or retained/escalated; active or
+unrecorded branches block cleanup. `*-to-pr` records merged PR plus reviewed-head SHA; direct push
+records verified `origin/main`. Include `git -C <exact-path> branch --show-current`. This inventory,
+not the file ledger, controls branch cleanup.
 
 **Provision the worktree BEFORE defining the plan, and author inside it.** Later moves split its
 history and defeat the pre-execution check. The [Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters or auto-provisions only as a backstop.
 
-**One worktree per plan, reused across every PR the plan opens.** A plan that splits its delivery into several sequential PRs (see [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md)) does NOT provision a worktree per PR. Land one slice, fast-forward the same worktree from `origin/main`, then open the next slice from it.
+**One worktree per plan, reused across its PRs.** For sequential PRs, land one slice, fast-forward
+the same worktree from `origin/main`, then open the next. See
+[PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md).
 
 See [Worktree Specification — Executor Lifecycle and Example](./worktree-specification-continued.md) for how the executor enters, syncs, and cleans up the worktree, plus a worked `## Worktree` block.
