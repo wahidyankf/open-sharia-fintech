@@ -76,7 +76,12 @@ let findCommonDir (repoRoot: string) : Result<string, string> =
 
 /// Runs `git diff --cached --name-only --diff-filter=AM` from `repoRoot` and
 /// returns the staged paths, one per line, blank lines dropped
-/// [Repo-grounded — `env_staged_guard.rs::run`].
+/// [Repo-grounded — `env_staged_guard.rs::run`]. Strips `GIT_DIR`/
+/// `GIT_WORK_TREE` from the inherited environment before running, matching
+/// `findRoot`/`findCommonDir` above (Wave D PR11) — an ambient value from an
+/// outer worktree-management call would otherwise redirect this staged-file
+/// query away from `repoRoot`, the exact class of bug those two functions
+/// already guard against.
 let getStagedFiles (repoRoot: string) : Result<string list, string> =
     use proc = new Process()
     proc.StartInfo.FileName <- "git"
@@ -85,6 +90,8 @@ let getStagedFiles (repoRoot: string) : Result<string list, string> =
     proc.StartInfo.ArgumentList.Add("--name-only")
     proc.StartInfo.ArgumentList.Add("--diff-filter=AM")
     proc.StartInfo.WorkingDirectory <- repoRoot
+    proc.StartInfo.EnvironmentVariables.Remove("GIT_DIR")
+    proc.StartInfo.EnvironmentVariables.Remove("GIT_WORK_TREE")
     proc.StartInfo.RedirectStandardOutput <- true
     proc.StartInfo.RedirectStandardError <- true
     proc.StartInfo.UseShellExecute <- false

@@ -55,6 +55,30 @@
 /// here exercises that fallback path, and reproducing it would make the
 /// `--changed-only` scenario's fixture ambiguous between "nothing changed"
 /// and "scan everything").
+///
+/// Wave D PR11 ports the git pre-commit hook shim's five resequenced
+/// `git-pre-commit.feature` scenarios [Repo-grounded —
+/// `apps/rhino-cli/tests/git_hooks.rs`'s markdown-validator scenarios],
+/// **integration**-tier (unlike every scenario above): the fixture stages
+/// real files in a throwaway git repo and asserts on rendered stdout/stderr
+/// text, not on the structured `Finding` list alone, so line 22-23's "no
+/// scenario here asserts on an exact line number" no longer holds for the
+/// links validator specifically — its broken-file `Finding.Message` now
+/// leads with `"Line %d: "` so the CLI-facing caller's rendered output
+/// surfaces it. This section also adds
+/// `validateDocsHeadingHierarchyForPaths`, the positional-path counterpart
+/// to `validateDocsHeadingHierarchyAllowlisted` that
+/// `md_validate_heading_hierarchy.rs::run` uses when lint-staged passes
+/// explicit file arguments instead of scanning the whole repo. Per this
+/// file's own "no rendering lives in this file" precedent above, the
+/// integration test's step definitions
+/// (`tests/integration/Steps/PreCommitHookSteps.fs`) compose these
+/// functions' `Finding list`/`MermaidValidationResult` outputs into
+/// printable text themselves — using the shared
+/// `RhinoCli.Domain.Finding.hasBlocking`/`formatText` helpers folded out of
+/// this file's own `findingsOutcome` — the same "call the internal function
+/// directly, format nothing here" split `DoctorSteps.fs` already
+/// establishes for CLI-adjacent testing without a compiled binary.
 module RhinoCli.Application.Md
 
 open System
@@ -709,6 +733,37 @@ let validateDocsHeadingHierarchy (paths: string list) : Result<Finding list, str
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
 
+/// CLI-facing entry for `md heading-hierarchy validate <path>...`'s
+/// positional-path branch: applies the same prose allowlist
+/// `validateDocsHeadingHierarchyAllowlisted`'s repo-wide walk uses to each
+/// explicit `paths` entry before validating, so a file outside the allowlist
+/// (e.g. `.claude/skills/**`) staged and passed explicitly by lint-staged is
+/// silently skipped rather than scanned. Returns an empty list — not an
+/// error — when every path is filtered out, matching the Rust command's
+/// early `return Ok(())` for that case
+/// [Repo-grounded — `md_validate_heading_hierarchy.rs::run`'s
+/// `args.positional`-non-empty branch].
+///
+/// Gherkin (binds) — "staged-prose-heading-blocks — staged docs file with bad
+/// heading hierarchy blocks commit" and "staged-skill-file-exempt — staged
+/// SKILL.md with bad heading hierarchy does not block commit" — both from
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature`.
+let validateDocsHeadingHierarchyForPaths (repoRoot: string) (paths: string list) : Finding list =
+    let allowlisted =
+        paths
+        |> List.choose (fun p ->
+            let abs = if Path.IsPathRooted p then p else Path.Combine(repoRoot, p)
+            let rel = Path.GetRelativePath(repoRoot, abs).Replace('\\', '/')
+
+            if isProseAllowlisted rel then Some abs else None)
+
+    if List.isEmpty allowlisted then
+        []
+    else
+        match validateDocsHeadingHierarchy allowlisted with
+        | Ok findings -> findings
+        | Error _ -> []
+
 // ---------------------------------------------------------------------------
 // docs validate-links
 // ---------------------------------------------------------------------------
@@ -1011,7 +1066,14 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
                 let target = resolveLink filePath pathPart
 
                 if not (File.Exists target || Directory.Exists target) then
-                    [ mkFail rel (sprintf "link \"%s\" in %s points to a non-existent file: %s" link.Url rel target) ]
+                    [ mkFail
+                          rel
+                          (sprintf
+                              "Line %d: link \"%s\" in %s points to a non-existent file: %s"
+                              link.LineNumber
+                              link.Url
+                              rel
+                              target) ]
                 else
                     match fragment with
                     | Some frag when frag <> "" ->
@@ -2705,21 +2767,19 @@ type MdAuditResult =
     { Failures: string list
       Report: string }
 
-/// Returns `true` when `findings` contains at least one `Blocking`-severity
-/// entry — shared by every `Finding`-returning member validator's outcome
-/// check below.
-let private hasBlockingFinding (findings: Finding list) : bool =
-    findings |> List.exists (fun f -> f.Severity = Severity.Blocking)
-
 /// Converts a `Finding`-list validator outcome into `runAuditMember`'s
 /// shared `Result<unit, string>` shape: an `Error` is reformatted with
 /// `name`, and a findings list containing at least one `Blocking` entry
 /// becomes an `Error` too — folds what would otherwise be four near-identical
 /// match expressions (one per `Finding`-returning member validator) into one.
+/// The blocking-severity check itself is `RhinoCli.Domain.Finding.hasBlocking`
+/// (Wave D PR11) rather than a private copy here, since the git pre-commit
+/// hook shim's integration tests need the identical predicate.
 let private findingsOutcome (name: string) (result: Result<Finding list, string>) : Result<unit, string> =
     match result with
     | Error e -> Error(sprintf "%s: %s" name e)
-    | Ok findings when hasBlockingFinding findings -> Error(sprintf "%s: %d finding(s) reported" name findings.Length)
+    | Ok findings when RhinoCli.Domain.Finding.hasBlocking findings ->
+        Error(sprintf "%s: %d finding(s) reported" name findings.Length)
     | Ok _ -> Ok()
 
 /// Runs one member validator against `repoRoot` with default arguments,
