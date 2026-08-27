@@ -19,15 +19,16 @@ created: 2026-05-02
 
 Each AI coding platform that integrates with this repository has a dedicated binding directory at the repo root:
 
-| Platform         | Binding directory                   | Root instruction file            | Tier      |
-| ---------------- | ----------------------------------- | -------------------------------- | --------- |
-| Claude Code      | `.claude/`                          | `CLAUDE.md` (shim → `AGENTS.md`) | source    |
-| OpenCode         | `.opencode/agents/`                 | `AGENTS.md` (read natively)      | generated |
-| OpenAI Codex CLI | `.codex/agents/`, `.agents/skills/` | `AGENTS.md` (read natively)      | generated |
+| Platform         | Binding paths                                                          | Root instruction file            | Harness tier |
+| ---------------- | ---------------------------------------------------------------------- | -------------------------------- | ------------ |
+| Claude Code      | `.claude/`                                                             | `CLAUDE.md` (shim → `AGENTS.md`) | source       |
+| OpenCode         | `.opencode/agents/`; vendored config                                   | `AGENTS.md` (read natively)      | generated    |
+| OpenAI Codex CLI | `.codex/agents/`; generated and vendored paths under `.agents/skills/` | `AGENTS.md` (read natively)      | generated    |
 
-The `harness:` registry in `repo-config.yml` is authoritative for this table's membership; a
-platform absent from that registry is not supported, whatever a binding directory's presence on
-some other machine might suggest.
+The `harness:` registry in `repo-config.yml` is authoritative for this table's membership and for
+path-level `source`, `generated`, or `vendored` ownership. Harness tier does not make every path in
+its binding root generated. A platform absent from that registry is not supported, whatever a
+binding directory's presence on some other machine might suggest.
 
 The governance layer refers to these binding directories collectively as "the platform binding" rather than naming specific directories in load-bearing prose.
 
