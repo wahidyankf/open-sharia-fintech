@@ -735,19 +735,20 @@ let private nWords (n: int) : string =
     String.Join(" ", Array.create (max 0 n) "w")
 
 /// Mirrors the live `governance-word-budget:` section of `repo-config.yml`
-/// verbatim (see that file): seven general surfaces at target 400/warn
-/// 500/fail 500, `**/README.md` declared last at the wider 700/900/900, and
-/// a `CLAUDE.md`-rooted resolved tree at 1200/1500/1500 — exactly what the
-/// feature's `Background:` (dropped from the per-scenario TickSpec snippet
-/// below along with its two steps, since no scenario needs it re-declared
-/// at runtime; its state is this fixture) and every scenario's own prose
+/// verbatim (see that file): eight general surfaces at target 650/warn
+/// 750/fail 750 (including `RTK.md`, added alongside the RTK tool), `**/README.md`
+/// declared last at the wider 900/1000/1000, and a `CLAUDE.md`-rooted
+/// resolved tree at 1200/1500/1500 — exactly what the feature's
+/// `Background:` (dropped from the per-scenario TickSpec snippet below
+/// along with its two steps, since no scenario needs it re-declared at
+/// runtime; its state is this fixture) and every scenario's own prose
 /// numbers already assume.
 let private canonicalWordBudgetConfig: BudgetConfig =
     let generalSurface (glob: string) : Surface =
         { Glob = glob
-          Target = 400UL
-          Warn = 500UL
-          Fail = 500UL }
+          Target = 650UL
+          Warn = 750UL
+          Fail = 750UL }
 
     { Surfaces =
         [ generalSurface "repo-governance/**/*.md"
@@ -757,10 +758,11 @@ let private canonicalWordBudgetConfig: BudgetConfig =
           generalSurface ".agents/**/*.md"
           generalSurface "AGENTS.md"
           generalSurface "CLAUDE.md"
+          generalSurface "RTK.md"
           { Glob = "**/README.md"
-            Target = 700UL
-            Warn = 900UL
-            Fail = 900UL } ]
+            Target = 900UL
+            Warn = 1000UL
+            Fail = 1000UL } ]
       ResolvedTree =
         { Root = "CLAUDE.md"
           Target = 1200UL
@@ -888,6 +890,13 @@ type GovernanceWordBudgetSteps() =
     member _.``"([^"]+)" imports "([^"]+)"``(fromPath: string, toPath: string) =
         let content = sprintf "@%s\n%s" toPath (nWords 5)
         File.WriteAllText(Path.Combine(scenarioRoot (), fromPath), content)
+
+    /// No-op: `scenarioRoot()` starts empty on every fresh scenario, so a
+    /// path nothing has written to already "does not exist" — this step
+    /// only records the path so the paired `Then` step below can name it
+    /// back in its assertion message.
+    [<Given>]
+    member _.``no file exists at "([^"]+)"``(path: string) = lastPath <- Some path
 
     [<Given>]
     member _.``the resolved CLAUDE.md tree totals (\d+) words``(n: int) =
@@ -1051,6 +1060,13 @@ type GovernanceWordBudgetSteps() =
         )
 
     [<Then>]
+    member _.``no finding is emitted for "([^"]+)"``(path: string) =
+        Assert.False(
+            lastFindings |> List.exists (fun f -> f.Path = path),
+            sprintf "expected no finding naming %s: %A" path lastFindings
+        )
+
+    [<Then>]
     member _.``the finding names "([^"]+)"``(path: string) =
         Assert.True(
             lastFindings |> List.exists (fun f -> f.Path = path),
@@ -1096,7 +1112,7 @@ type GovernanceWordBudgetSteps() =
     // ---- Then: narrative-only steps (the real assertion already ran above) ----
 
     [<Then>]
-    member _.``this holds even though 670 words exceeds the general surface's 500-word fail ceiling, because the winning README-specific surface classifies 670 words as "([^"]+)" against its own 700-word target``
+    member _.``this holds even though 900 words exceeds the general surface's 750-word fail ceiling, because the winning README-specific surface classifies 900 words as "([^"]+)" against its own 900-word target``
         (_severity: string)
         =
         ()
@@ -1127,6 +1143,7 @@ type GovernanceWordBudgetSteps() =
                   ".agents/**/*.md"
                   "AGENTS.md"
                   "CLAUDE.md"
+                  "RTK.md"
                   "**/README.md" ]
 
         let actual =
@@ -1283,8 +1300,12 @@ let ``The covered surfaces are exactly the live entry points of the supported ha
     WordBudgetFeatureRunner.run "The covered surfaces are exactly the live entry points of the supported harnesses"
 
 [<Fact>]
-let ``A root entry point keeps the unchanged 500-word ceiling`` () =
-    WordBudgetFeatureRunner.run "A root entry point keeps the unchanged 500-word ceiling"
+let ``A configured glob matching no file is a no-op`` () =
+    WordBudgetFeatureRunner.run "A configured glob matching no file is a no-op"
+
+[<Fact>]
+let ``A root entry point uses the ordinary 750-word ceiling`` () =
+    WordBudgetFeatureRunner.run "A root entry point uses the ordinary 750-word ceiling"
 
 [<Fact>]
 let ``A README.md file under the specific-surface target produces zero findings`` () =

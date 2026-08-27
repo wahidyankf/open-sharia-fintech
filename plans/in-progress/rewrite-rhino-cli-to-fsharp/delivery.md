@@ -318,14 +318,18 @@ bind here either.
 
 ### Governance-word-budget split-ceiling exception (Wave D PR9 only)
 
-**`governance/governance-word-budget.feature` (20 scenarios) lands as one PR despite exceeding the
-rule-4 ceilings — 1,140 added lines and 1 deleted line across 3 files
-[Repo-grounded — `git diff --cached --numstat "$(git merge-base HEAD origin/main)"`, measured on
-`rhino-fsharp-wave-d-pr9-governance-word-budget`: `RhinoCli.Application/src/Governance.fs` +521,
-`tests/unit/Steps/GovernanceSteps.fs` +618, `project.json` +1/-1].** Scope: this one feature file
-only — it does not generalize to any other flagged file in the nine-file list above, and per the
-non-precedent clause on the rule-4 exclusion, a future PR wanting the same treatment records its own
-exception with its own reasoning.
+**`governance/governance-word-budget.feature` (21 scenario/outline cycles, 22 per the feature
+heading's expanded-example count) lands as one PR despite exceeding the rule-4 ceilings — 1,256
+added lines and 67 deleted lines across 5 files
+[Repo-grounded — `git diff --numstat "$(git merge-base HEAD origin/main)"`, measured on
+`rhino-fsharp-wave-d-pr9-governance-word-budget` after rebasing onto the upstream rewrite of this
+same feature file (thresholds 400/500/500 → 650/750/750, a new `RTK.md` surface, and a new
+"A configured glob matching no file is a no-op" scenario): `RhinoCli.Application/src/Governance.fs`
++521, `tests/unit/Steps/GovernanceSteps.fs` +639, `project.json` +1/-1,
+`parity-manifest.sha256` +3/-3, `delivery.md` +92/-63].** Scope: this one feature file only — it
+does not generalize to any other flagged file in the nine-file list above, and per the non-precedent
+clause on the rule-4 exclusion, a future PR wanting the same treatment records its own exception with
+its own reasoning.
 
 **Justification.** The immediately preceding sibling PR in this same wave (Wave D PR8,
 `governance-readme-index.feature`) already attempted a three-way scenario-boundary split against the
@@ -338,12 +342,14 @@ one-feature-file-one-coverage-unit design, not of either feature file's content,
 identically here. Re-attempting the same three configurations against
 `governance-word-budget.feature` would reproduce the identical failures already proven and recorded
 immediately above; a second live attempt was not run for that reason. The single-shot implementation
-was built RED-before-GREEN per scenario — 20 scenarios, each with its own `[<Fact>]` against a sliced
+was built RED-before-GREEN per scenario — 21 cycles, each with its own `[<Fact>]` against a sliced
 `Background:` + `Scenario:` fixture — and is fully green under `test:quick`
-(`typecheck`, `lint`, `test:unit` at 745/745, `test:specs` reporting full coverage) before the
-ceiling was measured. PR-review cycles are already waived for this plan's remaining execution
-(user-granted automerge-on-green-CI, no specialist review), so the ceiling's reviewability rationale
-does not bind here either.
+(`typecheck`, `lint`, `test:unit` at 746/746, `test:specs` reporting full coverage) and under the
+whole-tree `specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli`
+check the `rust` CI quality gate runs (525 scenarios, all covered) before the ceiling was measured.
+PR-review cycles are already waived for this plan's remaining execution (user-granted
+automerge-on-green-CI, no specialist review), so the ceiling's reviewability rationale does not bind
+here either.
 
 ### Wave map
 
@@ -7275,17 +7281,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then no finding is emitted for ".codex/agents/example.md"
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Governance.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Governance.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Governance` does not implement it.
