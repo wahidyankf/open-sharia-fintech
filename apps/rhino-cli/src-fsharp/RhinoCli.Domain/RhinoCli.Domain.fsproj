@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="src/Types.fs" />
+    <Compile Include="src/Finding.fs" />
   </ItemGroup>
 
   <ItemGroup>
