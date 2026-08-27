@@ -4343,8 +4343,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Date**: 2026-08-27. **Status**: done. **Files Changed**:
       `apps/rhino-cli/src-fsharp/project.json`, `repo-config.yml` (both widened from the six
       file-scoped Wave C entries to `system/**`/`test-coverage/**`). `npx nx run
-    rhino-cli-fsharp:specs:behavior:coverage` exits 0, reporting `17 specs, 126 scenarios, 541
-    steps — all covered`. Temporarily removing a `DoctorToolCheckSteps.fs` step definition turned
+rhino-cli-fsharp:specs:behavior:coverage` exits 0, reporting `17 specs, 126 scenarios, 541
+steps — all covered`. Temporarily removing a `DoctorToolCheckSteps.fs` step definition turned
       the check red with a `Missing steps` count naming the exact scenario/step, restored afterwards
       with a clean `git diff`.
 - [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` — acceptance: zero byte
@@ -4357,10 +4357,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/src-fsharp/RhinoCli.Infrastructure/src/GitRoot.fs` (new `findCommonDir`),
       `apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs` (new `doctor`/`test-coverage validate`
       routing — see Wave C implementation cycles above). `apps/rhino-cli/scripts/shadow-diff.sh
-    doctor test-coverage` → `shadow-diff: 10 invocation(s) compared, 0 difference(s)`. Four genuine
+doctor test-coverage` → `shadow-diff: 10 invocation(s) compared, 0 difference(s)`. Four genuine
       mismatches were found and fixed first (all against the real Rust binary, not assumed): the F#
       `dotnet` tool check ignored `repo-config.yml`'s `doctor.dotnet-global-json` override; `doctor
-    -o json`'s `"scope"` field was conditionally omitted where Rust's `Scope::code()` never
+-o json`'s `"scope"` field was conditionally omitted where Rust's `Scope::code()` never
       returns an empty string so the field is always present; `System.Text.Json`'s default encoder
       escaped non-ASCII characters (`→`, `≥`) that `serde_json` emits raw; and `doctor -o json` was
       missing its trailing newline (`println!` in Rust vs. this port's initial uniform `printf`).
@@ -4375,8 +4375,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       (`FSHARP_NAMESPACES=("convention" "parity" "repo-config" "env" "doctor" "test-coverage")`).
       Post-flip `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` again reports
       `10 invocation(s) compared, 0 difference(s)`. `bash -x apps/rhino-cli/scripts/rhino-bin.sh
-    doctor --scope minimal --tools git` shows `exec .../src-fsharp/dist/rhino-cli-fsharp doctor
-    --scope minimal --tools git`, confirming `doctor`/`test-coverage` now route to the published
+doctor --scope minimal --tools git` shows `exec .../src-fsharp/dist/rhino-cli-fsharp doctor
+--scope minimal --tools git`, confirming `doctor`/`test-coverage` now route to the published
       F# binary end-to-end.
 - [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
@@ -4407,12 +4407,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       **Date**: 2026-08-27. **Status**: done. **Files Changed**: none (proof only; the edit to
       `apps/rhino-cli/scripts/rhino-bin.sh` was made then reverted in place, leaving the file
       identical to its post-flip state). With `FSHARP_NAMESPACES=("convention" "parity"
-    "repo-config" "env")` (Wave C entries removed), `apps/rhino-cli/scripts/shadow-diff.sh doctor
-    test-coverage` still reports `10 invocation(s) compared, 0 difference(s)` — shadow-diff always
+"repo-config" "env")` (Wave C entries removed), `apps/rhino-cli/scripts/shadow-diff.sh doctor
+test-coverage` still reports `10 invocation(s) compared, 0 difference(s)` — shadow-diff always
       compares the two binaries directly regardless of the shim's routing state, and separately `bash
-    -x apps/rhino-cli/scripts/rhino-bin.sh doctor --scope minimal --tools git` confirmed the shim
+-x apps/rhino-cli/scripts/rhino-bin.sh doctor --scope minimal --tools git` confirmed the shim
       itself now `exec`s the Rust `target/gate/rhino-cli` binary instead. `gate list --surface=ci
-    --format=json --by-group` against the removed-entries shim differs from
+--format=json --by-group` against the removed-entries shim differs from
       `evidence/gate-before-ose-public.json` only in JSON array line-wrapping (the tracked file was
       prettier-formatted after capture); a Python `json.load` structural comparison of the two
       confirms the content is semantically identical. With `FSHARP_NAMESPACES` restored to include
@@ -4424,7 +4424,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` (same "after wave C" section as
       the row above). Staged a single throwaway `apps/rhino-cli/bench-probe.md` (one heading, one
       paragraph, the same pinned-staged-set protocol as Phase 0/Wave A/Wave B), ran `/usr/bin/time
-    -p .husky/pre-commit`: exit 0, `real 3.70`. Removed the probe file and `git reset --` it
+-p .husky/pre-commit`: exit 0, `real 3.70`. Removed the probe file and `git reset --` it
       afterward; `git status --porcelain` returned to its exact pre-step state, confirming no
       residue.
 - [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
@@ -4435,14 +4435,32 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       code comment inside the unrelated `.NET quality gate` job Wave B's equivalent check already
       found — not an invocation, and not in a job that executes a flipped namespace. Every job that
       shells to `rhino-bin.sh` for a gate command sets `RHINO_CLI_FSHARP_BIN:
-    ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp` and `needs:
-    build-rhino` (directly or transitively), so `doctor`/`test-coverage` invocations in CI always
+${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp` and `needs:
+build-rhino` (directly or transitively), so `doctor`/`test-coverage` invocations in CI always
       run `build-rhino`'s uploaded artifact, never a from-source rebuild.
-- [ ] [AI] Land every Wave C change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave C change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
       tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
+      **Date**: 2026-08-27. **Status**: done. **Files Changed**: none (verification only; the
+      landing itself was already done across `ose-private` PR#90 (`e85fd0f5e4`), PR#91
+      (`32dcaa070e`), PR#92 (`cf9870d005`), and PR#94 (`c550300115`, the integration flip), all
+      authored directly in that worktree rather than copied — this item's two-part acceptance
+      clause had not yet been re-verified there until now). In the `ose-private` worktree, on a
+      fresh branch checked out off `origin/main` at `c550300115`:
+      `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` → `shadow-diff: 10 invocation(s)
+compared, 0 difference(s)`, exit 0. `apps/rhino-cli/scripts/rhino-bin.sh gate list
+--surface=ci --format=json --by-group`, run against the shim exactly as shipped (no temporary
+      `FSHARP_NAMESPACES` edit), differs from `apps/rhino-cli/evidence/gate-before-ose-private.json`
+      only in JSON array line-wrapping — the same class of difference the `ose-public` Pause-Safety
+      falsification above (`delivery.md:2901-2917`) found against its own baseline, because the
+      tracked file predates a later prettier reformatting pass. A Python `json.load` structural
+      comparison of the two (`a == b`) prints `True`, confirming the content is semantically
+      identical — i.e., the gate namespace/group structure is unchanged from the pre-rewrite
+      baseline, since `gate list` enumerates the static namespace registry rather than resolving
+      through the `FSHARP_NAMESPACES` shim. No tracked file was edited; the branch was discarded
+      after verification (`git branch -D`).
 
 ### Phase 5 Gate
 
@@ -4450,39 +4468,63 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 - [x] [AI] All 53 Wave C scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
-      PR — this PR does not touch that repo, see the unticked "Land every Wave C change" item
-      above). **Files Changed**: none beyond the implementation/flip commits already listed. The 53
-      Wave C scenarios were cross-referenced by summing `Scenario:` counts across
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none beyond the implementation/flip commits already listed. The 53 Wave C scenarios were
+      cross-referenced by summing `Scenario:` counts across
       `specs/apps/rhino/behavior/rhino-cli/gherkin/{system,test-coverage}/*.feature`
       (53) against the `[<Fact>]` count in `DoctorSteps.fs` (18) + `DoctorToolCheckSteps.fs` (17) +
       `FsharpToolInvocationSteps.fs` (1) + `TestCoverageSteps.fs` (17) = 53. Full suite:
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj` — `Passed! -
-    Failed: 0, Passed: 625, Skipped: 0, Total: 625`.
+Failed: 0, Passed: 625, Skipped: 0, Total: 625`. `ose-private` (fresh branch off `origin/main`
+      at `c550300115`): identical full-suite result — `Passed! - Failed: 0, Passed: 625, Skipped: 0,
+Total: 625`. Re-running the `[<Fact>]` cross-reference in `ose-private` today (its four
+      `Steps/*.fs` files are byte-identical to `ose-public`'s, confirmed via `diff`) actually counts
+      `DoctorSteps.fs` (19) + `DoctorToolCheckSteps.fs` (17) + `FsharpToolInvocationSteps.fs` (1) +
+      `TestCoverageSteps.fs` (18) = 55 in **both** repos today, not the 53 this annotation
+      originally stated — re-grepping `ose-public`'s own files confirms the same 55, so the
+      original 53 figure was a stale count at the time it was written, not a regression introduced
+      by this verification. The independently re-confirmed `Scenario:` count is still 53 in both
+      repos. Flagging the 55-vs-53 Fact/Scenario mismatch as a pre-existing documentation
+      inaccuracy for a human to reconcile — not every `[<Fact>]` in these Steps files necessarily
+      binds to exactly one Gherkin scenario, so the two counts were never guaranteed to match
+      1:1.
 - [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh doctor test-coverage` reports zero differences in both
       repos.
-      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
-      PR). **Files Changed**: none. `shadow-diff: 10 invocation(s) compared, 0 difference(s)`, exit
-      code 0.
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. `shadow-diff: 10 invocation(s) compared, 0 difference(s)`, exit code 0. `ose-private`
+      (fresh branch off `origin/main` at `c550300115`): identical result — `shadow-diff: 10
+invocation(s) compared, 0 difference(s)`, exit code 0.
 - [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
-      PR). **Files Changed**: none. All three commands run with a cold Nx cache
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. All three commands run with a cold Nx cache
       (`--skip-nx-cache`): `rhino-cli:test:quick` exit 0 (72 specs, 531 scenarios, 2165 steps — all
       covered); `rhino-cli-fsharp:test:quick` exit 0 (typecheck clean, fantomas/fsharplint/
       fsharp-analyzers clean, 625 unit tests passed, 17 specs/126 scenarios/541 steps — all
       covered); `.husky/pre-commit` exit 0 against this wave's real staged changes (see the commit
-      this PR carries).
+      this PR carries). `ose-private` (fresh branch off `origin/main` at `c550300115`, cold Nx
+      cache): `rhino-cli:test:quick` exit 0 (same 72 specs, 531 scenarios, 2165 steps);
+      `rhino-cli-fsharp:test:quick` exit 0 (same 17 specs, 126 scenarios, 541 steps); `.husky/
+pre-commit` exit 0 with nothing staged (`env-staged-guard` and `harness-bindings-generate`
+      ran — the latter reported `Sync Complete`, 55 agents converted — every lint-staged-gated step
+      reported `Skipping gate ...`), and `git status --short` showed no resulting diff to any
+      tracked file afterward.
 - [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-      **Date**: 2026-08-27. **Status**: done (`ose-public` only; `ose-private` not verified in this
-      PR). **Files Changed**: `apps/rhino-cli/parity-manifest.sha256` (regenerated as its own
-      commit). Exit code `0`, output `apps/rhino-cli/parity-manifest.sha256 is current`.
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      `apps/rhino-cli/parity-manifest.sha256` (regenerated as its own commit). Exit code `0`, output
+      `apps/rhino-cli/parity-manifest.sha256 is current`. `ose-private` (fresh branch off
+      `origin/main` at `c550300115`): exit code `0`, output `apps/rhino-cli/parity-manifest.sha256
+is current` — already current, no regeneration needed there.
 - [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
-      **Date**: 2026-08-27. **Status**: done (`ose-public` only; the `ose-private` half of this
-      check is not asserted here — this PR does not touch that repo). **Files Changed**: none.
-      `git diff --name-only origin/main -- specs/apps/rhino | wc -l` → `0`.
+      **Date**: 2026-08-27. **Status**: done (verification only, both repos). **Files Changed**:
+      none. `git diff --name-only origin/main -- specs/apps/rhino | wc -l` → `0`. `ose-private`
+      (fresh branch off `origin/main` at `c550300115`): the same command, redirected to a file
+      before counting rather than piped directly into `wc -l` — the RTK proxy's `git diff` filter
+      appends a trailer line that inflates a direct pipe's count by one — → `0` bytes, `0` lines;
+      also confirmed `0` across the full Wave C merge span
+      (`git diff --name-only 106f763731 1750ad3f01 -- specs/apps/rhino | wc -l`).
 - [x] [AI] `benchmark.md` has an `after wave C` row for startup and for pre-commit wall time.
       **Date**: 2026-08-27. **Status**: done. **Files Changed**:
       `plans/in-progress/rewrite-rhino-cli-to-fsharp/benchmark.md` (see the two items above; both
