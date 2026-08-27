@@ -40,6 +40,7 @@
     <Compile Include="Steps/TestCoverageSteps.fs" />
     <Compile Include="Steps/TestCoverageUnitTests.fs" />
     <Compile Include="Steps/MdSteps.fs" />
+    <Compile Include="Steps/GovernanceSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
