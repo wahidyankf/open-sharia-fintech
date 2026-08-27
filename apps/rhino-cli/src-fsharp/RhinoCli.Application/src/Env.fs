@@ -782,17 +782,26 @@ let envInitScanRoots: string list = [ "infra/dev"; "apps" ]
 [<Literal>]
 let EnvInitTargetTier: string = ".env.local"
 
-/// Recursively finds every `.env.example` file under `dir`.
+/// Recursively finds every `.env.example` file under `dir`, in a single pass
+/// over the raw filesystem listing rather than files-then-subdirectories
+/// [Repo-grounded — `env_init.rs::collect_examples`'s use of `WalkDir`, whose
+/// default traversal recurses into each directory entry immediately upon
+/// encountering it in `readdir()` order, rather than deferring every
+/// directory until every file at the same level is visited]. A prior version
+/// of this function enumerated files before subdirectories, which is a
+/// stronger ordering guarantee than either language's underlying walk
+/// actually provides, and diverged from the Rust CLI's real output order
+/// whenever a directory's native `readdir()` listing put a subdirectory
+/// entry ahead of a file entry — observed for `apps/ayokoding-www` in this
+/// checkout, whose `.env.example` sorts alphabetically before `content/` but
+/// is returned after it by both runtimes' unsorted directory enumeration.
 let rec private walkForExamples (dir: string) : string list =
-    let here =
-        Directory.EnumerateFiles dir
-        |> Seq.filter (fun f -> Path.GetFileName f = ".env.example")
-        |> List.ofSeq
-
-    let nested =
-        Directory.EnumerateDirectories dir |> Seq.collect walkForExamples |> List.ofSeq
-
-    here @ nested
+    Directory.EnumerateFileSystemEntries dir
+    |> Seq.collect (fun entry ->
+        if Directory.Exists entry then walkForExamples entry
+        elif Path.GetFileName entry = ".env.example" then [ entry ]
+        else [])
+    |> List.ofSeq
 
 /// Collects every `.env.example` file found under `envInitScanRoots` inside
 /// `repoRoot` [Repo-grounded — `env_init.rs::collect_examples`].
