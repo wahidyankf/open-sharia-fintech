@@ -2524,6 +2524,160 @@ let validateDocsNaming (paths: string list) : Result<Finding list, string> =
         |> Ok
 
 // ---------------------------------------------------------------------------
+// md frontmatter-dates validate
+// ---------------------------------------------------------------------------
+
+/// Matches a standalone `**Last Updated**` bold marker anywhere in a body
+/// line [Repo-grounded — `frontmatter_audit.rs::last_updated_footer_re`].
+let private lastUpdatedFooterRegex =
+    Regex(@"\*\*Last Updated\*\*", RegexOptions.Compiled)
+
+/// Matches an inline bullet `- **Created**: YYYY-MM-DD` or
+/// `- **Last Updated**: YYYY-MM-DD` date annotation in body text
+/// [Repo-grounded — `frontmatter_audit.rs::inline_date_annotation_re`].
+let private inlineDateAnnotationRegex =
+    Regex(@"^\s*-\s+\*\*(Created|Last Updated)\*\*:\s*\d{4}-\d{2}-\d{2}", RegexOptions.Compiled)
+
+/// Splits `content` into its YAML frontmatter block and body. An unclosed
+/// opening `---` fence is treated as if there is no frontmatter at all — the
+/// entire `content` becomes the body. Unlike `extractFrontmatter` above, this
+/// never discards the body half, since the body-annotation scan below needs
+/// it too [Repo-grounded — `frontmatter_audit.rs::split_frontmatter`].
+let private splitFrontmatterAndBody (content: string) : string * string =
+    let lines = content.Split('\n')
+
+    if lines.Length = 0 || lines.[0].Trim() <> "---" then
+        "", content
+    else
+        [ 1 .. lines.Length - 1 ]
+        |> List.tryFind (fun i -> lines.[i].Trim() = "---")
+        |> function
+            | None -> "", content
+            | Some i ->
+                let frontmatter = String.Join("\n", lines.[1 .. i - 1])
+                let bodyStart = i + 1
+
+                let body =
+                    if bodyStart >= lines.Length then
+                        ""
+                    else
+                        String.Join("\n", lines.[bodyStart..])
+
+                frontmatter, body
+
+/// Returns a finding when the parsed `frontmatter` YAML contains a forbidden
+/// top-level `updated` key. Unparseable YAML or a non-mapping block report no
+/// finding — out of scope for this audit, matching the Rust source
+/// [Repo-grounded — `frontmatter_audit.rs::check_frontmatter_updated_field`].
+let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : Finding list =
+    if frontmatter.Trim() = "" then
+        []
+    else
+        try
+            let parsed = deserializer.Deserialize<obj>(frontmatter)
+
+            match asRawMap parsed |> Option.bind (fun fm -> tryGetRawValue fm "updated") with
+            | None -> []
+            | Some _ ->
+                [ mkFail path "forbidden \"updated:\" field in YAML frontmatter; remove per no-date-metadata convention" ]
+        with _ ->
+            []
+
+/// Scans `body` line-by-line for forbidden inline date annotations and
+/// `**Last Updated**` footer markers, checked in that order per line — a line
+/// matching the inline-annotation pattern is not also checked against the
+/// footer pattern, so a bullet like `- **Last Updated**: 2026-01-01` (which
+/// matches both patterns) reports only once
+/// [Repo-grounded — `frontmatter_audit.rs::check_body_annotations`].
+let private checkBodyAnnotations (path: string) (body: string) : Finding list =
+    if body = "" then
+        []
+    else
+        body.Split('\n')
+        |> Array.toList
+        |> List.collect (fun line ->
+            if inlineDateAnnotationRegex.IsMatch line then
+                [ mkFail path "forbidden inline date annotation in body; remove per no-date-metadata convention" ]
+            elif lastUpdatedFooterRegex.IsMatch line then
+                [ mkFail
+                      path
+                      "forbidden **Last Updated** footer marker in body; remove per no-date-metadata convention" ]
+            else
+                [])
+
+/// Reads `path` and scans its content for both frontmatter and body
+/// date-metadata violations [Repo-grounded —
+/// `frontmatter_audit.rs::scan_frontmatter_content`].
+let private scanFrontmatterDatesFile (path: string) : Finding list =
+    let frontmatter, body = File.ReadAllText path |> splitFrontmatterAndBody
+    checkFrontmatterUpdatedField path frontmatter @ checkBodyAnnotations path body
+
+/// Returns `true` when `path` contains a configured exclusion prefix as a
+/// literal substring — not a path-component prefix
+/// [Repo-grounded — `frontmatter_audit.rs::is_excluded`].
+let private isFrontmatterDatesExcluded (excludedPrefixes: string list) (path: string) : bool =
+    let slashed = path.Replace('\\', '/')
+
+    excludedPrefixes
+    |> List.exists (fun prefix -> slashed.Contains(prefix, StringComparison.Ordinal))
+
+/// Recursively collects sorted `.md` file paths reachable from `root`,
+/// filtering out any path excluded by `excludedPrefixes`. No directory name
+/// is itself skipped during the walk — unlike every other `md` validator
+/// above, this one ports no `SKIP_DIRS` constant
+/// [Repo-grounded — `frontmatter_audit.rs::walk_paths`].
+let private walkFrontmatterDatesPath (excludedPrefixes: string list) (root: string) : string list =
+    collectFilesSkipping Set.empty root
+    |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun p -> not (isFrontmatterDatesExcluded excludedPrefixes p))
+    |> List.sort
+
+/// Audits every markdown file reachable from `paths` for forbidden YAML
+/// frontmatter date metadata and forbidden body-level date annotations,
+/// skipping any file whose path contains one of `excludedPrefixes` as a
+/// substring. The returned list is sorted by file path, then by message
+/// [Repo-grounded — `frontmatter_audit.rs::audit_frontmatter`].
+///
+/// Gherkin (binds) — "Clean directory passes the audit":
+///   Given a governance directory with no forbidden date metadata in markdown files
+///   When the developer runs md frontmatter validate on the directory
+///   Then the command exits successfully
+///   And the output reports zero frontmatter findings
+///
+/// Gherkin (binds) — "Frontmatter with forbidden updated field fails":
+///   Given a governance markdown file whose frontmatter contains a forbidden updated field
+///   When the developer runs md frontmatter validate on the file
+///   Then the command exits with a failure code
+///   And the output identifies the forbidden frontmatter field and its location
+///
+/// Gherkin (binds) — "Body containing Last Updated footer block fails":
+///   Given a governance markdown file whose body contains a Last Updated footer block
+///   When the developer runs md frontmatter validate on the file
+///   Then the command exits with a failure code
+///   And the output identifies the forbidden footer block and its location
+///
+/// Gherkin (binds) — "Body containing standalone Created annotation fails":
+///   Given a governance markdown file whose body contains a standalone Created date annotation
+///   When the developer runs md frontmatter validate on the file
+///   Then the command exits with a failure code
+///   And the output identifies the forbidden inline annotation and its location
+///
+/// Gherkin (binds) — "File under website app directory is exempt and passes":
+///   Given a markdown file with forbidden date metadata under a website app directory
+///   When the developer runs md frontmatter validate on the file
+///   Then the command exits successfully
+///   And the output reports zero frontmatter findings
+let validateFrontmatterDates (paths: string list) (excludedPrefixes: string list) : Result<Finding list, string> =
+    if List.isEmpty paths then
+        Error "at least one path is required"
+    else
+        paths
+        |> List.collect (walkFrontmatterDatesPath excludedPrefixes)
+        |> List.collect scanFrontmatterDatesFile
+        |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+        |> Ok
+
+// ---------------------------------------------------------------------------
 // md audit
 // ---------------------------------------------------------------------------
 

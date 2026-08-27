@@ -85,6 +85,10 @@ type MdSteps() =
     // ---- md-audit.feature state ----
     let mutable mdAuditResult: MdAuditResult option = None
 
+    // ---- repo-governance-frontmatter-audit.feature state ----
+    let mutable frontmatterDatesFileNeedle: string option = None
+    let mutable frontmatterDatesTarget: string option = None
+
     let root () =
         match rootDir with
         | Some dir -> dir
@@ -199,6 +203,39 @@ type MdSteps() =
             fun (f: Finding) ->
                 (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains(pathNeedle, StringComparison.Ordinal)
         )
+
+    /// Runs `validateFrontmatterDates` against the scenario's prepared root,
+    /// mirroring `md_validate_frontmatter_dates.rs::run`'s path- and
+    /// exclude-resolution logic at the level this file's own precedent
+    /// allows (`md` is not yet wired to CLI argv — see this file's module
+    /// doc comment): `frontmatterDatesTarget`, when a fixture sets it, is the
+    /// command's sole explicit path argument; otherwise the whole prepared
+    /// root stands in for the Rust command's five-directory default path
+    /// list (every fixture below writes under a subdirectory a real
+    /// invocation's defaults would already reach). The registry-driven
+    /// `md-frontmatter-dates` gate's `exclude` arg is read from
+    /// `repo-config.yml` at the root exactly as the real command reads it,
+    /// with no CLI `--exclude` flag to merge in since no scenario here
+    /// exercises one.
+    let runFrontmatterDatesValidate () : Result<Finding list, string> =
+        let repoRoot = root ()
+
+        let paths =
+            match frontmatterDatesTarget with
+            | Some target -> [ Path.Combine(repoRoot, target) ]
+            | None -> [ repoRoot ]
+
+        let excludedPrefixes =
+            (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot).Gates
+            |> List.tryFind (fun gate -> gate.Id = "md-frontmatter-dates")
+            |> Option.bind (fun gate -> gate.Args |> Map.tryFind "exclude")
+            |> Option.defaultValue []
+
+        validateFrontmatterDates paths excludedPrefixes
+
+    let frontmatterDatesFileNeedleValue () : string =
+        frontmatterDatesFileNeedle
+        |> Option.defaultWith (fun () -> failwith "fixture must set frontmatterDatesFileNeedle")
 
     // ---- Given ----
 
@@ -705,6 +742,49 @@ type MdSteps() =
     [<Given>]
     member _.``a repository containing no markdown files``() = rootDir <- Some(newTempDir ())
 
+    // ---- Given (repo-governance-frontmatter-audit.feature) ----
+
+    [<Given>]
+    member _.``a governance directory with no forbidden date metadata in markdown files``() =
+        writeDoc "repo-governance/clean.md" "---\ntitle: T\n---\n\nClean body.\n"
+
+    [<Given>]
+    member _.``a governance markdown file whose frontmatter contains a forbidden updated field``() =
+        writeDoc "repo-governance/dated.md" "---\ntitle: T\nupdated: 2026-01-01\n---\n\nbody\n"
+        frontmatterDatesFileNeedle <- Some "repo-governance/dated.md"
+
+    [<Given>]
+    member _.``a governance markdown file whose body contains a Last Updated footer block``() =
+        writeDoc "repo-governance/footer.md" "# Title\n\nBody.\n\n**Last Updated**: 2026-01-01\n"
+        frontmatterDatesFileNeedle <- Some "repo-governance/footer.md"
+
+    [<Given>]
+    member _.``a governance markdown file whose body contains a standalone Created date annotation``() =
+        writeDoc "repo-governance/created.md" "# Title\n\n- **Created**: 2026-01-01\n"
+        frontmatterDatesFileNeedle <- Some "repo-governance/created.md"
+
+    /// The website-app exemption is registry-driven (the `md-frontmatter-dates`
+    /// gate's `exclude` arg), not hardcoded — this fixture declares its own
+    /// local `repo-config.yml` so it exercises the real exclusion mechanism
+    /// rather than depending on this repo's own configuration
+    /// [Repo-grounded — `docs.rs::given_fd_website_exempt`].
+    [<Given>]
+    member _.``a markdown file with forbidden date metadata under a website app directory``() =
+        writeDoc "apps/ayokoding-www/content/post.md" "---\nupdated: 2026-01-01\n---\n"
+
+        writeDoc
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "gates:"
+                  "  - id: md-frontmatter-dates"
+                  "    args:"
+                  "      exclude:"
+                  "        - apps/"
+                  "" ])
+
+        frontmatterDatesTarget <- Some "apps/ayokoding-www"
+
     // ---- When ----
 
     [<When>]
@@ -987,6 +1067,16 @@ type MdSteps() =
     [<When>]
     member _.``the developer runs "rhino-cli md audit"``() =
         mdAuditResult <- Some(runAudit (root ()))
+
+    // ---- When (repo-governance-frontmatter-audit.feature) ----
+
+    [<When>]
+    member _.``the developer runs md frontmatter validate on the directory``() =
+        outcome <- Some(runFrontmatterDatesValidate ())
+
+    [<When>]
+    member _.``the developer runs md frontmatter validate on the file``() =
+        outcome <- Some(runFrontmatterDatesValidate ())
 
     [<When>]
     member _.``the parser processes the file``() =
@@ -1342,6 +1432,23 @@ type MdSteps() =
             |> Option.defaultWith (fun () -> failwith "no md audit command has been run by a When step")
 
         Assert.Contains("MD AUDIT PASSED", result.Report)
+
+    // ---- Then (repo-governance-frontmatter-audit.feature) ----
+
+    [<Then>]
+    member _.``the output reports zero frontmatter findings``() = Assert.Empty(theFindings ())
+
+    [<Then>]
+    member _.``the output identifies the forbidden frontmatter field and its location``() =
+        assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "updated:"
+
+    [<Then>]
+    member _.``the output identifies the forbidden footer block and its location``() =
+        assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "Last Updated"
+
+    [<Then>]
+    member _.``the output identifies the forbidden inline annotation and its location``() =
+        assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "inline date annotation"
 
     [<AfterScenario>]
     member _.Cleanup() =
@@ -1783,3 +1890,25 @@ let ``README.md is exempt and passes regardless of placement`` () =
 [<Fact>]
 let ``Every md validator passes on a repository with no markdown files`` () =
     FeatureRunner.run "md-audit.feature" "Every md validator passes on a repository with no markdown files"
+
+[<Fact>]
+let ``Clean directory passes the audit`` () =
+    FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Clean directory passes the audit"
+
+[<Fact>]
+let ``Frontmatter with forbidden updated field fails`` () =
+    FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Frontmatter with forbidden updated field fails"
+
+[<Fact>]
+let ``Body containing Last Updated footer block fails`` () =
+    FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Body containing Last Updated footer block fails"
+
+[<Fact>]
+let ``Body containing standalone Created annotation fails`` () =
+    FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Body containing standalone Created annotation fails"
+
+[<Fact>]
+let ``File under website app directory is exempt and passes`` () =
+    FeatureRunner.run
+        "repo-governance-frontmatter-audit.feature"
+        "File under website app directory is exempt and passes"
