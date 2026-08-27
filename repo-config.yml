@@ -1032,10 +1032,11 @@ gates:
   # content restructure. Those two trees therefore get structural enforcement
   # only; annotation stays scoped to the conforming trees below.
   #
-  # The generated harness mirrors (`.opencode/`, `.codex/`) are
-  # absent by design: they are emitted by `harness bindings generate` from
-  # `.claude/`, are never hand-edited, and an index written into them would be
-  # regenerated away. `.claude/` — their source of truth — is covered instead.
+  # Secondary binding roots are absent by design: their current Markdown
+  # content is registry-declared generated output, while their vendored
+  # configuration is non-Markdown. Generated paths are emitted by
+  # `harness bindings generate` from `.claude/` and never hand-edited;
+  # `.claude/` — their source of truth — is covered instead.
   - id: governance-readme-index
     type: check
     command: governance readme-index validate

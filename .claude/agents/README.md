@@ -37,8 +37,9 @@ PR review) are single-purpose pipelines instead.
 Every agent file's `name:` frontmatter is its identity — Claude Code discovers agents recursively
 by that field, not by file path, so grouping into subfolders does not break discovery. `name`
 must stay globally unique across the whole tree. OpenCode has no subfolder discovery, so
-`npm run generate:bindings` flattens every mirror (`.opencode/`, `.codex/`, `.agents/`) back to
-one level, filenames derived from `name`.
+`npm run generate:bindings` flattens generated agent files into `.opencode/agents/`; the same run
+emits Codex agent files under `.codex/agents/` and mirrors Skills to non-vendored paths under
+`.agents/skills/`. Generated filenames derive from `name`.
 
 ## Source and generated bindings
 
