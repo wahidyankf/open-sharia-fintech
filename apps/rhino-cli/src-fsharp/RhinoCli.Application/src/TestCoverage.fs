@@ -45,6 +45,7 @@
 /// merged output file exists in LCOV format.
 module RhinoCli.Application.TestCoverage
 
+open System
 open System.IO
 
 // ---------------------------------------------------------------------------
@@ -552,13 +553,13 @@ let private parseLcov (filename: string) : LcovFile list =
         ||> Array.fold (fun (files, current) line ->
             let trimmed = line.Trim()
 
-            if trimmed.StartsWith("SF:") then
+            if trimmed.StartsWith("SF:", StringComparison.Ordinal) then
                 files,
                 { current with
                     Path = trimmed.Substring(3) }
-            elif trimmed.StartsWith("DA:") then
+            elif trimmed.StartsWith("DA:", StringComparison.Ordinal) then
                 files, parseDa (trimmed.Substring(3)) current
-            elif trimmed.StartsWith("BRDA:") then
+            elif trimmed.StartsWith("BRDA:", StringComparison.Ordinal) then
                 files, parseBrda (trimmed.Substring(5)) current
             elif trimmed = "end_of_record" then
                 files @ [ current ], emptyLcovFile
