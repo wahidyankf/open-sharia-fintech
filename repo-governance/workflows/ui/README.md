@@ -18,7 +18,7 @@ Use these workflows when a UI component needs a repeatable quality pass. They co
 
 ## Available Workflows
 
-- [ui-quality-gate](./ui-quality-gate.md) — Validates UI component quality against frontend conventions and applies fixes iteratively until zero findings are confirmed twice. Use when auditing or fixing UI components for token compliance, accessibility, dark mode, and responsive design.
+- [ui-quality-gate](./ui-quality-gate.md) — Runs one full UI audit, at most one fix pass, and one scoped verification over original findings and affected-component regressions. Use when auditing or fixing UI components for token compliance, accessibility, dark mode, and responsive design.
 
 ## Related Documentation
 

@@ -40,10 +40,9 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix.
 
 ## Lifecycle-Owned Predicates
 
-When given `delegated-gate-ids` and an evidence ledger, preserve both and skip findings whose exact
-predicate is delegated. Never revalidate, infer, or fix delegated work; missing or stale evidence
-remains pending. After edits, invalidate evidence whose registered scope intersects changed files.
-Without this handoff, suppress nothing. See the
+Preserve supplied `delegated-gate-ids` and evidence. Skip exact delegated predicates; missing/stale
+evidence remains pending. After edits, invalidate evidence whose registered scope intersects the
+changes. Without a handoff, suppress nothing. See the
 [lifecycle ownership policy](../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Fix Capabilities
@@ -58,6 +57,12 @@ Without this handoff, suppress nothing. See the
 | Missing dark mode variant    | Yes           | Add dark: prefix with appropriate token    |
 | Missing focus-visible        | Yes           | Replace focus: with focus-visible:         |
 | Non-accessible color         | Partial       | Suggest replacement from semantic tokens   |
+
+## Bounded Quality-Gate Role
+
+For `ui-quality-gate`, process validated in-threshold discovery findings once. Return finding IDs,
+affected components, and updated evidence. Never invoke the checker, repeat fixing, or expand scope;
+the workflow owns verification.
 
 ## When to Use This Agent
 
