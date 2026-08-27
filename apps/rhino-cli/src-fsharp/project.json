@@ -55,7 +55,7 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/rhino-cli/src-fsharp/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/rhino-cli/src-fsharp/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj"
       },
       "cache": true,
       "inputs": [
@@ -67,14 +67,14 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/rhino-cli/src-fsharp/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/rhino-cli/src-fsharp/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj"
       },
       "cache": false
     },
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
       },
       "cache": true,
       "inputs": ["{projectRoot}/**/*.fs", "{projectRoot}/tests/unit/**/*.fs"],
@@ -112,7 +112,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin/convention specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate specs/apps/rhino/behavior/rhino-cli/gherkin/env specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature apps/rhino-cli/src-fsharp"
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin/convention specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate specs/apps/rhino/behavior/rhino-cli/gherkin/env specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature apps/rhino-cli/src-fsharp"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
