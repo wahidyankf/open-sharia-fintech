@@ -49,8 +49,8 @@ Validate that completed plan implementation matches what the plan promised — b
 (`brd.md`), product requirements (`prd.md`), technical approach (`tech-docs.md`), the delivery
 checklist, code quality standards — and that every execution-time gate actually held: operational
 readiness, manual behavioral assertions, plan archival, worktree usage, phase gates, post-execution
-anti-hallucination, Knowledge Capture routing (a **blocking gate**), and delivery mode / PR-review
-cycle compliance.
+anti-hallucination, Knowledge Capture routing (a **blocking gate**), and delivery mode / exact-head
+PR-CI compliance. Absence of semantic review is valid unless the user explicitly requested it.
 
 **See `plan-verifying-execution` Skill** for the complete post-execution validation methodology —
 Validation Scope, the Step 0-7 Workflow Overview, and every Step 5b-5i rule's What-to-Validate and

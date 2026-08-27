@@ -32,9 +32,10 @@ when_to_use: Use when writing a plan's Delivery Boundaries table or checking whe
 Every change-producing phase must appear in exactly one row. A phase absent from the table is a
 defect: its work has no declared route to `main`.
 
-**Enforcement**: `plan-maker` emits the `### Delivery Boundaries` table and places PR/push/review/
-merge steps only in boundary phases. `plan-checker` flags as **HIGH** a PR-creation, review-cycle, or
-merge step inside a non-boundary phase; a change-producing phase absent from the table; or a final
+**Enforcement**: `plan-maker` emits the `### Delivery Boundaries` table and places PR/push/CI/merge
+steps only in boundary phases. An explicitly user-requested semantic-review step is also a PR step
+and belongs at a boundary. `plan-checker` flags as **HIGH** any such step inside a non-boundary
+phase; a change-producing phase absent from the table; or a final
 change-producing phase that is not a boundary. It flags as **MEDIUM** a missing
 `### Delivery Boundaries` table on a non-trivial plan, and a plan declaring a single end-of-plan
 boundary while its `## Parallelization Model` declares independent parallel nodes. `plan-fixer` adds

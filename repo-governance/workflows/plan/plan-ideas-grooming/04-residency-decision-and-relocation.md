@@ -34,7 +34,8 @@ When Step 4's determined target repo differs from an idea's current repo, reloca
    file, not a draft to be touched again).
 2. Commit that write per the fixed `delivery-mode` (`worktree-to-pr`, unconditional — see the
    frontmatter's `delivery-mode` input) and land it on the destination repo's `main`: open the PR and
-   run it through the PR-Review Maker→Fixer Cycle before it merges.
+   require exact-head/base PR CI, one clean current-head `pr-leak-review`, and applicable finite
+   surface gates before it merges.
 3. **Verify the commit landed** on the destination repo's `origin/main` before doing anything else.
 4. **Only after verification succeeds**, delete the original file from the source repo, as its own
    separate commit and push.

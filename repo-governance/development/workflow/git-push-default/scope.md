@@ -29,7 +29,7 @@ when_to_use: Use when determining whether a git-push question is governed by thi
 
 - Force-push and `--no-verify` safety rules: governed by the
   [Git Push Safety Convention](../git-push-safety.md).
-- PR merge approval, the PR-Review Maker→Fixer Cycle, and the done-definition once a PR is opened:
-  governed by the [PR Merge Protocol Convention](../pr-merge-protocol.md).
+- PR merge authority, exact-head PR CI, optional semantic review, and the done-definition once a PR
+  is opened: governed by the [PR Merge Protocol Convention](../pr-merge-protocol.md).
 - The full four-mode vocabulary and the precedence algorithm itself: defined once, canonically, in the
   [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).

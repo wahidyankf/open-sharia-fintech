@@ -34,7 +34,7 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
       force removal or silently discard dirty or unpushed work.
 
 **`worktree-to-pr` / `main-to-pr` (`*-to-pr` modes)** — archival-in-PR: the plan-folder move lands
-inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, before the merge
+inside the delivering PR itself, followed by exact-current-head/base PR CI, before the merge
 (`[AI]` by default; `[HUMAN]` only where the plan's own step says so):
 
 1. Move entire plan folder from current location to `plans/done/` (same command as the direct-push
@@ -55,8 +55,7 @@ inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, bef
    chore(plans): move [plan-identifier] to done
    ```
 
-7. **Run or complete the PR-Review Maker→Fixer Cycle** against the PR (see the gate above) — because
-   each cycle's reviewer pipeline (`pr-review-scout-maker` → nine specialists → `pr-review-synthesis-maker`) reviews the full
-   current state of the PR, its final pass also covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
-   complete, every comment answered, all gates GREEN (including CI on this last push), and the
-   archival commit present on the PR branch.
+7. **Verify the replacement `Quality gate` run** is green for the archival commit's exact PR head
+   and current base. Confirm conversations are resolved, applicable finite surface gates pass, the
+   secrets check is clean, and the archival commit is present. Semantic-review evidence is required
+   only when the user explicitly requested that workflow for this PR.

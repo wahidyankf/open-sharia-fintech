@@ -22,7 +22,7 @@ git commit -m "feat(component): add feature X"
 git push origin <plan-identifier>
 gh pr create --draft --base main
 
-# 5. Repeat steps 2-4; drive the PR green through the review cycle and CI,
+# 5. Repeat steps 2-4; drive exact-current-head/base PR CI and applicable surface gates green,
 #    then merge once the hardened preconditions hold ([AI] by default)
 ```
 

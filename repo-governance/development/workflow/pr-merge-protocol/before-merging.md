@@ -15,24 +15,17 @@ when_to_use: Use as the final checklist immediately before executing a PR merge.
 
 # Before Merging
 
-Before merging, the agent must confirm **all five** hardened preconditions (a)-(e) hold, as stated in
-[The Rule](./the-rule.md#the-rule) above and defined normatively in
-[the PR Review Quality Gate](../../../workflows/pr/pr-review-quality-gate/hardened-merge-preconditions-a-e.md).
-Do not substitute the shorter list that used to live here.
+Before merging, confirm all five preconditions from [The Rule](./the-rule.md#the-rule):
 
-1. **(a)** The route is complete: eligible review reached its clean exit within its configured ceiling;
-   noneligible review has classification evidence plus a green `pr-quality-gate.yml` run. `blocked`
-   never merges.
-2. **(b)** 0 code-related CRITICAL, HIGH, and MEDIUM findings outstanding, verified against the PR's
-   own diff rather than against thread-resolution state.
-3. **(c)** The branch is non-destructively up to date with the target branch (no merge conflicts).
-4. **(d)** The route-required quality gate is green as of the PR's current head: all applicable
-   gates for eligible work, or the named `pr-quality-gate.yml` workflow for noneligible work.
-5. **(e)** Eligible surface tester gates have run and their findings are resolved. A noneligible
-   route is explicitly exempt because its classifier evidence shows no reachable behavior.
+1. **(a)** `Quality gate` is green for the PR's exact current head SHA and current base branch.
+2. **(b)** One authenticated current-head `ose-pr-leak-review:v1` record reports `pass`.
+3. **(c)** The branch is non-destructively current with the target and has no merge conflict.
+4. **(d)** Every review conversation is resolved or explicitly dismissed by the user.
+5. **(e)** Every applicable finite surface gate passed, or an unreachable surface has an explicit
+   exemption.
 
 > **Why this list is spelled out in full.** It previously carried only three items — CI completed,
-> review comments checked, branch up to date — because it ran immediately before a **human approval
+> review conversations checked, branch up to date — because it ran immediately before a **human approval
 > prompt**, and the human was the backstop for whatever the list omitted. Now that `[AI]` merges by
 > default, that backstop is gone and this is the last checklist an autonomous merge passes through.
 > An enumeration that was merely incomplete has become the thing standing in for a reviewer. Any

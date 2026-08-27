@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Canonical instructions for agents and contributors, aligned with the
+> Canonical contributor instructions aligned with the
 > [AGENTS.md standard](https://agents.md/).
 
 ## Repository Overview
@@ -12,8 +12,6 @@ Trunk-Based Dev on `main`. Node.js 24 (Volta), npm.
 [web-sites.md](./docs/reference/web-sites.md) (domains, ports)
 
 ## Glossary
-
-Terms are repository-wide.
 
 - **Repo rules** — every normative surface, not one directory: `repo-governance/`, `AGENTS.md`,
   `CLAUDE.md`, `.claude/` + mirrors, `repo-config.yml`, enforcement machinery, SE style guides.
@@ -43,8 +41,8 @@ rtk nx affected -t build,test:quick,lint
 
 ## Quality Gates
 
-Markdown auto-linted via hooks/CI; cross-language lint at warning-and-above. Instruction files carry
-a word budget; READMEs need annotated indexes.
+Hooks/CI lint Markdown and cross-language warnings. Instruction files have word budgets; READMEs
+need annotated indexes.
 
 **See**: [governance-word-budget.md](./repo-governance/conventions/structure/governance-word-budget.md),
 [governance-readme-completeness.md](./repo-governance/conventions/structure/governance-readme-completeness.md)
@@ -59,9 +57,10 @@ assumptions, ledger, and verification before acting.
 
 ### Delivery Mode
 
-`worktree-to-pr` is mandatory. Executable work and `plans/**` run review cycles plus
-`pr-quality-gate.yml`; other static work, the gate only. `[AI]` merges by default. One worktree per repo per plan; Phase 0 opens
-none.
+`worktree-to-pr` is mandatory. Every PR requires current-head/base `pr-quality-gate.yml` and one
+current-head `pr-leak-review`; semantic review runs only when explicitly requested.
+Applicable UI/API surface gates still bind.
+`[AI]` merges by default. One worktree per repo per plan; Phase 0 opens none.
 
 **See**: [Delivery Mode](./repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 
@@ -83,7 +82,7 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 ### Agent Workflow Orchestration
 
-Maintain task list. Plan non-trivial work. Preserve
+Maintain tasks; plan non-trivial work. Preserve
 user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
 file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. New worktree: run
 `rtk npm install` at its root. Poll CI every 2
@@ -117,8 +116,8 @@ Stage/commit only when explicitly instructed. License MIT — see
 
 ## Related Repositories
 
-Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private); `apps/rhino-cli` byte-identical.
-Independent/family-only: [BeaverNest](https://github.com/wahidyankf/beaver-nest); work stays there; learnings inform OSE.
+Parity sibling: [ose-private](https://github.com/wahidyankf/ose-private); `apps/rhino-cli` byte-identical.
+Independent: [BeaverNest](https://github.com/wahidyankf/beaver-nest); work stays there; learnings inform OSE.
 
 [Details](./docs/reference/related-repositories.md)
 

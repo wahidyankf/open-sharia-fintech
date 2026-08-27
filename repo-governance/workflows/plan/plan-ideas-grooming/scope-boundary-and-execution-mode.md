@@ -34,13 +34,13 @@ document, matching the pattern [`plan-execution`](../plan-execution.md) uses for
 orchestrator-run steps.
 
 Every git delivery under this workflow's `worktree-to-pr` default — unconditional, no override —
-runs the full PR-Review Maker→Fixer Cycle in the processed repo before the change lands, per
+runs exact-head/base PR CI and one clean current-head `pr-leak-review` before the change lands, per
 [Plans Organization Convention §Per-Repository Delivery Mode
 Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
 `main` is branch-protected against direct pushes in `ose-public`, so the historical
 `plans/**`-only **plan-docs-only carve-out**
 ([`plan-planning`](../plan-planning/plan-docs-only-carve-out.md))
-that once let this workflow push directly to each processed repo's own `main` with no review cycle
+that once let this workflow push directly to each processed repo's own `main` with no PR gate
 is retired there — a plan-docs-only change in `ose-public` uses `worktree-to-pr` like
 any other change. The carve-out survives, narrowed, only in `ose-private` as an
 infrastructure-as-code exception — but this workflow's write scope is strictly `plans/ideas/**`

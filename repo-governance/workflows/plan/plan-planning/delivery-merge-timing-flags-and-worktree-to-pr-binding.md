@@ -11,7 +11,7 @@ when_to_use: Use when deciding when a PR should merge, whether a phase needs a f
 Each delivery unit's PR is **opened and merged** as that unit's **delivery boundary** is reached. It
 is neither opened early at every intermediate phase, nor held open for a **batch merge** at plan end.
 
-Both failure modes cost something different. Opening a PR per phase spends a full review cycle on
+Both failure modes cost something different. Opening a PR per phase spends PR CI and integration overhead on
 scaffolding the next phase rewrites, and the review cannot judge intent that only lands two phases
 later. Holding PRs for a batch merge serialises work the DAG already declared independent, and grows
 the divergence each PR must reconcile against `main`.

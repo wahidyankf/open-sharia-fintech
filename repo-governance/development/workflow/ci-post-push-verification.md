@@ -14,7 +14,7 @@ when_to_use: Use immediately after pushing app or lib code, to confirm CI actual
 
 # CI Post-Push Verification Convention
 
-After pushing app or library code, you MUST manually trigger all related GitHub CI workflows and verify they pass before declaring the work done. **This obligation is delivery-mode-independent**: it applies to a push to a PR branch under the default `worktree-to-pr` exactly as it applies to a push to `origin main` under the direct-push modes. Under `worktree-to-pr` it is what makes the PR green, which merge precondition (d) requires. A green pre-push hook is a necessary condition, not a sufficient one — it cannot run integration tests, end-to-end tests, or deployment workflows.
+After pushing app or library code, you MUST manually trigger all related GitHub CI workflows and verify they pass before declaring the work done. **This obligation is delivery-mode-independent**: it applies to a push to a PR branch under the default `worktree-to-pr` exactly as it applies to a push to `origin main` under the direct-push modes. Under `worktree-to-pr` it is what makes the PR green, which merge precondition (a) requires. A green pre-push hook is a necessary condition, not a sufficient one — it cannot run integration tests, end-to-end tests, or deployment workflows.
 
 ## Contents
 

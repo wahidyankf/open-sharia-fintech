@@ -22,11 +22,10 @@ is not used either: every plan here uses **`worktree-to-pr`**, with no exception
 and the `.md`-only condition of the content restriction above are **retired** here — direct push is
 disallowed by this rule regardless of file content.
 
-**Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
-discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that
-bypass is even possible, across both repositories, to the one case with a genuine technical
-reason (secrets and state that cannot leave the primary checkout) closes the gap between "convenient"
-and "actually necessary" that the old `.md`-only carve-out left open everywhere.
+**Why this is a hard rule**: a direct push bypasses the branch-protected PR route and its exact-head
+`Quality gate`. Narrowing that bypass across both repositories to the one case with a genuine
+technical reason (secrets and state that cannot leave the primary checkout) closes the gap between
+"convenient" and "actually necessary" that the old `.md`-only carve-out left open everywhere.
 
 **Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
 `main-to-origin-main` in `ose-public` as **HIGH** — those modes have no executable

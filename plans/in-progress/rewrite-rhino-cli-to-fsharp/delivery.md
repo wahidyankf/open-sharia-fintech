@@ -35,10 +35,11 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 Mandatory in `ose-public` — `main` is branch-protected including for admins. `ose-private` uses the
 same mode here for symmetry, since this is not an infrastructure-as-code plan.
 
-> **PR review is skipped for the remainder of this plan's execution (user directive, 2026-08-26).**
-> Every PR from Phase 2 onward merges as soon as `pr-quality-gate.yml` (CI) is green — no
-> [PR-Review Maker→Fixer Cycle](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
-> runs at all, superseding both the default five-cycle cap and this plan's earlier "lighter review,
+> **Semantic PR review is not requested for the remainder of this plan's execution.** Every PR
+> from Phase 2 onward uses exact-current-head/base `pr-quality-gate.yml` plus applicable surface
+> gates and one current-head `pr-leak-review` pass — no broad
+> [PR-Review Cycle](../../../repo-governance/workflows/pr/pr-review-cycle.md) runs,
+> superseding both the former default five-cycle cap and this plan's earlier "lighter review,
 > cap 2 cycles, override readily" policy. `[AI]` merges directly once CI passes; no review-cycle
 > comment, no override note is required beforehand. PR #309 (`ose-public`) and PR #76
 > (`ose-private`) — mid cycle-1 review when this took effect — stop at cycle 1's already-applied
@@ -15560,7 +15561,8 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [ ] [AI] Verify all CI checks pass
 - [ ] [AI] If any CI check fails, fix immediately and push a follow-up commit
 - [ ] [AI] Do NOT proceed to the next delivery phase until CI is green
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle to its clean exit within the five-cycle cap
+- [ ] [AI] Verify `pr-quality-gate.yml` is green for the exact current PR head and base
+- [ ] [AI] Run one `pr-leak-review` and verify authenticated `pass` evidence for that exact head
 - [ ] [AI] Merge once the hardened preconditions hold, then fast-forward local `main`
 
 ## Commit Guidelines

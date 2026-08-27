@@ -46,7 +46,7 @@ This agent's output, every cycle, is exactly four things:
    Step 0's exact delegated IDs and lifecycle evidence ledger.
 4. **Probe class** — the named class of question this cycle asks, and whether that class has
    been used on this PR before. The coordinator records it, so
-   [a new probe](../../../../repo-governance/workflows/pr/pr-review-quality-gate/probe-variation-and-exit.md)
+   [a new probe](../../../../repo-governance/workflows/pr/pr-review-cycle/probe-variation-and-exit.md)
    is checkable rather than asserted.
 
 Hand all four to the route-selected specialist fan-out and `pr-review-synthesis-maker`;

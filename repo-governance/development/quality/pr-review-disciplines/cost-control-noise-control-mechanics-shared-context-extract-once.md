@@ -29,7 +29,7 @@ wrote last cycle. The **PR body stays in the brief** — it is what a human read
 plans-only PR the plan itself is the shipping surface and stays too. This is not generated-file filtering by another name: those files are
 excluded because the **loop itself authored them**, not because a tool emitted them, and cycle 1
 still reviews them in full. See
-[Loop-Exit and Block Rules](../../../workflows/pr/pr-review-quality-gate/loop-exit-and-block-rules.md)
+[Loop-Exit and Block Rules](../../../workflows/pr/pr-review-cycle/loop-exit-and-block-rules.md)
 for the rule and the PR #239 evidence behind it.
 
 Two mechanics keep this full-diff posture tractable rather than merely expensive:

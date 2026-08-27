@@ -16,16 +16,15 @@ when_to_use: Use when determining which delivery mode actually applies to a plan
 
 Continues [Delivery Mode — main-to-origin-main Content Restriction](./delivery-mode-content-restriction.md).
 
-**[AI] merges by default.** Every PR first uses the canonical behavior classifier, not a separate
-plan-specific review path. Eligible executable work must reach its clean exit within its
-authenticated configured ceiling: five by default, or the bounded value in an admitted per-PR
-human extension record. Starting an ordinal above that ceiling is forbidden. Noneligible static
-work requires the named `pr-quality-gate.yml` workflow. A PR touching `plans/**` is **always eligible** and must
-satisfy both routes unless the user waives it for that PR. A blocked eligible PR never merges. The shared hardened
-preconditions still apply: no code-related CRITICAL/HIGH/MEDIUM finding outstanding, branch current
-with `origin/main` via a non-destructive forward update, route-required quality checks green, and
-eligible surface tester gates run and resolved — see the
-[PR Review Quality Gate workflow](../../../workflows/pr/pr-review-quality-gate.md).
+**[AI] merges by default.** Every PR uses one convergent default route: the `Quality gate` check
+from `.github/workflows/pr-quality-gate.yml` must be green for the exact current head and base, and
+one authenticated `ose-pr-leak-review:v1` record must pass for that head.
+Semantic review is not inferred from executable content, `plans/**`, risk, or delivery mode. A plan
+may include [`pr-review`](../../../workflows/pr/pr-review.md) or
+[`pr-review-cycle`](../../../workflows/pr/pr-review-cycle.md) only because the user explicitly
+requested it, and only at a PR delivery boundary. The shared hardened preconditions also require a
+current conflict-free branch, resolved conversations, and passing applicable finite surface gates;
+see the [PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md).
 
 Where a plan **does** want human judgment at the merge point — an irreversible migration, a
 production cutover, a change whose blast radius the gates cannot express — it says so explicitly in

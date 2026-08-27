@@ -19,9 +19,9 @@ Every plan-execution rule applies unchanged, including:
   standard three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) —
   distinct from this composite's own `mode` input, which governs only the planning-phase delivery
   of the plan **documents** (Step 1). A repo whose plan resolves to a `*-to-pr` delivery mode
-  additionally runs the [PR-Review Maker→Fixer Cycle](../../pr/pr-review-quality-gate.md) inside
-  plan-execution's Step 8 before that repo's merge — its "done" for that repo is a green,
-  fully-reviewed, archival-included PR, not a direct push to `origin main`.
+  additionally requires exact-head/base PR CI, one clean current-head
+  [`pr-leak-review`](../../pr/pr-leak-review.md), and applicable finite surface gates before that
+  repo's merge — its "done" is a green, archival-included PR, not a direct push to `origin main`.
   See [plan-execution.md Step 8](../plan-execution.md).
 - **Step 0 worktree gate**: enter the plan's designated worktree (provision from the latest
   `origin/main` if missing), sync it with `origin/main` before any implementation.

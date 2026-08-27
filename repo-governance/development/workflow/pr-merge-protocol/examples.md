@@ -20,11 +20,11 @@ when_to_use: Use as a reference when unsure whether a specific merge decision ma
 ```
 Agent: All five merge preconditions hold for PR #42:
 
-  (a) review route:   eligible, clean at cycle 2 of 5
-  (b) C/H/M:          0 / 0 / 0 outstanding
+  (a) PR CI:          exact current head/base green
+  (b) leak review:    authenticated current-head pass
   (c) branch vs main: up to date
-  (d) quality gates:  all green
-  (e) tester gates:   run, findings resolved
+  (d) conversations:  resolved
+  (e) surface gates:  passed / explicitly exempt
 
 Merging PR #42.
 ```
@@ -32,8 +32,8 @@ Merging PR #42.
 ## FAIL: Incorrect agent behavior -- merging before the preconditions hold
 
 ```
-Agent: I created PR #42 and CI is green. Merging now.
-[merges before the eligible route reaches a clean cycle -- precondition (a) unmet]
+Agent: I created PR #42 and an earlier CI run is green. Merging now.
+[merges without proving the run matches the current head and base -- precondition (a) unmet]
 ```
 
 ## FAIL: Incorrect agent behavior -- merging with failing gates
@@ -41,7 +41,7 @@ Agent: I created PR #42 and CI is green. Merging now.
 ```
 Agent: PR #42 has a failing lint check, but the rest passed.
        Merging anyway to save time.
-[merges despite failing gate -- precondition (d) unmet]
+[merges despite failing PR CI -- precondition (a) unmet]
 ```
 
 ## FAIL: Incorrect agent behavior -- carrying a bypass forward

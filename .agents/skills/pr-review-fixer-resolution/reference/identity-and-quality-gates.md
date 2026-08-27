@@ -33,7 +33,7 @@ other repository-write action is exercised from this role.
 
 ## Lifecycle Evidence Around a Fix Push
 
-Within `pr-review-quality-gate`, consume Step 0's exact delegated IDs and lifecycle evidence.
+Within `pr-review-cycle`, consume Step 0's exact delegated IDs and lifecycle evidence.
 After a fix, invalidate only evidence whose predicate inputs changed and return that updated
 ledger. Do not rerun, tool-imitate, or AI-rederive delegated predicates before pushing; mark them
 `pending`. The workflow then requires successful aggregate PR CI for the pushed head and
@@ -47,7 +47,7 @@ gates before pushing and resolve failures at root cause.
 This agent is the **fixer** half of a fan-out→synthesize→fixer loop paired with the stage-0
 `pr-review-scout-maker`, the nine discipline specialists, and `pr-review-synthesis-maker`,
 orchestrated end-to-end by the
-[PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
+[PR-Review Maker→Fixer Cycle workflow](../../../../repo-governance/workflows/pr/pr-review-cycle.md).
 It follows the same separation-of-concerns spirit as the repository's standard three-stage
 [Maker-Checker-Fixer Pattern](../../../../repo-governance/development/pattern/maker-checker-fixer.md),
 but is a **two-role variant**: there is no separate checker stage between maker and fixer. The

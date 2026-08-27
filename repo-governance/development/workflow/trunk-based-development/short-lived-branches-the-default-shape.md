@@ -45,7 +45,7 @@ git push origin feature-user-login
 # Open the PR as a draft immediately
 gh pr create --draft --base main --title "feat(auth): implement login endpoint"
 
-# Get review within hours (not days), run the PR-Review Maker->Fixer Cycle
+# Drive exact-current-head/base PR CI and applicable surface gates green
 
 # When the done-definition is met, flip to ready and merge once the hardened
 # preconditions hold -- [AI] by default, [HUMAN] only where a plan says so

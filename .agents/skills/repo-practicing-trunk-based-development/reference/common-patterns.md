@@ -64,7 +64,7 @@ git checkout -b experimental-graphql
 # If adopting: push the branch and land it through a PR
 git push origin experimental-graphql
 gh pr create --draft --base main
-# ... review cycle + CI, then squash/rebase merge (never a local `git merge`,
+# ... exact-head PR CI + applicable surface gates, then squash/rebase merge (never a local `git merge`,
 # which would break linear history)
 git branch -d experimental-graphql
 

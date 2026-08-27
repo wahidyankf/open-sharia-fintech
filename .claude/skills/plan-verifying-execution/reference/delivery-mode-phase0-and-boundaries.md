@@ -22,13 +22,11 @@
 - A PR was opened for a phase the plan does not declare a delivery boundary: **HIGH**
 - A declared delivery unit whose PR never merged: **HIGH**
 - `*-to-pr` mode: PR missing: **CRITICAL**
-- `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
-- `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**
-- `*-to-pr` mode: loop exited with a [code-related](../../../../repo-governance/workflows/pr/pr-review-quality-gate/what-code-related-means.md) MEDIUM/HIGH/CRITICAL finding outstanding, or hit
-  its authenticated configured ceiling without the two-clean-cycle exit: **CRITICAL**
-- `*-to-pr` mode: loop started an ordinal above its authenticated configured ceiling: **HIGH**
-- `*-to-pr` mode: a low count that reached two consecutive clean current-head cycles under probe
-  classes unused earlier on the PR: **not a finding**
+- `*-to-pr` mode: exact-current-head/base `Quality gate` not green: **CRITICAL**
+- `*-to-pr` mode: current-head authenticated leak-review pass missing: **CRITICAL**
+- `*-to-pr` mode: no semantic-review evidence when none was requested: **not a finding**
+- `*-to-pr` mode: semantic-review step without a direct user request: **HIGH**
+- `*-to-pr` mode: applicable finite surface gate missing or failed: **CRITICAL**
 - `*-to-pr` mode: unresolved thread with no reply and no `[HUMAN]` escalation note: **HIGH**
 - `*-to-pr` mode: archival-in-PR missing or deferred post-merge (where applicable): **HIGH**
 - Filing a finding solely because a `*-to-pr` PR remains unmerged: **not a finding** (false positive

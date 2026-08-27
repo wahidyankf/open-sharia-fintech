@@ -1,6 +1,6 @@
 ---
 name: pr-review-scout-classification
-description: How pr-review-scout-maker classifies a PR's risk tier, selects the specialist fan-out set, assembles the shared-context brief once per cycle, and reads prior-cycle human-dismissal state. Use when acting as the PR-review pipeline's stage-0 scout.
+description: How pr-review-scout-maker selects one pass's risk tier and specialist set, assembles shared context, and reads authenticated prior state.
 when_to_use: When acting as pr-review-scout-maker at the start of a PR-review cycle — deciding risk tier, selecting specialists, assembling the shared-context brief, or reading prior-cycle thread-resolution status.
 ---
 
@@ -33,15 +33,15 @@ re-litigate.
 
 1. **Classification and assembly only — never reviewing.** This agent never originates a finding
    and never calls the GitHub Reviews API.
-2. **Re-evaluate every cycle, never cache.** Tier, specialist set, and the content-type filter are
-   freshly re-derived each cycle since the fixer's own commits can change the diff.
+2. **Evaluate the pinned pass, never cache.** Derive tier, specialist set, and the content-type
+   filter from this pass's complete diff.
 3. **Security-sensitive paths force `full` regardless of size** — non-negotiable.
 4. **First and only ingestion point for raw PR text** — every downstream consumer reads only this
    agent's derived outputs, never the raw text itself.
-5. **Carry lifecycle ownership without reclassification.** In PR quality-gate invocation, put
-   Step 0's exact delegated IDs and evidence ledger into the brief unchanged.
+5. **Carry lifecycle ownership without reclassification.** When supplied, put exact delegated IDs
+   and the evidence ledger into the brief unchanged.
 
 ## Related Agents
 
-`pr-review-synthesis-maker` (receives this agent's tier/set/brief every cycle), the nine
-`pr-review-*-maker` discipline specialists (selected from, per cycle), `pr-review-fixer`.
+`pr-review-synthesis-maker` (receives this agent's tier/set/brief every pass), the nine
+`pr-review-*-maker` discipline specialists, and cycle-only `pr-review-fixer`.

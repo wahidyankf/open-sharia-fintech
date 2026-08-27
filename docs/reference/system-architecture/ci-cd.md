@@ -327,8 +327,12 @@ runs are no-ops, avoiding both the Storybook build and the Vercel deployment.
 
 5. **Open a Pull Request** — the default path (`worktree-to-pr`); skip only under a declared direct-push mode:
    - GitHub Actions run the full quality gate on every PR event
-   - PR-Review Maker→Fixer Cycle runs before the merge
-   - Merge once the five hardened merge preconditions hold — `[AI]` by default
+   - The exact current head and base must pass the required `Quality gate`
+   - A focused agent pass checks the current head for secrets, protected environment values, and
+     machine-specific paths
+   - Applicable UI/API surface gates run before merge
+   - Semantic PR review runs only when the user explicitly invokes it
+   - Merge once the repository merge preconditions hold — `[AI]` by default
 
 6. **Deploy** (for Vercel-deployed apps):
 
