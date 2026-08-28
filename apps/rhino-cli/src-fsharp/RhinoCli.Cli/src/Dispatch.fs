@@ -1439,6 +1439,54 @@ let private runMdAuditLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: s
         eprintfn "Error: md audit found %d failure(s)" (List.length failures)
         1
 
+/// The command paths `route` recognises, in match order: each entry pairs the
+/// literal argv prefix with the leaf name `route` dispatches on. Held as data
+/// rather than as one `match` over cons-of-string-literal patterns because
+/// FSharpLint's project-mode analysis is super-linear in that pattern's arm
+/// count — at 25 arms a `dotnet fsharplint lint` of this project ran over an
+/// hour without finishing, against 7 seconds for this form
+/// [Repo-grounded — measured on both shapes of this file; see
+/// `plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md`].
+let private routeTable: (string list * string) list =
+    [ [ "convention"; "emoji"; "validate" ], "emoji"
+      [ "convention"; "license"; "validate" ], "license"
+      [ "convention"; "audit" ], "audit"
+      [ "parity"; "manifest"; "generate" ], "generate"
+      [ "parity"; "manifest"; "validate" ], "validate"
+      [ "repo-config"; "validate" ], "repo-config-validate"
+      [ "env"; "init" ], "env-init"
+      [ "env"; "backup" ], "env-backup"
+      [ "env"; "restore" ], "env-restore"
+      [ "env"; "validate" ], "env-validate"
+      [ "env"; "staged-guard"; "validate" ], "env-staged-guard-validate"
+      [ "doctor" ], "doctor"
+      [ "test-coverage"; "validate" ], "test-coverage-validate"
+      [ "md"; "links"; "validate" ], "md-links-validate"
+      [ "md"; "mermaid"; "validate" ], "md-mermaid-validate"
+      [ "md"; "heading-hierarchy"; "validate" ], "md-heading-hierarchy-validate"
+      [ "md"; "naming"; "validate" ], "md-naming-validate"
+      [ "md"; "frontmatter"; "validate" ], "md-frontmatter-validate"
+      [ "md"; "frontmatter-dates"; "validate" ], "md-frontmatter-dates-validate"
+      [ "md"; "audit" ], "md-audit"
+      [ "governance"; "word-budget"; "validate" ], "governance-word-budget-validate"
+      [ "governance"; "readme-index"; "validate" ], "governance-readme-index-validate"
+      [ "governance"; "readme-index"; "generate" ], "governance-readme-index-generate"
+      [ "governance"; "readme-index"; "rewrite-paths" ], "governance-readme-index-rewrite-paths"
+      [ "git"; "lockfile"; "sync" ], "git-lockfile-sync" ]
+
+/// Returns the first `routeTable` entry whose prefix `argvList` starts with,
+/// paired with the arguments left after that prefix — the data-driven
+/// equivalent of matching each command path as its own pattern arm.
+let private matchRoute (argvList: string list) : (string * string list) option =
+    let rec strip (prefix: string list) (args: string list) : string list option =
+        match prefix, args with
+        | [], rest -> Some rest
+        | ph :: pt, ah :: at when ph = ah -> strip pt at
+        | _ -> None
+
+    routeTable
+    |> List.tryPick (fun (prefix, name) -> strip prefix argvList |> Option.map (fun rest -> name, rest))
+
 /// Routes `argv` to the leaf it names, resolving the repository root via
 /// `getRepoRoot` — injected so tests can point at a fixture directory
 /// instead of shelling out to the real `git` in this checkout.
@@ -1446,34 +1494,9 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
     let argvList = List.ofArray argv
 
     let path, rest =
-        match argvList with
-        | "convention" :: "emoji" :: "validate" :: rest -> Some "emoji", rest
-        | "convention" :: "license" :: "validate" :: rest -> Some "license", rest
-        | "convention" :: "audit" :: rest -> Some "audit", rest
-        | "parity" :: "manifest" :: "generate" :: rest -> Some "generate", rest
-        | "parity" :: "manifest" :: "validate" :: rest -> Some "validate", rest
-        | "repo-config" :: "validate" :: rest -> Some "repo-config-validate", rest
-        | "env" :: "init" :: rest -> Some "env-init", rest
-        | "env" :: "backup" :: rest -> Some "env-backup", rest
-        | "env" :: "restore" :: rest -> Some "env-restore", rest
-        | "env" :: "validate" :: rest -> Some "env-validate", rest
-        | "env" :: "staged-guard" :: "validate" :: rest -> Some "env-staged-guard-validate", rest
-        | "doctor" :: rest -> Some "doctor", rest
-        | "test-coverage" :: "validate" :: rest -> Some "test-coverage-validate", rest
-        | "md" :: "links" :: "validate" :: rest -> Some "md-links-validate", rest
-        | "md" :: "mermaid" :: "validate" :: rest -> Some "md-mermaid-validate", rest
-        | "md" :: "heading-hierarchy" :: "validate" :: rest -> Some "md-heading-hierarchy-validate", rest
-        | "md" :: "naming" :: "validate" :: rest -> Some "md-naming-validate", rest
-        | "md" :: "frontmatter" :: "validate" :: rest -> Some "md-frontmatter-validate", rest
-        | "md" :: "frontmatter-dates" :: "validate" :: rest -> Some "md-frontmatter-dates-validate", rest
-        | "md" :: "audit" :: rest -> Some "md-audit", rest
-        | "governance" :: "word-budget" :: "validate" :: rest -> Some "governance-word-budget-validate", rest
-        | "governance" :: "readme-index" :: "validate" :: rest -> Some "governance-readme-index-validate", rest
-        | "governance" :: "readme-index" :: "generate" :: rest -> Some "governance-readme-index-generate", rest
-        | "governance" :: "readme-index" :: "rewrite-paths" :: rest ->
-            Some "governance-readme-index-rewrite-paths", rest
-        | "git" :: "lockfile" :: "sync" :: rest -> Some "git-lockfile-sync", rest
-        | _ -> None, []
+        match matchRoute argvList with
+        | Some(name, rest) -> Some name, rest
+        | None -> None, []
 
     // `test-coverage validate` and `governance readme-index rewrite-paths`
     // have required arguments (positional / `--map` respectively), whose
