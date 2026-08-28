@@ -44,6 +44,9 @@
     <Compile Include="Steps/GovernanceSteps.fs" />
     <Compile Include="Steps/GitSteps.fs" />
     <Compile Include="Steps/WaveDParityRegressionUnitTests.fs" />
+    <Compile Include="Steps/WaveDFormattersUnitTests.fs" />
+    <Compile Include="Steps/WaveDDispatchUnitTests.fs" />
+    <Compile Include="Steps/WaveDMermaidWarningUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -543,3 +543,47 @@ pushing: any new `string x` application needs `string<'t> x`, and the other twel
 `GRA-JSONOPTS-001`, `GRA-DISPBEFOREASYNC-001`, `GRA-IMMUTABLECOLLECTIONEQUALITY-001`,
 `GRA-LOGARGFUNCFULLAPP-001`, `GRA-LOGTEMPLMISSVALS-001`, `GRA-INTERPOLATED-001`) deserve the same
 read-through on every wave's new code.
+
+## 2026-08-28 — Phase 6: the coverage gate is a per-module minimum, not a repo total
+
+`rhino-cli-fsharp:test:coverage` runs coverlet with `/p:Threshold=90
+/p:ThresholdType=line`. Coverlet's `ThresholdStat` defaults to **`minimum`**, so the bar applies to
+**every module independently** — `RhinoCli.Domain`, `RhinoCli.Infrastructure`,
+`RhinoCli.Application`, and `RhinoCli.Cli` each need 90% line coverage on their own. Reading the
+"Total" row and concluding the gate passes is wrong twice over: a total of exactly 90.00% still
+failed here because `RhinoCli.Application` sat at 89.65%.
+
+### What Wave D did to it
+
+Wave D added roughly 1,300 lines to `RhinoCli.Cli` — the new dispatch leaves and their formatters —
+and no `RhinoCli.Cli` unit tests, because `shadow-diff.sh` was treated as the coverage story. It
+is not one: shadow-diff proves byte-identity for the code paths a live corpus happens to take, and
+coverlet counts lines. The result was `RhinoCli.Cli` at 44.73% line coverage and the total at
+80.87%, failing CI on a PR whose local `test:quick` was green — `test:quick` does not run
+`test:coverage`.
+
+### Where the uncovered lines actually were
+
+Three clusters, all the same shape — code that only runs when something is **wrong** or when a
+flag is **passed**, neither of which a clean repository produces:
+
+1. Every formatter's findings-present arm (headers, table shapes, per-row rendering). The Wave D
+   seven-column word-budget table shipped through a green shadow-diff for exactly this reason.
+2. Every dispatch leaf's body, reachable only by driving `route` against a fixture repository.
+   `DispatchUnitTests.fs`'s existing `runCaptured` + `newTempDir` harness makes this cheap.
+3. `md mermaid validate`'s **warning** renderers. This repository's committed diagrams stay inside
+   every default threshold, so `mermaidWarningDetail` and the JSON `warningNode` builder never ran
+   on live data at all.
+
+Closing all three took 78 tests (761 → 839) and moved `RhinoCli.Cli` to 91.08%,
+`RhinoCli.Application` to 90.65%, total to 90.82%.
+
+### The transferable rule
+
+**Every wave's flip PR must land Cli-level unit tests with the wave's dispatch and formatter
+code**, not after CI rejects it. Waves E and F add far more Cli surface than Wave D did, and the
+current margins are thin — 1.08 points on `RhinoCli.Cli`, 0.65 on `RhinoCli.Application`. Run
+`npx nx run rhino-cli-fsharp:test:coverage` locally before pushing any wave; `test:quick` will not
+tell you. When it fails, read `apps/rhino-cli/src-fsharp/tests/unit/coverage.json` per file rather
+than guessing — the fully-uncovered functions in it are the cheapest lines to win, and they name
+themselves.
