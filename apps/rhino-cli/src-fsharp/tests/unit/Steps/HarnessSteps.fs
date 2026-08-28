@@ -68,6 +68,10 @@ type HarnessSteps() =
     let mutable mirrorDrift: Harness.MirrorDrift list option = None
     let mutable fixtureSkillNames: string list = []
     let mutable lastSyncOutcome: Result<Harness.SyncResult, string> option = None
+    let mutable fixtureCodexAgentNames: string list = []
+    let mutable fixtureRoleSubfolders: string list = []
+    let mutable configAfterFirstRun: string option = None
+    let mutable configAfterSecondRun: string option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -317,6 +321,23 @@ type HarnessSteps() =
         let r = Harness.validateClaude opts
         lastResult <- Some r
         lastExitCode <- Some(if r.FailedChecks = 0 then 0 else 1)
+
+    /// Writes a Claude agent under a role subfolder — `.claude/agents/<subfolder>/<fileStem>.md` —
+    /// with `name` frontmatter that may differ from `fileStem`, matching
+    /// `discover_agent_sources`'s one-level group-nesting walk.
+    let writeCodexAgentUnderSubfolder
+        (root: string)
+        (subfolder: string)
+        (fileStem: string)
+        (name: string)
+        (description: string)
+        (body: string)
+        : string =
+        let dir = Path.Combine(root, ".claude", "agents", subfolder)
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, fileStem + ".md")
+        File.WriteAllText(path, sprintf "---\nname: %s\ndescription: %s\n---\n%s" name description body)
+        path
 
     [<Given>]
     member _.``a \.claude/ directory with valid agents and skills``() =
@@ -797,6 +818,179 @@ type HarnessSteps() =
         for check in failing do
             Assert.Contains(".toml", check.Message)
 
+    // ---- @codex-binding ----
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ directory holds one agent under a role subfolder``() =
+        let root = scenarioRoot ()
+
+        writeCodexAgentUnderSubfolder
+            root
+            "reviewers"
+            "role-agent"
+            "role-agent"
+            "Role fixture agent."
+            "Body instructions.\n"
+        |> ignore
+
+        fixtureCodexAgentNames <- [ "role-agent" ]
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ holds two agents in different role subfolders whose name frontmatter differs from their filename``
+        ()
+        =
+        let root = scenarioRoot ()
+
+        writeCodexAgentUnderSubfolder
+            root
+            "reviewers"
+            "reviewer-file"
+            "reviewer-identity"
+            "Reviewer fixture."
+            "Reviewer body.\n"
+        |> ignore
+
+        writeCodexAgentUnderSubfolder root "makers" "maker-file" "maker-identity" "Maker fixture." "Maker body.\n"
+        |> ignore
+
+        fixtureCodexAgentNames <- [ "reviewer-identity"; "maker-identity" ]
+        fixtureRoleSubfolders <- [ "reviewers"; "makers" ]
+
+    [<Given>]
+    member _.``a repository whose \.codex/config\.toml carries hand-maintained mcp_servers, features, and ci-monitor-subagent tables``
+        ()
+        =
+        let root = scenarioRoot ()
+
+        writeCodexAgentUnderSubfolder root "makers" "fixture-agent" "fixture-agent" "Fixture agent." "Body.\n"
+        |> ignore
+
+        fixtureCodexAgentNames <- [ "fixture-agent" ]
+        let codexDir = Path.Combine(root, ".codex")
+        Directory.CreateDirectory codexDir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(codexDir, "config.toml"),
+            String.Join(
+                "\n",
+                [ "[mcp_servers.example]"
+                  "command = \"example-server\""
+                  ""
+                  "[features]"
+                  "multi_agent = true"
+                  ""
+                  "[ci-monitor-subagent]"
+                  "enabled = true" ]
+            )
+            + "\n"
+        )
+
+    [<When>]
+    member _.``the developer runs harness bindings generate``() =
+        let root = scenarioRoot ()
+        let outcome = Harness.emitCodexBindings root false
+
+        lastExitCode <-
+            Some(
+                match outcome with
+                | Ok _ -> 0
+                | Error _ -> 1
+            )
+
+    [<When>]
+    member _.``the developer runs harness bindings generate twice``() =
+        let root = scenarioRoot ()
+        let configPath = Path.Combine(root, ".codex", "config.toml")
+        let first = Harness.emitCodexBindings root false
+        configAfterFirstRun <- Some(File.ReadAllText configPath)
+        let second = Harness.emitCodexBindings root false
+        configAfterSecondRun <- Some(File.ReadAllText configPath)
+
+        lastExitCode <-
+            Some(
+                match first, second with
+                | Ok _, Ok _ -> 0
+                | _ -> 1
+            )
+
+    [<Then>]
+    member _.``\.codex/agents/ holds exactly one TOML file named for that agent``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".codex", "agents")
+        let files = Directory.GetFiles dir |> Array.map Path.GetFileName
+        Assert.Equal(1, files.Length)
+        Assert.Equal(fixtureCodexAgentNames.[0] + ".toml", files.[0])
+
+    [<Then>]
+    member _.``the emitted Codex agent declares name, description, and developer_instructions``() =
+        let root = scenarioRoot ()
+
+        let path =
+            Path.Combine(root, ".codex", "agents", fixtureCodexAgentNames.[0] + ".toml")
+
+        let content = File.ReadAllText path
+        Assert.Contains("name = \"", content)
+        Assert.Contains("description = \"", content)
+        Assert.Contains("developer_instructions = \"\"\"", content)
+
+    [<Then>]
+    member _.``the emitted Codex agent declares no model field``() =
+        let root = scenarioRoot ()
+
+        let path =
+            Path.Combine(root, ".codex", "agents", fixtureCodexAgentNames.[0] + ".toml")
+
+        let content = File.ReadAllText path
+        Assert.DoesNotContain("model = ", content)
+
+    [<Then>]
+    member _.``\.codex/agents/ holds one flat TOML file per agent keyed on the name frontmatter``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".codex", "agents")
+
+        let files =
+            Directory.GetFiles dir
+            |> Array.map Path.GetFileName
+            |> Array.sort
+            |> List.ofArray
+
+        let expected =
+            fixtureCodexAgentNames |> List.map (fun n -> n + ".toml") |> List.sort
+
+        Assert.Equal<string list>(expected, files)
+
+    [<Then>]
+    member _.``no emitted filename repeats a role subfolder name``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".codex", "agents")
+        let files = Directory.GetFiles dir |> Array.map Path.GetFileName |> List.ofArray
+
+        for subfolder in fixtureRoleSubfolders do
+            Assert.DoesNotContain(subfolder + ".toml", files)
+
+    [<Then>]
+    member _.``\.codex/config\.toml declares a generated agents table for the fixture agent``() =
+        let root = scenarioRoot ()
+        let content = File.ReadAllText(Path.Combine(root, ".codex", "config.toml"))
+        Assert.Contains(sprintf "[agents.%s]" fixtureCodexAgentNames.[0], content)
+
+    [<Then>]
+    member _.``the hand-maintained mcp_servers, features, and ci-monitor-subagent tables are unchanged``() =
+        let root = scenarioRoot ()
+        let content = File.ReadAllText(Path.Combine(root, ".codex", "config.toml"))
+        Assert.Contains("[mcp_servers.example]", content)
+        Assert.Contains("command = \"example-server\"", content)
+        Assert.Contains("[features]", content)
+        Assert.Contains("multi_agent = true", content)
+        Assert.Contains("[ci-monitor-subagent]", content)
+        Assert.Contains("enabled = true", content)
+
+    [<Then>]
+    member _.``the second run left \.codex/config\.toml byte-identical to the first``() =
+        match configAfterFirstRun, configAfterSecondRun with
+        | Some first, Some second -> Assert.Equal(first, second)
+        | _ -> failwith "config.toml was not captured after both runs"
+
     [<Given>]
     member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
         let root = scenarioRoot ()
@@ -1230,6 +1424,10 @@ module private FeatureRunner =
     let runValidateClaude (scenarioTitle: string) : unit =
         runIn "agents-validate-claude.feature" scenarioTitle
 
+    /// Runs one scenario of `codex-binding.feature`.
+    let runCodexBinding (scenarioTitle: string) : unit =
+        runIn "codex-binding.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1358,3 +1556,15 @@ let ``--agents-only validates agents without checking skills`` () =
 [<Fact>]
 let ``--skills-only validates skills without checking agents`` () =
     FeatureRunner.runValidateClaude "--skills-only validates skills without checking agents"
+
+[<Fact>]
+let ``A Claude agent under a role subfolder gets a flat Codex TOML counterpart`` () =
+    FeatureRunner.runCodexBinding "A Claude agent under a role subfolder gets a flat Codex TOML counterpart"
+
+[<Fact>]
+let ``Agent identity comes from the name frontmatter, not the source subfolder`` () =
+    FeatureRunner.runCodexBinding "Agent identity comes from the name frontmatter, not the source subfolder"
+
+[<Fact>]
+let ``Regenerating rewrites only the delimited region of .codex/config.toml`` () =
+    FeatureRunner.runCodexBinding "Regenerating rewrites only the delimited region of .codex/config.toml"
