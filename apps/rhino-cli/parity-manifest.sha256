@@ -9,13 +9,13 @@ b5f5e511ac5697c2d2949d898633f079abbce9c7211205aad6f7521f17746df2  apps/rhino-cli
 ba223d446b461cce0e427e278e340a87330ed423885f92a674c5039fd755cb5b  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Env.fs
 c9bcab647bfa6b7f7f07db8da416708ab87728a71e5dd24bb3d9d85b871367e0  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Git.fs
 f73cfdceebd40120d9a8369da10c9802d555e6275f27c9cc461e263ae4f1321b  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Governance.fs
-05b967abd40c7672ffec4d9a696e53e80173fde38d845fe3d3467f2d210fe28c  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Md.fs
+7e310d70ef340967ef5e093365731a805e3fde46b3cd668464973a626da068f7  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Md.fs
 2f8085bcb8089f174e9548e609530471c9318c31b1bcab4a867e33880cec9e57  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Parity.fs
 d4bdb1646d8e18a40245bbd3fb2ac96ac1acf1adf38355a0b567d7b8d4cc6e48  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/RepoConfig.fs
 3c52c83f35ed710cadc6008cc22bbd4767d43d824be4aa56700698c2bff4c2cf  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/TestCoverage.fs
 fc1346c5ed931f006be550583e92d5603bdffceb270783f4b334bb5ff4d7aa3a  apps/rhino-cli/src-fsharp/RhinoCli.Cli/RhinoCli.Cli.fsproj
 34740aae120c3271608c3d3b8d8cfba95c5e672f592a051b45aa181f9f5f8fd3  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs
-f763b936daf2663b57599b7bfe0200138060aea7b70bf195b2c1e30ebaff7394  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Formatters.fs
+6d2e15cb7b401649c3e0ff783eda134f665de852fe40cd56205e70d804847fc8  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Formatters.fs
 ff741ba86d69a0d44bc4b0a4165c039f5e4d53c9b05cfbce5c5223f223c0fb99  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/HelpText.fs
 d7ff185030ec8501b639875753a3bc9487e0f783c6efa593484b6199811ddff2  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/RootArgs.fs
 52512b342d694832e500cc9a6d9711992211d31b5479f8e0fe2b6c1bbcc2b4d1  apps/rhino-cli/src-fsharp/RhinoCli.Domain/RhinoCli.Domain.fsproj
@@ -29,7 +29,7 @@ ea9c28fc3b1c41add46abd4de607b27e0b3b985b0d9825ad6763e2341892f91a  apps/rhino-cli
 9b6b0043b2618194ec886411425540fbf2713b4f460d75a41eea28eebc214764  apps/rhino-cli/src-fsharp/project.json
 aca5d109fdc277b6f4c6695a1265b163fac319b66d6201b32b85e5571a29d3ea  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 51bbb1298cd542e36b0f98320c3ef762d37f78e5fca2a7889c66811a4110c277  apps/rhino-cli/src-fsharp/tests/integration/Steps/PreCommitHookSteps.fs
-757ece161fa70844927ff0cd1796c9aed8eea9875f3f148cb0a546f7d3d27fd6  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
+27af4a8ba432f855e844be37c1036345b65861e49ee10d67c919e9a32eb1ea0e  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 85ba308ad0a88485db55b305120d99b9a4ec328d2379536110f73e51f4797fe2  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs
 a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
 e7ef73e5c7ced17c7c47813e81fd4b78060de7d765c584b791256cfd6a00b68f  apps/rhino-cli/src-fsharp/tests/unit/Steps/DispatchUnitTests.fs
@@ -64,6 +64,7 @@ e99afc8498e7d937658f115e43394ca206c9d4a9bf53235cf303ef1031600c3b  apps/rhino-cli
 00e5f934b41bbbc0d384afbd3eede0979b6a29fa08dc5f98f07e497569ab6758  apps/rhino-cli/src-fsharp/tests/unit/Steps/RepoConfigValidateUnitTests.fs
 61e62424c7501506313b1a6a4c5f3e16fa606abb754416708a09d74a148048e6  apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageSteps.fs
 28e3e31079570f095b6bbb1aed353323815d2e559b00adfc699342224444d56a  apps/rhino-cli/src-fsharp/tests/unit/Steps/TestCoverageUnitTests.fs
+102b81c9fdb265a1d681896dcb3b04cb9fb603aae4821bb250a4e28cbde38e52  apps/rhino-cli/src-fsharp/tests/unit/Steps/WaveDParityRegressionUnitTests.fs
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
 371c1e14d1532a1eea1214d98818c3e3da39a82b24dbb46e24cd09426e6ecc18  apps/rhino-cli/src/application/agents/bindings.rs
 0adf2fb9fb4ef5390caa25b75943505ac96aebabd0c46d966f60f66a9037f7c2  apps/rhino-cli/src/application/agents/catalog.rs

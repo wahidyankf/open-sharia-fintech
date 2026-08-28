@@ -43,6 +43,7 @@
     <Compile Include="Steps/FindingUnitTests.fs" />
     <Compile Include="Steps/GovernanceSteps.fs" />
     <Compile Include="Steps/GitSteps.fs" />
+    <Compile Include="Steps/WaveDParityRegressionUnitTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

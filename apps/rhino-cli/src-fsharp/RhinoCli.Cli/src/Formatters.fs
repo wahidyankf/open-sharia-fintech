@@ -662,21 +662,12 @@ let wordBudgetMarkdown (findings: Governance.WordBudgetFinding list) : string =
             sprintf "## Word Budget Audit\n\n**%s**: %d finding(s)\n\n" label (List.length findings)
 
         let tableHeader =
-            "| Path | Size | Target | Warn | Fail | Severity | Message |\n|------|------|--------|------|------|----------|---------|\n"
+            "| Path | Size (words) | Severity | Message |\n| --- | --- | --- | --- |\n"
 
         let rows =
             findings
             |> List.map toWordBudgetJson
-            |> List.map (fun f ->
-                sprintf
-                    "| %s | %d | %d | %d | %d | %s | %s |\n"
-                    f.path
-                    f.size
-                    f.target
-                    f.warn
-                    f.fail
-                    f.severity
-                    f.message)
+            |> List.map (fun f -> sprintf "| `%s` | %d | %s | %s |\n" f.path f.size f.severity f.message)
             |> String.concat ""
 
         header + tableHeader + rows

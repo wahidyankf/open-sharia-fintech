@@ -1948,6 +1948,22 @@ let parseMermaidDiagram (block: MermaidBlock) : ParsedMermaidDiagram * int =
           Subgraphs = subgraphs |> List.ofSeq },
         count
 
+/// Counts Unicode scalar values in `s`, treating a surrogate pair as one
+/// unit. `String.Length` counts UTF-16 code units, so an astral character
+/// (any emoji) would otherwise count as two where Rust's `chars().count()`
+/// counts one — making a 30-scalar label measure 31 and trip a budget it
+/// does not actually exceed
+/// [Repo-grounded — matches `str::chars().count()`].
+let private unicodeScalarCount (s: string) : int =
+    let mutable count = 0
+    let mutable i = 0
+
+    while i < s.Length do
+        i <- i + (if Char.IsSurrogatePair(s, i) then 2 else 1)
+        count <- count + 1
+
+    count
+
 /// Returns the effective display length of `label` after normalising
 /// line-break tokens (`<br/>`, `<BR/>`, `<br>`, `<BR>`, `\n`) to actual
 /// newlines — the maximum character count across all resulting lines
@@ -1964,7 +1980,7 @@ let effectiveMermaidLabelLen (label: string) : int =
                 .Replace("<BR>", "\n")
                 .Replace("\\n", "\n")
 
-        normalized.Split('\n') |> Array.map String.length |> Array.max
+        normalized.Split('\n') |> Array.map unicodeScalarCount |> Array.max
 
 /// Assigns a rank (depth level) to each node using a topological-sort-based
 /// longest-path algorithm. Cycles are handled by first removing back edges
