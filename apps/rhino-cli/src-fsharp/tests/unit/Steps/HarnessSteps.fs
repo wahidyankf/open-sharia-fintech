@@ -129,6 +129,7 @@ type HarnessSteps() =
     let mutable lookupDir: string = ""
     let mutable lookupFileContent: string = ""
     let mutable lastAuditJson: string option = None
+    let mutable lastHarnessAuditOutcome: Harness.HarnessAuditOutcome option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -1223,6 +1224,25 @@ type HarnessSteps() =
 
         Assert.Contains("Do not run or AI-rederive those predicates", normalized)
 
+    // ---- @harness-audit ----
+
+    [<Given>]
+    member _.``a repository with no \.claude or \.opencode agent directories``() = ()
+
+    [<When>]
+    member _.``the developer runs "rhino-cli harness audit"``() =
+        let outcome = Harness.runHarnessAudit (scenarioRoot ())
+        lastHarnessAuditOutcome <- Some outcome
+        lastExitCode <- Some outcome.ExitCode
+
+    [<Then>]
+    member _.``the output names the failing "([a-z-]+)" harness validator``(memberName: string) =
+        match lastHarnessAuditOutcome with
+        | Some outcome ->
+            Assert.Contains("HARNESS AUDIT FAILED", outcome.Output)
+            Assert.Contains(memberName, outcome.Output)
+        | None -> failwith "harness audit has not run in this scenario"
+
     [<Given>]
     member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
         let root = scenarioRoot ()
@@ -1668,6 +1688,10 @@ module private FeatureRunner =
     let runWordBudgetRule (scenarioTitle: string) : unit =
         runIn "governance-word-budget-rule.feature" scenarioTitle
 
+    /// Runs one scenario of `harness-audit.feature`.
+    let runHarnessAudit (scenarioTitle: string) : unit =
+        runIn "harness-audit.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1844,3 +1868,7 @@ let ``The preflight envelope carries the governance-word-budget category`` () =
 [<Fact>]
 let ``The AI checker defers to lifecycle-gate evidence`` () =
     FeatureRunner.runWordBudgetRule "The AI checker defers to lifecycle-gate evidence"
+
+[<Fact>]
+let ``Missing agent directories fail the aggregate harness audit`` () =
+    FeatureRunner.runHarnessAudit "Missing agent directories fail the aggregate harness audit"
