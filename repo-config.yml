@@ -168,12 +168,13 @@ coverage:
     # not-yet-ported scenarios, which also exempts them from `rhino-cli`'s
     # own one-to-one coverage check even though the Rust implementation
     # already covers them. Once the last sibling file lands — Wave B's `env/`
-    # (4 files) and `env-contract/` (1 file), and now Wave C's `system/` (3
-    # files) and `test-coverage/` (3 files) — the glob widens to
+    # (4 files) and `env-contract/` (1 file), Wave C's `system/` (3 files)
+    # and `test-coverage/` (3 files), and now Wave D's `md/` (7 files),
+    # `governance/` (2 files), and `git/` (2 files) — the glob widens to
     # directory-level like `convention/` did.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/**,test-coverage/**}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/**,test-coverage/**,md/**,governance/**,git/**}"
 
     # ose domain
     - name: ose-be

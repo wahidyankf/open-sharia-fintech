@@ -142,6 +142,34 @@ did from wave A to wave B. B6 remains well under the Phase 0 Rust baseline (14.2
 reason stated above: most of `.husky/pre-commit`'s gates are unrelated to `rhino-cli` invocation
 count, and only six of the CLI's namespaces route through F# at this point.
 
+## Interim measurement: after wave D
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+C" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave
+A/Wave B/Wave C — a single new `apps/rhino-cli/bench-probe.md` holding one heading and one
+paragraph, staged, hook run, then the file removed and the index reset). Taken with `convention`,
+`parity`, `repo-config`, `env`, `doctor`, `test-coverage`, `md`, `governance`, `git` in
+`FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 37.70 ms   |
+| B6 — full pre-commit     | 13.66 s    |
+
+B5 is in the same band as after-wave-C (37.71 ms) — the three new namespaces widen the dispatch
+surface but not by more than doctor/test-coverage already did in wave C, so bare `--help` startup
+cost does not move. B6 rose sharply from after-wave-C's 3.70 s: this worktree's `node_modules/`
+was reprovisioned from scratch immediately before this measurement (a fresh `npm install`, not
+present for wave A/B/C's runs in an already-warm worktree), so `node_modules/.bin/prettier` and
+`node_modules/.bin/markdownlint-cli2` both ran cold, and the hook's own output shows a
+`harness-bindings-generate` step re-syncing all 91 agents — the same one-off cost the Phase 0 B6
+note already documented for an earlier anomalous run. B6 is still well under the Phase 0 Rust
+baseline's own worst case and, per the Noise-floor note below, a single-run B6 figure with an
+identified one-off cause is recorded as observed, not adjusted or re-run to chase a lower number.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed

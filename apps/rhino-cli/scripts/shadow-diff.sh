@@ -153,9 +153,17 @@ walk_namespace() {
 	# whitespace-delimited word on each — clap's per-subcommand list shape.
 	local -a subcommands=()
 	if [[ "${exit_code}" -eq 2 ]] && grep -q '^Commands:$' "${output_capture}"; then
+		# A real subcommand line always has exactly two leading spaces before
+		# its name (clap's fixed left-pad). A long `about` string that wraps
+		# to a second line is indented further, to align under the
+		# description column — filtering on `^  [^ ]` (exactly two spaces,
+		# then a non-space) keeps the former and drops the latter, so a
+		# wrapped continuation's first word (e.g. "entry" from
+		# "rewrite-paths"'s two-line about text) is never mistaken for a
+		# phantom subcommand.
 		while IFS= read -r name; do
 			[[ -n "${name}" ]] && subcommands+=("${name}")
-		done < <(sed -n '/^Commands:$/,/^$/p' "${output_capture}" | tail -n +2 | sed '/^$/d' | awk '{print $1}')
+		done < <(sed -n '/^Commands:$/,/^$/p' "${output_capture}" | tail -n +2 | sed '/^$/d' | grep -E '^  [^ ]' | awk '{print $1}')
 	fi
 	rm -f "${output_capture}"
 

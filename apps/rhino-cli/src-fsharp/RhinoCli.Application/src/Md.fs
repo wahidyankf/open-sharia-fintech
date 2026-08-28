@@ -363,6 +363,32 @@ let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
 /// `heading_hierarchy.rs::walk_heading_hierarchy_path`'s shared `WalkDir`
 /// use — parameterised over which `SKIP_DIRS` constant applies, since the
 /// two validators use different lists].
+/// As `collectFilesSkipping`, but preserves the operating system's raw
+/// directory-enumeration order instead of sorting alphabetically. Used only
+/// by the links validator's JSON output, whose `categories` array is not
+/// independently re-sorted downstream (unlike every other `md` validator's
+/// output, and unlike the links validator's own text/markdown output) —
+/// matching Rust `walkdir::WalkDir`'s own unsorted-by-default enumeration
+/// order is the only way that JSON array can agree between the two
+/// binaries [Repo-grounded — `links.rs::get_all_markdown_files`'s bare
+/// `WalkDir::new(repo_root)`, no `.sort_by`].
+let rec private collectFilesSkippingUnsorted (skip: Set<string>) (root: string) : string list =
+    if File.Exists root then
+        [ root ]
+    elif Directory.Exists root then
+        Directory.GetFileSystemEntries(root)
+        |> Array.toList
+        |> List.collect (fun entry ->
+            if Directory.Exists entry then
+                if Set.contains (Path.GetFileName entry) skip then
+                    []
+                else
+                    collectFilesSkippingUnsorted skip entry
+            else
+                [ entry ])
+    else
+        []
+
 let rec private collectFilesSkipping (skip: Set<string>) (root: string) : string list =
     if File.Exists root then
         [ root ]
@@ -592,7 +618,20 @@ let private collectHeadings (content: string) : Heading list =
 /// directly by H4 (skipping H3) fails", and "Single-line file with no
 /// headings is ignored (passes)" — all from
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`.
-let private analyzeHeadings (path: string) (headings: Heading list) : Finding list =
+/// One finding from [`analyzeHeadingsDetailed`], carrying the `line`/`kind`
+/// fields the CLI's JSON/Markdown rendering needs beyond generic `Finding`
+/// [Repo-grounded — `heading_hierarchy.rs::DocsHeadingFinding`].
+type HeadingFinding =
+    { File: string
+      Line: int
+      Severity: string
+      Kind: string
+      Message: string }
+
+/// Same rule as `analyzeHeadings` but returns the richer per-finding shape
+/// (line number, machine-readable kind) the CLI-facing formatters need
+/// [Repo-grounded — `heading_hierarchy.rs::analyze_headings`].
+let private analyzeHeadingsDetailed (path: string) (headings: Heading list) : HeadingFinding list =
     match headings with
     | [] -> []
     | _ ->
@@ -601,36 +640,51 @@ let private analyzeHeadings (path: string) (headings: Heading list) : Finding li
 
         let h1Finding =
             match h1Count with
-            | 0 -> [ mkFail path "markdown file has no H1 heading; every documented file must have exactly one H1" ]
+            | 0 ->
+                [ { File = path
+                    Line = headings.[0].Line
+                    Severity = "high"
+                    Kind = "missing-h1"
+                    Message = "markdown file has no H1 heading; every documented file must have exactly one H1" } ]
             | 1 -> []
             | _ ->
                 let firstH1Line = h1s.[0].Line
+                let secondH1Line = h1s.[1].Line
 
-                [ mkFail
-                      path
-                      (sprintf
+                [ { File = path
+                    Line = secondH1Line
+                    Severity = "high"
+                    Kind = "duplicate-h1"
+                    Message =
+                      sprintf
                           "markdown file has %d H1 headings (first at line %d); every file must have exactly one H1"
                           h1Count
-                          firstH1Line) ]
+                          firstH1Line } ]
 
         let skipFindings =
             headings
             |> List.pairwise
             |> List.choose (fun (prev, cur) ->
                 if cur.Level > prev.Level + 1 then
-                    Some(
-                        mkFail
-                            path
-                            (sprintf
+                    Some
+                        { File = path
+                          Line = cur.Line
+                          Severity = "high"
+                          Kind = "skipped-level"
+                          Message =
+                            sprintf
                                 "H%d heading follows H%d, skipping H%d; heading levels must not skip"
                                 cur.Level
                                 prev.Level
-                                (prev.Level + 1))
-                    )
+                                (prev.Level + 1) }
                 else
                     None)
 
         h1Finding @ skipFindings
+
+let private analyzeHeadings (path: string) (headings: Heading list) : Finding list =
+    analyzeHeadingsDetailed path headings
+    |> List.map (fun f -> mkFail f.File f.Message)
 
 /// Reads `path`, extracts its headings, and applies the hierarchy rules
 /// [Repo-grounded — `heading_hierarchy.rs::scan_file_heading_hierarchy`].
@@ -718,6 +772,33 @@ let validateDocsHeadingHierarchyAllowlisted (repoRoot: string) (excludePrefixes:
             Some path)
     |> List.collect scanFileHeadingHierarchy
     |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+
+/// CLI-facing counterpart to `validateDocsHeadingHierarchyAllowlisted`
+/// carrying the richer `HeadingFinding` shape (line, kind), sorted by file
+/// then line — matching the Rust source's own sort key exactly, unlike the
+/// generic-`Finding` overload above, which sorts by message for lack of a
+/// `Line` field to sort on
+/// [Repo-grounded — `heading_hierarchy.rs::validate_docs_heading_hierarchy_allowlisted`].
+let validateDocsHeadingHierarchyAllowlistedDetailed
+    (repoRoot: string)
+    (excludePrefixes: string list)
+    : HeadingFinding list =
+    collectFilesSkipping namingSkipDirs repoRoot
+    |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+    |> List.choose (fun path ->
+        let rel = Path.GetRelativePath(repoRoot, path).Replace('\\', '/')
+
+        if not (isProseAllowlisted rel) then
+            None
+        elif
+            excludePrefixes
+            |> List.exists (fun pfx -> rel.StartsWith(pfx, StringComparison.Ordinal))
+        then
+            None
+        else
+            Some path)
+    |> List.collect (fun path -> File.ReadAllText(path) |> collectHeadings |> analyzeHeadingsDetailed path)
+    |> List.sortBy (fun f -> (f.File, f.Line))
 
 /// Validates heading hierarchy in every markdown file reachable from
 /// `paths`, without any prose-allowlist filtering — the counterpart callers
@@ -991,7 +1072,16 @@ let private resolveLink (sourceFile: string) (link: string) : string =
         let parent =
             Path.GetDirectoryName(sourceFile) |> Option.ofObj |> Option.defaultValue ""
 
-        Path.GetFullPath(Path.Combine(parent, link))
+        let resolved = Path.GetFullPath(Path.Combine(parent, link))
+        // Rust's `clean_path` (a `filepath.Clean` port) never retains a
+        // trailing separator on a non-root path — `.NET`'s `Path.Combine`
+        // does when `link` itself ends in `/` (e.g. a directory link like
+        // `./assets/`). Trimmed to match byte-for-byte
+        // [Repo-grounded — `links.rs::clean_path`].
+        if resolved.Length > 1 && resolved.EndsWith(Path.DirectorySeparatorChar) then
+            resolved.TrimEnd(Path.DirectorySeparatorChar)
+        else
+            resolved
 
 /// Options controlling `validateDocsLinks`'s file-selection behavior.
 /// `StagedFiles`, when `Some`, is the literal list of repository-relative
@@ -1019,7 +1109,7 @@ let private getMarkdownLinkFiles (opts: LinkScanOptions) : string list =
             |> List.filter (fun f -> f.EndsWith(".md", StringComparison.Ordinal))
             |> List.map (fun f -> Path.Combine(opts.RepoRoot, f))
         | None ->
-            collectFilesSkipping linksSkipDirs opts.RepoRoot
+            collectFilesSkippingUnsorted linksSkipDirs opts.RepoRoot
             |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
 
     if List.isEmpty opts.ExcludePrefixes then
@@ -1166,6 +1256,114 @@ let validateDocsLinks (opts: LinkScanOptions) : Finding list =
     getMarkdownLinkFiles opts
     |> List.collect (fun path -> validateFileLinks opts.RepoRoot path (extractLinks path))
     |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+
+/// A relative markdown link that could not be resolved to an existing file
+/// [Repo-grounded — `links.rs::BrokenLink`].
+type BrokenLink =
+    { LineNumber: int
+      SourceFile: string
+      LinkText: string
+      TargetPath: string
+      Category: string }
+
+/// Aggregated result of a link scan, carrying the rich per-link detail the
+/// CLI's JSON/Markdown rendering needs beyond a generic `Finding list`
+/// [Repo-grounded — `links.rs::LinkValidationResult`].
+type LinkValidationResult =
+    { TotalFiles: int
+      TotalLinks: int
+      BrokenLinks: BrokenLink list
+      BrokenByCategory: Map<string, BrokenLink list> }
+
+/// Assigns a human-readable category string to a broken link for report
+/// grouping [Repo-grounded — `links.rs::categorize_broken_link`].
+let categorizeBrokenLink (link: string) : string =
+    if link.Contains("workflows/") && not (link.Contains("repo-governance/workflows/")) then
+        "workflows/ paths"
+    elif link.Contains("vision/") && not (link.Contains("repo-governance/vision/")) then
+        "vision/ paths"
+    elif link.Contains("conventions/README.md") then
+        "conventions README"
+    elif link = "CODE_OF_CONDUCT.md" || link = "CHANGELOG.md" then
+        "Missing files"
+    else
+        "General/other paths"
+
+/// As `validateFileLinks`, but returns the richer `BrokenLink` shape (line
+/// number, link text, target path, category) the CLI's JSON/Markdown
+/// rendering needs instead of a prose `Finding.Message`
+/// [Repo-grounded — `links.rs::validate_file`].
+let private validateFileLinksDetailed (repoRoot: string) (filePath: string) (links: LinkInfo list) : BrokenLink list =
+    let normalizedPath = filePath.Replace('\\', '/')
+
+    if skillTreeMarkers |> List.exists normalizedPath.Contains then
+        []
+    else
+        let rel = Path.GetRelativePath(repoRoot, filePath).Replace('\\', '/')
+
+        links
+        |> List.collect (fun link ->
+            let pathPart, fragment = splitUrlFragment link.Url
+
+            if pathPart = "" then
+                match fragment with
+                | Some frag when frag <> "" ->
+                    let slugs = slugsFromContent (File.ReadAllText filePath)
+
+                    if Set.contains frag slugs then
+                        []
+                    else
+                        [ { LineNumber = link.LineNumber
+                            SourceFile = rel
+                            LinkText = link.Url
+                            TargetPath = sprintf "%s#%s" filePath frag
+                            Category = "broken-anchor" } ]
+                | _ -> []
+            else
+                let target = resolveLink filePath pathPart
+
+                if not (File.Exists target || Directory.Exists target) then
+                    [ { LineNumber = link.LineNumber
+                        SourceFile = rel
+                        LinkText = link.Url
+                        TargetPath = target
+                        Category = categorizeBrokenLink link.Url } ]
+                else
+                    match fragment with
+                    | Some frag when frag <> "" ->
+                        let slugs = slugsFromContent (File.ReadAllText target)
+
+                        if Set.contains frag slugs then
+                            []
+                        else
+                            [ { LineNumber = link.LineNumber
+                                SourceFile = rel
+                                LinkText = link.Url
+                                TargetPath = sprintf "%s#%s" target frag
+                                Category = "broken-anchor" } ]
+                    | _ -> [])
+
+/// As `validateDocsLinks`, but returns the richer `LinkValidationResult`
+/// (total files/links scanned, category-grouped broken links) the CLI's
+/// JSON/Markdown rendering needs
+/// [Repo-grounded — `links.rs::validate_all_links`].
+let validateAllLinksDetailed (opts: LinkScanOptions) : LinkValidationResult =
+    let files = getMarkdownLinkFiles opts
+
+    let perFile = files |> List.map (fun path -> path, extractLinks path)
+
+    let totalLinks = perFile |> List.sumBy (fun (_, links) -> List.length links)
+
+    let broken =
+        perFile
+        |> List.collect (fun (path, links) -> validateFileLinksDetailed opts.RepoRoot path links)
+
+    let byCategory = broken |> List.groupBy (fun b -> b.Category) |> Map.ofList
+
+    { TotalFiles = List.length files
+      TotalLinks = totalLinks
+      BrokenLinks = broken
+      BrokenByCategory = byCategory }
 
 // ---------------------------------------------------------------------------
 // docs validate-mermaid
@@ -1638,7 +1836,12 @@ let private collectMermaidNodeOrder (source: string) (nodeIndex: Dictionary<stri
                 if nodeIndex.ContainsKey id && seen.Add id then
                     order.Add id
 
-    for k in nodeIndex.Keys do
+    // Sorted, not raw `Dictionary` key order — this fallback only fires
+    // for node ids the line-by-line source scan above didn't already
+    // capture; matches `flowchart.rs::collect_node_order`'s sorted
+    // leftover loop (fixed alongside this port to eliminate Rust
+    // `HashMap` iteration-order nondeterminism, Wave D integration).
+    for k in nodeIndex.Keys |> Seq.sort do
         if seen.Add k then
             order.Add k
 
@@ -1745,6 +1948,22 @@ let parseMermaidDiagram (block: MermaidBlock) : ParsedMermaidDiagram * int =
           Subgraphs = subgraphs |> List.ofSeq },
         count
 
+/// Counts Unicode scalar values in `s`, treating a surrogate pair as one
+/// unit. `String.Length` counts UTF-16 code units, so an astral character
+/// (any emoji) would otherwise count as two where Rust's `chars().count()`
+/// counts one — making a 30-scalar label measure 31 and trip a budget it
+/// does not actually exceed
+/// [Repo-grounded — matches `str::chars().count()`].
+let private unicodeScalarCount (s: string) : int =
+    let mutable count = 0
+    let mutable i = 0
+
+    while i < s.Length do
+        i <- i + (if Char.IsSurrogatePair(s, i) then 2 else 1)
+        count <- count + 1
+
+    count
+
 /// Returns the effective display length of `label` after normalising
 /// line-break tokens (`<br/>`, `<BR/>`, `<br>`, `<BR>`, `\n`) to actual
 /// newlines — the maximum character count across all resulting lines
@@ -1761,7 +1980,7 @@ let effectiveMermaidLabelLen (label: string) : int =
                 .Replace("<BR>", "\n")
                 .Replace("\\n", "\n")
 
-        normalized.Split('\n') |> Array.map String.length |> Array.max
+        normalized.Split('\n') |> Array.map unicodeScalarCount |> Array.max
 
 /// Assigns a rank (depth level) to each node using a topological-sort-based
 /// longest-path algorithm. Cycles are handled by first removing back edges
@@ -1924,12 +2143,35 @@ let private parseMermaidStateArrow (line: string) : (string * string * string) o
 
 /// Parses a `stateDiagram-v2`/`stateDiagram` block into a
 /// `ParsedMermaidDiagram`. Handles: header skip, `%%`/`#` comment skip,
-/// `direction` keyword, and `FROM --> TO`/`FROM --> TO : label` edges — the
-/// only state-diagram constructs this port's Gherkin scenarios exercise;
-/// composite `state X { }` blocks, `state "label" as ID` aliases,
-/// pseudostate stereotypes, and notes are Rust-source features with no
-/// scenario coverage here, so they are intentionally not ported
-/// [Repo-grounded — `state.rs::parse_state`].
+/// `direction` keyword, `FROM --> TO`/`FROM --> TO : label` edges, and
+/// `state "label" as ID` aliases — the latter added to match a real
+/// repository fixture (`apps/rhino-cli/tests/fixtures/state/03-long-state-label.md`)
+/// exercised by a repo-wide `md mermaid validate` scan; composite
+/// `state X { }` blocks, `ID : description` lines, and pseudostate
+/// stereotypes remain Rust-source features with no scenario coverage here,
+/// so they are intentionally not ported
+/// [Repo-grounded — `state.rs::parse_state`, `state.rs::parse_state_as`].
+/// Parses `state "label" as ID`, returning `(id, label)`
+/// [Repo-grounded — `state.rs::parse_state_as`].
+let private parseMermaidStateAs (line: string) : (string * string) option =
+    if line.StartsWith("state \"", StringComparison.Ordinal) then
+        let rest = line.Substring("state \"".Length)
+        let quoteEnd = rest.IndexOf('"')
+
+        if quoteEnd < 0 then
+            None
+        else
+            let label = rest.Substring(0, quoteEnd)
+            let after = rest.Substring(quoteEnd + 1).Trim()
+
+            if after.StartsWith("as ", StringComparison.Ordinal) then
+                let id = after.Substring("as ".Length).Trim()
+                if id = "" then None else Some(id, label)
+            else
+                None
+    else
+        None
+
 let private parseMermaidState (block: MermaidBlock) : ParsedMermaidDiagram =
     let mutable direction = MermaidTB
     let nodeOrder = ResizeArray<string>()
@@ -1976,6 +2218,10 @@ let private parseMermaidState (block: MermaidBlock) : ParsedMermaidDiagram =
                         { From = from
                           To = toId
                           Label = label }
+                | None -> ()
+            elif line.StartsWith("state \"", StringComparison.Ordinal) then
+                match parseMermaidStateAs line with
+                | Some(id, label) -> ensureNode id label
                 | None -> ()
 
     let nodes =
@@ -2508,17 +2754,36 @@ let formatMermaidJson (result: MermaidValidationResult) : string =
 /// [Repo-grounded — `naming.rs::kebab_case_re`].
 let private kebabCaseRegex = Regex(@"^[a-z0-9-]+\.md$", RegexOptions.Compiled)
 
+/// Translates a `glob`-crate-style pattern (`*`, `?`, `[...]`) into an
+/// anchored regex matching a bare filename — .NET has no built-in bare-glob
+/// matcher, so this hand-rolls the small subset `--exempt` patterns actually
+/// use (`*__linkedin__*.md`, exact names, etc.) [Repo-grounded — the `glob`
+/// crate's `Pattern` semantics as used by `naming.rs::is_naming_exempt`].
+let private globToRegex (pattern: string) : Regex =
+    let sb = Text.StringBuilder("^")
+
+    for c in pattern do
+        match c with
+        | '*' -> sb.Append(".*") |> ignore
+        | '?' -> sb.Append(".") |> ignore
+        | c -> sb.Append(Regex.Escape(string<char> c)) |> ignore
+
+    sb.Append("$") |> ignore
+    Regex(sb.ToString(), RegexOptions.Compiled)
+
+/// Returns `true` when `basename` matches any pattern in `exemptGlobs`
+/// [Repo-grounded — `naming.rs::is_naming_exempt`'s glob loop].
+let private matchesAnyExemptGlob (exemptGlobs: string list) (basename: string) : bool =
+    exemptGlobs |> List.exists (fun pat -> (globToRegex pat).IsMatch basename)
+
 /// Basenames always exempt from the kebab-case rule, matching
 /// ecosystem-standard or structurally-required filenames dictated by
 /// external convention (GitHub directory indexes, the Claude Code Agent
 /// Skills spec, the agents.md standard, Hugo's `_index.md` section-page
 /// convention, GitHub's contributing-guide convention, etc.) rather than a
-/// naming choice this repo's kebab-case rule governs. The Rust source's
-/// additional `exempt_globs` CLI-flag override is left unported — no
-/// scenario in `docs-validate-naming.feature` exercises `--exempt`, and
-/// `md` is not yet wired to CLI argv parsing (see this file's module doc
-/// comment) [Repo-grounded — `naming.rs::is_naming_exempt`'s `matches!`
-/// literal set].
+/// naming choice this repo's kebab-case rule governs. Callers may supply
+/// additional `exemptGlobs` patterns, matched against the bare filename
+/// [Repo-grounded — `naming.rs::is_naming_exempt`'s `matches!` literal set].
 let private alwaysExemptNamingBasenames: Set<string> =
     Set.ofList
         [ "README.md"
@@ -2538,16 +2803,28 @@ let private namingViolationMessage (basename: string) : string =
         "filename \"%s\" violates lowercase-kebab-case rule (^[a-z0-9-]+\\.md$); rename to lowercase-kebab-case or add an exemption"
         basename
 
+/// Returns `true` when `path` is an audit artifact below the repository's
+/// mandated `generated-reports/` directory. The explicit component check is
+/// needed because lint-staged passes individual files to this validator, so
+/// a recursive directory walker never observes their parent directory entry
+/// [Repo-grounded — `naming.rs::path_is_within_generated_reports`].
+let private pathIsWithinGeneratedReports (path: string) : bool =
+    path.Replace('\\', '/').Split('/') |> Array.contains "generated-reports"
+
 /// Walks `root` recursively and collects naming findings for non-compliant
-/// files. Returns an empty list when `root` does not exist on the filesystem
+/// files, skipping any name matching `exemptGlobs`. Returns an empty list
+/// when `root` does not exist on the filesystem
 /// [Repo-grounded — `naming.rs::walk_naming_path`].
-let private walkNamingPath (root: string) : Finding list =
+let private walkNamingPath (exemptGlobs: string list) (root: string) : Finding list =
     collectFilesSkipping namingSkipDirs root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun p -> not (pathIsWithinGeneratedReports p))
     |> List.choose (fun path ->
         let basename = Path.GetFileName path
 
         if Set.contains basename alwaysExemptNamingBasenames then
+            None
+        elif matchesAnyExemptGlob exemptGlobs basename then
             None
         elif kebabCaseRegex.IsMatch basename then
             None
@@ -2576,14 +2853,16 @@ let private walkNamingPath (root: string) : Finding list =
 ///   When the developer runs docs validate-naming
 ///   Then the command exits successfully
 ///   And the output reports zero docs naming findings
-let validateDocsNaming (paths: string list) : Result<Finding list, string> =
+let validateDocsNamingExempt (paths: string list) (exemptGlobs: string list) : Result<Finding list, string> =
     if List.isEmpty paths then
         Error "at least one path is required"
     else
         paths
-        |> List.collect walkNamingPath
+        |> List.collect (walkNamingPath exemptGlobs)
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
+
+let validateDocsNaming (paths: string list) : Result<Finding list, string> = validateDocsNamingExempt paths []
 
 // ---------------------------------------------------------------------------
 // md frontmatter-dates validate
@@ -2605,16 +2884,21 @@ let private inlineDateAnnotationRegex =
 /// entire `content` becomes the body. Unlike `extractFrontmatter` above, this
 /// never discards the body half, since the body-annotation scan below needs
 /// it too [Repo-grounded — `frontmatter_audit.rs::split_frontmatter`].
-let private splitFrontmatterAndBody (content: string) : string * string =
+/// As `splitFrontmatterAndBody`, but also returns the 1-based line number of
+/// the closing `---` delimiter (`0` when `content` has no frontmatter block)
+/// — what `frontmatter_audit.rs::check_body_annotations`'s
+/// `frontmatter_end_line` parameter needs to convert body-relative line
+/// offsets into file-absolute ones.
+let private splitFrontmatterAndBodyWithEndLine (content: string) : string * string * int =
     let lines = content.Split('\n')
 
     if lines.Length = 0 || lines.[0].Trim() <> "---" then
-        "", content
+        "", content, 0
     else
         [ 1 .. lines.Length - 1 ]
         |> List.tryFind (fun i -> lines.[i].Trim() = "---")
         |> function
-            | None -> "", content
+            | None -> "", content, 0
             | Some i ->
                 let frontmatter = String.Join("\n", lines.[1 .. i - 1])
                 let bodyStart = i + 1
@@ -2625,13 +2909,41 @@ let private splitFrontmatterAndBody (content: string) : string * string =
                     else
                         String.Join("\n", lines.[bodyStart..])
 
-                frontmatter, body
+                frontmatter, body, i + 1
+
+let private splitFrontmatterAndBody (content: string) : string * string =
+    let frontmatter, body, _ = splitFrontmatterAndBodyWithEndLine content
+    frontmatter, body
+
+/// One finding from the frontmatter-dates audit, carrying the `line` field
+/// the CLI's JSON/Markdown rendering needs beyond generic `Finding`
+/// [Repo-grounded — `frontmatter_audit.rs::FrontmatterFinding`].
+type FrontmatterDatesFinding =
+    { File: string
+      Line: int
+      Severity: string
+      Message: string }
+
+/// Returns the 1-based file-level line number of the first occurrence of
+/// `field:` within `frontmatter`, falling back to line 2 (the first line
+/// after the opening `---`) when not found
+/// [Repo-grounded — `frontmatter_audit.rs::find_field_line`].
+let private findFieldLine (frontmatter: string) (field: string) : int =
+    let prefix = field + ":"
+
+    frontmatter.Split('\n')
+    |> Array.toList
+    |> List.mapi (fun i line -> i, line)
+    |> List.tryFind (fun (_, line) -> line.TrimStart(' ').StartsWith(prefix, StringComparison.Ordinal))
+    |> function
+        | Some(i, _) -> i + 2
+        | None -> 2
 
 /// Returns a finding when the parsed `frontmatter` YAML contains a forbidden
 /// top-level `updated` key. Unparseable YAML or a non-mapping block report no
 /// finding — out of scope for this audit, matching the Rust source
 /// [Repo-grounded — `frontmatter_audit.rs::check_frontmatter_updated_field`].
-let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : Finding list =
+let private checkFrontmatterUpdatedFieldDetailed (path: string) (frontmatter: string) : FrontmatterDatesFinding list =
     if frontmatter.Trim() = "" then
         []
     else
@@ -2641,7 +2953,10 @@ let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : 
             match asRawMap parsed |> Option.bind (fun fm -> tryGetRawValue fm "updated") with
             | None -> []
             | Some _ ->
-                [ mkFail path "forbidden \"updated:\" field in YAML frontmatter; remove per no-date-metadata convention" ]
+                [ { File = path
+                    Line = findFieldLine frontmatter "updated"
+                    Severity = "high"
+                    Message = "forbidden \"updated:\" field in YAML frontmatter; remove per no-date-metadata convention" } ]
         with _ ->
             []
 
@@ -2649,30 +2964,64 @@ let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : 
 /// `**Last Updated**` footer markers, checked in that order per line — a line
 /// matching the inline-annotation pattern is not also checked against the
 /// footer pattern, so a bullet like `- **Last Updated**: 2026-01-01` (which
-/// matches both patterns) reports only once
+/// matches both patterns) reports only once. `frontmatterEndLine` (the
+/// 1-based line of the closing `---`, or `0` when there is no frontmatter
+/// block) is added to each relative body-line index to produce absolute
+/// file-level line numbers
 /// [Repo-grounded — `frontmatter_audit.rs::check_body_annotations`].
-let private checkBodyAnnotations (path: string) (body: string) : Finding list =
+let private checkBodyAnnotationsDetailed
+    (path: string)
+    (body: string)
+    (frontmatterEndLine: int)
+    : FrontmatterDatesFinding list =
     if body = "" then
         []
     else
+        let startLine = if frontmatterEndLine = 0 then 1 else frontmatterEndLine + 1
+
         body.Split('\n')
         |> Array.toList
-        |> List.collect (fun line ->
+        |> List.mapi (fun i line -> startLine + i, line)
+        |> List.collect (fun (lineNum, line) ->
             if inlineDateAnnotationRegex.IsMatch line then
-                [ mkFail path "forbidden inline date annotation in body; remove per no-date-metadata convention" ]
+                [ { File = path
+                    Line = lineNum
+                    Severity = "high"
+                    Message = "forbidden inline date annotation in body; remove per no-date-metadata convention" } ]
             elif lastUpdatedFooterRegex.IsMatch line then
-                [ mkFail
-                      path
-                      "forbidden **Last Updated** footer marker in body; remove per no-date-metadata convention" ]
+                [ { File = path
+                    Line = lineNum
+                    Severity = "high"
+                    Message =
+                      "forbidden **Last Updated** footer marker in body; remove per no-date-metadata convention" } ]
             else
                 [])
+
+let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : Finding list =
+    checkFrontmatterUpdatedFieldDetailed path frontmatter
+    |> List.map (fun f -> mkFail f.File f.Message)
+
+let private checkBodyAnnotations (path: string) (body: string) : Finding list =
+    checkBodyAnnotationsDetailed path body 0
+    |> List.map (fun f -> mkFail f.File f.Message)
+
+/// Reads `path` and scans its content for both frontmatter and body
+/// date-metadata violations, returning the richer per-finding shape (line
+/// number) the CLI's JSON/Markdown rendering needs
+/// [Repo-grounded — `frontmatter_audit.rs::scan_frontmatter_content`].
+let private scanFrontmatterDatesFileDetailed (path: string) : FrontmatterDatesFinding list =
+    let frontmatter, body, frontmatterEndLine =
+        File.ReadAllText path |> splitFrontmatterAndBodyWithEndLine
+
+    checkFrontmatterUpdatedFieldDetailed path frontmatter
+    @ checkBodyAnnotationsDetailed path body frontmatterEndLine
 
 /// Reads `path` and scans its content for both frontmatter and body
 /// date-metadata violations [Repo-grounded —
 /// `frontmatter_audit.rs::scan_frontmatter_content`].
 let private scanFrontmatterDatesFile (path: string) : Finding list =
-    let frontmatter, body = File.ReadAllText path |> splitFrontmatterAndBody
-    checkFrontmatterUpdatedField path frontmatter @ checkBodyAnnotations path body
+    scanFrontmatterDatesFileDetailed path
+    |> List.map (fun f -> mkFail f.File f.Message)
 
 /// Returns `true` when `path` contains a configured exclusion prefix as a
 /// literal substring — not a path-component prefix
@@ -2737,6 +3086,23 @@ let validateFrontmatterDates (paths: string list) (excludedPrefixes: string list
         |> List.collect (walkFrontmatterDatesPath excludedPrefixes)
         |> List.collect scanFrontmatterDatesFile
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
+        |> Ok
+
+/// CLI-facing counterpart to `validateFrontmatterDates` carrying the richer
+/// `FrontmatterDatesFinding` shape (line), sorted by file then line —
+/// matching the Rust source's own sort key exactly
+/// [Repo-grounded — `frontmatter_audit.rs::audit_frontmatter`].
+let validateFrontmatterDatesDetailed
+    (paths: string list)
+    (excludedPrefixes: string list)
+    : Result<FrontmatterDatesFinding list, string> =
+    if List.isEmpty paths then
+        Error "at least one path is required"
+    else
+        paths
+        |> List.collect (walkFrontmatterDatesPath excludedPrefixes)
+        |> List.collect scanFrontmatterDatesFileDetailed
+        |> List.sortBy (fun f -> (f.File, f.Line))
         |> Ok
 
 // ---------------------------------------------------------------------------

@@ -334,13 +334,39 @@ let private auditIndexFile (indexPath: string) (targetDir: string) : ReadmeIndex
         else
             Some(Path.GetFileName targetDir + "/")
 
-    let normalize (raw: string) : string =
+    // Returns the normalized link plus whether `raw` actually carried
+    // `linkPrefix` (i.e. was genuinely written relative to `targetDir`'s
+    // parent). This provenance matters below: only a link that never
+    // carried the prefix may fall back to resolving against `indexDir` — a
+    // prefixed link that fails to resolve under `targetDir` is a genuine
+    // ghost, not a same-dir sibling reference, even if a same-named file
+    // happens to sit beside `indexDir`
+    // [Repo-grounded — `readme_index.rs::audit_index_file`'s `normalize` closure].
+    let normalize (raw: string) : string * bool =
         match linkPrefix with
-        | Some p when raw.StartsWith(p, StringComparison.Ordinal) -> raw.Substring(p.Length)
-        | _ -> raw
+        | Some p when raw.StartsWith(p, StringComparison.Ordinal) -> raw.Substring(p.Length), true
+        | _ -> raw, false
 
-    let linked = extractReadmeLinks content |> Set.map normalize
-    let unannotated = extractUnannotatedLinkTargets content |> Set.map normalize
+    // Map from normalized link -> "was this link ever seen prefixed with
+    // targetDir's name?". Defaults to `false`; flips to `true` if any raw
+    // occurrence of this normalized link carried the prefix, so the ghost
+    // guard below always errs toward reporting rather than silently
+    // swallowing a genuine ghost.
+    let linkedProvenance =
+        extractReadmeLinks content
+        |> Set.toList
+        |> List.map normalize
+        |> List.fold
+            (fun (acc: Map<string, bool>) (normalized, wasPrefixed) ->
+                let existing = acc |> Map.tryFind normalized |> Option.defaultValue false
+                acc |> Map.add normalized (existing || wasPrefixed))
+            Map.empty
+
+    let linked = linkedProvenance |> Map.toList |> List.map fst |> Set.ofList
+
+    let unannotated =
+        extractUnannotatedLinkTargets content |> Set.map (normalize >> fst)
+
     let targets = listSiblingTargets targetDir
 
     let orphanFindings =
@@ -368,7 +394,23 @@ let private auditIndexFile (indexPath: string) (targetDir: string) : ReadmeIndex
             if not (targets.Present link) then
                 let full = Path.Combine(targetDir, link)
 
-                if File.Exists full || Directory.Exists full then
+                // A split-index file (indexDir != targetDir) physically
+                // lives in indexDir, not targetDir — it may legitimately
+                // link a sibling of itself (e.g. "general.md") rather than
+                // a child under targetDir. Such a link resolves against
+                // indexDir, the file's real location, not targetDir. Check
+                // that base too before declaring ghost — but ONLY when
+                // this link never carried the targetDir prefix
+                // [Repo-grounded — `readme_index.rs::audit_index_file`].
+                let wasPrefixed = linkedProvenance |> Map.tryFind link |> Option.defaultValue false
+
+                let resolvesAgainstIndexDir =
+                    not wasPrefixed
+                    && not (String.Equals(indexDir, targetDir, StringComparison.Ordinal))
+                    && (let viaIndexDir = Path.Combine(indexDir, link)
+                        File.Exists viaIndexDir || Directory.Exists viaIndexDir)
+
+                if File.Exists full || Directory.Exists full || resolvesAgainstIndexDir then
                     None
                 else
                     Some
@@ -682,6 +724,32 @@ let private generateOneDir (dir: string) (root: string) : string list =
             generateIndexFile readmePath dir ""
             splitWritten @ [ readmePath ]
 
+/// Compares two `/`-separated paths component-by-component, the way Rust's
+/// `PathBuf: Ord` does — not as flat strings. This differs from a plain
+/// ordinal string sort exactly at a directory/file-with-extension boundary:
+/// e.g. `"foo/README.md"` sorts BEFORE `"foo.md"` here (the "foo" component
+/// is a strict prefix of "foo.md", so the shorter component list sorts
+/// first), whereas a flat string sort would put `"foo.md"` first (`'.'` <
+/// `'/'` byte-wise). `generateReadmeIndex`'s printed `written` list needs
+/// this to match Rust's own `Vec<PathBuf>::sort()` byte-for-byte
+/// [Repo-grounded — `readme_index.rs::generate_readme_index`'s `written.sort()`].
+let private comparePathsLikeRust (a: string) (b: string) : int =
+    let split (s: string) =
+        s.Split('/') |> Array.filter (fun c -> c <> "")
+
+    let ca = split a
+    let cb = split b
+    let len = min ca.Length cb.Length
+
+    let rec loop i =
+        if i >= len then
+            compare ca.Length cb.Length
+        else
+            let c = String.CompareOrdinal(ca.[i], cb.[i])
+            if c <> 0 then c else loop (i + 1)
+
+    loop 0
+
 /// Writes conforming `README.md` (or split-directory sibling `<name>.md`)
 /// indexes for every covered directory reachable from `paths` that needs one
 /// [Repo-grounded — `readme_index.rs::generate_readme_index`].
@@ -691,7 +759,7 @@ let generateReadmeIndex (repoRoot: string) (paths: string list) : string list =
         let full = if Path.IsPathRooted p then p else Path.Combine(repoRoot, p)
         listAllDirs full |> List.collect (fun d -> generateOneDir d full))
     |> List.distinct
-    |> List.sort
+    |> List.sortWith comparePathsLikeRust
 
 // ===========================================================================
 // `governance readme-index rewrite-paths`
@@ -1079,6 +1147,27 @@ let resolveTreeSize (root: string) : uint64 =
 /// Checks the resolved import tree of `config.ResolvedTree.Root` (relative
 /// to `repoRoot`) against its budget. Returns `None` when within target
 /// [Repo-grounded — `word_budget.rs::check_resolved_tree`].
+/// Returns the `exclude` list registered against `gateId` in
+/// `repo-config.yml`'s `gates:` registry, or an empty list when no such gate
+/// is registered — the single source a bare CLI validate invocation's
+/// `excludes` parameter should be seeded from, not only the `gate run`
+/// pre-push/CI path
+/// [Repo-grounded — `word_budget.rs::registered_excludes`,
+/// `md_validate_frontmatter_dates.rs::run`'s equivalent inline lookup].
+let registeredExcludesFor (repoRoot: string) (gateId: string) : Result<string list, string> =
+    RepoConfig.loadOptional repoRoot
+    |> Result.map (fun opt ->
+        opt
+        |> Option.bind (fun config -> config.Gates |> List.tryFind (fun g -> g.Id = gateId))
+        |> Option.bind (fun gate -> gate.Args.TryFind "exclude")
+        |> Option.defaultValue [])
+
+/// Returns the `exclude` list registered against the `governance-word-budget`
+/// gate — see `registeredExcludesFor`'s doc comment
+/// [Repo-grounded — `word_budget.rs::registered_excludes`].
+let registeredExcludes (repoRoot: string) : Result<string list, string> =
+    registeredExcludesFor repoRoot "governance-word-budget"
+
 let checkResolvedTree (repoRoot: string) (config: BudgetConfig) : WordBudgetFinding option =
     let rootPath = Path.Combine(repoRoot, config.ResolvedTree.Root)
     let size = resolveTreeSize rootPath

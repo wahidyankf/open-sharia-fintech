@@ -1,6 +1,6 @@
 //! Formats Mermaid validation results as text, JSON, or Markdown.
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
 use anyhow::Error;
@@ -70,8 +70,16 @@ pub fn format_text(result: &ValidationResult, verbose: bool, quiet: bool) -> Str
     }
     let mut sb = String::new();
     if verbose || has_findings {
-        let mut file_violations: HashMap<String, Vec<&Violation>> = HashMap::new();
-        let mut file_warnings: HashMap<String, Vec<&Warning>> = HashMap::new();
+        // `BTreeMap`, not a `HashMap` — deterministic key order matters
+        // here: this grouping feeds the per-file `[FAIL]`/`[WARN]`/`[OK]`
+        // block order directly, and `std::collections::HashMap`'s
+        // randomized per-process iteration order made that order
+        // nondeterministic across runs of the same binary, breaking
+        // shadow-diff byte-identity (Wave D integration,
+        // rewrite-rhino-cli-to-fsharp) — the same class of bug already
+        // fixed in `links.rs`'s `broken_by_category`.
+        let mut file_violations: BTreeMap<String, Vec<&Violation>> = BTreeMap::new();
+        let mut file_warnings: BTreeMap<String, Vec<&Warning>> = BTreeMap::new();
         for v in &result.violations {
             file_violations
                 .entry(v.file_path.clone())
@@ -84,7 +92,7 @@ pub fn format_text(result: &ValidationResult, verbose: bool, quiet: bool) -> Str
                 .or_default()
                 .push(w);
         }
-        let mut file_set: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut file_set: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
         for k in file_violations.keys() {
             file_set.insert(k.clone());
         }

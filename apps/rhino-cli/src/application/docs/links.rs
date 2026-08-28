@@ -6,7 +6,7 @@
 //! exists on the filesystem.  External URLs, anchor-only links, and a
 //! curated set of known placeholder patterns are silently skipped.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -69,7 +69,13 @@ pub struct LinkValidationResult {
     /// All broken links found during the scan.
     pub broken_links: Vec<BrokenLink>,
     /// Broken links grouped by their [`categorize_broken_link`] category string.
-    pub broken_by_category: HashMap<String, Vec<BrokenLink>>,
+    /// A `BTreeMap`, not a `HashMap` — deterministic key order matters here:
+    /// this field feeds `format_link_json`'s `categories` object directly,
+    /// and `std::collections::HashMap`'s randomized per-process iteration
+    /// order would make that JSON output nondeterministic across runs of
+    /// the same binary, which broke shadow-diff byte-identity even between
+    /// two Rust invocations (Wave D integration, rewrite-rhino-cli-to-fsharp).
+    pub broken_by_category: BTreeMap<String, Vec<BrokenLink>>,
     /// Wall-clock time for the full scan, in milliseconds.
     pub scan_duration_ms: i64,
 }
@@ -124,7 +130,7 @@ pub fn validate_all_links(opts: &ScanOptions) -> std::result::Result<LinkValidat
         total_files: files.len(),
         total_links: 0,
         broken_links: Vec::new(),
-        broken_by_category: HashMap::new(),
+        broken_by_category: BTreeMap::new(),
         scan_duration_ms: 0,
     };
 
@@ -728,8 +734,9 @@ pub fn format_link_json(result: &LinkValidationResult) -> std::result::Result<St
         broken_count: usize,
         /// Wall-clock duration of the scan in milliseconds.
         duration_ms: i64,
-        /// Broken links grouped by category.
-        categories: HashMap<&'a str, Vec<JsonBrokenLink<'a>>>,
+        /// Broken links grouped by category. A `BTreeMap` for the same
+        /// determinism reason as `LinkValidationResult::broken_by_category`.
+        categories: BTreeMap<&'a str, Vec<JsonBrokenLink<'a>>>,
     }
 
     let status = if result.broken_links.is_empty() {
@@ -738,7 +745,7 @@ pub fn format_link_json(result: &LinkValidationResult) -> std::result::Result<St
         "failure"
     };
     let timestamp = Local::now().format("%Y-%m-%dT%H:%M:%S%:z").to_string();
-    let mut categories: HashMap<&str, Vec<JsonBrokenLink>> = HashMap::new();
+    let mut categories: BTreeMap<&str, Vec<JsonBrokenLink>> = BTreeMap::new();
     for (cat, links) in &result.broken_by_category {
         let jl: Vec<JsonBrokenLink> = links
             .iter()
@@ -914,7 +921,7 @@ mod tests {
             total_files: 5,
             total_links: 20,
             broken_links: Vec::new(),
-            broken_by_category: HashMap::new(),
+            broken_by_category: BTreeMap::new(),
             scan_duration_ms: 100,
         };
         let s = format_link_text(&result, false, false);
@@ -928,7 +935,7 @@ mod tests {
             total_files: 5,
             total_links: 20,
             broken_links: Vec::new(),
-            broken_by_category: HashMap::new(),
+            broken_by_category: BTreeMap::new(),
             scan_duration_ms: 100,
         };
         let s = format_link_text(&result, false, true);
@@ -948,7 +955,7 @@ mod tests {
 
     /// Constructs a [`LinkValidationResult`] that contains one broken link.
     fn result_with_broken() -> LinkValidationResult {
-        let mut by_cat = HashMap::new();
+        let mut by_cat = BTreeMap::new();
         by_cat.insert("General/other paths".to_string(), vec![broken_link()]);
         LinkValidationResult {
             total_files: 1,
@@ -985,7 +992,7 @@ mod tests {
             target_path: "docs/chapter.md#missing-section".to_string(),
             category: "broken-anchor".to_string(),
         };
-        let mut by_cat = HashMap::new();
+        let mut by_cat = BTreeMap::new();
         by_cat.insert("broken-anchor".to_string(), vec![anchor_link]);
         let result = LinkValidationResult {
             total_files: 1,
@@ -1084,7 +1091,7 @@ mod tests {
             total_files: 5,
             total_links: 20,
             broken_links: Vec::new(),
-            broken_by_category: HashMap::new(),
+            broken_by_category: BTreeMap::new(),
             scan_duration_ms: 100,
         };
         let s = format_link_json(&result).unwrap();

@@ -89,7 +89,16 @@ pub fn run(
     } else {
         collect_md_repo_wide(&repo_root)
     };
-    let md_files = apply_excludes(&repo_root, md_files, &args.exclude);
+    let mut md_files = apply_excludes(&repo_root, md_files, &args.exclude);
+    // `WalkDir` does not sort by default, so a repo-wide scan's raw
+    // OS-readdir order is arbitrary (though stable per checkout) and not
+    // portable across platforms/filesystems. Every other `md` validator
+    // sorts its findings before reporting; this one didn't, which made
+    // `md mermaid validate`'s output order filesystem-dependent — sorting
+    // the file list here is the same class of determinism fix already
+    // applied to `links.rs`'s `broken_by_category` (Wave D integration,
+    // rewrite-rhino-cli-to-fsharp).
+    md_files.sort();
 
     let mut all_blocks: Vec<MermaidBlock> = Vec::new();
     let mut file_set: std::collections::HashSet<String> = std::collections::HashSet::new();
