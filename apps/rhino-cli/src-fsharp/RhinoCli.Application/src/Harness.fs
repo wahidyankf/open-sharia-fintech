@@ -17,7 +17,8 @@
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`,
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`,
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/catalog.rs`,
@@ -25,8 +26,10 @@
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
 /// `apps/rhino-cli/src/application/agents/detect_duplication.rs`,
+/// `apps/rhino-cli/src/application/agents/emit.rs`,
 /// `apps/rhino-cli/src/application/agents/field_policy.rs`,
 /// `apps/rhino-cli/src/application/agents/frontmatter.rs`,
+/// `apps/rhino-cli/src/application/agents/ownership.rs`,
 /// `apps/rhino-cli/src/application/agents/skill_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/skills_mirror.rs`,
 /// `apps/rhino-cli/src/application/agents/sync.rs`,
@@ -68,6 +71,21 @@
 /// since `harness/agents-validate-claude.feature`'s scenarios assert on the
 /// returned `ValidationResult` directly rather than on rendered CLI output —
 /// the same precedent every other scenario in this module follows.
+///
+/// A fourth scope note covers `ownership.rs::validate_ownership`, which folds
+/// in Rust's `validate_bindings` checks wholesale because that one function
+/// already tallies both the static-binding-file byte-parity family and the
+/// `OpenCode` mirror sync family. This module ported those two families as
+/// two separate functions instead ([`validateBindings`] and [`validateSync`],
+/// per the first and second scope notes above), so [`validateOwnership`]
+/// folds in both explicitly to reach the same effective coverage. `classify`,
+/// `guard_emitter_targets`, and `binding_roots` are ported in full, with one
+/// narrowing: `binding_roots` also walks `rules-dir`/`config`/`instruction`
+/// roots, which this module's `HarnessEntry` does not model (see its own
+/// scope note); every landed fixture's and the real registry's value for
+/// those fields is already named by a separate `ownership:` entry, so the
+/// narrower root set this module computes agrees with Rust's on every
+/// scenario this feature file exercises.
 ///
 /// The `harness` namespace stays on the Rust side of `FSHARP_NAMESPACES`
 /// until every Wave E feature file has landed, so no CLI path reaches this
@@ -1397,6 +1415,11 @@ let private rebaseAgentLinks (body: string) (inputPath: string) (claudeDir: stri
                 else
                     let resolved = normalizeLexical (inputDir + "/" + pathPart)
 
+                    // A link resolving under `claudeDir` — at any nesting depth,
+                    // not just directly inside it — targets another agent
+                    // source the mirror also flattens, so it rebases to that
+                    // sibling's flattened basename rather than a `../`-climb
+                    // back through the (mirror-absent) `.claude/` tree.
                     let newPath =
                         if
                             resolved = claudeDirNorm
@@ -1404,8 +1427,8 @@ let private rebaseAgentLinks (body: string) (inputPath: string) (claudeDir: stri
                         then
                             let rel = resolved.Substring(claudeDirNorm.Length).TrimStart('/')
 
-                            if rel <> "" && not (rel.Contains "/") then
-                                rel
+                            if rel <> "" then
+                                rel.Split('/') |> Array.last
                             else
                                 relativeFrom (resolved.Split('/')) mirrorDirComponents
                         else
@@ -3354,3 +3377,290 @@ let runHarnessCatalogValidate (repoRoot: string) : HarnessCatalogOutcome =
                     rendered.Relative
                     rendered.Relative
                     catalogRemediation }
+
+// ---------------------------------------------------------------------------
+// harness ownership — total ownership of binding files (US-8)
+// ---------------------------------------------------------------------------
+
+/// Name of the classification check, so the gate output is greppable
+/// [Repo-grounded — `ownership.rs::CLASSIFICATION_CHECK`].
+[<Literal>]
+let classificationCheck = "Ownership: every tracked binding file is classified"
+
+/// Name of the emitter-target guard check
+/// [Repo-grounded — `ownership.rs::SOURCE_GUARD_CHECK`].
+[<Literal>]
+let sourceGuardCheck = "Ownership: no emitter target is declared source"
+
+/// One tracked binding file and the class that owns it
+/// [Repo-grounded — `ownership.rs::ClassifiedFile`].
+type ClassifiedFile =
+    { Path: string
+      Class: RepoConfig.OwnershipClass }
+
+/// Result of classifying every tracked file under every binding directory
+/// [Repo-grounded — `ownership.rs::OwnershipReport`].
+type OwnershipReport =
+    { Classified: ClassifiedFile list
+      Unclassified: string list }
+
+/// Accumulation helpers for [`OwnershipReport`].
+[<RequireQualifiedAccess>]
+module OwnershipReport =
+
+    /// Total tracked binding files seen, classified or not
+    /// [Repo-grounded — `ownership.rs::OwnershipReport::total`].
+    let total (report: OwnershipReport) : int =
+        List.length report.Classified + List.length report.Unclassified
+
+    /// How many files carry `cls`
+    /// [Repo-grounded — `ownership.rs::OwnershipReport::count`].
+    let count (cls: RepoConfig.OwnershipClass) (report: OwnershipReport) : int =
+        report.Classified |> List.filter (fun f -> f.Class = cls) |> List.length
+
+/// Pushes a binding directory/file root onto `roots` — the first path
+/// component for a directory-shaped path, the path itself for a root-level
+/// file — skipping a blank value and a duplicate
+/// [Repo-grounded — `ownership.rs::binding_roots`'s inner `push` closure].
+let private pushBindingRoot (roots: string list) (value: string) : string list =
+    let trimmed = value.TrimEnd('/')
+
+    if trimmed = "" then
+        roots
+    else
+        let root =
+            match trimmed.IndexOf('/') with
+            | -1 -> trimmed
+            | i -> trimmed.Substring(0, i)
+
+        if List.contains root roots then roots else roots @ [ root ]
+
+/// Directories and files the registry treats as binding surfaces, derived
+/// from `agent-dir`, `skills-dir`, and every `ownership:` declaration.
+/// `rules-dir`/`config`/`instruction` are deliberately not walked
+/// separately, unlike Rust's `binding_roots`: every landed fixture's (and
+/// the real registry's) `rules-dir`/`config`/`instruction` root is already
+/// named by an `ownership:` entry too, so the two root sets agree — see this
+/// module's `HarnessEntry` scope note for why those fields stay unported
+/// [Repo-grounded — `ownership.rs::binding_roots`, narrowed].
+let bindingRoots (config: RepoConfig.RepoConfig) : string list =
+    config.Harness
+    |> List.fold
+        (fun roots entry ->
+            let roots =
+                match entry.AgentDir with
+                | Some v -> pushBindingRoot roots v
+                | None -> roots
+
+            let roots =
+                match entry.SkillsDir with
+                | Some v -> pushBindingRoot roots v
+                | None -> roots
+
+            entry.Ownership
+            |> List.fold (fun roots owned -> pushBindingRoot roots owned.Path) roots)
+        []
+    |> List.sort
+
+/// True when `declaration` claims `file` — exactly, or as a directory
+/// prefix — routed through the crate's one shared containment predicate
+/// rather than a second, independent string-prefix test
+/// [Repo-grounded — `ownership.rs::claims`].
+let claimsPath (declaration: string) (file: string) : bool =
+    let decl = declaration.TrimEnd('/')
+    file = decl || RepoConfig.pathIsUnder file decl
+
+/// Every ownership declaration in the registry, flattened across harnesses.
+/// The same path may be declared by more than one harness, which is why the
+/// declarations are flattened and the longest match wins rather than the
+/// first [Repo-grounded — `ownership.rs::declarations`].
+let private ownershipDeclarations (config: RepoConfig.RepoConfig) : (string * RepoConfig.OwnershipClass) list =
+    config.Harness
+    |> List.collect (fun entry -> entry.Ownership |> List.map (fun owned -> owned.Path.TrimEnd('/'), owned.Class))
+
+/// Runs `git ls-files -z -- <roots>` from `repoRoot` and returns the tracked
+/// paths under those roots, straight from the git index — a local scratch
+/// file is never a failure, and a deleted-but-still-present file is never
+/// counted [Repo-grounded — `ownership.rs::tracked_files`].
+let private trackedBindingFiles (repoRoot: string) (roots: string list) : Result<string list, string> =
+    if List.isEmpty roots then
+        Ok []
+    else
+        use proc = new Process()
+        proc.StartInfo.FileName <- "git"
+        proc.StartInfo.ArgumentList.Add("ls-files")
+        proc.StartInfo.ArgumentList.Add("-z")
+        proc.StartInfo.ArgumentList.Add("--")
+        roots |> List.iter proc.StartInfo.ArgumentList.Add
+        proc.StartInfo.WorkingDirectory <- repoRoot
+        proc.StartInfo.EnvironmentVariables.["GIT_DIR"] <- Path.Combine(repoRoot, ".git")
+        proc.StartInfo.EnvironmentVariables.["GIT_CEILING_DIRECTORIES"] <- repoRoot
+        proc.StartInfo.EnvironmentVariables.["GIT_CONFIG_GLOBAL"] <- "/dev/null"
+        proc.StartInfo.EnvironmentVariables.["GIT_CONFIG_SYSTEM"] <- "/dev/null"
+        proc.StartInfo.RedirectStandardOutput <- true
+        proc.StartInfo.RedirectStandardError <- true
+        proc.StartInfo.UseShellExecute <- false
+
+        try
+            proc.Start() |> ignore
+            let stdout = proc.StandardOutput.ReadToEnd()
+            let stderr = proc.StandardError.ReadToEnd()
+            proc.WaitForExit()
+
+            if proc.ExitCode <> 0 then
+                Error(sprintf "git ls-files failed: %s" (stderr.Trim()))
+            else
+                stdout.Split('\000') |> Array.filter (fun s -> s <> "") |> List.ofArray |> Ok
+        with :? System.ComponentModel.Win32Exception as ex ->
+            Error(sprintf "failed to run git ls-files: %s" ex.Message)
+
+/// Classifies every tracked file under every binding directory
+/// [Repo-grounded — `ownership.rs::classify`].
+let classifyOwnership (repoRoot: string) : Result<OwnershipReport, string> =
+    match RepoConfig.load repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        let roots = bindingRoots config
+        let decls = ownershipDeclarations config
+
+        match trackedBindingFiles repoRoot roots with
+        | Error e -> Error e
+        | Ok files ->
+            let report =
+                files
+                |> List.fold
+                    (fun report file ->
+                        // Longest declaration wins, so `.claude/skills` beats
+                        // `.claude/` for a file under it and a broad root
+                        // declaration cannot mask a narrower one.
+                        let best =
+                            decls
+                            |> List.filter (fun (decl, _) -> claimsPath decl file)
+                            |> List.sortByDescending (fun (decl, _) -> decl.Length)
+                            |> List.tryHead
+
+                        match best with
+                        | Some(_, cls) ->
+                            { report with
+                                Classified = report.Classified @ [ { Path = file; Class = cls } ] }
+                        | None ->
+                            { report with
+                                Unclassified = report.Unclassified @ [ file ] })
+                    { Classified = []; Unclassified = [] }
+
+            Ok
+                { report with
+                    Unclassified = report.Unclassified |> List.sort }
+
+/// Refuses to run the emitters when any generated-tier entry's `agent-dir` or
+/// `skills-dir` output target is declared `source` — a generator that writes
+/// into hand-authored canonical input destroys the thing every mirror is
+/// generated from, so this refuses before the first write rather than
+/// reporting the damage afterwards
+/// [Repo-grounded — `ownership.rs::guard_emitter_targets`].
+let guardEmitterTargets (repoRoot: string) : Result<unit, string> =
+    match RepoConfig.load repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        let decls = ownershipDeclarations config
+
+        let offending =
+            config.Harness
+            |> List.filter (fun entry -> entry.Tier = RepoConfig.Tier.Generated)
+            |> List.collect (fun entry ->
+                [ entry.AgentDir; entry.SkillsDir ]
+                |> List.choose id
+                |> List.map (fun target -> entry, target))
+            |> List.tryPick (fun (entry, target) ->
+                let claimed =
+                    decls
+                    |> List.filter (fun (decl, _) -> claimsPath decl target || claimsPath target decl)
+                    |> List.sortByDescending (fun (decl, _) -> decl.Length)
+                    |> List.tryHead
+
+                match claimed with
+                | Some(decl, RepoConfig.OwnershipClass.ClassSource) -> Some(entry, target, decl)
+                | _ -> None)
+
+        match offending with
+        | Some(entry, target, decl) ->
+            Error(
+                sprintf
+                    "refusing to generate: harness %s would write to %s, which %s declares source; the emitter never writes to hand-authored canonical input"
+                    entry.Name
+                    target
+                    decl
+            )
+        | None -> Ok()
+
+/// Runs `harness bindings generate`: refuses via [`guardEmitterTargets`] when
+/// any generated-tier emitter's output directory is declared source, then
+/// runs the `OpenCode` sync, the Codex agent/config emitter, and the skills
+/// mirror emitter — the same composition `emit.rs::emit` runs behind
+/// `harness bindings generate` and divergence triage alike
+/// [Repo-grounded — `harness_generate_bindings.rs::run`, `emit.rs::emit`].
+let runHarnessBindingsGenerate (repoRoot: string) : Result<unit, string> =
+    match guardEmitterTargets repoRoot with
+    | Error e -> Error e
+    | Ok() ->
+        match convertAllAgents repoRoot false with
+        | Error e -> Error e
+        | Ok _ ->
+            match emitCodexBindings repoRoot false with
+            | Error e -> Error e
+            | Ok _ ->
+                match emitSkillsMirrors repoRoot false with
+                | Error e -> Error e
+                | Ok _ -> Ok()
+
+/// Validates total ownership of every binding file: classification (no
+/// tracked binding file is unowned), the emitter-target source guard, and —
+/// folded in rather than reimplemented — [`validateBindings`]'s and
+/// [`validateSync`]'s checks, since a `generated` path reproducing
+/// byte-for-byte is exactly what those already prove. A `vendored` path
+/// carries no byte guard by design, and a `source` path is guarded by
+/// refusing the write rather than by a byte comparison
+/// [Repo-grounded — `ownership.rs::validate_ownership`].
+let validateOwnership (repoRoot: string) : ValidationResult =
+    let stopwatch = Stopwatch.StartNew()
+
+    let classificationResult =
+        match classifyOwnership repoRoot with
+        | Ok report when List.isEmpty report.Unclassified ->
+            ValidationCheck.passed
+                classificationCheck
+                (sprintf
+                    "%d tracked binding file(s): %d generated, %d vendored, %d source"
+                    (OwnershipReport.total report)
+                    (OwnershipReport.count RepoConfig.OwnershipClass.ClassGenerated report)
+                    (OwnershipReport.count RepoConfig.OwnershipClass.ClassVendored report)
+                    (OwnershipReport.count RepoConfig.OwnershipClass.ClassSource report))
+        | Ok report ->
+            ValidationCheck.failedMsg
+                classificationCheck
+                (sprintf
+                    "%d tracked binding file(s) carry no declared ownership class: %s"
+                    (List.length report.Unclassified)
+                    (String.Join(", ", report.Unclassified)))
+        | Error e -> ValidationCheck.failedMsg classificationCheck e
+
+    let guardResult =
+        match guardEmitterTargets repoRoot with
+        | Ok() -> ValidationCheck.passed sourceGuardCheck "no generated-tier output directory is declared source"
+        | Error e -> ValidationCheck.failedMsg sourceGuardCheck e
+
+    let result =
+        ValidationResult.empty
+        |> ValidationResult.tally classificationResult
+        |> ValidationResult.tally guardResult
+
+    let result =
+        (validateBindings repoRoot).Checks
+        |> List.fold (fun acc check -> ValidationResult.tally check acc) result
+
+    let result =
+        (validateSync repoRoot).Checks
+        |> List.fold (fun acc check -> ValidationResult.tally check acc) result
+
+    { result with
+        Duration = stopwatch.Elapsed }
