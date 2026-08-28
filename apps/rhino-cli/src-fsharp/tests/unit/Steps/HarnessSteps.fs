@@ -60,6 +60,9 @@ type HarnessSteps() =
     let mutable trackedFileCounts: (string * int) list = []
     let mutable expectedPaths: string list = []
     let mutable knownDirs: string list = []
+    let mutable duplicationFindings: Harness.DuplicationFinding list = []
+    let mutable fixtureAgentPaths: string list = []
+    let mutable fixtureSkillPaths: string list = []
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -152,6 +155,40 @@ type HarnessSteps() =
         stdout.Split('\n')
         |> Array.filter (fun line -> line.Trim() <> "")
         |> Array.length
+
+    // ---- @agents-detect-duplication ----
+
+    /// Writes an agent definition under the fixture's `.claude/agents/` and
+    /// records its path. Names deliberately avoid the sanctioned role suffixes
+    /// (`-maker`, `-checker`, `-fixer`, `-deployer`, `-dev`, `-tester`): two
+    /// files in the same template family are *expected* to share boilerplate,
+    /// so a fixture named `alpha-checker`/`beta-checker` would be exempted and
+    /// the scenario would pass for the wrong reason.
+    let writeAgent (root: string) (name: string) (body: string) : string =
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, name + ".md")
+        File.WriteAllText(path, sprintf "---\nname: %s\ndescription: fixture\n---\n%s" name body)
+        fixtureAgentPaths <- fixtureAgentPaths @ [ path ]
+        path
+
+    let writeSkill (root: string) (name: string) (body: string) : string =
+        let dir = Path.Combine(root, ".claude", "skills", name)
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, "SKILL.md")
+        File.WriteAllText(path, sprintf "---\nname: %s\ndescription: fixture\n---\n%s" name body)
+        fixtureSkillPaths <- fixtureSkillPaths @ [ path ]
+        path
+
+    /// `count` distinct prose lines seeded by `tag`, so two blocks built with
+    /// different tags share no window and one block repeated verbatim does.
+    let prose (tag: string) (count: int) : string =
+        String.Join("\n", [ for i in 1..count -> sprintf "%s line %d carries its own sentence." tag i ])
+        + "\n"
+
+    let findingSpanning (paths: string list) : Harness.DuplicationFinding list =
+        duplicationFindings
+        |> List.filter (fun finding -> paths |> List.forall (fun path -> List.contains path finding.Files))
 
     // ---- @harness-purge ----
 
@@ -304,15 +341,23 @@ type HarnessSteps() =
     [<When>]
     member _.``the developer runs harness bindings validate``() = runValidate (scenarioRoot ())
 
+    /// Shared by the `harness bindings validate` and `agents
+    /// detect-duplication` scenarios. When the command that ran produces a
+    /// `ValidationResult`, the offending checks are asserted first so a
+    /// failure names them rather than reporting only "expected 0, got 1";
+    /// `detect-duplication` produces findings instead, and is covered by the
+    /// zero-clusters step.
     [<Then>]
     member _.``the command exits successfully``() =
-        let notPassed =
-            (result ()).Checks
-            |> List.filter (fun (check: Harness.ValidationCheck) -> check.Status <> "passed")
+        match lastResult with
+        | Some validation ->
+            let notPassed =
+                validation.Checks
+                |> List.filter (fun (check: Harness.ValidationCheck) -> check.Status <> "passed")
 
-        // Asserted before the exit code so a failure names the offending
-        // check rather than reporting only "expected 0, got 1".
-        Assert.Equal<Harness.ValidationCheck list>([], notPassed)
+            Assert.Equal<Harness.ValidationCheck list>([], notPassed)
+        | None -> ()
+
         Assert.Equal(0, exitCode ())
 
     [<Then>]
@@ -391,12 +436,85 @@ type HarnessSteps() =
         for check in failing do
             Assert.Contains(".toml", check.Message)
 
+    [<Given>]
+    member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        writeAgent root "alpha-one" (prose "alpha" 14) |> ignore
+        writeAgent root "beta-two" (prose "beta" 14) |> ignore
+        writeSkill root "gamma-notes" (prose "gamma" 14) |> ignore
+
+    [<Given>]
+    member _.``a repository with two agent files that share (\d+) consecutive lines verbatim``(shared: int) =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        let block = prose "shared" shared
+        writeAgent root "alpha-one" (block + prose "alpha" 6) |> ignore
+        writeAgent root "beta-two" (block + prose "beta" 6) |> ignore
+
+    [<Given>]
+    member _.``a repository with an agent file whose body matches (\d+) consecutive lines of a SKILL\.md``
+        (shared: int)
+        =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        let block = prose "shared" shared
+        writeAgent root "alpha-one" (block + prose "alpha" 6) |> ignore
+        writeSkill root "gamma-notes" (block + prose "gamma" 6) |> ignore
+
+    [<Given>]
+    member _.``a repository where two agent files share a (\d+)-line window composed only of headings or blank lines``
+        (windowSize: int)
+        =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+
+        // Heading/blank pairs, so the shared window is exactly `windowSize`
+        // normalized lines and every one of them is a heading or a blank.
+        let scaffold =
+            String.Join("\n", [ for i in 1 .. windowSize / 2 -> sprintf "%s Section %d\n" (String.replicate i "#") i ])
+            + "\n"
+
+        writeAgent root "alpha-one" (scaffold + prose "alpha" 6) |> ignore
+        writeAgent root "beta-two" (scaffold + prose "beta" 6) |> ignore
+
+    [<When>]
+    member _.``the developer runs agents detect-duplication``() =
+        match Harness.detectDuplication (scenarioRoot ()) with
+        | Ok findings ->
+            duplicationFindings <- findings
+            lastExitCode <- Some(if List.isEmpty findings then 0 else 1)
+        | Error message -> failwith message
+
+    [<Then>]
+    member _.``the output reports zero duplication clusters``() =
+        Assert.Equal<Harness.DuplicationFinding list>([], duplicationFindings)
+
+    [<Then>]
+    member _.``the output identifies the duplicated cluster across both agents``() =
+        let spanning = findingSpanning fixtureAgentPaths
+        Assert.NotEmpty spanning
+
+        for finding in spanning do
+            Assert.Equal(Harness.duplicationWindowSize, finding.WindowSize)
+            Assert.Equal("high", finding.Severity)
+            // One start line per file, so a report can point at both sites.
+            Assert.Equal(List.length finding.Files, List.length finding.StartLines)
+
+    [<Then>]
+    member _.``the output identifies the duplicated cluster across the agent and the skill``() =
+        let spanning = findingSpanning (fixtureAgentPaths @ fixtureSkillPaths)
+        Assert.NotEmpty spanning
+
+        for finding in spanning do
+            Assert.Contains("SKILL.md", String.Join(", ", finding.Files))
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
 module private FeatureRunner =
 
-    let private featurePath: string =
+    let private featurePath (fileName: string) : string =
         Path.GetFullPath(
             Path.Combine(
                 __SOURCE_DIRECTORY__,
@@ -413,7 +531,7 @@ module private FeatureRunner =
                 "rhino-cli",
                 "gherkin",
                 "harness",
-                "agents-bindings.feature"
+                fileName
             )
         )
 
@@ -445,14 +563,22 @@ module private FeatureRunner =
 
         Array.concat [ [| featureLine; "" |]; featureLines.[startIdx .. endIdx - 1] ]
 
-    let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
-        let snippet = extractScenario allLines scenarioTitle
+    let private runIn (fileName: string) (scenarioTitle: string) : unit =
+        let path = featurePath fileName
+        let snippet = extractScenario (File.ReadAllLines path) scenarioTitle
         let definitions = StepDefinitions([| typeof<HarnessSteps> |])
-        let feature = definitions.GenerateFeature(featurePath, snippet)
+        let feature = definitions.GenerateFeature(path, snippet)
 
         for scenario in feature.Scenarios do
             scenario.Action.Invoke()
+
+    /// Runs one scenario of `agents-bindings.feature`.
+    let run (scenarioTitle: string) : unit =
+        runIn "agents-bindings.feature" scenarioTitle
+
+    /// Runs one scenario of `agents-detect-duplication.feature`.
+    let runDuplication (scenarioTitle: string) : unit =
+        runIn "agents-detect-duplication.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -493,3 +619,20 @@ let ``A .codex/agents directory holding only .toml files passes validation`` () 
 [<Fact>]
 let ``A .md file under .codex/agents fails validation`` () =
     FeatureRunner.run "A .md file under .codex/agents fails validation"
+
+[<Fact>]
+let ``Set of distinct agents and skills passes`` () =
+    FeatureRunner.runDuplication "Set of distinct agents and skills passes"
+
+[<Fact>]
+let ``Two agents sharing 12 consecutive lines verbatim fails`` () =
+    FeatureRunner.runDuplication "Two agents sharing 12 consecutive lines verbatim fails"
+
+[<Fact>]
+let ``Agent body matching 10+ consecutive lines of a SKILL.md fails (agent-skill duplication)`` () =
+    FeatureRunner.runDuplication
+        "Agent body matching 10+ consecutive lines of a SKILL.md fails (agent-skill duplication)"
+
+[<Fact>]
+let ``Heading-only or whitespace-only 10-line window does NOT trigger a finding`` () =
+    FeatureRunner.runDuplication "Heading-only or whitespace-only 10-line window does NOT trigger a finding"

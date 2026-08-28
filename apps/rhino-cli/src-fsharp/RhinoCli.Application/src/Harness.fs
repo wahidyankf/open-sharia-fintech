@@ -1,9 +1,12 @@
 /// Port of the slice of the Rust `application::agents` namespace needed by the
 /// scenarios in
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
+/// `apps/rhino-cli/src/application/agents/detect_duplication.rs`,
 /// `apps/rhino-cli/src/application/agents/frontmatter.rs`,
 /// `apps/rhino-cli/src/application/agents/types.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`].
@@ -26,6 +29,8 @@ open System
 open System.Collections.Generic
 open System.Diagnostics
 open System.IO
+open System.Security.Cryptography
+open System.Text
 open System.Text.RegularExpressions
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
@@ -474,3 +479,292 @@ let validateHarnessName (config: RepoConfig.RepoConfig) (requested: string) : Re
             accepted |> List.map (fun name -> sprintf "'%s'" name) |> String.concat ", "
 
         Error(sprintf "unknown harness name '%s'; expected one of %s" requested rendered)
+
+// ---------------------------------------------------------------------------
+// Verbatim duplication detection
+// ---------------------------------------------------------------------------
+
+/// Number of consecutive normalized lines that constitutes a duplication window
+/// [Repo-grounded — `detect_duplication.rs::DUPLICATION_WINDOW_SIZE`].
+[<Literal>]
+let duplicationWindowSize = 10
+
+/// One duplication finding: the same window appearing in two or more files
+/// [Repo-grounded — `detect_duplication.rs::DuplicationFinding`].
+type DuplicationFinding =
+    {
+        /// Sorted absolute paths where the duplicated window appears.
+        Files: string list
+        /// 1-based first line of the window in each corresponding file.
+        StartLines: int list
+        /// Always [`duplicationWindowSize`].
+        WindowSize: int
+        /// Always `"high"`.
+        Severity: string
+        /// Human-readable description.
+        Message: string
+    }
+
+/// Role suffixes denoting the repository's sanctioned maker-checker-fixer,
+/// swe-dev, and web-tester template families — agents in the same role are
+/// *designed* to share workflow boilerplate verbatim
+/// [Repo-grounded — `detect_duplication.rs::SANCTIONED_ROLE_SUFFIXES`].
+let private sanctionedRoleSuffixes: string list =
+    [ "-fixer"; "-checker"; "-maker"; "-deployer"; "-dev"; "-tester" ]
+
+/// A stable label for `path`: `skills/<dir>` for a skill file (skill content is
+/// keyed by its owning directory, since every skill file is literally named
+/// `SKILL.md`), the bare file stem otherwise
+/// [Repo-grounded — `detect_duplication.rs::family_label`].
+let private familyLabel (path: string) : string =
+    if Path.GetFileName path = "SKILL.md" then
+        let dir =
+            match Path.GetDirectoryName path with
+            | null -> ""
+            | parent -> Path.GetFileName parent
+
+        sprintf "skills/%s" dir
+    else
+        Path.GetFileNameWithoutExtension path
+
+/// The sanctioned role suffix `label` ends with, if any
+/// [Repo-grounded — `detect_duplication.rs::role_suffix`].
+let private roleSuffix (label: string) : string option =
+    sanctionedRoleSuffixes
+    |> List.tryFind (fun suffix -> label.EndsWith(suffix, StringComparison.Ordinal))
+
+/// `label` with its role suffix stripped — the domain it belongs to — or
+/// `label` unchanged when it carries no recognized suffix
+/// [Repo-grounded — `detect_duplication.rs::domain_prefix`].
+let private domainPrefix (label: string) : string =
+    match roleSuffix label with
+    | Some suffix -> label.Substring(0, label.Length - suffix.Length)
+    | None -> label
+
+/// Whether every file in a cluster belongs to the repository's own sanctioned
+/// template family — all sharing one role suffix (e.g. every file a
+/// `*-checker`), or all sharing one domain once the suffix is stripped (e.g.
+/// the `foo-maker`/`foo-checker`/`foo-fixer` trio). Duplication spanning
+/// different roles AND different domains is still reported
+/// [Repo-grounded — `detect_duplication.rs::is_sanctioned_template_family`].
+let private isSanctionedTemplateFamily (distinctFiles: (string * int) list) : bool =
+    let labels = distinctFiles |> List.map (fst >> familyLabel)
+
+    match labels |> List.map roleSuffix |> List.distinct with
+    | [ Some _ ] -> true
+    | _ -> (labels |> List.map domainPrefix |> List.distinct |> List.length) = 1
+
+/// Removes the YAML frontmatter block, returning only the body. Distinct from
+/// [`extractFrontmatter`]: this one keeps the body of a file that has no
+/// frontmatter at all rather than rejecting it, because a duplication scan
+/// must still read such a file
+/// [Repo-grounded — `detect_duplication.rs::strip_frontmatter`].
+let stripFrontmatterBody (s: string) : string =
+    if
+        not (
+            s.StartsWith("---\n", StringComparison.Ordinal)
+            || s.StartsWith("---\r\n", StringComparison.Ordinal)
+        )
+    then
+        s
+    else
+        match s.IndexOf('\n') with
+        | -1 -> s
+        | openingNewline ->
+            let body = s.Substring(openingNewline + 1)
+
+            // Offset of the first line equal to `---` once a trailing `\r` is
+            // trimmed — the closing fence.
+            let rec fenceOffset (offset: int) : int option =
+                if offset > body.Length then
+                    None
+                else
+                    let slice = body.Substring offset
+
+                    let line, hasNewline =
+                        match slice.IndexOf('\n') with
+                        | -1 -> slice, false
+                        | idx -> slice.Substring(0, idx), true
+
+                    if line.TrimEnd('\r') = "---" then Some offset
+                    elif not hasNewline then None
+                    else fenceOffset (offset + line.Length + 1)
+
+            match fenceOffset 0 with
+            | None -> s
+            | Some idx ->
+                match body.Substring(idx).IndexOf('\n') with
+                | -1 -> ""
+                | closingNewline -> body.Substring(idx + closingNewline + 1)
+
+/// Splits into lines with trailing spaces and tabs trimmed and runs of blank
+/// lines collapsed to one, so cosmetic whitespace edits cannot hide a
+/// duplicated block [Repo-grounded — `detect_duplication.rs::normalize_lines`].
+let normalizeLines (s: string) : string list =
+    (([], false), s.Replace("\r\n", "\n").Split('\n'))
+    ||> Array.fold (fun (acc, prevBlank) line ->
+        let trimmed = line.TrimEnd([| ' '; '\t' |])
+        let blank = trimmed = ""
+
+        if blank && prevBlank then
+            acc, prevBlank
+        else
+            trimmed :: acc, blank)
+    |> fst
+    |> List.rev
+
+/// Whether a window is entirely blank lines, or entirely headings and blanks —
+/// shared section scaffolding rather than shared prose, so not worth reporting
+/// [Repo-grounded — `detect_duplication.rs::is_excluded_window`].
+let isExcludedWindow (lines: string list) : bool =
+    let nonBlank =
+        lines |> List.map (fun line -> line.Trim()) |> List.filter (fun t -> t <> "")
+
+    List.isEmpty nonBlank
+    || nonBlank |> List.forall (fun t -> t.StartsWith("#", StringComparison.Ordinal))
+
+/// Lowercase hex SHA-256 of the newline-joined window — the index key
+/// [Repo-grounded — `detect_duplication.rs::hash_window`].
+let private hashWindow (lines: string list) : string =
+    SHA256.HashData(Encoding.UTF8.GetBytes(String.Join("\n", lines)))
+    |> Convert.ToHexStringLower
+
+/// Source-tier agent and skill directories derived from `repo-config.yml`,
+/// falling back to `.claude/agents` + `.claude/skills` when the registry is
+/// absent or declares no source tier — preserving pre-registry behaviour for
+/// callers with no config file
+/// [Repo-grounded — `detect_duplication.rs::source_dirs_from_registry`].
+let private sourceDirsFromRegistry (repoRoot: string) : string list * string list =
+    let config = RepoConfig.loadOrDefault repoRoot
+
+    let sourceDirs (select: RepoConfig.HarnessEntry -> string option) : string list =
+        config.Harness
+        |> List.filter (fun entry -> entry.Tier = RepoConfig.Tier.Source)
+        |> List.choose select
+        |> List.map (joinRel repoRoot)
+
+    let orDefault (fallback: string) (dirs: string list) : string list =
+        if List.isEmpty dirs then
+            [ Path.Combine(repoRoot, ".claude", fallback) ]
+        else
+            dirs
+
+    sourceDirs (fun entry -> entry.AgentDir) |> orDefault "agents",
+    sourceDirs (fun entry -> entry.SkillsDir) |> orDefault "skills"
+
+/// Every agent `.md` and skill `SKILL.md` path under `repoRoot`, sorted. A
+/// directory that does not exist is skipped; one that exists but cannot be
+/// read is an error
+/// [Repo-grounded — `detect_duplication.rs::enumerate_agent_and_skill_files`].
+let private enumerateAgentAndSkillFiles (repoRoot: string) : Result<string list, string> =
+    let agentDirs, skillsDirs = sourceDirsFromRegistry repoRoot
+
+    let listing (found: string -> string[]) (dir: string) : Result<string list, string> =
+        if not (Directory.Exists dir) then
+            Ok []
+        else
+            try
+                Ok(found dir |> List.ofArray)
+            with ex ->
+                Error(sprintf "read %s: %s" dir ex.Message)
+
+    let agentFiles =
+        listing (fun dir ->
+            Directory.GetFiles dir
+            |> Array.filter (fun path ->
+                let name = Path.GetFileName path
+                name.EndsWith(".md", StringComparison.Ordinal) && name <> "README.md"))
+
+    let skillFiles =
+        listing (fun dir ->
+            Directory.GetDirectories dir
+            |> Array.map (fun skillDir -> Path.Combine(skillDir, "SKILL.md"))
+            |> Array.filter File.Exists)
+
+    let collect (lookup: string -> Result<string list, string>) (dirs: string list) =
+        dirs
+        |> List.fold
+            (fun acc dir ->
+                match acc, lookup dir with
+                | Error e, _ -> Error e
+                | _, Error e -> Error e
+                | Ok found, Ok more -> Ok(found @ more))
+            (Ok [])
+
+    match collect agentFiles agentDirs, collect skillFiles skillsDirs with
+    | Error e, _ -> Error e
+    | _, Error e -> Error e
+    | Ok agents, Ok skills -> Ok(agents @ skills |> List.sortWith (fun a b -> String.CompareOrdinal(a, b)))
+
+/// Scans the source-tier agent and skill files for verbatim
+/// [`duplicationWindowSize`]-line duplications, returning one finding per
+/// cluster, ordered by first file then first start line
+/// [Repo-grounded — `detect_duplication.rs::detect_duplication`].
+let detectDuplication (repoRoot: string) : Result<DuplicationFinding list, string> =
+    let index = Dictionary<string, ResizeArray<string * int>>()
+
+    let indexOne (path: string) : Result<unit, string> =
+        try
+            let lines =
+                File.ReadAllText path |> stripFrontmatterBody |> normalizeLines |> Array.ofList
+
+            if lines.Length >= duplicationWindowSize then
+                for start in 0 .. lines.Length - duplicationWindowSize do
+                    let window = lines.[start .. start + duplicationWindowSize - 1] |> List.ofArray
+
+                    if not (isExcludedWindow window) then
+                        let key = hashWindow window
+
+                        match index.TryGetValue key with
+                        | true, refs -> refs.Add(path, start + 1)
+                        | _ ->
+                            let refs = ResizeArray<string * int>()
+                            refs.Add(path, start + 1)
+                            index.Add(key, refs)
+
+            Ok()
+        with ex ->
+            Error(sprintf "read %s: %s" path ex.Message)
+
+    let cluster (refs: ResizeArray<string * int>) : DuplicationFinding option =
+        // First occurrence per distinct file: a window repeated inside ONE
+        // file is repetition, not cross-file duplication.
+        let seen = HashSet<string>()
+
+        let distinctFiles =
+            refs
+            |> Seq.filter (fun (path, _) -> seen.Add path)
+            |> Seq.sortWith (fun (a, _) (b, _) -> String.CompareOrdinal(a, b))
+            |> List.ofSeq
+
+        if List.length distinctFiles < 2 || isSanctionedTemplateFamily distinctFiles then
+            None
+        else
+            Some
+                { Files = distinctFiles |> List.map fst
+                  StartLines = distinctFiles |> List.map snd
+                  WindowSize = duplicationWindowSize
+                  Severity = "high"
+                  Message =
+                    sprintf
+                        "%d-line verbatim duplication across %d files"
+                        duplicationWindowSize
+                        (List.length distinctFiles) }
+
+    enumerateAgentAndSkillFiles repoRoot
+    |> Result.bind (fun files ->
+        files
+        |> List.fold
+            (fun acc path ->
+                match acc with
+                | Error e -> Error e
+                | Ok() -> indexOne path)
+            (Ok()))
+    |> Result.map (fun () ->
+        index.Values
+        |> Seq.choose cluster
+        |> Seq.sortWith (fun a b ->
+            match String.CompareOrdinal(List.head a.Files, List.head b.Files) with
+            | 0 -> compare (List.head a.StartLines) (List.head b.StartLines)
+            | byFile -> byFile)
+        |> List.ofSeq)

@@ -350,3 +350,207 @@ let ``validateHarnessName rejects every name against an empty registry`` () =
     match validateHarnessName (registryWith []) "codex" with
     | Ok() -> failwith "expected 'codex' to be rejected"
     | Error message -> Assert.Equal("unknown harness name 'codex'; expected one of ", message)
+
+// ---------------------------------------------------------------------------
+// Duplication detection — helpers
+// ---------------------------------------------------------------------------
+
+let private proseLines (tag: string) (count: int) : string =
+    String.Join("\n", [ for i in 1..count -> sprintf "%s line %d carries its own sentence." tag i ])
+    + "\n"
+
+let private agentAt (root: string) (name: string) (body: string) : string =
+    let path = Path.Combine(root, ".claude", "agents", name + ".md")
+    writeFile path (sprintf "---\nname: %s\n---\n%s" name body)
+    path
+
+let private skillAt (root: string) (name: string) (body: string) : string =
+    let path = Path.Combine(root, ".claude", "skills", name, "SKILL.md")
+    writeFile path (sprintf "---\nname: %s\n---\n%s" name body)
+    path
+
+[<Fact>]
+let ``stripFrontmatterBody returns a file with no frontmatter unchanged`` () =
+    // Unlike `extractFrontmatter`, which rejects such a file: a duplication
+    // scan still has to read its body.
+    Assert.Equal("# Title\n", stripFrontmatterBody "# Title\n")
+
+[<Fact>]
+let ``stripFrontmatterBody removes an LF frontmatter block`` () =
+    Assert.Equal("Body\n", stripFrontmatterBody "---\nname: foo\n---\nBody\n")
+
+[<Fact>]
+let ``stripFrontmatterBody removes a CRLF frontmatter block`` () =
+    Assert.Contains("Body", stripFrontmatterBody "---\r\nname: foo\r\n---\r\nBody\r\n")
+
+[<Fact>]
+let ``stripFrontmatterBody returns the input when the fence never closes`` () =
+    let unclosed = "---\nname: foo\nstill frontmatter\n"
+    Assert.Equal(unclosed, stripFrontmatterBody unclosed)
+
+[<Fact>]
+let ``stripFrontmatterBody yields an empty body when the file ends at the closing fence`` () =
+    Assert.Equal("", stripFrontmatterBody "---\nname: foo\n---")
+
+[<Fact>]
+let ``normalizeLines trims trailing whitespace and collapses blank runs`` () =
+    Assert.Equal<string list>([ "a"; "b"; "c" ], normalizeLines "a  \nb\t\nc")
+    Assert.Equal<string list>([ "a"; ""; "b" ], normalizeLines "a\n\n\nb")
+
+[<Fact>]
+let ``isExcludedWindow skips blank-only and heading-only windows`` () =
+    Assert.True(isExcludedWindow (List.replicate duplicationWindowSize ""))
+    Assert.True(isExcludedWindow [ "# One"; ""; "## Two"; "" ])
+    Assert.False(isExcludedWindow [ "# One"; "prose carries meaning" ])
+
+// ---------------------------------------------------------------------------
+// Duplication detection — scanning
+// ---------------------------------------------------------------------------
+
+[<Fact>]
+let ``detectDuplication reports nothing for a repository with no agents`` () =
+    Assert.Equal(Ok([]: DuplicationFinding list), detectDuplication (scratch ()))
+
+[<Fact>]
+let ``detectDuplication ignores a window repeated inside one file`` () =
+    // Repetition within a single file is not cross-file duplication, so the
+    // cluster never reaches two distinct files.
+    let root = scratch ()
+    let block = proseLines "shared" 12
+    agentAt root "alpha-one" (block + block) |> ignore
+
+    match detectDuplication root with
+    | Ok findings -> Assert.Equal<DuplicationFinding list>([], findings)
+    | Error e -> failwith e
+
+[<Fact>]
+let ``detectDuplication exempts two files in the same role family`` () =
+    // `*-checker` agents are *designed* to share workflow boilerplate.
+    let root = scratch ()
+    let block = proseLines "shared" 12
+    agentAt root "alpha-checker" (block + proseLines "alpha" 4) |> ignore
+    agentAt root "beta-checker" (block + proseLines "beta" 4) |> ignore
+
+    match detectDuplication root with
+    | Ok findings -> Assert.Equal<DuplicationFinding list>([], findings)
+    | Error e -> failwith e
+
+[<Fact>]
+let ``detectDuplication exempts the maker-checker-fixer trio of one domain`` () =
+    let root = scratch ()
+    let block = proseLines "shared" 12
+    agentAt root "alpha-maker" (block + proseLines "one" 4) |> ignore
+    agentAt root "alpha-checker" (block + proseLines "two" 4) |> ignore
+    agentAt root "alpha-fixer" (block + proseLines "three" 4) |> ignore
+
+    match detectDuplication root with
+    | Ok findings -> Assert.Equal<DuplicationFinding list>([], findings)
+    | Error e -> failwith e
+
+[<Fact>]
+let ``detectDuplication reports duplication spanning different roles and domains`` () =
+    let root = scratch ()
+    let block = proseLines "shared" 12
+    let alpha = agentAt root "alpha-one" (block + proseLines "alpha" 4)
+    let beta = agentAt root "beta-two" (block + proseLines "beta" 4)
+
+    match detectDuplication root with
+    | Error e -> failwith e
+    | Ok findings ->
+        Assert.NotEmpty findings
+
+        for finding in findings do
+            Assert.Equal<string list>([ alpha; beta ] |> List.sort, finding.Files |> List.sort)
+            Assert.Equal(duplicationWindowSize, finding.WindowSize)
+            Assert.Equal("high", finding.Severity)
+            Assert.Contains("verbatim duplication across 2 files", finding.Message)
+
+[<Fact>]
+let ``detectDuplication reports an agent duplicating a skill body`` () =
+    let root = scratch ()
+    let block = proseLines "shared" 11
+    let agent = agentAt root "alpha-one" (block + proseLines "alpha" 4)
+    let skill = skillAt root "gamma-notes" (block + proseLines "gamma" 4)
+
+    match detectDuplication root with
+    | Error e -> failwith e
+    | Ok findings ->
+        Assert.NotEmpty findings
+        let files = findings |> List.collect (fun f -> f.Files) |> List.distinct
+        Assert.Contains(agent, files)
+        Assert.Contains(skill, files)
+
+[<Fact>]
+let ``detectDuplication skips a file shorter than one window`` () =
+    let root = scratch ()
+    agentAt root "alpha-one" (proseLines "alpha" 3) |> ignore
+    agentAt root "beta-two" (proseLines "alpha" 3) |> ignore
+
+    match detectDuplication root with
+    | Ok findings -> Assert.Equal<DuplicationFinding list>([], findings)
+    | Error e -> failwith e
+
+[<Fact>]
+let ``detectDuplication orders findings by first file then first start line`` () =
+    let root = scratch ()
+    // Two independent shared blocks, seeded so the sort has something to do.
+    let first = proseLines "first" 10
+    let second = proseLines "second" 10
+    agentAt root "alpha-one" (first + proseLines "pad" 3 + second) |> ignore
+    agentAt root "beta-two" (first + proseLines "other" 3 + second) |> ignore
+
+    match detectDuplication root with
+    | Error e -> failwith e
+    | Ok findings ->
+        Assert.NotEmpty findings
+
+        let keys = findings |> List.map (fun f -> List.head f.Files, List.head f.StartLines)
+
+        Assert.Equal<(string * int) list>(List.sort keys, keys)
+
+[<Fact>]
+let ``detectDuplication reads the registry-declared source directory`` () =
+    // The scan follows `harness:` rather than assuming `.claude/`, so a
+    // registry that names another directory is honoured.
+    let root = scratch ()
+    let block = proseLines "shared" 12
+
+    writeFile
+        (Path.Combine(root, "repo-config.yml"))
+        "harness:\n  - { name: claude-code, tier: source, agent-dir: .custom/agents }\n"
+
+    let write (name: string) (body: string) =
+        let path = Path.Combine(root, ".custom", "agents", name + ".md")
+        writeFile path (sprintf "---\nname: %s\n---\n%s" name body)
+        path
+
+    let alpha = write "alpha-one" (block + proseLines "alpha" 4)
+    // Placed under `.claude/`, which the registry does NOT declare.
+    agentAt root "beta-two" (block + proseLines "beta" 4) |> ignore
+
+    match detectDuplication root with
+    | Error e -> failwith e
+    | Ok findings ->
+        // Only one declared directory was scanned, so the pair never meets.
+        Assert.Equal<DuplicationFinding list>([], findings)
+        Assert.True(File.Exists alpha)
+
+[<Fact>]
+let ``detectDuplication skips README.md in an agent directory`` () =
+    let root = scratch ()
+    let block = proseLines "shared" 12
+    writeFile (Path.Combine(root, ".claude", "agents", "README.md")) (sprintf "---\nname: readme\n---\n%s" block)
+    agentAt root "alpha-one" (block + proseLines "alpha" 4) |> ignore
+
+    match detectDuplication root with
+    | Ok findings -> Assert.Equal<DuplicationFinding list>([], findings)
+    | Error e -> failwith e
+
+[<Fact>]
+let ``detectDuplication ignores a skill directory with no SKILL.md`` () =
+    let root = scratch ()
+
+    Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "empty-skill"))
+    |> ignore
+
+    Assert.Equal(Ok([]: DuplicationFinding list), detectDuplication root)
