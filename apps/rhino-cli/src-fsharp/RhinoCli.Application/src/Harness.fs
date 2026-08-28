@@ -6,18 +6,25 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature`
-/// [Repo-grounded — `apps/rhino-cli/src/application/agents/bindings.rs`,
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature`
+/// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
+/// `apps/rhino-cli/src/application/agents/bindings.rs`,
+/// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
 /// `apps/rhino-cli/src/application/agents/detect_duplication.rs`,
 /// `apps/rhino-cli/src/application/agents/field_policy.rs`,
 /// `apps/rhino-cli/src/application/agents/frontmatter.rs`,
+/// `apps/rhino-cli/src/application/agents/skill_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/skills_mirror.rs`,
 /// `apps/rhino-cli/src/application/agents/sync.rs`,
 /// `apps/rhino-cli/src/application/agents/sync_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/types.rs`,
-/// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`].
+/// `apps/rhino-cli/src/application/agents/yaml_formatting.rs`,
+/// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
+/// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
 /// Scope note: Rust's `validate_bindings` tallies five check families —
 /// static binding-file byte parity, `OpenCode`/Skills mirror sync, catalog
@@ -36,6 +43,15 @@
 /// exercise — `validate_agent_count` and `validate_agent_equivalence` — and
 /// omits `validate_no_stale_agent_dir`, `validate_no_synced_skills`, and
 /// `validate_skills_mirror`, none of which any landed scenario reaches.
+///
+/// A third scope note covers `claude_validator.rs::validate_claude` and its
+/// two check layers (`agent_validator.rs`, `skill_validator.rs`): this module
+/// ports both layers in full, matching every check family Rust runs. Only
+/// `reporter.rs`'s plain-text/JSON/Markdown renderers and
+/// `harness_validate_claude.rs`'s CLI argument wiring stay out of scope,
+/// since `harness/agents-validate-claude.feature`'s scenarios assert on the
+/// returned `ValidationResult` directly rather than on rendered CLI output —
+/// the same precedent every other scenario in this module follows.
 ///
 /// The `harness` namespace stays on the Rust side of `FSHARP_NAMESPACES`
 /// until every Wave E feature file has landed, so no CLI path reaches this
@@ -1813,6 +1829,736 @@ let validateSync (repoRoot: string) : ValidationResult =
 
     let result =
         checks
+        |> List.fold (fun acc check -> ValidationResult.tally check acc) ValidationResult.empty
+
+    stopwatch.Stop()
+
+    { result with
+        Duration = stopwatch.Elapsed }
+
+// ---------------------------------------------------------------------------
+// Claude Code agent/skill validation (harness agents validate-claude)
+// ---------------------------------------------------------------------------
+
+/// Full Claude Code agent definition parsed from a `.claude/agents/*.md` file
+/// [Repo-grounded — `agents/types.rs::ClaudeAgentFull`].
+type ClaudeAgentFull =
+    { Name: string
+      Description: string
+      Tools: string list
+      Model: string
+      Color: string
+      Skills: string list }
+
+let private claudeAgentFullEmpty: ClaudeAgentFull =
+    { Name = ""
+      Description = ""
+      Tools = []
+      Model = ""
+      Color = ""
+      Skills = [] }
+
+/// Minimal Claude Code skill definition parsed from a `SKILL.md` file
+/// [Repo-grounded — `agents/types.rs::ClaudeSkill`].
+type ClaudeSkill = { Name: string; Description: string }
+
+/// Ordered list of required frontmatter fields for agent definitions
+/// [Repo-grounded — `agents/types.rs::required_fields`].
+let requiredFields: string list = [ "name"; "description" ]
+
+/// Allow-list of known Claude Code tool names [Repo-grounded — `agents/types.rs::valid_tools`].
+let validTools: Set<string> =
+    set
+        [ "Read"
+          "Write"
+          "Edit"
+          "Glob"
+          "Grep"
+          "Bash"
+          "BashOutput"
+          "KillShell"
+          "NotebookEdit"
+          "TodoWrite"
+          "WebFetch"
+          "WebSearch"
+          "Agent"
+          "Task"
+          "SlashCommand"
+          "ExitPlanMode"
+          "EnterPlanMode"
+          "ListMcpResourcesTool"
+          "ReadMcpResourceTool"
+          "AskUserQuestion" ]
+
+/// Sorted iteration of [`validTools`] for a check's `Expected` string
+/// [Repo-grounded — `agents/types.rs::valid_tools_sorted`].
+let validToolsSorted: string list = validTools |> Set.toList |> List.sort
+
+/// Allow-list of accepted Claude model alias strings (empty means default)
+/// [Repo-grounded — `agents/types.rs::valid_model_alias`].
+let validModelAlias: Set<string> = set [ ""; "sonnet"; "opus"; "haiku"; "inherit" ]
+
+/// Matches full Claude model IDs (e.g. `claude-sonnet-4-6`)
+/// [Repo-grounded — `agents/types.rs::valid_model_id_pattern`].
+let validModelIdPattern: Regex =
+    Regex(@"^claude-[a-z0-9.-]+$", RegexOptions.Compiled)
+
+/// Matches agent tool entries in call form (`ToolName(...)`)
+/// [Repo-grounded — `agents/types.rs::agent_tool_pattern`].
+let agentToolPattern: Regex =
+    Regex(@"^([A-Za-z][A-Za-z0-9_]*)\(.*\)$", RegexOptions.Compiled)
+
+/// Allow-list of accepted `color` values for agent definitions
+/// [Repo-grounded — `agents/types.rs::valid_colors`].
+let validColors: Set<string> =
+    set [ "red"; "blue"; "green"; "yellow"; "purple"; "orange"; "pink"; "cyan" ]
+
+/// [`validColors`] in the fixed order Rust's failure message lists them.
+let private validColorsOrdered: string list =
+    [ "red"; "blue"; "green"; "yellow"; "purple"; "orange"; "pink"; "cyan" ]
+
+/// Matches valid skill directory names [Repo-grounded — `agents/types.rs::valid_skill_name_pattern`].
+let validSkillNamePattern: Regex =
+    Regex(@"^[a-z0-9-]{1,64}$", RegexOptions.Compiled)
+
+/// Allow-list of known frontmatter field names for Claude Code agents
+/// [Repo-grounded — `agents/types.rs::valid_claude_agent_fields`].
+let validClaudeAgentFields: Set<string> =
+    set
+        [ "name"
+          "description"
+          "tools"
+          "disallowedTools"
+          "model"
+          "permissionMode"
+          "maxTurns"
+          "skills"
+          "mcpServers"
+          "hooks"
+          "memory"
+          "background"
+          "effort"
+          "isolation"
+          "color"
+          "initialPrompt" ]
+
+/// Allow-list of known frontmatter field names for Claude Code skills
+/// [Repo-grounded — `agents/types.rs::valid_claude_skill_fields`].
+let validClaudeSkillFields: Set<string> =
+    set
+        [ "name"
+          "description"
+          "license"
+          "compatibility"
+          "metadata"
+          "when_to_use"
+          "argument-hint"
+          "arguments"
+          "disable-model-invocation"
+          "user-invocable"
+          "allowed-tools"
+          "model"
+          "effort"
+          "context"
+          "agent"
+          "hooks"
+          "paths"
+          "shell" ]
+
+/// Formats a string list Go `%v`-style: `[a b c]`
+/// [Repo-grounded — `agent_validator.rs::format_string_slice`].
+let private formatStringSlice (items: string list) : string =
+    sprintf "[%s]" (String.Join(" ", items))
+
+/// Checks that every key-value line in `content`'s frontmatter has a space
+/// after its colon [Repo-grounded — `yaml_formatting.rs::validate_yaml_formatting_raw`].
+let validateYamlFormattingRaw (checkName: string) (content: string) : ValidationCheck =
+    let lines = content.Split('\n')
+
+    if lines.Length < 3 then
+        ValidationCheck.passed checkName "File too short to check formatting"
+    elif lines.[0].Trim() <> "---" then
+        ValidationCheck.failedMsg checkName "Frontmatter does not start with ---"
+    else
+        match
+            lines
+            |> Array.skip 1
+            |> Array.tryFindIndex (fun line -> line.Trim() = "---")
+            |> Option.map (fun relativeIdx -> relativeIdx + 1)
+        with
+        | None -> ValidationCheck.failedMsg checkName "Frontmatter closing --- not found"
+        | Some endIdx ->
+            let issues =
+                lines
+                |> Array.indexed
+                |> Array.skip 1
+                |> Array.filter (fun (i, _) -> i < endIdx)
+                |> Array.choose (fun (i, line) ->
+                    let trimmed = line.Trim()
+
+                    if
+                        trimmed = ""
+                        || trimmed.StartsWith("-", StringComparison.Ordinal)
+                        || trimmed.StartsWith("#", StringComparison.Ordinal)
+                    then
+                        None
+                    elif trimmed.Contains(":") then
+                        let idx = trimmed.IndexOf ':'
+                        let rest = trimmed.Substring(idx + 1)
+
+                        if rest <> "" && not (rest.StartsWith(" ", StringComparison.Ordinal)) then
+                            Some(sprintf "Line %d: '%s' (missing space after colon)" (i + 1) trimmed)
+                        else
+                            None
+                    else
+                        None)
+                |> Array.toList
+
+            if not issues.IsEmpty then
+                ValidationCheck.failed
+                    checkName
+                    "Space after colon in YAML key-value pairs (e.g., 'name: value')"
+                    (sprintf "Found %d formatting issues" issues.Length)
+                    (sprintf "YAML formatting errors:\n  %s" (String.Join("\n  ", issues)))
+            else
+                ValidationCheck.passed checkName "YAML formatting correct (spaces after colons)"
+
+/// Parses a YAML frontmatter string into a [`ClaudeAgentFull`]
+/// [Repo-grounded — `agent_validator.rs::parse_agent_yaml`].
+let private parseAgentYaml (frontmatter: string) : Result<ClaudeAgentFull, string> =
+    try
+        match yamlDeserializer.Deserialize<Dictionary<string, obj>> frontmatter with
+        | null -> Ok claudeAgentFullEmpty
+        | mapping ->
+            let str key =
+                match tryGetField mapping key with
+                | Some(:? string as s) -> s
+                | _ -> ""
+
+            Ok
+                { Name = str "name"
+                  Description = str "description"
+                  Model = str "model"
+                  Color = str "color"
+                  Tools =
+                    tryGetField mapping "tools"
+                    |> Option.map parseClaudeTools
+                    |> Option.defaultValue []
+                  Skills = parseStringSeq (tryGetField mapping "skills") }
+    with ex ->
+        Error ex.Message
+
+/// Parses a YAML frontmatter string into a [`ClaudeSkill`]
+/// [Repo-grounded — `skill_validator.rs::parse_skill_yaml`].
+let private parseSkillYaml (frontmatter: string) : Result<ClaudeSkill, string> =
+    try
+        match yamlDeserializer.Deserialize<Dictionary<string, obj>> frontmatter with
+        | null -> Ok { Name = ""; Description = "" }
+        | mapping ->
+            let str key =
+                match tryGetField mapping key with
+                | Some(:? string as s) -> s
+                | _ -> ""
+
+            Ok
+                { Name = str "name"
+                  Description = str "description" }
+    with ex ->
+        Error ex.Message
+
+/// Checks that `name`, `description`, and `tools` are all non-empty
+/// [Repo-grounded — `agent_validator.rs::validate_required_fields`].
+let private validateRequiredFields (filename: string) (agent: ClaudeAgentFull) : ValidationCheck =
+    let missing =
+        [ if agent.Name = "" then
+              "name"
+          if agent.Description = "" then
+              "description"
+          if agent.Tools.IsEmpty then
+              "tools" ]
+
+    if not missing.IsEmpty then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Required Fields" filename)
+            "All required fields present"
+            (sprintf "Missing: %s" (formatStringSlice missing))
+            "Required fields missing"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Required Fields" filename) "All required fields present"
+
+/// Checks that required fields appear before optional fields, and warns on
+/// unknown fields [Repo-grounded — `agent_validator.rs::validate_field_order`].
+let private validateFieldOrder (filename: string) (frontmatter: string) : ValidationCheck list =
+    try
+        match yamlDeserializer.Deserialize<Dictionary<string, obj>> frontmatter with
+        | null ->
+            [ ValidationCheck.passed
+                  (sprintf "Agent: %s - Field Order" filename)
+                  "Required fields appear before optional fields" ]
+        | mapping ->
+            let fieldNames = mapping.Keys |> List.ofSeq
+            let required = Set.ofList requiredFields
+
+            let _, outOfOrder =
+                fieldNames
+                |> List.fold
+                    (fun (sawOptional, acc) f ->
+                        if required.Contains f then
+                            (sawOptional, (if sawOptional then acc @ [ f ] else acc))
+                        else
+                            (true, acc))
+                    (false, [])
+
+            let orderCheck =
+                if outOfOrder.IsEmpty then
+                    ValidationCheck.passed
+                        (sprintf "Agent: %s - Field Order" filename)
+                        "Required fields appear before optional fields"
+                else
+                    ValidationCheck.failed
+                        (sprintf "Agent: %s - Field Order" filename)
+                        (sprintf
+                            "Required fields %s appear before any optional field"
+                            (formatStringSlice requiredFields))
+                        (sprintf "Required field(s) appear after optional field: %s" (formatStringSlice outOfOrder))
+                        "Required fields must appear before optional fields"
+
+            let unknownWarnings =
+                fieldNames
+                |> List.filter (fun f -> not (validClaudeAgentFields.Contains f))
+                |> List.map (fun f ->
+                    ValidationCheck.warning
+                        (sprintf "Agent: %s - Unknown Field: %s" filename f)
+                        "Field listed in ValidClaudeAgentFields"
+                        (sprintf "Unknown field: %s" f)
+                        (sprintf
+                            "Field \"%s\" is not in the documented Claude Code agent field set; verify it is intentional"
+                            f))
+
+            orderCheck :: unknownWarnings
+    with ex ->
+        [ ValidationCheck.failedMsg
+              (sprintf "Agent: %s - Field Order" filename)
+              (sprintf "Failed to parse YAML for order check: %s" ex.Message) ]
+
+/// Checks that every tool name (or base name of call-form entries) is in the
+/// allow-list [Repo-grounded — `agent_validator.rs::validate_tools_check`].
+let private validateToolsCheck (filename: string) (tools: string list) : ValidationCheck =
+    let baseName (raw: string) =
+        let tool = raw.Trim()
+        let m = agentToolPattern.Match tool
+        if m.Success then m.Groups.[1].Value else tool
+
+    let invalid =
+        tools
+        |> List.choose (fun raw ->
+            let tool = raw.Trim()
+
+            if tool = "" then None
+            elif validTools.Contains(baseName tool) then None
+            else Some tool)
+
+    if not invalid.IsEmpty then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Valid Tools" filename)
+            (sprintf "Valid tools: %s" (formatStringSlice validToolsSorted))
+            (sprintf "Invalid tools: %s" (formatStringSlice invalid))
+            "Invalid tool names"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Valid Tools" filename) "All tools valid"
+
+/// Checks that `model` is a valid alias or a full `claude-*` model ID
+/// [Repo-grounded — `agent_validator.rs::validate_model_check`].
+let private validateModelCheck (filename: string) (model: string) : ValidationCheck =
+    if validModelAlias.Contains model || validModelIdPattern.IsMatch model then
+        ValidationCheck.passed (sprintf "Agent: %s - Valid Model" filename) "Model valid"
+    else
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Valid Model" filename)
+            "<empty>|sonnet|opus|haiku|inherit|claude-*"
+            (sprintf "Model: %s" model)
+            "Invalid model"
+
+/// Checks that `color` is in the allow-list of named color tokens
+/// [Repo-grounded — `agent_validator.rs::validate_color_check`].
+let private validateColorCheck (filename: string) (color: string) : ValidationCheck =
+    if not (validColors.Contains color) then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Valid Color" filename)
+            (sprintf "Valid colors: %s" (formatStringSlice validColorsOrdered))
+            (sprintf "Color: %s" color)
+            "Invalid color"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Valid Color" filename) "Color valid"
+
+/// Checks that the filename equals `<name>.md`
+/// [Repo-grounded — `agent_validator.rs::validate_filename_check`].
+let private validateFilenameCheck (filename: string) (name: string) : ValidationCheck =
+    let expected = sprintf "%s.md" name
+
+    if filename <> expected then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Filename Match" filename)
+            (sprintf "Filename: %s" expected)
+            (sprintf "Filename: %s" filename)
+            "Filename does not match name field"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Filename Match" filename) "Filename matches name"
+
+/// Checks that `name` has not already been registered in `agentNames`
+/// [Repo-grounded — `agent_validator.rs::validate_uniqueness`].
+let private validateUniqueness (filename: string) (name: string) (agentNames: Set<string>) : ValidationCheck =
+    if agentNames.Contains name then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Name Uniqueness" filename)
+            "Unique agent name"
+            (sprintf "Duplicate name: %s" name)
+            "Agent name already used"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Name Uniqueness" filename) "Agent name unique"
+
+/// Checks that every skill listed in `skills` exists in `skillNames`
+/// [Repo-grounded — `agent_validator.rs::validate_skills_exist`].
+let private validateSkillsExist (filename: string) (skills: string list) (skillNames: Set<string>) : ValidationCheck =
+    let missing = skills |> List.filter (fun s -> not (skillNames.Contains s))
+
+    if not missing.IsEmpty then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Skills Exist" filename)
+            "All skills exist"
+            (sprintf "Missing skills: %s" (formatStringSlice missing))
+            "Referenced skills not found"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - Skills Exist" filename) "All skills exist"
+
+/// Checks that frontmatter contains no YAML comment lines (`#`)
+/// [Repo-grounded — `agent_validator.rs::validate_no_comments`].
+let private validateNoComments (filename: string) (frontmatter: string) : ValidationCheck =
+    let hasComment =
+        frontmatter.Split('\n')
+        |> Array.exists (fun line -> line.Trim().StartsWith("#", StringComparison.Ordinal))
+
+    if hasComment then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - No Comments" filename)
+            "No YAML comments"
+            "Comments found"
+            "YAML comments not allowed in frontmatter"
+    else
+        ValidationCheck.passed (sprintf "Agent: %s - No Comments" filename) "No YAML comments"
+
+/// Checks that agents in `generated-reports/` declare both `Write` and `Bash`
+/// tools [Repo-grounded — `agent_validator.rs::validate_generated_reports_tools`].
+let private validateGeneratedReportsTools (filename: string) (tools: string list) : ValidationCheck =
+    let baseName (raw: string) =
+        let tool = raw.Trim()
+        let m = agentToolPattern.Match tool
+        if m.Success then m.Groups.[1].Value else tool
+
+    let hasWrite = tools |> List.exists (fun t -> baseName t = "Write")
+    let hasBash = tools |> List.exists (fun t -> baseName t = "Bash")
+
+    if not hasWrite || not hasBash then
+        ValidationCheck.failed
+            (sprintf "Agent: %s - Generated Reports Tools" filename)
+            "Tools must include: Write, Bash"
+            (sprintf "Has Write: %b, Has Bash: %b" hasWrite hasBash)
+            "generated-reports/ agents must have Write AND Bash tools"
+    else
+        ValidationCheck.passed
+            (sprintf "Agent: %s - Generated Reports Tools" filename)
+            "Has required Write and Bash tools"
+
+/// Validates a single agent file and returns its check results, plus the
+/// agent-name set updated with `agent.Name` when uniqueness passed
+/// [Repo-grounded — `agent_validator.rs::validate_agent`].
+let private validateAgent
+    (agentPath: string)
+    (filename: string)
+    (agentNames: Set<string>)
+    (skillNames: Set<string>)
+    : ValidationCheck list * Set<string> =
+    let readResult =
+        try
+            Ok(File.ReadAllText agentPath)
+        with ex ->
+            Error(sprintf "Failed to read file: %s" ex.Message)
+
+    match readResult with
+    | Error msg -> [ ValidationCheck.failedMsg (sprintf "Agent: %s - Read File" filename) msg ], agentNames
+    | Ok content ->
+        let formattingCheck =
+            validateYamlFormattingRaw (sprintf "Agent: %s - YAML Formatting" filename) content
+
+        if formattingCheck.Status = "failed" then
+            [ formattingCheck ], agentNames
+        else
+            match extractFrontmatter content with
+            | Error e ->
+                [ formattingCheck
+                  ValidationCheck.failedMsg
+                      (sprintf "Agent: %s - YAML Syntax" filename)
+                      (sprintf "Invalid frontmatter: %s" e) ],
+                agentNames
+            | Ok(frontmatter, _body) ->
+                let syntaxCheck =
+                    ValidationCheck.passed (sprintf "Agent: %s - YAML Syntax" filename) "Valid YAML frontmatter"
+
+                match parseAgentYaml frontmatter with
+                | Error e ->
+                    [ formattingCheck
+                      syntaxCheck
+                      ValidationCheck.failedMsg
+                          (sprintf "Agent: %s - YAML Parse" filename)
+                          (sprintf "Failed to parse YAML: %s" e) ],
+                    agentNames
+                | Ok agent ->
+                    let requiredCheck = validateRequiredFields filename agent
+
+                    if requiredCheck.Status = "failed" then
+                        [ formattingCheck; syntaxCheck; requiredCheck ], agentNames
+                    else
+                        let fieldOrderChecks = validateFieldOrder filename frontmatter
+                        let toolsCheck = validateToolsCheck filename agent.Tools
+                        let modelCheck = validateModelCheck filename agent.Model
+
+                        let colorChecks =
+                            if agent.Color <> "" then
+                                [ validateColorCheck filename agent.Color ]
+                            else
+                                []
+
+                        let filenameCheck = validateFilenameCheck filename agent.Name
+                        let uniqueCheck = validateUniqueness filename agent.Name agentNames
+
+                        let updatedNames =
+                            if uniqueCheck.Status = "passed" then
+                                Set.add agent.Name agentNames
+                            else
+                                agentNames
+
+                        let skillsCheck = validateSkillsExist filename agent.Skills skillNames
+                        let noCommentsCheck = validateNoComments filename frontmatter
+
+                        let generatedReportsChecks =
+                            if agentPath.Contains "generated-reports" then
+                                [ validateGeneratedReportsTools filename agent.Tools ]
+                            else
+                                []
+
+                        let allChecks =
+                            [ formattingCheck; syntaxCheck; requiredCheck ]
+                            @ fieldOrderChecks
+                            @ [ toolsCheck; modelCheck ]
+                            @ colorChecks
+                            @ [ filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
+                            @ generatedReportsChecks
+
+                        allChecks, updatedNames
+
+/// Validates all `.md` agent files in `.claude/agents/` (skipping `README.md`)
+/// and returns every check result
+/// [Repo-grounded — `agent_validator.rs::validate_all_agents`].
+let private validateAllAgents (repoRoot: string) (skillNames: Set<string>) : ValidationCheck list =
+    let agentsDir = Path.Combine(repoRoot, ".claude", "agents")
+
+    if not (Directory.Exists agentsDir) then
+        [ ValidationCheck.failedMsg "Read Agents Directory" "Failed to read agents directory: directory not found" ]
+    else
+        let files =
+            Directory.GetFiles agentsDir
+            |> Array.map Path.GetFileName
+            |> Array.filter (fun name -> name.EndsWith(".md", StringComparison.Ordinal) && name <> "README.md")
+            |> Array.sort
+
+        files
+        |> Array.fold
+            (fun (checks, names) name ->
+                let path = Path.Combine(agentsDir, name)
+                let newChecks, updatedNames = validateAgent path name names skillNames
+                checks @ newChecks, updatedNames)
+            ([], Set.empty)
+        |> fst
+
+/// Field-level checks on a parsed skill: description, name, name format,
+/// name-match, then unknown-field warnings
+/// [Repo-grounded — `skill_validator.rs::validate_skill_fields`].
+let private validateSkillFields (skill: ClaudeSkill) (frontmatter: string) (skillName: string) : ValidationCheck list =
+    if skill.Description = "" then
+        [ ValidationCheck.failed
+              (sprintf "Skill: %s - Description Field Required" skillName)
+              "description field present"
+              "description field missing or empty"
+              "Required description field missing" ]
+    else
+        let descCheck =
+            ValidationCheck.passed
+                (sprintf "Skill: %s - Description Field Required" skillName)
+                "Required description field present"
+
+        if skill.Name = "" then
+            [ descCheck
+              ValidationCheck.failed
+                  (sprintf "Skill: %s - Name Field Required" skillName)
+                  "name field present"
+                  "name field missing or empty"
+                  "Required name field missing" ]
+        else
+            let nameCheck =
+                ValidationCheck.passed
+                    (sprintf "Skill: %s - Name Field Required" skillName)
+                    "Required name field present"
+
+            if not (validSkillNamePattern.IsMatch skill.Name) then
+                [ descCheck
+                  nameCheck
+                  ValidationCheck.failed
+                      (sprintf "Skill: %s - Name Format" skillName)
+                      "Lowercase letters/numbers/hyphens only, max 64 chars"
+                      (sprintf "Name: %s" skill.Name)
+                      "Invalid skill name format" ]
+            else
+                let formatCheck =
+                    ValidationCheck.passed (sprintf "Skill: %s - Name Format" skillName) "Name format valid"
+
+                if skill.Name <> skillName then
+                    [ descCheck
+                      nameCheck
+                      formatCheck
+                      ValidationCheck.failed
+                          (sprintf "Skill: %s - Name Match" skillName)
+                          (sprintf "name field matches directory: %s" skillName)
+                          (sprintf "name field: %s" skill.Name)
+                          "Skill name must match directory name" ]
+                else
+                    let matchCheck =
+                        ValidationCheck.passed
+                            (sprintf "Skill: %s - Name Match" skillName)
+                            "Name matches directory name"
+
+                    let unknownWarnings =
+                        match yamlDeserializer.Deserialize<Dictionary<string, obj>> frontmatter with
+                        | null -> []
+                        | mapping ->
+                            mapping.Keys
+                            |> Seq.filter (fun k -> not (validClaudeSkillFields.Contains k))
+                            |> Seq.map (fun k ->
+                                ValidationCheck.warning
+                                    (sprintf "Skill: %s - Unknown Field: %s" skillName k)
+                                    "Field listed in ValidClaudeSkillFields"
+                                    (sprintf "Unknown field: %s" k)
+                                    (sprintf
+                                        "Field \"%s\" is not in the documented Claude Code skill field set; verify it is intentional"
+                                        k))
+                            |> List.ofSeq
+
+                    descCheck :: nameCheck :: formatCheck :: matchCheck :: unknownWarnings
+
+/// Validates a single skill directory at `skillPath` and returns all check
+/// results [Repo-grounded — `skill_validator.rs::validate_skill`].
+let private validateSkill (skillPath: string) (skillName: string) : ValidationCheck list =
+    let skillFile = Path.Combine(skillPath, "SKILL.md")
+
+    if not (File.Exists skillFile) then
+        [ ValidationCheck.failed
+              (sprintf "Skill: %s - SKILL.md Exists" skillName)
+              "SKILL.md file present"
+              "SKILL.md file not found"
+              "SKILL.md file missing" ]
+    else
+        let existsCheck =
+            ValidationCheck.passed (sprintf "Skill: %s - SKILL.md Exists" skillName) "SKILL.md file exists"
+
+        let readResult =
+            try
+                Ok(File.ReadAllText skillFile)
+            with ex ->
+                Error(sprintf "Failed to read SKILL.md: %s" ex.Message)
+
+        match readResult with
+        | Error msg ->
+            [ existsCheck
+              ValidationCheck.failedMsg (sprintf "Skill: %s - Read SKILL.md" skillName) msg ]
+        | Ok content ->
+            let formattingCheck =
+                validateYamlFormattingRaw (sprintf "Skill: %s - YAML Formatting" skillName) content
+
+            if formattingCheck.Status = "failed" then
+                [ existsCheck; formattingCheck ]
+            else
+                match extractFrontmatter content with
+                | Error e ->
+                    [ existsCheck
+                      formattingCheck
+                      ValidationCheck.failedMsg
+                          (sprintf "Skill: %s - YAML Syntax" skillName)
+                          (sprintf "Invalid frontmatter: %s" e) ]
+                | Ok(frontmatter, _body) ->
+                    let syntaxCheck =
+                        ValidationCheck.passed (sprintf "Skill: %s - YAML Syntax" skillName) "Valid YAML frontmatter"
+
+                    match parseSkillYaml frontmatter with
+                    | Error e ->
+                        [ existsCheck
+                          syntaxCheck
+                          ValidationCheck.failedMsg
+                              (sprintf "Skill: %s - YAML Parse" skillName)
+                              (sprintf "Failed to parse YAML: %s" e) ]
+                    | Ok skill -> existsCheck :: syntaxCheck :: validateSkillFields skill frontmatter skillName
+
+/// Validates all skill directories under `.claude/skills/` (skipping
+/// dot-directories) and returns all checks plus the set of skill names that
+/// passed every check [Repo-grounded — `skill_validator.rs::validate_all_skills`].
+let private validateAllSkills (repoRoot: string) : ValidationCheck list * Set<string> =
+    let skillsDir = Path.Combine(repoRoot, ".claude", "skills")
+
+    if not (Directory.Exists skillsDir) then
+        [ ValidationCheck.failedMsg "Read Skills Directory" "Failed to read skills directory: directory not found" ],
+        Set.empty
+    else
+        let dirs =
+            Directory.GetDirectories skillsDir
+            |> Array.map Path.GetFileName
+            |> Array.filter (fun name -> not (name.StartsWith(".", StringComparison.Ordinal)))
+            |> Array.sort
+
+        dirs
+        |> Array.fold
+            (fun (allChecks, names) name ->
+                let path = Path.Combine(skillsDir, name)
+                let checks = validateSkill path name
+                let allPassed = checks |> List.forall (fun c -> c.Status <> "failed")
+                let updatedNames = if allPassed then Set.add name names else names
+                allChecks @ checks, updatedNames)
+            ([], Set.empty)
+
+/// Options controlling which parts of the Claude binding to validate
+/// [Repo-grounded — `agents/types.rs::ValidateClaudeOptions`].
+type ValidateClaudeOptions =
+    { RepoRoot: string
+      AgentsOnly: bool
+      SkillsOnly: bool }
+
+/// Runs the full Claude binding validation (skills + agents) according to
+/// `opts` [Repo-grounded — `claude_validator.rs::validate_claude`].
+let validateClaude (opts: ValidateClaudeOptions) : ValidationResult =
+    let stopwatch = Stopwatch.StartNew()
+
+    let skillChecks, skillNames =
+        if opts.AgentsOnly then
+            let _, names = validateAllSkills opts.RepoRoot
+            [], names
+        else
+            validateAllSkills opts.RepoRoot
+
+    let agentChecks =
+        if opts.SkillsOnly then
+            []
+        else
+            validateAllAgents opts.RepoRoot skillNames
+
+    let result =
+        (skillChecks @ agentChecks)
         |> List.fold (fun acc check -> ValidationResult.tally check acc) ValidationResult.empty
 
     stopwatch.Stop()
