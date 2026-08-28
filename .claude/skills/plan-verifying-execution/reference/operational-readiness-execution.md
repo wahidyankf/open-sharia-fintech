@@ -53,6 +53,16 @@ preexisting ...`)
      worktree root before any work; another checkout or inferred equivalent does not count
    - Missing setup evidence: MEDIUM finding
 
+7. **Cross-Repository Resource Schedule Was Followed**
+   - Applies only when the plan spans repositories
+   - Read the repository-serial heavy-work schedule or capacity-controlled exception recorded in
+     `## Parallelization Model`
+   - Verify implementation notes, execution logs, and timestamps show worktree provisioning,
+     toolchain setup, builds, and validation followed that schedule; for an exception, verify the
+     recorded machine, disk, runner, and risk controls were observed
+   - Missing execution evidence or evidence contradicting the recorded schedule/exception: HIGH
+     finding; do not claim live capacity or overlap facts without authenticated evidence
+
 ### Finding Severity
 
 - Quality gates not run / still failing: **CRITICAL**
@@ -62,3 +72,4 @@ preexisting ...`)
 - Monolithic independent concerns or incomplete intermediate commits: **HIGH**
 - Missing implementation notes: **MEDIUM**
 - Missing setup evidence: **MEDIUM**
+- Missing or contradictory cross-repository schedule/exception execution evidence: **HIGH**

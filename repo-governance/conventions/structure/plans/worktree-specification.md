@@ -75,8 +75,8 @@ not the file ledger, controls branch cleanup.
 **Provision the worktree BEFORE defining the plan, and author inside it.** Later moves split its
 history and defeat the pre-execution check. The [Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters or auto-provisions only as a backstop.
 
-**One worktree per plan, reused across its PRs.** For sequential PRs, land one slice, fast-forward
-the same worktree from `origin/main`, then open the next. See
+**At most one worktree per repository per plan, reused across its PRs.** For sequential PRs, land
+one slice, fast-forward the same worktree from `origin/main`, then open the next. See
 [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md).
 
 See [Worktree Specification — Executor Lifecycle and Example](./worktree-specification-continued.md) for how the executor enters, syncs, and cleans up the worktree, plus a worked `## Worktree` block.

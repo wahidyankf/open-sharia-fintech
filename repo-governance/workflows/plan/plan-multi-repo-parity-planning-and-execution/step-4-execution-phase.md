@@ -40,10 +40,12 @@ Every plan-execution rule applies unchanged, including:
   point per repo, not a composite-wide one.
 - **Archival**: move the plan to `plans/done/YYYY-MM-DD__<objective-slug>/`, update plan READMEs,
   commit and push.
-- **Immediate worktree cleanup**: when that repo's delivery is confirmed, remove its exact,
-  identity-recorded worktree in the same session after merged/delivered, clean/idle, and no-unpushed
-  proof. Never use ancestry as a squash-merge proxy. Use non-force removal with no extra prompt;
-  retain, evidence, and escalate if any precondition fails.
+- **Immediate worktree and artifact cleanup**: when that repo's delivery is confirmed, run the full
+  three-class cleanup gate in the same session after merged/delivered, identity, clean/idle, and
+  no-unpushed proof. Preserve diagnostics, purge only plan-local regenerable build output, apply the
+  bare-repository branch-order exception when needed, and use non-force exact-path removal with no
+  extra prompt. Never use ancestry as a squash-merge proxy; retain, evidence, and escalate if any
+  precondition fails.
 
 **Sequencing rule**: one repo at a time. Repo N+1's execution does not start until repo N reaches
 `pass` (archived, pushed, CI green) — or, under a continue-on-failure policy from Step 3, until

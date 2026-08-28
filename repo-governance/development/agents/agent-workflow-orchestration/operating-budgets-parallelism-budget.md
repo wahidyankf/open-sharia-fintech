@@ -25,4 +25,10 @@ The budget follows the **N+1 model**: `1 main thread + N background agents = N+1
 
 **Same-machine assumption.** Treat the repository as **very active**: assume other AI agents, software engineers, and background processes are running **simultaneously on the same physical machine**, sharing its disk, its git object store, its worktrees, and its self-hosted CI runners. The N you can safely run is bounded by what that shared machine can absorb alongside everyone else's work, not by what this session alone could drive.
 
+**Cross-repository heavy-work schedule.** When one plan spans repositories, run worktree
+provisioning, toolchain convergence, builds, and validation in one repository at a time by default.
+N remains the cap for other independent work; it does not authorize cross-repository heavy overlap.
+An exception requires a concrete operational need recorded in the plan and confirmed machine, disk,
+runner, and risk controls.
+
 The detailed background-batch mechanics (sequencing, stuck detection, relaunch) live in the [Subagent Orchestration Convention](../subagent-orchestration.md), which specializes the same N.

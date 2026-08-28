@@ -1,16 +1,19 @@
 ---
 title: "Propagation, Delivery Shape, and Shared-Machine Safety"
-description: Covers the parallel propagation fan-out, the one-branch-one-PR delivery shape per repo, and the no-destructive-git rule for the shared machine.
+description: Covers parity propagation, the sequential-by-default cross-repository heavy-work schedule, per-repo delivery shape, and shared-machine safety.
 when_to_use: Use when deciding whether repos can run in parallel, how a repo's plan lands as PRs, or before running any destructive-looking git operation.
 ---
 
-# Parallel Propagation Shape
+# Propagation Shape and Resource Schedule
 
-The repos form a propagation fan-out, not a chain: **`ose-public` is the source of truth**, and
-`ose-private` is its one downstream target. Where a parity set covers more than two repos, the
-downstream repos are **independent DAG nodes** — author and deliver them in parallel under the N+1
-model (`1 main thread + N background agents`, default **N=3**), never serialized behind one another.
-`ose-private` does not participate in the parity loop for content it does not carry.
+The repos form a logical propagation fan-out, not a content-dependency chain: **`ose-public` is the
+source of truth**, and `ose-private` is its one downstream target. Where a parity set covers more
+than two repos, downstream repos may remain independent DAG nodes, but resource-heavy worktree
+provisioning, toolchain setup, builds, and validation run **one repository at a time by default** on
+the shared machine. Concurrent cross-repository heavy work requires a concrete operational need
+recorded in the plan and confirmed machine, disk, runner, and risk controls. Lightweight independent
+work may still use the N+1 model. `ose-private` does not participate in the parity loop for content
+it does not carry.
 
 The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the parity repos
 — `ose-public` and `ose-private`** — so plans touching it propagate one repo at a time

@@ -1,6 +1,6 @@
 ---
 title: "Worktree and Artifact Cleanup Convention"
-description: Mandatory plan-end gate requiring a plan to remove the worktrees, branches, and build artifacts it created — self-scoped, verified idle, and never touching shared caches other sessions depend on
+description: Mandatory plan-end gate requiring safe removal of plan-created worktrees, eligible branches, and plan-local regenerable build output while preserving diagnostics and shared state.
 category: explanation
 subcategory: development
 tags:
@@ -15,16 +15,18 @@ when_to_use: Use when a plan that created worktrees, branches, or build output i
 
 # Worktree and Artifact Cleanup Convention
 
-A plan that creates worktrees, branches, and build output must remove them when it finishes. This is
-the **teardown** half of the worktree lifecycle; provisioning and toolchain initialization are covered
-separately.
+A plan that creates worktrees, branches, and plan-local regenerable build output must remove them
+when it finishes. This is the **teardown** half of the worktree lifecycle; provisioning and
+toolchain initialization are covered separately. Diagnostic evidence, shared caches, ambiguous
+state, and artifacts still needed by an active, `partial`, or `fail` run are retained and escalated.
 
 Cleanup is a **mandatory gate**, not a courtesy. It is also the one gate most likely to cause harm if
 executed carelessly, because every action it takes is a deletion. The whole convention exists to make
 that combination safe: delete thoroughly, delete only what is yours, and verify before each removal.
 
-**Cleanup is immediate, not deferred.** Remove a repo's worktree the moment this plan is done using
-it — when every delivery unit this plan places in that repo is confirmed merged — right then, not
+**Cleanup is immediate, not deferred.** Clean a repo's three eligible artifact classes the moment
+this plan is done using them — when every delivery unit this plan places in that repo is confirmed
+merged and the identity, clean/idle, no-unpushed, and artifact-safety checks pass — right then, not
 batched with unrelated later steps and not left in place "in case it's needed again." Under the
 [Worktree Cap](../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
 a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
@@ -44,7 +46,12 @@ Provisioned Worktree Identity, or worktree created by another actor; those remai
 - [Hard Safety Rules](./worktree-and-artifact-cleanup/hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
 - [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The six checks before any `git worktree remove`.
 - [Branch Cleanup](./worktree-and-artifact-cleanup/branch-cleanup.md) — Deleting merged local and remote branches safely.
-- [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
+- [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local regenerable output while preserving diagnostics and shared caches.
+
+**Enforcement.** `plan-execution-checker` verifies that successful delivery evidence covers all
+three artifact classes and that diagnostic/shared-state protections held. Live worktree identity,
+branch delivery, forge events, idleness, and artifact ownership remain AI-verifier coverage because
+a deterministic repository-local check cannot authenticate that operational state.
 
 ## Related Documentation
 

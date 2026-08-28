@@ -8,12 +8,15 @@ when_to_use: Use when deciding whether to run repos concurrently, or the parity-
 
 **Continues from** [Step 4 — Execution Phase](./step-4-execution-phase.md).
 
-**Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
-fan-out, not a chain — `ose-public` is the source of truth and `ose-private` its one downstream node.
-Once `ose-public` reaches `pass`, downstream repos may run as concurrent DAG nodes under the N+1
-model (`1 main thread + N background agents`, default **N=3**) rather than serialized.
+**Propagation shape when the invoker opts out of strict whole-repository sequencing**: the repos
+form a logical fan-out, not a content-dependency chain — `ose-public` is the source of truth and
+`ose-private` its one downstream node. Once `ose-public` reaches `pass`, downstream repos may remain
+independent DAG nodes, but their resource-heavy worktree provisioning, toolchain setup, builds, and
+validation still run one repository at a time by default. Concurrent cross-repository heavy work
+requires a concrete operational need recorded in the plan and confirmed machine, disk, runner, and
+risk controls; lightweight independent work may use the N+1 model.
 
-Two constraints override that fan-out and force strict serialization:
+Two constraints override any permitted fan-out and force strict serialization:
 
 - **`apps/rhino-cli` byte-identity** across the parity repos — `ose-public` and
   `ose-private` — a plan touching it propagates one repo at a time, never concurrently

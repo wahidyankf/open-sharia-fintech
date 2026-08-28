@@ -74,6 +74,6 @@ pushed to the confirmed target.
 - [Step 4 — Plan Creation](./plan-planning/step-4-plan-creation.md) — plan-maker handoff and envelope loop.
 - [Step 5 — Plan Review](./plan-planning/step-5-plan-review.md) — eleven structural checks.
 - [Step 6 — Quality Gate](./plan-planning/step-6-quality-gate.md) — strict-mode plan-quality-gate.
-- [Step 7 — Push and Verify](./plan-planning/step-7-push-and-verify.md) — commit, push, CI, cleanup.
+- [Step 7 — Push and Verify](./plan-planning/step-7-push-and-verify.md) — commit, push, CI, and complete three-class cleanup.
 - [Principles and Conventions Implemented/Respected](./plan-planning/principles-and-conventions.md) — the catalog entries.
 - [Related Workflows and Documentation](./plan-planning/related-workflows-and-documentation.md) — cross-references.

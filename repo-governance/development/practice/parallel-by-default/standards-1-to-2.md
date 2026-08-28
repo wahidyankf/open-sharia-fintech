@@ -22,7 +22,12 @@ The default execution model is **parallel**. An agent MUST run multiple independ
 - The outputs of the units do not depend on each other
 - All inputs needed to launch the units are already known
 
-The burden of proof is on serialization: an agent that runs independent work serially must have an explicit reason (dependency, ordering constraint, tool conflict). Absence of a reason means parallel.
+The burden of proof is ordinarily on serialization: an agent that runs independent work serially
+must have an explicit reason (dependency, ordering constraint, tool conflict). The standing
+shared-machine reason is cross-repository resource-heavy work in one plan — provision worktrees,
+converge toolchains, build, and validate one repository at a time by default. Concurrent heavy work
+requires a concrete operational need recorded in the plan plus confirmed machine, disk, runner, and
+risk controls. Outside that narrow exception, absence of a reason means parallel.
 
 ## Standard 2 — The N+1 Model (One Adjustable N)
 

@@ -19,16 +19,19 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
       current `origin/<branch>` or verified GitHub auto-deletion under enabled
       `delete_branch_on_merge`; retain and escalate any other missing/mismatched proof. A repository
       root, wildcard, missing identity, or another actor's worktree is never eligible.
-   3. When every check passes, remove the exact path immediately without another confirmation
-      prompt, from the repository root:
+   3. When every check passes, purge only plan-local regenerable build output, preserving diagnostic
+      evidence and shared caches. If this is a bare repository whose pre-push hook requires a
+      working tree, delete each verified live remote branch from inside the linked worktree before
+      removal. Then remove the exact path immediately without another confirmation prompt, from the
+      repository root:
 
       ```bash
       git worktree remove <exact-plan-worktree-path>
       ```
 
-      Use the non-force command only, then apply the canonical
+      Use the non-force command only, then complete the canonical
       [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md)
-      procedure to this plan's verified branches.
+      procedure for this plan's verified branches and run `git worktree prune`.
 
    4. If any check or removal fails, retain the worktree, surface the evidence, and escalate. Never
       force removal or silently discard dirty or unpushed work.

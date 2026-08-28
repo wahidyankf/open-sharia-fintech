@@ -30,6 +30,10 @@ These bound every action the gate takes.
   sweeper described in the [Build-Artifact Sweeper Convention](../../infra/build-artifact-sweeper.md),
   which may remove the same shared cache on its own schedule. A cache you must not delete can still
   disappear; that is the environment, not a rule violation by another actor.
+- **Preserve diagnostic evidence.** Logs, traces, crash dumps, coverage output used to explain a
+  failure, and any other non-regenerable evidence stay in place or move to an explicitly recorded
+  evidence location before cleanup. An active, `partial`, or `fail` run retains its artifacts; a
+  desire to reclaim disk never outranks diagnosis or resumption.
 - **Cleanup is itself non-destructive to others.** The gate may not use any operation that a
   concurrent actor could be harmed by. It removes; it never force-removes, rewrites, or prunes shared
   state.

@@ -83,14 +83,17 @@ a green `parity manifest validate` in either repo.
 Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;
 this answers **how often** `ose-private` is brought current with `ose-public`.
 
-**`ose-private` is kept in real time.** `rhino-cli` and the shared `repo-governance/` content
-(conventions, workflows, agent definitions) propagate to `ose-private` as they land in `ose-public`,
-not on a batched schedule. That repo backs live authorized-maintainer and infrastructure operations,
-so governance and tooling drift there is costly immediately, not just eventually.
+**`ose-private` is kept current through recorded sibling obligations.** `rhino-cli` and shared
+`repo-governance/` content (conventions, workflows, agent definitions) propagate from `ose-public`
+through a separate one-repository run, not an unrecorded batch. The repositories need not merge at
+the same time: each ready PR lands when its own hardened prerequisites and merge opportunity permit,
+and the unfinished counterpart remains an explicit sibling obligation until convergence. That repo
+backs live authorized-maintainer and infrastructure operations, so the gap should remain short and
+visible rather than silent.
 
-For portable governance, agent, and skill changes, public is the source and `ose-private` is
-reconciled immediately. Verify the portable manifest byte-for-byte; list private-only operational
-exceptions explicitly.
+For portable governance, agent, and skill changes, public is the source and `ose-private` is the
+only propagation target. Verify the portable manifest byte-for-byte at convergence; list
+private-only operational exceptions explicitly.
 
 ### Private-only operational exceptions
 
