@@ -1425,13 +1425,23 @@ let private applyField (agent: OpenCodeAgent) (action: FieldAction) (key: string
 /// Whether a plain YAML scalar needs quoting under Go-`yaml.v3`'s rules
 /// [Repo-grounded — `converter.rs::needs_quoting`].
 let private needsQuoting (s: string) : bool =
-    if s = "" then true
-    elif "-?:,[]{}#&*!|>'\"%@`".IndexOf(s.[0]) >= 0 then true
-    elif s.EndsWith(" ") || s.EndsWith("\t") then true
-    elif s.Contains(": ") || s.EndsWith(":") then true
-    elif s.Contains(" #") then true
-    elif s.Contains("\n") then true
-    else false
+    if s = "" then
+        true
+    elif "-?:,[]{}#&*!|>'\"%@`".IndexOf(s.[0]) >= 0 then
+        true
+    elif
+        s.EndsWith(" ", StringComparison.Ordinal)
+        || s.EndsWith("\t", StringComparison.Ordinal)
+    then
+        true
+    elif s.Contains(": ") || s.EndsWith(":", StringComparison.Ordinal) then
+        true
+    elif s.Contains(" #") then
+        true
+    elif s.Contains("\n") then
+        true
+    else
+        false
 
 /// Emits a scalar, double-quoting and escaping it when required
 /// [Repo-grounded — `converter.rs::yaml_string`].
