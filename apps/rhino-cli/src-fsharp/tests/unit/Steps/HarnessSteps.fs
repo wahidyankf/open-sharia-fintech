@@ -63,6 +63,10 @@ type HarnessSteps() =
     let mutable duplicationFindings: Harness.DuplicationFinding list = []
     let mutable fixtureAgentPaths: string list = []
     let mutable fixtureSkillPaths: string list = []
+    let mutable registryDeclaresSkillsMirror: bool = false
+    let mutable mirrorResult: Harness.MirrorResult option = None
+    let mutable mirrorDrift: Harness.MirrorDrift list option = None
+    let mutable fixtureSkillNames: string list = []
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -98,6 +102,54 @@ type HarnessSteps() =
                   "" ]
             )
         )
+
+    /// The same registry, with the codex entry additionally declaring a
+    /// skills-directory mirror alongside its existing agent-directory mirror
+    /// — the shape `mirror_jobs` reads to build a [`Harness.MirrorJob`]
+    /// [Repo-grounded — `skills_mirror.rs`'s test fixture builder].
+    let writeThreeHarnessConfigWithSkillsMirror (root: string) : unit =
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness:"
+                  "  - { name: claude-code, tier: source, agent-dir: .claude/agents }"
+                  "  - name: opencode"
+                  "    tier: generated"
+                  "    agent-dir: .opencode/agents"
+                  "    mirrors: .claude/agents"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    skills-dir: .agents/skills"
+                  "    skills-mirrors: .claude/skills"
+                  "coverage:"
+                  "  projects: []"
+                  "" ]
+            )
+        )
+
+    let writeSkillFile (root: string) (name: string) (relPath: string) (body: string) : string =
+        let path = Path.Combine(root, ".claude", "skills", name, relPath)
+        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
+        File.WriteAllText(path, body)
+        path
+
+    /// Every real (non-symlink) file under `dir`, checked via
+    /// `FileSystemInfo.LinkTarget` — non-null only for a reparse point —
+    /// which is .NET's cross-platform symlink detector.
+    let rec allEntriesAreReal (dir: string) : bool =
+        if not (Directory.Exists dir) then
+            true
+        else
+            Directory.GetFileSystemEntries dir
+            |> Array.forall (fun path ->
+                let isDir = Directory.Exists path
+
+                let info: FileSystemInfo = if isDir then DirectoryInfo path else FileInfo path
+
+                isNull info.LinkTarget && (not isDir || allEntriesAreReal path))
 
     /// Materializes the mirror pair every sync check expects to find
     /// [Repo-grounded — `bindings.rs`'s `write_empty_mirror_pair`].
@@ -509,6 +561,283 @@ type HarnessSteps() =
         for finding in spanning do
             Assert.Contains("SKILL.md", String.Join(", ", finding.Files))
 
+    // ---- @agents-skills-mirror ----
+    //
+    // Two scenarios ("The npm entry points cover the new mirror",
+    // "The emitted mirror survives the formatter") read this repository's
+    // real `package.json` / prettier binary rather than a synthetic fixture,
+    // following the same precedent `@harness-name-registry-derived` set in
+    // `agents-bindings.feature`: the claim is about the real repo's wiring,
+    // so a fixture would prove only that the lookup works, never that the
+    // live scripts and formatter actually agree with the mirror. Neither
+    // spawns `npm`/`cargo` (the Rust CLI still owns `harness bindings
+    // generate` until Wave E's flip) — each stands in with the equivalent
+    // `Harness` function, documented at the call site.
+
+    [<Given>]
+    member _.``the harness registry declares an agent-directory mirror for the OpenCode entry``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+
+        match RepoConfig.load root with
+        | Error e -> failwith e
+        | Ok config ->
+            let opencode = config.Harness |> List.find (fun e -> e.Name = "opencode")
+            Assert.True(opencode.AgentDir.IsSome && opencode.Mirrors.IsSome)
+
+    [<When>]
+    member _.``the codex entry is updated to declare \.agents/skills as a mirror of \.claude/skills``() =
+        writeThreeHarnessConfigWithSkillsMirror (scenarioRoot ())
+
+    [<Then>]
+    member _.``rhino-cli repo-config validate exits 0 with both kinds of mirror relationship declared: agent directories and skill directories``
+        ()
+        =
+        match RepoConfig.load (scenarioRoot ()) with
+        | Error e -> failwith e
+        | Ok config ->
+            let opencode = config.Harness |> List.find (fun e -> e.Name = "opencode")
+            let codex = config.Harness |> List.find (fun e -> e.Name = "codex")
+            Assert.True(opencode.AgentDir.IsSome && opencode.Mirrors.IsSome)
+            Assert.True(codex.SkillsDir.IsSome && codex.SkillsMirrors.IsSome)
+
+    [<Then>]
+    member _.``rhino-cli harness bindings generate emits the \.agents/skills mirror without a new command-line flag``
+        ()
+        =
+        let root = scenarioRoot ()
+
+        writeSkillFile root "gamma-notes" "SKILL.md" "---\nname: gamma-notes\n---\nBody\n"
+        |> ignore
+
+        // `emitSkillsMirrors` takes only `repoRoot` and `dryRun` — no
+        // skills-specific parameter exists to add a flag for.
+        match Harness.emitSkillsMirrors root false with
+        | Error e -> failwith e
+        | Ok result ->
+            Assert.True(result.Copied > 0)
+            Assert.True(Directory.Exists(Path.Combine(root, ".agents", "skills", "gamma-notes")))
+
+    [<Given>]
+    member _.``\.claude/skills/ holds the repository's canonical skill directories and every one of them is tracked``
+        ()
+        =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithSkillsMirror root
+        fixtureSkillNames <- [ "alpha-skill"; "beta-skill"; "gamma-skill" ]
+
+        for name in fixtureSkillNames do
+            writeSkillFile root name "SKILL.md" (sprintf "---\nname: %s\n---\nBody for %s.\n" name name)
+            |> ignore
+
+            writeSkillFile root name "reference/notes.md" "extra reference content\n"
+            |> ignore
+
+    [<When>]
+    member _.``rhino-cli harness bindings generate runs``() =
+        match Harness.emitSkillsMirrors (scenarioRoot ()) false with
+        | Ok result -> mirrorResult <- Some result
+        | Error e -> failwith e
+
+    [<Then>]
+    member _.``\.agents/skills/ contains one real directory per \.claude/skills/ skill``() =
+        let root = scenarioRoot ()
+
+        for name in fixtureSkillNames do
+            let mirrored = Path.Combine(root, ".agents", "skills", name, "SKILL.md")
+            let source = Path.Combine(root, ".claude", "skills", name, "SKILL.md")
+            Assert.True(File.Exists mirrored)
+            Assert.Equal(File.ReadAllText source, File.ReadAllText mirrored)
+
+    [<Then>]
+    member _.``find \.agents/skills -type l returns zero results, proving no symlink was created in either direction``
+        ()
+        =
+        Assert.True(allEntriesAreReal (Path.Combine(scenarioRoot (), ".agents", "skills")))
+
+    [<Given>]
+    member _.``a clean tree immediately after rhino-cli harness bindings generate``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithSkillsMirror root
+
+        writeSkillFile root "alpha-skill" "SKILL.md" "---\nname: alpha-skill\n---\nBody.\n"
+        |> ignore
+
+        match Harness.emitSkillsMirrors root false with
+        | Ok _ -> ()
+        | Error e -> failwith e
+
+    [<When>]
+    member _.``the command runs a second time``() =
+        match Harness.emitSkillsMirrors (scenarioRoot ()) false with
+        | Ok result -> mirrorResult <- Some result
+        | Error e -> failwith e
+
+    [<Then>]
+    member _.``git diff --quiet \.agents/ exits 0, proving no churn``() =
+        // No filesystem write is pending on a clean regeneration — the F#
+        // analogue of a quiet `git diff`, since nothing changed for git to
+        // report.
+        match mirrorResult with
+        | None -> failwith "no regeneration has run in this scenario"
+        | Some result ->
+            Assert.Equal(0, result.Copied)
+            Assert.Equal(0, result.Removed)
+
+    [<Then>]
+    member _.``after a single character is changed in one mirrored file, rhino-cli harness bindings validate exits non-zero naming that file, where it exited 0 before the edit``
+        ()
+        =
+        let root = scenarioRoot ()
+        let mirrored = Path.Combine(root, ".agents", "skills", "alpha-skill", "SKILL.md")
+
+        let before =
+            match Harness.auditSkillsMirrors root with
+            | Ok drift -> drift
+            | Error e -> failwith e
+
+        Assert.Equal<Harness.MirrorDrift list>([], before)
+
+        File.WriteAllText(mirrored, File.ReadAllText(mirrored) + "x")
+
+        match Harness.auditSkillsMirrors root with
+        | Error e -> failwith e
+        | Ok after ->
+            Assert.NotEmpty after
+
+            Assert.Contains(
+                after,
+                fun drift ->
+                    match drift with
+                    | Harness.MirrorDriftMissing path -> path.Contains("alpha-skill", StringComparison.Ordinal)
+                    | Harness.MirrorDriftUndeclared _ -> false
+            )
+
+    [<Given>]
+    member _.``npm run generate:bindings and npm run validate:sync covered only the OpenCode and Amazon Q surfaces``() =
+        // Narrative provenance only, matching `@harness-purge`'s precedent:
+        // the pre-mirror coverage is history, not state this scenario
+        // reconstructs. What it asserts is the post-change invariant below.
+        ()
+
+    [<When>]
+    member _.``both scripts run after the mirror is wired``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithSkillsMirror root
+
+        writeSkillFile root "delta-skill" "SKILL.md" "---\nname: delta-skill\n---\nBody.\n"
+        |> ignore
+
+        // Stands in for `npm run generate:bindings` / `npm run validate:sync`:
+        // both ultimately call these two registry-driven functions, and
+        // spawning the real `cargo`-backed CLI here would rebuild the Rust
+        // binary for no assertion this scenario needs.
+        match Harness.emitSkillsMirrors root false with
+        | Error e -> failwith e
+        | Ok result ->
+            mirrorResult <- Some result
+
+            match Harness.auditSkillsMirrors root with
+            | Ok drift -> mirrorDrift <- Some drift
+            | Error e -> failwith e
+
+    [<Then>]
+    member _.``generate:bindings emits \.agents/skills/ and validate:sync reports it as in-parity``() =
+        Assert.True(Directory.Exists(Path.Combine(scenarioRoot (), ".agents", "skills", "delta-skill")))
+
+        Assert.Equal<Harness.MirrorDrift list>(
+            [],
+            mirrorDrift |> Option.defaultValue [ Harness.MirrorDriftMissing "unset" ]
+        )
+
+    [<Then>]
+    member _.``neither script names a skills-specific or mirror-specific flag, because both delegate to the registry-driven commands``
+        ()
+        =
+        let packageJsonPath = Path.Combine(repositoryRoot, "package.json")
+        let packageJson = File.ReadAllText packageJsonPath
+
+        let scriptLine (name: string) : string =
+            let marker = sprintf "\"%s\":" name
+            let start = packageJson.IndexOf(marker, StringComparison.Ordinal)
+            Assert.True(start >= 0, sprintf "%s script not found in package.json" name)
+            let lineEnd = packageJson.IndexOf('\n', start)
+            packageJson.Substring(start, lineEnd - start)
+
+        for line in [ scriptLine "generate:bindings"; scriptLine "validate:sync" ] do
+            Assert.Contains("harness", line)
+            Assert.DoesNotContain("--skills", line)
+            Assert.DoesNotContain("--mirror", line)
+
+    [<Given>]
+    member _.``this repository has previously broken a generated byte-equality guard by letting the formatter rewrite emitted files``
+        ()
+        =
+        // Narrative provenance — see `feedback_prettier_breaks_generated_byte_equality.md`.
+        // Nothing to construct: the claim below is about whether THIS
+        // scenario's mirrored content survives the real formatter.
+        ()
+
+    [<When>]
+    member _.``rhino-cli harness bindings generate is followed by prettier --write over \.agents/ and then rhino-cli harness bindings validate``
+        ()
+        =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithSkillsMirror root
+
+        // Prettier-clean on arrival: the same well-formed markdown shape the
+        // repo's own PostToolUse hook produces, so the claim under test is
+        // "prettier leaves already-clean content alone", not "prettier
+        // reformats messy content" (a different, already-known failure mode).
+        writeSkillFile
+            root
+            "epsilon-skill"
+            "SKILL.md"
+            "---\nname: epsilon-skill\n---\n\n# Epsilon Skill\n\nBody paragraph.\n"
+        |> ignore
+
+        match Harness.emitSkillsMirrors root false with
+        | Error e -> failwith e
+        | Ok _ ->
+            let prettierBin = Path.Combine(repositoryRoot, "node_modules", ".bin", "prettier")
+            let mirrorDir = Path.Combine(root, ".agents")
+
+            let psi = ProcessStartInfo(prettierBin)
+            psi.RedirectStandardOutput <- true
+            psi.RedirectStandardError <- true
+            psi.UseShellExecute <- false
+            psi.ArgumentList.Add "--write"
+            psi.ArgumentList.Add mirrorDir
+
+            use proc = Process.Start psi
+            proc.WaitForExit()
+            Assert.Equal(0, proc.ExitCode)
+
+            match Harness.auditSkillsMirrors root with
+            | Ok drift -> mirrorDrift <- Some drift
+            | Error e -> failwith e
+
+    [<Then>]
+    member _.``the validator exits 0``() =
+        Assert.Equal<Harness.MirrorDrift list>(
+            [],
+            mirrorDrift |> Option.defaultValue [ Harness.MirrorDriftMissing "unset" ]
+        )
+
+    [<Then>]
+    member _.``where it exits non-zero instead, \.agents/ is added to \.prettierignore and the same sequence then exits 0``
+        ()
+        =
+        // The prior Then already proved the zero-drift branch for this
+        // repository's current formatter configuration; this step documents
+        // the untaken remedial branch rather than asserting on it, matching
+        // the Gherkin's own conditional phrasing ("where it exits non-zero
+        // instead").
+        Assert.Equal<Harness.MirrorDrift list>(
+            [],
+            mirrorDrift |> Option.defaultValue [ Harness.MirrorDriftMissing "unset" ]
+        )
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -580,6 +909,10 @@ module private FeatureRunner =
     let runDuplication (scenarioTitle: string) : unit =
         runIn "agents-detect-duplication.feature" scenarioTitle
 
+    /// Runs one scenario of `agents-skills-mirror.feature`.
+    let runSkillsMirror (scenarioTitle: string) : unit =
+        runIn "agents-skills-mirror.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -636,3 +969,23 @@ let ``Agent body matching 10+ consecutive lines of a SKILL.md fails (agent-skill
 [<Fact>]
 let ``Heading-only or whitespace-only 10-line window does NOT trigger a finding`` () =
     FeatureRunner.runDuplication "Heading-only or whitespace-only 10-line window does NOT trigger a finding"
+
+[<Fact>]
+let ``The mirror target is declared in the registry`` () =
+    FeatureRunner.runSkillsMirror "The mirror target is declared in the registry"
+
+[<Fact>]
+let ``Every repository skill is mirrored as real files, not links`` () =
+    FeatureRunner.runSkillsMirror "Every repository skill is mirrored as real files, not links"
+
+[<Fact>]
+let ``Regeneration is idempotent and a hand edit is caught`` () =
+    FeatureRunner.runSkillsMirror "Regeneration is idempotent and a hand edit is caught"
+
+[<Fact>]
+let ``The npm entry points cover the new mirror`` () =
+    FeatureRunner.runSkillsMirror "The npm entry points cover the new mirror"
+
+[<Fact>]
+let ``The emitted mirror survives the formatter`` () =
+    FeatureRunner.runSkillsMirror "The emitted mirror survives the formatter"
