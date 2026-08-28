@@ -401,3 +401,116 @@ directly: temporarily adding one deliberately-uncovered function to the Infrastr
 dropped the measured figure to 0% and turned the target red, then the addition was reverted and the
 target was re-verified green — confirming the 90% threshold itself gates correctly, per delivery.md's
 own acceptance clause for that step.
+
+## 2026-08-28 — Phase 6: a stale `target/gate` binary fakes a shadow-diff parity failure
+
+Wave D's integration shadow-diff (`shadow-diff.sh md governance git`) first reported **9 of 60
+invocations differing** — every `md mermaid validate` format, every `md audit` format, and
+`md links validate -o json`. Every one of those diffs was a pure **ordering** difference: the
+finding multisets were provably identical (`sorted(rust) == sorted(fsharp)` over the parsed JSON),
+only the emission order differed. The tempting reading — "the F# port sorts its findings and Rust
+does not, so fix the F# comparer" — was wrong in both direction and substance.
+
+The real cause is that `shadow-diff.sh` resolves its Rust side to a **prebuilt**
+`apps/rhino-cli/target/gate/rhino-cli`, and nothing in the script rebuilds it. The determinism
+fixes this wave depends on — `md_files.sort()` in `commands/md_validate_mermaid.rs` (WalkDir
+returns raw readdir order) and the insertion-order preservation of `broken_by_category` in
+`application/docs/links.rs` — live in the **Rust source**, so a `target/gate` binary published
+before those edits still emits filesystem-walk order. The F# side was correct the whole time;
+the Rust side under comparison was simply months old.
+
+`cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml` (7.8 s, already-warm
+cache) took the run to **60 invocations compared, 0 difference(s)** with no source change at all.
+
+**Protocol for every remaining wave's integration step**: rebuild _both_ binaries immediately
+before `shadow-diff.sh` — `cargo build --profile gate` **and** `npx nx run rhino-cli-fsharp:build`.
+A stale binary on either side produces a mismatch that reads exactly like a real port defect and
+invites a "fix" to correct code. The failure is silent in the worst way: the script's own
+`RUST_BIN`/`FSHARP_BIN` resolution succeeds, the binary is executable, and the exit codes even
+agree (`rust=1 fsharp=1`) — only the ordering betrays it. CI never hits this because
+`build-rhino` publishes both artifacts fresh on every run; it is strictly a local-worktree trap.
+
+## 2026-08-28 — Phase 6: two Wave D defects only `ose-private`'s corpus could expose
+
+Wave D's `ose-public` shadow-diff was green at 60/0. The identical run in `ose-private` — same
+commit, byte-identical sources, both binaries freshly built — reported **9 differences**. Neither
+defect was reachable from `ose-public` data, so verifying the wave in one repo alone would have
+shipped both.
+
+### 1. `effectiveMermaidLabelLen` counted UTF-16 code units, not Unicode scalars
+
+`Md.fs` measured each normalised line with `String.Length`. .NET counts UTF-16 code units, so an
+astral character (any emoji) counts **two**, while Rust's `graph.rs::effective_label_len` uses
+`line.chars().count()` and counts **one**. The label
+`"📝 Log recovery via link-bounce"` — U+1F4DD plus 29 ASCII characters — is 30 scalars but 31 code
+units, so the F# binary emitted a `label_too_long` violation against `--max-label-len 30` that Rust
+never produced, and the run totals diverged (`110` vs `109`). Fixed with an explicit
+`unicodeScalarCount` that advances by two on `Char.IsSurrogatePair` — exactly `chars().count()`.
+`ose-public` has no mermaid node label that both contains an astral character and sits on the
+30-character boundary, which is why every prior wave's shadow-diff missed it.
+
+### 2. `wordBudgetMarkdown` rendered a seven-column table where Rust renders four
+
+`Formatters.fs` emitted `| Path | Size | Target | Warn | Fail | Severity | Message |` with
+`|------|` separators and bare paths. `governance_validate_word_budget.rs` emits
+`| Path | Size (words) | Severity | Message |` with `| --- |` separators and a **backticked**
+path. This is invisible whenever the finding list is empty — both sides then print the same
+`**PASSED**` line and never render a table at all. `ose-public` has no surface over its word
+budget, so the table never rendered there; `ose-private`'s
+`repo-governance/workflows/plan/plan-execution/README.md` (901 words against a 900-word target) is
+the single row that made the drift observable.
+
+### The transferable rule
+
+A formatter branch that only renders when findings exist is **untested by a green shadow-diff on a
+clean corpus**. Both defects sat in already-merged Wave D PRs whose own shadow-diffs passed. For
+every remaining wave, treat `ose-private`'s run as a first-class gate rather than a mirror-and-
+confirm formality, and prefer a unit test that constructs a finding directly over relying on live
+repo data to happen to contain one — `WaveDParityRegressionUnitTests.fs` pins both behaviours that
+way, so neither can regress in either repo regardless of corpus.
+
+## 2026-08-28 — Phase 6: FSharpLint hangs on a 25-arm cons-of-string-literal `match`
+
+`nx run rhino-cli-fsharp:test:quick` never terminated after the Wave D flip. The stall was
+`dotnet fsharplint lint apps/rhino-cli/src-fsharp/RhinoCli.Cli/RhinoCli.Cli.fsproj`, pinned at
+100% CPU for **over an hour** on a 2,394-line project, while the other four projects — including
+the 11,899-line `RhinoCli.Application` — each linted in 2–4 seconds.
+
+### What it was not
+
+- **Not a compiler problem.** `dotnet build` of the same project completes in 4 seconds with zero
+  warnings. Type inference was never the bottleneck.
+- **Not visible in single-file mode.** `dotnet fsharplint lint <file>.fs` on every one of
+  `RhinoCli.Cli`'s four sources finished in 2–3 seconds with 0 warnings. Only project mode, which
+  supplies type-check results, hangs. A per-file probe is therefore useless for reproducing this.
+- **Not a stale `obj/`, a lock, or a cracking failure.** The hang reproduces in a clean `rsync`
+  copy of `src-fsharp/` with `bin/`, `obj/`, and `dist/` excluded.
+
+### The bisect
+
+Reverting `RhinoCli.Cli` to its `origin/main` state in that scratch copy lints in **6 seconds**.
+Restoring Wave D's `Formatters.fs` alone (194 → 814 lines) still lints in 6 seconds. Restoring
+Wave D's `Dispatch.fs` alone (877 → 1,538 lines) reproduces the hang. Inside `Dispatch.fs` the
+sole structural change of that shape is `route`'s opening `match argvList with`, which Wave D grew
+from 13 to **25 arms**, each of the form
+`| "governance" :: "readme-index" :: "validate" :: rest -> Some "…", rest`.
+
+### The fix and the measurement
+
+Holding the same command paths as data — a `routeTable: (string list * string) list` plus a
+`matchRoute` that strips the first matching prefix — takes the same project from **>60 minutes to
+7 seconds**, and the whole `rhino-cli-fsharp:lint` target to 42 seconds. Behaviour is unchanged:
+`shadow-diff.sh md governance git` reports 60 invocations compared, 0 differences, in both repos,
+and the 761 unit plus 5 integration tests pass in both.
+
+### The transferable rule
+
+FSharpLint's project-mode analysis is super-linear in the arm count of a `match` over
+cons-of-string-literal patterns, and the knee sits somewhere between 13 and 25 arms. Waves E and F
+add roughly twenty more command paths between them; had `route` kept its original shape, each
+subsequent wave would have made the lint gate slower until CI timed out on a change that looks
+completely innocent in review. **Any argv-shaped dispatch in this port stays data-driven.** More
+generally: when a lint or analysis step in this repo appears to hang, time `dotnet build` on the
+same project first — a fast build against a stalled analyser localises the problem to the analyser
+immediately, and the per-file probe that seems like the obvious next step will exonerate the guilty
+file.

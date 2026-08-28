@@ -971,7 +971,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -985,12 +985,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output names the failing "license" validator
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
@@ -999,7 +999,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1013,17 +1013,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports zero emoji findings
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1037,17 +1037,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output identifies the offending file line and codepoint
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1061,17 +1061,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output identifies the offending file line and codepoint
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1085,17 +1085,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports zero emoji findings
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1109,17 +1109,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports zero emoji findings
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1133,12 +1133,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports zero emoji findings
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
@@ -1147,7 +1147,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1161,17 +1161,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output reports zero license findings
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1185,17 +1185,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output identifies the missing LICENSE app directory
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1209,17 +1209,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output identifies the missing LICENSE lib directory
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Convention` does not implement it.
@@ -1233,12 +1233,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the output identifies the SPDX mismatch
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Convention.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Convention.fs` formats no output itself.
@@ -2840,7 +2840,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > **PR seam**: the cycles under this heading are one PR. Relocated from Phase 7 (Wave E) — see the
 > Phase 4 header note above.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
@@ -2854,17 +2854,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the commit is aborted
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Env.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
@@ -2877,17 +2877,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it exits zero and does not block the commit
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Env.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/EnvStagedGuardSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Env` does not implement it.
@@ -2910,12 +2910,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
         | apps/x/.env.local |
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Env.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Env.fs` formats no output itself.
@@ -2992,7 +2992,7 @@ validate` shows `exec .../src-fsharp/dist/rhino-cli-fsharp env validate`, confir
       and exactly 1 after. Rebuilt `dist/rhino-cli-fsharp` via `nx run rhino-cli-fsharp:build` first
       so the measured binary carries this wave's leaves, then 50 `--help` invocations via Python
       `time.time()`-around-`subprocess.run`: total 1.957 s, mean **39.15 ms**, 0 non-zero exits.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -3036,7 +3036,7 @@ validate` shows `exec .../src-fsharp/dist/rhino-cli-fsharp env validate`, confir
 ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp`, and all such jobs
       `needs: build-rhino` (directly or transitively via `enumerate`), so the binary those jobs run
       is always `build-rhino`'s uploaded artifact, never a from-source rebuild.
-- [ ] [AI] Land every Wave B change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave B change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
@@ -7985,10 +7985,10 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       asserts but never tests.
 - [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave D`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
-- [ ] [AI] Land every Wave D change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave D change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
@@ -7998,7 +7998,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] All Wave D scenarios pass, counted across **both** test projects, because this is the one
+- [x] [AI] All Wave D scenarios pass, counted across **both** test projects, because this is the one
       wave whose scenarios span two tiers — acceptance:
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` reports **120 plus the `git lockfile`
       feature file's scenario count** (the `md` and `governance` files plus the new lockfile cycles),
@@ -8007,15 +8007,15 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       to this wave's restated wave-map total. Asserting the wave total against the unit project alone
       is unsatisfiable — those 5 scenarios never run there — and the other five waves' identical
       bullets are correct precisely because they mix no tiers.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh md governance git` reports zero differences in both
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh md governance git` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
+- [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
-- [ ] [AI] `benchmark.md` has an `after wave D` row for startup and for pre-commit wall time.
+- [x] [AI] `benchmark.md` has an `after wave D` row for startup and for pre-commit wall time.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
