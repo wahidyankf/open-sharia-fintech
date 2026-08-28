@@ -10,7 +10,9 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
@@ -25,6 +27,8 @@
 /// `apps/rhino-cli/src/application/agents/sync_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/types.rs`,
 /// `apps/rhino-cli/src/application/agents/yaml_formatting.rs`,
+/// `apps/rhino-cli/src/application/governance/word_budget.rs`,
+/// `apps/rhino-cli/src/commands/gate/run.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
 /// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
@@ -67,6 +71,7 @@ open System.IO
 open System.Security.Cryptography
 open System.Text
 open System.Text.RegularExpressions
+open RhinoCli.Application.Governance
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 
@@ -2927,3 +2932,67 @@ let validateClaude (opts: ValidateClaudeOptions) : ValidationResult =
 
     { result with
         Duration = stopwatch.Elapsed }
+
+// ---------------------------------------------------------------------------
+// Pre-push word-budget gate (registry-declared path gating)
+// ---------------------------------------------------------------------------
+//
+// Scope note: `gate run`'s full engine (`gate/run.rs`, ~1800 lines) dispatches
+// every registry-declared gate across four surfaces. This module ports only
+// what `harness/governance-word-budget-pre-push.feature`'s 4 scenarios need —
+// the trigger-matching predicate and the single `governance-word-budget` gate
+// entry's pre-push behavior — not the general multi-gate dispatcher, `gate
+// list`/`gate emit`/`gate validate`, or any surface besides `pre-push`.
+
+/// Path prefixes that trigger the `governance-word-budget` gate on the
+/// `pre-push` (and `ci`) surface, transcribed verbatim from `repo-config.yml`'s
+/// `gates: - id: governance-word-budget` entry's `surfaces.pre-push.trigger`
+/// list [Repo-grounded — `repo-config.yml`].
+let wordBudgetGateTriggers: string list =
+    [ "repo-governance/"
+      ".claude/"
+      ".codex/"
+      ".opencode/"
+      ".agents/"
+      "AGENTS.md"
+      "CLAUDE.md"
+      "RTK.md"
+      "repo-config.yml" ]
+
+/// Whether any of `paths` falls under any of `triggers` — a path matches a
+/// trigger when it equals the trigger with its trailing slash trimmed, or
+/// starts with the trigger verbatim [Repo-grounded — `gate/run.rs::trigger_matches`].
+let triggerMatches (paths: string list) (triggers: string list) : bool =
+    paths
+    |> List.exists (fun path ->
+        triggers
+        |> List.exists (fun trigger ->
+            let directory = trigger.TrimEnd('/')
+            path = directory || path.StartsWith(trigger, StringComparison.Ordinal)))
+
+/// Outcome of simulating the `governance-word-budget` gate on the pre-push
+/// surface: whether the trigger matched the push range at all, and — only
+/// when it did — the exit code the word-budget validation it invokes produces.
+type PrePushWordBudgetOutcome = { GateInvoked: bool; ExitCode: int }
+
+/// Simulates `rhino-cli gate run --surface=pre-push` scoped to exactly the
+/// `governance-word-budget` gate entry: skips the gate entirely when
+/// `pushRangePaths` matches none of [`wordBudgetGateTriggers`], otherwise runs
+/// `checkInstructionSizes` and exits non-zero when any finding is `Fail`
+/// [Repo-grounded — `gate/run.rs::run_at_root_with_only_and_message_file`,
+/// `word_budget.rs::check_instruction_sizes`].
+let runPrePushWordBudgetGate
+    (repoRoot: string)
+    (config: BudgetConfig)
+    (pushRangePaths: string list)
+    : PrePushWordBudgetOutcome =
+    if not (triggerMatches pushRangePaths wordBudgetGateTriggers) then
+        { GateInvoked = false; ExitCode = 0 }
+    else
+        let findings = checkInstructionSizes repoRoot config []
+
+        let hasFail =
+            findings |> List.exists (fun f -> f.Severity = WordBudgetSeverity.Fail)
+
+        { GateInvoked = true
+          ExitCode = (if hasFail then 1 else 0) }
