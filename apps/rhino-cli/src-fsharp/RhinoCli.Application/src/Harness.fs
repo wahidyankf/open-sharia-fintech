@@ -12,7 +12,9 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
@@ -28,7 +30,9 @@
 /// `apps/rhino-cli/src/application/agents/types.rs`,
 /// `apps/rhino-cli/src/application/agents/yaml_formatting.rs`,
 /// `apps/rhino-cli/src/application/governance/word_budget.rs`,
+/// `apps/rhino-cli/src/application/repo_governance/audit_orchestrator.rs`,
 /// `apps/rhino-cli/src/commands/gate/run.rs`,
+/// `apps/rhino-cli/src/commands/governance_audit.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
 /// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
@@ -70,6 +74,8 @@ open System.Diagnostics
 open System.IO
 open System.Security.Cryptography
 open System.Text
+open System.Text.Json
+open System.Text.Json.Nodes
 open System.Text.RegularExpressions
 open RhinoCli.Application.Governance
 open YamlDotNet.Serialization
@@ -2996,3 +3002,85 @@ let runPrePushWordBudgetGate
 
         { GateInvoked = true
           ExitCode = (if hasFail then 1 else 0) }
+
+// ---------------------------------------------------------------------------
+// `repo-governance audit` preflight — governance-word-budget category only
+// ---------------------------------------------------------------------------
+//
+// Scope note: the full `repo-governance audit` orchestrator
+// (`audit_orchestrator.rs`, ~900 lines) runs many categories — naming,
+// licensing, vendor-neutrality, traceability, and more. This module ports
+// only what `harness/governance-word-budget-rule.feature`'s "The preflight
+// envelope carries the governance-word-budget category" scenario needs: an
+// envelope whose `result.categories` includes a single `governance-word-budget`
+// entry built from the already-ported word-budget checker. The remaining
+// categories arrive with
+// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-audit.feature`.
+// `repo-governance` is not yet in `FSHARP_NAMESPACES`, so this is reached
+// directly by tests rather than through CLI argv routing, the same precedent
+// every other scenario in this module follows.
+
+/// The `schema` field every `repo-governance audit` envelope carries
+/// [Repo-grounded — `audit_orchestrator.rs::AuditEnvelope::schema`].
+let repoGovernanceAuditSchema = "rhino-cli/repo-governance-audit/v1"
+
+/// One category slice of a `repo-governance audit` envelope
+/// [Repo-grounded — `audit_orchestrator.rs::AuditCategoryResult`, trimmed to
+/// the fields this module's single category needs].
+type RepoGovernanceAuditCategory =
+    { Name: string
+      Passed: bool
+      Findings: WordBudgetFinding list }
+
+/// Runs the `governance-word-budget` category of `repo-governance audit`
+/// [Repo-grounded — `commands/governance_audit.rs::run`,
+/// `audit_orchestrator.rs::run_audit`'s word-budget category].
+let runRepoGovernanceAuditWordBudgetCategory (repoRoot: string) : RepoGovernanceAuditCategory =
+    let excludes =
+        match registeredExcludes repoRoot with
+        | Ok e -> e
+        | Error _ -> []
+
+    let findings =
+        match mergedBudgetConfig repoRoot with
+        | Ok(Some config) ->
+            checkInstructionSizes repoRoot config excludes
+            @ (checkResolvedTree repoRoot config |> Option.toList)
+        | _ -> []
+
+    let hasFail =
+        findings |> List.exists (fun f -> f.Severity = WordBudgetSeverity.Fail)
+
+    { Name = "governance-word-budget"
+      Passed = not hasFail
+      Findings = findings }
+
+/// Serialises the `governance-word-budget` category slice of the
+/// `repo-governance audit` preflight envelope to JSON
+/// [Repo-grounded — `commands/governance_audit.rs::format_json`, scoped to
+/// the single category this module computes].
+let repoGovernanceAuditJson (repoRoot: string) : string =
+    let category = runRepoGovernanceAuditWordBudgetCategory repoRoot
+
+    let findingNode (f: WordBudgetFinding) : JsonNode =
+        let node = JsonObject()
+        node.["path"] <- JsonValue.Create(f.Path)
+        node.["severity"] <- JsonValue.Create(wordBudgetSeverityLabel f.Severity)
+        node.["message"] <- JsonValue.Create(f.Message)
+        node :> JsonNode
+
+    let categoryNode = JsonObject()
+    categoryNode.["name"] <- JsonValue.Create(category.Name)
+    categoryNode.["passed"] <- JsonValue.Create(category.Passed)
+    categoryNode.["findings"] <- JsonArray(category.Findings |> List.map findingNode |> Array.ofList)
+
+    let resultNode = JsonObject()
+    resultNode.["categories"] <- JsonArray([| categoryNode :> JsonNode |])
+
+    let root = JsonObject()
+    root.["schema"] <- JsonValue.Create(repoGovernanceAuditSchema)
+    root.["result"] <- resultNode
+
+    let options = JsonSerializerOptions()
+    options.WriteIndented <- true
+    root.ToJsonString(options)
