@@ -262,7 +262,17 @@ fn collect_node_order(source: &str, node_map: &HashMap<String, usize>) -> Vec<St
             }
         }
     }
-    for k in node_map.keys() {
+    // Sorted, not raw `node_map.keys()` order — this fallback only fires
+    // for node ids the line-by-line source scan above didn't already
+    // capture, and `std::collections::HashMap`'s randomized per-process
+    // iteration order made that leftover order nondeterministic across
+    // runs of the same binary, breaking shadow-diff byte-identity (Wave D
+    // integration, rewrite-rhino-cli-to-fsharp) — the same class of bug
+    // already fixed in `links.rs`'s `broken_by_category` and
+    // `reporter.rs::format_text`'s per-file grouping.
+    let mut leftover: Vec<&String> = node_map.keys().collect();
+    leftover.sort();
+    for k in leftover {
         if seen.insert(k.clone()) {
             order.push(k.clone());
         }
