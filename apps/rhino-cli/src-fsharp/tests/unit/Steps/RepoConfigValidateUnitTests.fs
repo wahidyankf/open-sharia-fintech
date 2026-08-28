@@ -41,6 +41,7 @@ let private defaultHarnessEntry: HarnessEntry =
       SkillsDir = None
       SkillsMirrors = None
       Vendored = []
+      Catalog = None
       Ownership = [] }
 
 /// A minimal `OwnershipEntry`, for the same reason as `defaultHarnessEntry`

@@ -324,6 +324,7 @@ let private registryWith (names: string list) : RhinoCli.Application.RepoConfig.
                   SkillsDir = None
                   SkillsMirrors = None
                   Vendored = []
+                  Catalog = None
                   Ownership = [] }) }
 
 [<Fact>]
