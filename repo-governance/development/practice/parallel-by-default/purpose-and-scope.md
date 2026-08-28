@@ -36,5 +36,9 @@ This practice eliminates both failure modes by inverting the default: parallel u
 ### What This Practice Does NOT Cover
 
 - Dependent work, where a later step requires an earlier step's result — those stay sequential
+- Resource-heavy work across repositories in one plan: worktree provisioning, toolchain setup,
+  builds, and validation run one repository at a time by default on the shared machine. Concurrent
+  heavy work is an explicit exception requiring a recorded operational need and confirmed capacity
+  and risk controls.
 - Intra-agent concurrency inside a subagent's own execution (governed by that agent's own behavior)
 - Bash-level pipeline parallelism (e.g., `&` / `wait` in shell scripts)

@@ -14,12 +14,18 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
      unpushed commit, and every PR-mode branch meets the canonical merged-PR/head and
      remote-or-auto-deletion proof. A direct push needs its recorded `origin/main` commit and no
      open PR; any other missing/mismatched proof retains and escalates.
-   - When all checks pass, require immediate non-force removal of the exact path and canonical branch
-     cleanup, without another confirmation prompt.
+   - When all checks pass, require complete cleanup of all three artifact classes without another
+     confirmation prompt: non-force removal of the exact path, canonical cleanup of eligible
+     plan-created local/remote branches (using the bare-repository order exception where needed),
+     and purge of only plan-local regenerable build output.
+   - Require evidence that diagnostic artifacts were preserved and shared caches were not removed.
+     Active, `partial`, and `fail` runs retain output needed for diagnosis or resumption.
    - On a failed check or removal, require retention, surfaced evidence, and escalation. `partial`
      and `fail` likewise retain the worktree.
    - Eligible successful delivery retained without escalation: **HIGH**. Forced removal, removal
      without identity-proven ownership, or removal despite a failed safety check: **HIGH**.
+   - Eligible plan-local regenerable build output retained after successful delivery without a
+     recorded exception, diagnostic evidence removed, or any shared cache removed: **HIGH**.
 
 3. **Worktree cap held during execution** (enforces
    [Worktree Cap](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))
@@ -44,6 +50,8 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 - Wrong worktree-path format in plan: **HIGH**
 - Eligible worktree retained after successful delivery without a failed-check or removal-error
   escalation: **HIGH**
+- Eligible plan-local regenerable build output retained without a recorded exception: **HIGH**
+- Diagnostic evidence or a shared cache removed during plan cleanup: **HIGH**
 - Worktree force-removed, removed without identity-proven ownership, or removed despite a failed
   pre-removal check: **HIGH**
 - No worktree evidence in git history: **MEDIUM**

@@ -48,7 +48,14 @@ docs(explanation): add <objective-slug> parity decisions rationale
   bare repo has no primary checkout to push from directly; those targets deliver via
   `worktree-to-origin-main` instead.
 - `worktree-to-origin-main`: Push each repo's worktree commits to `origin main`. Remove worktrees
-  after delivery: `git worktree remove worktrees/<objective-slug> && git worktree prune`.
+  after delivery only through the full
+  [Worktree and Artifact Cleanup](../../../development/workflow/worktree-and-artifact-cleanup.md)
+  gate: resolve the exact recorded identity, prove every unit delivered plus clean/idle and
+  no-unpushed state, preserve diagnostic evidence, purge only plan-local regenerable output, apply
+  the bare-repository remote-branch order exception when needed, remove the exact worktree
+  non-force, clean eligible plan-created branches, then run `git worktree prune`. Retain and
+  escalate on ambiguous or failed proof; never remove on `partial` or `fail` and never prune shared
+  state.
 - `worktree-to-pr` (default): Push branch `plan/<objective-slug>` to each repo. Create or update a
   draft PR per repo via `gh pr create --draft` (skip creation if a PR for that branch already
   exists).

@@ -60,7 +60,7 @@ assumptions, ledger, and verification before acting.
 `worktree-to-pr` is mandatory. Every PR requires current-head/base `pr-quality-gate.yml` and one
 current-head `pr-leak-review`; semantic review runs only when explicitly requested.
 Applicable UI/API surface gates still bind.
-`[AI]` merges by default. One worktree per repo per plan; Phase 0 opens none.
+`[AI]` merges by default. At most one worktree per repo per plan; Phase 0 opens none.
 
 **See**: [Delivery Mode](./repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 

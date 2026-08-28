@@ -33,9 +33,6 @@ The calling context will:
 8. Move plan folder to plans/done/ using git mv
 9. Show git status with modified files
 10. Wait for user commit approval
-11. After the final delivery for each repository is pushed or merged, run the exact-path worktree
-    cleanup immediately. Build the [Delivery Branch Inventory](../../../conventions/structure/plans/worktree-specification.md#delivery-branch-inventory), then perform every canonical [mandatory pre-removal check](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md), including the canonical PR-mode proof: exact merged PR/head plus either a matching live
-    `origin/<branch>` or verified GitHub automatic deletion under an enabled repository setting, and
-    the no-unpushed check. Only then use non-force `git worktree remove <exact-path>` without a
-    confirmation prompt. Retain and escalate any mismatch; never remove a repository root, wildcard
-    path, or another actor's worktree.
+11. After the final delivery for each repository is pushed or merged, run the complete canonical
+    [Worktree and Artifact Cleanup gate](../../../development/workflow/worktree-and-artifact-cleanup.md)
+    immediately. Build the [Delivery Branch Inventory](../../../conventions/structure/plans/worktree-specification.md#delivery-branch-inventory), perform every mandatory pre-removal check, then clean all three eligible classes: the exact worktree, eligible plan-created branches, and plan-local regenerable build output. Preserve diagnostics and shared caches, retain and escalate active/ambiguous/partial/fail state, and apply the bare-repository remote-branch-before-worktree ordering exception. Never force-remove, prune shared state, or remove a repository root, wildcard path, or another actor's worktree.

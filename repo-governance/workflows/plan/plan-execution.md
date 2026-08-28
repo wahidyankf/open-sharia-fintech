@@ -44,7 +44,7 @@ outputs:
 ## Contents
 
 - [Execution Mode](./plan-execution/execution-mode.md) — orchestrator role.
-- [How to Execute](./plan-execution/how-to-execute.md) — 12 actions.
+- [How to Execute](./plan-execution/how-to-execute.md) — 12 actions through complete three-class cleanup.
 - [Orchestration Model](./plan-execution/orchestration-model.md) — delegation rule.
 - [Agent Selection](./plan-execution/agent-selection.md) — picking heuristics.
 - [Fan-Out Shape](./plan-execution/fan-out-ordering-and-delivery-shape.md) — N+1, DAG.
@@ -88,7 +88,7 @@ outputs:
 - [Paired Handoff](./plan-execution/finalization-paired-repository-terminal-handoff.md) — successor pin.
 - [Task Rules](./plan-execution/task-management-rules-and-termination.md) — termination.
 - [Example Usage](./plan-execution/example-usage-and-iteration-example.md) — invocations.
-- [Safety Features](./plan-execution/safety-features-and-plan-specific-validation.md) — checker scope.
+- [Safety Features](./plan-execution/safety-features-and-plan-specific-validation.md) — checker scope and complete cleanup safety.
 - [Related Workflows](./plan-execution/related-workflows-and-success-metrics.md) — metrics.
 - [Notes](./plan-execution/notes.md) — characteristics.
 - [TDD/Principles](./plan-execution/tdd-principles-conventions-agents.md) — governance.

@@ -28,3 +28,9 @@ Every non-trivial task list **and** plan delivery checklist declares an explicit
 The DAG's **independent-node width** is what the orchestrator fans out to — N only caps that width, it never creates it. Establish the DAG _before_ dispatching, not after: two nodes are independent only when neither reads what the other writes, so a shared output file, a shared branch, or an ordering constraint makes them dependent however separable they appear. **Cleanup is the terminal node**, depending on every other node, so it can never remove an artifact something still in flight needs.
 
 Task lists express this via `blocks` / `blockedBy`; `delivery.md` expresses it as phases/steps plus a `## Parallelization Model` section — see the [Plans Organization Convention](../../../conventions/structure/plans.md) and the [Agent Workflow Orchestration Convention](../../agents/agent-workflow-orchestration.md).
+
+For a plan spanning repositories, the `## Parallelization Model` also records its resource schedule.
+Logical independence does not by itself authorize overlapping the plan's resource-heavy worktree
+provisioning, toolchain setup, builds, or validation: those run one repository at a time by default.
+An exception records the concrete operational need and evidence that machine, disk, runner, and risk
+controls can absorb the overlap.

@@ -25,9 +25,9 @@ pure-docs, single-file, trivial plans included.
    Scoped to the single repository `plan-checker` runs in (confirm via `git remote get-url origin` or
    `repo-config.yml`). Collect every worktree path named: the top-level declaration, every `Worktree`
    column value in `### Delivery Boundaries`, and any other `worktrees/<...>/` path mentioned. More
-   than one distinct path for this repo: **HIGH** — the cap permits exactly one worktree per
-   repository per plan, reused across every delivery unit; a second distinct path is a defect even if
-   each is individually well-formatted.
+   than one distinct path for this repo: **HIGH** — the cap permits at most one worktree per
+   repository per plan, reused across every delivery unit; a second distinct path is a defect even
+   if each is individually well-formatted.
 6. **Identity record and initialized inventory** — `## Worktree` contains a Provisioned Worktree
    Identity with exact path, initial branch, creator, and UTC creation time, plus a Delivery Branch
    Inventory whose initial branch entry is `provisioned`/`active` and proves the exact creation command

@@ -47,6 +47,11 @@ The basename aligns identity, not absolute paths: each repository owns its own
 `<repo-root>/worktrees/<shared-basename>/`. The branch mapping may contain `not applicable` for a
 direct-main unit, but all corresponding short-lived branches use the same non-empty value.
 
+Shared identity is a traceability rule, not a synchronized-merge gate. Each repository's parity PR
+merges as soon as its own hardened prerequisites and merge opportunity permit; never hold a ready
+PR solely to align its merge time with a sibling. Until convergence, record the unfinished
+counterpart as a sibling obligation.
+
 ## Preflight and Final Assertions
 
 Preflight passes only when every intended path and branch has been probed and the common record is
@@ -81,3 +86,5 @@ preflight record and final assertions make the judgment auditable.
   and propagates parity identity into plans.
 - [Rules Propagation](../../workflows/rules/rules-propagation.md) — one-repo runs that preserve the
   same identity in the sibling obligation.
+- [PRs Open at Delivery Boundaries](../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules-continued.md)
+  — repositories merge ready parity PRs independently and record the unfinished counterpart.

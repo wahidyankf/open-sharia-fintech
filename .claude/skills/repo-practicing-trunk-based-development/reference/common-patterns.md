@@ -68,8 +68,9 @@ gh pr create --draft --base main
 # which would break linear history)
 git branch -d experimental-graphql
 
-# If rejecting: Delete branch
-git branch -D experimental-graphql
+# If rejecting: preserve diagnostics, prove this self-created branch has no unpushed work worth
+# retaining, then follow the canonical non-force plan-created branch cleanup. If its checks cannot
+# pass, retain and escalate the branch; never substitute `git branch -D`.
 ```
 
 ## Pattern 3: External Contribution

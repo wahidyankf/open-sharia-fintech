@@ -27,4 +27,12 @@ any write to a repo-rules surface. Neither _fails_. The reminder is warn-only by
 so that it can never deadlock the propagation workflow's own writes — and a check that cannot fail
 is not coverage. A blocking variant was considered and declined; enforcement is review-time.
 
-A rule that should hold everywhere is created with `repo-rules-maker` in one repo and then carried across the OSE repositories — via the [plan-multi-repo-parity-planning workflow](../../../workflows/plan/plan-multi-repo-parity-planning.md) when the change is planned, or an equivalent per-repo session otherwise — so the same rule text lands elsewhere rather than being retyped by hand per repo. `ose-private` receives it in real time; no other repository is a propagation target. See [Related Repositories §Sync cadence](../../../../docs/reference/related-repositories.md#sync-cadence) for the full policy and rationale.
+A portable rule is authored with `repo-rules-maker` in one repository per rules-propagation run.
+When the run finishes, Step 9 records the other OSE repository as a sibling obligation and a later
+run carries the same canonical change there; no other repository is a propagation target. Each
+repository's ready PR merges on its own hardened prerequisites and merge opportunity — never hold
+one solely to synchronize with its sibling — while the recorded obligation keeps any temporary gap
+visible until convergence. Use
+[plan-multi-repo-parity-planning](../../../workflows/plan/plan-multi-repo-parity-planning.md) for a
+planned cross-repository change and see
+[Related Repositories §Sync cadence](../../../../docs/reference/related-repositories.md#sync-cadence).
