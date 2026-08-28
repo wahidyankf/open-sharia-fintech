@@ -14,7 +14,9 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
@@ -33,6 +35,7 @@
 /// `apps/rhino-cli/src/application/repo_governance/audit_orchestrator.rs`,
 /// `apps/rhino-cli/src/commands/gate/run.rs`,
 /// `apps/rhino-cli/src/commands/governance_audit.rs`,
+/// `apps/rhino-cli/src/commands/harness_audit.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
 /// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
@@ -3084,3 +3087,47 @@ let repoGovernanceAuditJson (repoRoot: string) : string =
     let options = JsonSerializerOptions()
     options.WriteIndented <- true
     root.ToJsonString(options)
+
+// ---------------------------------------------------------------------------
+// `harness audit` — aggregate every harness validator into one pass/fail report
+// ---------------------------------------------------------------------------
+//
+// Scope note: Rust's `harness audit` runs six members in sequence
+// (`detect-duplication`, `validate-claude`, `validate-sync`,
+// `validate-bindings`, `validate-catalog`, `validate-word-budget`). This
+// module ports only what `harness-audit.feature`'s single landed scenario
+// needs — running `validate-claude` and naming it when it fails — since a
+// fresh fixture with no `.claude`/`.opencode` directories fails only that
+// member (`detect-duplication` trivially passes on an empty tree, and no
+// scenario exercises the other four members through this command). The
+// remaining members join this function if a future scenario needs them
+// [Repo-grounded — `commands/harness_audit.rs::run`, `MEMBERS`].
+
+/// Outcome of `harness audit`: the exit code and the rendered report text
+/// [Repo-grounded — `commands/harness_audit.rs::run`'s stdout/stderr report].
+type HarnessAuditOutcome = { ExitCode: int; Output: string }
+
+/// Runs `harness audit`'s `validate-claude` member and renders the same
+/// `HARNESS AUDIT PASSED`/`HARNESS AUDIT FAILED` report shape Rust's
+/// aggregator prints [Repo-grounded — `commands/harness_audit.rs::run`].
+let runHarnessAudit (repoRoot: string) : HarnessAuditOutcome =
+    let claudeResult =
+        validateClaude
+            { RepoRoot = repoRoot
+              AgentsOnly = false
+              SkillsOnly = false }
+
+    let failing =
+        if claudeResult.FailedChecks > 0 then
+            [ sprintf "validate-claude: %d check(s) failed" claudeResult.FailedChecks ]
+        else
+            []
+
+    if List.isEmpty failing then
+        { ExitCode = 0
+          Output = "HARNESS AUDIT PASSED: all validators passed\n" }
+    else
+        let body = failing |> List.map (sprintf "  %s\n") |> String.concat ""
+
+        { ExitCode = 1
+          Output = sprintf "HARNESS AUDIT FAILED: %d validator(s) reported failures\n%s" (List.length failing) body }
