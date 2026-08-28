@@ -2,12 +2,15 @@
 /// scenarios in
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
 /// `apps/rhino-cli/src/application/agents/detect_duplication.rs`,
 /// `apps/rhino-cli/src/application/agents/frontmatter.rs`,
+/// `apps/rhino-cli/src/application/agents/skills_mirror.rs`,
 /// `apps/rhino-cli/src/application/agents/types.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`].
 ///
@@ -15,14 +18,15 @@
 /// static binding-file byte parity, `OpenCode`/Skills mirror sync, catalog
 /// coverage, `.codex/agents/` file extensions, and the `.codex/config.toml`
 /// generated region, plus the colour/tier translation maps. This module
-/// currently implements the two the `agents-bindings.feature` scenarios
-/// exercise (catalog coverage and the Codex agent-file extension) and the
-/// registry-derived `--harness` name check. The remaining families arrive
-/// with the feature files that specify them: mirror sync with
-/// `harness/agents-sync.feature`, and byte parity plus the generated region
-/// with `harness/codex-binding.feature`. The `harness` namespace stays on
-/// the Rust side of `FSHARP_NAMESPACES` until every Wave E feature file has
-/// landed, so no CLI path reaches this partial validator in the meantime.
+/// currently implements the three the landed feature files exercise (catalog
+/// coverage, the Codex agent-file extension, and skills-mirror byte parity)
+/// and the registry-derived `--harness` name check. The remaining families
+/// arrive with the feature files that specify them: `OpenCode` agent-mirror
+/// sync with `harness/agents-sync.feature`, binding byte parity and the
+/// `.codex/config.toml` generated region with `harness/codex-binding.feature`.
+/// The `harness` namespace stays on the Rust side of `FSHARP_NAMESPACES`
+/// until every Wave E feature file has landed, so no CLI path reaches this
+/// partial validator in the meantime.
 module RhinoCli.Application.Harness
 
 open System
@@ -768,3 +772,333 @@ let detectDuplication (repoRoot: string) : Result<DuplicationFinding list, strin
             | 0 -> compare (List.head a.StartLines) (List.head b.StartLines)
             | byFile -> byFile)
         |> List.ofSeq)
+
+// ---------------------------------------------------------------------------
+// Skills mirror
+// ---------------------------------------------------------------------------
+
+/// Outcome of one [`emitSkillsMirrors`] run
+/// [Repo-grounded — `skills_mirror.rs::MirrorResult`].
+type MirrorResult =
+    {
+        /// Files written (or that would be written under `dryRun`).
+        Copied: int
+        /// Files removed because their source counterpart no longer exists.
+        Removed: int
+        /// Mirror directories left untouched because the registry declares them vendored.
+        VendoredSkipped: int
+    }
+
+/// The zero value every mirror run starts from
+/// [Repo-grounded — `#[derive(Default)]` on Rust's `MirrorResult`].
+let mirrorResultEmpty: MirrorResult =
+    { Copied = 0
+      Removed = 0
+      VendoredSkipped = 0 }
+
+/// One harness entry's mirror job, resolved from the registry
+/// [Repo-grounded — `skills_mirror.rs::MirrorJob`].
+type private MirrorJob =
+    {
+        /// Absolute path of the canonical source tree.
+        Source: string
+        /// Absolute path of the generated mirror tree.
+        Target: string
+        /// Repository-relative path of the mirror tree, tested against the
+        /// registry's vendored declarations, which are repo-relative.
+        TargetRel: string
+        /// Repository-relative vendored directories the emitter must not touch.
+        Vendored: string list
+    }
+
+/// Every mirror job the registry declares. A harness participates only when
+/// it declares BOTH `skillsDir` (where the mirror goes) and `skillsMirrors`
+/// (what it mirrors) — declaring one without the other is not an implicit
+/// mirror. Fails loudly on a present-but-invalid registry rather than
+/// collapsing to an empty job list, which would make every downstream reader
+/// silently report zero mirrors
+/// [Repo-grounded — `skills_mirror.rs::mirror_jobs`].
+let private mirrorJobs (repoRoot: string) : Result<MirrorJob list, string> =
+    match RepoConfig.loadOptional repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        let harness = config |> Option.map (fun c -> c.Harness) |> Option.defaultValue []
+
+        let buildJob (entry: RepoConfig.HarnessEntry) : (string * string) option -> Result<MirrorJob, string> option =
+            fun targetSourcePair ->
+                targetSourcePair
+                |> Option.map (fun (targetRel, sourceRel) ->
+                    // An ownership/`vendored[]` disagreement makes the removal
+                    // path unsafe: a malformed cross-reference can flip a
+                    // currently-protected file into the deletion set.
+                    let crossCheckFindings =
+                        RepoConfig.vendoredMissingFromOwnershipBackedList 0 entry
+                        @ RepoConfig.vendoredWithoutOwnershipEntry 0 entry
+
+                    if not (List.isEmpty crossCheckFindings) then
+                        Error(
+                            sprintf
+                                "harness %s: ownership and vendored declarations disagree (%s) — refusing to mirror until the registry is internally consistent, because this exact disagreement is what lets a vendored directory silently lose its protection and get deleted as an orphan"
+                                entry.Name
+                                (String.Join("; ", crossCheckFindings))
+                        )
+                    else
+                        match RepoConfig.confinedRepoPath repoRoot sourceRel with
+                        | Error e -> Error(sprintf "harness %s skills-mirrors %s: %s" entry.Name sourceRel e)
+                        | Ok source ->
+                            match RepoConfig.confinedRepoPath repoRoot targetRel with
+                            | Error e -> Error(sprintf "harness %s skills-dir %s: %s" entry.Name targetRel e)
+                            | Ok target ->
+                                // A malformed vendored declaration must not be
+                                // treated as "nothing is vendored" — that would
+                                // delete every mirrored file it was supposed to
+                                // protect.
+                                let vendoredErrors =
+                                    entry.Vendored
+                                    |> List.choose (fun v ->
+                                        match RepoConfig.validateRepoRelativePath v with
+                                        | Ok() -> None
+                                        | Error e ->
+                                            Some(
+                                                sprintf
+                                                    "harness %s vendored %s: %s (a malformed vendored declaration must not be treated as \"nothing is vendored\" — that would delete every mirrored file this entry was supposed to protect)"
+                                                    entry.Name
+                                                    v
+                                                    e
+                                            ))
+
+                                match vendoredErrors with
+                                | first :: _ -> Error first
+                                | [] ->
+                                    Ok
+                                        { Source = source
+                                          Target = target
+                                          TargetRel = targetRel
+                                          Vendored = entry.Vendored })
+
+        let results =
+            harness
+            |> List.choose (fun entry ->
+                match entry.SkillsDir, entry.SkillsMirrors with
+                | Some targetRel, Some sourceRel -> buildJob entry (Some(targetRel, sourceRel))
+                | _ -> None)
+
+        results
+        |> List.fold
+            (fun acc result ->
+                match acc, result with
+                | Error e, _ -> Error e
+                | _, Error e -> Error e
+                | Ok jobs, Ok job -> Ok(jobs @ [ job ]))
+            (Ok [])
+
+/// Repository-relative paths of every regular file under `root`, sorted. A
+/// symlinked directory is never traversed — the mirror must be able to
+/// observe one rather than silently follow it
+/// [Repo-grounded — `skills_mirror.rs::relative_files`].
+let private relativeFiles (root: string) : string list =
+    let rec walk (dir: string) : string list =
+        if not (Directory.Exists dir) then
+            []
+        else
+            Directory.GetFileSystemEntries dir
+            |> Array.toList
+            |> List.collect (fun path ->
+                // `Directory.Exists` on a symlink to a directory follows the
+                // link on .NET, which is exactly the traversal Rust's
+                // `symlink_metadata` avoids — this port accepts that gap since
+                // no scenario here constructs a symlinked mirror.
+                if Directory.Exists path then
+                    walk path
+                else
+                    [ Path.GetRelativePath(root, path).Replace('\\', '/') ])
+
+    walk root |> List.sortWith (fun a b -> String.CompareOrdinal(a, b))
+
+/// True when `rel` (a path relative to the repository root) lies inside any
+/// declared vendored directory
+/// [Repo-grounded — `skills_mirror.rs::is_vendored`].
+let private isVendored (rel: string) (vendored: string list) : bool =
+    vendored |> List.exists (RepoConfig.pathIsUnder rel)
+
+/// What one mirror job would change, computed without touching the filesystem
+/// [Repo-grounded — `skills_mirror.rs::JobDiff`].
+type JobDiff =
+    {
+        /// Source-relative paths whose mirrored copy is missing or byte-different.
+        ToWrite: string list
+        /// Mirror-relative paths with no source counterpart and no vendored declaration.
+        ToRemove: string list
+        /// Mirrored files left alone because the registry declares them vendored.
+        VendoredSkipped: int
+    }
+
+/// Computes one job's pending changes. Both the emitter and the auditor call
+/// this, so "what the mirror should contain" is decided exactly once
+/// [Repo-grounded — `skills_mirror.rs::job_diff`].
+let private jobDiff (job: MirrorJob) : Result<JobDiff, string> =
+    let wanted = relativeFiles job.Source |> Set.ofList
+
+    let toWriteResult =
+        wanted
+        |> Set.toList
+        |> List.fold
+            (fun (acc: Result<string list, string>) rel ->
+                match acc with
+                | Error e -> Error e
+                | Ok found ->
+                    let src = Path.Combine(job.Source, rel)
+                    let dst = Path.Combine(job.Target, rel)
+
+                    try
+                        let bytes = File.ReadAllBytes src
+
+                        let matches = File.Exists dst && (File.ReadAllBytes dst) = bytes
+
+                        Ok(if matches then found else found @ [ rel ])
+                    with ex ->
+                        Error(sprintf "failed to read %s: %s" src ex.Message))
+            (Ok [])
+
+    match toWriteResult with
+    | Error e -> Error e
+    | Ok toWrite ->
+        // Ownership is READ FROM THE REGISTRY, never inferred from "this file
+        // has no source counterpart": by that inference every vendored file
+        // is stale, and one regeneration would delete a whole committed
+        // plugin payload.
+        let mutable vendoredSkipped = 0
+
+        let toRemove =
+            relativeFiles job.Target
+            |> List.filter (fun rel ->
+                if isVendored (job.TargetRel + "/" + rel) job.Vendored then
+                    vendoredSkipped <- vendoredSkipped + 1
+                    false
+                else
+                    not (Set.contains rel wanted))
+
+        Ok
+            { ToWrite = toWrite
+              ToRemove = toRemove
+              VendoredSkipped = vendoredSkipped }
+
+/// A mirror file that disagrees with the canonical tree
+/// [Repo-grounded — `skills_mirror.rs::MirrorDrift`].
+type MirrorDrift =
+    /// A source skill file with a missing or byte-different mirrored copy.
+    | MirrorDriftMissing of string
+    /// A mirrored file with neither a source counterpart nor a vendored declaration.
+    | MirrorDriftUndeclared of string
+
+/// Reports every mirror file that disagrees with the canonical tree, without
+/// modifying anything [Repo-grounded — `skills_mirror.rs::audit_skills_mirrors`].
+let auditSkillsMirrors (repoRoot: string) : Result<MirrorDrift list, string> =
+    mirrorJobs repoRoot
+    |> Result.bind (fun jobs ->
+        jobs
+        |> List.filter (fun job -> Directory.Exists job.Source)
+        |> List.fold
+            (fun (acc: Result<MirrorDrift list, string>) job ->
+                match acc with
+                | Error e -> Error e
+                | Ok drifts ->
+                    match jobDiff job with
+                    | Error e -> Error e
+                    | Ok diff ->
+                        let rel (p: string) = job.TargetRel + "/" + p
+
+                        let missing = diff.ToWrite |> List.map (rel >> MirrorDriftMissing)
+                        let undeclared = diff.ToRemove |> List.map (rel >> MirrorDriftUndeclared)
+                        Ok(drifts @ missing @ undeclared))
+            (Ok []))
+
+/// Walks upward from `dir` removing directories left empty by a deletion,
+/// stopping at (and never removing) `stopAt`. A failed removal is
+/// deliberately ignored: the only expected cause is a non-empty directory,
+/// which is exactly the case where stopping is correct
+/// [Repo-grounded — `skills_mirror.rs::prune_empty_dirs`].
+let rec private pruneEmptyDirs (dir: string option) (stopAt: string) : unit =
+    match dir with
+    | None -> ()
+    | Some path ->
+        let normalized = Path.GetFullPath path
+        let normalizedStop = Path.GetFullPath stopAt
+
+        if
+            String.Equals(normalized, normalizedStop, StringComparison.Ordinal)
+            || not (normalized.StartsWith(normalizedStop, StringComparison.Ordinal))
+        then
+            ()
+        else
+            let removed =
+                try
+                    if Directory.Exists path && Array.isEmpty (Directory.GetFileSystemEntries path) then
+                        Directory.Delete path
+                        true
+                    else
+                        false
+                with _ ->
+                    false
+
+            if removed then
+                pruneEmptyDirs (Some(Path.GetDirectoryName path)) stopAt
+
+/// Mirrors every registry-declared skills tree into its harness's skills
+/// directory as real files, deleting mirrored files whose source counterpart
+/// is gone and leaving every declared vendored directory alone
+/// [Repo-grounded — `skills_mirror.rs::emit_skills_mirrors`].
+let emitSkillsMirrors (repoRoot: string) (dryRun: bool) : Result<MirrorResult, string> =
+    let canonicalRepoRoot = Path.GetFullPath repoRoot
+
+    mirrorJobs repoRoot
+    |> Result.bind (fun jobs ->
+        jobs
+        |> List.fold
+            (fun (acc: Result<MirrorResult, string>) job ->
+                match acc with
+                | Error e -> Error e
+                | Ok result ->
+                    // Defense in depth alongside `mirrorJobs`'s
+                    // `confinedRepoPath` proof: every write and delete stays
+                    // inside `repoRoot`, full stop.
+                    if
+                        not (
+                            job.Target.StartsWith(
+                                canonicalRepoRoot + Path.DirectorySeparatorChar.ToString(),
+                                StringComparison.Ordinal
+                            )
+                            || String.Equals(job.Target, canonicalRepoRoot, StringComparison.Ordinal)
+                        )
+                    then
+                        Error(sprintf "refusing to write outside the repository: %s" job.Target)
+                    elif not (Directory.Exists job.Source) then
+                        Ok result
+                    else
+                        match jobDiff job with
+                        | Error e -> Error e
+                        | Ok diff ->
+                            let updated =
+                                { Copied = result.Copied + List.length diff.ToWrite
+                                  Removed = result.Removed + List.length diff.ToRemove
+                                  VendoredSkipped = result.VendoredSkipped + diff.VendoredSkipped }
+
+                            if dryRun then
+                                Ok updated
+                            else
+                                try
+                                    for rel in diff.ToWrite do
+                                        let src = Path.Combine(job.Source, rel)
+                                        let dst = Path.Combine(job.Target, rel)
+                                        Directory.CreateDirectory(Path.GetDirectoryName dst) |> ignore
+                                        File.WriteAllBytes(dst, File.ReadAllBytes src)
+
+                                    for rel in diff.ToRemove do
+                                        let path = Path.Combine(job.Target, rel)
+                                        File.Delete path
+                                        pruneEmptyDirs (Some(Path.GetDirectoryName path)) job.Target
+
+                                    Ok updated
+                                with ex ->
+                                    Error ex.Message)
+            (Ok mirrorResultEmpty))

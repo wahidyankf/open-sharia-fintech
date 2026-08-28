@@ -554,3 +554,119 @@ let ``detectDuplication ignores a skill directory with no SKILL.md`` () =
     |> ignore
 
     Assert.Equal(Ok([]: DuplicationFinding list), detectDuplication root)
+
+// ---------------------------------------------------------------------------
+// Skills mirror
+// ---------------------------------------------------------------------------
+
+let private mirrorConfig (extra: string) : string =
+    "harness:\n"
+    + "  - name: codex\n"
+    + "    tier: generated\n"
+    + "    skills-dir: .agents/skills\n"
+    + "    skills-mirrors: .claude/skills\n"
+    + extra
+
+[<Fact>]
+let ``mirrorResultEmpty is all zero`` () =
+    Assert.Equal(0, mirrorResultEmpty.Copied)
+    Assert.Equal(0, mirrorResultEmpty.Removed)
+    Assert.Equal(0, mirrorResultEmpty.VendoredSkipped)
+
+[<Fact>]
+let ``emitSkillsMirrors is a no-op when no harness entry declares both skills-dir and skills-mirrors`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) "harness:\n  - { name: claude-code, tier: source }\n"
+
+    Assert.Equal(Ok mirrorResultEmpty, emitSkillsMirrors root false)
+
+[<Fact>]
+let ``emitSkillsMirrors propagates a malformed registry as an error`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) "harness: [this is not a mapping list\n"
+
+    match emitSkillsMirrors root false with
+    | Ok _ -> failwith "expected the malformed registry to fail"
+    | Error _ -> ()
+
+[<Fact>]
+let ``emitSkillsMirrors rejects a vendored entry with no matching ownership declaration`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) (mirrorConfig "    vendored: [.agents/skills/plugin]\n")
+    writeFile (Path.Combine(root, ".claude", "skills", "alpha", "SKILL.md")) "body\n"
+
+    match emitSkillsMirrors root false with
+    | Ok _ -> failwith "expected the vendored/ownership disagreement to fail"
+    | Error message -> Assert.Contains("no matching harness[0].ownership entry", message)
+
+[<Fact>]
+let ``emitSkillsMirrors under dryRun reports the pending copy without writing`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) (mirrorConfig "")
+    writeFile (Path.Combine(root, ".claude", "skills", "alpha", "SKILL.md")) "body\n"
+
+    match emitSkillsMirrors root true with
+    | Error e -> failwith e
+    | Ok result ->
+        Assert.Equal(1, result.Copied)
+        Assert.False(File.Exists(Path.Combine(root, ".agents", "skills", "alpha", "SKILL.md")))
+
+[<Fact>]
+let ``emitSkillsMirrors removes a stale mirrored file and prunes its now-empty directory`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) (mirrorConfig "")
+    writeFile (Path.Combine(root, ".claude", "skills", "alpha", "SKILL.md")) "body\n"
+
+    match emitSkillsMirrors root false with
+    | Error e -> failwith e
+    | Ok _ -> ()
+
+    // The source skill is gone; its mirror is now an orphan.
+    Directory.Delete(Path.Combine(root, ".claude", "skills", "alpha"), true)
+
+    match emitSkillsMirrors root false with
+    | Error e -> failwith e
+    | Ok result ->
+        Assert.Equal(1, result.Removed)
+        Assert.False(File.Exists(Path.Combine(root, ".agents", "skills", "alpha", "SKILL.md")))
+        Assert.False(Directory.Exists(Path.Combine(root, ".agents", "skills", "alpha")))
+
+[<Fact>]
+let ``auditSkillsMirrors does not flag a vendored directory with no source counterpart`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, "repo-config.yml"))
+        (mirrorConfig
+            "    vendored: [.agents/skills/plugin]\n    ownership:\n      - path: .agents/skills/plugin\n        class: vendored\n        reason: third-party payload\n")
+
+    writeFile (Path.Combine(root, ".agents", "skills", "plugin", "SKILL.md")) "third-party\n"
+
+    match auditSkillsMirrors root with
+    | Error e -> failwith e
+    | Ok drift -> Assert.Equal<MirrorDrift list>([], drift)
+
+[<Fact>]
+let ``emitSkillsMirrors treats a missing source directory as a no-op, not an error`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) (mirrorConfig "")
+
+    Assert.Equal(Ok mirrorResultEmpty, emitSkillsMirrors root false)
+
+[<Fact>]
+let ``emitSkillsMirrors rejects a skills-dir that escapes the repository root`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, "repo-config.yml"))
+        ("harness:\n"
+         + "  - name: codex\n"
+         + "    tier: generated\n"
+         + "    skills-dir: ../outside\n"
+         + "    skills-mirrors: .claude/skills\n")
+
+    writeFile (Path.Combine(root, ".claude", "skills", "alpha", "SKILL.md")) "body\n"
+
+    match emitSkillsMirrors root false with
+    | Ok _ -> failwith "expected an out-of-repository skills-dir to fail"
+    | Error message -> Assert.Contains("skills-dir", message)
