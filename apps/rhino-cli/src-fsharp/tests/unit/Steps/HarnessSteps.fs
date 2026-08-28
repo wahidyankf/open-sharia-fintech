@@ -72,6 +72,8 @@ type HarnessSteps() =
     let mutable fixtureRoleSubfolders: string list = []
     let mutable configAfterFirstRun: string option = None
     let mutable configAfterSecondRun: string option = None
+    let mutable pushRangePaths: string list = []
+    let mutable lastPrePushOutcome: Harness.PrePushWordBudgetOutcome option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -338,6 +340,32 @@ type HarnessSteps() =
         let path = Path.Combine(dir, fileStem + ".md")
         File.WriteAllText(path, sprintf "---\nname: %s\ndescription: %s\n---\n%s" name description body)
         path
+
+    /// Mirrors the live `governance-word-budget:` surfaces for `AGENTS.md` and
+    /// `RTK.md` in `repo-config.yml` (650/750/750), scoped to just the two
+    /// surfaces this feature's scenarios name — not the full 9-surface table
+    /// `GovernanceWordBudgetSteps.fs`'s own canonical fixture carries.
+    let wordBudgetFixtureConfig: Governance.BudgetConfig =
+        let surface (glob: string) : Governance.Surface =
+            { Glob = glob
+              Target = 650UL
+              Warn = 750UL
+              Fail = 750UL }
+
+        { Surfaces = [ surface "AGENTS.md"; surface "RTK.md" ]
+          ResolvedTree =
+            { Root = "CLAUDE.md"
+              Target = 1200UL
+              Warn = 1500UL
+              Fail = 1500UL } }
+
+    /// `n` single-character, single-space-separated "words" — the same
+    /// fixture-construction trick `GovernanceWordBudgetSteps.fs`'s `nWords` uses.
+    let nWordsBudget (n: int) : string =
+        String.Join(" ", Array.create (max 0 n) "w")
+
+    let writeBudgetFixture (root: string) (relPath: string) (n: int) : unit =
+        File.WriteAllText(Path.Combine(root, relPath), nWordsBudget n)
 
     [<Given>]
     member _.``a \.claude/ directory with valid agents and skills``() =
@@ -991,6 +1019,59 @@ type HarnessSteps() =
         | Some first, Some second -> Assert.Equal(first, second)
         | _ -> failwith "config.toml was not captured after both runs"
 
+    // ---- @governance-word-budget-pre-push ----
+
+    [<Given>]
+    member _.``my push range modifies "([^"]+)"``(path: string) = pushRangePaths <- [ path ]
+
+    [<Given>]
+    member _.``my push range modifies only "([^"]+)"``(path: string) = pushRangePaths <- [ path ]
+
+    [<Given>]
+    member _.``"([^"]+)" exceeds its fail ceiling``(path: string) =
+        writeBudgetFixture (scenarioRoot ()) path 800
+
+    [<Given>]
+    member _.``"([^"]+)" is within its fail ceiling``(path: string) =
+        writeBudgetFixture (scenarioRoot ()) path 10
+
+    [<When>]
+    member _.``the pre-push hook runs``() =
+        lastPrePushOutcome <-
+            Some(Harness.runPrePushWordBudgetGate (scenarioRoot ()) wordBudgetFixtureConfig pushRangePaths)
+
+    [<Then>]
+    member _.``the word-budget gate runs``() =
+        match lastPrePushOutcome with
+        | Some outcome -> Assert.True(outcome.GateInvoked)
+        | None -> failwith "the pre-push hook has not run in this scenario"
+
+    [<Then>]
+    member _.``the word-budget validation target is not invoked``() =
+        match lastPrePushOutcome with
+        | Some outcome -> Assert.False(outcome.GateInvoked)
+        | None -> failwith "the pre-push hook has not run in this scenario"
+
+    [<Then>]
+    member _.``the word-budget validation target runs and exits 0``() =
+        match lastPrePushOutcome with
+        | Some outcome ->
+            Assert.True(outcome.GateInvoked)
+            Assert.Equal(0, outcome.ExitCode)
+        | None -> failwith "the pre-push hook has not run in this scenario"
+
+    [<Then>]
+    member _.``the push is aborted with a non-zero exit``() =
+        match lastPrePushOutcome with
+        | Some outcome -> Assert.NotEqual(0, outcome.ExitCode)
+        | None -> failwith "the pre-push hook has not run in this scenario"
+
+    [<Then>]
+    member _.``the push proceeds``() =
+        match lastPrePushOutcome with
+        | Some outcome -> Assert.Equal(0, outcome.ExitCode)
+        | None -> failwith "the pre-push hook has not run in this scenario"
+
     [<Given>]
     member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
         let root = scenarioRoot ()
@@ -1428,6 +1509,10 @@ module private FeatureRunner =
     let runCodexBinding (scenarioTitle: string) : unit =
         runIn "codex-binding.feature" scenarioTitle
 
+    /// Runs one scenario of `governance-word-budget-pre-push.feature`.
+    let runWordBudgetPrePush (scenarioTitle: string) : unit =
+        runIn "governance-word-budget-pre-push.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1568,3 +1653,19 @@ let ``Agent identity comes from the name frontmatter, not the source subfolder``
 [<Fact>]
 let ``Regenerating rewrites only the delimited region of .codex/config.toml`` () =
     FeatureRunner.runCodexBinding "Regenerating rewrites only the delimited region of .codex/config.toml"
+
+[<Fact>]
+let ``Pushing an over-budget instruction file is blocked`` () =
+    FeatureRunner.runWordBudgetPrePush "Pushing an over-budget instruction file is blocked"
+
+[<Fact>]
+let ``Pushing changes that do not touch instruction files skips the gate`` () =
+    FeatureRunner.runWordBudgetPrePush "Pushing changes that do not touch instruction files skips the gate"
+
+[<Fact>]
+let ``Pushing an in-budget instruction-file edit passes`` () =
+    FeatureRunner.runWordBudgetPrePush "Pushing an in-budget instruction-file edit passes"
+
+[<Fact>]
+let ``Pushing an RTK-only change invokes its configured gate`` () =
+    FeatureRunner.runWordBudgetPrePush "Pushing an RTK-only change invokes its configured gate"
