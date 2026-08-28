@@ -873,3 +873,314 @@ let ``syncAll with SkillsOnly is a no-op that still reports success`` () =
     | Ok result ->
         Assert.Equal(syncResultEmpty, result)
         Assert.False(File.Exists(Path.Combine(root, ".opencode", "agents", "unsynced-agent.md")))
+
+// ---------------------------------------------------------------------------
+// Claude Code agent/skill validation — branches
+// agents-validate-claude.feature's 5 scenarios never reach
+// ---------------------------------------------------------------------------
+
+let private fullOpts (root: string) : ValidateClaudeOptions =
+    { RepoRoot = root
+      AgentsOnly = false
+      SkillsOnly = false }
+
+let private failedCheck (result: ValidationResult) (namePart: string) : ValidationCheck option =
+    result.Checks
+    |> List.tryFind (fun c -> c.Status = "failed" && c.Name.Contains(namePart, StringComparison.Ordinal))
+
+let private passedCheck (result: ValidationResult) (namePart: string) : ValidationCheck option =
+    result.Checks
+    |> List.tryFind (fun c -> c.Status = "passed" && c.Name.Contains(namePart, StringComparison.Ordinal))
+
+[<Fact>]
+let ``validateClaude fails an agent with an unrecognized tool`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "bad-tool-agent.md"))
+        "---\nname: bad-tool-agent\ndescription: fixture\ntools: Nonsense\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Valid Tools").IsSome)
+
+[<Fact>]
+let ``validateClaude accepts a call-form tool entry`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "call-form-agent.md"))
+        "---\nname: call-form-agent\ndescription: fixture\ntools: Agent(swe-typescript-dev)\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((passedCheck result "Valid Tools").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent with an invalid model`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "bad-model-agent.md"))
+        "---\nname: bad-model-agent\ndescription: fixture\ntools: Read\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Valid Model").IsSome)
+
+[<Fact>]
+let ``validateClaude accepts a full claude-* model id`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "full-model-agent.md"))
+        "---\nname: full-model-agent\ndescription: fixture\ntools: Read\nmodel: claude-opus-4-7\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((passedCheck result "Valid Model").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent with an invalid color`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "bad-color-agent.md"))
+        "---\nname: bad-color-agent\ndescription: fixture\ntools: Read\nmodel: sonnet\ncolor: magenta\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Valid Color").IsSome)
+
+[<Fact>]
+let ``validateClaude skips the color check when color is absent`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "no-color-agent.md"))
+        "---\nname: no-color-agent\ndescription: fixture\ntools: Read\nmodel: sonnet\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.False(result.Checks |> List.exists (fun c -> c.Name.Contains("Valid Color")))
+
+[<Fact>]
+let ``validateClaude fails an agent referencing a missing skill`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "missing-skill-agent.md"))
+        "---\nname: missing-skill-agent\ndescription: fixture\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\n  - ghost-skill\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Skills Exist").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent whose frontmatter contains a comment`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "commented-agent.md"))
+        "---\nname: commented-agent\ndescription: fixture\n# a comment\ntools: Read\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "No Comments").IsSome)
+
+[<Fact>]
+let ``validateClaude warns on an unknown agent frontmatter field and a required-after-optional order`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "field-order-agent.md"))
+        "---\ntools: Read\nname: field-order-agent\ndescription: fixture\nbogus: yes\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Field Order").IsSome)
+
+    Assert.True(
+        result.Checks
+        |> List.exists (fun c -> c.Status = "warning" && c.Name.Contains("Unknown Field: bogus"))
+    )
+
+[<Fact>]
+let ``validateClaude requires Write and Bash tools for agents under generated-reports/`` () =
+    let baseDir = scratch ()
+    let root = Path.Combine(baseDir, "generated-reports", "case")
+    Directory.CreateDirectory root |> ignore
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "gr-agent.md"))
+        "---\nname: gr-agent\ndescription: fixture\ntools: Read\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Generated Reports Tools").IsSome)
+
+[<Fact>]
+let ``validateClaude passes generated-reports/ agents that declare Write and Bash`` () =
+    let baseDir = scratch ()
+    let root = Path.Combine(baseDir, "generated-reports", "case")
+    Directory.CreateDirectory root |> ignore
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "gr-ok-agent.md"))
+        "---\nname: gr-ok-agent\ndescription: fixture\ntools: Read, Write, Bash\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((passedCheck result "Generated Reports Tools").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent with malformed YAML colon spacing`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "bad-format-agent.md"))
+        "---\nname:bad-format-agent\ndescription: fixture\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Formatting").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent whose file is too short to contain frontmatter`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, ".claude", "agents", "too-short-agent.md")) "no frontmatter"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Syntax").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent with malformed YAML inside its frontmatter`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, ".claude", "agents", "bad-yaml-agent.md")) "---\nname: [unbalanced\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Parse").IsSome)
+
+[<Fact>]
+let ``validateClaude fails an agent with completely empty frontmatter`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, ".claude", "agents", "empty-frontmatter-agent.md")) "---\n\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+
+    match failedCheck result "Required Fields" with
+    | Some c ->
+        Assert.Contains("name", c.Actual)
+        Assert.Contains("description", c.Actual)
+        Assert.Contains("tools", c.Actual)
+    | None -> failwith "expected a Required Fields failure"
+
+[<Fact>]
+let ``validateClaude fails a skill directory with no SKILL.md`` () =
+    let root = scratch ()
+
+    Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "no-file-skill"))
+    |> ignore
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "SKILL.md Exists").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill with malformed YAML colon spacing`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "bad-format-skill", "SKILL.md"))
+        "---\nname:bad-format-skill\ndescription: fixture\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Formatting").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill whose file is too short to contain frontmatter`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, ".claude", "skills", "too-short-skill", "SKILL.md")) "x"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Syntax").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill with malformed YAML inside its frontmatter`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "bad-yaml-skill", "SKILL.md"))
+        "---\nname: [unbalanced\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "YAML Parse").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill missing its description field`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "no-desc-skill", "SKILL.md"))
+        "---\nname: no-desc-skill\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Description Field Required").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill missing its name field`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "no-name-skill", "SKILL.md"))
+        "---\ndescription: fixture\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Name Field Required").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill with an invalid name format`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "Bad_Name", "SKILL.md"))
+        "---\nname: Bad_Name\ndescription: fixture\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Name Format").IsSome)
+
+[<Fact>]
+let ``validateClaude fails a skill whose name field does not match its directory`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "dir-name-skill", "SKILL.md"))
+        "---\nname: other-name\ndescription: fixture\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Name Match").IsSome)
+
+[<Fact>]
+let ``validateClaude warns on an unknown skill frontmatter field`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "skills", "unknown-field-skill", "SKILL.md"))
+        "---\nname: unknown-field-skill\ndescription: fixture\nbogus: yes\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+
+    Assert.True(
+        result.Checks
+        |> List.exists (fun c -> c.Status = "warning" && c.Name.Contains("Unknown Field: bogus"))
+    )
+
+[<Fact>]
+let ``validateClaude fails with a directory-not-found check when \.claude/agents is missing`` () =
+    let root = scratch ()
+    Directory.CreateDirectory(Path.Combine(root, ".claude", "skills")) |> ignore
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Read Agents Directory").IsSome)
+
+[<Fact>]
+let ``validateClaude fails with a directory-not-found check when \.claude/skills is missing`` () =
+    let root = scratch ()
+    Directory.CreateDirectory(Path.Combine(root, ".claude", "agents")) |> ignore
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((failedCheck result "Read Skills Directory").IsSome)
+
+[<Fact>]
+let ``validateYamlFormattingRaw reports every misformatted line`` () =
+    let content = "---\nname:foo\ndescription: bar\n---\nBody.\n"
+    let check = validateYamlFormattingRaw "X" content
+    Assert.Equal("failed", check.Status)
+    Assert.Contains("missing space after colon", check.Message)

@@ -281,6 +281,43 @@ type HarnessSteps() =
                 | Error _ -> 1
             )
 
+    /// Writes a fully valid agent: every required and known optional field
+    /// present, so it triggers neither a failed nor a warning check.
+    let writeValidatedAgent (root: string) (name: string) (skills: string list) : string =
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, name + ".md")
+
+        let skillsBlock =
+            if skills.IsEmpty then
+                ""
+            else
+                "skills:\n" + String.Join("\n", skills |> List.map (sprintf "  - %s")) + "\n"
+
+        File.WriteAllText(
+            path,
+            sprintf
+                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n%s---\nBody.\n"
+                name
+                skillsBlock
+        )
+
+        path
+
+    /// Writes a fully valid skill: `SKILL.md` present with a `description`
+    /// and a `name` matching the directory.
+    let writeValidatedSkill (root: string) (name: string) : string =
+        let dir = Path.Combine(root, ".claude", "skills", name)
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, "SKILL.md")
+        File.WriteAllText(path, sprintf "---\nname: %s\ndescription: fixture skill\n---\nBody.\n" name)
+        path
+
+    let runValidateClaudeOnce (opts: Harness.ValidateClaudeOptions) : unit =
+        let r = Harness.validateClaude opts
+        lastResult <- Some r
+        lastExitCode <- Some(if r.FailedChecks = 0 then 0 else 1)
+
     [<Given>]
     member _.``a \.claude/ directory with valid agents and skills``() =
         let root = scenarioRoot ()
@@ -409,6 +446,110 @@ type HarnessSteps() =
         match (result ()).Checks |> List.tryFind (fun c -> c.Name = "Agent Count") with
         | Some c -> Assert.Equal("failed", c.Status)
         | None -> failwith "no Agent Count check found"
+
+    // ---- @agents-validate-claude ----
+
+    [<Given>]
+    member _.``a \.claude/ directory where all agents and skills are valid``() =
+        let root = scenarioRoot ()
+        writeValidatedAgent root "validate-claude-ok-agent" [] |> ignore
+        writeValidatedSkill root "validate-claude-ok-skill" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent is missing the required "description" field``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-missing-desc.md"),
+            "---\nname: validate-claude-missing-desc\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<Given>]
+    member _.``a \.claude/ directory containing two agent files declaring the same name``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        for suffix in [ "a"; "b" ] do
+            File.WriteAllText(
+                Path.Combine(dir, sprintf "validate-claude-dup-%s.md" suffix),
+                "---\nname: validate-claude-dup\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+            )
+
+    [<Given>]
+    member _.``a \.claude/ directory where agents are valid but skills have issues``() =
+        let root = scenarioRoot ()
+        writeValidatedAgent root "validate-claude-agents-only-ok" [] |> ignore
+        // Deliberately no SKILL.md — a skill-side failure --agents-only must not surface.
+        Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "validate-claude-broken-skill"))
+        |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where skills are valid but agents have issues``() =
+        let root = scenarioRoot ()
+        writeValidatedSkill root "validate-claude-skills-only-ok" |> ignore
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        // Deliberately missing description — an agent-side failure --skills-only must not surface.
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-broken-agent.md"),
+            "---\nname: validate-claude-broken-agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<When>]
+    member _.``the developer runs agents validate-claude``() =
+        let opts: Harness.ValidateClaudeOptions =
+            { RepoRoot = scenarioRoot ()
+              AgentsOnly = false
+              SkillsOnly = false }
+
+        runValidateClaudeOnce opts
+
+    [<When>]
+    member _.``the developer runs agents validate-claude with the --agents-only flag``() =
+        let opts: Harness.ValidateClaudeOptions =
+            { RepoRoot = scenarioRoot ()
+              AgentsOnly = true
+              SkillsOnly = false }
+
+        runValidateClaudeOnce opts
+
+    [<When>]
+    member _.``the developer runs agents validate-claude with the --skills-only flag``() =
+        let opts: Harness.ValidateClaudeOptions =
+            { RepoRoot = scenarioRoot ()
+              AgentsOnly = false
+              SkillsOnly = true }
+
+        runValidateClaudeOnce opts
+
+    [<Then>]
+    member _.``the output reports all checks as passing``() =
+        let notPassed = (result ()).Checks |> List.filter (fun c -> c.Status <> "passed")
+
+        Assert.Equal<Harness.ValidationCheck list>([], notPassed)
+
+    [<Then>]
+    member _.``the output identifies the agent and the missing field``() =
+        let identifies =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("Required Fields", StringComparison.Ordinal)
+                && c.Actual.Contains("description", StringComparison.Ordinal))
+
+        Assert.True(identifies.IsSome)
+
+    [<Then>]
+    member _.``the output reports the duplicate agent name``() =
+        let duplicate =
+            (result ()).Checks
+            |> List.tryFind (fun c -> c.Status = "failed" && c.Message = "Agent name already used")
+
+        Assert.True(duplicate.IsSome)
 
     // ---- @harness-purge ----
 
@@ -1085,6 +1226,10 @@ module private FeatureRunner =
     let runSync (scenarioTitle: string) : unit =
         runIn "agents-sync.feature" scenarioTitle
 
+    /// Runs one scenario of `agents-validate-claude.feature`.
+    let runValidateClaude (scenarioTitle: string) : unit =
+        runIn "agents-validate-claude.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1193,3 +1338,23 @@ let ``A description mismatch between directories fails validation`` () =
 [<Fact>]
 let ``A count mismatch between directories fails validation`` () =
     FeatureRunner.runSync "A count mismatch between directories fails validation"
+
+[<Fact>]
+let ``A directory with all agents and skills correctly configured passes validation`` () =
+    FeatureRunner.runValidateClaude "A directory with all agents and skills correctly configured passes validation"
+
+[<Fact>]
+let ``An agent file missing a required frontmatter field fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent file missing a required frontmatter field fails validation"
+
+[<Fact>]
+let ``Two agents with the same name fail validation`` () =
+    FeatureRunner.runValidateClaude "Two agents with the same name fail validation"
+
+[<Fact>]
+let ``--agents-only validates agents without checking skills`` () =
+    FeatureRunner.runValidateClaude "--agents-only validates agents without checking skills"
+
+[<Fact>]
+let ``--skills-only validates skills without checking agents`` () =
+    FeatureRunner.runValidateClaude "--skills-only validates skills without checking agents"
