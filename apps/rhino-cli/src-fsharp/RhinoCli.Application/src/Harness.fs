@@ -18,7 +18,8 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`,
 /// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`,
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-sync-triage.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/catalog.rs`,
@@ -43,6 +44,8 @@
 /// `apps/rhino-cli/src/commands/harness_audit.rs`,
 /// `apps/rhino-cli/src/commands/harness_catalog.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
+/// `apps/rhino-cli/src/commands/harness_sync_promote.rs`,
+/// `apps/rhino-cli/src/commands/harness_sync_triage.rs`,
 /// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
 /// Scope note: Rust's `validate_bindings` tallies five check families —
@@ -53,8 +56,12 @@
 /// coverage, the Codex agent-file extension, skills-mirror byte parity,
 /// `OpenCode` agent-mirror sync, and Codex agent/`.codex/config.toml`
 /// generation) and the registry-derived `--harness` name check. Static
-/// binding-file byte parity remains out of scope — no landed scenario
-/// exercises it.
+/// binding-file byte parity remains out of scope as its own check family —
+/// no landed scenario tallies it — but the remediation sentence it would
+/// carry ([`driftRemediation`]) is ported and reused by
+/// [`validateAgentYaml`]'s body-mismatch failure, which is the check family
+/// `harness/harness-sync-triage.feature`'s "default failure behaviour"
+/// scenario actually exercises against a hand-edited mirror.
 ///
 /// A second scope note covers `sync_validator.rs::validate_sync`, which
 /// tallies five check families of its own. This module implements only the
@@ -86,6 +93,18 @@
 /// those fields is already named by a separate `ownership:` entry, so the
 /// narrower root set this module computes agrees with Rust's on every
 /// scenario this feature file exercises.
+///
+/// A fifth scope note covers `triage.rs`'s divergence triage and promotion.
+/// `triage`, `promote`, `resolve_canonical`, `unified_diff`, and every
+/// formatter in `harness_sync_triage.rs`/`harness_sync_promote.rs` are
+/// ported in full. `ScratchTree::build`'s symlink-aware `copy_path`/`copy_tree`
+/// collapse into one [`copyPath`] that treats a missing root as a no-op the
+/// same way, since no landed scenario exercises a symlinked or
+/// permission-denied binding root — those are Rust-only regression tests
+/// with no corresponding Gherkin scenario. `scratch_roots` includes the
+/// Codex config path via the already-existing [`codexConfigFile`] constant
+/// rather than a per-entry `config:` field, per the fourth scope note's
+/// `HarnessEntry` narrowing.
 ///
 /// The `harness` namespace stays on the Rust side of `FSHARP_NAMESPACES`
 /// until every Wave E feature file has landed, so no CLI path reaches this
@@ -421,6 +440,86 @@ let expectedBindingPaths (repoRoot: string) : Result<string list, string> =
     else
         discoverAgentSources claudeDir
         |> Result.map (List.map (fun (_source, name) -> sprintf "%s/%s.%s" codexAgentDir name codexAgentExtension))
+
+// ---------------------------------------------------------------------------
+// Canonical-source resolution (harness sync triage / promote)
+// ---------------------------------------------------------------------------
+
+/// The remainder of `rel` below `dir`, comparing path components so
+/// `.claude/skills` never claims `.claude/skills-archive/x.md`
+/// [Repo-grounded — `ownership.rs::strip_dir`, reused by `triage.rs`].
+let private stripDir (rel: string) (dir: string) : string option =
+    let dirNorm = dir.TrimEnd('/')
+
+    if rel = dirNorm then
+        Some ""
+    elif rel.StartsWith(dirNorm + "/", StringComparison.Ordinal) then
+        Some(rel.Substring(dirNorm.Length + 1))
+    else
+        None
+
+/// [`resolveCanonical`] for one registry entry: a skills mirror is a byte
+/// copy, so its path maps one-to-one; an agent mirror is keyed on the
+/// agent's `name`, which the emitter also uses as the mirror's filename, so
+/// the stem identifies the source
+/// [Repo-grounded — `triage.rs::canonical_for_entry`].
+let private canonicalForEntry (repoRoot: string) (entry: RepoConfig.HarnessEntry) (mirrorRel: string) : string option =
+    let bySkills =
+        match entry.SkillsDir, entry.SkillsMirrors with
+        | Some skillsDir, Some sourceDir ->
+            stripDir mirrorRel skillsDir
+            |> Option.map (fun suffix -> sprintf "%s/%s" sourceDir suffix)
+        | _ -> None
+
+    match bySkills with
+    | Some found -> Some found
+    | None ->
+        match entry.AgentDir, entry.Mirrors with
+        | Some agentDir, Some sourceDir ->
+            match stripDir mirrorRel agentDir with
+            | None -> None
+            | Some suffix ->
+                let stem = Path.GetFileNameWithoutExtension suffix
+
+                match discoverAgentSources (Path.Combine(repoRoot, sourceDir)) with
+                | Error _ -> None
+                | Ok sources ->
+                    sources
+                    |> List.tryFind (fun (_, name) -> name = stem)
+                    |> Option.bind (fun (path, _) ->
+                        if path.StartsWith(repoRoot, StringComparison.Ordinal) then
+                            Some(path.Substring(repoRoot.Length).TrimStart('/', '\\').Replace('\\', '/'))
+                        else
+                            None)
+        | _ -> None
+
+/// The canonical source path a mirror file is generated from, resolved
+/// through the registry's `mirrors` / `skills-mirrors` declarations. `None`
+/// when no harness entry claims the path
+/// [Repo-grounded — `triage.rs::resolve_canonical`].
+let resolveCanonical (repoRoot: string) (config: RepoConfig.RepoConfig) (mirrorRel: string) : string option =
+    config.Harness
+    |> List.tryPick (fun entry -> canonicalForEntry repoRoot entry mirrorRel)
+
+/// The remediation sentence a drifted generated file carries. Names BOTH
+/// ways out — the canonical file to edit, and the promote command that
+/// keeps a mirror edit instead of discarding it — so a developer who hits a
+/// drift failure learns promotion exists from the failure message itself
+/// [Repo-grounded — `bindings.rs::drift_remediation`].
+let driftRemediation (repoRoot: string) (mirrorRel: string) : string =
+    let source =
+        match RepoConfig.load repoRoot with
+        | Error _ -> "its canonical .claude/ source"
+        | Ok config ->
+            match resolveCanonical repoRoot config mirrorRel with
+            | Some path -> sprintf "`%s`" path
+            | None -> "its canonical .claude/ source"
+
+    sprintf
+        "%s drifted from generated content. Edit %s and run `rhino-cli harness bindings generate` to regenerate it, or keep the mirror edit for review with `rhino-cli harness sync promote --from %s`."
+        mirrorRel
+        source
+        mirrorRel
 
 // ---------------------------------------------------------------------------
 // Checks
@@ -1461,9 +1560,20 @@ let private applyField (agent: OpenCodeAgent) (action: FieldAction) (key: string
         { agent with
             Permission = convertPermission (parseClaudeTools value) }
     | Translate, "model" ->
-        match value with
-        | :? string as s -> { agent with Model = convertModel s }
-        | _ -> agent
+        // Unlike `color` (guard, no fallback below), Rust's `apply_translate`
+        // reads `model` via `value.as_str().unwrap_or("")` — translation
+        // always runs, even when the frontmatter value is absent or not a
+        // string (e.g. a bare `model:` scalar parses as YAML null). Since
+        // `convertModel` ignores its argument entirely, the only observable
+        // effect of skipping this call was leaving `agent.Model` at its
+        // empty-string default instead of the translated value every other
+        // agent gets.
+        let s =
+            match value with
+            | :? string as s -> s
+            | _ -> ""
+
+        { agent with Model = convertModel s }
     | Translate, "color" ->
         match value with
         | :? string as s -> { agent with Color = convertColor s }
@@ -2112,6 +2222,7 @@ let private validateAgentYaml
     (opencodeMapping: Dictionary<string, obj>)
     (expectedBody: string)
     (actualBody: string)
+    (bodyMismatchReason: string)
     : ValidationCheck =
     let checkName = sprintf "Agent Equivalence: %s" agentName
 
@@ -2167,7 +2278,7 @@ let private validateAgentYaml
                         (sprintf "%A" actualSkills)
                         "skills mismatch"
                 elif expectedBody <> actualBody then
-                    ValidationCheck.failed checkName expectedBody actualBody "body mismatch"
+                    ValidationCheck.failed checkName expectedBody actualBody bodyMismatchReason
                 else
                     ValidationCheck.passed checkName "Agent is semantically equivalent"
 
@@ -2176,6 +2287,7 @@ let private validateAgentYaml
 /// comparison to `validateAgentYaml`
 /// [Repo-grounded — `sync_validator.rs::validate_agent_file`].
 let private validateAgentFile
+    (repoRoot: string)
     (claudeDir: string)
     (opencodeDir: string)
     (sourcePath: string)
@@ -2183,6 +2295,7 @@ let private validateAgentFile
     : ValidationCheck =
     let checkName = sprintf "Agent Equivalence: %s" agentName
     let mirrorPath = Path.Combine(opencodeDir, agentName + ".md")
+    let mirrorRel = sprintf "%s/%s.md" opencodeAgentDir agentName
 
     try
         let claudeContent = File.ReadAllText sourcePath
@@ -2206,7 +2319,15 @@ let private validateAgentFile
                 | _, null -> ValidationCheck.failedMsg checkName "frontmatter is not a mapping"
                 | claudeMapping, opencodeMapping ->
                     let expectedBody = rebaseAgentLinks claudeBody sourcePath claudeDir opencodeDir
-                    validateAgentYaml agentName claudeMapping opencodeMapping expectedBody opencodeBody
+                    let bodyMismatchReason = driftRemediation repoRoot mirrorRel
+
+                    validateAgentYaml
+                        agentName
+                        claudeMapping
+                        opencodeMapping
+                        expectedBody
+                        opencodeBody
+                        bodyMismatchReason
     with ex ->
         ValidationCheck.failedMsg checkName (sprintf "failed to compare %s: %s" agentName ex.Message)
 
@@ -2220,7 +2341,7 @@ let private validateAgentEquivalence (repoRoot: string) : ValidationCheck list =
     | Error e -> [ ValidationCheck.failedMsg "Agent Equivalence" (sprintf "failed to discover agent sources: %s" e) ]
     | Ok sources ->
         sources
-        |> List.map (fun (path, name) -> validateAgentFile claudeDir opencodeDir path name)
+        |> List.map (fun (path, name) -> validateAgentFile repoRoot claudeDir opencodeDir path name)
 
 /// Runs the scoped sync validation: agent count, then per-agent equivalence
 /// [Repo-grounded — `sync_validator.rs::validate_sync`].
@@ -3599,19 +3720,27 @@ let guardEmitterTargets (repoRoot: string) : Result<unit, string> =
 /// mirror emitter — the same composition `emit.rs::emit` runs behind
 /// `harness bindings generate` and divergence triage alike
 /// [Repo-grounded — `harness_generate_bindings.rs::run`, `emit.rs::emit`].
+/// The three-emitter composition alone, with no target guard — what
+/// `emit.rs::emit` runs. `harness bindings generate` guards first
+/// ([`runHarnessBindingsGenerate`]); divergence triage regenerates into a
+/// disposable scratch tree instead, where writing to a would-be-source path
+/// is harmless, so it calls this directly
+/// [Repo-grounded — `emit.rs::emit`].
+let private regenerateAll (repoRoot: string) (dryRun: bool) : Result<unit, string> =
+    match convertAllAgents repoRoot dryRun with
+    | Error e -> Error e
+    | Ok _ ->
+        match emitCodexBindings repoRoot dryRun with
+        | Error e -> Error e
+        | Ok _ ->
+            match emitSkillsMirrors repoRoot dryRun with
+            | Error e -> Error e
+            | Ok _ -> Ok()
+
 let runHarnessBindingsGenerate (repoRoot: string) : Result<unit, string> =
     match guardEmitterTargets repoRoot with
     | Error e -> Error e
-    | Ok() ->
-        match convertAllAgents repoRoot false with
-        | Error e -> Error e
-        | Ok _ ->
-            match emitCodexBindings repoRoot false with
-            | Error e -> Error e
-            | Ok _ ->
-                match emitSkillsMirrors repoRoot false with
-                | Error e -> Error e
-                | Ok _ -> Ok()
+    | Ok() -> regenerateAll repoRoot false
 
 /// Validates total ownership of every binding file: classification (no
 /// tracked binding file is unowned), the emitter-target source guard, and —
@@ -3664,3 +3793,728 @@ let validateOwnership (repoRoot: string) : ValidationResult =
 
     { result with
         Duration = stopwatch.Elapsed }
+
+// ---------------------------------------------------------------------------
+// harness sync triage / promote — divergence triage and reviewed promotion
+// ---------------------------------------------------------------------------
+
+/// Which side of a canonical/mirror pair a report holds responsible
+/// [Repo-grounded — `triage.rs::Side`].
+type Side =
+    | SideMirror
+    | SideCanonical
+
+/// The three — and only three — states a canonical/mirror pair can be in
+/// [Repo-grounded — `triage.rs::Outcome`].
+type Outcome =
+    | InSync
+    | OneSided of Side
+    | BothDiverged
+
+/// One mirror file that is not what the generator would produce
+/// [Repo-grounded — `triage.rs::Divergence`].
+type Divergence =
+    { Mirror: string
+      Canonical: string option
+      Outcome: Outcome }
+
+/// What one triage run found [Repo-grounded — `triage.rs::TriageReport`].
+type TriageReport =
+    { Compared: int
+      Divergences: Divergence list }
+
+[<RequireQualifiedAccess>]
+module TriageReport =
+    /// The report's single verdict: the most severe per-file outcome
+    /// [Repo-grounded — `triage.rs::TriageReport::verdict`].
+    let verdict (report: TriageReport) : Outcome =
+        if report.Divergences |> List.exists (fun d -> d.Outcome = BothDiverged) then
+            BothDiverged
+        else
+            match report.Divergences with
+            | [] -> InSync
+            | d :: _ -> d.Outcome
+
+/// The `.claude/` path a promoted edit would land in, plus what promoting it
+/// would put at risk [Repo-grounded — `triage.rs::PromoteProposal`].
+type PromoteProposal =
+    { Mirror: string
+      Canonical: string
+      Diff: string
+      AtRisk: (string * string) list
+      BothDiverged: bool }
+
+/// Every tracked binding file the registry classifies `generated`. Scoped to
+/// that one class on purpose: a `vendored` file has no in-repo source to
+/// regenerate from, and a `source` file is the promotion target rather than a
+/// triage subject [Repo-grounded — `triage.rs::generated_files`].
+let private generatedFiles (repoRoot: string) : Result<string list, string> =
+    classifyOwnership repoRoot
+    |> Result.map (fun report ->
+        report.Classified
+        |> List.filter (fun f -> f.Class = RepoConfig.OwnershipClass.ClassGenerated)
+        |> List.map (fun f -> f.Path))
+
+/// Every path the emitters read from or write to, derived from the registry
+/// rather than listed by name. Includes the hardcoded Codex config path
+/// (`codexConfigFile`) unconditionally rather than reading it off a
+/// per-harness `config:` field, since `HarnessEntry` does not model that
+/// field (see this module's doc-header scope notes) and the real registry's
+/// value for it is exactly that constant already
+/// [Repo-grounded — `triage.rs::scratch_roots`].
+let private scratchRoots (config: RepoConfig.RepoConfig) : string list =
+    let roots = ResizeArray<string>()
+
+    for entry in config.Harness do
+        [ entry.AgentDir; entry.SkillsDir; entry.Mirrors; entry.SkillsMirrors ]
+        |> List.choose id
+        |> List.iter roots.Add
+
+    roots.Add codexConfigFile
+    roots |> Seq.distinct |> Seq.sort |> List.ofSeq
+
+/// Copies one file or directory tree from `src` to `dst`. A `src` that does
+/// not exist is silently a no-op — "this root has not been created yet" is
+/// not an error [Repo-grounded — `triage.rs::copy_path`, `triage.rs::copy_tree`].
+let rec private copyPath (src: string) (dst: string) : unit =
+    if Directory.Exists src then
+        Directory.CreateDirectory dst |> ignore
+
+        for entry in Directory.GetFileSystemEntries src do
+            copyPath entry (Path.Combine(dst, Path.GetFileName entry))
+    elif File.Exists src then
+        let parent = Path.GetDirectoryName dst
+
+        if not (String.IsNullOrEmpty parent) then
+            Directory.CreateDirectory parent |> ignore
+
+        File.Copy(src, dst, true)
+
+/// Runs `git show HEAD:<rel>`, isolated the same way [`trackedBindingFiles`]
+/// is. `None` when the path is absent at `HEAD` or git fails
+/// [Repo-grounded — `triage.rs::differs_from_head`].
+let private gitShowAtHead (repoRoot: string) (rel: string) : string option =
+    use proc = new Process()
+    proc.StartInfo.FileName <- "git"
+    proc.StartInfo.ArgumentList.Add("show")
+    proc.StartInfo.ArgumentList.Add(sprintf "HEAD:%s" rel)
+    proc.StartInfo.WorkingDirectory <- repoRoot
+    proc.StartInfo.EnvironmentVariables.["GIT_DIR"] <- Path.Combine(repoRoot, ".git")
+    proc.StartInfo.EnvironmentVariables.["GIT_CEILING_DIRECTORIES"] <- repoRoot
+    proc.StartInfo.EnvironmentVariables.["GIT_CONFIG_GLOBAL"] <- "/dev/null"
+    proc.StartInfo.EnvironmentVariables.["GIT_CONFIG_SYSTEM"] <- "/dev/null"
+    proc.StartInfo.RedirectStandardOutput <- true
+    proc.StartInfo.RedirectStandardError <- true
+    proc.StartInfo.UseShellExecute <- false
+
+    try
+        proc.Start() |> ignore
+        let stdout = proc.StandardOutput.ReadToEnd()
+        proc.StandardError.ReadToEnd() |> ignore
+        proc.WaitForExit()
+        if proc.ExitCode <> 0 then None else Some stdout
+    with :? System.ComponentModel.Win32Exception ->
+        None
+
+/// `true` when `rel`'s working-tree content differs from its content at
+/// `HEAD`. A path absent from `HEAD` counts as differing — a file that did
+/// not exist in the last commit is, unambiguously, a working-tree change
+/// [Repo-grounded — `triage.rs::differs_from_head`].
+let private differsFromHead (repoRoot: string) (rel: string) : bool =
+    match gitShowAtHead repoRoot rel with
+    | None -> true
+    | Some headContent ->
+        match
+            (try
+                Some(File.ReadAllText(Path.Combine(repoRoot, rel)))
+             with _ ->
+                 None)
+        with
+        | None -> false
+        | Some working -> working <> headContent
+
+/// Decides which side moved, by comparing each side's working-tree content
+/// against the same file at `HEAD`
+/// [Repo-grounded — `triage.rs::attribute`].
+let private attribute (repoRoot: string) (mirror: string) (canonical: string option) : Outcome =
+    let mirrorEdited = differsFromHead repoRoot mirror
+
+    let canonicalEdited =
+        canonical |> Option.map (differsFromHead repoRoot) |> Option.defaultValue false
+
+    match mirrorEdited, canonicalEdited with
+    | true, true -> BothDiverged
+    | true, false -> OneSided SideMirror
+    | false, _ -> OneSided SideCanonical
+
+/// Reads every text file at `path`, tolerating its absence
+/// [Repo-grounded — `triage.rs::triage`, the `.ok()` on `std::fs::read`].
+let private tryReadAllText (path: string) : string option =
+    try
+        Some(File.ReadAllText path)
+    with _ ->
+        None
+
+/// Regenerates every binding into a scratch copy of `repoRoot` and reports
+/// every `generated`-class file whose committed content differs from the
+/// regenerated output.
+///
+/// Detection is by content, never by a clock: nothing on this path reads a
+/// file's modification time, and nothing may — git stores no such stamp, so
+/// in a fresh clone every file's stamp is checkout time
+/// [Repo-grounded — `triage.rs::triage`].
+let triage (repoRoot: string) : Result<TriageReport, string> =
+    match RepoConfig.load repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        match generatedFiles repoRoot with
+        | Error e -> Error e
+        | Ok generated ->
+            let scratchDir = Directory.CreateTempSubdirectory("rhino-triage-").FullName
+
+            try
+                let registrySrc = Path.Combine(repoRoot, "repo-config.yml")
+
+                if File.Exists registrySrc then
+                    File.Copy(registrySrc, Path.Combine(scratchDir, "repo-config.yml"), true)
+
+                for root in scratchRoots config do
+                    copyPath (Path.Combine(repoRoot, root)) (Path.Combine(scratchDir, root))
+
+                match regenerateAll scratchDir false with
+                | Error e -> Error e
+                | Ok() ->
+                    let divergences =
+                        generated
+                        |> List.choose (fun rel ->
+                            let actual = tryReadAllText (Path.Combine(repoRoot, rel))
+                            let expected = tryReadAllText (Path.Combine(scratchDir, rel))
+
+                            if actual = expected then
+                                None
+                            else
+                                let canonical = resolveCanonical repoRoot config rel
+                                let outcome = attribute repoRoot rel canonical
+
+                                Some
+                                    { Mirror = rel
+                                      Canonical = canonical
+                                      Outcome = outcome })
+
+                    Ok
+                        { Compared = List.length generated
+                          Divergences = divergences }
+            finally
+                try
+                    Directory.Delete(scratchDir, true)
+                with _ ->
+                    ()
+
+/// Absolute directory `rel` sits in, under `repoRoot`
+/// [Repo-grounded — `triage.rs::parent_of`].
+let private parentOf (repoRoot: string) (rel: string) : string =
+    let joined = Path.Combine(repoRoot, rel)
+
+    match Path.GetDirectoryName joined with
+    | null -> joined
+    | p -> p
+
+/// The harness entry whose mirror trees contain `rel`
+/// [Repo-grounded — `triage.rs::owning_entry`].
+let private owningEntry (config: RepoConfig.RepoConfig) (rel: string) : RepoConfig.HarnessEntry option =
+    config.Harness
+    |> List.tryFind (fun e ->
+        (e.SkillsDir
+         |> Option.exists (fun d -> e.SkillsMirrors.IsSome && (stripDir rel d).IsSome))
+        || (e.AgentDir
+            |> Option.exists (fun d -> e.Mirrors.IsSome && (stripDir rel d).IsSome)))
+
+/// `true` when `rel` sits in a byte-copy skills mirror rather than a
+/// translated agent mirror — a byte copy loses nothing, so promotion from one
+/// needs no field translation and puts no field at risk
+/// [Repo-grounded — `triage.rs::is_skills_mirror`].
+let private isSkillsMirror (config: RepoConfig.RepoConfig) (rel: string) : bool =
+    config.Harness
+    |> List.exists (fun e ->
+        e.SkillsMirrors.IsSome
+        && (e.SkillsDir |> Option.exists (fun d -> (stripDir rel d).IsSome)))
+
+/// The three directories a reverse link rebase needs
+/// [Repo-grounded — `triage.rs::AgentPaths`].
+type private AgentPaths =
+    { ClaudeDir: string
+      MirrorDir: string
+      CanonicalDir: string
+      Sources: (string * string) list }
+
+/// The canonical path a flattened agent-to-agent link points at, or `None`
+/// when the link is not one [Repo-grounded — `triage.rs::agent_target`].
+let private agentTarget (pathPart: string) (ctx: AgentPaths) : string option =
+    if pathPart.Contains('/') then
+        None
+    else
+        let stem = Path.GetFileNameWithoutExtension pathPart
+
+        ctx.Sources
+        |> List.tryFind (fun (path, name) -> name = stem && path.StartsWith(ctx.ClaudeDir, StringComparison.Ordinal))
+        |> Option.map fst
+
+/// Inverts [`rebaseAgentLinks`]: rewrites every relative link in a mirror
+/// body so it resolves from the canonical file's own depth. Without this,
+/// promoting a body verbatim would write the mirror's shallower `../` depth
+/// into a canonical file one level deeper, silently breaking every relative
+/// link in it [Repo-grounded — `triage.rs::rebase_links_to_canonical`].
+let private rebaseLinksToCanonical (body: string) (ctx: AgentPaths) : string =
+    let mirrorDirNorm = normalizeLexical ctx.MirrorDir
+    let canonicalDirComponents = (normalizeLexical ctx.CanonicalDir).Split('/')
+
+    agentLinkRe.Replace(
+        body,
+        fun m ->
+            let link = m.Groups.[1].Value
+
+            let passThrough =
+                link = ""
+                || link.StartsWith("http://", StringComparison.Ordinal)
+                || link.StartsWith("https://", StringComparison.Ordinal)
+                || link.StartsWith("#", StringComparison.Ordinal)
+                || link.StartsWith("/", StringComparison.Ordinal)
+
+            if passThrough then
+                sprintf "](%s)" link
+            else
+                let pathPart, anchor =
+                    match link.IndexOf '#' with
+                    | -1 -> link, None
+                    | idx -> link.Substring(0, idx), Some(link.Substring(idx + 1))
+
+                if pathPart = "" then
+                    sprintf "](%s)" link
+                else
+                    let target =
+                        match agentTarget pathPart ctx with
+                        | Some t -> normalizeLexical t
+                        | None -> normalizeLexical (mirrorDirNorm + "/" + pathPart)
+
+                    let out0 = relativeFrom (target.Split('/')) canonicalDirComponents
+
+                    let out =
+                        match anchor with
+                        | Some a -> out0 + "#" + a
+                        | None -> out0
+
+                    sprintf "](%s)" out
+    )
+
+/// `(frontmatter, body)` for text with a leading `---` block, with no error
+/// and no YAML normalization — unlike [`extractFrontmatter`], a file without
+/// one is not malformed here, it simply has no frontmatter to promote
+/// [Repo-grounded — `triage.rs::split_frontmatter`].
+let private splitFrontmatterLoose (text: string) : string * string =
+    if not (text.StartsWith("---\n", StringComparison.Ordinal)) then
+        "", text
+    else
+        let rest = text.Substring(4)
+
+        match rest.IndexOf("\n---\n", StringComparison.Ordinal) with
+        | -1 -> "", text
+        | idx -> (rest.Substring(0, idx) + "\n"), rest.Substring(idx + 5)
+
+/// `str::lines()`-equivalent split: unlike `String.Split('\n')`, a single
+/// trailing newline produces no trailing empty element
+/// [Repo-grounded — Rust's `str::lines()`, used throughout `triage.rs`].
+let private rustLines (text: string) : string[] =
+    let parts = text.Replace("\r\n", "\n").Split('\n')
+
+    if
+        parts.Length > 0
+        && parts.[parts.Length - 1] = ""
+        && text.EndsWith("\n", StringComparison.Ordinal)
+    then
+        parts.[.. parts.Length - 2]
+    else
+        parts
+
+/// The value of a top-level `key: value` scalar in a YAML frontmatter block
+/// [Repo-grounded — `triage.rs::yaml_scalar`].
+let private yamlScalarLine (front: string) (key: string) : string option =
+    let prefix = key + ":"
+
+    rustLines front
+    |> Array.tryFind (fun l -> l.StartsWith(prefix, StringComparison.Ordinal))
+    |> Option.map (fun l -> l.Substring(prefix.Length).Trim())
+
+/// The value of a TOML `key = "..."` or `key = """..."""` assignment.
+/// Deliberately narrow: the Codex emitter writes exactly these two shapes
+/// [Repo-grounded — `triage.rs::toml_string_value`].
+let private tomlStringValue (text: string) (key: string) : string option =
+    let needle = key + " = "
+    let idx = text.IndexOf(needle, StringComparison.Ordinal)
+
+    if idx < 0 then
+        None
+    else
+        let rest = text.Substring(idx + needle.Length)
+
+        if rest.StartsWith("\"\"\"\n", StringComparison.Ordinal) then
+            let body = rest.Substring(4)
+            Some(body.Split([| "\"\"\"" |], StringSplitOptions.None).[0])
+        elif rest.StartsWith("\"", StringComparison.Ordinal) then
+            let body = rest.Substring(1)
+            let raw = body.Split('"').[0]
+            Some(raw.Replace("\\\"", "\""))
+        else
+            None
+
+/// `(frontmatter, body)` for a mirror in either shape the emitters produce:
+/// markdown with YAML frontmatter, or the Codex TOML agent table
+/// [Repo-grounded — `triage.rs::mirror_content`].
+let private mirrorContent (mirror: string) : string * string =
+    if mirror.StartsWith("---\n", StringComparison.Ordinal) then
+        splitFrontmatterLoose mirror
+    else
+        "", (tomlStringValue mirror "developer_instructions" |> Option.defaultValue "")
+
+/// The mirror's `description`, read from whichever shape it carries
+/// [Repo-grounded — `triage.rs::mirror_description`].
+let private mirrorDescription (mirror: string) : string option =
+    if mirror.StartsWith("---\n", StringComparison.Ordinal) then
+        let front, _ = splitFrontmatterLoose mirror
+        yamlScalarLine front "description"
+    else
+        tomlStringValue mirror "description"
+
+/// Replaces a top-level scalar field's value, preserving key order. Appends
+/// the field when it is absent
+/// [Repo-grounded — `triage.rs::replace_scalar_field`].
+let private replaceScalarField (front: string) (key: string) (value: string) : string =
+    let prefix = key + ":"
+    let mutable replaced = false
+    let sb = StringBuilder()
+
+    for line in rustLines front do
+        if line.StartsWith(prefix, StringComparison.Ordinal) then
+            sb.Append(sprintf "%s: %s\n" key value) |> ignore
+            replaced <- true
+        else
+            sb.Append(line).Append('\n') |> ignore
+
+    if not replaced then
+        sb.Append(sprintf "%s: %s\n" key value) |> ignore
+
+    sb.ToString()
+
+/// The field-policy table a harness name answers to. A harness with no
+/// translation step — a byte-copy mirror — has no table and therefore no
+/// at-risk fields, which is correct rather than missing
+/// [Repo-grounded — `triage.rs::policy_table`].
+let private policyTable (harness: string) : (string * FieldAction * string) list option =
+    match harness with
+    | "opencode" -> Some opencodeFieldPolicyTable
+    | "codex" -> Some codexFieldPolicyTable
+    | _ -> None
+
+/// The canonical frontmatter keys the named harness's field policy drops
+/// with a warning — the fields whoever edited the mirror never saw
+/// [Repo-grounded — `triage.rs::at_risk_fields`].
+let private atRiskFields (canonical: string) (harness: string option) : (string * string) list =
+    match harness |> Option.bind policyTable with
+    | None -> []
+    | Some table ->
+        let dropWarn =
+            table
+            |> List.filter (fun (_, action, _) -> action = DropWarn)
+            |> List.map (fun (field, _, reason) -> field, reason)
+            |> Map.ofList
+
+        let front, _ = splitFrontmatterLoose canonical
+
+        rustLines front
+        |> Array.choose (fun line ->
+            match line.IndexOf(':') with
+            | -1 -> None
+            | idx ->
+                let key = line.Substring(0, idx)
+
+                if key.Length > 0 && Char.IsWhiteSpace key.[0] then
+                    None
+                else
+                    Map.tryFind key dropWarn |> Option.map (fun reason -> key, reason))
+        |> List.ofArray
+
+/// Substitutes the mirror's description and body into the canonical file,
+/// leaving every other canonical frontmatter field exactly as it was — what
+/// makes promotion non-destructive by construction
+/// [Repo-grounded — `triage.rs::propose_agent`].
+let private proposeAgent (ctx: AgentPaths) (canonical: string) (mirror: string) : string =
+    let front0, _ = splitFrontmatterLoose canonical
+    let _, body0 = mirrorContent mirror
+    let body = rebaseLinksToCanonical body0 ctx
+
+    let front =
+        match mirrorDescription mirror with
+        | Some description -> replaceScalarField front0 "description" description
+        | None -> front0
+
+    if front = "" then
+        body
+    else
+        sprintf "---\n%s---\n%s" front body
+
+[<Literal>]
+let private diffContext = 3
+
+/// `common.[i, j]` is the longest common subsequence length of `a.[i..]`/`b.[j..]`
+/// [Repo-grounded — `triage.rs::lcs_table`].
+let private lcsTable (a: string[]) (b: string[]) : int[,] =
+    let table = Array2D.create (a.Length + 1) (b.Length + 1) 0
+
+    for i in a.Length - 1 .. -1 .. 0 do
+        for j in b.Length - 1 .. -1 .. 0 do
+            table.[i, j] <-
+                if a.[i] = b.[j] then
+                    table.[i + 1, j + 1] + 1
+                else
+                    max table.[i + 1, j] table.[i, j + 1]
+
+    table
+
+/// Renders the edit script as unified-diff hunks with [`diffContext`] lines
+/// of context on each side [Repo-grounded — `triage.rs::render_hunks`].
+let private renderHunks (path: string) (ops: (char * string)[]) : string =
+    let changed =
+        ops
+        |> Array.mapi (fun idx (tag, _) -> idx, tag)
+        |> Array.filter (fun (_, tag) -> tag <> ' ')
+        |> Array.map fst
+
+    if changed.Length = 0 then
+        ""
+    else
+        let sb = StringBuilder()
+        sb.Append(sprintf "--- a/%s\n+++ b/%s\n" path path) |> ignore
+        let mutable cursor = 0
+
+        while cursor < changed.Length do
+            let start = max 0 (changed.[cursor] - diffContext)
+            let mutable endIdx = changed.[cursor] + diffContext
+            let mutable next = cursor + 1
+            let mutable keepGoing = true
+
+            while keepGoing do
+                if next < changed.Length && changed.[next] <= endIdx + diffContext then
+                    endIdx <- changed.[next] + diffContext
+                    next <- next + 1
+                else
+                    keepGoing <- false
+
+            let endIdx = min endIdx (ops.Length - 1)
+            let mutable oldLen = 0
+            let mutable newLen = 0
+
+            for k in start..endIdx do
+                match fst ops.[k] with
+                | '-' -> oldLen <- oldLen + 1
+                | '+' -> newLen <- newLen + 1
+                | _ ->
+                    oldLen <- oldLen + 1
+                    newLen <- newLen + 1
+
+            let oldStart =
+                (ops.[.. start - 1] |> Array.filter (fun (t, _) -> t <> '+') |> Array.length)
+                + 1
+
+            let newStart =
+                (ops.[.. start - 1] |> Array.filter (fun (t, _) -> t <> '-') |> Array.length)
+                + 1
+
+            sb.Append(sprintf "@@ -%d,%d +%d,%d @@\n" oldStart oldLen newStart newLen)
+            |> ignore
+
+            for k in start..endIdx do
+                let tag, line = ops.[k]
+                sb.Append(tag).Append(line).Append('\n') |> ignore
+
+            cursor <- next
+
+        sb.ToString()
+
+/// A unified diff from `old` to `new`, labelled with `path`. Empty when the
+/// two are identical, so a caller can treat "no proposal" as an empty diff
+/// rather than a special case [Repo-grounded — `triage.rs::unified_diff`].
+let unifiedDiff (path: string) (oldText: string) (newText: string) : string =
+    if oldText = newText then
+        ""
+    else
+        let a = rustLines oldText
+        let b = rustLines newText
+        let common = lcsTable a b
+        let ops = ResizeArray<char * string>()
+        let mutable i = 0
+        let mutable j = 0
+
+        while i < a.Length && j < b.Length do
+            if a.[i] = b.[j] then
+                ops.Add(' ', a.[i])
+                i <- i + 1
+                j <- j + 1
+            elif common.[i + 1, j] >= common.[i, j + 1] then
+                ops.Add('-', a.[i])
+                i <- i + 1
+            else
+                ops.Add('+', b.[j])
+                j <- j + 1
+
+        for k in i .. a.Length - 1 do
+            ops.Add('-', a.[k])
+
+        for k in j .. b.Length - 1 do
+            ops.Add('+', b.[k])
+
+        renderHunks path (ops.ToArray())
+
+/// Builds the proposed canonical content for one mirror edit, and the list
+/// of canonical fields the editing harness could not have carried. Writes
+/// nothing — the caller prints the proposal, a human applies it
+/// [Repo-grounded — `triage.rs::promote`].
+let promote (repoRoot: string) (mirrorRelRaw: string) : Result<PromoteProposal, string> =
+    let mirrorRel =
+        if mirrorRelRaw.StartsWith("./", StringComparison.Ordinal) then
+            mirrorRelRaw.Substring(2)
+        else
+            mirrorRelRaw
+
+    match RepoConfig.load repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        match generatedFiles repoRoot with
+        | Error e -> Error e
+        | Ok gens ->
+            if not (List.contains mirrorRel gens) then
+                Error(
+                    sprintf
+                        "%s is not a generated binding file; only a file the registry classifies `generated` has a canonical source to promote into"
+                        mirrorRel
+                )
+            else
+                match resolveCanonical repoRoot config mirrorRel with
+                | None -> Error(sprintf "no canonical source is declared for %s; nothing to promote into" mirrorRel)
+                | Some canonicalRel ->
+                    let readText (path: string) (rel: string) : Result<string, string> =
+                        try
+                            Ok(File.ReadAllText path)
+                        with ex ->
+                            Error(sprintf "failed to read %s: %s" rel ex.Message)
+
+                    match readText (Path.Combine(repoRoot, canonicalRel)) canonicalRel with
+                    | Error e -> Error e
+                    | Ok canonicalText ->
+                        match readText (Path.Combine(repoRoot, mirrorRel)) mirrorRel with
+                        | Error e -> Error e
+                        | Ok mirrorText ->
+                            let entry = owningEntry config mirrorRel
+                            let skillsMirror = isSkillsMirror config mirrorRel
+
+                            let proposed =
+                                if skillsMirror then
+                                    mirrorText
+                                else
+                                    let claudeDir =
+                                        match entry |> Option.bind (fun e -> e.Mirrors) with
+                                        | Some m -> Path.Combine(repoRoot, m)
+                                        | None -> Path.Combine(repoRoot, ".claude", "agents")
+
+                                    let sources = discoverAgentSources claudeDir |> Result.defaultValue []
+
+                                    let ctx =
+                                        { ClaudeDir = claudeDir
+                                          MirrorDir = parentOf repoRoot mirrorRel
+                                          CanonicalDir = parentOf repoRoot canonicalRel
+                                          Sources = sources }
+
+                                    proposeAgent ctx canonicalText mirrorText
+
+                            let atRisk =
+                                if skillsMirror then
+                                    []
+                                else
+                                    atRiskFields canonicalText (entry |> Option.map (fun e -> e.Name))
+
+                            let bothDiverged = attribute repoRoot mirrorRel (Some canonicalRel) = BothDiverged
+
+                            Ok
+                                { Mirror = mirrorRel
+                                  Canonical = canonicalRel
+                                  Diff = unifiedDiff canonicalRel canonicalText proposed
+                                  AtRisk = atRisk
+                                  BothDiverged = bothDiverged }
+
+/// One block per diverged file — one formatter per outcome, so the
+/// both-diverged case can never be rendered by code that also knows how to
+/// offer a resolution [Repo-grounded — `harness_sync_triage.rs::format_divergence`].
+let formatDivergence (divergence: Divergence) : string =
+    let canonical = divergence.Canonical |> Option.defaultValue "<undeclared>"
+
+    match divergence.Outcome with
+    | InSync -> ""
+    | OneSided SideMirror ->
+        sprintf
+            "\u2718 %s — the mirror was hand-edited\n    canonical source: %s\n    keep the edit:    rhino-cli harness sync promote --from %s\n    discard the edit: rhino-cli harness bindings generate\n"
+            divergence.Mirror
+            canonical
+            divergence.Mirror
+    | OneSided SideCanonical ->
+        sprintf
+            "\u2718 %s — the canonical source is ahead of this mirror\n    canonical source: %s\n    regenerate:       rhino-cli harness bindings generate\n"
+            divergence.Mirror
+            canonical
+    | BothDiverged ->
+        sprintf
+            "\u2718 %s — HARD STOP: both sides were hand-edited\n    canonical source: %s\n    Both files carry edits this tool cannot reconcile. No automatic\n    resolution exists and none is offered. Reconcile them by hand,\n    then re-run.\n"
+            divergence.Mirror
+            canonical
+
+/// The single sentence a non-zero `harness sync triage` exit carries
+/// [Repo-grounded — `harness_sync_triage.rs::verdict_summary`].
+let verdictSummary (report: TriageReport) : string =
+    match TriageReport.verdict report with
+    | InSync -> "no divergence"
+    | BothDiverged ->
+        sprintf
+            "%d divergence(s), at least one with edits on BOTH sides — reconcile by hand"
+            (List.length report.Divergences)
+    | OneSided _ -> sprintf "%d divergence(s)" (List.length report.Divergences)
+
+/// Renders a promote proposal. Nothing here writes; the closing line says so
+/// [Repo-grounded — `harness_sync_promote.rs::format_proposal`].
+let formatProposal (proposal: PromoteProposal) : string =
+    let sb = StringBuilder()
+
+    sb.Append(sprintf "proposed change to %s (from %s)\n\n" proposal.Canonical proposal.Mirror)
+    |> ignore
+
+    if proposal.BothDiverged then
+        sb.Append(
+            "HARD STOP: both the mirror and its canonical source were hand-edited since HEAD. This diff's removed lines include the canonical-side edit — review it carefully before applying, or reconcile the two sides by hand instead.\n\n"
+        )
+        |> ignore
+
+    if proposal.Diff = "" then
+        sb.Append("no change: the mirror carries nothing the canonical source lacks\n\n")
+        |> ignore
+    else
+        sb.Append(proposal.Diff).Append('\n') |> ignore
+
+    sb.Append("At risk of loss — canonical fields this harness cannot carry:\n")
+    |> ignore
+
+    if List.isEmpty proposal.AtRisk then
+        sb.Append("  (none)\n") |> ignore
+    else
+        for field, reason in proposal.AtRisk do
+            sb.Append(sprintf "  - %s (%s)\n" field reason) |> ignore
+
+    sb.Append(sprintf "\nNothing was written. Apply the diff to %s yourself to accept it.\n" proposal.Canonical)
+    |> ignore
+
+    sb.ToString()

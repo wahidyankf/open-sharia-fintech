@@ -133,6 +133,15 @@ type HarnessSteps() =
     let mutable lastCatalogOutcome: Harness.HarnessCatalogOutcome option = None
     let mutable catalogDocBefore: string option = None
     let mutable ownershipSourceDigestBefore: string option = None
+    let mutable triageCloneRootDir: string option = None
+    let mutable triageUseRealRepo: bool = false
+    let mutable triageOutput: string = ""
+    let mutable triageExitCode: int option = None
+    let mutable promoteOutput: string = ""
+    let mutable promoteExitCode: int option = None
+    let mutable triageCanonicalBefore: string option = None
+    let mutable bindingsValidateOutput: string = ""
+    let mutable bindingsValidateExitCode: int option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -551,6 +560,170 @@ type HarnessSteps() =
             c.Status <> "passed"
             && (c.Name.Contains(target, StringComparison.Ordinal)
                 || c.Message.Contains(target, StringComparison.Ordinal)))
+
+    // ---- @sync-triage ----
+
+    /// The plain agent: nothing in its frontmatter is unrepresentable
+    /// downstream [Repo-grounded — `tests/harness_sync_triage.rs::PLAIN`].
+    let triagePlainAgent = "alpha"
+
+    /// The rich agent: carries two fields every downstream policy drops with
+    /// a warning, so the at-risk list has something real to compute
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::RICH`].
+    let triageRichAgent = "rich"
+
+    /// The two canonical fields [`triageRichAgent`] carries that no mirror
+    /// schema can hold
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::UNREPRESENTABLE`].
+    let triageUnrepresentableFields = [ "permissionMode"; "isolation" ]
+
+    /// The root the next command runs against: the real repository, a fresh
+    /// clone, or the scenario's own fixture — mirroring
+    /// `TriageWorld::root`'s three-way choice.
+    let triageRoot () : string =
+        match triageCloneRootDir with
+        | Some dir -> dir
+        | None ->
+            if triageUseRealRepo then
+                repositoryRoot
+            else
+                scenarioRoot ()
+
+    /// A Claude agent with extra frontmatter lines injected before the
+    /// closing `---`, so the same writer produces both the plain and the
+    /// rich fixture agent
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::TriageWorld::build_and_commit`].
+    let writeTriageAgent (root: string) (name: string) (extraFrontmatter: string) : unit =
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, name + ".md"),
+            sprintf
+                "---\nname: %s\ndescription: Agent %s.\ntools: Read, Write\nmodel: sonnet\n%s---\n# Body\n"
+                name
+                name
+                extraFrontmatter
+        )
+
+    /// A complete fixture — the same registry shape [`ownershipRegistryYaml`]
+    /// already builds, two agents, one skill, one vendored plugin directory —
+    /// generated, then committed so the classifier (which reads the git
+    /// index) and the attribution step (which compares against `HEAD`) both
+    /// have something to read
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::TriageWorld::build_and_commit`].
+    let buildAndCommitTriageFixture (root: string) : unit =
+        writeOwnershipRegistry root false
+        writeOwnershipSupportingDocs root
+        writeTriageAgent root triagePlainAgent ""
+        writeTriageAgent root triageRichAgent "permissionMode: acceptEdits\nisolation: worktree\n"
+        writeOwnershipSkill root "beta"
+
+        let vendorDir = Path.Combine(root, ".agents", "skills", ownershipVendorDir)
+        Directory.CreateDirectory vendorDir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(vendorDir, "SKILL.md"),
+            "---\nname: vendor-plugin\ndescription: Third-party.\n---\n# Vendored\n"
+        )
+
+        initOwnershipGitFixture root
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "fixture generate: %s" e
+
+        runOwnershipGit root [ "add"; "-A" ]
+        runOwnershipGit root [ "commit"; "-q"; "-m"; "fixture" ]
+
+    /// Appends `line` to the working-tree file at `rel`, under `root`.
+    let appendToTriageFile (root: string) (rel: string) (line: string) : unit =
+        let path = Path.Combine(root, rel.Replace('/', Path.DirectorySeparatorChar))
+        File.AppendAllText(path, line)
+
+    /// Restores `rel` to its `HEAD` content via `git checkout --`, the
+    /// falsifiability half of every triage scenario
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::TriageWorld::restore`].
+    let restoreTriageFile (root: string) (rel: string) : unit =
+        runOwnershipGit root [ "checkout"; "--"; rel ]
+
+    /// Runs [`Harness.triage`] against `root`, rendering the same summary
+    /// line and per-divergence blocks `harness_sync_triage.rs::run` prints
+    /// [Repo-grounded — `harness_sync_triage.rs::run`].
+    let runTriage (root: string) : unit =
+        match Harness.triage root with
+        | Error e ->
+            triageOutput <- e
+            triageExitCode <- Some 1
+        | Ok report ->
+            let summary =
+                sprintf
+                    "harness sync triage: %d generated file(s) compared, %d divergence(s)"
+                    report.Compared
+                    (List.length report.Divergences)
+
+            let body =
+                report.Divergences |> List.map Harness.formatDivergence |> String.concat ""
+
+            triageOutput <- summary + "\n" + body
+            triageExitCode <- Some(if List.isEmpty report.Divergences then 0 else 1)
+
+    /// Runs [`Harness.promote`] against `root`, rendering the same proposal
+    /// text `harness_sync_promote.rs::run` prints
+    /// [Repo-grounded — `harness_sync_promote.rs::run`].
+    let runPromote (root: string) (mirrorRel: string) : unit =
+        match Harness.promote root mirrorRel with
+        | Error e ->
+            promoteOutput <- e
+            promoteExitCode <- Some 1
+        | Ok proposal ->
+            promoteOutput <- Harness.formatProposal proposal
+            promoteExitCode <- Some 0
+
+    /// Runs the check family a hand-edited generated mirror actually reaches
+    /// today — [`Harness.validateSync`]'s per-agent equivalence check, now
+    /// carrying [`Harness.driftRemediation`]'s canonical+promote wording on
+    /// its body-mismatch failure. Static binding-file byte parity
+    /// (`bindings.rs::validate_binding_file`, the check family Rust's own
+    /// fixture edits a `.codex/agents/*.toml` mirror to reach) stays out of
+    /// scope per this module's doc-header scope notes, so this scenario's
+    /// fixture hand-edits the `.opencode/` mirror instead — the same
+    /// "generated mirror carries a hand edit" behaviour, reached through the
+    /// check family this port actually implements.
+    let runBindingsValidateNoTriage (root: string) : unit =
+        let outcome = Harness.validateSync root
+
+        bindingsValidateOutput <-
+            outcome.Checks
+            |> List.map (fun c -> sprintf "%s: %s (%s)" c.Name c.Status c.Message)
+            |> String.concat "\n"
+
+        bindingsValidateExitCode <- Some(if outcome.FailedChecks = 0 then 0 else 1)
+
+    /// The hard-stop block alone, so an assertion about what it does NOT
+    /// offer is not satisfied — or defeated — by a neighbouring divergence's
+    /// block. The both-diverged fixture's canonical edit also leaves the
+    /// unrelated Codex mirror one step behind (a real, correctly-detected
+    /// "canonical is ahead" divergence alongside the intended both-diverged
+    /// one), so isolating this block is load-bearing, not defensive
+    /// [Repo-grounded — `tests/harness_sync_triage.rs::hard_stop_block`].
+    let triageHardStopBlock (output: string) : string =
+        let marker = output.IndexOf("HARD STOP", StringComparison.Ordinal)
+
+        if marker < 0 then
+            failwith "no hard stop block in triage output"
+        else
+            let start =
+                match output.LastIndexOf('\n', marker) with
+                | -1 -> 0
+                | i -> i + 1
+
+            let rest = output.Substring(start)
+            let searchFrom = marker - start + 1
+
+            match rest.IndexOf("\n\u2718", searchFrom, StringComparison.Ordinal) with
+            | -1 -> rest
+            | endIdx -> rest.Substring(0, endIdx)
 
     /// Runs `git ls-files -- <path>` at the repository root and returns the
     /// number of tracked paths it reports.
@@ -2129,6 +2302,281 @@ type HarnessSteps() =
 
             Assert.Equal(total, sum)
 
+    // ---- @sync-triage ----
+
+    [<Given>]
+    member _.``every generated mirror matches what the generator produces from canonical source``() =
+        buildAndCommitTriageFixture (scenarioRoot ())
+
+    [<Given>]
+    member _.``a fixture repository cloned fresh, so every file's modification time is its checkout time and carries no information``
+        ()
+        =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+
+        let clone =
+            Path.Combine(Path.GetTempPath(), "rhino-cli-harness-clone-" + Guid.NewGuid().ToString("N"))
+
+        runOwnershipGit root [ "clone"; "-q"; root; clone ]
+        triageCloneRootDir <- Some clone
+
+    [<Given>]
+    member _.``a tree that reported zero divergences and then had exactly one generated mirror hand-edited``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        runTriage root
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+        appendToTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent) "\n<!-- edit -->\n"
+
+    [<Given>]
+    member _.``a canonical source agent was hand-edited and the generator has not been run since``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        appendToTriageFile root (sprintf ".claude/agents/%s.md" triagePlainAgent) "\nExtra canonical prose.\n"
+
+    [<Given>]
+    member _.``a canonical source file and its corresponding generated mirror have both been hand-edited``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        appendToTriageFile root (sprintf ".claude/agents/%s.md" triagePlainAgent) "\nExtra canonical prose.\n"
+        appendToTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent) "\n<!-- edit -->\n"
+
+    [<Given>]
+    member _.``a generated OpenCode mirror carries a hand edit worth keeping``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        appendToTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent) "\nA paragraph worth keeping.\n"
+
+        triageCanonicalBefore <-
+            Some(File.ReadAllText(Path.Combine(root, ".claude", "agents", triagePlainAgent + ".md")))
+
+    [<Given>]
+    member _.``a canonical agent carrying fields the editing harness's field policy drops with a warning``() =
+        buildAndCommitTriageFixture (scenarioRoot ())
+
+    [<Given>]
+    member _.``a generated skills mirror carries a hand edit``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        appendToTriageFile root ".agents/skills/beta/SKILL.md" "\n<!-- skill mirror edit -->\n"
+
+    [<Given>]
+    member _.``a vendored skill directory declared in the registry and a generated mirror file beside it``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        Assert.True(File.Exists(Path.Combine(root, ".agents", "skills", "beta", "SKILL.md")))
+
+    [<Given>]
+    member _.``a generated mirror carries a hand edit``() =
+        let root = scenarioRoot ()
+        buildAndCommitTriageFixture root
+        appendToTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent) "\n<!-- edit -->\n"
+
+    [<Given>]
+    member _.``this repository's generated mirrors were produced by the current generator``() =
+        triageUseRealRepo <- true
+
+    [<When>]
+    member _.``rhino-cli harness sync triage runs``() = runTriage (triageRoot ())
+
+    [<When>]
+    member _.``rhino-cli harness sync triage runs against it``() = runTriage (triageRoot ())
+
+    [<When>]
+    member _.``rhino-cli harness sync promote runs against that mirror``() =
+        runPromote (triageRoot ()) (sprintf ".opencode/agents/%s.md" triagePlainAgent)
+
+    [<When>]
+    member _.``rhino-cli harness sync promote runs against that harness's mirror``() =
+        runPromote (triageRoot ()) (sprintf ".opencode/agents/%s.md" triageRichAgent)
+
+    [<When>]
+    member _.``rhino-cli harness sync promote runs against that mirror, without triage having run first``() =
+        runPromote (triageRoot ()) (sprintf ".opencode/agents/%s.md" triagePlainAgent)
+
+    [<When>]
+    member _.``rhino-cli harness sync promote runs against that skills mirror``() =
+        runPromote (triageRoot ()) ".agents/skills/beta/SKILL.md"
+
+    [<When>]
+    member _.``the vendored file is hand-edited and rhino-cli harness sync triage runs``() =
+        let root = triageRoot ()
+        appendToTriageFile root (sprintf ".agents/skills/%s/SKILL.md" ownershipVendorDir) "\n<!-- vendor edit -->\n"
+        runTriage root
+
+    [<When>]
+    member _.``rhino-cli harness bindings validate runs without triage``() =
+        runBindingsValidateNoTriage (triageRoot ())
+
+    [<Then>]
+    member _.``it exits 0 reporting zero divergences``() =
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+        Assert.Contains("0 divergence(s)", triageOutput)
+
+    [<Then>]
+    member _.``it exits 0 reporting zero divergences, because detection compares content and never a clock``() =
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+        Assert.Contains("0 divergence(s)", triageOutput)
+
+    [<Then>]
+    member _.``no clock-reading call appears anywhere on the detection path``() =
+        let source =
+            File.ReadAllText(
+                Path.Combine(
+                    repositoryRoot,
+                    "apps",
+                    "rhino-cli",
+                    "src-fsharp",
+                    "RhinoCli.Application",
+                    "src",
+                    "Harness.fs"
+                )
+            )
+
+        for forbidden in [ "LastWriteTime"; "LastAccessTime"; "CreationTime" ] do
+            Assert.DoesNotContain(forbidden, source)
+
+    [<Then>]
+    member _.``it exits non-zero naming that mirror as the hand-edited side and naming the promote command``() =
+        Assert.NotEqual(0, triageExitCode |> Option.defaultValue 0)
+        Assert.Contains(sprintf ".opencode/agents/%s.md" triagePlainAgent, triageOutput)
+        Assert.Contains("the mirror was hand-edited", triageOutput)
+        Assert.Contains("harness sync promote --from", triageOutput)
+
+    [<Then>]
+    member _.``it exits 0 again once the mirror is restored, so the detection is falsifiable in both directions``() =
+        let root = triageRoot ()
+        restoreTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent)
+        runTriage root
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+
+    [<Then>]
+    member _.``it exits non-zero naming the canonical side and naming the generate command rather than the promote command``
+        ()
+        =
+        Assert.NotEqual(0, triageExitCode |> Option.defaultValue 0)
+        Assert.Contains("the canonical source is ahead", triageOutput)
+        Assert.Contains(sprintf ".claude/agents/%s.md" triagePlainAgent, triageOutput)
+        Assert.Contains("harness bindings generate", triageOutput)
+        Assert.DoesNotContain("harness sync promote", triageOutput)
+
+    [<Then>]
+    member _.``it exits 0 once the generator is run``() =
+        let root = triageRoot ()
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "regenerate: %s" e
+
+        runTriage root
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+
+    [<Then>]
+    member _.``it exits non-zero naming both files``() =
+        Assert.NotEqual(0, triageExitCode |> Option.defaultValue 0)
+        Assert.Contains(sprintf ".opencode/agents/%s.md" triagePlainAgent, triageOutput)
+        Assert.Contains(sprintf ".claude/agents/%s.md" triagePlainAgent, triageOutput)
+
+    [<Then>]
+    member _.``it offers neither promotion nor any automatic resolution, because no correct automatic answer exists``
+        ()
+        =
+        let block = triageHardStopBlock triageOutput
+        Assert.DoesNotContain("promote", block)
+        Assert.DoesNotContain("bindings generate", block)
+
+    [<Then>]
+    member _.``it exits 0 once both files are restored``() =
+        let root = triageRoot ()
+        restoreTriageFile root (sprintf ".claude/agents/%s.md" triagePlainAgent)
+        restoreTriageFile root (sprintf ".opencode/agents/%s.md" triagePlainAgent)
+        runTriage root
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+
+    [<Then>]
+    member _.``a proposed unified diff against the canonical source is emitted``() =
+        Assert.Equal(0, promoteExitCode |> Option.defaultValue -1)
+        Assert.Contains(sprintf "--- a/.claude/agents/%s.md" triagePlainAgent, promoteOutput)
+        Assert.Contains(sprintf "+++ b/.claude/agents/%s.md" triagePlainAgent, promoteOutput)
+        Assert.Contains("+A paragraph worth keeping.", promoteOutput)
+
+    [<Then>]
+    member _.``the canonical source file is byte-identical to what it was before the promote run, proving nothing was overwritten``
+        ()
+        =
+        let root = triageRoot ()
+
+        let after =
+            File.ReadAllText(Path.Combine(root, ".claude", "agents", triagePlainAgent + ".md"))
+
+        Assert.Equal(triageCanonicalBefore |> Option.defaultValue "<no snapshot recorded>", after)
+
+    [<Then>]
+    member _.``the output lists exactly those fields under an at-risk heading``() =
+        Assert.Equal(0, promoteExitCode |> Option.defaultValue -1)
+        Assert.Contains("At risk of loss", promoteOutput)
+
+        for field in triageUnrepresentableFields do
+            Assert.Contains(sprintf "- %s (" field, promoteOutput)
+
+    [<Then>]
+    member _.``an agent whose canonical source carries none of them lists nothing, proving the list is computed rather than hardcoded``
+        ()
+        =
+        runPromote (triageRoot ()) (sprintf ".opencode/agents/%s.md" triagePlainAgent)
+        Assert.Equal(0, promoteExitCode |> Option.defaultValue -1)
+        Assert.Contains("(none)", promoteOutput)
+
+        for field in triageUnrepresentableFields do
+            Assert.DoesNotContain(field, promoteOutput)
+
+    [<Then>]
+    member _.``the output carries a hard-stop warning naming both sides as hand-edited``() =
+        Assert.Contains("HARD STOP", promoteOutput)
+        Assert.Contains("both the mirror and its canonical source", promoteOutput)
+
+    [<Then>]
+    member _.``nothing was written to canonical source``() =
+        Assert.Contains("Nothing was written", promoteOutput)
+
+    [<Then>]
+    member _.``the output lists nothing under the at-risk heading``() =
+        Assert.Equal(0, promoteExitCode |> Option.defaultValue -1)
+        Assert.Contains("At risk of loss", promoteOutput)
+        Assert.Contains("(none)", promoteOutput)
+
+    [<Then>]
+    member _.``no divergence is reported for the vendored file, because the generator does not own it``() =
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+        Assert.Contains("0 divergence(s)", triageOutput)
+
+    [<Then>]
+    member _.``hand-editing the generated file instead does report a divergence``() =
+        let root = triageRoot ()
+        restoreTriageFile root (sprintf ".agents/skills/%s/SKILL.md" ownershipVendorDir)
+        appendToTriageFile root ".agents/skills/beta/SKILL.md" "\n<!-- generated edit -->\n"
+        runTriage root
+        Assert.NotEqual(0, triageExitCode |> Option.defaultValue 0)
+        Assert.Contains(".agents/skills/beta/SKILL.md", triageOutput)
+
+    [<Then>]
+    member _.``it exits non-zero exactly as it did before triage existed``() =
+        Assert.NotEqual(0, bindingsValidateExitCode |> Option.defaultValue 0)
+
+    [<Then>]
+    member _.``the failure message names both the canonical source file to edit and the harness sync promote command``
+        ()
+        =
+        Assert.Contains(sprintf ".claude/agents/%s.md" triagePlainAgent, bindingsValidateOutput)
+        Assert.Contains("harness sync promote --from", bindingsValidateOutput)
+
+    [<Then>]
+    member _.``it exits 0 and reports the number of generated files compared``() =
+        Assert.Equal(0, triageExitCode |> Option.defaultValue -1)
+        Assert.Contains("generated file(s) compared", triageOutput)
+        Assert.Contains("0 divergence(s)", triageOutput)
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -2235,6 +2683,10 @@ module private FeatureRunner =
     /// Runs one scenario of `harness-ownership.feature`.
     let runHarnessOwnership (scenarioTitle: string) : unit =
         runIn "harness-ownership.feature" scenarioTitle
+
+    /// Runs one scenario of `harness-sync-triage.feature`.
+    let runHarnessSyncTriage (scenarioTitle: string) : unit =
+        runIn "harness-sync-triage.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -2444,3 +2896,54 @@ let ``A source path is never written by the emitter`` () =
 [<Fact>]
 let ``Every tracked binding file in this repository carries exactly one class`` () =
     FeatureRunner.runHarnessOwnership "Every tracked binding file in this repository carries exactly one class"
+
+[<Fact>]
+let ``An in-sync tree reports no divergence`` () =
+    FeatureRunner.runHarnessSyncTriage "An in-sync tree reports no divergence"
+
+[<Fact>]
+let ``Detection survives a fresh clone where every file carries checkout time`` () =
+    FeatureRunner.runHarnessSyncTriage "Detection survives a fresh clone where every file carries checkout time"
+
+[<Fact>]
+let ``One-sided divergence is detected and promotion is offered`` () =
+    FeatureRunner.runHarnessSyncTriage "One-sided divergence is detected and promotion is offered"
+
+[<Fact>]
+let ``A canonical edit that was never regenerated is reported against the canonical side`` () =
+    FeatureRunner.runHarnessSyncTriage
+        "A canonical edit that was never regenerated is reported against the canonical side"
+
+[<Fact>]
+let ``Divergence on both sides is a hard stop with no automatic resolution`` () =
+    FeatureRunner.runHarnessSyncTriage "Divergence on both sides is a hard stop with no automatic resolution"
+
+[<Fact>]
+let ``Promotion emits a reviewable diff and never writes canonical source`` () =
+    FeatureRunner.runHarnessSyncTriage "Promotion emits a reviewable diff and never writes canonical source"
+
+[<Fact>]
+let ``Promotion lists the canonical fields the editing harness cannot carry`` () =
+    FeatureRunner.runHarnessSyncTriage "Promotion lists the canonical fields the editing harness cannot carry"
+
+[<Fact>]
+let ``Promoting a both-diverged mirror directly still warns, without requiring triage first`` () =
+    FeatureRunner.runHarnessSyncTriage
+        "Promoting a both-diverged mirror directly still warns, without requiring triage first"
+
+[<Fact>]
+let ``Promoting a skills mirror lists no field at risk, because a byte copy translates nothing`` () =
+    FeatureRunner.runHarnessSyncTriage
+        "Promoting a skills mirror lists no field at risk, because a byte copy translates nothing"
+
+[<Fact>]
+let ``A vendored file is excluded from triage entirely`` () =
+    FeatureRunner.runHarnessSyncTriage "A vendored file is excluded from triage entirely"
+
+[<Fact>]
+let ``The default failure behaviour is unchanged and now names the way out`` () =
+    FeatureRunner.runHarnessSyncTriage "The default failure behaviour is unchanged and now names the way out"
+
+[<Fact>]
+let ``This repository's own tree reports zero divergences`` () =
+    FeatureRunner.runHarnessSyncTriage "This repository's own tree reports zero divergences"
