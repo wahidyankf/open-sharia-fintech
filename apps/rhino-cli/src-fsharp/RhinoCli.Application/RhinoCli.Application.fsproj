@@ -20,6 +20,7 @@
     <Compile Include="src/Md.fs" />
     <Compile Include="src/Governance.fs" />
     <Compile Include="src/Git.fs" />
+    <Compile Include="src/Harness.fs" />
   </ItemGroup>
 
   <ItemGroup>
