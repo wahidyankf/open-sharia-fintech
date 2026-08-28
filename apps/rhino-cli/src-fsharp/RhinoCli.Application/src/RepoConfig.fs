@@ -2,17 +2,19 @@
 /// scenarios in
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature`
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature`,
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/repo_config/mod.rs`,
 /// `apps/rhino-cli/src/commands/repo_config_validate.rs`].
 ///
 /// Scope note: the Rust `RepoConfig` schema is a ~40-field struct covering
 /// gate wiring, env contracts, word budgets, and the full Doctor tool
 /// roster. This port models only `harness[].{name,tier,agent-dir,mirrors,
-/// forbid-dir,skills-dir,skills-mirrors,vendored,ownership}`,
-/// `gates[].{id,args}`, `specs.{ddd-areas,domain-areas}`, and
-/// `doctor.dotnet-global-json` — the fields these two feature files'
-/// scenarios read — and deserializes the rest of the document with
+/// forbid-dir,skills-dir,skills-mirrors,vendored,catalog,ownership}`,
+/// `gates[].{id,args}`, `specs.{ddd-areas,domain-areas}`,
+/// `doctor.dotnet-global-json`, and `harness-catalog.{document,verified}` —
+/// the fields these three feature files' scenarios read — and deserializes
+/// the rest of the document with
 /// `IgnoreUnmatchedProperties` rather than Rust's `deny_unknown_fields`, so
 /// every other real `repo-config.yml` key is silently accepted rather than
 /// schema-validated. `harness[]` and `harness[].ownership[]` are the
@@ -54,6 +56,18 @@ type OwnershipEntry =
       Class: OwnershipClass
       Reason: string option }
 
+/// One harness's row in the generated platform-binding catalog table, read
+/// from a harness entry's `catalog:` block
+/// [Repo-grounded — `repo_config/mod.rs::CatalogEntry`].
+type CatalogEntry =
+    { Platform: string
+      ReadsAgentsMd: string
+      InstructionSurface: string
+      McpConfig: string
+      AgentSurface: string
+      SkillsSurface: string
+      Status: string }
+
 /// One harness entry in the `harness:` section of `repo-config.yml`, trimmed
 /// to the fields the codex-entry, three-harness-registry, and
 /// repo-config-validate scenarios read
@@ -67,6 +81,7 @@ type HarnessEntry =
       SkillsDir: string option
       SkillsMirrors: string option
       Vendored: string list
+      Catalog: CatalogEntry option
       Ownership: OwnershipEntry list }
 
 /// One entry in the `gates:` section, trimmed to the `id` and `args` fields
@@ -91,13 +106,19 @@ type SpecsConfig =
     { DddAreas: string list
       DomainAreas: string list }
 
+/// Document-level settings for the generated platform-binding catalog: where
+/// it lives, and the date its claims were last verified against upstream
+/// [Repo-grounded — `repo_config/mod.rs::HarnessCatalog`].
+type HarnessCatalog = { Document: string; Verified: string }
+
 /// Parsed `repo-config.yml`, trimmed to this port's scope (see module doc
 /// comment) [Repo-grounded — `repo_config/mod.rs::RepoConfig`].
 type RepoConfig =
     { Harness: HarnessEntry list
       Gates: GateEntry list
       Specs: SpecsConfig
-      Doctor: DoctorConfig }
+      Doctor: DoctorConfig
+      HarnessCatalog: HarnessCatalog option }
 
 /// The value `load`/`loadOptional` never produce on their own but that
 /// `loadOrDefault` falls back to on any load failure
@@ -108,7 +129,8 @@ let empty: RepoConfig =
       Specs = { DddAreas = []; DomainAreas = [] }
       Doctor =
         { DotnetGlobalJson = None
-          SkipTools = [] } }
+          SkipTools = [] }
+      HarnessCatalog = None }
 
 /// Raw YAML-shaped intermediate records. `[<CLIMutable>]` gives each record a
 /// parameterless constructor and settable properties, which is what lets
@@ -131,6 +153,16 @@ type OwnershipEntryDto =
       Reason: string | null }
 
 [<CLIMutable>]
+type CatalogEntryDto =
+    { Platform: string
+      ReadsAgentsMd: string
+      InstructionSurface: string
+      McpConfig: string
+      AgentSurface: string
+      SkillsSurface: string
+      Status: string }
+
+[<CLIMutable>]
 type HarnessEntryDto =
     { Name: string
       Tier: string
@@ -140,6 +172,7 @@ type HarnessEntryDto =
       SkillsDir: string | null
       SkillsMirrors: string | null
       Vendored: ResizeArray<string>
+      Catalog: CatalogEntryDto
       Ownership: ResizeArray<OwnershipEntryDto> }
 
 [<CLIMutable>]
@@ -158,11 +191,15 @@ type SpecsConfigDto =
       DomainAreas: ResizeArray<string> }
 
 [<CLIMutable>]
+type HarnessCatalogDto = { Document: string; Verified: string }
+
+[<CLIMutable>]
 type RepoConfigDto =
     { Harness: ResizeArray<HarnessEntryDto>
       Gates: ResizeArray<GateEntryDto>
       Specs: SpecsConfigDto
-      Doctor: DoctorConfigDto }
+      Doctor: DoctorConfigDto
+      HarnessCatalog: HarnessCatalogDto }
 
 /// Matches `repo-config.yml`'s kebab-case keys (`agent-dir`, `ddd-areas`,
 /// `dotnet-global-json`, ...) against the DTOs' PascalCase properties without
@@ -230,6 +267,15 @@ let private toOwnershipEntry
           Class = cls
           Reason = Option.ofObj dto.Reason })
 
+let private toCatalogEntry (dto: CatalogEntryDto) : CatalogEntry =
+    { Platform = dto.Platform
+      ReadsAgentsMd = dto.ReadsAgentsMd
+      InstructionSurface = dto.InstructionSurface
+      McpConfig = dto.McpConfig
+      AgentSurface = dto.AgentSurface
+      SkillsSurface = dto.SkillsSurface
+      Status = dto.Status }
+
 let private toHarnessEntry (index: int) (dto: HarnessEntryDto) : Result<HarnessEntry, string> =
     parseTier index dto.Tier
     |> Result.bind (fun tier ->
@@ -245,6 +291,10 @@ let private toHarnessEntry (index: int) (dto: HarnessEntryDto) : Result<HarnessE
               SkillsDir = Option.ofObj dto.SkillsDir
               SkillsMirrors = Option.ofObj dto.SkillsMirrors
               Vendored = toOptionList dto.Vendored
+              Catalog =
+                match box dto.Catalog with
+                | null -> None
+                | _ -> Some(toCatalogEntry dto.Catalog)
               Ownership = ownership }))
 
 let private toGateEntry (dto: GateEntryDto) : GateEntry =
@@ -402,7 +452,14 @@ let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
                     { Harness = harness
                       Gates = toOptionList dto.Gates |> List.map toGateEntry
                       Specs = toSpecsConfig dto.Specs
-                      Doctor = toDoctorConfig dto.Doctor })
+                      Doctor = toDoctorConfig dto.Doctor
+                      HarnessCatalog =
+                        match box dto.HarnessCatalog with
+                        | null -> None
+                        | _ ->
+                            Some
+                                { Document = dto.HarnessCatalog.Document
+                                  Verified = dto.HarnessCatalog.Verified } })
         with ex ->
             Error ex.Message
 

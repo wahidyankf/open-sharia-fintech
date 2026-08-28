@@ -16,9 +16,11 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`,
+/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
+/// `apps/rhino-cli/src/application/agents/catalog.rs`,
 /// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
@@ -36,6 +38,7 @@
 /// `apps/rhino-cli/src/commands/gate/run.rs`,
 /// `apps/rhino-cli/src/commands/governance_audit.rs`,
 /// `apps/rhino-cli/src/commands/harness_audit.rs`,
+/// `apps/rhino-cli/src/commands/harness_catalog.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
 /// `apps/rhino-cli/src/commands/harness_validate_claude.rs`].
 ///
@@ -3131,3 +3134,223 @@ let runHarnessAudit (repoRoot: string) : HarnessAuditOutcome =
 
         { ExitCode = 1
           Output = sprintf "HARNESS AUDIT FAILED: %d validator(s) reported failures\n%s" (List.length failing) body }
+
+// ---------------------------------------------------------------------------
+// `harness catalog` — render the platform-binding catalog from the harness
+// registry, and guard the generated region against hand edits
+// ---------------------------------------------------------------------------
+//
+// Scope note: Rust's `harness_catalog.rs` renders through the shared
+// text/JSON/Markdown `ValidationResult` reporter (`agents/reporter.rs`). This
+// module returns a plain `HarnessCatalogOutcome` instead, following the same
+// "scenarios assert on returned state, not rendered CLI output" precedent
+// every other command in this module follows — see the module doc comment's
+// third scope note.
+
+/// Opening delimiter of the generated region this emitter owns
+/// [Repo-grounded — `application/agents/catalog.rs::REGION_START`].
+let catalogRegionStart =
+    "<!-- >>> rhino-cli generated: harness catalog - do not edit inside this region -->"
+
+/// Closing delimiter of the generated region.
+///
+/// **Marker-first hazard**: [`rewriteCatalogRegion`] checks for THIS marker
+/// as well as the start marker before rewriting. An anchor-first
+/// implementation would find only an insertion anchor on every run and
+/// append a fresh region each time, so the document grows a duplicate table
+/// per invocation. The end marker is the "already applied" signal that
+/// prevents that
+/// [Repo-grounded — `application/agents/catalog.rs::REGION_END`].
+let catalogRegionEnd = "<!-- <<< rhino-cli generated: harness catalog -->"
+
+/// Remediation sentence shared by catalog drift findings
+/// [Repo-grounded — `application/agents/catalog.rs::CATALOG_REMEDIATION`].
+let catalogRemediation =
+    "run `rhino-cli harness catalog generate` to regenerate the catalog region"
+
+/// Every table column, in emitted order: its header, and the function
+/// reading its cell out of a catalog entry
+/// [Repo-grounded — `application/agents/catalog.rs::Column`, `COLUMNS`].
+let private catalogColumns: (string * (RepoConfig.CatalogEntry -> string)) list =
+    [ "Platform", (fun e -> e.Platform)
+      "Reads root `AGENTS.md` natively?", (fun e -> e.ReadsAgentsMd)
+      "Tool-specific instruction surface", (fun e -> e.InstructionSurface)
+      "Project MCP config", (fun e -> e.McpConfig)
+      "Custom-agent surface", (fun e -> e.AgentSurface)
+      "Skills surface", (fun e -> e.SkillsSurface)
+      "Status", (fun e -> e.Status) ]
+
+/// Display width of a cell, in the same terms Prettier measures: Unicode
+/// scalar count rather than UTF-16 code-unit count, so a multi-byte em dash
+/// still occupies one column
+/// [Repo-grounded — `application/agents/catalog.rs::cell_width`].
+let private catalogCellWidth (cell: string) : int = cell.EnumerateRunes() |> Seq.length
+
+/// Pads `cell` to `width` with trailing spaces
+/// [Repo-grounded — `application/agents/catalog.rs::pad`].
+let private padCatalogCell (cell: string) (width: int) : string =
+    cell + String(' ', max 0 (width - catalogCellWidth cell))
+
+/// Renders one markdown table line from already-padded cells
+/// [Repo-grounded — `application/agents/catalog.rs::table_line`].
+let private catalogTableLine (cells: string list) : string =
+    sprintf "| %s |" (String.concat " | " cells)
+
+/// Per-column width: the widest cell in that column, header included
+/// [Repo-grounded — `application/agents/catalog.rs::column_widths`].
+let private catalogColumnWidths (rows: string list list) : int list =
+    let headerWidths =
+        catalogColumns |> List.map (fun (header, _) -> catalogCellWidth header)
+
+    rows
+    |> List.fold (fun widths row -> List.map2 (fun w cell -> max w (catalogCellWidth cell)) widths row) headerWidths
+
+/// Renders the markdown table: header, separator, one row per entry
+/// [Repo-grounded — `application/agents/catalog.rs::render_table`].
+///
+/// # Errors
+///
+/// Returns an error message when any harness entry lacks a `catalog:` block.
+let renderCatalogTable (harnesses: RepoConfig.HarnessEntry list) : Result<string, string> =
+    match harnesses |> List.tryFind (fun h -> h.Catalog.IsNone) with
+    | Some missing ->
+        Error(
+            sprintf
+                "harness \"%s\" has no `catalog:` block in repo-config.yml; every registry entry must declare one so the table cannot silently omit a harness"
+                missing.Name
+        )
+    | None ->
+        let rows =
+            harnesses
+            |> List.map (fun h -> catalogColumns |> List.map (fun (_, cell) -> cell h.Catalog.Value))
+
+        let widths = catalogColumnWidths rows
+
+        let header =
+            List.map2 (fun (h, _) w -> padCatalogCell h w) catalogColumns widths
+            |> catalogTableLine
+
+        let separator = widths |> List.map (fun w -> String('-', w)) |> catalogTableLine
+
+        let dataLines =
+            rows
+            |> List.map (fun row -> List.map2 padCatalogCell row widths |> catalogTableLine)
+
+        Ok(String.concat "\n" (header :: separator :: dataLines) + "\n")
+
+/// Renders the whole generated region, markers included
+/// [Repo-grounded — `application/agents/catalog.rs::render_region`].
+///
+/// # Errors
+///
+/// Propagates [`renderCatalogTable`]'s error.
+let renderCatalogRegion (harnesses: RepoConfig.HarnessEntry list) (verified: string) : Result<string, string> =
+    renderCatalogTable harnesses
+    |> Result.map (fun table ->
+        sprintf "%s\n\n**Verified %s.**\n\n%s\n%s" catalogRegionStart verified table catalogRegionEnd)
+
+/// Replaces the region between the markers in `existing`, leaving every byte
+/// outside them untouched
+/// [Repo-grounded — `application/agents/catalog.rs::rewrite_region`].
+///
+/// # Errors
+///
+/// Returns an error message when both markers are not present, in order.
+let rewriteCatalogRegion (existing: string) (region: string) (document: string) : Result<string, string> =
+    let endAt = existing.IndexOf(catalogRegionEnd, StringComparison.Ordinal)
+    let startAt = existing.IndexOf(catalogRegionStart, StringComparison.Ordinal)
+
+    if endAt < 0 || startAt < 0 || startAt >= endAt then
+        Error(
+            sprintf
+                "%s does not contain the generated-region markers in order; expected %s before %s"
+                document
+                catalogRegionStart
+                catalogRegionEnd
+        )
+    else
+        Ok(
+            existing.Substring(0, startAt)
+            + region
+            + existing.Substring(endAt + catalogRegionEnd.Length)
+        )
+
+/// The catalog document's repository-relative and absolute paths, its
+/// current text, and the text a fresh render would produce
+/// [Repo-grounded — `commands/harness_catalog.rs::Rendered`].
+type private RenderedCatalog =
+    { Relative: string
+      Absolute: string
+      Current: string
+      Expected: string }
+
+/// Loads the registry, renders the region, and returns both document states
+/// [Repo-grounded — `commands/harness_catalog.rs::render`].
+let private renderCatalogDocument (repoRoot: string) : Result<RenderedCatalog, string> =
+    match RepoConfig.load repoRoot with
+    | Error e -> Error e
+    | Ok config ->
+        match config.HarnessCatalog with
+        | None ->
+            Error
+                "repo-config.yml declares no `harness-catalog:` block; the catalog document path and verification date must be declared, not inferred"
+        | Some settings ->
+            match renderCatalogRegion config.Harness settings.Verified with
+            | Error e -> Error e
+            | Ok region ->
+                let absolute = Path.Combine(repoRoot, settings.Document)
+
+                try
+                    let current = File.ReadAllText absolute
+
+                    match rewriteCatalogRegion current region settings.Document with
+                    | Error e -> Error e
+                    | Ok expected ->
+                        Ok
+                            { Relative = settings.Document
+                              Absolute = absolute
+                              Current = current
+                              Expected = expected }
+                with ex ->
+                    Error(sprintf "cannot read %s: %s" settings.Document ex.Message)
+
+/// Outcome of `harness catalog generate`/`harness catalog validate`: the
+/// exit code and the rendered report text
+/// [Repo-grounded — `commands/harness_catalog.rs::run_generate`,
+/// `run_validate`].
+type HarnessCatalogOutcome = { ExitCode: int; Output: string }
+
+/// Runs `harness catalog generate`: writes the generated region when it
+/// diverges from the registry, leaving the rest of the document untouched
+/// [Repo-grounded — `commands/harness_catalog.rs::run_generate`].
+let runHarnessCatalogGenerate (repoRoot: string) : HarnessCatalogOutcome =
+    match renderCatalogDocument repoRoot with
+    | Error e -> { ExitCode = 1; Output = e + "\n" }
+    | Ok rendered ->
+        if rendered.Current = rendered.Expected then
+            { ExitCode = 0
+              Output = sprintf "%s already matches the registry\n" rendered.Relative }
+        else
+            File.WriteAllText(rendered.Absolute, rendered.Expected)
+
+            { ExitCode = 0
+              Output = sprintf "%s regenerated from the registry\n" rendered.Relative }
+
+/// Runs `harness catalog validate`: fails when the generated region diverges
+/// from a fresh render, naming the drifted document
+/// [Repo-grounded — `commands/harness_catalog.rs::run_validate`].
+let runHarnessCatalogValidate (repoRoot: string) : HarnessCatalogOutcome =
+    match renderCatalogDocument repoRoot with
+    | Error e -> { ExitCode = 1; Output = e + "\n" }
+    | Ok rendered ->
+        if rendered.Current = rendered.Expected then
+            { ExitCode = 0
+              Output = sprintf "%s matches the registry\n" rendered.Relative }
+        else
+            { ExitCode = 1
+              Output =
+                sprintf
+                    "%s diverges from the registry; the generated region of %s was hand-edited or the registry changed; %s\n"
+                    rendered.Relative
+                    rendered.Relative
+                    catalogRemediation }

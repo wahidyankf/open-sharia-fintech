@@ -130,6 +130,8 @@ type HarnessSteps() =
     let mutable lookupFileContent: string = ""
     let mutable lastAuditJson: string option = None
     let mutable lastHarnessAuditOutcome: Harness.HarnessAuditOutcome option = None
+    let mutable lastCatalogOutcome: Harness.HarnessCatalogOutcome option = None
+    let mutable catalogDocBefore: string option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -192,6 +194,127 @@ type HarnessSteps() =
                   "" ]
             )
         )
+
+    /// Repository-relative path of the catalog document in the fixture
+    /// [Repo-grounded — `tests/harness_catalog.rs::CATALOG_DOC`].
+    let catalogDoc = "docs/reference/platform-bindings.md"
+
+    /// Prose the fixture carries above the generated region. Byte-identity
+    /// of this text after a generate run is what proves the emitter rewrites
+    /// only its own region [Repo-grounded —
+    /// `tests/harness_catalog.rs::PROSE_BEFORE`].
+    let catalogProseBefore =
+        "# Platform Bindings\n\nFixture prose that the emitter must never touch. It carries a `pipe | character`\nand a trailing sentence so a naive whole-file rewrite is detectable.\n"
+
+    /// Prose the fixture carries below the generated region, including a
+    /// footnote definition the table cells reference but the emitter does
+    /// not own [Repo-grounded — `tests/harness_catalog.rs::PROSE_AFTER`].
+    let catalogProseAfter =
+        "[^mcp]: A footnote definition the emitter does not own.\n\n## Related\n\n- A trailing list item.\n"
+
+    /// Writes a fixture registry whose three harness entries each carry a
+    /// full `catalog:` block, plus the sibling `harness-catalog:` block
+    /// naming the document and the verification date
+    /// [Repo-grounded — `tests/harness_catalog.rs::write_fixture_registry`].
+    let writeFixtureCatalogRegistry (root: string) : unit =
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness-catalog:"
+                  "  document: docs/reference/platform-bindings.md"
+                  "  verified: 2026-05-24"
+                  ""
+                  "harness:"
+                  "  - name: alpha-harness"
+                  "    tier: source"
+                  "    agent-dir: .alpha/agents"
+                  "    catalog:"
+                  "      platform: Alpha Harness"
+                  "      reads-agents-md: 'No -- reads `ALPHA.md`'"
+                  "      instruction-surface: '`ALPHA.md`, `.alpha/`'"
+                  "      mcp-config: '`.mcp.json`'"
+                  "      agent-surface: '`.alpha/agents/*.md`'"
+                  "      skills-surface: '`.alpha/skills/*/SKILL.md`'"
+                  "      status: Active"
+                  "  - name: beta-harness"
+                  "    tier: generated"
+                  "    agent-dir: .beta/agents"
+                  "    mirrors: .alpha/agents"
+                  "    catalog:"
+                  "      platform: Beta Harness"
+                  "      reads-agents-md: 'Yes'"
+                  "      instruction-surface: '`.beta/agents/` (auto-synced)'"
+                  "      mcp-config: '`beta.json`'"
+                  "      agent-surface: '`.beta/agents/*.md`'"
+                  "      skills-surface: 'reads `.alpha/skills/`'"
+                  "      status: Active"
+                  "  - name: gamma-harness"
+                  "    tier: generated"
+                  "    agent-dir: .gamma/agents"
+                  "    mirrors: .alpha/agents"
+                  "    catalog:"
+                  "      platform: Gamma Harness"
+                  "      reads-agents-md: 'Yes (since Apr 2025)'"
+                  "      instruction-surface: '`.gamma/config.toml`'"
+                  "      mcp-config: '`.gamma/config.toml` `[mcp_servers]`[^mcp]'"
+                  "      agent-surface: '`.gamma/agents/<name>.toml`'"
+                  "      skills-surface: '`.agents/skills/`'"
+                  "      status: Partial"
+                  "" ]
+            )
+        )
+
+    /// Writes the catalog document with an EMPTY generated region, so a
+    /// generate run has something to fill and the before-state carries no
+    /// rows [Repo-grounded — `tests/harness_catalog.rs::write_fixture_document`].
+    let writeFixtureCatalogDocument (root: string) : unit =
+        let path = Path.Combine(root, catalogDoc)
+        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
+
+        File.WriteAllText(
+            path,
+            sprintf
+                "%s\n%s\n%s\n\n%s"
+                catalogProseBefore
+                Harness.catalogRegionStart
+                Harness.catalogRegionEnd
+                catalogProseAfter
+        )
+
+    let catalogDocPath (root: string) : string = Path.Combine(root, catalogDoc)
+
+    let readCatalogDoc (root: string) : string = File.ReadAllText(catalogDocPath root)
+
+    /// The text strictly between the two markers, marker lines excluded
+    /// [Repo-grounded — `tests/harness_catalog.rs::CatalogWorld::region`].
+    let catalogRegionBody (root: string) : string =
+        let body = readCatalogDoc root
+        let start = body.IndexOf(Harness.catalogRegionStart, StringComparison.Ordinal)
+        let stop = body.IndexOf(Harness.catalogRegionEnd, StringComparison.Ordinal)
+        body.Substring(start + Harness.catalogRegionStart.Length, stop - (start + Harness.catalogRegionStart.Length))
+
+    /// Everything outside the markers, with the region collapsed away, so a
+    /// before/after comparison isolates the prose
+    /// [Repo-grounded — `tests/harness_catalog.rs::CatalogWorld::outside`].
+    let catalogOutsideRegion (body: string) : string =
+        let start = body.IndexOf(Harness.catalogRegionStart, StringComparison.Ordinal)
+        let stop = body.IndexOf(Harness.catalogRegionEnd, StringComparison.Ordinal)
+
+        body.Substring(0, start)
+        + body.Substring(stop + Harness.catalogRegionEnd.Length)
+
+    /// Table rows inside the region — data rows only, excluding the header
+    /// and the `| --- |` separator [Repo-grounded —
+    /// `tests/harness_catalog.rs::CatalogWorld::row_count`].
+    let catalogRowCount (root: string) : int =
+        let dataRows =
+            (catalogRegionBody root).Split('\n')
+            |> Array.map (fun line -> line.TrimStart())
+            |> Array.filter (fun line -> line.StartsWith("|"))
+            |> Array.filter (fun line -> not (line.Contains("---")))
+
+        max 0 (dataRows.Length - 1)
 
     let writeSkillFile (root: string) (name: string) (relPath: string) (body: string) : string =
         let path = Path.Combine(root, ".claude", "skills", name, relPath)
@@ -1243,6 +1366,82 @@ type HarnessSteps() =
             Assert.Contains(memberName, outcome.Output)
         | None -> failwith "harness audit has not run in this scenario"
 
+    // ---- @catalog-generation ----
+
+    [<Given>]
+    member _.``each harness entry in repo-config\.yml carries catalog fields including display name, instruction surfaces, agent surface, skills surface, and status``
+        ()
+        =
+        let root = scenarioRoot ()
+        writeFixtureCatalogRegistry root
+        writeFixtureCatalogDocument root
+        catalogDocBefore <- Some(readCatalogDoc root)
+        Assert.Equal(0, catalogRowCount root)
+
+    [<When>]
+    member _.``rhino-cli harness catalog generate runs``() =
+        let outcome = Harness.runHarnessCatalogGenerate (scenarioRoot ())
+        lastCatalogOutcome <- Some outcome
+        lastExitCode <- Some outcome.ExitCode
+
+    [<Then>]
+    member _.``docs/reference/platform-bindings\.md contains one table row per registry entry between the generated-region markers``
+        ()
+        =
+        match lastCatalogOutcome with
+        | Some outcome -> Assert.Equal(0, outcome.ExitCode)
+        | None -> failwith "harness catalog generate has not run in this scenario"
+
+        let root = scenarioRoot ()
+        Assert.Equal(3, catalogRowCount root)
+        let region = catalogRegionBody root
+
+        for platform in [ "Alpha Harness"; "Beta Harness"; "Gamma Harness" ] do
+            Assert.Contains(platform, region)
+
+    [<Then>]
+    member _.``prose outside those markers is byte-identical to its pre-run content``() =
+        let root = scenarioRoot ()
+
+        match catalogDocBefore with
+        | Some before -> Assert.Equal(catalogOutsideRegion before, catalogOutsideRegion (readCatalogDoc root))
+        | None -> failwith "no pre-run document content was recorded in this scenario"
+
+        Assert.Contains("[^mcp]: A footnote definition", readCatalogDoc root)
+
+    [<Given>]
+    member _.``a freshly generated catalog with a clean git diff``() =
+        let root = scenarioRoot ()
+        writeFixtureCatalogRegistry root
+        writeFixtureCatalogDocument root
+        let generated = Harness.runHarnessCatalogGenerate root
+        Assert.Equal(0, generated.ExitCode)
+
+    [<When>]
+    member _.``one cell inside the generated region is edited by hand``() =
+        let root = scenarioRoot ()
+        let body = readCatalogDoc root
+        let edited = body.Replace("Alpha Harness", "Tampered Harness")
+        Assert.NotEqual<string>(body, edited)
+        File.WriteAllText(catalogDocPath root, edited)
+
+    [<Then>]
+    member _.``rhino-cli harness catalog validate exits non-zero naming the drifted region``() =
+        let outcome = Harness.runHarnessCatalogValidate (scenarioRoot ())
+        Assert.NotEqual(0, outcome.ExitCode)
+        Assert.Contains(catalogDoc, outcome.Output)
+        lastCatalogOutcome <- Some outcome
+        lastExitCode <- Some outcome.ExitCode
+
+    [<Then>]
+    member _.``it exits 0 after rhino-cli harness catalog generate is re-run``() =
+        let root = scenarioRoot ()
+        let regenerated = Harness.runHarnessCatalogGenerate root
+        Assert.Equal(0, regenerated.ExitCode)
+        let outcome = Harness.runHarnessCatalogValidate root
+        Assert.Equal(0, outcome.ExitCode)
+        Assert.DoesNotContain("Tampered Harness", readCatalogDoc root)
+
     [<Given>]
     member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
         let root = scenarioRoot ()
@@ -1692,6 +1891,10 @@ module private FeatureRunner =
     let runHarnessAudit (scenarioTitle: string) : unit =
         runIn "harness-audit.feature" scenarioTitle
 
+    /// Runs one scenario of `harness-catalog.feature`.
+    let runHarnessCatalog (scenarioTitle: string) : unit =
+        runIn "harness-catalog.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1872,3 +2075,11 @@ let ``The AI checker defers to lifecycle-gate evidence`` () =
 [<Fact>]
 let ``Missing agent directories fail the aggregate harness audit`` () =
     FeatureRunner.runHarnessAudit "Missing agent directories fail the aggregate harness audit"
+
+[<Fact>]
+let ``The catalog table renders from the harness registry`` () =
+    FeatureRunner.runHarnessCatalog "The catalog table renders from the harness registry"
+
+[<Fact>]
+let ``A hand edit inside the generated region is rejected`` () =
+    FeatureRunner.runHarnessCatalog "A hand edit inside the generated region is rejected"
