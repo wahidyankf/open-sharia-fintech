@@ -1065,7 +1065,7 @@ let emitSkillsMirrors (repoRoot: string) (dryRun: bool) : Result<MirrorResult, s
                     if
                         not (
                             job.Target.StartsWith(
-                                canonicalRepoRoot + string Path.DirectorySeparatorChar,
+                                canonicalRepoRoot + Path.DirectorySeparatorChar.ToString(),
                                 StringComparison.Ordinal
                             )
                             || String.Equals(job.Target, canonicalRepoRoot, StringComparison.Ordinal)
