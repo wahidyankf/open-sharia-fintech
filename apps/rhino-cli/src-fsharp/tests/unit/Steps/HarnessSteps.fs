@@ -33,6 +33,7 @@ module RhinoCli.Tests.Unit.Steps.HarnessSteps
 open System
 open System.Diagnostics
 open System.IO
+open System.Text.Json
 open TickSpec
 open Xunit
 open RhinoCli.Application
@@ -48,6 +49,57 @@ let private repositoryRoot: string =
 /// `knownBindingDirs` fails the `@binding-surface-set` scenarios rather than
 /// silently passing.
 let private droppedHarnessSurfaces: string list = [ ".cursor"; ".amazonq"; ".pi" ]
+
+/// Reads a governance document plus, when the document has a same-named
+/// sibling directory (progressive disclosure's split-file convention), every
+/// `.md` file under it in sorted order [Repo-grounded —
+/// `apps/rhino-cli/tests/agents.rs::read_document_tree`].
+let private readDocumentTree (rel: string) : string =
+    let parentPath = Path.Combine(repositoryRoot, rel)
+    let mutable out = File.ReadAllText(parentPath)
+    let childrenDir = Path.ChangeExtension(parentPath, null)
+
+    if Directory.Exists(childrenDir) then
+        for child in Directory.GetFiles(childrenDir, "*.md") |> Array.sort do
+            out <- out + "\n" + File.ReadAllText(child)
+
+    out
+
+/// Reads an agent's full instruction surface: its own definition plus every
+/// skill it declares in `skills:` (each skill's `SKILL.md` and every file
+/// under its `reference/` in sorted order) [Repo-grounded —
+/// `apps/rhino-cli/tests/agents.rs::read_agent_surface`].
+let private readAgentSurface (agentRel: string) : string =
+    let agentPath = Path.Combine(repositoryRoot, agentRel)
+    let mutable out = File.ReadAllText(agentPath)
+    let mutable inSkills = false
+    let declared = ResizeArray<string>()
+
+    for line in out.Split('\n') do
+        if line.StartsWith("skills:") then
+            inSkills <- true
+        elif inSkills then
+            if line.StartsWith("  - ") then
+                declared.Add(line.Substring(4).Trim())
+            else
+                inSkills <- false
+
+    for skill in declared do
+        let dir = Path.Combine(repositoryRoot, ".claude", "skills", skill)
+        let refDir = Path.Combine(dir, "reference")
+
+        let paths =
+            Path.Combine(dir, "SKILL.md")
+            :: (if Directory.Exists(refDir) then
+                    Directory.GetFiles(refDir, "*.md") |> Array.sort |> Array.toList
+                else
+                    [])
+
+        for path in paths do
+            if File.Exists(path) then
+                out <- out + "\n" + File.ReadAllText(path)
+
+    out
 
 /// Instance step-definition container — see `ConventionSteps.fs`'s module doc
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
@@ -74,6 +126,9 @@ type HarnessSteps() =
     let mutable configAfterSecondRun: string option = None
     let mutable pushRangePaths: string list = []
     let mutable lastPrePushOutcome: Harness.PrePushWordBudgetOutcome option = None
+    let mutable lookupDir: string = ""
+    let mutable lookupFileContent: string = ""
+    let mutable lastAuditJson: string option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -1072,6 +1127,102 @@ type HarnessSteps() =
         | Some outcome -> Assert.Equal(0, outcome.ExitCode)
         | None -> failwith "the pre-push hook has not run in this scenario"
 
+    // ---- @governance-word-budget-rule ----
+
+    [<Given>]
+    member _.``the plan is complete``() = ()
+
+    [<When>]
+    member _.``I look under "([^"]+)"``(dir: string) = lookupDir <- dir
+
+    [<Then>]
+    member _.``"([^"]+)" exists``(filename: string) =
+        let path = Path.Combine(repositoryRoot, lookupDir, filename)
+        Assert.True(File.Exists(path), sprintf "expected %s to exist" path)
+        lookupFileContent <- File.ReadAllText(path)
+
+    [<Then>]
+    member _.``the file lists the monitored file classes, configured threshold source, and enforcement points``() =
+        Assert.Contains("Monitored Surfaces", lookupFileContent)
+        Assert.Contains("repo-config.yml", lookupFileContent)
+        Assert.Contains("target", lookupFileContent)
+        Assert.Contains("fail", lookupFileContent)
+        Assert.Contains("Enforcement Points", lookupFileContent)
+
+    [<When>]
+    member _.``"repo-rules-checker" runs Step 6``() =
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+
+    [<Then>]
+    member _.``it reports qualitative bloat concerns across the whole instruction-file class``() =
+        Assert.Contains("qualitative concerns a mechanical gate cannot measure", lookupFileContent)
+        Assert.Contains("progressive disclosure", lookupFileContent)
+
+    [<Then>]
+    member _.``it annotates that the word ceiling is enforced by the deterministic "governance-word-budget" gate``() =
+        Assert.Contains("enforced by the deterministic", lookupFileContent)
+        Assert.Contains("governance word-budget validate", lookupFileContent)
+
+    [<When>]
+    member _.``I read "([^"]+)"``(path: string) =
+        lookupFileContent <- readDocumentTree path
+
+    [<Then>]
+    member _.``"governance-word-budget" is skipped locally and delegated from Step 0\.5``() =
+        Assert.Contains("governance-word-budget` skipped", lookupFileContent)
+        Assert.Contains("`delegated-gate-ids`", lookupFileContent)
+
+    [<Given>]
+    member _.``a repo with instruction files within the configured budgets``() = ()
+
+    [<When>]
+    member _.``the developer runs "rhino-cli repo-governance audit" with JSON output``() =
+        lastAuditJson <- Some(Harness.repoGovernanceAuditJson (scenarioRoot ()))
+
+    [<Then>]
+    member _.``the envelope schema is "rhino-cli/repo-governance-audit/v1"``() =
+        match lastAuditJson with
+        | Some json ->
+            use doc = JsonDocument.Parse(json)
+            Assert.Equal("rhino-cli/repo-governance-audit/v1", doc.RootElement.GetProperty("schema").GetString())
+        | None -> failwith "the repo-governance audit has not run in this scenario"
+
+    [<Then>]
+    member _.``"result\.categories" contains a category named "governance-word-budget"``() =
+        match lastAuditJson with
+        | Some json ->
+            use doc = JsonDocument.Parse(json)
+
+            let categories =
+                doc.RootElement.GetProperty("result").GetProperty("categories").EnumerateArray()
+                |> Seq.toList
+
+            Assert.True(
+                categories
+                |> List.exists (fun c -> c.GetProperty("name").GetString() = "governance-word-budget")
+            )
+        | None -> failwith "the repo-governance audit has not run in this scenario"
+
+    [<Given>]
+    member _.``lifecycle evidence contains a current "governance-word-budget" result``() = ()
+
+    [<When>]
+    member _.``"repo-rules-checker" runs Step 0\.5``() =
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+
+    [<Then>]
+    member _.``it consumes the exact delegated gate ID "governance-word-budget"``() =
+        Assert.Contains("`delegated-gate-ids`", lookupFileContent)
+        Assert.Contains("word budgets are all mechanically enforced", lookupFileContent)
+
+    [<Then>]
+    member _.``it does not re-derive word counts in Step 6``() =
+        let normalized =
+            lookupFileContent.Split([| ' '; '\n'; '\t'; '\r' |], StringSplitOptions.RemoveEmptyEntries)
+            |> String.concat " "
+
+        Assert.Contains("Do not run or AI-rederive those predicates", normalized)
+
     [<Given>]
     member _.``a repository with agent and skill files whose bodies share no 10-line verbatim windows``() =
         let root = scenarioRoot ()
@@ -1513,6 +1664,10 @@ module private FeatureRunner =
     let runWordBudgetPrePush (scenarioTitle: string) : unit =
         runIn "governance-word-budget-pre-push.feature" scenarioTitle
 
+    /// Runs one scenario of `governance-word-budget-rule.feature`.
+    let runWordBudgetRule (scenarioTitle: string) : unit =
+        runIn "governance-word-budget-rule.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -1669,3 +1824,23 @@ let ``Pushing an in-budget instruction-file edit passes`` () =
 [<Fact>]
 let ``Pushing an RTK-only change invokes its configured gate`` () =
     FeatureRunner.runWordBudgetPrePush "Pushing an RTK-only change invokes its configured gate"
+
+[<Fact>]
+let ``The rule is documented as a convention`` () =
+    FeatureRunner.runWordBudgetRule "The rule is documented as a convention"
+
+[<Fact>]
+let ``repo-rules-checker validates the budget qualitatively`` () =
+    FeatureRunner.runWordBudgetRule "repo-rules-checker validates the budget qualitatively"
+
+[<Fact>]
+let ``The quality-gate workflow delegates the validator by exact gate ID`` () =
+    FeatureRunner.runWordBudgetRule "The quality-gate workflow delegates the validator by exact gate ID"
+
+[<Fact>]
+let ``The preflight envelope carries the governance-word-budget category`` () =
+    FeatureRunner.runWordBudgetRule "The preflight envelope carries the governance-word-budget category"
+
+[<Fact>]
+let ``The AI checker defers to lifecycle-gate evidence`` () =
+    FeatureRunner.runWordBudgetRule "The AI checker defers to lifecycle-gate evidence"
