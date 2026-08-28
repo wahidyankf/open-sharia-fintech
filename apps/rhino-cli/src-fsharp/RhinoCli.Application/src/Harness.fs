@@ -8,7 +8,9 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/claude_validator.rs`,
@@ -30,12 +32,12 @@
 /// static binding-file byte parity, `OpenCode`/Skills mirror sync, catalog
 /// coverage, `.codex/agents/` file extensions, and the `.codex/config.toml`
 /// generated region, plus the colour/tier translation maps. This module
-/// currently implements the four the landed feature files exercise (catalog
-/// coverage, the Codex agent-file extension, skills-mirror byte parity, and
-/// `OpenCode` agent-mirror sync) and the registry-derived `--harness` name
-/// check. The remaining families arrive with the feature files that specify
-/// them: binding byte parity and the `.codex/config.toml` generated region
-/// with `harness/codex-binding.feature`.
+/// currently implements the five the landed feature files exercise (catalog
+/// coverage, the Codex agent-file extension, skills-mirror byte parity,
+/// `OpenCode` agent-mirror sync, and Codex agent/`.codex/config.toml`
+/// generation) and the registry-derived `--harness` name check. Static
+/// binding-file byte parity remains out of scope — no landed scenario
+/// exercises it.
 ///
 /// A second scope note covers `sync_validator.rs::validate_sync`, which
 /// tallies five check families of its own. This module implements only the
@@ -1585,6 +1587,366 @@ let convertAllAgents (repoRoot: string) (dryRun: bool) : Result<ConvertAllResult
                         Failed = acc.Failed + 1
                         FailedFiles = acc.FailedFiles @ [ filename ] })
             convertAllResultEmpty)
+
+// ---------------------------------------------------------------------------
+// Codex agent conversion
+// ---------------------------------------------------------------------------
+
+/// Relative path of the Codex configuration file, part of which this emitter
+/// owns (see [`rewriteGeneratedRegion`])
+/// [Repo-grounded — `codex.rs::CODEX_CONFIG_FILE`].
+let codexConfigFile = ".codex/config.toml"
+
+/// Opening delimiter of the region of [`codexConfigFile`] this emitter owns
+/// [Repo-grounded — `codex.rs::GENERATED_REGION_START`].
+let generatedRegionStart =
+    "# >>> rhino-cli generated: codex agents - do not edit inside this region"
+
+/// Closing delimiter of the generated region.
+///
+/// **Marker-first hazard**: [`rewriteGeneratedRegion`] looks for THIS marker
+/// before it looks for any insertion anchor. An anchor-first implementation
+/// finds the anchor on every run and appends a fresh region each time, so the
+/// file grows a duplicate block per invocation and the idempotence gate fails
+/// [Repo-grounded — `codex.rs::GENERATED_REGION_END`].
+let generatedRegionEnd = "# <<< rhino-cli generated: codex agents"
+
+/// Codex agent emit shape: `name`, `description`, `developer_instructions`
+/// [Repo-grounded — `codex.rs::CodexAgent`].
+type CodexAgent =
+    { Name: string
+      Description: string
+      DeveloperInstructions: string }
+
+let private codexAgentEmpty: CodexAgent =
+    { Name = ""
+      Description = ""
+      DeveloperInstructions = "" }
+
+/// One generated agent as the `.codex/config.toml` region needs it
+/// [Repo-grounded — `codex.rs::EmittedCodexAgent`].
+type EmittedCodexAgent = { Name: string; Description: string }
+
+/// Everything one Codex emit run produced
+/// [Repo-grounded — `codex.rs::CodexEmitResult`].
+type CodexEmitResult =
+    { Result: ConvertAllResult
+      Agents: EmittedCodexAgent list }
+
+let private codexEmitResultEmpty: CodexEmitResult =
+    { Result = convertAllResultEmpty
+      Agents = [] }
+
+/// Escapes `s` for a TOML basic string (the `"…"` single-line form)
+/// [Repo-grounded — `codex.rs::escape_toml_basic`].
+let private escapeTomlBasic (s: string) : string =
+    let out = StringBuilder(s.Length)
+
+    for ch in s do
+        match ch with
+        | '\\' -> out.Append "\\\\" |> ignore
+        | '"' -> out.Append "\\\"" |> ignore
+        | '\n' -> out.Append "\\n" |> ignore
+        | '\r' -> out.Append "\\r" |> ignore
+        | '\t' -> out.Append "\\t" |> ignore
+        | c when int c < 0x20 || int c = 0x7f -> out.Append(sprintf "\\u%04X" (int c)) |> ignore
+        | c -> out.Append c |> ignore
+
+    out.ToString()
+
+/// Escapes `s` for a TOML multi-line basic string (the `"""…"""` form).
+///
+/// Every `"` is escaped rather than only runs of three, which keeps the
+/// encoder from having to reason about where a run lands relative to the
+/// closing delimiter — a `"""` sequence adjacent to the terminator would
+/// otherwise end the string early [Repo-grounded — `codex.rs::escape_toml_multiline`].
+let private escapeTomlMultiline (s: string) : string =
+    let out = StringBuilder(s.Length)
+
+    for ch in s do
+        match ch with
+        | '\\' -> out.Append "\\\\" |> ignore
+        | '"' -> out.Append "\\\"" |> ignore
+        | '\r' -> out.Append "\\r" |> ignore
+        | '\n'
+        | '\t' -> out.Append ch |> ignore
+        | c when int c < 0x20 || int c = 0x7f -> out.Append(sprintf "\\u%04X" (int c)) |> ignore
+        | c -> out.Append c |> ignore
+
+    out.ToString()
+
+/// Renders a [`CodexAgent`] as the bytes of a standalone `.codex/agents/*.toml`
+/// file, emitting `name`, `description`, `developer_instructions` in that
+/// fixed order [Repo-grounded — `codex.rs::encode_codex_agent`].
+let encodeCodexAgent (agent: CodexAgent) : string =
+    let lines = ResizeArray<string>()
+    lines.Add(sprintf "name = \"%s\"" (escapeTomlBasic agent.Name))
+    lines.Add(sprintf "description = \"%s\"" (escapeTomlBasic agent.Description))
+
+    lines.Add(sprintf "developer_instructions = \"\"\"\n%s\"\"\"" (escapeTomlMultiline agent.DeveloperInstructions))
+
+    String.Join("\n", lines) + "\n"
+
+/// A short, stable name for `value`'s deserialized YAML kind, for a warning
+/// message [Repo-grounded — `codex.rs::value_kind`].
+let private describeYamlValueKind (value: obj) : string =
+    match value with
+    | null -> "null"
+    | :? bool -> "a boolean"
+    | :? string -> "a string"
+    | :? int
+    | :? int64
+    | :? float
+    | :? decimal -> "a number"
+    | :? Collections.IDictionary -> "a mapping"
+    | :? Collections.IEnumerable -> "a sequence"
+    | _ -> "a tagged value"
+
+/// Copies a `description` frontmatter value into the Codex output. `name` is
+/// already resolved from the discovery walk, so a frontmatter `name` copy is
+/// ignored to keep one source of identity.
+///
+/// Returns `Some((field, reason))` when `description` is present but not a
+/// string: every OTHER dropped field surfaces a `ConversionWarning` through
+/// `DropWarn`; `description` is `Preserve`-class and would otherwise fall
+/// through to an empty string with no signal at all
+/// [Repo-grounded — `codex.rs::apply_preserve`].
+let private applyCodexPreserve (agent: CodexAgent) (key: string) (value: obj) : CodexAgent * (string * string) option =
+    if key = "description" then
+        match value with
+        | :? string as s -> { agent with Description = s }, None
+        | _ ->
+            agent,
+            Some(
+                key,
+                sprintf
+                    "description must be a string; got %s — left empty rather than silently coerced"
+                    (describeYamlValueKind value)
+            )
+    else
+        agent, None
+
+/// Codex field policy: everything except `name`/`description` is dropped,
+/// most with a conversion warning explaining why it has no Codex counterpart
+/// [Repo-grounded — `codex.rs::CODEX_FIELD_POLICY_TABLE`].
+let private codexFieldPolicyTable: (string * FieldAction * string) list =
+    [ "name", Preserve, ""
+      "description", Preserve, ""
+      "model", DropWarn, "no verified claude-to-codex model mapping; codex applies its own default"
+      "color", DropWarn, "codex agent files declare no color"
+      "tools", DropWarn, "codex governs tool access through sandbox and approval policy, not per agent"
+      "skills", DropWarn, "codex discovers skills from .agents/skills, not from an agent file"
+      "maxTurns", DropWarn, "no codex equivalent"
+      "disallowedTools", DropWarn, "no codex equivalent"
+      "permissionMode", DropWarn, "codex declares sandbox_mode at config level"
+      "effort", DropWarn, "claude-only"
+      "memory", DropWarn, "claude-only"
+      "isolation", DropWarn, "claude-only"
+      "background", DropWarn, "claude-only"
+      "initialPrompt", DropWarn, "claude-only"
+      "mcpServers", DropWarn, "codex declares mcp_servers at config level"
+      "hooks", DropWarn, "no codex equivalent" ]
+
+let private codexAgentFieldPolicy: Map<string, FieldPolicy> =
+    codexFieldPolicyTable
+    |> List.map (fun (key, action, reason) -> key, { Action = action; Reason = reason })
+    |> Map.ofList
+
+/// Shared body of the Codex render and write paths: parses `inputPath`'s
+/// frontmatter, applies the Codex field policy, and rebases relative links in
+/// the body from `claudeDir` to `mirrorDir`
+/// [Repo-grounded — `codex.rs::convert_codex_agent_inner`].
+let private convertCodexAgentInner
+    (inputPath: string)
+    (agentName: string)
+    (claudeDir: string)
+    (mirrorDir: string)
+    : Result<CodexAgent * string * ConversionWarning list, string> =
+    try
+        let content = File.ReadAllText inputPath
+
+        match extractFrontmatter content with
+        | Error e -> Error(sprintf "failed to extract frontmatter: %s" e)
+        | Ok(front, body) ->
+            match yamlDeserializer.Deserialize<Dictionary<string, obj>>(front) with
+            | null -> Error "frontmatter is not a mapping"
+            | mapping ->
+                let applied, dropped = walkFrontmatterFields mapping codexAgentFieldPolicy
+
+                let mutable out =
+                    { codexAgentEmpty with
+                        Name = agentName }
+
+                let preserveFindings = ResizeArray<string * string>()
+
+                for action, key, value in applied do
+                    match action with
+                    | Preserve ->
+                        let next, finding = applyCodexPreserve out key value
+                        out <- next
+                        finding |> Option.iter preserveFindings.Add
+                    | _ -> ()
+
+                let warnings =
+                    [ for d in dropped ->
+                          { AgentName = agentName
+                            Field = d.Field
+                            Reason = d.Reason }
+                      for field, reason in preserveFindings ->
+                          { AgentName = agentName
+                            Field = field
+                            Reason = reason } ]
+
+                let rebasedBody = rebaseAgentLinks body inputPath claudeDir mirrorDir
+
+                let converted =
+                    { out with
+                        DeveloperInstructions = rebasedBody }
+
+                Ok(converted, encodeCodexAgent converted, warnings)
+    with ex ->
+        Error(sprintf "failed to convert %s: %s" inputPath ex.Message)
+
+/// Converts a single Claude agent file to Codex format and writes it to
+/// `outputPath` unless `dryRun`
+/// [Repo-grounded — `codex.rs::convert_codex_agent`].
+let convertCodexAgent
+    (inputPath: string)
+    (outputPath: string)
+    (agentName: string)
+    (claudeDir: string)
+    (dryRun: bool)
+    : Result<EmittedCodexAgent * ConversionWarning list, string> =
+    let mirrorDir =
+        match Path.GetDirectoryName outputPath with
+        | null
+        | "" -> "."
+        | d -> d
+
+    convertCodexAgentInner inputPath agentName claudeDir mirrorDir
+    |> Result.map (fun (agent, output, warnings) ->
+        if not dryRun then
+            Directory.CreateDirectory mirrorDir |> ignore
+            File.WriteAllText(outputPath, output)
+
+        { Name = agent.Name
+          Description = agent.Description },
+        warnings)
+
+/// Converts every `.claude/agents/` agent into `.codex/agents/<name>.toml`
+/// [Repo-grounded — `codex.rs::convert_all_codex_agents`].
+let convertAllCodexAgents (repoRoot: string) (dryRun: bool) : Result<CodexEmitResult, string> =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let codexDir = Path.Combine(repoRoot, codexAgentDir)
+
+    discoverAgentSources claudeDir
+    |> Result.map (fun sources ->
+        sources
+        |> List.fold
+            (fun acc (input, name) ->
+                let filename = name + "." + codexAgentExtension
+                let output = Path.Combine(codexDir, filename)
+
+                match convertCodexAgent input output name claudeDir dryRun with
+                | Ok(agent, warnings) ->
+                    { acc with
+                        Result =
+                            { acc.Result with
+                                Converted = acc.Result.Converted + 1
+                                Warnings = acc.Result.Warnings @ warnings }
+                        Agents = acc.Agents @ [ agent ] }
+                | Error _ ->
+                    { acc with
+                        Result =
+                            { acc.Result with
+                                Failed = acc.Result.Failed + 1
+                                FailedFiles = acc.Result.FailedFiles @ [ filename ] } })
+            codexEmitResultEmpty)
+
+/// Renders the generated region of [`codexConfigFile`]: one `[agents.<name>]`
+/// table per emitted agent, between the two markers. The returned text
+/// carries no trailing newline — [`rewriteGeneratedRegion`] owns the
+/// surrounding whitespace so a rewrite is byte-stable
+/// [Repo-grounded — `codex.rs::render_generated_region`].
+let renderGeneratedRegion (agents: EmittedCodexAgent list) : string =
+    let out = StringBuilder(generatedRegionStart)
+
+    for agent in agents do
+        out
+            .Append("\n\n[agents.")
+            .Append(agent.Name)
+            .Append("]\ndescription = \"")
+            .Append(escapeTomlBasic agent.Description)
+            .Append("\"\nconfig_file = \"agents/")
+            .Append(agent.Name)
+            .Append(".")
+            .Append(codexAgentExtension)
+            .Append("\"")
+        |> ignore
+
+    out.Append("\n").Append(generatedRegionEnd) |> ignore
+    out.ToString()
+
+/// Replaces the generated region of `existing` with `region`, or appends it
+/// when no region is present yet.
+///
+/// **Marker-first**: the already-present [`generatedRegionEnd`] marker is
+/// searched for BEFORE the append anchor. Checking the anchor first would
+/// match on every run and append a duplicate region each time — the
+/// re-runnable substitution hazard this repository has hit before
+/// [Repo-grounded — `codex.rs::rewrite_generated_region`].
+let rewriteGeneratedRegion (existing: string) (region: string) : string =
+    match existing.IndexOf(generatedRegionEnd, StringComparison.Ordinal) with
+    | -1 ->
+        if existing = "" then
+            region + "\n"
+        else
+            let out = StringBuilder(existing)
+
+            if not (existing.EndsWith("\n", StringComparison.Ordinal)) then
+                out.Append("\n") |> ignore
+
+            out.Append("\n").Append(region).Append("\n") |> ignore
+            out.ToString()
+    | endAt ->
+        let startAt =
+            match existing.IndexOf(generatedRegionStart, StringComparison.Ordinal) with
+            | -1 -> endAt
+            | idx -> idx
+
+        let head = existing.Substring(0, startAt)
+        let tailStart = endAt + generatedRegionEnd.Length
+        let tail = existing.Substring(tailStart)
+        head + region + tail
+
+/// Emits every Codex binding: the standalone agent files and the generated
+/// region of `.codex/config.toml`
+/// [Repo-grounded — `codex.rs::emit_codex_bindings`].
+let emitCodexBindings (repoRoot: string) (dryRun: bool) : Result<CodexEmitResult, string> =
+    convertAllCodexAgents repoRoot dryRun
+    |> Result.map (fun emitted ->
+        if not dryRun then
+            let configPath = Path.Combine(repoRoot, codexConfigFile)
+
+            let existing =
+                if File.Exists configPath then
+                    File.ReadAllText configPath
+                else
+                    ""
+
+            let updated = rewriteGeneratedRegion existing (renderGeneratedRegion emitted.Agents)
+
+            if updated <> existing then
+                let configDir =
+                    match Path.GetDirectoryName configPath with
+                    | null
+                    | "" -> "."
+                    | d -> d
+
+                Directory.CreateDirectory configDir |> ignore
+                File.WriteAllText(configPath, updated)
+
+        emitted)
 
 // ---------------------------------------------------------------------------
 // Sync (agents leg)
