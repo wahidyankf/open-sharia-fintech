@@ -670,3 +670,206 @@ let ``emitSkillsMirrors rejects a skills-dir that escapes the repository root`` 
     match emitSkillsMirrors root false with
     | Ok _ -> failwith "expected an out-of-repository skills-dir to fail"
     | Error message -> Assert.Contains("skills-dir", message)
+
+// ---------------------------------------------------------------------------
+// Agent sync — branches `agents-sync.feature`'s 8 scenarios never reach
+// ---------------------------------------------------------------------------
+
+let private writeAgent (root: string) (name: string) (frontmatterExtra: string) (body: string) : unit =
+    writeFile
+        (Path.Combine(root, ".claude", "agents", name + ".md"))
+        (sprintf "---\nname: %s\ndescription: fixture\n%s---\n%s" name frontmatterExtra body)
+
+[<Fact>]
+let ``convertColor passes an unrecognized color through unchanged, and empty stays empty`` () =
+    Assert.Equal("primary", convertColor "blue")
+    Assert.Equal("mauve", convertColor "mauve")
+    Assert.Equal("", convertColor "")
+
+[<Fact>]
+let ``convertPermission lower-cases, trims, and dedupes tool names`` () =
+    let perm = convertPermission [ " Read "; "read"; "Write" ]
+    Assert.Equal<Map<string, string>>(Map.ofList [ "read", "allow"; "write", "allow" ], perm)
+
+[<Fact>]
+let ``convertModel always resolves to the single OpenCode model id`` () =
+    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "sonnet")
+    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "opus")
+    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "")
+
+[<Fact>]
+let ``parseClaudeTools accepts a YAML sequence as well as a comma-separated string`` () =
+    Assert.Equal<string list>([ "Read"; "Write" ], parseClaudeTools (box "Read, Write"))
+    Assert.Equal<string list>([], parseClaudeTools (box 42))
+
+[<Fact>]
+let ``convertAllAgents translates maxTurns into a steps field`` () =
+    let root = scratch ()
+    writeAgent root "steps-agent" "maxTurns: 7\n" "Body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok result ->
+        Assert.Equal(1, result.Converted)
+
+        let mirror =
+            File.ReadAllText(Path.Combine(root, ".opencode", "agents", "steps-agent.md"))
+
+        Assert.Contains("steps: 7", mirror)
+
+[<Fact>]
+let ``convertAllAgents preserves a skills list into the mirror`` () =
+    let root = scratch ()
+    writeAgent root "skills-agent" "skills:\n  - alpha-skill\n  - beta-skill\n" "Body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok _ ->
+        let mirror =
+            File.ReadAllText(Path.Combine(root, ".opencode", "agents", "skills-agent.md"))
+
+        Assert.Contains("skills:\n  - alpha-skill\n  - beta-skill", mirror)
+
+[<Fact>]
+let ``convertAllAgents warns on an unknown field and on a DropWarn field with its own reason`` () =
+    let root = scratch ()
+    writeAgent root "warn-agent" "customField: value\nmcpServers: foo\n" "Body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok result ->
+        Assert.Contains(result.Warnings, fun w -> w.Field = "customField" && w.Reason = unknownFieldReason)
+
+        Assert.Contains(
+            result.Warnings,
+            fun w ->
+                w.Field = "mcpServers"
+                && w.Reason = "OpenCode declares MCP servers at the config level"
+        )
+
+[<Fact>]
+let ``convertAllAgents rebases a relative link and passes an absolute, URL, or anchor link through unchanged`` () =
+    let root = scratch ()
+
+    writeAgent
+        root
+        "link-agent"
+        ""
+        "See [other](./other-agent.md), [site](https://example.com), [here](#section), and [empty]().\n"
+
+    writeAgent root "other-agent" "" "Body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok _ ->
+        let mirror =
+            File.ReadAllText(Path.Combine(root, ".opencode", "agents", "link-agent.md"))
+
+        Assert.Contains("[other](other-agent.md)", mirror)
+        Assert.Contains("[site](https://example.com)", mirror)
+        Assert.Contains("[here](#section)", mirror)
+        Assert.Contains("[empty]()", mirror)
+
+[<Fact>]
+let ``validateSync fails a claude source with no frontmatter as a discovery error, not a per-agent check`` () =
+    let root = scratch ()
+    writeFile (Path.Combine(root, ".claude", "agents", "broken.md")) "no frontmatter here\n"
+    Directory.CreateDirectory(Path.Combine(root, ".opencode", "agents")) |> ignore
+
+    let result = validateSync root
+
+    Assert.Contains(
+        result.Checks,
+        fun c ->
+            c.Name = "Agent Equivalence"
+            && c.Status = "failed"
+            && c.Message.Contains("failed to discover")
+    )
+
+[<Fact>]
+let ``validateSync reports a missing OpenCode mirror by name`` () =
+    let root = scratch ()
+    writeAgent root "orphan-agent" "" "Body.\n"
+    writeFile (Path.Combine(root, ".opencode", "agents", "placeholder.md")) "---\ndescription: x\n---\nx\n"
+
+    let result = validateSync root
+
+    Assert.Contains(
+        result.Checks,
+        fun c ->
+            c.Name = "Agent Equivalence: orphan-agent"
+            && c.Status = "failed"
+            && c.Message.Contains("OpenCode mirror not found")
+    )
+
+[<Fact>]
+let ``validateSync fails when the OpenCode mirror's own frontmatter cannot be parsed`` () =
+    let root = scratch ()
+    writeAgent root "bad-mirror-agent" "" "Body.\n"
+    writeFile (Path.Combine(root, ".opencode", "agents", "bad-mirror-agent.md")) "no frontmatter here\n"
+
+    let result = validateSync root
+
+    Assert.Contains(
+        result.Checks,
+        fun c ->
+            c.Name = "Agent Equivalence: bad-mirror-agent"
+            && c.Status = "failed"
+            && c.Message.Contains("failed to parse OpenCode frontmatter")
+    )
+
+[<Fact>]
+let ``validateSync fails a skills-list mismatch and a body mismatch`` () =
+    let root = scratch ()
+    writeAgent root "skills-mismatch-agent" "model: sonnet\nskills:\n  - alpha\n" "Body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok _ -> ()
+
+    let mirrorPath =
+        Path.Combine(root, ".opencode", "agents", "skills-mismatch-agent.md")
+
+    File.WriteAllText(mirrorPath, File.ReadAllText(mirrorPath).Replace("- alpha", "- beta"))
+
+    let result = validateSync root
+
+    Assert.Contains(
+        result.Checks,
+        fun c ->
+            c.Name = "Agent Equivalence: skills-mismatch-agent"
+            && c.Message = "skills mismatch"
+    )
+
+    writeAgent root "body-mismatch-agent" "model: sonnet\n" "Original body.\n"
+
+    match convertAllAgents root false with
+    | Error e -> failwith e
+    | Ok _ -> ()
+
+    let bodyMirrorPath =
+        Path.Combine(root, ".opencode", "agents", "body-mismatch-agent.md")
+
+    File.WriteAllText(bodyMirrorPath, File.ReadAllText(bodyMirrorPath).Replace("Original body.", "Edited body."))
+
+    let bodyResult = validateSync root
+
+    Assert.Contains(
+        bodyResult.Checks,
+        fun c -> c.Name = "Agent Equivalence: body-mismatch-agent" && c.Message = "body mismatch"
+    )
+
+[<Fact>]
+let ``syncAll with SkillsOnly is a no-op that still reports success`` () =
+    let root = scratch ()
+    writeAgent root "unsynced-agent" "" "Body.\n"
+
+    let opts =
+        { syncOptionsDefault root with
+            SkillsOnly = true }
+
+    match syncAll opts with
+    | Error e -> failwith e
+    | Ok result ->
+        Assert.Equal(syncResultEmpty, result)
+        Assert.False(File.Exists(Path.Combine(root, ".opencode", "agents", "unsynced-agent.md")))

@@ -4,13 +4,18 @@
 /// and
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`,
+/// and
+/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/codex.rs`,
 /// `apps/rhino-cli/src/application/agents/converter.rs`,
 /// `apps/rhino-cli/src/application/agents/detect_duplication.rs`,
+/// `apps/rhino-cli/src/application/agents/field_policy.rs`,
 /// `apps/rhino-cli/src/application/agents/frontmatter.rs`,
 /// `apps/rhino-cli/src/application/agents/skills_mirror.rs`,
+/// `apps/rhino-cli/src/application/agents/sync.rs`,
+/// `apps/rhino-cli/src/application/agents/sync_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/types.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`].
 ///
@@ -18,12 +23,20 @@
 /// static binding-file byte parity, `OpenCode`/Skills mirror sync, catalog
 /// coverage, `.codex/agents/` file extensions, and the `.codex/config.toml`
 /// generated region, plus the colour/tier translation maps. This module
-/// currently implements the three the landed feature files exercise (catalog
-/// coverage, the Codex agent-file extension, and skills-mirror byte parity)
-/// and the registry-derived `--harness` name check. The remaining families
-/// arrive with the feature files that specify them: `OpenCode` agent-mirror
-/// sync with `harness/agents-sync.feature`, binding byte parity and the
-/// `.codex/config.toml` generated region with `harness/codex-binding.feature`.
+/// currently implements the four the landed feature files exercise (catalog
+/// coverage, the Codex agent-file extension, skills-mirror byte parity, and
+/// `OpenCode` agent-mirror sync) and the registry-derived `--harness` name
+/// check. The remaining families arrive with the feature files that specify
+/// them: binding byte parity and the `.codex/config.toml` generated region
+/// with `harness/codex-binding.feature`.
+///
+/// A second scope note covers `sync_validator.rs::validate_sync`, which
+/// tallies five check families of its own. This module implements only the
+/// two `harness/agents-sync.feature`'s `@agents-validate-sync` scenarios
+/// exercise — `validate_agent_count` and `validate_agent_equivalence` — and
+/// omits `validate_no_stale_agent_dir`, `validate_no_synced_skills`, and
+/// `validate_skills_mirror`, none of which any landed scenario reaches.
+///
 /// The `harness` namespace stays on the Rust side of `FSHARP_NAMESPACES`
 /// until every Wave E feature file has landed, so no CLI path reaches this
 /// partial validator in the meantime.
@@ -1102,3 +1115,707 @@ let emitSkillsMirrors (repoRoot: string) (dryRun: bool) : Result<MirrorResult, s
                                 with ex ->
                                     Error ex.Message)
             (Ok mirrorResultEmpty))
+
+// ---------------------------------------------------------------------------
+// Field policy (shared conversion vocabulary)
+// ---------------------------------------------------------------------------
+
+/// What happens to a Claude frontmatter field when converting to OpenCode
+/// [Repo-grounded — `field_policy.rs::FieldAction`].
+type FieldAction =
+    | Preserve
+    | Translate
+    | Drop
+    | DropWarn
+
+/// One field's policy entry [Repo-grounded — `field_policy.rs::FieldPolicy`].
+type FieldPolicy = { Action: FieldAction; Reason: string }
+
+/// The reason attached to a field absent from the policy table
+/// [Repo-grounded — `field_policy.rs::UNKNOWN_FIELD_REASON`].
+let unknownFieldReason = "unknown claude code field"
+
+/// A field the walk dropped, carried into a `ConversionWarning`
+/// [Repo-grounded — `field_policy.rs::DroppedField`].
+type DroppedField = { Field: string; Reason: string }
+
+/// Splits a frontmatter mapping into the fields to apply (`Preserve` /
+/// `Translate`) and the fields dropped (unknown, `Drop`, or `DropWarn`)
+/// [Repo-grounded — `field_policy.rs::walk_frontmatter_fields`].
+let private walkFrontmatterFields
+    (mapping: Dictionary<string, obj>)
+    (policy: Map<string, FieldPolicy>)
+    : (FieldAction * string * obj) list * DroppedField list =
+    let mutable applied = []
+    let mutable dropped = []
+
+    for kv in mapping do
+        match policy.TryFind kv.Key with
+        | None ->
+            dropped <-
+                { Field = kv.Key
+                  Reason = unknownFieldReason }
+                :: dropped
+        | Some entry ->
+            match entry.Action with
+            | Drop -> ()
+            | DropWarn ->
+                dropped <-
+                    { Field = kv.Key
+                      Reason = entry.Reason }
+                    :: dropped
+            | Preserve
+            | Translate -> applied <- (entry.Action, kv.Key, kv.Value) :: applied
+
+    List.rev applied, List.rev dropped
+
+/// Splits a Claude `tools` frontmatter value — either a YAML sequence or a
+/// comma-separated string — into individual tool names
+/// [Repo-grounded — `frontmatter.rs::parse_claude_tools`].
+let parseClaudeTools (value: obj) : string list =
+    match value with
+    | :? string as s ->
+        s.Split(',')
+        |> Array.map (fun p -> p.Trim())
+        |> Array.filter (fun p -> p <> "")
+        |> List.ofArray
+    | :? Collections.IEnumerable as items when not (value :? string) ->
+        items
+        |> Seq.cast<obj>
+        |> Seq.choose (function
+            | :? string as s -> Some s
+            | _ -> None)
+        |> List.ofSeq
+    | _ -> []
+
+// ---------------------------------------------------------------------------
+// OpenCode agent conversion
+// ---------------------------------------------------------------------------
+
+/// Where converted agents land, relative to the repo root
+/// [Repo-grounded — `converter.rs::OPENCODE_AGENT_DIR`].
+let opencodeAgentDir = ".opencode/agents"
+
+/// A frontmatter field dropped for one specific agent, tallied across a
+/// whole `sync` run [Repo-grounded — `converter.rs::ConversionWarning`].
+type ConversionWarning =
+    { AgentName: string
+      Field: string
+      Reason: string }
+
+/// The OpenCode agent shape emitted to the mirror
+/// [Repo-grounded — `converter.rs::OpenCodeAgent`].
+type OpenCodeAgent =
+    { Description: string
+      Model: string
+      Permission: Map<string, string>
+      Color: string
+      Steps: int64
+      Skills: string list }
+
+let private openCodeAgentEmpty: OpenCodeAgent =
+    { Description = ""
+      Model = ""
+      Permission = Map.empty
+      Color = ""
+      Steps = 0L
+      Skills = [] }
+
+/// Claude → OpenCode field policy, in Rust declaration order
+/// [Repo-grounded — `converter.rs::OPENCODE_FIELD_POLICY_TABLE`].
+let private opencodeFieldPolicyTable: (string * FieldAction * string) list =
+    [ "name", Drop, "filename carries the agent name"
+      "description", Preserve, ""
+      "tools", Translate, ""
+      "model", Translate, ""
+      "color", Translate, ""
+      "skills", Preserve, ""
+      "maxTurns", Translate, ""
+      "disallowedTools", DropWarn, "no OpenCode equivalent"
+      "permissionMode", DropWarn, "use the OpenCode permission block instead"
+      "effort", DropWarn, "Claude-only field"
+      "memory", DropWarn, "Claude-only field"
+      "isolation", DropWarn, "Claude-only field"
+      "background", DropWarn, "Claude-only field"
+      "initialPrompt", DropWarn, "Claude-only field"
+      "mcpServers", DropWarn, "OpenCode declares MCP servers at the config level"
+      "hooks", DropWarn, "no OpenCode equivalent" ]
+
+let private claudeAgentFieldPolicy: Map<string, FieldPolicy> =
+    opencodeFieldPolicyTable
+    |> List.map (fun (key, action, reason) -> key, { Action = action; Reason = reason })
+    |> Map.ofList
+
+/// Claude agent color name → OpenCode color token
+/// [Repo-grounded — `converter.rs::claude_to_opencode_color`].
+let private claudeToOpencodeColor: Map<string, string> =
+    Map.ofList
+        [ "blue", "primary"
+          "green", "success"
+          "yellow", "warning"
+          "purple", "secondary"
+          "red", "error"
+          "orange", "warning"
+          "pink", "accent"
+          "cyan", "info" ]
+
+/// Maps a Claude color to its OpenCode token, passing an unrecognized color
+/// through unchanged [Repo-grounded — `converter.rs::convert_color`].
+let convertColor (color: string) : string =
+    if color = "" then
+        ""
+    else
+        claudeToOpencodeColor |> Map.tryFind color |> Option.defaultValue color
+
+/// Lower-cases and dedupes-by-key each tool name into an `"allow"` grant
+/// [Repo-grounded — `converter.rs::convert_permission`].
+let convertPermission (claudeTools: string list) : Map<string, string> =
+    claudeTools
+    |> List.map (fun t -> t.Trim().ToLowerInvariant())
+    |> List.filter (fun t -> t <> "")
+    |> List.map (fun t -> t, "allow")
+    |> Map.ofList
+
+/// Every Claude model tier resolves to the same OpenCode model ID — the
+/// `zai-coding-plan` binding has one tier, so `sonnet`/`opus`/anything else
+/// all translate identically [Repo-grounded — `converter.rs::convert_model`].
+let convertModel (_claudeModel: string) : string = "zai-coding-plan/glm-5.2"
+
+/// The source filename's stem, used to label a `ConversionWarning`
+/// [Repo-grounded — `converter.rs::agent_name_from_path`].
+let private agentNameFromPath (path: string) : string =
+    let baseName = Path.GetFileName path
+
+    if baseName.EndsWith(".md", StringComparison.Ordinal) then
+        baseName.Substring(0, baseName.Length - 3)
+    else
+        baseName
+
+/// Matches a markdown link target: `](target)`
+/// [Repo-grounded — `converter.rs::agent_link_re`].
+let private agentLinkRe: Regex = Regex(@"\]\(([^)]*)\)", RegexOptions.Compiled)
+
+/// Collapses `.`/`..` components out of a `/`-joined relative path, without
+/// touching the filesystem [Repo-grounded — `converter.rs::normalize_lexical`].
+let private normalizeLexical (path: string) : string =
+    let stack = ResizeArray<string>()
+
+    for part in path.Replace('\\', '/').Split('/') do
+        if part = ".." then
+            if stack.Count > 0 then
+                stack.RemoveAt(stack.Count - 1)
+        elif part <> "." && part <> "" then
+            stack.Add part
+
+    String.Join("/", stack)
+
+/// The `../`-prefixed path from `baseComponents` to `targetComponents`,
+/// sharing their longest common prefix [Repo-grounded — `converter.rs::relative_from`].
+let private relativeFrom (targetComponents: string[]) (baseComponents: string[]) : string =
+    let mutable common = 0
+
+    while (common < targetComponents.Length
+           && common < baseComponents.Length
+           && targetComponents.[common] = baseComponents.[common]) do
+        common <- common + 1
+
+    let ups = Array.create (baseComponents.Length - common) ".."
+    let downs = targetComponents.[common..]
+    String.Join("/", Array.append ups downs)
+
+/// Rewrites a relative markdown link in `body` so it still resolves once the
+/// agent moves from `inputPath` (under `claudeDir`) to `mirrorDir` — absolute,
+/// URL, anchor-only, and empty links pass through unchanged
+/// [Repo-grounded — `converter.rs::rebase_agent_links`].
+let private rebaseAgentLinks (body: string) (inputPath: string) (claudeDir: string) (mirrorDir: string) : string =
+    let inputDir =
+        match Path.GetDirectoryName inputPath with
+        | null
+        | "" -> "."
+        | d -> d
+
+    let claudeDirNorm = normalizeLexical claudeDir
+    let mirrorDirComponents = (normalizeLexical mirrorDir).Split('/')
+
+    agentLinkRe.Replace(
+        body,
+        fun m ->
+            let link = m.Groups.[1].Value
+
+            let passThrough =
+                link = ""
+                || link.StartsWith("http://", StringComparison.Ordinal)
+                || link.StartsWith("https://", StringComparison.Ordinal)
+                || link.StartsWith("#", StringComparison.Ordinal)
+                || link.StartsWith("/", StringComparison.Ordinal)
+
+            if passThrough then
+                sprintf "](%s)" link
+            else
+                let pathPart, anchor =
+                    match link.IndexOf '#' with
+                    | -1 -> link, ""
+                    | idx -> link.Substring(0, idx), link.Substring(idx)
+
+                if pathPart = "" then
+                    sprintf "](%s)" link
+                else
+                    let resolved = normalizeLexical (inputDir + "/" + pathPart)
+
+                    let newPath =
+                        if
+                            resolved = claudeDirNorm
+                            || resolved.StartsWith(claudeDirNorm + "/", StringComparison.Ordinal)
+                        then
+                            let rel = resolved.Substring(claudeDirNorm.Length).TrimStart('/')
+
+                            if rel <> "" && not (rel.Contains "/") then
+                                rel
+                            else
+                                relativeFrom (resolved.Split('/')) mirrorDirComponents
+                        else
+                            relativeFrom (resolved.Split('/')) mirrorDirComponents
+
+                    sprintf "](%s%s)" newPath anchor
+    )
+
+/// Applies one `Preserve`/`Translate` field onto an in-progress `OpenCodeAgent`
+/// [Repo-grounded — `converter.rs::apply_preserve` and `apply_translate`].
+let private applyField (agent: OpenCodeAgent) (action: FieldAction) (key: string) (value: obj) : OpenCodeAgent =
+    match action, key with
+    | Preserve, "description" ->
+        match value with
+        | :? string as s -> { agent with Description = s }
+        | _ -> agent
+    | Preserve, "skills" ->
+        match value with
+        | :? Collections.IEnumerable as items when not (value :? string) ->
+            { agent with
+                Skills =
+                    items
+                    |> Seq.cast<obj>
+                    |> Seq.choose (function
+                        | :? string as s -> Some s
+                        | _ -> None)
+                    |> List.ofSeq }
+        | _ -> agent
+    | Translate, "tools" ->
+        { agent with
+            Permission = convertPermission (parseClaudeTools value) }
+    | Translate, "model" ->
+        match value with
+        | :? string as s -> { agent with Model = convertModel s }
+        | _ -> agent
+    | Translate, "color" ->
+        match value with
+        | :? string as s -> { agent with Color = convertColor s }
+        | _ -> agent
+    | Translate, "maxTurns" ->
+        match value with
+        | :? int as i -> { agent with Steps = int64 i }
+        | :? int64 as i -> { agent with Steps = i }
+        | :? float as f -> { agent with Steps = int64 f }
+        | :? string as s ->
+            match Int64.TryParse s with
+            | true, i -> { agent with Steps = i }
+            | false, _ -> agent
+        | _ -> agent
+    | _ -> agent
+
+/// Whether a plain YAML scalar needs quoting under Go-`yaml.v3`'s rules
+/// [Repo-grounded — `converter.rs::needs_quoting`].
+let private needsQuoting (s: string) : bool =
+    if s = "" then
+        true
+    elif "-?:,[]{}#&*!|>'\"%@`".IndexOf(s.[0]) >= 0 then
+        true
+    elif
+        s.EndsWith(" ", StringComparison.Ordinal)
+        || s.EndsWith("\t", StringComparison.Ordinal)
+    then
+        true
+    elif s.Contains(": ") || s.EndsWith(":", StringComparison.Ordinal) then
+        true
+    elif s.Contains(" #") then
+        true
+    elif s.Contains("\n") then
+        true
+    else
+        false
+
+/// Emits a scalar, double-quoting and escaping it when required
+/// [Repo-grounded — `converter.rs::yaml_string`].
+let private yamlString (s: string) : string =
+    if needsQuoting s then
+        sprintf "\"%s\"" (s.Replace("\\", "\\\\").Replace("\"", "\\\""))
+    else
+        s
+
+/// Hand-rolled Go-`yaml.v3`-compatible encoder: `description`/`model` always
+/// emit, `permission` emits `{}` when empty else one entry per line sorted by
+/// key, `color`/`steps`/`skills` are omitted when at their zero value
+/// [Repo-grounded — `converter.rs::encode_opencode_agent`].
+let private encodeOpenCodeAgent (agent: OpenCodeAgent) : string =
+    let lines = ResizeArray<string>()
+    lines.Add(sprintf "description: %s" (yamlString agent.Description))
+    lines.Add(sprintf "model: %s" (yamlString agent.Model))
+
+    if Map.isEmpty agent.Permission then
+        lines.Add "permission: {}"
+    else
+        lines.Add "permission:"
+
+        for KeyValue(tool, grant) in agent.Permission do
+            lines.Add(sprintf "  %s: %s" tool grant)
+
+    if agent.Color <> "" then
+        lines.Add(sprintf "color: %s" (yamlString agent.Color))
+
+    if agent.Steps <> 0L then
+        lines.Add(sprintf "steps: %d" agent.Steps)
+
+    if not (List.isEmpty agent.Skills) then
+        lines.Add "skills:"
+
+        for skill in agent.Skills do
+            lines.Add(sprintf "  - %s" (yamlString skill))
+
+    String.Join("\n", lines) + "\n"
+
+/// Converts one Claude agent file into its OpenCode mirror, writing it unless
+/// `dryRun` [Repo-grounded — `converter.rs::convert_agent`].
+let private convertAgent
+    (inputPath: string)
+    (outputPath: string)
+    (claudeDir: string)
+    (dryRun: bool)
+    : Result<ConversionWarning list, string> =
+    try
+        let content = File.ReadAllText inputPath
+
+        match extractFrontmatter content with
+        | Error e -> Error(sprintf "failed to extract frontmatter from %s: %s" inputPath e)
+        | Ok(front, body) ->
+            match yamlDeserializer.Deserialize<Dictionary<string, obj>>(front) with
+            | null -> Error(sprintf "frontmatter is not a mapping in %s" inputPath)
+            | mapping ->
+                let agentName = agentNameFromPath inputPath
+                let applied, dropped = walkFrontmatterFields mapping claudeAgentFieldPolicy
+
+                let converted =
+                    applied
+                    |> List.fold (fun acc (action, key, value) -> applyField acc action key value) openCodeAgentEmpty
+
+                let warnings =
+                    dropped
+                    |> List.map (fun d ->
+                        { AgentName = agentName
+                          Field = d.Field
+                          Reason = d.Reason })
+
+                let mirrorDir =
+                    match Path.GetDirectoryName outputPath with
+                    | null
+                    | "" -> "."
+                    | d -> d
+
+                let rebasedBody = rebaseAgentLinks body inputPath claudeDir mirrorDir
+                let output = "---\n" + encodeOpenCodeAgent converted + "---\n" + rebasedBody
+
+                if not dryRun then
+                    Directory.CreateDirectory mirrorDir |> ignore
+                    File.WriteAllText(outputPath, output)
+
+                Ok warnings
+    with ex ->
+        Error(sprintf "failed to convert %s: %s" inputPath ex.Message)
+
+/// A tallied run of `convertAgent` over every discovered source
+/// [Repo-grounded — `converter.rs::ConvertAllResult`].
+type ConvertAllResult =
+    { Converted: int
+      Failed: int
+      FailedFiles: string list
+      Warnings: ConversionWarning list }
+
+let private convertAllResultEmpty: ConvertAllResult =
+    { Converted = 0
+      Failed = 0
+      FailedFiles = []
+      Warnings = [] }
+
+/// Discovers every mirrorable Claude agent source under `repoRoot` and
+/// converts each one to its flat `.opencode/agents/` mirror
+/// [Repo-grounded — `converter.rs::convert_all_agents`].
+let convertAllAgents (repoRoot: string) (dryRun: bool) : Result<ConvertAllResult, string> =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let opencodeDir = Path.Combine(repoRoot, opencodeAgentDir)
+
+    discoverAgentSources claudeDir
+    |> Result.map (fun sources ->
+        sources
+        |> List.fold
+            (fun acc (input, name) ->
+                let filename = name + ".md"
+                let output = Path.Combine(opencodeDir, filename)
+
+                match convertAgent input output claudeDir dryRun with
+                | Ok warnings ->
+                    { acc with
+                        Converted = acc.Converted + 1
+                        Warnings = acc.Warnings @ warnings }
+                | Error _ ->
+                    { acc with
+                        Failed = acc.Failed + 1
+                        FailedFiles = acc.FailedFiles @ [ filename ] })
+            convertAllResultEmpty)
+
+// ---------------------------------------------------------------------------
+// Sync (agents leg)
+// ---------------------------------------------------------------------------
+
+/// `rhino-cli harness sync` inputs [Repo-grounded — `sync.rs::SyncOptions`].
+type SyncOptions =
+    { RepoRoot: string
+      DryRun: bool
+      AgentsOnly: bool
+      SkillsOnly: bool }
+
+/// Defaults matching Rust's `SyncOptions::new` — every flag off
+/// [Repo-grounded — `sync.rs::SyncOptions::new`].
+let syncOptionsDefault (repoRoot: string) : SyncOptions =
+    { RepoRoot = repoRoot
+      DryRun = false
+      AgentsOnly = false
+      SkillsOnly = false }
+
+/// `rhino-cli harness sync` outcome. `skills_copied`/`skills_failed` are
+/// dropped: Rust's `SyncResult` carries them but they are permanently zero —
+/// skills were never synced by this command, only agents
+/// [Repo-grounded — `sync.rs::SyncResult`].
+type SyncResult =
+    { AgentsConverted: int
+      AgentsFailed: int
+      FailedFiles: string list
+      Warnings: ConversionWarning list }
+
+let syncResultEmpty: SyncResult =
+    { AgentsConverted = 0
+      AgentsFailed = 0
+      FailedFiles = []
+      Warnings = [] }
+
+/// Runs the agents leg of a sync, unless `SkillsOnly` short-circuits it to a
+/// no-op [Repo-grounded — `sync.rs::sync_all`].
+let syncAll (opts: SyncOptions) : Result<SyncResult, string> =
+    if opts.SkillsOnly then
+        Ok syncResultEmpty
+    else
+        convertAllAgents opts.RepoRoot opts.DryRun
+        |> Result.map (fun r ->
+            { AgentsConverted = r.Converted
+              AgentsFailed = r.Failed
+              FailedFiles = r.FailedFiles
+              Warnings = r.Warnings })
+
+// ---------------------------------------------------------------------------
+// Sync validation (scoped)
+// ---------------------------------------------------------------------------
+//
+// Scope note: Rust's `validate_sync` tallies five check families. This module
+// ports the two the three `@agents-validate-sync` scenarios exercise —
+// `validate_agent_count` and `validate_agent_equivalence` — and omits
+// `validate_no_stale_agent_dir`, `validate_no_synced_skills`, and
+// `validate_skills_mirror`, none of which any landed scenario reaches.
+
+let private countMarkdownFiles (dir: string) : int =
+    if not (Directory.Exists dir) then
+        0
+    else
+        Directory.GetFiles dir
+        |> Array.filter (fun p -> isMirrorableAgentFilename (Path.GetFileName p) false)
+        |> Array.length
+
+let private countClaudeAgentSources (claudeDir: string) : int =
+    match discoverAgentSources claudeDir with
+    | Ok sources -> List.length sources
+    | Error _ -> 0
+
+/// Passes when the OpenCode mirror has at least as many agent files as
+/// Claude has agent sources [Repo-grounded — `sync_validator.rs::validate_agent_count`].
+let private validateAgentCount (repoRoot: string) : ValidationCheck =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let opencodeDir = Path.Combine(repoRoot, opencodeAgentDir)
+    let claudeCount = countClaudeAgentSources claudeDir
+    let opencodeCount = countMarkdownFiles opencodeDir
+
+    if opencodeCount >= claudeCount then
+        ValidationCheck.passed "Agent Count" "OpenCode mirror contains every Claude agent"
+    else
+        ValidationCheck.failed
+            "Agent Count"
+            (sprintf "%d agents" claudeCount)
+            (sprintf "%d agents" opencodeCount)
+            "OpenCode agents directory is missing one or more Claude agents"
+
+let private parseOpencodePermission (value: obj option) : Map<string, string> =
+    match value with
+    | Some(:? IDictionary<obj, obj> as m) ->
+        m
+        |> Seq.choose (fun kv ->
+            match kv.Key, kv.Value with
+            | (:? string as k), (:? string as v) -> Some(k, v)
+            | _ -> None)
+        |> Map.ofSeq
+    | _ -> Map.empty
+
+let private parseStringSeq (value: obj option) : string list =
+    match value with
+    | Some(:? Collections.IEnumerable as items) when not (value.Value :? string) ->
+        items
+        |> Seq.cast<obj>
+        |> Seq.choose (function
+            | :? string as s -> Some s
+            | _ -> None)
+        |> List.ofSeq
+    | _ -> []
+
+let private tryGetField (mapping: Dictionary<string, obj>) (key: string) : obj option =
+    match mapping.TryGetValue key with
+    | true, v -> Some v
+    | _ -> None
+
+/// Compares the source Claude agent's frontmatter/body against its OpenCode
+/// mirror field by field, returning the first mismatch or a pass
+/// [Repo-grounded — `sync_validator.rs::validate_agent_yaml`].
+let private validateAgentYaml
+    (agentName: string)
+    (claudeMapping: Dictionary<string, obj>)
+    (opencodeMapping: Dictionary<string, obj>)
+    (expectedBody: string)
+    (actualBody: string)
+    : ValidationCheck =
+    let checkName = sprintf "Agent Equivalence: %s" agentName
+
+    let claudeDescription =
+        match tryGetField claudeMapping "description" with
+        | Some(:? string as s) -> s
+        | _ -> ""
+
+    let opencodeDescription =
+        match tryGetField opencodeMapping "description" with
+        | Some(:? string as s) -> s
+        | _ -> ""
+
+    if claudeDescription <> opencodeDescription then
+        ValidationCheck.failed checkName claudeDescription opencodeDescription "description mismatch"
+    else
+        let expectedModel =
+            match tryGetField claudeMapping "model" with
+            | Some(:? string as s) -> convertModel s
+            | _ -> convertModel ""
+
+        let actualModel =
+            match tryGetField opencodeMapping "model" with
+            | Some(:? string as s) -> s
+            | _ -> ""
+
+        if expectedModel <> actualModel then
+            ValidationCheck.failed checkName expectedModel actualModel "model mismatch"
+        else
+            let expectedPermission =
+                tryGetField claudeMapping "tools"
+                |> Option.map parseClaudeTools
+                |> Option.defaultValue []
+                |> convertPermission
+
+            let actualPermission =
+                parseOpencodePermission (tryGetField opencodeMapping "permission")
+
+            if expectedPermission <> actualPermission then
+                ValidationCheck.failed
+                    checkName
+                    (sprintf "%A" (Map.toList expectedPermission))
+                    (sprintf "%A" (Map.toList actualPermission))
+                    "permission mismatch"
+            else
+                let expectedSkills = parseStringSeq (tryGetField claudeMapping "skills")
+                let actualSkills = parseStringSeq (tryGetField opencodeMapping "skills")
+
+                if expectedSkills <> actualSkills then
+                    ValidationCheck.failed
+                        checkName
+                        (sprintf "%A" expectedSkills)
+                        (sprintf "%A" actualSkills)
+                        "skills mismatch"
+                elif expectedBody <> actualBody then
+                    ValidationCheck.failed checkName expectedBody actualBody "body mismatch"
+                else
+                    ValidationCheck.passed checkName "Agent is semantically equivalent"
+
+/// Reads one Claude agent source and its OpenCode mirror, rebases the
+/// Claude body the same way `convertAgent` would, and delegates the field
+/// comparison to `validateAgentYaml`
+/// [Repo-grounded — `sync_validator.rs::validate_agent_file`].
+let private validateAgentFile
+    (claudeDir: string)
+    (opencodeDir: string)
+    (sourcePath: string)
+    (agentName: string)
+    : ValidationCheck =
+    let checkName = sprintf "Agent Equivalence: %s" agentName
+    let mirrorPath = Path.Combine(opencodeDir, agentName + ".md")
+
+    try
+        let claudeContent = File.ReadAllText sourcePath
+
+        if not (File.Exists mirrorPath) then
+            ValidationCheck.failedMsg checkName (sprintf "OpenCode mirror not found: %s" mirrorPath)
+        else
+            let opencodeContent = File.ReadAllText mirrorPath
+
+            match extractFrontmatter claudeContent, extractFrontmatter opencodeContent with
+            | Error e, _ -> ValidationCheck.failedMsg checkName (sprintf "failed to parse Claude frontmatter: %s" e)
+            | _, Error e -> ValidationCheck.failedMsg checkName (sprintf "failed to parse OpenCode frontmatter: %s" e)
+            | Ok(claudeFront, claudeBody), Ok(_, opencodeBody) ->
+                match
+                    yamlDeserializer.Deserialize<Dictionary<string, obj>> claudeFront,
+                    yamlDeserializer.Deserialize<Dictionary<string, obj>>(
+                        (extractFrontmatter opencodeContent |> Result.map fst |> Result.defaultValue "")
+                    )
+                with
+                | null, _
+                | _, null -> ValidationCheck.failedMsg checkName "frontmatter is not a mapping"
+                | claudeMapping, opencodeMapping ->
+                    let expectedBody = rebaseAgentLinks claudeBody sourcePath claudeDir opencodeDir
+                    validateAgentYaml agentName claudeMapping opencodeMapping expectedBody opencodeBody
+    with ex ->
+        ValidationCheck.failedMsg checkName (sprintf "failed to compare %s: %s" agentName ex.Message)
+
+/// Walks every discovered Claude agent source and validates it against its
+/// mirror [Repo-grounded — `sync_validator.rs::validate_agent_equivalence`].
+let private validateAgentEquivalence (repoRoot: string) : ValidationCheck list =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let opencodeDir = Path.Combine(repoRoot, opencodeAgentDir)
+
+    match discoverAgentSources claudeDir with
+    | Error e -> [ ValidationCheck.failedMsg "Agent Equivalence" (sprintf "failed to discover agent sources: %s" e) ]
+    | Ok sources ->
+        sources
+        |> List.map (fun (path, name) -> validateAgentFile claudeDir opencodeDir path name)
+
+/// Runs the scoped sync validation: agent count, then per-agent equivalence
+/// [Repo-grounded — `sync_validator.rs::validate_sync`].
+let validateSync (repoRoot: string) : ValidationResult =
+    let stopwatch = Stopwatch.StartNew()
+
+    let checks = validateAgentCount repoRoot :: validateAgentEquivalence repoRoot
+
+    let result =
+        checks
+        |> List.fold (fun acc check -> ValidationResult.tally check acc) ValidationResult.empty
+
+    stopwatch.Stop()
+
+    { result with
+        Duration = stopwatch.Elapsed }

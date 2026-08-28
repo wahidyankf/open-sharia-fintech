@@ -67,6 +67,7 @@ type HarnessSteps() =
     let mutable mirrorResult: Harness.MirrorResult option = None
     let mutable mirrorDrift: Harness.MirrorDrift list option = None
     let mutable fixtureSkillNames: string list = []
+    let mutable lastSyncOutcome: Result<Harness.SyncResult, string> option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -241,6 +242,173 @@ type HarnessSteps() =
     let findingSpanning (paths: string list) : Harness.DuplicationFinding list =
         duplicationFindings
         |> List.filter (fun finding -> paths |> List.forall (fun path -> List.contains path finding.Files))
+
+    // ---- @agents-sync / @agents-validate-sync ----
+
+    let writeAgentWithModel (root: string) (name: string) (model: string) : string =
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, name + ".md")
+
+        File.WriteAllText(
+            path,
+            sprintf
+                "---\nname: %s\ndescription: fixture\ntools: Read, Write\nmodel: %s\ncolor: blue\n---\nAgent body.\n"
+                name
+                model
+        )
+
+        path
+
+    let readFrontmatterField (path: string) (field: string) : string option =
+        File.ReadAllText(path).Split('\n')
+        |> Array.tryPick (fun line ->
+            let trimmed = line.Trim()
+
+            if trimmed.StartsWith(field + ":", StringComparison.Ordinal) then
+                Some(trimmed.Substring(field.Length + 1).Trim().Trim('"'))
+            else
+                None)
+
+    let runSyncOnce (opts: Harness.SyncOptions) : unit =
+        let outcome = Harness.syncAll opts
+        lastSyncOutcome <- Some outcome
+
+        lastExitCode <-
+            Some(
+                match outcome with
+                | Ok _ -> 0
+                | Error _ -> 1
+            )
+
+    [<Given>]
+    member _.``a \.claude/ directory with valid agents and skills``() =
+        let root = scenarioRoot ()
+        writeAgent root "sync-fixture-agent" "Agent body.\n" |> ignore
+        writeSkill root "sync-fixture-skill" "Skill body.\n" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory with agents and skills to convert``() =
+        let root = scenarioRoot ()
+        writeAgent root "sync-fixture-agent" "Agent body.\n" |> ignore
+        writeSkill root "sync-fixture-skill" "Skill body.\n" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory with both agents and skills``() =
+        let root = scenarioRoot ()
+        writeAgent root "sync-fixture-agent" "Agent body.\n" |> ignore
+        writeSkill root "sync-fixture-skill" "Skill body.\n" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ agent configured with the "([^"]+)" model``(model: string) =
+        writeAgentWithModel (scenarioRoot ()) "sync-model-agent" model |> ignore
+
+    [<Given>]
+    member _.``\.claude/ and \.opencode/ configurations that are fully synchronised``() =
+        let root = scenarioRoot ()
+        writeAgentWithModel root "sync-parity-agent" "sonnet" |> ignore
+
+        match Harness.convertAllAgents root false with
+        | Ok _ -> ()
+        | Error e -> failwith e
+
+    [<Given>]
+    member _.``an agent in \.claude/ whose description differs from its \.opencode/ counterpart``() =
+        let root = scenarioRoot ()
+        writeAgentWithModel root "sync-mismatch-agent" "sonnet" |> ignore
+
+        match Harness.convertAllAgents root false with
+        | Ok _ -> ()
+        | Error e -> failwith e
+
+        let mirrorPath = Path.Combine(root, ".opencode", "agents", "sync-mismatch-agent.md")
+        let content = File.ReadAllText mirrorPath
+
+        File.WriteAllText(
+            mirrorPath,
+            content.Replace("description: fixture", "description: \"a different description\"")
+        )
+
+    [<Given>]
+    member _.``\.claude/ containing more agents than \.opencode/``() =
+        let root = scenarioRoot ()
+        writeAgent root "sync-count-agent-one" "Agent body.\n" |> ignore
+        writeAgent root "sync-count-agent-two" "Agent body.\n" |> ignore
+        Directory.CreateDirectory(Path.Combine(root, ".opencode", "agents")) |> ignore
+
+    [<When>]
+    member _.``the developer runs agents sync``() =
+        runSyncOnce (Harness.syncOptionsDefault (scenarioRoot ()))
+
+    [<When>]
+    member _.``the developer runs agents sync with the --dry-run flag``() =
+        runSyncOnce
+            { Harness.syncOptionsDefault (scenarioRoot ()) with
+                DryRun = true }
+
+    [<When>]
+    member _.``the developer runs agents sync with the --agents-only flag``() =
+        runSyncOnce
+            { Harness.syncOptionsDefault (scenarioRoot ()) with
+                AgentsOnly = true }
+
+    [<When>]
+    member _.``the developer runs agents validate-sync``() =
+        let r = Harness.validateSync (scenarioRoot ())
+        lastResult <- Some r
+        lastExitCode <- Some(if r.FailedChecks = 0 then 0 else 1)
+
+    [<Then>]
+    member _.``the \.opencode/ directory contains the converted configuration``() =
+        let root = scenarioRoot ()
+        Assert.True(File.Exists(Path.Combine(root, ".opencode", "agents", "sync-fixture-agent.md")))
+        Assert.True(Directory.Exists(Path.Combine(root, ".claude", "skills", "sync-fixture-skill")))
+
+    [<Then>]
+    member _.``the output describes the planned operations``() =
+        match lastSyncOutcome with
+        | Some(Ok r) -> Assert.True(r.AgentsConverted > 0)
+        | Some(Error e) -> failwith e
+        | None -> failwith "no sync has run in this scenario"
+
+    [<Then>]
+    member _.``no files are written to the \.opencode/ directory``() =
+        Assert.False(Directory.Exists(Path.Combine(scenarioRoot (), ".opencode")))
+
+    [<Then>]
+    member _.``only agent files are written to the \.opencode/ directory``() =
+        let root = scenarioRoot ()
+        Assert.True(File.Exists(Path.Combine(root, ".opencode", "agents", "sync-fixture-agent.md")))
+        Assert.False(Directory.Exists(Path.Combine(root, ".opencode", "skills")))
+
+    [<Then>]
+    member _.``the corresponding \.opencode/ agent uses the "([^"]+)" model identifier``(modelId: string) =
+        let mirrorPath =
+            Path.Combine(scenarioRoot (), ".opencode", "agents", "sync-model-agent.md")
+
+        match readFrontmatterField mirrorPath "model" with
+        | Some m -> Assert.Equal(modelId, m)
+        | None -> failwith "mirror has no model field"
+
+    [<Then>]
+    member _.``the output reports all sync checks as passing``() =
+        let notPassed = (result ()).Checks |> List.filter (fun c -> c.Status <> "passed")
+
+        Assert.Equal<Harness.ValidationCheck list>([], notPassed)
+
+    [<Then>]
+    member _.``the output identifies the agent with the mismatched description``() =
+        let mismatch =
+            (result ()).Checks
+            |> List.tryFind (fun c -> c.Status = "failed" && c.Message = "description mismatch")
+
+        Assert.True(mismatch.IsSome)
+
+    [<Then>]
+    member _.``the output reports the agent count mismatch``() =
+        match (result ()).Checks |> List.tryFind (fun c -> c.Name = "Agent Count") with
+        | Some c -> Assert.Equal("failed", c.Status)
+        | None -> failwith "no Agent Count check found"
 
     // ---- @harness-purge ----
 
@@ -913,6 +1081,10 @@ module private FeatureRunner =
     let runSkillsMirror (scenarioTitle: string) : unit =
         runIn "agents-skills-mirror.feature" scenarioTitle
 
+    /// Runs one scenario of `agents-sync.feature`.
+    let runSync (scenarioTitle: string) : unit =
+        runIn "agents-sync.feature" scenarioTitle
+
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
     FeatureRunner.run "Generated binding directories for dropped harnesses no longer exist"
@@ -989,3 +1161,35 @@ let ``The npm entry points cover the new mirror`` () =
 [<Fact>]
 let ``The emitted mirror survives the formatter`` () =
     FeatureRunner.runSkillsMirror "The emitted mirror survives the formatter"
+
+[<Fact>]
+let ``Syncing converts Claude agents to OpenCode format and leaves skills in place`` () =
+    FeatureRunner.runSync "Syncing converts Claude agents to OpenCode format and leaves skills in place"
+
+[<Fact>]
+let ``The --dry-run flag previews changes without modifying files`` () =
+    FeatureRunner.runSync "The --dry-run flag previews changes without modifying files"
+
+[<Fact>]
+let ``The --agents-only flag syncs agents without touching skills`` () =
+    FeatureRunner.runSync "The --agents-only flag syncs agents without touching skills"
+
+[<Fact>]
+let ``Model names are correctly translated to OpenCode equivalents`` () =
+    FeatureRunner.runSync "Model names are correctly translated to OpenCode equivalents"
+
+[<Fact>]
+let ``The opus model name is translated to the same OpenCode equivalent as sonnet`` () =
+    FeatureRunner.runSync "The opus model name is translated to the same OpenCode equivalent as sonnet"
+
+[<Fact>]
+let ``Directories that are in sync pass validation`` () =
+    FeatureRunner.runSync "Directories that are in sync pass validation"
+
+[<Fact>]
+let ``A description mismatch between directories fails validation`` () =
+    FeatureRunner.runSync "A description mismatch between directories fails validation"
+
+[<Fact>]
+let ``A count mismatch between directories fails validation`` () =
+    FeatureRunner.runSync "A count mismatch between directories fails validation"
