@@ -2766,7 +2766,7 @@ let private globToRegex (pattern: string) : Regex =
         match c with
         | '*' -> sb.Append(".*") |> ignore
         | '?' -> sb.Append(".") |> ignore
-        | c -> sb.Append(Regex.Escape(string c)) |> ignore
+        | c -> sb.Append(Regex.Escape(string<char> c)) |> ignore
 
     sb.Append("$") |> ignore
     Regex(sb.ToString(), RegexOptions.Compiled)

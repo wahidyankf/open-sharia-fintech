@@ -514,3 +514,32 @@ generally: when a lint or analysis step in this repo appears to hang, time `dotn
 same project first — a fast build against a stalled analyser localises the problem to the analyser
 immediately, and the per-file probe that seems like the obvious next step will exonerate the guilty
 file.
+
+## 2026-08-28 — Phase 6: `dotnet fsharp-analyzers` is a silent no-op locally
+
+`rhino-cli-fsharp:lint` runs two commands: `dotnet fsharplint` and then the G-Research
+`dotnet fsharp-analyzers` sweep. On this workstation the second one **prints nothing and exits 0
+regardless of the code**, so a green local `nx run rhino-cli-fsharp:lint` says nothing about the
+analyzer half of the same target. CI, running the identical command line, reported
+
+```text
+RhinoCli.Application/src/Md.fs(2769,38): Error GRA-TYPE-ANNOTATE-001 :
+Please annotate your type when using the `string` function.
+```
+
+for `sb.Append(Regex.Escape(string c))` inside `globToRegex`, fixed by writing
+`string<char> c`. `ANALYZERS_PATH` resolves correctly here
+(`~/.nuget/packages/g-research.fsharp.analyzers/0.22.0/analyzers/dotnet/fs`) and the tool is in
+`.config/dotnet-tools.json`, so this is not a missing-install — the CLI simply produces no
+diagnostics locally.
+
+### The transferable rule
+
+**The local lint gate is strictly weaker than the CI lint gate for F#.** Treat a green local
+`lint` as covering FSharpLint only. Because `--treat-as-error` makes the analyzer sweep stop at
+its first finding, one CI round-trip surfaces one violation, so batch-check by inspection before
+pushing: any new `string x` application needs `string<'t> x`, and the other twelve
+`--treat-as-error` rules (`GRA-STRING-00{1..4}`, `GRA-UNIONCASE-001`, `GRA-VIRTUALCALL-001`,
+`GRA-JSONOPTS-001`, `GRA-DISPBEFOREASYNC-001`, `GRA-IMMUTABLECOLLECTIONEQUALITY-001`,
+`GRA-LOGARGFUNCFULLAPP-001`, `GRA-LOGTEMPLMISSVALS-001`, `GRA-INTERPOLATED-001`) deserve the same
+read-through on every wave's new code.
