@@ -132,6 +132,7 @@ type HarnessSteps() =
     let mutable lastHarnessAuditOutcome: Harness.HarnessAuditOutcome option = None
     let mutable lastCatalogOutcome: Harness.HarnessCatalogOutcome option = None
     let mutable catalogDocBefore: string option = None
+    let mutable ownershipSourceDigestBefore: string option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -371,6 +372,185 @@ type HarnessSteps() =
         match lastExitCode with
         | Some code -> code
         | None -> failwith "no command has been run in this scenario"
+
+    // ---- @binding-ownership ----
+
+    /// The undeclared file the falsifiability probe introduces
+    /// [Repo-grounded — `tests/harness_ownership.rs::PROBE`].
+    let ownershipProbe = ".opencode/probe-unowned.md"
+
+    /// The single vendored directory the fixture registry declares
+    /// [Repo-grounded — `tests/harness_ownership.rs::VENDOR_DIR`].
+    let ownershipVendorDir = "vendor-plugin"
+
+    /// Isolates a `git` subprocess against `root` per the Git Fixture
+    /// Isolation Convention's Standards 1-3
+    /// [Repo-grounded — `tests/support/git_fixture.rs::run_git`].
+    let isolateOwnershipGit (root: string) (psi: ProcessStartInfo) =
+        psi.EnvironmentVariables.["GIT_DIR"] <- Path.Combine(root, ".git")
+        psi.EnvironmentVariables.["GIT_CEILING_DIRECTORIES"] <- root
+        psi.EnvironmentVariables.["GIT_CONFIG_GLOBAL"] <- "/dev/null"
+        psi.EnvironmentVariables.["GIT_CONFIG_SYSTEM"] <- "/dev/null"
+
+    /// Runs a `git` subcommand against `root`, isolated, failing loud on a
+    /// non-zero exit [Repo-grounded — `tests/support/git_fixture.rs::run_git`].
+    let runOwnershipGit (root: string) (args: string list) : unit =
+        use proc = new Process()
+        proc.StartInfo.FileName <- "git"
+        args |> List.iter proc.StartInfo.ArgumentList.Add
+        proc.StartInfo.WorkingDirectory <- root
+        proc.StartInfo.RedirectStandardOutput <- true
+        proc.StartInfo.RedirectStandardError <- true
+        proc.StartInfo.UseShellExecute <- false
+        isolateOwnershipGit root proc.StartInfo
+        proc.Start() |> ignore
+        let stderr = proc.StandardError.ReadToEnd()
+        proc.WaitForExit()
+
+        if proc.ExitCode <> 0 then
+            failwithf "git %s failed in %s: %s" (String.concat " " args) root stderr
+
+    /// A fresh `git init` repository with a committable local identity
+    /// [Repo-grounded — `tests/harness_ownership.rs::OwnershipWorld::new`].
+    let initOwnershipGitFixture (root: string) : unit =
+        runOwnershipGit root [ "init"; "-q"; "-b"; "main" ]
+        runOwnershipGit root [ "config"; "user.name"; "Rhino CLI Test" ]
+        runOwnershipGit root [ "config"; "user.email"; "rhino-cli-test@example.invalid" ]
+
+    /// The fixture registry: three harnesses, every binding path classified.
+    /// When `emitterTargetIsSource`, the OpenCode entry misdeclares its own
+    /// output directory as source — the condition the generator must refuse
+    /// [Repo-grounded — `tests/harness_ownership.rs::registry_yaml`].
+    let ownershipRegistryYaml (emitterTargetIsSource: bool) : string =
+        let opencodeAgentsClass = if emitterTargetIsSource then "source" else "generated"
+
+        String.Join(
+            "\n",
+            [ "harness:"
+              "  - name: claude-code"
+              "    tier: source"
+              "    agent-dir: .claude/agents"
+              "    skills-dir: .claude/skills"
+              "    ownership:"
+              "      - { path: .claude/, class: source, reason: canonical hand-authored tree }"
+              "  - name: opencode"
+              "    tier: generated"
+              "    agent-dir: .opencode/agents"
+              "    mirrors: .claude/agents"
+              "    ownership:"
+              sprintf
+                  "      - { path: .opencode/agents, class: %s, reason: emitted from .claude/agents }"
+                  opencodeAgentsClass
+              "  - name: codex"
+              "    tier: generated"
+              "    agent-dir: .codex/agents"
+              "    mirrors: .claude/agents"
+              "    config: .codex/config.toml"
+              "    skills-dir: .agents/skills"
+              "    skills-mirrors: .claude/skills"
+              "    vendored:"
+              sprintf "      - .agents/skills/%s" ownershipVendorDir
+              "    ownership:"
+              "      - { path: .codex/agents, class: generated, reason: emitted from .claude/agents }"
+              "      - { path: .codex/config.toml, class: vendored, reason: tooling config with a delimited region }"
+              "      - { path: .agents/skills, class: generated, reason: mirrored from .claude/skills }"
+              sprintf
+                  "      - { path: .agents/skills/%s, class: vendored, reason: third-party plugin skill; no in-repo source }"
+                  ownershipVendorDir
+              "coverage:"
+              "  projects: []"
+              "" ]
+        )
+
+    let writeOwnershipRegistry (root: string) (emitterTargetIsSource: bool) : unit =
+        File.WriteAllText(Path.Combine(root, "repo-config.yml"), ownershipRegistryYaml emitterTargetIsSource)
+
+    /// `harness bindings validate` asserts every present binding directory is
+    /// referenced in the catalog; a fixture missing it fails for a reason
+    /// unrelated to ownership
+    /// [Repo-grounded — `tests/harness_ownership.rs::write_supporting_docs`].
+    let writeOwnershipSupportingDocs (root: string) : unit = writeCatalog root (fullCatalog ())
+
+    /// A valid Claude agent. `tools:`/`model:` are present because the
+    /// OpenCode equivalence check translates both; `color:` is omitted
+    /// because its translation map is governance prose this fixture has no
+    /// reason to carry [Repo-grounded — `tests/harness_ownership.rs::write_agent`].
+    let writeOwnershipAgent (root: string) (name: string) : unit =
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, name + ".md"),
+            sprintf "---\nname: %s\ndescription: Agent %s.\ntools: Read, Write\nmodel: sonnet\n---\n# Body\n" name name
+        )
+
+    let writeOwnershipSkill (root: string) (name: string) : unit =
+        let dir = Path.Combine(root, ".claude", "skills", name)
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "SKILL.md"),
+            sprintf "---\nname: %s\ndescription: Skill %s.\n---\n# Skill body\n" name name
+        )
+
+    /// Builds a complete fixture, generates the bindings, and commits
+    /// everything so the validator — which reads the git index — can see it
+    /// [Repo-grounded — `tests/harness_ownership.rs::OwnershipWorld::build_and_commit`].
+    let buildAndCommitOwnershipFixture (root: string) : unit =
+        writeOwnershipRegistry root false
+        writeOwnershipSupportingDocs root
+        writeOwnershipAgent root "alpha"
+        writeOwnershipSkill root "beta"
+
+        let vendorDir = Path.Combine(root, ".agents", "skills", ownershipVendorDir)
+        Directory.CreateDirectory vendorDir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(vendorDir, "SKILL.md"),
+            "---\nname: vendor-plugin\ndescription: Third-party.\n---\n# Vendored\n"
+        )
+
+        initOwnershipGitFixture root
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "fixture generate: %s" e
+
+        runOwnershipGit root [ "add"; "-A" ]
+        runOwnershipGit root [ "commit"; "-q"; "-m"; "fixture" ]
+
+    /// A stable digest of every file under `rel`, so a before/after
+    /// comparison catches a rewrite as well as an addition or deletion
+    /// [Repo-grounded — `tests/harness_ownership.rs::tree_digest`].
+    let ownershipTreeDigest (root: string) (rel: string) : string =
+        let rec walk (dir: string) : (string * int64) list =
+            if not (Directory.Exists dir) then
+                []
+            else
+                let files =
+                    Directory.GetFiles dir
+                    |> Array.map (fun f -> Path.GetRelativePath(root, f).Replace('\\', '/'), FileInfo(f).Length)
+                    |> List.ofArray
+
+                let subdirs = Directory.GetDirectories dir |> Array.toList |> List.collect walk
+                files @ subdirs
+
+        walk (Path.Combine(root, rel))
+        |> List.sortBy fst
+        |> List.map (fun (p, len) -> sprintf "%s:%d" p len)
+        |> String.concat "|"
+
+    let runOwnershipValidate (root: string) : unit =
+        let outcome = Harness.validateOwnership root
+        lastResult <- Some outcome
+        lastExitCode <- Some(if outcome.FailedChecks = 0 then 0 else 1)
+
+    let ownershipMentions (target: string) : bool =
+        (result ()).Checks
+        |> List.exists (fun c ->
+            c.Status <> "passed"
+            && (c.Name.Contains(target, StringComparison.Ordinal)
+                || c.Message.Contains(target, StringComparison.Ordinal)))
 
     /// Runs `git ls-files -- <path>` at the repository root and returns the
     /// number of tracked paths it reports.
@@ -1578,6 +1758,11 @@ type HarnessSteps() =
         =
         let root = scenarioRoot ()
         writeThreeHarnessConfigWithSkillsMirror root
+        // `harness bindings generate` also runs the OpenCode/Codex agent
+        // emitters (see the `@binding-ownership` scenario sharing this same
+        // step text), which need `.claude/agents/` to exist even when this
+        // scenario has no agent of its own to mirror.
+        Directory.CreateDirectory(Path.Combine(root, ".claude", "agents")) |> ignore
         fixtureSkillNames <- [ "alpha-skill"; "beta-skill"; "gamma-skill" ]
 
         for name in fixtureSkillNames do
@@ -1587,10 +1772,13 @@ type HarnessSteps() =
             writeSkillFile root name "reference/notes.md" "extra reference content\n"
             |> ignore
 
+    /// Shared by `@agents-skills-mirror` and `@binding-ownership`, since both
+    /// feature files use this exact Gherkin step text for a full
+    /// `harness bindings generate` run.
     [<When>]
     member _.``rhino-cli harness bindings generate runs``() =
-        match Harness.emitSkillsMirrors (scenarioRoot ()) false with
-        | Ok result -> mirrorResult <- Some result
+        match Harness.runHarnessBindingsGenerate (scenarioRoot ()) with
+        | Ok() -> ()
         | Error e -> failwith e
 
     [<Then>]
@@ -1792,6 +1980,155 @@ type HarnessSteps() =
             mirrorDrift |> Option.defaultValue [ Harness.MirrorDriftMissing "unset" ]
         )
 
+    // ---- @binding-ownership ----
+
+    [<Given>]
+    member _.``a fixture repository whose binding files are all declared generated, vendored, or source``() =
+        let root = scenarioRoot ()
+        buildAndCommitOwnershipFixture root
+        runOwnershipValidate root
+
+        Assert.Equal(
+            (0, ""),
+            (exitCode (),
+             if exitCode () = 0 then
+                 ""
+             else
+                 "the fixture must start classified")
+        )
+
+    [<When>]
+    member _.``a tracked file with no declared class is introduced under a binding directory``() =
+        let root = scenarioRoot ()
+
+        let path =
+            Path.Combine(root, ownershipProbe.Replace('/', Path.DirectorySeparatorChar))
+
+        Directory.CreateDirectory(Path.GetDirectoryName(path: string)) |> ignore
+        File.WriteAllText(path, "# unowned\n")
+        runOwnershipGit root [ "add"; ownershipProbe ]
+
+    [<Then>]
+    member _.``rhino-cli harness ownership validate exits non-zero naming that exact file as unclassified``() =
+        let root = scenarioRoot ()
+        runOwnershipValidate root
+        Assert.NotEqual(0, exitCode ())
+        Assert.True(ownershipMentions ownershipProbe)
+
+    [<Then>]
+    member _.``it exits 0 once the file is removed, proving the check is falsifiable in both directions rather than always-green``
+        ()
+        =
+        let root = scenarioRoot ()
+        runOwnershipGit root [ "rm"; "-q"; "-f"; ownershipProbe ]
+        runOwnershipValidate root
+        Assert.Equal(0, exitCode ())
+
+    [<Given>]
+    member _.``a fixture repository whose mirror trees are declared generated``() =
+        buildAndCommitOwnershipFixture (scenarioRoot ())
+
+    [<When>]
+    member _.``one emitted file is hand-edited``() =
+        let root = scenarioRoot ()
+        let path = Path.Combine(root, ".opencode", "agents", "alpha.md")
+        let body = File.ReadAllText path
+        File.WriteAllText(path, body + "\nhand-edited\n")
+
+    [<Then>]
+    member _.``rhino-cli harness ownership validate exits non-zero naming the drifted generated file``() =
+        let root = scenarioRoot ()
+        runOwnershipValidate root
+        Assert.NotEqual(0, exitCode ())
+        Assert.True(ownershipMentions "alpha")
+
+    [<Then>]
+    member _.``it exits 0 after regeneration restores the canonical bytes``() =
+        let root = scenarioRoot ()
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "regenerate: %s" e
+
+        runOwnershipValidate root
+        Assert.Equal(0, exitCode ())
+
+    [<Given>]
+    member _.``a fixture repository declaring one vendored skill directory with a recorded reason``() =
+        buildAndCommitOwnershipFixture (scenarioRoot ())
+
+    [<When>]
+    member _.``the vendored file is hand-edited``() =
+        let root = scenarioRoot ()
+        let path = Path.Combine(root, ".agents", "skills", ownershipVendorDir, "SKILL.md")
+        let body = File.ReadAllText path
+        File.WriteAllText(path, body + "\nlocal edit\n")
+
+    [<Then>]
+    member _.``rhino-cli harness ownership validate still exits 0, because a vendored path has no in-repo source to compare against``
+        ()
+        =
+        runOwnershipValidate (scenarioRoot ())
+        Assert.Equal(0, exitCode ())
+
+    [<Then>]
+    member _.``the vendored file is still present, so nothing deleted it in passing``() =
+        let root = scenarioRoot ()
+        let path = Path.Combine(root, ".agents", "skills", ownershipVendorDir, "SKILL.md")
+        Assert.True(File.Exists path)
+        Assert.Contains("local edit", File.ReadAllText path)
+
+    [<Given>]
+    member _.``a fixture repository declaring the \.claude tree as source``() =
+        let root = scenarioRoot ()
+        buildAndCommitOwnershipFixture root
+        ownershipSourceDigestBefore <- Some(ownershipTreeDigest root ".claude")
+
+    [<Then>]
+    member _.``every declared source path is byte-identical to what it was before the run``() =
+        let root = scenarioRoot ()
+
+        match ownershipSourceDigestBefore with
+        | Some before -> Assert.Equal(before, ownershipTreeDigest root ".claude")
+        | None -> failwith "no pre-run digest was recorded in this scenario"
+
+    [<Then>]
+    member _.``a registry declaring an emitter output directory as source makes the generator refuse rather than silently succeed``
+        ()
+        =
+        let root = scenarioRoot ()
+        writeOwnershipRegistry root true
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> failwith "a source-declared emitter target must refuse"
+        | Error e -> Assert.Contains(".opencode/agents", e)
+
+    [<Given>]
+    member _.``this repository's registry declares an ownership class for every binding path``() =
+        let text = File.ReadAllText(Path.Combine(repositoryRoot, "repo-config.yml"))
+        Assert.Contains("ownership:", text)
+
+    [<When>]
+    member _.``rhino-cli harness ownership validate runs against it``() = runOwnershipValidate repositoryRoot
+
+    [<Then>]
+    member _.``it exits 0``() = Assert.Equal(0, exitCode ())
+
+    [<Then>]
+    member _.``it reports a per-class count that sums to the total tracked binding-file count``() =
+        match Harness.classifyOwnership repositoryRoot with
+        | Error e -> failwithf "classify: %s" e
+        | Ok report ->
+            let total = Harness.OwnershipReport.total report
+            Assert.True(total > 0)
+
+            let sum =
+                Harness.OwnershipReport.count RepoConfig.OwnershipClass.ClassGenerated report
+                + Harness.OwnershipReport.count RepoConfig.OwnershipClass.ClassVendored report
+                + Harness.OwnershipReport.count RepoConfig.OwnershipClass.ClassSource report
+
+            Assert.Equal(total, sum)
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -1894,6 +2231,10 @@ module private FeatureRunner =
     /// Runs one scenario of `harness-catalog.feature`.
     let runHarnessCatalog (scenarioTitle: string) : unit =
         runIn "harness-catalog.feature" scenarioTitle
+
+    /// Runs one scenario of `harness-ownership.feature`.
+    let runHarnessOwnership (scenarioTitle: string) : unit =
+        runIn "harness-ownership.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -2083,3 +2424,23 @@ let ``The catalog table renders from the harness registry`` () =
 [<Fact>]
 let ``A hand edit inside the generated region is rejected`` () =
     FeatureRunner.runHarnessCatalog "A hand edit inside the generated region is rejected"
+
+[<Fact>]
+let ``An unclassified file under a binding directory fails the validator`` () =
+    FeatureRunner.runHarnessOwnership "An unclassified file under a binding directory fails the validator"
+
+[<Fact>]
+let ``A generated file must reproduce byte-for-byte`` () =
+    FeatureRunner.runHarnessOwnership "A generated file must reproduce byte-for-byte"
+
+[<Fact>]
+let ``A vendored file carries no byte guard`` () =
+    FeatureRunner.runHarnessOwnership "A vendored file carries no byte guard"
+
+[<Fact>]
+let ``A source path is never written by the emitter`` () =
+    FeatureRunner.runHarnessOwnership "A source path is never written by the emitter"
+
+[<Fact>]
+let ``Every tracked binding file in this repository carries exactly one class`` () =
+    FeatureRunner.runHarnessOwnership "Every tracked binding file in this repository carries exactly one class"
