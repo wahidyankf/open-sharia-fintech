@@ -46,6 +46,12 @@ noted below — this section is the summary layer):
   against a `## Parallelization Model` declaring independent parallel nodes. Full detail below and
   `reference/21-rule19-delivery-mode-validation-part2.md` rule 19 item 8. See
   [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+- **Cross-repository resource schedule (HARD RULE)**: when a plan spans repositories, its
+  `## Parallelization Model` records either repository-serial worktree provisioning, toolchain
+  setup, builds, and validation, or a concrete overlap need with confirmed machine, disk, runner,
+  and risk controls. Missing or incomplete schedule/exception: **HIGH**. Live overlap and capacity
+  are execution facts; this check validates only the repository-visible declaration. See
+  [Delivery Checklists Express a DAG](../../../../repo-governance/conventions/structure/plans/delivery-checklists-express-a-dag.md#delivery-checklists-express-a-dag-hard-rule).
 - **Specs and Gherkin delivery (Two Paths)**: a plan changing observable behavior in `apps/`,
   `libs/`, or `specs/` needs delivery steps adding/updating companion `specs/` `.feature` files and
   running `specs:coverage`. Full detail in `reference/17-rules16-specs-gherkin-and-regression-test.md`

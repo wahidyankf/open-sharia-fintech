@@ -1,12 +1,13 @@
 ---
 title: "Step 7 — Push and Verify"
-description: Describes the commit, push, CI-monitoring, and worktree-removal sequence that finishes plan-establishment.
-when_to_use: Use when pushing a finished plan to its confirmed target and monitoring CI before removing the worktree.
+description: Describes the commit, push, CI-monitoring, and complete worktree, branch, and build-output cleanup sequence that finishes plan-establishment.
+when_to_use: Use when pushing a finished plan to its confirmed target, monitoring CI, and running the canonical three-class cleanup gate.
 ---
 
 # Step 7. Push and Verify (Sequential)
 
-Commit and push the plan to the confirmed target, then remove the worktree.
+Commit and push the plan to the confirmed target, then run the canonical cleanup gate for the
+worktree, eligible plan-created branches, and plan-local regenerable build output.
 
 **Orchestrator action**:
 
@@ -19,22 +20,16 @@ Commit and push the plan to the confirmed target, then remove the worktree.
 4. Monitor GitHub Actions: `gh run list --limit 5` — verify all workflows triggered by the push
    complete with `completed/success` conclusion.
 5. If a CI workflow fails: diagnose root cause, fix, push a follow-up commit, re-monitor
-6. After CI passes, resolve the exact worktree path from the plan's Provisioned Worktree Identity and
-   reconcile it with `git worktree list --porcelain`. Inventory every plan-created and current branch.
-   Continue only if the identity matches, the exact worktree is clean and idle, no inventoried branch
-   is unpushed, and each direct-push delivery reached `origin/main` with no open PR. For any PR-mode
-   branch, its merged PR reviewed head must equal its recorded inventory SHA and either its live
-   `origin/<branch>` must match or GitHub must verify automatic deletion under an enabled
-   `delete_branch_on_merge` setting; retain and escalate any other missing/mismatched proof. Do not
-   use `origin/main` ancestry for a squash-merged PR branch. When every check passes, remove the exact
-   path immediately, without a further prompt, using non-force removal:
-
-   ```bash
-   git worktree remove <exact-plan-worktree-path>
-   ```
-
-   Then follow canonical branch cleanup. If any check or removal fails, retain the worktree,
-   surface the evidence, and escalate; never force removal.
+6. After CI passes, run the complete canonical
+   [Worktree and Artifact Cleanup gate](../../../development/workflow/worktree-and-artifact-cleanup.md).
+   Resolve the exact path from the Provisioned Worktree Identity, reconcile it with
+   `git worktree list --porcelain`, inventory every plan-created/current branch and plan-local build
+   output, and perform all mandatory pre-removal checks. When they pass, immediately clean all three
+   eligible classes: non-force removal of the exact worktree, safe cleanup of eligible plan-created
+   branches, and removal of only plan-local regenerable build output. Preserve diagnostics and shared
+   caches, retain and escalate active/ambiguous/partial/fail state, and delete verified remote branches
+   before the worktree only when the bare-repository ordering exception applies. Never force-remove or
+   prune shared state.
 
 7. Emit a user-visible summary: plan path, quality gate status, push target, CI status
 

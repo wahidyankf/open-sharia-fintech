@@ -25,6 +25,11 @@ phase, stating:
   phase builds the source of truth the next one needs, not because the list happens to be ordered.
 - **The plan's chosen N** (see the [Agent Workflow Orchestration Convention](../../../development/agents/agent-workflow-orchestration.md)
   for the N+1 model), and any reason it differs from the default.
+- **The cross-repository resource schedule**, when the plan spans repositories. Provisioning
+  worktrees, converging toolchains, building, and validating run in one repository at a time by
+  default, even when their logical DAG nodes are independent. Concurrent cross-repository heavy
+  work is permitted only when the plan records a concrete operational need and confirms the
+  machine, disk, runner, and risk controls that make the overlap safe.
 - **Cleanup as the terminal node**, depending on every delivery node — so the cleanup gate can never
   remove a worktree, branch, or artifact that an in-flight node still needs.
 
@@ -38,6 +43,11 @@ Two nodes are independent only when neither reads what the other writes. A share
 shared branch, or an ordering constraint makes them dependent however separable they look.
 
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
-as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
+as **MEDIUM**, flags a declared-parallel node set with a genuine write conflict as **HIGH**, and for
+a multi-repository plan verifies that the section records either the default repository-serial heavy
+work schedule or a concrete exception with machine, disk, runner, and risk controls.
+`plan-execution-checker` verifies delivery evidence against that recorded schedule or exception.
+Only live overlap and capacity facts remain **unenforced by decision** because a repository-local
+check cannot authenticate them.
 
 See [Delivery Checklists Express a DAG — Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) for how DAG nodes map to delivery units, PRs, and the worktree cap.

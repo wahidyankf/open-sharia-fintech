@@ -30,10 +30,13 @@ When removing a worktree:
    use `origin/main` ancestry for a squash-merged PR branch.
 3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and every
    inventoried branch has no unpushed commit.
-4. When every check passes, immediately run non-force `git worktree remove <exact-path>`, then the
-   canonical [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md).
-   `git worktree prune` may follow. If any check or removal fails, retain the worktree, preserve the
-   evidence, and escalate; never force removal or prompt for an otherwise eligible exact plan path.
+4. When every check passes, purge only plan-local regenerable build output while preserving
+   diagnostic evidence and shared caches. For a bare repository whose push hook requires a working
+   tree, clean verified live remote branches from inside the linked worktree before removal. Then
+   immediately run non-force `git worktree remove <exact-path>`, complete the canonical
+   [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md),
+   and run `git worktree prune`. If any check or removal fails, retain the worktree and evidence and
+   escalate; never force removal or prompt for an otherwise eligible exact plan path.
 
 For plan worktrees, the [plan-execution workflow](../../../workflows/plan/plan-execution.md) performs
 this cleanup immediately when that repo's delivery is confirmed. It never removes a root, wildcard,
@@ -43,7 +46,8 @@ identity-unknown, or another actor's worktree.
 
 ## Multiple Worktrees
 
-The pattern supports multiple concurrent worktrees:
+The pattern supports multiple concurrent worktrees belonging to different plans or repositories;
+each plan remains capped at **at most one worktree per repository**:
 
 ```
 worktrees/

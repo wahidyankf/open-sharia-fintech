@@ -26,10 +26,12 @@ list --porcelain`, then use the Delivery Branch Inventory and canonical mandator
    Each PR-mode branch needs the canonical merged-PR/head proof plus either a matching live
    `origin/<branch>` tip or a verified GitHub automatic-deletion event when that repository enables
    it; any other missing/mismatched proof retains the worktree and escalates. Only then remove that
-   self-created worktree without another prompt. Use non-force
-   `git worktree remove`, then canonical branch cleanup. If any check fails, retain it with evidence
-   and escalate. Never remove on `partial`/`fail`. For a multi-unit plan, the shared worktree is
-   removed once, after every delivery unit that used it has landed.
+   self-created worktree without another prompt. Purge only plan-local regenerable build output and
+   preserve diagnostics/shared caches; in a bare repository, clean verified live remote branches
+   from inside the worktree before removal when hooks require a working tree. Then use non-force
+   `git worktree remove`, complete canonical branch cleanup, and `git worktree prune`. If any check
+   fails, retain it with evidence and escalate. Never remove on `partial`/`fail`. For a multi-unit
+   plan, the shared worktree is removed once, after every delivery unit that used it has landed.
 
 **This requirement applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
 

@@ -29,6 +29,15 @@ Continues [PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)](./prs-o
    does this bar a **GitHub merge queue**, which serialises already-approved merges for CI
    correctness and holds nothing back: the prohibition is on a plan deferring its own merges, not on
    the platform ordering them.
+4. **Parity PRs merge on each repository's own opportunity.** Once one repository's parity PR meets
+   that repository's hardened merge prerequisites and a merge opportunity exists, merge it; never
+   hold a ready PR solely to synchronize its merge with a sibling repository. Record any unfinished
+   counterpart as a named sibling obligation until the repositories converge. A shared parity
+   identity makes deliveries traceable; it does not create a synchronized-merge gate.
+
+**Enforcement disposition for rule 4 — unenforced by decision.** Cross-repository readiness and a
+merge opportunity require authenticated operational evidence that a repository-local deterministic
+check cannot observe. The merge record plus explicit sibling obligation make the decision auditable.
 
 This rule governs **PRs**, so it binds the `*-to-pr` delivery modes only. Under
 `worktree-to-origin-main` or `main-to-origin-main` a plan opens no PR at all, and a **per-phase

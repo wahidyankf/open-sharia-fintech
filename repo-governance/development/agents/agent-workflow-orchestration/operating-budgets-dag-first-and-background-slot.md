@@ -24,6 +24,11 @@ Every non-trivial task list **and** plan delivery checklist declares an explicit
 
 Determine independence before fanning out, not after. Two nodes are independent only when neither reads what the other writes; a shared output file, a shared branch, or an ordering constraint makes them dependent regardless of how separable they look. The delivery-checklist expression of this rule is documented in the [Plans Organization Convention](../../../conventions/structure/plans.md).
 
+For multi-repository plans, the DAG also carries a resource-scheduling edge across each repository's
+worktree provisioning, toolchain setup, build, and validation phases. Run those heavy phases one
+repository at a time by default even when their content nodes are logically independent. Remove the
+edge only when the plan records a concrete operational need and confirms capacity and risk controls.
+
 ## Background-Slot Preference
 
 Fill the **background** slots up to N and keep the **main thread vacant** and responsive — the main thread is the **orchestrator**, background agents are the **workers**. This is **bounded by the DAG**: fan out only genuinely independent nodes, and never split dependent work artificially to raise slot utilization.

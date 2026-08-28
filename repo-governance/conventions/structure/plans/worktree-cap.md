@@ -30,12 +30,15 @@ that setup cost is worth paying once per repo, not once per delivery unit.
 [One Branch, One PR, One Delivery Unit](../../../workflows/plan/plan-planning/planning-granularity-and-one-branch-rule.md#one-branch-one-pr-one-delivery-unit-hard-rule).
 Only the **worktree** moves from a per-delivery-unit unit to a per-repository one.
 
-**Sequencing consequence**: because only one worktree exists per repo, delivery units that share a
+**Sequencing consequence**: because at most one worktree exists per repo, delivery units that share a
 repo execute their file edits **serially** within that shared worktree — finish and push unit A's
 branch, open its PR, then `git fetch origin && git checkout -b <unit-B-branch> origin/main` in the
-same worktree directory for unit B. **Cross-repo parallelism is unaffected**: an N-repo plan's N
-worktrees (one per repo) still proceed in parallel with each other; the cap only forecloses running
-two delivery units of the **same** repo concurrently in separate worktrees.
+same worktree directory for unit B. Repositories remain separate DAG nodes, but their
+resource-heavy worktree provisioning, toolchain setup, builds, and validation run **one repository
+at a time by default** on the shared machine. Concurrent cross-repository heavy work requires the
+plan's recorded operational need plus confirmed capacity and risk controls; lightweight independent
+work may still fan out. See
+[Delivery Checklists Express a DAG](./delivery-checklists-express-a-dag.md).
 
 **Cleanup timing**: a repo's shared worktree is removed only once **every** delivery unit's PR that
 used it has landed — never when the first one does. See the

@@ -15,7 +15,15 @@ when_to_use: Use when deleting local or remote branches after removing a repo's 
 
 # Branch Cleanup
 
-Removing a shared worktree leaves one branch per delivery unit. Run this after removing the worktree.
+Removing a shared worktree leaves one branch per delivery unit. Ordinarily run this after removing
+the worktree.
+
+**Bare-repository ordering exception.** When the repository is bare and its pre-push hook requires a
+working tree, delete each verified live remote branch from inside the linked plan worktree **before**
+removing that worktree. The local branch cleanup may follow removal from the repository root. If the
+worktree is already gone, use the forge API route documented in
+[Remote-Branch Cleanup in a Bare Repository](../bare-repo-landing-method/remote-branch-cleanup-in-a-bare-repository.md);
+never bypass hooks. This changes order only, not the ownership, delivery, or no-unpushed checks.
 
 **Delete only inventory branches after rechecking delivery and no-unpushed proof.** For `*-to-pr`,
 the recorded PR must be `MERGED`; its exact branch and head must equal the inventory's reviewed-head

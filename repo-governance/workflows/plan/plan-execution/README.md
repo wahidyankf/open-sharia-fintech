@@ -7,7 +7,7 @@ when_to_use: "Use to locate a plan-execution child document."
 # Plan Execution Workflow
 
 - [Execution Mode](./execution-mode.md) — That the calling context, not a dedicated plan-executor agent, directly orchestrates plan execution.
-- [How to Execute](./how-to-execute.md) — Tracing the exact ordered actions plan execution performs, from backlog promotion through worktree cleanup.
+- [How to Execute](./how-to-execute.md) — Tracing the ordered actions plan execution performs, from backlog promotion through complete worktree, branch, and build-output cleanup.
 - [Orchestration Model](./orchestration-model.md) — That the calling context orchestrates plan execution, routing substantive work to specialized agents.
 - [Agent Selection](./agent-selection.md) — Deciding which agent should execute a given delivery checklist item.
 - [Fan-Out, Ordering, and Delivery Shape](./fan-out-ordering-and-delivery-shape.md) — The N+1 fan-out model, DAG-first ordering, and the one-PR-per-delivery-unit / one-worktree-per-repo delivery shape.
@@ -51,7 +51,7 @@ when_to_use: "Use to locate a plan-execution child document."
 - [PR Merge, Cleanup, and Final Status](./finalization-pr-merge-and-final-status.md) — The PR-mode merge, safe immediate worktree cleanup, and final pass/partial/fail status determination.
 - [Task Management Rules](./task-management-rules-and-termination.md) — A compact reference for task-list discipline rules and the pass/partial/fail termination criteria.
 - [Example Usage](./example-usage-and-iteration-example.md) — Learning how to invoke plan execution with different arguments, or tracing a typical execute-validate cycle.
-- [Safety Features](./safety-features-and-plan-specific-validation.md) — Explaining what safety guarantees plan execution provides, or what the checker validates.
+- [Safety Features](./safety-features-and-plan-specific-validation.md) — Explaining plan execution safety, complete three-class cleanup, and checker coverage.
 - [Related Workflows](./related-workflows-and-success-metrics.md) — Composing plan execution with other workflows, or when tracking success metrics across plan executions.
 - [Notes](./notes.md) — A quick-reference summary of plan execution's operating characteristics and how it differs from plan-quality-gate.
 - [Test-Driven Development](./tdd-principles-conventions-agents.md) — Confirming TDD is required for a code-shipping checklist item, or checking which principles/conventions this workflow follows.

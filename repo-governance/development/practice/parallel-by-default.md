@@ -1,6 +1,6 @@
 ---
 title: "Parallel-by-Default Practice"
-description: When doing work with independent sub-units (tool calls, file reads/edits, searches, or delegated agents), default to running them in parallel rather than serially, capped at three concurrent units of work
+description: Run independent work in parallel within the declared budget, while serializing cross-repository resource-heavy work by default on the shared machine.
 category: explanation
 subcategory: development
 tags:
@@ -15,7 +15,12 @@ when_to_use: Use whenever you have two or more independent units of work — too
 
 # Parallel-by-Default Practice
 
-When independent units of work are ready, run them in parallel. Serial execution of independent work wastes throughput and adds latency with no benefit. The deliberate cap of **three** simultaneous units preserves meaningful speedup while staying below the token-burn and Claude API per-minute rate-limit threshold.
+When independent units of work are ready, run them in parallel. The deliberate cap of **three**
+simultaneous units preserves meaningful speedup while staying below the token-burn and Claude API
+per-minute rate-limit threshold. A narrow shared-machine exception applies to plans spanning
+repositories: worktree provisioning, toolchain setup, builds, and validation run in one repository
+at a time by default. Overlap those heavy phases only for a recorded operational need with confirmed
+capacity and risk controls.
 
 ## Principles Implemented/Respected
 
@@ -39,7 +44,7 @@ This practice implements/respects the following conventions:
 
 ## Contents
 
-- [Purpose and Scope](./parallel-by-default/purpose-and-scope.md) — the two failure modes this practice eliminates, and exactly what it covers.
-- [Standards 1-2 — Parallel Unless Dependent, and the N+1 Model](./parallel-by-default/standards-1-to-2.md) — the default execution model and the adjustable concurrency cap.
-- [Standards 3-4 — Background-Slot Preference and DAG-First Ordering](./parallel-by-default/standards-3-to-4.md) — keeping the main thread vacant, and declaring the dependency DAG.
+- [Purpose and Scope](./parallel-by-default/purpose-and-scope.md) — the two failure modes this practice eliminates and the cross-repository heavy-work exception.
+- [Standards 1-2 — Parallel Unless Dependent, and the N+1 Model](./parallel-by-default/standards-1-to-2.md) — the default execution model, shared-machine exception, and adjustable concurrency cap.
+- [Standards 3-4 — Background-Slot Preference and DAG-First Ordering](./parallel-by-default/standards-3-to-4.md) — keeping the main thread vacant, declaring the dependency DAG, and recording the cross-repository resource schedule.
 - [Anti-Patterns and References](./parallel-by-default/anti-patterns-and-references.md) — four common failure patterns, related principles, practices, and agents.
