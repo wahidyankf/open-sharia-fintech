@@ -393,14 +393,13 @@ pub fn extract_fsharp_step_texts(
 fn add_fsharp_step_pattern(name: &str, path: &str, sm: &mut StepMatcher) {
     let text = normalize_ws(name);
     let pattern = format!("^{text}$");
-    match Regex::new(&pattern) {
-        Ok(re) => sm.add_pattern_with_origin(re, &pattern, path),
-        Err(_) => {
-            let escaped = text.replace('{', "\\{").replace('}', "\\}");
-            let escaped_pattern = format!("^{escaped}$");
-            if let Ok(re) = Regex::new(&escaped_pattern) {
-                sm.add_pattern_with_origin(re, &escaped_pattern, path);
-            }
+    if let Ok(re) = Regex::new(&pattern) {
+        sm.add_pattern_with_origin(re, &pattern, path);
+    } else {
+        let escaped = text.replace('{', "\\{").replace('}', "\\}");
+        let escaped_pattern = format!("^{escaped}$");
+        if let Ok(re) = Regex::new(&escaped_pattern) {
+            sm.add_pattern_with_origin(re, &escaped_pattern, path);
         }
     }
 }
