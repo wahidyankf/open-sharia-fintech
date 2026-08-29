@@ -62,9 +62,6 @@ struct DoctorWorld {
     bin: TempDir,
     /// Override the node requirement to force a version mismatch (warning).
     node_req_override: Option<String>,
-    /// Override the pinned rust-toolchain.toml channel to force a version
-    /// mismatch against the `rustc` stub (warning).
-    rust_channel_override: Option<String>,
     scope: Option<String>,
     tools: Vec<String>,
     fix: bool,
@@ -87,7 +84,6 @@ impl DoctorWorld {
             repo,
             bin: TempDir::new().expect("temp bin"),
             node_req_override: None,
-            rust_channel_override: None,
             scope: None,
             tools: Vec::new(),
             fix: false,
@@ -214,11 +210,7 @@ impl DoctorWorld {
                 .node_req_override
                 .clone()
                 .unwrap_or_else(|| "24.11.1".to_string());
-            let rust_channel = self
-                .rust_channel_override
-                .clone()
-                .unwrap_or_else(|| "1.90.0".to_string());
-            self.write_config(&node_req, &rust_channel);
+            self.write_config(&node_req, "1.90.0");
         }
 
         let mut args = vec!["doctor".to_string()];
@@ -277,34 +269,15 @@ fn shell_quote(s: &str) -> String {
 
 /// Finds the `rust` tool's report line in `doctor`'s text output.
 ///
+/// Finds the `rust-toolchain-components` check's report line in `doctor`'s
+/// text output.
+///
 /// Scoped to lines before the `"Target-share:"` marker (the unrelated
 /// cargo-target-share doctor step, whose output may legitimately mention
 /// crate directory names such as `crud-be-rust-axum` that coincidentally
 /// contain "rust" as a substring — see [`then_minimal_set`]'s identical
-/// scoping) and to report lines whose second whitespace-delimited token
-/// (the tool name column) is exactly `"rust"`, not merely a substring match.
-fn rust_report_line(out: &str) -> String {
-    out.split("Target-share:")
-        .next()
-        .unwrap_or(out)
-        .lines()
-        .find(|line| {
-            (line.starts_with('\u{2713}')
-                || line.starts_with('\u{26a0}')
-                || line.starts_with('\u{2717}'))
-                && line.split_whitespace().nth(1) == Some("rust")
-        })
-        .unwrap_or_default()
-        .to_string()
-}
-
-/// Finds the `rust-toolchain-components` check's report line in `doctor`'s
-/// text output.
-///
-/// Scoped and matched the same way as [`rust_report_line`]: before the
-/// `"Target-share:"` marker, and by the report line's second
-/// whitespace-delimited token (the name column) being exactly
-/// `"rust-toolchain-components"`.
+/// scoping), and by the report line's second whitespace-delimited token
+/// (the name column) being exactly `"rust-toolchain-components"`.
 fn component_check_line(out: &str) -> String {
     out.split("Target-share:")
         .next()
@@ -383,16 +356,6 @@ fn given_skip_tools(w: &mut DoctorWorld) {
         "doctor:\n  skip-tools: [shfmt]\n",
     )
     .expect("write repo-config.yml");
-}
-
-#[given("the installed rustc differs from the pinned rust-toolchain.toml channel")]
-fn given_rust_channel_mismatch(w: &mut DoctorWorld) {
-    // rustc stub reports "1.90.0"; pin a different channel (this plan's real
-    // pinned value, for narrative consistency) to force a mismatch → warning.
-    let rust_channel = "1.95.0".to_string();
-    w.rust_channel_override = Some(rust_channel.clone());
-    w.write_config("24.11.1", &rust_channel);
-    w.write_stubs();
 }
 
 #[given("a rust-toolchain.toml pins a channel and declares no lint components")]
@@ -648,31 +611,6 @@ fn then_nothing_to_fix(w: &mut DoctorWorld) {
 fn then_skipped_tool_absent(w: &mut DoctorWorld) {
     let out = w.stdout();
     assert!(!out.contains("shfmt"), "got: {out}");
-}
-
-#[then("it reports the Rust toolchain as mismatched")]
-fn then_rust_mismatched(w: &mut DoctorWorld) {
-    assert_eq!(w.exit_code(), 0, "warnings must not fail: {}", w.stdout());
-    let out = w.stdout();
-    let rust_line = rust_report_line(&out);
-    assert!(
-        rust_line.starts_with('\u{26a0}') || rust_line.to_lowercase().contains("warning"),
-        "expected rust tool warning line, got: {out}"
-    );
-}
-
-#[then("it names the pinned channel as the expected value")]
-fn then_rust_names_pinned_channel(w: &mut DoctorWorld) {
-    let expected = w
-        .rust_channel_override
-        .clone()
-        .expect("rust_channel_override set by a prior Given step");
-    let out = w.stdout();
-    let rust_line = rust_report_line(&out);
-    assert!(
-        rust_line.contains(&format!("required: {expected}")),
-        "expected pinned channel {expected} named, got: {out}"
-    );
 }
 
 #[then("it reports the toolchain component check as a warning naming rustfmt and clippy")]

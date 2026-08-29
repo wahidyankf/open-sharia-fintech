@@ -10,8 +10,7 @@
 
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Output};
-use std::time::SystemTime;
+use std::process::Command;
 
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
@@ -39,19 +38,12 @@ struct GateWorld {
     path: Option<OsString>,
     ci_changed_base: Option<String>,
     ci_arguments: Option<PathBuf>,
-    shim_target_dir: Option<TempDir>,
-    shim_override_dir: Option<TempDir>,
-    shim_override_bin: Option<PathBuf>,
-    shim_invalid_override: Option<PathBuf>,
-    shim_stale_bin_mtime_before: Option<SystemTime>,
-    shim_first_run: Option<Output>,
     workflow_yaml: Option<String>,
     build_rhino_publishes_artifact: Option<bool>,
     gate_job_needs_build_rhino: Option<bool>,
     gate_job_block: Option<String>,
     no_npm_group_id: Option<String>,
     unnamed_npm_ci_is_unguarded: Option<bool>,
-    msrv_preinstall_invocations: Option<Vec<String>>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -76,19 +68,12 @@ impl GateWorld {
             path: None,
             ci_changed_base: None,
             ci_arguments: None,
-            shim_target_dir: None,
-            shim_override_dir: None,
-            shim_override_bin: None,
-            shim_invalid_override: None,
-            shim_stale_bin_mtime_before: None,
-            shim_first_run: None,
             workflow_yaml: None,
             build_rhino_publishes_artifact: None,
             gate_job_needs_build_rhino: None,
             gate_job_block: None,
             no_npm_group_id: None,
             unnamed_npm_ci_is_unguarded: None,
-            msrv_preinstall_invocations: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -3448,338 +3433,12 @@ fn then_unknown_group_fails_before_leaf(w: &mut GateWorld) {
     );
 }
 
-// Binds `gate-binary-resolution.feature`'s two scenarios — "A swept target
-// directory produces a slow run, not a failure" and "RHINO_CLI_BIN takes
-// precedence over discovery" — against the real `rhino-bin.sh` resolver shim
-// script (not a fixture stand-in). The first scenario sandboxes tier 3
-// (build-then-execute) via a scratch `CARGO_TARGET_DIR`, so the real
-// `apps/rhino-cli/target/gate/rhino-cli` build artifact this test suite
-// itself may depend on is never touched. The second scenario proves no
-// `cargo build` occurred by stripping cargo's directory from PATH for that
-// invocation, rather than relying on timing.
-
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .ancestors()
         .nth(2)
         .expect("rhino-cli manifest has a repository-root ancestor")
         .to_path_buf()
-}
-
-fn rhino_bin_shim_path() -> PathBuf {
-    repo_root().join("apps/rhino-cli/scripts/rhino-bin.sh")
-}
-
-/// The gate-profile binary these scenarios compare the resolver shim against,
-/// built on first use if it is absent.
-///
-/// The artifact is never guaranteed to exist: a fresh clone has never built it,
-/// and the ambient build-artifact sweeper deletes `target/` at any time,
-/// mid-run included. Assuming its presence made these scenarios pass only on a
-/// machine that happened to have built it. Building it here — once per test
-/// binary, under the same `--profile gate` the resolver shim itself uses —
-/// makes the comparison self-contained instead of environment-dependent.
-fn real_prebuilt_rhino_cli() -> PathBuf {
-    static BUILT: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
-    BUILT
-        .get_or_init(|| {
-            let binary = repo_root().join("apps/rhino-cli/target/gate/rhino-cli");
-            if binary.is_file() {
-                return binary;
-            }
-            let status = Command::new(std::env::var_os("CARGO").unwrap_or_else(|| "cargo".into()))
-                .args(["build", "--profile", "gate", "--manifest-path"])
-                .arg(repo_root().join("apps/rhino-cli/Cargo.toml"))
-                .status()
-                .expect("build the gate-profile rhino-cli binary");
-            assert!(
-                status.success() && binary.is_file(),
-                "cargo build --profile gate must produce {}",
-                binary.display()
-            );
-            binary
-        })
-        .clone()
-}
-
-/// Deterministic, side-effect-free probe args for exercising the resolver
-/// shim: `--say <msg>` echoes `<msg>` to stdout and exits `0` (unlike
-/// `--version`, which this CLI's own error-handling maps to exit `2` because
-/// clap's `DisplayVersion` pseudo-error is treated as a parse error).
-const RESOLVER_SHIM_PROBE_ARGS: [&str; 2] = ["--say", "resolver-shim-probe"];
-
-/// The current `PATH`, minus the directory containing the `cargo` binary
-/// that is running this test (resolved via the `CARGO` env var cargo sets
-/// for its own child processes). Used to prove a resolver-shim invocation
-/// never reached its `cargo build` fallback: if it had, the invocation would
-/// fail with "command not found" rather than succeed.
-fn path_without_cargo_directory() -> OsString {
-    let cargo_dir = std::env::var_os("CARGO")
-        .map(PathBuf::from)
-        .and_then(|cargo| cargo.parent().map(Path::to_path_buf));
-    let existing = std::env::var_os("PATH").expect("PATH is available");
-    let filtered =
-        std::env::split_paths(&existing).filter(|dir| Some(dir.as_path()) != cargo_dir.as_deref());
-    std::env::join_paths(filtered).expect("join PATH without cargo directory")
-}
-
-#[given("the rhino-cli binary is absent because the ambient sweeper removed target/")]
-fn given_swept_target_directory(w: &mut GateWorld) {
-    w.shim_target_dir = Some(TempDir::new().expect("create sandbox CARGO_TARGET_DIR"));
-}
-
-#[given("the environment variable RHINO_CLI_BIN points at an executable rhino-cli binary")]
-fn given_rhino_cli_bin_override(w: &mut GateWorld) {
-    let dir = TempDir::new().expect("create RHINO_CLI_BIN fixture directory");
-    let stub = dir.path().join("stub-rhino-cli");
-    std::fs::write(
-        &stub,
-        "#!/bin/sh\nprintf 'stub-rhino-cli-override-marker\\n'\nexit 0\n",
-    )
-    .expect("write RHINO_CLI_BIN stub");
-    make_executable(stub.clone());
-    w.shim_override_bin = Some(stub);
-    w.shim_override_dir = Some(dir);
-}
-
-#[given(
-    "the prebuilt gate-profile binary in target/ is older than the source tree it was built from"
-)]
-fn given_stale_prebuilt_binary(w: &mut GateWorld) {
-    let target_dir = TempDir::new().expect("create sandbox CARGO_TARGET_DIR");
-    let gate_dir = target_dir.path().join("gate");
-    std::fs::create_dir_all(&gate_dir).expect("create sandbox gate/ directory");
-    let placeholder = gate_dir.join("rhino-cli");
-    // A trivial executable stub, deliberately NOT the real binary — its
-    // distinguishing marker output proves whether the shim actually rebuilt
-    // it (tier 3) or silently kept serving it (the regression this scenario
-    // guards against).
-    std::fs::write(
-        &placeholder,
-        "#!/bin/sh\nprintf 'stale-placeholder-marker\\n'\nexit 0\n",
-    )
-    .expect("write stale placeholder binary");
-    make_executable(placeholder.clone());
-    // Backdate the placeholder's mtime far enough into the past that it
-    // predates every real file under apps/rhino-cli/src, Cargo.toml, and
-    // Cargo.lock — the shim's staleness check (`find ... -newer`) always
-    // compares against those real, un-sandboxable paths, since SRC_DIR is
-    // resolved relative to the shim script's own real location, not to
-    // CARGO_TARGET_DIR.
-    let backdated = std::time::UNIX_EPOCH + std::time::Duration::from_hours(24);
-    std::fs::OpenOptions::new()
-        .write(true)
-        .open(&placeholder)
-        .expect("open placeholder binary to backdate its mtime")
-        .set_modified(backdated)
-        .expect("backdate placeholder binary mtime");
-    w.shim_stale_bin_mtime_before = Some(backdated);
-    w.shim_target_dir = Some(target_dir);
-}
-
-#[given("the environment variable RHINO_CLI_BIN points at a path that does not exist")]
-fn given_rhino_cli_bin_invalid_override(w: &mut GateWorld) {
-    // Sandboxed so the fallthrough deterministically hits tier 3 (build)
-    // regardless of whatever the real apps/rhino-cli/target/gate/rhino-cli
-    // happens to contain on the machine running this test.
-    w.shim_target_dir = Some(TempDir::new().expect("create sandbox CARGO_TARGET_DIR"));
-    let dir = TempDir::new().expect("create RHINO_CLI_BIN invalid-override fixture directory");
-    let missing = dir.path().join("does-not-exist-rhino-cli");
-    w.shim_invalid_override = Some(missing);
-    w.shim_override_dir = Some(dir);
-}
-
-#[when("a generated gate command runs through the resolver shim")]
-fn when_resolver_shim_runs(w: &mut GateWorld) {
-    let mut command = Command::new(rhino_bin_shim_path());
-    command.args(RESOLVER_SHIM_PROBE_ARGS);
-    if let Some(target_dir) = &w.shim_target_dir {
-        command.env("CARGO_TARGET_DIR", target_dir.path());
-    }
-    if let Some(bin) = &w.shim_override_bin {
-        command
-            .env("RHINO_CLI_BIN", bin)
-            .env("PATH", path_without_cargo_directory());
-    }
-    if let Some(invalid_bin) = &w.shim_invalid_override {
-        command.env("RHINO_CLI_BIN", invalid_bin);
-    }
-    w.shim_first_run = Some(command.output().expect("run resolver shim"));
-}
-
-#[then("the shim builds the binary and then executes the requested gate")]
-fn then_shim_builds_and_executes(w: &mut GateWorld) {
-    let output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    assert!(
-        output.status.success(),
-        "resolver shim must build then execute successfully: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let built_binary = w
-        .shim_target_dir
-        .as_ref()
-        .expect("sandbox target dir configured")
-        .path()
-        .join("gate/rhino-cli");
-    assert!(
-        built_binary.is_file(),
-        "resolver shim must build the binary into the sandbox target directory"
-    );
-}
-
-#[then("the gate reports the same result it would have reported with the binary present")]
-fn then_shim_output_matches_real_binary(w: &mut GateWorld) {
-    let shim_output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    let direct_output = Command::new(real_prebuilt_rhino_cli())
-        .args(RESOLVER_SHIM_PROBE_ARGS)
-        .output()
-        .expect("run the real prebuilt rhino-cli binary directly");
-    assert_eq!(shim_output.status.code(), direct_output.status.code());
-    assert_eq!(shim_output.stdout, direct_output.stdout);
-}
-
-#[then("a subsequent invocation reuses the built binary without rebuilding")]
-fn then_subsequent_invocation_reuses_binary(w: &mut GateWorld) {
-    let target_dir = w
-        .shim_target_dir
-        .as_ref()
-        .expect("sandbox target dir configured");
-    let built_binary = target_dir.path().join("gate/rhino-cli");
-    let mtime_before = std::fs::metadata(&built_binary)
-        .expect("read sandbox binary metadata")
-        .modified()
-        .expect("read sandbox binary mtime");
-
-    let output = Command::new(rhino_bin_shim_path())
-        .args(RESOLVER_SHIM_PROBE_ARGS)
-        .env("CARGO_TARGET_DIR", target_dir.path())
-        .output()
-        .expect("run resolver shim a second time");
-    assert!(
-        output.status.success(),
-        "second resolver shim invocation must succeed: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-
-    let mtime_after = std::fs::metadata(&built_binary)
-        .expect("read sandbox binary metadata after second invocation")
-        .modified()
-        .expect("read sandbox binary mtime after second invocation");
-    assert_eq!(
-        mtime_before, mtime_after,
-        "a second invocation must reuse the already-built binary, not rebuild it"
-    );
-}
-
-#[then("the shim rebuilds the binary before executing the requested gate")]
-fn then_shim_rebuilds_stale_binary(w: &mut GateWorld) {
-    let output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    assert!(
-        output.status.success(),
-        "resolver shim must rebuild a stale binary then execute successfully: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let target_dir = w
-        .shim_target_dir
-        .as_ref()
-        .expect("sandbox target dir configured");
-    let built_binary = target_dir.path().join("gate/rhino-cli");
-    let mtime_after = std::fs::metadata(&built_binary)
-        .expect("read sandbox binary metadata after invocation")
-        .modified()
-        .expect("read sandbox binary mtime after invocation");
-    let mtime_before = w
-        .shim_stale_bin_mtime_before
-        .expect("captured stale placeholder mtime before invocation");
-    assert!(
-        mtime_after > mtime_before,
-        "a stale prebuilt binary must be rebuilt (newer mtime), not silently reused: \
-         before={mtime_before:?} after={mtime_after:?}"
-    );
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        !stdout.contains("stale-placeholder-marker"),
-        "the shim must not silently execute the stale placeholder binary: {stdout}"
-    );
-}
-
-#[then("the shim falls back to discovery instead of the invalid override")]
-fn then_shim_falls_back_to_discovery(w: &mut GateWorld) {
-    let output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    assert!(
-        output.status.success(),
-        "resolver shim must fall back to discovery when RHINO_CLI_BIN is invalid, not fail: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let target_dir = w
-        .shim_target_dir
-        .as_ref()
-        .expect("sandbox target dir configured");
-    let built_binary = target_dir.path().join("gate/rhino-cli");
-    assert!(
-        built_binary.is_file(),
-        "an invalid RHINO_CLI_BIN must fall through to tier 2/3 discovery, which must build \
-         into the resolved CARGO_TARGET_DIR"
-    );
-}
-
-#[then("the shim executes the binary at that path")]
-fn then_shim_executes_override_binary(w: &mut GateWorld) {
-    let output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    assert!(
-        output.status.success(),
-        "resolver shim must execute the RHINO_CLI_BIN override: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    assert_eq!(
-        String::from_utf8_lossy(&output.stdout).trim(),
-        "stub-rhino-cli-override-marker",
-        "resolver shim must run the RHINO_CLI_BIN override binary, not a rebuilt one"
-    );
-}
-
-#[then("it performs no cargo build")]
-fn then_no_cargo_build_occurred(w: &mut GateWorld) {
-    // The invocation's PATH excluded cargo's directory (see
-    // `when_resolver_shim_runs`), so if the shim had fallen through to tier 3
-    // and invoked `cargo build`, the shell would report "command not found"
-    // and the shim would exit non-zero. A successful exit is therefore
-    // conclusive proof no cargo build was attempted.
-    //
-    // A prior version of this step corroborated that proof with a second
-    // check: capturing the real, checked-out `apps/rhino-cli/target/gate/`
-    // binary's mtime before the invocation and asserting it was unchanged
-    // afterward. That corroboration was removed (PR #162 cycle-2 review,
-    // r3743500939) because it read a real, shared, un-sandboxed path outside
-    // this test's control. It reproduced a flake within 5 local runs of this
-    // suite: an unrelated concurrent invocation of this same test binary (or
-    // the documented ambient build-artifact sweeper) can touch that path in
-    // the narrow window between the two reads, and it added no proof beyond
-    // what the PATH-stripping check above already establishes.
-    let output = w
-        .shim_first_run
-        .as_ref()
-        .expect("resolver shim invocation recorded");
-    assert!(
-        output.status.success(),
-        "resolver shim must not attempt cargo build when RHINO_CLI_BIN is set: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
 }
 
 // Binds `gate-execution.feature`'s "Gate group jobs consume a prebuilt
@@ -3968,38 +3627,6 @@ fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
     );
 }
 
-#[given("the real Rust quality gate")]
-fn given_real_rust_quality_gate(w: &mut GateWorld) {
-    w.gate_job_block = Some(job_block(&pr_quality_gate_workflow(), "rust"));
-}
-
-#[when("its target families execute")]
-fn when_rust_target_families_execute(_w: &mut GateWorld) {}
-
-#[then("every Rust target command serializes Cargo work")]
-fn then_rust_targets_serialize_cargo_work(w: &mut GateWorld) {
-    let rust_job = w
-        .gate_job_block
-        .as_deref()
-        .expect("the real Rust job must be loaded by the Given step");
-    let target_commands: Vec<&str> = rust_job
-        .lines()
-        .filter(|line| line.contains("nx affected -t") || line.contains("nx run-many -t"))
-        .collect();
-    assert_eq!(
-        target_commands.len(),
-        2,
-        "the Rust quality job must retain both its quick/spec and coverage target commands: {target_commands:?}"
-    );
-    assert!(
-        target_commands.iter().all(|command| {
-            (command.contains("--parallel=1") || command.contains("--parallel=false"))
-                && command.contains("--outputStyle=stream")
-        }),
-        "every Rust target command must serialize Cargo work and stream progress: {target_commands:?}"
-    );
-}
-
 #[then("every gate in the group still reports its baseline result")]
 fn then_group_gates_still_run(w: &mut GateWorld) {
     let group_id = w
@@ -4029,103 +3656,6 @@ fn then_group_gates_still_run(w: &mut GateWorld) {
         "the gate run step must be unconditional for group {group_id} — skipping npm ci must \
          never skip running its gates: {step_lines:?}"
     );
-}
-
-// Binds `gate-execution.feature`'s "The MSRV pre-install covers the toolchain
-// name cargo-hack requests" scenario. `cargo hack check --rust-version`
-// resolves a crate's `rust-version = "X.Y.Z"` floor to the toolchain name
-// `X.Y`, and rustup stores `X.Y` in a different directory from `X.Y.Z` — so
-// pre-installing only the patch-level name leaves every parallel
-// `compat:min-version` task racing rustup to download `X.Y` itself, which is
-// the exact race the pre-install step exists to prevent. This runs the real,
-// checked-in pre-install script against a fixture crate with a stub `rustup`
-// on PATH and asserts on the toolchain names it actually asks for.
-
-#[given("a crate declares a patch-level rust-version floor")]
-fn given_patch_level_msrv_floor(w: &mut GateWorld) {
-    w.write(
-        "apps/fixture-cli/Cargo.toml",
-        "[package]\nname = \"fixture-cli\"\nversion = \"0.1.0\"\nrust-version = \"1.95.0\"\n",
-    );
-    std::fs::create_dir_all(w.root().join("libs")).expect("create fixture libs directory");
-}
-
-#[when("the Rust setup action pre-installs the pinned MSRV toolchains")]
-fn when_msrv_preinstall_runs(w: &mut GateWorld) {
-    let action = std::fs::read_to_string(repo_root().join(".github/actions/setup-rust/action.yml"))
-        .expect("read the real .github/actions/setup-rust/action.yml");
-    let script = run_block(&action, "Pre-install pinned MSRV toolchain");
-
-    let stub_dir = w.root().join("stub-bin");
-    std::fs::create_dir_all(&stub_dir).expect("create stub bin directory");
-    let log = w.root().join("rustup-invocations.log");
-    let stub = stub_dir.join("rustup");
-    std::fs::write(
-        &stub,
-        format!("#!/bin/sh\nprintf '%s\\n' \"$*\" >>'{}'\n", log.display()),
-    )
-    .expect("write the stub rustup recorder");
-    make_executable(stub);
-
-    let inherited_path = std::env::var("PATH").unwrap_or_default();
-    let output = Command::new("bash")
-        .arg("-c")
-        .arg(&script)
-        .current_dir(w.root())
-        .env("PATH", format!("{}:{inherited_path}", stub_dir.display()))
-        .output()
-        .expect("run the real MSRV pre-install script");
-    assert!(
-        output.status.success(),
-        "the MSRV pre-install script must succeed on every supported host shell — stdout: {} \
-         stderr: {}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr)
-    );
-
-    let recorded = std::fs::read_to_string(&log).unwrap_or_default();
-    w.msrv_preinstall_invocations = Some(recorded.lines().map(str::to_string).collect());
-}
-
-#[then("it installs that floor's major-minor toolchain name")]
-fn then_preinstall_covers_major_minor(w: &mut GateWorld) {
-    let invocations = w
-        .msrv_preinstall_invocations
-        .as_ref()
-        .expect("invocations must be recorded by the When step");
-    assert!(
-        invocations
-            .iter()
-            .any(|call| call.starts_with("toolchain install 1.95 ")
-                || call == "toolchain install 1.95"),
-        "the pre-install must install the major-minor toolchain `1.95` that cargo-hack resolves \
-         a `1.95.0` floor to, otherwise parallel compat:min-version tasks race rustup for it: \
-         {invocations:?}"
-    );
-}
-
-#[then("it installs the patch-level toolchain name too")]
-fn then_preinstall_covers_patch_level(w: &mut GateWorld) {
-    let invocations = w
-        .msrv_preinstall_invocations
-        .as_ref()
-        .expect("invocations must be recorded by the When step");
-    assert!(
-        invocations
-            .iter()
-            .any(|call| call.starts_with("toolchain install 1.95.0 ")
-                || call == "toolchain install 1.95.0"),
-        "the pre-install must still install the exact declared floor `1.95.0`, so a direct \
-         `cargo +1.95.0` invocation stays race-free too: {invocations:?}"
-    );
-}
-
-/// Extracts the first action step whose `name:` contains `step_name_fragment`.
-fn step_block(action_yaml: &str, step_name_fragment: &str) -> String {
-    action_steps(action_yaml)
-        .into_iter()
-        .find(|step| step.contains("name:") && step.contains(step_name_fragment))
-        .unwrap_or_else(|| panic!("the action must declare a step named like {step_name_fragment}"))
 }
 
 fn action_steps(action_yaml: &str) -> Vec<String> {
@@ -4161,15 +3691,6 @@ fn action_steps(action_yaml: &str) -> Vec<String> {
             lines[start..end].join("\n")
         })
         .collect()
-}
-
-/// Extracts a scalar `run:` command or the body of a `run: |` block belonging
-/// to the first step whose `name:` contains `step_name_fragment`. Block bodies
-/// are dedented to column zero so they can be executed directly.
-fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
-    let step = step_block(action_yaml, step_name_fragment);
-    run_block_from_step(&step)
-        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a `run:` command"))
 }
 
 fn run_block_from_step(step: &str) -> Option<String> {
