@@ -25,7 +25,6 @@ jobs:
     outputs:
       has-ts: ${{ steps.detect.outputs.has-ts }}
       has-dotnet-projects: ${{ steps.detect.outputs.has-dotnet-projects }}
-      has-rust: ${{ steps.detect.outputs.has-rust }}
       has-dart: ${{ steps.detect.outputs.has-dart }}
       has-markdown: ${{ steps.detect.outputs.has-markdown }}
     steps:
@@ -35,7 +34,7 @@ jobs:
       - uses: ./.github/actions/setup-node
       - id: detect
         run: |
-          # has-dotnet-projects (like has-ts / has-rust) answers "which nx
+          # has-dotnet-projects (like has-ts) answers "which nx
           # projects does the affected-graph mark as touched", via each
           # project's `lang:*` tag — the same question the merge-blocking
           # `dotnet` job's own `nx affected` invocation answers. That is a
@@ -78,7 +77,6 @@ jobs:
             {
               echo "has-ts=true"
               echo "has-dotnet-projects=true"
-              echo "has-rust=true"
               echo "has-dart=true"
               echo "has-markdown=true"
             } >> "$GITHUB_OUTPUT"
@@ -89,7 +87,6 @@ jobs:
           {
             echo "has-ts=false"
             echo "has-dotnet-projects=false"
-            echo "has-rust=false"
             echo "has-dart=false"
             echo "has-markdown=false"
           } >> "$GITHUB_OUTPUT"
@@ -100,7 +97,6 @@ jobs:
               case "$tag" in
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
                 lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
-                lang:rust) echo "has-rust=true" >> "$GITHUB_OUTPUT" ;;
                 lang:dart) echo "has-dart=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
@@ -343,37 +339,12 @@ jobs:
     needs: detect
     if: needs.detect.outputs.has-dotnet-projects == 'true'
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-dotnet
-      # typecheck's `dotnet build --no-restore` requires a prior project-level restore —
-      # the NuGet package cache above only warms `~/.nuget/packages`, it does not generate
-      # each project's `obj/project.assets.json`. Every dotnet-tagged project's `install`
-      # target runs `dotnet restore`, so run it explicitly before typecheck.
-      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
-      # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
-      # downloaded JAR, so serial execution prevents a first-run download race.
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
-      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli's
-      # coverlet `/p:Threshold=90 /p:ThresholdType=line`). Without this step the threshold is
-      # declared but never enforced by CI — mirrors the rust job's identical split below.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
-
-  rust:
-    name: Rust quality gate
-    needs: detect
-    if: needs.detect.outputs.has-rust == 'true'
-    runs-on: ubuntu-latest
-    # `rhino-cli`'s Elixir formatter-wrapper tests
-    # (`tests/gate_format_verify_wrappers.rs`) assert real `mix format`
-    # behavior when the toolchain is present and otherwise skip quietly —
-    # except in an environment that sets `RHINO_REQUIRE_ELIXIR`, which this
-    # job does. Provisioning the toolchain here, unconditionally, is what
-    # turns that assertion from a dormant opt-in into real coverage that runs
-    # on every CI invocation instead of never running anywhere.
+    # `rhino-cli`'s Elixir formatter-wrapper tests assert real `mix format`
+    # behavior — Phase 9c ported the crate to F#, so this job (not the former
+    # `rust` job, deleted in Phase 9d) is now the only place `rhino-cli`'s
+    # test:quick runs, and therefore the only place that can provision the
+    # toolchain these assertions need. RHINO_REQUIRE_ELIXIR/erlef/setup-beam
+    # are re-homed here unchanged from the former `rust` job.
     env:
       RHINO_REQUIRE_ELIXIR: "1"
     steps:
@@ -381,18 +352,23 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
+      - uses: ./.github/actions/setup-dotnet
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27"
           elixir-version: "1.18"
-      # Rust targets share Cargo's registry and build locks. Keep the target families serial so
-      # the nested test:quick gate cannot contend with standalone checks on CI runners.
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
-      # Coverage was lifted out of the local `test:quick` chain (DD-7) so pre-push stays fast. It
-      # still gates merge — `--fail-under-lines 90` lives in the target itself, so a coverage drop
-      # turns this job red exactly as it previously turned pre-push red.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
+      # typecheck's `dotnet build --no-restore` requires a prior project-level restore —
+      # the NuGet package cache above only warms `~/.nuget/packages`, it does not generate
+      # each project's `obj/project.assets.json`. Every dotnet-tagged project's `install`
+      # target runs `dotnet restore`, so run it explicitly before typecheck.
+      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
+      # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
+      # downloaded JAR, so serial execution prevents a first-run download race.
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
+      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli's
+      # coverlet `/p:Threshold=90 /p:ThresholdType=line`). Without this step the threshold is
+      # declared but never enforced by CI.
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
 
   flutter:
     name: Flutter quality gate
@@ -418,17 +394,6 @@ jobs:
         run: fvm install
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
 
-  compat-min-version:
-    name: Minimum version compatibility (all affected)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: npx nx affected -t compat:min-version
-
   specs-structure:
     name: Specs structure validation (all affected)
     runs-on: ubuntu-latest
@@ -437,13 +402,12 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
+      - uses: ./.github/actions/setup-dotnet
       - run: npx nx affected -t specs:structure-validation
 
   quality-gate:
     name: Quality gate
-    needs:
-      [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, flutter, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

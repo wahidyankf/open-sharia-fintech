@@ -801,3 +801,111 @@ command's reported exit code — the first background run's exit code read as 0 
 command piped through `tail`, masking `dotnet test`'s real non-zero exit (the same class of bug as
 [[feedback_pipeline_exit_code_masked_by_tail]]); the real failure was only visible by reading the
 captured output text. Re-run without a masking pipe afterward, exit code 0, 1203/1203 passed.
+
+## 2026-08-29 — Phase 9c follow-up: three findings surfaced only once external projects flipped to F
+
+Pushing the 9c commit surfaced three problems the crate-deletion commit itself couldn't have caught
+— each because deleting `apps/rhino-cli/Cargo.toml` was the FIRST time something other than
+rhino-cli's own Nx targets exercised the F# binary in anger.
+
+**1. Every other project's Nx target still hardcoded `cargo run`.** Grepping the whole repo found
+50 files invoking `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- ...`
+directly — never routed through `rhino-bin.sh` — across every other app/lib's `project.json`,
+`package.json`'s `generate:bindings`/`doctor`/etc. scripts, and one `.claude/hooks/` self-test.
+These were never migrated during Wave A-F because that work only ever touched rhino-cli's own
+targets and `rhino-bin.sh`'s dispatch. Fixed 28 real invocation sites (26 `project.json` + root
+`package.json` + `guard-pre-commit-env.test.sh`) by substituting
+`dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --`, preserving
+the `../../` relative-path variant e2e projects with a `cwd` use. Deferred (not a mechanical path
+swap): `block-env-file-access.test.sh`'s mention is an inert string literal never executed, and
+`shadow-diff.sh`'s Rust-vs-F# comparison is now permanently unreachable since there is no Rust
+binary left to compare against — both need their own disposition decision in 9d/9e.
+
+**2. A genuine F# parity bug in `specs e2e-coverage validate`, hidden until now.** Once those 28
+sites ran the real F# binary, three previously-green e2e projects (`ayokoding-www-fe-e2e`,
+`ose-be-e2e`, `organiclever-be-e2e`) started reporting already-baselined scenarios as brand-new
+gaps. Root cause: `Dispatch.fs`'s `globFeatureFiles` resolves the default `--project-dir` (`"."`)
+via `Path.Combine(".", pattern)`, which — like Rust's own `PathBuf::join` — literally produces a
+`./`-prefixed string; but Rust's `glob` crate silently drops that prefix from its match results,
+while `Directory.GetFiles` preserves whatever `root` string it's handed verbatim. A `Feature` path
+carrying the stray `./` never equality-matched the checked-in baseline's un-prefixed entries. Proven
+against the still-on-disk pre-deletion Rust binaries (`apps/rhino-cli/target/{release,gate}/rhino-cli`)
+byte-for-byte on the exact same fixture inputs before writing the fix. This CLI-argument-resolution
+layer was never covered by the port's own test suite (`SpecsSteps.fs` drives `diffGaps`/
+`scanFixmeDir` directly, bypassing `Dispatch.fs` entirely) or by Wave E/F's shadow-diff (which only
+ever ran rhino-cli's own spec directory through both binaries) — a coverage gap in the ORIGINAL
+Rust test suite too, not something the port introduced. Fixed by stripping a leading `./` in
+`globFeatureFiles`; added a new subprocess-based Gherkin scenario + step binding (the other 13
+`e2e-coverage.feature` scenarios test the pure `Specs.fs` core only) proven red against the
+pre-fix `Dispatch.fs`, green after.
+
+**3. `governance readme-index validate`'s "FAILED: N finding(s)" text is a red herring — faithfully
+so.** Chased what looked like a `governance-readme-index` pre-push gate failure (419 pre-existing
+"unannotated" findings across `specs/`/`docs/`, already documented in `repo-config.yml` as deferred
+debt with `fail-kinds: [missing, orphan, ghost]` explicitly excluding "unannotated") for far longer
+than warranted before checking `rhino-bin.sh gate run --surface=pre-push --group=markdown` in
+isolation, which showed `governance-readme-index    PASS` the whole time — confirmed identical to
+the original Rust (`format_text`/`format_json` compute their "FAILED"/`status` purely from
+`findings.is_empty()`, independent of `has_failing_finding`'s `fail_kinds` filtering, which only
+gates the real exit code). `gate run` executes every declared gate regardless of individual outcome
+and reports each one's PASS/FAIL on its own summary line; a check's own verbose "FAILED" text
+mid-stream is not that signal. The actual blocker was a different, later gate
+(`parity-manifest`, genuinely stale from the pre-commit prettier pass reformatting `project.json`
+after the manifest had already been generated) — recorded as
+[[feedback_rhino_gate_text_failed_not_gate_failure]].
+
+Verification: full `rhino-cli:test:unit` (1204/1204, including the new scenario),
+`specs:behavior:coverage` (519 scenarios), and all three previously-failing e2e projects'
+`specs:e2e:coverage` targets re-run clean. Landed as three follow-up commits on
+`rhino-fsharp-wave-e-p7-18` (`97641d50a`, `1832a0aee`, `264e32db9`, `4a3c127b3`), pushed and
+confirmed via `git ls-remote`.
+
+## 2026-08-29 — Phase 9d: CI teardown
+
+**Course-example count**: `find . -name '*.rs' -not -path './node_modules/*' -not -path
+'./apps/rhino-cli/*' -not -path './**/target/*' | wc -l` → **198**, matching the delta table's
+recorded fact. Non-zero, so the restrictions around `setup-rust`/`format-verify-rustfmt` in
+`repo-config.yml` bind: both retained unchanged.
+
+**`compat:min-version` cross-check**: the plan text asserts "the `rust` job is the only caller of
+`nx affected -t test:coverage`" and "nothing else invokes [`compat:min-version`]" — the second claim
+does not hold literally. `grep -rl '"compat:min-version"' --include=project.json .` returns **26**
+other files, every one an `echo` no-op placeholder (e.g. `"compat:min-version: no standard
+min-version floor for F#"`). Checked both mandatory-target governance docs
+(`nx-targets/mandatory-targets-all-projects-six-and-required.md`'s Mandatory-Six and
+Required-Where-Applicable tables) — `compat:min-version` appears in neither, so these 26 echoes are
+pre-existing, out-of-plan-scope debt, not a currently-enforced convention this plan must honor.
+Deleting the `compat-min-version` CI job is still correct: its only-ever-meaningful check
+(`cargo hack check --rust-version` on `rhino-cli`) is gone, and every remaining invoker is a no-op
+that cannot fail, so no real coverage is lost. Filed as a note here rather than a repo-governance
+edit — the docs are already accurate; the 26 stale stubs are a separate, unopened cleanup.
+
+**Per-file `setup-rust` disposition** (the four workflows outside `pr-quality-gate.yml`, each
+provisioning Rust only to build `rhino-cli` from source):
+
+| File                                       | Verdict                                                                 |
+| ------------------------------------------ | ----------------------------------------------------------------------- |
+| `validate-env.yml`                         | Removed; replaced with `setup-dotnet` (runs `rhino-cli:env:validation`) |
+| `dependency-vulnerability-audit.yml`       | Removed; `setup-dotnet` already present, no addition needed             |
+| `_reusable-www-test-local-deploy.yml`      | Removed; replaced with `setup-dotnet` (`specs-gate` job)                |
+| `_reusable-app-test-local-deploy-stag.yml` | Removed; replaced with `setup-dotnet` (`specs-gate` job)                |
+
+**Elixir re-homing**: the `rust` job's `RHINO_REQUIRE_ELIXIR: "1"` env and `erlef/setup-beam@v1` step
+moved onto the `dotnet` job verbatim — that job is now the only place `rhino-cli`'s `test:quick`
+(and therefore the Elixir formatter-wrapper `.fs` tests) runs, per Wave F's flip to `lang:fsharp`.
+`test:coverage` needed no re-homing — the `dotnet` job already ran it for every `lang:fsharp`/
+`lang:csharp` project, `rhino-cli` included, since Wave F.
+
+**`format-verify-fantomas` reach**: `repo-config.yml`'s glob (`*.fs`, `affected-file-type` scope) is
+extension-only, not path-scoped, so the `src-fsharp` → `src` flatten needed no repo-config change.
+Proved live: appended a badly-indented line to a tracked `.fs` file, ran
+`gate run --surface=ci --group=formatting-verify`, confirmed `format-verify-fantomas FAIL` and the
+group failing, then restored the file and confirmed `git diff --exit-code` clean.
+
+**Workflow-wide sweep**: `rust` job deleted (its `if: needs.detect.outputs.has-rust` guard went with
+it); `has-rust` removed from `detect` (6 occurrences: output, two echoes, the `lang:rust` case, the
+job's own guard, and the `has-ts`/`has-rust` analogy comment — reworded to `has-ts` alone);
+`compat-min-version` job deleted outright (see above); `specs-structure` swapped `setup-rust` for
+`setup-dotnet`. Post-edit `pr-quality-gate.yml` carries exactly one `setup-rust` (the `format` job,
+retained for the 198 course-example files) and zero `has-rust`/`clippy` occurrences. `actionlint`
+exits 0 on every touched workflow file.

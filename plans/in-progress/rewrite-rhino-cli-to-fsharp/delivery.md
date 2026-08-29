@@ -15322,11 +15322,11 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 
 ### 9d — Remaining CI teardown
 
-- [ ] [AI] Delete the `rust` job from `.github/workflows/pr-quality-gate.yml` — but first re-home
+- [x] [AI] Delete the `rust` job from `.github/workflows/pr-quality-gate.yml` — but first re-home
       its two unique responsibilities, per
       [tech-docs §CI Impact](./tech-docs.md#ci-impact) — acceptance: the job is gone and both
       responsibilities below have a new home named in the PR body.
-- [ ] [AI] Remove `rust` from the `quality-gate` job's `needs:` list in the same commit that deletes
+- [x] [AI] Remove `rust` from the `quality-gate` job's `needs:` list in the same commit that deletes
       the job — a `needs:` naming a job that does not exist makes the **whole workflow** fail to
       start, not just that edge, so this is not a tidy-up. Pre-edit the list is
       `needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]`
@@ -15334,17 +15334,17 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `actionlint .github/workflows/pr-quality-gate.yml` exits 0 **and** the workflow actually
       dispatches on the PR — a parse pass alone is not proof, because the failure mode is at
       dispatch time. Do the same in `ose-private`, where the list is that repo's own.
-- [ ] [AI] Re-home the Elixir formatter-wrapper coverage: the `rust` job is the only place setting
+- [x] [AI] Re-home the Elixir formatter-wrapper coverage: the `rust` job is the only place setting
       `RHINO_REQUIRE_ELIXIR: "1"` and provisioning `erlef/setup-beam`, which is what turns those
       assertions from a quietly-skipping opt-in into real coverage — acceptance: the F# port of
       those assertions runs in the `dotnet` job with the same env var and the same Erlang/Elixir
       setup step, and deliberately fails when the wrapper is broken, verified by a temporary
       local break.
-- [ ] [AI] Re-home the Rust `test:coverage` run: the `rust` job is the only caller of
+- [x] [AI] Re-home the Rust `test:coverage` run: the `rust` job is the only caller of
       `nx affected -t test:coverage` for this project — acceptance: the `dotnet` job runs
       `nx affected -t test:coverage` for `rhino-cli` with the same `--fail-under-lines 90` threshold
       enforced inside the target.
-- [ ] [AI] Remove the `has-rust` output, its two `echo` lines, and the `lang:rust` case from the
+- [x] [AI] Remove the `has-rust` output, its two `echo` lines, and the `lang:rust` case from the
       `detect` job — **and** rewrite the comment that names `has-rust` as a sibling example, since
       the acceptance below counts it too. Pre-edit the string appears **6** times: the output
       declaration, the two `echo` lines, the `lang:rust` case, the `rust` job's `if:` guard (which
@@ -15365,20 +15365,20 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 > those two gate entries at F# tooling, would leave 198 files unformattable and turn the
 > `formatting-verify` CI group red. The steps below are scoped accordingly.
 
-- [ ] [AI] Re-confirm the course-example count before touching anything Rust-shaped:
+- [x] [AI] Re-confirm the course-example count before touching anything Rust-shaped:
       `find . -name '*.rs' -not -path './node_modules/*' -not -path './apps/rhino-cli/*' -not -path './**/target/*' | wc -l`
       — acceptance: the number is written into `learnings.md`; a result of 0 permits full teardown,
       any non-zero result binds the restrictions below.
-- [ ] [AI] **Retain** `format-rustfmt` and `format-verify-rustfmt` in `repo-config.yml` unchanged —
+- [x] [AI] **Retain** `format-rustfmt` and `format-verify-rustfmt` in `repo-config.yml` unchanged —
       acceptance: `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json | jq -r '.[].id' | grep -c 'format-verify-rustfmt'`
       returns 1, and the `formatting-verify` group still passes on a PR touching a `.rs` course file.
-- [ ] [AI] Remove `- uses: ./.github/actions/setup-rust` **only** from `build-rhino` and from the
+- [x] [AI] Remove `- uses: ./.github/actions/setup-rust` **only** from `build-rhino` and from the
       deleted `rust` job — acceptance: `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml`
       drops by exactly 2 and the `format` job still has it.
-- [ ] [AI] **Retain** `setup-rust` in the `format` job, which runs `lint-staged` and therefore
+- [x] [AI] **Retain** `setup-rust` in the `format` job, which runs `lint-staged` and therefore
       invokes `format-rustfmt` on any changed course example — acceptance: a PR that changes one
       `.rs` file under `apps/ayokoding-www/content/` is still auto-formatted by that job.
-- [ ] [AI] Give the two remaining **in-file** `setup-rust` consumers a disposition, because 9c
+- [x] [AI] Give the two remaining **in-file** `setup-rust` consumers a disposition, because 9c
       removes the Rust work they were provisioning for: the `compat-min-version` job (runs
       `nx affected -t compat:min-version`, a target 9c deletes outright) and the `specs-structure`
       job (runs `nx affected -t specs:structure-validation`, which becomes an F# target). Pre-edit,
@@ -15398,28 +15398,28 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `ose-private`, `.github/actions/setup-rust/` is deleted there, and the deletion is paired with
       the zero-`.rs` count the delta table already records. **The two repos diverge here by design**
       — do not converge them.
-- [ ] [AI] Decide `setup-rust`'s fate in `validate-env.yml`,
+- [x] [AI] Decide `setup-rust`'s fate in `validate-env.yml`,
       `dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`, and
       `_reusable-app-test-local-deploy-stag.yml` individually — each installed it only to build
       `rhino-cli` from source, which no longer applies — acceptance: a per-file verdict of _remove_
       or _retain with reason_ is written into `learnings.md`, and each removal is paired with
       `setup-dotnet` if that job now runs an F# target.
-- [ ] [AI] **In `ose-public`, do not delete** `.github/actions/setup-rust/` — acceptance: in
+- [x] [AI] **In `ose-public`, do not delete** `.github/actions/setup-rust/` — acceptance: in
       `ose-public` the directory still exists, `.github/actions/README.md` still lists it, and
       `learnings.md` records that it survives for the course examples rather than by oversight.
       Delete it only if the count step above returned 0.
-- [ ] [AI] Confirm 9b already removed `cargo build --profile gate` and renamed the artifact, and
+- [x] [AI] Confirm 9b already removed `cargo build --profile gate` and renamed the artifact, and
       do **not** repeat that edit here — acceptance:
       `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
       returns 0 before this sub-phase makes any change. If it returns non-zero, 9b did not land and
       9c should never have opened; stop and re-sequence rather than patching forward. Scoped to the
       job for the same reason 9b's clause is — the `format` job's explanatory comment keeps the
       whole-file count at 1 even after a correct 9b.
-- [ ] [AI] Remove the `cargo clippy` command from `apps/rhino-cli/project.json`'s `lint` target and
+- [x] [AI] Remove the `cargo clippy` command from `apps/rhino-cli/project.json`'s `lint` target and
       replace it with the F# analyzers — note clippy is **not** a `repo-config.yml` gate entry, it
       lives only in that target [Repo-grounded — `apps/rhino-cli/project.json` line 26] — acceptance:
       `grep -c clippy apps/rhino-cli/project.json` returns 0 and `npx nx run rhino-cli:lint` exits 0.
-- [ ] [AI] Add `format-fantomas` / `format-verify-fantomas` coverage for the new `.fs` files if the
+- [x] [AI] Add `format-fantomas` / `format-verify-fantomas` coverage for the new `.fs` files if the
       existing entries' globs do not already reach the `fsharp-source-root` recorded above at 9c —
       `apps/rhino-cli/src-fsharp/` on the deferred branch, `apps/rhino-cli/src/` on the move branch;
       never assume the former — acceptance: a deliberately misformatted `.fs` file turns the
