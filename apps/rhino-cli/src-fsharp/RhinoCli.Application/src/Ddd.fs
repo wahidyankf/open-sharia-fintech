@@ -131,7 +131,7 @@ let private asString (v: obj) : string =
     match v with
     | null -> ""
     | :? string as s -> s
-    | other -> string other
+    | other -> string<obj> other
 
 let private lookup (m: IDictionary<obj, obj>) (key: string) : obj option =
     match m.TryGetValue(box key) with

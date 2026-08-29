@@ -1863,10 +1863,10 @@ let private relTo (root: string) (p: string) : string =
         p
     else
         let prefix =
-            if root.EndsWith(string Path.DirectorySeparatorChar, StringComparison.Ordinal) then
+            if root.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) then
                 root
             else
-                root + string Path.DirectorySeparatorChar
+                root + Path.DirectorySeparatorChar.ToString()
 
         if p.StartsWith(prefix, StringComparison.Ordinal) then
             p.Substring(prefix.Length)
@@ -1877,7 +1877,7 @@ let private relTo (root: string) (p: string) : string =
 let private toPascalCase (stem: string) : string =
     stem.Split('-')
     |> Array.filter (fun p -> p <> "")
-    |> Array.map (fun p -> string (Char.ToUpper(p.[0], CultureInfo.InvariantCulture)) + p.Substring 1)
+    |> Array.map (fun p -> (Char.ToUpper(p.[0], CultureInfo.InvariantCulture)).ToString() + p.Substring 1)
     |> String.concat ""
 
 /// `true` when file base name `base'` is a plausible test file for feature
@@ -2528,10 +2528,10 @@ let private toRepoRelative (repoRoot: string) (path: string) : string =
         path
     else
         let prefix =
-            if repoRoot.EndsWith(string Path.DirectorySeparatorChar) then
+            if repoRoot.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) then
                 repoRoot
             else
-                repoRoot + string Path.DirectorySeparatorChar
+                repoRoot + Path.DirectorySeparatorChar.ToString()
 
         if path.StartsWith(prefix, StringComparison.Ordinal) then
             path.Substring prefix.Length

@@ -603,7 +603,7 @@ let scanVendorLines (path: string) (content: string) : VendorFinding list =
                 inHtmlComment <- false
         elif line.Contains "<!--" && not (line.Contains "-->") then
             inHtmlComment <- true
-            let idx = line.IndexOf "<!--"
+            let idx = line.IndexOf("<!--", StringComparison.Ordinal)
             let stripped = stripNonProse (line.Substring(0, idx))
 
             if stripped <> "" then
