@@ -15277,6 +15277,23 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       and env-var name already in use. `gate list --surface=ci --format=json --by-group` still
       reports 6 groups, matching the Phase 2 capture recorded in `tech-docs.md`.
 
+- [x] [AI] 9c-14 push-time follow-up: three issues surfaced only once the crate deletion actually hit
+      `git push` — full root-cause narrative in `learnings.md` under
+      "2026-08-29 — Phase 9c follow-up: three findings surfaced only once external projects flipped
+      to F#". Summary: (1) 28 files repo-wide still invoked the deleted crate via
+      `cargo run --manifest-path apps/rhino-cli/Cargo.toml` — rewritten to the `dotnet run` equivalent;
+      (2) genuine F# parity bug in `globFeatureFiles` (`Dispatch.fs`) — a `--features` glob resolved
+      against the default `"."` project dir kept a stray `./` prefix that Rust's `glob` crate silently
+      drops, breaking baseline-match lookups for any external consumer's own
+      `specs e2e-coverage validate` call; fixed plus new regression scenario/step/fact; (3)
+      `governance readme-index validate`'s "FAILED: N finding(s)" text investigated and confirmed a
+      faithfully-ported cosmetic artifact, not a bug — see memory
+      `feedback_rhino_gate_text_failed_not_gate_failure.md`. Also regenerated the parity manifest
+      (prettier reformatted `project.json` post-commit) and fixed 14 dead links in
+      `docs/explanation/software-engineering/programming-languages/rust/*.md` pointing at the deleted
+      `Cargo.toml`. Landed as `97641d50a`, `1832a0aee`, `264e32db9`, `4a3c127b3` on
+      `rhino-fsharp-wave-e-p7-18`, pushed and confirmed via `git ls-remote`.
+
 ### 9d — Remaining CI teardown
 
 - [ ] [AI] Delete the `rust` job from `.github/workflows/pr-quality-gate.yml` — but first re-home
