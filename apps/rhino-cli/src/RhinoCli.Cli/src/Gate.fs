@@ -1033,6 +1033,16 @@ let runAtRootWithOnlyAndMessageFile
                                     | gate :: rest ->
                                         let scope = scopeOf gate
 
+                                        if gate.Id = "path-gated-check" then
+                                            write (
+                                                sprintf
+                                                    "DEBUG-TRIGGER changed=%A matched=%b\n"
+                                                    changedPathsResult
+                                                    (changedPathsResult
+                                                     |> Option.map (fun paths -> triggerMatches paths scope.Trigger)
+                                                     |> Option.defaultValue false)
+                                            )
+
                                         if
                                             scope.Scope = PathGated
                                             && not (
