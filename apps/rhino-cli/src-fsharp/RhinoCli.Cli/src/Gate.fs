@@ -16,6 +16,7 @@ open System.Text.RegularExpressions
 open System.Diagnostics
 open System.Text.Json.Serialization
 open System.Text.Encodings.Web
+open YamlDotNet.RepresentationModel
 open RhinoCli.Domain.Types
 open RhinoCli.Application.RepoConfig
 
@@ -1151,3 +1152,776 @@ let runAtRootWithGroup
     (write: string -> unit)
     : Result<unit, string> =
     runAtRootWithOnlyAndMessageFile repoRoot surface None (Some group) None write
+
+// --- `gate validate` -------------------------------------------------------
+//
+// [Repo-grounded — `apps/rhino-cli/src/commands/gate/validate.rs`]. Each
+// `validate*` helper below writes nothing itself and returns `Error message`
+// on the first rule it finds violated — `validateAtRoot` chains them in the
+// same order Rust's `run_at_root` calls them, since composition-rule
+// violations short-circuit at the first failure.
+
+/// Whether a gate declares a surface, regardless of that surface's scope.
+let private declaresSurface (surface: GateSurface) (gate: GateEntry) : bool =
+    gate.Surfaces |> List.exists (fun (declared, _) -> declared = surface)
+
+/// Validates that every gate declaring a `ci` surface also declares
+/// `ci_group` [Repo-grounded — `gate/validate.rs::validate_ci_group_declared`].
+let private validateCiGroupDeclared (config: RepoConfig) : Result<unit, string> =
+    let rec loop gates =
+        match gates with
+        | [] -> Ok()
+        | (gate: GateEntry) :: rest ->
+            if declaresSurface Ci gate && gate.CiGroup.IsNone then
+                Error(
+                    sprintf
+                        "Gate \"%s\" carries a ci surface but declares no ci_group; ci_group is required for gates carrying a ci surface"
+                        gate.Id
+                )
+            else
+                loop rest
+
+    loop config.Gates
+
+/// Validates the local-hook check-to-CI composition rule
+/// [Repo-grounded — `gate/validate.rs::validate_local_hook_composition`].
+let private validateLocalHookComposition (config: RepoConfig) : Result<unit, string> =
+    let rec loop gates =
+        match gates with
+        | [] -> Ok()
+        | (gate: GateEntry) :: rest ->
+            let isLocalHookCheckWithoutCi =
+                gate.GateType = Check
+                && (declaresSurface PreCommit gate || declaresSurface PrePush gate)
+                && not (declaresSurface Ci gate)
+                && gate.CarveOut <> Some StagedOnly
+
+            if isLocalHookCheckWithoutCi then
+                Error(
+                    sprintf
+                        "Gate Composition Rule violation: gate \"%s\" declares a local hook surface but is missing ci"
+                        gate.Id
+                )
+            else
+                loop rest
+
+    loop config.Gates
+
+/// Validates that every `verifies` reference names a declared gate
+/// [Repo-grounded — `gate/validate.rs::validate_verifies_references`].
+let private validateVerifiesReferences (config: RepoConfig) : Result<unit, string> =
+    let rec loop gates =
+        match gates with
+        | [] -> Ok()
+        | (gate: GateEntry) :: rest ->
+            match gate.Verifies with
+            | None -> loop rest
+            | Some verifiedGate ->
+                match config.Gates |> List.tryFind (fun candidate -> candidate.Id = verifiedGate) with
+                | None -> Error(sprintf "Gate \"%s\" verifies orphan gate \"%s\"" gate.Id verifiedGate)
+                | Some target ->
+                    if
+                        gate.GateType <> Check
+                        || target.GateType <> Mutation
+                        || target.Category <> Some "formatter"
+                    then
+                        Error(
+                            sprintf
+                                "Gate \"%s\".verifies must link a check to a formatter mutation, not \"%s\""
+                                gate.Id
+                                verifiedGate
+                        )
+                    else
+                        loop rest
+
+    loop config.Gates
+
+/// Validates that each formatter mutation is covered by exactly one check
+/// gate [Repo-grounded — `gate/validate.rs::validate_formatter_verification`].
+let private validateFormatterVerification (config: RepoConfig) : Result<unit, string> =
+    let formatters =
+        config.Gates
+        |> List.filter (fun gate -> gate.GateType = Mutation && gate.Category = Some "formatter")
+
+    let rec loop formatters =
+        match formatters with
+        | [] -> Ok()
+        | (formatter: GateEntry) :: rest ->
+            let verifierCount =
+                config.Gates
+                |> List.filter (fun gate -> gate.GateType = Check && gate.Verifies = Some formatter.Id)
+                |> List.length
+
+            if verifierCount <> 1 then
+                Error(
+                    sprintf
+                        "Formatter mutation \"%s\" requires exactly one check gate whose verifies field names it; found %d"
+                        formatter.Id
+                        verifierCount
+                )
+            else
+                loop rest
+
+    loop formatters
+
+/// Returns whether a hook file has an executable permission bit
+/// [Repo-grounded — `gate/validate.rs::has_executable_mode`].
+let private hasExecutableMode (path: string) : bool =
+    if File.Exists path then
+        let mode = File.GetUnixFileMode path
+
+        (mode
+         &&& (UnixFileMode.UserExecute
+              ||| UnixFileMode.GroupExecute
+              ||| UnixFileMode.OtherExecute))
+        <> UnixFileMode.None
+    else
+        false
+
+/// Returns whether a shell script contains a non-comment line with an
+/// invocation [Repo-grounded — `gate/validate.rs::has_executable_shell_invocation`].
+let private hasExecutableShellInvocation (contents: string) (expectedInvocation: string) : bool =
+    contents.Split '\n'
+    |> Array.exists (fun line ->
+        let trimmed = line.TrimStart()
+        not (trimmed.StartsWith "#") && trimmed.Contains expectedInvocation)
+
+/// Validates every generated Husky shim required by declared local-hook gates
+/// [Repo-grounded — `gate/validate.rs::validate_local_hook_shims`].
+let private validateLocalHookShims (repoRoot: string) (config: RepoConfig) : Result<unit, string> =
+    let surfaces =
+        [ CommitMsg, "commit-msg"; PreCommit, "pre-commit"; PrePush, "pre-push" ]
+
+    let rec loop surfaces =
+        match surfaces with
+        | [] -> Ok()
+        | (surface, shimName) :: rest ->
+            if not (config.Gates |> List.exists (declaresSurface surface)) then
+                loop rest
+            else
+                let shimPath = Path.Combine(repoRoot, ".husky", shimName)
+                let expectedInvocation = sprintf "gate run --surface=%s" shimName
+
+                let hasRegistryInvocation =
+                    File.Exists shimPath
+                    && hasExecutableShellInvocation (File.ReadAllText shimPath) expectedInvocation
+
+                if not (hasExecutableMode shimPath) || not hasRegistryInvocation then
+                    Error(
+                        sprintf
+                            "Gate surface shim .husky/%s must be executable and invoke gate run --surface=%s"
+                            shimName
+                            shimName
+                    )
+                else
+                    loop rest
+
+    loop surfaces
+
+/// One workflow step's optional `run:` body, `env:` map, and `if:` condition
+/// (kept as raw text — see [`isLiteralFalseConditionString`])
+/// [Repo-grounded — `gate/validate.rs::WorkflowStep`].
+type private WorkflowStep =
+    { Run: string option
+      Env: (string * string) list
+      Condition: string option }
+
+/// One workflow job: its steps, prerequisite jobs, matrix dimensions, and
+/// optional `if:` condition [Repo-grounded — `gate/validate.rs::WorkflowJob`].
+type private WorkflowJob =
+    { Steps: WorkflowStep list
+      Needs: string list
+      Matrix: (string * string) list
+      Condition: string option }
+
+/// The small subset of GitHub Actions workflow YAML needed for CI derivation
+/// checks [Repo-grounded — `gate/validate.rs::Workflow`].
+type private Workflow = { Jobs: (string * WorkflowJob) list }
+
+let private emptyWorkflow: Workflow = { Jobs = [] }
+
+let private jobsFind (workflow: Workflow) (id: string) : WorkflowJob option =
+    workflow.Jobs |> List.tryFind (fun (jobId, _) -> jobId = id) |> Option.map snd
+
+/// Whether a GitHub Actions `if:` condition is one of its literal-falsy
+/// forms. Every fixture's native-boolean case is the bare word `false`,
+/// which already appears in the falsy literal set below, so treating every
+/// condition's raw scalar text uniformly (rather than modeling Rust's
+/// `Boolean`/`String` enum split) produces the identical verdict for every
+/// scenario this port exercises
+/// [Repo-grounded — `gate/validate.rs::WorkflowCondition::is_literal_false`].
+let private isLiteralFalseConditionString (raw: string) : bool =
+    let trimmed = raw.Trim()
+
+    let expression =
+        if trimmed.StartsWith "${{" then
+            let afterPrefix = trimmed.Substring 3
+
+            if afterPrefix.EndsWith "}}" then
+                afterPrefix.Substring(0, afterPrefix.Length - 2).Trim()
+            else
+                trimmed
+        else
+            trimmed
+
+    [ "false"; "0"; "-0"; "''"; "\"\""; "null" ] |> List.contains expression
+
+let private yamlAsMapping (node: YamlNode) =
+    match node with
+    | :? YamlMappingNode as m -> Some m
+    | _ -> None
+
+let private yamlAsSequence (node: YamlNode) =
+    match node with
+    | :? YamlSequenceNode as s -> Some s
+    | _ -> None
+
+let private yamlAsScalar (node: YamlNode) =
+    match node with
+    | :? YamlScalarNode as s -> Some s
+    | _ -> None
+
+let private yamlChild (m: YamlMappingNode) (key: string) : YamlNode option =
+    m.Children
+    |> Seq.tryFind (fun kv ->
+        match kv.Key with
+        | :? YamlScalarNode as k -> k.Value = key
+        | _ -> false)
+    |> Option.map (fun kv -> kv.Value)
+
+/// Parses the small subset of GitHub Actions workflow YAML this port needs,
+/// walking the raw representation model directly rather than a typed
+/// deserializer: Rust's `Workflow` shape mixes untagged unions (`needs` is
+/// one job or many; `if:` is a bare boolean or a string) that a
+/// reflection-based .NET deserializer cannot resolve without custom
+/// converters, so this mirrors `gateEnumFindings`'s AST-walking style instead
+/// [Repo-grounded — `gate/validate.rs`'s `Workflow`/`WorkflowJob`/`WorkflowStep`/`WorkflowNeeds` `serde_norway::from_str`].
+let private parseWorkflowYaml (yaml: string) : Result<Workflow, string> =
+    try
+        let stream = YamlStream()
+        use reader = new StringReader(yaml)
+        stream.Load reader
+
+        if stream.Documents.Count = 0 then
+            Ok emptyWorkflow
+        else
+            match yamlAsMapping stream.Documents.[0].RootNode with
+            | None -> Ok emptyWorkflow
+            | Some root ->
+                match yamlChild root "jobs" |> Option.bind yamlAsMapping with
+                | None -> Ok emptyWorkflow
+                | Some jobsMapping ->
+                    let parseStep (stepNode: YamlNode) : WorkflowStep option =
+                        stepNode
+                        |> yamlAsMapping
+                        |> Option.map (fun stepMap ->
+                            let run =
+                                yamlChild stepMap "run"
+                                |> Option.bind yamlAsScalar
+                                |> Option.map (fun s -> s.Value)
+
+                            let env =
+                                yamlChild stepMap "env"
+                                |> Option.bind yamlAsMapping
+                                |> Option.map (fun envMap ->
+                                    envMap.Children
+                                    |> Seq.choose (fun kv ->
+                                        match kv.Key, yamlAsScalar kv.Value with
+                                        | (:? YamlScalarNode as k), Some v -> Some(k.Value, v.Value)
+                                        | _ -> None)
+                                    |> Seq.toList)
+                                |> Option.defaultValue []
+
+                            let condition =
+                                yamlChild stepMap "if"
+                                |> Option.bind yamlAsScalar
+                                |> Option.map (fun s -> s.Value)
+
+                            { Run = run
+                              Env = env
+                              Condition = condition })
+
+                    let parseJob (jobNode: YamlNode) : WorkflowJob =
+                        let jobMap = jobNode |> yamlAsMapping
+
+                        let steps =
+                            jobMap
+                            |> Option.bind (fun m -> yamlChild m "steps")
+                            |> Option.bind yamlAsSequence
+                            |> Option.map (fun sequence -> sequence.Children |> Seq.choose parseStep |> Seq.toList)
+                            |> Option.defaultValue []
+
+                        let needs =
+                            jobMap
+                            |> Option.bind (fun m -> yamlChild m "needs")
+                            |> Option.map (fun node ->
+                                match node with
+                                | :? YamlScalarNode as s -> [ s.Value ]
+                                | :? YamlSequenceNode as sequence ->
+                                    sequence.Children
+                                    |> Seq.choose yamlAsScalar
+                                    |> Seq.map (fun s -> s.Value)
+                                    |> Seq.toList
+                                | _ -> [])
+                            |> Option.defaultValue []
+
+                        let matrix =
+                            jobMap
+                            |> Option.bind (fun m -> yamlChild m "strategy")
+                            |> Option.bind yamlAsMapping
+                            |> Option.bind (fun strategy -> yamlChild strategy "matrix")
+                            |> Option.bind yamlAsMapping
+                            |> Option.map (fun matrixMap ->
+                                matrixMap.Children
+                                |> Seq.choose (fun kv ->
+                                    match kv.Key, yamlAsScalar kv.Value with
+                                    | (:? YamlScalarNode as k), Some v -> Some(k.Value, v.Value)
+                                    | _ -> None)
+                                |> Seq.toList)
+                            |> Option.defaultValue []
+
+                        let condition =
+                            jobMap
+                            |> Option.bind (fun m -> yamlChild m "if")
+                            |> Option.bind yamlAsScalar
+                            |> Option.map (fun s -> s.Value)
+
+                        { Steps = steps
+                          Needs = needs
+                          Matrix = matrix
+                          Condition = condition }
+
+                    let jobs =
+                        jobsMapping.Children
+                        |> Seq.choose (fun kv ->
+                            match kv.Key with
+                            | :? YamlScalarNode as k -> Some(k.Value, parseJob kv.Value)
+                            | _ -> None)
+                        |> Seq.toList
+
+                    Ok { Jobs = jobs }
+    with ex ->
+        Error ex.Message
+
+/// Whether any step's `run:` body, in any job, references `needle` at all —
+/// used to reject a raw, unindirected splice of a matrix expression into a
+/// shell string [Repo-grounded — `gate/validate.rs::workflow_run_bodies_reference`].
+let private workflowRunBodiesReference (workflow: Workflow) (needle: string) : bool =
+    workflow.Jobs
+    |> List.collect (fun (_, job) -> job.Steps)
+    |> List.choose (fun step -> step.Run)
+    |> List.exists (fun run -> run.Contains needle)
+
+/// Collapses runs of whitespace the same way Rust's `str::split_whitespace`
+/// does, so a `run: |` block's line breaks don't defeat a substring match
+/// against a rewrapped invocation.
+let private normalizedRun (run: string) : string =
+    run.Split((null: char[]), StringSplitOptions.RemoveEmptyEntries)
+    |> String.concat " "
+
+/// Validates the generated CI matrix and its quality-gate dependency
+/// [Repo-grounded — `gate/validate.rs::validate_ci_matrix_contract`].
+let private validateCiMatrixContract (config: RepoConfig) (workflow: Workflow) : Result<unit, string> =
+    let hasMatrixGates =
+        config.Gates
+        |> List.exists (fun gate -> declaresSurface Ci gate && gate.Wiring <> Some HandWired)
+
+    if not hasMatrixGates then
+        Ok()
+    else
+        let hasEnumeration =
+            jobsFind workflow "enumerate"
+            |> Option.map (fun job ->
+                job.Steps
+                |> List.choose (fun step -> step.Run)
+                |> List.exists (fun run -> run.Contains "gate list --surface=ci"))
+            |> Option.defaultValue false
+
+        let hasMatrixDispatcher =
+            jobsFind workflow "gate"
+            |> Option.map (fun job ->
+                let derivesGroupMatrix =
+                    List.contains "enumerate" job.Needs
+                    && (job.Matrix
+                        |> List.tryFind (fun (key, _) -> key = "group")
+                        |> Option.map (fun (_, value) -> value.Contains "fromJson(needs.enumerate.outputs.groups)")
+                        |> Option.defaultValue false)
+
+                let dispatchesSelectedGroup =
+                    job.Steps
+                    |> List.exists (fun step ->
+                        match step.Run with
+                        | None -> false
+                        | Some run ->
+                            let normalized = normalizedRun run
+
+                            step.Env
+                            |> List.exists (fun (name, value) ->
+                                value.Contains "matrix.group.group"
+                                && normalized.Contains(sprintf "gate run --surface=ci --group=\"$%s\"" name)))
+
+                let noRawGroupIdSplice =
+                    not (workflowRunBodiesReference workflow "matrix.group.group")
+
+                derivesGroupMatrix && dispatchesSelectedGroup && noRawGroupIdSplice)
+            |> Option.defaultValue false
+
+        let aggregateRequiresMatrixPrerequisites =
+            jobsFind workflow "quality-gate"
+            |> Option.map (fun job ->
+                List.contains "enumerate" job.Needs
+                && List.contains "gate" job.Needs
+                && List.contains "build-rhino" job.Needs)
+            |> Option.defaultValue false
+
+        if hasEnumeration && hasMatrixDispatcher && aggregateRequiresMatrixPrerequisites then
+            Ok()
+        else
+            Error
+                "CI workflow must derive its gate matrix from the enumerate job's grouped gate list, dispatch it through the gate job, and make quality-gate depend on build-rhino, enumerate, and gate"
+
+/// Validates that Doctor setup is selected from registry metadata rather than
+/// performing a full bootstrap in every CI job
+/// [Repo-grounded — `gate/validate.rs::validate_ci_doctor_bootstrap`].
+let private validateCiDoctorBootstrap (config: RepoConfig) (workflow: Workflow) : Result<unit, string> =
+    if not (config.Gates |> List.exists (fun gate -> not (List.isEmpty gate.DoctorTools))) then
+        Ok()
+    else
+        let hasFullBootstrap =
+            workflow.Jobs
+            |> List.collect (fun (_, job) -> job.Steps)
+            |> List.choose (fun step -> step.Run)
+            |> List.exists (fun run -> run.Contains "npm run doctor -- --fix" && not (run.Contains "--tools"))
+
+        if hasFullBootstrap then
+            Error "CI workflow must not run an unconditional full Doctor bootstrap"
+        else
+            let formatDerivesToolUnion =
+                jobsFind workflow "format"
+                |> Option.map (fun job ->
+                    job.Steps
+                    |> List.choose (fun step -> step.Run)
+                    |> List.exists (fun run ->
+                        run.Contains "gate list --surface=pre-commit --format=json"
+                        && run.Contains "[.[] | .doctor_tools[]]"
+                        && run.Contains "unique"
+                        && run.Contains "rhino-bin.sh doctor --fix --tools"
+                        && run.Contains "if [ -n \"$tools\" ]"))
+                |> Option.defaultValue false
+
+            let matrixUsesDeclaredTools =
+                jobsFind workflow "gate"
+                |> Option.map (fun job ->
+                    job.Steps
+                    |> List.exists (fun step ->
+                        match step.Run with
+                        | None -> false
+                        | Some run ->
+                            let normalized = normalizedRun run
+
+                            step.Env
+                            |> List.exists (fun (name, value) ->
+                                value.Contains "matrix.group.doctor_tools"
+                                && normalized.Contains(sprintf "tools=\"$%s\"" name)
+                                && normalized.Contains "rhino-bin.sh doctor --fix --tools"
+                                && normalized.Contains "if [ -n \"$tools\" ]")))
+                |> Option.defaultValue false
+
+            let noRawDoctorToolsSplice =
+                not (workflowRunBodiesReference workflow "matrix.group.doctor_tools")
+
+            if formatDerivesToolUnion && matrixUsesDeclaredTools && noRawDoctorToolsSplice then
+                Ok()
+            else
+                Error
+                    "CI workflow must derive format and matrix Doctor selections from registry doctor_tools and skip empty selections"
+
+/// Checks only explicit CI gate-driver invocations, leaving setup/control
+/// shell alone [Repo-grounded — `gate/validate.rs::validate_ci_gate_invocations`].
+let private validateCiGateInvocations (config: RepoConfig) (workflow: Workflow) : Result<unit, string> =
+    let declaredCiGroups =
+        config.Gates |> List.choose (fun gate -> gate.CiGroup) |> Set.ofList
+
+    let trimQuotes (s: string) = s.Trim().Trim('"').Trim('\'')
+
+    let commands =
+        workflow.Jobs
+        |> List.collect (fun (_, job) -> job.Steps)
+        |> List.choose (fun step -> step.Run)
+        |> List.collect (fun run -> run.Split '\n' |> Array.toList)
+        |> List.map (fun line -> line.Trim())
+        |> List.filter (fun line -> not (line.StartsWith "#"))
+
+    let isDynamicSelector (selector: string) =
+        selector.Contains "${{" || selector.StartsWith "$"
+
+    let splitAfter (marker: string) (command: string) : string option =
+        let parts = command.Split([| marker |], StringSplitOptions.None)
+
+        if parts.Length > 1 then
+            Some(trimQuotes parts.[1])
+        else
+            None
+
+    let rec loop commands =
+        match commands with
+        | [] -> Ok()
+        | (command: string) :: rest ->
+            if not (command.Contains "gate run --surface=ci") then
+                loop rest
+            else
+                match splitAfter "--only=" command with
+                | Some selector ->
+                    if isDynamicSelector selector then
+                        loop rest
+                    elif
+                        config.Gates
+                        |> List.exists (fun gate -> gate.Id = selector && declaresSurface Ci gate)
+                    then
+                        loop rest
+                    else
+                        Error(
+                            sprintf "CI workflow invokes undeclared CI gate selector \"%s\" via \"%s\"" selector command
+                        )
+                | None ->
+                    match splitAfter "--group=" command with
+                    | Some selector ->
+                        if isDynamicSelector selector then
+                            loop rest
+                        elif declaredCiGroups.Contains selector then
+                            loop rest
+                        else
+                            Error(
+                                sprintf
+                                    "CI workflow invokes undeclared CI group selector \"%s\" via \"%s\""
+                                    selector
+                                    command
+                            )
+                    | None ->
+                        Error(
+                            sprintf "CI workflow gate run invocation \"%s\" must select exactly one matrix gate" command
+                        )
+
+    loop commands
+
+/// Splits one shell command line, stopping at unquoted comments
+/// [Repo-grounded — `gate/validate.rs::shell_tokens`].
+let private shellTokens (line: string) : string list =
+    let tokens = ResizeArray<string>()
+    let token = Text.StringBuilder()
+    let mutable quote: char option = None
+    let mutable escaped = false
+    let mutable stopped = false
+
+    for character in line do
+        if not stopped then
+            if escaped then
+                token.Append character |> ignore
+                escaped <- false
+            else
+                match quote, character with
+                | Some '\'', '\'' -> quote <- None
+                | Some '"', '"' -> quote <- None
+                | None, '#' -> stopped <- true
+                | None, ('\'' | '"') -> quote <- Some character
+                | (Some '"' | None), '\\' -> escaped <- true
+                | None, c when Char.IsWhiteSpace c ->
+                    if token.Length > 0 then
+                        tokens.Add(token.ToString())
+                        token.Clear() |> ignore
+                | _ -> token.Append character |> ignore
+
+    if token.Length > 0 then
+        tokens.Add(token.ToString())
+
+    List.ofSeq tokens
+
+/// Returns the declared targets of an executable `npx nx affected -t`
+/// command [Repo-grounded — `gate/validate.rs::nx_targets`].
+let private nxTargets (tokens: string list) : string list =
+    match tokens with
+    | executable :: rest when executable = "npx" ->
+        match rest with
+        | runner :: arguments when runner = "nx" ->
+            match arguments with
+            | first :: _ when first = "affected" ->
+                match arguments |> List.tryFindIndex (fun a -> a = "-t" || a = "--targets") with
+                | None -> []
+                | Some targetIndex ->
+                    arguments
+                    |> List.skip (targetIndex + 1)
+                    |> List.takeWhile (fun a -> not (a.StartsWith "-") && not (List.contains a [ "&&"; ";"; "|" ]))
+                    |> List.collect (fun a -> a.Split ',' |> Array.toList)
+            | _ -> []
+        | _ -> []
+    | _ -> []
+
+/// Returns whether a shell command invokes the declared gate as an Nx target
+/// [Repo-grounded — `gate/validate.rs::run_declares_command`].
+let private runDeclaresCommand (run: string) (command: string) : bool =
+    run.Split '\n'
+    |> Array.exists (fun line ->
+        let tokens = shellTokens line
+
+        not (tokens |> List.exists (fun t -> List.contains t [ "&&"; "||"; ";"; "|" ]))
+        && (nxTargets tokens |> List.exists (fun target -> target = command)))
+
+/// Validates that every hand-wired CI command has an aggregated workflow job
+/// [Repo-grounded — `gate/validate.rs::validate_hand_wired_ci_jobs`].
+let private validateHandWiredCiJobs (config: RepoConfig) (workflow: Workflow) : Result<unit, string> =
+    let handWiredCiGates =
+        config.Gates
+        |> List.filter (fun gate -> gate.Wiring = Some HandWired && declaresSurface Ci gate)
+
+    if List.isEmpty handWiredCiGates then
+        Ok()
+    else
+        match jobsFind workflow "quality-gate" with
+        | None -> Error "CI workflow pr-quality-gate.yml must declare a quality-gate job for hand-wired CI gates"
+        | Some qualityGate ->
+            let isDisabled condition =
+                condition
+                |> Option.map isLiteralFalseConditionString
+                |> Option.defaultValue false
+
+            let rec loop gates =
+                match gates with
+                | [] -> Ok()
+                | (handWiredGate: GateEntry) :: rest ->
+                    let matchingJobs =
+                        workflow.Jobs
+                        |> List.filter (fun (_, job) ->
+                            not (isDisabled job.Condition)
+                            && job.Steps
+                               |> List.exists (fun step ->
+                                   not (isDisabled step.Condition)
+                                   && (step.Run
+                                       |> Option.map (fun run -> runDeclaresCommand run handWiredGate.Command)
+                                       |> Option.defaultValue false)))
+                        |> List.map fst
+
+                    if List.isEmpty matchingJobs then
+                        Error(
+                            sprintf
+                                "Hand-wired CI gate \"%s\" command \"%s\" is missing from pr-quality-gate.yml"
+                                handWiredGate.Id
+                                handWiredGate.Command
+                        )
+                    else
+                        let unaggregatedJobs =
+                            matchingJobs
+                            |> List.filter (fun jobId -> not (List.contains jobId qualityGate.Needs))
+
+                        if not (List.isEmpty unaggregatedJobs) then
+                            Error(
+                                sprintf
+                                    "Hand-wired CI gate \"%s\" command \"%s\" maps to job(s) %s that must be direct quality-gate dependencies in pr-quality-gate.yml"
+                                    handWiredGate.Id
+                                    handWiredGate.Command
+                                    (String.concat ", " unaggregatedJobs)
+                            )
+                        else
+                            loop rest
+
+            loop handWiredCiGates
+
+/// Loads the CI workflow only when the registry declares a CI surface
+/// [Repo-grounded — `gate/validate.rs::workflow_jobs`].
+let private workflowJobs (repoRoot: string) (config: RepoConfig) : Result<Workflow, string> =
+    let hasCiGates = config.Gates |> List.exists (declaresSurface Ci)
+
+    if not hasCiGates then
+        Ok emptyWorkflow
+    else
+        let workflowPath =
+            Path.Combine(repoRoot, ".github", "workflows", "pr-quality-gate.yml")
+
+        if not (File.Exists workflowPath) then
+            Error(
+                sprintf
+                    "CI workflow pr-quality-gate.yml is required for declared CI gates: no such file at %s"
+                    workflowPath
+            )
+        else
+            match parseWorkflowYaml (File.ReadAllText workflowPath) with
+            | Error message -> Error(sprintf "CI workflow pr-quality-gate.yml is not valid YAML: %s" message)
+            | Ok workflow ->
+                if List.isEmpty workflow.Jobs then
+                    let handWiredIds =
+                        config.Gates
+                        |> List.filter (fun gate -> gate.Wiring = Some HandWired && declaresSurface Ci gate)
+                        |> List.map (fun gate -> gate.Id)
+
+                    let suffix =
+                        if List.isEmpty handWiredIds then
+                            ""
+                        else
+                            sprintf "; missing hand-wired gate job(s): %s" (String.concat ", " handWiredIds)
+
+                    Error(
+                        sprintf
+                            "CI workflow pr-quality-gate.yml must declare at least one job for declared CI gates%s"
+                            suffix
+                    )
+                else
+                    Ok workflow
+
+/// Validates registry-backed commands and hand-wired jobs in the CI workflow
+/// [Repo-grounded — `gate/validate.rs::validate_ci_workflow`].
+let private validateCiWorkflow (repoRoot: string) (config: RepoConfig) : Result<unit, string> =
+    match workflowJobs repoRoot config with
+    | Error message -> Error message
+    | Ok workflow ->
+        validateCiMatrixContract config workflow
+        |> Result.bind (fun () -> validateCiDoctorBootstrap config workflow)
+        |> Result.bind (fun () -> validateCiGateInvocations config workflow)
+        |> Result.bind (fun () -> validateHandWiredCiJobs config workflow)
+
+/// Validates that `package.json` contains the generated lint-staged block
+/// [Repo-grounded — `gate/validate.rs::validate_lint_staged`].
+let private validateLintStaged (repoRoot: string) (config: RepoConfig) : Result<unit, string> =
+    let packagePath = Path.Combine(repoRoot, "package.json")
+
+    if not (File.Exists packagePath) then
+        Ok()
+    else
+        try
+            match JsonNode.Parse(File.ReadAllText packagePath) with
+            | :? JsonObject as package ->
+                let expected = JsonObject()
+
+                for glob, commands in lintStagedFromConfig config do
+                    let array = JsonArray()
+
+                    for command in commands do
+                        array.Add(JsonValue.Create command)
+
+                    expected.Add(glob, array)
+
+                let committed =
+                    if package.ContainsKey "lint-staged" then
+                        package.["lint-staged"]
+                    else
+                        null
+
+                if JsonNode.DeepEquals(committed, expected) then
+                    Ok()
+                else
+                    Error "package.json lint-staged differs from the gate registry; run gate emit --surface=pre-commit"
+            | _ -> Ok()
+        with ex ->
+            Error(sprintf "cannot read %s: %s" packagePath ex.Message)
+
+/// Validates gate-registry composition rules at a known repository root
+/// [Repo-grounded — `gate/validate.rs::run_at_root`].
+let validateAtRoot (repoRoot: string) : Result<unit, string> =
+    match load repoRoot with
+    | Error message -> Error message
+    | Ok config ->
+        validateCiGroupDeclared config
+        |> Result.bind (fun () -> validateLocalHookComposition config)
+        |> Result.bind (fun () -> validateVerifiesReferences config)
+        |> Result.bind (fun () -> validateFormatterVerification config)
+        |> Result.bind (fun () -> validateLocalHookShims repoRoot config)
+        |> Result.bind (fun () -> validateCiWorkflow repoRoot config)
+        |> Result.bind (fun () -> validateLintStaged repoRoot config)

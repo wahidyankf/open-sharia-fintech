@@ -59,6 +59,7 @@
     <Compile Include="Steps/GateEmissionSteps.fs" />
     <Compile Include="Steps/GateEnumerationSteps.fs" />
     <Compile Include="Steps/GateExecutionSteps.fs" />
+    <Compile Include="Steps/GateValidationSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>

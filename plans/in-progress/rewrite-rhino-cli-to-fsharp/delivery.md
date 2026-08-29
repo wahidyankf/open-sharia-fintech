@@ -14072,8 +14072,26 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 #### `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature` — 26 scenarios
 
 > **PR seam**: the cycles under this heading are one PR.
+>
+> **Deviation, recorded rather than silent**: `gate validate` landed in
+> `RhinoCli.Cli/src/Gate.fs`, matching Rust's placement in
+> `commands/gate/validate.rs` rather than the application layer named below.
+> Step definitions live in `tests/unit/Steps/GateValidationSteps.fs`, ported
+> from Rust's `GateWorld` fixture harness in `tests/gate_specs.rs`. Unlike
+> `gate-execution.feature`, every scenario here calls `Gate.validateAtRoot`
+> in-process rather than spawning a subprocess — Rust's own
+> `GateWorld::validate` calls `validate::run_at_root` directly, since
+> `validate.rs` never self-references the current executable. The CI
+> workflow's GitHub Actions YAML subset (`Workflow`/`WorkflowJob`/
+> `WorkflowStep`, `needs`, `strategy.matrix`, `if:`) is parsed by walking
+> `YamlDotNet.RepresentationModel` nodes directly, mirroring the existing
+> `RepoConfig.fs` `gateEnumFindings` idiom, rather than via typed
+> deserialization — Rust's `#[serde(untagged)]` `WorkflowNeeds` and
+> `WorkflowCondition` enums have no clean YamlDotNet equivalent. The 43
+> inline `#[cfg(test)]` Rust unit tests in `validate.rs` are supplementary
+> Rust-only coverage beyond these 26 Gherkin scenarios and are not ported.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14086,17 +14104,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the Gate Composition Rule, gate, and ci surface
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14109,17 +14127,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it succeeds
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14132,17 +14150,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it succeeds and gate list reports the exemption
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14155,17 +14173,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the hook file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14178,17 +14196,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names that command
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14201,17 +14219,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the enumerate dependency and quality-gate
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14224,17 +14242,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names both IDs
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14247,17 +14265,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it names package.json and the emit command
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14270,17 +14288,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the formatter
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14293,17 +14311,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it succeeds
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14316,17 +14334,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14339,17 +14357,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14362,17 +14380,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14385,17 +14403,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14408,17 +14426,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14431,17 +14449,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14454,17 +14472,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate and workflow file
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14478,17 +14496,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then validation fails and identifies the commit-msg hook
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14501,17 +14519,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it exits zero
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14526,17 +14544,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And its output states that ci_group is required
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14549,17 +14567,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names build-rhino
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14572,17 +14590,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and states that the invocation must select exactly one matrix gate
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14595,17 +14613,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the undeclared group id
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14618,17 +14636,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and names the gate job's stale Doctor bootstrap
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14641,17 +14659,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it fails and states that the gate matrix id must be derived through env indirection
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -14664,12 +14682,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then it exits zero
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
