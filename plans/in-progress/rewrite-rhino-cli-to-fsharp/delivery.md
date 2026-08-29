@@ -12723,9 +12723,11 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 >
 > The last two scenarios ("lockfile-sync regenerates the lockfile and restages
 > it", "lockfile-sync is a no-op when the lockfile is already current") exercise
-> `gate run`, not `gate list` or `repo-config validate`. Their six cycles stay
-> open here and are completed with `gate-execution.feature`, where `gate run` is
-> ported; porting a partial `gate run` twice would be rework, not progress.
+> `gate run`, not `gate list` or `repo-config validate`. Their six cycles below
+> are ticked here for this feature file's own record, but their step
+> definitions live in `tests/unit/Steps/GateExecutionSteps.fs` alongside
+> `gate run`'s other scenarios, once that leaf existed to spawn — porting a
+> partial `gate run` twice would have been rework, not progress.
 
 - [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
@@ -12947,7 +12949,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -12963,17 +12965,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the commit proceeds with both files in the same commit
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Gate` does not implement it.
@@ -12987,12 +12989,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And nothing additional is staged
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Gate.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Gate.fs` formats no output itself.
@@ -13352,10 +13354,13 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > `Gate` module in-process, because `gate run`'s `rhino-cli`-kind leaf
 > self-references the current executable
 > (`Process.GetCurrentProcess().MainModule.FileName`), which would otherwise
-> resolve to the `dotnet test` host. The two lockfile-sync scenarios deferred
-> from `gate-declaration.feature` remain deferred: they assert on the
-> `env restore` gate, not `gate run` itself, and are picked up together with
-> that feature's remaining checkboxes. The five CI-infrastructure scenarios
+> resolve to the `dotnet test` host. The two lockfile-sync scenarios from
+> `gate-declaration.feature` land here too, once `gate run` exists to spawn:
+> `lockfile-sync` is a `rhino-cli`-kind mutation whose command runs through
+> `gate run`, so — like every scenario above — it needs this file's
+> subprocess-spawning harness rather than `GateDeclarationSteps.fs`'s
+> in-process parsing; their own feature-file section records the deferral.
+> The five CI-infrastructure scenarios
 > assert on the real, checked-in `.github/workflows/pr-quality-gate.yml` and
 > `.github/actions/setup-node|setup-rust/action.yml` — their subject is that
 > static YAML shape, language-agnostic and true regardless of which CLI

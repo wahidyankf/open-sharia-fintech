@@ -1382,6 +1382,90 @@ type GateExecutionSteps() =
                 call.StartsWith "toolchain install 1.95.0 " || call = "toolchain install 1.95.0")
         )
 
+    // --- gate-declaration.feature: lockfile-sync ------------------------------
+    //
+    // Deferred from `GateDeclarationSteps.fs` until `gate run` existed —
+    // `lockfile-sync` is a `rhino-cli`-kind mutation whose command runs
+    // through `gate run`, so it needs this file's subprocess-spawning
+    // harness rather than `GateDeclarationSteps.fs`'s in-process parsing.
+
+    [<Given>]
+    member _.``a staged package.json changes a dependency``() =
+        initGit ()
+
+        write
+            "bin/npm"
+            "#!/bin/sh\nprintf '{\"name\":\"lock-app\",\"version\":\"2.0.0\",\"packages\":{\"\":{\"name\":\"lock-app\",\"version\":\"2.0.0\"}}}' > apps/lock-app/package-lock.json\n"
+
+        makeExecutable (Path.Combine(root, "bin", "npm"))
+        prependBinToPath "bin"
+        write "apps/lock-app/package.json" "{\"name\":\"lock-app\",\"version\":\"2.0.0\"}\n"
+
+        write
+            "apps/lock-app/package-lock.json"
+            "{\"name\":\"lock-app\",\"version\":\"1.0.0\",\"packages\":{\"\":{\"name\":\"lock-app\",\"version\":\"1.0.0\"}}}\n"
+
+        write
+            "repo-config.yml"
+            (config (
+                gate "lockfile-sync" "mutation" "git lockfile sync" "rhino-cli" "      pre-commit: { scope: other }\n"
+                + "    restages: true\n"
+            ))
+
+        stage [ "apps/lock-app/package.json" ]
+
+    [<Given>]
+    member _.``package-lock.json is stale with respect to it``() =
+        Assert.Contains("1.0.0", File.ReadAllText(Path.Combine(root, "apps", "lock-app", "package-lock.json")))
+
+    [<When>]
+    member _.``the gate with id "lockfile-sync" runs on surface "pre-commit"``() =
+        runGate "pre-commit" (Some "lockfile-sync")
+
+    [<Then>]
+    member _.``package-lock.json is regenerated``() =
+        Assert.True(isSuccess (), sprintf "lockfile gate failed: %s" output)
+        Assert.Contains("2.0.0", File.ReadAllText(Path.Combine(root, "apps", "lock-app", "package-lock.json")))
+
+    [<Then>]
+    member _.``the regenerated package-lock.json is staged``() =
+        let staged = runFixtureGit [ "diff"; "--cached"; "--name-only" ]
+        Assert.Contains("apps/lock-app/package-lock.json", staged.Stdout)
+
+    [<Then>]
+    member _.``the commit proceeds with both files in the same commit``() =
+        let staged = runFixtureGit [ "diff"; "--cached"; "--name-only" ]
+        Assert.Contains("apps/lock-app/package.json", staged.Stdout)
+        Assert.Contains("apps/lock-app/package-lock.json", staged.Stdout)
+
+    [<Given>]
+    member _.``a staged package.json matches package-lock.json``() =
+        initGit ()
+        write "apps/lock-app/package.json" "{\"name\":\"lock-app\",\"version\":\"2.0.0\"}\n"
+
+        write
+            "apps/lock-app/package-lock.json"
+            "{\"name\":\"lock-app\",\"version\":\"2.0.0\",\"packages\":{\"\":{\"name\":\"lock-app\",\"version\":\"2.0.0\"}}}\n"
+
+        write
+            "repo-config.yml"
+            (config (
+                gate "lockfile-sync" "mutation" "git lockfile sync" "rhino-cli" "      pre-commit: { scope: other }\n"
+                + "    restages: true\n"
+            ))
+
+        stage [ "apps/lock-app/package.json" ]
+
+    [<Then>]
+    member _.``package-lock.json is unchanged``() =
+        Assert.True(isSuccess (), sprintf "lockfile gate failed: %s" output)
+        Assert.Contains("2.0.0", File.ReadAllText(Path.Combine(root, "apps", "lock-app", "package-lock.json")))
+
+    [<Then>]
+    member _.``nothing additional is staged``() =
+        let staged = runFixtureGit [ "diff"; "--cached"; "--name-only" ]
+        Assert.Equal("apps/lock-app/package.json\n", staged.Stdout)
+
 module private FeatureRunner =
 
     let private featurePath: string =
@@ -1426,6 +1510,31 @@ module private FeatureRunner =
         let feature = definitions.GenerateFeature(featurePath, snippet)
         let scenario = Seq.exactlyOne feature.Scenarios
         scenario.Action.Invoke()
+
+    /// The two `gate-declaration.feature` lockfile-sync scenarios exercise
+    /// `gate run` and so need this file's subprocess-spawning harness, but
+    /// their Gherkin lives in a different feature file than the one `run`
+    /// above reads from.
+    let runFrom (otherFeaturePath: string) (scenarioTitle: string) : unit =
+        let allLines = File.ReadAllLines otherFeaturePath
+        let snippet = extractScenario allLines scenarioTitle
+        let definitions = StepDefinitions([| typeof<GateExecutionSteps> |])
+        let feature = definitions.GenerateFeature(otherFeaturePath, snippet)
+        let scenario = Seq.exactlyOne feature.Scenarios
+        scenario.Action.Invoke()
+
+    let gateDeclarationFeaturePath: string =
+        Path.Combine(
+            repoRoot,
+            "specs",
+            "apps",
+            "rhino",
+            "behavior",
+            "rhino-cli",
+            "gherkin",
+            "gate",
+            "gate-declaration.feature"
+        )
 
 [<Fact>]
 let ``Rhino CLI kind receives derived files`` () =
@@ -1546,3 +1655,15 @@ let ``Rust CI target families run serially`` () =
 [<Fact>]
 let ``The MSRV pre-install covers the toolchain name cargo-hack requests`` () =
     FeatureRunner.run "The MSRV pre-install covers the toolchain name cargo-hack requests"
+
+[<Fact>]
+let ``lockfile-sync regenerates the lockfile and restages it`` () =
+    FeatureRunner.runFrom
+        FeatureRunner.gateDeclarationFeaturePath
+        "lockfile-sync regenerates the lockfile and restages it"
+
+[<Fact>]
+let ``lockfile-sync is a no-op when the lockfile is already current`` () =
+    FeatureRunner.runFrom
+        FeatureRunner.gateDeclarationFeaturePath
+        "lockfile-sync is a no-op when the lockfile is already current"
