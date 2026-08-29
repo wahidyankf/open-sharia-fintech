@@ -910,7 +910,7 @@ job's own guard, and the `has-ts`/`has-rust` analogy comment — reworded to `ha
 retained for the 198 course-example files) and zero `has-rust`/`clippy` occurrences. `actionlint`
 exits 0 on every touched workflow file.
 
-## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real (but non-reproducing) test failure
+## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real `GATE_CHANGED_BASE` leak bug
 
 **SDK drift**: `apps/rhino-cli/global.json` pins `10.0.204`; the local dev machine has `10.0.300`
 installed; `.github/actions/setup-dotnet/action.yml` resolves the floating channel `10.0.x` via
@@ -958,12 +958,53 @@ second **fresh** rerun (no `--failed`, forcing a new `build-rhino` artifact) of 
 passed. Two independent fresh builds, zero reproductions; the earlier "two failures" was one real
 failure plus one artifact-reuse replay of it. The diagnostic commit was reverted
 (`git revert --no-edit`, verified byte-identical to the pre-diagnostic tree via
-`git diff <before> <after>` returning empty) rather than kept, since there was nothing left to
-diagnose.
+`git diff <before> <after>` returning empty) rather than kept, since there appeared to be nothing
+left to diagnose — that verdict, written up as "CI-runner-level flakiness, no root-cause fix
+needed" and committed to this file, was **wrong**: the very next CI run on that same "nothing to
+fix" commit failed again with the identical symptom, proving the bug was real and genuinely
+intermittent rather than an artifact-reuse mirage. General lesson —
+[[feedback_verify_before_asserting_state]]: two clean fresh reruns is weak evidence for an
+intermittent failure; treat an unreproduced CI-only failure as unresolved, not disproven, until the
+mechanism is understood, not merely until reruns stop failing.
 
-**Conclusion**: treated as CI-runner-level flakiness in the same class as this repo's other
-documented CI-only flakes (`feedback_nx_flaky_warm_cache_commit.md`,
-`project_ci_rustup_concurrency_race.md`), not a defect in the F# port — no skip/xfail was applied
-(the test is unchanged from its original, fully-asserting form), no root-cause fix was needed in
-`Gate.fs`, and the only lasting artifacts of this investigation are this entry and the corrected
-understanding of `gh run rerun --failed`'s artifact-reuse semantics for future incidents.
+The diagnostic was re-applied and progressively enriched (full pipeline trace across `runGit`,
+`changedPathsFromBase`, `mergeBasePaths`, and `changedPaths`, gated behind a
+`RHINO_GATE_TRIGGER_DEBUG=1` env toggle so it wouldn't pollute other tests' output) and captured a
+real failure on the next CI run. Root cause: `.github/workflows/pr-quality-gate.yml` sets
+`GATE_CHANGED_BASE` in the workflow-level `env:` block
+(`format('origin/{0}', github.base_ref)` on `pull_request` events) — a GitHub Actions
+workflow-level `env:` block applies to **every** job and step in the workflow, not just the
+`gate run --surface=ci` call sites it was written for. That makes `GATE_CHANGED_BASE=origin/main`
+ambiently present in the `.NET quality gate` job's `dotnet test` invocation too. The
+`GateExecutionSteps` fixture for this scenario deliberately creates a branch named `origin/main` as
+test setup, so `commitResolves repoRoot "origin/main"` spuriously succeeds inside the test's own
+sandboxed repo. `changedPaths`'s `PrePush` dispatch read this CI-only env var unconditionally
+regardless of surface, so `explicitBase` resolved to `Some "origin/main"` and the match fell into
+the `Ci`-shaped `changedPathsFromBase` path — using a "changed vs. `origin/main`" diff instead of
+the `PrePush`-correct `mergeBasePaths` — which found no changed paths for the deletion-only trigger
+and the gate silently skipped. Whether this happened on a given CI run depended on runner
+env-var propagation timing/caching, which is why it looked intermittent rather than deterministic.
+
+Confirmed with an on-demand **local** reproduction (no CI cycle needed): exporting the same variable
+before running the exact test reproduces the failure byte-for-byte —
+
+```bash
+GATE_CHANGED_BASE=origin/main dotnet test \
+  apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj \
+  --filter "FullyQualifiedName~GateExecutionSteps"
+```
+
+**Fix** (commit `608b3895b`): `changedPaths` in `Gate.fs` now only consults `GATE_CHANGED_BASE` for
+the `Ci` surface; `PrePush` always falls through to `mergeBasePaths` regardless of whether that env
+var happens to be set in the ambient environment. This is a genuine correctness/safety gap beyond
+the CI symptom: any developer or script with `GATE_CHANGED_BASE` left over in their shell (e.g.
+copy-pasted while debugging CI) would have had `rhino-cli gate run --surface=pre-push` silently skip
+every path-gated gate, with no error or warning.
+
+**Conclusion**: real defect in `Gate.fs`, not flakiness — fixed at the root cause. No skip/xfail was
+applied (the test is unchanged from its original, fully-asserting form). Verified locally before
+pushing: full 1204-test suite green, fantomas clean, fsharplint clean, and the leak scenario
+re-tested both with and without the simulated ambient `GATE_CHANGED_BASE` present. Lasting
+artifacts: this entry, the `changedPaths` surface-scoping fix, and the corrected understanding of
+both `gh run rerun --failed`'s artifact-reuse semantics and workflow-level `env:` blocks' blast
+radius for future incidents.
