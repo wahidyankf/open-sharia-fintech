@@ -8,7 +8,10 @@
 /// envelopes are a CLI-output concern.
 module RhinoCli.Cli.Gate
 
+open System
+open System.IO
 open System.Text.Json
+open System.Text.Json.Nodes
 open System.Text.Json.Serialization
 open System.Text.Encodings.Web
 open RhinoCli.Domain.Types
@@ -245,3 +248,180 @@ let listAtRoot
                                 carveOut)
                         |> String.concat ""
                         |> Ok
+
+/// The lightweight resolver shim generated `rhino-cli`-kind commands invoke
+/// instead of a `cargo run` invocation, whose invocation-check tax every
+/// hook/gate call would otherwise pay
+/// [Repo-grounded — `gate/emit.rs::RHINO_CLI_RESOLVER_SHIM`].
+let rhinoCliResolverShim = "apps/rhino-cli/scripts/rhino-bin.sh"
+
+/// Splits a command string into its leading whitespace-delimited token and
+/// the whitespace-trimmed remainder
+/// [Repo-grounded — `gate/emit.rs::split_leading_token`].
+let private splitLeadingToken (command: string) : string * string =
+    match command |> Seq.tryFindIndex Char.IsWhiteSpace with
+    | None -> command, ""
+    | Some index -> command.Substring(0, index), command.Substring(index + 1).TrimStart()
+
+/// Rewrites a node-resolved gate's command to invoke its tool through the
+/// repository-local `node_modules/.bin` directory instead of `npx`, whose own
+/// resolution/download check runs even when the package is installed
+/// [Repo-grounded — `gate/emit.rs::node_modules_bin_command`].
+let private nodeModulesBinCommand (command: string) : string =
+    let rec skipNpxFlags (arguments: string) : string * string =
+        let nextTool, nextArguments = splitLeadingToken arguments
+
+        if nextTool.StartsWith("-", StringComparison.Ordinal) then
+            skipNpxFlags nextArguments
+        else
+            nextTool, nextArguments
+
+    let leadingTool, leadingArguments = splitLeadingToken command
+
+    let tool, arguments =
+        if leadingTool = "npx" then
+            skipNpxFlags leadingArguments
+        else
+            leadingTool, leadingArguments
+
+    if arguments = "" then
+        sprintf "node_modules/.bin/%s" tool
+    else
+        sprintf "node_modules/.bin/%s %s" tool arguments
+
+/// Whether a `kind: external` gate resolves its tool from this repository's
+/// `node_modules` rather than a system `PATH` binary, signalled by the
+/// registry's existing `doctor-tools: [npm]` declaration
+/// [Repo-grounded — `gate/emit.rs::is_node_resolved`].
+let private isNodeResolved (gate: GateEntry) : bool = gate.DoctorTools |> List.contains "npm"
+
+/// Quotes one generated argument for lint-staged's POSIX-shell command
+/// string, keeping configuration values literal
+/// [Repo-grounded — `gate/emit.rs::shell_quote`].
+let private shellQuote (argument: string) : string =
+    let escaped =
+        argument.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("$", "\\$").Replace("`", "\\`")
+
+    sprintf "\"%s\"" escaped
+
+/// Quotes a whole script for `bash -c`, retaining literal shell expansion
+/// inside it [Repo-grounded — `gate/emit.rs::shell_script_quote`].
+let private shellScriptQuote (script: string) : string =
+    sprintf "'%s'" (script.Replace("'", "'\"'\"'"))
+
+/// Renders a registry command with its fixed arguments for a generated shell
+/// command [Repo-grounded — `gate/emit.rs::command_with_fixed_arguments`].
+let private commandWithFixedArguments (gate: GateEntry) : string =
+    let command =
+        match gate.Kind with
+        | RhinoCli -> sprintf "%s %s" rhinoCliResolverShim gate.Command
+        | External when isNodeResolved gate -> nodeModulesBinCommand gate.Command
+        | External
+        | Nx -> gate.Command
+
+    match fixedArguments gate with
+    | [] -> command
+    | arguments ->
+        let quoted =
+            arguments
+            |> List.mapi (fun index argument -> if index % 2 = 0 then argument else shellQuote argument)
+            |> String.concat " "
+
+        sprintf "%s %s" command quoted
+
+/// Whether a pre-commit file-scoped gate belongs in lint-staged's one batch:
+/// formatter mutations run inside it so their output reaches later
+/// validators, while other mutations stay direct hook work
+/// [Repo-grounded — `gate/emit.rs::is_lint_staged_eligible`].
+let private isLintStagedEligible (gate: GateEntry) : bool =
+    gate.GateType = Check
+    || (gate.GateType = Mutation && gate.Category = Some "formatter")
+
+/// Renders one gate as the command lint-staged must execute for its glob
+/// [Repo-grounded — `gate/emit.rs::lint_staged_command`].
+let private lintStagedCommand (gate: GateEntry) (scope: SurfaceScope) : string =
+    let command = commandWithFixedArguments gate
+
+    match scope.LintStagedShell with
+    | None -> command
+    | Some template ->
+        let body =
+            match template.IndexOf("{{command}}", StringComparison.Ordinal) with
+            | -1 -> template
+            | at ->
+                template.Substring(0, at)
+                + command
+                + template.Substring(at + "{{command}}".Length)
+
+        sprintf "bash -c %s --" (shellScriptQuote body)
+
+/// Derives the `lint-staged` block from pre-commit affected-file gates,
+/// keeping each glob's first-occurrence order rather than sorting: that order
+/// is the generated artifact's declaration-order contract
+/// [Repo-grounded — `gate/emit.rs::lint_staged_from_config`].
+let lintStagedFromConfig (config: RepoConfig) : (string * string list) list =
+    let addCommand (acc: (string * string list) list) (glob: string) (command: string) =
+        if acc |> List.exists (fun (declared, _) -> declared = glob) then
+            acc
+            |> List.map (fun (declared, commands) ->
+                if declared = glob then
+                    declared, commands @ [ command ]
+                else
+                    declared, commands)
+        else
+            acc @ [ glob, [ command ] ]
+
+    config.Gates
+    |> List.fold
+        (fun acc gate ->
+            let preCommit =
+                gate.Surfaces
+                |> List.tryPick (fun (surface, scope) -> if surface = PreCommit then Some scope else None)
+
+            match preCommit with
+            | Some scope when scope.Scope = AffectedFileType && isLintStagedEligible gate ->
+                let command = lintStagedCommand gate scope
+
+                Option.toList scope.Glob @ scope.Globs
+                |> List.fold (fun acc glob -> addCommand acc glob command) acc
+            | _ -> acc)
+        []
+
+/// Emits the configured gate surface into its generated artifact at a known
+/// repository root [Repo-grounded — `gate/emit.rs::emit_at_root`].
+let emitAtRoot (repoRoot: string) (surface: string) : Result<string, string> =
+    if surface <> "pre-commit" then
+        Error "gate emit currently supports only surface pre-commit"
+    else
+        match load repoRoot with
+        | Error message -> Error message
+        | Ok config ->
+            let packagePath = Path.Combine(repoRoot, "package.json")
+
+            try
+                let node = JsonNode.Parse(File.ReadAllText packagePath)
+
+                match node with
+                | :? JsonObject as package ->
+                    let block = JsonObject()
+
+                    for glob, commands in lintStagedFromConfig config do
+                        let array = JsonArray()
+
+                        for command in commands do
+                            array.Add(JsonValue.Create command)
+
+                        block.Add(glob, array)
+
+                    // Marker-first: replacing an existing key in place keeps
+                    // its position, so re-emitting is byte-identical.
+                    if package.ContainsKey "lint-staged" then
+                        package.["lint-staged"] <- block
+                    else
+                        package.Add("lint-staged", block)
+
+                    File.WriteAllText(packagePath, package.ToJsonString jsonOptions + "\n")
+                    Ok "Emitted lint-staged from gate surface pre-commit\n"
+                | _ -> Error "package.json must contain a JSON object"
+            with ex ->
+                Error(sprintf "cannot read %s: %s" packagePath ex.Message)

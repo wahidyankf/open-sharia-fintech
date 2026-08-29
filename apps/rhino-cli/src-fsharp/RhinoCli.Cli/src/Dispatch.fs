@@ -35,6 +35,15 @@ let private parseOutputFormat (args: string list) : Result<OutputFormat, string>
     | Some "markdown" -> Ok Markdown
     | Some other -> Error(sprintf "unknown output format \"%s\": must be text, json, or markdown" other)
 
+/// Parses one `--format` value [Repo-grounded — `domain/cliout.rs::parse`].
+let private parseOutputFormatValue (value: string) : Result<OutputFormat, string> =
+    match value with
+    | ""
+    | "text" -> Ok Text
+    | "json" -> Ok Json
+    | "markdown" -> Ok Markdown
+    | other -> Error(sprintf "unknown output format \"%s\": must be text, json, or markdown" other)
+
 /// `true` when any of `names` appears verbatim in `args` — a bare boolean
 /// flag such as `--force`/`-f`.
 let private hasFlag (names: string list) (args: string list) : bool =
@@ -1376,6 +1385,48 @@ let private runGitLockfileSyncLeaf (repoRoot: string) : int =
         eprintfn "Error: %s" message
         1
 
+/// Reads a `--flag=value` long option out of a leaf's remaining arguments.
+let private longOptionValue (name: string) (args: string list) : string option =
+    let prefix = sprintf "--%s=" name
+
+    args
+    |> List.tryPick (fun arg ->
+        if arg.StartsWith(prefix, StringComparison.Ordinal) then
+            Some(arg.Substring prefix.Length)
+        else
+            None)
+
+/// `gate list` [Repo-grounded — `commands/gate/list.rs::run`].
+let private runGateListLeaf (repoRoot: string) (args: string list) : int =
+    let surface = longOptionValue "surface" args |> Option.defaultValue ""
+
+    let requested = longOptionValue "format" args |> Option.defaultValue "text"
+
+    match parseOutputFormatValue requested with
+    | Error message ->
+        eprintfn "Error: %s" message
+        1
+    | Ok format ->
+        match Gate.listAtRoot repoRoot surface format (List.contains "--by-group" args) with
+        | Ok output ->
+            printf "%s" output
+            0
+        | Error message ->
+            eprintfn "Error: %s" message
+            1
+
+/// `gate emit` [Repo-grounded — `commands/gate/emit.rs::run`].
+let private runGateEmitLeaf (repoRoot: string) (args: string list) : int =
+    let surface = longOptionValue "surface" args |> Option.defaultValue ""
+
+    match Gate.emitAtRoot repoRoot surface with
+    | Ok output ->
+        printf "%s" output
+        0
+    | Error message ->
+        eprintfn "Error: %s" message
+        1
+
 /// `md audit` [Repo-grounded — `md_audit.rs::run`]. Each member prints its
 /// own format-rendered output as it runs — exactly like `convention audit`
 /// composes `emoji`/`license` — then the aggregate PASSED/FAILED banner is
@@ -2701,7 +2752,9 @@ let private routeTable: (string list * string) list =
       [ "harness"; "catalog"; "validate" ], "harness-catalog-validate"
       [ "harness"; "audit" ], "harness-audit"
       [ "specs"; "e2e-coverage"; "validate" ], "specs-e2e-coverage-validate"
-      [ "specs"; "audit" ], "specs-audit" ]
+      [ "specs"; "audit" ], "specs-audit"
+      [ "gate"; "list" ], "gate-list"
+      [ "gate"; "emit" ], "gate-emit" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,
 /// paired with the arguments left after that prefix — the data-driven
@@ -2821,6 +2874,8 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "governance-readme-index-validate" -> runGovernanceReadmeIndexValidateLeaf repoRoot format rest
                     | "governance-readme-index-generate" -> runGovernanceReadmeIndexGenerateLeaf repoRoot format rest
                     | "git-lockfile-sync" -> runGitLockfileSyncLeaf repoRoot
+                    | "gate-list" -> runGateListLeaf repoRoot rest
+                    | "gate-emit" -> runGateEmitLeaf repoRoot rest
                     | "repo-governance-vendor-validate" -> runRepoGovernanceVendorValidateLeaf repoRoot format rest
                     | "repo-governance-layer-coherence-validate" ->
                         runRepoGovernanceLayerCoherenceValidateLeaf repoRoot format

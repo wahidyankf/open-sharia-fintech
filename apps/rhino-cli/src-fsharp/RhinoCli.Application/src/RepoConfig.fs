@@ -172,6 +172,17 @@ let doctorToolInventory: string list =
       "tofu"
       "clang-format" ]
 
+/// Flattens a gate's declared `args` map into the ordered `--key value`
+/// argument list a generated command appends
+/// [Repo-grounded — `repo_config/mod.rs::fixed_arguments`].
+///
+/// Rust holds `args` in a `BTreeMap`, so iteration is by key; F#'s `Map` is
+/// ordered the same way.
+let fixedArguments (gate: GateEntry) : string list =
+    gate.Args
+    |> Map.toList
+    |> List.collect (fun (key, values) -> values |> List.collect (fun value -> [ sprintf "--%s" key; value ]))
+
 /// The `doctor:` section, trimmed to the .NET SDK path scenario's field plus
 /// `skip-tools` (needed by
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s "A
