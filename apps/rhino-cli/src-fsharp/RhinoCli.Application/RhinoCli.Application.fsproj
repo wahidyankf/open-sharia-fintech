@@ -21,6 +21,7 @@
     <Compile Include="src/Governance.fs" />
     <Compile Include="src/Git.fs" />
     <Compile Include="src/Harness.fs" />
+    <Compile Include="src/Specs.fs" />
   </ItemGroup>
 
   <ItemGroup>
