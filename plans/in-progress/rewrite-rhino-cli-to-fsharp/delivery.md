@@ -9731,7 +9731,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
@@ -9745,17 +9745,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And an undeclared directory appearing under .agents/skills/ with no .claude/skills/ counterpart makes rhino-cli harness bindings validate exit non-zero, where an ownership heuristic would have silently deleted it instead
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
@@ -9769,17 +9769,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And every vendored directory is still present, proving cleanup is scoped to emitter-owned paths
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
@@ -9792,17 +9792,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the run fails loudly instead of deleting the directory the ownership record protects
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Harness` does not implement it.
@@ -9815,12 +9815,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then the run fails loudly instead of deleting the real directory the typo'd entry was meant to protect
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Harness.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Harness.fs` formats no output itself.
