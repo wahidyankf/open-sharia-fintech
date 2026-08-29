@@ -372,4 +372,4 @@ cargo deny check
 
 **Maintainers**: Platform Documentation Team
 
-**Rust Version**: MSRV declared in [`apps/rhino-cli/Cargo.toml`](../../../../../apps/rhino-cli/Cargo.toml); Edition 2024
+**Rust Version**: MSRV declared via the crate's `rust-version` field in `Cargo.toml`; Edition 2024
