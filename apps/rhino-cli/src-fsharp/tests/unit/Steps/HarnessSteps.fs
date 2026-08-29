@@ -2747,6 +2747,65 @@ type HarnessSteps() =
             sprintf "every brief must be linked exactly once at its quadrant-matching path, offenders %A" unlinked
         )
 
+    // ---- @opencode-skills-removal ----
+
+    [<Given>]
+    member _.``the repository tracks no file under .opencode/skills/ or .opencode/commands/``() =
+        let count =
+            trackedFileCount ".opencode/skills" + trackedFileCount ".opencode/commands"
+
+        Assert.Equal(0, count)
+
+    [<When>]
+    member _.``the governance-word-budget gate exclude list is read``() = ()
+
+    [<Then>]
+    member _.``neither tree exists as a directory in the working tree``() =
+        for tree in [ ".opencode/skills"; ".opencode/commands" ] do
+            Assert.False(Directory.Exists(Path.Combine(repositoryRoot, tree)), sprintf "%s must not exist" tree)
+
+    [<Then>]
+    member _.``neither prefix remains in the governance-word-budget gate exclude list``() =
+        let now = File.ReadAllText(Path.Combine(repositoryRoot, "repo-config.yml"))
+        Assert.DoesNotContain(".opencode/skills/", now)
+        Assert.DoesNotContain(".opencode/commands/", now)
+
+    [<Then>]
+    member _.``rhino-cli governance word-budget validate exits 0, proving the exclusions were removed because the trees are gone rather than because coverage was weakened``
+        ()
+        =
+        let category = Harness.runRepoGovernanceAuditWordBudgetCategory repositoryRoot
+        Assert.True(category.Passed, "word-budget validate must pass")
+
+    [<Given>]
+    member _.``OpenCode does not read Claude Code plugins and no nx-mcp equivalent covers the gap for OpenCode``() = ()
+
+    [<When>]
+    member _.``the deletion lands``() = ()
+
+    [<Then>]
+    member _.``the platform-bindings catalog records the removal as a deliberate accepted capability loss naming the lost Nx skills and the monitor-ci command``
+        ()
+        =
+        let catalog =
+            File.ReadAllText(Path.Combine(repositoryRoot, "docs", "reference", "platform-bindings.md"))
+
+        Assert.Contains("capability loss", catalog)
+        Assert.Contains("monitor-ci", catalog)
+        Assert.Contains("Nx skill", catalog)
+        Assert.Contains("nx-mcp", catalog)
+
+    [<Then>]
+    member _.``no document describes the change as routine cleanup``() =
+        let catalog =
+            File.ReadAllText(Path.Combine(repositoryRoot, "docs", "reference", "platform-bindings.md"))
+
+        for line in catalog.Split('\n') do
+            let lower = line.ToLowerInvariant()
+
+            if lower.Contains("cleanup") then
+                Assert.Contains("not a cleanup", lower)
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -2861,6 +2920,10 @@ module private FeatureRunner =
     /// Runs one scenario of `opencode-conformance.feature`.
     let runOpencodeConformance (scenarioTitle: string) : unit =
         runIn "opencode-conformance.feature" scenarioTitle
+
+    /// Runs one scenario of `opencode-skills-removal.feature`.
+    let runOpencodeSkillsRemoval (scenarioTitle: string) : unit =
+        runIn "opencode-skills-removal.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -3129,3 +3192,11 @@ let ``The stale upstream repository citation is corrected`` () =
 [<Fact>]
 let ``A rename set filed as an idea stays an idea, linked from its own quadrant`` () =
     FeatureRunner.runOpencodeConformance "A rename set filed as an idea stays an idea, linked from its own quadrant"
+
+[<Fact>]
+let ``Both trees are gone and their word-budget exclusions with them`` () =
+    FeatureRunner.runOpencodeSkillsRemoval "Both trees are gone and their word-budget exclusions with them"
+
+[<Fact>]
+let ``The capability loss is recorded, not silent`` () =
+    FeatureRunner.runOpencodeSkillsRemoval "The capability loss is recorded, not silent"

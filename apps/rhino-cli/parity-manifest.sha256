@@ -27,7 +27,7 @@ ea9c28fc3b1c41add46abd4de607b27e0b3b985b0d9825ad6763e2341892f91a  apps/rhino-cli
 631376afb9e4d7c5192d38f51b533c18b64cca83c18ed5c50982ba9acce51d74  apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj
 153a226f5ef1d6916aa6e6425b278a606a48659fcba9623c9d01e5cf3b2589a5  apps/rhino-cli/src-fsharp/RhinoCli.Program/src/Program.fs
 822f6ec8446562a4de9a3b1a2481af50fac01bbedc32e1963142709e5f48ec13  apps/rhino-cli/src-fsharp/fsharplint.json
-aa527b2963dabe0043426118faaa88f7c71dac505c34dc9cb2f1411cc88d48f2  apps/rhino-cli/src-fsharp/project.json
+7a46dd7811585823e302d8358931c025b37eaae4c9b648268b5c84940ff01890  apps/rhino-cli/src-fsharp/project.json
 aca5d109fdc277b6f4c6695a1265b163fac319b66d6201b32b85e5571a29d3ea  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 51bbb1298cd542e36b0f98320c3ef762d37f78e5fca2a7889c66811a4110c277  apps/rhino-cli/src-fsharp/tests/integration/Steps/PreCommitHookSteps.fs
 21110c52ad9693e9a265c3fbf34888b6e1dabee66d8857c3978cb8b49ad4277d  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
@@ -57,7 +57,7 @@ df2d2403e3dbf9b7cde5eae9ff273fb26d62ee0841ba72bbbf81c91ed8c8527d  apps/rhino-cli
 413baab2577c13102e7eb36979cbea9d75735929a5c429591a05ca85cf69cbec  apps/rhino-cli/src-fsharp/tests/unit/Steps/GitRootUnitTests.fs
 f8001cb2ebc6ae2184962f56d8224caacdc67d1ae6647b32960c092972b21eba  apps/rhino-cli/src-fsharp/tests/unit/Steps/GitSteps.fs
 88973990d3cb584c6da4769af25e9a202fc5d66a1fc04bfc82f1aeaecf6c48fb  apps/rhino-cli/src-fsharp/tests/unit/Steps/GovernanceSteps.fs
-0dddb1a9b97e5534ae564510c09de98458bfc8aa02250208cac1a5482c924a3a  apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs
+26a7d3e3b8839e8b831b14f9fd02f192347133e16b2ad641f530264fc80a1167  apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs
 ce3648b4a6ac559165835f8b002237a497b7cfd59622a608613b56902838c7ae  apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessUnitTests.fs
 ae657d69f14610a7fa31ea57a6e3e24b74961a8ea3da944ad96b409c232c4c67  apps/rhino-cli/src-fsharp/tests/unit/Steps/MdSteps.fs
 b8a8fbf79e78dee93f32944d3bbae2daccf33876ce5988ae31b1259c2f5ce201  apps/rhino-cli/src-fsharp/tests/unit/Steps/ParityUnitTests.fs
