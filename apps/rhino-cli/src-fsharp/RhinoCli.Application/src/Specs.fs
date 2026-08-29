@@ -2,7 +2,10 @@
 /// [Repo-grounded — `apps/rhino-cli/src/application/behavior_coverage/types.rs`,
 /// `apps/rhino-cli/src/application/behavior_coverage/validator.rs`] for
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/behavior-coverage.feature`'s
-/// 6 scenarios.
+/// 6 scenarios, plus the `domain/**`-scoped allowlist gate
+/// [Repo-grounded — `apps/rhino-cli/src/application/domain_coverage/mod.rs`]
+/// for `domain-coverage.feature`'s 2 scenarios, which reuses [`validate`]
+/// rather than duplicating it.
 ///
 /// Scope: this first PR against the `specs` subsystem ports only what
 /// [`validate`] itself needs — [`TestLevel`], [`ScenarioSpec`],
@@ -120,3 +123,16 @@ let validate
                     [])
 
     scenarioViolations @ markerViolations
+
+/// `true` iff `projectName` is listed in `domainAreas`.
+///
+/// A project absent from the allowlist is skipped even if it has `domain/**`
+/// feature files.
+let isEligible (projectName: string) (domainAreas: string list) : bool =
+    domainAreas |> List.contains projectName
+
+/// Returns only those scenarios whose `FeaturePath` contains a `domain`
+/// path component.
+let filterDomainScenarios (scenarios: ScenarioSpec list) : ScenarioSpec list =
+    scenarios
+    |> List.filter (fun s -> s.FeaturePath.Split('/') |> Array.contains "domain")
