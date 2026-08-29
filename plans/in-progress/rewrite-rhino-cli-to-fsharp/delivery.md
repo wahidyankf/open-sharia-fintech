@@ -50,6 +50,16 @@ same mode here for symmetry, since this is not an infrastructure-as-code plan.
 > invocation through `rtk` where applicable. Bare tokens retained below are literal configured
 > commands, search strings, file paths, forbidden examples, or historical evidence—not exceptions
 > to this runtime rule and not targets for mechanical rewriting.
+>
+> **PR-size rule 4's two added-line ceilings are waived for the remainder of this plan** (user
+> directive, 2026-08-29), because per-feature-file PRs were blocking other work. Rule 4 is
+> unenforced by decision — no deterministic gate measures it — so this waiver is a recorded
+> plan-scoped exception only: no `repo-governance/` text changes, and the convention itself is
+> untouched and still binds every other plan. It supersedes the one-PR-per-feature-file seam note
+> under each `####` heading from Wave E's `e2e-coverage.feature` onward — batch into as few PRs as
+> the work allows, so the rest of Wave E lands as one implementation PR plus its integration/flip
+> PR, and Wave F likewise. The 20-file cap, the 300-file machine ceiling, and PR-size rules 1-3
+> remain in force, and every batched PR body discloses this waiver.
 
 ## Parallelization Model
 
@@ -67,22 +77,22 @@ Every change-producing phase appears in exactly one row. Both repositories use t
 name and the same branch per unit; `ose-private` has no plan folder, so its branches carry only the
 implementation change.
 
-| Phase(s) | Delivery unit                                                                 | Worktree                      | Branch                       | PR opens                                                                                                |
-| -------- | ----------------------------------------------------------------------------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| —        | Initial plan documents (#305)                                                 | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                            |
-| 0        | — (baseline and "before" benchmark)                                           | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md) |
-| 1        | `tree-sitter` removal + regenerated manifest                                  | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead             |
-| 2        | Scaffold, dispatch shim, CI wiring                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                        |
-| 3        | Wave A — `convention`, `parity`                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                            |
-| 4        | Wave B — `repo-config`, `env`                                                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                            |
-| 5        | Wave C — `doctor`, `test-coverage`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-c`        | yes — one per feature file, then the flip PR                                                            |
-| 6        | Wave D — `md`, `governance`, `git`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-d`        | yes — one per feature file, then the flip PR                                                            |
-| 7        | Wave E — `harness`, `specs`, `repo-governance`                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-e`        | yes — one per feature file, then the flip PR                                                            |
-| 8        | Wave F — `gate`                                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-f`        | yes — one per feature file, then the flip PR                                                            |
-| 9a-9e    | Retire the Rust crate, then the descriptive doc sweep it stales               | `worktrees/rewrite-rhino-cli` | `rhino-rust-teardown`        | yes — five PRs, in the stated order                                                                     |
-| 10       | The "after" benchmark and comparison                                          | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                       |
-| 11       | Rules propagation (rule-bearing half only — the descriptive half moved to 9e) | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                       |
-| 12       | Knowledge capture and archival                                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                       |
+| Phase(s) | Delivery unit                                                                 | Worktree                      | Branch                       | PR opens                                                                                                               |
+| -------- | ----------------------------------------------------------------------------- | ----------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| —        | Initial plan documents (#305)                                                 | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes — `ose-public` only, under the recorded rule-4 exclusion                                                           |
+| 0        | — (baseline and "before" benchmark)                                           | `worktrees/rewrite-rhino-cli` | —                            | no — [Phase 0 opens no PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md)                |
+| 1        | `tree-sitter` removal + regenerated manifest                                  | `worktrees/rewrite-rhino-cli` | `worktree/rewrite-rhino-cli` | yes, dedicated PR — `ose-private` (#75) only; `ose-public` folded it into this PR † instead                            |
+| 2        | Scaffold, dispatch shim, CI wiring                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-scaffold`      | yes — at Phase 2                                                                                                       |
+| 3        | Wave A — `convention`, `parity`                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-a`        | yes — one per feature file, then the flip PR                                                                           |
+| 4        | Wave B — `repo-config`, `env`                                                 | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-b`        | yes — one per feature file, then the flip PR                                                                           |
+| 5        | Wave C — `doctor`, `test-coverage`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-c`        | yes — one per feature file, then the flip PR                                                                           |
+| 6        | Wave D — `md`, `governance`, `git`                                            | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-d`        | yes — one per feature file, then the flip PR                                                                           |
+| 7        | Wave E — `harness`, `specs`, `repo-governance`                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-e`        | yes — PRs 1-18 one per feature file, the remaining files batched into one PR under the rule-4 waiver, then the flip PR |
+| 8        | Wave F — `gate`                                                               | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-wave-f`        | yes — as few batched PRs as the work allows under the rule-4 waiver, then the flip PR                                  |
+| 9a-9e    | Retire the Rust crate, then the descriptive doc sweep it stales               | `worktrees/rewrite-rhino-cli` | `rhino-rust-teardown`        | yes — five PRs, in the stated order                                                                                    |
+| 10       | The "after" benchmark and comparison                                          | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-benchmark`     | yes — at Phase 10                                                                                                      |
+| 11       | Rules propagation (rule-bearing half only — the descriptive half moved to 9e) | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-rules`         | yes — at Phase 11                                                                                                      |
+| 12       | Knowledge capture and archival                                                | `worktrees/rewrite-rhino-cli` | `rhino-fsharp-archive`       | yes — at Phase 12                                                                                                      |
 
 † As planned, `ose-private` opened a dedicated Phase 1 PR (#75), in the same window as this PR; the
 publish-mode spike itself carries no reviewable change and folds into Phase 2 in both repos. In
