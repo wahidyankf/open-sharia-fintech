@@ -60,6 +60,7 @@
     <Compile Include="Steps/GateEnumerationSteps.fs" />
     <Compile Include="Steps/GateExecutionSteps.fs" />
     <Compile Include="Steps/GateValidationSteps.fs" />
+    <Compile Include="Steps/ParityManifestSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
