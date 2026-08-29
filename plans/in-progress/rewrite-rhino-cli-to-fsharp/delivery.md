@@ -12554,7 +12554,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 - [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
-- [ ] [AI] Land every Wave E change in the `ose-private` worktree, authored there rather than
+- [x] [AI] Land every Wave E change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
@@ -12564,17 +12564,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] All 179 Wave E scenarios pass under
+- [x] [AI] All 179 Wave E scenarios pass under
       `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` reports zero differences in both
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` reports zero differences in both
       repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
       `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
       asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
+- [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
-- [ ] [AI] `benchmark.md` has an `after wave E` row for startup and for pre-commit wall time.
+- [x] [AI] `benchmark.md` has an `after wave E` row for startup and for pre-commit wall time.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
