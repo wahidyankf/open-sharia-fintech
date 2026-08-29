@@ -631,3 +631,48 @@ Net effect: **7 scenarios retire** (1 from `doctor.feature`, 4 from `gate-binary
 `data-driven.feature`. `apps/rhino-cli/scripts/deny-check.sh`'s discovery glob and `Doctor.fs`'s
 hardcoded `apps/rhino-cli/rust-toolchain.toml` rustc-mismatch check both become dead production
 code once 9c/9d land — flagged here for 9c/9d to remove, since 9a's own scope is specs-only.
+
+## 2026-08-29 — Phase 9a follow-up: orphaned Rust cucumber step implementations
+
+9a's retire/rename edits above updated the Gherkin `.feature` files and the F# (TickSpec) step
+definitions, and verified `npx nx run rhino-cli-fsharp:specs:behavior:coverage` (the F#-side
+coverage target) exits 0 with 518 scenarios covered. That verification was incomplete: it never ran
+`npx nx run rhino-cli:specs:behavior:coverage` (the Rust-crate-side coverage target, a distinct
+target backed by a distinct cucumber-rs harness that binds the exact same `.feature` files). 9b's
+first push attempt in both repos failed pre-push with `rhino-cli:test:quick` reporting "Found 22
+orphan step implementation(s)" — Rust `#[given]`/`#[when]`/`#[then]` functions in
+`apps/rhino-cli/tests/{doctor,gate_specs}.rs` whose literal step text no longer matched anything
+after 9a deleted or renamed the corresponding Gherkin steps.
+
+**Root cause**: both the retired-scenario cleanup and the "fix the class not the site" grep-blind-
+spot lesson from 9a's enumeration above applied equally to the Rust side, but only the F# side was
+actually checked. The Rust crate has its own independent cucumber-rs step-definition inventory,
+completely separate from TickSpec's — during this migration's transition period (Rust crate still
+present, deleted only in 9c) every Gherkin-level retire/rename touches **two** step-definition
+surfaces, not one, and both must be swept.
+
+**Fix**: deleted the 22 orphaned step-impl functions plus their exclusively-used `World` struct
+fields and now-dead helper functions (`rhino_bin_shim_path`, `real_prebuilt_rhino_cli`,
+`path_without_cargo_directory`, `RESOLVER_SHIM_PROBE_ARGS`, `step_block`, `run_block`,
+`rust_report_line`), while preserving helpers still shared with retained scenarios (`repo_root`,
+`action_steps`, `run_block_from_step`, `gate_job_block`) — verified by grepping every symbol's full
+caller list before deleting it, not just the deleted function's own body. Also separately caught and
+fixed a related miss: `cargo-target-share.feature`'s renamed step ("Nx launches the dotnet test
+command") only had its F# binding (`DoctorSteps.fs`) updated in 9a; the Rust binding in
+`apps/rhino-cli/tests/cargo_target_share.rs` still carried the old step text and needed the same
+one-line rebind. Both fixes regenerate the parity manifest (all three `.rs` files are inside the
+byte-identity boundary) and are verified via a full local `npx nx run rhino-cli:test:quick` (not
+just the F# target) passing clean in both repos before pushing.
+
+**Compounding navigational error, unrelated to the above**: three consecutive `git push` attempts in
+ose-public silently pushed to the wrong remote ref (`rhino-fsharp-wave-e-p7-17`, an already-merged,
+closed-PR branch left over from an earlier Wave E sub-phase) instead of the actual open-PR branch
+(`rhino-fsharp-wave-e-p7-18`, PR #366) — `git push origin <name>` resolves `<name>` against a
+same-named **local** branch when the working tree is checked out on a _different_ local branch, so
+the stale local branch's old tip kept getting force-published rather than the checked-out HEAD.
+Every pre-push hook run still executed against the correct (checked-out) working tree, so all prior
+verification was valid; only the destination ref was wrong. Caught by `git ls-remote` showing an
+unexpected old SHA after a "completed" push, cross-checked against `gh pr view <number>
+--json headRefName` to find the actual tracked branch name. Lesson: after any push, verify the
+**branch name being pushed matches `git branch --show-current`**, not just that the push exited 0 —
+especially in a repo carrying many old per-sub-phase local branches from the same plan.

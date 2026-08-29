@@ -14975,27 +14975,44 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
 
 ### 9a — Spec disposition for Rust-specific behaviour
 
-- [ ] [AI] Enumerate every scenario whose subject is Rust-specific and therefore has no consumer
+- [x] [AI] Enumerate every scenario whose subject is Rust-specific and therefore has no consumer
       once the crate is gone — start from
       `specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature` and grep the
       whole gherkin tree for `cargo`, `rust`, and `clippy` — acceptance: a per-scenario verdict
       table of _retain_ or _retire_ is written into `learnings.md` with the enumerating command.
-- [ ] [AI] Confirm whether any project outside `apps/rhino-cli` still carries `tag:lang:rust`:
+      Done 2026-08-29: the literal grep missed `gate-binary-resolution.feature`'s 4 scenarios (no
+      literal keyword match), caught by a second broader search
+      (`target/gate|CARGO_TARGET_DIR|ambient sweeper|gate-profile binary|resolver shim|rhino-bin`);
+      verdict table for all 11 candidate scenarios written to `learnings.md`'s
+      "2026-08-29 — Phase 9a" entry.
+- [x] [AI] Confirm whether any project outside `apps/rhino-cli` still carries `tag:lang:rust`:
       `grep -rl '"lang:rust"' --include=project.json .` — acceptance: the result decides every
       _retain_ verdict above, and is recorded rather than assumed.
-- [ ] [AI] Apply the _retire_ verdicts — the second and last of this plan's **two** sanctioned
+      Done: the grep returns only `apps/rhino-cli/project.json` — no other project carries the tag.
+- [x] [AI] Apply the _retire_ verdicts — the second and last of this plan's **two** sanctioned
       edits under `specs/apps/rhino/`, the first being Phase 3's addition of the new `git/` lockfile
       feature file, already on `main` by now — in its own PR with the verdict table in the PR body
       — acceptance:
       `git diff --name-only origin/main -- specs/apps/rhino` lists only the files named in the
       table, and `npx nx run rhino-cli-fsharp:specs:behavior:coverage` exits 0 afterwards.
+      Done: 7 scenarios retired (`gate-binary-resolution.feature` deleted entirely, 2 from
+      `gate-execution.feature`, 1 from `doctor.feature`), 1 scenario renamed
+      (`cargo-target-share.feature`), 1 narrative line reworded (`data-driven.feature`), landed
+      public `e7abc89ca`/private `60b5945bba`; `specs:behavior:coverage` reports 518 scenarios all
+      covered afterwards in both repos. Follow-up gap found and fixed after this PR: 9a's cleanup
+      only updated the F# (TickSpec) step definitions and missed the Rust crate's own cucumber-rs
+      bindings in `apps/rhino-cli/tests/{doctor,gate_specs,cargo_target_share}.rs`, which left 22
+      orphaned step implementations that `rhino-cli:specs:behavior:coverage` (the Rust-crate-side
+      coverage target, distinct from the F# one) correctly flagged once run to completion — fixed
+      in public `11a98f5d1`/`c649ac6d5`, private `c9d821a78a`/`5ae81589a6`; both repos' full
+      `test:quick` (Rust and F# sides) pass clean afterwards.
 
 ### 9b — CI decouple, before anything is deleted
 
 > **PR seam**: this PR touches only `.github/workflows/`. The Rust crate is untouched and still
 > present, so this PR is green on its own and revertible without unwinding anything else.
 
-- [ ] [AI] Remove `cargo build --profile gate` from the `build-rhino` job, leaving only the F#
+- [x] [AI] Remove `cargo build --profile gate` from the `build-rhino` job, leaving only the F#
       publish, and rename the published artifact back to `rhino-cli-gate-binary` so `enumerate`,
       `gate`, and `format` need no edit of their own — acceptance:
       `awk '/^  build-rhino:/{p=1;next} p&&/^  [a-z]/{p=0} p' .github/workflows/pr-quality-gate.yml | grep -c 'cargo build'`
@@ -15007,11 +15024,14 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       documents the `RHINO_CLI_BIN` tier-1-resolution trade-off. That comment is deliberate and no
       step in Phase 9 touches it. A whole-file `returns 0` clause would be unsatisfiable after a
       correct edit, and forcing it to 0 would destroy the provenance rationale.
-- [ ] [AI] Verify the crate is still present and still buildable at this point, because that is what
+      Done: both greps return 0 in both repos; CI's "Build rhino-cli (gate profile)" and "Enumerate
+      registry CI gate groups" jobs pass on public PR #366.
+- [x] [AI] Verify the crate is still present and still buildable at this point, because that is what
       makes this PR safe — acceptance: `test -f apps/rhino-cli/Cargo.toml` succeeds and
       `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml` exits 0 locally, even
       though CI no longer runs it.
-- [ ] [AI] Confirm the `format` job does **not** compile rhino from source, and re-home it only if
+      Done: verified in both repos, exit 0.
+- [x] [AI] Confirm the `format` job does **not** compile rhino from source, and re-home it only if
       it does — acceptance: measured pre-edit, the job already downloads `rhino-cli-gate-binary` and
       its `steps:` block already contains **0** `cargo`, so this step is expected to be a **no-op**
       and must be recorded as one rather than ticked as work.
@@ -15023,13 +15043,25 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       therefore: `awk '/^    steps:/{p=1} p&&/^  [a-z]/{p=0} p'` over the `format` job's line range
       returns 0 for `cargo`, **and** the PR body records whether the step changed anything. A clause
       that passes on an untouched file measures nothing unless the no-op is the recorded finding.
-- [ ] [AI] Prove the decouple is real by deleting `apps/rhino-cli/Cargo.toml` **locally, uncommitted**
+      Done: confirmed no-op in both repos (isolating the `format` job's block first, then applying
+      the `steps:`-scoped awk, returns 0); the only edit `format` needed was the download-artifact
+      rename to `rhino-cli-gate-binary` already covered by the item above.
+- [x] [AI] Prove the decouple is real by deleting `apps/rhino-cli/Cargo.toml` **locally, uncommitted**
       and re-running the workflow's `build-rhino` step logic — acceptance: it still succeeds, which
       is the exact condition 9c depends on; restore the file immediately afterwards. If it fails,
       9c must not open.
-- [ ] [AI] Land 9b in the sibling repository in the same window — acceptance:
+      Done: deleted uncommitted in ose-public, ran `npx nx run rhino-cli-fsharp:build --rid="-r
+  linux-x64"` (the job's now-sole build step) — succeeded; restored via `git checkout --`
+      immediately after.
+- [x] [AI] Land 9b in the sibling repository in the same window — acceptance:
       `rhino-cli-parity-audit.yml` is green in both repos, which it can be here because 9b touches
       nothing inside the `apps/rhino-cli/` parity boundary.
+      Done: `rhino-cli-parity-audit.yml` is a nightly `schedule`-triggered workflow, not PR-gated,
+      so its own future green run is what this clause is about; verified the underlying condition
+      directly instead — `parity manifest validate` passes and the manifest is byte-identical
+      between repos after 9b (and after the 9a-follow-up manifest regen and orphan-step-cleanup
+      commits above). Landed public `6ce8586ed`, private `5dec35a52a` (plus the two follow-up fix
+      commits on each side).
 
 ### 9c — Delete the crate and rewire the Nx project
 
