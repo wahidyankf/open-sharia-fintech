@@ -10026,7 +10026,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 
 > **PR seam**: the cycles under this heading are one PR.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10041,17 +10041,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports 2 declared-but-unbound scenarios all covered by the baseline
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10067,17 +10067,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it does not report scenario "A" as a new gap
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10092,17 +10092,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports scenario "B" as newly bound relative to the baseline
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10117,17 +10117,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports scenario "B" as a stale baseline entry that can be pruned
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10142,17 +10142,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it does not report the @unit-only scenario as an unbound gap
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10167,17 +10167,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports exactly one new unbound scenario for the outline
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10192,17 +10192,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports exactly one new unbound scenario for the zero-row outline
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10217,17 +10217,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then every scenario nested under the skipped Rule is reported as unbound
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10240,17 +10240,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       Then every scenario in the file is reported as unbound
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10265,17 +10265,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports exactly one new unbound scenario for the apostrophe-bearing title
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10290,17 +10290,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And the failure output states the delta is an increase of 1 over baseline
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10315,17 +10315,17 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And a subsequent validate run for that project passes with exit code 0
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
 
-- [ ] [AI] **RED**: Add the step definitions for this scenario in
+- [x] [AI] **RED**: Add the step definitions for this scenario in
       `apps/rhino-cli/src-fsharp/tests/unit/Steps/SpecsSteps.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario fails because `RhinoCli.Application.Specs` does not implement it.
@@ -10339,12 +10339,12 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       And it reports that bddgen output was not found and must be generated first
   ```
 
-- [ ] [AI] **GREEN**: Implement only what this scenario requires in
+- [x] [AI] **GREEN**: Implement only what this scenario requires in
       `apps/rhino-cli/src-fsharp/RhinoCli.Application/Specs.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: this scenario passes and no previously passing scenario breaks.
 
-- [ ] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
+- [x] [AI] **REFACTOR**: Fold any duplication this cycle introduced into
       `apps/rhino-cli/src-fsharp/RhinoCli.Domain/Finding.fs`
       — command: `dotnet test apps/rhino-cli/src-fsharp/tests/unit`
       — acceptance: all tests still pass and `Specs.fs` formats no output itself.
