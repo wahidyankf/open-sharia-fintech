@@ -589,14 +589,12 @@ type GateExecutionSteps() =
 
     [<When>]
     member _.``the path-gated gate evaluates its trigger``() =
-        let args = [ "gate"; "run"; "--surface=pre-push"; "--only=path-gated-check" ]
-
-        recordRun (run prebuiltFsharpCli.Value args root (fixtureEnv [ "RHINO_GATE_TRIGGER_DEBUG", "1" ]))
+        runGate "pre-push" (Some "path-gated-check")
 
     [<Then>]
     member _.``the gate still runs because trigger matching is unaffected by on-disk existence``() =
         Assert.True(isSuccess (), sprintf "path-gated gate failed: %s" output)
-        Assert.True(File.Exists(Path.Combine(root, "was-run.txt")), sprintf "was-run.txt missing; output=%s" output)
+        Assert.True(File.Exists(Path.Combine(root, "was-run.txt")))
 
     // --- External kind resolves a repository-local binary -------------------
 

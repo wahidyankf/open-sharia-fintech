@@ -433,9 +433,6 @@ let emitAtRoot (repoRoot: string) (surface: string) : Result<string, string> =
 /// [Repo-grounded — `gate/run.rs::GATE_CHANGED_BASE_ENV`].
 let private gateChangedBaseEnv = "GATE_CHANGED_BASE"
 
-let private debugTrigger: bool =
-    Environment.GetEnvironmentVariable "RHINO_GATE_TRIGGER_DEBUG" = "1"
-
 /// Source of candidate paths used by a gate scope
 /// [Repo-grounded — `gate/run.rs::CandidateScope`].
 type private CandidateScope =
@@ -576,18 +573,8 @@ let private runGit (repoRoot: string) (removeGitEnv: bool) (arguments: string li
 
     use proc = Process.Start psi
     let stdout = proc.StandardOutput.ReadToEnd()
-    let stderr = proc.StandardError.ReadToEnd()
+    proc.StandardError.ReadToEnd() |> ignore
     proc.WaitForExit()
-
-    if debugTrigger then
-        eprintfn
-            "DEBUG runGit repoRoot=%s removeGitEnv=%b args=%A exit=%d stdout=%A stderr=%A"
-            repoRoot
-            removeGitEnv
-            arguments
-            proc.ExitCode
-            stdout
-            stderr
 
     proc.ExitCode = 0, stdout.Split('\n') |> Array.filter (fun line -> line <> "") |> Array.toList
 
@@ -603,16 +590,8 @@ let private commitResolves (repoRoot: string) (rev: string) : bool =
 /// [Repo-grounded — `gate/run.rs::changed_paths_from_base`].
 let private changedPathsFromBase (repoRoot: string) (baseRev: string) (label: string) : Result<string list, string> =
     match runGit repoRoot false [ "diff"; "--name-only"; baseRev.Trim(); "HEAD" ] with
-    | true, lines ->
-        if debugTrigger then
-            eprintfn "DEBUG changedPathsFromBase base=%s label=%s lines=%A" (baseRev.Trim()) label lines
-
-        Ok lines
-    | false, _ ->
-        if debugTrigger then
-            eprintfn "DEBUG changedPathsFromBase base=%s label=%s: git diff FAILED" (baseRev.Trim()) label
-
-        Error(sprintf "git diff from %s to HEAD failed" label)
+    | true, lines -> Ok lines
+    | false, _ -> Error(sprintf "git diff from %s to HEAD failed" label)
 
 /// Returns paths staged in the Git index at the explicit repository root
 /// [Repo-grounded — `gate/run.rs::staged_paths`].
@@ -654,40 +633,34 @@ let private trackedPaths (repoRoot: string) : Result<string list, string> =
 /// configured origin) [Repo-grounded — `gate/run.rs::merge_base_paths`].
 let private mergeBasePaths (repoRoot: string) : Result<string list, string> =
     match runGit repoRoot false [ "merge-base"; "origin/main"; "HEAD" ] with
-    | false, _ ->
-        if debugTrigger then
-            eprintfn "DEBUG mergeBasePaths: merge-base FAILED, falling back to stagedPaths"
-
-        stagedPaths repoRoot
+    | false, _ -> stagedPaths repoRoot
     | true, lines ->
-        if debugTrigger then
-            eprintfn "DEBUG mergeBasePaths: merge-base OK lines=%A" lines
-
         changedPathsFromBase repoRoot (List.tryHead lines |> Option.defaultValue "") "the branch merge base"
 
-/// Returns files staged or changed for a file-scoped surface
+/// Returns files staged or changed for a file-scoped surface. `GATE_CHANGED_BASE`
+/// is a CI-only baseline (see `gateChangedBaseEnv`'s doc comment) — it must
+/// only be consulted for the `Ci` surface. A `PrePush` invocation always
+/// falls back to `mergeBasePaths` regardless of whether that env var happens
+/// to be set in the ambient environment (e.g. inherited from a CI job's
+/// workflow-level `env:` block, or left over in a developer's shell);
+/// treating it as authoritative for `PrePush` too would silently return no
+/// changed paths whenever it happened to resolve in the current repo
 /// [Repo-grounded — `gate/run.rs::changed_paths`].
 let private changedPaths (repoRoot: string) (surface: GateSurface) : Result<string list, string> =
-    if surface = PreCommit then
-        stagedPaths repoRoot
-    else
+    match surface with
+    | PreCommit -> stagedPaths repoRoot
+    | PrePush -> mergeBasePaths repoRoot
+    | Ci ->
         let explicitBase =
             Environment.GetEnvironmentVariable gateChangedBaseEnv
             |> Option.ofObj
             |> Option.filter (fun value -> value.Trim() <> "")
             |> Option.filter (fun value -> commitResolves repoRoot (value.Trim()))
 
-        if debugTrigger then
-            eprintfn
-                "DEBUG changedPaths surface=%A rawEnv=%A explicitBase=%A"
-                surface
-                (Environment.GetEnvironmentVariable gateChangedBaseEnv)
-                explicitBase
-
-        match surface, explicitBase with
-        | Ci, Some baseRev -> changedPathsFromBase repoRoot (baseRev.Trim()) gateChangedBaseEnv
-        | (PrePush | Ci), None -> mergeBasePaths repoRoot
-        | _ -> Ok []
+        match explicitBase with
+        | Some baseRev -> changedPathsFromBase repoRoot (baseRev.Trim()) gateChangedBaseEnv
+        | None -> mergeBasePaths repoRoot
+    | _ -> Ok []
 
 /// Returns modified and untracked worktree paths for mutation output
 /// detection [Repo-grounded — `gate/run.rs::worktree_changed_paths`].
@@ -1067,16 +1040,6 @@ let runAtRootWithOnlyAndMessageFile
                                     | [] -> Ok groupSummary
                                     | gate :: rest ->
                                         let scope = scopeOf gate
-
-                                        if gate.Id = "path-gated-check" then
-                                            write (
-                                                sprintf
-                                                    "DEBUG-TRIGGER changed=%A matched=%b\n"
-                                                    changedPathsResult
-                                                    (changedPathsResult
-                                                     |> Option.map (fun paths -> triggerMatches paths scope.Trigger)
-                                                     |> Option.defaultValue false)
-                                            )
 
                                         if
                                             scope.Scope = PathGated
