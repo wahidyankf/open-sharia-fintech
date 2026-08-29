@@ -589,7 +589,9 @@ type GateExecutionSteps() =
 
     [<When>]
     member _.``the path-gated gate evaluates its trigger``() =
-        runGate "pre-push" (Some "path-gated-check")
+        let args = [ "gate"; "run"; "--surface=pre-push"; "--only=path-gated-check" ]
+
+        recordRun (run prebuiltFsharpCli.Value args root (fixtureEnv [ "RHINO_GATE_TRIGGER_DEBUG", "1" ]))
 
     [<Then>]
     member _.``the gate still runs because trigger matching is unaffected by on-disk existence``() =
