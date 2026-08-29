@@ -878,8 +878,10 @@ per [DD-4](./tech-docs.md#dd-4--namespace-waves-ordered-by-risk-gate-last).
       sides pointed at Rust, proving the harness itself is sound before it is trusted.
 - [x] [AI] The re-measured wave map sums to 525 scenarios across 71 feature files, or the table at
       the top of this file has been corrected.
-- [ ] [AI] `pr-quality-gate.yml` is green on this phase's PR in both repos, and the `build-rhino`
+- [x] [AI] `pr-quality-gate.yml` is green on this phase's PR in both repos, and the `build-rhino`
       job's new duration is written into `benchmark.md` beside its Phase 0 B7 baseline.
+      Verified: `ose-public#309` and `ose-private#76` both merged with 0 failing checks of 18;
+      the re-measured durations are recorded as `B7 after Phase 2` in `benchmark.md`.
 
 > **Pause Safety**: F# projects exist but nothing routes to them; every namespace still runs on
 > Rust. Safe to stop. To resume: re-run the `gate list` diff above.

@@ -244,6 +244,18 @@ machine noise rather than signal.
   runs on `main`. `ose-public`: 73 s, 69 s, 70 s (runs 32810578748, 32797537004, 32796057166), mean
   **70.67 s**. `ose-private`: 89 s, 88 s, 89 s (runs 32797359073, 32796938182, 32795391522), mean
   **88.67 s**.
+- **B7 after Phase 2** — the same three-most-recent-green-runs-on-`main` measurement, re-taken once
+  Phase 2's F# scaffolding had merged and `build-rhino` had grown a second responsibility: it now
+  publishes the self-contained `dist/rhino-cli-fsharp` alongside the Rust `gate` binary, because
+  every downstream job resolves that artifact through `RHINO_CLI_FSHARP_BIN` rather than building
+  F# from source. `ose-public`: 293 s, 296 s, 289 s (runs 33237638893, 33235713582, 33231338842),
+  mean **292.67 s**. `ose-private`: 831 s, 391 s, 819 s (runs 33237644795, 33232904277,
+  33229933531), mean **680.33 s** — recorded with its spread, not smoothed: that repository's
+  self-hosted runner produced a 2.1x range across three consecutive runs, so its mean is not a
+  figure Phase 10 should read a small delta against. The rise over the 70.67 s / 88.67 s Phase 0
+  baseline is the added F# publish, paid once per CI run in a job every other job already waited
+  on, rather than paid per-job as a from-source build would be.
+
 - **B8** — byte count of the `gate`-profile binary: **4,489,616** bytes in both repositories, equal
   in size. No digest was taken, so this is evidence of matching size only, not of byte-identity.
   It is also not the parity check: `apps/rhino-cli/parity-manifest.sha256` hashes 603 tracked
