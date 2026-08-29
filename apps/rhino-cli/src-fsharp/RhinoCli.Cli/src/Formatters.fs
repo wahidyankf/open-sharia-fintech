@@ -812,3 +812,861 @@ let readmeIndexRewritePathsJson (rewritten: string list) : string =
     JsonSerializer.Serialize(env, jsonOptions) + "\n"
 
 let readmeIndexRewritePathsMarkdown (rewritten: string list) : string = readmeIndexRewritePathsText rewritten
+
+// ---------------------------------------------------------------------------
+// repo-governance vendor / layer-coherence / traceability / audit
+// [Repo-grounded — `governance_vendor_audit.rs`, `governance_layer_coherence.rs`,
+// `governance_traceability_audit.rs`, `governance_audit.rs`]
+// ---------------------------------------------------------------------------
+
+type VendorFindingJson =
+    {
+        path: string
+        line: int
+        /// `match` is an F# keyword; the backticks are erased in the JSON name,
+        /// which must stay `match` to mirror Rust's `r#match` field.
+        ``match``: string
+        replacement: string
+    }
+
+/// The vendor audit is the one repo-governance leaf whose JSON carries no
+/// outer schema envelope [Repo-grounded — `governance_vendor_audit.rs`'s
+/// `JsonResult`].
+type VendorResultJson =
+    { status: string
+      count: int
+      findings: VendorFindingJson list }
+
+let vendorAuditText (findings: RepoGovernance.VendorFinding list) : string =
+    RepoGovernance.formatVendorText findings
+
+let vendorAuditJson (findings: RepoGovernance.VendorFinding list) : string =
+    let result: VendorResultJson =
+        { status = (if List.isEmpty findings then "passed" else "failed")
+          count = List.length findings
+          findings =
+            findings
+            |> List.map (fun f ->
+                { path = f.Path
+                  line = f.Line
+                  ``match`` = f.Match
+                  replacement = f.Replacement }) }
+
+    JsonSerializer.Serialize(result, jsonOptions) + "\n"
+
+let vendorAuditMarkdown (findings: RepoGovernance.VendorFinding list) : string =
+    if List.isEmpty findings then
+        "## Governance Vendor Audit\n\n**PASSED**: no violations found\n"
+    else
+        let header =
+            sprintf
+                "## Governance Vendor Audit\n\n**FAILED**: %d violation(s) found\n\n| File | Line | Term | Replacement |\n|------|------|------|-------------|\n"
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f -> sprintf "| %s | %d | `%s` | %s |\n" f.Path f.Line f.Match f.Replacement)
+            |> String.concat ""
+
+        header + rows
+
+type LayerCoherenceFindingJson =
+    { file: string
+      severity: string
+      kind: string
+      message: string }
+
+type LayerCoherenceInnerResult =
+    { status: string
+      count: int
+      findings: LayerCoherenceFindingJson list }
+
+type LayerCoherenceEnvelope =
+    { schema: string
+      status: string
+      result: LayerCoherenceInnerResult }
+
+let layerCoherenceText (findings: RepoGovernance.LayerCoherenceFinding list) : string =
+    RepoGovernance.formatLayerCoherenceText findings
+
+let layerCoherenceJson (findings: RepoGovernance.LayerCoherenceFinding list) : string =
+    let status = if List.isEmpty findings then "passed" else "failed"
+
+    let env: LayerCoherenceEnvelope =
+        { schema = "rhino-cli/layer-coherence/v1"
+          status = status
+          result =
+            { status = status
+              count = List.length findings
+              findings =
+                findings
+                |> List.map (fun f ->
+                    { file = f.File
+                      severity = f.Severity
+                      kind = f.Kind
+                      message = f.Message }) } }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let layerCoherenceMarkdown (findings: RepoGovernance.LayerCoherenceFinding list) : string =
+    if List.isEmpty findings then
+        "## Layer Coherence Audit\n\n**PASSED**: zero findings\n"
+    else
+        let header =
+            sprintf
+                "## Layer Coherence Audit\n\n**FAILED**: %d finding(s) reported\n\n| File | Severity | Kind | Message |\n|------|----------|------|---------|\n"
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f -> sprintf "| %s | %s | %s | %s |\n" f.File f.Severity f.Kind f.Message)
+            |> String.concat ""
+
+        header + rows
+
+type TraceabilityFindingJson =
+    { path: string
+      line: int
+      kind: string
+      message: string }
+
+type TraceabilityInnerResult =
+    { status: string
+      count: int
+      findings: TraceabilityFindingJson list }
+
+type TraceabilityEnvelope =
+    { schema: string
+      status: string
+      result: TraceabilityInnerResult }
+
+let traceabilityText (findings: RepoGovernance.TraceabilityFinding list) : string =
+    RepoGovernance.formatTraceabilityText findings
+
+let traceabilityJson (findings: RepoGovernance.TraceabilityFinding list) : string =
+    let status = if List.isEmpty findings then "passed" else "failed"
+
+    let env: TraceabilityEnvelope =
+        { schema = "rhino-cli/traceability-audit/v1"
+          status = status
+          result =
+            { status = status
+              count = List.length findings
+              findings =
+                findings
+                |> List.map (fun f ->
+                    { path = f.Path
+                      line = f.Line
+                      kind = f.Kind
+                      message = f.Message }) } }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let traceabilityMarkdown (findings: RepoGovernance.TraceabilityFinding list) : string =
+    if List.isEmpty findings then
+        "## Traceability Audit\n\n**PASSED**: zero findings\n"
+    else
+        let header =
+            sprintf
+                "## Traceability Audit\n\n**FAILED**: %d finding(s) reported\n\n| File | Line | Kind | Message |\n|------|------|------|---------|\n"
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f -> sprintf "| %s | %d | %s | %s |\n" f.Path f.Line f.Kind f.Message)
+            |> String.concat ""
+
+        header + rows
+
+let governanceAuditText (envelope: RepoGovernance.AuditEnvelope) : string =
+    let result = envelope.Result
+    let sb = Text.StringBuilder()
+
+    let headline =
+        if result.TotalFindings = 0 then
+            sprintf
+                "GOVERNANCE AUDIT PASSED: 0 findings across %d categories (git_sha=%s, ran_at=%s)\n"
+                (List.length result.Categories)
+                result.GitSha
+                result.RanAt
+        else
+            sprintf
+                "GOVERNANCE AUDIT FAILED: %d finding(s) across %d categories (git_sha=%s, ran_at=%s)\n"
+                result.TotalFindings
+                (List.length result.Categories)
+                result.GitSha
+                result.RanAt
+
+    sb.Append headline |> ignore
+
+    for c in result.Categories do
+        sb.Append(
+            sprintf "  [%s] %-32s %d finding(s)\n" (if c.Passed then "PASS" else "FAIL") c.Name (List.length c.Findings)
+        )
+        |> ignore
+
+        for f in c.Findings do
+            let location = if f.Line > 0 then sprintf "%s:%d" f.File f.Line else f.File
+
+            sb.Append(sprintf "         %s  %s\n" location f.Message) |> ignore
+
+    if not (List.isEmpty result.SkippedFalsePositives) then
+        sb.Append(sprintf "  %d skipped false-positive(s)\n" (List.length result.SkippedFalsePositives))
+        |> ignore
+
+    sb.ToString()
+
+let governanceAuditJson (envelope: RepoGovernance.AuditEnvelope) : string =
+    RepoGovernance.formatAuditJson envelope + "\n"
+
+let governanceAuditMarkdown (envelope: RepoGovernance.AuditEnvelope) : string =
+    let result = envelope.Result
+    let sb = Text.StringBuilder()
+    sb.Append "## Governance Audit\n\n" |> ignore
+
+    let headline =
+        if result.TotalFindings = 0 then
+            sprintf
+                "**PASSED**: 0 findings across %d categories (git_sha=`%s`, ran_at=`%s`)\n\n"
+                (List.length result.Categories)
+                result.GitSha
+                result.RanAt
+        else
+            sprintf
+                "**FAILED**: %d finding(s) across %d categories (git_sha=`%s`, ran_at=`%s`)\n\n"
+                result.TotalFindings
+                (List.length result.Categories)
+                result.GitSha
+                result.RanAt
+
+    sb.Append(headline).Append("| Category | Status | Findings |\n")
+    |> fun b -> b.Append "|----------|--------|---------:|\n"
+    |> ignore
+
+    for c in result.Categories do
+        sb.Append(sprintf "| %s | %s | %d |\n" c.Name (if c.Passed then "PASS" else "FAIL") (List.length c.Findings))
+        |> ignore
+
+    if not (List.isEmpty result.SkippedFalsePositives) then
+        sb.Append(sprintf "\n_%d skipped false-positive(s)._\n" (List.length result.SkippedFalsePositives))
+        |> ignore
+
+    sb.ToString()
+
+// ---------------------------------------------------------------------------
+// specs gherkin-cardinality / scaffold dart
+// [Repo-grounded — `specs_gherkin_cardinality.rs`, `specs_scaffold_dart.rs`]
+// ---------------------------------------------------------------------------
+
+type CardinalityFindingJson =
+    { file: string
+      line: int
+      scenario: string
+      keyword: string
+      count: int
+      severity: string }
+
+type CardinalityEnvelope =
+    { schema: string
+      status: string
+      result: CardinalityFindingJson list }
+
+let cardinalityText (findings: Specs.GherkinCardinalityFinding list) : string = Specs.formatCardinalityText findings
+
+let cardinalityJson (findings: Specs.GherkinCardinalityFinding list) : string =
+    let env: CardinalityEnvelope =
+        { schema = "rhino-cli/gherkin-keyword-cardinality/v1"
+          status = (if List.isEmpty findings then "passed" else "failed")
+          result =
+            findings
+            |> List.map (fun f ->
+                { file = f.File
+                  line = f.Line
+                  scenario = f.Scenario
+                  keyword = f.Keyword
+                  count = f.Count
+                  severity = f.Severity }) }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let cardinalityMarkdown (findings: Specs.GherkinCardinalityFinding list) : string =
+    if List.isEmpty findings then
+        "## Gherkin Keyword Cardinality Audit\n\n**PASSED**: every scenario uses each primary keyword at most once\n"
+    else
+        let header =
+            sprintf
+                "## Gherkin Keyword Cardinality Audit\n\n**FAILED**: %d violation(s) found\n\n| File | Line | Scenario | Keyword | Count | Severity |\n|------|------|----------|---------|------:|----------|\n"
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f ->
+                sprintf "| %s | %d | %s | %s | %d | %s |\n" f.File f.Line f.Scenario f.Keyword f.Count f.Severity)
+            |> String.concat ""
+
+        header + rows
+
+type DartScaffoldJson =
+    { status: string
+      pubspec_created: bool
+      barrel_created: bool
+      model_files: string list }
+
+let dartScaffoldText (result: Contracts.DartScaffoldResult) : string =
+    let header =
+        sprintf
+            "Dart scaffold created: pubspec.yaml + barrel library (%d model files).\n"
+            (List.length result.ModelFiles)
+
+    header + (result.ModelFiles |> List.map (sprintf "  %s\n") |> String.concat "")
+
+let dartScaffoldJson (result: Contracts.DartScaffoldResult) : string =
+    let env: DartScaffoldJson =
+        { status = "success"
+          pubspec_created = result.PubspecCreated
+          barrel_created = result.BarrelCreated
+          model_files = result.ModelFiles }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let dartScaffoldMarkdown (result: Contracts.DartScaffoldResult) : string =
+    let header =
+        sprintf
+            "# Dart Contract Scaffold Report\n\n- **pubspec.yaml**: %s\n- **Barrel library**: %s\n- **Model files**: %d\n"
+            (if result.PubspecCreated then "created" else "not created")
+            (if result.BarrelCreated then "created" else "not created")
+            (List.length result.ModelFiles)
+
+    if List.isEmpty result.ModelFiles then
+        header
+    else
+        header
+        + "\n## Model Files\n\n"
+        + (result.ModelFiles |> List.map (sprintf "- `%s`\n") |> String.concat "")
+
+// ---------------------------------------------------------------------------
+// specs behavior-coverage / domain-coverage
+// [Repo-grounded — `application/speccoverage/reporter.rs`]
+// ---------------------------------------------------------------------------
+
+type CoverageGapJson = { spec_file: string; stem: string }
+
+type CoverageScenarioGapJson =
+    { spec_file: string
+      scenario_title: string }
+
+type CoverageStepGapJson =
+    { spec_file: string
+      scenario_title: string
+      keyword: string
+      step_text: string }
+
+type CoverageOrphanImplJson =
+    { file: string
+      matcher_kind: string
+      matcher_text: string }
+
+type CoverageJsonOutput =
+    { status: string
+      timestamp: string
+      total_specs: int
+      total_scenarios: int
+      total_steps: int
+      gap_count: int
+      scenario_gap_count: int
+      step_gap_count: int
+      orphan_step_impl_count: int
+      duration_ms: int64
+      gaps: CoverageGapJson list
+      scenario_gaps: CoverageScenarioGapJson list
+      step_gaps: CoverageStepGapJson list
+      orphan_step_impls: CoverageOrphanImplJson list }
+
+let coverageText (result: Specs.CheckResult) : string = Specs.formatCoverageText result false
+
+/// `duration_ms` is emitted as `0`: `shadow-diff.sh` masks both it and
+/// `timestamp` precisely because they cannot be byte-stable across two runs,
+/// and the F# `CheckResult` carries no scan duration.
+let coverageJson (result: Specs.CheckResult) : string =
+    let status =
+        if
+            List.isEmpty result.Gaps
+            && List.isEmpty result.ScenarioGaps
+            && List.isEmpty result.StepGaps
+            && List.isEmpty result.OrphanStepImpls
+        then
+            "success"
+        else
+            "failure"
+
+    let out: CoverageJsonOutput =
+        { status = status
+          timestamp = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ssK")
+          total_specs = result.TotalSpecs
+          total_scenarios = result.TotalScenarios
+          total_steps = result.TotalSteps
+          gap_count = List.length result.Gaps
+          scenario_gap_count = List.length result.ScenarioGaps
+          step_gap_count = List.length result.StepGaps
+          orphan_step_impl_count = List.length result.OrphanStepImpls
+          duration_ms = 0L
+          gaps =
+            result.Gaps
+            |> List.map (fun g ->
+                { spec_file = g.SpecFile
+                  stem = g.Stem })
+          scenario_gaps =
+            result.ScenarioGaps
+            |> List.map (fun g ->
+                { spec_file = g.SpecFile
+                  scenario_title = g.ScenarioTitle })
+          step_gaps =
+            result.StepGaps
+            |> List.map (fun g ->
+                { spec_file = g.SpecFile
+                  scenario_title = g.ScenarioTitle
+                  keyword = g.StepKeyword
+                  step_text = g.StepText })
+          orphan_step_impls =
+            result.OrphanStepImpls
+            |> List.map (fun o ->
+                { file = o.File
+                  matcher_kind = o.MatcherKind
+                  matcher_text = o.MatcherText }) }
+
+    JsonSerializer.Serialize(out, jsonOptions)
+
+let coverageMarkdown (result: Specs.CheckResult) : string = coverageText result
+
+// ---------------------------------------------------------------------------
+// Shared harness validation reporter
+// [Repo-grounded — `apps/rhino-cli/src/application/agents/reporter.rs`]
+// ---------------------------------------------------------------------------
+
+let private statusBanner (result: Harness.ValidationResult) : string =
+    if result.FailedChecks > 0 then
+        "\u274C VALIDATION FAILED"
+    elif result.WarningChecks > 0 then
+        "\u26A0 VALIDATION PASSED WITH WARNINGS"
+    else
+        "\u2713 VALIDATION PASSED"
+
+let private statusJson (result: Harness.ValidationResult) : string =
+    if result.FailedChecks > 0 then "failure"
+    elif result.WarningChecks > 0 then "warning"
+    else "success"
+
+let private trimTrailingZeros (s: string) : string = s.TrimEnd '0'
+
+/// Formats a duration the way Go's `time.Duration.String()` does — `1s`,
+/// `100ms`, `1.5s`, `1µs`, `1ns`, `1m0s` — which is what the Rust reporter
+/// reproduces and therefore what byte-identity requires.
+let formatGoDuration (d: TimeSpan) : string =
+    let nanos = int64 (d.TotalMilliseconds * 1_000_000.0)
+
+    let formatFraction (nanos: int64) (scale: int64) (width: int) : string =
+        let whole = nanos / scale
+        let frac = nanos % scale
+
+        if frac = 0L then
+            string whole
+        else
+            let trimmed = trimTrailingZeros ((string frac).PadLeft(width, '0'))
+
+            if trimmed = "" then
+                string whole
+            else
+                sprintf "%d.%s" whole trimmed
+
+    if nanos = 0L then
+        "0s"
+    elif nanos < 1_000L then
+        sprintf "%dns" nanos
+    elif nanos < 1_000_000L then
+        formatFraction nanos 1_000L 3 + "µs"
+    elif nanos < 1_000_000_000L then
+        formatFraction nanos 1_000_000L 6 + "ms"
+    else
+        let totalSecs = nanos / 1_000_000_000L
+        let fracNs = nanos % 1_000_000_000L
+        let hours = totalSecs / 3600L
+        let mins = (totalSecs % 3600L) / 60L
+        let secs = totalSecs % 60L
+
+        let fracPart =
+            if fracNs = 0L then
+                ""
+            else
+                "." + trimTrailingZeros ((string fracNs).PadLeft(9, '0'))
+
+        if hours > 0L then
+            sprintf "%dh%dm%d%ss" hours mins secs fracPart
+        elif mins > 0L then
+            sprintf "%dm%d%ss" mins secs fracPart
+        else
+            sprintf "%d%ss" secs fracPart
+
+let private checkDetailLines (prefix: string) (c: Harness.ValidationCheck) : string =
+    [ if c.Expected <> "" then
+          sprintf "%sExpected: %s\n" prefix c.Expected
+      if c.Actual <> "" then
+          sprintf "%sActual: %s\n" prefix c.Actual
+      if c.Message <> "" then
+          sprintf "%sMessage: %s\n" prefix c.Message ]
+    |> String.concat ""
+
+let validationText (result: Harness.ValidationResult) (verbose: bool) (quiet: bool) : string =
+    let sb = Text.StringBuilder()
+
+    if not quiet then
+        sb.Append("Validation Complete\n").Append(String('=', 50)).Append("\n\n")
+        |> ignore
+
+    sb.Append(sprintf "Total Checks: %d\n" result.TotalChecks) |> ignore
+    sb.Append(sprintf "Passed: %d\n" result.PassedChecks) |> ignore
+
+    if result.WarningChecks > 0 then
+        sb.Append(sprintf "Warnings: %d\n" result.WarningChecks) |> ignore
+
+    sb.Append(sprintf "Failed: %d\n" result.FailedChecks) |> ignore
+    sb.Append(sprintf "Duration: %s\n" (formatGoDuration result.Duration)) |> ignore
+
+    if result.FailedChecks > 0 then
+        sb.Append "\nFailed Checks:\n" |> ignore
+
+        for c in result.Checks do
+            if c.Status = "failed" then
+                sb.Append(sprintf "\n  \u274C %s\n" c.Name).Append(checkDetailLines "     " c)
+                |> ignore
+
+    if result.WarningChecks > 0 then
+        sb.Append "\nWarnings:\n" |> ignore
+
+        for c in result.Checks do
+            if c.Status = "warning" then
+                sb.Append(sprintf "\n  \u26A0 %s\n" c.Name).Append(checkDetailLines "     " c)
+                |> ignore
+
+    if verbose then
+        sb.Append "\nAll Checks:\n" |> ignore
+
+        for c in result.Checks do
+            let marker =
+                match c.Status with
+                | "passed" -> "\u2713"
+                | "warning" -> "\u26A0"
+                | _ -> "\u274C"
+
+            sb.Append(sprintf "  %s %s\n" marker c.Name) |> ignore
+
+            if c.Message <> "" then
+                sb.Append(sprintf "     %s\n" c.Message) |> ignore
+
+    if not quiet then
+        sb.Append("\n").Append(sprintf "Status: %s\n" (statusBanner result)) |> ignore
+
+    sb.ToString()
+
+type ValidationCheckJson =
+    { name: string
+      status: string
+      expected: string
+      actual: string
+      message: string }
+
+type ValidationJsonOut =
+    { status: string
+      timestamp: string
+      total_checks: int
+      passed_checks: int
+      warning_checks: int
+      failed_checks: int
+      duration_ms: int64
+      checks: ValidationCheckJson list }
+
+/// Empty `expected`/`actual`/`message` fields are omitted, mirroring Rust's
+/// `#[serde(skip_serializing_if = "str::is_empty")]`.
+let private validationJsonOptions =
+    let opts = JsonSerializerOptions()
+    opts.WriteIndented <- true
+    opts.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    opts.DefaultIgnoreCondition <- JsonIgnoreCondition.WhenWritingNull
+    opts
+
+/// Renders an empty string as an omitted JSON field.
+let private orNull (s: string) : string = if s = "" then null else s
+
+let validationJson (result: Harness.ValidationResult) : string =
+    let out: ValidationJsonOut =
+        { status = statusJson result
+          timestamp = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ssK")
+          total_checks = result.TotalChecks
+          passed_checks = result.PassedChecks
+          warning_checks = result.WarningChecks
+          failed_checks = result.FailedChecks
+          duration_ms = int64 result.Duration.TotalMilliseconds
+          checks =
+            result.Checks
+            |> List.map (fun c ->
+                { name = c.Name
+                  status = c.Status
+                  expected = orNull c.Expected
+                  actual = orNull c.Actual
+                  message = orNull c.Message }) }
+
+    JsonSerializer.Serialize(out, validationJsonOptions)
+
+let validationMarkdown (result: Harness.ValidationResult) (verbose: bool) : string =
+    let sb = Text.StringBuilder()
+    sb.Append("# Validation Results\n\n## Summary\n\n") |> ignore
+    sb.Append(sprintf "- **Total Checks**: %d\n" result.TotalChecks) |> ignore
+    sb.Append(sprintf "- **Passed**: %d\n" result.PassedChecks) |> ignore
+
+    if result.WarningChecks > 0 then
+        sb.Append(sprintf "- **Warnings**: %d\n" result.WarningChecks) |> ignore
+
+    sb.Append(sprintf "- **Failed**: %d\n" result.FailedChecks) |> ignore
+
+    sb.Append(sprintf "- **Duration**: %s\n\n" (formatGoDuration result.Duration))
+    |> ignore
+
+    let section (heading: string) (status: string) (marker: string) =
+        if
+            (status = "failed" && result.FailedChecks > 0)
+            || (status = "warning" && result.WarningChecks > 0)
+        then
+            sb.Append(sprintf "## %s\n\n" heading) |> ignore
+
+            for c in result.Checks do
+                if c.Status = status then
+                    sb.Append(sprintf "### %s %s\n\n" marker c.Name) |> ignore
+
+                    if c.Expected <> "" then
+                        sb.Append(sprintf "- **Expected**: %s\n" c.Expected) |> ignore
+
+                    if c.Actual <> "" then
+                        sb.Append(sprintf "- **Actual**: %s\n" c.Actual) |> ignore
+
+                    if c.Message <> "" then
+                        sb.Append(sprintf "- **Message**: %s\n" c.Message) |> ignore
+
+                    sb.Append "\n" |> ignore
+
+    section "Failed Checks" "failed" "\u274C"
+    section "Warnings" "warning" "\u26A0"
+
+    if verbose then
+        sb.Append "## All Checks\n\n" |> ignore
+
+        for c in result.Checks do
+            let marker =
+                match c.Status with
+                | "passed" -> "\u2713"
+                | "warning" -> "\u26A0"
+                | _ -> "\u274C"
+
+            sb.Append(sprintf "- %s %s" marker c.Name) |> ignore
+
+            if c.Message <> "" then
+                sb.Append(sprintf " - %s" c.Message) |> ignore
+
+            sb.Append "\n" |> ignore
+
+        sb.Append "\n" |> ignore
+
+    sb.Append(sprintf "**Status**: %s\n" (statusBanner result)) |> ignore
+    sb.ToString()
+
+// ---------------------------------------------------------------------------
+// harness duplication / sync report
+// [Repo-grounded — `harness_validate_duplication.rs`, `agents/reporter.rs`]
+// ---------------------------------------------------------------------------
+
+type DuplicationFindingJson =
+    { files: string list
+      start_lines: int list
+      window_size: int
+      severity: string
+      message: string }
+
+type DuplicationEnvelope =
+    { schema: string
+      status: string
+      result: DuplicationFindingJson list }
+
+let duplicationText (findings: Harness.DuplicationFinding list) : string =
+    if List.isEmpty findings then
+        "AGENTS DUPLICATION VALIDATION PASSED: 0 clusters\n"
+    else
+        let header =
+            sprintf "AGENTS DUPLICATION VALIDATION FAILED: %d cluster(s)\n" (List.length findings)
+
+        let body =
+            findings
+            |> List.map (fun f ->
+                sprintf "  [%s] %s (window=%d)\n" f.Severity f.Message f.WindowSize
+                + (List.zip f.Files f.StartLines
+                   |> List.map (fun (path, line) -> sprintf "    - %s:%d\n" path line)
+                   |> String.concat ""))
+            |> String.concat ""
+
+        header + body
+
+let duplicationJson (findings: Harness.DuplicationFinding list) : string =
+    let env: DuplicationEnvelope =
+        { schema = "rhino-cli/agents-detect-duplication/v1"
+          status = (if List.isEmpty findings then "passed" else "failed")
+          result =
+            findings
+            |> List.map (fun f ->
+                { files = f.Files
+                  start_lines = f.StartLines
+                  window_size = f.WindowSize
+                  severity = f.Severity
+                  message = f.Message }) }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let duplicationMarkdown (findings: Harness.DuplicationFinding list) : string =
+    if List.isEmpty findings then
+        "## Agents Duplication Detection\n\n**PASSED**: 0 duplication clusters detected\n"
+    else
+        let header =
+            sprintf
+                "## Agents Duplication Detection\n\n**FAILED**: %d duplication cluster(s) detected\n\n| Severity | Window | Files | Start Lines | Message |\n|----------|--------|-------|-------------|---------|\n"
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f ->
+                sprintf
+                    "| %s | %d | %s | %s | %s |\n"
+                    f.Severity
+                    f.WindowSize
+                    (String.concat "<br>" f.Files)
+                    (f.StartLines |> List.map string |> String.concat "<br>")
+                    f.Message)
+            |> String.concat ""
+
+        header + rows
+
+/// The sync report `harness bindings generate` prints. `skills_copied` /
+/// `skills_failed` are structurally always `0`: OpenCode reads
+/// `.claude/skills/` natively, so the sync leg copies no skills
+/// [Repo-grounded — `agents/reporter.rs`'s own field doc comments].
+type SyncWarningJson =
+    { agent: string
+      field: string
+      reason: string }
+
+type SyncJsonOut =
+    { status: string
+      timestamp: string
+      agents_converted: int
+      agents_failed: int
+      skills_copied: int
+      skills_failed: int
+      failed_files: string list
+      warnings: SyncWarningJson list
+      duration_ms: int64 }
+
+let syncText (result: Harness.ConvertAllResult) (duration: TimeSpan) (verbose: bool) (quiet: bool) : string =
+    let sb = Text.StringBuilder()
+
+    if not quiet then
+        sb.Append("Sync Complete\n").Append(String('=', 50)).Append("\n\n") |> ignore
+
+    sb.Append(sprintf "Agents: %d converted" result.Converted) |> ignore
+
+    if result.Failed > 0 then
+        sb.Append(sprintf ", %d failed" result.Failed) |> ignore
+
+    sb.Append("\nSkills: 0 copied\n") |> ignore
+    sb.Append(sprintf "Duration: %s\n" (formatGoDuration duration)) |> ignore
+
+    if not (List.isEmpty result.FailedFiles) then
+        sb.Append "\nFailed Files:\n" |> ignore
+
+        for f in result.FailedFiles do
+            sb.Append(sprintf "  - %s\n" f) |> ignore
+
+    if not quiet then
+        sb.Append "\n" |> ignore
+
+        sb.Append(
+            if List.isEmpty result.FailedFiles then
+                "Status: \u2713 SUCCESS\n"
+            else
+                "Status: \u274C FAILED\n"
+        )
+        |> ignore
+
+    if verbose && not (List.isEmpty result.Warnings) then
+        sb.Append "\nWarnings:\n" |> ignore
+
+        for w in result.Warnings do
+            sb.Append(sprintf "  \u26A0 %s: dropped field \"%s\" (%s)\n" w.AgentName w.Field w.Reason)
+            |> ignore
+
+    sb.ToString()
+
+let syncJson (result: Harness.ConvertAllResult) (duration: TimeSpan) : string =
+    let out: SyncJsonOut =
+        { status =
+            (if List.isEmpty result.FailedFiles then
+                 "success"
+             else
+                 "failure")
+          timestamp = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ssK")
+          agents_converted = result.Converted
+          agents_failed = result.Failed
+          skills_copied = 0
+          skills_failed = 0
+          failed_files = result.FailedFiles
+          warnings =
+            result.Warnings
+            |> List.map (fun w ->
+                { agent = w.AgentName
+                  field = w.Field
+                  reason = w.Reason })
+          duration_ms = int64 duration.TotalMilliseconds }
+
+    JsonSerializer.Serialize(out, jsonOptions)
+
+let syncMarkdown (result: Harness.ConvertAllResult) (duration: TimeSpan) : string =
+    let sb = Text.StringBuilder()
+    sb.Append("# Sync Results\n\n## Summary\n\n") |> ignore
+    sb.Append(sprintf "- **Agents Converted**: %d\n" result.Converted) |> ignore
+
+    if result.Failed > 0 then
+        sb.Append(sprintf "- **Agents Failed**: %d\n" result.Failed) |> ignore
+
+    sb.Append("- **Skills Copied**: 0\n") |> ignore
+
+    sb.Append(sprintf "- **Duration**: %s\n\n" (formatGoDuration duration))
+    |> ignore
+
+    if not (List.isEmpty result.FailedFiles) then
+        sb.Append "## Failed Files\n\n" |> ignore
+
+        for f in result.FailedFiles do
+            sb.Append(sprintf "- `%s`\n" f) |> ignore
+
+        sb.Append "\n" |> ignore
+
+    sb.Append(
+        if List.isEmpty result.FailedFiles then
+            "**Status**: \u2713 SUCCESS\n"
+        else
+            "**Status**: \u274C FAILED\n"
+    )
+    |> ignore
+
+    if not (List.isEmpty result.Warnings) then
+        sb.Append "\n## Warnings\n\n" |> ignore
+
+        for w in result.Warnings do
+            sb.Append(sprintf "- \u26A0 `%s`: dropped field `%s` (%s)\n" w.AgentName w.Field w.Reason)
+            |> ignore
+
+    sb.ToString()

@@ -607,23 +607,6 @@ let validateCodexAgentsDir (repoRoot: string) : ValidationCheck =
                         joined
                         codexAgentExtension)
 
-/// Runs the binding checks this module implements — catalog coverage for each
-/// known binding directory, then the Codex agent-file extension check. See
-/// this module's scope note for the check families still to land
-/// [Repo-grounded — `bindings.rs::validate_bindings`].
-let validateBindings (repoRoot: string) : ValidationResult =
-    let stopwatch = Stopwatch.StartNew()
-
-    let result =
-        knownBindingDirs
-        |> List.fold
-            (fun acc dir -> ValidationResult.tally (validateCatalogCoverage repoRoot dir) acc)
-            ValidationResult.empty
-        |> ValidationResult.tally (validateCodexAgentsDir repoRoot)
-
-    { result with
-        Duration = stopwatch.Elapsed }
-
 // ---------------------------------------------------------------------------
 // `--harness` name acceptance
 // ---------------------------------------------------------------------------
@@ -2178,13 +2161,15 @@ let private validateAgentCount (repoRoot: string) : ValidationCheck =
     let opencodeCount = countMarkdownFiles opencodeDir
 
     if opencodeCount >= claudeCount then
-        ValidationCheck.passed "Agent Count" "OpenCode mirror contains every Claude agent"
+        { ValidationCheck.passed "Agent Count" "OpenCode agents directory contains every Claude agent" with
+            Expected = sprintf ">= %d agents" claudeCount
+            Actual = sprintf "%d agents" opencodeCount }
     else
         ValidationCheck.failed
             "Agent Count"
-            (sprintf "%d agents" claudeCount)
+            (sprintf ">= %d agents" claudeCount)
             (sprintf "%d agents" opencodeCount)
-            "OpenCode agents directory is missing one or more Claude agents"
+            "OpenCode agents directory missing one or more Claude agents"
 
 let private parseOpencodePermission (value: obj option) : Map<string, string> =
     match value with
@@ -2224,7 +2209,7 @@ let private validateAgentYaml
     (actualBody: string)
     (bodyMismatchReason: string)
     : ValidationCheck =
-    let checkName = sprintf "Agent Equivalence: %s" agentName
+    let checkName = sprintf "Agent: %s" agentName
 
     let claudeDescription =
         match tryGetField claudeMapping "description" with
@@ -2293,7 +2278,7 @@ let private validateAgentFile
     (sourcePath: string)
     (agentName: string)
     : ValidationCheck =
-    let checkName = sprintf "Agent Equivalence: %s" agentName
+    let checkName = sprintf "Agent: %s" agentName
     let mirrorPath = Path.Combine(opencodeDir, agentName + ".md")
     let mirrorRel = sprintf "%s/%s.md" opencodeAgentDir agentName
 
@@ -2338,17 +2323,393 @@ let private validateAgentEquivalence (repoRoot: string) : ValidationCheck list =
     let opencodeDir = Path.Combine(repoRoot, opencodeAgentDir)
 
     match discoverAgentSources claudeDir with
-    | Error e -> [ ValidationCheck.failedMsg "Agent Equivalence" (sprintf "failed to discover agent sources: %s" e) ]
+    | Error e ->
+        [ ValidationCheck.failedMsg "Agent Equivalence" (sprintf "Failed to read Claude agents directory: %s" e) ]
     | Ok sources ->
         sources
         |> List.map (fun (path, name) -> validateAgentFile repoRoot claudeDir opencodeDir path name)
 
-/// Runs the scoped sync validation: agent count, then per-agent equivalence
+/// Rejects the legacy singular `.opencode/agent` path; the canonical OpenCode
+/// location is `.opencode/agents/`
+/// [Repo-grounded — `sync_validator.rs::validate_no_stale_agent_dir`].
+let private validateNoStaleAgentDir (repoRoot: string) : ValidationCheck =
+    let stale = Path.Combine(repoRoot, ".opencode", "agent")
+
+    if Directory.Exists stale then
+        ValidationCheck.failed
+            "No Stale Agent Directory"
+            ".opencode/agent does not exist"
+            ".opencode/agent exists as a directory"
+            "Stale singular .opencode/agent reappeared; canonical OpenCode path is .opencode/agents/ (plural). Remove the stale directory."
+    elif File.Exists stale then
+        ValidationCheck.failed
+            "No Stale Agent Directory"
+            ".opencode/agent does not exist"
+            ".opencode/agent exists"
+            "Stale .opencode/agent entry reappeared; canonical OpenCode path is .opencode/agents/ (plural). Remove the stale entry."
+    else
+        ValidationCheck.passed "No Stale Agent Directory" "Legacy singular .opencode/agent does not exist"
+
+/// Rejects `.opencode/skill(s)/<name>/SKILL.md` copies of a `.claude/skills`
+/// entry: OpenCode reads the source natively
+/// [Repo-grounded — `sync_validator.rs::validate_no_synced_skills`].
+let private validateNoSyncedSkills (repoRoot: string) : ValidationCheck =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "skills")
+
+    let claudeNames =
+        if Directory.Exists claudeDir then
+            Directory.GetDirectories claudeDir
+            |> Array.filter (fun d -> File.Exists(Path.Combine(d, "SKILL.md")))
+            |> Array.map Path.GetFileName
+            |> Set.ofArray
+        else
+            Set.empty
+
+    let offenders =
+        [ Path.Combine(repoRoot, ".opencode", "skill")
+          Path.Combine(repoRoot, ".opencode", "skills") ]
+        |> List.collect (fun dir ->
+            if Directory.Exists dir then
+                Directory.GetDirectories dir
+                |> Array.filter (fun d ->
+                    claudeNames.Contains(Path.GetFileName d)
+                    && File.Exists(Path.Combine(d, "SKILL.md")))
+                |> Array.toList
+            else
+                [])
+
+    if List.isEmpty offenders then
+        ValidationCheck.passed
+            "No Synced Skill Mirror"
+            "No rhino-cli-managed skill copies under .opencode/skill or .opencode/skills"
+    else
+        ValidationCheck.failed
+            "No Synced Skill Mirror"
+            "No skill copy mirroring .claude/skills/<name>"
+            (sprintf
+                "Found %d mirrored skill dir(s): %s"
+                (List.length offenders)
+                (sprintf "[%s]" (String.Join(" ", offenders))))
+            "OpenCode reads .claude/skills/ natively; remove the mirror copies"
+
+/// Compares every registry-declared skills mirror against its canonical source
+/// tree, reusing the emitter's own diff
+/// [Repo-grounded — `sync_validator.rs::validate_skills_mirror`].
+let private validateSkillsMirror (repoRoot: string) : ValidationCheck =
+    let checkName = "Skills Mirror: .agents/skills"
+
+    match auditSkillsMirrors repoRoot with
+    | Error e -> ValidationCheck.failedMsg checkName e
+    | Ok [] -> ValidationCheck.passed checkName "skills mirror matches its source tree"
+    | Ok drifts ->
+        let detail =
+            drifts
+            |> List.map (function
+                | MirrorDriftMissing p -> sprintf "missing or stale mirror for %s" p
+                | MirrorDriftUndeclared p -> sprintf "undeclared directory in the mirror: %s" p)
+            |> String.concat "; "
+
+        let remediation =
+            drifts
+            |> List.map (function
+                | MirrorDriftMissing mirrorRel -> driftRemediation repoRoot mirrorRel
+                | MirrorDriftUndeclared mirrorRel ->
+                    sprintf
+                        "%s has no source counterpart and is not declared vendored; run `rhino-cli harness bindings generate` to remove it."
+                        mirrorRel)
+            |> String.concat " "
+
+        ValidationCheck.failed checkName "mirror byte-equal to its canonical source tree" detail remediation
+
+/// Runs the scoped sync validation: stale-directory guard, agent count,
+/// per-agent equivalence, then the two skills-surface checks
 /// [Repo-grounded — `sync_validator.rs::validate_sync`].
 let validateSync (repoRoot: string) : ValidationResult =
     let stopwatch = Stopwatch.StartNew()
 
-    let checks = validateAgentCount repoRoot :: validateAgentEquivalence repoRoot
+    let checks =
+        [ validateNoStaleAgentDir repoRoot; validateAgentCount repoRoot ]
+        @ validateAgentEquivalence repoRoot
+        @ [ validateNoSyncedSkills repoRoot; validateSkillsMirror repoRoot ]
+
+    let result =
+        checks
+        |> List.fold (fun acc check -> ValidationResult.tally check acc) ValidationResult.empty
+
+    stopwatch.Stop()
+
+    { result with
+        Duration = stopwatch.Elapsed }
+
+// ---------------------------------------------------------------------------
+// All-harness binding parity (harness bindings validate)
+// ---------------------------------------------------------------------------
+
+/// The canonical (path, content) pairs the parity guard compares the working
+/// tree against: one `.codex/agents/<name>.toml` per `.claude/agents/` agent,
+/// rendered from the same source the emitter uses. `.codex/config.toml` is
+/// deliberately absent — only its delimited region is emitter-owned, and
+/// `validateCodexConfigRegion` checks that separately
+/// [Repo-grounded — `bindings.rs::expected_bindings`].
+let expectedBindings (repoRoot: string) : Result<BindingFile list, string> =
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+
+    if not (Directory.Exists claudeDir) then
+        Ok []
+    else
+        let mirrorDir = Path.Combine(repoRoot, codexAgentDir)
+
+        discoverAgentSources claudeDir
+        |> Result.bind (fun sources ->
+            sources
+            |> List.fold
+                (fun acc (input, name) ->
+                    match acc with
+                    | Error e -> Error e
+                    | Ok bindings ->
+                        match convertCodexAgentInner input name claudeDir mirrorDir with
+                        | Error e -> Error e
+                        | Ok(_agent, content, _warnings) ->
+                            Ok(
+                                bindings
+                                @ [ { RelPath = sprintf "%s/%s.%s" codexAgentDir name codexAgentExtension
+                                      Content = content } ]
+                            ))
+                (Ok []))
+
+/// Compares one generated binding file against the bytes the emitter would
+/// write right now [Repo-grounded — `bindings.rs::validate_binding_file`].
+let private validateBindingFile (repoRoot: string) (binding: BindingFile) : ValidationCheck =
+    let checkName = sprintf "Binding: %s" binding.RelPath
+    let abs = joinRel repoRoot binding.RelPath
+
+    if not (File.Exists abs) then
+        ValidationCheck.failed
+            checkName
+            "file present and byte-equal to generated content"
+            "file missing"
+            (sprintf "%s is missing; run `rhino-cli harness bindings generate`" binding.RelPath)
+    else
+        try
+            if File.ReadAllText abs = binding.Content then
+                ValidationCheck.passed checkName (sprintf "%s matches generated content" binding.RelPath)
+            else
+                ValidationCheck.failed
+                    checkName
+                    "byte-equal to generated content"
+                    "content differs from generated bytes"
+                    (driftRemediation repoRoot binding.RelPath)
+        with ex ->
+            ValidationCheck.failedMsg checkName (sprintf "failed to read %s: %s" binding.RelPath ex.Message)
+
+/// Checks the delimited generated region of `.codex/config.toml` against what
+/// the emitter would write right now; everything outside the markers is
+/// hand-maintained and deliberately unguarded
+/// [Repo-grounded — `bindings.rs::validate_codex_config_region`].
+let private validateCodexConfigRegion (repoRoot: string) : ValidationCheck =
+    let checkName = sprintf "Codex Config Region: %s" codexConfigFile
+    let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let configPath = joinRel repoRoot codexConfigFile
+
+    if not (Directory.Exists claudeDir) || not (File.Exists configPath) then
+        ValidationCheck.passed checkName (sprintf "%s absent; nothing to check" codexConfigFile)
+    else
+        let content =
+            try
+                Ok(File.ReadAllText configPath)
+            with ex ->
+                Error(sprintf "failed to read %s: %s" codexConfigFile ex.Message)
+
+        match content with
+        | Error e -> ValidationCheck.failedMsg checkName e
+        | Ok content ->
+            let planned =
+                discoverAgentSources claudeDir
+                |> Result.map (fun sources ->
+                    let mirrorDir = Path.Combine(repoRoot, codexAgentDir)
+
+                    sources
+                    |> List.choose (fun (input, name) ->
+                        match convertCodexAgentInner input name claudeDir mirrorDir with
+                        | Ok(agent, _, _) ->
+                            Some
+                                { Name = agent.Name
+                                  Description = agent.Description }
+                        | Error _ -> None))
+
+            match planned with
+            | Error e -> ValidationCheck.failedMsg checkName e
+            | Ok agents ->
+                let expected = renderGeneratedRegion agents
+                let startIdx = content.IndexOf(generatedRegionStart, StringComparison.Ordinal)
+                let endIdx = content.IndexOf(generatedRegionEnd, StringComparison.Ordinal)
+
+                if startIdx < 0 || endIdx < startIdx then
+                    ValidationCheck.failed
+                        checkName
+                        "a delimited generated agents region"
+                        "no generated region found"
+                        (sprintf "%s has no generated region; run `rhino-cli harness bindings generate`" codexConfigFile)
+                elif content.Substring(startIdx, endIdx + generatedRegionEnd.Length - startIdx) = expected then
+                    ValidationCheck.passed checkName (sprintf "%s generated region matches" codexConfigFile)
+                else
+                    ValidationCheck.failed
+                        checkName
+                        "generated region byte-equal to emitted content"
+                        "generated region drifted"
+                        (sprintf
+                            "%s generated region drifted; run `rhino-cli harness bindings generate`"
+                            codexConfigFile)
+
+/// OpenCode theme tokens that need no translation-map row.
+let private opencodeDirectColors: string list =
+    [ "primary"
+      "success"
+      "warning"
+      "secondary"
+      "error"
+      "info"
+      "accent"
+      "muted" ]
+
+/// Reads `path` plus every `.md` child of its sibling split directory. A
+/// governance doc that relocated its tables into split children would
+/// otherwise read as if the table were gone
+/// [Repo-grounded — `bindings.rs::read_with_split_children`].
+let private readWithSplitChildren (path: string) : string =
+    let head =
+        try
+            File.ReadAllText path
+        with _ ->
+            ""
+
+    let splitDir =
+        match Path.GetDirectoryName path with
+        | null
+        | "" -> None
+        | parent -> Some(Path.Combine(parent, Path.GetFileNameWithoutExtension path))
+
+    match splitDir with
+    | Some dir when Directory.Exists dir ->
+        Directory.GetFiles(dir, "*.md")
+        |> Array.sort
+        |> Array.fold
+            (fun (acc: string) child ->
+                try
+                    acc + "\n" + File.ReadAllText child
+                with _ ->
+                    acc)
+            head
+    | _ -> head
+
+/// Checks that every `color:` and `model:` value used by a top-level
+/// `.claude/agents/*.md` resolves in its governance translation map
+/// [Repo-grounded — `bindings.rs::validate_color_tier_maps`].
+let private validateColorTierMaps (repoRoot: string) : ValidationCheck list =
+    let agentsDir = Path.Combine(repoRoot, ".claude", "agents")
+
+    if not (Directory.Exists agentsDir) then
+        []
+    else
+        let colorMap =
+            readWithSplitChildren (Path.Combine(repoRoot, "repo-governance/development/agents/ai-agents.md"))
+
+        let tierMap =
+            readWithSplitChildren (Path.Combine(repoRoot, "repo-governance/development/agents/model-selection.md"))
+
+        let scalars (prefix: string) =
+            Directory.GetFiles(agentsDir, "*.md")
+            |> Array.collect (fun path ->
+                try
+                    File.ReadAllText(path).Split('\n')
+                with _ ->
+                    [||])
+            |> Array.choose (fun line ->
+                if line.StartsWith(prefix, StringComparison.Ordinal) then
+                    let value = line.Substring(prefix.Length).Trim()
+                    if value = "" then None else Some value
+                else
+                    None)
+            |> Set.ofArray
+            |> Set.toList
+
+        let seenColors = scalars "color:"
+        let seenTiers = scalars "model:"
+
+        let colorChecks =
+            seenColors
+            |> List.map (fun color ->
+                let name = sprintf "Color translation: %s" color
+
+                if List.contains color opencodeDirectColors then
+                    ValidationCheck.passed
+                        name
+                        (sprintf "'%s' is a valid OpenCode theme token (no mapping needed)" color)
+                elif colorMap.Contains(sprintf "`%s`" color) then
+                    ValidationCheck.passed name (sprintf "'%s' is mapped in ai-agents.md" color)
+                else
+                    ValidationCheck.failed
+                        name
+                        "color mapped in repo-governance/development/agents/ai-agents.md"
+                        (sprintf "'%s' is NOT in the color translation table" color)
+                        (sprintf
+                            "Add a row for '%s' in the Platform Binding Color Translation table in ai-agents.md"
+                            color))
+
+        let colorFallback =
+            if List.isEmpty seenColors then
+                [ ValidationCheck.passed
+                      "Color translation map"
+                      "No agent color values to verify (no agents or all use theme tokens)" ]
+            else
+                []
+
+        let tierChecks =
+            seenTiers
+            |> List.map (fun tier ->
+                let name = sprintf "Tier mapping: %s" tier
+
+                if
+                    tierMap.Contains(sprintf "`%s`" tier)
+                    || tierMap.Contains(sprintf "model: %s" tier)
+                then
+                    ValidationCheck.passed name (sprintf "'%s' is mapped in model-selection.md" tier)
+                else
+                    ValidationCheck.failed
+                        name
+                        "model value mapped in repo-governance/development/agents/model-selection.md"
+                        (sprintf "'%s' is NOT in the capability-tier map" tier)
+                        (sprintf "Add a row for '%s' in the capability-tier table in model-selection.md" tier))
+
+        let tierFallback =
+            if List.isEmpty seenTiers then
+                [ ValidationCheck.passed
+                      "Capability-tier map"
+                      "No agent model values to verify (all agents use planning-grade inherit)" ]
+            else
+                []
+
+        colorChecks @ colorFallback @ tierChecks @ tierFallback
+
+/// Validates all 3 supported harnesses: static Codex binding files against the
+/// emitter's own bytes, the OpenCode and Skills mirrors (via `validateSync`),
+/// catalog coverage for every present binding directory, the Codex agent-file
+/// extension and config-region checks, and the color/tier translation maps
+/// [Repo-grounded — `bindings.rs::validate_bindings`].
+let validateBindings (repoRoot: string) : ValidationResult =
+    let stopwatch = Stopwatch.StartNew()
+
+    let staticChecks =
+        match expectedBindings repoRoot with
+        | Error e -> [ ValidationCheck.failedMsg "Static binding configuration" e ]
+        | Ok bindings -> bindings |> List.map (validateBindingFile repoRoot)
+
+    let checks =
+        staticChecks
+        @ (validateSync repoRoot).Checks
+        @ (knownBindingDirs |> List.map (validateCatalogCoverage repoRoot))
+        @ [ validateCodexAgentsDir repoRoot; validateCodexConfigRegion repoRoot ]
+        @ validateColorTierMaps repoRoot
 
     let result =
         checks
@@ -3023,11 +3384,16 @@ let private validateSkill (skillPath: string) (skillName: string) : ValidationCh
                     match parseSkillYaml frontmatter with
                     | Error e ->
                         [ existsCheck
+                          formattingCheck
                           syntaxCheck
                           ValidationCheck.failedMsg
                               (sprintf "Skill: %s - YAML Parse" skillName)
                               (sprintf "Failed to parse YAML: %s" e) ]
-                    | Ok skill -> existsCheck :: syntaxCheck :: validateSkillFields skill frontmatter skillName
+                    | Ok skill ->
+                        existsCheck
+                        :: formattingCheck
+                        :: syntaxCheck
+                        :: validateSkillFields skill frontmatter skillName
 
 /// Validates all skill directories under `.claude/skills/` (skipping
 /// dot-directories) and returns all checks plus the set of skill names that
@@ -3742,6 +4108,30 @@ let runHarnessBindingsGenerate (repoRoot: string) : Result<unit, string> =
     | Error e -> Error e
     | Ok() -> regenerateAll repoRoot false
 
+/// Every count `harness bindings generate` reports, in one value
+/// [Repo-grounded — `harness_generate_bindings.rs::report`, whose text is
+/// assembled from the same three emitter results].
+type BindingsGenerateOutcome =
+    { Agents: ConvertAllResult
+      Codex: CodexEmitResult
+      Mirror: MirrorResult }
+
+/// Same composition as [`runHarnessBindingsGenerate`], but keeps each
+/// emitter's counts so the CLI can report them.
+let runHarnessBindingsGenerateDetailed (repoRoot: string) : Result<BindingsGenerateOutcome, string> =
+    match guardEmitterTargets repoRoot with
+    | Error e -> Error e
+    | Ok() ->
+        convertAllAgents repoRoot false
+        |> Result.bind (fun agents ->
+            emitCodexBindings repoRoot false
+            |> Result.bind (fun codex ->
+                emitSkillsMirrors repoRoot false
+                |> Result.map (fun mirror ->
+                    { Agents = agents
+                      Codex = codex
+                      Mirror = mirror })))
+
 /// Validates total ownership of every binding file: classification (no
 /// tracked binding file is unowned), the emitter-target source guard, and —
 /// folded in rather than reimplemented — [`validateBindings`]'s and
@@ -3785,10 +4175,6 @@ let validateOwnership (repoRoot: string) : ValidationResult =
 
     let result =
         (validateBindings repoRoot).Checks
-        |> List.fold (fun acc check -> ValidationResult.tally check acc) result
-
-    let result =
-        (validateSync repoRoot).Checks
         |> List.fold (fun acc check -> ValidationResult.tally check acc) result
 
     { result with

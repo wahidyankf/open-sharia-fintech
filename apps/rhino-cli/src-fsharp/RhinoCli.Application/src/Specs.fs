@@ -2493,3 +2493,121 @@ let formatRuntimeViolations (violations: RuntimeCoverageViolation list) : string
             |> ignore
 
         out.ToString()
+
+// ---------------------------------------------------------------------------
+// Behavior-coverage extraction
+// [Repo-grounded — `apps/rhino-cli/src/application/behavior_coverage/extract.rs`]
+// ---------------------------------------------------------------------------
+
+/// Directory names skipped while walking a level dir for `@covers` markers —
+/// generated output and dependency caches carry no hand-authored markers.
+let private coversSkipDirs =
+    set [ "node_modules"; ".git"; "target"; "dist"; "build"; ".next" ]
+
+/// Matches the marker payload alone, not any one comment prefix: every
+/// language spells `@covers <path>:<title>` the same way.
+let private coversMarkerRe =
+    Regex(@"@covers\s+(\S+):(.+?)\s*$", RegexOptions.Compiled)
+
+let private walkSkippingDirs (dir: string) (skip: Set<string>) : string list =
+    let rec walk (current: string) : string list =
+        let files = Directory.GetFiles current |> List.ofArray
+
+        let subdirs =
+            Directory.GetDirectories current
+            |> List.ofArray
+            |> List.filter (fun d -> not (skip.Contains(Path.GetFileName d)))
+            |> List.collect walk
+
+        files @ subdirs
+
+    if Directory.Exists dir then walk dir else []
+
+let private toRepoRelative (repoRoot: string) (path: string) : string =
+    if String.IsNullOrEmpty repoRoot then
+        path
+    else
+        let prefix =
+            if repoRoot.EndsWith(string Path.DirectorySeparatorChar) then
+                repoRoot
+            else
+                repoRoot + string Path.DirectorySeparatorChar
+
+        if path.StartsWith(prefix, StringComparison.Ordinal) then
+            path.Substring prefix.Length
+        else
+            path
+
+/// Scans `dir` recursively for `@covers` markers, tagging each with `level`.
+/// A missing directory yields no markers rather than an error.
+let extractCoversMarkers (dir: string) (level: TestLevel) (repoRoot: string) : CoversMarker list =
+    walkSkippingDirs dir coversSkipDirs
+    |> List.collect (fun file ->
+        let lines =
+            try
+                File.ReadAllLines file |> List.ofArray
+            with _ ->
+                // Binary / non-UTF-8 files carry no markers.
+                []
+
+        let sourceFile = toRepoRelative repoRoot file
+
+        lines
+        |> List.choose (fun line ->
+            let m = coversMarkerRe.Match line
+
+            if m.Success then
+                Some
+                    { SourceFile = sourceFile
+                      Level = level
+                      FeaturePath = m.Groups.[1].Value
+                      ScenarioTitle = m.Groups.[2].Value.Trim() }
+            else
+                None))
+
+/// Parses `path`'s scenarios into [`ScenarioSpec`]s, reading the level tags
+/// and `@wip` exemption declared on the tag lines above each scenario.
+/// `#`-comment lines are skipped without clearing pending tags, matching how
+/// a real Gherkin parser associates tags across comments.
+let extractScenarioSpecs (path: string) (featurePath: string) : ScenarioSpec list =
+    let specs = ResizeArray<ScenarioSpec>()
+    let pendingTags = ResizeArray<string>()
+
+    for raw in File.ReadAllLines path do
+        let line = raw.Trim()
+
+        if line = "" || line.StartsWith("#", StringComparison.Ordinal) then
+            ()
+        elif line.StartsWith("@", StringComparison.Ordinal) then
+            pendingTags.AddRange(line.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries))
+        else
+            let title =
+                [ "Scenario Outline:"; "Scenario Template:"; "Scenario:" ]
+                |> List.tryPick (fun prefix ->
+                    if line.StartsWith(prefix, StringComparison.Ordinal) then
+                        Some(line.Substring(prefix.Length).Trim())
+                    else
+                        None)
+
+            match title with
+            | Some title ->
+                let levelTags =
+                    pendingTags
+                    |> Seq.choose (fun tag ->
+                        match tag with
+                        | "@unit" -> Some Unit
+                        | "@integration" -> Some Integration
+                        | "@e2e" -> Some E2e
+                        | _ -> None)
+                    |> Set.ofSeq
+
+                specs.Add
+                    { FeaturePath = featurePath
+                      Title = title
+                      LevelTags = levelTags
+                      IsWip = pendingTags.Contains "@wip" }
+            | None -> ()
+
+            pendingTags.Clear()
+
+    List.ofSeq specs

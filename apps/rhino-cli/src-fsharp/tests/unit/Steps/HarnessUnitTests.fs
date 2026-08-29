@@ -300,10 +300,30 @@ let ``validateCodexAgentsDir names every offender in sorted order`` () =
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``validateBindings tallies one catalog check per known binding dir plus the codex check`` () =
+let ``validateBindings folds in the sync checks, catalog coverage, and both codex checks`` () =
     let result = validateBindings (scratch ())
-    Assert.Equal(List.length knownBindingDirs + 1, result.TotalChecks)
-    Assert.Equal(result.TotalChecks, result.PassedChecks)
+    let names = result.Checks |> List.map (fun c -> c.Name)
+
+    // An empty scratch repo has no agents, so the static per-binding-file
+    // checks contribute nothing and every remaining family shows up once.
+    // `Agent Equivalence` is the discovery-error check: a scratch repo has no
+    // `.claude/agents`, so the walk reports once instead of per agent.
+    let syncNames =
+        [ "No Stale Agent Directory"
+          "Agent Count"
+          "Agent Equivalence"
+          "No Synced Skill Mirror"
+          "Skills Mirror: .agents/skills" ]
+
+    for expected in syncNames do
+        Assert.Contains(expected, names)
+
+    for dir in knownBindingDirs do
+        Assert.Contains(sprintf "Catalog Coverage: %s" dir, names)
+
+    Assert.Contains(sprintf "Codex Agent Files: %s" codexAgentDir, names)
+    Assert.Contains(sprintf "Codex Config Region: %s" codexConfigFile, names)
+    Assert.Equal(List.length syncNames + List.length knownBindingDirs + 2, result.TotalChecks)
 
 // ---------------------------------------------------------------------------
 // `--harness` name acceptance
@@ -784,7 +804,7 @@ let ``validateSync fails a claude source with no frontmatter as a discovery erro
         fun c ->
             c.Name = "Agent Equivalence"
             && c.Status = "failed"
-            && c.Message.Contains("failed to discover")
+            && c.Message.Contains("Failed to read Claude agents directory")
     )
 
 [<Fact>]
@@ -798,7 +818,7 @@ let ``validateSync reports a missing OpenCode mirror by name`` () =
     Assert.Contains(
         result.Checks,
         fun c ->
-            c.Name = "Agent Equivalence: orphan-agent"
+            c.Name = "Agent: orphan-agent"
             && c.Status = "failed"
             && c.Message.Contains("OpenCode mirror not found")
     )
@@ -814,7 +834,7 @@ let ``validateSync fails when the OpenCode mirror's own frontmatter cannot be pa
     Assert.Contains(
         result.Checks,
         fun c ->
-            c.Name = "Agent Equivalence: bad-mirror-agent"
+            c.Name = "Agent: bad-mirror-agent"
             && c.Status = "failed"
             && c.Message.Contains("failed to parse OpenCode frontmatter")
     )
@@ -835,12 +855,7 @@ let ``validateSync fails a skills-list mismatch and a body mismatch`` () =
 
     let result = validateSync root
 
-    Assert.Contains(
-        result.Checks,
-        fun c ->
-            c.Name = "Agent Equivalence: skills-mismatch-agent"
-            && c.Message = "skills mismatch"
-    )
+    Assert.Contains(result.Checks, fun c -> c.Name = "Agent: skills-mismatch-agent" && c.Message = "skills mismatch")
 
     writeAgent root "body-mismatch-agent" "model: sonnet\n" "Original body.\n"
 
@@ -858,7 +873,7 @@ let ``validateSync fails a skills-list mismatch and a body mismatch`` () =
     Assert.Contains(
         bodyResult.Checks,
         fun c ->
-            c.Name = "Agent Equivalence: body-mismatch-agent"
+            c.Name = "Agent: body-mismatch-agent"
             && c.Message.Contains(".opencode/agents/body-mismatch-agent.md drifted from generated content")
             && c.Message.Contains("harness sync promote --from .opencode/agents/body-mismatch-agent.md")
     )

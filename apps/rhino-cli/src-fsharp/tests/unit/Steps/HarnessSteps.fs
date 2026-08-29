@@ -581,7 +581,22 @@ type HarnessSteps() =
     /// referenced in the catalog; a fixture missing it fails for a reason
     /// unrelated to ownership
     /// [Repo-grounded — `tests/harness_ownership.rs::write_supporting_docs`].
-    let writeOwnershipSupportingDocs (root: string) : unit = writeCatalog root (fullCatalog ())
+    /// `harness bindings validate` resolves every agent `color:`/`model:`
+    /// value against a governance map, so a fixture lacking those two docs
+    /// would fail for a reason unrelated to ownership
+    /// [Repo-grounded — `tests/harness_ownership.rs::write_supporting_docs`].
+    let writeOwnershipSupportingDocs (root: string) : unit =
+        writeCatalog root (fullCatalog ())
+
+        let govDir = Path.Combine(root, "repo-governance", "development", "agents")
+        Directory.CreateDirectory govDir |> ignore
+
+        File.WriteAllText(Path.Combine(govDir, "ai-agents.md"), "# AI Agents\n\nColor translation: `blue`\n")
+
+        File.WriteAllText(
+            Path.Combine(govDir, "model-selection.md"),
+            "# Model Selection\n\nCapability tiers: `sonnet`, `haiku`, `opus`\n"
+        )
 
     /// A valid Claude agent. `tools:`/`model:` are present because the
     /// OpenCode equivalence check translates both; `color:` is omitted
@@ -2270,7 +2285,10 @@ type HarnessSteps() =
              if exitCode () = 0 then
                  ""
              else
-                 "the fixture must start classified")
+                 (result ()).Checks
+                 |> List.filter (fun c -> c.Status <> "passed")
+                 |> List.map (fun c -> sprintf "%s: %s" c.Name c.Message)
+                 |> String.concat "; ")
         )
 
     [<When>]

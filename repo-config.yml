@@ -169,12 +169,14 @@ coverage:
     # own one-to-one coverage check even though the Rust implementation
     # already covers them. Once the last sibling file lands — Wave B's `env/`
     # (4 files) and `env-contract/` (1 file), Wave C's `system/` (3 files)
-    # and `test-coverage/` (3 files), and now Wave D's `md/` (7 files),
-    # `governance/` (2 files), and `git/` (2 files) — the glob widens to
-    # directory-level like `convention/` did.
+    # and `test-coverage/` (3 files), Wave D's `md/` (7 files),
+    # `governance/` (2 files), and `git/` (2 files), and now Wave E's
+    # `harness/` (14 files), `specs/` (13 files), `spec-coverage/` (1 file),
+    # `contracts/` (1 file), `repo-governance/` (4 files), and `ddd/`
+    # (2 files) — the glob widens to directory-level like `convention/` did.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/**,test-coverage/**,md/**,governance/**,git/**}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,system/**,test-coverage/**,md/**,governance/**,git/**,harness/**,specs/**,spec-coverage/**,contracts/**,repo-governance/**,ddd/**}"
 
     # ose domain
     - name: ose-be
