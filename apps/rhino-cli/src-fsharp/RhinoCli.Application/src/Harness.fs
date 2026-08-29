@@ -803,7 +803,7 @@ let private hashWindow (lines: string list) : string =
 /// absent or declares no source tier — preserving pre-registry behaviour for
 /// callers with no config file
 /// [Repo-grounded — `detect_duplication.rs::source_dirs_from_registry`].
-let private sourceDirsFromRegistry (repoRoot: string) : string list * string list =
+let sourceDirsFromRegistry (repoRoot: string) : string list * string list =
     let config = RepoConfig.loadOrDefault repoRoot
 
     let sourceDirs (select: RepoConfig.HarnessEntry -> string option) : string list =
