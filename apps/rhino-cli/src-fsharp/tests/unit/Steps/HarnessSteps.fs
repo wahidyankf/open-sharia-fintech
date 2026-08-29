@@ -101,6 +101,54 @@ let private readAgentSurface (agentRel: string) : string =
 
     out
 
+/// The organization the OpenCode repository moved away from, split from its
+/// path so no tracked file carries the full citation
+/// [Repo-grounded — `tests/opencode_conformance.rs::FORMER_ORG`].
+let private formerOrg = "sst"
+
+/// The organization the OpenCode repository moved to.
+let private currentOrg = "anomalyco"
+
+/// The repository name, shared by both citations.
+let private opencodeRepoName = "opencode"
+
+let private formerCitation () : string =
+    sprintf "%s/%s" formerOrg opencodeRepoName
+
+let private currentCitation () : string =
+    sprintf "%s/%s" currentOrg opencodeRepoName
+
+/// Every `.md` file directly under `root`, sorted, mirroring
+/// `ConformanceWorld::docs`.
+let private conformanceDocs (root: string) : string list =
+    Directory.GetFiles(root, "*.md") |> Array.sort |> Array.toList
+
+let private countCiting (root: string) (needle: string) : int =
+    conformanceDocs root
+    |> List.filter (fun p -> (File.ReadAllText p).Contains(needle))
+    |> List.length
+
+/// Whether a directory name is an Eisenhower quadrant subfolder
+/// [Repo-grounded — `tests/opencode_conformance.rs::is_quadrant`].
+let private isQuadrant (name: string) : bool =
+    name.Length >= 3
+    && name.[0] = 'q'
+    && name.[1] >= '1'
+    && name.[1] <= '4'
+    && name.[2] = '-'
+
+/// Every `.md` brief under the given quadrant directories, as (quadrant,
+/// file), sorted [Repo-grounded — `tests/opencode_conformance.rs::briefs_in`].
+let private briefsIn (quadrants: string list) : (string * string) list =
+    quadrants
+    |> List.collect (fun quadrant ->
+        let name = Path.GetFileName(quadrant.TrimEnd('/', '\\'))
+
+        Directory.GetFiles(quadrant, "*.md")
+        |> Array.toList
+        |> List.map (fun path -> name, Path.GetFileName path))
+    |> List.sort
+
 /// Instance step-definition container — see `ConventionSteps.fs`'s module doc
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
 /// instance-level mutable fields the idiomatic state-threading mechanism here.
@@ -142,6 +190,9 @@ type HarnessSteps() =
     let mutable triageCanonicalBefore: string option = None
     let mutable bindingsValidateOutput: string = ""
     let mutable bindingsValidateExitCode: int option = None
+    let mutable conformanceBefore: int option = None
+    let mutable conformanceAfter: int option = None
+    let mutable conformanceBriefs: (string * string) list = []
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -2577,6 +2628,125 @@ type HarnessSteps() =
         Assert.Contains("generated file(s) compared", triageOutput)
         Assert.Contains("0 divergence(s)", triageOutput)
 
+    // ---- @opencode-conformance ----
+
+    [<Given>]
+    member _.``repository documents cite the OpenCode upstream repository under its former organization path``() =
+        let root = scenarioRoot ()
+        let former = formerCitation ()
+
+        File.WriteAllText(
+            Path.Combine(root, "catalog.md"),
+            sprintf "The generator flattens mirrors; see https://github.com/%s/issues/6635.\n" former
+        )
+
+        File.WriteAllText(
+            Path.Combine(root, "convention.md"),
+            sprintf "Upstream lives at https://github.com/%s.\n" former
+        )
+
+        File.WriteAllText(Path.Combine(root, "unrelated.md"), "This document mentions no upstream repository at all.\n")
+
+        conformanceBefore <- Some(countCiting root former)
+
+        Assert.Equal(Some 2, conformanceBefore)
+
+    [<When>]
+    member _.``the citation sweep completes``() =
+        let root = scenarioRoot ()
+        let former = formerCitation ()
+        let current = currentCitation ()
+
+        for path in conformanceDocs root do
+            let body = File.ReadAllText path
+            File.WriteAllText(path, body.Replace(former, current))
+
+        conformanceAfter <- Some(countCiting root former)
+
+    [<Then>]
+    member _.``a search for that former organization path across tracked non-archival documents returns zero matches, where it returned at least one before the sweep``
+        ()
+        =
+        let before = conformanceBefore |> Option.defaultValue 0
+        let after = conformanceAfter |> Option.defaultValue -1
+        Assert.True(before >= 1, sprintf "before-count must be non-zero, got %d" before)
+        Assert.Equal(0, after)
+
+    [<Then>]
+    member _.``the current organization path appears in its place``() =
+        let root = scenarioRoot ()
+        let current = currentCitation ()
+
+        Assert.Equal(conformanceBefore |> Option.defaultValue -1, countCiting root current)
+
+        let untouched = File.ReadAllText(Path.Combine(root, "unrelated.md"))
+        Assert.DoesNotContain(current, untouched)
+
+    [<Given>]
+    member _.``plans/ideas/ is organized into Eisenhower quadrant subfolders and holds at least one brief``() =
+        let ideas = Path.Combine(repositoryRoot, "plans", "ideas")
+        Assert.True(Directory.Exists ideas, "the ideas tree must exist")
+
+        let quadrants = Directory.GetDirectories ideas |> Array.toList
+
+        Assert.True(not (List.isEmpty quadrants), "the ideas tree must be organized into quadrant subfolders")
+
+        Assert.True(
+            quadrants
+            |> List.forall (fun q -> isQuadrant (Path.GetFileName(q.TrimEnd('/', '\\')))),
+            sprintf "every subfolder of plans/ideas must be an Eisenhower quadrant, found %A" quadrants
+        )
+
+        conformanceBriefs <- briefsIn quadrants
+
+        Assert.True(
+            not (List.isEmpty conformanceBriefs),
+            "the assertions below prove nothing against an empty ideas tree"
+        )
+
+    [<When>]
+    member _.``the ideas tree is enumerated``() =
+        Assert.True(not (List.isEmpty conformanceBriefs), "an enumerated ideas tree")
+
+    [<Then>]
+    member _.``no brief has been promoted into a same-named folder under plans/backlog/``() =
+        let backlog = Path.Combine(repositoryRoot, "plans", "backlog")
+
+        let promoted =
+            conformanceBriefs
+            |> List.map (fun (_, file) -> file.Substring(0, file.Length - 3))
+            |> List.filter (fun stem -> Directory.Exists(Path.Combine(backlog, stem)))
+
+        Assert.True(
+            List.isEmpty promoted,
+            sprintf "a brief filed as an idea must not also exist as a backlog plan, found %A" promoted
+        )
+
+    [<Then>]
+    member _.``plans/ideas/README.md links every brief exactly once at its quadrant-matching path``() =
+        let readme =
+            File.ReadAllText(Path.Combine(repositoryRoot, "plans", "ideas", "README.md"))
+
+        let countOccurrences (haystack: string) (needle: string) : int =
+            let mutable count = 0
+            let mutable idx = haystack.IndexOf(needle, StringComparison.Ordinal)
+
+            while idx >= 0 do
+                count <- count + 1
+                idx <- haystack.IndexOf(needle, idx + needle.Length, StringComparison.Ordinal)
+
+            count
+
+        let unlinked =
+            conformanceBriefs
+            |> List.map (fun (quadrant, file) -> sprintf "./%s/%s" quadrant file)
+            |> List.filter (fun entry -> countOccurrences readme entry <> 1)
+
+        Assert.True(
+            List.isEmpty unlinked,
+            sprintf "every brief must be linked exactly once at its quadrant-matching path, offenders %A" unlinked
+        )
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -2687,6 +2857,10 @@ module private FeatureRunner =
     /// Runs one scenario of `harness-sync-triage.feature`.
     let runHarnessSyncTriage (scenarioTitle: string) : unit =
         runIn "harness-sync-triage.feature" scenarioTitle
+
+    /// Runs one scenario of `opencode-conformance.feature`.
+    let runOpencodeConformance (scenarioTitle: string) : unit =
+        runIn "opencode-conformance.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -2947,3 +3121,11 @@ let ``The default failure behaviour is unchanged and now names the way out`` () 
 [<Fact>]
 let ``This repository's own tree reports zero divergences`` () =
     FeatureRunner.runHarnessSyncTriage "This repository's own tree reports zero divergences"
+
+[<Fact>]
+let ``The stale upstream repository citation is corrected`` () =
+    FeatureRunner.runOpencodeConformance "The stale upstream repository citation is corrected"
+
+[<Fact>]
+let ``A rename set filed as an idea stays an idea, linked from its own quadrant`` () =
+    FeatureRunner.runOpencodeConformance "A rename set filed as an idea stays an idea, linked from its own quadrant"
