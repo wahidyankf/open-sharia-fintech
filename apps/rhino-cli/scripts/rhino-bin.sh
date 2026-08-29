@@ -64,7 +64,7 @@ GATE_BIN="${TARGET_DIR}/gate/rhino-cli"
 # Namespaces already flipped to the F# binary. Empty at Phase 2 — every wave
 # from Wave A (Phase 3) onward adds exactly its own namespaces here in that
 # wave's flip PR, per tech-docs.md DD-4's wave ordering.
-FSHARP_NAMESPACES=("convention" "parity" "repo-config" "env" "doctor" "test-coverage" "md" "governance" "git" "harness" "specs" "repo-governance")
+FSHARP_NAMESPACES=("convention" "parity" "repo-config" "env" "doctor" "test-coverage" "md" "governance" "git" "harness" "specs" "repo-governance" "gate")
 
 if [[ $# -gt 0 ]]; then
 	for FSHARP_NAMESPACE in "${FSHARP_NAMESPACES[@]+"${FSHARP_NAMESPACES[@]}"}"; do
