@@ -134,9 +134,6 @@ jobs:
       # `main`. A second, head-sha-pinned artifact built solely for this job
       # was judged not worth the extra CI job for that bound; revisit if a
       # validator invoked here ever gains file-mutating behavior.
-      RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
-      # Mirrors RHINO_CLI_BIN above for the F# binary this job's rhino-bin.sh
-      # calls resolve to once a namespace is listed in FSHARP_NAMESPACES.
       RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
     steps:
       - uses: actions/checkout@v6
@@ -186,11 +183,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/target/gate
-      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
-      - uses: actions/download-artifact@v4
-        with:
-          name: rhino-cli-fsharp-binary
           path: apps/rhino-cli/src-fsharp/dist
       - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
       - name: Provision registry-declared pre-commit tools
@@ -231,18 +223,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-rust
-      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml
-      - uses: actions/upload-artifact@v4
-        with:
-          name: rhino-cli-gate-binary
-          path: apps/rhino-cli/target/gate/rhino-cli
-      # F# rhino-cli port (rewrite-rhino-cli-to-fsharp): publishes alongside
-      # the Rust binary from Phase 2 onward so every downstream job can
-      # resolve either binary through the dispatch shim. Self-contained,
-      # non-AOT per the Phase 1 publish-mode decision
+      # Self-contained, non-AOT per the Phase 1 publish-mode decision
       # (learnings.md#publish-mode-decision) — bundles the .NET runtime so
-      # the eight consumer jobs below stay toolchain-free, unlike a
+      # the downstream consumer jobs stay toolchain-free, unlike a
       # framework-dependent publish. Invokes the Nx `build` target itself
       # (never a hand-written `dotnet publish` duplicate) so there is exactly
       # one source of truth for the publish command; `--rid` overrides the
@@ -254,7 +237,7 @@ jobs:
       - run: npx nx run rhino-cli-fsharp:build --rid="-r linux-x64"
       - uses: actions/upload-artifact@v4
         with:
-          name: rhino-cli-fsharp-binary
+          name: rhino-cli-gate-binary
           path: apps/rhino-cli/src-fsharp/dist
 
   enumerate:
@@ -268,25 +251,20 @@ jobs:
       - uses: ./.github/actions/setup-node
         with:
           # `enumerate` only lists gate groups via the shim; the `list` step
-          # later in this job sets RHINO_CLI_BIN inline for that one
+          # later in this job sets RHINO_CLI_FSHARP_BIN inline for that one
           # invocation so rhino-bin.sh resolves the artifact downloaded by
           # the `download-artifact` step (also later in this job) instead of
-          # falling back to cargo/node. jq is runner-provided; no npm-managed
-          # tool is needed here.
+          # falling back to `dotnet run`/node. jq is runner-provided; no
+          # npm-managed tool is needed here.
           run-npm-ci: false
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/target/gate
-      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
-      - uses: actions/download-artifact@v4
-        with:
-          name: rhino-cli-fsharp-binary
           path: apps/rhino-cli/src-fsharp/dist
       - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
       - id: list
         run: |
-          groups=$(RHINO_CLI_BIN="$PWD/apps/rhino-cli/target/gate/rhino-cli" RHINO_CLI_FSHARP_BIN="$PWD/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
+          groups=$(RHINO_CLI_FSHARP_BIN="$PWD/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
           echo "groups=$groups" >> "$GITHUB_OUTPUT"
 
   gate:
@@ -330,11 +308,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/target/gate
-      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
-      - uses: actions/download-artifact@v4
-        with:
-          name: rhino-cli-fsharp-binary
           path: apps/rhino-cli/src-fsharp/dist
       - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
       - name: Provision registry-declared tools
@@ -345,11 +318,9 @@ jobs:
           fi
         env:
           DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}
-          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
           RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
       - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
         env:
-          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
           RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
           GROUP_ID: ${{ matrix.group.group }}
 
