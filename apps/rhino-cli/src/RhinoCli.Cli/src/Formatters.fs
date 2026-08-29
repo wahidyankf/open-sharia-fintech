@@ -1265,8 +1265,8 @@ let formatGoDuration (d: TimeSpan) : string =
     let nanos = int64 (d.TotalMilliseconds * 1_000_000.0)
 
     let formatFraction (nanos: int64) (scale: int64) (width: int) : string =
-        let whole = nanos / scale
-        let frac = nanos % scale
+        let whole: int64 = nanos / scale
+        let frac: int64 = nanos % scale
 
         if frac = 0L then
             string whole
@@ -1288,7 +1288,7 @@ let formatGoDuration (d: TimeSpan) : string =
         formatFraction nanos 1_000_000L 6 + "ms"
     else
         let totalSecs = nanos / 1_000_000_000L
-        let fracNs = nanos % 1_000_000_000L
+        let fracNs: int64 = nanos % 1_000_000_000L
         let hours = totalSecs / 3600L
         let mins = (totalSecs % 3600L) / 60L
         let secs = totalSecs % 60L
@@ -1544,7 +1544,7 @@ let duplicationMarkdown (findings: Harness.DuplicationFinding list) : string =
                     f.Severity
                     f.WindowSize
                     (String.concat "<br>" f.Files)
-                    (f.StartLines |> List.map string |> String.concat "<br>")
+                    (f.StartLines |> List.map (fun (n: int) -> string n) |> String.concat "<br>")
                     f.Message)
             |> String.concat ""
 

@@ -1284,7 +1284,9 @@ let private hasExecutableShellInvocation (contents: string) (expectedInvocation:
     contents.Split '\n'
     |> Array.exists (fun line ->
         let trimmed = line.TrimStart()
-        not (trimmed.StartsWith "#") && trimmed.Contains expectedInvocation)
+
+        not (trimmed.StartsWith("#", StringComparison.Ordinal))
+        && trimmed.Contains expectedInvocation)
 
 /// Validates every generated Husky shim required by declared local-hook gates
 /// [Repo-grounded — `gate/validate.rs::validate_local_hook_shims`].
@@ -1354,10 +1356,10 @@ let private isLiteralFalseConditionString (raw: string) : bool =
     let trimmed = raw.Trim()
 
     let expression =
-        if trimmed.StartsWith "${{" then
+        if trimmed.StartsWith("${{", StringComparison.Ordinal) then
             let afterPrefix = trimmed.Substring 3
 
-            if afterPrefix.EndsWith "}}" then
+            if afterPrefix.EndsWith("}}", StringComparison.Ordinal) then
                 afterPrefix.Substring(0, afterPrefix.Length - 2).Trim()
             else
                 trimmed
@@ -1650,10 +1652,10 @@ let private validateCiGateInvocations (config: RepoConfig) (workflow: Workflow) 
         |> List.choose (fun step -> step.Run)
         |> List.collect (fun run -> run.Split '\n' |> Array.toList)
         |> List.map (fun line -> line.Trim())
-        |> List.filter (fun line -> not (line.StartsWith "#"))
+        |> List.filter (fun line -> not (line.StartsWith("#", StringComparison.Ordinal)))
 
     let isDynamicSelector (selector: string) =
-        selector.Contains "${{" || selector.StartsWith "$"
+        selector.Contains "${{" || selector.StartsWith("$", StringComparison.Ordinal)
 
     let splitAfter (marker: string) (command: string) : string option =
         let parts = command.Split([| marker |], StringSplitOptions.None)
@@ -1750,7 +1752,9 @@ let private nxTargets (tokens: string list) : string list =
                 | Some targetIndex ->
                     arguments
                     |> List.skip (targetIndex + 1)
-                    |> List.takeWhile (fun a -> not (a.StartsWith "-") && not (List.contains a [ "&&"; ";"; "|" ]))
+                    |> List.takeWhile (fun a ->
+                        not (a.StartsWith("-", StringComparison.Ordinal))
+                        && not (List.contains a [ "&&"; ";"; "|" ]))
                     |> List.collect (fun a -> a.Split ',' |> Array.toList)
             | _ -> []
         | _ -> []

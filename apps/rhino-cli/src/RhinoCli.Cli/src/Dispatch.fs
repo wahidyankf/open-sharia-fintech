@@ -2007,7 +2007,7 @@ let private capitalizeFirst (s: string) : string =
     if s = "" then
         s
     else
-        string (Char.ToUpperInvariant s.[0]) + s.Substring 1
+        string (Char.ToUpperInvariant s.[0]: char) + s.Substring 1
 
 /// `Ok None` when no level dir is given, `Ok (Some levels)` when all three
 /// are, and `Error` for a partial set [Repo-grounded —
