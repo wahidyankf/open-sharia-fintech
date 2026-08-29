@@ -523,7 +523,7 @@ type DoctorSteps() =
         exec ()
 
     [<When>]
-    member _.``Nx launches the Rust test or coverage command``() = ()
+    member _.``Nx launches the dotnet test command``() = ()
 
     // ---- Then ----
 
@@ -883,5 +883,5 @@ let ``stale-artifact sweep degrades gracefully when cargo-sweep is absent`` () =
     FeatureRunner.run "stale-artifact sweep degrades gracefully when cargo-sweep is absent"
 
 [<Fact>]
-let ``Rust test targets ignore inherited Git process state`` () =
-    FeatureRunner.run "Rust test targets ignore inherited Git process state"
+let ``Test targets ignore inherited Git process state`` () =
+    FeatureRunner.run "Test targets ignore inherited Git process state"

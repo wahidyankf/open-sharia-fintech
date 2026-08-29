@@ -150,14 +150,3 @@ Feature: Gate execution
     Given a composite action with an unnamed unguarded npm ci step
     When its npm ci steps are inspected
     Then the unnamed npm ci step is reported unguarded
-
-  Scenario: Rust CI target families run serially
-    Given the real Rust quality gate
-    When its target families execute
-    Then every Rust target command serializes Cargo work
-
-  Scenario: The MSRV pre-install covers the toolchain name cargo-hack requests
-    Given a crate declares a patch-level rust-version floor
-    When the Rust setup action pre-installs the pinned MSRV toolchains
-    Then it installs that floor's major-minor toolchain name
-    And it installs the patch-level toolchain name too

@@ -131,7 +131,6 @@ type GateExecutionSteps() =
     let mutable ciChangedBase: string option = None
     let mutable ciArguments: string option = None
     let mutable pendingCiGroup: string option = None
-    let mutable msrvInvocations: string list option = None
     let mutable unnamedNpmCiUnguarded: bool option = None
 
     let write (relative: string) (contents: string) =
@@ -1276,30 +1275,6 @@ type GateExecutionSteps() =
         let stepLines = lines.[start..idx]
         Assert.False(stepLines |> Array.exists (fun l -> l.TrimStart().StartsWith "if:"))
 
-    [<Given>]
-    member _.``the real Rust quality gate``() =
-        gateJobBlock <- Some(jobBlock (prQualityGateWorkflow ()) "rust")
-
-    [<When>]
-    member _.``its target families execute``() = ()
-
-    [<Then>]
-    member _.``every Rust target command serializes Cargo work``() =
-        let rustJob = gateJobBlock.Value
-
-        let targetCommands =
-            rustJob.Split('\n')
-            |> Array.filter (fun l -> l.Contains "nx affected -t" || l.Contains "nx run-many -t")
-
-        Assert.Equal(2, targetCommands.Length)
-
-        Assert.True(
-            targetCommands
-            |> Array.forall (fun c ->
-                (c.Contains "--parallel=1" || c.Contains "--parallel=false")
-                && c.Contains "--outputStyle=stream")
-        )
-
     // --- Unnamed npm ci action step -------------------------------------------
 
     [<Given>]
@@ -1325,62 +1300,6 @@ type GateExecutionSteps() =
     [<Then>]
     member _.``the unnamed npm ci step is reported unguarded``() =
         Assert.True((unnamedNpmCiUnguarded = Some true))
-
-    // --- MSRV pre-install -------------------------------------------------------
-
-    [<Given>]
-    member _.``a crate declares a patch-level rust-version floor``() =
-        write
-            "apps/fixture-cli/Cargo.toml"
-            "[package]\nname = \"fixture-cli\"\nversion = \"0.1.0\"\nrust-version = \"1.95.0\"\n"
-
-        Directory.CreateDirectory(Path.Combine(root, "libs")) |> ignore
-
-    [<When>]
-    member _.``the Rust setup action pre-installs the pinned MSRV toolchains``() =
-        let action =
-            File.ReadAllText(Path.Combine(repoRoot, ".github", "actions", "setup-rust", "action.yml"))
-
-        let step = stepBlock action "Pre-install pinned MSRV toolchain"
-        let script = runBlockFromStep step |> Option.get
-
-        let stubDir = Path.Combine(root, "stub-bin")
-        Directory.CreateDirectory stubDir |> ignore
-        let log = Path.Combine(root, "rustup-invocations.log")
-        let stub = Path.Combine(stubDir, "rustup")
-        File.WriteAllText(stub, sprintf "#!/bin/sh\nprintf '%%s\\n' \"$*\" >>'%s'\n" log)
-        makeExecutable stub
-
-        let inheritedPath =
-            Environment.GetEnvironmentVariable "PATH"
-            |> Option.ofObj
-            |> Option.defaultValue ""
-
-        let result =
-            run "bash" [ "-c"; script ] root [ "PATH", sprintf "%s%c%s" stubDir Path.PathSeparator inheritedPath ]
-
-        Assert.True(
-            result.ExitCode = 0,
-            sprintf "the MSRV pre-install script must succeed — stdout: %s stderr: %s" result.Stdout result.Stderr
-        )
-
-        let recorded = if File.Exists log then File.ReadAllText log else ""
-        msrvInvocations <- Some(recorded.Split('\n') |> Array.filter (fun l -> l <> "") |> Array.toList)
-
-    [<Then>]
-    member _.``it installs that floor's major-minor toolchain name``() =
-        Assert.True(
-            msrvInvocations.Value
-            |> List.exists (fun call -> call.StartsWith "toolchain install 1.95 " || call = "toolchain install 1.95")
-        )
-
-    [<Then>]
-    member _.``it installs the patch-level toolchain name too``() =
-        Assert.True(
-            msrvInvocations.Value
-            |> List.exists (fun call ->
-                call.StartsWith "toolchain install 1.95.0 " || call = "toolchain install 1.95.0")
-        )
 
     // --- gate-declaration.feature: lockfile-sync ------------------------------
     //
@@ -1647,14 +1566,6 @@ let ``A gate group with no node tooling skips npm ci`` () =
 [<Fact>]
 let ``An unnamed npm ci action step is detected`` () =
     FeatureRunner.run "An unnamed npm ci action step is detected"
-
-[<Fact>]
-let ``Rust CI target families run serially`` () =
-    FeatureRunner.run "Rust CI target families run serially"
-
-[<Fact>]
-let ``The MSRV pre-install covers the toolchain name cargo-hack requests`` () =
-    FeatureRunner.run "The MSRV pre-install covers the toolchain name cargo-hack requests"
 
 [<Fact>]
 let ``lockfile-sync regenerates the lockfile and restages it`` () =

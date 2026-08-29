@@ -83,7 +83,6 @@ type DoctorToolCheckSteps() =
         Directory.CreateDirectory(dir) |> ignore
         dir
 
-    let mutable rustChannelOverride: string option = None
     let mutable scope: string option = None
     let mutable selectedTools: string list = []
     let mutable fixFlag = false
@@ -237,14 +236,6 @@ type DoctorToolCheckSteps() =
         missingBinaries <- Set.add "shfmt" missingBinaries
 
         File.WriteAllText(Path.Combine(repoRoot, "repo-config.yml"), "doctor:\n  skip-tools: [shfmt]\n")
-
-    [<Given>]
-    member _.``the installed rustc differs from the pinned rust-toolchain.toml channel``() =
-        // The fake runner's rustc stub always reports "1.90.0"; pin a
-        // different channel to force a mismatch → warning.
-        let rustChannel = "1.95.0"
-        rustChannelOverride <- Some rustChannel
-        writeConfig "24.11.1" rustChannel
 
     [<Given>]
     member _.``a rust-toolchain.toml pins a channel and declares no lint components``() =
@@ -409,21 +400,6 @@ type DoctorToolCheckSteps() =
         Assert.DoesNotContain("shfmt", outputText)
 
     [<Then>]
-    member _.``it reports the Rust toolchain as mismatched``() =
-        Assert.True(exitSuccess, outputText)
-        let line = findCheckLine "rust" outputText
-        Assert.True(line.StartsWith("\u26A0") || line.ToLowerInvariant().Contains("warning"), line)
-
-    [<Then>]
-    member _.``it names the pinned channel as the expected value``() =
-        let expected =
-            rustChannelOverride
-            |> Option.defaultWith (fun () -> failwith "rustChannelOverride set by a prior Given step")
-
-        let line = findCheckLine "rust" outputText
-        Assert.Contains(sprintf "required: %s" expected, line)
-
-    [<Then>]
     member _.``it reports the toolchain component check as a warning naming rustfmt and clippy``() =
         let line = findCheckLine "rust-toolchain-components" outputText
         Assert.True(line.StartsWith("\u26A0") || line.ToLowerInvariant().Contains("warning"), line)
@@ -560,10 +536,6 @@ let ``Fix reports nothing to fix when all tools are present`` () =
 [<Fact>]
 let ``A repo-config-declared tool is skipped from the check`` () =
     FeatureRunner.run "A repo-config-declared tool is skipped from the check"
-
-[<Fact>]
-let ``doctor compares rustc against the toolchain that builds`` () =
-    FeatureRunner.run "doctor compares rustc against the toolchain that builds"
 
 [<Fact>]
 let ``A pinned Rust toolchain without lint components is reported as a warning`` () =

@@ -3,7 +3,7 @@ Feature: Repo-specific behaviour is data-driven from repo-config.yml
 
   As a maintainer keeping rhino-cli byte-identical across ose-public and ose-private
   I want every per-repo behaviour (env globs, domain-areas, ddd-areas) read from repo-config.yml
-  So that the Rust source stays identical and only the per-repo data file differs
+  So that the source stays identical and only the per-repo data file differs
 
   Scenario: Repo-specific behaviour is data-driven, not hard-coded
     Given rhino-cli's repo-specific behaviour (env globs, domain/ddd areas)

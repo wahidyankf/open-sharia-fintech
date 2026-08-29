@@ -104,8 +104,8 @@ Feature: Shared Cargo Target Directories via Doctor
     Then the sweep step is reported as skipped rather than failing the command
     And the command exits successfully
 
-  Scenario: Rust test targets ignore inherited Git process state
+  Scenario: Test targets ignore inherited Git process state
     Given a rhino-cli test target is invoked with inherited GIT_DIR, GIT_WORK_TREE and GIT_COMMON_DIR
-    When Nx launches the Rust test or coverage command
+    When Nx launches the dotnet test command
     Then all three inherited variables are cleared for that command
     And a regression test protects the target configuration before any downstream copy
