@@ -57,6 +57,8 @@ type SpecsSteps() =
     let mutable e2eBaselinePath: string option = None
     let mutable e2eSaveOutcome: Result<unit, string> option = None
     let mutable e2eLoaded: BaselineManifest option = None
+    let mutable e2eCliFixtureRoot: string option = None
+    let mutable e2eCliExitCode: int option = None
 
     let e2eRoot () : string =
         match e2eScenarioRoot with
@@ -851,6 +853,105 @@ type SpecsSteps() =
         Assert.Contains("not found", message, StringComparison.Ordinal)
         Assert.Contains("npx bddgen", message, StringComparison.Ordinal)
 
+    // ---- Given/When/Then (`e2e-coverage.feature` — CLI glob-resolution regression) ----
+    //
+    // Every other e2e-coverage.feature step above drives `diffGaps`/
+    // `scanFixmeDir` directly, bypassing `Dispatch.fs`'s own `--features`
+    // glob resolution entirely. That CLI-layer path-joining step is where a
+    // real bug shipped: `Path.Combine(".", pattern)` (the default
+    // `--project-dir`) produces a literal `./`-prefixed string that
+    // `Directory.GetFiles` preserves verbatim, while the checked-in baseline
+    // manifest's `feature` entries never carry that prefix — so every
+    // already-accepted unbound scenario in a real (non-rhino-cli) consuming
+    // project falsely reported as a brand-new gap. This scenario spawns the
+    // real CLI as a subprocess specifically to exercise that layer.
+    [<Given>]
+    member _.``a project fixture with a repo-relative --features glob and a baseline keyed on the unprefixed match``() =
+        let dir =
+            Path.Combine(Path.GetTempPath(), "rhino-cli-e2e-cli-fixture-" + Guid.NewGuid().ToString("N"))
+
+        let specDir = Path.Combine(dir, "specs", "sample")
+        Directory.CreateDirectory specDir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(specDir, "thing.feature"),
+            String.Join(
+                "\n",
+                [ "Feature: Sample"
+                  ""
+                  "  @e2e"
+                  "  Scenario: Sample scenario"
+                  "    Given a step"
+                  "" ]
+            )
+        )
+
+        let genDir = Path.Combine(dir, ".features-gen", "specs", "sample")
+        Directory.CreateDirectory genDir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(genDir, "thing.feature.spec.js"),
+            "test.fixme('Sample scenario', {}, async () => {});\n"
+        )
+
+        File.WriteAllText(
+            Path.Combine(dir, "e2e-coverage-baseline.json"),
+            """{"project":"fixture","allowedUnbound":[{"feature":"specs/sample/thing.feature","scenario":"Sample scenario"}]}"""
+            + "\n"
+        )
+
+        e2eCliFixtureRoot <- Some dir
+
+    [<When>]
+    member _.``rhino-cli specs e2e-coverage validate runs as a subprocess against that fixture``() =
+        let dir =
+            match e2eCliFixtureRoot with
+            | Some d -> d
+            | None -> failwith "fixture was not created"
+
+        let repoRoot =
+            match RhinoCli.Infrastructure.GitRoot.findRoot () with
+            | Ok root -> root
+            | Error message -> failwithf "locate repository root: %s" message
+
+        let fsproj =
+            Path.Combine(repoRoot, "apps", "rhino-cli", "src", "RhinoCli.Program", "RhinoCli.Program.fsproj")
+
+        let psi =
+            Diagnostics.ProcessStartInfo(
+                FileName = "dotnet",
+                UseShellExecute = false,
+                WorkingDirectory = dir,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            )
+
+        for a in
+            [ "run"
+              "--project"
+              fsproj
+              "--"
+              "specs"
+              "e2e-coverage"
+              "validate"
+              "--features"
+              "specs/**/*.feature"
+              "--features-gen"
+              ".features-gen"
+              "--baseline"
+              "e2e-coverage-baseline.json"
+              "--project"
+              "fixture" ] do
+            psi.ArgumentList.Add a
+
+        use p = Diagnostics.Process.Start psi
+        p.StandardOutput.ReadToEnd() |> ignore
+        p.StandardError.ReadToEnd() |> ignore
+        p.WaitForExit()
+        e2eCliExitCode <- Some p.ExitCode
+
+    [<Then>]
+    member _.``the subprocess exits 0``() = Assert.Equal(Some 0, e2eCliExitCode)
 
     // ---- Given (`gherkin-cardinality.feature`) ----
 
@@ -1780,6 +1881,12 @@ let ``First-time baseline generation snapshots current unbound scenarios`` () =
 [<Fact>]
 let ``The generated output directory is absent`` () =
     FeatureRunner.run "e2e-coverage.feature" "The generated output directory is absent"
+
+[<Fact>]
+let ``A --features glob resolves against the default project directory without a stray path prefix`` () =
+    FeatureRunner.run
+        "e2e-coverage.feature"
+        "A --features glob resolves against the default project directory without a stray path prefix"
 
 [<Fact>]
 let ``A scenario with two primary When keywords fails the audit`` () =

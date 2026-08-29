@@ -2342,12 +2342,30 @@ let private runSpecsDomainCoverageLeaf (repoRoot: string) (format: OutputFormat)
 /// Resolves a `--features` glob relative to `projectDir`, returning matched
 /// `.feature` paths [Repo-grounded — `specs_e2e_coverage.rs::collect_declared`,
 /// which delegates to the `glob` crate].
+///
+/// The default `projectDir` is `"."` — joining it onto a pattern via
+/// `Path.Combine`/Rust's `PathBuf::join` both literally produce a
+/// `./`-prefixed string, but the `glob` crate drops that leading `./` from
+/// its match results, while `Directory.GetFiles` preserves whatever `root`
+/// string it is given verbatim. A `Feature` path carrying that stray `./`
+/// never equality-matches the checked-in baseline manifest's un-prefixed
+/// entries, turning every already-accepted unbound scenario into a false
+/// "new gap" — caught via Wave E/F's shadow-diff never exercising an
+/// external consuming project's own `specs e2e-coverage validate`
+/// invocation, only rhino-cli's own spec directory.
 let private globFeatureFiles (projectDir: string) (pattern: string) : string list =
     let combined = IO.Path.Combine(projectDir, pattern)
-    let normalized = combined.Replace('\\', '/')
+
+    let normalized =
+        let withForwardSlashes = combined.Replace('\\', '/')
+
+        if withForwardSlashes.StartsWith("./", StringComparison.Ordinal) then
+            withForwardSlashes.Substring(2)
+        else
+            withForwardSlashes
 
     match normalized.IndexOf '*' with
-    | -1 -> if IO.File.Exists combined then [ combined ] else []
+    | -1 -> if IO.File.Exists normalized then [ normalized ] else []
     | starIndex ->
         let lastSlashBeforeStar = normalized.LastIndexOf('/', starIndex)
 
