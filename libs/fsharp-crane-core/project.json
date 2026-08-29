@@ -79,7 +79,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-crane-core/behavior/gherkin libs/fsharp-crane-core"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-crane-core/behavior/gherkin libs/fsharp-crane-core"
       },
       "cache": true,
       "inputs": [
@@ -91,7 +91,7 @@
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs counts validate specs/libs/fsharp-crane-core"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs counts validate specs/libs/fsharp-crane-core"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/**/*"]

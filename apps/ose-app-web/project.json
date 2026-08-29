@@ -120,8 +120,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/smoke apps/ose-app-web-e2e",
-          "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/env-loader apps/ose-app-web/test/unit"
+          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/smoke apps/ose-app-web-e2e",
+          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/env-loader apps/ose-app-web/test/unit"
         ],
         "parallel": false
       },
@@ -156,7 +156,7 @@
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
