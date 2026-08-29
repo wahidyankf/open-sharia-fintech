@@ -1032,7 +1032,7 @@ let harnessEntrySemanticFindings (index: int) (entry: HarnessEntry) : string lis
 /// and its `Display` shape. No scenario declares an invalid glob; the check
 /// exists so `repo-config validate` keeps rejecting exactly what Rust
 /// rejects.
-let private globPatternError (pattern: string) : string option =
+let globPatternError (pattern: string) : string option =
     let chars = pattern.ToCharArray()
     let n = chars.Length
 

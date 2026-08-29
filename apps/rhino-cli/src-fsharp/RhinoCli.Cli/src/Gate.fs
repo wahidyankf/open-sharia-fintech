@@ -12,6 +12,8 @@ open System
 open System.IO
 open System.Text.Json
 open System.Text.Json.Nodes
+open System.Text.RegularExpressions
+open System.Diagnostics
 open System.Text.Json.Serialization
 open System.Text.Encodings.Web
 open RhinoCli.Domain.Types
@@ -425,3 +427,727 @@ let emitAtRoot (repoRoot: string) (surface: string) : Result<string, string> =
                 | _ -> Error "package.json must contain a JSON object"
             with ex ->
                 Error(sprintf "cannot read %s: %s" packagePath ex.Message)
+
+/// CI event baseline supplied by the workflow for a push-to-main run
+/// [Repo-grounded — `gate/run.rs::GATE_CHANGED_BASE_ENV`].
+let private gateChangedBaseEnv = "GATE_CHANGED_BASE"
+
+/// Source of candidate paths used by a gate scope
+/// [Repo-grounded — `gate/run.rs::CandidateScope`].
+type private CandidateScope =
+    | StagedFiles
+    | TrackedFiles
+    | PathTriggers
+    | NoCandidates
+
+/// Maps a registry scope to its candidate-path source
+/// [Repo-grounded — `gate/run.rs::candidate_scope`].
+let private candidateScope (scope: ScopeKind) : CandidateScope =
+    match scope with
+    | AffectedFileType -> StagedFiles
+    | AllFileType -> TrackedFiles
+    | PathGated -> PathTriggers
+    | AffectedProjects
+    | AllProjects
+    | Other -> NoCandidates
+
+/// Translates one `glob` crate pattern into an anchored .NET regex under the
+/// crate's default `MatchOptions` — where `require_literal_separator` is
+/// false, so `*`, `**`, and `?` all cross `/` [Repo-grounded — the `glob`
+/// crate's `Pattern::matches`].
+///
+/// Returns `None` for a pattern the crate itself would reject, matching
+/// Rust's `Pattern::new(..).is_ok_and(..)`, which treats an invalid pattern
+/// as one that matches nothing.
+let private globRegex (pattern: string) : Regex option =
+    match globPatternError pattern with
+    | Some _ -> None
+    | None ->
+        let builder = Text.StringBuilder()
+        builder.Append '^' |> ignore
+        let mutable index = 0
+
+        while index < pattern.Length do
+            match pattern.[index] with
+            | '?' ->
+                builder.Append '.' |> ignore
+                index <- index + 1
+            | '*' ->
+                builder.Append ".*" |> ignore
+
+                while index < pattern.Length && pattern.[index] = '*' do
+                    index <- index + 1
+            | '[' ->
+                let negated = index + 1 < pattern.Length && pattern.[index + 1] = '!'
+                let bodyStart = if negated then index + 2 else index + 1
+
+                let closing =
+                    seq { bodyStart .. pattern.Length - 1 }
+                    |> Seq.find (fun candidate -> pattern.[candidate] = ']')
+
+                let body = pattern.Substring(bodyStart, closing - bodyStart)
+                builder.Append('[') |> ignore
+
+                if negated then
+                    builder.Append('^') |> ignore
+
+                builder.Append(body.Replace("\\", "\\\\").Replace("^", "\\^")) |> ignore
+                builder.Append(']') |> ignore
+                index <- closing + 1
+            | character ->
+                builder.Append(Regex.Escape(string<char> character)) |> ignore
+                index <- index + 1
+
+        builder.Append '$' |> ignore
+        Some(Regex(builder.ToString()))
+
+/// Whether a path is equal to or below a configured exclusion
+/// [Repo-grounded — `gate/run.rs::is_excluded`].
+let private isExcluded (path: string) (excludes: string list) : bool =
+    excludes
+    |> List.exists (fun exclude ->
+        let prefix = exclude.TrimEnd '/'
+
+        path = prefix
+        || (path.StartsWith(prefix, StringComparison.Ordinal)
+            && path.Substring(prefix.Length).StartsWith("/", StringComparison.Ordinal)))
+
+/// Filters candidate paths by configured glob patterns and exclusions
+/// [Repo-grounded — `gate/run.rs::filter_candidates`].
+let private filterCandidates (candidates: string list) (patterns: string list) (excludes: string list) : string list =
+    let compiled = patterns |> List.map globRegex
+
+    candidates
+    |> List.filter (fun path ->
+        not (isExcluded path excludes)
+        && (List.isEmpty patterns
+            || compiled
+               |> List.exists (fun regex ->
+                   match regex with
+                   | Some regex -> regex.IsMatch path
+                   | None -> false)))
+
+/// Whether a file-scoped gate declares candidate-path patterns
+/// [Repo-grounded — `gate/run.rs::scope_has_file_patterns`].
+let private scopeHasFilePatterns (scope: SurfaceScope) : bool =
+    scope.Glob.IsSome || not (List.isEmpty scope.Globs)
+
+/// Selects candidate paths matching a surface scope and gate exclusions
+/// [Repo-grounded — `gate/run.rs::matching_files`].
+let private matchingFiles (changedPaths: string list) (scope: SurfaceScope) (excludes: string list) : string list =
+    filterCandidates changedPaths (Option.toList scope.Glob @ scope.Globs) excludes
+
+/// Whether any changed path is equal to or under a configured trigger
+/// [Repo-grounded — `gate/run.rs::trigger_matches`].
+let private triggerMatches (paths: string list) (triggers: string list) : bool =
+    paths
+    |> List.exists (fun path ->
+        triggers
+        |> List.exists (fun trigger ->
+            let directory = trigger.TrimEnd '/'
+            path = directory || path.StartsWith(trigger, StringComparison.Ordinal)))
+
+/// Runs `git` with the given arguments at `repoRoot`, returning its exit
+/// success and captured stdout lines. `removeGitEnv` strips `GIT_DIR`/
+/// `GIT_WORK_TREE` from the child environment — required when this process
+/// itself runs under a worktree-relative `GIT_DIR`/`GIT_WORK_TREE` (as this
+/// port's own test harness does), matching Rust's explicit `env_remove`
+/// calls at each corresponding call site.
+let private runGit (repoRoot: string) (removeGitEnv: bool) (arguments: string list) : bool * string list =
+    let psi =
+        ProcessStartInfo(
+            FileName = "git",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            WorkingDirectory = repoRoot
+        )
+
+    for argument in arguments do
+        psi.ArgumentList.Add argument
+
+    if removeGitEnv then
+        psi.Environment.Remove "GIT_DIR" |> ignore
+        psi.Environment.Remove "GIT_WORK_TREE" |> ignore
+
+    use proc = Process.Start psi
+    let stdout = proc.StandardOutput.ReadToEnd()
+    proc.StandardError.ReadToEnd() |> ignore
+    proc.WaitForExit()
+
+    proc.ExitCode = 0, stdout.Split('\n') |> Array.filter (fun line -> line <> "") |> Array.toList
+
+/// Returns whether `rev` names a commit reachable in `repoRoot`. An
+/// unresolvable base (all-zeroes on branch creation, absent after a
+/// force-push, absent from an unrelated fixture repository) is treated as
+/// "no explicit base" so the caller falls through to the merge base
+/// [Repo-grounded — `gate/run.rs::commit_resolves`].
+let private commitResolves (repoRoot: string) (rev: string) : bool =
+    fst (runGit repoRoot false [ "rev-parse"; "--verify"; "--quiet"; sprintf "%s^{commit}" rev ])
+
+/// Returns paths changed from an explicit baseline commit to `HEAD`
+/// [Repo-grounded — `gate/run.rs::changed_paths_from_base`].
+let private changedPathsFromBase (repoRoot: string) (baseRev: string) (label: string) : Result<string list, string> =
+    match runGit repoRoot false [ "diff"; "--name-only"; baseRev.Trim(); "HEAD" ] with
+    | true, lines -> Ok lines
+    | false, _ -> Error(sprintf "git diff from %s to HEAD failed" label)
+
+/// Returns paths staged in the Git index at the explicit repository root
+/// [Repo-grounded — `gate/run.rs::staged_paths`].
+let private stagedPaths (repoRoot: string) : Result<string list, string> =
+    let psi =
+        ProcessStartInfo(
+            FileName = "git",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            WorkingDirectory = repoRoot
+        )
+
+    for argument in [ "diff"; "--cached"; "--name-only" ] do
+        psi.ArgumentList.Add argument
+
+    psi.Environment.["GIT_DIR"] <- Path.Combine(repoRoot, ".git")
+    psi.Environment.["GIT_CEILING_DIRECTORIES"] <- repoRoot
+
+    use proc = Process.Start psi
+    let stdout = proc.StandardOutput.ReadToEnd()
+    proc.StandardError.ReadToEnd() |> ignore
+    proc.WaitForExit()
+
+    if proc.ExitCode = 0 then
+        Ok(stdout.Split('\n') |> Array.filter (fun line -> line <> "") |> Array.toList)
+    else
+        Error "git diff --cached --name-only failed"
+
+/// Returns paths tracked by Git at the repository root
+/// [Repo-grounded — `gate/run.rs::tracked_paths`].
+let private trackedPaths (repoRoot: string) : Result<string list, string> =
+    match runGit repoRoot true [ "ls-files" ] with
+    | true, lines -> Ok lines
+    | false, _ -> Error "git ls-files failed"
+
+/// Returns paths changed from the branch merge base to `HEAD`, falling back
+/// to staged paths when no merge base exists (a disposable fixture with no
+/// configured origin) [Repo-grounded — `gate/run.rs::merge_base_paths`].
+let private mergeBasePaths (repoRoot: string) : Result<string list, string> =
+    match runGit repoRoot false [ "merge-base"; "origin/main"; "HEAD" ] with
+    | false, _ -> stagedPaths repoRoot
+    | true, lines ->
+        changedPathsFromBase repoRoot (List.tryHead lines |> Option.defaultValue "") "the branch merge base"
+
+/// Returns files staged or changed for a file-scoped surface
+/// [Repo-grounded — `gate/run.rs::changed_paths`].
+let private changedPaths (repoRoot: string) (surface: GateSurface) : Result<string list, string> =
+    if surface = PreCommit then
+        stagedPaths repoRoot
+    else
+        let explicitBase =
+            Environment.GetEnvironmentVariable gateChangedBaseEnv
+            |> Option.ofObj
+            |> Option.filter (fun value -> value.Trim() <> "")
+            |> Option.filter (fun value -> commitResolves repoRoot (value.Trim()))
+
+        match surface, explicitBase with
+        | Ci, Some baseRev -> changedPathsFromBase repoRoot (baseRev.Trim()) gateChangedBaseEnv
+        | (PrePush | Ci), None -> mergeBasePaths repoRoot
+        | _ -> Ok []
+
+/// Returns modified and untracked worktree paths for mutation output
+/// detection [Repo-grounded — `gate/run.rs::worktree_changed_paths`].
+let private worktreeChangedPaths (repoRoot: string) : Result<Set<string>, string> =
+    match runGit repoRoot true [ "diff"; "--name-only" ] with
+    | false, _ -> Error "git [\"diff\"; \"--name-only\"] failed"
+    | true, modified ->
+        match runGit repoRoot true [ "ls-files"; "--others"; "--exclude-standard" ] with
+        | false, _ -> Error "git [\"ls-files\"; \"--others\"; \"--exclude-standard\"] failed"
+        | true, untracked -> Ok(Set.union (Set.ofList modified) (Set.ofList untracked))
+
+/// Returns paths introduced into the worktree after a mutation gate runs
+/// [Repo-grounded — `gate/run.rs::mutation_output_delta`].
+let private mutationOutputDelta (changedBefore: Set<string>) (changedAfter: Set<string>) : string list =
+    Set.difference changedAfter changedBefore |> Set.toList
+
+/// Stages files newly changed by a successful mutation gate, returning the
+/// post-mutation snapshot with this gate's own just-staged outputs removed
+/// so a later restaging gate's cache stays equivalent to a fresh rescan
+/// [Repo-grounded — `gate/run.rs::restage_mutation_outputs`].
+let private restageMutationOutputs (repoRoot: string) (changedBefore: Set<string>) : Result<Set<string>, string> =
+    match worktreeChangedPaths repoRoot with
+    | Error message -> Error message
+    | Ok changedAfter ->
+        match mutationOutputDelta changedBefore changedAfter with
+        | [] -> Ok changedAfter
+        | outputs ->
+            match runGit repoRoot true (("add" :: "--" :: outputs)) with
+            | false, _ -> Error "git add mutation outputs failed"
+            | true, _ -> Ok(Set.difference changedAfter (Set.ofList outputs))
+
+/// Drops candidate paths no longer present in the working tree. Left for the
+/// one call site that needs it — a `path-gated` gate reads changed paths
+/// directly, including deletions, so this filter must not run upstream of
+/// trigger detection [Repo-grounded — `gate/run.rs::retain_existing_paths`].
+let private retainExistingPaths (repoRoot: string) (files: string list) : string list =
+    files
+    |> List.filter (fun path ->
+        File.Exists(Path.Combine(repoRoot, path))
+        || Directory.Exists(Path.Combine(repoRoot, path)))
+
+/// Splits a declared command and appends fixed arguments and derived files
+/// [Repo-grounded — `gate/run.rs::arguments_with_derived_files`].
+let private argumentsWithDerivedFiles
+    (command: string)
+    (fixedArgs: string list)
+    (files: string list)
+    : Result<string list, string> =
+    let commandParts =
+        command.Split([| ' '; '\t'; '\n'; '\r' |], StringSplitOptions.RemoveEmptyEntries)
+        |> Array.toList
+
+    if List.isEmpty commandParts then
+        Error "gate command cannot be empty"
+    else
+        Ok(commandParts @ fixedArgs @ files)
+
+/// Runs a process to completion, inheriting stdio, returning its exit code
+/// [Repo-grounded — every `Command::new(..).status()` call in `gate/run.rs`].
+let private runInherited
+    (fileName: string)
+    (arguments: string list)
+    (workingDirectory: string)
+    (env: (string * string) list)
+    : int =
+    let psi =
+        ProcessStartInfo(FileName = fileName, UseShellExecute = false, WorkingDirectory = workingDirectory)
+
+    for argument in arguments do
+        psi.ArgumentList.Add argument
+
+    for key, value in env do
+        psi.Environment.[key] <- value
+
+    use proc = Process.Start psi
+    proc.WaitForExit()
+    proc.ExitCode
+
+/// Runs a Rhino CLI gate through the current executable with derived files
+/// appended [Repo-grounded — `gate/run.rs::run_rhino_cli_leaf`].
+let private runRhinoCliLeaf
+    (command: string)
+    (fixedArgs: string list)
+    (files: string list)
+    (repoRoot: string)
+    : Result<int, string> =
+    match argumentsWithDerivedFiles command fixedArgs files with
+    | Error message -> Error message
+    | Ok arguments ->
+        let currentExe = Diagnostics.Process.GetCurrentProcess().MainModule.FileName
+
+        Ok(runInherited currentExe arguments repoRoot [])
+
+/// Prepends the repository's local Node executable directory to a child
+/// `PATH`, matching the local-tool resolution npm scripts already receive
+/// [Repo-grounded — `gate/run.rs::external_command_path`].
+let private externalCommandPath (repoRoot: string) : string =
+    let inherited =
+        Environment.GetEnvironmentVariable "PATH"
+        |> Option.ofObj
+        |> Option.defaultValue ""
+
+    let localBin = Path.Combine(repoRoot, "node_modules/.bin")
+
+    if inherited = "" then
+        localBin
+    else
+        sprintf "%s%c%s" localBin Path.PathSeparator inherited
+
+/// Runs an external shell command with matching files appended as arguments
+/// [Repo-grounded — `gate/run.rs::run_external_leaf`].
+let private runExternalLeaf
+    (command: string)
+    (fixedArgs: string list)
+    (files: string list)
+    (commitMessageFile: string option)
+    (repoRoot: string)
+    : Result<int, string> =
+    if command.Trim() = "" then
+        Error "external gate command cannot be empty"
+    else
+        let commandWithFiles = sprintf "%s \"$@\"" command
+        let arguments = fixedArgs @ files @ Option.toList commitMessageFile
+        let path = externalCommandPath repoRoot
+
+        let script =
+            match commitMessageFile with
+            | Some _ -> command
+            | None -> commandWithFiles
+
+        Ok(runInherited "sh" ([ "-c"; script; "gate-external" ] @ arguments) repoRoot [ "PATH", path ])
+
+/// Runs an Nx target over all or affected projects for the declared scope
+/// [Repo-grounded — `gate/run.rs::run_nx_leaf`].
+let private runNxLeaf (target: string) (scope: ScopeKind) (repoRoot: string) : int =
+    let arguments =
+        match scope with
+        | AllProjects -> [ "exec"; "nx"; "--"; "run-many"; "--all"; "-t"; target ]
+        | AffectedProjects
+        | AffectedFileType
+        | AllFileType
+        | Other
+        | PathGated -> [ "exec"; "nx"; "--"; "affected"; "-t"; target ]
+
+    runInherited "npm" arguments repoRoot []
+
+/// Runs one declared gate through the executor for its declared kind
+/// [Repo-grounded — `gate/run.rs::run_leaf`].
+let private runLeaf
+    (kind: GateKind)
+    (command: string)
+    (fixedArgs: string list)
+    (files: string list)
+    (scope: ScopeKind)
+    (commitMessageFile: string option)
+    (repoRoot: string)
+    : Result<int, string> =
+    match kind with
+    | RhinoCli -> runRhinoCliLeaf command fixedArgs files repoRoot
+    | External -> runExternalLeaf command fixedArgs files commitMessageFile repoRoot
+    | Nx -> Ok(runNxLeaf command scope repoRoot)
+
+/// Returns whether this entry belongs to the single aggregate pre-commit
+/// batch [Repo-grounded — `gate/run.rs::is_pre_commit_batch_eligible`].
+let private isPreCommitBatchEligible
+    (gate: GateEntry)
+    (scope: SurfaceScope)
+    (surface: GateSurface)
+    (only: string option)
+    : bool =
+    surface = PreCommit
+    && only.IsNone
+    && scope.Scope = AffectedFileType
+    && (gate.GateType = Check
+        || (gate.GateType = Mutation && gate.Category = Some "formatter"))
+
+/// Runs the batched `lint-staged` invocation for eligible pre-commit gates
+/// [Repo-grounded — `gate/run.rs::run_lint_staged_batch`].
+let private runLintStagedBatch (repoRoot: string) (write: string -> unit) : Result<unit, string> =
+    write "Running lint-staged batch\n"
+
+    if runInherited "npx" [ "--no"; "--"; "lint-staged" ] repoRoot [] = 0 then
+        Ok()
+    else
+        Error "lint-staged batch failed"
+
+/// Resolves a restaging gate's pre-mutation worktree snapshot, reusing the
+/// previous restaging gate's post-mutation snapshot when still valid.
+/// Returns `None` for a non-restaging gate
+/// [Repo-grounded — `gate/run.rs::restaging_before_snapshot`].
+let private restagingBeforeSnapshot
+    (gate: GateEntry)
+    (worktreeSnapshot: Set<string> option)
+    (repoRoot: string)
+    : Result<Set<string> option, string> =
+    if not gate.Restages then
+        Ok None
+    else
+        match worktreeSnapshot with
+        | Some snapshot -> Ok(Some snapshot)
+        | None ->
+            match worktreeChangedPaths repoRoot with
+            | Ok snapshot -> Ok(Some snapshot)
+            | Error message -> Error message
+
+/// Reports and signals when a file-scoped gate has no matching candidates
+/// [Repo-grounded — `gate/run.rs::report_empty_scope_skip`].
+let private reportEmptyScopeSkip
+    (write: string -> unit)
+    (gateId: string)
+    (candidateScope: CandidateScope)
+    (files: string list)
+    : bool =
+    match candidateScope, files with
+    | (StagedFiles | TrackedFiles), [] ->
+        write (sprintf "Skipping gate %s\n" gateId)
+        true
+    | _ -> false
+
+/// Parses a command-line surface name into its registry variant
+/// [Repo-grounded — `gate/run.rs::parse_surface`, distinct wording from
+/// `Gate.fs::parseSurface` above: `gate run` names no valid values].
+let private parseRunSurface (surface: string) : Result<GateSurface, string> =
+    match surface with
+    | "commit-msg" -> Ok CommitMsg
+    | "pre-commit" -> Ok PreCommit
+    | "pre-push" -> Ok PrePush
+    | "ci" -> Ok Ci
+    | other -> Error(sprintf "unknown gate surface \"%s\"" other)
+
+/// Resolves the gates selected by a declared CI group, excluding hand-wired
+/// members: they are dispatched by their own dedicated CI workflow job, not
+/// by `--group` [Repo-grounded — `gate/run.rs::resolve_group_gates`].
+let private resolveGroupGates
+    (surfaceGates: GateEntry list)
+    (group: string option)
+    : Result<GateEntry list option, string> =
+    match group with
+    | None -> Ok None
+    | Some groupId ->
+        let members =
+            gatesInCiGroup surfaceGates groupId
+            |> List.filter (fun gate -> gate.Wiring <> Some HandWired)
+
+        if List.isEmpty members then
+            Error(sprintf "--group id \"%s\" matched no gates on surface" groupId)
+        else
+            Ok(Some members)
+
+/// Writes every group member's `PASS`/`FAIL` outcome line, then fails the
+/// overall group run if any member failed
+/// [Repo-grounded — `gate/run.rs::report_group_summary`].
+let private reportGroupSummary
+    (groupId: string)
+    (summary: (string * bool) list)
+    (write: string -> unit)
+    : Result<unit, string> =
+    for id, passed in summary do
+        write (sprintf "%s\t%s\n" id (if passed then "PASS" else "FAIL"))
+
+    if summary |> List.exists (fun (_, passed) -> not passed) then
+        Error(sprintf "gate group %s failed" groupId)
+    else
+        Ok()
+
+/// Load the candidate paths required by a collection of selected gates
+/// [Repo-grounded — `gate/run.rs::candidate_paths`].
+let private candidatePaths
+    (repoRoot: string)
+    (selectedGates: GateEntry list)
+    (surface: GateSurface)
+    : Result<string list option * string list option, string> =
+    let scopeOf (gate: GateEntry) =
+        gate.Surfaces
+        |> List.pick (fun (declared, scope) -> if declared = surface then Some scope else None)
+
+    let scopes = selectedGates |> List.map scopeOf
+
+    let needsChanged =
+        scopes
+        |> List.exists (fun scope ->
+            match candidateScope scope.Scope with
+            | StagedFiles
+            | PathTriggers -> true
+            | _ -> false)
+
+    let needsTracked =
+        scopes
+        |> List.exists (fun scope -> candidateScope scope.Scope = TrackedFiles && scopeHasFilePatterns scope)
+
+    match
+        (if needsChanged then
+             changedPaths repoRoot surface |> Result.map Some
+         else
+             Ok None)
+    with
+    | Error message -> Error message
+    | Ok changed ->
+        match
+            (if needsTracked then
+                 trackedPaths repoRoot |> Result.map Some
+             else
+                 Ok None)
+        with
+        | Error message -> Error message
+        | Ok tracked -> Ok(changed, tracked)
+
+/// Rejects malformed gate configuration before selecting a gate or starting
+/// a leaf, shared with `repo-config validate` so dispatch never runs a
+/// malformed entry [Repo-grounded — `gate/run.rs::validate_registry_semantics`].
+let private validateRegistrySemantics (config: RepoConfig) (write: string -> unit) : Result<unit, string> =
+    match gateSemanticFindings config with
+    | [] -> Ok()
+    | findings ->
+        for finding in findings do
+            write (finding + "\n")
+
+        Error(sprintf "gate run: %d registry semantic finding(s); fix the key(s) listed above" (List.length findings))
+
+/// Runs gates declared on a surface, optionally selecting one gate or CI
+/// group and forwarding a commit message
+/// [Repo-grounded — `gate/run.rs::run_at_root_with_only_and_message_file`].
+let runAtRootWithOnlyAndMessageFile
+    (repoRoot: string)
+    (surface: string)
+    (only: string option)
+    (group: string option)
+    (commitMessageFile: string option)
+    (write: string -> unit)
+    : Result<unit, string> =
+    match parseRunSurface surface with
+    | Error message -> Error message
+    | Ok surface ->
+        if commitMessageFile.IsSome && surface <> CommitMsg then
+            Error "a commit-message file is only valid for the commit-msg surface"
+        else
+            match load repoRoot with
+            | Error message -> Error message
+            | Ok config ->
+                let surfaceGates =
+                    config.Gates
+                    |> List.filter (fun gate -> gate.Surfaces |> List.exists (fun (declared, _) -> declared = surface))
+
+                match
+                    (if only.IsSome then
+                         validateGateIds surfaceGates only
+                     else
+                         Ok())
+                with
+                | Error message -> Error message
+                | Ok() ->
+                    match resolveGroupGates surfaceGates group with
+                    | Error message -> Error message
+                    | Ok groupGates ->
+                        match validateRegistrySemantics config write with
+                        | Error message -> Error message
+                        | Ok() ->
+                            let selectedGates =
+                                (groupGates |> Option.defaultValue surfaceGates)
+                                |> List.filter (fun gate -> only.IsNone || only = Some gate.Id)
+
+                            match candidatePaths repoRoot selectedGates surface with
+                            | Error message -> Error message
+                            | Ok(changedPathsResult, trackedPathsResult) ->
+                                let scopeOf (gate: GateEntry) =
+                                    gate.Surfaces
+                                    |> List.pick (fun (declared, scope) ->
+                                        if declared = surface then Some scope else None)
+
+                                let rec loop
+                                    (gates: GateEntry list)
+                                    (batchRan: bool)
+                                    (worktreeSnapshot: Set<string> option)
+                                    (groupSummary: (string * bool) list)
+                                    : Result<(string * bool) list, string> =
+                                    match gates with
+                                    | [] -> Ok groupSummary
+                                    | gate :: rest ->
+                                        let scope = scopeOf gate
+
+                                        if
+                                            scope.Scope = PathGated
+                                            && not (
+                                                changedPathsResult
+                                                |> Option.map (fun paths -> triggerMatches paths scope.Trigger)
+                                                |> Option.defaultValue false
+                                            )
+                                        then
+                                            loop rest batchRan worktreeSnapshot groupSummary
+                                        else
+                                            let candidate = candidateScope scope.Scope
+                                            let excludes = gate.Args |> Map.tryFind "exclude" |> Option.defaultValue []
+
+                                            let files =
+                                                match candidate with
+                                                | StagedFiles ->
+                                                    retainExistingPaths
+                                                        repoRoot
+                                                        (matchingFiles
+                                                            (changedPathsResult |> Option.defaultValue [])
+                                                            scope
+                                                            excludes)
+                                                | TrackedFiles ->
+                                                    matchingFiles
+                                                        (if scopeHasFilePatterns scope then
+                                                             trackedPathsResult |> Option.defaultValue []
+                                                         else
+                                                             [])
+                                                        scope
+                                                        excludes
+                                                | _ -> []
+
+                                            if
+                                                scopeHasFilePatterns scope
+                                                && reportEmptyScopeSkip write gate.Id candidate files
+                                            then
+                                                loop rest batchRan worktreeSnapshot groupSummary
+                                            elif isPreCommitBatchEligible gate scope surface only then
+                                                if batchRan then
+                                                    loop rest batchRan worktreeSnapshot groupSummary
+                                                else
+                                                    match runLintStagedBatch repoRoot write with
+                                                    | Error message -> Error message
+                                                    | Ok() -> loop rest true None groupSummary
+                                            else
+                                                write (sprintf "Running gate %s\n" gate.Id)
+
+                                                match restagingBeforeSnapshot gate worktreeSnapshot repoRoot with
+                                                | Error message -> Error message
+                                                | Ok changedBefore ->
+                                                    match
+                                                        runLeaf
+                                                            gate.Kind
+                                                            gate.Command
+                                                            (fixedArguments gate)
+                                                            files
+                                                            scope.Scope
+                                                            commitMessageFile
+                                                            repoRoot
+                                                    with
+                                                    | Error message -> Error message
+                                                    | Ok exitCode ->
+                                                        let passed = exitCode = 0
+
+                                                        let outcome =
+                                                            match group with
+                                                            | Some _ -> Ok(groupSummary @ [ gate.Id, passed ])
+                                                            | None when not passed ->
+                                                                Error(sprintf "gate %s failed" gate.Id)
+                                                            | None -> Ok groupSummary
+
+                                                        match outcome with
+                                                        | Error message -> Error message
+                                                        | Ok nextSummary ->
+                                                            if passed then
+                                                                match changedBefore with
+                                                                | Some before ->
+                                                                    match restageMutationOutputs repoRoot before with
+                                                                    | Error message -> Error message
+                                                                    | Ok after ->
+                                                                        loop rest batchRan (Some after) nextSummary
+                                                                | None when gate.GateType = Mutation ->
+                                                                    loop rest batchRan None nextSummary
+                                                                | None ->
+                                                                    loop rest batchRan worktreeSnapshot nextSummary
+                                                            else
+                                                                loop rest batchRan worktreeSnapshot nextSummary
+
+                                match loop selectedGates false None [] with
+                                | Error message -> Error message
+                                | Ok groupSummary ->
+                                    match group with
+                                    | Some groupId -> reportGroupSummary groupId groupSummary write
+                                    | None -> Ok()
+
+/// Runs gates declared on a surface at a known root, optionally selecting
+/// one gate [Repo-grounded — `gate/run.rs::run_at_root_with_only`].
+let runAtRootWithOnly
+    (repoRoot: string)
+    (surface: string)
+    (only: string option)
+    (write: string -> unit)
+    : Result<unit, string> =
+    runAtRootWithOnlyAndMessageFile repoRoot surface only None None write
+
+/// Runs gates declared on a surface at a known root
+/// [Repo-grounded — `gate/run.rs::run_at_root`].
+let runAtRoot (repoRoot: string) (surface: string) (write: string -> unit) : Result<unit, string> =
+    runAtRootWithOnly repoRoot surface None write
+
+/// Runs gates declared on a surface at a known root, restricted to one
+/// declared CI group [Repo-grounded — `gate/run.rs::run_at_root_with_group`].
+let runAtRootWithGroup
+    (repoRoot: string)
+    (surface: string)
+    (group: string)
+    (write: string -> unit)
+    : Result<unit, string> =
+    runAtRootWithOnlyAndMessageFile repoRoot surface None (Some group) None write

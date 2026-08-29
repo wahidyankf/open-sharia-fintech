@@ -1415,6 +1415,28 @@ let private runGateListLeaf (repoRoot: string) (args: string list) : int =
             eprintfn "Error: %s" message
             1
 
+/// `gate run` [Repo-grounded — `commands/gate/run.rs::run`].
+let private runGateRunLeaf (repoRoot: string) (args: string list) : int =
+    let surface = longOptionValue "surface" args |> Option.defaultValue ""
+    let only = longOptionValue "only" args
+    let group = longOptionValue "group" args
+
+    let commitMessageFile =
+        args
+        |> List.tryFindIndex (fun a -> a = "--")
+        |> Option.bind (fun index -> args |> List.skip (index + 1) |> List.tryHead)
+
+    let result =
+        match commitMessageFile with
+        | Some file -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group (Some file) (printf "%s")
+        | None -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group None (printf "%s")
+
+    match result with
+    | Ok() -> 0
+    | Error message ->
+        eprintfn "Error: %s" message
+        1
+
 /// `gate emit` [Repo-grounded — `commands/gate/emit.rs::run`].
 let private runGateEmitLeaf (repoRoot: string) (args: string list) : int =
     let surface = longOptionValue "surface" args |> Option.defaultValue ""
@@ -2754,7 +2776,8 @@ let private routeTable: (string list * string) list =
       [ "specs"; "e2e-coverage"; "validate" ], "specs-e2e-coverage-validate"
       [ "specs"; "audit" ], "specs-audit"
       [ "gate"; "list" ], "gate-list"
-      [ "gate"; "emit" ], "gate-emit" ]
+      [ "gate"; "emit" ], "gate-emit"
+      [ "gate"; "run" ], "gate-run" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,
 /// paired with the arguments left after that prefix — the data-driven
@@ -2876,6 +2899,7 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "git-lockfile-sync" -> runGitLockfileSyncLeaf repoRoot
                     | "gate-list" -> runGateListLeaf repoRoot rest
                     | "gate-emit" -> runGateEmitLeaf repoRoot rest
+                    | "gate-run" -> runGateRunLeaf repoRoot rest
                     | "repo-governance-vendor-validate" -> runRepoGovernanceVendorValidateLeaf repoRoot format rest
                     | "repo-governance-layer-coherence-validate" ->
                         runRepoGovernanceLayerCoherenceValidateLeaf repoRoot format
