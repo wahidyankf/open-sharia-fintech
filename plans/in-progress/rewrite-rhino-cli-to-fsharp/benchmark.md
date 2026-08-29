@@ -196,6 +196,29 @@ a cold, freshly reprovisioned `node_modules/`, and this one was not. Per the Noi
 below, neither figure is repeated, so B6's swing is read as the warm/cold difference wave D
 identified rather than as a wave-E effect.
 
+## Interim measurement: after wave F
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+E" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A-E —
+a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged, hook
+run, then the file removed and the index reset). Taken with `convention`, `parity`, `repo-config`,
+`env`, `doctor`, `test-coverage`, `md`, `governance`, `git`, `harness`, `specs`, `repo-governance`,
+`gate` in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 46.17 ms   |
+| B6 — full pre-commit     | 4.41 s     |
+
+Both figures sit within the noise band already established across waves A-E (B5: 37.30-46.17 ms;
+B6: 3.33-13.66 s, the latter an already-explained cold-`node_modules` outlier) rather than showing
+a directional trend — `gate` adds four leaves to the dispatch table, a negligible fraction of
+startup cost dominated by .NET runtime initialization, matching wave E's same conclusion for a
+larger three-namespace addition.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed

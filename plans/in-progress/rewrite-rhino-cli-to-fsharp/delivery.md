@@ -14845,7 +14845,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `gate/` — in
+- [x] [AI] Widen the coverage scope by exactly this wave's spec directories — `gate/` — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
       either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
@@ -14853,24 +14853,26 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       equal to this wave's count from the wave map, and temporarily deleting one **step definition** from a
       wave-F `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
       Deleting a `@covers` marker would **not** turn it red in shared-steps mode — that check is
-      opt-in to three-level mode.
-- [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh gate` — acceptance: zero byte
+      opt-in to three-level mode. Verified: `70 specs, 525 scenarios, 2140 steps — all covered` after widening (the wave map's `524` running total is stale by one pre-existing scenario, predating this wave — `524` matches the heading count without Scenario Outline row-expansion; `525` is the actual expanded count already used as the whole-tree baseline). Deleting `GateValidationSteps.fs`'s `a check declares pre-commit but no ci surface or carve-out` member reproduced exactly `Missing steps (1)`; restored via `git checkout` and reconfirmed green. While porting, also fixed a latent bug in the Rust speccoverage tool's F# extractor (`add_fsharp_step_pattern` in `extractors.rs`): it always compiled backtick step text as raw regex and silently dropped any step whose text failed to compile, which hid `gate-emission.feature`'s `{{command}}` step (valid, lenient .NET regex at real `TickSpec` runtime; invalid Rust regex, since `{command}` is not a valid quantifier). Fix retries with literal braces escaped when the first compile fails.
+- [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh gate` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
-- [ ] [AI] Add `gate` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
+      Verified: `shadow-diff: 20 invocation(s) compared, 0 difference(s)` (Rust-routed, before
+      the flip).
+- [x] [AI] Add `gate` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
       immediately after the flip still reports zero differences — the same shadow-diff invocation the
       step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
       shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
       binary itself, which the flip does not touch, rather than a stored snapshot no step here
-      produces.
-- [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
+      produces. Verified: `shadow-diff: 20 invocation(s) compared, 0 difference(s)` both before adding `gate` to `FSHARP_NAMESPACES` (Rust-routed) and after (F#-routed). Before wiring `gate list`/`gate emit`/`gate run`/`gate validate` into `Dispatch.fs` (this checklist item's own prerequisite, done in the same PR), the same command reported 15-19 mismatches: `gate validate` was entirely unrouted, and `gate list`/`emit`/`run` lacked clap's required `--surface` enforcement (message + exit code 2), so a bare/`--help`/`-o <fmt>` invocation silently proceeded with `surface=""` instead of failing the way the Rust binary does.
+- [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave F`. Check for an existing `after wave F` row **before** appending — this
       integration section can be retried after a partial failure, and an unguarded append silently
       duplicates a row in the record Phases 10 and 12 treat as durable — acceptance:
       `grep -c 'after wave F' benchmark.md` returns exactly 1 after the step, whether it ran once
-      or three times.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+      or three times. Verified: `grep -c` was 0 before appending, 1 after. B5 mean of 50 `--help` invocations against the freshly rebuilt `dist/rhino-cli-fsharp`: 46.17 ms, zero non-zero exits.
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -14881,41 +14883,58 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces again reports zero differences,
       confirming the restore left the shim exactly where the flip left it rather than in some third
       state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
-      asserts but never tests.
-- [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
-      appended to `benchmark.md` as `after wave F`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+      asserts but never tests. Verified: with `gate` removed, `shadow-diff.sh gate` reported `20 invocation(s) compared, 0 difference(s)` (routed to Rust). `gate list --surface=ci --format=json --by-group` differed from the tracked evidence file only in JSON array line-wrapping (same already-documented Wave B cosmetic gap — the tracked file was prettier-formatted after capture); a Python `json.load` structural comparison of the two confirmed `SEMANTICALLY EQUAL`. With `gate` restored, `shadow-diff.sh gate` again reported `20 invocation(s) compared, 0 difference(s)`, and `git diff --stat rhino-bin.sh` showed the same single-line flip as before this proof, confirming an exact restore.
+- [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
+      appended to `benchmark.md` as `after wave F`, beside the Phase 0 B6 baseline. Verified: 4.41 s real, staged the same pinned single-file `bench-probe.md` probe as prior waves, then unstaged and removed it, restoring the working tree exactly.
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
-- [ ] [AI] Land every Wave F change in the `ose-private` worktree, authored there rather than
+      Verified by inspecting `.github/workflows/pr-quality-gate.yml`: `RHINO_CLI_FSHARP_BIN` is
+      exported from the downloaded `dist/rhino-cli-fsharp` artifact at the job/step level
+      (unconditional, not per-namespace — already wired since Wave A), and the enumerate step that
+      runs `gate list` under CI also exports it alongside `RHINO_CLI_BIN`. Wave F adds no new job
+      or step, so no CI change was needed; `grep -n 'dotnet run\|dotnet build' pr-quality-gate.yml`
+      returns only comment lines, none inside `build-rhino`.
+- [x] [AI] Land every Wave F change in the `ose-private` worktree, authored there rather than
       copied — acceptance: `shadow-diff.sh` reports zero differences there, **and**, in that
       worktree, `gate list --surface=ci --format=json --by-group` (namespaces restored) matches
       `apps/rhino-cli/evidence/gate-before-ose-private.json`, read from that same `ose-private`
       tree — so `ose-private`'s rollback evidence is not `shadow-diff.sh` alone.
+      Verified in `/Users/wkf/ose-projects/ose-private/worktrees/rewrite-rhino-cli`: applied
+      ose-public's reviewed Wave F diff (`apps/rhino-cli` + `repo-config.yml`, excluding
+      `delivery.md`/`benchmark.md`, which are not carried there), rebuilt, ran the full
+      1210-test suite (0 failures), widened coverage (`70 specs, 525 scenarios, 2140 steps —
+all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the parity
+      manifest — `shadow-diff.sh gate` reported `20 invocation(s) compared, 0 difference(s)`
+      both before and after the flip, and `gate list --surface=ci --format=json --by-group`
+      is `SEMANTICALLY EQUAL` to `gate-before-ose-private.json` (Python `json.load` structural
+      comparison). Found and fixed ose-public's own parity manifest being stale (Dispatch.fs,
+      project.json, and extractors.rs had changed since the last regeneration) as part of
+      reconciling the two repos' manifests to match exactly.
 
 ### Phase 8 Gate
 
 > All checks below must pass before starting Phase 9.
 
-- [ ] [AI] All 89 Wave F scenarios pass under
-      `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/shadow-diff.sh gate` reports zero differences in both
-      repos.
-- [ ] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
-      `.husky/pre-commit` run all exit 0 in both repos.
-- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
-      asserted on the **exit code**, not on the absence of a `[FAIL]` token.
-- [ ] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
-      `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0.
-- [ ] [AI] `benchmark.md` has an `after wave F` row for startup and for pre-commit wall time.
-- [ ] [AI] Tear down `ose-private`'s transient `apps/rhino-cli/evidence/` directory, committed —
+- [x] [AI] All 89 Wave F scenarios pass under
+      `dotnet test apps/rhino-cli/src-fsharp/tests/unit` in both repos. Verified: `dotnet test --filter "FullyQualifiedName~Gate"` reports 104 passed, 0 failed in both `ose-public` and `ose-private` (104 reflects Scenario Outline expansion by TickSpec; the underlying feature-file Scenario count across `gate-declaration.feature` (11), `gate-binary-resolution.feature` (4), `gate-execution.feature` (30), `gate-validation.feature` (26), `gate-emission.feature` (5), `gate-enumeration.feature` (8), and `parity-manifest.feature` (5) sums to exactly 89).
+- [x] [AI] `apps/rhino-cli/scripts/shadow-diff.sh gate` reports zero differences in both
+      repos. Verified: `shadow-diff: 20 invocation(s) compared, 0 difference(s)` in both `ose-public` and `ose-private`.
+- [x] [AI] `npx nx run rhino-cli:test:quick`, `npx nx run rhino-cli-fsharp:test:quick`, and a full
+      `.husky/pre-commit` run all exit 0 in both repos. Verified: a first `rhino-cli:test:quick` run in `ose-public` failed on a `clippy::single_match_else` violation introduced by this wave's `add_fsharp_step_pattern` escape-fallback fix (a `match Regex::new(&pattern) { Ok(re) => ..., Err(_) => { block } }` construct); fixed by rewriting it as `if let Ok(re) = Regex::new(&pattern) { ... } else { ... }`, re-verified clean via `cargo clippy --all-targets -- -D warnings`, `cargo test --release --lib speccoverage` (85 passed, unchanged), and `specs:behavior:coverage` (70 specs, 525 scenarios, 2140 steps — all covered, unchanged); the same rewrite was then applied to `ose-private`'s byte-identical copy of `extractors.rs` and passed the same three checks there. After the fix, `rhino-cli:test:quick`, `rhino-cli-fsharp:test:quick`, and a full `.husky/pre-commit` (run against a pinned single-file `apps/rhino-cli/bench-probe.md` probe, staged, hook run, then removed and the index reset) each exited 0 in both repos.
+- [x] [AI] `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both repos —
+      asserted on the **exit code**, not on the absence of a `[FAIL]` token. Verified: exit 0 in both repos, output `apps/rhino-cli/parity-manifest.sha256 is current` in each. This surfaced a real defect along the way — `ose-public`'s own manifest had gone stale after two earlier commits touched `Dispatch.fs`/`project.json`/`extractors.rs` without regenerating it; caught via a direct hash comparison against `ose-private`, fixed by regenerating and committing `ose-public`'s manifest, then reconfirmed identical between repos via `shasum -a 256` on every affected file.
+- [x] [AI] No file under `specs/apps/rhino/` was modified — acceptance:
+      `git diff --name-only origin/main -- specs/apps/rhino | wc -l` returns 0. Verified: returns 0 in both repos — Wave F's gate feature files already existed from an earlier phase; this wave only added F# step definitions and dispatch wiring, no Gherkin content.
+- [x] [AI] `benchmark.md` has an `after wave F` row for startup and for pre-commit wall time. Verified: the "Interim measurement: after wave F" section above carries both the B5 (46.17 ms) and B6 (4.41 s) rows, `grep -c "after wave F"` returns 1.
+- [x] [AI] Tear down `ose-private`'s transient `apps/rhino-cli/evidence/` directory, committed —
       per [tech-docs §DD-9](./tech-docs.md#dd-9--ose-privates-cross-phase-gate-baseline-lives-in-the-app-tree-transiently),
       the "Land every Wave F change in the `ose-private` worktree" check immediately above is
       `gate-before-ose-private.json`'s last consumer, so nothing later reads it — acceptance:
       `git rm -r apps/rhino-cli/evidence/` committed in the `ose-private` worktree, and
       `git ls-files apps/rhino-cli/evidence/` in that repo returns nothing. `ose-public`'s equivalent
       capture is unaffected: it lives in this plan's own `evidence/` folder and travels to
-      `plans/done/` on archival, per the ordinary convention.
+      `plans/done/` on archival, per the ordinary convention. Verified: `git rm -r apps/rhino-cli/evidence/` committed in `ose-private`, `git ls-files apps/rhino-cli/evidence/` returns nothing.
 
 > **Pause Safety**: the namespaces flipped so far run on F#, the rest still run on Rust, and both
 > binaries build. Reverting is a one-line edit to `FSHARP_NAMESPACES`. Safe to stop. To resume:
