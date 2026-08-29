@@ -28,6 +28,7 @@ open System
 open System.Collections.Generic
 open System.IO
 open System.Text.Json
+open YamlDotNet.RepresentationModel
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 
@@ -84,12 +85,92 @@ type HarnessEntry =
       Catalog: CatalogEntry option
       Ownership: OwnershipEntry list }
 
-/// One entry in the `gates:` section, trimmed to the `id` and `args` fields
-/// the website-exclusion scenario reads
+/// Whether a gate validates or mutates repository content
+/// [Repo-grounded — `repo_config/mod.rs::GateType`].
+type GateType =
+    | Check
+    | Mutation
+
+/// Command runner for a gate [Repo-grounded — `repo_config/mod.rs::GateKind`].
+type GateKind =
+    | RhinoCli
+    | External
+    | Nx
+
+/// Execution wiring for a check gate
+/// [Repo-grounded — `repo_config/mod.rs::GateWiring`].
+type GateWiring =
+    | Matrix
+    | HandWired
+
+/// A composition-rule exemption for a gate
+/// [Repo-grounded — `repo_config/mod.rs::GateCarveOut`].
+type GateCarveOut = StagedOnly
+
+/// A gate execution surface
+/// [Repo-grounded — `repo_config/mod.rs::GateSurface`].
+type GateSurface =
+    | CommitMsg
+    | PreCommit
+    | PrePush
+    | Ci
+
+/// The scope that determines a gate's inputs on a surface
+/// [Repo-grounded — `repo_config/mod.rs::ScopeKind`].
+type ScopeKind =
+    | AffectedFileType
+    | AllFileType
+    | AffectedProjects
+    | AllProjects
+    | Other
+    | PathGated
+
+/// A gate's scope on one execution surface
+/// [Repo-grounded — `repo_config/mod.rs::SurfaceScope`].
+type SurfaceScope =
+    { Scope: ScopeKind
+      Glob: string option
+      Globs: string list
+      LintStagedShell: string option
+      Trigger: string list }
+
+/// One entry in the `gates:` registry of `repo-config.yml`
 /// [Repo-grounded — `repo_config/mod.rs::GateEntry`].
 type GateEntry =
     { Id: string
-      Args: Map<string, string list> }
+      GateType: GateType
+      Command: string
+      Kind: GateKind
+      DoctorTools: string list
+      Wiring: GateWiring option
+      Restages: bool
+      Args: Map<string, string list>
+      Surfaces: (GateSurface * SurfaceScope) list
+      CarveOut: GateCarveOut option
+      Verifies: string option
+      Category: string option
+      CiGroup: string option }
+
+/// Every tool identifier Doctor can select from the registry. This is the
+/// authoritative validation source for per-gate `doctor-tools` metadata
+/// [Repo-grounded — `repo_config/mod.rs::DOCTOR_TOOL_INVENTORY`].
+let doctorToolInventory: string list =
+    [ "git"
+      "volta"
+      "node"
+      "npm"
+      "rust"
+      "cargo-llvm-cov"
+      "dotnet"
+      "docker"
+      "jq"
+      "shellcheck"
+      "hadolint"
+      "actionlint"
+      "playwright"
+      "shfmt"
+      "tofu"
+      "clang-format" ]
 
 /// The `doctor:` section, trimmed to the .NET SDK path scenario's field plus
 /// `skip-tools` (needed by
@@ -176,9 +257,31 @@ type HarnessEntryDto =
       Ownership: ResizeArray<OwnershipEntryDto> }
 
 [<CLIMutable>]
+type SurfaceScopeDto =
+    { Scope: string
+      Glob: string | null
+      Globs: ResizeArray<string>
+      LintStagedShell: string | null
+      Trigger: ResizeArray<string> }
+
+/// Enum-valued fields arrive as raw strings so an unknown variant is reported
+/// by [`gateEnumFindings`] with the same wording, allowed-value list, and
+/// source position serde produces, rather than as a bare deserializer fault.
+[<CLIMutable>]
 type GateEntryDto =
     { Id: string
-      Args: Dictionary<string, ResizeArray<string>> }
+      Type: string | null
+      Command: string | null
+      Kind: string | null
+      DoctorTools: ResizeArray<string>
+      Wiring: string | null
+      Restages: bool
+      Args: Dictionary<string, ResizeArray<string>>
+      Surfaces: Dictionary<string, SurfaceScopeDto>
+      CarveOut: string | null
+      Verifies: string | null
+      Category: string | null
+      CiGroup: string | null }
 
 [<CLIMutable>]
 type DoctorConfigDto =
@@ -297,13 +400,77 @@ let private toHarnessEntry (index: int) (dto: HarnessEntryDto) : Result<HarnessE
                 | _ -> Some(toCatalogEntry dto.Catalog)
               Ownership = ownership }))
 
+/// Kebab-case spellings, in the declaration order serde lists them in its
+/// "expected one of" message.
+let private gateTypeNames = [ "check", Check; "mutation", Mutation ]
+
+let private gateKindNames =
+    [ "rhino-cli", RhinoCli; "external", External; "nx", Nx ]
+
+let private gateWiringNames = [ "matrix", Matrix; "hand-wired", HandWired ]
+let private gateCarveOutNames = [ "staged-only", StagedOnly ]
+
+let private gateSurfaceNames =
+    [ "commit-msg", CommitMsg
+      "pre-commit", PreCommit
+      "pre-push", PrePush
+      "ci", Ci ]
+
+let private scopeKindNames =
+    [ "affected-file-type", AffectedFileType
+      "all-file-type", AllFileType
+      "affected-projects", AffectedProjects
+      "all-projects", AllProjects
+      "other", Other
+      "path-gated", PathGated ]
+
+let private lookupVariant (table: (string * 'a) list) (raw: string) : 'a option =
+    table |> List.tryFind (fst >> (=) raw) |> Option.map snd
+
+let private toSurfaceScope (dto: SurfaceScopeDto) : SurfaceScope =
+    { Scope = lookupVariant scopeKindNames dto.Scope |> Option.defaultValue Other
+      Glob = Option.ofObj dto.Glob
+      Globs = toOptionList dto.Globs
+      LintStagedShell = Option.ofObj dto.LintStagedShell
+      Trigger = toOptionList dto.Trigger }
+
 let private toGateEntry (dto: GateEntryDto) : GateEntry =
     let args =
         match dto.Args with
         | null -> Map.empty
         | dict -> dict |> Seq.map (fun kv -> kv.Key, toOptionList kv.Value) |> Map.ofSeq
 
-    { Id = dto.Id; Args = args }
+    let surfaces =
+        match dto.Surfaces with
+        | null -> []
+        | dict ->
+            dict
+            |> Seq.choose (fun kv ->
+                lookupVariant gateSurfaceNames kv.Key
+                |> Option.map (fun surface -> surface, toSurfaceScope kv.Value))
+            // Rust holds `surfaces` in a BTreeMap, so iteration is by the
+            // enum's declared order, not by the order YAML happened to list
+            // them. Findings and emitted output both depend on it.
+            |> Seq.sortBy (fun (surface, _) -> gateSurfaceNames |> List.findIndex (snd >> (=) surface))
+            |> List.ofSeq
+
+    { Id = dto.Id
+      GateType =
+        lookupVariant gateTypeNames (Option.ofObj dto.Type |> Option.defaultValue "")
+        |> Option.defaultValue Check
+      Command = Option.ofObj dto.Command |> Option.defaultValue ""
+      Kind =
+        lookupVariant gateKindNames (Option.ofObj dto.Kind |> Option.defaultValue "")
+        |> Option.defaultValue External
+      DoctorTools = toOptionList dto.DoctorTools
+      Wiring = Option.ofObj dto.Wiring |> Option.bind (lookupVariant gateWiringNames)
+      Restages = dto.Restages
+      Args = args
+      Surfaces = surfaces
+      CarveOut = Option.ofObj dto.CarveOut |> Option.bind (lookupVariant gateCarveOutNames)
+      Verifies = Option.ofObj dto.Verifies
+      Category = Option.ofObj dto.Category
+      CiGroup = Option.ofObj dto.CiGroup }
 
 let private toSpecsConfig (dto: SpecsConfigDto) : SpecsConfig =
     match box dto with
@@ -392,6 +559,152 @@ let private unknownKeyFindings (allowed: Set<string>) (dict: IDictionary<obj, ob
 /// everything this port does not model at all) — see the module doc comment.
 /// Widening this check to more of the schema is future work for later
 /// waves, as this port grows to cover more of `repo-config.yml`.
+/// Rejects an unknown enum spelling under `gates:` with serde's own wording,
+/// allowed-value list, and source position.
+///
+/// Rust gets this for free: `GateType`, `GateKind`, `GateWiring`,
+/// `GateCarveOut`, `GateSurface`, and `ScopeKind` are `Deserialize` enums, so
+/// an unrecognised spelling is a deserialization fault carrying the variant
+/// list and the YAML mark. YamlDotNet has no equivalent — an unmatched string
+/// silently becomes whatever the converter defaults to — so the check is
+/// explicit here, walking the representation model for the marks
+/// [Repo-grounded — `repo_config/mod.rs`'s six `#[serde(rename_all = "kebab-case")]` enums].
+let private gateEnumFindings (path: string) (data: string) : Result<unit, string> =
+    let stream = YamlStream()
+    use reader = new StringReader(data)
+
+    try
+        stream.Load reader
+    with _ ->
+        // A malformed document is not this check's concern; the deserializer
+        // below reports it with its own message.
+        ()
+
+    let asMapping (node: YamlNode) =
+        match node with
+        | :? YamlMappingNode as m -> Some m
+        | _ -> None
+
+    let child (m: YamlMappingNode) (key: string) : YamlNode option =
+        m.Children
+        |> Seq.tryFind (fun kv ->
+            match kv.Key with
+            | :? YamlScalarNode as k -> k.Value = key
+            | _ -> false)
+        |> Option.map (fun kv -> kv.Value)
+
+    let asScalar (node: YamlNode) =
+        match node with
+        | :? YamlScalarNode as sc -> Some sc
+        | _ -> None
+
+    /// serde renders its allowed set as backticked, comma-separated variants
+    /// in declaration order.
+    let expected (table: (string * 'a) list) =
+        table |> List.map (fun (name, _) -> sprintf "`%s`" name) |> String.concat ", "
+
+    let fault (field: string) (sc: YamlScalarNode) (table: (string * 'a) list) (gateId: string) =
+        sprintf
+            "failed to parse repo-config.yml at %s: %s: unknown variant `%s`, expected one of %s at line %d column %d (gate id \"%s\")"
+            path
+            field
+            sc.Value
+            (expected table)
+            sc.Start.Line
+            sc.Start.Column
+            gateId
+
+    let checkScalar field node table gateId =
+        match node |> Option.bind asScalar with
+        | Some sc when (lookupVariant table sc.Value).IsNone -> Some(fault field sc table gateId)
+        | _ -> None
+
+    let gateFindings (index: int) (gate: YamlMappingNode) : string option =
+        let gateId =
+            child gate "id"
+            |> Option.bind asScalar
+            |> Option.map (fun sc -> sc.Value)
+            |> Option.defaultValue ""
+
+        // Document order within the gate, then its surfaces — the order serde
+        // itself visits the map in, so the first reported fault matches.
+        let scalarChecks =
+            [ "type",
+              child gate "type",
+              lazy (expected gateTypeNames),
+              (fun (v: string) -> (lookupVariant gateTypeNames v).IsNone)
+              "kind",
+              child gate "kind",
+              lazy (expected gateKindNames),
+              (fun v -> (lookupVariant gateKindNames v).IsNone)
+              "wiring",
+              child gate "wiring",
+              lazy (expected gateWiringNames),
+              (fun v -> (lookupVariant gateWiringNames v).IsNone)
+              "carve-out",
+              child gate "carve-out",
+              lazy (expected gateCarveOutNames),
+              (fun v -> (lookupVariant gateCarveOutNames v).IsNone) ]
+            |> List.tryPick (fun (field, node, allowed, isUnknown) ->
+                match node |> Option.bind asScalar with
+                | Some sc when isUnknown sc.Value ->
+                    Some(
+                        sprintf
+                            "failed to parse repo-config.yml at %s: gates[%d].%s: unknown variant `%s`, expected one of %s at line %d column %d (gate id \"%s\")"
+                            path
+                            index
+                            field
+                            sc.Value
+                            allowed.Value
+                            sc.Start.Line
+                            sc.Start.Column
+                            gateId
+                    )
+                | _ -> None)
+
+        match scalarChecks with
+        | Some finding -> Some finding
+        | None ->
+            // Scope note: an unknown *surface key* is not checked here, only
+            // an unknown `scope:` value. Rust rejects both, but no scenario
+            // exercises the key direction and `gateSemanticFindings`'s
+            // "at least one surface" rule already catches the shape that a
+            // silently-dropped unknown key would produce.
+            child gate "surfaces"
+            |> Option.bind asMapping
+            |> Option.bind (fun surfaces ->
+                surfaces.Children
+                |> Seq.tryPick (fun kv ->
+                    let surfaceName =
+                        match kv.Key with
+                        | :? YamlScalarNode as k -> k.Value
+                        | _ -> ""
+
+                    kv.Value
+                    |> asMapping
+                    |> Option.bind (fun scope ->
+                        checkScalar
+                            (sprintf "gates[%d].surfaces.%s.scope" index surfaceName)
+                            (child scope "scope")
+                            scopeKindNames
+                            gateId)))
+
+    if stream.Documents.Count = 0 then
+        Ok()
+    else
+        match asMapping stream.Documents[0].RootNode with
+        | None -> Ok()
+        | Some root ->
+            match child root "gates" with
+            | Some(:? YamlSequenceNode as gates) ->
+                gates.Children
+                |> Seq.indexed
+                |> Seq.tryPick (fun (i, node) -> asMapping node |> Option.bind (gateFindings i))
+                |> function
+                    | Some finding -> Error finding
+                    | None -> Ok()
+            | _ -> Ok()
+
 let private checkNoUnknownHarnessKeys (data: string) : Result<unit, string> =
     try
         let root = deserializer.Deserialize<obj>(data)
@@ -470,7 +783,10 @@ let load (repoRoot: string) : Result<RepoConfig, string> =
 
     try
         let data = File.ReadAllText path
-        parseRepoConfig data
+
+        match gateEnumFindings path data with
+        | Error message -> Error message
+        | Ok() -> parseRepoConfig data
     with ex ->
         Error(sprintf "cannot read repo-config.yml at %s: %s" path ex.Message)
 
@@ -696,6 +1012,299 @@ let harnessEntrySemanticFindings (index: int) (entry: HarnessEntry) : string lis
 /// wiring/carve-out/duplicate-id rules — none of which either feature file's
 /// scenarios exercise, and none of which this trimmed `RepoConfig` type (see
 /// module doc comment) carries enough data to check.
+/// Reports the message `glob::Pattern::new` would produce for an invalid
+/// pattern, or `None` when the pattern parses [Repo-grounded — the `glob`
+/// crate's `PatternError`].
+///
+/// Scope note: reproduces the crate's four `ErrorKind` variants
+/// (`InvalidRange`, `UnclosedClass`, `InvalidRecursion`, `WildcardsError`)
+/// and its `Display` shape. No scenario declares an invalid glob; the check
+/// exists so `repo-config validate` keeps rejecting exactly what Rust
+/// rejects.
+let private globPatternError (pattern: string) : string option =
+    let chars = pattern.ToCharArray()
+    let n = chars.Length
+
+    let rec starRun (k: int) : int =
+        if k < n && chars.[k] = '*' then starRun (k + 1) else k
+
+    let rec closingBracket (k: int) : int option =
+        if k >= n then None
+        elif chars.[k] = ']' then Some k
+        else closingBracket (k + 1)
+
+    let rec scan (i: int) : (int * string) option =
+        if i >= n then
+            None
+        elif chars.[i] = '[' then
+            let afterBang = if i + 1 < n && chars.[i + 1] = '!' then i + 2 else i + 1
+
+            // A `]` in the first position of a class is a literal member, not
+            // the class terminator.
+            let bodyStart =
+                if afterBang < n && chars.[afterBang] = ']' then
+                    afterBang + 1
+                else
+                    afterBang
+
+            match closingBracket bodyStart with
+            | None -> Some(i, "unclosed character class")
+            | Some closing ->
+                let body = pattern.Substring(afterBang, closing - afterBang)
+
+                let invalidRange =
+                    seq { 1 .. body.Length - 2 }
+                    |> Seq.exists (fun k -> body.[k] = '-' && body.[k - 1] > body.[k + 1])
+
+                if invalidRange then
+                    Some(i, "invalid range pattern")
+                else
+                    scan (closing + 1)
+        elif chars.[i] = '*' then
+            let past = starRun i
+            let run = past - i
+
+            if run > 2 then
+                Some(i, "wildcards are either regular `*` or recursive `**`")
+            elif
+                run = 2
+                && not ((i = 0 || chars.[i - 1] = '/') && (past = n || chars.[past] = '/'))
+            then
+                Some(i, "recursive wildcards must form a single path component")
+            else
+                scan past
+        else
+            scan (i + 1)
+
+    scan 0
+    |> Option.map (fun (position, message) -> sprintf "Pattern syntax error near position %d: %s" position message)
+
+/// Collects semantic findings for a gate's optional ordered Doctor-tool list
+/// [Repo-grounded — `repo_config_validate.rs::doctor_tools_semantic_findings`].
+let private doctorToolsSemanticFindings (index: int) (gate: GateEntry) : string list =
+    gate.DoctorTools
+    |> List.mapi (fun position tool ->
+        let unknown =
+            if List.contains tool doctorToolInventory then
+                []
+            else
+                [ sprintf "gates[%d] (gate id \"%s\").doctor-tools: unknown Doctor tool \"%s\"" index gate.Id tool ]
+
+        let duplicate =
+            if gate.DoctorTools |> List.take position |> List.contains tool then
+                [ sprintf "gates[%d] (gate id \"%s\").doctor-tools: duplicate Doctor tool \"%s\"" index gate.Id tool ]
+            else
+                []
+
+        unknown @ duplicate)
+    |> List.collect id
+
+/// Collects findings for the pre-commit-only lint-staged shell override
+/// [Repo-grounded — `repo_config_validate.rs::lint_staged_shell_findings`].
+let private lintStagedShellFindings
+    (index: int)
+    (gate: GateEntry)
+    (surface: GateSurface)
+    (scope: SurfaceScope)
+    : string list =
+    match scope.LintStagedShell with
+    | None -> []
+    | Some shell ->
+        let placement =
+            if surface <> PreCommit || scope.Scope <> AffectedFileType then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").surfaces.%A.lint-staged-shell: only valid for pre-commit affected-file-type"
+                      index
+                      gate.Id
+                      surface ]
+            else
+                []
+
+        let blank =
+            if shell.Trim() = "" then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").surfaces.%A.lint-staged-shell: must not be blank"
+                      index
+                      gate.Id
+                      surface ]
+            else
+                []
+
+        // Rust counts occurrences of the literal `{{command}}` while its
+        // message renders `{command}` (format! collapses the doubled braces).
+        let placeholder =
+            let rec count (from: int) (total: int) : int =
+                match shell.IndexOf("{{command}}", from, StringComparison.Ordinal) with
+                | -1 -> total
+                | at -> count (at + "{{command}}".Length) (total + 1)
+
+            if count 0 0 > 1 then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").surfaces.%A.lint-staged-shell: {command} may appear at most once"
+                      index
+                      gate.Id
+                      surface ]
+            else
+                []
+
+        placement @ blank @ placeholder
+
+/// Collects semantic findings for one gate on one declared surface
+/// [Repo-grounded — `repo_config_validate.rs::gate_surface_semantic_findings`].
+let private gateSurfaceSemanticFindings
+    (index: int)
+    (gate: GateEntry)
+    (surface: GateSurface)
+    (scope: SurfaceScope)
+    : string list =
+    let isFileScope = scope.Scope = AffectedFileType || scope.Scope = AllFileType
+
+    let isProjectScope = scope.Scope = AffectedProjects || scope.Scope = AllProjects
+
+    let allGlobs = Option.toList scope.Glob @ scope.Globs
+
+    let globScope =
+        if not (List.isEmpty allGlobs) && not isFileScope then
+            [ sprintf
+                  "gates[%d] (gate id \"%s\").surfaces.%A: glob and globs require a file scope"
+                  index
+                  gate.Id
+                  surface ]
+        else
+            []
+
+    let triggerScope =
+        if not (List.isEmpty scope.Trigger) && scope.Scope <> PathGated then
+            [ sprintf
+                  "gates[%d] (gate id \"%s\").surfaces.%A.trigger: only valid for path-gated scope"
+                  index
+                  gate.Id
+                  surface ]
+        else
+            []
+
+    let missingTrigger =
+        if scope.Scope = PathGated && List.isEmpty scope.Trigger then
+            [ sprintf
+                  "gates[%d] (gate id \"%s\").surfaces.%A.trigger: path-gated scope requires at least one trigger"
+                  index
+                  gate.Id
+                  surface ]
+        else
+            []
+
+    let globSyntax =
+        allGlobs
+        |> List.choose (fun glob ->
+            globPatternError glob
+            |> Option.map (fun error ->
+                sprintf
+                    "gates[%d] (gate id \"%s\").surfaces.%A: invalid glob \"%s\": %s"
+                    index
+                    gate.Id
+                    surface
+                    glob
+                    error))
+
+    let nxScope =
+        if gate.Kind = Nx && not isProjectScope then
+            [ sprintf
+                  "gates[%d] (gate id \"%s\").surfaces.%A: nx kind requires an affected-projects or all-projects scope"
+                  index
+                  gate.Id
+                  surface ]
+        else
+            []
+
+    let nonNxScope =
+        if gate.Kind <> Nx && isProjectScope then
+            [ sprintf "gates[%d] (gate id \"%s\").surfaces.%A: project scopes require kind nx" index gate.Id surface ]
+        else
+            []
+
+    globScope
+    @ lintStagedShellFindings index gate surface scope
+    @ triggerScope
+    @ missingTrigger
+    @ globSyntax
+    @ nxScope
+    @ nonNxScope
+
+/// Collects the semantic findings that apply specifically to the gate
+/// registry, shared by `repo-config validate` and `gate run` so dispatch
+/// rejects a malformed entry before it selects or invokes a leaf
+/// [Repo-grounded — `repo_config_validate.rs::gate_semantic_findings`].
+let gateSemanticFindings (config: RepoConfig) : string list =
+    config.Gates
+    |> List.mapi (fun index gate ->
+        let duplicate =
+            if config.Gates |> List.take index |> List.exists (fun other -> other.Id = gate.Id) then
+                [ sprintf "gates[%d].id: duplicate gate id \"%s\"" index gate.Id ]
+            else
+                []
+
+        let charset =
+            if
+                gate.Id = ""
+                || not (
+                    gate.Id
+                    |> Seq.forall (fun c -> (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c = '-')
+                )
+            then
+                [ sprintf
+                      "gates[%d].id: \"%s\" must be non-empty lowercase kebab-case (`[a-z0-9-]+`) — this value reaches shell contexts (CI matrix dispatch, hook generation) unescaped, so any other character is a defense-in-depth risk, not merely a style violation"
+                      index
+                      gate.Id ]
+            else
+                []
+
+        let surfaces =
+            if List.isEmpty gate.Surfaces then
+                [ sprintf "gates[%d] (gate id \"%s\").surfaces: at least one surface is required" index gate.Id ]
+            else
+                []
+
+        let wiring =
+            if gate.Wiring.IsSome && gate.GateType <> Check then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").wiring: only valid for type \"check\" (found type \"mutation\")"
+                      index
+                      gate.Id ]
+            else
+                []
+
+        let restages =
+            if gate.Restages && gate.GateType <> Mutation then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").restages: only valid for type \"mutation\" (found type \"check\")"
+                      index
+                      gate.Id ]
+            else
+                []
+
+        let carveOut =
+            if gate.CarveOut.IsSome && gate.GateType <> Check then
+                [ sprintf
+                      "gates[%d] (gate id \"%s\").carve-out: only valid for type \"check\" (found type \"mutation\")"
+                      index
+                      gate.Id ]
+            else
+                []
+
+        let surfaceFindings =
+            gate.Surfaces
+            |> List.collect (fun (surface, scope) -> gateSurfaceSemanticFindings index gate surface scope)
+
+        duplicate
+        @ charset
+        @ surfaces
+        @ wiring
+        @ restages
+        @ carveOut
+        @ doctorToolsSemanticFindings index gate
+        @ surfaceFindings)
+    |> List.collect id
+
 let semanticFindings (config: RepoConfig) : string list =
     let doctorFindings =
         match config.Doctor.DotnetGlobalJson with
@@ -708,7 +1317,7 @@ let semanticFindings (config: RepoConfig) : string list =
     let harnessFindings =
         config.Harness |> List.mapi harnessEntrySemanticFindings |> List.collect id
 
-    doctorFindings @ harnessFindings
+    doctorFindings @ harnessFindings @ gateSemanticFindings config
 
 /// Runs `repo-config validate` from a known `repoRoot`, returning whether it
 /// passed alongside the human-readable text a CLI invocation would print

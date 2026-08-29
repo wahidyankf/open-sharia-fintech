@@ -54,6 +54,8 @@
     <Compile Include="Steps/RepoGovernanceSteps.fs" />
     <Compile Include="Steps/DddSteps.fs" />
     <Compile Include="Steps/GlossarySteps.fs" />
+    <Compile Include="Steps/GateSteps.fs" />
+    <Compile Include="Steps/GateDeclarationSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>

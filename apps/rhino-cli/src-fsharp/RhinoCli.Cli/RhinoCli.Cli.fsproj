@@ -14,6 +14,7 @@
     <Compile Include="src/RootArgs.fs" />
     <Compile Include="src/HelpText.fs" />
     <Compile Include="src/Formatters.fs" />
+    <Compile Include="src/Gate.fs" />
     <Compile Include="src/Dispatch.fs" />
   </ItemGroup>
 
