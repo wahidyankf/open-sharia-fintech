@@ -47,6 +47,11 @@
     <Compile Include="Steps/WaveDFormattersUnitTests.fs" />
     <Compile Include="Steps/WaveDDispatchUnitTests.fs" />
     <Compile Include="Steps/WaveDMermaidWarningUnitTests.fs" />
+    <Compile Include="Steps/WaveEFDispatchUnitTests.fs" />
+    <Compile Include="Steps/WaveEFGateUnitTests.fs" />
+    <Compile Include="Steps/WaveEFE2eCoverageUnitTests.fs" />
+    <Compile Include="Steps/WaveEFFormattersUnitTests.fs" />
+    <Compile Include="Steps/WaveEFApplicationUnitTests.fs" />
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
     <Compile Include="Steps/SpecsSteps.fs" />
