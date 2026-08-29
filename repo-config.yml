@@ -176,7 +176,7 @@ coverage:
     # (2 files) — the glob widens to directory-level like `convention/` did.
     - name: rhino-cli-fsharp
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,system/**,test-coverage/**,md/**,governance/**,git/**,harness/**,specs/**,spec-coverage/**,contracts/**,repo-governance/**,ddd/**}"
+      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,system/**,test-coverage/**,md/**,governance/**,git/**,harness/**,specs/**,spec-coverage/**,contracts/**,repo-governance/**,ddd/**,gate/**}"
 
     # ose domain
     - name: ose-be

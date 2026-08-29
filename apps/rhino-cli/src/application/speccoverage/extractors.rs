@@ -381,11 +381,27 @@ pub fn extract_fsharp_step_texts(
 
 /// Normalises an F# backtick-quoted step name and registers it as a `^…$`
 /// anchored regex pattern in `sm`.
+///
+/// Tries the text as-is first (the vast majority of F# step names embed
+/// genuine regex capture groups, e.g. `(.*?)`, matching real `TickSpec`
+/// runtime semantics). Some step names instead embed literal `{…}` braces
+/// (e.g. a step describing a `{{command}}` placeholder) that are valid,
+/// lenient .NET regex input at runtime but that Rust's stricter `regex`
+/// crate rejects as an invalid quantifier. For those, retry once with
+/// literal braces escaped so the step is still recorded rather than
+/// silently dropped.
 fn add_fsharp_step_pattern(name: &str, path: &str, sm: &mut StepMatcher) {
     let text = normalize_ws(name);
     let pattern = format!("^{text}$");
-    if let Ok(re) = Regex::new(&pattern) {
-        sm.add_pattern_with_origin(re, &pattern, path);
+    match Regex::new(&pattern) {
+        Ok(re) => sm.add_pattern_with_origin(re, &pattern, path),
+        Err(_) => {
+            let escaped = text.replace('{', "\\{").replace('}', "\\}");
+            let escaped_pattern = format!("^{escaped}$");
+            if let Ok(re) = Regex::new(&escaped_pattern) {
+                sm.add_pattern_with_origin(re, &escaped_pattern, path);
+            }
+        }
     }
 }
 
