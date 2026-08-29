@@ -1396,18 +1396,119 @@ let private longOptionValue (name: string) (args: string list) : string option =
         else
             None)
 
-/// `gate list` [Repo-grounded — `commands/gate/list.rs::run`].
+/// Reproduces clap's exact `error: the following required arguments were
+/// not provided: --surface <SURFACE>` message for `gate list`/`gate
+/// emit`/`gate run` byte-for-byte [Repo-grounded — empirically captured from
+/// the real Rust binary's bare/`--help`/`-o text`/`-o json`/`-o markdown`
+/// invocations of each]. Mirrors `readmeIndexRewritePathsMissingArgsError`'s
+/// echo-recognised-flags-in-argv-order construction; `trailingSuffix` covers
+/// `gate run`'s extra `[-- <COMMIT_MESSAGE_FILE>]` clause, which clap always
+/// renders last regardless of which other flags are echoed.
+let private gateSurfaceMissingArgsError
+    (commandUsage: string)
+    (trailingSuffix: string)
+    (rawArgs: string list)
+    : string =
+    let indexed = rawArgs |> List.mapi (fun i a -> i, a)
+
+    let helpIndex =
+        indexed
+        |> List.tryFind (fun (_, a) -> a = "--help" || a = "-h")
+        |> Option.map fst
+
+    let outputIndex =
+        indexed
+        |> List.tryFind (fun (_, a) -> a = "-o" || a = "--output")
+        |> Option.map fst
+
+    let extras =
+        [ helpIndex |> Option.map (fun i -> i, "--help")
+          outputIndex |> Option.map (fun i -> i, "--output <OUTPUT>") ]
+        |> List.choose id
+        |> List.sortBy fst
+        |> List.map snd
+
+    let usage = (commandUsage :: extras) |> String.concat " "
+
+    let usageWithSuffix =
+        if trailingSuffix = "" then
+            usage
+        else
+            usage + " " + trailingSuffix
+
+    sprintf "error: the following required arguments were not provided:\n  --surface <SURFACE>\n\n%s\n" usageWithSuffix
+
+/// `gate list` [Repo-grounded — `commands/gate/list.rs::run`]. `--surface`
+/// is required, so — mirroring `test-coverage validate` — its absence must
+/// win over `--help`; `route` checks this ahead of the blanket `wantsHelp`
+/// shortcut every other leaf relies on.
 let private runGateListLeaf (repoRoot: string) (args: string list) : int =
-    let surface = longOptionValue "surface" args |> Option.defaultValue ""
+    match longOptionValue "surface" args with
+    | None ->
+        eprintf "%s" (gateSurfaceMissingArgsError "Usage: rhino-cli gate list --surface <SURFACE>" "" args)
 
-    let requested = longOptionValue "format" args |> Option.defaultValue "text"
+        2
+    | Some surface ->
+        let requested = longOptionValue "format" args |> Option.defaultValue "text"
 
-    match parseOutputFormatValue requested with
-    | Error message ->
-        eprintfn "Error: %s" message
-        1
-    | Ok format ->
-        match Gate.listAtRoot repoRoot surface format (List.contains "--by-group" args) with
+        match parseOutputFormatValue requested with
+        | Error message ->
+            eprintfn "Error: %s" message
+            1
+        | Ok format ->
+            match Gate.listAtRoot repoRoot surface format (List.contains "--by-group" args) with
+            | Ok output ->
+                printf "%s" output
+                0
+            | Error message ->
+                eprintfn "Error: %s" message
+                1
+
+/// `gate run` [Repo-grounded — `commands/gate/run.rs::run`]. `--surface` is
+/// required — see `runGateListLeaf`'s doc comment for why the check comes
+/// first.
+let private runGateRunLeaf (repoRoot: string) (args: string list) : int =
+    match longOptionValue "surface" args with
+    | None ->
+        eprintf
+            "%s"
+            (gateSurfaceMissingArgsError
+                "Usage: rhino-cli gate run --surface <SURFACE>"
+                "[-- <COMMIT_MESSAGE_FILE>]"
+                args)
+
+        2
+    | Some surface ->
+        let only = longOptionValue "only" args
+        let group = longOptionValue "group" args
+
+        let commitMessageFile =
+            args
+            |> List.tryFindIndex (fun a -> a = "--")
+            |> Option.bind (fun index -> args |> List.skip (index + 1) |> List.tryHead)
+
+        let result =
+            match commitMessageFile with
+            | Some file -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group (Some file) (printf "%s")
+            | None -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group None (printf "%s")
+
+        match result with
+        | Ok() -> 0
+        | Error message ->
+            eprintfn "Error: %s" message
+            1
+
+/// `gate emit` [Repo-grounded — `commands/gate/emit.rs::run`]. `--surface`
+/// is required — see `runGateListLeaf`'s doc comment for why the check comes
+/// first.
+let private runGateEmitLeaf (repoRoot: string) (args: string list) : int =
+    match longOptionValue "surface" args with
+    | None ->
+        eprintf "%s" (gateSurfaceMissingArgsError "Usage: rhino-cli gate emit --surface <SURFACE>" "" args)
+
+        2
+    | Some surface ->
+        match Gate.emitAtRoot repoRoot surface with
         | Ok output ->
             printf "%s" output
             0
@@ -1415,37 +1516,15 @@ let private runGateListLeaf (repoRoot: string) (args: string list) : int =
             eprintfn "Error: %s" message
             1
 
-/// `gate run` [Repo-grounded — `commands/gate/run.rs::run`].
-let private runGateRunLeaf (repoRoot: string) (args: string list) : int =
-    let surface = longOptionValue "surface" args |> Option.defaultValue ""
-    let only = longOptionValue "only" args
-    let group = longOptionValue "group" args
-
-    let commitMessageFile =
-        args
-        |> List.tryFindIndex (fun a -> a = "--")
-        |> Option.bind (fun index -> args |> List.skip (index + 1) |> List.tryHead)
-
-    let result =
-        match commitMessageFile with
-        | Some file -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group (Some file) (printf "%s")
-        | None -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group None (printf "%s")
-
-    match result with
+/// `gate validate` [Repo-grounded — `commands/gate/validate.rs::run_at_root`,
+/// which writes the diagnostic to stdout before returning the `Err` that
+/// `dispatch`'s generic handler also echoes to stderr with an `Error: `
+/// prefix]. Ignores `-o`/`--format` — the Rust command does too.
+let private runGateValidateLeaf (repoRoot: string) : int =
+    match Gate.validateAtRoot repoRoot with
     | Ok() -> 0
     | Error message ->
-        eprintfn "Error: %s" message
-        1
-
-/// `gate emit` [Repo-grounded — `commands/gate/emit.rs::run`].
-let private runGateEmitLeaf (repoRoot: string) (args: string list) : int =
-    let surface = longOptionValue "surface" args |> Option.defaultValue ""
-
-    match Gate.emitAtRoot repoRoot surface with
-    | Ok output ->
-        printf "%s" output
-        0
-    | Error message ->
+        printfn "%s" message
         eprintfn "Error: %s" message
         1
 
@@ -2777,7 +2856,8 @@ let private routeTable: (string list * string) list =
       [ "specs"; "audit" ], "specs-audit"
       [ "gate"; "list" ], "gate-list"
       [ "gate"; "emit" ], "gate-emit"
-      [ "gate"; "run" ], "gate-run" ]
+      [ "gate"; "run" ], "gate-run"
+      [ "gate"; "validate" ], "gate-validate" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,
 /// paired with the arguments left after that prefix — the data-driven
@@ -2854,6 +2934,24 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
             eprintfn "Error: failed to find git repository root: %s" message
             1
         | Ok repoRoot -> runGovernanceReadmeIndexRewritePathsLeaf repoRoot rest
+    elif path = Some "gate-list" then
+        match getRepoRoot () with
+        | Error message ->
+            eprintfn "Error: failed to find git repository root: %s" message
+            1
+        | Ok repoRoot -> runGateListLeaf repoRoot rest
+    elif path = Some "gate-emit" then
+        match getRepoRoot () with
+        | Error message ->
+            eprintfn "Error: failed to find git repository root: %s" message
+            1
+        | Ok repoRoot -> runGateEmitLeaf repoRoot rest
+    elif path = Some "gate-run" then
+        match getRepoRoot () with
+        | Error message ->
+            eprintfn "Error: failed to find git repository root: %s" message
+            1
+        | Ok repoRoot -> runGateRunLeaf repoRoot rest
     elif wantsHelp argv then
         printf "%s" HelpText.Text
         0
@@ -2897,9 +2995,7 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "governance-readme-index-validate" -> runGovernanceReadmeIndexValidateLeaf repoRoot format rest
                     | "governance-readme-index-generate" -> runGovernanceReadmeIndexGenerateLeaf repoRoot format rest
                     | "git-lockfile-sync" -> runGitLockfileSyncLeaf repoRoot
-                    | "gate-list" -> runGateListLeaf repoRoot rest
-                    | "gate-emit" -> runGateEmitLeaf repoRoot rest
-                    | "gate-run" -> runGateRunLeaf repoRoot rest
+                    | "gate-validate" -> runGateValidateLeaf repoRoot
                     | "repo-governance-vendor-validate" -> runRepoGovernanceVendorValidateLeaf repoRoot format rest
                     | "repo-governance-layer-coherence-validate" ->
                         runRepoGovernanceLayerCoherenceValidateLeaf repoRoot format
