@@ -20,7 +20,7 @@ e828dd0c5db7b67bc94d3185e5324148f029c976d109e077c21d1629496020ec  apps/rhino-cli
 8af0c3b6d214167c2f8ea9ab2a0d53c1d6c2fbb3cdfe74c6315b4f661f56b899  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/Specs.fs
 3c52c83f35ed710cadc6008cc22bbd4767d43d824be4aa56700698c2bff4c2cf  apps/rhino-cli/src-fsharp/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src-fsharp/RhinoCli.Cli/RhinoCli.Cli.fsproj
-80554415cda1c8a956ae04f342eb9550e7068f4b4ce5dfc2cb4ab2dda86d8803  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs
+a8147af43c93265f544cafb3635049379c9be5f800978196a1e297452d6e4595  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Dispatch.fs
 c1fcf8ce01c49a8286e529aeb16921e8e7691e61ff2d084e57801f20f6a49032  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Formatters.fs
 d10a668a626ba17f600c59ecdc46f809dde4ceb4c10ead6d7df509b6999c6ec1  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/Gate.fs
 ff741ba86d69a0d44bc4b0a4165c039f5e4d53c9b05cfbce5c5223f223c0fb99  apps/rhino-cli/src-fsharp/RhinoCli.Cli/src/HelpText.fs
@@ -33,7 +33,7 @@ ea9c28fc3b1c41add46abd4de607b27e0b3b985b0d9825ad6763e2341892f91a  apps/rhino-cli
 631376afb9e4d7c5192d38f51b533c18b64cca83c18ed5c50982ba9acce51d74  apps/rhino-cli/src-fsharp/RhinoCli.Program/RhinoCli.Program.fsproj
 153a226f5ef1d6916aa6e6425b278a606a48659fcba9623c9d01e5cf3b2589a5  apps/rhino-cli/src-fsharp/RhinoCli.Program/src/Program.fs
 822f6ec8446562a4de9a3b1a2481af50fac01bbedc32e1963142709e5f48ec13  apps/rhino-cli/src-fsharp/fsharplint.json
-92252dc8349dd3539acb4aa414fdff32e82a258df7cd845f8af4182906baf85a  apps/rhino-cli/src-fsharp/project.json
+58b78d4a911035daf24dd274822bd3b287286e1aaf94c4bc4b6799defc015398  apps/rhino-cli/src-fsharp/project.json
 aca5d109fdc277b6f4c6695a1265b163fac319b66d6201b32b85e5571a29d3ea  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 51bbb1298cd542e36b0f98320c3ef762d37f78e5fca2a7889c66811a4110c277  apps/rhino-cli/src-fsharp/tests/integration/Steps/PreCommitHookSteps.fs
 3794154dfce3408e612052b9cce8eb1eb54770ef8b29b4e71d8c979c35bb6539  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
@@ -162,7 +162,7 @@ fdd7756a872cd0c58d7220ab5a7bddc5b2dc8d9e0a0aad599f81a0983b55a733  apps/rhino-cli
 5468de46c876aa9f0a7cd5f59ff28b063d44823fdbbf66559610ca64019b4b58  apps/rhino-cli/src/application/severity.rs
 ebf475c41693d81a36e2b623707b6fe1f048ff4ce764098ea7de22ba4d22c46a  apps/rhino-cli/src/application/speccoverage/checker.rs
 76ac87000267935f37df7a36d43391d425e71b9c55fada4bb62401fe20195712  apps/rhino-cli/src/application/speccoverage/cucumber_expr.rs
-99071b65758750c5db5119550a5f2c79d8320764ecb9dfabdf94e45edd28c808  apps/rhino-cli/src/application/speccoverage/extractors.rs
+3fe60f830cd7fe7e0b1460ceb57a7f2ba00db3794e339dc1d1baf1468271c31f  apps/rhino-cli/src/application/speccoverage/extractors.rs
 4a24dc5dde7ae6b6e0459d12b648c16facbaaea2f10dbff09b387cee6b408d6b  apps/rhino-cli/src/application/speccoverage/matcher.rs
 0e08aae85027fa9ce80019e16526675afe08d7d7e2af2cbc0a4acd4361197b03  apps/rhino-cli/src/application/speccoverage/mod.rs
 17406ba6f358b4e16910ed2e86f4a658d709e3452b646711498d8b6dc6c139c9  apps/rhino-cli/src/application/speccoverage/parser.rs
