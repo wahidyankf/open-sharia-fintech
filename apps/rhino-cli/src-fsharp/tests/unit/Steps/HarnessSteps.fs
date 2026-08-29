@@ -149,6 +149,57 @@ let private briefsIn (quadrants: string list) : (string * string) list =
         |> List.map (fun path -> name, Path.GetFileName path))
     |> List.sort
 
+/// Immediate `.agents/skills/` subdirectory names the emitter did not
+/// generate, i.e. those with no `.claude/skills/` counterpart. Derived from
+/// the tree itself, never hard-coded, because the vendored payload is
+/// repository-local while this suite is byte-identical across sibling
+/// repositories [Repo-grounded — `tests/skills_mirror.rs::unmirrored_agents_dirs`].
+let private unmirroredAgentsSkillsDirs (root: string) : string list =
+    let agentsSkills = Path.Combine(root, ".agents", "skills")
+
+    if not (Directory.Exists agentsSkills) then
+        []
+    else
+        Directory.GetDirectories agentsSkills
+        |> Array.map Path.GetFileName
+        |> Array.filter (fun name -> not (Directory.Exists(Path.Combine(root, ".claude", "skills", name))))
+        |> Array.sort
+        |> Array.toList
+
+/// The `.agents/skills/` directory names the real repository's registry
+/// declares as vendored, parsed out of `repo-config.yml`'s `vendored:` list.
+/// Derived rather than hard-coded, because the vendored payload is
+/// repository-local while this suite is byte-identical across sibling
+/// repositories [Repo-grounded — `tests/skills_mirror.rs::vendored_from_registry`].
+let private vendoredFromRegistry (root: string) : string list =
+    File.ReadAllLines(Path.Combine(root, "repo-config.yml"))
+    |> Array.choose (fun line ->
+        let trimmed = line.Trim()
+
+        if trimmed.StartsWith("- .agents/skills/", StringComparison.Ordinal) then
+            let rest = trimmed.Substring("- .agents/skills/".Length)
+            let token = rest.Split([| '/'; ' '; '#' |]).[0].Trim()
+            if token = "" then None else Some token
+        else
+            None)
+    |> Array.toList
+    |> List.sort
+    |> List.distinct
+
+/// Fixture-only vendored directory names the `@vendored-skill-preservation`
+/// stale-mirror scenario writes payload files under, mirroring
+/// `VENDORED_DIRS` in the Rust suite — the real repository's vendored set is
+/// read from its registry via [`vendoredFromRegistry`], never from this list.
+let private vendoredFixtureDirs: string list =
+    [ "cavecrew"
+      "caveman"
+      "caveman-commit"
+      "caveman-compress"
+      "caveman-help"
+      "caveman-review"
+      "caveman-stats"
+      "compress" ]
+
 /// Instance step-definition container — see `ConventionSteps.fs`'s module doc
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
 /// instance-level mutable fields the idiomatic state-threading mechanism here.
@@ -193,6 +244,7 @@ type HarnessSteps() =
     let mutable conformanceBefore: int option = None
     let mutable conformanceAfter: int option = None
     let mutable conformanceBriefs: (string * string) list = []
+    let mutable vendoredGenerateOutcome: Result<unit, string> option = None
 
     let scenarioRoot () : string =
         match scenarioRootDir with
@@ -2806,6 +2858,241 @@ type HarnessSteps() =
             if lower.Contains("cleanup") then
                 Assert.Contains("not a cleanup", lower)
 
+    // ---- @vendored-skill-preservation ----
+    //
+    // Vendored directory names used by the fixture in the second scenario
+    // only, mirroring `VENDORED_DIRS` in the Rust suite — the real
+    // repository's vendored set is read from its registry via
+    // `vendoredFromRegistry`, never from this list.
+
+    [<Given>]
+    member _.``every \.agents/skills/ directory without a \.claude/skills/ source is one the emitter cannot regenerate``
+        ()
+        =
+        let root = repositoryRoot
+
+        for dir in unmirroredAgentsSkillsDirs root do
+            Assert.False(
+                Directory.Exists(Path.Combine(root, ".claude", "skills", dir)),
+                sprintf "%s was selected for having no .claude/skills/ source" dir
+            )
+
+            Assert.True(
+                Directory.Exists(Path.Combine(root, ".agents", "skills", dir)),
+                sprintf "%s must be a real directory carrying a payload" dir
+            )
+
+    [<When>]
+    member _.``the harness registry declares each of those directories as vendored``() =
+        let root = repositoryRoot
+        let declared = vendoredFromRegistry root
+
+        let undeclared =
+            unmirroredAgentsSkillsDirs root
+            |> List.filter (fun d -> not (List.contains d declared))
+
+        Assert.True(
+            List.isEmpty undeclared,
+            sprintf "ownership is declared, not inferred: %A carry no vendored declaration" undeclared
+        )
+
+    [<Then>]
+    member _.``rhino-cli repo-config validate exits 0``() =
+        let passed, _ = RepoConfig.validateAtRoot repositoryRoot
+        Assert.True(passed, "repo-config validate must exit 0")
+
+    /// `Harness.validateSync` does not yet fold in the skills-mirror audit the
+    /// way Rust's `validate_sync`/`validate_bindings` do (see this module's
+    /// scope note on `runBindingsValidateNoTriage`), so this scenario calls
+    /// `Harness.auditSkillsMirrors` directly — the exact check family Rust's
+    /// `harness bindings validate` routes an undeclared mirror file through,
+    /// per `sync_validator.rs`'s own doc comment that the two commands report
+    /// this family identically.
+    [<Then>]
+    member _.``an undeclared directory appearing under \.agents/skills/ with no \.claude/skills/ counterpart makes rhino-cli harness bindings validate exit non-zero, where an ownership heuristic would have silently deleted it instead``
+        ()
+        =
+        let root = scenarioRoot ()
+        writeOwnershipRegistry root false
+        writeOwnershipAgent root "alpha-maker"
+        writeOwnershipSkill root "alpha-skill"
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "fixture generate: %s" e
+
+        let probe = Path.Combine(root, ".agents", "skills", "probe-undeclared", "SKILL.md")
+        Directory.CreateDirectory(Path.GetDirectoryName probe) |> ignore
+        File.WriteAllText(probe, "probe\n")
+
+        match Harness.auditSkillsMirrors root with
+        | Error e -> failwith e
+        | Ok drift ->
+            Assert.NotEmpty drift
+
+            Assert.Contains(
+                drift,
+                fun d ->
+                    match d with
+                    | Harness.MirrorDriftUndeclared path -> path.Contains("probe-undeclared", StringComparison.Ordinal)
+                    | Harness.MirrorDriftMissing _ -> false
+            )
+
+        Assert.True(
+            File.Exists probe,
+            "validation must REPORT the directory, never delete it — that is the whole \
+             difference between a declared boundary and an ownership heuristic"
+        )
+
+        // Declared vendored directories, by contrast, are silently accepted.
+        let vendorFile =
+            Path.Combine(root, ".agents", "skills", "vendor-plugin", "SKILL.md")
+
+        Directory.CreateDirectory(Path.GetDirectoryName vendorFile) |> ignore
+        File.WriteAllText(vendorFile, "vendored\n")
+        Directory.Delete(Path.Combine(root, ".agents", "skills", "probe-undeclared"), true)
+
+        match Harness.auditSkillsMirrors root with
+        | Error e -> failwith e
+        | Ok drift -> Assert.Equal<Harness.MirrorDrift list>([], drift)
+
+    [<Given>]
+    member _.``a skill directory is renamed under \.claude/skills/ so its old mirror becomes stale``() =
+        let root = scenarioRoot ()
+        writeOwnershipRegistry root false
+        writeOwnershipAgent root "alpha-maker"
+        writeOwnershipSkill root "old-name"
+
+        match Harness.runHarnessBindingsGenerate root with
+        | Ok() -> ()
+        | Error e -> failwithf "fixture generate: %s" e
+
+        Assert.True(File.Exists(Path.Combine(root, ".agents", "skills", "old-name", "SKILL.md")))
+
+        for dir in vendoredFixtureDirs do
+            let path = Path.Combine(root, ".agents", "skills", ownershipVendorDir, dir + ".md")
+            Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
+            File.WriteAllText(path, sprintf "vendored %s\n" dir)
+
+        Directory.Delete(Path.Combine(root, ".claude", "skills", "old-name"), true)
+        writeOwnershipSkill root "new-name"
+
+    [<Then>]
+    member _.``the stale mirrored directory is removed and the new one created``() =
+        let root = scenarioRoot ()
+        Assert.False(Directory.Exists(Path.Combine(root, ".agents", "skills", "old-name")))
+        Assert.True(File.Exists(Path.Combine(root, ".agents", "skills", "new-name", "SKILL.md")))
+
+    [<Then>]
+    member _.``every vendored directory is still present, proving cleanup is scoped to emitter-owned paths``() =
+        let root = scenarioRoot ()
+
+        for dir in vendoredFixtureDirs do
+            let path = Path.Combine(root, ".agents", "skills", ownershipVendorDir, dir + ".md")
+            Assert.True(File.Exists path, sprintf "vendored payload %s must survive cleanup" dir)
+            Assert.Equal(sprintf "vendored %s\n" dir, File.ReadAllText path)
+
+    [<Given>]
+    member _.``a harness declares \.agents/skills/vendor-plugin as ownership class vendored but its vendored list names a different value for it``
+        ()
+        =
+        let root = scenarioRoot ()
+
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness:"
+                  "  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills }"
+                  "  - name: opencode"
+                  "    tier: generated"
+                  "    agent-dir: .opencode/agents"
+                  "    mirrors: .claude/agents"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    skills-dir: .agents/skills"
+                  "    skills-mirrors: .claude/skills"
+                  "    vendored:"
+                  "      - .agents/skills/vendor-plugin-typo"
+                  "    ownership:"
+                  "      - { path: .agents/skills/vendor-plugin, class: vendored, reason: third-party plugin skill; no in-repo source }"
+                  "coverage:"
+                  "  projects: []"
+                  "" ]
+            )
+        )
+
+        writeOwnershipAgent root "alpha-maker"
+        writeOwnershipSkill root "alpha-skill"
+        let path = Path.Combine(root, ".agents", "skills", "vendor-plugin", "SKILL.md")
+        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
+        File.WriteAllText(path, "vendored payload\n")
+
+    [<When>]
+    member _.``rhino-cli harness bindings generate runs against that mismatched registry``() =
+        vendoredGenerateOutcome <- Some(Harness.runHarnessBindingsGenerate (scenarioRoot ()))
+
+    [<Then>]
+    member _.``the run fails loudly instead of deleting the directory the ownership record protects``() =
+        match vendoredGenerateOutcome with
+        | Some(Ok()) -> failwith "an ownership/vendored[] disagreement must be refused, not silently applied"
+        | Some(Error _) -> ()
+        | None -> failwith "no generate run has happened in this scenario"
+
+        Assert.True(File.Exists(Path.Combine(scenarioRoot (), ".agents", "skills", "vendor-plugin", "SKILL.md")))
+
+    [<Given>]
+    member _.``a harness's vendored list names a typo'd path with no ownership record for the real directory it was meant to protect``
+        ()
+        =
+        let root = scenarioRoot ()
+
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness:"
+                  "  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills }"
+                  "  - name: opencode"
+                  "    tier: generated"
+                  "    agent-dir: .opencode/agents"
+                  "    mirrors: .claude/agents"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    skills-dir: .agents/skills"
+                  "    skills-mirrors: .claude/skills"
+                  "    vendored:"
+                  "      - .agents/skills/vendor-plugin-typo"
+                  "coverage:"
+                  "  projects: []"
+                  "" ]
+            )
+        )
+
+        writeOwnershipAgent root "alpha-maker"
+        writeOwnershipSkill root "alpha-skill"
+        let path = Path.Combine(root, ".agents", "skills", "vendor-plugin", "SKILL.md")
+        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
+        File.WriteAllText(path, "vendored payload\n")
+
+    [<When>]
+    member _.``rhino-cli harness bindings generate runs against that under-declared registry``() =
+        vendoredGenerateOutcome <- Some(Harness.runHarnessBindingsGenerate (scenarioRoot ()))
+
+    [<Then>]
+    member _.``the run fails loudly instead of deleting the real directory the typo'd entry was meant to protect``() =
+        match vendoredGenerateOutcome with
+        | Some(Ok()) ->
+            failwith "a vendored[] entry with no matching ownership entry must be refused, not silently applied"
+        | Some(Error _) -> ()
+        | None -> failwith "no generate run has happened in this scenario"
+
+        Assert.True(File.Exists(Path.Combine(scenarioRoot (), ".agents", "skills", "vendor-plugin", "SKILL.md")))
+
 /// Slices one scenario out of the real, frozen feature file and runs it
 /// against `HarnessSteps` — see `GovernanceSteps.fs`'s runner for the shared
 /// convention.
@@ -2924,6 +3211,10 @@ module private FeatureRunner =
     /// Runs one scenario of `opencode-skills-removal.feature`.
     let runOpencodeSkillsRemoval (scenarioTitle: string) : unit =
         runIn "opencode-skills-removal.feature" scenarioTitle
+
+    /// Runs one scenario of `vendored-skill-preservation.feature`.
+    let runVendoredSkillPreservation (scenarioTitle: string) : unit =
+        runIn "vendored-skill-preservation.feature" scenarioTitle
 
 [<Fact>]
 let ``Generated binding directories for dropped harnesses no longer exist`` () =
@@ -3200,3 +3491,21 @@ let ``Both trees are gone and their word-budget exclusions with them`` () =
 [<Fact>]
 let ``The capability loss is recorded, not silent`` () =
     FeatureRunner.runOpencodeSkillsRemoval "The capability loss is recorded, not silent"
+
+[<Fact>]
+let ``Vendored subdirectories are declared, not inferred`` () =
+    FeatureRunner.runVendoredSkillPreservation "Vendored subdirectories are declared, not inferred"
+
+[<Fact>]
+let ``Stale-mirror cleanup never reaches a vendored directory`` () =
+    FeatureRunner.runVendoredSkillPreservation "Stale-mirror cleanup never reaches a vendored directory"
+
+[<Fact>]
+let ``A vendored declaration that disagrees with its own ownership record is refused`` () =
+    FeatureRunner.runVendoredSkillPreservation
+        "A vendored declaration that disagrees with its own ownership record is refused"
+
+[<Fact>]
+let ``A vendored entry naming no real directory is refused even when no ownership record contradicts it`` () =
+    FeatureRunner.runVendoredSkillPreservation
+        "A vendored entry naming no real directory is refused even when no ownership record contradicts it"
