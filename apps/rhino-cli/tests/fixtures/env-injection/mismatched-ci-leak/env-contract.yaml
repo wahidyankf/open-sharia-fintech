@@ -1,5 +1,0 @@
-surfaces:
-  - root: apps/demo-www
-    kind: app
-    lang: typescript
-    allowlist: []

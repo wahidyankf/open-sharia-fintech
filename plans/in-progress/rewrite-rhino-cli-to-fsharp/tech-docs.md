@@ -200,15 +200,13 @@ flowchart LR
   PROG --> CLI
 ```
 
-**Source root — TBD, resolved at Phase 9c, recorded here as the durable home.** The tree starts at
-`apps/rhino-cli/src-fsharp/` (Phase 2) and Phase 9c decides whether it flattens to
-`apps/rhino-cli/src/` once no Rust tree competes for the path (`delivery.md`'s Phase 9c decision
-step). That step's own `learnings.md#fsharp-source-root` entry is the read-back source Phase 9d and
-Phase 10 depend on with no fallback — but `learnings.md` is a transient running log a future date
-may delete, per
+**Source root — `apps/rhino-cli/src/`, resolved at Phase 9c.** The tree started at
+`apps/rhino-cli/src-fsharp/` (Phase 2); Phase 9c flattened it to `apps/rhino-cli/src/` once the Rust
+tree that previously occupied `apps/rhino-cli/src/` was deleted in the same sub-phase. This is the
+durable record of that decision — `learnings.md#fsharp-source-root` also carries it, but
+`learnings.md` is a transient running log a future date may delete, per
 [the transient-log caveat](../../../repo-governance/development/quality/knowledge-capture/the-transient-log-caveat.md),
-so this line is the artifact's durable record: Phase 9c replaces "TBD" above with the final path in
-the same commit it writes the `learnings.md` entry, before Phase 12's sweep runs.
+so this line, not that one, is what Phase 9d and Phase 10 should be read as depending on.
 
 ### Dispatch shim during migration
 
@@ -532,11 +530,24 @@ caller and every reader takes "audit" at face value. A second hazard compounds i
 exit 0 on a finding; Phase 9c proves the exit code against a known-vulnerable scratch project before
 treating it as a gate.
 
-**Decision**: Phase 9c must close the gap or record it. Preferred close: a `nuget.config` under
-`apps/rhino-cli/src-fsharp/` that opens with `<clear />` and pins `packageSources` to nuget.org
-(covering `[sources]`/`[bans]`), plus a license check folded into the `deps:audit` command
-(covering `[licenses]`). If either is deferred, `learnings.md` records which control was dropped,
-who accepted it, and why — and the target is renamed to say what it actually does.
+**Decision (resolved at Phase 9c execution)**: deferred, not closed — recorded as an accepted
+regression in `learnings.md`, dated and attributed. `dotnet list package --include-transitive
+--format json` carries no license field at all, so a `[licenses]` equivalent would require a bespoke
+`.nuspec`-parsing scanner with no precedent anywhere in this repo; building and proving one to this
+plan's own break-restore standard is disproportionate net-new scope for a crate-retirement
+sub-phase. A `nuget.config` for `[sources]`/`[bans]` alone was considered and also rejected: no
+other F# project in this repo (`ose-be`, `organiclever-be`) carries one, and it does not satisfy this
+decision's "restore" branch without the license check beside it. **The target keeps the name
+`deps:audit`**, reversing this DD's original "rename it" recommendation — discovered at execution
+time: `.github/workflows/dependency-vulnerability-audit.yml` runs
+`npx nx run-many --all -t deps:audit` across every project that defines the target, including the
+five other F# apps that ship the exact same bare-vulnerability-only command
+(`apps/crane-cli`, `apps/ose-be`, `apps/organiclever-be`, `libs/fsharp-crane-core`,
+`libs/fsharp-env-loader`) — a repository-wide weakness this plan inherits, not a precedent that
+makes it correct, but real enough that renaming only `rhino-cli`'s target would
+silently drop it from that sweep entirely — a strictly worse outcome than a truthfully-narrower
+`deps:audit` — rather than just narrowing what it checks, so the name stays and the narrowing is
+documented instead.
 
 **The SDK floor.** Removing `compat:min-version` is correct — it asserts a Rust MSRV and cannot
 outlive the crate. The justification that a .NET floor already exists is not. `repo-config.yml`
@@ -545,11 +556,18 @@ pins `dotnet-global-json: apps/ose-be/global.json`; `apps/ose-be/` is a sibling 
 never sideways. No repo-root `global.json` exists in `ose-public`, and `ose-private` has none at
 all — as this plan's own `ose-private` delta table already states.
 
-**Decision**: Phase 9c establishes a `global.json` at a path that actually covers
-`apps/rhino-cli/src-fsharp/`, in both repos, before removing `compat:min-version`. The acceptance
-is behavioural, not existential: `dotnet --version` run from inside `apps/rhino-cli/src-fsharp/`
-reports the pinned version. A file that exists but does not scope is the defect being fixed, so
-`test -f` alone cannot be the check.
+**Decision (resolved)**: `apps/rhino-cli/global.json` (SDK `10.0.204`, `rollForward: latestMinor`,
+matching `apps/ose-be/global.json` and `apps/organiclever-be/global.json` verbatim), placed at
+`apps/rhino-cli/` — the narrowest ancestor that covers `apps/rhino-cli/src/` under .NET's
+upward-only walk. The acceptance is behavioural, not existential, but not literally "reports the
+pinned version" either: on the machine this was proved on, `dotnet --version` from
+`apps/rhino-cli/src/` prints `10.0.300` both with and without the file present, because
+`rollForward: latestMinor` accepts any installed SDK `>= 10.0.204` in the same major — the identical
+behavior `apps/ose-be` already has today. Proved the file is actually read from that directory
+instead: temporarily pinned an unsatisfiable `99.0.0`/`rollForward: disable`, and the resulting
+SDK-not-found error named this exact `global.json` path, confirming the ancestor-walk reaches it
+from `apps/rhino-cli/src/`. `test -f` alone would not have caught a file that exists but does not
+scope, which is why this proof exists.
 
 ### DD-9 — `ose-private`'s cross-phase gate baseline lives in the app tree, transiently
 
@@ -696,13 +714,15 @@ CI after re-homing proves nothing on its own — the assertion may simply have s
   `apps/rhino-cli/src-fsharp/` in both repos. `compat:min-version` is the **only** target removed,
   so of the 20 the other **19** keep their names and no downstream caller changes — `deps:audit`
   among them, since it is retained under its own name with a swapped command.
-- **The new F# tree gets its own Nx project.** Without one, `nx affected` never sees it and the
-  `dotnet` CI job never runs its tests — the suite would be green because it never ran. Phase 2
-  creates `apps/rhino-cli/src-fsharp/project.json` as `rhino-cli-fsharp` with `tag:lang:fsharp`.
-  At Phase 9c, when `apps/rhino-cli/project.json` itself becomes an F# project, `delivery.md` gains
-  an explicit decide-and-record step — merge the two into one `project.json`, or keep them
-  separate — with delivery.md's own downstream acceptance clause reading whichever count that
-  decision produces, rather than asserting the merge as already accomplished.
+- **The new F# tree gets its own Nx project during the migration, merged back at retirement.**
+  Without one, `nx affected` never sees it and the `dotnet` CI job never runs its tests — the suite
+  would be green because it never ran. Phase 2 creates `apps/rhino-cli/src-fsharp/project.json` as
+  `rhino-cli-fsharp` with `tag:lang:fsharp`. **Decided at Phase 9c: merged.**
+  `apps/rhino-cli/src-fsharp/project.json` (by then `apps/rhino-cli/src/project.json`, after the
+  same sub-phase's flatten) is deleted; its targets fold into `apps/rhino-cli/project.json`, which
+  becomes the sole Nx project for this app. `repo-config.yml`'s `coverage.projects` collapses from
+  two entries to one for the same reason. `nx show project rhino-cli --json` is the one name every
+  caller uses from Phase 9c onward.
 - **Parity manifest regeneration order** — regenerate in `ose-public` first, then reproduce the
   _semantic_ change in `ose-private` by re-running the generator there. Never copy the manifest
   file between repos; each repo's generator must produce it from its own tree.

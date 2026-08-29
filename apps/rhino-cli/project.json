@@ -1,90 +1,90 @@
 {
   "name": "rhino-cli",
-  "sourceRoot": "apps/rhino-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/rhino-cli/src",
   "projectType": "application",
-  "tags": ["type:app", "platform:cli", "lang:rust", "domain:tooling"],
+  "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:tooling"],
   "implicitDependencies": [],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo build --release --manifest-path apps/rhino-cli/Cargo.toml && mkdir -p apps/rhino-cli/dist && cp apps/rhino-cli/target/release/rhino-cli apps/rhino-cli/dist/rhino-cli"
+        "command": "dotnet publish apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -c Release --self-contained true {args.rid} -o apps/rhino-cli/src/dist",
+        "rid": "--use-current-runtime"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/src/dist"],
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/**/*.fsproj"]
     },
     "install": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo fetch --manifest-path apps/rhino-cli/Cargo.toml"
+        "command": "dotnet restore apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj"
       }
     },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore"
+      },
+      "dependsOn": ["^typecheck"],
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/**/*.fsproj"]
+    },
     "lint": {
+      "dependsOn": ["typecheck"],
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cargo fmt --manifest-path apps/rhino-cli/Cargo.toml -- --check",
-          "cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings"
+          "dotnet tool restore",
+          "dotnet tool run fantomas --check apps/rhino-cli/src",
+          "for p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharplint lint apps/rhino-cli/src/$p/$p.fsproj --lint-config apps/rhino-cli/src/fsharplint.json || exit 1; done",
+          "ANALYZERS_PATH=$(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1); for p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharp-analyzers --project apps/rhino-cli/src/$p/$p.fsproj --analyzers-path \"$ANALYZERS_PATH\" --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001 || exit 1; done"
         ],
         "parallel": false
-      }
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/**/*.fsproj"]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash apps/rhino-cli/scripts/deny-check.sh"
+        "command": "apps/rhino-cli/scripts/dotnet-deps-audit.sh apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj"
       },
-      "cache": false,
-      "inputs": [
-        "{projectRoot}/Cargo.toml",
-        "{projectRoot}/Cargo.lock",
-        "{projectRoot}/deny.toml",
-        "{projectRoot}/scripts/deny-check.sh"
-      ]
-    },
-    "compat:min-version": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cargo hack --manifest-path apps/rhino-cli/Cargo.toml check --rust-version"
-      },
-      "cache": true,
-      "inputs": ["{projectRoot}/Cargo.toml", "{projectRoot}/src/**/*.rs"]
+      "cache": false
     },
     "run": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --manifest-path apps/rhino-cli/Cargo.toml --"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --"
       }
     },
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli/src"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature", "{projectRoot}/**/*.rs"]
+      "inputs": [
+        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature",
+        "{projectRoot}/src/**/*.fs"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --tests"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/src/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/integration/RhinoCli.IntegrationTests.fsproj"
       },
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/Cargo.toml",
-        "{projectRoot}/src/**/*.rs",
-        "{projectRoot}/tests/**/*.rs",
-        "{projectRoot}/tests/golden-master/**/*",
-        "{workspaceRoot}/specs/apps/rhino/**/*.feature"
-      ]
+      "cache": false
     },
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo llvm-cov --manifest-path apps/rhino-cli/Cargo.toml --lib --ignore-filename-regex '(cli\\.rs|main\\.rs|internal/git\\.rs|commands/git_pre_commit\\.rs|commands/env_|commands/doctor\\.rs|application/git/pre_commit\\.rs|infrastructure/git/|application/doctor/tools\\.rs|application/doctor/fixer\\.rs|application/doctor/checker\\.rs|application/testcoverage/diff\\.rs|application/testcoverage/merge\\.rs|application/env/)' --lcov --output-path apps/rhino-cli/lcov.info --fail-under-lines 90"
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
       },
       "cache": true,
-      "inputs": ["{projectRoot}/Cargo.toml", "{projectRoot}/src/**/*.rs"],
-      "outputs": ["{projectRoot}/lcov.info"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/tests/unit/**/*.fs"],
+      "outputs": ["{projectRoot}/src/tests/unit/coverage.json"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
@@ -97,41 +97,29 @@
         ],
         "parallel": false
       },
+      "dependsOn": ["typecheck", "lint"],
       "cache": true,
       "inputs": ["default", "specs"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch --test docs --test stdio_blocking_wiring --test agents --test cargo_target_share --test cli_smoke --test codex_binding --test contracts --test convention --test ddd --test doctor --test env --test env_validate_integration --test gate_format_verify_wrappers --test git_hooks --test golden_master --test governance --test harness_catalog --test harness_ownership --test harness_sync_triage --test mermaid_golden_corpus --test opencode_conformance --test repo_config_validate --test skills_mirror --test spec_coverage --test specs_tree --test test_coverage"
-        ],
-        "cwd": "{workspaceRoot}",
-        "parallel": false
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/src/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj"
       },
       "cache": true,
       "inputs": [
-        "{projectRoot}/Cargo.toml",
-        "{projectRoot}/src/**/*.rs",
-        "{projectRoot}/tests/**/*.rs",
-        "{projectRoot}/tests/golden-master/**/*",
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/src/tests/unit/**/*.fs",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature"
       ]
-    },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cargo check --manifest-path apps/rhino-cli/Cargo.toml --all-targets"
-      }
     },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{workspaceRoot}/specs/apps/**/*"]
     },
     "test:specs": {
       "executor": "nx:run-commands",
@@ -145,27 +133,27 @@
     "specs:gherkin-cardinality-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs gherkin-cardinality validate"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/specs/**/*.feature"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{workspaceRoot}/specs/**/*.feature"]
     },
     "governance:vendor-audit-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- repo-governance vendor validate repo-governance/"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/**/*.md"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{workspaceRoot}/repo-governance/**/*.md"]
     },
     "governance-word-budget:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- governance word-budget validate"
       },
       "cache": true,
       "inputs": [
-        "{projectRoot}/src/**/*.rs",
+        "{projectRoot}/src/**/*.fs",
         "{workspaceRoot}/repo-config.yml",
         "{workspaceRoot}/AGENTS.md",
         "{workspaceRoot}/CLAUDE.md"
@@ -174,19 +162,19 @@
     "governance-readme-index:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- governance readme-index validate"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/**/*.md"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{workspaceRoot}/repo-governance/**/*.md"]
     },
     "env:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- env validate"
       },
       "cache": true,
       "inputs": [
-        "{projectRoot}/src/**/*.rs",
+        "{projectRoot}/src/**/*.fs",
         "{workspaceRoot}/repo-config.yml",
         "{workspaceRoot}/apps/**/.env.example",
         "{workspaceRoot}/apps/*/src/env.ts",

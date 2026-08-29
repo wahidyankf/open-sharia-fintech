@@ -134,7 +134,7 @@ jobs:
       # `main`. A second, head-sha-pinned artifact built solely for this job
       # was judged not worth the extra CI job for that bound; revisit if a
       # validator invoked here ever gains file-mutating behavior.
-      RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+      RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src/dist/rhino-cli-fsharp
     steps:
       - uses: actions/checkout@v6
         with:
@@ -183,8 +183,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/src-fsharp/dist
-      - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          path: apps/rhino-cli/src/dist
+      - run: chmod +x apps/rhino-cli/src/dist/rhino-cli-fsharp
       - name: Provision registry-declared pre-commit tools
         run: |
           tools=$(apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=json |
@@ -234,11 +234,11 @@ jobs:
       # learnings.md#2026-08-26--phase-2-publish-rid-pinned-to-linux-x64-judgment-call.
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
-      - run: npx nx run rhino-cli-fsharp:build --rid="-r linux-x64"
+      - run: npx nx run rhino-cli:build --rid="-r linux-x64"
       - uses: actions/upload-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/src-fsharp/dist
+          path: apps/rhino-cli/src/dist
 
   enumerate:
     name: Enumerate registry CI gate groups
@@ -260,11 +260,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/src-fsharp/dist
-      - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          path: apps/rhino-cli/src/dist
+      - run: chmod +x apps/rhino-cli/src/dist/rhino-cli-fsharp
       - id: list
         run: |
-          groups=$(RHINO_CLI_FSHARP_BIN="$PWD/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
+          groups=$(RHINO_CLI_FSHARP_BIN="$PWD/apps/rhino-cli/src/dist/rhino-cli-fsharp" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
           echo "groups=$groups" >> "$GITHUB_OUTPUT"
 
   gate:
@@ -308,8 +308,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
-          path: apps/rhino-cli/src-fsharp/dist
-      - run: chmod +x apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          path: apps/rhino-cli/src/dist
+      - run: chmod +x apps/rhino-cli/src/dist/rhino-cli-fsharp
       - name: Provision registry-declared tools
         run: |
           tools="$DOCTOR_TOOLS"
@@ -318,10 +318,10 @@ jobs:
           fi
         env:
           DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}
-          RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src/dist/rhino-cli-fsharp
       - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
         env:
-          RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+          RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src/dist/rhino-cli-fsharp
           GROUP_ID: ${{ matrix.group.group }}
 
   typescript:
@@ -357,7 +357,7 @@ jobs:
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
-      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli-fsharp's
+      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli's
       # coverlet `/p:Threshold=90 /p:ThresholdType=line`). Without this step the threshold is
       # declared but never enforced by CI — mirrors the rust job's identical split below.
       - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1

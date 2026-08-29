@@ -1,7 +1,0 @@
-apps:
-  - app: demo-www
-    keys-from: apps/demo-www/.env.example
-    runtime: { local: env-local, local-ci: compose, production: vercel-production }
-ci-harness:
-  - key: WEB_BASE_URL
-    class: var

@@ -1,6 +1,0 @@
-error: 'rhino-cli repo-governance layer-coherence' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli repo-governance layer-coherence [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

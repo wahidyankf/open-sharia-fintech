@@ -1,6 +1,0 @@
-error: 'rhino-cli convention' requires a subcommand but one was not provided
-  [subcommands: emoji, license, audit, help]
-
-Usage: rhino-cli convention [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

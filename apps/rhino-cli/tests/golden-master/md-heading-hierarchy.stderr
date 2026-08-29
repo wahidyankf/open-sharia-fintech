@@ -1,6 +1,0 @@
-error: 'rhino-cli md heading-hierarchy' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli md heading-hierarchy [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

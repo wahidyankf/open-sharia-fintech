@@ -676,3 +676,128 @@ unexpected old SHA after a "completed" push, cross-checked against `gh pr view <
 --json headRefName` to find the actual tracked branch name. Lesson: after any push, verify the
 **branch name being pushed matches `git branch --show-current`**, not just that the push exited 0 —
 especially in a repo carrying many old per-sub-phase local branches from the same plan.
+
+## 2026-08-29 — Phase 9c: crate deletion and Nx rewire — decisions and proofs
+
+**Nx-project merge** (item 3): merged `rhino-cli-fsharp` into `rhino-cli`. Rationale: post-retirement
+there is one physical F# tree, and CI already invoked both names for the same artifact (`rhino-cli`
+via `nx affected` sweeps, `rhino-cli-fsharp` via named build/test steps) — exactly the duplication
+Phase 9 exists to remove. `apps/rhino-cli/src-fsharp/project.json` is deleted; its `build`,
+`install`, `typecheck`, `lint`, `test:unit`, `test:integration`, `test:coverage`, `deps:audit`
+targets now live in `apps/rhino-cli/project.json`. `repo-config.yml`'s two `coverage.projects`
+entries (`rhino-cli`, `rhino-cli-fsharp`) are collapsed into one `rhino-cli` entry with the full
+`specs/apps/rhino/behavior/rhino-cli/**` glob — the per-wave incremental-widening rationale that
+justified two entries no longer applies once F# is the only implementation.
+
+**Source-tree flatten** (item 11): `apps/rhino-cli/src-fsharp/` moved to `apps/rhino-cli/src/` via
+`git mv` (86 files, all recognized as renames). `fsharp-source-root: apps/rhino-cli/src/` — the
+literal value every downstream reader (9d's formatter-glob step, Phase 10's build/source-size
+measurements) must derive from `test -d` against its own tree, never by reading this file from
+`ose-private` (it carries no copy of this plan). `tech-docs.md` §Target layout's `TBD` is replaced
+with this same path in the same commit as this entry.
+
+**Coverage-scope widening** (item 4): `rhino-cli:specs:behavior:coverage`'s `--shared-steps` argument
+reverted to the simple two-argument form (`specs/apps/rhino/behavior/rhino-cli/gherkin
+apps/rhino-cli/src`), replacing the itemized per-subdirectory list `rhino-cli-fsharp` carried during
+the migration. Actual run: **518 scenarios, all covered** (69 specs, 2112 steps) — delivery.md's
+stated acceptance figure of 524 is stale: 9a retired 7 scenarios (525 → 518) after that figure was
+written into the plan. 518 is the correct, freshly-measured total, not a discrepancy to chase.
+
+**`deps:audit`** (items 6-7): re-pointed at the existing `apps/rhino-cli/scripts/dotnet-deps-audit.sh`
+wrapper (already built in Phase 2, already proven to turn a reporting-only `dotnet list package
+--vulnerable` into a real gate) rather than inlining a bare `dotnet list` command — the wrapper _is_
+the correct implementation of item 6's intent, not a deviation from it. Re-confirmed the live
+break-and-restore proof against the merged `rhino-cli:deps:audit` target name (the prior proof at
+Phase 2 ran against `rhino-cli-fsharp:deps:audit`, a name that no longer exists post-merge): recorded
+`git rev-parse HEAD` (`754b1ef5`); temporarily added `<PackageReference Include="Newtonsoft.Json"
+Version="12.0.1" />` to `RhinoCli.Program.fsproj`, confined to the uncommitted working tree;
+`npx nx run rhino-cli:deps:audit` exited **1**; removed the reference; re-run exited **0**;
+`git diff --exit-code -- apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj` exited 0; `git
+rev-parse HEAD` still `754b1ef5`. All four conditions matched the required shape.
+
+**NuGet license-allowlist and source-pin controls — accepted regression** (item 8): **not restored**.
+`deny.toml`'s `[licenses]` (MIT/Apache-2.0/ISC/BSD-2-Clause/BSD-3-Clause/Unicode-3.0 allowlist) and
+`[sources]`/`[bans]` (deny unknown registries/git sources) controls have no F#-side equivalent and
+none is added here. Investigated first: `dotnet list package --include-transitive --format json`
+carries no license field at all (confirmed by running it against `RhinoCli.Program.fsproj` directly —
+the JSON schema has only `id`/`requestedVersion`/`resolvedVersion`, nothing else), so a license check
+would require parsing each resolved package's `.nuspec` out of the local NuGet cache — a bespoke
+scanner with no existing repo precedent (the same five other F# projects item 7 already names ship
+no license check either). Building and proving that scanner to this plan's own break-restore
+standard is disproportionate net-new scope for a crate-retirement sub-phase, not a like-for-like
+port of anything that existed. A repo-committed `nuget.config` pinning `packageSources` alone was
+considered and rejected too: no project anywhere in this repo (`ose-be`, `organiclever-be`) carries
+one, so adding it only for `rhino-cli` would be a new, inconsistent, unproven pattern that — alone,
+without the license check — does not satisfy item 8's "restore" branch anyway (the branch requires
+both together). **Decision, dated and attributed**: accepted as a permanent regression by the
+executing agent under this plan's standing autonomous-execution authorization, 2026-08-29. Both
+dropped controls are named here so a future reader does not mistake silence for oversight. See
+`tech-docs.md`'s new DD recording this.
+
+**`compat:min-version` removal + `global.json` fix** (item 9): target deleted (asserted a Rust MSRV
+floor that cannot survive the crate). Added `apps/rhino-cli/global.json` (SDK `10.0.204`,
+`rollForward: latestMinor`), matching `apps/ose-be/global.json` and `apps/organiclever-be/global.json`
+verbatim — placed at `apps/rhino-cli/` (parent of `src/`) rather than repo-root, since `.NET`
+resolves `global.json` by walking upward only and this is the narrowest ancestor that actually covers
+`apps/rhino-cli/src/`, matching the sibling apps' own convention (their `global.json` sits at their
+own app root too, not repo-root). Verification nuance: `dotnet --version` from inside
+`apps/rhino-cli/src/` prints `10.0.300` **both with and without** this file present, because the only
+installed SDKs are `10.0.107`/`10.0.201`/`10.0.300` and `rollForward: latestMinor` happily accepts
+`10.0.300` as satisfying a `10.0.204` floor — the same is true today for `ose-be`, confirmed by the
+same check. A version-string match is therefore not a meaningful proof in this environment. Proved
+resolution reaches the new file a different way instead: temporarily set the pin to an unsatisfiable
+`99.0.0`/`rollForward: disable`, ran `dotnet --version` from `apps/rhino-cli/src/`, and the SDK-not-
+found error explicitly printed `global.json file:
+.../apps/rhino-cli/global.json` — proving the ancestor-walk reaches this exact file from that
+directory. Restored the real pin immediately after; `git diff --exit-code` clean.
+
+**`rhino-bin.sh` simplification** (item 13): `FSHARP_NAMESPACES` and the three-tier Rust resolution
+(`RHINO_CLI_BIN`, `<target>/gate/rhino-cli`, `cargo build --profile gate`) both deleted — one
+resolution path remains (`RHINO_CLI_FSHARP_BIN` override → `apps/rhino-cli/src/dist/rhino-cli-fsharp`
+→ `dotnet run` fallback), same tier order and env-var name the F# side already used during migration,
+so no CI-facing rename was needed beyond the `src-fsharp` → `src` path swap. **Scope note**: 9a's
+retire-verdict table flagged that the simplified shim "may still warrant fresh, F#-only-tier
+scenarios" for the two behaviors `gate-binary-resolution.feature` used to cover before its full
+retirement. Considered and declined: that note itself hedges ("may"), it is not one of 9c's 13 named
+checklist items, and authoring a new `.feature` file plus TickSpec bindings for a resolver shim is
+net-new test-authoring scope beyond "delete/simplify", not a like-for-like port. Not silently
+dropped — recorded here as a deliberate scope decision, not an oversight.
+
+**Incidental fixes caused directly by the flatten**, not separately itemized in 9c but required for
+correctness: `Parity.fs`'s `boundaryPaths` trimmed from 8 entries (`src`, `src-fsharp`, `tests`,
+`Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, the specs dir) to 4 (`src`, `project.json`,
+`LICENSE`, the specs dir) — the four removed either no longer exist or are now covered by `src`.
+`Dispatch.fs`'s unrecognized-invocation error string changed from `"rhino-cli-fsharp: ..."` to
+`"rhino-cli: ..."` (user-facing output; the `-fsharp` qualifier only ever made sense while a parallel
+Rust binary existed). Three test files had hardcoded `src-fsharp` literal paths that broke under
+`dotnet test` once the move landed (`HarnessSteps.fs`, `DoctorSteps.fs`'s `fsharpProjectJsonPath` —
+which additionally needed one more `../` once `project.json` moved up a level to the merged file —
+and the two gate/parity step files' `prebuiltFsharpCli` fixture paths); all fixed and the full
+`rhino-cli:test:unit` suite re-run clean (1203/1203) after each. `apps/rhino-cli/scripts/shadow-diff.sh`
+kept, not deleted — `tech-docs.md`'s file-tree annotates it `[N] Phase 2` with no `[D]` at any phase,
+unlike `deny-check.sh`'s explicit `[D] Phase 9c`, a deliberate distinction the plan draws between the
+two migration-era scripts; only its now-stale `src-fsharp` default path and `rhino-cli-fsharp:build`
+hint were corrected, its Rust-comparison logic is left untouched pending 9e's own grep-sweep verdict
+on it (it matches that sweep's enumerating grep, so it gets a verdict there, not invented here).
+
+**Full verification after all of the above**: `npx nx run rhino-cli:typecheck` (0 warnings),
+`rhino-cli:lint` (fantomas/fsharplint/fsharp-analyzers all clean, after fantomas auto-formatted one
+touched file), `rhino-cli:test:unit` (1203/1203 passed), `rhino-cli:specs:behavior:coverage` (518
+scenarios, all covered), `rhino-cli:deps:audit` (clean pre- and post- break/restore proof above).
+`.github/workflows/pr-quality-gate.yml` updated for the same `src-fsharp` → `src` and
+`rhino-cli-fsharp:build` → `rhino-cli:build` renames; `actionlint` exits 0.
+
+**Addendum — a genuine regression the first `test:quick` run caught**: `ParityManifestSteps.fs`'s
+`Given a tracked Rhino CLI parity boundary` step seeds a fully synthetic, self-contained fixture
+repo with its own fabricated file list (`apps/rhino-cli/tests/parity.rs` among them) — independent
+of `Parity.fs`'s real `boundaryPaths`, but written to mirror its shape at authoring time. Trimming
+`boundaryPaths` (above) without updating this fixture's file list left `apps/rhino-cli/tests/parity.rs`
+outside the boundary the real compiled binary now enforces, so "The manifest covers tests as well as
+source" failed with "test drift unexpectedly passed" — the edited fixture file was silently outside
+every boundary entry, not silently inside one. Fixed by moving the fixture's test file into the
+`src` boundary (`apps/rhino-cli/src/tests/parity.rs`), consistent across the `Given`/`When`/`Then`
+steps. Caught by running the actual `dotnet test` output rather than trusting a backgrounded shell
+command's reported exit code — the first background run's exit code read as 0 only because the
+command piped through `tail`, masking `dotnet test`'s real non-zero exit (the same class of bug as
+[[feedback_pipeline_exit_code_masked_by_tail]]); the real failure was only visible by reading the
+captured output text. Re-run without a masking pipe afterward, exit code 0, 1203/1203 passed.

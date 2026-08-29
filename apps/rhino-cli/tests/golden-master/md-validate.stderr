@@ -1,6 +1,0 @@
-error: 'rhino-cli md validate' requires a subcommand but one was not provided
-  [subcommands: naming, frontmatter, heading-hierarchy, links, mermaid, frontmatter-dates, readme-index, help]
-
-Usage: rhino-cli md validate [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

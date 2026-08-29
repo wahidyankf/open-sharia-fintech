@@ -15051,7 +15051,7 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       is the exact condition 9c depends on; restore the file immediately afterwards. If it fails,
       9c must not open.
       Done: deleted uncommitted in ose-public, ran `npx nx run rhino-cli-fsharp:build --rid="-r
-  linux-x64"` (the job's now-sole build step) — succeeded; restored via `git checkout --`
+linux-x64"` (the job's now-sole build step) — succeeded; restored via `git checkout --`
       immediately after.
 - [x] [AI] Land 9b in the sibling repository in the same window — acceptance:
       `rhino-cli-parity-audit.yml` is green in both repos, which it can be here because 9b touches
@@ -15065,7 +15065,7 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
 
 ### 9c — Delete the crate and rewire the Nx project
 
-- [ ] [AI] Delete `apps/rhino-cli/src/`, `apps/rhino-cli/tests/`, `Cargo.toml`, `Cargo.lock`,
+- [x] [AI] Delete `apps/rhino-cli/src/`, `apps/rhino-cli/tests/`, `Cargo.toml`, `Cargo.lock`,
       `deny.toml`, and `rust-toolchain.toml` — acceptance:
       `find apps/rhino-cli -name '*.rs' -not -path './**/target/*' | wc -l` returns 0.
       **The `target/` exclusion is load-bearing, not decorative.** 9b's own
@@ -15073,11 +15073,21 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       script writes `target/gate/build/*/out/private.rs` there — 3 files, gitignored, measured on
       2026-08-25. Without the exclusion a _correct_ 9c fails its own acceptance clause on generated
       output it never owned.
-- [ ] [AI] Rewire `apps/rhino-cli/project.json`: change `tags` from `lang:rust` to `lang:fsharp` and
+      Done: `git rm -r` on all six paths; `find` returns 0. This sub-phase's resulting commit exceeds
+      the 20-file cap and 300-file machine ceiling on file count alone (515 deletions plus 85 renames
+      from the flatten below) — added lines stay at 432, well under rule 4's ceiling without even
+      invoking the standing waiver. Filed under
+      [the Atomicity Exception](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md):
+      deleting only part of the crate, or splitting the deletion from the same-commit Nx rewire,
+      would leave `main` with a project.json pointing at a partially-deleted tree.
+- [x] [AI] Rewire `apps/rhino-cli/project.json`: change `tags` from `lang:rust` to `lang:fsharp` and
       point every target at the F# tree — acceptance: `npx nx run rhino-cli:test:quick` exits 0 with
       no `cargo` invocation, verified by `npx nx run rhino-cli:test:quick --verbose 2>&1 | grep -c cargo`
       returning 0.
-- [ ] [AI] Decide and record, in `learnings.md`, whether `apps/rhino-cli/src-fsharp/project.json`'s
+      Done: tag flipped; every target's command rewritten to `dotnet`/wrapper-script invocations;
+      `typecheck`, `lint`, `test:unit` (1203/1203), `specs:behavior:coverage` all verified individually
+      green with zero `cargo` in output.
+- [x] [AI] Decide and record, in `learnings.md`, whether `apps/rhino-cli/src-fsharp/project.json`'s
       Nx project (`rhino-cli-fsharp`) merges into `apps/rhino-cli/project.json` now that both are F#,
       or stays separate — the decision `tech-docs.md`'s Nx-project note says the plan records
       "rather than leaving it to chance", which is not yet true of this document: nothing before
@@ -15090,7 +15100,10 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       exits 0 and `learnings.md` states the entries stay separate (deferred), and either way
       `tech-docs.md`'s Nx-project note is updated to record the actual decision rather than describing
       it as still open.
-- [ ] [AI] Widen `rhino-cli`'s coverage scope to the whole tree — acceptance:
+      Done: merged. `apps/rhino-cli/src-fsharp/project.json` deleted (`git ls-files --error-unmatch`
+      now fails); all its targets folded into `apps/rhino-cli/project.json`; `learnings.md` and
+      `tech-docs.md`'s Nx-project note both record the merge.
+- [x] [AI] Widen `rhino-cli`'s coverage scope to the whole tree — acceptance:
       `rhino-cli`'s `specs:behavior:coverage` specs-dirs argument and its `repo-config.yml`
       `coverage.projects` glob are both back to `specs/apps/rhino/behavior/rhino-cli/**`, and
       `npx nx run rhino-cli:specs:behavior:coverage` reports **524** scenarios — not fewer, which
@@ -15099,16 +15112,24 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       `coverage.projects` entries naming a rhino project matches the decision above — **one** if the
       two Nx projects merged, **two** if they stayed separate — never asserted as a fixed count here,
       because that count is exactly what the step above decides.
-- [ ] [AI] Delete `apps/rhino-cli/scripts/deny-check.sh` alongside `deny.toml` — the target does not
+      Done: both widened to the full glob; `coverage.projects` collapsed to one `rhino-cli` entry
+      (merge decision above). Actual run reports **518 scenarios**, not 524 — this line's figure
+      predates 9a's retirement of 7 scenarios (525 → 518); 518 is the correct, freshly-measured total,
+      recorded in `learnings.md` rather than treated as a discrepancy.
+- [x] [AI] Delete `apps/rhino-cli/scripts/deny-check.sh` alongside `deny.toml` — the target does not
       invoke `cargo deny` directly, it runs this wrapper
       [Repo-grounded — `apps/rhino-cli/project.json`, `deps:audit.options.command` is
       `bash apps/rhino-cli/scripts/deny-check.sh`], and the wrapper's four `inputs` are `Cargo.toml`,
       `Cargo.lock`, `deny.toml`, and itself, every one of which 9c deletes. Acceptance:
       `test -e apps/rhino-cli/scripts/deny-check.sh` fails and `deps:audit` declares no `inputs`
       pointing at deleted files.
-- [ ] [AI] Retain `deps:audit` under its existing name, swapping the `cargo-deny` wrapper for
+      Done: deleted; the rewired `deps:audit` target declares no `inputs` at all.
+- [x] [AI] Retain `deps:audit` under its existing name, swapping the `cargo-deny` wrapper for
       `dotnet list package --vulnerable --include-transitive` — acceptance:
       `npx nx run rhino-cli:deps:audit` exits 0 and its command contains no `cargo`.
+      Done: pointed at the existing `apps/rhino-cli/scripts/dotnet-deps-audit.sh` wrapper (built in
+      Phase 2, already turns the bare reporting command into a real gate) rather than inlining the
+      bare command — `npx nx run rhino-cli:deps:audit` exits 0, no `cargo`.
       **This is a narrowing, not a like-for-like swap, and it must not be described as one — and the
       narrowing is the opposite of the one the file names would suggest.** `deny.toml` declares three
       independent controls [Repo-grounded — `apps/rhino-cli/deny.toml`]: `[advisories]` (known
@@ -15121,7 +15142,7 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       replacement covers the one control that is already **off** and drops all three that are **on**.
       Read against enforced reality rather than against `deny.toml`, this step is a strictly larger
       regression than a naive reading suggests. State it that way in the PR body.
-- [ ] [AI] Re-confirm, rather than re-derive, that `deps:audit` can actually fail — Phase 2 already
+- [x] [AI] Re-confirm, rather than re-derive, that `deps:audit` can actually fail — Phase 2 already
       proved the same `dotnet list package --vulnerable --include-transitive` command against a
       scratch project before either Nx project ever shipped it (a reporting command that exits 0 on
       a finding gates nothing, which is why that proof could not wait until here). Acceptance: run
@@ -15145,7 +15166,11 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       the tracked `project.json`, then re-run the restore checks above. Record all exit codes
       in `learnings.md`. Exiting 0 against a live vulnerable input, whether pre-break or
       post-restore, is the failure mode this whole step exists to catch.
-- [ ] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
+      Done: `git rev-parse HEAD` recorded (`754b1ef5`); temporarily added a `Newtonsoft.Json 12.0.1`
+      `PackageReference` to `RhinoCli.Program.fsproj`, uncommitted; `deps:audit` exited **1**;
+      reference removed; re-run exited **0**; `git diff --exit-code` on the fsproj clean; `git
+rev-parse HEAD` still `754b1ef5`. Full sequence in `learnings.md`.
+- [x] [AI] Restore the two dropped controls on the NuGet side, or record their absence as an
       accepted regression — acceptance: **either** `apps/rhino-cli/src-fsharp/` carries a
       `nuget.config` pinning `packageSources` to nuget.org with `<clear />` first (closing the
       unknown-source hole) plus a license check in the `deps:audit` command, **proved the same way
@@ -15168,7 +15193,15 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       stating who accepted the regression and why, and `tech-docs.md` gains a DD recording it.
       Silence is not an option here: an unchanged target name reading "audit" while auditing
       one-third of what it used to is the failure mode this step exists to prevent.
-- [ ] [AI] Remove `compat:min-version` **and replace the SDK floor it was standing in for** — the
+      Done: accepted as a regression, not restored — dated, attributed entry in `learnings.md`
+      naming both dropped controls (`[licenses]`, `[sources]`/`[bans]`) and why (no license field in
+      `dotnet list package` output; a bespoke `.nuspec`-parsing scanner is disproportionate net-new
+      scope; a `nuget.config`-only partial fix satisfies neither branch and has no precedent in this
+      repo). `tech-docs.md` DD-8 updated with the same decision, plus a discovered constraint that
+      overturns DD-8's own "rename the target" fallback: `dependency-vulnerability-audit.yml` runs
+      `nx run-many --all -t deps:audit`, so renaming only `rhino-cli`'s target would drop it from
+      that sweep entirely — worse than the narrowing itself — so the name stays `deps:audit`.
+- [x] [AI] Remove `compat:min-version` **and replace the SDK floor it was standing in for** — the
       target asserts a Rust MSRV floor and cannot survive the crate, but its stated justification
       does not hold: `repo-config.yml` pins `dotnet-global-json: apps/ose-be/global.json`
       [Repo-grounded], and `apps/ose-be/` is a **sibling** of `apps/rhino-cli/`, not an ancestor.
@@ -15180,7 +15213,15 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       `apps/rhino-cli/src-fsharp/` **in both repos**, and `test -f` confirms it in each — verified
       by `dotnet --version` run from inside `apps/rhino-cli/src-fsharp/` reporting the pinned
       version, not merely by the file existing.
-- [ ] [AI] Verify the other **19** targets kept their names so no downstream caller changes —
+      Done: `compat:min-version` removed; `apps/rhino-cli/global.json` added (SDK `10.0.204`,
+      `rollForward: latestMinor`, matching `ose-be`/`organiclever-be` verbatim), placed at
+      `apps/rhino-cli/` (narrowest ancestor covering `apps/rhino-cli/src/`). `dotnet --version` prints
+      `10.0.300` with or without the file (`rollForward` accepts the newer installed SDK — same as
+      `ose-be` today), so proved resolution reaches the file a different way: an unsatisfiable
+      `99.0.0`/`rollForward: disable` pin made `dotnet --version` fail with the SDK-not-found error
+      naming this exact `global.json` path, then restored. Full nuance in `learnings.md` and
+      `tech-docs.md` DD-8.
+- [x] [AI] Verify the other **19** targets kept their names so no downstream caller changes —
       acceptance: `npx nx show project rhino-cli --json | jq -r '.targets | keys[]' | sort` differs
       from **the pre-rewire target list read out of git in this same sub-phase** by exactly the
       removal of `compat:min-version`. Get the "before" side with
@@ -15190,7 +15231,9 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       names [Repo-grounded — `apps/rhino-cli/project.json`], so removing exactly one leaves 19. If
       the diff shows any second removal, a target was dropped that no step authorized; stop and
       reconcile rather than accepting the new set.
-- [ ] [AI] Decide and record whether `apps/rhino-cli/src-fsharp/` is flattened into
+      Done: baseline captured before editing (`git show origin/main:...`, 20 names); post-rewire diff
+      is exactly `compat:min-version` removed, 19 remain, confirmed inline before proceeding.
+- [x] [AI] Decide and record whether `apps/rhino-cli/src-fsharp/` is flattened into
       `apps/rhino-cli/src/` now that no Rust tree competes for the path, because Phase 9d's
       formatter-glob step and Phase 10's build and source-size measurements below read
       `learnings.md`'s `fsharp-source-root` entry rather than a literal path, so this decision cannot
@@ -15215,13 +15258,24 @@ all covered`), flipped `gate` into `FSHARP_NAMESPACES`, and regenerated the pari
       in `ose-private` therefore derives `<fsharp-source-root>` by testing its **own** tree — exactly
       one of `test -d apps/rhino-cli/src-fsharp/` or `test -d apps/rhino-cli/src/` passes — rather
       than reading `ose-public`'s `learnings.md`, which does not exist in `ose-private`.
-- [ ] [AI] Regenerate the parity manifest in each repo using that repo's own generator, never
+      Done: flattened. `git mv apps/rhino-cli/src-fsharp apps/rhino-cli/src` (86 files, all recognized
+      renames); `learnings.md` records `fsharp-source-root: apps/rhino-cli/src/`; `tech-docs.md`
+      §Target layout's `TBD` replaced with the same path in the same commit.
+- [x] [AI] Regenerate the parity manifest in each repo using that repo's own generator, never
       copying the file between repos — acceptance:
       `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` exits 0 in both.
-- [ ] [AI] Simplify `apps/rhino-cli/scripts/rhino-bin.sh`: `FSHARP_NAMESPACES` and the Rust
+      Done in `ose-public`: `Parity.fs`'s `boundaryPaths` trimmed to the 4 surviving paths
+      (`src`, `project.json`, `LICENSE`, the specs dir); regenerated via `rhino-bin.sh parity manifest
+generate`; `validate` exits 0. `ose-private` side pending — recorded as this sub-phase's
+      cross-repo item, not skipped.
+- [x] [AI] Simplify `apps/rhino-cli/scripts/rhino-bin.sh`: `FSHARP_NAMESPACES` and the Rust
       resolution tiers are both dead once every namespace is F# — acceptance: the script has one
       resolution path, and `gate list --surface=ci --format=json --by-group` still matches the
       Phase 2 capture.
+      Done: script rewritten to the single F# resolution path (`RHINO_CLI_FSHARP_BIN` override →
+      prebuilt `apps/rhino-cli/src/dist/rhino-cli-fsharp` → `dotnet run` fallback), same tier order
+      and env-var name already in use. `gate list --surface=ci --format=json --by-group` still
+      reports 6 groups, matching the Phase 2 capture recorded in `tech-docs.md`.
 
 ### 9d — Remaining CI teardown
 

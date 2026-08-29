@@ -7,7 +7,7 @@
 # plans/in-progress/rewrite-rhino-cli-to-fsharp/learnings.md's `deps:audit`
 # scratch-project proof, where a deliberately pinned vulnerable
 # `Newtonsoft.Json 12.0.1` reference was reported and the command still
-# exited 0. Every rhino-cli-fsharp `deps:audit` target invocation goes
+# exited 0. Every rhino-cli `deps:audit` target invocation goes
 # through this wrapper instead of the bare `dotnet list` command so a
 # finding actually turns the target (and therefore the CI job invoking it)
 # red, per tech-docs.md DD-8.
