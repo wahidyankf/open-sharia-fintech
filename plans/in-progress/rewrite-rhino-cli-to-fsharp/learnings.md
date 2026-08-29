@@ -909,3 +909,61 @@ job's own guard, and the `has-ts`/`has-rust` analogy comment — reworded to `ha
 `setup-dotnet`. Post-edit `pr-quality-gate.yml` carries exactly one `setup-rust` (the `format` job,
 retained for the 198 course-example files) and zero `has-rust`/`clippy` occurrences. `actionlint`
 exits 0 on every touched workflow file.
+
+## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real (but non-reproducing) test failure
+
+**SDK drift**: `apps/rhino-cli/global.json` pins `10.0.204`; the local dev machine has `10.0.300`
+installed; `.github/actions/setup-dotnet/action.yml` resolves the floating channel `10.0.x` via
+`actions/setup-dotnet@v5`, landing on whatever the latest patch is on the runner that day
+(`10.0.400` at the time of this entry). All three differ, and the F# compiler's type inference for
+the bare `string` operator is sensitive to this: `G-Research.FSharp.Analyzers` rule
+`GRA-TYPE-ANNOTATE-001` ("annotate your type when using the `string` function") fired in CI on
+`Formatters.fs`/`Dispatch.fs` call sites that never flagged locally, even pinning the exact same
+analyzer version (0.22.0, already pinned repo-wide).
+
+**First fix attempt failed**: annotating the _let-binding_ the `string` result flows into (e.g.
+`let whole: int64 = nanos / scale`) does not satisfy this rule — it still flags the generic `string`
+call itself, regardless of downstream annotations. Confirmed by a second identical CI failure after
+that fix. **Working fix**: eliminate the `string` operator entirely in favor of `.ToString(...)`.
+For numeric types, this must be `.ToString(CultureInfo.InvariantCulture)`, not bare `.ToString()` —
+F#'s `string` operator formats numerics with invariant culture, and bare `.ToString()` uses the
+current culture, which would have been a silent, locale-dependent break in Rust-parity byte-identical
+output. A single `char` result may use plain `.ToString()` (culture-insensitive). Same CI sweep also
+converted six single-argument `String.StartsWith`/`.EndsWith` calls in `Gate.fs` to the explicit
+`StringComparison.Ordinal` overload for `GRA-STRING-001`/`002` — also strictly more correct for
+Rust parity, since Rust's string methods are always byte-exact.
+
+**The `gh run rerun --failed` trap**: once the analyzer fix landed, a different test —
+`GateExecutionSteps`'s "Path-gated gates still fire when a trigger path is only deleted" — failed on
+that same CI run (`isSuccess` true but `was-run.txt` never created, i.e. the gate was silently
+skipped because `triggerMatches` saw no changed paths). Rerunning via `gh run rerun --failed`
+reproduced the identical failure, which looked like proof of a deterministic bug. It wasn't:
+**`gh run rerun --failed` does not rebuild upstream jobs** — `build-rhino`'s artifact from the
+original run is reused verbatim by the dependent `dotnet` job, so the "second" failure was the same
+compiled binary being exercised twice, not two independent trials. A genuinely fresh run (new
+commit, or `gh run rerun` **without** `--failed`, which does rebuild everything) is the only way to
+get an independent sample.
+
+**Investigation before realizing this**: the scenario's own logic was read line-by-line
+(`changedPaths` → `mergeBasePaths` → `changedPathsFromBase` → `triggerMatches` → the `PathGated`
+dispatch branch in `runAtRootWithOnlyAndMessageFile`) and found correct by inspection. Reproduction
+was attempted locally (macOS, passed every time, filtered and full-suite) and in a Docker container
+built to match the CI runner exactly — Ubuntu 24.04, git 2.55.0 (installed via the `ppa:git-core/ppa`
+PPA to get past Ubuntu 24.04's stock 2.43.0), dotnet 10.0.400 — cloning the worktree at the exact
+failing commit and running both the filtered test and the full 1204-test suite unfiltered. It passed
+cleanly every time. A scoped, single-gate-id diagnostic (`gate.Id = "path-gated-check"`, printing
+`changedPathsResult`/`triggerMatches` via the CLI's own `write`, surfaced through the test's
+assertion message) was committed, pushed, and — critically — the CI run it produced also passed. A
+second **fresh** rerun (no `--failed`, forcing a new `build-rhino` artifact) of the same commit also
+passed. Two independent fresh builds, zero reproductions; the earlier "two failures" was one real
+failure plus one artifact-reuse replay of it. The diagnostic commit was reverted
+(`git revert --no-edit`, verified byte-identical to the pre-diagnostic tree via
+`git diff <before> <after>` returning empty) rather than kept, since there was nothing left to
+diagnose.
+
+**Conclusion**: treated as CI-runner-level flakiness in the same class as this repo's other
+documented CI-only flakes (`feedback_nx_flaky_warm_cache_commit.md`,
+`project_ci_rustup_concurrency_race.md`), not a defect in the F# port — no skip/xfail was applied
+(the test is unchanged from its original, fully-asserting form), no root-cause fix was needed in
+`Gate.fs`, and the only lasting artifacts of this investigation are this entry and the corrected
+understanding of `gh run rerun --failed`'s artifact-reuse semantics for future incidents.
