@@ -389,7 +389,7 @@ fn given_inherited_git_state(w: &mut TargetShareWorld) {
     w.git_state_isolation_commands = rust_test_and_coverage_commands();
 }
 
-#[when("Nx launches the Rust test or coverage command")]
+#[when("Nx launches the dotnet test command")]
 fn when_nx_launches_rust_test_or_coverage_command(_w: &mut TargetShareWorld) {}
 
 #[then("all three inherited variables are cleared for that command")]
