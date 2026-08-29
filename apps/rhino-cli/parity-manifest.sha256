@@ -36,7 +36,7 @@ ea9c28fc3b1c41add46abd4de607b27e0b3b985b0d9825ad6763e2341892f91a  apps/rhino-cli
 92252dc8349dd3539acb4aa414fdff32e82a258df7cd845f8af4182906baf85a  apps/rhino-cli/src-fsharp/project.json
 aca5d109fdc277b6f4c6695a1265b163fac319b66d6201b32b85e5571a29d3ea  apps/rhino-cli/src-fsharp/tests/integration/RhinoCli.IntegrationTests.fsproj
 51bbb1298cd542e36b0f98320c3ef762d37f78e5fca2a7889c66811a4110c277  apps/rhino-cli/src-fsharp/tests/integration/Steps/PreCommitHookSteps.fs
-d1dfb2ce049e9c1859c4fa0fc51df3eef4952614bddc799391f34dec23c0de9d  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
+3794154dfce3408e612052b9cce8eb1eb54770ef8b29b4e71d8c979c35bb6539  apps/rhino-cli/src-fsharp/tests/unit/RhinoCli.UnitTests.fsproj
 a4129f2917299cb8ab288f84ce3822d9ddd01ab56e236cd70fcfee02a6fdeff0  apps/rhino-cli/src-fsharp/tests/unit/Steps/ContractsSteps.fs
 85ba308ad0a88485db55b305120d99b9a4ec328d2379536110f73e51f4797fe2  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionSteps.fs
 a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src-fsharp/tests/unit/Steps/ConventionUnitTests.fs
@@ -75,6 +75,7 @@ f8001cb2ebc6ae2184962f56d8224caacdc67d1ae6647b32960c092972b21eba  apps/rhino-cli
 0f2b8ab6d4c39c1df64cf43afe9a6c0a213a69cb3e407d4601607740a4e8f645  apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessSteps.fs
 ba7c17ba552e7b000a337a03d60b0ed4fb5cfeba715519286dbc2638e0b8697d  apps/rhino-cli/src-fsharp/tests/unit/Steps/HarnessUnitTests.fs
 ae657d69f14610a7fa31ea57a6e3e24b74961a8ea3da944ad96b409c232c4c67  apps/rhino-cli/src-fsharp/tests/unit/Steps/MdSteps.fs
+aa5bb8a498b9e2c45ab4f923385656d0b891c232f3d15584709ecffafa1cbf52  apps/rhino-cli/src-fsharp/tests/unit/Steps/ParityManifestSteps.fs
 b8a8fbf79e78dee93f32944d3bbae2daccf33876ce5988ae31b1259c2f5ce201  apps/rhino-cli/src-fsharp/tests/unit/Steps/ParityUnitTests.fs
 76ee39dfa9f270aeffdbee896cf4f521f8685dea723f8ec41acb24d3f80abf47  apps/rhino-cli/src-fsharp/tests/unit/Steps/RepoConfigSteps.fs
 7d6558430a23078b4306c31a0198fb7ff0a5775f03e0100ee7a62cec7f4aa932  apps/rhino-cli/src-fsharp/tests/unit/Steps/RepoConfigUnitTests.fs
