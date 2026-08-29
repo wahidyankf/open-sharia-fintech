@@ -857,7 +857,10 @@ let ``validateSync fails a skills-list mismatch and a body mismatch`` () =
 
     Assert.Contains(
         bodyResult.Checks,
-        fun c -> c.Name = "Agent Equivalence: body-mismatch-agent" && c.Message = "body mismatch"
+        fun c ->
+            c.Name = "Agent Equivalence: body-mismatch-agent"
+            && c.Message.Contains(".opencode/agents/body-mismatch-agent.md drifted from generated content")
+            && c.Message.Contains("harness sync promote --from .opencode/agents/body-mismatch-agent.md")
     )
 
 [<Fact>]
