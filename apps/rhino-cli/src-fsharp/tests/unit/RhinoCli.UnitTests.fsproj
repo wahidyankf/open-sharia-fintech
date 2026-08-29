@@ -49,6 +49,7 @@
     <Compile Include="Steps/WaveDMermaidWarningUnitTests.fs" />
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
+    <Compile Include="Steps/SpecsSteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
