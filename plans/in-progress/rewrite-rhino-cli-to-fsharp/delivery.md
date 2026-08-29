@@ -15294,6 +15294,32 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `Cargo.toml`. Landed as `97641d50a`, `1832a0aee`, `264e32db9`, `4a3c127b3` on
       `rhino-fsharp-wave-e-p7-18`, pushed and confirmed via `git ls-remote`.
 
+- [x] [AI] 9c replicated in ose-private (ose-private carries no copy of this plan doc, so its
+      execution record lives here only) — acceptance: same end state as ose-public's 9c above,
+      verified independently in ose-private's own worktree.
+      Done: crate deletion + Nx merge + `src-fsharp`→`src` flatten applied by syncing ose-public's
+      final `apps/rhino-cli/src`, `project.json`, `LICENSE`, and gherkin spec tree verbatim (all four
+      are the parity-manifest's own byte-identical boundary, so this is satisfying that contract, not
+      converging one repo onto the other); `global.json`, `rhino-bin.sh`, `dotnet-deps-audit.sh`, and
+      `shadow-diff.sh` copied the same way after confirming byte-for-byte they carry no repo-specific
+      content. `.github/workflows/pr-quality-gate.yml` was hand-edited instead (structurally
+      divergent from ose-public's, so not copyable) — same `src-fsharp`→`src`/`rhino-cli-fsharp`→
+      `rhino-cli` mechanical rename ose-public's own 9c commit applied, plus a comment fix on the
+      `dotnet` job's now-dead `setup-rust` step (kept in place; removal deferred to 9d alongside the
+      `rust` job, matching ose-public's own asymmetric disposition). The repo-wide cargo→dotnet sweep
+      found only 3 live sites here (`package.json`, `libs/ts-ui/project.json`,
+      `libs/ts-ui-tokens/project.json` — ose-private's much smaller consumer surface vs.
+      ose-public's 28) plus the same 13 dead-link docs under
+      `docs/explanation/software-engineering/programming-languages/rust/`. `apps/rhino-cli/README.md`
+      and `specs/apps/rhino/README.md`'s own stale cargo references were left untouched, matching
+      ose-public's own not-yet-fixed state there (parity in incompleteness, not divergence).
+      Verified: `dotnet build`/`dotnet test` (1204/1204 passing, including the ported e2e-coverage
+      glob-fix regression test), `nx run rhino-cli:{typecheck,lint,deps:audit,specs:behavior:coverage}`,
+      and `gate run --surface=pre-push` (exit 0) all green before committing. Landed as three commits
+      mirroring ose-public's own commit split — crate retirement, cargo→dotnet consumer fix, docs
+      dead-link fix — on `rhino-fsharp-wave-e-p7-18`, pushed and confirmed via `git ls-remote`
+      (`dc270ee6ca`).
+
 ### 9d — Remaining CI teardown
 
 - [ ] [AI] Delete the `rust` job from `.github/workflows/pr-quality-gate.yml` — but first re-home
