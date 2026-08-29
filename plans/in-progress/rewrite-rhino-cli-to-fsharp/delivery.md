@@ -12512,7 +12512,7 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
 > shim edit plus measurements, so it stays far inside the size bound, and it is the single
 > commit a reviewer reverts to withdraw the wave.
 
-- [ ] [AI] Widen the coverage scope by exactly this wave's spec directories — `harness/`, `specs/`, `spec-coverage/`, `contracts/`, `repo-governance/`, and `ddd/` — in
+- [x] [AI] Widen the coverage scope by exactly this wave's spec directories — `harness/`, `specs/`, `spec-coverage/`, `contracts/`, `repo-governance/`, and `ddd/` — in
       **both** places, in this same PR: `rhino-cli-fsharp`'s `specs:behavior:coverage` specs-dirs
       argument and its `repo-config.yml` `coverage.projects` glob. Widening one without the other
       either leaves scenarios unmeasured or fails the level-envelope check — acceptance:
@@ -12521,23 +12521,23 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       wave-E `Steps/*.fs` file turns it red with a `Missing steps` count, restored afterwards.
       Deleting a `@covers` marker would **not** turn it red in shared-steps mode — that check is
       opt-in to three-level mode.
-- [ ] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` — acceptance: zero byte
+- [x] [AI] Run `apps/rhino-cli/scripts/shadow-diff.sh harness specs repo-governance` — acceptance: zero byte
       differences in stdout, stderr, and exit code across text, json, and markdown formats.
-- [ ] [AI] Add `harness`, `specs`, `repo-governance` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
+- [x] [AI] Add `harness`, `specs`, `repo-governance` to `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: re-running `apps/rhino-cli/scripts/shadow-diff.sh` over this wave's namespaces
       immediately after the flip still reports zero differences — the same shadow-diff invocation the
       step above already ran while these namespaces still routed to Rust. `shadow-diff.sh` diffs the
       shim's current dispatch against the Rust binary directly, so the "before" side is the Rust
       binary itself, which the flip does not touch, rather than a stored snapshot no step here
       produces.
-- [ ] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
+- [x] [AI] Re-measure 50-invocation startup of the F# binary now that it carries the namespaces
       flipped so far — acceptance: the figure is appended to `benchmark.md` as a running row labelled
       `after wave E`. Check for an existing `after wave E` row **before** appending — this
       integration section can be retried after a partial failure, and an unguarded append silently
       duplicates a row in the record Phases 10 and 12 treat as durable — acceptance:
       `grep -c 'after wave E' benchmark.md` returns exactly 1 after the step, whether it ran once
       or three times.
-- [ ] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
+- [x] [AI] Prove the wave is actually revertible rather than asserting it: remove this wave's
       entries from `FSHARP_NAMESPACES` in `apps/rhino-cli/scripts/rhino-bin.sh`, re-run
       `apps/rhino-cli/scripts/shadow-diff.sh` over those namespaces, then restore the entries —
       acceptance: with the entries removed the namespaces route to the Rust binary and
@@ -12549,9 +12549,9 @@ Each cycle below binds exactly one Gherkin scenario, copied verbatim from its `.
       confirming the restore left the shim exactly where the flip left it rather than in some third
       state. This is the falsification [prd.md AC-4](./prd.md) asks for, which the Pause Safety prose
       asserts but never tests.
-- [ ] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
+- [x] [AI] Re-run a full `.husky/pre-commit` under `/usr/bin/time -p` — acceptance: elapsed seconds
       appended to `benchmark.md` as `after wave E`, beside the Phase 0 B6 baseline.
-- [ ] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
+- [x] [AI] Verify no CI job builds F# from source: every job executing a flipped namespace has
       `RHINO_CLI_FSHARP_BIN` exported from a downloaded artifact — acceptance: searching this wave's
       CI logs for `dotnet run` and for `dotnet build` outside `build-rhino` returns nothing.
 - [ ] [AI] Land every Wave E change in the `ose-private` worktree, authored there rather than

@@ -170,6 +170,32 @@ note already documented for an earlier anomalous run. B6 is still well under the
 baseline's own worst case and, per the Noise-floor note below, a single-run B6 figure with an
 identified one-off cause is recorded as observed, not adjusted or re-run to chase a lower number.
 
+## Interim measurement: after wave E
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+D" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A-D —
+a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged, hook
+run, then the file removed and the index reset). Taken with `convention`, `parity`, `repo-config`,
+`env`, `doctor`, `test-coverage`, `md`, `governance`, `git`, `harness`, `specs`, `repo-governance`
+in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 37.30 ms   |
+| B6 — full pre-commit     | 3.33 s     |
+
+B5 is flat against after-wave-D (37.70 ms) and after-wave-C (37.71 ms). This wave adds the three
+largest namespaces by leaf count, so a flat bare-`--help` figure is the expected result rather than
+a surprising one: startup cost is dominated by .NET runtime initialization, not by the size of the
+dispatch table. B6 fell back to the wave-A-to-C band (3.68-3.85 s) from after-wave-D's 13.66 s,
+which is consistent with the cause that entry already recorded — wave D's run was measured against
+a cold, freshly reprovisioned `node_modules/`, and this one was not. Per the Noise-floor note
+below, neither figure is repeated, so B6's swing is read as the warm/cold difference wave D
+identified rather than as a wave-E effect.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed
