@@ -10,6 +10,7 @@
 module RhinoCli.Cli.Formatters
 
 open System
+open System.Globalization
 open System.Text.Json
 open System.Text.Json.Serialization
 open System.Text.Encodings.Web
@@ -1269,12 +1270,13 @@ let formatGoDuration (d: TimeSpan) : string =
         let frac: int64 = nanos % scale
 
         if frac = 0L then
-            string whole
+            whole.ToString(CultureInfo.InvariantCulture)
         else
-            let trimmed = trimTrailingZeros ((string frac).PadLeft(width, '0'))
+            let trimmed =
+                trimTrailingZeros (frac.ToString(CultureInfo.InvariantCulture).PadLeft(width, '0'))
 
             if trimmed = "" then
-                string whole
+                whole.ToString(CultureInfo.InvariantCulture)
             else
                 sprintf "%d.%s" whole trimmed
 
@@ -1297,7 +1299,8 @@ let formatGoDuration (d: TimeSpan) : string =
             if fracNs = 0L then
                 ""
             else
-                "." + trimTrailingZeros ((string fracNs).PadLeft(9, '0'))
+                "."
+                + trimTrailingZeros (fracNs.ToString(CultureInfo.InvariantCulture).PadLeft(9, '0'))
 
         if hours > 0L then
             sprintf "%dh%dm%d%ss" hours mins secs fracPart
@@ -1544,7 +1547,9 @@ let duplicationMarkdown (findings: Harness.DuplicationFinding list) : string =
                     f.Severity
                     f.WindowSize
                     (String.concat "<br>" f.Files)
-                    (f.StartLines |> List.map (fun (n: int) -> string n) |> String.concat "<br>")
+                    (f.StartLines
+                     |> List.map (fun (n: int) -> n.ToString(CultureInfo.InvariantCulture))
+                     |> String.concat "<br>")
                     f.Message)
             |> String.concat ""
 

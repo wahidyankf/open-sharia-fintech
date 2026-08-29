@@ -18,8 +18,8 @@ e828dd0c5db7b67bc94d3185e5324148f029c976d109e077c21d1629496020ec  apps/rhino-cli
 8af0c3b6d214167c2f8ea9ab2a0d53c1d6c2fbb3cdfe74c6315b4f661f56b899  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
 3c52c83f35ed710cadc6008cc22bbd4767d43d824be4aa56700698c2bff4c2cf  apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src/RhinoCli.Cli/RhinoCli.Cli.fsproj
-e5ef6424d22fa66cf4ef30ebd8fe5f522c36c2f98b6f137b2f8b5ceb1b136ebb  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
-6a285ab7a8293803d868427c27f3b55a41ddf14957023f13881c3e890a0c2bc4  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
+a0de1f5f0aedf8d5b725b153a93d5a49c70736bc7183c7304b1182df4055b37c  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+ecf28d99c8fc4e0af8e2225c727ac51e520e1e7b20ece1ba13fde8b6b547e1b0  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
 3f2687f24416784429378654162a4504d72e706eea4c8a4375f1e382c01a2237  apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs
 ff741ba86d69a0d44bc4b0a4165c039f5e4d53c9b05cfbce5c5223f223c0fb99  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
 d7ff185030ec8501b639875753a3bc9487e0f783c6efa593484b6199811ddff2  apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs
