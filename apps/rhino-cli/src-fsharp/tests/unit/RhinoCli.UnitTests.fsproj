@@ -50,6 +50,10 @@
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
     <Compile Include="Steps/SpecsSteps.fs" />
+    <Compile Include="Steps/ContractsSteps.fs" />
+    <Compile Include="Steps/RepoGovernanceSteps.fs" />
+    <Compile Include="Steps/DddSteps.fs" />
+    <Compile Include="Steps/GlossarySteps.fs" />
   </ItemGroup>
 
   <ItemGroup>
