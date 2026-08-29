@@ -594,7 +594,7 @@ type GateExecutionSteps() =
     [<Then>]
     member _.``the gate still runs because trigger matching is unaffected by on-disk existence``() =
         Assert.True(isSuccess (), sprintf "path-gated gate failed: %s" output)
-        Assert.True(File.Exists(Path.Combine(root, "was-run.txt")), sprintf "was-run.txt missing; output=%s" output)
+        Assert.True(File.Exists(Path.Combine(root, "was-run.txt")))
 
     // --- External kind resolves a repository-local binary -------------------
 
