@@ -19,7 +19,9 @@ Every plan declares its worktree path before the executor reads the delivery che
 **Where to declare**:
 
 - **Multi-file plans**: Add a top-level `## Worktree` section in `delivery.md`, placed before any phase heading.
-- **Single-file plans**: Add a `## Worktree` section in `README.md`, placed before the `## Delivery Checklist` section.
+- **Existing pre-contract single-file plans only**: Add a `## Worktree` section in `README.md`,
+  placed before `## Delivery Checklist`. This compatibility path never authorizes creation of a new
+  single-file formal plan.
 
 **Worktree path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` is the slug portion of the folder name (strip the `YYYY-MM-DD__` prefix when present).
 
@@ -72,8 +74,22 @@ unrecorded branches block cleanup. `*-to-pr` records merged PR plus reviewed-hea
 records verified `origin/main`. Include `git -C <exact-path> branch --show-current`. This inventory,
 not the file ledger, controls branch cleanup.
 
-**Provision the worktree BEFORE defining the plan, and author inside it.** Later moves split its
-history and defeat the pre-execution check. The [Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters or auto-provisions only as a backstop.
+**Provision the worktree BEFORE defining the plan, and author inside it by default.** Later moves
+split its history and defeat the pre-execution check.
+
+### Authoring-Worktree Exception
+
+When the new plan artifact is itself a deliverable being authored inside another existing worktree
+that the user explicitly required the session to keep using, the plan may declare its matching
+execution worktree as pending. This exception exists for plan-authoring changes that depend on
+unlanded work in the active worktree; convenience alone does not qualify.
+
+The `## Worktree` section must still name `worktrees/<plan-identifier>/`, record `Provisioning status:
+pending`, name the active authoring worktree and user constraint, and omit—not fabricate—the
+Provisioned Worktree Identity and branch inventory. The
+[Step 0 gate](../../../workflows/plan/plan-execution/enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate)
+must provision the declared matching worktree, initialize the immutable identity/inventory, and
+sync it before any delivery packet begins. The exception ends at execution.
 
 **At most one worktree per repository per plan, reused across its PRs.** For sequential PRs, land
 one slice, fast-forward the same worktree from `origin/main`, then open the next. See

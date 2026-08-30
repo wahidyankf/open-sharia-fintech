@@ -17,10 +17,8 @@ Each agent is a separate professional lens; they complement each other and never
 - **Distinct from `swe-code-checker`** — that validates handler/source artifacts against coding
   standards and writes an audit report to `generated-reports/`. This agent validates a **running API**
   and writes findings to the selected output-mode destination. It does not audit code.
-- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
-  is a findings record, not yet an executable delivery plan. When the maintainer promotes it to
-  `plans/in-progress/`, `plan-maker`
-  grills it and adds `tech-docs.md` + a TDD-shaped `delivery.md` with the specs/Gherkin coverage steps
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — that mode creates a findings plan
+  with the mature core and TDD-shaped `delivery.md`, including the specs/Gherkin coverage steps
   required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).
 - **Feeds `specs-maker`** — the `spec-gaps.md` catalog proposes Gherkin for behaviours the live API

@@ -20,7 +20,7 @@ and again as merge precondition (e) in the
   workflow) → **not exempt**. Exercise the changed behavior through its own interface and record what
   was run.
 - **Genuinely no reachable behavior** → the plan MUST state the exemption explicitly in
-  `tech-docs.md`; an executor that finds no such statement treats it as a gap, not as a pass.
+  its chosen technical form; an executor that finds no such statement treats it as a gap, not as a pass.
 
 **The three UI gates are complementary, never substitutes**: `plan-checker` **Step 5k** gates the
 UI **design funnel** in `prd.md` (pre-build); `ui/ui-quality-gate.md` gates the **built components**

@@ -45,6 +45,7 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 
 - [Self-Improvement Loop](./agent-workflow-orchestration/self-improvement-loop.md) — lessons file.
 - [Task Management](./agent-workflow-orchestration/task-management.md) — planning, tracking, granular items.
+- [Ask Last](./agent-workflow-orchestration/ask-last.md) — Defines the evidence and authority boundary an agent must exhaust before asking the user. Use before asking the user for information, preference, or authority during repository work.
 - [Continuation-State Integrity](./agent-workflow-orchestration/continuation-state-integrity.md) — preserves active user-established rule decisions across compaction and handoff.
 - [Anti-Patterns](./agent-workflow-orchestration/anti-patterns.md) — orchestration mistakes.
 - [References](./agent-workflow-orchestration/references.md) — related conventions.

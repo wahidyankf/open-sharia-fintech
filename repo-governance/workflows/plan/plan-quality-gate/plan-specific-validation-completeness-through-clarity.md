@@ -8,7 +8,19 @@ when_to_use: Use when checking exactly what plan-checker validates for structura
 
 The plan-checker validates:
 
-- **Completeness**: All five canonical documents present in multi-file plans — `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`. Required sections populated in each file per the [Content-Placement Rules](../../../conventions/structure/plans/content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd). Single-file exception is allowed when the plan is trivially small (≤1000 lines) and a single `README.md` covers the nine mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, **Worktree**, Delivery Checklist, Quality Gates, Verification.
+- **Completeness**: Every newly created formal plan contains `README.md`, `brd.md`, `prd.md`,
+  `delivery.md`, `learnings.md`, and exactly one technical form: `tech-docs.md` or a mapped
+  `tech-docs/`. Reader jobs and cohesion decide the technical shape; numeric thresholds do not.
+  Apply this prospectively: archived plans and the existing Rhino plan receive no migration finding.
+- **Comprehensive readability**: A junior engineer fresh from bootcamp with no professional,
+  repository, or stack experience can trace evidence, goals, alternatives, decisions, design,
+  delivery, proof, rollout, rollback, and learnings without chat history or author assistance.
+- **Material decisions**: Each records the selected option and two viable alternatives (including
+  status quo when viable), repository and applicable external prior art, evidence, constraints, trade-offs,
+  rejection reasons, consequences, and revisit triggers. Evidence-backed disqualification is valid;
+  fabricated alternatives are not. These are substantive product, architecture, implementation,
+  delivery, rollout, testing, operational, or recovery choices—not wording, document layout,
+  checker/fixer iterations, or other editorial history unless the delivered contract changed.
 - **Technical Accuracy**: Commands, versions, tool names, API signatures verified via repo `Grep` first (free, fast, accurate); external claims verified via `web-researcher` per the lower plan-content delegation threshold
 - **Anti-Hallucination Scan**: Every non-trivial factual claim carries an inline confidence label
   (`[Repo-grounded]` / `[Web-cited]` / `[Judgment call]` / `[Unverified]`); zero violations of
@@ -26,7 +38,22 @@ The plan-checker validates:
   [governance-vendor-independence.md](../../../conventions/structure/governance-vendor-independence.md).
   Reports CRITICAL if a plan skips this check when in scope. Skip entirely when plan touches only
   application code and tests.
+- **Automatic Rules-Propagation Coverage**: Classify rule impact from the promised behavior and
+  file-impact tree, not merely from paths named `repo-governance/`. For each affected repository,
+  require a detailed repository-local `delivery.md` outcome invoking the canonical
+  `rules-propagation` workflow in the rule-changing delivery unit. It must separately cover subject
+  inventory, conflict/precedence and supersession, placement/eviction, canonical/config/
+  enforcement/index edits, three-way enforcement disposition, generated bindings, verification
+  and `rules-quality-gate`, manifest/final status, and sibling obligation. Missing propagation is
+  **HIGH**; a generic checkbox or one repository's evidence standing in for another is **HIGH**.
 - **Worktree Specification**: Plan contains a `## Worktree` section declaring the worktree path (`worktrees/<plan-identifier>/`) and provisioning command. See [Plans Organization Convention §Worktree Specification](../../../conventions/structure/plans/worktree-specification.md#worktree-specification).
-- **Execution-Grade Clarity**: Every delivery checkbox names explicit file path(s), verbatim shell command(s), and a concrete acceptance criterion. See [Plans Organization Convention §Execution-Grade Clarity](../../../conventions/structure/plans/execution-grade-clarity.md#execution-grade-clarity-hard-rule).
+- **Execution-Grade Clarity**: Every delivery outcome section has its acceptance-criterion label,
+  Input, Outcome, and Proof; every independently verifiable action is a separate executor-tagged
+  checkbox. A fresh bootcamp graduate can follow its prerequisites, exact paths/symbols, copyable
+  commands, expected observations, failure handling, and evidence destinations. Code outcomes have
+  separate detailed RED/GREEN/REFACTOR checkboxes. Exact paths and commands
+  remain required where they materially remove ambiguity. Canonical Gherkin remains in PRD/spec
+  files and is referenced, not copied. Packet counts never relax natural delivery seams, delivery
+  boundary tables, PR-size limits, or atomicity.
 
 **Continued in** [Plan-Specific Validation — Operational Readiness and Knowledge Capture](./plan-specific-validation-operational-readiness.md) for the remaining checks (implementation readiness through knowledge capture).

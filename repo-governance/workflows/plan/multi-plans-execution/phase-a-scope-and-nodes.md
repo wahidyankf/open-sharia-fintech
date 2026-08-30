@@ -41,6 +41,8 @@ reachable from `origin/main`, resolves under `plans/in-progress/`, and is verifi
 run record. `plan-only` skips this gate and parses each member at its observed path.
 
 **A3. Parse each plan's delivery checklist into nodes.** Read every plan's `delivery.md`
-top-to-bottom (disk is truth). Each `- [ ]` checkbox — **including every nested sub-bullet** —
-becomes one **node**. A node carries: `plan-id`, `phase`, the checkbox prose, its `[AI]`/`[HUMAN]`
-tag, and a computed **resource-set** (A5).
+top-to-bottom (disk is truth). Every action checkbox becomes one **node**, including each separate
+RED, GREEN, and REFACTOR checkbox. The enclosing outcome section's acceptance reference plus
+Input/Outcome/Proof travel with every child node as context; they are not nodes themselves. A node
+carries: `plan-id`, `phase`, outcome context, exact checkbox prose, its `[AI]`/`[HUMAN]` tag, and a
+computed **resource-set** (A5).

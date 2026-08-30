@@ -24,7 +24,9 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes the organizational structure for project planning documents in the `plans/` directory. It defines how to organize ideas, backlog, in-progress work, and completed projects using stage-aware folder naming and standardized lifecycle stages.
+This convention establishes the organization and quality contract for project planning documents in
+the `plans/` directory. A formal plan is a comprehensive, traceable decision-to-delivery record for
+an engineer new to the repository and stack, not merely a delivery checklist.
 
 ## Scope
 
@@ -38,7 +40,7 @@ This convention establishes the organizational structure for project planning do
 
 ### What This Convention Does NOT Cover
 
-- **Plan content format** - How to write plans (covered by plan-checker agent)
+- **Plan content quality** - Audience, reasoning, structure, delivery packets, and validation
 - **Project management methodology** - This is file organization, not PM process
 - **Task tracking** - Covered by the [plan-execution workflow](../../../workflows/plan/plan-execution.md) (orchestrated directly by the calling context)
 - **Deployment scheduling** - Covered in deployment conventions
@@ -53,5 +55,8 @@ The `plans/` folder serves as the workspace for project planning activities:
 - **Format**: Structured markdown documents following specific naming and organization conventions
 
 **Key Distinction**: Plans are temporary working documents that eventually move to `done/` and may be archived, while `docs/` contains permanent documentation that evolves over time.
+
+Creating a durable plan requires literal user authorization. Use the harness task list for internal
+planning and `local-tmp/` for temporary findings; neither authorizes a new `plans/` artifact.
 
 **No secrets in plans**: Plan documents are committed to git — including `done/` history, which is permanent. Never put a secret value (credentials, SSH keys, tokens, API keys, sensitive usernames, or connection strings with real credentials) in any plan. Name the variable and state where the value lives, never the value itself. This is a hard iron rule — see [No Secrets in Git](../../security/no-secrets-in-committed-files.md).

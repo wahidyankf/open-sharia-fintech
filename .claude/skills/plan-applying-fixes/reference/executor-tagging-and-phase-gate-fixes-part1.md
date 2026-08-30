@@ -8,7 +8,9 @@ and
 [§Phase Gates and Natural Pauses](../../../../repo-governance/conventions/structure/plans/phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 
 **1. Missing Executor Legend** — **HIGH**: insert the canonical legend as the first lines of
-`delivery.md` (before `## Worktree`), or at the top of a single-file plan's Delivery Checklist:
+`delivery.md` before `## Worktree`. An existing pre-contract single-file plan may retain the
+legend at the top of its Delivery Checklist; this compatibility repair never authorizes a new
+single-file plan:
 
 ```markdown
 > **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).

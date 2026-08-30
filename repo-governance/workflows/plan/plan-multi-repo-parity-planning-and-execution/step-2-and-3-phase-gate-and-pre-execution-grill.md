@@ -8,7 +8,8 @@ when_to_use: Use before starting the execution phase, to verify readiness and re
 
 Before any execution, verify for EVERY target repo:
 
-1. The plan folder exists at `plans/in-progress/<objective-slug>/` with the five-document layout.
+1. The plan folder exists at `plans/in-progress/<objective-slug>/` with the mature core and exactly
+   one reader-led technical form.
 2. The plan reached `pass` on plan-quality-gate (double-zero at the selected gate-mode).
 3. The planning-phase commits are on that repo's `origin main` (`git fetch origin && git log
 origin/main --oneline -5` shows the plan delivery commits).
@@ -43,8 +44,9 @@ question per message; interactive multiple-choice tool when available.
    `[HUMAN]` item and resume later?
 5. **Worktree cleanup evidence**: confirm each plan has a Provisioned Worktree Identity recording
    its exact path, branch, and creator. After delivery, the executor removes only that exact worktree
-   immediately when merged/delivered, clean/idle, and no-unpushed proof all pass; a failed check
-   retains it with evidence and escalates. This is not a preference or confirmation gate.
+   when replacement proof, the terminal audit in `{final-report}`, final `pass`, clean/idle, and
+   no-unpushed checks all pass. A failed terminal or safety check retains it, reopens execution, and
+   escalates. This is not a preference or confirmation gate.
 6. **Cross-repository parity identity**: confirm every plan carries the same objective slug and
    worktree basename, and that corresponding short-lived branch names match. Probe ownership and
    stop on an unavailable or silently divergent identity before execution mutation.

@@ -28,5 +28,7 @@ work. Never bypass a failing gate to keep a plan moving.
 **D4. Per-plan Knowledge Capture is inherited (not skipped).** Each plan still runs its own
 [Knowledge Capture pre-archival gate](../plan-execution/finalization-pre-archival-gates.md)
 before that plan archives — every entry in its `learnings.md` reaches a terminal state (routed
-inline, filed as a `plans/ideas/` two-pager follow-up, or discarded with a one-line reason), both safety
-gates applied. Multi-plan scheduling never lets a plan archive with an open, undecided `learnings.md`.
+inline, filed as an explicitly authorized `plans/ideas/` two-pager (never a directly created
+backlog folder), reported without plan authorization with handoff evidence, or discarded with a
+one-line reason), both safety gates applied. Multi-plan scheduling never lets a plan archive with an
+open, undecided `learnings.md`.

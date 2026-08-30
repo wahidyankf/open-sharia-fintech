@@ -22,10 +22,9 @@ All of its steps apply unchanged: parity-set survey, deviation-matrix constructi
 - `stage` is fixed to `in-progress` — execution follows immediately, so plans must land in
   `plans/in-progress/<objective-slug>/` in each repo. A backlog parity run does not belong in
   this composite.
-- `mode` is restricted to the direct-push modes (`main-to-origin-main`,
-  `worktree-to-origin-main`). The `worktree-to-pr` mode leaves plans unmerged and execution MUST
-  NOT start on them; if the invoker wants PR review, terminate after the planning phase and
-  direct them to the standalone workflows.
+- `mode=worktree-to-pr` is mandatory. Drive each plan-document PR through exact-head quality/leak
+  gates and merge it under default `[AI]` authority before execution; an open or unmerged planning
+  PR blocks the phase. Direct-push modes are unavailable here.
 - Each authored plan MUST carry its `## Worktree` section (the planning workflow's plan-checker
   gate enforces this) — the execution phase depends on it.
 

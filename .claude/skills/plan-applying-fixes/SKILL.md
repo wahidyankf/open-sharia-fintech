@@ -69,6 +69,16 @@ For a lasting mechanism missing concrete-need and existing-mechanism rationale, 
 `[AUTHOR INPUT REQUIRED]` scaffolds: the requirement/risk, and why evaluated mechanisms are
 insufficient. Grill for both; never infer answers or mark unresolved placeholders fixed.
 
+## Current Formal-Plan Contract
+
+For newly created formal plans, repair toward the fixed core plus exactly one reader-led technical
+shape, bootcamp-graduate readability, evidence-backed alternatives/prior art, schema/migration
+contracts when applicable, and cohesive outcome sections with Input/Outcome/Proof plus granular
+action checkboxes and separate detailed RED/GREEN/REFACTOR cycles. Reference
+canonical Gherkin; never add copied scenarios or detail-free/keystroke checkboxes. Preserve
+phase gates, ownership, natural delivery seams, PR-size rules, delivery mode, manual/operational
+verification, and Knowledge Capture. Do not migrate archived plans or the existing Rhino plan.
+
 ## Related
 
 `plan-validating-quality` (the checker methodology this fixer's recipes repair), `plan-creating-project-plans`

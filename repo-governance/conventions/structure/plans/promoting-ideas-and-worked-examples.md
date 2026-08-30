@@ -23,8 +23,9 @@ distinct, legitimate state from "rejected" (timing and fit are separate axes fro
 
 When a two-pager is ripe:
 
-1. Create a new plan folder in `backlog/` with `[project-identifier]/` format (no date prefix) —
-   default to the five-document multi-file layout (see [Structure Decision](./structure-decision.md#structure-decision)).
+1. After literal user authorization to promote, create a new plan folder in `backlog/` with
+   `[project-identifier]/` format (no date prefix) using the fixed mature-plan core and exactly one
+   reader-led technical shape (see [Structure Decision](./structure-decision.md#structure-decision)).
 2. **Run the deep prior-art study** — commission a [`web-researcher`](../../../development/agents/ai-agents.md)
    survey of precedents, standards, and existing solutions for the idea, and fold the findings into
    the plan's `brd.md` / `prd.md` as design input. The two-pager's _Prior art_ section was a
@@ -41,8 +42,8 @@ orchestrates these four steps end to end — ripeness gate, the deep prior-art s
 
 The [Knowledge Capture phase](./the-knowledge-capture-phase.md#the-knowledge-capture-phase-final-phase-before-archival) routes some
 plan-execution learnings here: a **future-work idea** that is richer than a one-liner but not yet
-plan-ready becomes a two-pager in `plans/ideas/`, rather than being filed straight as a backlog plan
-or discarded. The [Knowledge Capture Convention](../../../development/quality/knowledge-capture.md)'s
+plan-ready becomes a two-pager in `plans/ideas/` only with literal artifact authorization; otherwise
+it is reported without plan authorization. The [Knowledge Capture Convention](../../../development/quality/knowledge-capture.md)'s
 routing matrix names `plans/ideas/` as one of its candidate durable homes.
 
 ## Worked Examples

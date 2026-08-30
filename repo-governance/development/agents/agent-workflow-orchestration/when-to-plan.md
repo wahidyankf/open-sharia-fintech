@@ -15,7 +15,8 @@ when_to_use: Use when deciding whether a task needs an upfront plan before execu
 
 # When to Plan
 
-Enter plan mode for any non-trivial task. A task is non-trivial if it meets any of these criteria:
+Use the harness's native planning/task surface for any non-trivial task. A task is non-trivial if
+it meets any of these criteria:
 
 - Three or more distinct steps are required
 - The task involves architectural decisions or file structure choices
@@ -24,9 +25,13 @@ Enter plan mode for any non-trivial task. A task is non-trivial if it meets any 
 
 **When not to plan**: Simple, obvious fixes with a single step and no ambiguity. Documenting a plan for "fix this typo" wastes time without adding clarity.
 
-## Plan Format
+## Task-Plan Format
 
-Write the plan as a checklist in `local-tmp/todo.md`. Each item should be independently verifiable.
+Prefer the harness task list; use `local-tmp/todo.md` only when the harness lacks one. This internal
+planning does not authorize a durable artifact under `plans/`. Create a repository plan only on a
+literal user request under the
+[Plan-Artifact Authorization rule](../../../conventions/structure/plans/plan-artifact-authorization-and-transition.md).
+Each item should be independently verifiable.
 
 ```
 ## Plan: [Brief task description]

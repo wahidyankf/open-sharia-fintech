@@ -43,7 +43,7 @@ The default binds differently depending on what is being done:
 - **Creating or updating a plan** binds it as a **design obligation**. The authoring edit itself may
   push direct to `main`, but the plan's phases MUST be authored so they group into **independently
   PR-able delivery units**, with each unit's boundary named in the `### Delivery Boundaries` table.
-  A plan that genuinely cannot be decomposed that way records **why** in its `tech-docs.md` — the
+  A plan that genuinely cannot be decomposed that way records **why** in its chosen technical form — the
   constraint is documented, not silently absorbed.
 - **Executing a plan** binds it as the actual delivery route: worktree → PR, per the
   delivery-unit-to-PR mapping above.

@@ -1,56 +1,43 @@
-# Delivery Plan Structure — TDD Shape and Validation Checklist
+# Delivery Plan Structure — Detailed TDD Checklists
 
-## Implementation Steps (TDD Shape — MANDATORY for code-touching items)
+## Code Outcome Sections (TDD Detail — MANDATORY)
 
-Every delivery checklist item that touches production code MUST be expressed as a
-Red→Green→Refactor cycle. Do not write "implement X, then write tests."
-
-**TDD-shaped format** (each phase is its own checkbox):
-
-```markdown
-- [ ] [AI] **RED**: Write failing test for `[specific behavior]` in `[test file path]`
-      — command: `nx run [project]:test:unit`
-      — acceptance: test fails with `[expected error message]`
-  - _Suggested executor: `swe-[lang]-dev`_
-- [ ] [AI] **GREEN**: Implement `[function/component]` in `[file path]`
-      — command: `nx run [project]:test:unit`
-      — acceptance: test passes, no other tests broken
-- [ ] [AI] **REFACTOR**: Clean up `[specific concern]` in `[file path]`
-      — command: `nx run [project]:test:unit`
-      — acceptance: all tests still pass, code is cleaner
-```
-
-**HARD RULE**: Never combine RED, GREEN, and REFACTOR into a single checkbox. Each phase is its
-own `- [ ]` item. `plan-checker` flags combined items (e.g., `- [ ] Implement X with TDD`) as
-HIGH findings.
-
-Non-code steps (doc edits, config, file creation) do NOT require Red→Green→Refactor. Use a
-direct action + acceptance criterion instead.
-
-**See**: [Test-Driven Development Convention](../../../../repo-governance/development/workflow/test-driven-development.md) for the authoritative mandate, including how Gherkin scenarios map to first failing tests.
-
-**Update after completion**:
+Every production-code outcome section preserves RED→GREEN→REFACTOR as separate ordered checkboxes.
+Do not write “implement X, then write tests,” combine the cycle, or omit detail to reduce checklist
+length. Write for a junior engineer fresh from bootcamp with no professional work experience and no
+repository or stack context.
 
 ```markdown
-- [x] Step 1: Description
-  - [x] Substep 1.1
-  - [x] Substep 1.2
-  - **Implementation Notes**: What was done, decisions made
-  - **Date**: 2026-01-02
-  - **Status**: Completed
-  - **Files Changed**: List of modified files
+### AC-### — [cohesive behavior outcome]
+
+- **Input:** canonical AC, prerequisites, and affected scope.
+- **Outcome:** [observable contracted behavior].
+- [ ] [AI] **RED:** write `[exact test path/case]`; run `[copyable command]`; acceptance: it fails
+      for `[expected missing behavior]`; save output at `[evidence destination]`.
+- [ ] [AI] **GREEN:** implement `[exact symbol/path]`; rerun `[copyable command]`; acceptance: the
+      new and existing focused cases pass.
+- [ ] [AI] **REFACTOR:** clean `[specific concern/path]`; run `[focused and regression commands]`;
+      acceptance: behavior and diagnostics remain unchanged.
+- **Proof:** RED evidence plus the passing focused/regression outputs.
+- _Suggested executor: `swe-[lang]-dev`._
 ```
+
+Use another RED/GREEN/REFACTOR trio for every independently testable behavior slice inside the same
+outcome. `plan-checker` flags combined or missing cycle actions, or missing paths, commands, expected
+observations, and evidence, as HIGH. Canonical Gherkin stays in PRD/spec files and is referenced by
+ID/title; never copy full scenarios into `delivery.md`.
+
+Non-code work does not require TDD labels, but every independently verifiable action remains its own
+detailed checkbox with exact path, command/inspection, acceptance observation, and proof.
 
 ## Validation Checklist
-
-After implementation steps, add validation:
 
 ```markdown
 ### Validation Checklist
 
-- [ ] All TDD cycles complete (RED→GREEN→REFACTOR for every code change)
-- [ ] All tests pass (`nx affected -t test:quick`)
-- [ ] Code meets quality standards
-- [ ] Documentation updated
-- [ ] Acceptance criteria verified
+- [ ] Every code outcome has separate detailed RED, GREEN, and REFACTOR checkboxes.
+- [ ] All tests pass (`rtk nx affected -t test:quick`).
+- [ ] Code meets quality standards.
+- [ ] Documentation and rules are reconciled.
+- [ ] Acceptance criteria are verified.
 ```

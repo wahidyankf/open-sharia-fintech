@@ -11,8 +11,9 @@ The orchestrator MUST follow these task management rules throughout execution:
 ## Create Tasks Before Starting
 
 Before beginning Step 2 execution, create one task per delivery checklist item using
-`TaskCreate`. Tasks must be granular — one concrete action per task. Never bundle multiple
-steps behind a single task.
+`TaskCreate`. Each task maps to one concrete, independently verifiable action checkbox. Input,
+Outcome, Proof, and implementation-note prose belong to the outcome section; do not materialize
+them as tasks. Each concrete action checkbox, including RED/GREEN/REFACTOR, is a separate task.
 
 ## Update Task Status Progressively
 
@@ -34,6 +35,10 @@ with a note explaining why it was skipped rather than silently omitting it.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY criticality level (CRITICAL, HIGH, MEDIUM, LOW) in final validation, all deliverables complete, all infrastructure-apply steps verified-executed from the primary checkout, plan archived to `plans/done/`
+- PASS: **Success** (`pass`): Zero findings of ANY criticality level (CRITICAL, HIGH, MEDIUM, LOW)
+  in final validation; every required surface gate passes; Knowledge Capture is terminal; the
+  terminal end-to-end audit proves every requirement against the delivered head; exact-head/base CI passes where applicable;
+  all deliverables and infrastructure-apply steps are verified; and the plan is archived according
+  to its delivery mode
 - **Partial** (`partial`): Findings remain after max-iterations cycles, OR an infrastructure-apply step remains unexecuted from the primary checkout — plan requires manual intervention
 - FAIL: **Failure** (`fail`): Orchestrator or checker encountered technical errors preventing completion

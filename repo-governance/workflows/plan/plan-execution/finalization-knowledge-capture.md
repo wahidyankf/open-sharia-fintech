@@ -15,8 +15,9 @@ If defects surface after archival, use the reopen path (rule 14) — move the fo
 proceed until the plan's Knowledge Capture phase is complete.
 
 - Every entry in `learnings.md` (or the explicit "none" escape) reaches a terminal state: routed
-  inline, filed as a `plans/ideas/` two-pager follow-up, or discarded with a one-line reason — zero entries
-  left in an open, undecided state.
+  inline, filed as an explicitly authorized `plans/ideas/` two-pager (never a directly created
+  backlog folder), reported without plan authorization with handoff evidence, or discarded with a
+  one-line reason — zero entries left in an open, undecided state.
 - Both the secret/sensitivity gate and the repo-relevance gate have been applied to every
   surviving entry before it was routed.
 - See the [Knowledge Capture Convention](../../../development/quality/knowledge-capture.md) for the

@@ -25,7 +25,7 @@ Continues [Executor Tagging — Git-Mechanical Steps](./executor-tagging-git-mec
 - [ ] [HUMAN] Unplug the power cable to the test rig and confirm the LED is off — acceptance: operator confirms power removed
 ```
 
-**Legend (required)**: every `delivery.md` (or a single-file plan's Delivery Checklist section) MUST open with a short legend defining the tags it uses and stating that unmarked steps are `[AI]`:
+**Legend (required)**: every `delivery.md` MUST open with a short legend defining the tags it uses and stating that unmarked steps are `[AI]`:
 
 ```markdown
 > **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).

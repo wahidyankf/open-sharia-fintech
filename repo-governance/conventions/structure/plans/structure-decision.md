@@ -1,6 +1,6 @@
 ---
 title: "Structure Decision"
-description: States the no-secrets rule for plan content and the decision rule for choosing single-file versus the default five-document multi-file plan layout.
+description: States the fixed mature-plan core and the reader-led decision rule for one technical-documentation shape.
 category: explanation
 subcategory: conventions
 tags:
@@ -9,7 +9,7 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when deciding whether a new plan should use the single-file or multi-file structure.
+when_to_use: Use when scaffolding a new formal plan and choosing its technical-documentation shape.
 ---
 
 # Structure Decision
@@ -20,24 +20,16 @@ when_to_use: Use when deciding whether a new plan should use the single-file or 
 > "set `DEPLOY_TOKEN` in `.env`"); real values belong in uncommitted files. See the
 > [No Secrets in Git convention](../../security/no-secrets-in-committed-files.md).
 
-Plans can use either **single-file** or **multi-file** structure depending on size and complexity.
+Every newly authorized formal plan MUST contain this fixed mature-plan core:
 
-**Multi-File Structure** (DEFAULT — five documents):
+- `README.md`, `brd.md`, `prd.md`, `delivery.md`, and `learnings.md`
+- exactly one technical form: `tech-docs.md`, or `tech-docs/README.md` with mapped companions
 
-Every new plan MUST use the five-document multi-file layout unless ALL of the exception criteria listed under Single-File Structure are met. When in doubt, use five documents.
+Choose the technical form by reader jobs, subject cohesion, navigation, and ownership. Use the
+single file while one coherent technical narrative serves the readers; use the directory when
+distinct concerns have different readers or owners and its README maps every companion. File or
+line counts are review signals, never structure thresholds.
 
-- Five separate files: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`
-- Each file owns one concern (see Content-Placement Rules below), so diffs stay narrow per PR and cross-reviewers can find the section relevant to their concern without skimming an omnibus file
-
-**Single-File Structure** (exception — only when ALL criteria below are met):
-
-A plan MAY collapse to a single `README.md` only when **all** of the following hold simultaneously:
-
-1. Combined business rationale + product scope + tech-docs + delivery fits within 1000 lines total
-2. The condensed BRD and condensed PRD sections both fit comfortably in the README without crowding out the technical sections
-3. The plan touches at most one subrepo or one narrow concern (single-phase, no new agents/workflows/conventions introduced)
-4. The author does not foresee the plan growing mid-execution
-
-If any criterion is unmet, use the five-document layout. If the plan grows past 1000 lines or any criterion is violated mid-execution, promote to the multi-file layout before continuing execution.
-
-**Decision Rule**: The five-document multi-file layout is the required default. Single-file is a bounded exception that requires all four criteria above to be satisfied, not merely a choice based on line-count alone.
+Do not collapse a new formal plan to one `README.md`. Simple work belongs in the harness task list;
+early work belongs in an explicitly requested idea brief. The retired single-file contract remains
+valid only for plans covered by the prospective transition rule.

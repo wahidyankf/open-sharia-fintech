@@ -44,7 +44,8 @@ own open questions. Then use `AskUserQuestion` (options-first, per the
 [Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md)) to:
 
 1. Confirm the `plan-identifier` (default `<slug>`).
-2. Confirm the plan structure (default: the five-document multi-file layout).
+2. Confirm the plan's technical shape: one `tech-docs.md` or a mapped `tech-docs/` directory,
+   selected by reader jobs and cohesion. The mature core itself is fixed.
 3. Confirm the `push-target`.
 4. **Explicitly approve** promoting this brief to a backlog plan now.
 

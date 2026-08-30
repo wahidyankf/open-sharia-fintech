@@ -4,7 +4,7 @@ title: "plan-multi-repo-parity-planning-and-execution"
 description: Plans and executes a cross-repo parity objective in one run.
 when_to_use: Use when a cross-repo objective should be planned AND delivered in one continuous run.
 goal: Author aligned-but-deliberately-divergent plans across sibling repositories for a shared objective, then execute every resulting plan to zero-findings completion and archival — one end-to-end orchestration from idea to delivered parity
-termination: "Every plan passes double-zero, executes to zero findings, and is archived with work pushed. Each exact identity-recorded worktree is immediately removed after delivered/merged, clean/idle, and no-unpushed proof; failure retains evidence and escalates."
+termination: "Every plan passes double-zero, delivers its archival change, records a passing delivered-head terminal audit, and reaches pass. Each exact identity-recorded worktree is then removed after safety proof; failure retains evidence, reopens execution, and escalates."
 inputs:
   - name: objective
     type: string
@@ -17,10 +17,10 @@ inputs:
     default: "ose-public, ose-private"
   - name: mode
     type: enum
-    values: [main-to-origin-main, worktree-to-origin-main]
-    description: "Planning-phase delivery mode passed to plan-multi-repo-parity-planning. worktree-to-pr is NOT supported by this composite — execution cannot start on plans that are awaiting PR review (use the planning workflow alone for that)"
+    values: [worktree-to-pr]
+    description: "Planning-phase delivery mode. Public OSE parity planning uses worktree-to-pr; each gated plan-document PR must pass exact-head gates and merge under default [AI] authority before execution."
     required: false
-    default: worktree-to-origin-main
+    default: worktree-to-pr
   - name: gate-mode
     type: enum
     values: [lax, normal, strict, ocd]
@@ -54,7 +54,7 @@ outputs:
     description: "plan-execution final status per repo (pass/partial/fail) with iterations-completed"
   - name: delivery-refs
     type: string
-    description: "Commits pushed to each repo's origin main during planning and execution phases"
+    description: "Merged planning and execution PR references for each repository"
 ---
 
 # Plan Multi-Repo Parity Planning and Execution Workflow

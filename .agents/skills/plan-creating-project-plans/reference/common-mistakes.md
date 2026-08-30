@@ -20,26 +20,28 @@
 **Wrong**: Active work in backlog/
 **Right**: Move to in-progress/ when starting work
 
-## Mistake 5: Code delivery items without TDD shape
+## Mistake 5: One omnibus checkbox instead of detailed TDD actions
 
-**Wrong**: Combining implementation and test into one checkbox
+**Wrong**: Activity without Input/Outcome/Proof
 
 ```markdown
 - [ ] Implement email validation with tests
 ```
 
-**Right**: Separate RED, GREEN, REFACTOR phases as independent checkboxes
+**Right**: One cohesive outcome section with separate detailed RED/GREEN/REFACTOR checkboxes
 
 ```markdown
-- [ ] **RED**: Write failing test for email validation in `libs/ts-utils/src/validation.test.ts`
-      — command: `nx run ts-utils:test:unit`
-      — acceptance: test fails with "validateEmail is not defined"
-- [ ] **GREEN**: Implement `validateEmail` in `libs/ts-utils/src/validation.ts`
-      — command: `nx run ts-utils:test:unit`
-      — acceptance: test passes, no other tests broken
-- [ ] **REFACTOR**: Extract regex constant, improve naming
-      — command: `nx run ts-utils:test:unit`
-      — acceptance: all tests still pass
+### AC-EMAIL-02 — Valid and invalid email inputs follow the contract
+
+- **Input:** AC-EMAIL-02 and the existing validation API.
+- **Outcome:** the validator accepts and rejects the canonical cases.
+- [ ] [AI] **RED:** add the exact failing cases in `[test path]`; run
+      `rtk nx run ts-utils:test:unit`; acceptance: they fail for the missing rule.
+- [ ] [AI] **GREEN:** implement the validator in `[source path/symbol]`; rerun the focused command;
+      acceptance: all cases pass.
+- [ ] [AI] **REFACTOR:** extract the named pattern constant; rerun focused and quick tests;
+      acceptance: behavior is unchanged.
+- **Proof:** RED failure recorded; `rtk nx run ts-utils:test:unit` passes.
 ```
 
-`plan-checker` flags combined TDD items as HIGH severity findings.
+`plan-checker` flags missing TDD detail or outcome fields as HIGH severity findings.

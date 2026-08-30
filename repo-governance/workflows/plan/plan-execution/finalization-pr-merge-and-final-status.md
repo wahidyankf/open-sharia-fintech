@@ -15,7 +15,14 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
    [authenticated terminal-handoff procedure](./finalization-paired-repository-terminal-handoff.md)
    before any successor scout runs.
 
-3. **Worktree cleanup — immediate (after the merge completes)**: once the PR is confirmed merged,
+3. **Terminal End-to-End Delivery Completeness Audit — before final status or cleanup**: after the
+   merge or permitted direct push is confirmed, replace every `Pending final delivery` row with
+   proof from the delivered head and record the result in `{final-report}`. The terminal audit is a
+   workflow-owned post-delivery gate, not a delivery checkbox that may be pre-ticked. Any missing,
+   stale, inferred, or unsupported row reopens the earliest affected action, leaves status non-pass,
+   retains the worktree, and blocks cleanup.
+4. **Worktree cleanup — immediate (after terminal audit passes)**: once the delivery and terminal
+   audit are confirmed,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
    1. Resolve the exact Provisioned Worktree Identity path, reconcile `git worktree list --porcelain`,
@@ -51,7 +58,9 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
 
 **Status determination**:
 
-- PASS: **Success** (`pass`): Zero findings after validation, all requirements met, AND all infrastructure-apply steps in the delivery checklist (`terraform apply`, live Ansible converge, or equivalent) are verified-executed from the primary checkout — plan moved to `plans/done/`
+- PASS: **Success** (`pass`): The terminal end-to-end audit proves every requirement against the
+  delivered head, zero findings remain, all requirements are met, and every infrastructure-apply
+  step is verified from the primary checkout — plan moved to `plans/done/`
 - **Partial** (`partial`): Findings remain after max-iterations, OR an infrastructure-apply step (`terraform apply`, live Ansible converge, or equivalent per the Step 0 policy) remains unexecuted from the primary checkout — plan stays in current location
 - FAIL: **Failure** (`fail`): Technical errors during execution or checking, plan stays in current location
 

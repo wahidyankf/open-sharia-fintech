@@ -32,8 +32,9 @@ when_to_use: "Use for an incorrect knowledge-capture example."
 governance plan's PR.
 ```
 
-This is a **plan-execution-checker** blocking finding: a code-homed learning must be filed as a
-separate `plans/ideas/` two-pager, never landed inline, regardless of how small the fix looks.
+This is a **plan-execution-checker** blocking finding: a code-homed learning must never land inline,
+regardless of how small the fix looks. File an authorized `plans/ideas/` two-pager or report it with
+handoff evidence.
 
 ## FAIL: Run created a backlog plan for its own finding
 

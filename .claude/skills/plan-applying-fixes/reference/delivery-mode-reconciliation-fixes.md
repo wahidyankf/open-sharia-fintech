@@ -34,9 +34,9 @@ Mode Reconciliation above and takes a different fix:
   is illegal for the repo, not the step.
 - After rewriting, scaffold the missing exact-head/base PR-CI steps so the plan is executable
   under the corrected mode.
-- **One narrow exception**: a genuinely infrastructure-as-code plan targeting `ose-private` may keep
-  a direct-push mode — verify the plan's stated scope actually is infrastructure-as-code before
-  treating this as the exception.
+- **One narrow exception**: a genuine infrastructure-as-code or CI-IaC plan targeting
+  `ose-private` may keep only `main-to-origin-main`. Verify that scope before applying the
+  exception. `worktree-to-origin-main` is unavailable in both OSE repositories.
 - Never silently coerce an author's explicit mode choice without recording why in the fix report.
 
 Verify by re-running `plan-checker`'s item 9 detection and confirming the resolved mode no longer

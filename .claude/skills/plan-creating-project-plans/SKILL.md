@@ -1,6 +1,6 @@
 ---
 name: plan-creating-project-plans
-description: Project planning standards for plans/ directory including folder structure (ideas/, backlog/, in-progress/, done/), stage-aware naming convention (done uses YYYY-MM-DD__identifier/; backlog and in-progress use identifier/ with no date prefix), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, Gherkin acceptance criteria, and decision grilling only when a material choice remains unresolved. Essential for creating structured, executable project plans.
+description: Project planning standards for authorized plans/ artifacts, including lifecycle naming, fixed mature core, bootcamp-graduate readability, alternatives and prior art, Gherkin criteria, granular delivery checklists, and evidence-first grilling.
 ---
 
 # Creating Project Plans
@@ -18,9 +18,13 @@ This Skill provides guidance for creating **structured project plans** in the pl
 - Structuring multi-phase projects
 - Moving plans through workflow stages
 
-**Start here — decision grilling**: before writing, resolve a material design decision that cannot
-be answered from repository evidence. Do not run a separate post-write grill; use the bounded
-evidence audit in the applicable plan workflow. See
+**Authorization gate**: creating a tracked plan requires a literal user plan request or explicit
+plan-authoring invocation. Plan Mode, internal task planning, discovery, and omitted tester output
+mode do not authorize `plans/` writes.
+
+**Start here — mandatory grilling**: before writing, resolve material design decisions that cannot
+be answered from repository evidence. After writing, run a separate validation/stress-test grill
+against the completed artifacts before signaling done. See
 [mandatory-grilling.md](reference/mandatory-grilling.md).
 
 ## Minimal Sufficiency in Plans
@@ -28,17 +32,39 @@ evidence audit in the applicable plan workflow. See
 Treat the requested outcome, explicit non-goals and out-of-scope items, acceptance criteria, and
 required quality gates as the plan's boundary and stop condition. When a plan introduces code, a
 dependency, abstraction, validator, automation, infrastructure, or another lasting mechanism,
-`tech-docs.md` (or a single-file plan's `Technical Approach`) must name its concrete need and explain
+the chosen technical form must name its concrete need and explain
 why existing mechanisms are insufficient. Choose the smallest responsible design that satisfies
 every applicable rule; mandatory safeguards remain part of sufficiency. See
 [Plans Best Practices](../../../repo-governance/conventions/structure/plans/best-practices.md#apply-minimal-sufficiency).
 
+## Automatic Rule-Impact Coverage
+
+During authoring, classify both proposed behavior and the file-impact tree against the full repo
+rules surface. If any scoped repository may add, change, supersede, or delete a rule or enforcement,
+`delivery.md` automatically includes the complete repository-local
+[`rules-propagation`](../../../repo-governance/workflows/rules/rules-propagation.md) outcome in that
+delivery unit. Split inventory, conflict/precedence, placement/eviction, canonical and enforcement
+edits, enforcement dispositions, binding generation, verification plus `rules-quality-gate`,
+manifest/final status, and sibling obligation into granular bootcamp-executable checkboxes. Repeat
+per affected repository; a link, generic invocation, or reusable checkbox template is insufficient
+because every concrete repository/action pair must map to its own execution task.
+
+## Primary Junior-Readable Surfaces
+
+Write the selected technical form and `delivery.md` for a junior engineer fresh from bootcamp with
+no professional work experience and no repository or stack context. The technical form teaches the
+current state, relevant concepts, alternatives, contracts, architecture, migration/rollback, and
+verification design. `delivery.md` turns that design into ordered granular actions with the exact
+inputs, paths/discovery, commands, expected observations, failure handling, and evidence needed for
+independent execution.
+
 ## Reference Modules
 
-- [mandatory-grilling.md](reference/mandatory-grilling.md) — decision grilling for unresolved material choices
+- [mandatory-grilling.md](reference/mandatory-grilling.md) — evidence-first pre-write and post-write grilling
 - [plan-lifecycle-and-git-workflow.md](reference/plan-lifecycle-and-git-workflow.md) — 4-stage lifecycle + git workflow
-- [plan-folder-and-naming.md](reference/plan-folder-and-naming.md) — `plans/` folder layout + stage-aware naming
-- [plan-structure-multi-and-single-file.md](reference/plan-structure-multi-and-single-file.md) — five-document structure vs. single-file exception
+- [plan-folder-and-naming.md](reference/plan-folder-and-naming.md) — `plans/` folder layout,
+  stage-aware naming, and runtime-only completion dates
+- [plan-structure-multi-and-single-file.md](reference/plan-structure-multi-and-single-file.md) — fixed mature-plan core and reader-led technical shape
 - [mermaid-diagrams.md](reference/mermaid-diagrams.md) — Mermaid diagram requirements
 - [ui-design-funnel.md](reference/ui-design-funnel.md) — UI-design-funnel HARD RULE (diverge→narrow→select→justify)
 - [ui-design-funnel-grilling-and-learning-plans.md](reference/ui-design-funnel-grilling-and-learning-plans.md) — funnel grilling questions + Learning-Bearing syllabus record
@@ -51,7 +77,7 @@ every applicable rule; mandatory safeguards remain part of sufficiency. See
 - [refuse-uncertainty-and-anti-patterns.md](reference/refuse-uncertainty-and-anti-patterns.md) — refuse-on-uncertainty + AP-1..AP-10 catalog
 - [specialized-executor-annotation.md](reference/specialized-executor-annotation.md) — suggested-executor annotation
 - [gherkin-acceptance-criteria.md](reference/gherkin-acceptance-criteria.md) — Gherkin format + Step-Keyword Cardinality
-- [delivery-plan-tdd-structure.md](reference/delivery-plan-tdd-structure.md) — RED/GREEN/REFACTOR checkbox shape
+- [delivery-plan-tdd-structure.md](reference/delivery-plan-tdd-structure.md) — outcome-section and granular RED/GREEN/REFACTOR evidence shape
 - [operational-readiness.md](reference/operational-readiness.md) — Local Quality Gates, Post-Push, Env Setup, Commits
 - [manual-ui-and-api-verification.md](reference/manual-ui-and-api-verification.md) — Playwright/curl manual verification
 - [manual-verification-retest-rules.md](reference/manual-verification-retest-rules.md) — rule-15/rule-16 pre-archival retests

@@ -36,20 +36,25 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    [Worktree Cap](./worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 4. **Every PR here is human-readable — there are no machine-only PRs.** Apply
-   [Addition Limits and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md):
-   independently cap handwritten code/program-type additions at **500** and other/document-type
-   additions at **1,000**, count deletions as zero, and cap hand-authored files at **20**. That
-   child defines file categories, generated-mirror exclusions, and the only plan-document cases
-   that waive the two LOC ceilings.
-   **Use one PR for as much of one natural, independently stable seam as fits.** Split only at a
-   real seam when its applicable limit would otherwise be exceeded.
+   [Addition Targets, Limits, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md).
+   Treat **500** handwritten code/program-type additions as a strong reviewability recommendation,
+   not a hard ceiling. A larger code diff is valid when it remains one natural, cohesive,
+   independently reviewable, verifiable, and revertible seam; declare its measured size, seam,
+   rejected split alternatives, and review proof. The independent **1,000** other/document-type
+   ceiling and **20** hand-authored-file ceiling remain hard; deletions count as zero. The child
+   defines file categories, generated-mirror exclusions, the natural-seam exception record, and
+   the narrow plan-document exemption.
+   **Use one PR for as much of one natural, independently stable seam as belongs together.** Split
+   at a real seam, never solely to make the code counter read 500 or less.
 5. **A slice must be self-consistent on `main` the moment it merges** — see
    [The Atomicity Exception](./prs-open-at-delivery-boundaries-pr-size-atomicity.md), which pairs a
-   convention with the binding that executes it. That broader exception may exceed any rule-4
-   bound; the linked plan-document exemption waives only the two added-line ceilings.
+   convention with the binding that executes it. That broader exception may exceed a remaining
+   hard rule-4 bound; the linked plan-document exemption waives only its applicable hard LOC
+   ceiling.
 
-**Enforcement disposition — unenforced by decision.** No deterministic gate classifies every
-handwritten file or decides whether a plan diff is initial establishment or a pure move. The PR
-template exposes the category totals and any exemption claim for author and reviewer inspection.
+**Enforcement disposition — unenforced by decision.** No deterministic gate can decide whether a
+larger code diff is one natural seam, classify every handwritten file, or decide whether a plan diff
+is initial establishment or a pure move. The PR template exposes category totals, split reasoning,
+and exception claims for author and reviewer inspection.
 
 **See**: [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md).

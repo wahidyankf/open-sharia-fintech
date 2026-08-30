@@ -4,7 +4,7 @@ title: "plan-execution"
 description: Indexes end-to-end plan execution across per-topic children.
 when_to_use: Use when executing a plan or locating one execution step.
 goal: Execute a project plan, validate its completion and quality, then iteratively continue until all requirements are met and archive to plans/done/
-termination: Zero findings remain after validation and plan moved to done/
+termination: End-to-end requirement-to-proof trace is complete, zero findings remain, and plan moved to done/
 inputs:
   - name: plan-path
     type: string
@@ -50,7 +50,8 @@ outputs:
 - [Fan-Out Shape](./plan-execution/fan-out-ordering-and-delivery-shape.md) — N+1, DAG.
 - [Tester Gates](./plan-execution/surface-conditional-tester-gates.md) — per-surface.
 - [Vercel MCP](./plan-execution/vercel-mcp-availability.md) — Phase 0 check.
-- [Task-Checklist Sync](./plan-execution/task-checklist-synchronization.md) — 1:1 mapping.
+- [Task-Checklist Sync](./plan-execution/task-checklist-synchronization.md) — strict action-level
+  1:1 mapping, reconstructed even on first mid-run invocation or reinvocation.
 - [Harness Task List](./plan-execution/harness-task-list-primary-observability-surface.md) — invariants.
 - [Sync Ritual](./plan-execution/atomic-sync-ritual.md) — tick/notes/update.
 - [Resume Reconciliation](./plan-execution/resume-reconciliation.md) — disk truth.
@@ -81,6 +82,7 @@ outputs:
 - [Pre-Archival Gates](./plan-execution/finalization-pre-archival-gates.md) — rule-15.
 - [Rule-16 Retest](./plan-execution/finalization-rule16-api-retest.md) — API retest.
 - [Knowledge Capture](./plan-execution/finalization-knowledge-capture.md) — learnings.md.
+- [Finalization and Archival — End-to-End Delivery Completeness Audit](./plan-execution/finalization-end-to-end-completeness-audit.md) — Reconciles the full plan from its first requirement through final proof before completion can be declared. Use preliminarily after pre-archival gates pass, then repeat terminally after the final delivery is pushed or merged and before assigning pass.
 - [PR CI Gate](./plan-execution/finalization-pr-ci-gate.md) — exact-head/base evidence and optional review.
 - [Status/Infra Gate](./plan-execution/finalization-status-logic-and-infra-gate.md) — pass/fail.
 - [Cleanup/Archival](./plan-execution/finalization-worktree-cleanup-and-pr-archival.md) — archival-in-PR.

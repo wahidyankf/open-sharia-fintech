@@ -40,7 +40,7 @@ workflow failure.
 
 Every deviation requires:
 
-1. A recorded resolution in the deviation matrix (in each plan's `tech-docs.md`)
+1. A recorded resolution in the deviation matrix in each plan's chosen technical form
 2. A recorded justification (why this repo differs)
 3. A rationale doc in the repo's `docs/explanation/` tree (or equivalent location) describing
    the decision in plain language for future contributors

@@ -7,7 +7,8 @@ when_to_use: When validating a project plan before execution, or extending/audit
 # Validating Plan Quality
 
 Full methodology for `plan-checker`: what "complete, clear, and executable" means for a project plan,
-across structure, requirements, technical docs, delivery-checklist granularity, and 21 numbered
+across prospective structure, bootcamp-graduate readability, requirements, material
+alternatives/prior art, technical docs, granular delivery checklists, and 21 numbered
 validation rules layered on top of the base five validation-scope sections.
 
 ## Reference Modules
@@ -65,8 +66,9 @@ safeguards omitted in the name of minimalism is a finding.
 ## Quality-Gate Lifecycle Handoff
 
 When the plan quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
-registry IDs or predicates connected through `verifies`. Preserve pending state; never rerun or
-infer delegated work. Plan structure, semantics, evidence, and executability remain in scope. See the
+registry IDs or predicates connected through `verifies`. Deterministic gates own links, maps, word
+budgets, formatting, Mermaid mechanics, and Gherkin cardinality. Preserve pending state; never rerun
+or infer delegated work. Plan structure, semantics, evidence, and executability remain in scope. See the
 [lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Related

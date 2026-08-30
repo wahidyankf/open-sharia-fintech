@@ -1,53 +1,62 @@
 ---
 title: "TDD Shape for Delivery Checklists"
-description: The mandatory three-substep RED/GREEN/REFACTOR pattern for code delivery steps, the non-code exception, and the never-combine hard rule.
+description: The mandatory granular RED/GREEN/REFACTOR checklist sequence within one outcome section.
 category: explanation
 subcategory: development
 tags:
   - development
-  - workflow
-  - tdd
   - testing
-  - red-green-refactor
-created: 2026-05-02
-when_to_use: Use when writing a delivery checklist item that ships code, to format it as machine-executable RED/GREEN/REFACTOR substeps.
+  - tdd
+  - delivery
+created: 2025-12-05
+when_to_use: Use when writing a delivery outcome section that ships code and must preserve detailed TDD proof.
 ---
 
 # TDD Shape for Delivery Checklists
 
-All code delivery steps in plan checklists must follow this three-substep pattern. Each substep
-names an explicit file path, verbatim shell command, and a concrete acceptance criterion so the
-step is machine-executable without ambiguity:
+Every code-shipping outcome section preserves RED → GREEN → REFACTOR as separate, ordered,
+independently verifiable checkboxes. The section keeps them tied to one acceptance criterion and
+observable outcome; the checkboxes keep progress, commands, and evidence visible to a junior
+engineer with no professional experience.
 
 ```markdown
-- [ ] **RED**: Write failing test for [specific behavior]
-      — command: `nx run [project]:test:unit`
-      — acceptance: test fails with `[expected error message]`
-- [ ] **GREEN**: Implement `[function/component]` in `[file path]`
-      — command: `nx run [project]:test:unit`
-      — acceptance: test passes, no other tests broken
-- [ ] **REFACTOR**: Clean up [specific concern] in `[file path]`
-      — command: `nx run [project]:test:unit`
-      — acceptance: all tests still pass, code is cleaner
+### AC-### — [cohesive behavior outcome]
+
+- **Input:** canonical acceptance-criterion reference, prerequisites, and affected scope.
+- **Outcome:** [observable behavior].
+- [ ] [AI] **RED:** write `[test path and exact case]`; run `[copyable focused command]`;
+      acceptance: it fails for `[expected missing behavior or diagnostic]` and existing unrelated tests
+      remain green; save output at `[evidence destination]`.
+- [ ] [AI] **GREEN:** implement `[exact symbol]` in `[source path]`; run `[copyable focused command]`;
+      acceptance: the new test passes and no unrelated focused case regresses.
+- [ ] [AI] **REFACTOR:** clean up `[specific concern/path]`; run `[focused and regression commands]`;
+      acceptance: behavior, public contract, and expected diagnostics remain unchanged.
+- **Proof:** RED evidence plus the passing focused and regression outputs.
 ```
 
-Non-code steps (doc edits, config changes, file creation, governance updates) do not require
-RED-GREEN-REFACTOR. They use direct action + acceptance criterion instead:
+If one outcome needs several TDD cycles, write a separate RED/GREEN/REFACTOR checkbox trio for each
+independently testable behavior slice inside that outcome section. Do not collapse cycles to keep the
+checklist short. Every RED checkbox names what must fail and why; “test fails” alone is insufficient.
+
+Non-code outcome sections do not require RED-GREEN-REFACTOR. Each independently verifiable action is
+still its own detailed checkbox.
 
 ```markdown
-- [ ] [Action verb] `[file path]` — add/update [specific content]
-      — acceptance: [concrete observable outcome]
+### [Outcome]
+
+- **Input:** [source, prerequisites, and scope].
+- **Outcome:** [observable state].
+- [ ] [AI] Update `[exact path/section]`; acceptance: `[observable result]`; verify with
+      `[copyable inspection or gate]`; save evidence at `[destination]` when the result is not committed.
+- **Proof:** [final section-level gate].
 ```
 
-**HARD RULE: Never combine RED, GREEN, and REFACTOR into a single checkbox.** Each of the three
-phases must be its own `- [ ]` item in the delivery checklist. Collapsing multiple phases into
-one checkbox is forbidden. Each sub-bullet in a mini-TDD nested group counts as its own
-independent checkbox. `plan-checker` flags combined items as HIGH findings.
+`plan-checker` flags a code outcome that combines or omits RED, GREEN, or REFACTOR checkboxes; lacks
+exact paths, commands, expected observations, or proof; or separates those actions into unrelated
+outcome sections. It also flags micro-checkboxes that expose keystrokes rather than independently
+verifiable work.
 
-`plan-checker` flags delivery checklist items that reference code changes without this
-three-substep structure as a HIGH finding.
-
-These RED/GREEN/REFACTOR substeps are `[AI]` work — each checkbox also carries the `[AI]`/`[HUMAN]`
+These RED/GREEN/REFACTOR actions are `[AI]` work — each checkbox carries the `[AI]`/`[HUMAN]`
 executor tag, and the phase they belong to ends with a `### Phase N Gate` plus a Pause Safety note,
 per [Plans Organization Convention §Executor Tagging](../../../conventions/structure/plans/executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)
 and [§Phases as Natural Pauses With Clear Gates](../../../conventions/structure/plans/phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).

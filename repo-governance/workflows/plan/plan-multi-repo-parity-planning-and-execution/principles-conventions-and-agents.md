@@ -22,9 +22,9 @@ when_to_use: Use when auditing this workflow's governance alignment or looking u
 
 ## Conventions Implemented/Respected
 
-- **[Plans Organization Convention](../../../conventions/structure/plans.md)**: Five-document
-  layout, `in-progress` staging, worktree specification, executor tagging, and phase gates all
-  enforced through the nested workflows.
+- **[Plans Organization Convention](../../../conventions/structure/plans.md)**: Fixed mature core,
+  one reader-led technical form, `in-progress` staging, worktree specification, executor tagging,
+  and phase gates are enforced through the nested workflows.
 - **[Worktree Path Convention](../../../conventions/structure/worktree-path.md)** and
   **[Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md)**: Every
   worktree lands at `worktrees/<name>/` and is initialized with the two-step toolchain sequence.

@@ -24,15 +24,29 @@ The calling context will:
    [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work);
    never execute directly from `plans/backlog/`.
 1. **Enter the work branch** (Step 0): the work branch is whatever the user specifies at invocation (a dedicated worktree, the `main` checkout, or any existing branch); if unspecified, the plan docs win (the `## Worktree` section, defaulting to a worktree provisioned from `origin/main`) — refuse to start only when neither the user nor the plan specifies one. Then, by default, pull the latest `origin/main` into the work branch first — before any implementation — to minimize merge collisions
-2. Read the delivery checklist from the plan's `delivery.md` to understand all items
-3. Create granular tasks using `TaskCreate` — one per remaining checkbox (including nested sub-bullets)
+2. Read the delivery checklist from the plan's `delivery.md` to understand all items. This step is
+   mandatory even when the workflow is first invoked after implementation started or is reinvoked
+   mid-run; never trust a prior conversational task list over disk.
+3. Reconstruct and audit the granular harness list using `TaskCreate`—one task per remaining action
+   checkbox, including separate RED/GREEN/REFACTOR actions; outcome-section Input/Outcome/Proof
+   remains context. Before implementation, prove the full 1:1 mapping: checked action ↔ completed
+   task when retained, unchecked action ↔ open task, and zero task orphans/duplicates.
 4. For each item: mark `in_progress`, **repo-ground its file paths and commands** (refuse-on-uncertainty if grounding fails), analyze it, **prefer the `_Suggested executor:_` annotation** if present (else fall back to Agent Selection heuristics), delegate to the chosen agent (or execute directly for trivial edits), verify the result
 5. Perform the Atomic Sync Ritual after each item — tick `- [ ]` → `- [x]` in `delivery.md`, add implementation notes, `TaskUpdate completed`
 6. Invoke `plan-execution-checker` via the Agent tool to validate the implementation
-7. Iterate execution and validation until zero findings achieved
-8. Move plan folder to plans/done/ using git mv
-9. Show git status with modified files
-10. Wait for user commit approval
-11. After the final delivery for each repository is pushed or merged, run the complete canonical
+7. Iterate execution and validation until zero findings are achieved
+8. Run the applicable pre-archival surface gates, API retest, and Knowledge Capture gate
+9. Run the **preliminary** End-to-End Delivery Completeness Audit. Build every
+   requirement-to-artifact/PR-to-proof row now; only final-delivery proof may remain explicitly
+   pending. A missing or stale non-delivery row reopens the earliest affected action and returns to
+   steps 4-8
+10. Pass the infrastructure gate, archive through the resolved delivery-mode path, and honor the
+    applicable commit/merge authority. Push the archival commit, require replacement exact-head/base
+    CI and leak-review evidence where applicable, resolve paired-repository handoff, then merge or
+    confirm the permitted direct push
+11. Run the **terminal** End-to-End Delivery Completeness Audit against the delivered head. Fill the
+    final-delivery rows, reopen any unsupported requirement, and assign `pass` only when the full
+    requirement-to-proof trace is evidenced end to end
+12. After the final delivery for each repository is pushed or merged, run the complete canonical
     [Worktree and Artifact Cleanup gate](../../../development/workflow/worktree-and-artifact-cleanup.md)
     immediately. Build the [Delivery Branch Inventory](../../../conventions/structure/plans/worktree-specification.md#delivery-branch-inventory), perform every mandatory pre-removal check, then clean all three eligible classes: the exact worktree, eligible plan-created branches, and plan-local regenerable build output. Preserve diagnostics and shared caches, retain and escalate active/ambiguous/partial/fail state, and apply the bare-repository remote-branch-before-worktree ordering exception. Never force-remove, prune shared state, or remove a repository root, wildcard path, or another actor's worktree.

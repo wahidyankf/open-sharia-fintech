@@ -22,7 +22,9 @@ plan's corpus is a **consumer**. Four rules govern the relationship:
 
 1. **Exactly one custodian per corpus.** The custodian is named in the corpus's own
    `syllabus/README.md` as a `**Custodian**: <plan-id>` line, and echoed in every consumer plan's
-   `tech-docs.md` under its own `## Corpus Custody` heading as `custodied-by:<plan-id>` — a distinct
+   selected technical form under its own `## Corpus Custody` heading as `custodied-by:<plan-id>`.
+   The selected form is `tech-docs.md`, or a companion owned and mapped by `tech-docs/README.md`
+   when directory form is selected. This is a distinct
    declaration from [`## Corpus Disposition`](./corpus-disposition.md), which only the owning
    (custodian) plan carries. A consumer plan is not learning-bearing in its own right (see the
    [Learning-Bearing Trigger](./learning-bearing-trigger.md)'s negative example 2) and so never

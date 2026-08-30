@@ -26,4 +26,9 @@ layer-coherence or traceability with an AI approximation.
 
 **Success criteria**: Checker completes and generates audit report.
 
+For every budget-motivated edit in the current diff, the checker performs a semantic-preservation
+comparison. Deterministic word-budget success never suppresses a changed obligation, named audience,
+strength, scope, boundary, exception, pass/violation condition, or enforcement disposition; any
+weakening or loss is HIGH.
+
 **On failure**: Terminate workflow with status `fail`.

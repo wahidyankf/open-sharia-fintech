@@ -11,9 +11,10 @@ Read the created plan files and verify structural completeness before the qualit
 **Orchestrator action**:
 
 1. Read all plan files in the resolved `<plan-dir>`
-2. Verify `## Worktree` section exists in `delivery.md` (multi-file) or `README.md` (single-file)
+2. Verify the fixed mature core exists and exactly one technical form is present; verify
+   `## Worktree` exists in `delivery.md`
 3. Verify delivery checklist has at least one `- [ ]` checkbox
-4. Verify Gherkin acceptance criteria present in `prd.md` (multi-file) or condensed PRD
+4. Verify canonical Gherkin acceptance criteria are present in `prd.md` and delivery references them
 5. Verify the worktree path in the plan matches `<identifier>` confirmed in Step 1, and that the
    plan folder lives under the correct stage (`backlog/` and `in-progress/` both use a bare
    `<identifier>/` with no date prefix; only `done/` carries the `<YYYY-MM-DD>__` prefix) per the
@@ -29,10 +30,18 @@ Read the created plan files and verify structural completeness before the qualit
    ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
 9. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
-10. Verify `tech-docs.md` has a `## File-Impact Analysis` whose primary view is one root-relative,
+10. Verify the chosen technical form has a `## File-Impact Analysis` whose primary view is one root-relative,
     annotated file tree with `[E]`/`[N]`/`[D]`/`[G]` markers. If `### More Detail` exists, verify it
     immediately follows the tree and provides context rather than a second prose scope list.
-11. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`.
+11. Verify junior-readable decision-to-delivery traceability, material alternatives/prior art,
+    granular outcome-section checklist fields, and applicable schema/rule/C4/recovery contracts.
+12. Independently classify rule impact from scope and the file-impact tree. For every affected
+    repository, verify `delivery.md` automatically includes the complete repository-local
+    rules-propagation outcome: inventory, conflict/precedence, placement/eviction,
+    canonical/config/enforcement/index changes, enforcement dispositions, binding generation,
+    verification plus `rules-quality-gate`, manifest/final status, and sibling obligation. Reject a
+    bare workflow link or generic “run propagation” checkbox.
+13. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`.
     Any reinvoked `plan-maker` response follows the same decision-envelope loop from Step 4; do not
     treat its envelope as the one-retry failure.
 

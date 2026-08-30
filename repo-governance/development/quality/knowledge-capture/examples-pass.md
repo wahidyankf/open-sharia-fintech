@@ -31,7 +31,7 @@ when_to_use: "Use for a correct knowledge-capture example."
 INLINE, landed in commit `abc1234` of this plan.
 ```
 
-## PASS: Learning filed as a two-pager (code, mandatory)
+## PASS: Learning filed as an authorized idea two-pager
 
 ```markdown
 ## Learning: rhino-cli doctor command silently swallows a missing-tool exit code
@@ -42,9 +42,18 @@ INLINE, landed in commit `abc1234` of this plan.
 - **Why it might generalize**: a future contributor could believe their toolchain is healthy when
   it is not — the system would not catch this without a code fix.
 
-**Routing**: `apps/rhino-cli` (code) — ALWAYS filed as a two-pager, never straight to
-`plans/backlog/`. Filed at `plans/ideas/q2-not-urgent-important/fix-doctor-silent-tool-failure.md`.
-NOT landed inline in this plan's PR.
+**Routing**: `apps/rhino-cli` (code) — user authorized a follow-up artifact in conversation turn 42.
+Filed at `plans/ideas/q2-not-urgent-important/fix-doctor-silent-tool-failure.md`; backlog promotion
+remains a later ripeness decision. NOT landed inline in this plan's PR.
+```
+
+## PASS: Code learning reported without plan authorization
+
+```markdown
+## Learning: rhino-cli doctor command silently swallows a missing-tool exit code
+
+**Routing**: `Reported without plan authorization` — reported in the final handoff under
+"Future code work"; no `plans/ideas/` artifact created and no code landed inline.
 ```
 
 ## PASS: Learning discarded (fails the litmus)

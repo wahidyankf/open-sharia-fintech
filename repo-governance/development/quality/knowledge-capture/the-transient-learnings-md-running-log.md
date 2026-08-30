@@ -16,7 +16,8 @@ when_to_use: "Use when maintaining a plan's learnings.md log."
 
 # The Transient `learnings.md` Running Log
 
-`learnings.md` is a plan-folder file, sibling to `delivery.md`, `prd.md`, and `tech-docs.md`:
+`learnings.md` is a plan-folder file, sibling to `delivery.md`, `prd.md`, and the selected
+`tech-docs.md` or `tech-docs/` form:
 
 ```
 plans/
@@ -51,5 +52,5 @@ This is cheap in-the-moment capture, not a separate research task.
 ```
 
 **What it is NOT**: `learnings.md` is not a decision log, not a design-rationale document (that is
-`tech-docs.md`'s job), and not a status report. It exists solely to stage candidate learnings for the
+the chosen technical form's job), and not a status report. It exists solely to stage candidate learnings for the
 triage pass described below.

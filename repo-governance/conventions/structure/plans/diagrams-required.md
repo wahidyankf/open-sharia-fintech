@@ -45,6 +45,8 @@ The concerns that warrant their own diagram when present in a plan:
 
 **Prefer multiple focused diagrams over one overloaded diagram.** A plan covering N distinct architectural concerns should generally carry N diagrams — one per concern — rather than forcing all concerns into a single crowded chart.
 
-If unsure whether a diagram is warranted for a given concern, add it. A redundant diagram costs less than a missed architectural ambiguity.
+Add a diagram only when it materially reduces the reader's effort to understand a relationship,
+sequence, state, hierarchy, decision, or data model. Do not add a redundant diagram merely because
+the plan is large.
 
 See [Diagrams in Plans — Skipping, Accessibility, and Example](./diagrams-skip-accessibility-and-example.md) for the escape hatch, the accessibility rules, and a worked example.

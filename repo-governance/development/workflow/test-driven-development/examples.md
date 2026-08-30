@@ -77,6 +77,7 @@ Playwright for E2E, Vitest describe/it for TypeScript). See
 [plan-writing-gherkin-criteria skill](../../../../.claude/skills/plan-writing-gherkin-criteria/SKILL.md)
 and [Acceptance Criteria Convention](../../infra/acceptance-criteria.md).
 
-Each RED delivery step in a plan checklist that primarily binds a scenario MUST also embed
-the full `Given/When/Then` verbatim — see
-[Gherkin-Tagged Delivery Steps](./gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps) above.
+The delivery outcome section references the canonical scenario by stable ID or exact title and
+uses separate detailed RED/GREEN/REFACTOR checkboxes. Do not duplicate the full `Given/When/Then`
+in `delivery.md`; preserve the failing binding/test and its RED evidence in implementation notes. See
+[Gherkin-Tagged Delivery Steps](./gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).

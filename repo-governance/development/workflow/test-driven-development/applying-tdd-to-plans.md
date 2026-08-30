@@ -18,30 +18,43 @@ when_to_use: Use when authoring a plan's delivery.md checklist, or when executin
 ## Plan Creation (plan-maker)
 
 When `plan-maker` authors a `delivery.md` checklist, items that ship code MUST be expressed as
-TDD-shaped steps. Do not write "implement X, then write tests."
+TDD-shaped outcome sections with separate, detailed RED, GREEN, and REFACTOR checkboxes. Do not
+write "implement X, then write tests," combine the cycle into one checkbox, or omit detail merely to
+keep the checklist short.
 
 Write instead:
 
 ```markdown
-- [ ] Write failing test for [behavior]
-- [ ] Implement [behavior] to make test pass
-- [ ] Refactor implementation (keep tests green)
+### AC-EXAMPLE-01 — [observable behavior]
+
+- **Input:** canonical scenario AC-EXAMPLE-01 and the current implementation boundary.
+- **Outcome:** [observable behavior] matches the canonical scenario.
+- [ ] [AI] **RED:** add `[test case]` in `[test path]`; run `[focused command]`; acceptance: it fails
+      for `[expected missing behavior]`; record the output.
+- [ ] [AI] **GREEN:** implement `[symbol]` in `[source path]`; rerun `[focused command]`;
+      acceptance: the focused suite passes.
+- [ ] [AI] **REFACTOR:** clean `[specific concern]`; run `[focused command]` and
+      `rtk nx run <project>:test:quick`; acceptance: behavior stays green.
+- **Proof:** RED failure evidence, focused pass, and the project `test:quick` result.
 ```
 
-Or, when one delivery item spans multiple mini-cycles, group them explicitly:
+When one cohesive outcome needs multiple cycles, give every behavior slice its own checkbox trio in
+the same outcome section:
 
 ```markdown
-- [ ] TDD cycle: [feature name]
-  - [ ] Red: write failing test for happy path
-  - [ ] Green: implement minimum code to pass
-  - [ ] Red: write failing test for error path
-  - [ ] Green: implement error handling to pass
-  - [ ] Refactor: clean up, remove duplication
+- **Input:** AC-EXAMPLE-02 and existing focused tests.
+- **Outcome:** both paths satisfy AC-EXAMPLE-02 without duplication.
+- [ ] [AI] **RED — happy path:** [exact test/path/command/failure].
+- [ ] [AI] **GREEN — happy path:** [exact source/symbol/command/pass].
+- [ ] [AI] **REFACTOR — happy path:** [exact cleanup/commands/invariant].
+- [ ] [AI] **RED — error path:** [exact test/path/command/failure].
+- [ ] [AI] **GREEN — error path:** [exact source/symbol/command/pass].
+- [ ] [AI] **REFACTOR — error path:** [exact cleanup/commands/invariant].
+- **Proof:** each RED failure and GREEN/refactor pass plus `rtk nx run <project>:test:quick`.
 ```
 
-Note: each nested sub-bullet is its own independent checkbox tracked by the plan-execution
-workflow. The parent label (`- [ ] TDD cycle:`) is a grouping label only — it must not
-substitute for the three phase items.
+The TDD actions remain one cohesive delivered behavior, but they are independent checklist progress
+and harness tasks. Outcome cohesion does not erase execution detail.
 
 Acceptance criteria in `prd.md` are written as Gherkin scenarios (per the
 [plan-writing-gherkin-criteria skill](../../../../.claude/skills/plan-writing-gherkin-criteria/SKILL.md)).
@@ -51,8 +64,8 @@ Those Gherkin scenarios are the natural source of the first failing tests. The c
 prd.md Gherkin scenario → first failing test → minimum implementation → refactor
 ```
 
-`plan-checker` will flag delivery checklist items that reference code changes without a
-corresponding test-first step as a HIGH finding.
+`plan-checker` flags code-shipping outcome sections that combine or omit the RED/GREEN/REFACTOR
+checkboxes, or omit paths, commands, expected observations, or proof, as HIGH.
 
 ## Plan Execution
 

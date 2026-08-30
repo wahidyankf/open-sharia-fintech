@@ -42,9 +42,10 @@ stops when such a branch is open. See [Decision Grilling](mandatory-grilling.md)
 
 ### 4. Completion (done/)
 
-**Gate**: The root validates the finished plan through its bounded evidence audit before archiving.
-Do not reopen a settled plan for a separate post-write grill; escalate only a genuinely unresolved
-material decision. See [Decision Grilling](mandatory-grilling.md).
+**Gate**: The root validates and stress-tests the finished plan through the mandatory post-write
+grill before archiving. Reuse repository and plan evidence, avoid editorial-history questions, and
+escalate any newly exposed material decision through the canonical envelope. See
+[Decision Grilling](mandatory-grilling.md).
 
 **Actions**:
 

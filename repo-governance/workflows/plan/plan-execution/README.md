@@ -13,10 +13,12 @@ when_to_use: "Use to locate a plan-execution child document."
 - [Fan-Out, Ordering, and Delivery Shape](./fan-out-ordering-and-delivery-shape.md) — The N+1 fan-out model, DAG-first ordering, and the one-PR-per-delivery-unit / one-worktree-per-repo delivery shape.
 - [Surface-Conditional Tester Gates](./surface-conditional-tester-gates.md) — Determining which tester gates a plan's shipped surface requires before archival.
 - [Vercel MCP Availability (Surface-Conditional)](./vercel-mcp-availability.md) — How execution reconfirms Vercel MCP availability at Phase 0 for plans touching a Vercel-deployed surface.
-- [Task-Checklist Synchronization](./task-checklist-synchronization.md) — Reconciling the harness Task list against delivery.md, or confirming every checkbox maps to exactly one task.
+- [Task-Checklist Synchronization](./task-checklist-synchronization.md) — Proving the strict
+  action-level task/checkbox bijection on startup, first mid-run invocation, and every re-entry.
 - [Harness Task List as Primary Observability Surface](./harness-task-list-primary-observability-surface.md) — Auditing task creation, titling, and timing against the observability invariants.
 - [Atomic Sync Ritual](./atomic-sync-ritual.md) — The mandatory three-step tick-notes-TaskUpdate sequence that must land together for every completed checklist item.
-- [Resume Reconciliation (Disk Is Truth)](./resume-reconciliation.md) — Resuming plan execution in a new conversation, or when the Task list and delivery.md disagree.
+- [Resume Reconciliation (Disk Is Truth)](./resume-reconciliation.md) — Reconstructing the task
+  list from disk on every entry or re-entry, including after work began outside this workflow.
 - [Rules 1-5](./iron-rules-1-5.md) — Checking execution against the first five hard, non-negotiable rules governing every execution step.
 - [Rules 6-11](./iron-rules-6-11.md) — Checking execution against rules 6-11 of the hard, non-negotiable rules governing every execution step.
 - [Preconditions and Work Branch](./enter-worktree-preconditions-and-work-branch.md) — The backlog-promotion precondition and the three-tier precedence for selecting the plan's work branch.
@@ -44,6 +46,7 @@ when_to_use: "Use to locate a plan-execution child document."
 - [Pre-Archival Gates](./finalization-pre-archival-gates.md) — A UI-bearing or web-UI feature-change plan approaches archival and must run its pre-archival visual and retest gates.
 - [Rule-16 API Retest Gate](./finalization-rule16-api-retest.md) — An API feature-change plan approaches archival and must run its near-end exploratory retest gate.
 - [Knowledge Capture Gate](./finalization-knowledge-capture.md) — Confirming every learnings.md entry reached a terminal state before archival.
+- [Finalization and Archival — End-to-End Delivery Completeness Audit](./finalization-end-to-end-completeness-audit.md) — Reconciles the full plan from its first requirement through final proof before completion can be declared. Use preliminarily after pre-archival gates pass, then repeat terminally after the final delivery is pushed or merged and before assigning pass.
 - [Exact-Head PR CI Gate](./finalization-pr-ci-gate.md) — A \*-to-pr plan approaches archival and must prove current-head/base CI plus applicable surface evidence before merge.
 - [Paired-Repository Terminal Handoff](./finalization-paired-repository-terminal-handoff.md) — Post-merge sibling-handoff emission and authenticated read-back before successor scouting.
 - [Status Logic, Infra-Execution Gate, and Direct-Push Archival](./finalization-status-logic-and-infra-gate.md) — The pass/partial/fail branching and the Infra-Execution Gate precondition.

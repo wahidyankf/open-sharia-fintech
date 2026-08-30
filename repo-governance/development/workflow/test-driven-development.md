@@ -27,8 +27,8 @@ when_to_use: Use when writing any delivery checklist step that ships code, or wh
 - [The Red-Green-Refactor Cycle](./test-driven-development/the-red-green-refactor-cycle.md) — The three-step loop every code change follows.
 - [Mini-TDD Passes](./test-driven-development/mini-tdd-passes.md) — Splitting a feature into small Red→Green→Refactor cycles.
 - [Applying TDD to Plans](./test-driven-development/applying-tdd-to-plans.md) — Plan creation and plan execution requirements.
-- [TDD Shape for Delivery Checklists](./test-driven-development/tdd-shape-for-delivery-checklists.md) — The mandatory RED/GREEN/REFACTOR substep pattern.
-- [Gherkin-Tagged Delivery Steps](./test-driven-development/gherkin-tagged-delivery-steps.md) — One cycle per scenario, tag format, exceptions.
+- [TDD Shape for Delivery Checklists](./test-driven-development/tdd-shape-for-delivery-checklists.md) — granular RED/GREEN/REFACTOR evidence inside cohesive outcome sections.
+- [Gherkin-Tagged Delivery Steps](./test-driven-development/gherkin-tagged-delivery-steps.md) — Canonical scenario references, outcome-cohesion splitting, tag format, and exceptions.
 - [Enforcement and Exceptions](./test-driven-development/enforcement-and-exceptions.md) — How TDD is enforced, and what it does not apply to.
 - [Examples](./test-driven-development/examples.md) — TypeScript, Go, and Gherkin-to-test worked examples.
 - [Relationship to Implementation Workflow](./test-driven-development/relationship-to-implementation-workflow.md) — How TDD maps onto the three implementation stages.

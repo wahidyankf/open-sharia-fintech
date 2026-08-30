@@ -1,6 +1,6 @@
 ---
 title: "Examples"
-description: Shows a complete worked single-file plan, a multi-file plan's folder layout, and a full two-pager idea brief example.
+description: Shows the retired single-file boundary, the current mature formal-plan layout, and a full two-pager idea brief example.
 category: explanation
 subcategory: conventions
 tags:
@@ -9,65 +9,26 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when you want a concrete worked example of a single-file plan, a multi-file plan layout, or a two-pager.
+when_to_use: Use when you want a concrete mature-plan layout, transition example, or two-pager.
 ---
 
 # Examples
 
-## Example: Small Plan (Single-File)
+## Example: Existing Small Plan (Retired Shape)
+
+An existing all-in-one `README.md` plan may complete under its recorded contract when it predates
+the current structure rule. Never use this example to create a new formal plan.
+
+## Example: Mature Formal Plan
 
 ```
-2025-12-05__add-user-search/
-└── README.md                # ~400 lines total
-```
-
-**README.md structure**:
-
-```markdown
-# Add User Search Feature
-
-## Context
-
-Brief description and background...
-
-## Scope
-
-In-scope features, out-of-scope items, affected apps...
-
-## Business Rationale (condensed BRD)
-
-Why this matters, affected roles, success metrics (observable facts preferred; judgment calls labeled)...
-
-## Product Requirements (condensed PRD)
-
-User stories (As a … I want … So that …), Gherkin acceptance criteria, product scope...
-
-## Technical Approach
-
-API design, database changes, implementation notes...
-
-## Delivery Checklist
-
-Phased `- [ ]` items, one action per checkbox...
-
-## Quality Gates
-
-`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (includes `nx affected -t test:quick`), markdown lint, manual verification...
-
-## Verification
-
-How to confirm done...
-```
-
-## Example: Large Plan (Multi-File)
-
-```
-2025-12-05__migrate-to-microservices/
+<plan-identifier>/
 ├── README.md                # ~100 lines (overview + navigation)
 ├── brd.md                   # ~150 lines (business goal, impact, affected roles, success metrics)
 ├── prd.md                   # ~250 lines (personas, user stories, Gherkin acceptance criteria, product scope)
 ├── tech-docs.md             # ~800 lines (architecture + API specs + file impact analysis)
-└── delivery.md              # ~200 lines (phased rollout plan)
+├── delivery.md              # Phased outcomes with granular action checklists
+└── learnings.md             # Transient Knowledge Capture log
 ```
 
 ## Example: Two-Pager Idea Brief

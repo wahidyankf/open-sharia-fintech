@@ -6,7 +6,11 @@ when_to_use: Use when determining final plan status, or verifying a pending infr
 
 **Logic**:
 
-- If status is `pass` (zero findings):
+- If the preliminary
+  [End-to-End Delivery Completeness Audit](./finalization-end-to-end-completeness-audit.md) has zero
+  non-delivery gaps, mark the plan `ready-for-archive` for workflow control only; this is not final
+  status and does not authorize `pass`. Final `pass` requires the terminal audit after the actual
+  pushed or merged delivery.
 
   **Infra-Execution Gate (precondition before archival)**: Before running `git mv`, check whether the plan's delivery checklist contains any infrastructure-apply step — `terraform apply`, `terraform destroy`, a live Ansible converge (`ansible-playbook` against real hosts), or any equivalent state-changing infra operation per the [Step 0 policy note](./enter-worktree-preconditions-and-work-branch.md). If any such step is present but has NOT been verified-executed from the primary checkout (i.e., its checkbox remains unticked, or its implementation notes show it was deferred rather than genuinely run and confirmed), the workflow MUST NOT archive. Instead:
   1. Set status to `partial`.
@@ -22,22 +26,31 @@ when_to_use: Use when determining final plan status, or verifying a pending infr
 
   **`worktree-to-origin-main` / `main-to-origin-main` (direct-push modes)** — archival lands as a
   direct commit pushed to `origin main`, matching the default flow:
-  1. Move entire plan folder from current location to `plans/done/`:
+  1. Resolve the actual completion date only now:
 
      ```bash
-     git mv plans/in-progress/plan-name/ plans/done/YYYY-MM-DD__plan-name/
+     rtk date +%F
      ```
 
-  2. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
-  3. **Update `plans/done/README.md`** — add the plan entry with completion date and brief summary:
+     Record the output as `<completion-date>`. Never reuse a date hardcoded prospectively in
+     `delivery.md`.
+
+  2. Move entire plan folder from current location to `plans/done/`:
+
+     ```bash
+     rtk git mv plans/in-progress/plan-name/ plans/done/<completion-date>__plan-name/
+     ```
+
+  3. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
+  4. **Update `plans/done/README.md`** — add the plan entry with the same resolved date and brief summary:
 
      ```markdown
-     - [Plan Name](./YYYY-MM-DD__plan-name/) — Brief description. Completed YYYY-MM-DD.
+     - [Plan Name](./<completion-date>__plan-name/) — Brief description. Completed <completion-date>.
      ```
 
-  4. **Update any other READMEs** that reference this plan (e.g., `plans/README.md`, project READMEs that link to the plan)
-  5. **Search for orphaned references** to the old `plans/in-progress/[plan-name]` path and fix them
-  6. **Commit the archival**:
+  5. **Update any other READMEs** that reference this plan (e.g., `plans/README.md`, project READMEs that link to the plan)
+  6. **Search for orphaned references** to the old `plans/in-progress/[plan-name]` path and fix them
+  7. **Commit the archival**:
 
      ```
      chore(plans): move [plan-identifier] to done

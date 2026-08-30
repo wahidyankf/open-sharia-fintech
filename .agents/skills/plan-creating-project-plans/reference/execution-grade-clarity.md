@@ -2,11 +2,26 @@
 
 Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-grade (opus-tier) agents. Authoring-grade hand-waving is forbidden.
 
-**Every checkbox MUST contain all of the following that apply**:
+**Every outcome section and checkbox MUST be executable by a junior engineer fresh from bootcamp
+with no professional work experience and no repository or stack context.**
+
+- The outcome section names its canonical acceptance criterion plus **Input, Outcome, and Proof**.
+- Every independently verifiable action is a separate checkbox with an executor tag.
 
 - **Explicit file path(s)** when the action touches a known file. When the path cannot be determined at authoring time, give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-www/src/lib/` following the pattern of sibling `auth.ts`").
 - **Explicit shell command(s)** verbatim when applicable (e.g., `npx nx run ose-web:test:quick`), not "run the lint".
-- **Concrete acceptance criterion** stating the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y", "configure Z".
+- **Prerequisites, expected failure/pass state, failure handling, and evidence destination** for
+  each action; never assume professional experience supplies a missing step.
+- **Separate RED, GREEN, and REFACTOR checkboxes** for every code behavior slice.
+- **Concrete proof** stating the observable change that proves done (e.g., "all assertions in
+  `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y",
+  "configure Z".
+
+Canonical Gherkin remains in `prd.md`/`specs/**`; reference IDs/titles instead of copying full
+scenarios. Checklist count never overrides natural delivery seams, Delivery Boundaries, or
+atomicity. Do not split solely to force handwritten code below the strong 500-line recommendation.
+When a natural, cohesive seam exceeds it, record measured size, rejected viable split alternatives,
+and review/proof strategy; independent hard PR-size bounds still apply.
 
 **`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**
 

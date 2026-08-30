@@ -39,8 +39,14 @@ Active plans carry no date prefix at all. The date is added only when the plan i
 YYYY-MM-DD__[project-identifier]/
 ```
 
-The date is the day the plan was completed (last git-committed), NOT the creation date. When
-archiving from `in-progress/`, add the completion date prefix.
+The date is the repository-local calendar date on which all pre-archival gates, including the
+preliminary end-to-end audit, pass and the archival move is executed. It is NOT the creation,
+authoring, forecast, terminal-audit, or last-edit date. Resolve it only during the archival step. A
+prospective `delivery.md` MUST use the literal placeholder
+`<completion-date>__<project-identifier>` (or equivalent runtime-resolved notation); it MUST NOT
+hardcode the plan-authoring date or guess a future completion date. When archiving from
+`in-progress/`, run `rtk date +%F`, record that output as `<completion-date>`, and use that same value
+for the folder, done index, and completion evidence.
 
 ## Naming Rules (all stages)
 
@@ -76,3 +82,5 @@ archiving from `in-progress/`, add the completion date prefix.
 - `2025-11-24_init-monorepo/` (single underscore)
 - `2025-11-24__Init Monorepo/` (capital letters, spaces)
 - `2025-11-24__init_monorepo/` (underscores in identifier)
+- A prospective checklist that says `git mv ... done/2026-08-30__auth-system/` before completion
+  (hardcoded or predicted completion date)

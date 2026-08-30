@@ -1,6 +1,6 @@
 ---
 title: "Execution-Grade Clarity (HARD RULE)"
-description: Lists what every delivery.md checkbox must contain — explicit file paths, commands, acceptance criteria, and inline Gherkin — so an execution-grade agent can act without extra context.
+description: Defines the outcome-section and granular-checkbox detail required for execution without extra context or duplicated Gherkin.
 category: explanation
 subcategory: conventions
 tags:
@@ -14,13 +14,20 @@ when_to_use: Use when writing or reviewing a delivery.md checkbox for execution-
 
 # Execution-Grade Clarity (HARD RULE)
 
-Plans are executed by execution-grade agents. Every checkbox MUST be unambiguous without extra context.
+Plans are executed by execution-grade agents. Every outcome section and action checkbox MUST be
+unambiguous to a junior engineer fresh from bootcamp with no professional work experience and no
+repository or stack context, chat, or tribal knowledge.
 
 **Each checkbox MUST contain all of the following that apply:**
 
 - **Exact path(s)**, or the maximum-detail target: parent, naming pattern, and sibling reference.
 - **Verbatim command(s)** when a command is involved.
-- **Observable acceptance criterion**; never only “implement”, “set up”, or “configure”.
+- Section-level **Input, Outcome, and Proof**, plus the applicable acceptance-criterion reference.
+- Exactly one independently verifiable action per checkbox, including its prerequisites, expected
+  observation, failure handling, and evidence destination. Never write only “implement”, “set up”,
+  or “configure”.
+- Separate RED, GREEN, and REFACTOR checkboxes for every code behavior slice, each with its exact
+  test/source path, symbol, copyable command, and expected failure/pass state.
 
 ## Controlled Runbook-Reference Exception
 
@@ -35,15 +42,10 @@ gate, or evade file-touch, scope, or acceptance requirements.
 binding and violations; no scanner or exception list is introduced. This limits drift and preserves
 human readability without adding maintenance burden.
 
-- **One scenario per behavior cycle + inline Gherkin**: Every behavior-implementing
-  RED→GREEN→REFACTOR cycle targets **exactly one** Gherkin scenario. Its RED step carries a
-  single-scenario `**Gherkin (binds) →** "<title>"` tag line followed immediately by that
-  scenario's full `Given/When/Then` as a fenced ` ```gherkin ` block copied verbatim from the
-  companion `.feature`; never bundle multiple scenarios into one cycle (long checklists are
-  expected). Pure-core (`**Gherkin (underpins) →**`) data/calc tests and the aggregate
-  feature-consuming / `playwright-bdd` binders are the only steps that keep a multi-scenario
-  title list. `plan-checker` flags a multi-scenario behavior RED, or absent/non-verbatim inline
-  Gherkin, as a **HIGH** finding. See
+- **Canonical Gherkin references**: Name the acceptance-criterion/scenario ID or exact title and
+  link its canonical PRD or `specs/**` home. Do not copy the full Gherkin into `delivery.md`.
+  A cohesive outcome section may cover multiple scenarios only when they share one observable outcome and
+  proof boundary; list each reference. See
   [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development/gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
 
 **HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
@@ -62,4 +64,7 @@ human readability without adding maintenance burden.
       `npx nx run ose-www:test:quick` — all tests pass.
 ```
 
-**Acceptance Criteria**: All user stories in `prd.md` (or the condensed PRD section of a single-file plan's `README.md`) must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md) for complete details, including the **step-keyword cardinality HARD rule**: every `Scenario` uses exactly one primary `Given`, one `When`, and one `Then`; additional steps chain with `And`/`But`. `Background` blocks and `Scenario Outline` `Examples` tables are exempt. `plan-checker` and `repo-rules-checker` enforce this rule on Gherkin fences in `plans/in-progress/` and `plans/backlog/`; `plans/done/` is exempt as an immutable archive.
+**Acceptance Criteria**: All user stories in `prd.md` must include testable acceptance criteria using
+Gherkin format. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md)
+for complete details. Deterministic gates own Gherkin mechanics; semantic plan review checks that
+the referenced behavior, outcome, and proof are complete and consistent.

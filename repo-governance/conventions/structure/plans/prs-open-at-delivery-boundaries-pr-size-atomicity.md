@@ -18,9 +18,10 @@ when_to_use: "Use when a size split would leave main stating one rule two contra
 delivery-boundary rule 5; qualify it when citing.
 
 [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) rule 1 splits a sweep by surface.
-[Rule 4](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) sets addition and file caps;
-its narrow plan-document exemption waives only LOC ceilings. Atomicity is broader: any rule-4 bound
-may yield.
+[Rule 4](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) sets the strong 500-code
+target plus hard other/document and file caps. Its natural-seam record governs code diffs above 500,
+and its narrow plan-document exemption waives only the applicable hard LOC ceiling. Atomicity is
+broader: a remaining hard rule-4 bound may yield.
 
 ## The Rule
 
@@ -35,7 +36,8 @@ contradicting ways is worse than a large PR.
 It admits **only the paired surfaces, and only for rules this PR changes**. Nothing else rides
 along — an unrelated fix in a file the slice happens to touch is still scope creep, and rules 1-3
 still bound what enters. Outside atomicity and rule 4's narrow plan-document added-line exemption,
-rule 4 stays the bound.
+the remaining hard rule-4 bounds stay binding. The 500 code target separately permits a documented
+natural-seam exception.
 
 **A surface is a rule-1 category, not a directory.** Governance text is one surface however many
 subdirectories of `repo-governance/` a rule spans; agents plus their mirrors are one surface across
@@ -59,6 +61,9 @@ behind.
 A PR relying on this exception says so in its body's `## Scope` section, names the two paired
 surfaces, and states the size reached. An undeclared oversized PR is indistinguishable from an
 unbounded one.
+
+A PR exceeding only the 500 code target uses the natural-seam record instead; it must not claim
+atomicity unless splitting would actually make `main` inconsistent.
 
 **Enforcement disposition — unenforced by decision.** Whether two surfaces must land atomically is
 a review-time consistency judgment. A relying PR must expose the paired surfaces and reached size

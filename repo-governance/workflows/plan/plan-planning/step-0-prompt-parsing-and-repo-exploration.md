@@ -8,6 +8,13 @@ when_to_use: Use when starting plan-establishment and needing to understand what
 
 Before any user interaction, understand the current repo state relative to the prompt.
 
+## Plan-Artifact Authorization Gate
+
+Before exploration can lead to a tracked write, verify that the user literally requested a plan
+artifact or invoked this plan-authoring workflow. Plan Mode, a task list, discovery, or an omitted
+tester output mode is insufficient. If authorization is absent, keep the work in the harness task
+list or `local-tmp/` and do not continue to plan creation.
+
 **Orchestrator action**:
 
 1. Parse the prompt: extract the desired behavior, likely affected areas (governance files,
@@ -18,7 +25,10 @@ Before any user interaction, understand the current repo state relative to the p
    - Search `plans/in-progress/`, `plans/backlog/`, `plans/done/` for related prior plans
    - `Grep` for existing conventions or code that may already address or conflict with the prompt
    - Read `AGENTS.md` for relevant agent and workflow references
-3. Build a context summary: what already exists, what gaps remain, what conflicts with the prompt
+3. Search repository history and applicable external prior art for the material decisions the plan
+   will make.
+4. Build a context summary: what already exists, what gaps remain, what conflicts with the prompt,
+   and which viable solution options evidence supports.
 
 **Output**: Repo context loaded. Related prior work and conflicts identified.
 

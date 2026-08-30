@@ -21,12 +21,12 @@ never the boundary of the rule — a surface absent from it does not become exem
 - **API- or backend-bearing plan** → run [`api/api-quality-gate.md`](../../api/api-quality-gate.md).
 - **Several of these** → run each set.
 - **A reachable surface with no gate listed above** — a CLI such as `apps/rhino-cli/**`, a library
-  under `libs/`, a git hook, a CI workflow — is **not exempt**. The plan states in its `tech-docs.md`
+  under `libs/`, a git hook, a CI workflow — is **not exempt**. The plan states in its chosen technical form
   how the changed behavior will be exercised through its own interface (for a CLI: which subcommands
   get invoked and what output is recorded; for a library: which consuming caller exercises it, not
   only its unit tests), and the delivery checklist carries that as a step.
 - **Genuinely no reachable behavior** — docs, comments, or a pure refactor with no behavioral delta —
-  → the plan **MUST state the exemption explicitly in its `tech-docs.md`**, with the justification.
+  → the plan **MUST state the exemption explicitly in its chosen technical form**, with the justification.
   An unstated exemption is indistinguishable from an oversight, which is exactly what this rule
   exists to prevent.
 

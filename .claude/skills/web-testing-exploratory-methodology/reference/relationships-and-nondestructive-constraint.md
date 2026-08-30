@@ -12,13 +12,12 @@ on the same running site; they complement each other and never overlap:
   matches its design and follows good design practice. Answers "does it match the design?" A token
   drift or reinvented primitive belongs to it; a functional/correctness defect belongs here. Run all
   three for full live-site coverage.
-- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
-  is a findings record, not yet an executable delivery plan. When promoted to `plans/in-progress/`,
-  `plan-maker` grills it and adds
-  `tech-docs.md` + a TDD-shaped `delivery.md` with the specs/Gherkin coverage steps required by the
+- **Uses the plan-making contract in explicit plan mode** — the authorized output is a complete
+  mature-core plan with mapped findings/spec-gap technical companions and a TDD-shaped
+  `delivery.md` containing the specs/Gherkin coverage steps required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).
 - **Feeds `specs-maker`** — the `spec-gaps.md` catalog proposes Gherkin for behaviours the live
-  target exhibits but `specs/**` does not yet cover. On promotion these proposals seed `specs-maker`
+  target exhibits but `specs/**` does not yet cover. During execution these proposals seed `specs-maker`
   scenario work and the Specs & Gherkin Completeness coverage steps.
 - **Feeds the `swe-*-dev` family** — developers consume `findings.md` to drive fixes.
 - **Delegates to `web-researcher`** — when the goal implies a standard the agent does not hold, it

@@ -33,7 +33,11 @@ list --porcelain`, then use the Delivery Branch Inventory and canonical mandator
    fails, retain it with evidence and escalate. Never remove on `partial`/`fail`. For a multi-unit
    plan, the shared worktree is removed once, after every delivery unit that used it has landed.
 
-**This requirement applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
+**This requirement applies to all newly created formal plans regardless of size** — pure-docs plans included.
+
+For the narrow authoring-worktree exception, replace the provisioning sentence with the pending
+status, active authoring worktree, user constraint, and Step 0 blocking obligation. Do not include
+placeholder identity or inventory values as though provisioning already happened.
 
 See [Worktree Path Convention](../worktree-path.md) for the full routing and directory structure specification.
 

@@ -23,25 +23,25 @@ Write the plan before starting implementation. This is not optional for non-triv
 
 Mark items complete as you go. An updated checklist shows what has been done and what remains. This matters when tasks are interrupted or when reporting progress.
 
-## Use Granular Task Items
+## Mirror Granular Delivery Actions
 
-Each item in a task list or plan checklist must represent one independently completable unit of work. This applies to `local-tmp/todo.md` plans and to any checklist an agent produces in delivery plans.
+Each harness task represents one concrete, independently verifiable delivery action. A formal
+plan's outcome section supplies shared context; every action checkbox—including separate RED,
+GREEN, and REFACTOR actions—maps to its own task.
 
-**Rule**: One item = one concrete action. Never bundle multiple steps behind a single checkbox.
+**Rule**: One task = one delivery checkbox. Split distinct actions; reject only mechanical
+keystroke tasks with no separate observation.
 
-**Bad** (too coarse):
+**Bad** (activity without proof):
 
 ```markdown
 - [ ] Add coverage merging with all formats and tests
 ```
 
-**Good** (granular):
+**Good** (one verifiable action):
 
 ```markdown
-- [ ] Create `internal/testcoverage/merge.go` with format-agnostic merge logic
-- [ ] Implement `CoverageMap` type for normalized per-line data
-- [ ] Add parsers to return `CoverageMap` from each format
-- [ ] Write unit tests for merge logic (same format, cross-format, overlapping)
+- [ ] Add cross-format failing cases to `merge_test.go` and record the expected RED diagnostic
 ```
 
 **Why this matters**:
@@ -50,7 +50,8 @@ Each item in a task list or plan checklist must represent one independently comp
 - Resume capability when context is compacted — a granular list shows exactly where execution stopped
 - Clear audit trail — coarse items leave ambiguity about what was actually done
 
-**Test for granularity**: Can you verify the item is done without completing anything else on the list? If the answer is no, split it.
+**Granularity test**: Can the action be ticked without silently completing another distinct action?
+If no, split it.
 
 ## Use the Task Tool for Multi-Step Work
 

@@ -51,7 +51,10 @@ declaration's schema before moving on.
 
 Measure the word count of every file this step touched. A single added table row can cross a
 ceiling, and the sanctioned remedy is always a split with an annotated index — never compression
-that drops substance, and never a raised threshold.
+that drops substance, and never a raised threshold. Before accepting the split, compare the
+normalized rule and its surviving surfaces field by field: obligation, audience qualifier,
+strength, scope, boundaries, exceptions, pass/violation conditions, and enforcement disposition
+must retain the same meaning. “Shorter” is not success when any field weakened or disappeared.
 
 ## Ledger
 

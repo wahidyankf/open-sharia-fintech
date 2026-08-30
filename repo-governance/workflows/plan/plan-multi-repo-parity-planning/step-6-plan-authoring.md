@@ -1,13 +1,13 @@
 ---
 title: "Step 6 — Plan Authoring"
-description: Authors the five-document plan per repo via plan-maker, with the eight-item handoff prompt including delivery-mode instructions.
+description: Authors the mature-core plan per repo via plan-maker, with the required handoff prompt including delivery-mode instructions.
 when_to_use: Use when authoring each repo's plan after both grills close, to build the plan-maker handoff correctly.
 ---
 
 # Step 6 — Plan Authoring (One Plan Per Repo)
 
-Author a five-document plan (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`)
-in each target repo per the
+Author a mature-core plan (`README.md`, `brd.md`, `prd.md`, `delivery.md`, `learnings.md`, plus
+exactly one technical form: `tech-docs.md` or mapped `tech-docs/`) in each target repo per the
 [Plans Organization Convention](../../../conventions/structure/plans.md).
 
 **Stage-aware folder naming**:

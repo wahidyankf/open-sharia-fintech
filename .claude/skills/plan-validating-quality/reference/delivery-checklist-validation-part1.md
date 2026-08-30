@@ -2,21 +2,28 @@
 
 ## 4. Delivery Checklist Validation
 
-Steps executable, sequential, granular; validation/acceptance criteria specific and testable; git
+Outcome sections and granular action checklists executable, ordered, cohesive; validation/acceptance criteria specific and testable; git
 workflow specified. Named HARD RULEs (each validated in full detail by a later numbered rule/step
 noted below — this section is the summary layer):
+
+`delivery.md` is the primary execution surface for a junior engineer fresh from bootcamp with no
+professional work experience and no repository or stack context. If that reader must infer order,
+prerequisites, paths, commands, observations, recovery, or proof, flag the relevant action **HIGH**.
 
 - **TDD-shaped steps**: any code-shipping item needs a test-first step (Red→Green→Refactor). Missing
   failing-test step before implementation: **HIGH**. See
   [Test-Driven Development Convention](../../../../repo-governance/development/workflow/test-driven-development.md).
-- **TDD phase separation (HARD RULE)**: RED, GREEN, REFACTOR each their own `- [ ]` checkbox — a
-  combined checkbox is **HIGH**. See
+- **TDD evidence (HARD RULE)**: each code outcome section contains separate, detailed RED, GREEN,
+  and REFACTOR checkboxes with exact paths/symbols, commands, expected observations, evidence, and
+  final regression proof. Combined/missing cycle actions or vague detail are **HIGH**. See
   [TDD Shape for Delivery Checklists](../../../../repo-governance/development/workflow/test-driven-development/tdd-shape-for-delivery-checklists.md#tdd-shape-for-delivery-checklists).
-- **Non-code step format**: non-code steps (docs, config, governance) use
-  `[Action verb] [file] — acceptance: [outcome]`, not RED/GREEN/REFACTOR. Misapplied TDD shape:
+- **Non-code action format**: non-code outcome sections (docs, config, governance) use AC reference,
+  Input/Outcome/Proof, and one detailed checkbox per independently verifiable action, not
+  RED/GREEN/REFACTOR. Misapplied TDD shape:
   **MEDIUM**.
-- **Execution-grade clarity (HARD RULE)**: every checkbox names explicit file path(s), verbatim
-  shell command(s), and a concrete acceptance criterion — or has a valid same-document controlled
+- **Execution-grade clarity (HARD RULE)**: every section/checkbox is executable by a bootcamp
+  graduate with no professional or repository experience, with prerequisites, explicit
+  paths/symbols, copyable commands, expected observations, failure handling, and evidence—or has a valid same-document controlled
   runbook-reference binding for a finite cross-repository lifecycle procedure. Bare "implement
   X"/"set up Y" is **HIGH**.
   Full detail in `reference/12-rule11-execution-grade-clarity-validation.md` (Step 5e). See

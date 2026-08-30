@@ -34,3 +34,7 @@ lifecycle-evidence: {current-lifecycle-evidence}`
 - Below-threshold findings remain untouched
 - Delegated lifecycle predicates are never fixer work in this invocation
 - Applied fixes invalidate affected evidence; the fixer never reruns a delegated check to restore it
+- A word-budget finding permits progressive disclosure or an indexed split only. Before accepting
+  the fix, diff the original and surviving semantic fields: obligation, named audience, strength,
+  scope, boundaries, exceptions, pass/violation conditions, and enforcement disposition. Any
+  weakening, generalization, deletion, or new ambiguity is a failed fix and a HIGH domain finding.

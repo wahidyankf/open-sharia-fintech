@@ -47,8 +47,12 @@ For the worked route, see [Execute Plan from Backlog](../../../workflows/plan/pl
 ## Completing Work
 
 1. **Verify completion**: Ensure all deliverables and acceptance criteria met — for UI-bearing plans, this includes the production visual sign-off (rule 10 of the [User-Facing Delivery Hardening Convention](../../../development/quality/user-facing-delivery-hardening.md))
-2. **Add completion date prefix**: Rename folder from `in-progress/[identifier]/` to `done/YYYY-MM-DD__[identifier]/` using today's date (the completion date, not the original creation date)
-3. **Move folder**: Move renamed folder to `done/`
+2. **Resolve the completion date at execution time**: only after completion proof passes, run
+   `rtk date +%F`; record its repository-local output as `<completion-date>`. A prospective plan
+   uses this placeholder and never pre-fills an authoring or forecast date.
+3. **Add the resolved prefix and move**: rename
+   `in-progress/[identifier]/` to `done/<completion-date>__[identifier]/` via `rtk git mv`, using the
+   same resolved value in every index/reference.
 4. **Update index**: Update both `in-progress/README.md` and `done/README.md`
 5. **Git commit**: Commit the move with completion message
 6. **Archive**: Plan is now archived for historical reference

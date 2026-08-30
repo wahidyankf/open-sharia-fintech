@@ -12,9 +12,9 @@ capability-shaped sibling of rule 14's executor-tag validation.
    a changed path covered by a `vercel.json` (`git ls-files | grep 'vercel\.json$'`), a named
    `prod-*`/`stag-*` deploy branch, or a deployment agent for an in-scope app. A repository with no
    `vercel.json` at all makes every plan exempt — record the exemption, don't flag.
-2. **Availability declared** — a triggered plan's `tech-docs.md` states whether a Vercel MCP server is
-   available and what follows. Absent: **MEDIUM** (an executor can't tell an assumed capability from
-   an overlooked one).
+2. **Availability declared** — a triggered plan's chosen technical form states whether a Vercel MCP
+   server is available and what follows. For a directory form, the section lives in its README or a
+   companion that README maps. Absent: **MEDIUM**.
 3. **No step assumes a capability outside the boundary** — any `[AI]`-tagged step requiring billing/
    usage figures, an invoice, Spend Management, Observability settings, firewall/WAF rulesets, the
    compute-model setting, or domain/DNS configuration: **HIGH** — no tool provides these; the step

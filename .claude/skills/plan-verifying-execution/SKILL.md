@@ -43,6 +43,13 @@ post-execution repo state (git log, CI status, delivered files) — the finding 
 but the evidence source never does. **Blocking gates block archival unconditionally** — Knowledge
 Capture (Step 5h) and any CRITICAL finding halt archival regardless of how many other checks passed.
 
+Before pass, perform an end-to-end trace from scope and every canonical PRD acceptance criterion to
+delivery units, as-built code/docs/C4/rules, automated and manual proof, applicable schema migration/
+rollout/rollback evidence, recovery and deferred-item dispositions, and Knowledge Capture. Do not
+trust checked boxes alone. Any missing or unsupported row reopens execution at the earliest affected
+granular outcome-section checklist. Apply this contract prospectively; do not report migration findings against archived
+plans or the existing Rhino plan.
+
 ## Related
 
 `plan-validating-quality` (the authoring-time sibling methodology — Anti-Hallucination and

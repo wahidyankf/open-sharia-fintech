@@ -20,7 +20,8 @@ Continues [Diagrams in Plans](./diagrams-required.md).
 
 This section defines the "where appropriate" escape hatch for the extensive-diagram requirement above. Text-only is acceptable only when the plan is genuinely linear and trivially small — it touches no distinct architectural concern that a diagram would clarify:
 
-- Single-file README-only plans touching one file or one config value
+- Existing pre-contract single-file plans retained only for compatibility; new trivial changes do
+  not require a formal plan
 - Renames, copy edits, documentation fixes
 - Dependency bumps with no behavioural change
 

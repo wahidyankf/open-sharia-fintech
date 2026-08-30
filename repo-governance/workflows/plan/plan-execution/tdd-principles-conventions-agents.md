@@ -14,7 +14,7 @@ acceptance criteria in `prd.md` are the natural source of the first failing test
 
 **See**: [Test-Driven Development Convention](../../../development/workflow/test-driven-development.md) — in particular, the
 [TDD Shape for Delivery Checklists](../../../development/workflow/test-driven-development/tdd-shape-for-delivery-checklists.md#tdd-shape-for-delivery-checklists)
-section for the required RED/GREEN/REFACTOR three-substep template (explicit file path, verbatim command, acceptance criterion per substep).
+section for required separate, detailed RED/GREEN/REFACTOR checkboxes inside one outcome section.
 
 ## Principles Implemented/Respected
 

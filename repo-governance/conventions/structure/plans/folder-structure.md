@@ -28,7 +28,7 @@ plans/
 
 **ideas/** - Idea Briefs (Two-Pagers)
 
-- Contains **two-pagers**: shortened, promotable idea briefs — richer than a one-line todo, but NOT full five-document plans
+- Contains **two-pagers**: shortened, promotable idea briefs — richer than a one-line todo, but NOT mature-core formal plans
 - Each idea is one `<slug>.md` file; the folder has a `README.md` index
 - The first lifecycle stage: ripe two-pagers are promoted to `backlog/` as full plans (see [Ideas Folder (Two-Pagers)](./ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) below)
 

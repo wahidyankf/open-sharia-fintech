@@ -14,11 +14,11 @@ when_to_use: Use when writing or reviewing a plan's tech-docs.md File-Impact Ana
 
 # File-Impact Analysis Format (HARD RULE)
 
-Every substantive plan's `tech-docs.md` (or the Technical Approach section of a permitted
-single-file plan) MUST contain a `## File-Impact Analysis` whose primary view is one root-relative,
-annotated file tree. The tree is the scan-first source of truth for scope: a reviewer must be able
-to identify every planned path, its repository location, and its intended action without assembling
-information from prose bullets.
+Every substantive plan's selected technical form MUST contain a `## File-Impact Analysis` whose
+primary view is one root-relative, annotated file tree. In the directory form,
+`tech-docs/README.md` either owns the section or maps the companion that owns it. The tree is the
+scan-first source of truth for scope: a reviewer must identify every planned path, repository
+location, and intended action without assembling information from prose bullets.
 
 Use a fenced `text` block rooted at `.`. Annotate each leaf or bounded path family with its action:
 **[E]** edit, **[N]** new file/pattern, **[D]** delete, or **[G]** generated/regenerated. A `*`

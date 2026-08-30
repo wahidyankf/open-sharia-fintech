@@ -32,7 +32,7 @@ when_to_use: "Use when mapping a plan's surface to its required tester gate, or 
     of those two surfaces is **not thereby exempt** — if it still changes behavior a user or caller
     can reach (a CLI, a library, a hook, a CI workflow) it exercises that behavior through its own
     interface and records what was run; only a plan with no reachable behavioral delta at all is
-    exempt, and it states that exemption explicitly in `tech-docs.md`. These surfaces are meant to
+    exempt, and it states that exemption explicitly in the plan's chosen technical form. These surfaces are meant to
     agree — if this rule and the workflow mapping ever diverge, the workflow mapping is the one to
     fix.
 
