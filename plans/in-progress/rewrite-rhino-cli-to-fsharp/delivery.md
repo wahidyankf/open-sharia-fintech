@@ -15556,7 +15556,7 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 > Nothing in this phase is a gate. The numbers are the deliverable. A row where F# is worse is
 > written down exactly as plainly as a row where it is better.
 
-- [ ] [AI] **A1 — cold build**: `dotnet build <fsharp-source-root>/RhinoCli.Program`, where
+- [x] [AI] **A1 — cold build**: `dotnet build <fsharp-source-root>/RhinoCli.Program`, where
       `<fsharp-source-root>` is the path 9c recorded in `learnings.md`
       (`apps/rhino-cli/src-fsharp/` if the flatten was deferred, `apps/rhino-cli/src/` if it moved —
       never assume the former; in `ose-private`, resolved per 9c's rule by testing that repo's own
@@ -15564,28 +15564,28 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `/usr/bin/time -p`, asserting exit code 0 — acceptance: `test -d <fsharp-source-root>` passes
       before the build so a stale path fails loudly rather than silently, and elapsed seconds are
       written to the "after" column of `benchmark.md` row B1.
-- [ ] [AI] **A2 — publish build**, the one CI runs, in the mode selected at Phase 1, under
+- [x] [AI] **A2 — publish build**, the one CI runs, in the mode selected at Phase 1, under
       `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written to row B2, and
       the recorded exit code is 0.
-- [ ] [AI] **A3 — warm no-op build**: run the build twice **under `/usr/bin/time -p`**, record the
+- [x] [AI] **A3 — warm no-op build**: run the build twice **under `/usr/bin/time -p`**, record the
       second, asserting exit code 0 on both — acceptance: elapsed seconds written to row B3, and the
       recorded exit code is 0.
-- [ ] [AI] **A4 — edit-rebuild loop**: touch the deepest `.fs` file in `RhinoCli.Application` and
+- [x] [AI] **A4 — edit-rebuild loop**: touch the deepest `.fs` file in `RhinoCli.Application` and
       rebuild under `/usr/bin/time -p`, asserting exit code 0 — acceptance: elapsed seconds written
       to row B4, and the recorded exit code is 0.
-- [ ] [AI] **A5 — startup**: run the published binary's `--help` 50 times under `/usr/bin/time -p`,
+- [x] [AI] **A5 — startup**: run the published binary's `--help` 50 times under `/usr/bin/time -p`,
       asserting exit code 0 on **every** iteration without aborting the loop — acceptance: total wall
       time and derived mean milliseconds written to row B5.
-- [ ] [AI] **A6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
+- [x] [AI] **A6 — real hook cost**: run a full `.husky/pre-commit` under `/usr/bin/time -p` on a
       one-file change, asserting exit code 0, and count the `rhino-bin.sh` invocations — acceptance:
       elapsed seconds and invocation count written to row B6, and the recorded exit code is 0. Same
       rule as B6: an early-aborting hook is discarded, never recorded.
-- [ ] [AI] **A7 — CI critical path**: read the `build-rhino` job duration from the three most recent
+- [x] [AI] **A7 — CI critical path**: read the `build-rhino` job duration from the three most recent
       green `pr-quality-gate.yml` runs on `main` — acceptance: the three durations and their mean
       written to row B7.
-- [ ] [AI] **A8 — artifact size**: `ls -l` the published binary — acceptance: byte count written to
+- [x] [AI] **A8 — artifact size**: `ls -l` the published binary — acceptance: byte count written to
       row B8.
-- [ ] [AI] **Source size**: count F# code lines under `<fsharp-source-root>` (9c's recorded path —
+- [x] [AI] **Source size**: count F# code lines under `<fsharp-source-root>` (9c's recorded path —
       see A1 above) **excluding its `tests/` subdirectory**, using the same counting command shape
       recorded at Phase 0 (the Rust side counted `apps/rhino-cli/src` only) — acceptance: the count
       is non-zero (a zero count means `<fsharp-source-root>` resolved wrong, not that F# has no
@@ -15597,9 +15597,9 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       test code while the Rust figure sweeps none of its own. Excluding `src-fsharp/tests/` here is
       what keeps the two sides on comparable terms — it is not automatic from "the same command
       shape" alone.
-- [ ] [AI] Complete the whole-run picture: total wall time of one CI run before and after, taken
+- [x] [AI] Complete the whole-run picture: total wall time of one CI run before and after, taken
       from the same `gh run list` sample — acceptance: both figures in `benchmark.md`.
-- [ ] [AI] Write the verdict paragraph: for each of the nine rows, state better, worse, or
+- [x] [AI] Write the verdict paragraph: for each of the nine rows, state better, worse, or
       unchanged, with the absolute delta and not only the ratio — acceptance: every row has a
       one-line verdict and no row is omitted for being unflattering. **For any row whose Before value
       still carries `benchmark.md`'s `†` pre-removal marker** — expected to be none if Phase 1's
@@ -15607,13 +15607,13 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       **provisional** and state the confound explicitly (the delta mixes the language change with the
       tree-sitter removal), per `benchmark.md`'s own "Baseline provenance" instruction; do not write
       an unqualified verdict against a `†`-marked value.
-- [ ] [AI] Fold the finished comparison into `tech-docs.md` §Measured Baseline, replacing the
+- [x] [AI] Fold the finished comparison into `tech-docs.md` §Measured Baseline, replacing the
       pre-execution projections with the measured outcome and marking which projections were wrong —
       acceptance: no projection from the planning phase survives unlabelled.
-- [ ] [AI] Route the comparison to a durable home outside the plan folder, so the next
+- [x] [AI] Route the comparison to a durable home outside the plan folder, so the next
       language-change proposal starts from data rather than from argument — acceptance: the target
       file is named in `learnings.md` and the content lands there in this PR.
-- [ ] [AI] Produce the same measurements in `ose-private` — acceptance: the single-sourced
+- [x] [AI] Produce the same measurements in `ose-private` — acceptance: the single-sourced
       `benchmark.md` has a populated "after" column in its `ose-private` measurements table, and any
       figure that differs materially between the repos is called out rather than averaged.
 
@@ -15621,18 +15621,18 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 
 > All checks below must pass before starting Phase 11.
 
-- [ ] [AI] The single-sourced `benchmark.md` has a non-placeholder "after" value for all eight rows
+- [x] [AI] The single-sourced `benchmark.md` has a non-placeholder "after" value for all eight rows
       B1-B8 plus source size, in both its `ose-public` and its `ose-private` measurements table —
       acceptance: `/usr/bin/grep -o 'TBD' benchmark.md | wc -l` returns **0**, down from the 18 the
       Phase 0 gate asserted — both bounds checked, so neither a never-seeded file nor a
       partially-filled one passes.
-- [ ] [AI] Every row carries a better/worse/unchanged verdict with an absolute delta.
-- [ ] [AI] If Phase 1's B2-B8 re-measurement was skipped and recorded as such in `learnings.md`, the
+- [x] [AI] Every row carries a better/worse/unchanged verdict with an absolute delta.
+- [x] [AI] If Phase 1's B2-B8 re-measurement was skipped and recorded as such in `learnings.md`, the
       rows that entry names carry a verdict of "provisional" here rather than a plain
       better/worse/unchanged — acceptance: **either** `learnings.md` has no such skip entry, **or**
       every row it names reads "provisional" in this comparison record. A confounded delta reported
       as clean is the failure this check exists to catch.
-- [ ] [AI] The comparison exists at a durable path outside `plans/`.
+- [x] [AI] The comparison exists at a durable path outside `plans/`.
 
 > **Pause Safety**: measurement only; no code changed. Safe to stop. To resume: re-read
 > `benchmark.md`.

@@ -41,31 +41,31 @@ green post-merge `pr-quality-gate.yml` runs exist — see the dated `learnings.m
 
 ## Measurements — ose-public
 
-| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
-| ---- | --------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                  | 17.59 s       | TBD        | —       |
-| B2   | Gate-profile build          | 21.09 s       | TBD        | —       |
-| B3   | Warm no-op build            | 0.18 s        | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.37 s        | TBD        | —       |
-| B5   | Startup, mean of 50         | 7.47 ms       | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 14.24 s       | TBD        | —       |
-| B7   | CI critical path, build job | 70.67 s †     | TBD        | —       |
-| B8   | Artifact size               | 4,489,568 B   | TBD        | —       |
-| Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
+| Row  | Metric                      | Before (Rust) | After (F#)                                     | Verdict                                            |
+| ---- | --------------------------- | ------------- | ---------------------------------------------- | -------------------------------------------------- |
+| B1   | Cold build                  | 17.59 s       | 10.38 s                                        | **better**, Δ -7.21 s                              |
+| B2   | Gate-profile build          | 21.09 s       | 10.82 s                                        | **better**, Δ -10.27 s                             |
+| B3   | Warm no-op build            | 0.18 s        | 1.15 s                                         | **unchanged** (within noise floor), raw Δ +0.97 s  |
+| B4   | Edit-rebuild loop           | 0.37 s        | 10.37 s                                        | **worse**, Δ +10.00 s                              |
+| B5   | Startup, mean of 50         | 7.47 ms       | 71.2 ms                                        | **worse**, Δ +63.73 ms (~9.5x)                     |
+| B6   | Full `.husky/pre-commit`    | 14.24 s       | 4.19 s                                         | **better**, Δ -10.05 s                             |
+| B7   | CI critical path, build job | 70.67 s †     | 158.00 s (mean)                                | **provisional** — Before still `†`, raw Δ +87.33 s |
+| B8   | Artifact size               | 4,489,568 B   | 124,712 B launcher / 92,996,313 B full payload | **worse** — true footprint ~20.7x larger           |
+| Size | Source lines (src/ only)    | 49,460        | 19,710                                         | **better**, Δ -29,750 lines (0.40x)                |
 
 ## Measurements — ose-private
 
-| Row  | Metric                      | Before (Rust) | After (F#) | Verdict |
-| ---- | --------------------------- | ------------- | ---------- | ------- |
-| B1   | Cold build                  | 16.00 s       | TBD        | —       |
-| B2   | Gate-profile build          | 19.27 s       | TBD        | —       |
-| B3   | Warm no-op build            | 0.16 s        | TBD        | —       |
-| B4   | Edit-rebuild loop           | 0.37 s        | TBD        | —       |
-| B5   | Startup, mean of 50         | 8.35 ms       | TBD        | —       |
-| B6   | Full `.husky/pre-commit`    | 13.18 s       | TBD        | —       |
-| B7   | CI critical path, build job | 88.67 s †     | TBD        | —       |
-| B8   | Artifact size               | 4,489,568 B   | TBD        | —       |
-| Size | Source lines (src/ only)    | 49,460        | TBD        | —       |
+| Row  | Metric                      | Before (Rust) | After (F#)                                     | Verdict                                             |
+| ---- | --------------------------- | ------------- | ---------------------------------------------- | --------------------------------------------------- |
+| B1   | Cold build                  | 16.00 s       | 9.33 s                                         | **better**, Δ -6.67 s                               |
+| B2   | Gate-profile build          | 19.27 s       | 10.35 s                                        | **better**, Δ -8.92 s                               |
+| B3   | Warm no-op build            | 0.16 s        | 1.13 s                                         | **unchanged** (within noise floor), raw Δ +0.97 s   |
+| B4   | Edit-rebuild loop           | 0.37 s        | 9.70 s                                         | **worse**, Δ +9.33 s                                |
+| B5   | Startup, mean of 50         | 8.35 ms       | 58.0 ms                                        | **worse**, Δ +49.65 ms (~6.9x)                      |
+| B6   | Full `.husky/pre-commit`    | 13.18 s       | 3.13 s                                         | **better**, Δ -10.05 s                              |
+| B7   | CI critical path, build job | 88.67 s †     | 762.00 s (mean)                                | **provisional** — Before still `†`, raw Δ +673.33 s |
+| B8   | Artifact size               | 4,489,568 B   | 124,712 B launcher / 92,996,325 B full payload | **worse** — true footprint ~20.7x larger            |
+| Size | Source lines (src/ only)    | 49,460        | 19,710                                         | **better**, Δ -29,750 lines (0.40x)                 |
 
 `†` — pre-removal baseline (79 crates, tree-sitter still linked), retained only for B7; see
 "Baseline provenance" above. All other rows are post-removal, `†`-free figures.
@@ -356,6 +356,166 @@ timed invocation asserting exit code 0.
   repositories, equal in size to each other and 48 bytes smaller than the pre-removal 4,489,616 —
   consistent with removing an unused, unlinked dependency having a negligible effect on the final
   binary.
+
+## Phase 10 "After" measurements — ose-public
+
+All commands below assert exit code 0; every run succeeded on the first attempt (no retries, no
+discarded runs). `<fsharp-source-root>` resolved to `apps/rhino-cli/src/` (9c's flatten, per
+`learnings.md`). Timing harness is `/usr/bin/time -p`, matching A1-A6's literal instruction in
+`delivery.md` rather than the Before-side Python `time.time()` convention — a deliberate,
+uniform-across-rows simplification for Phase 10, noted here because it is a real methodology
+difference from how B5 was originally captured.
+
+- **A1 (B1, cold build)** — `dotnet build apps/rhino-cli/src/RhinoCli.Program` after removing every
+  `obj/`/`bin/` under `apps/rhino-cli/src/` (including `tests/`). **10.38 s.**
+- **A2 (B2, publish build)** — the `build` Nx target's actual command,
+  `dotnet publish apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -c Release
+--self-contained true --use-current-runtime -o apps/rhino-cli/src/dist`, run cold (fresh
+  `obj:`/`bin:`/`dist:` clear) immediately after A1. **10.82 s.**
+- **A3 (B3, warm no-op build)** — the same A2 command run twice against the now-warm `obj/`; the
+  second run is the figure. Run 1: 1.11 s. Run 2 (recorded): **1.15 s.**
+- **A4 (B4, edit-rebuild loop)** — `touch` on `RhinoCli.Application/src/Glossary.fs` (last file in
+  the project's `<Compile>` order — F#'s strict top-to-bottom compile order makes every file within
+  one `.fsproj` part of a single translation unit regardless of directory depth, so `Glossary.fs`
+  was chosen as the most-downstream file rather than a directory-depth reading, which is vacuous
+  here since `RhinoCli.Application/src` is flat), then `dotnet build
+apps/rhino-cli/src/RhinoCli.Program`. **10.37 s** — essentially identical to A1's cold-build figure,
+  because F# has no per-file incremental compilation the way `rustc`'s incremental cache does:
+  touching any one file recompiles the whole `.fsproj`, and touching a `RhinoCli.Application` file
+  also forces `RhinoCli.Cli` and `RhinoCli.Program` to relink. This is a genuine, structural
+  regression versus Rust's B4 baseline, not a measurement artifact.
+- **A5 (B5, startup)** — 50 invocations of `apps/rhino-cli/src/dist/rhino-cli-fsharp --help` in a
+  loop, exit code checked every iteration, zero failures. Total **3.56 s**, mean **71.2 ms**.
+- **A6 (B6, real hook cost)** — one full `.husky/pre-commit` against the pinned staged set (a new
+  `apps/rhino-cli/bench-probe.md`, one heading + one paragraph), staged, hook run, file removed,
+  index reset (`git status --porcelain` empty before and after). Plain timed run: **4.19 s**, exit 0. A second, instrumented run (`RHINO_CLI_FSHARP_BIN` pointed at a counting wrapper around the
+  same `dist/rhino-cli-fsharp` binary, per the Before-side's own precedent) recorded **5** rhino-cli
+  invocations — identical to the Before figure's own instrumented count.
+- **A7 (B7, CI critical path)** — `build-rhino` job duration from the three most recent green
+  `pr-quality-gate.yml` push runs on `main` as of this measurement: 154 s (run 33293545881), 178 s
+  (run 33288863484), 142 s (run 33282440776), mean **158.00 s**. Per the Phase 10 Gate's own rule,
+  this row's Before value (70.67 s) still carries the pre-tree-sitter-removal `†` (see `learnings.md`
+  "2026-08-26 — Phase 1: B7 re-measurement documented skip"), so this row's verdict is
+  **provisional**, not a plain better/worse — the delta mixes the Rust→F# language change with the
+  tree-sitter dependency removal, and (favorably, not a confound in the language-change direction)
+  the fact that `build-rhino` no longer builds Rust at all, only F#.
+- **A8 (B8, artifact size)** — `apps/rhino-cli/src/dist/rhino-cli-fsharp` itself is **124,712**
+  bytes — smaller than Rust's 4,489,568-byte static binary, but comparing the two figures directly
+  would be misleading: unlike Rust's binary, this launcher is non-functional without its
+  self-contained publish payload alongside it (`.dll`s, `libcoreclr.dylib`, ICU/globalization data,
+  etc.), which totals **92,996,313** bytes (~89 MB) across the `dist/` directory. The true deployable
+  footprint is therefore ~20.7x larger than Rust's single static binary, not smaller — recorded as
+  **worse**, with both figures kept so neither the flattering nor the honest number is silently
+  dropped.
+- **Source size** — identical command shape to the Before side
+  (`find apps/rhino-cli/src -name '*.fs' -not -path '*/tests/*' ... | xargs cat | awk ... | wc -l`,
+  same non-blank/non-comment filter, same `-not -path` exclusions swapped to F#'s test-project
+  layout), walking `apps/rhino-cli/src/*/src/` only: **19,710** non-blank, non-comment lines across
+  **24** `.fs` files — 0.40x the Rust figure (49,460 lines / 189 files).
+- **Whole-run CI wall time** — one Before run (32810578748, the most-recent of B7's own
+  already-cited three-run Before sample): created-to-updated **398 s** (6 m 38 s). One After run
+  (33293545881, the most-recent of A7's three-run sample above): created-to-updated **388 s**
+  (6 m 28 s) — picked from the same already-fetched samples per the acceptance clause's "same `gh
+run list` sample" wording, rather than a fresh query. The After sample's other two runs spanned
+  409 s and 1,114 s, a 2.9x range consistent with this repository's already-documented self-hosted
+  runner noise (see the B7-after-Phase-2 note above), so the single-run comparison here is read as
+  roughly unchanged rather than a confident directional signal.
+
+### Verdict — ose-public
+
+- **B1 (cold build): better.** 10.38 s vs. 17.59 s, Δ -7.21 s. A plain `dotnet build` beats a plain
+  `cargo build` here.
+- **B2 (publish build, the one CI runs): better.** 10.82 s vs. 21.09 s, Δ -10.27 s.
+- **B3 (warm no-op build): unchanged.** 1.15 s vs. 0.18 s, raw Δ +0.97 s — smaller than this row's
+  own previously-observed run-to-run spread (0.31 s → 0.18 s, a 42% swing) and within the ~1-2 s
+  cross-repo noise floor `benchmark.md` already established, so not read as a directional result.
+- **B4 (edit-rebuild loop): worse.** 10.37 s vs. 0.37 s, Δ +10.00 s (~28x). F#/.NET has no per-file
+  incremental compilation within one `.fsproj`; every edit anywhere in `RhinoCli.Application`
+  recompiles the whole project and relinks everything downstream. This is the plan's clearest
+  "F# is worse" row.
+- **B5 (startup, mean of 50): worse.** 71.2 ms vs. 7.47 ms, Δ +63.73 ms (~9.5x). Self-contained
+  non-AOT .NET startup cost, exactly as the Phase 1 publish-mode spike predicted when NativeAOT was
+  ruled out for correctness reasons (see `benchmark.md`'s own Phase 1 spike table above).
+- **B6 (full `.husky/pre-commit`): better.** 4.19 s vs. 14.24 s, Δ -10.05 s. All nine namespaces now
+  route through one already-built self-contained F# binary with no per-invocation JIT/dotnet-run
+  overhead, consistent with every interim wave measurement recorded above staying well under the
+  Rust baseline.
+- **B7 (CI critical path): provisional**, per the Phase 10 Gate's own rule — Before still carries
+  `†`. Raw reading: 158.00 s vs. 70.67 s, Δ +87.33 s (~2.24x), but the confound (tree-sitter removal
+  bundled with the language change, and `build-rhino`'s own responsibilities changing across
+  phases) makes an unqualified verdict unsound.
+- **B8 (artifact size): worse.** True deployable footprint 92,996,313 B vs. 4,489,568 B, ~20.7x
+  larger. The 124,712-byte launcher-only figure is smaller than Rust's binary but is not a
+  comparable measurement — see the A8 note above.
+- **Source size: better.** 19,710 lines vs. 49,460 lines, Δ -29,750 lines (0.40x) — F# needed
+  roughly 60% fewer non-blank, non-comment source lines for the same behavior.
+- **Whole-run CI wall time: roughly unchanged.** 388 s vs. 398 s on the single sampled pair, well
+  within this repository's documented self-hosted-runner noise band.
+
+## Phase 10 "After" measurements — ose-private
+
+Same commands as the ose-public section above, run in that repository's own worktree on branch
+`rhino-fsharp-10-benchmark-measure` (off `origin/main`). `<fsharp-source-root>` also resolved to
+`apps/rhino-cli/src/` (9c ran identically in both repositories). All runs asserted exit code 0 on
+the first attempt.
+
+- **A1 (B1):** cold `dotnet build`, cleared `obj/`/`bin/`. **9.33 s.**
+- **A2 (B2):** cold publish build (same command as ose-public's A2). **10.35 s.**
+- **A3 (B3):** same publish command run twice, warm; run 1: 1.12 s, run 2 (recorded): **1.13 s.**
+- **A4 (B4):** touch `RhinoCli.Application/src/Glossary.fs` (same file, same last-in-`<Compile>`-order
+  rationale as ose-public), rebuild. **9.70 s** — again essentially a full cold build, confirming the
+  ose-public finding is not repository-specific.
+- **A5 (B5):** 50x `--help`, zero failures. Total **2.90 s**, mean **58.0 ms**.
+- **A6 (B6):** plain timed `.husky/pre-commit` run on the pinned probe: **3.13 s**, exit 0, tree
+  restored exactly. Instrumented run (counting wrapper): **5** rhino-cli invocations — identical
+  count to ose-public.
+- **A7 (B7):** `build-rhino` job duration from the three most recent green `pr-quality-gate.yml` push
+  runs on `main`: 725 s (run 33291341787), 730 s (run 33286617645), 831 s (run 33237644795), mean
+  **762.00 s**. Provisional for the same reason as ose-public's B7 (Before still carries `†`).
+  **Materially different from ose-public's 158.00 s mean** — not averaged together, per this
+  repository's own already-documented self-hosted-runner artifact-upload variance (see the
+  "B7 after Phase 2" note above, which recorded an 831 s/391 s/819 s spread on this exact runner
+  pool well before this rewrite finished). One of this sample's three source runs
+  (33237644795) is the identical run already cited there, still reading 831 s — confirming this is
+  ongoing runner-pool noise, not a new regression introduced by this measurement.
+- **A8 (B8):** launcher **124,712** bytes (byte-identical to ose-public, as the parity manifest
+  requires); full self-contained payload **92,996,325** bytes (~89 MB) — 12 bytes different from
+  ose-public's 92,996,313, an immaterial difference (embedded build-path strings), not a parity
+  violation of the tracked-source manifest.
+- **Source size:** **19,710** lines across **24** files — byte-identical F# source to ose-public, as
+  expected.
+
+**A live break/restore incident during this measurement window, not part of the measured figures**:
+while gathering A7's sample, the push-triggered `pr-quality-gate.yml` run for the just-merged PR #127
+(run 33292968267, `build-rhino` job) was found already failed with `##[error]Upload progress
+stalled` inside `actions/upload-artifact@v4` — the `dotnet publish` itself completed and NX reported
+success before the stall; only the artifact upload hung for roughly 9 minutes. This is the confirmed
+transient-external-failure class this plan's constraints allow rerunning without a code change,
+matching this runner pool's already-documented flakiness. Reran via `gh run rerun 33292968267
+--failed`; excluded from A7's three-run sample regardless (it was not among the three most recent
+green runs at measurement time).
+
+### Verdict — ose-private
+
+- **B1: better.** 9.33 s vs. 16.00 s, Δ -6.67 s.
+- **B2: better.** 10.35 s vs. 19.27 s, Δ -8.92 s.
+- **B3: unchanged.** 1.13 s vs. 0.16 s, raw Δ +0.97 s — within the same noise floor as ose-public.
+- **B4: worse.** 9.70 s vs. 0.37 s, Δ +9.33 s (~26x) — confirms ose-public's B4 finding is structural
+  to F#'s lack of per-file incremental compilation, not a one-repository artifact.
+- **B5: worse.** 58.0 ms vs. 8.35 ms, Δ +49.65 ms (~6.9x).
+- **B6: better.** 3.13 s vs. 13.18 s, Δ -10.05 s.
+- **B7: provisional**, per the same Before-`†` rule as ose-public. Raw reading 762.00 s vs. 88.67 s
+  is not read as a clean verdict, and this row's own After figure is not comparable to ose-public's
+  either — both repositories' B7 numbers are dominated by their own self-hosted-runner behavior, not
+  by the language.
+- **B8: worse.** 92,996,325 B vs. 4,489,568 B, ~20.7x, same reasoning as ose-public.
+- **Source size: better.** 19,710 vs. 49,460, Δ -29,750 lines (0.40x) — identical to ose-public.
+
+**Cross-repo material difference, called out rather than averaged**: B7's After figure is 158.00 s
+in `ose-public` versus 762.00 s in `ose-private` — a ~4.8x gap driven entirely by `ose-private`'s
+self-hosted-runner artifact-upload variance (already documented before this rewrite, reconfirmed by
+the identical-run cross-check above), not by anything language-related. Every other row's two
+repositories agree to within the noise floor already established on this page.
 
 ## Phase 1 publish-mode spike — decision
 

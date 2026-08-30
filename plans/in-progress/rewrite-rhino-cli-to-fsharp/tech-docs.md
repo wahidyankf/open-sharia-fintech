@@ -1,5 +1,41 @@
 # Technical Documentation — rhino-cli F# port
 
+## Phase 10 — Measured Outcome (2026-08-30)
+
+The table below **supersedes every row in the "Measured Baseline" projection table beneath it**.
+That table was built from a `crane-cli` spike (3,770 LOC, a prototype, not the real port) measured
+2026-08-25; the real port that actually shipped is 19,710 F# lines across five projects. Full
+commands, both repositories' figures, and the per-row verdict rationale live in
+[`benchmark.md`](./benchmark.md); this table exists to mark, per row, which spike-era projection
+turned out right, wrong, or unmeasurable at spike time. `ose-public` figures shown; `ose-private`'s
+are in `benchmark.md` and track the same directions.
+
+| Original projected axis                  | Projection (spike)                      | Phase 10 actual (real port)                                                      | Verdict                                                                                                                                                                                               |
+| ---------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source size measured                     | 3,770 lines (prototype)                 | 19,710 lines (real port)                                                         | **not comparable to the projection** — the spike was never feature-complete; see B-Size below                                                                                                         |
+| Dependency compile cost                  | ~0, F# decisive win                     | Gate build 10.82 s vs. Rust 21.09 s (B2)                                         | **confirmed** — F# still wins decisively once first-party code dominates                                                                                                                              |
+| Marginal compile throughput, first-party | Rust ~4x faster per line                | not re-measured in LOC/s form at Phase 10                                        | **not re-validated** — no equivalent figure was captured this phase                                                                                                                                   |
+| Startup, per invocation                  | ~9-10x slower (F#)                      | 71.2 ms vs. 7.47 ms, ~9.5x slower (B5)                                           | **confirmed** — ratio landed almost exactly where the spike projected                                                                                                                                 |
+| Startup, aggregated per run              | negligible Rust win                     | full hook **faster** for F#: 4.19 s vs. 14.24 s (B6)                             | **wrong** — once the whole Rust toolchain was retired (not just per-invocation startup), the real full-hook cost fell, not rose, because most of the hook's cost was never rhino-cli invocation count |
+| Warm no-op build                         | F# wins by 0.9 s                        | 1.15 s vs. 0.18 s, raw Δ +0.97 s (B3)                                            | **wrong** — the real delta sits inside this page's own documented noise floor; recorded as unchanged, not a clear F# win                                                                              |
+| CI artifact, moved 9x per run            | Rust wins weakly (4.5 MB vs. 45-128 MB) | 92,996,313 B (~89 MB) full payload vs. 4,489,568 B (B8)                          | **confirmed**, and starker than projected — ~20.7x, at the upper end of the projected range                                                                                                           |
+| Cold build, whole project                | n/c (17.5x size gap)                    | 10.38 s vs. 17.59 s (B1) — now comparable, 2.5x size gap                         | **now comparable, and F# wins** — the real port's size gap narrowed enough to score                                                                                                                   |
+| Rebuild after one source touch           | n/c (17.5x size gap)                    | 10.37 s vs. 0.37 s, ~28x worse (B4)                                              | **now comparable, and this is the plan's worst regression** — the projection's `n/c` hedge could not have surfaced this; F# has no per-file incremental compilation within one `.fsproj`              |
+| Test compile, warm deps                  | not measured                            | not measured at Phase 10 either                                                  | **still not measured** — carried forward as a genuine gap, not silently dropped                                                                                                                       |
+| Build directory after a full build       | not scored (shared cache)               | `dist/` payload 92,996,313 B, in the range the CI-artifact row already projected | **roughly confirmed** by the adjacent artifact figure                                                                                                                                                 |
+
+**The single biggest miss**: the two rows marked `n/c` because the spike was too small to compare
+hid the plan's most severe real finding — B4's ~28x edit-rebuild regression. A projection that
+declines to score a row because the available prototype is too small is not the same as that row
+being safe; Phase 0/1's own honesty about `n/c` meaning "no verdict possible yet," not "fine," held
+up exactly as documented once the real port existed to measure.
+
+**The two biggest wins**: B1/B2 cold and gate-profile builds beat Rust outright once real first-party
+code dominated the build (matching the dependency-compile-cost row's original logic), and B6's full
+pre-commit hook came in faster for F# than for Rust — a genuine surprise the aggregated-startup
+projection got backwards, because it modeled only per-invocation overhead and could not anticipate
+that retiring the Rust toolchain would remove other, larger costs from the hook.
+
 ## Measured Baseline
 
 Recorded 2026-08-25 on an Apple-silicon workstation, `rustc 1.95.0` / `cargo 1.95.0` /

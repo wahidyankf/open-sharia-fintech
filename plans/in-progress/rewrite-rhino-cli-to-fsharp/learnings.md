@@ -1228,3 +1228,80 @@ failure, not a soft warning. Reran with `/p:Threshold=90` → passes again, same
 
 All three failure signatures are the actual gate mechanism firing (rustfmt's real diff, mix
 format's real exit code, coverlet.msbuild's real threshold check) — not test-harness artifacts.
+
+## 2026-08-30 — Phase 10: "After" measurements and the durable comparison home
+
+All nine `benchmark.md` rows measured for `ose-public` (A1-A8 plus source size), on branch
+`rhino-fsharp-10-after-benchmark` off `origin/main`. Full commands and per-row rationale are in
+`benchmark.md`'s new "Phase 10 'After' measurements — ose-public" section; only the notable findings
+are recorded here.
+
+**F# has no per-file incremental compilation within one `.fsproj`.** A4 (edit-rebuild loop, touching
+`RhinoCli.Application/src/Glossary.fs`) measured 10.37 s — statistically identical to A1's cold-build
+figure (10.38 s). Touching any single source file recompiles the whole project and relinks every
+downstream project. This is the plan's clearest and most severe "F# is worse" finding (~28x
+regression vs. Rust's 0.37 s), and it could not have been predicted from `tech-docs.md`'s original
+spike-era projection, which marked the equivalent row `n/c` (not comparable) because the `crane-cli`
+prototype was too small to measure meaningfully.
+
+**Startup regression landed almost exactly where the Phase 1 spike predicted**: A5 measured 71.2 ms
+mean vs. Rust's 7.47 ms (~9.5x), matching the spike's ~9-10x projection closely — one of the few
+projections that held up unchanged.
+
+**The full pre-commit hook got faster, not slower, for F#** (A6: 4.19 s vs. Rust's 14.24 s) — the
+opposite of what the spike-era "aggregated startup" row predicted. Once the entire Rust toolchain
+was retired (not just per-invocation dispatch cost), most of the hook's own cost turned out to be
+unrelated to rhino-cli invocation count at all, so the net effect was a win.
+
+**Artifact/deployable footprint is a genuine, large regression** (A8): the published launcher alone
+is 124,712 bytes (smaller than Rust's 4,489,568-byte static binary), but it is non-functional
+without its self-contained payload — 92,996,313 bytes (~89 MB) total. Recorded as **worse**, ~20.7x,
+using the full payload as the honest figure rather than the flattering launcher-only one.
+
+**B7 (CI critical path) is recorded as `provisional`**, not a plain verdict, per the Phase 10 Gate's
+own rule: its Before figure (70.67 s) still carries the pre-tree-sitter-removal `†` documented in
+this file's 2026-08-26 entry above, so the raw +87.33 s delta mixes the language change with an
+unrelated dependency removal and `build-rhino`'s own changed responsibilities across phases.
+
+**Durable comparison home**: the finished, distilled comparison (not the full measurement log, which
+stays in this plan's `benchmark.md`) is recorded at
+`docs/explanation/software-engineering/programming-languages/rhino-cli-rust-to-fsharp-benchmark.md`,
+linked from that directory's own `README.md` under "Language Selection Criteria" — so the next
+language-change proposal starts from data. Landed in this same PR
+(`rhino-fsharp-10-after-benchmark`).
+
+`tech-docs.md`'s original "Measured Baseline" projection table (built from an early `crane-cli`
+spike, not the real port) is left in place as a historical record but is now prefixed with a new
+"Phase 10 — Measured Outcome" section that marks every one of its rows as confirmed, wrong, or
+not-re-validated, per the Phase 10 acceptance clause that no projection may survive unlabelled.
+
+## 2026-08-30 — Phase 10: "after" measurements in ose-private, and a live CI-stall incident
+
+Same nine rows measured in `ose-private` (branch `rhino-fsharp-10-benchmark-measure`, off
+`origin/main`, no commits — this repo carries no `benchmark.md` of its own, so all figures were
+written directly into `ose-public`'s single-sourced `benchmark.md`). Every row's direction matches
+`ose-public`'s: B1/B2/B6/Size better, B3 unchanged (noise), B4/B5/B8 worse, B7 provisional. B4
+(edit-rebuild loop) reproduced at 9.70 s (vs. Rust's 0.37 s), confirming F#'s lack of per-file
+incremental compilation is structural, not a one-repository artifact.
+
+**B7 differs materially between repositories and is called out, not averaged**: 158.00 s
+(`ose-public`) vs. 762.00 s (`ose-private`). `ose-private`'s figure is dominated by that
+repository's already-documented self-hosted-runner artifact-upload variance — one of the three
+sampled runs (33237644795) is the exact same run this file's Phase-2-era B7 re-measurement already
+cited at 831 s, and it still reads 831 s now, confirming ongoing runner-pool noise rather than a new
+regression.
+
+**Incidental finding, not part of the measured figures**: while sampling A7's three most-recent-green
+runs, the push-triggered CI run for the just-merged PR #127 (run 33292968267) was found already
+`failure`d, root-caused to `##[error]Upload progress stalled` inside `actions/upload-artifact@v4` on
+the `Build rhino-cli (gate profile)` job — the `dotnet publish` itself had already completed and NX
+reported success before the stall; only the subsequent artifact upload hung (~9 minutes) before the
+job was marked failed. This is the confirmed-transient-external-failure class this plan's standing
+constraints permit rerunning without any code change. Reran via `gh run rerun 33292968267 --failed`
+to restore `main`'s CI status; excluded the run from A7's sample regardless, since it was not among
+the three most recent green runs at measurement time.
+
+Durable comparison home (`docs/explanation/software-engineering/programming-languages/
+rhino-cli-rust-to-fsharp-benchmark.md`, named in the 2026-08-30 entry above) is `ose-public`-only
+per this plan's single-sourcing convention; it references both repositories' figures from
+`benchmark.md` rather than duplicating a second copy.
