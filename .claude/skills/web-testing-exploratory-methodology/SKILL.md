@@ -30,7 +30,7 @@ truth.
 - `reference/10-defect-anatomy-and-severity.md` — the full `EWT-###` defect anatomy and the
   severity/priority scales.
 - `reference/11-output-modes-overview.md` and `reference/12-output-mode-plan.md` — the output-mode
-  selection table and the default `plan` mode's document set.
+  selection table and the explicitly authorized `plan` mode's document set.
 - `reference/13-output-modes-delivery-localtmp-and-procedure.md` — the `delivery` and `local-tmp`
   modes, and the 10-step procedure summary.
 - `reference/14-quality-guidelines-and-constraints.md` — quality guidelines and hard constraints.
@@ -47,6 +47,6 @@ behaviour becomes a `spec-gaps.md` proposal.
 ## Related
 
 `web-usability-tester` (the spec-blind first-time-comprehension sibling), `web-design-tester` (the
-design-aware third lens of the live-site advocate triad), `plan-creating-project-plans` (backlog plan
-structure), `plan-writing-gherkin-criteria` (Gherkin ACs and `spec-gaps.md` scenarios),
+design-aware third lens of the live-site advocate triad), `plan-creating-project-plans` (explicit
+plan-mode structure), `plan-writing-gherkin-criteria` (Gherkin ACs and `spec-gaps.md` scenarios),
 `docs-applying-content-quality`.

@@ -25,7 +25,8 @@ The orchestrator (or user) provides:
    - **Ground-truth pointers** — a plan folder, `assets/` mockups, or design-token/theme files to test
      the live page against. Even when none are named, the agent reads the plan `assets/` mockups and the
      design tokens/theme by default — see _The Five Ground-Truth Sources_.
-4. **Output mode & destination** — `plan` (default) | `delivery` | `local-tmp`; see _Output Modes_.
+4. **Output mode & destination** — `local-tmp` (default) | `plan` | `delivery`; `plan` and
+   `delivery` require explicit selection and destination; see _Output Modes_.
    With `delivery`, also pass a **plan-path** (the existing plan whose `delivery.md` receives the
    findings); with `plan`, optionally pass `plan-stage: in-progress` to file directly into
    `plans/in-progress/`.

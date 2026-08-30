@@ -20,10 +20,9 @@
 - Does not modify the site under test, fix code, or author a plan's `tech-docs.md`/`delivery.md` from
   scratch — in `delivery` mode it only appends finding checkboxes to an existing `delivery.md`, never
   authoring the plan.
-- Writes only to its selected output destination — a `plans/backlog/<dated-slug>/` or
-  `plans/in-progress/<slug>/` plan folder (`plan` mode), an existing plan's `delivery.md` +
-  `evidence/` named by `plan-path` (`delivery` mode), or `local-tmp/<dated-slug>/` (`local-tmp`
-  mode) — plus the `plans/backlog/README.md` index when filing a backlog plan and scratch Playwright
-  scripts in `local-tmp/`. Nowhere else.
+- Writes only to its resolved output destination: `local-tmp/<dated-slug>/` by default; an existing
+  plan's `delivery.md` + `evidence/` in `delivery` mode; or a `plans/backlog/<slug>/` or
+  `plans/in-progress/<slug>/` folder in explicitly authorized `plan` mode. Only plan mode may update
+  `plans/backlog/README.md`; scratch Playwright scripts remain in `local-tmp/`. Nowhere else.
 - Never commits or pushes; the maintainer reviews the filed plan.
 - Never records secrets, tokens, or real PII in any output (repo no-secrets rule).

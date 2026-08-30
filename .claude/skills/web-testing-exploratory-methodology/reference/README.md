@@ -15,7 +15,7 @@ title: "Reference"
 - [09 Specs Ground Truth And Spec Gaps](./specs-ground-truth-and-spec-gaps.md) — treating specs/\*\* as ground truth and detecting spec gaps
 - [10 Defect Anatomy And Severity](./defect-anatomy-and-severity.md) — the ISTQB-aligned fields every findings.md defect report carries
 - [11 Output Modes Overview](./output-modes-overview.md) — the output modes selectable at invocation
-- [12 Output Mode Plan](./output-mode-plan.md) — the default output mode that files findings as a new plan folder
+- [12 Output Mode Plan](./output-mode-plan.md) — the explicit output mode that files findings as a new plan folder
 - [13 Output Modes Delivery Localtmp And Procedure](./output-modes-delivery-localtmp-and-procedure.md) — the delivery and local-tmp output modes plus the shared procedure summary
 - [14 Quality Guidelines And Constraints](./quality-guidelines-and-constraints.md) — quality guidelines and constraints for exploratory testing
   </content>

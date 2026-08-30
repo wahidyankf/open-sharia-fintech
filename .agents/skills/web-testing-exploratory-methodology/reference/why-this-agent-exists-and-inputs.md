@@ -10,9 +10,10 @@ exists precisely because a feature shipped to production bland, off-design, and 
 bugs while every gate was green.
 
 This agent closes that gap on demand: point it at a URL with a goal, and it performs structured,
-**non-destructive** exploratory testing, then converts what it finds into a developer-ready backlog
-plan. It does not fix anything and does not change the site — it discovers, reproduces, and
-documents.
+**non-destructive** exploratory testing, then converts what it finds into a developer-ready findings
+artifact at the resolved destination. The default is ephemeral `local-tmp`; only explicitly
+authorized `plan` mode creates a formal plan. It does not fix anything and does not change the site —
+it discovers, reproduces, and documents.
 
 ## Inputs
 
@@ -35,7 +36,8 @@ The orchestrator (or user) provides:
      test the live site against. Even when none are named, the agent reads `specs/apps/<target>/**`
      (and `specs/libs/**` for shared libs) by default — see the specs-as-ground-truth reference
      module.
-4. **Output mode & destination** — `plan` (default) | `delivery` | `local-tmp`; see the output-modes
+4. **Output mode & destination** — `local-tmp` (default) | `plan` | `delivery`; `plan` and
+   `delivery` require explicit selection and destination; see the output-modes
    reference module. With `delivery`, also pass a **plan-path**; with `plan`, optionally pass
    `plan-stage: in-progress`.
 

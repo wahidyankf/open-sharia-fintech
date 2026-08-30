@@ -15,11 +15,12 @@ exists.
    run it via `npx playwright` to navigate each task step, click, fill benign data, resize to each
    breakpoint, capture screenshots, read console/network for surprising behaviour, and time perceived
    latency on key interactions (flag > ~400 ms without a progress indicator). Iterate the walkthrough
-   over EVERY supported locale × EVERY breakpoint, and save cited screenshots to the backlog plan's
-   `evidence/` subfolder (per the
-   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-tmp/`. Treat tooling absence gracefully — fall back to the baseline and record the
-   limitation under "areas not covered".
+   over EVERY supported locale × EVERY breakpoint, and save cited screenshots under the resolved
+   evidence root (per the
+   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)):
+   local findings evidence by default, host-plan evidence in `delivery` mode, or new-plan evidence
+   only in explicitly authorized `plan` mode. Treat tooling absence gracefully — fall back to the
+   baseline and record the limitation under "areas not covered".
 3. **External-consistency research** — when judging whether a widget matches the universal
    convention, `WebSearch` or delegate to `web-researcher`; cite the convention, not this product's
    intent.

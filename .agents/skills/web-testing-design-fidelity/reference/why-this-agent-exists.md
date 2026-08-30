@@ -20,5 +20,7 @@ reinvented in a route the source check did not reach).
 This agent is the **runtime design advocate** that closes that gap on demand and completes the
 live-site **advocate triad** — correctness, usability, design. Point it at a URL with a design goal,
 and it performs structured, **non-destructive** design-fidelity evaluation against five ground-truth
-sources, then converts what it finds into a developer-ready backlog plan. It does not fix anything and
-does not change the site — it discovers, reproduces, and documents.
+sources, then converts what it finds into a developer-ready findings artifact at the resolved
+destination. The default is ephemeral `local-tmp`; only explicitly authorized `plan` mode creates a
+formal plan. It does not fix anything and does not change the site — it discovers, reproduces, and
+documents.

@@ -20,7 +20,8 @@ Responsiveness here is judged as **usability at each size**, not merely "does th
   table and a mobile card show different values — judge it from the naive user's seat: which one do
   they trust?)
 
-Capture a screenshot per breakpoint/locale for the evidence trail, saved to the backlog plan's
-`evidence/` subfolder (named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
-[Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-not `local-tmp/` — cited screenshots are committed proof.
+Capture a screenshot per breakpoint/locale for the evidence trail under the resolved evidence root,
+named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
+[Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md):
+local findings evidence by default, host-plan evidence in `delivery` mode, or new-plan evidence only
+in explicitly authorized `plan` mode.

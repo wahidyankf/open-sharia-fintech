@@ -15,7 +15,7 @@ title: "Reference"
 - [09 Browser Driving](./browser-driving.md) — how to drive the browser, with locale and evidence awareness
 - [10 Finding Anatomy And Severity](./finding-anatomy-and-severity.md) — the fields every findings.md entry carries, and the severity/priority scales
 - [11 Output Modes Overview](./output-modes-overview.md) — the output modes selectable at invocation
-- [12 Output Mode Plan](./output-mode-plan.md) — the default output mode that files findings as a new plan folder
+- [12 Output Mode Plan](./output-mode-plan.md) — the explicit output mode that files findings as a new plan folder
 - [13 Output Modes Delivery Localtmp And Procedure](./output-modes-delivery-localtmp-and-procedure.md) — the delivery and local-tmp output modes plus the shared procedure summary
 - [14 Quality Guidelines And Constraints](./quality-guidelines-and-constraints.md) — quality guidelines and constraints for design evaluation
   </content>

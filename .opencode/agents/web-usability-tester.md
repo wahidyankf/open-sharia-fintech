@@ -1,5 +1,5 @@
 ---
-description: Performs spec-blind, heuristic usability evaluation of a live website given URL(s) and a usability goal, then files the findings as a new backlog plan (README + brd + prd + findings + walkthrough + spec-suggestions) that a developer can pick up and fix. Deliberately ignores specs, source, and mockups — judges only what a first-time user perceives, against Nielsen's 10 heuristics, cognitive walkthrough, information scent, WCAG Understandable, and UX laws. Distinct from web-exploratory-tester (spec-aware, hunts functional/correctness defects). Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md, the rule-15 retest mechanism), or local-tmp.
+description: Performs spec-blind heuristic usability evaluation of a live website and records findings in local-tmp by default. Judges first-time usability; output-mode plan or delivery must be explicit.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -46,8 +46,9 @@ three output modes.
 3. Run the four Mandatory Systematic Probes (enumerate, never sample) and URL/responsive passes.
 4. Triage findings with Nielsen 0-4 severity + priority, citing the violated principle; draft any
    `USS-###` spec suggestions carrying the spec-blind caveat.
-5. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
-   `output-mode`.
+5. Write `local-tmp/findings.md` by default. Create a backlog plan only for explicit
+   `output-mode: plan`, or fold into a named existing delivery only for explicit
+   `output-mode: delivery`.
 
 Discovers and documents friction; never fixes it or changes the site. Distinct from
 `web-exploratory-tester` (spec-aware) and `web-design-tester` (design-aware) — the three form the

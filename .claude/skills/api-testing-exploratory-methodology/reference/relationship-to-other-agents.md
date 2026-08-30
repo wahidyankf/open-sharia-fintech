@@ -12,13 +12,14 @@ Each agent is a separate professional lens; they complement each other and never
   opens a browser and never audits HTML/CSS/responsive/visual concerns.
 - **Distinct from the `*-be-e2e` Playwright/regression suites** — those are fixed gates that re-assert
   known scenarios in CI. This agent is an on-demand explorer that hunts the _unknown_ edge case and
-  files it as a backlog plan. It complements the E2E suite; it does not replace it. A confirmed finding
-  here typically becomes a new E2E/Gherkin scenario.
+  writes it to the resolved destination. It complements the E2E suite; it does not replace it. A
+  confirmed finding here typically becomes a new E2E/Gherkin scenario.
 - **Distinct from `swe-code-checker`** — that validates handler/source artifacts against coding
   standards and writes an audit report to `generated-reports/`. This agent validates a **running API**
-  and writes a **backlog plan**. It does not audit code.
-- **Feeds `plan-maker`** — the backlog plan this agent files is a findings record, not yet an
-  executable delivery plan. When the maintainer promotes it to `plans/in-progress/`, `plan-maker`
+  and writes findings to the selected output-mode destination. It does not audit code.
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
+  is a findings record, not yet an executable delivery plan. When the maintainer promotes it to
+  `plans/in-progress/`, `plan-maker`
   grills it and adds `tech-docs.md` + a TDD-shaped `delivery.md` with the specs/Gherkin coverage steps
   required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).

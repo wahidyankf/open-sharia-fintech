@@ -17,10 +17,10 @@ Every finding in `findings.md` carries:
   primitive/external source/principle).
 - **Actual result** — what the rendered page shows; quote the computed value verbatim (e.g. the
   rendered hex, the px spacing).
-- **Evidence** — screenshot path in the plan's `evidence/` subfolder
+- **Evidence** — screenshot path in the resolved destination's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), a computed-style excerpt, or a
-  mockup-vs-render comparison — never secrets/PII. Cited screenshots are committed to `evidence/`, not
-  left in `local-tmp/`, per the
+  mockup-vs-render comparison — never secrets/PII. The evidence root is local findings by default,
+  host plan in `delivery` mode, or new plan only in explicitly authorized `plan` mode, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Defect type** — Mockup-fidelity / Token / Primitive-reuse / Hierarchy / Alignment /

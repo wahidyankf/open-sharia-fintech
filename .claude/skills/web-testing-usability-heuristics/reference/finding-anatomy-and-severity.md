@@ -17,10 +17,10 @@ Every finding in `findings.md` carries:
 - **Expected (predictable) behaviour** — what a first-time user would reasonably expect, grounded in
   the cited principle/convention — _not_ in a spec.
 - **Actual behaviour** — what the page does; quote exact label/message text verbatim.
-- **Evidence** — screenshot path in the plan's `evidence/` subfolder
+- **Evidence** — screenshot path in the resolved destination's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), the confusing label/copy, a
-  timing measurement — never secrets/PII. Cited screenshots are committed to `evidence/`, not left in
-  `local-tmp/`, per the
+  timing measurement — never secrets/PII. The evidence root is local findings by default, host plan
+  in `delivery` mode, or new plan only in explicitly authorized `plan` mode, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Suggested clarification** — best-guess fix to restore predictability (clearly a hypothesis:

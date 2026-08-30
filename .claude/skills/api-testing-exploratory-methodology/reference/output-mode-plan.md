@@ -1,8 +1,9 @@
 # Output Mode `plan`
 
-## Mode `plan` (default) — a new plan folder
+## Mode `plan` (explicit only) — a new plan folder
 
-This is the default when `output-mode` is omitted. (When the caller passes `plan-stage: in-progress`,
+Use only when the caller literally selects `output-mode: plan`. When omitted, use `local-tmp`.
+(When the caller passes `plan-stage: in-progress`,
 write the folder under `plans/in-progress/<slug>/` with no date prefix instead of `plans/backlog/`.)
 
 Create `plans/backlog/<slug>/` where `<slug>` is a kebab-case identifier derived from the target +

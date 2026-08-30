@@ -15,10 +15,11 @@ exists.
    `local-tmp/` and run it via `npx playwright` to navigate, click, fill, resize to each breakpoint,
    capture screenshots (compare to mockups), read console errors, and capture network failures.
    Iterate the navigate/screenshot pass over EVERY supported locale × EVERY breakpoint. Save
-   screenshots that a finding cites to the backlog plan's `evidence/` subfolder (named
+   screenshots that a finding cites under the resolved evidence root (named
    `phase-N-<description>-<locale>-<breakpoint>px.png` per the
-   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-tmp/` — they become committed proof a developer can inspect. Run
+   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)):
+   local findings evidence by default, host-plan evidence in `delivery` mode, or new-plan evidence
+   only in explicitly authorized `plan` mode. Run
    `npx lighthouse <url> --output=json` for Core Web Vitals where available (save reports to
    `evidence/`). Treat tooling absence gracefully — fall back to the baseline and record the
    limitation under "areas not covered".

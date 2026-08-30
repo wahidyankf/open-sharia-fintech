@@ -29,7 +29,7 @@ follows good visual-design practice — the design-team advocate of the live-sit
    severity and priority scales.
 8. [Output Modes Overview](reference/output-modes-overview.md) and
    [Output Mode: plan](reference/output-mode-plan.md) — the output-mode selection table and the
-   default `plan` mode's document set.
+   explicitly authorized `plan` mode's document set.
 9. [Output Modes: delivery/local-tmp, and Procedure](reference/output-modes-delivery-localtmp-and-procedure.md)
    — the `delivery` and `local-tmp` modes, and the procedure summary.
 10. [Quality Guidelines and Constraints](reference/quality-guidelines-and-constraints.md) — quality

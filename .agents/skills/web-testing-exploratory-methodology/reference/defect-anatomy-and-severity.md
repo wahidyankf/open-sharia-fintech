@@ -12,10 +12,10 @@ Every finding in `findings.md` carries the ISTQB-aligned fields:
 - **Steps to Reproduce** — numbered, minimal, deterministic; include preconditions.
 - **Expected Result** — per spec/design/mockup (cite the ground truth).
 - **Actual Result** — what happened; quote exact error text verbatim.
-- **Evidence** — screenshot path in the plan's `evidence/` subfolder
+- **Evidence** — screenshot path in the resolved destination's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), console excerpt, network entry,
-  response header — never secrets/PII. Screenshots a finding cites are committed to `evidence/`, not
-  left in `local-tmp/`, per the
+  response header — never secrets/PII. The evidence root is local findings by default, host plan in
+  `delivery` mode, or new plan only in explicitly authorized `plan` mode, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Defect type** — Functional / UI / Responsive / Accessibility / Performance / Security / Content /

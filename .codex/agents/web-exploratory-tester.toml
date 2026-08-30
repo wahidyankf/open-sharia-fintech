@@ -1,5 +1,5 @@
 name = "web-exploratory-tester"
-description = "Performs spec-aware session-based exploratory testing of a live website given URL(s) and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps) that a developer can pick up and fix. Hunts edge cases and boundary conditions, not just the happy path. Compares live behaviour against existing specs/** Gherkin and proposes scenarios for correct behaviours lacking coverage. Covers functional, behavioural-consistency, edge-case, UI/UX, responsive, accessibility, performance, URL/IA, and safe security defects. For spec-blind usability evaluation use web-usability-tester instead. Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md), or local-tmp."
+description = "Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behavior with specs; output-mode plan or delivery must be explicit."
 developer_instructions = """
 
 # Web Exploratory Tester Agent
@@ -33,8 +33,9 @@ spec-gap detection, the `EWT-###` defect anatomy, and the three output modes.
    recompute values rather than trust presence.
 5. Triage findings with severity + priority; draft `SG-###` spec-gap proposals for correct-but-
    unprotected behaviour.
-6. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
-   `output-mode`.
+6. Write `local-tmp/findings.md` by default. Create a backlog plan only for explicit
+   `output-mode: plan`, or fold into a named existing delivery only for explicit
+   `output-mode: delivery`.
 
 Discovers and documents defects; never fixes them or changes the site. Distinct from
 `web-usability-tester` (spec-blind) and `web-design-tester` (design-aware) — the three form the

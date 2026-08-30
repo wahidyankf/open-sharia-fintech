@@ -50,6 +50,6 @@ these failure classes once the evaluator has already explored the page.
 ## Related
 
 `web-exploratory-tester` (the spec-aware functional/correctness sibling), `web-design-tester` (the
-design-aware third lens of the live-site advocate triad), `plan-creating-project-plans` (backlog plan
-structure), `plan-writing-gherkin-criteria` (Gherkin ACs and `spec-suggestions.md` scenarios),
+design-aware third lens of the live-site advocate triad), `plan-creating-project-plans` (explicit
+plan-mode structure), `plan-writing-gherkin-criteria` (Gherkin ACs and `spec-suggestions.md` scenarios),
 `docs-applying-content-quality`.
