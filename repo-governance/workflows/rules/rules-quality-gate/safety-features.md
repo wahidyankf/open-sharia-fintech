@@ -30,6 +30,16 @@ when_to_use: Use when auditing this workflow's guardrails against runaway iterat
 - Skips FALSE_POSITIVE findings automatically
 - Progressive writing ensures audit history survives
 
+**Word-Budget Meaning Protection**:
+
+- A budget finding authorizes relocation through progressive disclosure, not semantic rewriting.
+- Before and after every budget-motivated fix, compare obligations, named audience, strength, scope,
+  boundaries, exceptions, pass/violation conditions, and enforcement disposition.
+- Any weakened, generalized, omitted, or ambiguity-creating field is a HIGH finding and the fixer
+  must restore it, even when the deterministic word count passes.
+- Material qualifiers stay explicit; for example, “junior engineer fresh from bootcamp with no
+  professional work experience” cannot be shortened to “new engineer.”
+
 **Error Recovery**:
 
 - Continues to verification even if some fixes fail

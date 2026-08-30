@@ -6,7 +6,9 @@ when_to_use: Use when a UI-bearing or web-UI feature-change plan approaches arch
 
 # 8. Finalization and Archival (Sequential)
 
-Report final status, archive plan if successful, and update all related READMEs.
+Use these gates plus the preliminary audit to establish `ready-for-archive`; this is not final
+status. Archive through the resolved delivery mode, then assign `pass` only after delivered-head
+proof and the workflow-owned terminal audit succeed.
 
 **UI-bearing plan pre-archival gate (rules 1, 10, 15)**: For plans that add or change user-facing
 screens or components, archival MUST NOT proceed until the production visual sign-off is confirmed

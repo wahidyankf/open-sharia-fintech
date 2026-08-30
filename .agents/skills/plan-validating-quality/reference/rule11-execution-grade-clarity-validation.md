@@ -1,9 +1,11 @@
 # Rule 11: Execution-Grade Clarity Validation (Step 5e — MANDATORY HARD RULE)
 
-After Step 5d, audit every delivery checkbox — plans are executed by sonnet-tier agents,
-authoring-grade hand-waving is a HARD RULE violation.
+After Step 5d, audit every delivery outcome section and action checkbox. A junior engineer fresh
+from bootcamp with no professional work experience and no repository or stack context must be able
+to execute it; authoring-grade hand-waving is a HARD RULE violation.
 
-**What to validate**: every checkbox satisfies all that apply:
+**What to validate**: every outcome section supplies Input, Outcome, Proof, and canonical ACs; every
+checkbox satisfies all that apply:
 
 1. **Explicit file path(s)** for file-touching actions. When unknowable at authoring time, give the
    maximum-detail target (parent directory, naming pattern, sibling reference). Bare "the auth file",
@@ -13,6 +15,12 @@ authoring-grade hand-waving is a HARD RULE violation.
 3. **Concrete acceptance criterion** stating the observable proof of done (e.g. "`nx run
 ose-web:typecheck` exits 0"). Bare "implement X", "set up Y", "configure Z", "add caching", "fix
    the bug": **HIGH**.
+4. **One independently verifiable action** per checkbox, including prerequisites, expected
+   observation, failure handling, and evidence destination. An omnibus checkbox hiding distinct
+   actions: **HIGH**. A useful high checkbox count is not a finding.
+5. **Separate TDD actions**: every code behavior slice has ordered RED, GREEN, and REFACTOR
+   checkboxes with exact test/source path or bounded discovery, symbol, command, and expected state.
+   Combined/missing cycle actions: **HIGH**.
 
 **Controlled runbook-reference exception**: A finite cross-repository lifecycle checkbox may bind
 to one same-document, uniquely named runbook packet instead of repeating one maintained procedure

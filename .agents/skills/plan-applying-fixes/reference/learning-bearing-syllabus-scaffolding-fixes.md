@@ -26,7 +26,8 @@ corrects an existing corpus — exempt.
 <one-paragraph corpus overview — author to fill>
 ```
 
-`tech-docs.md` — Corpus Disposition (owning/custodian plan only):
+Chosen technical form — Corpus Disposition (owning/custodian plan only; directory README maps the
+owning companion):
 
 ```markdown
 ## Corpus Disposition
@@ -34,7 +35,8 @@ corrects an existing corpus — exempt.
 `<archive-with-plan|promote-to:<path>>` <!-- author: choose exactly one -->
 ```
 
-`tech-docs.md` — Corpus Custody echo (consumer plan only; a plan carries exactly one of the two):
+Chosen technical form — Corpus Custody echo (consumer plan only; a plan carries exactly one of the
+two, and a directory README maps the owning companion):
 
 ```markdown
 ## Corpus Custody

@@ -32,8 +32,9 @@ UI-design-funnel bindings above.
 
 Every learning-bearing plan MUST document its corpus through the required
 `syllabus/README.md` + `syllabus/courses/` + `syllabus/paths/` folder layout, the template-derived
-per-course shape, a `## Corpus Disposition` declaration in `tech-docs.md`, and a Custodian line in
-`syllabus/README.md`, authored per the
+per-course shape, a `## Corpus Disposition` declaration in the selected technical form, and a
+Custodian line in `syllabus/README.md`. In directory form, `tech-docs/README.md` maps the companion
+that owns the declaration. Author these per the
 [Learning-Plan `syllabus/` Folder Convention](../../../../repo-governance/conventions/structure/learning-plan-syllabus.md).
 
 `plan-maker` requires these artefacts and emits delivery steps that produce them; `plan-checker`

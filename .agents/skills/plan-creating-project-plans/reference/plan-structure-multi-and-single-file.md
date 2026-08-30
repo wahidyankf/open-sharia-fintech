@@ -1,6 +1,6 @@
-# Plan Structure — Multi-File and Single-File
+# Plan Structure — Fixed Core and Reader-Led Technical Shape
 
-## Multi-File Structure (default — five documents)
+## Mature Formal-Plan Structure
 
 **For any plan with substantive business intent, product scope, and technical design:**
 
@@ -10,7 +10,8 @@ plans/in-progress/complex-feature/
 ├── brd.md                    # Business Requirements Document
 ├── prd.md                    # Product Requirements Document
 ├── tech-docs.md              # Architecture, design decisions, file impact
-└── delivery.md               # Phased checklist (one checkbox = one action)
+├── delivery.md               # Phased outcomes with granular action checklists
+└── learnings.md              # Transient Knowledge Capture log
 ```
 
 **Content-placement split** (authoritative — see [Content-Placement Rules](../../../../repo-governance/conventions/structure/plans/content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd)):
@@ -24,29 +25,15 @@ plans/in-progress/complex-feature/
   only for non-obvious mechanics, ordering, discovery criteria, or archival follow-up; it never
   replaces the tree or contains delivery checkboxes. See [Plans Organization Convention §File-Impact
   Analysis Format](../../../../repo-governance/conventions/structure/plans/file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
-- **`delivery.md`** — DO: sequential `- [ ]` checklist organized by phase; one concrete action per checkbox. Opens with the `[AI]`/`[HUMAN]` executor legend; each phase ends with a `### Phase N Gate` (must-pass verification) followed by a Pause Safety note.
+- **`delivery.md`** — DO: phased outcome sections with Input/Outcome/Proof and granular
+  `[AI]`/`[HUMAN]` action checkboxes. Code outcomes use separate detailed RED/GREEN/REFACTOR
+  checkboxes. Opens with the executor legend; each phase ends with a
+  `### Phase N Gate` followed by Pause Safety. Preserve natural delivery seams and PR-size rules.
 
 **Benefits**: narrow PR diff per concern (business PRs touch brd.md only; product PRs touch prd.md only), sharper agent validation (plan-checker asserts placement per file), industry-norm alignment (BRD + PRD are recognized doc types).
 
-## Single-File Structure (exception, ≤1000 lines)
-
-**Only for trivially small plans** where both condensed BRD and condensed PRD fit without crowding the technical sections:
-
-```
-plans/in-progress/simple-feature/
-└── README.md                 # All content in one file
-```
-
-**README.md mandatory sections (in order)**:
-
-1. **Context** — background, non-technical framing
-2. **Scope** — in-scope + out-of-scope; affected apps named
-3. **Business Rationale (condensed BRD)** — why + affected roles + success metrics (gut-based reasoning OK when logic supports it; fabricated KPIs forbidden)
-4. **Product Requirements (condensed PRD)** — user stories + Gherkin acceptance criteria + product scope
-5. **Technical Approach** — architecture, design decisions; every new lasting mechanism names its
-   concrete need and explains why existing mechanisms are insufficient
-6. **Delivery Checklist** — phased `- [ ]` items; opens with the `[AI]`/`[HUMAN]` executor legend; every phase ends with a `### Phase N Gate` and a Pause Safety note
-7. **Quality Gates** — local + CI gates
-8. **Verification** — how to confirm done
-
-If the plan grows past 1000 lines or authoring feels crowded, promote to the five-document multi-file layout before execution begins.
+Use exactly one technical shape: the `tech-docs.md` shown above, or `tech-docs/README.md` with mapped
+companions. Reader jobs, cohesion, navigation, and ownership decide the shape; line counts do not.
+New formal plans never collapse to a single README. Simple work uses the harness task list; early
+ideas use an explicitly requested brief. Archived plans and the existing Rhino plan retain their
+recorded contract.

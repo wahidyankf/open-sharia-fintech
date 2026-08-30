@@ -1,17 +1,28 @@
 # Technical Documentation Validation (Scope 3)
 
+The selected technical form is a primary junior-readable surface. A junior engineer fresh from
+bootcamp with no professional work experience and no repository or stack context must be able to
+understand the current state, relevant concepts, alternatives, contracts, architecture,
+migration/rollback, and verification design without chat or author assistance. Missing prerequisite
+explanation or rationale is **HIGH** even when paths and diagrams exist.
+
 Architecture documented; design decisions justified; implementation approach clear; dependencies
 listed; testing strategy defined.
 
 **Minimal-sufficiency rationale (HIGH)**: when the plan adds code, a dependency, abstraction,
-validator, automation, infrastructure, or another lasting mechanism, `tech-docs.md` must name the
+validator, automation, infrastructure, or another lasting mechanism, its selected technical form
+must name the
 concrete requirement, correctness or safety obligation, or demonstrated recurring risk it addresses
-and explain why existing mechanisms are insufficient. For a single-file plan, require the same
-rationale in `Technical Approach`. Flag a missing rationale, a speculative future need, or a new
+and explain why existing mechanisms are insufficient. Flag a missing rationale, a speculative future need, or a new
 mechanism when the documented existing mechanism already satisfies the stated need.
 
-**File-impact tree (HARD RULE)**: `tech-docs.md` has a `## File-Impact Analysis` whose primary view
-is a root-relative fenced `text` tree; each planned path or bounded pattern carries `[E]`, `[N]`,
+**Schema/migration contract (HIGH when applicable)**: require a relational ERD or storage-
+appropriate model, exact old/new contract, field purpose/lifecycle guide, compatibility boundaries,
+expand-migrate-verify-contract sequence, rollback triggers, and no-loss proof.
+
+**File-impact tree (HARD RULE)**: the single `tech-docs.md` or one companion mapped by
+`tech-docs/README.md` has a `## File-Impact Analysis` whose primary view is a root-relative fenced
+`text` tree; each planned path or bounded pattern carries `[E]`, `[N]`,
 `[D]`, or `[G]` — the tree, not prose bullets, is the scan-first scope. Flag a missing tree, missing
 action markers, an unbounded/vague target, or prose as the primary view as **HIGH**. An optional
 `### More Detail` section must immediately follow the tree and only explain mechanics/ordering/
@@ -20,14 +31,15 @@ discovery/archival follow-up — it cannot replace the tree or contain delivery 
 
 ### Diagram Format Check
 
-Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`):
+Audit all plan files (`README.md`, `brd.md`, `prd.md`, `delivery.md`, `learnings.md`, and every file
+in the selected technical form):
 
 - **MEDIUM**: ASCII art depicting component interactions, data flows, sequences, state machines, or
   decision branches — a Mermaid diagram would fit better. Simple directory-tree listings are exempt.
 - **MEDIUM (under-diagrammed plan)**: a non-trivial plan covers a diagram-warranting concern
   (component interactions, agent/system sequence, state transitions, decision branches,
   upstream/downstream dependency position, phase/delivery flow) with no diagram for it. Trivial
-  plans (single-file config bumps, renames, doc fixes, no-behavior-change dependency bumps) are
+  plans (config bumps, renames, doc fixes, no-behavior-change dependency bumps) are
   exempt. Each undiagrammed concern is a separate finding.
 - Reference: [Plans Organization Convention §Diagrams in Plans](../../../../repo-governance/conventions/structure/plans.md) and
   [Diagrams Convention](../../../../repo-governance/conventions/formatting/diagrams.md).

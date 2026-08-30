@@ -30,14 +30,18 @@ Plans differ from `docs/` in several important ways:
 
 ## Creating Plans
 
-1. **Start with an idea**: Capture the idea as a two-pager in `plans/ideas/<slug>.md` (see [Ideas Folder (Two-Pagers)](./ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers))
-2. **Formalize when ready**: Promote the two-pager to a full plan folder in `backlog/` when it is ripe
-3. **Follow naming convention**: Use `[project-identifier]/` format (no date prefix in `backlog/`)
-4. **Choose structure**: Default to the five-document multi-file layout (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`). Collapse to single-file only when all four exception criteria in the Structure Decision section are met simultaneously.
-5. **Resolve design decisions via structured grilling**: Before writing plan content, resolve all
+1. **Confirm literal authorization**: do not create any `plans/` artifact from Plan Mode,
+   discovery, or task planning alone.
+2. **Start with the authorized maturity**: use an explicitly requested two-pager for early work or
+   a formal plan for mature work.
+3. **Formalize when ready**: Promote an authorized two-pager to a full plan folder in `backlog/` when ripe.
+4. **Follow naming convention**: Use `[project-identifier]/` format (no date prefix in `backlog/`).
+5. **Use the mature core**: Create `README.md`, `brd.md`, `prd.md`, `delivery.md`, `learnings.md`,
+   and exactly one reader-led technical form.
+6. **Resolve design decisions via structured grilling**: Before writing plan content, resolve all
    open design decisions using the
    [Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md) — structured
    multiple-choice questions with 2-4 concrete options, explicit trade-offs, and exactly one Recommended
    option. Never ask open-ended "what approach?" questions without offering structured options.
-6. **Create content**: Write overview, requirements, tech docs, and delivery sections
-7. **Update index**: Add plan to `backlog/README.md`
+7. **Create content**: Write the comprehensive evidence-to-delivery record, including alternatives and prior art.
+8. **Update index**: Add the plan to `backlog/README.md`.

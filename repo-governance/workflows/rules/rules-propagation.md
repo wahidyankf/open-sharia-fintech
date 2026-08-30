@@ -4,7 +4,7 @@ title: "rules-propagation"
 description: "Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, arming enforcement."
 when_to_use: "Use when a decided rule must be written into the repository, or an existing rule superseded."
 goal: Land every stated rule correctly, contradicting nothing, retaining no unjustified duplicate, carrying an enforcement disposition
-termination: "PR green, quality gate converged, every rule placed and dispositioned; halts on an unfalsifiable rule or a higher-layer conflict"
+termination: "No-op verified, or PR green with every rule placed and dispositioned; halts on an unfalsifiable rule or a higher-layer conflict"
 inputs:
   - name: rules
     type: string
@@ -39,7 +39,7 @@ outputs:
     description: "Subject inventory with per-surface verdict, canonical home or replacement, keep rationale; plus placement, layer, enforcement, supersessions"
   - name: final-status
     type: enum
-    values: [landed, halted, partial]
+    values: [no-op, landed, halted, partial]
     description: Terminal state of the run
   - name: pr-url
     type: string
@@ -61,6 +61,13 @@ eviction. A threshold is never raised to make room for a placement. A separately
 class-wide policy recalibration follows the governance word-budget convention and is not an
 eviction substitute.
 
+**Semantic-preservation hard gate:** a word budget may change placement, never meaning. Propagation
+must preserve every obligation, audience qualifier, scope boundary, exception, pass condition, and
+violation condition verbatim enough to remain unambiguous. It may use progressive disclosure or an
+indexed split; it may not generalize, weaken, compress away, or paraphrase a material qualifier to
+make a counter pass. For example, “junior engineer fresh from bootcamp with no professional work
+experience” cannot become merely “new engineer” for brevity.
+
 Agents composed: `.claude/agents/repo/repo-rules-maker.md`, `repo-rules-checker`,
 `repo-rules-fixer`. `rules-quality-gate` verifies at Step 8.
 
@@ -71,7 +78,7 @@ Agents composed: `.claude/agents/repo/repo-rules-maker.md`, `repo-rules-checker`
 - [Step 0: Intake](./rules-propagation/step-0-intake-and-normalization.md) — prose to falsifiable rule.
 - [Step 1: Working Tree](./rules-propagation/step-1-worktree-and-branch.md) — where the run writes.
 - [Step 2: Classification](./rules-propagation/step-2-classification.md) — subject, layer, neutrality.
-- [Step 3: Conflict Scan](./rules-propagation/step-3-conflict-scan.md) — precedence, supersession.
+- [Step 3: Semantic Sufficiency and Conflict Scan](./rules-propagation/step-3-conflict-scan.md) — semantic no-op, precedence, supersession.
 - [Step 4: Placement](./rules-propagation/step-4-placement-decision.md) — admission test, home table.
 - [Step 5: Eviction](./rules-propagation/step-5-eviction-protocol.md) — making room on a full surface.
 - [Step 6: Write and Tidy](./rules-propagation/step-6-write-and-tidy.md) — classify, consolidate, reindex.

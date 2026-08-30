@@ -8,7 +8,7 @@ Every delivery checklist item MUST make clear **who can execute it**. Some work 
 - **`[HUMAN]`** — only a human can do it (physical action, out-of-band approval/sign-off, real-secret or privileged-credential handling, real-world authority).
 - **`[AI+HUMAN]`** (optional) — agent prepares/drafts; human reviews, approves, or performs the irreversible final action.
 
-**Required legend** — open `delivery.md` (or a single-file plan's Delivery Checklist section) with:
+**Required legend** — open `delivery.md` with:
 
 ```markdown
 > **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).

@@ -10,8 +10,10 @@ when_to_use: Use when checking exactly what plan-checker validates on the initia
 
 First apply the
 [lifecycle validation ownership policy](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
-Record exact `delegated-gate-ids` and their evidence ledger. Plan semantics remain in scope; only
-registry-owned predicates are removed from checker prompts.
+Record exact `delegated-gate-ids` and their evidence ledger. Deterministic gates own links, maps,
+word budgets, formatting, Mermaid mechanics, and Gherkin cardinality. Plan semantics remain in
+scope; remove only exact registry-owned predicates from checker prompts, and consume their evidence
+without rederiving it.
 
 Run plan validation to identify completeness, accuracy, and hallucination issues.
 
@@ -22,11 +24,16 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 
 **Validation scope** (per `plan-checker` Steps 0-7 + 5b/5c/5d/5e/5f/5g/5h/5i/5j/5k/5n):
 
-- Structure (folder name, file layout, mandatory sections)
+- Prospective structure (fixed core and exactly one reader-led technical shape for newly created
+  formal plans; no migration findings for `plans/done/` or the existing Rhino plan)
+- Comprehensive bootcamp-graduate readability and decision-to-delivery traceability
+- Material decisions (selected option plus two viable alternatives or evidence-backed
+  disqualification, repository and applicable external prior art, trade-offs, consequences, revisit triggers)
 - Requirements (BRD + PRD content placement, Gherkin)
 - Technical documentation (architecture, design decisions, diagrams, and the annotated file-impact
   tree; `### More Detail` is optional supporting context, never a replacement for the tree)
-- Delivery checklist (granularity, TDD shape, execution-grade clarity)
+- Delivery checklist (outcome-section cohesion; granular action detail; Input/Outcome/Proof; AC references; separate TDD actions;
+  natural delivery seams and PR-size rules; no copied full Gherkin)
 - Operational readiness (Step 5b — quality gates, CI verification, env setup)
 - Manual behavioral assertions (Step 5c — Playwright MCP / curl)
 - Worktree specification (Step 5d — declared `## Worktree` section + path format)
@@ -37,6 +44,11 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 - **Harness-neutrality scan** (Step 5g — conditional: fires only when the plan touches agents,
   skills, rules, or `repo-governance/` paths) per the
   [Multi-Harness Binding Convention](../../../conventions/structure/multi-harness-binding.md)
+- Schema/migration contracts when persisted data changes: data-model diagram, exact old/new
+  contracts, field lifecycle guide, compatibility, expand-migrate-verify-contract, rollback, and
+  no-loss proof
+- Rule propagation and exact as-built C4 packets in the phase that changes them, plus explicit
+  triggers and evidence-backed `Not triggered` dispositions for dormant recovery work
 - **Specs & Gherkin delivery coverage** (Step 5j — conditional: behavior-changing plans under
   `apps/`/`libs/`/`specs/` must carry companion Gherkin + a `specs:coverage` gate) per the
   [Feature Change Completeness Convention](../../../development/quality/feature-change-completeness.md)

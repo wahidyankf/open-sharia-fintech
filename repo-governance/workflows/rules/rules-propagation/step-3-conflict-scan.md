@@ -1,10 +1,10 @@
 ---
-title: "Step 3: Conflict Scan"
-description: The pre-write contradiction check and the layer-aware precedence rule that decides whether a new rule supersedes an existing one or yields to it.
+title: "Step 3: Semantic Sufficiency and Conflict Scan"
+description: The pre-write semantic no-op gate, contradiction check, and layer-aware precedence rule.
 when_to_use: Use after classification and before placement, whenever a new rule may touch ground an existing rule already covers.
 ---
 
-# Step 3: Conflict Scan
+# Step 3: Semantic Sufficiency and Conflict Scan
 
 The repository already detects contradictions repository-wide — but only after edits land. This
 step runs **before** anything is written, because when a new rule contradicts an old one,
@@ -18,6 +18,17 @@ restated in different words will not match a single-term search.
 
 Accumulate a whole list item before matching it. A line-oriented search silently misses any rule
 whose statement wraps across lines, and the resulting zero reads exactly like "no conflict found".
+
+## Semantic Sufficiency Gate
+
+Before placement, compare the requested outcome with the effective rule set. Evaluate meaning,
+strength, audience and scope, boundaries, exceptions, and discoverability—not wording or order.
+
+When the existing effective rules satisfy every dimension, terminate that rule as `no-op`. Record
+the canonical source, matching obligation, subject-surface inventory, and verification evidence in
+the manifest; produce no tracked diff for that rule. Continue when any material dimension is
+missing or weaker. A nearby rule, a wording resemblance, or an undiscoverable obligation is not
+sufficient.
 
 ## Precedence
 

@@ -11,7 +11,7 @@ when_to_use: "Read this index to find the right Knowledge Capture Convention chi
 - [The Transient `learnings.md` Running Log](./the-transient-learnings-md-running-log.md) — How the transient learnings.md log works. Use when maintaining a plan's learnings.md log.
 - [The Triage Rubric: Open-Ended, Principle-Based Routing](./the-triage-rubric-open-ended-principle-based-routing.md) — The rubric for routing a learning to its home. Use when triaging a captured learning.
 - [The Code-Routing Downstream Rule](./the-code-routing-downstream-rule.md) — Routing for a learning implying a code change. Use when a learning implies a code change.
-- [Routing Timing: Destination-Aware (Inline vs. Backlog)](./routing-timing-destination-aware-inline-vs-backlog.md) — Inline routing versus backlog filing. Use when deciding inline fix vs. backlog plan.
+- [Routing Timing: Destination-Aware (Inline vs. Ideas)](./routing-timing-destination-aware-inline-vs-ideas.md) — Inline routing versus an explicitly authorized `plans/ideas/` two-pager; Knowledge Capture never creates backlog directly.
 - [The Two Safety Gates (HARD — run before routing)](./the-two-safety-gates-hard-run-before-routing.md) — The two mandatory pre-routing safety gates. Use before routing any learning.
 - [Mandatory + Explicit "None" Escape](./mandatory-explicit-none-escape.md) — Why plans must state "no learnings" explicitly. Use when a plan has no learnings to record.
 - [Exemptions](./exemptions.md) — Narrow exemptions to knowledge capture. Use when checking a plan's exemption status.

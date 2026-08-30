@@ -1,12 +1,12 @@
 # Rule 10: Worktree Specification Validation (Step 5d — MANDATORY)
 
 After Step 5c, verify the plan declares a worktree path. Applies to ALL plans regardless of size —
-pure-docs, single-file, trivial plans included.
+pure-docs and otherwise small formal plans included. Apply prospectively.
 
 **What to validate**:
 
 1. **`## Worktree` section exists** — multi-file plans: top-level section in `delivery.md` before any
-   phase heading; single-file plans: in `README.md` before `## Delivery Checklist`. Missing: **HIGH**
+   phase heading in `delivery.md`. Missing: **HIGH**
    (plan-execution Step 0 hard gate refuses to start).
 2. **Path format** — `worktrees/<plan-identifier>/` where the identifier matches the plan-folder
    identifier (folder name minus the `YYYY-MM-DD__` prefix). Wrong format or identifier mismatch:
@@ -28,13 +28,19 @@ pure-docs, single-file, trivial plans included.
    than one distinct path for this repo: **HIGH** — the cap permits at most one worktree per
    repository per plan, reused across every delivery unit; a second distinct path is a defect even
    if each is individually well-formatted.
-6. **Identity record and initialized inventory** — `## Worktree` contains a Provisioned Worktree
+6. **Identity record and initialized inventory** — normally, `## Worktree` contains a Provisioned Worktree
    Identity with exact path, initial branch, creator, and UTC creation time, plus a Delivery Branch
    Inventory whose initial branch entry is `provisioned`/`active` and proves the exact creation command
    and timestamp. Missing identity, inventory, or initial proof: **HIGH**. An inventory that omits a
    plan-created/current branch, leaves an active entry at cleanup, or lacks a merged-PR reviewed-head
-   SHA for a `*-to-pr` delivery: **HIGH**.
+   SHA for a `*-to-pr` delivery: **HIGH**. The sole authoring-worktree exception passes authoring
+   review only when the plan records `Provisioning status: pending`, names the different active
+   authoring worktree, cites the user's explicit stay-in-worktree constraint, and explains its
+   dependency on unlanded work there. It must omit rather than fake identity/inventory and must make
+   Step 0 provisioning a blocking first outcome. Missing evidence or any implementation while
+   pending: **HIGH**.
 
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree
-path for this repository: **HIGH**. Missing/incomplete identity or inventory: **HIGH**.
+path for this repository: **HIGH**. Missing/incomplete identity or inventory outside the documented
+authoring exception: **HIGH**.

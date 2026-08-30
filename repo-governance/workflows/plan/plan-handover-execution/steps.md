@@ -22,7 +22,7 @@ Continues [Notes and Execution Mode](./notes-and-execution-mode.md).
 4. **Write the active user-established rule-decision record.** Include every unsuperseded decision
    constraining the current work with its operative statement, scope, source, and status. Then
    capture non-obvious learned constraints that are not already written into the plan's
-   own `tech-docs.md`/`learnings.md` — a surprising tool behavior, a governance rule that only bites at
+   own chosen technical form and `learnings.md` — a surprising tool behavior, a governance rule that only bites at
    a specific step, a decision the user made live that isn't yet reflected in the plan's committed
    docs. Write the _why_, not just the _what_, exactly as
    [Feedback memory guidance](../../../development/quality/knowledge-capture.md) already asks of

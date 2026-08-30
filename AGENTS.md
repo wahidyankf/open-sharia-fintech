@@ -67,8 +67,10 @@ Applicable UI/API surface gates still bind.
 ## Conventions
 
 Follow the [Principles Index](./repo-governance/principles/README.md). Code changes require TDD and
-Specs/Gherkin; bug fixes require regression tests. Plans end with Knowledge Capture. PR bodies
-state new-code cost/benefit; tests exempt.
+Specs/Gherkin; bug fixes require regression tests. Create `plans/` artifacts only on literal plan
+authorization. Formal plans are comprehensive, junior-readable decision-to-delivery records of
+substantive solution choices, not their own editorial history; they end with Knowledge Capture. PR bodies state new-code cost/benefit;
+tests exempt.
 
 Use English for repository-authored material and developer-facing source text; declared localized
 content and user-facing values are exempt. See [Working Language](./repo-governance/conventions/writing/repository-working-language.md).
@@ -82,7 +84,9 @@ Never commit secrets; real values only in uncommitted `.env*` (except `.env.exam
 
 ### Agent Workflow Orchestration
 
-Maintain tasks; plan non-trivial work. Preserve
+Maintain tasks; plan non-trivial work in the harness task list unless the user literally requests a
+repository plan. Exhaust instructions, repository evidence, history, safe diagnostics, and bounded
+reversible assumptions before asking the user; never assume material authority or preference. Preserve
 user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
 file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. New worktree: run
 `rtk npm install` at its root. Poll CI every 2

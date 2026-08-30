@@ -31,7 +31,9 @@ Determine whether to continue execution or terminate.
 **Logic**:
 
 - Count ALL findings in `{step6.outputs.audit-report-N}` (CRITICAL, HIGH, MEDIUM, LOW)
-- If findings = 0: Proceed to step 8 (Finalization - Success)
+- If findings = 0: Proceed to the ordered finalization gates: applicable surface retests,
+  Knowledge Capture, end-to-end delivery completeness audit, exact-head/base PR CI where
+  applicable, status/infra resolution, delivery-mode archival, merge, and cleanup
 - If findings > 0 AND iterations < max-iterations: Loop back to step 5 with new report
 - If findings > 0 AND iterations >= max-iterations: Proceed to step 8 (Finalization - Partial)
 
@@ -43,3 +45,6 @@ Determine whether to continue execution or terminate.
 - Continues until ZERO findings of any criticality level
 - Each iteration uses the latest validation report
 - Tracks iteration count for observability
+- A gap found by any finalization gate reopens the earliest affected outcome section/action, rebuilds the
+  task mapping, and returns to execution and validation; zero checker findings do not bypass that
+  loop.

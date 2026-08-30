@@ -20,7 +20,8 @@
 
 1. Read `learnings.md` in full (or confirm its absence plus the explicit "none" record elsewhere).
 2. For each entry, resolve its recorded routing destination and verify it against the repo:
-   `Bash test -f` for `plans/ideas/` two-pagers, `git log`/`git diff` for inline commits.
+   `rtk ls plans/ideas/<quadrant>/<slug>.md` for authorized `plans/ideas/` two-pagers, handoff
+   evidence for reported entries, and `rtk git log`/`rtk git diff` for inline commits.
 3. Run `Grep` for secret-shaped patterns across `learnings.md`.
 4. Run `Grep` for infra-private terms (Terraform, k3s, Proxmox, `coralpolyp`, real hostnames) across
    any non-`ose-private` routed destination named in the entries.
@@ -33,7 +34,7 @@
 ### Finding Severity
 
 - Any `learnings.md` entry not in a terminal state at archival time: **CRITICAL** (BLOCKS archival)
-- Code-homed learning landed inline instead of filed to `plans/ideas/`: **CRITICAL** (BLOCKS
+- Code-homed learning landed inline instead of being filed with authorization or reported: **CRITICAL** (BLOCKS
   archival)
 - Unsanitized secret in `learnings.md`: **CRITICAL** (BLOCKS archival)
 - Infra-private content cross-routed into a public repo: **CRITICAL** (BLOCKS archival)

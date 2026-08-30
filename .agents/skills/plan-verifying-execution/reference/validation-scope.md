@@ -5,12 +5,13 @@
 Validate that completed plan implementation:
 
 1. Meets the business intent captured in `brd.md` and the product requirements captured in `prd.md`
-2. Follows technical approach from `tech-docs.md`
+2. Follows the technical approach from the plan's chosen technical form
 3. Completes all delivery checklist items with implementation notes
 4. Satisfies all Gherkin acceptance criteria authored in `prd.md`
 5. Maintains code quality standards
-6. Verifies the plan's transient `learnings.md` was fully triaged — every entry routed, filed as a
-   `plans/ideas/` two-pager, or discarded — and both safety gates satisfied, BLOCKING archival otherwise
+6. Verifies the plan's transient `learnings.md` was fully triaged — every entry routed inline,
+   filed with literal authorization, reported without plan authorization with handoff evidence, or
+   discarded — and both safety gates satisfied, BLOCKING archival otherwise
    (Knowledge Capture Convention)
 
 ## Validation Scope
@@ -37,7 +38,7 @@ Validate that completed plan implementation:
   retrospective delivery-note rationale as plan approval.
 - Dependencies are properly integrated
 - Testing strategy is executed
-- Delivered paths reconcile to `tech-docs.md`'s annotated File-Impact Analysis tree and their
+- Delivered paths reconcile to the chosen technical form's annotated File-Impact Analysis tree and their
   `[E]`/`[N]`/`[D]`/`[G]` actions. `### More Detail` provides context only; it cannot authorize an
   undeclared path. A scope change requires a plan amendment recorded before execution, not a
   retrospective justification.
@@ -50,6 +51,11 @@ Validate that completed plan implementation:
 - Each `### Phase N Gate` passed before the next phase's work began; `[HUMAN]` steps show genuine
   human-confirmation evidence (see `reference/09-phase-gate-and-execution-marker.md`)
 - Progress tracking is comprehensive
+- For every repository whose delivered scope changed rules or enforcement, the repository-local
+  rules-propagation outcome is complete: subject inventory, conflict/precedence and supersession,
+  placement/eviction, canonical/config/enforcement/index changes, enforcement disposition,
+  generated bindings, `rules-quality-gate`, manifest/final status, and sibling obligation all have
+  evidence. Another repository's evidence cannot satisfy this check.
 - **Vercel MCP probe recorded (conditional)** — if the plan touches a Vercel-deployed surface, Phase
   0 records the availability probe outcome, and any step the probe forced to downgrade says so
   explicitly. A deployment-verification step that was silently skipped because the capability was

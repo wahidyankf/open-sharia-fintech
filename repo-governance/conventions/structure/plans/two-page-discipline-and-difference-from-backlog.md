@@ -21,7 +21,7 @@ when_to_use: Use when a two-pager is growing too detailed or when deciding wheth
 - **The solution stays "immediately understandable", never wireframe- or file-level** — naming
   specific files, functions, or exact layouts means you've drifted into full-plan territory.
 - **No BRD/PRD/tech-docs/delivery split, no Gherkin, no delivery checklist, no phase gates** — those
-  belong to the five-document backlog plan.
+  belong to the mature-core backlog plan.
 - **Prior art stays lightweight at capture** — the _Prior art_ section is author-supplied links and a
   clause each, never a research report; a thin idea keeps it short but never omits it. The deep
   `web-researcher` prior-art study runs at promotion, where the full plan can afford it — capturing an

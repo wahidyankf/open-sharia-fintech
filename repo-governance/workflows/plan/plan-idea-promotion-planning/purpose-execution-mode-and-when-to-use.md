@@ -7,7 +7,7 @@ when_to_use: Use when deciding whether a two-pager is ready for the promotion pr
 # Purpose, Execution Mode, and When to Use
 
 **Purpose**: Turn one ripe two-pager in [`plans/ideas/`](../../../conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
-into a full five-document backlog plan, operationalizing the four-step
+into a mature-core backlog plan, operationalizing the four-step
 [Promoting a Two-Pager to a Full Plan](../../../conventions/structure/plans/promoting-ideas-and-worked-examples.md#promoting-a-two-pager-to-a-full-plan)
 procedure end to end. It gates the brief for completeness, runs the deep `web-researcher` prior-art
 study that the capture phase deliberately deferred, hands the enriched brief to

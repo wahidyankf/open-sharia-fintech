@@ -2,17 +2,33 @@
 
 ## 1. Structure Validation
 
-- Plan folder naming: `YYYY-MM-DD-project-identifier`.
-- File structure: **Multi-file (default)** — five files `README.md`, `brd.md`, `prd.md`,
-  `tech-docs.md`, `delivery.md`; flag missing files **HIGH**. **Single-file (exception)** — one
-  `README.md` with eight mandatory sections (Context, Scope, Business Rationale, Product
-  Requirements, Technical Approach, Delivery Checklist, Quality Gates, Verification); flag missing
-  sections **HIGH**.
+- Plan folder naming is stage-aware: `plans/ideas/<quadrant>/<slug>.md`, undated
+  `plans/backlog/<slug>/` and `plans/in-progress/<slug>/`, and
+  `plans/done/YYYY-MM-DD__<slug>/` only after completion. Prospective archival instructions must
+  resolve the repository-local date after completion gates and use `<completion-date>` until then;
+  a hardcoded or forecast date is **HIGH**.
+- File structure for newly created formal plans: `README.md`, `brd.md`, `prd.md`, `delivery.md`,
+  `learnings.md`, and exactly one technical form (`tech-docs.md` or mapped `tech-docs/`); flag
+  missing core files or both/neither technical forms **HIGH**. Reader jobs and cohesion decide the
+  technical shape; line counts do not. Do not raise migration findings for `plans/done/`, the
+  existing Rhino plan, or another plan that predates this contract.
 - Required sections per file: BRD (business goal, impact, affected roles, success metrics,
   non-goals, risks); PRD (product overview, personas, user stories, Gherkin acceptance criteria,
   product scope, product risks); tech-docs (architecture, decisions, file-impact, rollback);
   delivery (phased checkboxes with implementation-notes blocks).
 - Folder sits under `plans/backlog/`, `plans/in-progress/`, or `plans/done/`.
+- A junior engineer fresh from bootcamp with no professional work experience and no repository or
+  stack context can trace current evidence, goals/non-goals, alternatives, decision, design, delivery,
+  proof, rollout, rollback, and learnings without author or chat context; gaps are **HIGH**.
+- Every material decision records the selected option plus two viable alternatives (status quo when
+  viable), repository and applicable external prior art, evidence, trade-offs, rejection reasons, consequences,
+  and revisit triggers. Evidence-backed disqualification is valid; invented alternatives are
+  **HIGH**.
+- A material decision changes the proposed product, architecture, implementation contract,
+  delivery boundary, rollout, operation, testing strategy, or recovery behavior. Wording, section
+  layout, checker/fixer iterations, and other plan-authoring history are not alternatives unless
+  they change that delivered contract; flag editorial changelogs presented as decision records
+  **HIGH**.
 
 ## 2. Requirements Validation (BRD + PRD)
 

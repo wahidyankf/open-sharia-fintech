@@ -13,15 +13,21 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Two-Page Discipline and Difference from backlog/](./two-page-discipline-and-difference-from-backlog.md) — A two-pager grows too detailed, or an idea may be ready to become a full plan.
 - [Promoting a Two-Pager and Worked Examples](./promoting-ideas-and-worked-examples.md) — Promoting a two-pager to backlog/, or filing a learning in ideas/.
 - [Plan Folder Naming](./plan-folder-naming.md) — Naming or renaming a plan folder as it moves between lifecycle stages.
-- [Structure Decision](./structure-decision.md) — Choosing between the single-file and multi-file structure.
-- [Single-File Structure](./single-file-structure.md) — Authoring a plan that meets all single-file exception criteria.
-- [Multi-File Structure](./multi-file-structure-layout-and-core-files.md) — Scaffolding a multi-file plan folder, or what belongs in README.md, brd.md, prd.md.
+- [Plan-Artifact Authorization and Transition](./plan-artifact-authorization-and-transition.md) — Deciding whether a request authorizes a new plans/ artifact and which plans use the current contract.
+- [Comprehensive Decision Records](./comprehensive-decision-records.md) — Making a formal plan understandable to a bootcamp graduate with no professional experience, with alternatives and prior art.
+- [Structure Decision](./structure-decision.md) — Choosing the required mature-plan core and reader-led technical shape.
+- [Retired Single-File Structure](./single-file-structure.md) — Recognizing the prospective boundary for existing single-file plans.
+- [Multi-File Structure](./multi-file-structure-layout-and-core-files.md) — Scaffolding the fixed mature-plan core and choosing one technical shape.
 - [Additional File Purposes](./multi-file-structure-additional-file-purposes.md) — Clarifying what belongs in tech-docs.md, delivery.md, learnings.md, or evidence/.
 - [File-Impact Analysis Format](./file-impact-analysis-format.md) — Writing or reviewing a plan's tech-docs.md File-Impact Analysis section.
 - [The Knowledge Capture Phase (Final Phase Before Archival)](./the-knowledge-capture-phase.md) — Authoring or executing a plan's final Knowledge Capture phase before moving it to done/.
 - [Content-Placement Rules (brd.md vs prd.md)](./content-placement-rules.md) — Deciding whether a piece of plan content belongs in brd.md or prd.md.
-- [Granular Checklist Items in delivery.md](./granular-checklist-items.md) — Checking whether a delivery.md checkbox is too coarse.
+- [Granular Checklist Actions Within Outcome Sections](./granular-checklist-items.md) — Keeping
+  cohesive acceptance outcomes while exposing each verifiable action and TDD stage as its own
+  bootcamp-executable checkbox.
 - [Execution-Grade Clarity](./execution-grade-clarity.md) — Writing or reviewing a delivery.md checkbox for execution-grade clarity.
+- [Schema and Migration Contracts](./schema-and-migration-contracts.md) — Making schema changes, compatibility, migration, rollback, and no-loss proof executable.
+- [Delivery Reconciliation and Conditional Recovery](./delivery-reconciliation-and-recovery.md) — Places governance and architecture reconciliation with the change and gives conditional recovery work explicit terminal states. Use when delivery may change repository rules, documented C4 elements, or invoke rollback/recovery work.
 - [[AI] vs [HUMAN]](./executor-tagging-tags-and-bias.md) — Deciding whether a delivery.md checkbox should be tagged [AI], [HUMAN], or [AI+HUMAN].
 - [Git-Mechanical Steps Are [AI]](./executor-tagging-git-mechanical-steps.md) — Tagging a worktree-provisioning, push, or worktree-removal step in delivery.md.
 - [Placement, Legend, and Execution Semantics](./executor-tagging-placement-legend-and-execution-semantics.md) — Adding the executor-tag legend to a delivery.md file or handling a [HUMAN] stop during execution.
@@ -34,7 +40,7 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether work may share a PR or await another merge.
 - [Boundary Test](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing a delivery boundary.
 - [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
-- [Addition Limits and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Measuring addition-only category ceilings or testing a plan-document LOC exemption.
+- [Addition Targets, Limits, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Strong C=500, hard O/file bounds, and the plan-document LOC exemption.
 - [The Atomicity Exception (PR-Size Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
 - [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.
@@ -55,4 +61,4 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Relative Link Paths in Plan Files](./relative-link-paths.md) — Three-level `../../../` depth to repo-root files, one level shallower for two-pagers.
 - [Related Documentation](./related-documentation.md) — The decision guides, related conventions, and development guides that cross-reference the plans organization convention.
 - [Best Practices](./best-practices.md) — Looking for day-to-day working habits for maintaining plan documents over their lifecycle.
-- [Examples](./examples.md) — You want a concrete worked example of a single-file plan, a multi-file plan layout, or a two-pager.
+- [Examples](./examples.md) — You want a current mature-core example, a grandfathered retired-shape example, or a two-pager.

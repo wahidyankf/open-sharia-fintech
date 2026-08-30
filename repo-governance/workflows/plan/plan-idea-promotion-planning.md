@@ -1,10 +1,10 @@
 ---
 name: plan-idea-promotion-planning
 title: "plan-idea-promotion-planning"
-description: Promotes one ripe two-pager idea brief into a full five-document backlog plan, gated, researched, and retired atomically.
+description: Promotes one ripe two-pager idea brief into a mature-core backlog plan, gated, researched, and retired atomically.
 when_to_use: Use when a two-pager in plans/ideas/ has matured and should become a scheduled backlog plan.
 goal: >
-  Promote one ripe two-pager idea brief from plans/ideas/ into a full five-document backlog plan at
+  Promote one ripe two-pager idea brief from plans/ideas/ into a mature-core backlog plan at
   plans/backlog/<identifier>/: gate the brief for completeness, run the deep prior-art study the
   capture phase deferred, then hand the enriched brief to plan-planning (target-stage=backlog) and
   retire the two-pager. The deliverable is the backlog plan, never any implementation.
@@ -58,7 +58,7 @@ outputs:
 
 # Plan Idea Promotion Planning Workflow
 
-Turns one ripe two-pager into a full five-document backlog plan: gates it for completeness, runs the
+Turns one ripe two-pager into a mature-core backlog plan: gates it for completeness, runs the
 deferred deep prior-art study, hands it to `plan-planning`, and retires the source two-pager.
 
 ## Contents

@@ -50,11 +50,29 @@ Writes validation findings to `generated-reports/` using the pattern
 ## Core Responsibility
 
 Validate that completed plan implementation matches what the plan promised — business intent
-(`brd.md`), product requirements (`prd.md`), technical approach (`tech-docs.md`), the delivery
+(`brd.md`), product requirements (`prd.md`), the chosen technical form, the delivery
 checklist, code quality standards — and that every execution-time gate actually held: operational
 readiness, manual behavioral assertions, plan archival, worktree usage, phase gates, post-execution
 anti-hallucination, Knowledge Capture routing (a **blocking gate**), and delivery mode / exact-head
 PR-CI compliance. Absence of semantic review is valid unless the user explicitly requested it.
+
+For current-contract plans, verify each outcome section's Input, Outcome, Proof, canonical
+acceptance reference, granular action checkboxes, and separate detailed RED/GREEN/REFACTOR proof
+against the delivered state. Rule propagation and exact as-built C4 reconciliation must occur in
+their changing phase; recovery ends executed or `Not triggered` with evidence.
+Outcome cohesion does not relax natural delivery seams, PR-size rules, or atomicity. Above the
+strong 500-line code target, require evidence of the natural seam, rejected splits, and review
+proof; never fail on size alone, and retain all hard bounds. Do
+not report migration findings
+against archived plans or the existing Rhino plan.
+Before archival, verify the completion date was resolved only after all pre-archival gates,
+including the preliminary audit, passed and the same repository-local value appears in the
+done-folder name, index entry, and completion evidence. After delivery, require the workflow-owned
+terminal audit in the final report before `pass` or cleanup; never require it to be pre-ticked.
+For every affected repository, verify the rule-changing delivery unit actually completed the
+canonical rules-propagation subject inventory, conflict/precedence and placement decisions,
+enforcement dispositions, generated bindings, `rules-quality-gate`, repository-specific manifest,
+final status, and sibling obligation. One repository's evidence cannot satisfy another's outcome.
 
 **See `plan-verifying-execution` Skill** for the complete post-execution validation methodology —
 Validation Scope, the Step 0-7 Workflow Overview, and every Step 5b-5i rule's What-to-Validate and

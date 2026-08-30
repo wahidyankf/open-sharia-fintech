@@ -14,7 +14,7 @@ when_to_use: Use when clarifying what belongs in tech-docs.md, delivery.md, lear
 
 # Multi-File Structure — Additional File Purposes
 
-Continues the file-purpose list from [Multi-File Structure](./multi-file-structure-layout-and-core-files.md) for the remaining files in the five-document plan folder.
+Continues the file-purpose list from [Mature Formal-Plan Structure](./multi-file-structure-layout-and-core-files.md) for the remaining core files.
 
 - **tech-docs.md**: architecture, design decisions with rationale, file-impact analysis, mechanics,
   dependencies, risks, rollback. For every new lasting mechanism, name the concrete need it addresses

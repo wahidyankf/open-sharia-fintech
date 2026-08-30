@@ -1,6 +1,6 @@
 ---
 title: "Gherkin-Tagged Delivery Steps"
-description: Why one RED-GREEN-REFACTOR cycle binds exactly one Gherkin scenario, the required tag-line format, the two exceptions, and PASS/FAIL examples.
+description: How detailed outcome sections reference canonical Gherkin without duplicating full scenarios in delivery.md.
 category: explanation
 subcategory: development
 tags:
@@ -10,27 +10,19 @@ tags:
   - testing
   - red-green-refactor
 created: 2026-05-02
-when_to_use: Use when writing a RED step for a plan touching apps/ or libs/ with companion Gherkin specs.
+when_to_use: Use when writing detailed code delivery steps for a plan with companion Gherkin specs.
 ---
 
 # Gherkin-Tagged Delivery Steps
 
-A behavior-implementing delivery cycle targets **exactly one Gherkin scenario**. Split work so
-that each `RED → GREEN → REFACTOR` cycle implements a single scenario — never bundle multiple
-scenarios into one RED (or one GREEN, or one REFACTOR). Long, granular checklists are expected and
-preferred over a few broad steps.
+A behavior-implementing outcome section names every acceptance criterion it binds by stable ID or
+exact scenario title and links the canonical `prd.md` or `specs/**` source. `delivery.md` never
+copies the full `Given/When/Then`; duplicated scenarios drift.
 
-Each such cycle's RED step MUST carry, in two parts:
-
-1. A **tag line** naming the one scenario: `**Gherkin (binds) →** "<Scenario title>"`.
-2. That scenario's **complete `Given/When/Then`** inline as a fenced ` ```gherkin ` block
-   immediately under the step — copied **verbatim** from the companion `.feature` file (itself
-   mirrored verbatim from `prd.md §Acceptance Criteria`). The `.feature` is the source of truth if
-   they ever diverge.
-
-The matching GREEN step implements only the slice that makes that one scenario pass; the REFACTOR
-step tidies that slice. Because each scenario gets its own cycle, its full `Given/When/Then` appears
-exactly once — in that cycle's RED step.
+A section may bind multiple scenarios when their actions are inseparable and one observable outcome
+and proof boundary accepts or rejects them together. Otherwise split them into separate outcome
+sections. Pure-core tests may use `Gherkin (underpins)` and aggregate BDD binders may name all
+consumed scenarios; both still reference, rather than copy, the canonical scenarios.
 
 **Two exceptions** keep a multi-scenario tag (a `;`-separated title list) and are **not** split
 one-cycle-per-scenario:
@@ -47,30 +39,24 @@ Gherkin (ties to the
 [Specs & Gherkin two-path completeness rule](../../quality/feature-change-completeness.md)).
 Exempt: pure refactors, docs/governance-only plans, and non-code delivery steps.
 
-**PASS example** — one RED step bound to exactly one scenario:
+**PASS example**:
 
-````markdown
-- [ ] [AI] **RED**: Write failing test for discount calculation in
-      `apps/organiclever-app-web/src/features/pricing/core/discount.test.ts`
-      — command: `nx run organiclever-app-web:test:unit`
-      — acceptance: test fails with `TypeError: calculateDiscount is not a function`
+```markdown
+### AC-PRICING-04 — A percentage discount produces the contracted final price
 
-  **Gherkin (binds) →** "10% discount reduces price"
-
-  ```gherkin
-  Scenario: 10% discount reduces price
-    Given a product priced at 100
-    When a 10% discount is applied
-    Then the final price should be 90
-  ```
-````
+- **Input:** [AC-PRICING-04 "10% discount reduces price"](../prd.md#acceptance-criteria).
+- **Outcome:** the final price matches the canonical scenario.
+- [ ] [AI] **RED:** [exact calculation test/path/command/expected failure].
+- [ ] [AI] **GREEN:** [exact implementation symbol/path/command/expected pass].
+- [ ] [AI] **REFACTOR:** [exact pricing-helper cleanup/regression command/invariant].
+- **Proof:** recorded RED failure and `rtk nx run organiclever-app-web:test:unit` passes.
+```
 
 **FAIL examples** (each a HIGH finding):
 
-- A behavior RED step whose `**Gherkin (binds) →**` tag lists **more than one** scenario — split it
-  into one cycle per scenario.
-- A behavior RED step missing its tag line, or whose inline `Given/When/Then` block is absent or not
-  verbatim-equal to the companion `.feature`.
+- A behavior outcome section with no canonical scenario reference.
+- Full Gherkin copied into `delivery.md`.
+- Multiple independently verifiable behaviors hidden in one section.
 
 `plan-checker` flags both as **HIGH** findings.
 

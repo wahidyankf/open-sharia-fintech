@@ -9,12 +9,30 @@ when_to_use: Use to validate or extend this workflow.
 ```gherkin
 Feature: Repository rules propagation
 
+  Scenario: A semantically sufficient rule request is a no-op
+    Given the effective rules already satisfy the requested meaning, strength, scope, boundaries, exceptions, and discoverability
+    When semantic sufficiency is evaluated before placement
+    Then the manifest records no-op with the canonical source and verification evidence
+    And the rule produces no tracked diff
+
+  Scenario: A material semantic gap continues to placement
+    Given an existing rule resembles the request but has weaker scope or strength
+    When semantic sufficiency is evaluated
+    Then the request is not suppressed as a no-op
+    And the workflow continues through placement and enforcement
+
   Scenario: A rule that must be read unprompted is admitted by evicting a weaker resident
     Given a normalized rule must be read before files are opened
     And the instruction surface is full
     When the workflow runs
     Then the rule is admitted by relocating a resident to its owning governance layer
     And both changes land together without changing a word-budget threshold
+
+  Scenario: Word-budget remediation preserves material meaning
+    Given a rule exceeds its destination word budget and names a specific audience and boundary
+    When the workflow relocates detail through progressive disclosure
+    Then obligation, audience, strength, scope, exceptions, pass conditions, and enforcement remain equivalent
+    And no material qualifier is generalized or removed for brevity
 
   Scenario: A rule reachable by activity is placed in a governance layer
     Given a normalized rule whose audience reaches it through the activity it governs

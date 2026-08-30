@@ -48,6 +48,23 @@ and learning-syllabus scaffolding, diagram fixes, worktree and delivery-mode fix
 clarity rewrites, executor-tagging and phase-gate fixes, anti-hallucination repair (AP-1 through
 AP-10), and Knowledge Capture phase scaffolding.
 
+Repair current-contract plans toward the fixed mature core, reader-led technical form,
+bootcamp-graduate readability, evidence-backed alternatives/prior art, schema/migration contracts,
+cohesive Input/Outcome/Proof sections, granular actions, separate detailed RED/GREEN/REFACTOR, and
+canonical acceptance references.
+Do not add copied Gherkin or detail-free/keystroke checkboxes. Preserve phase gates,
+executor ownership, natural seams/PR-size rules, worktree/delivery mode, manual/operational proof,
+and Knowledge Capture. Never migrate archived plans or the Rhino plan. Never split only to force
+code below the strong 500-line target. Above it require a natural seam, measured size, rejected
+viable splits, review proof, and all hard bounds.
+Replace any prospectively hardcoded archival date with an execution-time `<completion-date>` step:
+run `rtk date +%F` only after completion proof, then reuse that output for the move and indexes.
+When a finding exposes missing rule-impact handling, independently confirm the affected repository
+set, then add the complete granular repository-local `rules-propagation` runbook in each
+rule-changing delivery unit. Include enforcement dispositions, generated bindings,
+`rules-quality-gate`, manifest/final-status evidence, and sibling obligation; never repair it with
+one generic “run propagation” checkbox.
+
 ## Reference Documentation
 
 [CLAUDE.md](../../CLAUDE.md); [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md);

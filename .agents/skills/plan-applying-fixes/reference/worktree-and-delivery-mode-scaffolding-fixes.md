@@ -8,9 +8,10 @@ missing — mechanical fix: derive `<plan-identifier>` from the plan-folder name
 section already exists under non-standard heading text (e.g. `## Git Worktree`) — rename rather than
 duplicate.
 
-**How to fix missing `## Worktree` section**: multi-file plans — insert into `delivery.md` before
-the first phase heading; single-file plans — insert into `README.md` before `## Delivery Checklist`.
-In both cases, insert the verbatim `## Worktree` template (path declaration, optional
+**How to fix missing `## Worktree` section**: for a current formal plan, insert it into
+`delivery.md` before the first phase heading. For an existing pre-contract single-file plan,
+retain or restore it in `README.md` before `## Delivery Checklist`; this compatibility repair
+never authorizes a new single-file plan. Insert the verbatim `## Worktree` template (path declaration, optional
 `claude --worktree <plan-identifier>` pre-provisioning block, Step-0-gate note) from the Worktree
 Specification section of `.claude/skills/plan-creating-project-plans/SKILL.md` — that section is the
 single source of truth for the exact wording; do not paraphrase it.
@@ -45,8 +46,9 @@ mechanically retagged, at any confidence level — see How to Fix a Merge-Tag Mi
 ### How to Fix a Missing `## Delivery Mode` Section
 
 Insert `## Delivery Mode: worktree-to-pr` immediately after `## Worktree` (default mode, absent any
-signal otherwise) — multi-file: `delivery.md` before the first phase heading; single-file:
-`README.md` before `## Delivery Checklist`. If the plan's existing checklist already shows
+signal otherwise) in `delivery.md` before the first phase heading. An existing pre-contract
+single-file plan may retain it in `README.md` before `## Delivery Checklist`; this does not
+authorize that shape for new plans. If the plan's existing checklist already shows
 direct-push-only steps (no PR step, no worktree at all), resolve via the Grilling Interaction
 Contract rather than silently defaulting.
 

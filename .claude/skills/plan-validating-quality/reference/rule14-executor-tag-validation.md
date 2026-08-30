@@ -7,7 +7,7 @@ action.
 
 **What to validate**:
 
-1. **Legend present** — `delivery.md` (or a single-file plan's Delivery Checklist section) defines the
+1. **Legend present** — `delivery.md` defines the
    `[AI]`/`[HUMAN]`/`[AI+HUMAN]` legend at the top. Missing: **HIGH**.
 2. **Human-only steps tagged `[HUMAN]`** — physical acts, BIOS/firmware/hardware changes, external
    vendor-portal actions needing human auth/2FA/biometrics, account creation, real-world-presence

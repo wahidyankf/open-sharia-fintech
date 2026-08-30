@@ -12,8 +12,9 @@ before implementing. This step independently confirms the gate held.
 ### What to Validate
 
 1. **Plan declares a `## Worktree` section**
-   - Multi-file plan: `delivery.md` contains `## Worktree`. Single-file plan: `README.md` contains
-     it.
+   - Multi-file plan: `delivery.md` contains `## Worktree`. An existing pre-contract single-file
+     plan carries it in `README.md`; this compatibility check never authorizes creation of a new
+     single-file formal plan.
    - Missing: **HIGH** finding (the executor should have refused to start; if it ran, that itself is
      a CRITICAL workflow violation).
 

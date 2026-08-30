@@ -30,6 +30,10 @@ academic paper. `.github/pull_request_template.md` prompts for each in compact f
 4. **Which paths to skip** — generated mirrors and mechanical churn, named explicitly.
 5. **What was verified and what could go wrong.** Name the checks run, the remaining risk, and the
    safe rollback or containment step.
+6. **How the size remains reviewable.** State measured `C`, `O`, and hand-authored-file totals. When
+   `C` exceeds the strong 500-line recommendation, name the natural cohesive seam, viable split
+   points considered and rejected, and the review/proof approach. State any hard-bound exemption
+   separately.
 
 **Why this binds prose PRs too.** [Code as
 Liability](../../../development/practice/code-as-liability/the-obligation.md) makes a PR adding

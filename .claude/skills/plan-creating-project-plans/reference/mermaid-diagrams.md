@@ -11,7 +11,8 @@ Concerns that warrant their own diagram when present:
 - **Dependency position** — upstream/downstream plan or system dependencies
 - **Phase/delivery flow** — phased progression with gates and transition conditions
 
-Prefer multiple focused diagrams over one overloaded diagram. Trivial/linear plans (single-file config bumps, renames, doc fixes) may skip diagrams — this is the "where appropriate" escape hatch.
+Prefer multiple focused diagrams over one overloaded diagram. Trivial/linear plans (config bumps,
+renames, doc fixes) may skip diagrams when a visual would not materially improve understanding.
 
 **Authoritative rule**: [repo-governance/conventions/structure/plans.md §Diagrams in Plans](../../../../repo-governance/conventions/structure/plans/diagrams-required.md#diagrams-in-plans)
 

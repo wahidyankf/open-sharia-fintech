@@ -6,26 +6,24 @@ when_to_use: Use when determining the composite's final status, or confirming wh
 
 # Termination Criteria
 
-- **Success** (`pass`): every plan gated to double-zero, executed to zero findings, archived,
-  pushed, CI green in every repo; sibling links repaired; every exact identity-recorded worktree
-  immediately removed after delivered/merged, clean/idle, and no-unpushed proof
+- **Success** (`pass`): every plan gated to double-zero and delivered its archival change; replacement
+  exact-head proof is green, the delivered-head terminal audit passes in every repo, sibling links
+  are repaired, and each exact identity-recorded worktree is removed only after `pass` plus all
+  cleanup safety proofs.
 - **Partial** (`partial`): planning phase succeeded but at least one repo's execution ended
   `partial`/`fail`, or a delivery target was not reached; completed repos remain archived,
-  failing repos keep their plan in `plans/in-progress/` and their worktree intact with evidence
-  and escalation. A cleanup-precondition failure is never a user-choice retention or `pass` path.
+  failing repos retain their current plan/worktree state with evidence and escalation. A terminal
+  audit or cleanup-precondition failure is never a user-choice `pass` path and reopens execution.
 - **Failure** (`fail`): the planning phase failed, the phase gate found a repo not
   execution-ready, or the invoker abandoned any of the three grills
 
 **Per-repo Delivery Mode note**: "archived, pushed" above means a different concrete outcome per
 repo depending on that repo's resolved
-[`## Delivery Mode`](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) — a direct push of the
-archival commit to `origin main` for the direct-push modes (`worktree-to-origin-main`,
-`main-to-origin-main`), or a green exact-head-CI/leak-reviewed PR with the archival move committed inside it,
-awaiting the merge outside the AI done-boundary, for the `*-to-pr` modes
-(`worktree-to-pr`, `main-to-pr`) — see the
-[PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md). Because each
-repo resolves its delivery mode independently, a single composite run may end with some repos
-merged directly and others handed off as open PRs.
+[`## Delivery Mode`](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode):
+public OSE repositories use `worktree-to-pr`, with exact-head CI/leak proof and merge under default
+`[AI]` authority before terminal audit. Direct-push modes, `main-to-pr`, and
+`worktree-to-origin-main` are unavailable in this public composite. See the
+[PR Merge Protocol](../../../development/workflow/pr-merge-protocol.md).
 
 ## Grilling Contract
 
@@ -37,8 +35,9 @@ This composite is intentionally exhaustive: **three grill sessions, all hard gat
    no authoring on stale assumptions.
 3. **Pre-execution grill** (composite Step 3): execution order, failure policy, open design
    decisions, and `[HUMAN]` availability — no execution on unconfirmed operational decisions.
-   Cleanup is not grilled: eligible exact identity-recorded worktrees are removed immediately; failed
-   preconditions retain evidence and escalate.
+   Cleanup is not grilled: after delivered-head terminal audit and `pass`, eligible exact
+   identity-recorded worktrees are removed immediately; failed preconditions retain evidence,
+   reopen execution, and escalate.
 
 Every question follows the
 [Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md). "We

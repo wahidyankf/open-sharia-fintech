@@ -58,6 +58,12 @@ fixer are [repo-rules-checker](../../../.claude/agents/repo/repo-rules-checker.m
 `.claude/agents/`, `.claude/skills/`, `docs/explanation/` partially) — see the Purpose and Scope
 child below for the full validates/skips breakdown.
 
+**Word-budget semantic-preservation hard gate:** neither checker nor fixer may change rule meaning
+to satisfy a word target or ceiling. Progressive disclosure and indexed splits are valid only when
+every obligation, named audience qualifier, strength, scope, boundary, exception, pass/violation
+condition, and enforcement disposition survives. Generalization, weakening, dense paraphrase, or
+deletion for brevity is a HIGH domain finding even if the deterministic word counter turns green.
+
 ## Contents
 
 - [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.

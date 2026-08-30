@@ -29,4 +29,6 @@ Naming is **stage-aware** — each lifecycle stage has its own rule:
 - Identifier: Lowercase, hyphen-separated, descriptive
 - Trailing slash indicates directory
 - Moving from `backlog/` → `in-progress/` is a pure move (neither carries a date prefix)
-- Add the completion date prefix when moving from `in-progress/` → `done/`
+- Add the completion date prefix when moving from `in-progress/` → `done/`. Resolve it only after
+  completion gates by running `rtk date +%F`; prospective checklists use `<completion-date>` and
+  never hardcode the authoring date or predict a future completion date.

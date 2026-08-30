@@ -1,6 +1,6 @@
 ---
-title: "Single-File Structure"
-description: Specifies the mandatory section order for a single-file README.md plan and when this exception structure is permitted.
+title: "Retired Single-File Structure"
+description: Records the prospective boundary for existing plans created under the retired single-file exception.
 category: explanation
 subcategory: conventions
 tags:
@@ -9,27 +9,20 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when authoring a plan that meets all single-file exception criteria.
+when_to_use: Use when reviewing an existing single-file plan against the prospective transition rule.
 ---
 
-# Single-File Structure
+# Retired Single-File Structure
 
-```
-2025-12-01__feature-name/
-└── README.md                # All-in-one plan document
-```
+New formal plans never use the retired all-in-one `README.md` exception. Use the fixed core in
+[Structure Decision](./structure-decision.md).
 
-**README.md sections** (mandatory, in order):
+Do not migrate or report structure findings against:
 
-1. **Context** — project description, background, non-technical framing
-2. **Scope** — in-scope + out-of-scope; affected subrepos / apps named explicitly
-3. **Business rationale (condensed BRD)** — why this matters, business goals, affected roles, success metrics (gut-based reasoning OK; judgment calls labeled; fabricated KPIs forbidden; internet citations inline with excerpt + URL + access date)
-4. **Product requirements (condensed PRD)** — user stories (`As a … I want … So that …`), Gherkin acceptance criteria, product scope
-5. **Technical approach** — architecture, design decisions, implementation approach; every new
-   lasting mechanism names its concrete need and why existing mechanisms are insufficient
-6. **Worktree** — declared worktree path (`worktrees/<plan-identifier>/`) and provisioning command (see [Worktree Specification](./worktree-specification.md#worktree-specification))
-7. **Delivery checklist** — phased `- [ ]` items with one concrete action per checkbox; opens with the `[AI]`/`[HUMAN]` executor legend; every phase ends with a `### Phase N Gate` and a Pause Safety note (see Executor Tagging and Phases as Natural Pauses With Clear Gates above)
-8. **Quality gates** — local gates + CI gates that must pass
-9. **Verification** — how to confirm the plan is done
+- immutable plans in `plans/done/`;
+- the Rhino plan already in progress when the current mature-plan contract landed; or
+- another existing plan whose creation predates that contract.
 
-If the author cannot comfortably fit both the condensed BRD and condensed PRD sections into the README without crowding out the technical sections, promote the plan to the five-document multi-file layout before execution begins.
+When such a plan is otherwise edited or executed, preserve its recorded structure. New material
+within it must remain internally consistent and safe, but the edit does not silently convert the
+plan to the current document set.

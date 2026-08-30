@@ -16,7 +16,8 @@ never from memory: the set drifts, and in some repositories of this ecosystem it
 makes every plan there out of scope.
 
 **When triggered**, the author probes for a connected, authenticated Vercel MCP server and records
-the result in `tech-docs.md`. That result decides executor tags:
+the result in the chosen technical form's README or a companion it maps. That result decides
+executor tags:
 
 - **Available** → deployment-observation steps are `[AI]`: deploy state and provenance, build logs,
   runtime errors, and runtime invocation counts grouped by source, route, or status code. This is

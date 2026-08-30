@@ -1,13 +1,20 @@
 ---
 title: "Termination Criteria"
-description: The three terminal states — landed, halted, partial — and the conditions that produce each.
+description: The four terminal states — no-op, landed, halted, partial — and the conditions that produce each.
 when_to_use: Use when deciding whether a propagation run is finished, and what to report.
 ---
 
 # Termination Criteria
 
-A run ends in exactly one of three states. There is no state in which a rule is written but
+A run ends in exactly one of four states. There is no state in which a rule is written but
 unaccounted for.
+
+## No-op
+
+The Step 3 semantic sufficiency gate proves that the effective rules already satisfy the requested
+meaning, strength, scope, boundaries, exceptions, and discoverability. The manifest names the
+canonical source and verification evidence, the ledger is reconciled, and the rule produces no
+tracked diff. A no-op does not open a delivery PR solely to restate existing wording.
 
 ## Landed
 
@@ -47,6 +54,9 @@ commitment to ship them together.
 - Softening an unfalsifiable rule into "guidance" so it can be written.
 - Recording an enforcement disposition of "unclear" or leaving it blank.
 - Raising a word-budget threshold, or adding an exemption entry, so a placement fits.
+- Weakening, generalizing, omitting, or ambiguously paraphrasing any obligation, named audience,
+  strength, scope, boundary, exception, pass/violation condition, or enforcement disposition to make
+  a word counter pass.
 - Declaring the composed quality gate's pre-existing findings as this run's, or this run's findings
   as pre-existing, without demonstrating the baseline.
 

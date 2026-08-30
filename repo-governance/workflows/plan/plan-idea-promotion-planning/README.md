@@ -1,6 +1,6 @@
 ---
 title: "Plan Idea Promotion Planning Workflow"
-description: "Promotes one ripe two-pager idea brief into a full five-document backlog plan, gated, researched, and retired atomically."
+description: "Promotes one ripe two-pager idea brief into a mature-core backlog plan, gated, researched, and retired atomically."
 when_to_use: "Read this index to find the right Plan Idea Promotion Planning Workflow child document."
 ---
 

@@ -21,6 +21,11 @@ No threshold is raised, and no exemption, waiver, or ignore entry is added, to m
 fit. When a surface is full, the moves are eviction or the fallback layer. This guard exists
 because defeating the budget is always the cheapest apparent fix and always the wrong one.
 
+The rule's meaning is equally non-negotiable. Budget remediation may relocate full detail behind an
+annotated link, but MUST preserve obligations, named audience, strength, scope, boundaries,
+exceptions, pass/violation conditions, and enforcement disposition. Shortening a material qualifier,
+generalizing the audience, or deleting an edge condition to reduce words is a propagation defect.
+
 ## Higher Layers Are Read-Only
 
 A run may not edit a rule in a layer above the one it is propagating into. The whole point of the
@@ -47,10 +52,11 @@ converge is information, not an obstacle to grind through.
 
 ## Idempotency
 
-Re-running propagation with the same rule is a no-op: intake normalizes to the same statement,
-classification reaches the same surface, and the tidy finds nothing left to reconcile. Where a run
-inserts rather than replaces, the already-applied state is checked **before** the insertion anchor,
-so a re-run cannot duplicate what it added.
+Re-running propagation with the same effective outcome is a no-op. Step 3 compares meaning,
+strength, scope, boundaries, exceptions, and discoverability before placement and records the
+canonical source and proof. Wording-only differences cannot cause churn; material gaps cannot be
+hidden by textual similarity. Where a run inserts rather than replaces, the already-applied state
+is checked **before** the insertion anchor, so a re-run cannot duplicate what it added.
 
 ## Related Documents
 

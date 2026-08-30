@@ -4,9 +4,11 @@ description: Defines safe direct-push cleanup and *-to-pr archival.
 when_to_use: Use when cleaning up a plan's worktree after a direct push, or moving a plan folder to done/ inside a delivering PR.
 ---
 
-1. **Worktree cleanup — immediate (after archival pushed)**: once the archival commit is confirmed
-   on `origin/main` and CI is green, clean up a `worktree-to-origin-main` worktree in the same
-   session. `main-to-origin-main` created no plan worktree, so this step is N/A for that mode.
+1. **Direct-push worktree compatibility cleanup — only after terminal audit and `pass`**:
+   `worktree-to-origin-main` is unavailable in both OSE repositories; `main-to-origin-main` creates
+   no plan worktree. If this compatibility procedure is reused by a repository that permits such a
+   worktree mode, require confirmed delivery, a passing workflow-owned terminal audit in
+   `{final-report}`, and final `pass` before cleanup.
    1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
       `git worktree list --porcelain`. Inventory every plan-created/current branch; the initial
       identity branch may differ after normal switching. Missing identity, path conflict, or
@@ -40,25 +42,34 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
 inside the delivering PR itself, followed by exact-current-head/base PR CI, before the merge
 (`[AI]` by default; `[HUMAN]` only where the plan's own step says so):
 
-1. Move entire plan folder from current location to `plans/done/` (same command as the direct-push
-   path):
+1. Resolve the actual repository-local completion date only after every pre-archival gate,
+   including the preliminary end-to-end audit, passes:
 
    ```bash
-   git mv plans/in-progress/plan-name/ plans/done/YYYY-MM-DD__plan-name/
+   rtk date +%F
    ```
 
-2. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
-3. **Update `plans/done/README.md`** — add the plan entry with completion date and brief summary
+   Record the output as `<completion-date>`; never use an authoring-time or forecast date from a
+   prospective checklist.
+
+2. Move entire plan folder from current location to `plans/done/`:
+
+   ```bash
+   rtk git mv plans/in-progress/plan-name/ plans/done/<completion-date>__plan-name/
+   ```
+
+3. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
+4. **Update `plans/done/README.md`** — add the plan entry with the same resolved completion date and brief summary
    (same format as above)
-4. **Update any other READMEs** that reference this plan
-5. **Search for orphaned references** to the old `plans/in-progress/[plan-name]` path and fix them
-6. **Commit the archival and push to the PR branch** (never to `main` directly):
+5. **Update any other READMEs** that reference this plan
+6. **Search for orphaned references** to the old `plans/in-progress/[plan-name]` path and fix them
+7. **Commit the archival and push to the PR branch** (never to `main` directly):
 
    ```
    chore(plans): move [plan-identifier] to done
    ```
 
-7. **Verify the replacement `Quality gate` run** is green for the archival commit's exact PR head
+8. **Verify the replacement `Quality gate` run** is green for the archival commit's exact PR head
    and current base. Confirm conversations are resolved, applicable finite surface gates pass, the
    secrets check is clean, and the archival commit is present. Semantic-review evidence is required
    only when the user explicitly requested that workflow for this PR.

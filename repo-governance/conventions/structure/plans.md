@@ -43,14 +43,18 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 
 ## Plan Contents
 
-- [Structure Decision](./plans/structure-decision.md) — single- vs. multi-file.
-- [Single-File Structure](./plans/single-file-structure.md) — exception layout.
-- [Multi-File Structure](./plans/multi-file-structure-layout-and-core-files.md) — README/brd/prd.
-- [Multi-File — Additional Files](./plans/multi-file-structure-additional-file-purposes.md) — rest.
+- [Plan Artifact Authorization and Transition](./plans/plan-artifact-authorization-and-transition.md) — Defines literal authorization for plans/ artifacts and the prospective applicability of the mature-plan contract. Use before creating a plans/ artifact or deciding whether an existing plan must adopt the current contract.
+- [Structure Decision](./plans/structure-decision.md) — fixed core and reader-led technical shape.
+- [Retired Single-File Structure](./plans/single-file-structure.md) — grandfathered plans only.
+- [Mature Formal-Plan Structure](./plans/multi-file-structure-layout-and-core-files.md) — required core files.
+- [Additional File Purposes](./plans/multi-file-structure-additional-file-purposes.md) — technical shape, delivery, learnings, and evidence.
+- [Comprehensive Decision Records](./plans/comprehensive-decision-records.md) — substantive solution choices, alternatives, and prior art without editorial iteration history.
+- [Schema and Migration Contracts](./plans/schema-and-migration-contracts.md) — required contracts for persisted-data changes.
+- [Delivery Reconciliation and Conditional Recovery](./plans/delivery-reconciliation-and-recovery.md) — Places governance and architecture reconciliation with the change and gives conditional recovery work explicit terminal states. Use when delivery may change repository rules, documented C4 elements, or invoke rollback/recovery work.
 - [File-Impact Analysis Format](./plans/file-impact-analysis-format.md) — annotated file tree.
 - [The Knowledge Capture Phase](./plans/the-knowledge-capture-phase.md) — final phase.
 - [Content-Placement Rules](./plans/content-placement-rules.md) — brd vs prd.
-- [Granular Checklist Items](./plans/granular-checklist-items.md) — one action.
+- [Granular Checklist Actions](./plans/granular-checklist-items.md) — detailed action checkboxes grouped by cohesive outcome.
 - [Execution-Grade Clarity](./plans/execution-grade-clarity.md) — checkbox rules.
 - [Executor Tagging — Tags and Bias](./plans/executor-tagging-tags-and-bias.md) — [AI]/[HUMAN] tags.
 - [Tagging — Git-Mechanical Steps](./plans/executor-tagging-git-mechanical-steps.md) — worktree/push.
@@ -64,7 +68,7 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [PRs Open — Rules 5-7](./plans/prs-open-at-delivery-boundaries-rules-continued.md) — remaining rules.
 - [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — qualification.
 - [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — surface bounds.
-- [PRs Open — Addition Limits](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — LOC caps and plan-doc exemption.
+- [PRs Open — Addition Targets and Limits](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — strong C target, hard O/file bounds, and plan-doc exemption.
 - [PRs Open — Atomicity](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — rule 5.
 - [PRs Open — PR Body](./plans/prs-open-at-delivery-boundaries-pr-body.md) — why, entry, skip.
 - [Delivery Boundaries](./plans/delivery-boundaries-and-applicability.md) — table.

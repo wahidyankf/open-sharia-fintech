@@ -15,7 +15,11 @@ content, or all-at-once complexity). Standalone invocation retains its configure
 
 **Remediation guidance**: the only sanctioned fix is progressive disclosure (inline content →
 one-line summary + `See` link) — call out forbidden anti-fixes (deleting rules, dense compression,
-splitting into another auto-loaded file) if observed. See
+splitting into another auto-loaded file) if observed. Compare the before/after obligation, named
+audience qualifier, strength, scope, boundaries, exceptions, pass/violation conditions, and
+enforcement disposition; any weakening, generalization, omission, or ambiguity is HIGH even when
+the counter passes. Material qualifiers such as “junior engineer fresh from bootcamp with no
+professional work experience” must remain explicit. See
 [Governance Word-Budget Convention](../../../../repo-governance/conventions/structure/governance-word-budget.md).
 
 ## Step 7: Rules Governance Validation

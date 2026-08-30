@@ -1,9 +1,11 @@
 # Decision Grilling for Unresolved Material Choices
 
 Before writing plan content, the calling root resolves only material design decisions that remain
-open after reading relevant repository evidence. A finished plan does not trigger a separate
-post-write grill: its bounded evidence audit reuses the stronger PR, check, and plan-specific
-evidence already collected.
+open after reading relevant repository evidence. After all plan artifacts are written, the root
+runs a separate post-write validation/stress-test grill against the completed plan. That grill
+checks ambiguity, contradictions, unsupported assumptions, rejected alternatives, operational and
+recovery gaps, and whether the intended bootcamp-graduate reader can execute the delivery. It does
+not invent editorial-history decision records or repeat questions already settled by evidence.
 
 **HARD RULE — 2-4 options required**: Every grilling question MUST present **2-4 concrete,
 mutually exclusive options**. Each option MUST state its trade-off in one sentence. Exactly one
@@ -26,6 +28,15 @@ envelope.
 question. Never surface a decision a file read can answer — the repo is the ground truth; the user
 is the tiebreaker for genuinely ambiguous decisions.
 
+For every material decision, research repository/history evidence and applicable external prior
+art before grilling. Present the selected candidate and at least two viable alternatives, including
+status quo when viable, with their trade-offs. If fewer exist, record the search and disqualifying
+constraints instead of inventing choices. The plan preserves the final selection, evidence,
+rejection reasons, consequences, and revisit triggers. A material decision changes the delivered
+product, architecture, implementation contract, delivery, rollout, testing, operation, or recovery
+behavior. Do not grill or preserve wording changes, section moves, checker/fixer iterations, or
+other editorial plan history unless they change that delivered contract.
+
 **Pre-write grill covers** (each as a structured multiple-choice question):
 
 - What problem is this solving? What specific pain point?
@@ -40,6 +51,10 @@ is the tiebreaker for genuinely ambiguous decisions.
 **Do NOT proceed to writing while a material pre-write branch remains unresolved.** A specialist with any open
 branch returns `## User Decisions Required` and stops; it never infers an answer. Unresolved design
 decisions force expensive rewrites.
+
+**Do NOT signal completion before the post-write grill passes.** Resolve any new material branch
+through the same envelope protocol, update the plan, and rerun the stress test. Preserve the final
+solution decision and rationale, not the drafting conversation.
 
 See [Grilling-With-Options Convention](../../../../repo-governance/development/workflow/grilling-with-options.md)
 for the authoritative rule, validation checklist, and examples. Invoke via the `grill-me` skill.

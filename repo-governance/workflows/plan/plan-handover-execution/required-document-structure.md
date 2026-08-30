@@ -62,7 +62,7 @@ state explicitly if nothing was touched.>
 ## Do not re-litigate
 
 <Design decisions, deferred findings, or already-settled debates a fresh reader might otherwise
-reopen — one line each, with a pointer to where the decision is recorded (tech-docs.md's decision
+reopen — one line each, with a pointer to where the decision is recorded (the chosen technical form's decision
 table, a specific PR review thread, etc.). Omit this section entirely if nothing applies; do not
 force an empty list.>
 ```

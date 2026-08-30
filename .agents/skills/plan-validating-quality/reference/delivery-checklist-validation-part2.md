@@ -1,11 +1,9 @@
 # Delivery Checklist Validation, Part 2 (Scope 4)
 
-- **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior RED→GREEN→REFACTOR cycle
-  targets exactly one Gherkin scenario — RED carries a single-scenario `**Gherkin (binds) →**`
-  tag plus the verbatim inline scenario. **HIGH** a multi-scenario `binds` tag, a missing tag, or a
-  non-verbatim inline block. Exceptions (keep multi-scenario `;`-lists): pure-core
-  `**Gherkin (underpins) →**` unit tests, and aggregate BDD binders consuming a whole `.feature`.
-  Pure refactors and docs/governance-only steps exempt. See
+- **Canonical Gherkin references**: every behavior outcome section names stable IDs or exact titles and links
+  the canonical PRD/spec source. Full inline Gherkin is duplication and **HIGH**. Multiple scenarios
+  share one section only when one cohesive outcome and proof boundary binds them; otherwise split.
+  Pure refactors and docs/governance-only sections are exempt. See
   [Gherkin-Tagged Delivery Steps](../../../../repo-governance/development/workflow/test-driven-development/gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
 - **UI-design-funnel completeness (UI-bearing plans)**: plans adding/changing user-facing
   screens/components need the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi
@@ -43,12 +41,28 @@
   `reference/19-rule18-knowledge-capture-phase-presence.md` (Step 5l). Silent absence: **MEDIUM**;
   explicit "none": PASS. See
   [Knowledge Capture Convention](../../../../repo-governance/development/quality/knowledge-capture.md).
+- **Automatic rules-propagation coverage (conditional HARD RULE)**: independently classify scope
+  and file impacts against the full normative surface. Every affected repository must have a
+  repository-local outcome in the rule-changing delivery unit with separate actions for inventory,
+  conflict/precedence and supersession, placement/eviction, canonical/config/enforcement/index
+  edits, three-way enforcement dispositions, generated bindings, verification and
+  `rules-quality-gate`, manifest/final status, and sibling obligation. A missing outcome, generic
+  invocation, reusable checkbox template standing in for repeated concrete actions, or
+  cross-repository evidence substitution is **HIGH**.
 
-### Delivery Checklist Granularity Standard
+### Granular Delivery Within Outcome Cohesion
 
-- Each checkbox is a single, independently verifiable action — not a paragraph of actions.
-- Multi-action items must split (e.g. "Install X, configure Y, and verify Z" → 3 checkboxes).
-- Every item has a clear done-state.
+- Each outcome section has Input, Outcome, Proof, and canonical AC references; every concrete,
+  independently verifiable action is a separate executor-tagged checkbox.
+- Code behavior slices have separate RED/GREEN/REFACTOR checkboxes. Flag omitted detail and omnibus
+  actions; do not flag a high useful checkbox count.
+- Split outcome sections at independent proof boundaries. Reject only mechanical keystroke
+  micro-checkboxes with no distinct observation.
+- Checklist counts never override independently reviewable, verifiable, revertible delivery seams,
+  Delivery Boundaries, PR-size/addition rules, atomicity, or the phase/boundary distinction. Treat
+  500 handwritten code additions as a strong recommendation, not a hard ceiling: above 500 require
+  measured size, a natural cohesive seam, rejected split alternatives, and review proof. Enforce
+  the independent other/document, hand-authored-file, and machine ceilings as hard bounds unless
+  their canonical exception applies.
 - Phase transitions have explicit verification steps (e.g. "Verify `nx run app:typecheck` passes").
-- Maximum nesting depth: 2 levels (top-level checkbox with sub-checkboxes, no deeper).
-- Sub-items independently checkable — completing a parent doesn't auto-complete children.
+- Input/Outcome/Proof prose is not a task; every action checkbox is an independent harness task.

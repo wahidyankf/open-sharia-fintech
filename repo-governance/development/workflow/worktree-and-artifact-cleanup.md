@@ -24,14 +24,15 @@ Cleanup is a **mandatory gate**, not a courtesy. It is also the one gate most li
 executed carelessly, because every action it takes is a deletion. The whole convention exists to make
 that combination safe: delete thoroughly, delete only what is yours, and verify before each removal.
 
-**Cleanup is immediate, not deferred.** Clean a repo's three eligible artifact classes the moment
-this plan is done using them — when every delivery unit this plan places in that repo is confirmed
-merged and the identity, clean/idle, no-unpushed, and artifact-safety checks pass — right then, not
-batched with unrelated later steps and not left in place "in case it's needed again." Under the
+**Cleanup is immediate after the terminal gate, not deferred.** A plan is done using a repository's
+three eligible artifact classes only when every delivery unit is confirmed delivered, replacement
+exact-head proof exists where applicable, the workflow-owned terminal audit is recorded as passing
+in `{final-report}`, final status is `pass`, and the identity, clean/idle, no-unpushed, and
+artifact-safety checks pass. Clean right then, not in an unrelated later batch. A terminal-audit gap
+retains the artifacts and reopens execution. Under the
 [Worktree Cap](../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
 a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
-repo's worktree is torn down as soon as that repo's own units land, independently of whether the
-plan's other repos are still in flight.
+repo reaches this terminal gate independently of whether the plan's other repos are still in flight.
 
 **No confirmation prompt is required for an exact, self-created plan worktree.** Once all mandatory
 pre-removal checks pass, the AI executor removes the exact path recorded in the plan immediately.

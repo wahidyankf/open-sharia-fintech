@@ -24,8 +24,11 @@ are:
   no explicit "none" record, at **MEDIUM** criticality. An explicit "none" record passes without a
   finding.
 - **`plan-execution-checker`**: blocks archival until every `learnings.md` entry is routed-inline
-  (non-code only), filed-as-a-two-pager (mandatory for code), or discarded-with-reason; verifies
-  both safety gates were applied; verifies no code born from a learning landed inline.
+  (non-code only), filed as an explicitly authorized `plans/ideas/` two-pager after the mandatory
+  overlap scan, reported without plan authorization, or discarded-with-reason; verifies both
+  safety gates were applied; verifies no code born from a learning landed inline; and rejects any
+  Knowledge Capture write under `plans/backlog/`. Only the idea-promotion workflow owns the
+  transition from a ripe idea to a formal backlog plan.
 - **`plan-fixer`**: scaffolds a missing Knowledge Capture phase and `learnings.md` file into a plan
   that lacks them.
 - **`plan-maker`** and the plan-creating skill: emit the Knowledge Capture phase and the

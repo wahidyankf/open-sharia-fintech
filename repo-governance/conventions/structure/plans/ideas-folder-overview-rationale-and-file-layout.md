@@ -17,11 +17,11 @@ when_to_use: Use when capturing a new idea in plans/ideas/ or deciding whether i
 **Location**: `plans/ideas/` (folder at the root of `plans/`)
 
 **Purpose**: Capture pre-plan ideas as **two-pagers** — shortened, promotable idea briefs that are
-richer than a one-line todo but deliberately **NOT** the full five-document plan. Each idea is its own
+richer than a one-line todo but deliberately **NOT** the mature-core formal plan. Each idea is its own
 file; the folder carries a `README.md` index. `ideas/` is the first stage of the plan lifecycle:
 
 ```text
-ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
+ideas/ (two-pagers) → backlog/ (mature formal plans) → in-progress/ → done/
 ```
 
 ## Why a Two-Pager (Not a One-Liner, Not a Full Plan)
@@ -34,7 +34,7 @@ design doc", and the Rust RFC — all of which name the problem, sketch a soluti
 invites debate rather than forecloses it, state what is explicitly out of scope, name the open
 questions, and define what success looks like, inside a one-to-two-page ceiling (ADR: _"the whole
 document should be one or two pages long"_; Google's mini design doc: _"1-3 pages"_). The full
-five-document plan is the deliberately-longer sibling the two-pager is promoted into.
+mature-core plan is the deliberately longer sibling the two-pager is promoted into.
 
 ## File Layout
 

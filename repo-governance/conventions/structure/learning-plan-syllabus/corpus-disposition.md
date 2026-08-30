@@ -1,7 +1,7 @@
 ---
 title: "Corpus Disposition"
-description: The archive-with-plan versus promote-to disposition declaration every custodian plan carries, the default rule, the promotion trigger test, and the corpus lifecycle diagram.
-when_to_use: Read this when writing a custodian plan's tech-docs.md Corpus Disposition section, or when deciding whether a corpus should switch from archive-with-plan to promote-to.
+description: The archive-with-plan versus promote-to disposition declaration every custodian plan carries in its selected technical form, the default rule, the promotion trigger test, and the corpus lifecycle diagram.
+when_to_use: Read this when writing a custodian plan's Corpus Disposition section in its selected technical form, or when deciding whether a corpus should switch from archive-with-plan to promote-to.
 category: explanation
 subcategory: conventions
 tags:
@@ -18,8 +18,9 @@ created: 2026-07-22
 Part of the [Learning-Plan `syllabus/` Folder Convention](../learning-plan-syllabus.md).
 
 Every learning-bearing plan that **owns** a corpus (its **custodian** — see the
-[Custody Rule](./custody-rule.md)) declares, in its `tech-docs.md`, a `## Corpus Disposition`
-section with exactly one of the following values. A plan that only **consumes** another plan's
+[Custody Rule](./custody-rule.md)) declares a `## Corpus Disposition` section in its selected
+technical form: `tech-docs.md`, or a mapped companion owned by `tech-docs/README.md` when the
+directory form is selected. The section has exactly one of the following values. A plan that only **consumes** another plan's
 corpus never carries a `## Corpus Disposition` section — it is not learning-bearing in its own
 right (see the [Learning-Bearing Trigger](./learning-bearing-trigger.md)'s negative example 2)
 and instead carries the `custodied-by:<plan-id>` echo under its own `## Corpus Custody` heading,

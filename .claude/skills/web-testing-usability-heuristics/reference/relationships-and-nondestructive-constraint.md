@@ -16,10 +16,9 @@
   mockup-blind and spec-blind. A page can be perfectly on-design and still confusing (this agent's
   finding), or perfectly clear and off-brand (design-tester's finding). Run all three testers for
   full live-site coverage.
-- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan is a findings
-  record, not an executable delivery plan. On promotion to `plans/in-progress/`, `plan-maker` grills it
-  and adds `tech-docs.md` + a TDD-shaped
-  `delivery.md` with the specs/Gherkin coverage steps required by the
+- **Uses the plan-making contract in explicit plan mode** — plan mode runs the mature-plan grill
+  and creates the fixed core plus mapped technical
+  companions and a TDD-shaped `delivery.md` with the specs/Gherkin coverage steps required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).
 - **Feeds the `swe-ui-*` and `swe-*-dev` families** — developers consume `findings.md` to drive
   UI/UX fixes.

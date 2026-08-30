@@ -7,7 +7,7 @@ title: "Reference"
 - [01 Mandatory Grilling](./mandatory-grilling.md) — the mandatory pre-write and post-write grilling gates for resolving open design decisions
 - [02 Plan Lifecycle And Git Workflow](./plan-lifecycle-and-git-workflow.md) — the plan lifecycle and its git workflow
 - [03 Plan Folder And Naming](./plan-folder-and-naming.md) — the plans/ folder structure and stage-aware naming convention
-- [04 Plan Structure Multi And Single File](./plan-structure-multi-and-single-file.md) — the five-document multi-file structure and the single-file exception
+- [04 Plan Structure Multi And Single File](./plan-structure-multi-and-single-file.md) — the fixed mature-plan core and one reader-led technical shape
 - [05 Mermaid Diagrams](./mermaid-diagrams.md) — why plans must include extensive Mermaid diagrams, one per distinct architectural concern
 - [06 Ui Design Funnel](./ui-design-funnel.md) — the mandatory UI-mockup design funnel for plans that add or change user-facing screens
 - [07 Ui Design Funnel Grilling And Learning Plans](./ui-design-funnel-grilling-and-learning-plans.md) — design-funnel grilling questions and requirements for learning-bearing plans

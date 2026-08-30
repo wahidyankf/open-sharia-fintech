@@ -44,7 +44,7 @@ outputs:
     description: One plan folder path per target repo
   - name: deviation-matrix
     type: file
-    description: "Cross-repo decision matrix (every gap mapped to an align/deviate decision with justification), embedded in each plan's tech-docs.md and mirrored in each repo's explanation rationale doc"
+    description: "Cross-repo decision matrix (every gap mapped to an align/deviate decision with justification), embedded in each plan's chosen technical form and mirrored in each repo's explanation rationale doc"
   - name: gate-results
     type: string
     description: "plan-quality-gate final status per plan (pass/partial/fail)"

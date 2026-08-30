@@ -1,11 +1,25 @@
 # Worktree Specification (Mandatory — Applies to ALL Plans)
 
-Provision the worktree **before** defining the plan and author every plan document inside it — the worktree precedes the plan, never follows it. Every plan MUST then declare that worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent. When the section is present, the executor enters the declared worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — per the [Worktree Cap HARD RULE](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) — is capped at **one worktree per repository per plan**, reused across every delivery unit landed there. Cleanup is immediate, not deferred: the worktree is removed the moment this plan is done using that repo, not batched with unrelated later steps.
+Provision the worktree **before** defining the plan and author every plan document inside it by
+default. Every plan MUST declare that worktree path before the delivery checklist begins. The only
+authoring exception is when this plan artifact is itself a deliverable inside another existing
+worktree that the user explicitly required the session to keep using, and it depends on unlanded
+work there. In that case, declare the matching execution worktree with `Provisioning status:
+pending`, the authoring worktree, and the user constraint; omit its identity/inventory until Step 0.
+Convenience alone is not an exception, and no implementation may begin while status is pending.
+
+This is enforced by `plan-checker` and the
+[plan-execution workflow Step 0 hard gate](../../../../repo-governance/workflows/plan/plan-execution.md).
+The executor enters or provisions the declared matching worktree, syncs with `origin/main`, and—per
+the [Worktree Cap HARD RULE](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)—reuses
+at most one worktree per repository across every delivery unit.
 
 **Where to declare**:
 
 - **Multi-file plans**: top-level `## Worktree` section in `delivery.md`, placed before any phase heading.
-- **Single-file plans**: top-level `## Worktree` section in `README.md`, placed before `## Delivery Checklist`.
+- **Existing pre-contract single-file plans only**: top-level `## Worktree` section in `README.md`,
+  before `## Delivery Checklist`. Compatibility handling never authorizes a new single-file formal
+  plan.
 
 **Path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (strip the `YYYY-MM-DD__` date prefix). Examples:
 
@@ -54,4 +68,4 @@ applicable` only when a repository's mode has no such identity. See
 See [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 ````
 
-**This applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
+**This applies to all newly created formal plans regardless of size** — pure-docs plans included.

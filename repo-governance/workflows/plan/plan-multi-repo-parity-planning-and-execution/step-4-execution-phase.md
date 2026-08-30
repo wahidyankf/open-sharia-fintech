@@ -33,22 +33,26 @@ Every plan-execution rule applies unchanged, including:
   post-push CI verification, thematic commits, manual behavioral assertions, progress streaming,
   disk-is-truth reconciliation.
 - **Validation loop**: `plan-execution-checker` to zero findings (CRITICAL through LOW).
-- **Knowledge Capture pre-archival gate**: each repo's plan-execution phase blocks its own
-  archival until every `learnings.md` entry is routed-inline, filed-as-backlog-plan, or
-  discarded-with-reason and both safety gates pass, per the
+- **Knowledge Capture pre-archival gate**: each repo's plan-execution phase blocks its own archival
+  until every `learnings.md` entry is routed inline, recorded in a literal user-authorized
+  `plans/ideas/` brief after an overlap scan, marked `Reported without plan authorization`, or
+  discarded with reason and both safety gates pass, per the
   [Knowledge Capture Convention](../../../development/quality/knowledge-capture.md) — an attention
   point per repo, not a composite-wide one.
-- **Archival**: move the plan to `plans/done/YYYY-MM-DD__<objective-slug>/`, update plan READMEs,
-  commit and push.
-- **Immediate worktree and artifact cleanup**: when that repo's delivery is confirmed, run the full
-  three-class cleanup gate in the same session after merged/delivered, identity, clean/idle, and
-  no-unpushed proof. Preserve diagnostics, purge only plan-local regenerable build output, apply the
+- **Archival and terminal proof**: after the preliminary audit and all pre-archival gates pass,
+  resolve `rtk date +%F` once as `<completion-date>`, move the plan to
+  `plans/done/<completion-date>__<objective-slug>/`, update indexes, deliver the archival change,
+  and require replacement exact-head proof where applicable. After merge or delivery confirmation,
+  record the workflow-owned terminal audit in `{final-report}`; only then assign `pass`.
+- **Immediate worktree and artifact cleanup after `pass`**: run the full three-class cleanup gate
+  in the same session after terminal proof, identity, clean/idle, and no-unpushed proof. Preserve
+  diagnostics, purge only plan-local regenerable build output, apply the
   bare-repository branch-order exception when needed, and use non-force exact-path removal with no
   extra prompt. Never use ancestry as a squash-merge proxy; retain, evidence, and escalate if any
   precondition fails.
 
 **Sequencing rule**: one repo at a time. Repo N+1's execution does not start until repo N reaches
-`pass` (archived, pushed, CI green) — or, under a continue-on-failure policy from Step 3, until
+`pass` (archival delivered, replacement proof green, terminal audit passed) — or, under a continue-on-failure policy from Step 3, until
 repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
 
 **Continues in** [Step 4 — Execution Phase (Continued)](./step-4-execution-phase-continued.md).

@@ -27,7 +27,7 @@ occurrence (may be legitimate version bump during execution; flag for review).
 annotations): `find .claude/agents -name '<name>.md'` returns a match — definitions live in nested
 role subfolders, so a flat path test always fails. Missing: **HIGH** (AP-7).
 
-**F. Behavior claims** — for every claim about library or framework behavior in tech-docs.md: verify
+**F. Behavior claims** — for every claim about library or framework behavior in the chosen technical form: verify
 it is backed by a `[Web-cited]` inline excerpt + URL + access date, or by a repo-doc reference.
 Missing source: **MEDIUM** per occurrence.
 

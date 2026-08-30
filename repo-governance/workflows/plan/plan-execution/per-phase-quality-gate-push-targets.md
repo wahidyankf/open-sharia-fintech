@@ -26,9 +26,11 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
      [Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md)). Open the
      PR only at the unit's declared delivery boundary. Its body is the reader's entry point and
      applies [Bounding PR Size](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md):
-     at most 500 handwritten code/program-type additions, independently at most 1,000 handwritten
-     other/document-type additions, and at most 20 hand-authored files. Claim the plan-document LOC
-     exemption only for a qualifying initial establishment or backlog/in-progress pure move. At an
+     target 500 or fewer handwritten code/program-type additions as a strong recommendation, while
+     independently enforcing at most 1,000 handwritten other/document-type additions and at most 20
+     hand-authored files. A code diff above 500 remains valid only with its measured size, natural
+     cohesive seam, rejected split alternatives, and review proof recorded. Claim the plan-document
+     LOC exemption only for a qualifying initial establishment or backlog/in-progress pure move. At an
      intermediate phase, push for durability but open no PR, run no PR review, merge nothing, and
      skip Step 2c. Dependent phases share a delivery unit; independent nodes never do. Monitor CI
      on the PR, not `main`.

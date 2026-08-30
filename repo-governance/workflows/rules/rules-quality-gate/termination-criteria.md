@@ -27,3 +27,6 @@ from this domain count and use `lifecycle-status` instead.
 
 **Note**: Below-threshold findings are reported in the final audit but do not prevent success.
 Success requires two consecutive validations with zero findings at or above the selected threshold.
+A budget-motivated semantic change is HIGH regardless of a green deterministic word count; strict
+mode cannot pass until every affected obligation, named audience, strength, scope, boundary,
+exception, pass/violation condition, and enforcement disposition is restored.

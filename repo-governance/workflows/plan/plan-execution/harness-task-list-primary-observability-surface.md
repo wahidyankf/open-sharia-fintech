@@ -10,7 +10,9 @@ The harness task list (`TaskCreate` to add, `TaskUpdate` to mutate) is the user'
 
 **Non-negotiable invariants**:
 
-- **One checkbox = one harness task**. Every `- [ ]` in `delivery.md` (including every nested sub-bullet) maps to exactly one harness task created via `TaskCreate`. Every harness task maps back to exactly one checkbox.
+- **One action checkbox = one harness task**. Every `- [ ]` in `delivery.md`, including separate
+  RED, GREEN, and REFACTOR actions, maps to exactly one harness task. Outcome-section
+  Input/Outcome/Proof prose is not a task. Every harness task maps back to exactly one checkbox.
 - **Title short-form rule**. The task `subject` is a short-form of the checkbox prose: drop articles, keep verb + object, ≤80 characters. The reader watching the spinner MUST recognize the checkbox at a glance.
 - **At most one `in_progress` task at any time**. Multiple `in_progress` tasks indicate the orchestrator is interleaving items — forbidden.
 - **Sync lag ≤ one Edit call**. The on-disk checkbox state never lags more than a single `Edit` call behind the harness task state. If `TaskUpdate completed` fires before the matching `Edit` ticks the checkbox, the system is in an inconsistent state — roll back per the Atomic Sync Ritual below.

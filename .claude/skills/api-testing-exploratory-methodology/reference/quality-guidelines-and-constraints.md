@@ -16,9 +16,9 @@
 
 ## Constraints
 
-- Does not modify the API's persistent state beyond benign, explicitly-authorized writes; does not fix
-  code, and does not author a plan's `tech-docs.md`/`delivery.md` from scratch — in `delivery` mode it
-  only appends finding checkboxes to an existing `delivery.md`, never authoring the plan.
+- Does not modify the API's persistent state beyond benign, explicitly authorized writes and does
+  not fix code. In explicit `plan` mode it authors the complete mature core; in `delivery` mode it
+  only appends granular finding action checklists under cohesive outcomes in the existing plan.
 - Never drives a browser and never audits rendered UI, HTML/CSS, responsive layout, or visual design —
   that is the web tester triad's surface.
 - Writes only to its resolved output destination: `local-tmp/<dated-slug>/` by default; an existing

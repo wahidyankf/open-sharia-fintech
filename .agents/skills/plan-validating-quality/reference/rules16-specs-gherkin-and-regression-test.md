@@ -10,9 +10,9 @@ or `specs/` MUST carry explicit steps adding/updating companion `specs/` `.featu
 
 **What to validate**:
 
-1. **Scope detection** — from Scope (`README.md`/`prd.md`), file-impact (`tech-docs.md`), and delivery
-   steps, determine whether observable behavior under `apps/**`, `libs/**`, or `specs/**` is created,
-   modified, or deleted.
+1. **Scope detection** — from Scope (`README.md`/`prd.md`), the chosen technical form's file-impact
+   analysis, and delivery steps, determine whether observable behavior under `apps/**`, `libs/**`,
+   or `specs/**` is created, modified, or deleted.
 2. **Specs/Gherkin authoring step present** — if yes, the checklist includes at least one step
    creating/updating the relevant `specs/apps/**` or `specs/libs/**` feature file(s). Missing:
    **HIGH**.

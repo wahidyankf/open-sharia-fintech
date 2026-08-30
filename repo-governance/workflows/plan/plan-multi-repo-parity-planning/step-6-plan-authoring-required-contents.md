@@ -1,6 +1,6 @@
 ---
 title: "Step 6 — Plan Authoring (Required Contents)"
-description: The five required contents of every authored plan — full deviation matrix, sibling cross-links, rationale doc item, governance-update item, and Knowledge Capture.
+description: The required parity contents of every mature-core plan.
 when_to_use: Use when verifying an authored plan carries everything this workflow requires before it can pass the quality gate.
 ---
 
@@ -10,9 +10,9 @@ when_to_use: Use when verifying an authored plan carries everything this workflo
 
 Each plan MUST include:
 
-**(a) Full deviation matrix** with justifications in `tech-docs.md`. Every row from the Steps 3
-and 5 output appears verbatim, including the chosen resolution and justification for any
-deviation.
+**(a) Full deviation matrix** with justifications in the chosen technical form. For a directory
+form, `tech-docs/README.md` maps the companion containing it. Every row from the Steps 3 and 5
+output appears verbatim, including the chosen resolution and justification for any deviation.
 
 **(b) Cross-links to sibling plans** in each of the other target repos. Use the expected paths
 at the agreed stage. Example (from a plan at `plans/in-progress/foo/README.md`):
@@ -47,7 +47,8 @@ the [plan-execution workflow](../plan-execution.md).
 
 **Agent**: `plan-maker`
 
-**Success criteria**: Five-document plan exists at the resolved path in each target repo.
+**Success criteria**: The mature core and exactly one mapped technical form exist at the resolved
+path in each target repo.
 
 **On failure**: Surface the error. Do not proceed to Step 7 for the failing repo until the plan
 is authored.

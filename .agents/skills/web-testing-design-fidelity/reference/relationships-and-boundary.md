@@ -16,10 +16,9 @@ the same running site. They complement each other and never overlap:
   design and follow good design practice?"_ A button that drifted from the mockup, used a raw colour
   instead of the theme token, or sits in a cramped, mis-aligned layout belongs here. Run all three for
   full live-site coverage.
-- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
-  is a findings record, not yet an executable delivery plan. On promotion to `plans/in-progress/`,
-  `plan-maker` grills it and adds `tech-docs.md` +
-  a TDD-shaped `delivery.md`.
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — that mode runs the mature-plan
+  grill and creates the fixed core with mapped
+  technical companions and a TDD-shaped `delivery.md`.
 - **Feeds the `swe-ui-*` and `swe-*-dev` families** — developers consume `findings.md` (steps to
   reproduce, the design ground truth violated) to drive design fixes.
 - **Delegates to `web-researcher`** — for the current, authoritative statement of a design principle it
