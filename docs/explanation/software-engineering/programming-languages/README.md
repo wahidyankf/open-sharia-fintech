@@ -192,6 +192,11 @@ TypeScript is used for frontend web applications (Next.js) and tRPC backends. Ty
 
 ### Language Selection Criteria
 
+Before proposing a language change for an existing component, read
+[rhino-cli: Rust to F# Rewrite — Measured Outcome](./rhino-cli-rust-to-fsharp-benchmark.md) — the
+durable, measured comparison record from the one rewrite this platform has actually carried through
+end to end, including the regressions it found.
+
 Languages in this documentation are chosen based on:
 
 **Technical Fit**:
