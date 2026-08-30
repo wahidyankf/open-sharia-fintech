@@ -1729,3 +1729,33 @@ manifest are the `ose-private` half `ose-public`'s Phase 11a named as owed.
 **Terminal state**: Verified/already-terminal — same R1-R3 deferral and R4 "N/A —
 nothing to place" verdict as `ose-public`'s run; recorded here per this plan's sibling-obligation
 requirement. No further action.
+
+## 2026-08-30 — Final Validation Checklist: Wave B git-fixture-safety recording gap
+
+Two Validation-Checklist sub-items near the top of `delivery.md` (the DD-6 git-fixture-safety
+convention's six layers) were never ticked. Re-checked at plan close, substantively and via the
+record:
+
+**Substance — verified compliant.** `PreCommitHookSteps.fs` (the one integration-test step file
+that shells a real `git` subprocess) sets all six layers: `GIT_CEILING_DIRECTORIES`, `GIT_DIR`,
+`GIT_CONFIG_GLOBAL`, `GIT_CONFIG_SYSTEM`, a pre-write `rev-parse --show-toplevel` escape guard
+compared against the fixture root, and asserts exit status on every git invocation (grep-confirmed
+in the file's own doc comments and helper functions). `EnvSteps.fs` — the other file the checklist
+item named — never shells a subprocess at all (no `Process`/`ProcessStartInfo` reference anywhere
+in the file); the six-layer requirement's premise (a fixture that runs real `git`) does not apply
+to it, so there was nothing for that cycle to satisfy.
+
+**Recording — a genuine miss, closed here instead of then.** The paired item required a
+`learnings.md` entry, written at the time, naming `apps/rhino-cli/tests/git_hooks.rs` and
+`apps/rhino-cli/tests/env.rs` as themselves non-compliant with DD-6, so the F# port would implement
+the convention's layers rather than copy the Rust helpers' shape. That entry was never written
+during Wave B. The Rust crate (including both named files) was deleted at Phase 9c, so the
+original files no longer exist to consult — this note necessarily reconstructs the finding after
+the fact rather than restating it from the time. The substantive outcome it was meant to protect
+did land correctly regardless: `PreCommitHookSteps.fs` was authored independently against the DD-6
+convention (six layers present, verified above), not copied from the Rust fixture's shape.
+
+**Terminal state**: Closed here. The protected outcome (DD-6-compliant F# git fixtures) is verified
+true; the specific "record it in learnings.md at the time" sub-requirement was missed during
+execution and is satisfied retroactively by this entry rather than a contemporaneous one. No
+further action — there is no live Rust fixture left to mis-copy from.
