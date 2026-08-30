@@ -1472,3 +1472,42 @@ by construction.
 shows exactly `learnings.md` (modified) and `generated-reports/rules-propagation__ose-public__2026-08-30__manifest.md`
 (new) — both on the Step 1 ledger. `delivery.md`'s checkbox ticks land in the same commit. No
 unledgered path.
+
+## 2026-08-30 — Phase 11a: rules-propagation repeated independently in ose-private
+
+Same nine-step propagation run repeated in `ose-private` (scratch branch off `origin/main`, no
+commits — this repo carries no plan-doc copy of `rewrite-rhino-cli-to-fsharp`, matching Phase 10's
+own precedent, so all findings are recorded here rather than in a per-repo file). Manifest written
+to that repo's own `generated-reports/rules-propagation__ose-private__2026-08-30__manifest.md`
+(gitignored there too, same as `ose-public`'s).
+
+R1-R3 verified identically to `ose-public`: `rhino-bin.sh` and `Parity.fs` are byte-identical
+across repos; the same 7 Nx targets use `dotnet run` directly (never touching the binary);
+`shadow-diff.sh` is the same sole non-hook/target/workflow exception; `pr-quality-gate.yml`'s
+`build-rhino` job (`npx nx run rhino-cli:build`) is the only `dotnet publish`, every consumer job
+`needs: build-rhino` + downloads the artifact; `rhino-bin.sh parity manifest validate` exits 0
+against this repo's own 181-line manifest — one line longer than `ose-public`'s 180-line manifest
+(an extra `GlossaryDddCoverageUnitTests.fs` entry), concretely proving a copied manifest would not
+silently validate. Same Step 4 verdict: R1-R3's fallback lands under `repo-governance/` (the
+CI-conventions layer, though the specific `ci-toolchain-parity-checklist-invariants-a-and-b.md`
+document itself doesn't exist in this repo's smaller governance tree — the closest analogues,
+`repo-governance/development/infra/ci-conventions/pre-push.md` and
+`repo-governance/development/quality/code/pre-push-hook.md`, describe hook shape generically and
+don't name `rhino-cli`'s manifest or binary-invocation rule specifically) — **deliberately not
+written**, same standing constraint.
+
+**R4 resolves differently here, and this is the reason the plan says "authored there rather than
+copied" rather than letting a single write serve both repos**: `ose-private` has **zero** `.rs`
+files anywhere in its tree (`find . -name "*.rs" -not -path "./node_modules/*"` → 0) — there is no
+`apps/ayokoding-www` in this repo at all. `package.json`'s lint-staged `"*.rs"` →
+`rustfmt --edition 2024` entry is still declared but currently matches no file — inert, not false.
+Unlike `ose-public`, where R4 exists specifically to block an overstated "no Rust toolchain at all"
+claim against 198 real `.rs` files, `ose-private` has no active-Rust-elsewhere fact to guard
+against; R4's placement verdict here is "N/A — nothing to place."
+
+`wc -w AGENTS.md CLAUDE.md` in `ose-private`: 542 + 420 = 962, both below the 750-word-per-file
+ceiling — recorded per the Phase 11 Gate, moot for the same reason as `ose-public` (nothing was an
+instruction-surface candidate).
+
+Sibling obligation discharged: this entry and `ose-private`'s own (uncommitted, ephemeral)
+manifest are the `ose-private` half `ose-public`'s Phase 11a named as owed.
