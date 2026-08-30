@@ -15521,9 +15521,9 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `ose-private` and exactly **1** in `ose-public`, the `format` job's, retained for the 198
       course examples. Neither number is "0/1 because it was easier", and neither is satisfied by
       the `build-rhino` + `rust` removals alone. > **Deviation, recorded rather than silent**: the original acceptance text expected **0** in > `ose-private`. Corrected to **1** during this Gate audit — the survivor is the `dotnet` job's > `setup-rust`, added later (task #64, postdating the 9d item's 2026-08-25 measurement) to back > real `cargo-target-share` Doctor-feature test coverage (18 Gherkin scenarios), required for > parity with `ose-public`'s rhino-cli test suite and bound by the plan's no-skip-tests rule. > This is a different survivor, for a different reason, than `ose-public`'s course-example > carve-out — both repos keep exactly one, by two unrelated designs. `ose-private`'s `format` > job's own now-dead `setup-rust` (the item 9d actually left unfinished) was removed in a > follow-up PR (#127) once the Gate audit caught it. See `learnings.md`'s 2026-08-30 "9d > gap-fix" entry.
-- [ ] [AI] In `ose-public`, a PR changing one `.rs` file under `apps/ayokoding-www/content/` is
+- [x] [AI] In `ose-public`, a PR changing one `.rs` file under `apps/ayokoding-www/content/` is
       still auto-formatted by the `format` job and still passes `format-verify-rustfmt`.
-- [ ] [AI] The Elixir formatter-wrapper assertions and the coverage threshold both run in the
+- [x] [AI] The Elixir formatter-wrapper assertions and the coverage threshold both run in the
       `dotnet` job, proved by a deliberate temporary break that turns CI red.
 - [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` exits 0 in both
       repos.

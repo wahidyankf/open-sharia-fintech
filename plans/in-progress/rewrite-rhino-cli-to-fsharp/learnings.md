@@ -1190,3 +1190,41 @@ app currently exists in `ose-private` (`find . -iname '*coralpolyp*'` matches on
 `plans/done/**` entries). This pre-dates the 9e sweep's own edit to that row (which only touched the
 Rust→F# wording, not the coralpolyp-be citation itself) and is out of this sweep's scope, same class
 as ose-public's `ci-standards/SKILL.md` coverage-threshold discovery. Flagged here, not fixed.
+
+## 2026-08-30 — Phase 9 Gate: live break/restore proofs
+
+Three of the Gate's own acceptance clauses required a live "deliberate temporary break that turns
+red" proof, not just a structural read of the workflow YAML. All three run locally (Elixir/mix and
+coverlet.msbuild are both installed on this dev machine), no CI run needed.
+
+**1. Course-example format-job wiring** (`apps/ayokoding-www/content/**/*.rs`, `ose-public` only):
+appended a badly-indented line to a tracked course-example `.rs` file
+(`ex-28-flag-over-env/main.rs`), staged it (uncommitted — `git diff --cached` is what both
+`format-verify-rustfmt`'s CI-surface detection and `lint-staged` itself key off, so a **committed**
+change doesn't reproduce this; it must be staged-but-uncommitted, matching the `format` job's own
+`git add -- $CHANGED && npx lint-staged` sequence). `apps/rhino-cli/scripts/rhino-bin.sh gate
+run --surface=ci --group=formatting-verify` → `format-verify-rustfmt FAIL`, group fails. Then ran
+`npx lint-staged --no-stash` directly (the same command the `format` job's "Format affected files"
+step runs): `rustfmt --edition 2024` fired, rewrote `fn   badly_indented(  )  {}` →
+`fn badly_indented() {}`. Restored the original file from a backup; `git diff --stat` clean, no
+residual change.
+
+**2. Elixir formatter-wrapper coverage** (`dotnet` job, `RHINO_REQUIRE_ELIXIR`/`erlef/setup-beam`):
+baseline `dotnet test .../RhinoCli.UnitTests.fsproj --filter "FullyQualifiedName~Elixir"` → 2/2
+pass. Edited `scripts/format-elixir.sh`, replacing its real `mix format --check-formatted
+"$absolute_file"` call with `true` (a no-op that always "succeeds"). Rerun: `The Elixir formatter
+script gains a check mode that fails` → **FAIL** (`Assert.False() Failure — Expected: False, Actual:
+True`, at `GateExecutionSteps.fs:1069`) — proves the test is exercising the _real_ `mix format`
+binary's exit code, not a mock. Restored the script from backup (byte-identical, `diff` exit 0);
+rerun → 2/2 pass again.
+
+**3. Coverage threshold enforcement** (`dotnet test .../RhinoCli.UnitTests.fsproj
+/p:CollectCoverage=true /p:Threshold=<N> /p:ThresholdType=line`): baseline at the real, committed
+`Threshold=90` → passes, actual total line coverage **90.22%** (Application 90.12%, Cli 90.32%,
+Infrastructure 100%, Domain 100%). Reran with `/p:Threshold=95` (a CLI override, no file edit — the
+committed `project.json` threshold of 90 is untouched) → **coverlet.msbuild build error**: "The
+minimum line coverage is below the specified 95" (`coverlet.msbuild.targets(73,5)`), a real MSBuild
+failure, not a soft warning. Reran with `/p:Threshold=90` → passes again, same 90.22%.
+
+All three failure signatures are the actual gate mechanism firing (rustfmt's real diff, mix
+format's real exit code, coverlet.msbuild's real threshold check) — not test-harness artifacts.
