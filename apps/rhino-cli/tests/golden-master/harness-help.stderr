@@ -1,6 +1,0 @@
-error: 'rhino-cli harness' requires a subcommand but one was not provided
-  [subcommands: duplication, claude, sync, bindings, ownership, catalog, audit, help]
-
-Usage: rhino-cli harness [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

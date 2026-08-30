@@ -1,6 +1,0 @@
-error: 'rhino-cli harness emit' requires a subcommand but one was not provided
-  [subcommands: amazonq, help]
-
-Usage: rhino-cli harness emit [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

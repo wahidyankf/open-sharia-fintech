@@ -22,7 +22,7 @@
 #
 # Binary resolution (override either independently):
 #   SHADOW_DIFF_RUST_BIN   — defaults to apps/rhino-cli/target/gate/rhino-cli
-#   SHADOW_DIFF_FSHARP_BIN — defaults to apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp
+#   SHADOW_DIFF_FSHARP_BIN — defaults to apps/rhino-cli/src/dist/rhino-cli-fsharp
 #
 # Exits 0 and prints "shadow-diff: N invocation(s) compared, 0 difference(s)"
 # when every compared invocation matches; exits 1 and prints every mismatch
@@ -37,7 +37,7 @@ fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 RUST_BIN="${SHADOW_DIFF_RUST_BIN:-${REPO_ROOT}/apps/rhino-cli/target/gate/rhino-cli}"
-FSHARP_BIN="${SHADOW_DIFF_FSHARP_BIN:-${REPO_ROOT}/apps/rhino-cli/src-fsharp/dist/rhino-cli-fsharp}"
+FSHARP_BIN="${SHADOW_DIFF_FSHARP_BIN:-${REPO_ROOT}/apps/rhino-cli/src/dist/rhino-cli-fsharp}"
 
 if [[ ! -x "${RUST_BIN}" ]]; then
 	echo "shadow-diff: Rust binary not found or not executable: ${RUST_BIN}" >&2
@@ -46,7 +46,7 @@ if [[ ! -x "${RUST_BIN}" ]]; then
 fi
 if [[ ! -x "${FSHARP_BIN}" ]]; then
 	echo "shadow-diff: F# binary not found or not executable: ${FSHARP_BIN}" >&2
-	echo "shadow-diff: build it first, e.g. npx nx run rhino-cli-fsharp:build" >&2
+	echo "shadow-diff: build it first, e.g. npx nx run rhino-cli:build" >&2
 	exit 2
 fi
 

@@ -68,15 +68,14 @@ behavior/rhino-cli/gherkin/
 
 ### gate
 
-| File                             | Command(s)                            | Scenarios |
-| -------------------------------- | ------------------------------------- | --------- |
-| `gate-binary-resolution.feature` | `gate run` (binary resolution)        | 4         |
-| `gate-declaration.feature`       | `repo-config validate` / `gate list`  | 11        |
-| `gate-emission.feature`          | `gate emit`                           | 5         |
-| `gate-enumeration.feature`       | `gate list`                           | 8         |
-| `gate-execution.feature`         | `gate run`                            | 30        |
-| `gate-validation.feature`        | `gate validate`                       | 26        |
-| `parity-manifest.feature`        | `parity manifest generate`/`validate` | 5         |
+| File                       | Command(s)                            | Scenarios |
+| -------------------------- | ------------------------------------- | --------- |
+| `gate-declaration.feature` | `repo-config validate` / `gate list`  | 11        |
+| `gate-emission.feature`    | `gate emit`                           | 5         |
+| `gate-enumeration.feature` | `gate list`                           | 8         |
+| `gate-execution.feature`   | `gate run`                            | 28        |
+| `gate-validation.feature`  | `gate validate`                       | 26        |
+| `parity-manifest.feature`  | `parity manifest generate`/`validate` | 5         |
 
 ### git
 
@@ -173,7 +172,7 @@ behavior/rhino-cli/gherkin/
 | File                             | Command(s)                                             | Scenarios |
 | -------------------------------- | ------------------------------------------------------ | --------- |
 | `cargo-target-share.feature`     | `doctor`                                               | 18        |
-| `doctor.feature`                 | `doctor`                                               | 17        |
+| `doctor.feature`                 | `doctor`                                               | 16        |
 | `fsharp-tool-invocation.feature` | N/A — F# lint-target manifest regression (no CLI verb) | 1         |
 
 ### test-coverage

@@ -147,34 +147,14 @@ coverage:
   # `specs`  = the feature-file glob this project owns (surface-precise for apps;
   #             per-project for libs).
   projects:
-    # rhino-cli (tooling)
+    # rhino-cli (tooling): single entry since Phase 9c retired the Rust crate
+    # and merged the transition-era `rhino-cli-fsharp` Nx project back into
+    # this one — the directory-by-directory widening this registry tracked
+    # through Waves A-F no longer applies now that F# is the only
+    # implementation and the whole spec surface is covered uniformly.
     - name: rhino-cli
       levels: [unit, integration]
       specs: "specs/apps/rhino/behavior/rhino-cli/**"
-    # rhino-cli-fsharp (rewrite-rhino-cli-to-fsharp): registry hygiene from
-    # Phase 2 onward per this registry's own "every project is listed"
-    # comment above. The glob covers exactly the Gherkin files whose F#
-    # step definitions have landed — a property of implementation, not of
-    # FSHARP_NAMESPACES — so it widens with *each wave's implementation
-    # work*, not with the wave's later integration/flip PR: a namespace's
-    # step definitions exist (and must be provably covered) before that
-    # wave's namespace ever serves real traffic. Directory-level scope
-    # matches ose-private once every feature file under a directory has
-    # landed (Wave A's `convention/`, since `RhinoCli.Application.Convention`
-    # binds all three of its feature files together). While a directory's
-    # feature files are still being split across several PRs, the glob is
-    # file-scoped instead: widening to the whole directory before every
-    # sibling file is implemented would require `@wip`-tagging the
-    # not-yet-ported scenarios, which also exempts them from `rhino-cli`'s
-    # own one-to-one coverage check even though the Rust implementation
-    # already covers them. Once the last sibling file lands — Wave B's `env/`
-    # (4 files) and `env-contract/` (1 file), Wave C's `system/` (3 files)
-    # and `test-coverage/` (3 files), and now Wave D's `md/` (7 files),
-    # `governance/` (2 files), and `git/` (2 files) — the glob widens to
-    # directory-level like `convention/` did.
-    - name: rhino-cli-fsharp
-      levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/gherkin/{convention/**,repo-config/**,repo-config-validate/**,env/**,env-contract/**,specs/env-staged-guard.feature,system/**,test-coverage/**,md/**,governance/**,git/**}"
 
     # ose domain
     - name: ose-be

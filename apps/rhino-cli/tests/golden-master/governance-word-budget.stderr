@@ -1,6 +1,0 @@
-error: 'rhino-cli governance word-budget' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli governance word-budget [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

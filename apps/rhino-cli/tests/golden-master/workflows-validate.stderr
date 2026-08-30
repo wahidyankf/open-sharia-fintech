@@ -1,6 +1,0 @@
-error: 'rhino-cli workflows validate' requires a subcommand but one was not provided
-  [subcommands: naming, help]
-
-Usage: rhino-cli workflows validate [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

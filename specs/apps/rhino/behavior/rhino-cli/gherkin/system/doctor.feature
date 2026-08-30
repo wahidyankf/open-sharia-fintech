@@ -92,12 +92,6 @@ Feature: Development Environment Health Check
     Then the command exits successfully
     And the output does not include the skipped tool
 
-  Scenario: doctor compares rustc against the toolchain that builds
-    Given the installed rustc differs from the pinned rust-toolchain.toml channel
-    When "npm run doctor" runs
-    Then it reports the Rust toolchain as mismatched
-    And it names the pinned channel as the expected value
-
   Scenario: A pinned Rust toolchain without lint components is reported as a warning
     Given a rust-toolchain.toml pins a channel and declares no lint components
     When "npm run doctor" runs

@@ -170,6 +170,55 @@ note already documented for an earlier anomalous run. B6 is still well under the
 baseline's own worst case and, per the Noise-floor note below, a single-run B6 figure with an
 identified one-off cause is recorded as observed, not adjusted or re-run to chase a lower number.
 
+## Interim measurement: after wave E
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+D" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A-D —
+a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged, hook
+run, then the file removed and the index reset). Taken with `convention`, `parity`, `repo-config`,
+`env`, `doctor`, `test-coverage`, `md`, `governance`, `git`, `harness`, `specs`, `repo-governance`
+in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 37.30 ms   |
+| B6 — full pre-commit     | 3.33 s     |
+
+B5 is flat against after-wave-D (37.70 ms) and after-wave-C (37.71 ms). This wave adds the three
+largest namespaces by leaf count, so a flat bare-`--help` figure is the expected result rather than
+a surprising one: startup cost is dominated by .NET runtime initialization, not by the size of the
+dispatch table. B6 fell back to the wave-A-to-C band (3.68-3.85 s) from after-wave-D's 13.66 s,
+which is consistent with the cause that entry already recorded — wave D's run was measured against
+a cold, freshly reprovisioned `node_modules/`, and this one was not. Per the Noise-floor note
+below, neither figure is repeated, so B6's swing is read as the warm/cold difference wave D
+identified rather than as a wave-E effect.
+
+## Interim measurement: after wave F
+
+`ose-public` only — this wave's PR does not touch `ose-private`. Same methodology as "after wave
+E" above: Python `time.time()`-around-`subprocess.run` for B5 (50 invocations of `--help` against
+the freshly rebuilt (`nx run rhino-cli-fsharp:build`) published self-contained
+`dist/rhino-cli-fsharp` binary, exit code asserted per iteration, zero failures), `/usr/bin/time
+-p` for B6 (one full `.husky/pre-commit` against the same pinned staged set as Phase 0/Wave A-E —
+a single new `apps/rhino-cli/bench-probe.md` holding one heading and one paragraph, staged, hook
+run, then the file removed and the index reset). Taken with `convention`, `parity`, `repo-config`,
+`env`, `doctor`, `test-coverage`, `md`, `governance`, `git`, `harness`, `specs`, `repo-governance`,
+`gate` in `FSHARP_NAMESPACES`.
+
+| Metric                   | ose-public |
+| ------------------------ | ---------- |
+| B5 — startup, mean of 50 | 46.17 ms   |
+| B6 — full pre-commit     | 4.41 s     |
+
+Both figures sit within the noise band already established across waves A-E (B5: 37.30-46.17 ms;
+B6: 3.33-13.66 s, the latter an already-explained cold-`node_modules` outlier) rather than showing
+a directional trend — `gate` adds four leaves to the dispatch table, a negligible fraction of
+startup cost dominated by .NET runtime initialization, matching wave E's same conclusion for a
+larger three-namespace addition.
+
 **Noise floor for the Verdict column.** Unless a bullet below states an explicit repeat count (B3,
 B5, B7), the recorded figure is a **single run** — B1, B2, B4, and B6 were not repeated. This doc's
 own repeated measurement shows how much that matters: B3's two consecutive warm-build runs differed
@@ -218,6 +267,18 @@ machine noise rather than signal.
   runs on `main`. `ose-public`: 73 s, 69 s, 70 s (runs 32810578748, 32797537004, 32796057166), mean
   **70.67 s**. `ose-private`: 89 s, 88 s, 89 s (runs 32797359073, 32796938182, 32795391522), mean
   **88.67 s**.
+- **B7 after Phase 2** — the same three-most-recent-green-runs-on-`main` measurement, re-taken once
+  Phase 2's F# scaffolding had merged and `build-rhino` had grown a second responsibility: it now
+  publishes the self-contained `dist/rhino-cli-fsharp` alongside the Rust `gate` binary, because
+  every downstream job resolves that artifact through `RHINO_CLI_FSHARP_BIN` rather than building
+  F# from source. `ose-public`: 293 s, 296 s, 289 s (runs 33237638893, 33235713582, 33231338842),
+  mean **292.67 s**. `ose-private`: 831 s, 391 s, 819 s (runs 33237644795, 33232904277,
+  33229933531), mean **680.33 s** — recorded with its spread, not smoothed: that repository's
+  self-hosted runner produced a 2.1x range across three consecutive runs, so its mean is not a
+  figure Phase 10 should read a small delta against. The rise over the 70.67 s / 88.67 s Phase 0
+  baseline is the added F# publish, paid once per CI run in a job every other job already waited
+  on, rather than paid per-job as a from-source build would be.
+
 - **B8** — byte count of the `gate`-profile binary: **4,489,616** bytes in both repositories, equal
   in size. No digest was taken, so this is evidence of matching size only, not of byte-identity.
   It is also not the parity check: `apps/rhino-cli/parity-manifest.sha256` hashes 603 tracked

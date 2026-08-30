@@ -107,3 +107,9 @@ Feature: specs e2e-coverage validate
     When rhino-cli specs e2e-coverage validate runs for that project
     Then it fails with a non-zero exit code
     And it reports that bddgen output was not found and must be generated first
+
+  @unit
+  Scenario: A --features glob resolves against the default project directory without a stray path prefix
+    Given a project fixture with a repo-relative --features glob and a baseline keyed on the unprefixed match
+    When rhino-cli specs e2e-coverage validate runs as a subprocess against that fixture
+    Then the subprocess exits 0

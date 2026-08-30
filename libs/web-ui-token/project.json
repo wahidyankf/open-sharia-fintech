@@ -53,7 +53,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate specs/libs/web-ui-token/behavior/gherkin libs/web-ui-token"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate specs/libs/web-ui-token/behavior/gherkin libs/web-ui-token"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/web-ui-token/behavior/gherkin/**/*.feature", "{projectRoot}/src/**/*"]
@@ -61,7 +61,7 @@
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs counts validate specs/libs/web-ui-token"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs counts validate specs/libs/web-ui-token"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/web-ui-token/**/*"]

@@ -1,6 +1,0 @@
-error: 'rhino-cli md mermaid' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli md mermaid [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

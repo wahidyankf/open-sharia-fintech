@@ -113,7 +113,7 @@
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
@@ -121,7 +121,7 @@
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && cargo run --release --quiet --manifest-path ../../apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --project organiclever-app-web-e2e --features \"../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
+        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project organiclever-app-web-e2e --features \"../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
         "cwd": "apps/organiclever-app-web-e2e"
       },
       "cache": true,

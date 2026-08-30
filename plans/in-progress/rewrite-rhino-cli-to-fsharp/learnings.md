@@ -587,3 +587,424 @@ current margins are thin — 1.08 points on `RhinoCli.Cli`, 0.65 on `RhinoCli.Ap
 tell you. When it fails, read `apps/rhino-cli/src-fsharp/tests/unit/coverage.json` per file rather
 than guessing — the fully-uncovered functions in it are the cheapest lines to win, and they name
 themselves.
+
+## 2026-08-29 — Phase 9a: spec disposition enumeration and verdict table
+
+Enumerating command: `grep -rlEi 'cargo|clippy|\brust\b' specs/apps/rhino/behavior/rhino-cli/gherkin/`,
+starting from `cargo-target-share.feature` per the plan step. Confirming command:
+`grep -rl '"lang:rust"' --include=project.json .` returns exactly one hit —
+`apps/rhino-cli/project.json` — so no other project in either repo carries `tag:lang:rust`; every
+retain verdict below rests on that result, not on an assumption.
+
+**The literal grep is not sufficient on its own.** Three of `gate-binary-resolution.feature`'s four
+scenarios contain none of `cargo`/`rust`/`clippy` in their Gherkin text (they say "the ambient
+sweeper removed target/", "the prebuilt gate-profile binary in target/", "a path that does not
+exist" — never the literal words), yet all four scenarios exist solely to test
+`rhino-bin.sh`'s Rust-resolution-tier rebuild mechanics
+[Repo-grounded — `apps/rhino-cli/src-fsharp/tests/unit/Steps/GateSteps.fs`, which drives the real
+shim and asserts on `cargo build --profile gate`/`target/gate/rhino-cli`]. A second, broader search
+(`grep -rniE "target/gate|CARGO_TARGET_DIR|ambient sweeper|gate-profile binary|resolver shim|rhino-bin"`)
+was run precisely because the plan's own prescribed grep would have silently missed these three.
+Applying only the literal instruction here would have left a whole feature file's worth of
+soon-to-be-dead coverage untouched.
+
+### Per-file verdict table
+
+| File                                  | Scenario                                                                                                                                                           | Verdict                                                               | Reason                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `system/cargo-target-share.feature`   | 17 of 18 (all except the one below)                                                                                                                                | **Retain**                                                            | Generic `doctor` crate-discovery/target-sharing/pruning capability, exercised entirely through synthetic temp-directory fixtures [Repo-grounded — `DoctorSteps.fs`, `Directory.CreateDirectory`/`Path.GetTempPath` fixtures, never `apps/rhino-cli`'s real crate]. `discoverCrates` walks `apps/*`/`libs/*` for any `Cargo.toml` with no hardcoded crate list, so the mechanism activates for any future top-level Rust crate; it is not rhino-cli-specific even though rhino-cli was its only real-world subject historically.                                                                                                                                                                                                                                                                                                                                                                           |
+| `system/cargo-target-share.feature`   | "Rust test targets ignore inherited Git process state"                                                                                                             | **Rename, not retire**                                                | The Gherkin prose still says "Rust"/"the Rust test or coverage command", but the step definition already reads `apps/rhino-cli/src-fsharp/project.json` and asserts every `dotnet test` invocation is prefixed with `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR` [Repo-grounded — `DoctorSteps.fs` lines 109, 405-406, 736-740]. This scenario already tests live F# behavior under stale Rust-era prose. 9a's edit renames the scenario title and its Given/When/Then text to describe the F# git-state-scrub guard; the assertion and its production code are untouched.                                                                                                                                                                                                                                                                                                                         |
+| `repo-config/data-driven.feature`     | all 8 scenarios                                                                                                                                                    | **Retain**                                                            | None of the eight Scenario bodies mention Rust/cargo/clippy; only the Feature-level narrative line ("So that the Rust source stays identical") does. Wording fix only — drop the language-specific qualifier, since the data-driven design principle holds identically for F#.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `system/doctor.feature`               | "doctor compares rustc against the toolchain that builds"                                                                                                          | **Retire**                                                            | Backed by a hardcoded path, not generic discovery [Repo-grounded — `Doctor.fs:1476`, `Path.Combine(repoRoot, "apps", "rhino-cli", "rust-toolchain.toml")`]. 9c deletes that exact file and no other `rust-toolchain.toml` exists anywhere in the repo (confirmed by `find`), so this check has zero remaining subject.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `system/doctor.feature`               | "A pinned Rust toolchain without lint components is reported as a warning"; "A pinned Rust toolchain declaring only one lint component names just the missing one" | **Retain**                                                            | Backed by `rustToolchainManifests` [Repo-grounded — `Doctor.fs:1041`], a generic workspace-root-plus-`apps/*`/`libs/*` scan with no hardcoded path — the same shape as `discoverCrates`. The step definitions happen to write their synthetic fixture file under `apps/rhino-cli/`'s directory inside a temp repo skeleton, which is incidental to fixture authoring, not a functional dependency on that project existing for real.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `gate/gate-binary-resolution.feature` | all 4 scenarios (whole file)                                                                                                                                       | **Retire**                                                            | All four exist to test `rhino-bin.sh`'s Rust resolution tiers (build-on-missing, rebuild-on-stale, `RHINO_CLI_BIN` override, invalid-override fallback), which 9c's own "simplify `rhino-bin.sh`: `FSHARP_NAMESPACES` and the Rust resolution tiers are both dead once every namespace is F#" step deletes outright, collapsing the shim to one resolution path. None of the four survive that collapse as worded. **Follow-up for 9c, not authored here**: the simplified script may still warrant fresh, F#-only-tier scenarios for "explicit override takes precedence" and "invalid override falls through to discovery" — the resolution-order comment already promises this behavior for `RHINO_CLI_FSHARP_BIN` — but the exact tier semantics and variable name only exist once 9c actually ships the simplification, so authoring that coverage belongs to 9c, not to this retire-only sub-phase. |
+| `gate/gate-execution.feature`         | "Rust CI target families run serially"                                                                                                                             | **Retire**                                                            | Given clause is "the real Rust quality gate" — the `rust` job in `pr-quality-gate.yml`, which 9d deletes entirely. No replacement subject.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `gate/gate-execution.feature`         | "The MSRV pre-install covers the toolchain name cargo-hack requests"                                                                                               | **Retire**                                                            | Tests `setup-rust/action.yml`'s `cargo-hack` MSRV pre-install step, whose only real consumer is `compat:min-version` [Repo-grounded — `setup-rust/action.yml` line 13, "used by rhino-cli compat:min-version"] — a target 9c deletes outright — and whose own discovery glob (`apps/*/Cargo.toml libs/*/Cargo.toml`, one level deep) matches zero files repo-wide once `apps/rhino-cli/Cargo.toml` is gone, since the `ayokoding-www` course-example crates nest far deeper than that glob reaches.                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `gate/gate-execution.feature`         | "Gate group jobs consume a prebuilt binary"                                                                                                                        | **Retain**                                                            | Negative assertion ("runs no cargo install command", "no Rust toolchain setup") about gate CI jobs downloading a prebuilt artifact rather than compiling. Remains straightforwardly true and worth protecting post-9c.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `gate/gate-emission.feature`          | "Rhino CLI kind renders a resolver shim invocation"                                                                                                                | **Retain**                                                            | Negative assertion ("contains no cargo run substring") about the generated command shape. Remains valid regardless of what runs inside the shim.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `gate/gate-validation.feature`        | "The gate job's Doctor bootstrap must use the resolver shim"                                                                                                       | **Retain (not a grep hit — checked because it names `rhino-bin.sh`)** | Tests that a generated command points at the shim path, independent of the shim's internal resolution tiers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `README.md` (gherkin tree index)      | table rows and grand total                                                                                                                                         | **Edit, not a scenario**                                              | `cargo-target-share.feature`'s row stays at 18 (17 retained + 1 renamed, none deleted). `gate-binary-resolution.feature`'s row is removed entirely (file deleted, 4→0). `doctor.feature` and `gate-execution.feature` rows drop by 1 and 2 respectively. Grand total drops by 7: 525 → 518.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+
+Net effect: **7 scenarios retire** (1 from `doctor.feature`, 4 from `gate-binary-resolution.feature`
+— the whole file — 2 from `gate-execution.feature`), **1 scenario is renamed** (not retired) in
+`cargo-target-share.feature`, and one Feature-level narrative line is reworded in
+`data-driven.feature`. `apps/rhino-cli/scripts/deny-check.sh`'s discovery glob and `Doctor.fs`'s
+hardcoded `apps/rhino-cli/rust-toolchain.toml` rustc-mismatch check both become dead production
+code once 9c/9d land — flagged here for 9c/9d to remove, since 9a's own scope is specs-only.
+
+## 2026-08-29 — Phase 9a follow-up: orphaned Rust cucumber step implementations
+
+9a's retire/rename edits above updated the Gherkin `.feature` files and the F# (TickSpec) step
+definitions, and verified `npx nx run rhino-cli-fsharp:specs:behavior:coverage` (the F#-side
+coverage target) exits 0 with 518 scenarios covered. That verification was incomplete: it never ran
+`npx nx run rhino-cli:specs:behavior:coverage` (the Rust-crate-side coverage target, a distinct
+target backed by a distinct cucumber-rs harness that binds the exact same `.feature` files). 9b's
+first push attempt in both repos failed pre-push with `rhino-cli:test:quick` reporting "Found 22
+orphan step implementation(s)" — Rust `#[given]`/`#[when]`/`#[then]` functions in
+`apps/rhino-cli/tests/{doctor,gate_specs}.rs` whose literal step text no longer matched anything
+after 9a deleted or renamed the corresponding Gherkin steps.
+
+**Root cause**: both the retired-scenario cleanup and the "fix the class not the site" grep-blind-
+spot lesson from 9a's enumeration above applied equally to the Rust side, but only the F# side was
+actually checked. The Rust crate has its own independent cucumber-rs step-definition inventory,
+completely separate from TickSpec's — during this migration's transition period (Rust crate still
+present, deleted only in 9c) every Gherkin-level retire/rename touches **two** step-definition
+surfaces, not one, and both must be swept.
+
+**Fix**: deleted the 22 orphaned step-impl functions plus their exclusively-used `World` struct
+fields and now-dead helper functions (`rhino_bin_shim_path`, `real_prebuilt_rhino_cli`,
+`path_without_cargo_directory`, `RESOLVER_SHIM_PROBE_ARGS`, `step_block`, `run_block`,
+`rust_report_line`), while preserving helpers still shared with retained scenarios (`repo_root`,
+`action_steps`, `run_block_from_step`, `gate_job_block`) — verified by grepping every symbol's full
+caller list before deleting it, not just the deleted function's own body. Also separately caught and
+fixed a related miss: `cargo-target-share.feature`'s renamed step ("Nx launches the dotnet test
+command") only had its F# binding (`DoctorSteps.fs`) updated in 9a; the Rust binding in
+`apps/rhino-cli/tests/cargo_target_share.rs` still carried the old step text and needed the same
+one-line rebind. Both fixes regenerate the parity manifest (all three `.rs` files are inside the
+byte-identity boundary) and are verified via a full local `npx nx run rhino-cli:test:quick` (not
+just the F# target) passing clean in both repos before pushing.
+
+**Compounding navigational error, unrelated to the above**: three consecutive `git push` attempts in
+ose-public silently pushed to the wrong remote ref (`rhino-fsharp-wave-e-p7-17`, an already-merged,
+closed-PR branch left over from an earlier Wave E sub-phase) instead of the actual open-PR branch
+(`rhino-fsharp-wave-e-p7-18`, PR #366) — `git push origin <name>` resolves `<name>` against a
+same-named **local** branch when the working tree is checked out on a _different_ local branch, so
+the stale local branch's old tip kept getting force-published rather than the checked-out HEAD.
+Every pre-push hook run still executed against the correct (checked-out) working tree, so all prior
+verification was valid; only the destination ref was wrong. Caught by `git ls-remote` showing an
+unexpected old SHA after a "completed" push, cross-checked against `gh pr view <number>
+--json headRefName` to find the actual tracked branch name. Lesson: after any push, verify the
+**branch name being pushed matches `git branch --show-current`**, not just that the push exited 0 —
+especially in a repo carrying many old per-sub-phase local branches from the same plan.
+
+## 2026-08-29 — Phase 9c: crate deletion and Nx rewire — decisions and proofs
+
+**Nx-project merge** (item 3): merged `rhino-cli-fsharp` into `rhino-cli`. Rationale: post-retirement
+there is one physical F# tree, and CI already invoked both names for the same artifact (`rhino-cli`
+via `nx affected` sweeps, `rhino-cli-fsharp` via named build/test steps) — exactly the duplication
+Phase 9 exists to remove. `apps/rhino-cli/src-fsharp/project.json` is deleted; its `build`,
+`install`, `typecheck`, `lint`, `test:unit`, `test:integration`, `test:coverage`, `deps:audit`
+targets now live in `apps/rhino-cli/project.json`. `repo-config.yml`'s two `coverage.projects`
+entries (`rhino-cli`, `rhino-cli-fsharp`) are collapsed into one `rhino-cli` entry with the full
+`specs/apps/rhino/behavior/rhino-cli/**` glob — the per-wave incremental-widening rationale that
+justified two entries no longer applies once F# is the only implementation.
+
+**Source-tree flatten** (item 11): `apps/rhino-cli/src-fsharp/` moved to `apps/rhino-cli/src/` via
+`git mv` (86 files, all recognized as renames). `fsharp-source-root: apps/rhino-cli/src/` — the
+literal value every downstream reader (9d's formatter-glob step, Phase 10's build/source-size
+measurements) must derive from `test -d` against its own tree, never by reading this file from
+`ose-private` (it carries no copy of this plan). `tech-docs.md` §Target layout's `TBD` is replaced
+with this same path in the same commit as this entry.
+
+**Coverage-scope widening** (item 4): `rhino-cli:specs:behavior:coverage`'s `--shared-steps` argument
+reverted to the simple two-argument form (`specs/apps/rhino/behavior/rhino-cli/gherkin
+apps/rhino-cli/src`), replacing the itemized per-subdirectory list `rhino-cli-fsharp` carried during
+the migration. Actual run: **518 scenarios, all covered** (69 specs, 2112 steps) — delivery.md's
+stated acceptance figure of 524 is stale: 9a retired 7 scenarios (525 → 518) after that figure was
+written into the plan. 518 is the correct, freshly-measured total, not a discrepancy to chase.
+
+**`deps:audit`** (items 6-7): re-pointed at the existing `apps/rhino-cli/scripts/dotnet-deps-audit.sh`
+wrapper (already built in Phase 2, already proven to turn a reporting-only `dotnet list package
+--vulnerable` into a real gate) rather than inlining a bare `dotnet list` command — the wrapper _is_
+the correct implementation of item 6's intent, not a deviation from it. Re-confirmed the live
+break-and-restore proof against the merged `rhino-cli:deps:audit` target name (the prior proof at
+Phase 2 ran against `rhino-cli-fsharp:deps:audit`, a name that no longer exists post-merge): recorded
+`git rev-parse HEAD` (`754b1ef5`); temporarily added `<PackageReference Include="Newtonsoft.Json"
+Version="12.0.1" />` to `RhinoCli.Program.fsproj`, confined to the uncommitted working tree;
+`npx nx run rhino-cli:deps:audit` exited **1**; removed the reference; re-run exited **0**;
+`git diff --exit-code -- apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj` exited 0; `git
+rev-parse HEAD` still `754b1ef5`. All four conditions matched the required shape.
+
+**NuGet license-allowlist and source-pin controls — accepted regression** (item 8): **not restored**.
+`deny.toml`'s `[licenses]` (MIT/Apache-2.0/ISC/BSD-2-Clause/BSD-3-Clause/Unicode-3.0 allowlist) and
+`[sources]`/`[bans]` (deny unknown registries/git sources) controls have no F#-side equivalent and
+none is added here. Investigated first: `dotnet list package --include-transitive --format json`
+carries no license field at all (confirmed by running it against `RhinoCli.Program.fsproj` directly —
+the JSON schema has only `id`/`requestedVersion`/`resolvedVersion`, nothing else), so a license check
+would require parsing each resolved package's `.nuspec` out of the local NuGet cache — a bespoke
+scanner with no existing repo precedent (the same five other F# projects item 7 already names ship
+no license check either). Building and proving that scanner to this plan's own break-restore
+standard is disproportionate net-new scope for a crate-retirement sub-phase, not a like-for-like
+port of anything that existed. A repo-committed `nuget.config` pinning `packageSources` alone was
+considered and rejected too: no project anywhere in this repo (`ose-be`, `organiclever-be`) carries
+one, so adding it only for `rhino-cli` would be a new, inconsistent, unproven pattern that — alone,
+without the license check — does not satisfy item 8's "restore" branch anyway (the branch requires
+both together). **Decision, dated and attributed**: accepted as a permanent regression by the
+executing agent under this plan's standing autonomous-execution authorization, 2026-08-29. Both
+dropped controls are named here so a future reader does not mistake silence for oversight. See
+`tech-docs.md`'s new DD recording this.
+
+**`compat:min-version` removal + `global.json` fix** (item 9): target deleted (asserted a Rust MSRV
+floor that cannot survive the crate). Added `apps/rhino-cli/global.json` (SDK `10.0.204`,
+`rollForward: latestMinor`), matching `apps/ose-be/global.json` and `apps/organiclever-be/global.json`
+verbatim — placed at `apps/rhino-cli/` (parent of `src/`) rather than repo-root, since `.NET`
+resolves `global.json` by walking upward only and this is the narrowest ancestor that actually covers
+`apps/rhino-cli/src/`, matching the sibling apps' own convention (their `global.json` sits at their
+own app root too, not repo-root). Verification nuance: `dotnet --version` from inside
+`apps/rhino-cli/src/` prints `10.0.300` **both with and without** this file present, because the only
+installed SDKs are `10.0.107`/`10.0.201`/`10.0.300` and `rollForward: latestMinor` happily accepts
+`10.0.300` as satisfying a `10.0.204` floor — the same is true today for `ose-be`, confirmed by the
+same check. A version-string match is therefore not a meaningful proof in this environment. Proved
+resolution reaches the new file a different way instead: temporarily set the pin to an unsatisfiable
+`99.0.0`/`rollForward: disable`, ran `dotnet --version` from `apps/rhino-cli/src/`, and the SDK-not-
+found error explicitly printed `global.json file:
+.../apps/rhino-cli/global.json` — proving the ancestor-walk reaches this exact file from that
+directory. Restored the real pin immediately after; `git diff --exit-code` clean.
+
+**`rhino-bin.sh` simplification** (item 13): `FSHARP_NAMESPACES` and the three-tier Rust resolution
+(`RHINO_CLI_BIN`, `<target>/gate/rhino-cli`, `cargo build --profile gate`) both deleted — one
+resolution path remains (`RHINO_CLI_FSHARP_BIN` override → `apps/rhino-cli/src/dist/rhino-cli-fsharp`
+→ `dotnet run` fallback), same tier order and env-var name the F# side already used during migration,
+so no CI-facing rename was needed beyond the `src-fsharp` → `src` path swap. **Scope note**: 9a's
+retire-verdict table flagged that the simplified shim "may still warrant fresh, F#-only-tier
+scenarios" for the two behaviors `gate-binary-resolution.feature` used to cover before its full
+retirement. Considered and declined: that note itself hedges ("may"), it is not one of 9c's 13 named
+checklist items, and authoring a new `.feature` file plus TickSpec bindings for a resolver shim is
+net-new test-authoring scope beyond "delete/simplify", not a like-for-like port. Not silently
+dropped — recorded here as a deliberate scope decision, not an oversight.
+
+**Incidental fixes caused directly by the flatten**, not separately itemized in 9c but required for
+correctness: `Parity.fs`'s `boundaryPaths` trimmed from 8 entries (`src`, `src-fsharp`, `tests`,
+`Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, the specs dir) to 4 (`src`, `project.json`,
+`LICENSE`, the specs dir) — the four removed either no longer exist or are now covered by `src`.
+`Dispatch.fs`'s unrecognized-invocation error string changed from `"rhino-cli-fsharp: ..."` to
+`"rhino-cli: ..."` (user-facing output; the `-fsharp` qualifier only ever made sense while a parallel
+Rust binary existed). Three test files had hardcoded `src-fsharp` literal paths that broke under
+`dotnet test` once the move landed (`HarnessSteps.fs`, `DoctorSteps.fs`'s `fsharpProjectJsonPath` —
+which additionally needed one more `../` once `project.json` moved up a level to the merged file —
+and the two gate/parity step files' `prebuiltFsharpCli` fixture paths); all fixed and the full
+`rhino-cli:test:unit` suite re-run clean (1203/1203) after each. `apps/rhino-cli/scripts/shadow-diff.sh`
+kept, not deleted — `tech-docs.md`'s file-tree annotates it `[N] Phase 2` with no `[D]` at any phase,
+unlike `deny-check.sh`'s explicit `[D] Phase 9c`, a deliberate distinction the plan draws between the
+two migration-era scripts; only its now-stale `src-fsharp` default path and `rhino-cli-fsharp:build`
+hint were corrected, its Rust-comparison logic is left untouched pending 9e's own grep-sweep verdict
+on it (it matches that sweep's enumerating grep, so it gets a verdict there, not invented here).
+
+**Full verification after all of the above**: `npx nx run rhino-cli:typecheck` (0 warnings),
+`rhino-cli:lint` (fantomas/fsharplint/fsharp-analyzers all clean, after fantomas auto-formatted one
+touched file), `rhino-cli:test:unit` (1203/1203 passed), `rhino-cli:specs:behavior:coverage` (518
+scenarios, all covered), `rhino-cli:deps:audit` (clean pre- and post- break/restore proof above).
+`.github/workflows/pr-quality-gate.yml` updated for the same `src-fsharp` → `src` and
+`rhino-cli-fsharp:build` → `rhino-cli:build` renames; `actionlint` exits 0.
+
+**Addendum — a genuine regression the first `test:quick` run caught**: `ParityManifestSteps.fs`'s
+`Given a tracked Rhino CLI parity boundary` step seeds a fully synthetic, self-contained fixture
+repo with its own fabricated file list (`apps/rhino-cli/tests/parity.rs` among them) — independent
+of `Parity.fs`'s real `boundaryPaths`, but written to mirror its shape at authoring time. Trimming
+`boundaryPaths` (above) without updating this fixture's file list left `apps/rhino-cli/tests/parity.rs`
+outside the boundary the real compiled binary now enforces, so "The manifest covers tests as well as
+source" failed with "test drift unexpectedly passed" — the edited fixture file was silently outside
+every boundary entry, not silently inside one. Fixed by moving the fixture's test file into the
+`src` boundary (`apps/rhino-cli/src/tests/parity.rs`), consistent across the `Given`/`When`/`Then`
+steps. Caught by running the actual `dotnet test` output rather than trusting a backgrounded shell
+command's reported exit code — the first background run's exit code read as 0 only because the
+command piped through `tail`, masking `dotnet test`'s real non-zero exit (the same class of bug as
+[[feedback_pipeline_exit_code_masked_by_tail]]); the real failure was only visible by reading the
+captured output text. Re-run without a masking pipe afterward, exit code 0, 1203/1203 passed.
+
+## 2026-08-29 — Phase 9c follow-up: three findings surfaced only once external projects flipped to F
+
+Pushing the 9c commit surfaced three problems the crate-deletion commit itself couldn't have caught
+— each because deleting `apps/rhino-cli/Cargo.toml` was the FIRST time something other than
+rhino-cli's own Nx targets exercised the F# binary in anger.
+
+**1. Every other project's Nx target still hardcoded `cargo run`.** Grepping the whole repo found
+50 files invoking `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- ...`
+directly — never routed through `rhino-bin.sh` — across every other app/lib's `project.json`,
+`package.json`'s `generate:bindings`/`doctor`/etc. scripts, and one `.claude/hooks/` self-test.
+These were never migrated during Wave A-F because that work only ever touched rhino-cli's own
+targets and `rhino-bin.sh`'s dispatch. Fixed 28 real invocation sites (26 `project.json` + root
+`package.json` + `guard-pre-commit-env.test.sh`) by substituting
+`dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --`, preserving
+the `../../` relative-path variant e2e projects with a `cwd` use. Deferred (not a mechanical path
+swap): `block-env-file-access.test.sh`'s mention is an inert string literal never executed, and
+`shadow-diff.sh`'s Rust-vs-F# comparison is now permanently unreachable since there is no Rust
+binary left to compare against — both need their own disposition decision in 9d/9e.
+
+**2. A genuine F# parity bug in `specs e2e-coverage validate`, hidden until now.** Once those 28
+sites ran the real F# binary, three previously-green e2e projects (`ayokoding-www-fe-e2e`,
+`ose-be-e2e`, `organiclever-be-e2e`) started reporting already-baselined scenarios as brand-new
+gaps. Root cause: `Dispatch.fs`'s `globFeatureFiles` resolves the default `--project-dir` (`"."`)
+via `Path.Combine(".", pattern)`, which — like Rust's own `PathBuf::join` — literally produces a
+`./`-prefixed string; but Rust's `glob` crate silently drops that prefix from its match results,
+while `Directory.GetFiles` preserves whatever `root` string it's handed verbatim. A `Feature` path
+carrying the stray `./` never equality-matched the checked-in baseline's un-prefixed entries. Proven
+against the still-on-disk pre-deletion Rust binaries (`apps/rhino-cli/target/{release,gate}/rhino-cli`)
+byte-for-byte on the exact same fixture inputs before writing the fix. This CLI-argument-resolution
+layer was never covered by the port's own test suite (`SpecsSteps.fs` drives `diffGaps`/
+`scanFixmeDir` directly, bypassing `Dispatch.fs` entirely) or by Wave E/F's shadow-diff (which only
+ever ran rhino-cli's own spec directory through both binaries) — a coverage gap in the ORIGINAL
+Rust test suite too, not something the port introduced. Fixed by stripping a leading `./` in
+`globFeatureFiles`; added a new subprocess-based Gherkin scenario + step binding (the other 13
+`e2e-coverage.feature` scenarios test the pure `Specs.fs` core only) proven red against the
+pre-fix `Dispatch.fs`, green after.
+
+**3. `governance readme-index validate`'s "FAILED: N finding(s)" text is a red herring — faithfully
+so.** Chased what looked like a `governance-readme-index` pre-push gate failure (419 pre-existing
+"unannotated" findings across `specs/`/`docs/`, already documented in `repo-config.yml` as deferred
+debt with `fail-kinds: [missing, orphan, ghost]` explicitly excluding "unannotated") for far longer
+than warranted before checking `rhino-bin.sh gate run --surface=pre-push --group=markdown` in
+isolation, which showed `governance-readme-index    PASS` the whole time — confirmed identical to
+the original Rust (`format_text`/`format_json` compute their "FAILED"/`status` purely from
+`findings.is_empty()`, independent of `has_failing_finding`'s `fail_kinds` filtering, which only
+gates the real exit code). `gate run` executes every declared gate regardless of individual outcome
+and reports each one's PASS/FAIL on its own summary line; a check's own verbose "FAILED" text
+mid-stream is not that signal. The actual blocker was a different, later gate
+(`parity-manifest`, genuinely stale from the pre-commit prettier pass reformatting `project.json`
+after the manifest had already been generated) — recorded as
+[[feedback_rhino_gate_text_failed_not_gate_failure]].
+
+Verification: full `rhino-cli:test:unit` (1204/1204, including the new scenario),
+`specs:behavior:coverage` (519 scenarios), and all three previously-failing e2e projects'
+`specs:e2e:coverage` targets re-run clean. Landed as three follow-up commits on
+`rhino-fsharp-wave-e-p7-18` (`97641d50a`, `1832a0aee`, `264e32db9`, `4a3c127b3`), pushed and
+confirmed via `git ls-remote`.
+
+## 2026-08-29 — Phase 9d: CI teardown
+
+**Course-example count**: `find . -name '*.rs' -not -path './node_modules/*' -not -path
+'./apps/rhino-cli/*' -not -path './**/target/*' | wc -l` → **198**, matching the delta table's
+recorded fact. Non-zero, so the restrictions around `setup-rust`/`format-verify-rustfmt` in
+`repo-config.yml` bind: both retained unchanged.
+
+**`compat:min-version` cross-check**: the plan text asserts "the `rust` job is the only caller of
+`nx affected -t test:coverage`" and "nothing else invokes [`compat:min-version`]" — the second claim
+does not hold literally. `grep -rl '"compat:min-version"' --include=project.json .` returns **26**
+other files, every one an `echo` no-op placeholder (e.g. `"compat:min-version: no standard
+min-version floor for F#"`). Checked both mandatory-target governance docs
+(`nx-targets/mandatory-targets-all-projects-six-and-required.md`'s Mandatory-Six and
+Required-Where-Applicable tables) — `compat:min-version` appears in neither, so these 26 echoes are
+pre-existing, out-of-plan-scope debt, not a currently-enforced convention this plan must honor.
+Deleting the `compat-min-version` CI job is still correct: its only-ever-meaningful check
+(`cargo hack check --rust-version` on `rhino-cli`) is gone, and every remaining invoker is a no-op
+that cannot fail, so no real coverage is lost. Filed as a note here rather than a repo-governance
+edit — the docs are already accurate; the 26 stale stubs are a separate, unopened cleanup.
+
+**Per-file `setup-rust` disposition** (the four workflows outside `pr-quality-gate.yml`, each
+provisioning Rust only to build `rhino-cli` from source):
+
+| File                                       | Verdict                                                                 |
+| ------------------------------------------ | ----------------------------------------------------------------------- |
+| `validate-env.yml`                         | Removed; replaced with `setup-dotnet` (runs `rhino-cli:env:validation`) |
+| `dependency-vulnerability-audit.yml`       | Removed; `setup-dotnet` already present, no addition needed             |
+| `_reusable-www-test-local-deploy.yml`      | Removed; replaced with `setup-dotnet` (`specs-gate` job)                |
+| `_reusable-app-test-local-deploy-stag.yml` | Removed; replaced with `setup-dotnet` (`specs-gate` job)                |
+
+**Elixir re-homing**: the `rust` job's `RHINO_REQUIRE_ELIXIR: "1"` env and `erlef/setup-beam@v1` step
+moved onto the `dotnet` job verbatim — that job is now the only place `rhino-cli`'s `test:quick`
+(and therefore the Elixir formatter-wrapper `.fs` tests) runs, per Wave F's flip to `lang:fsharp`.
+`test:coverage` needed no re-homing — the `dotnet` job already ran it for every `lang:fsharp`/
+`lang:csharp` project, `rhino-cli` included, since Wave F.
+
+**`format-verify-fantomas` reach**: `repo-config.yml`'s glob (`*.fs`, `affected-file-type` scope) is
+extension-only, not path-scoped, so the `src-fsharp` → `src` flatten needed no repo-config change.
+Proved live: appended a badly-indented line to a tracked `.fs` file, ran
+`gate run --surface=ci --group=formatting-verify`, confirmed `format-verify-fantomas FAIL` and the
+group failing, then restored the file and confirmed `git diff --exit-code` clean.
+
+**Workflow-wide sweep**: `rust` job deleted (its `if: needs.detect.outputs.has-rust` guard went with
+it); `has-rust` removed from `detect` (6 occurrences: output, two echoes, the `lang:rust` case, the
+job's own guard, and the `has-ts`/`has-rust` analogy comment — reworded to `has-ts` alone);
+`compat-min-version` job deleted outright (see above); `specs-structure` swapped `setup-rust` for
+`setup-dotnet`. Post-edit `pr-quality-gate.yml` carries exactly one `setup-rust` (the `format` job,
+retained for the 198 course-example files) and zero `has-rust`/`clippy` occurrences. `actionlint`
+exits 0 on every touched workflow file.
+
+## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real `GATE_CHANGED_BASE` leak bug
+
+**SDK drift**: `apps/rhino-cli/global.json` pins `10.0.204`; the local dev machine has `10.0.300`
+installed; `.github/actions/setup-dotnet/action.yml` resolves the floating channel `10.0.x` via
+`actions/setup-dotnet@v5`, landing on whatever the latest patch is on the runner that day
+(`10.0.400` at the time of this entry). All three differ, and the F# compiler's type inference for
+the bare `string` operator is sensitive to this: `G-Research.FSharp.Analyzers` rule
+`GRA-TYPE-ANNOTATE-001` ("annotate your type when using the `string` function") fired in CI on
+`Formatters.fs`/`Dispatch.fs` call sites that never flagged locally, even pinning the exact same
+analyzer version (0.22.0, already pinned repo-wide).
+
+**First fix attempt failed**: annotating the _let-binding_ the `string` result flows into (e.g.
+`let whole: int64 = nanos / scale`) does not satisfy this rule — it still flags the generic `string`
+call itself, regardless of downstream annotations. Confirmed by a second identical CI failure after
+that fix. **Working fix**: eliminate the `string` operator entirely in favor of `.ToString(...)`.
+For numeric types, this must be `.ToString(CultureInfo.InvariantCulture)`, not bare `.ToString()` —
+F#'s `string` operator formats numerics with invariant culture, and bare `.ToString()` uses the
+current culture, which would have been a silent, locale-dependent break in Rust-parity byte-identical
+output. A single `char` result may use plain `.ToString()` (culture-insensitive). Same CI sweep also
+converted six single-argument `String.StartsWith`/`.EndsWith` calls in `Gate.fs` to the explicit
+`StringComparison.Ordinal` overload for `GRA-STRING-001`/`002` — also strictly more correct for
+Rust parity, since Rust's string methods are always byte-exact.
+
+**The `gh run rerun --failed` trap**: once the analyzer fix landed, a different test —
+`GateExecutionSteps`'s "Path-gated gates still fire when a trigger path is only deleted" — failed on
+that same CI run (`isSuccess` true but `was-run.txt` never created, i.e. the gate was silently
+skipped because `triggerMatches` saw no changed paths). Rerunning via `gh run rerun --failed`
+reproduced the identical failure, which looked like proof of a deterministic bug. It wasn't:
+**`gh run rerun --failed` does not rebuild upstream jobs** — `build-rhino`'s artifact from the
+original run is reused verbatim by the dependent `dotnet` job, so the "second" failure was the same
+compiled binary being exercised twice, not two independent trials. A genuinely fresh run (new
+commit, or `gh run rerun` **without** `--failed`, which does rebuild everything) is the only way to
+get an independent sample.
+
+**Investigation before realizing this**: the scenario's own logic was read line-by-line
+(`changedPaths` → `mergeBasePaths` → `changedPathsFromBase` → `triggerMatches` → the `PathGated`
+dispatch branch in `runAtRootWithOnlyAndMessageFile`) and found correct by inspection. Reproduction
+was attempted locally (macOS, passed every time, filtered and full-suite) and in a Docker container
+built to match the CI runner exactly — Ubuntu 24.04, git 2.55.0 (installed via the `ppa:git-core/ppa`
+PPA to get past Ubuntu 24.04's stock 2.43.0), dotnet 10.0.400 — cloning the worktree at the exact
+failing commit and running both the filtered test and the full 1204-test suite unfiltered. It passed
+cleanly every time. A scoped, single-gate-id diagnostic (`gate.Id = "path-gated-check"`, printing
+`changedPathsResult`/`triggerMatches` via the CLI's own `write`, surfaced through the test's
+assertion message) was committed, pushed, and — critically — the CI run it produced also passed. A
+second **fresh** rerun (no `--failed`, forcing a new `build-rhino` artifact) of the same commit also
+passed. Two independent fresh builds, zero reproductions; the earlier "two failures" was one real
+failure plus one artifact-reuse replay of it. The diagnostic commit was reverted
+(`git revert --no-edit`, verified byte-identical to the pre-diagnostic tree via
+`git diff <before> <after>` returning empty) rather than kept, since there appeared to be nothing
+left to diagnose — that verdict, written up as "CI-runner-level flakiness, no root-cause fix
+needed" and committed to this file, was **wrong**: the very next CI run on that same "nothing to
+fix" commit failed again with the identical symptom, proving the bug was real and genuinely
+intermittent rather than an artifact-reuse mirage. General lesson —
+[[feedback_verify_before_asserting_state]]: two clean fresh reruns is weak evidence for an
+intermittent failure; treat an unreproduced CI-only failure as unresolved, not disproven, until the
+mechanism is understood, not merely until reruns stop failing.
+
+The diagnostic was re-applied and progressively enriched (full pipeline trace across `runGit`,
+`changedPathsFromBase`, `mergeBasePaths`, and `changedPaths`, gated behind a
+`RHINO_GATE_TRIGGER_DEBUG=1` env toggle so it wouldn't pollute other tests' output) and captured a
+real failure on the next CI run. Root cause: `.github/workflows/pr-quality-gate.yml` sets
+`GATE_CHANGED_BASE` in the workflow-level `env:` block
+(`format('origin/{0}', github.base_ref)` on `pull_request` events) — a GitHub Actions
+workflow-level `env:` block applies to **every** job and step in the workflow, not just the
+`gate run --surface=ci` call sites it was written for. That makes `GATE_CHANGED_BASE=origin/main`
+ambiently present in the `.NET quality gate` job's `dotnet test` invocation too. The
+`GateExecutionSteps` fixture for this scenario deliberately creates a branch named `origin/main` as
+test setup, so `commitResolves repoRoot "origin/main"` spuriously succeeds inside the test's own
+sandboxed repo. `changedPaths`'s `PrePush` dispatch read this CI-only env var unconditionally
+regardless of surface, so `explicitBase` resolved to `Some "origin/main"` and the match fell into
+the `Ci`-shaped `changedPathsFromBase` path — using a "changed vs. `origin/main`" diff instead of
+the `PrePush`-correct `mergeBasePaths` — which found no changed paths for the deletion-only trigger
+and the gate silently skipped. Whether this happened on a given CI run depended on runner
+env-var propagation timing/caching, which is why it looked intermittent rather than deterministic.
+
+Confirmed with an on-demand **local** reproduction (no CI cycle needed): exporting the same variable
+before running the exact test reproduces the failure byte-for-byte —
+
+```bash
+GATE_CHANGED_BASE=origin/main dotnet test \
+  apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj \
+  --filter "FullyQualifiedName~GateExecutionSteps"
+```
+
+**Fix** (commit `608b3895b`): `changedPaths` in `Gate.fs` now only consults `GATE_CHANGED_BASE` for
+the `Ci` surface; `PrePush` always falls through to `mergeBasePaths` regardless of whether that env
+var happens to be set in the ambient environment. This is a genuine correctness/safety gap beyond
+the CI symptom: any developer or script with `GATE_CHANGED_BASE` left over in their shell (e.g.
+copy-pasted while debugging CI) would have had `rhino-cli gate run --surface=pre-push` silently skip
+every path-gated gate, with no error or warning.
+
+**Conclusion**: real defect in `Gate.fs`, not flakiness — fixed at the root cause. No skip/xfail was
+applied (the test is unchanged from its original, fully-asserting form). Verified locally before
+pushing: full 1204-test suite green, fantomas clean, fsharplint clean, and the leak scenario
+re-tested both with and without the simulated ambient `GATE_CHANGED_BASE` present. Lasting
+artifacts: this entry, the `changedPaths` surface-scoping fix, and the corrected understanding of
+both `gh run rerun --failed`'s artifact-reuse semantics and workflow-level `env:` blocks' blast
+radius for future incidents.

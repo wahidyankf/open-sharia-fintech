@@ -1,6 +1,0 @@
-error: 'rhino-cli repo-governance validate' requires a subcommand but one was not provided
-  [subcommands: vendor, layer-coherence, traceability, help]
-
-Usage: rhino-cli repo-governance validate [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

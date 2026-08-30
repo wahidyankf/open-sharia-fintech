@@ -1,6 +1,0 @@
-error: 'rhino-cli governance' requires a subcommand but one was not provided
-  [subcommands: word-budget, readme-index, help]
-
-Usage: rhino-cli governance [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

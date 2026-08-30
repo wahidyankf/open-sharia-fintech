@@ -6,7 +6,7 @@
 # when the SDLC-parity plan replaced the inline shell script.
 set -euo pipefail
 
-GUARD_CMD=(cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate)
+GUARD_CMD=(dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- env staged-guard validate)
 PASS=0
 FAIL=0
 

@@ -1,6 +1,0 @@
-error: 'rhino-cli convention emoji' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli convention emoji [OPTIONS] <COMMAND>
-
-For more information, try 'help'.
