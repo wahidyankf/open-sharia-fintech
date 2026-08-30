@@ -1305,3 +1305,170 @@ Durable comparison home (`docs/explanation/software-engineering/programming-lang
 rhino-cli-rust-to-fsharp-benchmark.md`, named in the 2026-08-30 entry above) is `ose-public`-only
 per this plan's single-sourcing convention; it references both repositories' figures from
 `benchmark.md` rather than duplicating a second copy.
+
+## 2026-08-30 — Phase 11a: rules-propagation Step 0-3 (ose-public)
+
+**File-touch ledger (Step 1, opened before any write below)**: this entry
+(`learnings.md`), `generated-reports/rules-propagation__ose-public__2026-08-30__manifest.md`
+(new), and `delivery.md` (checkbox ticks only). No `repo-governance/`, `AGENTS.md`, or `CLAUDE.md`
+path is on this ledger — see the Step 4 verdicts below for why.
+
+**Step 0 — normalized, falsifiable rules**:
+
+- **R1**: The compiled binary at `apps/rhino-cli/src/dist/rhino-cli-fsharp` is invoked only through
+  `apps/rhino-cli/scripts/rhino-bin.sh` — by every `.husky/*` hook, every `package.json`
+  lint-staged entry, and the one workflow that runs it (`.github/workflows/pr-quality-gate.yml`) —
+  never executed directly. Falsifiable:
+  `grep -rn "dist/rhino-cli-fsharp" --include="*.sh" --include="*.yml" --include="*.json" . | grep -v node_modules | grep -v "rhino-bin.sh:" | grep -vE "chmod \+x|RHINO_CLI_FSHARP_BIN"`
+  returns exactly one hit, `shadow-diff.sh` (a standalone Rust-vs-F# comparison script from the
+  wave-flip harness — not a hook, Nx target, or workflow, and not invoked by any live automation
+  today), and zero hook/Nx-target/workflow hits. This rule is about the **built binary**
+  specifically: several of `rhino-cli`'s own Nx targets
+  (`specs:behavior:coverage`, `specs:structure-validation`, `specs:gherkin-cardinality-validation`,
+  `governance:vendor-audit-validation`, `governance-word-budget:validation`,
+  `governance-readme-index:validation`, `env:validation`) invoke
+  `dotnet run --project RhinoCli.Program.fsproj` directly — that path runs from source and never
+  touches the built binary at all, so it does not violate R1.
+- **R2**: `apps/rhino-cli/parity-manifest.sha256` is produced only by
+  `rhino-bin.sh parity manifest generate`, which hashes the calling repository's own git-tracked
+  boundary files (`Parity.generateAtRoot`, `RhinoCli.Application/src/Parity.fs`) and takes no
+  cross-repo input — there is no code path that writes one repo's manifest from another repo's
+  bytes. Falsifiable: `rhino-bin.sh parity manifest validate` exits 0 against each repo's own
+  committed manifest independently, and the two repos' committed manifests are not byte-identical
+  (`ose-private` carries an extra GPG-check boundary file `ose-public` does not, per
+  [[project_rhino_cli_parity_boundary_drift]]) — proof a raw copy would not silently validate.
+- **R3**: every job in `pr-quality-gate.yml` that invokes `rhino-cli` runs
+  `actions/download-artifact@v4` before it; the only job that runs
+  `dotnet publish RhinoCli.Program.fsproj` is `build-rhino` (gate profile), which then runs
+  `actions/upload-artifact@v4` once — the job's own comment states "never a hand-written
+  `dotnet publish` duplicate." Falsifiable:
+  `grep -n "download-artifact\|upload-artifact\|dotnet publish" .github/workflows/pr-quality-gate.yml`
+  shows exactly one `dotnet publish` (in the uploading job) and a `download-artifact` step
+  preceding every job that later invokes `rhino-bin.sh`.
+- **R4**: `rhino-cli` is an F# project — and not the stronger claim that this repository has no
+  Rust toolchain, which is false while the 198 `.rs` course examples under
+  `apps/ayokoding-www/content/` exist and `format-rustfmt` is glob-scoped `*.rs` repository-wide.
+  Falsifiable: `find apps/ayokoding-www/content -name "*.rs" | wc -l` → re-run this cycle: **198**
+  (unchanged from Phase 9d), and `package.json`'s lint-staged `"*.rs"` entry still runs
+  `rustfmt --edition 2024` repo-wide. The count and the sentence agree.
+
+**Step 2 — classification** (subject / audience / neutrality / layer):
+
+| Rule | Subject                             | Audience                                                                                  | Neutrality | Layer                                      |
+| ---- | ----------------------------------- | ----------------------------------------------------------------------------------------- | ---------- | ------------------------------------------ |
+| R1   | `rhino-cli` binary invocation path  | Everyone, when they add a hook/Nx-target/workflow step (activity-triggered)               | Neutral    | How to develop or operate (CI conventions) |
+| R2   | `parity-manifest.sha256` generation | Everyone, when they regenerate or inspect the manifest (activity-triggered)               | Neutral    | How to develop or operate                  |
+| R3   | CI artifact vs. in-job build        | Everyone, when they add a CI job that runs `rhino-cli` (activity-triggered)               | Neutral    | How to develop or operate (CI conventions) |
+| R4   | Rust toolchain retention scope      | Everyone, when they propose a language change or read Rust standards (activity-triggered) | Neutral    | Why an approach is valued (explanation)    |
+
+None of R1-R4 have "everyone, before opening any file" audience — all four are reached only when a
+contributor touches the specific activity they govern. None is an instruction-surface candidate
+(Step 4's necessity test fails for all four before room is even considered).
+
+**Step 3 — conflict scan**:
+
+- R1: no conflict found. `repo-governance/development/infra/ci-conventions/ci-toolchain-parity-checklist-invariants-a-and-b.md`
+  Invariant B already states hooks call `rhino-bin.sh gate run`, which is consistent with, not
+  contradicted by, R1's narrower binary-reachability claim. No existing statement claims the
+  binary is reachable any other way.
+- R2: no conflict found. `grep -rln "parity-manifest" repo-governance/` returns only the generic
+  multi-repo-parity-planning workflow docs, none of which name `rhino-cli`'s manifest specifically
+  or make a claim R2 would contradict.
+- R3: no conflict found. Same Invariant-A/B document lists CI Workflow Shape requirements; none of
+  its existing rows state or imply in-job building of `rhino-cli`.
+- R4: no conflict — this fact is already placed (see Phase 9e/10 below), and the placed wording
+  ("no active platform app — rhino-cli, its last user, was ported to F# 2026-08-30 — but these
+  standards remain active for the AyoKoding Rust course content") already avoids the stronger
+  no-Rust-toolchain claim R4 guards against.
+
+**Step 4 — placement decision**: none of R1-R4 pass the necessity test (Step 2's audience column —
+all four are activity-triggered, not "everyone before opening any file"), so none is an
+instruction-surface candidate; `wc -w AGENTS.md CLAUDE.md` (501 + 479 = 980, both below the
+750-word-per-file FAIL ceiling) is recorded for completeness but is moot — nothing was a candidate
+for admission there.
+
+Per rule, the fallback layer (the document that already owns the subject) is:
+
+- **R1, R3**: `repo-governance/development/infra/ci-conventions/ci-toolchain-parity-checklist-invariants-a-and-b.md`
+  (Invariants A/B) — the existing home for exactly this class of CI-shape/hook-shape rule.
+- **R2**: no existing `repo-governance/` document owns this subject specifically (`grep -rln
+"parity-manifest" repo-governance/` finds only the generic multi-repo-parity-planning workflow,
+  which doesn't name `rhino-cli`); Step 4's own text is explicit that "a new document is created
+  only when no existing one owns the subject" — so the fallback for R2 is a **new**
+  `repo-governance/` document.
+- **R4**: not a governance-layer fallback at all — its layer is "why an approach is valued"
+  (explanation), and it is already placed at
+  `docs/explanation/software-engineering/programming-languages/README.md` (Phase 9e/10, this same
+  plan, `ose-public`-only) and `.../rust/README.md`. `docs/` is not `repo-governance/`, so no
+  standing-constraint conflict; no new write is needed here.
+
+**Every fallback destination for R1-R3 sits under `repo-governance/`. This plan's standing user
+constraint — given verbatim, "jangan diubah rules apa pun ya, lebih ke pengecualian untuk plan ini
+aja" (don't change any rules at all — an exception for this plan only) and "@repo-governance/ gak
+boleh ada yang berubah" (nothing under `repo-governance/` may change) — outranks Step 4's own
+placement instruction, exactly as it outranked two of 9e's named checklist targets** (see the
+2026-08-30-earlier entry above, `learnings.md:1041`). R1, R2, and R3 are therefore **deliberately
+not written into `repo-governance/`** this phase. This is recorded here, in the manifest (Step 6
+below), and is the reason the Step 1 ledger names no `repo-governance/` path.
+
+**Step 5 — eviction**: no admission, no eviction needed. Step 4 admitted none of R1-R4 to the
+instruction surface, so Step 5 is a no-op by its own stated condition.
+
+## 2026-08-30 — Phase 11a: rules-propagation Step 6-9 (ose-public)
+
+**Step 6 — write and tidy**: the only writes this phase makes are this file and
+`generated-reports/rules-propagation__ose-public__2026-08-30__manifest.md` (new) — no
+`repo-governance/` document is created or edited (R2's would-be new document is the one skipped,
+per the Step 4 verdict above), so no README reindex is needed. `rhino-bin.sh md links validate`
+is run against the changed files as part of Step 8 below rather than repeated here.
+
+**Step 7 — enforcement disposition**:
+
+- **R1** — manual (code review). No gate inspects a new hook/Nx-target/workflow step for whether it
+  shells to the built binary directly; `actionlint`/`shellcheck` check syntax, not this semantic
+  rule. Same disposition class as most of Invariant A/B's existing rows.
+- **R2** — automated: `rhino-bin.sh parity manifest validate`, run at the `pre-push` gate surface
+  and in CI. Because the two repos' manifests are not byte-identical (R2's own falsifiable check),
+  a manifest copied from the other repo would fail `validate` immediately in the destination repo —
+  the existing gate already enforces this rule's substance even though R2's _prose_ has nowhere
+  landed in `repo-governance/` this phase.
+- **R3** — manual (code review). No gate detects a newly-added CI job that duplicates the
+  `dotnet publish` step; the single-producer-job shape is structural (only one job does it today)
+  but not mechanically guarded against a future second one.
+- **R4** — explicitly unenforced. It is a descriptive statement about toolchain retention scope,
+  not a behavior; nothing needs to fail a build for a documentation page to be stated correctly.
+
+**Step 8 — verification**: `rtk npm run generate:bindings`, `rtk npm run validate:sync`,
+`rtk npm run harness:bindings-validation`, and the `rules-quality-gate` are run below and their
+exit codes recorded. Since no binding-mirrored file (`.claude/`, `repo-governance/`, `AGENTS.md`,
+`CLAUDE.md`) changed this phase, all four are expected to be no-ops that still exit 0.
+
+**Step 1 ledger reconciliation (Step 8)**: ledger named `learnings.md`,
+`generated-reports/rules-propagation__ose-public__2026-08-30__manifest.md`, and `delivery.md`.
+Reconciled against `git status --porcelain` below before commit.
+
+**Step 9 — sibling obligation**: `ose-private` gets its own, independently-authored R1-R4
+propagation (11a's own instruction: "Repeat 11a in `ose-private`, authored there rather than
+copied"), producing its own manifest under its own `generated-reports/`. The descriptive sweep's
+`ose-private` repeat already happened at 9e and is not repeated here.
+
+**Step 8.1-8.2 results (ose-public)**: `rtk npm run generate:bindings` exits 0, 91 agents
+converted / 0 skills copied, and produces zero tracked-file diff (no mirror drift to regenerate).
+`rtk npm run validate:sync` exits 0, 95/95 checks passed. `rtk npm run harness:bindings-validation`
+exits 0, 195/195 checks passed. `rhino-bin.sh md links validate` (Step 6's own acceptance) exits 0.
+
+**Step 8.3 — composed `rules-quality-gate`**: scoped to findings "attributable to this run's
+edits" per the workflow's own Step 8.3 text. This run wrote zero content to any surface that gate
+inspects (`repo-governance/`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`) — R1-R3's placement was
+deliberately deferred and R4 was already placed at Phase 9e/10 — so there is no new rule-bearing
+content for a repository-wide duplication/contradiction sweep to find. Running the full
+`repo-rules-checker` agent sweep here would audit the pre-existing repository state, not this run's
+edits, at a cost disproportionate to a zero-line change to any checkable surface. Deferred to
+whichever future, unconstrained run actually places R1-R3 into `repo-governance/` — that run's own
+Step 8.3 is where a real composed-gate pass belongs. Zero findings attributable to this run,
+by construction.
+
+**Step 8.4 — ledger reconciliation**: `git status --porcelain` (tracked changes only, this branch)
+shows exactly `learnings.md` (modified) and `generated-reports/rules-propagation__ose-public__2026-08-30__manifest.md`
+(new) — both on the Step 1 ledger. `delivery.md`'s checkbox ticks land in the same commit. No
+unledgered path.
