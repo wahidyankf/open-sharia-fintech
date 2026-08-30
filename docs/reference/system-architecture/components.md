@@ -26,7 +26,7 @@ Shows the internal components within each container. Components are groupings of
 - **Source Directory**: App source at `apps/ose-www/src/`
 - **Static Assets**: Images and public assets at `apps/ose-www/public/`
 
-### rhino-cli Components (Rust CLI Tool)
+### rhino-cli Components (F# CLI Tool)
 
 ```mermaid
 graph TB
@@ -70,9 +70,10 @@ graph TB
 
 ## C4 Level 4: Code Architecture
 
-Shows implementation details for critical components. Focus on Rust CLI tool package structures and key implementation patterns.
+Shows implementation details for critical components. Focus on rhino-cli's F# package structure and key implementation patterns.
 
-### rhino-cli Package Structure (Rust)
+### rhino-cli Package Structure (F#)
 
-`rhino-cli` is the workspace's only Rust project. Its `md links validate` command validates internal
-Markdown links across the whole repository, including both content trees.
+`rhino-cli` is the repository's F# CLI tool (other F# projects are backend services and shared
+libraries, not CLIs). Its `md links validate` command validates internal Markdown links across the
+whole repository, including both content trees.

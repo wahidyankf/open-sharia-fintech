@@ -42,7 +42,7 @@ This document defines **authoritative standards** for visualizing Nx monorepo st
 apps/
 ├── ose-www/        # Next.js 16 fullstack platform
 ├── ayokoding-www/          # Next.js 16 fullstack platform
-├── rhino-cli/              # Rust CLI tool
+├── rhino-cli/              # F# CLI tool
 └── crane-cli/              # F# CLI tool
 ```
 
@@ -53,7 +53,7 @@ graph TD
     OseWeb["OSE Platform Web<br/>[Next.js 16 App Router]<br/>Landing page"]:::blue
     AyoWeb["AyoKoding Web<br/>[Next.js 16, tRPC]<br/>Educational content"]:::blue
     AyoCLI["AyoKoding CLI<br/>[Container: Rust]<br/>Content link validation"]:::blue
-    RhinoCLI["Rhino CLI<br/>[Container: Rust]<br/>Repository management"]:::blue
+    RhinoCLI["Rhino CLI<br/>[Container: F#]<br/>Repository management"]:::blue
 
     AyoCLI -->|"Validates links<br/>[File system]"| AyoWeb
     RhinoCLI -->|"Manages repository<br/>[File system]"| OseWeb
@@ -112,7 +112,7 @@ graph LR
     OseWeb["OSE Platform Web<br/>[Next.js 16 App Router]<br/>Landing page"]:::blue
     AyoWeb["AyoKoding Web<br/>[Next.js 16, tRPC]<br/>Educational content"]:::blue
     AyoCLI["AyoKoding CLI<br/>[Container: Rust]<br/>Content link validation"]:::blue
-    RhinoCLI["Rhino CLI<br/>[Container: Rust]<br/>Repository management"]:::blue
+    RhinoCLI["Rhino CLI<br/>[Container: F#]<br/>Repository management"]:::blue
     Vercel["Vercel<br/>[Platform]<br/>Next.js hosting"]:::teal
 
     AyoCLI --> AyoWeb

@@ -29,15 +29,15 @@ scoped to FSL-1.1-MIT; now MIT throughout.
 
 ## Production Dependency License Summary
 
-| App                    | Ecosystem    | Result                                        |
-| ---------------------- | ------------ | --------------------------------------------- |
-| `ayokoding-www`        | npm          | All permissive after LGPL removal (see below) |
-| `ose-www`              | npm          | All permissive after LGPL removal (see below) |
-| `organiclever-app-web` | npm          | All permissive after LGPL removal (see below) |
-| `organiclever-be`      | .NET (NuGet) | All permissive (MIT, Apache-2.0, PostgreSQL)  |
-| `ose-be`               | .NET (NuGet) | All permissive (MIT, Apache-2.0, PostgreSQL)  |
-| `crane-cli`            | Rust         | MIT/Apache-2.0 (Cargo dependencies)           |
-| `rhino-cli`            | Rust         | MIT (Cargo dependencies — all permissive)     |
+| App                    | Ecosystem    | Result                                                                                                                                                                                |
+| ---------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ayokoding-www`        | npm          | All permissive after LGPL removal (see below)                                                                                                                                         |
+| `ose-www`              | npm          | All permissive after LGPL removal (see below)                                                                                                                                         |
+| `organiclever-app-web` | npm          | All permissive after LGPL removal (see below)                                                                                                                                         |
+| `organiclever-be`      | .NET (NuGet) | All permissive (MIT, Apache-2.0, PostgreSQL)                                                                                                                                          |
+| `ose-be`               | .NET (NuGet) | All permissive (MIT, Apache-2.0, PostgreSQL)                                                                                                                                          |
+| `crane-cli`            | Rust         | MIT/Apache-2.0 (Cargo dependencies)                                                                                                                                                   |
+| `rhino-cli`            | F# (NuGet)   | All permissive (MIT), no automated license gate (ported from Rust 2026-08-30; the prior `cargo-deny` license allowlist has no F#-side equivalent, accepted as a permanent regression) |
 
 ## LGPL-3.0 Elimination: `@img/sharp-libvips`
 
