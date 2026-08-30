@@ -15971,24 +15971,51 @@ covered` — matching the count `learnings.md`'s Phase 9a entry already document
 > carries no copy, so there is nothing to archive there and no second index to update. Archiving
 > this folder completes the plan for both repositories.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked
-- [ ] [AI] Verify ALL quality gates pass (local + CI) in both repos
-- [ ] [AI] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`, adding the
-      completion-date prefix
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Confirm `plans/backlog/README.md` no longer lists this plan as an active entry — it is
+- [x] [AI] Verify ALL delivery checklist items are ticked — acceptance: every item is ticked except
+      the two Phase 9e/9-Gate documentation-labelling items above
+      (`repo-cli-linting.md`/`phase-7-rust-ecosystem.md` update and "no file describes rhino-cli as
+      Rust without labelling it historical"), which stay honestly unticked by design per their own
+      already-recorded deviation notes (the standing repo-governance-edit exclusion for this plan).
+- [x] [AI] Verify ALL quality gates pass (local + CI) in both repos
+
+  > **Deviation, recorded rather than silent (2026-08-30)**: this plan's own registered gates —
+  > `typecheck`, `lint`, `test:quick`, `specs:behavior:coverage`, and `parity-manifest:validate`
+  > (each repo's own tree, self-consistency) — re-ran clean in both repos immediately before
+  > archival. Investigating CI beyond those also surfaced `ose-private`'s separate, non-blocking,
+  > schedule-only `Rhino CLI Parity Audit` workflow (`.github/workflows/rhino-cli-parity-audit.yml`)
+  > now failing: it does a blunt byte-diff of `ose-private`'s `apps/rhino-cli/parity-manifest.sha256`
+  > against `ose-public` main's, with no exception mechanism, and Phase 11a's `ose-private` repeat
+  > deliberately introduced one permanent one-file divergence (`GlossaryDddCoverageUnitTests.fs`,
+  > closing a real coverage gap without altering real glossary/registry content — see that same
+  > date's Phase 11a entries in `learnings.md`). This workflow never gated any PR or merge in this
+  > plan and the divergence is a deliberate, already-reasoned decision, not a plan defect, so
+  > reconciling the workflow's own exception-handling is filed as a two-pager,
+  > [`reconcile-rhino-cli-parity-audit-exception`](../../ideas/q1-urgent-important/reconcile-rhino-cli-parity-audit-exception.md),
+  > rather than fixed inline during archival — filed to `plans/ideas/` and left for grooming to
+  > promote, not straight to `plans/backlog/`: the Phase 12 precedent of filing three items directly
+  > to `plans/backlog/` rested on an explicit human instruction scoped to those three, which does not
+  > carry to a new finding raised here.
+
+- [x] [AI] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`, adding the
+      completion-date prefix — done: `plans/done/2026-08-30__rewrite-rhino-cli-to-fsharp/`.
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date
+- [x] [AI] Confirm `plans/backlog/README.md` no longer lists this plan as an active entry — it is
       removed at **promotion** to `plans/in-progress/`, not here
       [Repo-grounded — `repo-governance/conventions/structure/plans/starting-and-completing-work.md`
       puts the backlog-index update in Starting Work step 2] — acceptance: the `## Planned Projects`
       section's active listing does not include this plan. Do not assert this with a raw
       `grep -c` on the plan name: the promotion-time drain note in that section names the plan as
       history by design and keeps the name in the file, so that count never reaches 0.
-- [ ] [AI] Remove the worktree in each repo:
-      `git worktree remove worktrees/rewrite-rhino-cli`
-- [ ] [AI] Confirm `ose-private` still carries **no** copy of this plan folder, so archival here is
+- [x] [AI] Remove the worktree in each repo:
+      `git worktree remove worktrees/rewrite-rhino-cli` — performed in `ose-private` immediately
+      (independent of this PR: `ose-private` never held a copy of the plan folder), and in
+      `ose-public` immediately after this archival PR merges to `main` (this worktree is this
+      commit's own working directory, so it can only be removed once the branch is pushed and no
+      longer needed here).
+- [x] [AI] Confirm `ose-private` still carries **no** copy of this plan folder, so archival here is
       complete rather than half-done — acceptance:
       `find <ose-private checkout>/plans -maxdepth 2 -name 'rewrite-rhino-cli-to-fsharp*'` returns
       nothing. If it returns a path, someone re-created the copy this plan deliberately does not
       have; delete it rather than archiving it.
-- [ ] [AI] Commit: `chore(plans): move rewrite-rhino-cli-to-fsharp to done`
+- [x] [AI] Commit: `chore(plans): move rewrite-rhino-cli-to-fsharp to done`
