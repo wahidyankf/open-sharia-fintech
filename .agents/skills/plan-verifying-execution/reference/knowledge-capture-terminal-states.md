@@ -16,15 +16,19 @@ confirmed satisfied.
    - **Routed inline** (non-code homes only — `docs/`, `repo-governance/`, `.claude/agents/`,
      `.claude/skills/`, post-mortems, or any other non-code durable home) — confirm the referenced
      commit or file edit actually landed in this plan's own history.
-   - **Filed as a `plans/backlog/<slug>/` plan** — **mandatory** whenever the home is `apps/`,
-     `libs/`, or a test (code); also an acceptable route for any non-code home. Confirm the backlog
-     folder actually exists: `Bash test -d plans/backlog/<slug>/`.
+   - **Filed as a `plans/ideas/<slug>.md` two-pager** — **mandatory** whenever the home is `apps/`,
+     `libs/`, or a test (code); also an acceptable route for any non-code home. Confirm the
+     two-pager actually exists: `Bash test -f plans/ideas/*/<slug>.md`. A run MUST NOT create a
+     `plans/backlog/<slug>/` folder for its own finding — `backlog/` is reached only through
+     `plan-idea-promotion-planning`'s ripeness gate, or by an explicit human instruction naming that
+     specific finding. A new `plans/backlog/<slug>/` folder in this plan's own diff, with no such
+     instruction recorded, is a **CRITICAL** finding — archival is BLOCKED.
    - **Discarded with a one-line reason** — confirm a concrete reason is present, not merely the word
      "discarded". An entry with no terminal state recorded, or left silently open: **CRITICAL**
      finding — archival is BLOCKED until resolved.
 2. **No code-homed learning landed inline** — cross-check `learnings.md` against this plan's own
    commit history/diff for any learning whose home is `apps/`, `libs/`, or a test file that was
-   implemented directly in this plan's commits/PR instead of filed to `plans/backlog/`. Any code born
+   implemented directly in this plan's commits/PR instead of filed to `plans/ideas/`. Any code born
    from a learning that landed inline in the current plan — outside the narrow current-plan-blocker
    carve-out (Root Cause Orientation: fixing a genuine blocker to finish this plan's own scope) — is a
    **CRITICAL** finding — archival is BLOCKED.

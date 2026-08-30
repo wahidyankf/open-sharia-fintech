@@ -16,8 +16,8 @@ both safety gates — before archival.
    **MEDIUM**, per
    [Criticality Levels Convention](../../../../repo-governance/development/quality/criticality-levels.md).
 4. **Code-routing rule stated** — the phase states a learning routed to `apps/`/`libs/`/tests is
-   ALWAYS filed as a separate `plans/backlog/` plan, never landed inline (current-plan-blocker
-   carve-out aside). Missing: **MEDIUM**.
+   ALWAYS filed as a separate `plans/ideas/` two-pager, never landed inline and never as a
+   directly-created `plans/backlog/` folder (current-plan-blocker carve-out aside). Missing: **MEDIUM**.
 5. **Both safety gates present** — references applying the secret/sensitivity gate and the
    repo-relevance gate to every surviving entry. Missing either: **MEDIUM**.
 6. **`plans/ideas/` overlap-scan rule stated** — if the routing matrix names `plans/ideas/` (default),

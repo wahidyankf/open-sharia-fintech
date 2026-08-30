@@ -17,8 +17,8 @@ when_to_use: "Use when a learning implies a code change."
 # The Code-Routing Downstream Rule
 
 When a learning's home is `apps/`, `libs/`, or tests — i.e., the codebase itself must change — that
-follow-up work is **always** a separate `plans/backlog/` plan. It is **never landed inline** in the
-current plan's commits or PR.
+follow-up work is **always** a separate follow-up, filed as a `plans/ideas/` two-pager. It is
+**never landed inline** in the current plan's commits or PR.
 
 **Why**: a code change is bound by the repository's normal engineering gates, and a captured learning
 does not get to bypass them:
@@ -30,9 +30,14 @@ does not get to bypass them:
 - **[Test-Driven Development](../../workflow/test-driven-development.md)**: Red → Green → Refactor
   governs the code change itself.
 
-Because these gates apply, a code-routed learning is filed as its own `plans/backlog/<slug>/`
-plan (which then carries its own specs/Gherkin, regression-test, and TDD obligations when executed) —
-never smuggled into the current governance/docs plan's PR.
+Because these gates apply, a code-routed learning is filed as its own `plans/ideas/<slug>.md`
+two-pager, which becomes a `plans/backlog/<slug>/` plan (carrying its own specs/Gherkin,
+regression-test, and TDD obligations when executed) once
+[plan-idea-promotion-planning](../../../workflows/plan/plan-idea-promotion-planning.md) passes it
+through the ripeness gate — never smuggled into the current governance/docs plan's PR. The executing
+run files the two-pager, not the backlog folder: see
+[Routing Timing](./routing-timing-destination-aware-inline-vs-backlog.md) for why an executing
+agent's own readiness judgment does not substitute for that gate.
 
 **Carve-out (Iron Rule 3 — Root Cause Orientation still applies in full)**: this downstream rule
 governs learnings captured for **future** evolution. A bug, failing test, or lint failure the

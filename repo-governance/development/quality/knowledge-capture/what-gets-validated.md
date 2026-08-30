@@ -24,7 +24,7 @@ are:
   no explicit "none" record, at **MEDIUM** criticality. An explicit "none" record passes without a
   finding.
 - **`plan-execution-checker`**: blocks archival until every `learnings.md` entry is routed-inline
-  (non-code only), filed-as-a-backlog-plan (mandatory for code), or discarded-with-reason; verifies
+  (non-code only), filed-as-a-two-pager (mandatory for code), or discarded-with-reason; verifies
   both safety gates were applied; verifies no code born from a learning landed inline.
 - **`plan-fixer`**: scaffolds a missing Knowledge Capture phase and `learnings.md` file into a plan
   that lacks them.

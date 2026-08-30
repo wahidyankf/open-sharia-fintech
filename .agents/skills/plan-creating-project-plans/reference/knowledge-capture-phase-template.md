@@ -24,11 +24,12 @@ Plan Archival — see [plan-archival.md](plan-archival.md)):
       when the scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers)).
 - [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
-      separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR. The sole
+      separate `plans/ideas/` two-pager — NEVER land it inline in this plan's commits/PR, and never
+      create a `plans/backlog/` folder for it directly (promotion's ripeness gate does that). The sole
       carve-out is a bug/lint/test failure that blocks THIS plan's own scope — that is fixed inline
       as ordinary Root Cause Orientation work, not routed as a deferred learning.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
-      discarded with reason) directly in `learnings.md`.
+- [ ] [AI] Record the terminal state of every entry (routed inline / filed as a two-pager at
+      `<path>` / discarded with reason) directly in `learnings.md`.
 - [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead of individual entries.
 
