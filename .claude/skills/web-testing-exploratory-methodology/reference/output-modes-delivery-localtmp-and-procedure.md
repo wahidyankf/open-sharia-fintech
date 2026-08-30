@@ -29,12 +29,16 @@ summary plus the `local-tmp/` path to the orchestrator.
 
 ## Procedure Summary
 
-1. Confirm URL(s) and goal; resolve depth, breakpoints, locales, ground truth.
+1. Confirm URL(s) and goal; resolve depth, breakpoints, locales, ground truth, and **output mode before
+   any capture**. An omitted mode resolves to `local-tmp`; `delivery` requires an existing
+   `plan-path`; `plan` requires explicit selection plus literal authorization to create a plan
+   artifact.
 2. Frame charters from the goal.
 3. Establish the baseline (WebFetch and curl): structure, links, headers, redirects.
 4. Run interactive/visual/responsive/perf passes across EVERY supported locale × EVERY breakpoint,
-   saving cited screenshots to the plan's `evidence/` subfolder; deliberately exercise edge cases and
-   boundary conditions, not only the happy path.
+   saving cited screenshots under the resolved evidence root: local findings `evidence/` by default,
+   host-plan `evidence/` in `delivery` mode, or new-plan `evidence/` only in explicitly authorized
+   `plan` mode. Deliberately exercise edge cases and boundary conditions, not only the happy path.
 5. Run the three **Mandatory Systematic Sweeps** (enumerate, never sample); record each matrix in
    the coverage map, then run the self-completeness check.
 6. Compare every observation against ground truth — including each mapped `specs/**` scenario;
@@ -42,7 +46,9 @@ summary plus the `local-tmp/` path to the orchestrator.
 7. Detect spec gaps: catalog correct behaviours the live target exhibits but `specs/**` does not
    cover — giving edge-case behaviours special attention — and draft proposed Gherkin for each.
 8. Triage findings with severity and proposed priority; de-duplicate.
-9. Write the backlog plan (README, brd, prd, findings, spec-gaps) with steps-to-reproduce, Gherkin
-   ACs, and spec-gap proposals.
+9. Write to the resolved destination: `local-tmp/.../findings.md` plus `evidence/` by default;
+   unchecked host-plan follow-ups plus host evidence in `delivery` mode; or the full plan document
+   set and its index entry only in explicitly authorized `plan` mode. Preserve reproduction steps,
+   Gherkin ACs, and spec-gap proposals where supported.
 10. Return a concise summary to the orchestrator: counts by severity, the spec-gap count, the top
-    risks, the plan path, and what was _not_ covered.
+    risks, the resolved output path, and what was _not_ covered.

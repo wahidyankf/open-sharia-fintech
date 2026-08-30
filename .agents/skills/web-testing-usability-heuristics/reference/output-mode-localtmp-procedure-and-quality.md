@@ -10,8 +10,10 @@ summary plus the `local-tmp/` path to the orchestrator.
 
 ## Procedure Summary
 
-1. Confirm URL(s) + usability goal; resolve persona, tasks, depth, breakpoints, locales. Do not
-   request specs/mockups.
+1. Confirm URL(s) + usability goal; resolve persona, tasks, depth, breakpoints, locales, and **output
+   mode before any capture**. An omitted mode resolves to `local-tmp`; `delivery` requires an
+   existing `plan-path`; `plan` requires explicit selection plus literal authorization to create a
+   plan artifact. Do not request specs/mockups.
 2. Establish the baseline (WebFetch + curl): rendered content, nav labels, link graph, URL/locale
    structure.
 3. Run the heuristic-evaluation sweep against all 10 heuristics across the page and sibling
@@ -27,10 +29,12 @@ summary plus the `local-tmp/` path to the orchestrator.
    product's specs.
 9. Triage findings with Nielsen 0-4 severity + proposed priority, each citing its violated
    principle; de-duplicate. Draft any `USS-###` spec suggestions.
-10. Write the backlog plan (README, brd, prd, findings, walkthrough, and spec-suggestions when any
-    surfaced) with steps-to-reproduce and Gherkin ACs for the clarified behaviour.
+10. Write to the resolved destination: `local-tmp/.../findings.md` plus `evidence/` by default;
+    unchecked host-plan follow-ups plus host evidence in `delivery` mode; or the full plan document
+    set and its index entry only in explicitly authorized `plan` mode. Preserve reproduction steps,
+    walkthrough evidence, and Gherkin ACs where supported.
 11. Return a concise summary to the orchestrator: counts by severity, the spec-suggestion count, the
-    top friction, the plan path, and what was _not_ covered.
+    top friction, the resolved output path, and what was _not_ covered.
 
 ## Quality Guidelines
 

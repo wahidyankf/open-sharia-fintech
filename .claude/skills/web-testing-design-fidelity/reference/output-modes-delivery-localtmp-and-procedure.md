@@ -34,12 +34,15 @@ plus the `local-tmp/` path to the orchestrator.
 
 ## Procedure Summary
 
-1. Confirm URL(s) + design goal; resolve depth, breakpoints, locales, and the design ground truth
-   (mockups, tokens, primitives, optional external source).
+1. Confirm URL(s) + design goal; resolve depth, breakpoints, locales, design ground truth, and
+   **output mode before any capture**. An omitted mode resolves to `local-tmp`; `delivery` requires an
+   existing `plan-path`; `plan` requires explicit selection plus literal authorization to create a
+   plan artifact.
 2. Establish the baseline (`WebFetch`): structure, routes, locale-prefix.
 3. Render, measure computed styles, and screenshot each route across EVERY supported locale × EVERY
-   breakpoint (375 / 768 / 1280, plus 320/1440 when `thorough`), saving cited screenshots to the plan's
-   `evidence/` subfolder.
+   breakpoint (375 / 768 / 1280, plus 320/1440 when `thorough`), saving cited screenshots under the
+   resolved evidence root: local findings `evidence/` by default, host-plan `evidence/` in
+   `delivery` mode, or new-plan `evidence/` only in explicitly authorized `plan` mode.
 4. Compare every observation against the five ground-truth sources; for design practice, cite the
    principle (delegating to `web-researcher` when unsure). Deliberately probe spacing/density ("not
    cramped"), alignment, hierarchy, and cross-surface consistency — not just colour/mockup match.
@@ -50,7 +53,9 @@ plus the `local-tmp/` path to the orchestrator.
    cover, and draft proposed Gherkin for each.
 7. Triage findings with severity + proposed priority, each citing its violated ground truth/principle;
    de-duplicate.
-8. Write the backlog plan (README, brd, prd, findings, spec-gaps when any surfaced) with
-   steps-to-reproduce and Gherkin ACs for the on-design result.
+8. Write to the resolved destination: `local-tmp/.../findings.md` plus `evidence/` by default;
+   unchecked host-plan follow-ups plus host evidence in `delivery` mode; or the full plan document
+   set and its index entry only in explicitly authorized `plan` mode. Preserve reproduction steps
+   and Gherkin ACs for the on-design result where supported.
 9. Return a concise summary to the orchestrator: counts by severity, the spec-gap count, the top
-   design risks, the plan path, and what was _not_ covered.
+   design risks, the resolved output path, and what was _not_ covered.

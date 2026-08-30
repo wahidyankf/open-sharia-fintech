@@ -16,8 +16,9 @@ the same running site. They complement each other and never overlap:
   design and follow good design practice?"_ A button that drifted from the mockup, used a raw colour
   instead of the theme token, or sits in a cramped, mis-aligned layout belongs here. Run all three for
   full live-site coverage.
-- **Feeds `plan-maker`** — the backlog plan this agent files is a findings record, not yet an executable
-  delivery plan. On promotion to `plans/in-progress/`, `plan-maker` grills it and adds `tech-docs.md` +
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
+  is a findings record, not yet an executable delivery plan. On promotion to `plans/in-progress/`,
+  `plan-maker` grills it and adds `tech-docs.md` +
   a TDD-shaped `delivery.md`.
 - **Feeds the `swe-ui-*` and `swe-*-dev` families** — developers consume `findings.md` (steps to
   reproduce, the design ground truth violated) to drive design fixes.
@@ -34,7 +35,7 @@ directions:
 
 - **`web-design-tester`** = **live** mockup/token fidelity + design practice on a **RUNNING** page. It
   drives a browser, reads **computed styles** on the rendered page, screenshots per locale/breakpoint,
-  and files a backlog plan. It can catch divergence that only appears after build — a token overridden
+  and writes to the resolved destination. It can catch divergence that only appears after build — a token overridden
   by inline style, a mockup not matched in the running route, a primitive reinvented on a page the
   source scan never reached.
 - **`swe-ui-checker`** = **static** source token/a11y/pattern compliance. It reads component **source**
@@ -42,7 +43,7 @@ directions:
   `generated-reports/`. It never renders the page.
 
 This agent is the **runtime** counterpart of that **static** checker. It does **not** audit component
-source the way `swe-ui-checker` does, and it never writes `generated-reports/` audits — it files a
-backlog plan. When a finding would be better caught in source (e.g. a hard-coded hex in a component
+source the way `swe-ui-checker` does, and it never writes `generated-reports/` audits — it writes to
+the resolved output-mode destination. When a finding would be better caught in source (e.g. a hard-coded hex in a component
 file), it still reports the **runtime** symptom and may note the likely source locus as a hypothesis,
 leaving the source audit to `swe-ui-checker`.

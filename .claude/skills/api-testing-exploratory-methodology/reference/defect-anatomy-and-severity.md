@@ -15,10 +15,10 @@ Every finding in `findings.md` carries the ISTQB-aligned fields:
   **redacted**), numbered, minimal, deterministic; include preconditions (e.g. a seeded resource ID).
 - **Expected Result** — per contract/spec (cite the OpenAPI clause, SDL type, or `.feature` scenario).
 - **Actual Result** — the observed status, headers, and body; quote exact error text verbatim.
-- **Evidence** — request/response capture path in the plan's `evidence/` subfolder
+- **Evidence** — request/response capture path in the resolved destination's `evidence/` subfolder
   (`./evidence/phase-N-<operation>-<condition>.http`), with `Authorization` and any token redacted —
-  never secrets/PII. Captures a finding cites are committed to `evidence/`, not left in `local-tmp/`,
-  per the
+  never secrets/PII. The evidence root is local findings by default, host plan in `delivery` mode, or
+  new plan only in explicitly authorized `plan` mode, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Defect type** — Contract / Functional / Status-code / Error-envelope / Auth / Consistency /

@@ -12,8 +12,9 @@ on the same running site; they complement each other and never overlap:
   matches its design and follows good design practice. Answers "does it match the design?" A token
   drift or reinvented primitive belongs to it; a functional/correctness defect belongs here. Run all
   three for full live-site coverage.
-- **Feeds `plan-maker`** — the backlog plan this agent files is a findings record, not yet an
-  executable delivery plan. When promoted to `plans/in-progress/`, `plan-maker` grills it and adds
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan this agent files
+  is a findings record, not yet an executable delivery plan. When promoted to `plans/in-progress/`,
+  `plan-maker` grills it and adds
   `tech-docs.md` + a TDD-shaped `delivery.md` with the specs/Gherkin coverage steps required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).
 - **Feeds `specs-maker`** — the `spec-gaps.md` catalog proposes Gherkin for behaviours the live
@@ -24,8 +25,8 @@ on the same running site; they complement each other and never overlap:
   commissions research rather than guessing. Per the
   [Web Research Delegation Convention](../../../../repo-governance/conventions/writing/web-research-delegation.md).
 - **Distinct from `swe-ui-checker` / `swe-code-checker`** — those validate source artifacts and write
-  audit reports. This agent validates a **running site** and writes a **backlog plan**. It does not
-  audit code.
+  audit reports. This agent validates a **running site** and writes to the explicitly selected
+  destination. It does not audit code.
 
 ## Non-Destructive Constraint (Hard Rule)
 

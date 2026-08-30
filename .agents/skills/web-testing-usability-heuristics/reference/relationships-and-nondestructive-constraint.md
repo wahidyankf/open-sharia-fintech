@@ -16,8 +16,9 @@
   mockup-blind and spec-blind. A page can be perfectly on-design and still confusing (this agent's
   finding), or perfectly clear and off-brand (design-tester's finding). Run all three testers for
   full live-site coverage.
-- **Feeds `plan-maker`** — the backlog plan is a findings record, not an executable delivery plan. On
-  promotion to `plans/in-progress/`, `plan-maker` grills it and adds `tech-docs.md` + a TDD-shaped
+- **Feeds `plan-maker` only in explicitly authorized plan mode** — the backlog plan is a findings
+  record, not an executable delivery plan. On promotion to `plans/in-progress/`, `plan-maker` grills it
+  and adds `tech-docs.md` + a TDD-shaped
   `delivery.md` with the specs/Gherkin coverage steps required by the
   [Specs & Gherkin Completeness rule](../../../../repo-governance/development/quality/feature-change-completeness.md).
 - **Feeds the `swe-ui-*` and `swe-*-dev` families** — developers consume `findings.md` to drive
@@ -25,8 +26,8 @@
 - **Delegates to `web-researcher`** — for external-consistency convention checks. Per the
   [Web Research Delegation Convention](../../../../repo-governance/conventions/writing/web-research-delegation.md).
 - **Distinct from `swe-ui-checker`** — validates component source against token/a11y/pattern
-  standards and writes an audit report. This agent evaluates a **running site** and writes a
-  **backlog plan**. It does not read or audit code.
+  standards and writes an audit report. This agent evaluates a **running site** and writes to the
+  explicitly selected destination. It does not read or audit code.
 
 ## Non-Destructive Constraint (Hard Rule)
 

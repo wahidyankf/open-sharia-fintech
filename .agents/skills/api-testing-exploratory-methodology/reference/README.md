@@ -17,7 +17,7 @@ title: "Reference"
 - [11 Spec Gap Detection](./spec-gap-detection.md) — detecting and proposing spec gaps for correct behaviours lacking coverage
 - [12 Defect Anatomy And Severity](./defect-anatomy-and-severity.md) — the ISTQB-aligned fields every findings.md defect report must carry
 - [13 Output Modes Overview](./output-modes-overview.md) — the output modes selectable at invocation
-- [14 Output Mode Plan](./output-mode-plan.md) — the default output mode that files findings as a new plan folder
+- [14 Output Mode Plan](./output-mode-plan.md) — the explicit output mode that files findings as a new plan folder
 - [15 Output Modes Delivery Localtmp And Procedure](./output-modes-delivery-localtmp-and-procedure.md) — the delivery and local-tmp output modes plus the shared procedure summary
 - [16 Quality Guidelines And Constraints](./quality-guidelines-and-constraints.md) — quality guidelines including reproducing every finding before reporting it
   </content>

@@ -24,9 +24,9 @@ when_to_use: "Use when locating the automated enforcement for one of the sixteen
   near-end three-tester round against the running web UI (Rule 15); runs across ALL supported locales;
   surfaces EWT-### (correctness) / UWT-### (usability) / DWT-### (design-fidelity) findings plus SG-###
   spec-gap / USS-### spec-suggestion proposals; saves screenshots to the plan's `evidence/` folder.
-  Each tester supports a selectable **`output-mode`** input: `plan` (default — files a new backlog
-  plan), `delivery` (appends findings into an existing plan's `delivery.md`), or `local-tmp` (writes
-  a throwaway `findings.md` with no plan paperwork). For the Rule-15 in-place append, invoke each
+  Each tester supports a selectable **`output-mode`** input: `local-tmp` (default; writes ephemeral
+  findings), `plan` (requires literal authorization), or `delivery` (appends findings into an
+  existing plan's `delivery.md`). For the Rule-15 in-place append, invoke each
   tester with **`output-mode: delivery`** and the executing plan's `plan-path`; this is the single
   mechanism that produces the "Rule-15 three-tester retest follow-ups" section in `delivery.md`.
 - **`api-exploratory-tester`**: the API-surface counterpart to the web triad — the near-end

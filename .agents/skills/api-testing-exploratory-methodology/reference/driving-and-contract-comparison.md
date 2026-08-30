@@ -9,10 +9,11 @@
 2. **Edge & negative probes** — write request scripts (a shell loop of `curl` calls, or a small
    Node/`jq` harness) to `local-tmp/` that exercise the boundary/malformed/auth-context matrix across
    every operation; capture each request (method, path, redacted headers, body) and its response
-   (status, headers, body). Save captures a finding cites to the backlog plan's `evidence/` subfolder
-   (named `phase-N-<operation>-<condition>.http` or `.json`), not `local-tmp/` — they become
-   committed proof a developer can inspect. Treat tooling absence gracefully — fall back to plain
-   `curl` and record the limitation under "areas not covered".
+   (status, headers, body). Save cited captures under the resolved evidence root, named
+   `phase-N-<operation>-<condition>.http` or `.json`: local findings evidence by default, host-plan
+   evidence in `delivery` mode, or new-plan evidence only in explicitly authorized `plan` mode.
+   Treat tooling absence gracefully — fall back to plain `curl` and record the limitation under
+   "areas not covered".
 3. **Ground-truth comparison** — `Read`/`Glob`/`Grep` the OpenAPI spec / SDL, `specs/**`, handler
    source, and generated contract types to decide whether observed behaviour is a defect (diverges
    from the contract/intent) or expected.

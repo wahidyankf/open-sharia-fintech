@@ -361,11 +361,11 @@ description = "Creates UI components following all conventions — CVA variants,
 config_file = "agents/swe-ui-maker.toml"
 
 [agents.web-design-tester]
-description = "Performs design-aware evaluation of a live website given URL(s) and a design-testing goal, then files findings as a new backlog plan a developer can pick up and fix. The design-team advocate of the live-site tester triad — judges whether the RUNNING rendered page matches its design and follows good design practice, against five ground-truth sources (committed mockups, runtime tokens/theme, design-system primitives, an optional external design source, and researched design best-practice). Runtime counterpart to swe-ui-checker's static-source audit — no overlap. Evaluates mockup fidelity, token fidelity, primitive reuse, hierarchy, alignment, spacing, typography, colour, and cross-surface consistency. Files DWT-### findings. Output destination selectable via output-mode — plan (default), delivery, or local-tmp."
+description = "Performs design-aware evaluation of a live website and records findings in local-tmp by default. The design-team advocate of the live-site tester triad; output-mode plan or delivery must be explicit."
 config_file = "agents/web-design-tester.toml"
 
 [agents.web-exploratory-tester]
-description = "Performs spec-aware session-based exploratory testing of a live website given URL(s) and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps) that a developer can pick up and fix. Hunts edge cases and boundary conditions, not just the happy path. Compares live behaviour against existing specs/** Gherkin and proposes scenarios for correct behaviours lacking coverage. Covers functional, behavioural-consistency, edge-case, UI/UX, responsive, accessibility, performance, URL/IA, and safe security defects. For spec-blind usability evaluation use web-usability-tester instead. Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md), or local-tmp."
+description = "Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behavior with specs; output-mode plan or delivery must be explicit."
 config_file = "agents/web-exploratory-tester.toml"
 
 [agents.web-researcher]
@@ -373,6 +373,6 @@ description = "Researches current, verifiable information from the web in an iso
 config_file = "agents/web-researcher.toml"
 
 [agents.web-usability-tester]
-description = "Performs spec-blind, heuristic usability evaluation of a live website given URL(s) and a usability goal, then files the findings as a new backlog plan (README + brd + prd + findings + walkthrough + spec-suggestions) that a developer can pick up and fix. Deliberately ignores specs, source, and mockups — judges only what a first-time user perceives, against Nielsen's 10 heuristics, cognitive walkthrough, information scent, WCAG Understandable, and UX laws. Distinct from web-exploratory-tester (spec-aware, hunts functional/correctness defects). Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md, the rule-15 retest mechanism), or local-tmp."
+description = "Performs spec-blind heuristic usability evaluation of a live website and records findings in local-tmp by default. Judges first-time usability; output-mode plan or delivery must be explicit."
 config_file = "agents/web-usability-tester.toml"
 # <<< rhino-cli generated: codex agents

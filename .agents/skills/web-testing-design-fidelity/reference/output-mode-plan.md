@@ -1,4 +1,6 @@
-# Output Mode: `plan` (Default) — a New Plan Folder
+# Output Mode: `plan` (Explicit Only) — a New Plan Folder
+
+Use only when the caller literally selects `output-mode: plan`; omission defaults to `local-tmp`.
 
 (When the caller passes `plan-stage: in-progress`, write the folder under
 `plans/in-progress/<slug>/` with no date prefix instead of `plans/backlog/`.) Create

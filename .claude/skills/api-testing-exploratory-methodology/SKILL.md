@@ -30,7 +30,7 @@ a **running** REST or GraphQL API — the API-surface counterpart to the web tes
     severity/priority scales.
 11. [Output Modes Overview](reference/output-modes-overview.md) and
     [Output Mode `plan`](reference/output-mode-plan.md) — the output-mode selection table and the
-    default `plan` mode's document set.
+    explicitly authorized `plan` mode's document set.
 12. [Output Modes `delivery`/`local-tmp` and Procedure](reference/output-modes-delivery-localtmp-and-procedure.md)
     — the other two output modes and the 10-step procedure summary.
 13. [Quality Guidelines and Constraints](reference/quality-guidelines-and-constraints.md)

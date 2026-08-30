@@ -16,11 +16,12 @@ exists.
    `local-tmp/` and run it via `npx playwright` to navigate each route, resize to each breakpoint,
    read **computed styles** for the elements under test (colour, spacing, font, radius, shadow), and
    capture screenshots. Iterate the render/measure/screenshot pass over EVERY supported locale × EVERY
-   breakpoint (375 / 768 / 1280, plus 320/1440 when `thorough`). Save cited screenshots to the backlog
-   plan's `evidence/` subfolder (named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
-   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-tmp/` — they become committed proof. Treat tooling absence gracefully — fall back to
-   `WebFetch` static inspection and record the limitation under "areas not covered".
+   breakpoint (375 / 768 / 1280, plus 320/1440 when `thorough`). Save cited screenshots under the
+   resolved evidence root (named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
+   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)):
+   local findings by default, host plan in `delivery` mode, or new plan only in explicitly authorized
+   `plan` mode. Treat tooling absence gracefully — fall back to `WebFetch` static inspection and
+   record the limitation under "areas not covered".
 3. **Ground-truth comparison** — `Read`/`Glob`/`Grep` the plan `assets/` mockups, the design tokens/
    theme, and the `libs/web-ui` primitive library to decide whether an observation diverges from the
    design (a finding) or matches it. `WebFetch` the external design source when one was provided.
