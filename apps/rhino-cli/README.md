@@ -2,62 +2,80 @@
 
 **RHINO** – Repository Hygiene & INtegration Orchestrator
 
-Command-line tools for repository management and automation. Canonical implementation is Rust (this crate); the predecessor Go binary is recoverable from git history.
+Command-line tools for repository management and automation. Canonical implementation is F# (this
+project); the predecessor Rust crate and, before that, the original Go binary are recoverable from
+git history.
 
 ## What is rhino-cli?
 
-A Rust CLI binary with the same commands, flags, exit codes, and output formats (text / json / markdown) as the original Go implementation. Built with `clap` (derive macros), consuming the Gherkin specs in [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/).
+An F# CLI binary with the same commands, flags, exit codes, and output formats (text / json /
+markdown) as the retired Rust and Go implementations it replaced. Built with `Argu`
+(declarative argument parsing) across four projects — `RhinoCli.Domain`, `RhinoCli.Infrastructure`,
+`RhinoCli.Application`, `RhinoCli.Cli` — plus the `RhinoCli.Program` entry point, consuming the
+Gherkin specs in
+[`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/).
 
 ## Status
 
-Production; byte-identical to the Go binary across shadow-diff corpora. Forbids unsafe Rust in both `lib.rs` and `main.rs`; see [`code-quality-standards.md` §Unsafe Code Policy](../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md#unsafe-code-policy).
+Production. Ported 1:1 from the Rust crate scenario-by-scenario (`rewrite-rhino-cli-to-fsharp`
+plan); `shadow-diff.sh` proved byte-identical stdout/stderr/exit-code behavior against the Rust
+binary for every namespace before each wave's flip, and `parity manifest validate` now guards
+byte-identity of this app's own tree against its checked-in SHA-256 manifest going forward.
 
 ## Quick Start
 
 ```bash
-# Build the release binary (Nx)
+# Build the self-contained release binary (Nx)
 nx build rhino-cli
 
-# Run the binary
-cargo run --manifest-path apps/rhino-cli/Cargo.toml -- --help
+# Run via dotnet (no prior build required)
+dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --help
 
 # Echo a message
-cargo run --manifest-path apps/rhino-cli/Cargo.toml -- --say "hello world"
+dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --say "hello world"
 
 # Reject invalid output format (exits 1)
-cargo run --manifest-path apps/rhino-cli/Cargo.toml -- --output xml --help
+dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --output xml --help
 ```
 
 ## Installation
 
-Local to this monorepo. To produce a standalone binary:
+Local to this monorepo. To produce a standalone, self-contained binary:
 
 ```bash
-cd apps/rhino-cli
-cargo build --release
-# Binary at apps/rhino-cli/target/release/rhino-cli
-# Or via Nx: nx build rhino-cli → apps/rhino-cli/dist/rhino-cli
+nx build rhino-cli
+# Binary at apps/rhino-cli/src/dist/rhino-cli-fsharp
 ```
 
-Toolchain pinned to Rust 1.95.0 via `rust-toolchain.toml`; the first `cargo` call auto-bootstraps it through `rustup`. MSRV is 1.88 (`cucumber 0.23.0` bound) — `Cargo.toml`'s `rust-version` is the minimum buildable compiler; `rust-toolchain.toml`'s `channel` is the installed version. Both are correct: installed ≥ MSRV is the invariant.
+SDK pinned to .NET 10.0.204 via `apps/rhino-cli/global.json` (`rollForward: latestMinor`).
+`apps/rhino-cli/scripts/rhino-bin.sh` is the resolver shim every generated gate command invokes: it
+prefers an explicit `RHINO_CLI_FSHARP_BIN` override, falls back to the published `dist` binary, and
+only shells to `dotnet run` (needing the SDK) as a last resort.
 
 ## Nx Targets
 
-| Target             | Command                                                 |
-| ------------------ | ------------------------------------------------------- |
-| `build`            | `cargo build --release` → `dist/rhino-cli`              |
-| `lint`             | `cargo clippy --all-targets -- -D warnings`             |
-| `typecheck`        | `cargo check --all-targets`                             |
-| `test:unit`        | `cargo test --lib` (in-source `#[cfg(test)]` modules)   |
-| `test:integration` | `cargo test --tests` (integration tests under `tests/`) |
-| `test:quick`       | `cargo llvm-cov --lib --lcov --fail-under-lines 90`     |
-| `specs:coverage`   | Phase 0 stub; wires cucumber-rs later                   |
-| `run`              | `cargo run --`                                          |
-| `install`          | `cargo fetch`                                           |
+| Target                       | Command                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------- |
+| `build`                      | `dotnet publish RhinoCli.Program.fsproj -c Release --self-contained` → `src/dist` |
+| `lint`                       | `fantomas --check` + `fsharplint` + `fsharp-analyzers` across all five projects   |
+| `typecheck`                  | `dotnet build RhinoCli.Program.fsproj --no-restore`                               |
+| `test:unit`                  | `dotnet test RhinoCli.UnitTests.fsproj` (TickSpec step definitions + plain xunit) |
+| `test:integration`           | `dotnet test RhinoCli.IntegrationTests.fsproj`                                    |
+| `test:coverage`              | `dotnet test` with `/p:CollectCoverage=true /p:Threshold=90` (per-module minimum) |
+| `test:quick`                 | `typecheck` → `lint` → `test:unit` → `test:specs`, in order                       |
+| `specs:structure-validation` | `rhino-cli specs structure validate`                                              |
+| `specs:behavior:coverage`    | `rhino-cli specs behavior-coverage validate` — every scenario needs a bound step  |
+| `run`                        | `dotnet run --project RhinoCli.Program.fsproj --`                                 |
+| `install`                    | `dotnet restore RhinoCli.Program.fsproj`                                          |
+| `deps:audit`                 | `scripts/dotnet-deps-audit.sh` (NuGet vulnerability scan)                         |
+
+See `apps/rhino-cli/project.json` for the full target set, including the cross-cutting governance
+and env validators this project also owns (`governance:*`, `env:validation`,
+`specs:gherkin-cardinality-validation`).
 
 ## Global Flags
 
-See `src/cli.rs`:
+See `src/RhinoCli.Cli/src/HelpText.fs`:
 
 - `--verbose, -v` — timestamps
 - `--quiet, -q` — errors only
@@ -73,7 +91,7 @@ See `src/cli.rs`:
 baseline manifest so only _new_ unbound scenarios fail the gate.
 
 ```bash
-cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate \
+dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate \
   --features "specs/**/*.feature" --features-gen .features-gen \
   --baseline e2e-coverage-baseline.json --project my-e2e-project
 ```
@@ -96,42 +114,45 @@ ordinary unbound scenario), or when `--features-gen` names a directory that does
 [`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
 for the full behavior contract.
 
-## Adding a Gherkin Scenario: Two Binding Sites
+## Adding a Gherkin Scenario: One Binding Site
 
 A new scenario anywhere under
 [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/README.md)
-needs updating in **two** places, not one:
+needs exactly one binding: a `[<Given>]`/`[<When>]`/`[<Then>]`-style method on the relevant
+`*Steps.fs` class under `src/tests/unit/Steps/`, discovered by
+[TickSpec](https://github.com/fsprojects/TickSpec) at test-run time. Unlike the retired Rust
+crate's two-site model (a `#[cfg(test)]` unit test plus a separate `tests/gate_specs.rs` cucumber
+binding), F#'s TickSpec step classes are both the binding and the executable assertion — there is
+no second file to keep in sync.
 
-1. the relevant **unit-test module** (e.g. `src/commands/gate/emit.rs`'s `#[cfg(test)]` block) — a
-   plain Rust unit test, not a step binding, and
-2. **`tests/gate_specs.rs`** — the cucumber harness, the only place carrying actual
-   `#[given]`/`#[when]`/`#[then]` step bindings.
-
-The harness scans the entire feature directory regardless of which change a scenario belongs to, so
-binding only the unit-test side leaves an undefined-step failure that surfaces on the next
-`test:quick` / pre-push run. This has recurred; budget for both sites up front.
+`specs:behavior:coverage validate` is the enforcement mechanism: it fails if any scenario under the
+shared Gherkin tree lacks a bound step, so an unbound scenario surfaces on the next `test:quick` /
+pre-push run rather than silently passing.
 
 ```bash
-# Verify BEFORE committing — the narrower --lib filter will not catch it
-cargo test --test gate_specs
+# Verify BEFORE committing
+nx run rhino-cli:test:unit
+nx run rhino-cli:specs:behavior:coverage
 ```
 
 **Author a scenario in the phase that creates its behavior, or an earlier one — never a later one.**
-The harness requires a literal, _passing_ binding for every scenario at all times, so behavior that
+TickSpec requires a literal, _passing_ binding for every scenario at all times, so behavior that
 does not exist yet cannot be bound truthfully.
 
 ## Dependency Status
 
-Reviewed 2026-05-23 per [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
-
-| Dependency | Pinned | Path | Decision                               |
-| ---------- | ------ | ---- | -------------------------------------- |
-| `chrono`   | 0.4.44 | A    | Patch-only bump from 0.4.39            |
-| `glob`     | 0.3.3  | A    | Patch-only bump from 0.3.2             |
-| `sha2`     | 0.11.0 | A    | Bumped from 0.10.9; used API unchanged |
-| `tempfile` | 3.27.0 | A    | Bumped from 3.14.0; used API unchanged |
+Core NuGet packages beyond the .NET SDK itself: `Argu` (CLI argument parsing, `RhinoCli.Cli`),
+`YamlDotNet` (`RhinoCli.Application`), and `FSharp.Analyzers.Build` +
+`G-Research.FSharp.Analyzers` (build-time lint, all five projects). `deps:audit` scans the full
+transitive set for known vulnerabilities; see
+[Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md)
+for the bump-review process.
 
 ## See also
 
-- Migration plan (completed 2026-05-23, `2026-05-23__rhino-cli-rust-rewrite`): documents the preceding Go implementation (recoverable from git history; not linked here — `plans/done/` is repo-specific and this README is byte-identical across sibling repos)
-- Gherkin specs (shared with Go binary): [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/)
+- Rewrite plan (`rewrite-rhino-cli-to-fsharp`, `plans/`): documents the Rust-to-F# port and the
+  preceding Rust-to-Go migration plan referenced from its own history (recoverable from git
+  history; not linked here — `plans/done/` is repo-specific and this README is byte-identical
+  across sibling repos)
+- Gherkin specs (shared with the retired Rust and Go binaries):
+  [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/)

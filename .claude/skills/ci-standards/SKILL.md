@@ -22,24 +22,23 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 | Demo-be backend  | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
 | Demo-fe frontend | codegen, typecheck, lint, build, test:unit, test:quick, specs:behavior:coverage                   |
 | Fullstack app    | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
-| CLI app (Rust)   | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
+| CLI app (F#)     | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
 | Content platform | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
 | Library          | lint, build, test:unit, test:quick                                                                |
 | E2E runner       | lint, test:e2e, test:e2e:ui, specs:behavior:coverage                                              |
 
 Required-target lists name Nx targets that must exist, not necessarily distinct test scopes: for
-`rhino-cli` (the only Rust CLI app today), `test:unit` and `test:integration` both exist as
-required, but `test:integration`'s `cargo test --tests` re-runs the identical `tests/*.rs`
-binaries `test:unit` already enumerates by name — `test:integration` is not wired into any CI job
-for this app, so the two targets do not currently cover disjoint ground. See [Per-Backend and CLI
-App Implementation
+`rhino-cli`, `test:unit` and `test:integration` both exist as required, but
+`test:integration` — a single-scenario F# suite (`Steps/PreCommitHookSteps.fs`) — is not wired
+into any CI job for this app, so it never runs outside a local
+`nx run rhino-cli:test:integration` invocation. See [Per-Backend and CLI App Implementation
 Patterns](../../../repo-governance/development/quality/three-level-testing-standard/per-backend-and-cli-app-implementation-patterns.md).
 
 ## Coverage Thresholds
 
 | Threshold | Projects                                   |
 | --------- | ------------------------------------------ |
-| 90%       | organiclever-be, CLI apps, Rust libs       |
+| 90%       | organiclever-be, CLI apps                  |
 | 80%       | Content platforms (ayokoding-www, ose-www) |
 | 70%       | organiclever-app-web                       |
 
