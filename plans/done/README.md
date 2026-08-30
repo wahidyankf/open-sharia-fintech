@@ -9,6 +9,12 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-30: rewrite-rhino-cli-to-fsharp](./2026-08-30__rewrite-rhino-cli-to-fsharp/README.md) —
+  Replaced the Rust `rhino-cli` with a behavior-equivalent F# implementation across all 13
+  namespaces and 525 Gherkin scenarios, namespace by namespace behind a dispatch shim, then retired
+  the Rust crate and tore down the Rust CI surface. Landed in both `ose-public` and `ose-private`
+  from a single-sourced plan folder. Thirteen phases, six waves. Started 2026-08-25.
+
 - [2026-08-25: optimize-pr-process](./2026-08-25__optimize-pr-process/README.md) — Improved
   human-readable PR descriptions, review conversations, bounded convergence, and public/private
   semantic "sync" through traceable native PR artifacts. Delivery Mode: `worktree-to-pr`.
