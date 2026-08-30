@@ -14,9 +14,23 @@ step-by-step execution record.
 
 ## Planned Projects
 
-_Empty._ The single entry this queue carried —
-[`rewrite-rhino-cli-to-fsharp`](../in-progress/rewrite-rhino-cli-to-fsharp/README.md) — started
-on 2026-08-25 and now lives in [`../in-progress/`](../in-progress/README.md).
+- [`remove-dead-shadow-diff-script`](./remove-dead-shadow-diff-script/README.md) — `shadow-diff.sh`'s
+  Rust-vs-F# comparison is permanently unreachable since `rewrite-rhino-cli-to-fsharp` Phase 9c
+  deleted the Rust crate; delete or repurpose it.
+- [`remove-stale-compat-min-version-stubs`](./remove-stale-compat-min-version-stubs/README.md) — 27
+  `project.json` files carry a no-op echo `compat:min-version` target that does no real check.
+- [`rhino-bin-resolver-shim-coverage`](./rhino-bin-resolver-shim-coverage/README.md) — the simplified
+  `rhino-bin.sh` resolver shim's three tiers (override, dist binary, `dotnet run` fallback) have zero
+  scenario-level test coverage since the Rust-era `gate-binary-resolution.feature` was retired.
+
+These three were filed directly from `rewrite-rhino-cli-to-fsharp`'s Phase 12 knowledge-capture
+triage under that plan's own code-routing rule (a learning whose natural home is `apps/`, `libs/`,
+or a test suite is filed here, not landed inline in the plan's own commits) rather than promoted
+from an `../ideas/` two-pager — a deliberate, explicitly-instructed exception to the normal
+promotion flow described below.
+
+`rewrite-rhino-cli-to-fsharp` itself — started on 2026-08-25 — passed through this queue and now
+lives in [`../in-progress/`](../in-progress/README.md).
 
 Everything else lives as a two-pager idea brief in [`../ideas/`](../ideas/README.md), sorted into
 Eisenhower quadrants. Promote one here when it is ripe — when its open questions have shrunk to ones
