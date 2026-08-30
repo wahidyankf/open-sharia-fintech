@@ -20,7 +20,7 @@ before the Plan Archival phase. This phase triages every entry in `learnings.md`
 principle-based routing matrix: each surviving learning is routed to exactly one durable home (a
 convention, a doc, an agent, a skill, code, a test, or a post-mortem) — small non-code routings land
 inline in the current plan's commits, large non-code routings and ALL code routings become a
-`plans/backlog/` follow-up plan, and non-generalizable entries are discarded with a one-line reason.
+`plans/ideas/` two-pager follow-up, and non-generalizable entries are discarded with a one-line reason.
 Two safety gates (secret/sensitivity and repo-relevance) run on every surviving entry before routing.
 
 Archival is **BLOCKED** until every `learnings.md` entry reaches a terminal state — routed inline,

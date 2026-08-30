@@ -10,7 +10,7 @@ Validate that completed plan implementation:
 4. Satisfies all Gherkin acceptance criteria authored in `prd.md`
 5. Maintains code quality standards
 6. Verifies the plan's transient `learnings.md` was fully triaged — every entry routed, filed as a
-   `plans/backlog/` plan, or discarded — and both safety gates satisfied, BLOCKING archival otherwise
+   `plans/ideas/` two-pager, or discarded — and both safety gates satisfied, BLOCKING archival otherwise
    (Knowledge Capture Convention)
 
 ## Validation Scope

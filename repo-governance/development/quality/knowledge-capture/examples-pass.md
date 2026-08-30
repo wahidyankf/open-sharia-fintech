@@ -31,7 +31,7 @@ when_to_use: "Use for a correct knowledge-capture example."
 INLINE, landed in commit `abc1234` of this plan.
 ```
 
-## PASS: Learning filed as backlog (code, mandatory)
+## PASS: Learning filed as a two-pager (code, mandatory)
 
 ```markdown
 ## Learning: rhino-cli doctor command silently swallows a missing-tool exit code
@@ -42,8 +42,9 @@ INLINE, landed in commit `abc1234` of this plan.
 - **Why it might generalize**: a future contributor could believe their toolchain is healthy when
   it is not — the system would not catch this without a code fix.
 
-**Routing**: `apps/rhino-cli` (code) — ALWAYS filed as backlog. Filed at
-`plans/backlog/fix-doctor-silent-tool-failure/`. NOT landed inline in this plan's PR.
+**Routing**: `apps/rhino-cli` (code) — ALWAYS filed as a two-pager, never straight to
+`plans/backlog/`. Filed at `plans/ideas/q2-not-urgent-important/fix-doctor-silent-tool-failure.md`.
+NOT landed inline in this plan's PR.
 ```
 
 ## PASS: Learning discarded (fails the litmus)

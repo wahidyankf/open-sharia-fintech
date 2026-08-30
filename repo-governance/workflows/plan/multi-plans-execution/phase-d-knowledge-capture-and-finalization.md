@@ -27,7 +27,7 @@ stranded in individual archived plan folders:
    secret/sensitivity gate and the repo-relevance gate) to every surviving item: a recurring
    engineering insight → the relevant `repo-governance/` convention or development doc; a scheduling
    or workflow insight → this workflow or `plan-execution.md`; a follow-up worth its own work → a new
-   `plans/backlog/` entry; anything that fails a gate or the litmus test → discarded with a one-line
+   `plans/ideas/` two-pager; anything that fails a gate or the litmus test → discarded with a one-line
    reason. **Zero cross-cutting themes may be left in an open, undecided state.**
 4. **Record the consolidation** in the summary report (D6) — each theme, the plans it spanned, and its
    terminal routing decision — so the solidification is auditable, not implicit.
