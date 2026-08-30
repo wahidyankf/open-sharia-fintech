@@ -15449,7 +15449,7 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 > fail Step 0's falsifiability test, which is why it is a separate sub-phase from 11a rather than
 > folded into it.
 
-- [ ] [AI] Enumerate the surface:
+- [x] [AI] Enumerate the surface:
       `grep -rlE 'rhino-cli[^.]{0,120}(Rust|cargo)|(Rust|cargo)[^.]{0,120}rhino-cli' docs repo-governance AGENTS.md CLAUDE.md README.md .claude/skills`
       — acceptance: the file list is written into `learnings.md` with a per-file verdict of _edit_ or
       _correct as-is_. The count measured while authoring this plan was **51** in `ose-public` over
@@ -15463,30 +15463,32 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       just its label. Its generated mirror `.agents/skills/ci-standards/SKILL.md` carries the same
       sentence and regenerates via `npm run generate:bindings` once the source is fixed — never
       hand-edit the mirror.
-- [ ] [AI] Review `.claude/skills/ci-standards/SKILL.md` **whole-file**, not grep-hit-only — the
+- [x] [AI] Review `.claude/skills/ci-standards/SKILL.md` **whole-file**, not grep-hit-only — the
       enumerating grep above requires the literal string `rhino-cli` near `Rust`/`cargo`, and this
       file's target-matrix row reading `CLI app (Rust)` contains no `rhino-cli` token, so it never
       matches the grep and would survive every future re-run of the enumerating step untouched even
       after the prose sentence above is corrected — acceptance: that row is corrected in the same
       edit as the prose sentence, and `learnings.md` records that this file needed a whole-file read
       rather than a second grep hit.
-- [ ] [AI] Do **not** widen the remedy to every `.claude/skills` grep hit — several match while
+- [x] [AI] Do **not** widen the remedy to every `.claude/skills` grep hit — several match while
       being correct. `.claude/skills/swe-developing-applications-common/reference/checker-validation-steps.md`
       describes `rhino-cli` as the **tool** that validates Rust coverage for any Rust project, not as
       a Rust project itself; its verdict is _correct as-is_ — acceptance: `learnings.md` records that
       verdict explicitly, so a later reader does not "fix" it.
-- [ ] [AI] Edit the five files that **match the grep** and assert `rhino-cli` is a Rust project —
+- [x] [AI] Edit the five files that **match the grep** and assert `rhino-cli` is a Rust project —
       `docs/reference/system-architecture/technology-stack.md` (1 hit),
       `docs/reference/system-architecture/applications.md` (1),
       `docs/reference/system-architecture/components.md` (3),
       `docs/reference/monorepo-structure.md` (1), and
       `docs/reference/project-dependency-graph.md` (1) — acceptance: each names F#, and none still
       names `cargo` for this project.
-- [ ] [AI] Additionally edit `docs/reference/system-architecture/ci-cd.md`, which describes the CI
+- [x] [AI] Additionally edit `docs/reference/system-architecture/ci-cd.md`, which describes the CI
       pipeline including the `rust` job but **does not match the enumerating grep** — acceptance: it
       reflects the Phase 9d teardown, and `learnings.md` records that the grep alone would have
       missed it, so the sweep is grep-plus-review rather than grep-only.
-- [ ] [AI] Decide the disposition of
+      **Finding**: this file already had zero Rust/cargo mentions — correct as-is, no edit needed
+      (likely fixed by a prior 9b/9c/9d sub-phase). Recorded in `learnings.md`.
+- [x] [AI] Decide the disposition of
       `docs/explanation/software-engineering/programming-languages/rust/` — fourteen style-guide
       files that cite `rhino-cli` as their worked example, which is no longer true. Note the series
       itself stays relevant regardless: the 198 `.rs` course examples under
@@ -15497,8 +15499,8 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 - [ ] [AI] Update `repo-governance/development/quality/code/rust-cli-linting.md` and
       `repo-governance/workflows/infra/development-environment-setup/phase-7-rust-ecosystem.md`,
       which describe a toolchain the repo no longer provisions — acceptance: each is retired or
-      rewritten, and `apps/rhino-cli/scripts/rhino-bin.sh md links validate` exits 0 repo-wide.
-- [ ] [AI] Apply the **fix-the-class rule**: after the edits, re-run the enumerating grep and give a
+      rewritten, and `apps/rhino-cli/scripts/rhino-bin.sh md links validate` exits 0 repo-wide. > > **Deviation, recorded rather than silent**: left unchecked. The user gave a standing, > verbatim constraint for this plan — "jangan diubah rules apa pun ya, lebih ke pengecualian > untuk plan ini aja" (don't change any rules at all — an exception for this plan only) and > "@repo-governance/ gak boleh ada yang berubah" (nothing under repo-governance/ may change) > — which outranks this checklist line and every other `repo-governance/` hit the enumerating > grep found (22 files total, not just these two). See `learnings.md`'s 2026-08-30 Phase 9e > entry for the full list and reasoning. `md links validate` was still run repo-wide: it exits > 1 on a 531-link, pre-existing baseline confined to archived `plans/done/**` docs, unrelated > to this sweep — also recorded there.
+- [x] [AI] Apply the **fix-the-class rule**: after the edits, re-run the enumerating grep and give a
       per-file verdict for every remaining hit, rather than stopping at the files named in this
       checklist — acceptance: the second grep's output is recorded and every hit has a verdict.
 - [ ] [AI] Repeat 9e in `ose-private`, authored there rather than copied — acceptance: the same

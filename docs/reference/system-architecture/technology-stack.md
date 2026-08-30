@@ -37,19 +37,13 @@ Technology stack summary, quality tools, and future architecture considerations 
 
 ### CLI Tools
 
-**Rust CLI Tools**:
-
-- **Language**: Rust (edition 2024, rust-version 1.95.0)
-- **Build**: Cargo via Nx
-- **Distribution**: Local binaries
-- **Applications**: rhino-cli (Repository Hygiene & INtegration Orchestrator)
-
 **F# CLI Tools**:
 
-- **Language**: F# (.NET)
+- **Language**: F# (.NET 10)
 - **Build**: dotnet via Nx
 - **Distribution**: Local binaries
-- **Applications**: crane-cli (Content Retrieval And Normalization Engine)
+- **Applications**: rhino-cli (Repository Hygiene & INtegration Orchestrator, ported from Rust
+  2026-08-30), crane-cli (Content Retrieval And Normalization Engine)
 
 ### Infrastructure
 
@@ -64,7 +58,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 
 - **Formatting**: Prettier 3.6.2
 - **Markdown Linting**: markdownlint-cli2 0.21.0
-- **Link Validation**: rhino-cli md links validate (Rust)
+- **Link Validation**: rhino-cli md links validate (F#)
 - **Commit Linting**: Commitlint + Conventional Commits
 - **Git Hooks**: Husky + lint-staged
 - **Testing**: Nx test orchestration

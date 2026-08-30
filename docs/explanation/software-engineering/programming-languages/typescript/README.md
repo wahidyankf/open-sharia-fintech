@@ -678,7 +678,7 @@ apps/
 ├── ayokoding-www/            # Next.js 16 fullstack content platform (TypeScript, tRPC)
 ├── organiclever-www/         # Next.js 16 landing website
 ├── wahidyankf-www/           # Next.js 16 personal portfolio
-└── rhino-cli/                # Rust CLI tool (repository management)
+└── rhino-cli/                # F# CLI tool (repository management)
 
 libs/
 ├── ts-ui/                   # Shared TypeScript UI components
@@ -1201,8 +1201,7 @@ fn calculate_zakat(wealth: f64, nisab: f64) -> Result<f64, ZakatError> {
 **OSE Platform Usage**:
 
 - **TypeScript**: `ose-www`, `ayokoding-www`, `organiclever-www`, `ose-app-web` — all web frontends and tRPC backends
-- **Rust**: `rhino-cli` (repo management), `crane-cli` (PDF pipeline)
-- **F#**: `organiclever-be` (REST API), `ose-be` (REST API)
+- **F#**: `organiclever-be` (REST API), `ose-be` (REST API), `rhino-cli` (repo management), `crane-cli` (PDF pipeline)
 
 **When to Choose**:
 

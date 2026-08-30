@@ -23,18 +23,23 @@ tests relevant to the project you are changing.
 
 ## Overview
 
-The monorepo contains projects in TypeScript, Rust, and F#. Each language has its own runtime,
-but they all share the same Nx build system and git hooks.
+The monorepo contains projects in TypeScript and F#, plus Rust course-example content under
+`apps/ayokoding-www/content/` (no Rust app or lib remains — `rhino-cli`, the last one, was ported
+to F# 2026-08-30). Each language has its own runtime, but they all share the same Nx build system
+and git hooks.
 
 **Three setup paths**. These name what _you_ install by hand.
 
-- **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
-  basic end-to-end (E2E) tests. Rust is here rather than in Full because the tool checker is a Rust
-  program: `npm install` runs it but discards its exit code, so without Cargo the check fails while
-  the install still reports success. The Quick Start's final `npm run doctor` keeps that exit code,
-  and so do the Git hooks the install sets up — the first `git commit` stops outright.
+- **Minimal** — Node.js + .NET SDK + Docker + jq. Covers git hooks, TypeScript projects, and
+  basic end-to-end (E2E) tests. .NET is here rather than in Full because the tool checker
+  (`rhino-cli doctor`) is itself an F#/.NET program: `npm install` runs it but discards its exit
+  code, so without the .NET SDK the check fails while the install still reports success. The Quick
+  Start's final `npm run doctor` keeps that exit code, and so do the Git hooks the install sets up
+  — the first `git commit` stops outright.
 - **Full** — All tools checked by doctor. Required for working on F# backend apps
-  (`organiclever-be`, `ose-be`) and for building the Rust CLI tools themselves.
+  (`organiclever-be`, `ose-be`) or the F# CLI apps (`rhino-cli`, `crane-cli`) themselves. Install
+  Rust separately, and only if you are editing a `.rs` file under `apps/ayokoding-www/content/` —
+  that is its one remaining local use, formatted by the pre-commit `rustfmt` step.
 - **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. Use
   `npm run doctor -- --fix --dry-run` to preview what would be installed.
 
@@ -47,9 +52,9 @@ but they all share the same Nx build system and git hooks.
 
 ## Quick Start (Minimal Setup)
 
-If you only work on TypeScript projects, this is all you need. Rust still appears below, for the
-reason the Minimal path gives above — the verify step at the end of this block will not pass
-without it:
+If you only work on TypeScript projects, this is all you need. The .NET SDK still appears below,
+for the reason the Minimal path gives above — the verify step at the end of this block will not
+pass without it:
 
 ```bash
 # 1. Install Homebrew (macOS — skip if already installed)
@@ -63,10 +68,10 @@ brew install jq
 curl https://get.volta.sh | bash
 source ~/.zshrc   # or source ~/.bashrc on Ubuntu
 
-# 4. Install Rust — required by step 6 and by the Git hooks
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
-rustc --version   # Expected: a version line, not "command not found"
+# 4. Install the .NET SDK — required by step 6 and by the Git hooks
+brew install dotnet   # Linux: see https://dotnet.microsoft.com/download, or run
+                       # `npm run doctor -- --fix` after step 5 to auto-install it
+dotnet --version   # Expected: a version line, not "command not found"
 
 # 5. Clone and bootstrap
 git clone https://github.com/wahidyankf/ose-public.git
@@ -155,25 +160,29 @@ volta install node@$(node -p "require('./package.json').volta.node")
 volta install npm@$(node -p "require('./package.json').volta.npm")
 ```
 
-### Step 4: Rust Toolchain
+### Step 4: .NET SDK
 
-Required for `rhino-cli`. The toolchain version is pinned via `rust-toolchain.toml` in the project — `rustup` picks it up automatically.
-
-`doctor` additionally checks that every `rust-toolchain.toml` (the workspace root and each
-`apps/*`/`libs/*` project) declares the `rustfmt` and `clippy` components. A toolchain pinned
-without them installs with rustup's `minimal` profile, and `cargo fmt`/`cargo clippy` then fail
-intermittently under it — the failure races with whichever gate happens to run first against that
-toolchain. A missing component is reported as a warning, not a blocking failure, matching how
-`doctor` reports every other version mismatch.
+Required for `rhino-cli` (an F# CLI) and the F# backends (`organiclever-be`, `ose-be`). The pinned
+SDK version lives in `apps/ose-be/global.json` — `repo-config.yml`'s `doctor.dotnet-global-json`
+names that file as the source of truth `doctor` reads from.
 
 ```bash
-# Install rustup (if not present)
+# macOS
+brew install dotnet
+
+# Linux — run `npm run doctor -- --fix` after step 5 instead of a manual install; it runs the
+# official GPG-verified dotnet-install.sh script for you
+
+dotnet --version
+```
+
+**Editing AyoKoding's Rust course content?** Install Rust separately — it is no longer needed for
+`rhino-cli` or any other app/lib, only for the pre-commit `rustfmt` step over `.rs` files under
+`apps/ayokoding-www/content/`:
+
+```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Install additional cargo tools: coverage for test:coverage, deny for deps:audit
-cargo install cargo-llvm-cov --locked
-cargo install cargo-deny --locked
-
+source "$HOME/.cargo/env"
 rustc --version
 ```
 
@@ -334,14 +343,12 @@ npx playwright install-deps
 
 All version requirements are auto-detected by `npm run doctor` from these config files:
 
-| Tool                 | Version Source                                                                                         |
-| -------------------- | ------------------------------------------------------------------------------------------------------ |
-| Node.js              | `package.json` → `volta.node`                                                                          |
-| npm                  | `package.json` → `volta.npm`                                                                           |
-| Rust                 | `apps/rhino-cli/rust-toolchain.toml` → `channel`                                                       |
-| Rust lint components | every `rust-toolchain.toml` (root + `apps/*`/`libs/*`) → `components` must include `rustfmt`, `clippy` |
-| .NET                 | `repo-config.yml` → `doctor.dotnet-global-json` → `sdk.version` (currently `apps/ose-be/global.json`)  |
-| Docker, jq           | Any (no pinned version)                                                                                |
+| Tool       | Version Source                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| Node.js    | `package.json` → `volta.node`                                                                         |
+| npm        | `package.json` → `volta.npm`                                                                          |
+| .NET       | `repo-config.yml` → `doctor.dotnet-global-json` → `sdk.version` (currently `apps/ose-be/global.json`) |
+| Docker, jq | Any (no pinned version)                                                                               |
 
 Never hardcode version numbers in scripts — always read from these source-of-truth files.
 

@@ -70,10 +70,10 @@ The platform consists of the following applications across its technology stacks
 #### rhino-cli
 
 - **Purpose**: Repository management and automation
-- **Language**: Rust
+- **Language**: F# (ported from Rust 2026-08-30)
 - **Build Command**: `nx build rhino-cli`
 - **Location**: `apps/rhino-cli/`
-- **Status**: Active development
+- **Status**: Production
 
 ### OrganicLever Applications
 
@@ -193,7 +193,7 @@ content site depends on a per-domain CLI.
 ```mermaid
 graph LR
     subgraph "CLI Tools"
-        RHINO[rhino-cli<br/>Rust CLI]
+        RHINO[rhino-cli<br/>F# CLI]
     end
 
     subgraph "Marketing & Education"

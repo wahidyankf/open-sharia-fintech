@@ -126,8 +126,8 @@ and other validation tasks.
 
 - **Dependents**: CLI tools, libs, content platforms, organiclever-app-web
 - **Mechanism**: `implicitDependencies`
-- **Own dependency**: None (self-contained Rust application with only Rust crate dependencies)
-- **Note**: rhino-cli was ported from Go to Rust (2026-05-23).
+- **Own dependency**: None (self-contained F# application with only NuGet package dependencies)
+- **Note**: rhino-cli was ported from Go to Rust (2026-05-23), then from Rust to F# (2026-08-30).
 
 ## Project Dependency Table
 
