@@ -1079,3 +1079,114 @@ archived docs, unrelated to Rust/rhino-cli). The one hit naming a file this swee
 `git show HEAD:apps/rhino-cli/README.md | grep -i environ`, which shows the old README never had
 that heading either. 9e introduces zero new broken links; the 531-count baseline is pre-existing
 link-rot in archived plan docs and belongs to `docs-link-checker`'s domain, not this sweep's.
+
+## 2026-08-30 — Phase 9e: descriptive documentation sweep (ose-private)
+
+Authored fresh in `ose-private`, not copied from `ose-public` — the plan's own instruction
+anticipates the two repos' file lists differing, and here they differ structurally: `ose-private`
+keeps a real, unrelated Rust backend (`coralpolyp-be`), so this sweep could not be a blanket
+"Rust → F#" replace — it had to preserve Rust as `✅ Active` while adding net-new F# entries
+alongside it.
+
+### Edited (10 files)
+
+| File                                                                          | Fix                                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/ci-standards/SKILL.md` (+ `.agents/skills/` mirror)           | `rhino-cli` description updated to note the 2026-08-30 Rust→F# port; corrected `test:integration` claim — it exists (`Steps/PreCommitHookSteps.fs`, one scenario) but isn't wired into any CI job                                                                                              |
+| `docs/explanation/software-engineering/licensing/dependency-compatibility.md` | appended a dated addendum blockquote below the historical 2026-04-04 table (table itself untouched) noting the Cargo→NuGet ecosystem switch and the 4 current MIT-licensed package refs                                                                                                        |
+| `docs/explanation/software-engineering/programming-languages/README.md`       | Rust bullet/table-row narrowed to `coralpolyp-be` only; new F# bullet/table-row added for `rhino-cli (ported from Rust 2026-08-30)` — first F# entries this file has ever had                                                                                                                  |
+| `docs/reference/code-coverage.md`                                             | section renamed "F# Projects", tool corrected to coverlet.msbuild (`/p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line`), format corrected to `coverage.json`, noted MSBuild enforces the threshold inline rather than going through `rhino-cli test-coverage validate`'s LCOV path |
+| `docs/reference/platform-bindings.md`                                         | `convert_permission` (`converter.rs`) → `convertPermission` (`Harness.fs`); "Add Rust integration tests" → "Add TickSpec step definitions"                                                                                                                                                     |
+| `docs/reference/system-architecture/applications.md`                          | `Rust + Clap` → `F# + Argu` in the C2 diagram node                                                                                                                                                                                                                                             |
+| `docs/reference/system-architecture/ci-cd.md`                                 | corrected a description of a nonexistent `GitCommands` enum (cases "Lockfile"/"Parity") to the real mechanism: `git`'s only leaf is `git lockfile sync`, `parity` is a separate top-level namespace                                                                                            |
+| `docs/reference/system-architecture/components.md`                            | rewrote heading/diagram/responsibilities: fictional "docs validate-links"/"java validate-annotations" subcommands replaced with verified-real "md validate-links"/"git lockfile sync"; "Clap command tree" → "Argu command tree"                                                               |
+| `docs/reference/system-architecture/deployment.md`                            | `[cargo build]` → `[dotnet publish]`, bullet notes the port date                                                                                                                                                                                                                               |
+| `docs/reference/system-architecture/technology-stack.md`                      | `Rust + Clap`/Cargo/cargo-llvm-cov → `F# + Argu`/dotnet publish/coverlet.msbuild; `docs validate-links (Rust)` → `md validate-links (F#)`                                                                                                                                                      |
+
+### Correct as-is (2 files)
+
+- `checker-validation-steps.md` — "tool not project" pattern: cites rhino-cli as a coverage-CHECKING
+  tool for other projects, not itself Rust.
+- `docs/explanation/plan-domain-parity-decisions.md` — quotes an OLD `package.json` script
+  (`cargo run --manifest-path apps/rhino-cli/Cargo.toml...`) verbatim as a historical decision
+  record; rewriting it would falsify history, not correct an error.
+
+### Repo-specific divergence: Rust stays Active
+
+Unlike `ose-public` (Rust fully retired repo-wide except the AyoKoding course-content series),
+`ose-private` has `coralpolyp-be`, a real independent Rust backend. Both
+`programming-languages/README.md` edits above had to _narrow_ the existing Rust row/bullet rather
+than delete it, and add new F# row/bullet alongside — net addition, not substitution.
+
+### Two extra accuracy bugs caught in passing
+
+Found while doing the narrower "is rhino-cli Rust" sweep, adjacent to text already being rewritten,
+so fixed as small bonus corrections rather than separate scope:
+
+1. `components.md`'s C4 diagram and `technology-stack.md`'s Quality Tools bullet both named a
+   "`docs validate-links`" subcommand that never existed under that name — the real, current leaf
+   is `md validate-links`. `components.md` also named a fictional "java validate-annotations"
+   subcommand with no implementation anywhere in `Dispatch.fs` — replaced with the verified-real
+   "git lockfile sync" leaf.
+2. `ci-cd.md` described a nonexistent `GitCommands` enum (cases "Lockfile"/"Parity") — grep
+   confirmed no such type exists in the current F# codebase; dispatch uses string-leaf matching.
+   Corrected to describe the real mechanism.
+
+### Self-caught claim before commit: coverage tool/format
+
+Initially wrote (unverified) `dotnet test --collect:"XPlat Code Coverage"` / Cobertura format for
+`code-coverage.md`. Before committing, verified against `apps/rhino-cli/project.json`'s actual
+`test:coverage` target and `TestCoverage.fs`'s doc-comments, and corrected to the real mechanism:
+coverlet.msbuild, `coverage.json` output, threshold enforced inline by MSBuild — a different pathway
+from `rhino-cli test-coverage validate`'s generic LCOV-parsing capability (which exists for OTHER
+projects' coverage, not rhino-cli's own).
+
+### `md links validate` baseline (pre-existing, out of scope)
+
+Same pattern as `ose-public`'s entry above: broken-link baseline is pre-existing, confined to
+archived `plans/done/**` docs, unrelated to Rust/rhino-cli. 9e introduces zero new broken links in
+`ose-private` either.
+
+## 2026-08-30 — 9d gap-fix: ose-private's leftover format-job `setup-rust`
+
+Discovered during the Phase 9 Gate audit, not during 9d itself. 9d's own checklist had an unchecked
+item — "sweep `ose-private`'s six in-file `setup-rust` uses to zero" — that five-of-six satisfied,
+but the `format` job's use survived unnoticed.
+
+**Verified genuinely dead**: `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=json`
+lists doctor_tools `actionlint,docker,hadolint,npm,shellcheck,shfmt,tofu` — no `rust` entry — and
+`git ls-files | grep -c '\.rs$'` is 0 repo-wide. The `format` job's "Provision registry-declared
+pre-commit tools" step (`doctor --fix --tools "$tools"`) never requests cargo/rustfmt, so the step
+provisioned a toolchain nothing downstream in that job ever calls.
+
+**Found in the same audit, NOT removable**: the `dotnet` job's own `setup-rust` — added later by
+task #64 (postdating 9d's 2026-08-25 measurement), backing real `cargo-target-share` Doctor-feature
+test coverage (`specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature`, 18
+scenarios; implementation `RhinoCli.Application/src/Doctor.fs`). This is rhino-cli's OWN feature —
+symlinking every Rust crate's `target/` directory into a shared cache — tested with a real `cargo`
+process to validate the symlinking logic against actual Cargo output. Since `apps/rhino-cli` must
+stay byte-identical across `ose-public`/`ose-private` (parity requirement), and `ose-public` still
+has 198 real `.rs` course examples exercising this exact code path, `ose-private`'s copy of the same
+test suite needs the same real coverage — removing it would either silently skip real assertions
+(violates the plan's no-skip-tests rule) or fail outright with cargo absent. Confirmed via `find` /
+`grep`: `coralpolyp-be`, previously assumed to be ose-private's own real Rust project justifying this
+kind of thing, does **not currently exist** in this repo (removed pre-session, per
+`applications.md`'s own note — "removed and will return... when the product need re-arises"); the
+`dotnet` job's `setup-rust` need is unrelated to that and stands on its own via the parity argument
+above.
+
+**Fix**: removed only the `format` job's `- uses: ./.github/actions/setup-rust` on branch
+`rhino-fsharp-9d-setup-rust-sweep` (built off `origin/main`, avoiding the squash-merge-divergence
+issue from earlier in Phase 9), verified `actionlint` exits 0, opened `ose-private` PR #127, all 14
+CI checks green, merged (`50a8316421`). `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml`
+is now **1** in `ose-private` (the `dotnet` job's), not the originally-planned **0** —
+`delivery.md`'s 9d checkbox and Phase 9 Gate checkbox both carry a deviation note pointing here.
+
+### Collateral, out-of-scope finding: `coralpolyp-be`/`coralpolyp-fe` "Active" claims
+
+While tracing the `dotnet`-job justification, confirmed `docs/explanation/software-engineering/programming-languages/README.md`'s
+table cites `Rust: ✅ Active - coralpolyp-be` and `TypeScript: ✅ Active - coralpolyp-fe` — neither
+app currently exists in `ose-private` (`find . -iname '*coralpolyp*'` matches only two archived
+`plans/done/**` entries). This pre-dates the 9e sweep's own edit to that row (which only touched the
+Rust→F# wording, not the coralpolyp-be citation itself) and is out of this sweep's scope, same class
+as ose-public's `ci-standards/SKILL.md` coverage-threshold discovery. Flagged here, not fixed.
