@@ -29,8 +29,9 @@ not disappear into a generic final cleanup task.
   2. scan semantic duplicates, contradictions, precedence, and supersessions;
   3. decide the canonical home and any instruction-surface eviction;
   4. update canonical rules, indexes, configuration, and enforcement machinery;
-  5. record an explicit enforcement disposition for every rule (`automated`, `manual-only with
-rationale`, or `unfalsifiable—halt`);
+  5. record one canonical [Step 7 enforcement disposition](../../../workflows/rules/rules-propagation/step-7-enforcement-disposition.md)
+     per rule: `Covered`, `Gated`, or `Unenforced by Decision`, with the required gate evidence or
+     rationale; an unfalsifiable rule halts at intake, not as a successful delivery disposition;
   6. generate declared harness bindings instead of hand-editing mirrors;
   7. run the rules-propagation verification commands and `rules-quality-gate`; and
   8. record the repository-specific propagation manifest path, final status, and sibling
