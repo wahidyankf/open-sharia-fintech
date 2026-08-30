@@ -15389,7 +15389,7 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       `setup-dotnet`, both are removed from `quality-gate`'s `needs:` if deleted, and
       `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns exactly **1** in
       `ose-public` — the `format` job's, retained for the course examples.
-- [ ] [AI] Sweep `ose-private`'s **six** in-file uses to zero, because that repo has no course
+- [x] [AI] Sweep `ose-private`'s **six** in-file uses to zero, because that repo has no course
       examples to protect: `format` (line 65), `build-rhino` (97), `typescript` (178), `rust` (191),
       `compat-min-version` (223), `specs-structure` (234)
       [Repo-grounded — `ose-private/.github/workflows/pr-quality-gate.yml`, measured 2026-08-25].
@@ -15397,7 +15397,7 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       Acceptance: `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns 0 in
       `ose-private`, `.github/actions/setup-rust/` is deleted there, and the deletion is paired with
       the zero-`.rs` count the delta table already records. **The two repos diverge here by design**
-      — do not converge them.
+      — do not converge them. > **Deviation, corrected during the Phase 9 Gate audit**: five of the six were swept to zero in > this sub-phase's own PR, but `format` (line 65) survived unnoticed until the Gate audit > caught it — verified genuinely dead (pre-commit surface's `doctor_tools` list carries no > `rust` entry; 0 tracked `.rs` files repo-wide) and removed in a follow-up PR (ose-private > #127). That PR also surfaced a use this item never anticipated: the `dotnet` job gained its > own `setup-rust` step later (task #64, after this item's 2026-08-25 measurement date) to back > real `cargo-target-share` Doctor-feature test coverage — required for parity with > `ose-public`'s rhino-cli test suite and bound by the plan's own no-skip-tests rule. Final > count is **1**, not 0, and `.github/actions/setup-rust/` survives for that reason — see the > Phase 9 Gate line below and `learnings.md`'s 2026-08-30 "9d gap-fix" entry.
 - [x] [AI] Decide `setup-rust`'s fate in `validate-env.yml`,
       `dependency-vulnerability-audit.yml`, `_reusable-www-test-local-deploy.yml`, and
       `_reusable-app-test-local-deploy-stag.yml` individually — each installed it only to build
@@ -15503,7 +15503,7 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 - [x] [AI] Apply the **fix-the-class rule**: after the edits, re-run the enumerating grep and give a
       per-file verdict for every remaining hit, rather than stopping at the files named in this
       checklist — acceptance: the second grep's output is recorded and every hit has a verdict.
-- [ ] [AI] Repeat 9e in `ose-private`, authored there rather than copied — acceptance: the same
+- [x] [AI] Repeat 9e in `ose-private`, authored there rather than copied — acceptance: the same
       enumerating grep is run in that repo and its own per-file verdicts are recorded; the two repos'
       file lists are expected to differ and that difference is stated, not reconciled.
 
@@ -15517,11 +15517,10 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
       Asserted over tracked files, not over `find`, so gitignored `target/` build output cannot fail
       a correct teardown.
 - [ ] [AI] `grep -rl '"lang:rust"' --include=project.json .` returns nothing in either repo.
-- [ ] [AI] `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns **0** in
-      `ose-private` — reachable only because the sweep step above disposes of all six uses, not just
-      the two the `build-rhino`/`rust` steps remove — and returns exactly **1** in `ose-public`, the
-      `format` job's, retained for the 198 course examples. Neither number is "0 because it was
-      easier", and neither is satisfied by the `build-rhino` + `rust` removals alone.
+- [x] [AI] `grep -c 'setup-rust' .github/workflows/pr-quality-gate.yml` returns **1** in
+      `ose-private` and exactly **1** in `ose-public`, the `format` job's, retained for the 198
+      course examples. Neither number is "0/1 because it was easier", and neither is satisfied by
+      the `build-rhino` + `rust` removals alone. > **Deviation, recorded rather than silent**: the original acceptance text expected **0** in > `ose-private`. Corrected to **1** during this Gate audit — the survivor is the `dotnet` job's > `setup-rust`, added later (task #64, postdating the 9d item's 2026-08-25 measurement) to back > real `cargo-target-share` Doctor-feature test coverage (18 Gherkin scenarios), required for > parity with `ose-public`'s rhino-cli test suite and bound by the plan's no-skip-tests rule. > This is a different survivor, for a different reason, than `ose-public`'s course-example > carve-out — both repos keep exactly one, by two unrelated designs. `ose-private`'s `format` > job's own now-dead `setup-rust` (the item 9d actually left unfinished) was removed in a > follow-up PR (#127) once the Gate audit caught it. See `learnings.md`'s 2026-08-30 "9d > gap-fix" entry.
 - [ ] [AI] In `ose-public`, a PR changing one `.rs` file under `apps/ayokoding-www/content/` is
       still auto-formatted by the `format` job and still passes `format-verify-rustfmt`.
 - [ ] [AI] The Elixir formatter-wrapper assertions and the coverage threshold both run in the
