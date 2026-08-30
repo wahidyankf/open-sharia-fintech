@@ -17,6 +17,13 @@ pre-removal Before figure (70.67 s `ose-public`, 88.67 s `ose-private`). B7 must
 this PR merges to `main` and three green post-merge `pr-quality-gate.yml` runs exist — Phase 10's
 verdict step should treat B7 as provisional until then.
 
+**Terminal state**: Discard — narrow, single-PR provisional-measurement note. B7's final
+disposition (still provisional, both repos' raw figures) is already recorded in `benchmark.md` and
+folded into `tech-docs.md`'s "Phase 10 — Measured Outcome" table and the durable
+[rhino-cli-rust-to-fsharp-benchmark.md](../../../docs/explanation/software-engineering/programming-languages/rhino-cli-rust-to-fsharp-benchmark.md)
+comparison (both verified present and consistent with the 2026-08-30 Phase 10 entries below). No
+separate durable surface needed.
+
 ## 2026-08-26 — Phase 1: Size row confirmation
 
 Re-ran Phase 0's exact source-line-count command
@@ -24,6 +31,10 @@ Re-ran Phase 0's exact source-line-count command
 worktrees after the tree-sitter removal. Both report **49,460** lines, unchanged from Phase 0 — as
 expected, since removing an unreferenced `Cargo.toml` dependency cannot change line counts under
 `apps/rhino-cli/src/`. The Before figure in `benchmark.md`'s Size row is left as-is.
+
+**Terminal state**: Discard — a one-off sanity check (line count unchanged after a
+dependency-only removal). No generalizable rule; superseded by Phase 10's real source-size
+measurement already folded into the same durable comparison cited above.
 
 ## 2026-08-26 — Phase 1: publish-mode spike (`local-tmp/publish-spike/`, `ose-public` only)
 
@@ -185,6 +196,17 @@ self-contained publish bundles the runtime and is equally toolchain-free, per
 [Plans & Temporary Files](../../../AGENTS.md#plans--temporary-files) and this phase's own cleanup
 acceptance criterion.
 
+**Terminal state**: Routed. The three AOT-incompatibility findings (`sprintf`/`printfn`'s
+reflection-based format-string parsing, `Argu`'s trim-incompatible DU reflection vs.
+`System.CommandLine`'s AOT-clean alternative, `System.Text.Json`'s reflection serializer requiring a
+source-generated `JsonSerializerContext`) are generalizable to any future F#/.NET NativeAOT publish
+attempt anywhere in this repo and were not documented anywhere durable — added a new "NativeAOT
+Considerations" section to
+[`docs/explanation/software-engineering/programming-languages/f-sharp/build-configuration.md`](../../../docs/explanation/software-engineering/programming-languages/f-sharp/build-configuration.md).
+The publish-mode decision framework itself (startup ranking, toolchain-free CI shape) already lives
+in `tech-docs.md` [DD-1](./tech-docs.md#dd-1--nativeaot-is-preferred-not-mandatory) — verified
+present, not duplicated.
+
 ## 2026-08-26 — Phase 2: shared-steps mode (decision)
 
 `rhino-cli-fsharp` stays in **shared-steps** mode, matching both existing precedents (Rust
@@ -195,6 +217,11 @@ today — adopting it now would leave the target unrunnable. Shared-steps mode's
 step implementations) is sufficient for every wave this plan schedules; `@covers` markers and
 runtime-execution cross-checks are not needed until a future plan explicitly charters three-level
 mode with its own argument-wiring steps.
+
+**Terminal state**: Discard — settled, migration-specific architecture decision, per the
+plan's own "do not re-litigate" instruction. Not independently generalizable beyond this project's
+own Nx target shape (three-level mode's `--unit-dir`/`--integration-dir`/`--e2e-dir` machinery does
+not exist anywhere else in this repo either).
 
 ## 2026-08-26 — Phase 2: TickSpec fallback protocol
 
@@ -213,6 +240,11 @@ table, this is the protocol every wave from Wave A onward must follow:
   wave has run yet, so this is the protocol's baseline, not evidence it was exercised. A mismatch
   after a wave lands means a scenario was silently re-implemented rather than deliberately
   re-expressed, and the wave gate must not pass until the counts agree again.
+
+**Terminal state**: Discard — the protocol was defined but never triggered across the
+whole migration (`grep -rc "TickSpec fallback" apps/rhino-cli/src/tests/` → 0 hits, confirmed). A
+one-off procedural scaffold for a migration that is now complete; no fallback test exists for a
+durable surface to point at.
 
 ## 2026-08-26 — Phase 2: widening protocol
 
@@ -241,6 +273,11 @@ namespace) against the still-empty `apps/rhino-cli/src-fsharp` produced `ERROR: 
 without matching step definitions` and exited 1, proving the target is wired rather than inert. The
 widening was reverted immediately after the proof; Phase 2 ships with the placeholder.
 
+**Terminal state**: Discard — a per-wave mechanical procedure specific to this
+migration's incremental Nx-target/`repo-config.yml` widening. Fully consumed: Phase 9c reverted
+`--shared-steps` to its simple two-argument form once F# became the only implementation (see the
+Phase 9c entry below). No future recurrence — there is no next wave.
+
 ## 2026-08-26 — Phase 2: `deps:audit` reporting-vs-gating proof
 
 Per delivery.md's instruction, `dotnet list package --vulnerable --include-transitive` was proven to
@@ -264,6 +301,12 @@ exit 0 (confirmed), `git diff --exit-code -- apps/rhino-cli/src-fsharp/` was req
 (confirmed), and `git rev-parse HEAD` was confirmed unchanged across the whole sequence in both
 repos. All exit codes matched the required shape in both `ose-public` and `ose-private`.
 
+**Terminal state**: Discard — the fix is the shipped
+`apps/rhino-cli/scripts/dotnet-deps-audit.sh` wrapper itself (confirmed present on disk), already
+proven live via break/restore in both this Phase 2 proof and its Phase 9c re-confirmation against
+the merged target name. The wrapper is self-documenting; no separate durable-doc write needed for
+"reporting commands must be wrapped to gate."
+
 ## 2026-08-26 — Phase 2: CI files confirmed unaffected
 
 Per delivery.md's instruction, the reasoning for each of the five named workflow files, none of
@@ -281,6 +324,11 @@ which needed a Phase 2 edit:
   workflow's own scheduled/dispatch-triggered rhino-cli invocations).
 - `_reusable-www-test-local-deploy.yml` and `_reusable-app-test-local-deploy-stag.yml` — both invoke
   rhino namespaces that stay on Rust at Phase 2, for the same reason as the two above.
+
+**Terminal state**: Discard — a one-off confirmation that five named workflow files
+needed no Phase 2 edit, reasoned from each file's own invoked namespace. No generalizable rule; the
+reasoning is fully reflected in the current (still-unaffected-by-this-reasoning) workflow files
+themselves.
 
 ## 2026-08-26 — Phase 2: `detect` job's `has-dotnet-projects` mapping
 
@@ -334,6 +382,11 @@ serialization between `build-rhino` and `format` that did not exist before, with
 while `FSHARP_NAMESPACES` stays empty. `ose-public`'s `format` job already depended on `build-rhino`
 before this plan, so no equivalent change was needed there.
 
+**Terminal state**: Discard — a factual record of new `ose-private` CI infrastructure
+(the `dotnet` job, `has-dotnet-projects` output, `.config/dotnet-tools.json`, the `format` job's new
+`needs: build-rhino` edge), all shipped and self-documenting in the committed
+`.github/workflows/pr-quality-gate.yml` and `.config/` files. No separate durable doc needed.
+
 ## 2026-08-26 — Phase 2: `apps/rhino-cli/scripts/shadow-diff.sh` was not a new file
 
 Both repos already had a tracked `apps/rhino-cli/scripts/shadow-diff.sh` from the prior Go→Rust
@@ -347,6 +400,10 @@ a plan-documentation inaccuracy being recorded here rather than silently correct
 2 repurposes the same path for the new Rust↔F# differential runner, replacing the Go-era content
 entirely, which is the same tool serving the same purpose for the migration now in progress.
 
+**Terminal state**: Discard — a plan-documentation accuracy correction
+(`tech-docs.md`'s File-Impact Analysis marks this file `[N]` rather than `[E]`), scoped to this
+plan's own now-archiving documents. Not a generalizable rule.
+
 ## 2026-08-26 — Phase 2: publish RID pinned to `linux-x64` (judgment call)
 
 Neither `ose-public`'s `ubuntu-latest` GH-hosted runners nor `ose-private`'s
@@ -358,6 +415,10 @@ for this class of infrastructure, but this is a judgment call, not a grounded fa
 confirmed against the actual self-hosted runner hardware before this PR merges. If the self-hosted
 runner is `linux-arm64`, the publish step's `-r` flag needs a matching correction there (and only
 there — `ose-public` stays `linux-x64` either way).
+
+**Terminal state**: Discard — the judgment call is empirically resolved: every
+`ose-private` CI run since Phase 2 has published and executed the `linux-x64` binary successfully on
+its self-hosted runner, confirming the assumption was correct. No open question remains.
 
 ## 2026-08-26 — Phase 2: `RhinoCli.Program` → `RhinoCli.Cli` reference direction (judgment call)
 
@@ -372,6 +433,10 @@ rather than a literal, intended dependency contract. No wave's plan text depends
 arrow direction, so this does not block any later step, but it is recorded here as a deviation from
 the tech-docs diagram as drawn.
 
+**Terminal state**: Discard — verified consistent: `tech-docs.md`'s current "Target
+layout" mermaid diagram already draws `PROG --> CLI` (the conventional direction this entry chose),
+so the documented deviation and the diagram agree. No further action needed.
+
 ## 2026-08-26 — Phase 2: `Severity` DU renamed from the Rust source's `Error`/`Warn`
 
 `apps/rhino-cli/src/application/severity.rs`'s two-level scale (`Error`, `Warn`) cannot be ported
@@ -384,6 +449,11 @@ grounded in the Rust source and corrected here too) before landing on the final 
 the case does. Whichever wave first ports `severity.rs`'s real validators should decide whether
 `Blocking`/`Advisory` is the permanent naming or gets revisited then, since Phase 2's choice here was
 made for lint compliance on a placeholder type, not as a settled domain-naming decision.
+
+**Terminal state**: Discard — the open question ("is `Blocking`/`Advisory` permanent?")
+is resolved by outcome: the naming shipped unchanged through every later wave and is still in use in
+`RhinoCli.Domain/src/Finding.fs` (confirmed — `Severity.Blocking`) and `Types.fs`. Settled,
+migration-specific.
 
 ## 2026-08-26 — Phase 2: placeholder modules avoid executable `let` bindings
 
@@ -401,6 +471,10 @@ directly: temporarily adding one deliberately-uncovered function to the Infrastr
 dropped the measured figure to 0% and turned the target red, then the addition was reverted and the
 target was re-verified green — confirming the 90% threshold itself gates correctly, per delivery.md's
 own acceptance clause for that step.
+
+**Terminal state**: Discard — a Phase-2-specific bootstrapping technique for
+placeholder modules that no longer exist, superseded by real implementations in every later wave. No
+lasting subject.
 
 ## 2026-08-28 — Phase 6: a stale `target/gate` binary fakes a shadow-diff parity failure
 
@@ -429,6 +503,12 @@ invites a "fix" to correct code. The failure is silent in the worst way: the scr
 `RUST_BIN`/`FSHARP_BIN` resolution succeeds, the binary is executable, and the exit codes even
 agree (`rust=1 fsharp=1`) — only the ordering betrays it. CI never hits this because
 `build-rhino` publishes both artifacts fresh on every run; it is strictly a local-worktree trap.
+
+**Terminal state**: Discard — moot. The "rebuild both binaries before shadow-diff"
+protocol has no remaining live subject: Phase 9c deleted the Rust crate entirely, so `shadow-diff.sh`'s
+Rust-vs-F# comparison is now permanently unreachable (confirmed by the Phase 9c-follow-up entry
+below). The script's own disposition is filed separately as
+[`plans/backlog/remove-dead-shadow-diff-script/`](../../backlog/remove-dead-shadow-diff-script/README.md).
 
 ## 2026-08-28 — Phase 6: two Wave D defects only `ose-private`'s corpus could expose
 
@@ -468,6 +548,16 @@ every remaining wave, treat `ose-private`'s run as a first-class gate rather tha
 confirm formality, and prefer a unit test that constructs a finding directly over relying on live
 repo data to happen to contain one — `WaveDParityRegressionUnitTests.fs` pins both behaviours that
 way, so neither can regress in either repo regardless of corpus.
+
+**Terminal state**: Split. The two concrete defects (UTF-16-code-unit-vs-Unicode-scalar
+counting; seven- vs. four-column word-budget table) are fixed and permanently regression-tested —
+confirmed present at `apps/rhino-cli/src/tests/unit/Steps/WaveDParityRegressionUnitTests.fs` and
+`unicodeScalarCount` in `RhinoCli.Application/src/Md.fs`. The generalized "transferable rule" (a
+formatter branch that only renders on non-empty findings is untested by a green shadow-diff on a
+clean corpus) is a repo-wide testing-methodology point whose natural home is
+`repo-governance/development/quality/regression-test-mandate/test-form-by-defect-type.md` —
+**deliberately not written into `repo-governance/`**, standing plan constraint (matching the Phase
+9e/11a precedent elsewhere in this file).
 
 ## 2026-08-28 — Phase 6: FSharpLint hangs on a 25-arm cons-of-string-literal `match`
 
@@ -515,6 +605,14 @@ same project first — a fast build against a stalled analyser localises the pro
 immediately, and the per-file probe that seems like the obvious next step will exonerate the guilty
 file.
 
+**Terminal state**: Split. The concrete fix (data-driven `routeTable`/`matchRoute` in
+`RhinoCli.Cli/src/Dispatch.fs`) is shipped and confirmed present. The generalized FSharpLint tooling
+gotcha (project-mode analysis is super-linear in cons-of-string-literal match-arm count) is a
+rhino-cli-lint-specific fact whose natural home is a new
+`repo-governance/development/quality/code/fsharp-cli-linting.md` — the F# analogue of the existing
+`rust-cli-linting.md`, itself already on this plan's Phase 9e "would need updating, not touched"
+list above — **deliberately not written into `repo-governance/`**, standing plan constraint.
+
 ## 2026-08-28 — Phase 6: `dotnet fsharp-analyzers` is a silent no-op locally
 
 `rhino-cli-fsharp:lint` runs two commands: `dotnet fsharplint` and then the G-Research
@@ -543,6 +641,11 @@ pushing: any new `string x` application needs `string<'t> x`, and the other twel
 `GRA-JSONOPTS-001`, `GRA-DISPBEFOREASYNC-001`, `GRA-IMMUTABLECOLLECTIONEQUALITY-001`,
 `GRA-LOGARGFUNCFULLAPP-001`, `GRA-LOGTEMPLMISSVALS-001`, `GRA-INTERPOLATED-001`) deserve the same
 read-through on every wave's new code.
+
+**Terminal state**: Discard-with-defer. The concrete violation is fixed (`string<char>
+c` in `Md.fs`, confirmed). The "local lint gate is strictly weaker than CI for F#" tooling gotcha
+belongs in the same would-be `repo-governance/development/quality/code/fsharp-cli-linting.md` as the
+entry above — **deliberately not written into `repo-governance/`**, standing plan constraint.
 
 ## 2026-08-28 — Phase 6: the coverage gate is a per-module minimum, not a repo total
 
@@ -588,6 +691,14 @@ tell you. When it fails, read `apps/rhino-cli/src-fsharp/tests/unit/coverage.jso
 than guessing — the fully-uncovered functions in it are the cheapest lines to win, and they name
 themselves.
 
+**Terminal state**: Discard-with-defer. The concrete gap is closed (78 new tests,
+`RhinoCli.Cli`/`RhinoCli.Application` both above 90%, confirmed via the shipped `test:coverage`
+target passing at 90.82% total with every module ≥90%). The generalized "coverlet's `ThresholdStat`
+defaults to per-module minimum, not total" CI-convention fact belongs in
+`repo-governance/development/infra/ci-conventions/coverage-threshold-rationale.md` and/or
+`repo-governance/development/quality/three-level-testing-standard/coverage-enforcement-and-threshold-rationale.md`
+— **deliberately not written into `repo-governance/`**, standing plan constraint.
+
 ## 2026-08-29 — Phase 9a: spec disposition enumeration and verdict table
 
 Enumerating command: `grep -rlEi 'cargo|clippy|\brust\b' specs/apps/rhino/behavior/rhino-cli/gherkin/`,
@@ -631,6 +742,11 @@ Net effect: **7 scenarios retire** (1 from `doctor.feature`, 4 from `gate-binary
 `data-driven.feature`. `apps/rhino-cli/scripts/deny-check.sh`'s discovery glob and `Doctor.fs`'s
 hardcoded `apps/rhino-cli/rust-toolchain.toml` rustc-mismatch check both become dead production
 code once 9c/9d land — flagged here for 9c/9d to remove, since 9a's own scope is specs-only.
+
+**Terminal state**: Discard — fully embodied in the actual, current `specs/` tree
+(scenarios retired/renamed exactly per the verdict table above) and in the Gherkin-tree README's own
+updated counts. The grep-blind-spot methodology point is a one-off aside for this specific
+retirement sweep, not stated in the entry as an independently generalizable rule.
 
 ## 2026-08-29 — Phase 9a follow-up: orphaned Rust cucumber step implementations
 
@@ -676,6 +792,13 @@ unexpected old SHA after a "completed" push, cross-checked against `gh pr view <
 --json headRefName` to find the actual tracked branch name. Lesson: after any push, verify the
 **branch name being pushed matches `git branch --show-current`**, not just that the push exited 0 —
 especially in a repo carrying many old per-sub-phase local branches from the same plan.
+
+**Terminal state**: Discard. The dual-step-definition-surface root cause is
+migration-transition-specific and moot now that the Rust crate is deleted (Phase 9c). The
+git-push-wrong-branch navigational error is a one-off operator mistake, self-caught by existing
+verification discipline (`git ls-remote` / `gh pr view --json headRefName`); not automated via a
+hook change, since detecting it generically risks false positives on legitimate multi-branch
+pushes.
 
 ## 2026-08-29 — Phase 9c: crate deletion and Nx rewire — decisions and proofs
 
@@ -802,6 +925,19 @@ command piped through `tail`, masking `dotnet test`'s real non-zero exit (the sa
 [[feedback_pipeline_exit_code_masked_by_tail]]); the real failure was only visible by reading the
 captured output text. Re-run without a masking pipe afterward, exit code 0, 1203/1203 passed.
 
+**Terminal state**: Split. Most of this entry discards clean — one-off migration-mechanical
+decisions (Nx-project merge, source-tree flatten, `deps:audit` re-pointing, `compat:min-version`
+removal + `global.json`, `boundaryPaths` trim), all fully embodied in shipped, verified code/config.
+Item 8's NuGet license/source-control regression is already routed and verified at
+`docs/explanation/software-engineering/licensing/dependency-compatibility.md` (confirmed present,
+cites this exact decision verbatim). The addendum's pipe-into-`tail`-masks-exit-code gotcha is
+already a recognized, tagged pattern (`[[feedback_pipeline_exit_code_masked_by_tail]]`); the
+concrete `ParityManifestSteps.fs` fixture-drift bug is fixed. The one piece that does NOT discard:
+the `rhino-bin.sh` simplification's own "Scope note" declined authoring fresh F#-only-tier resolver
+scenarios, and nobody picked that up in any later phase — real, live, zero-scenario-coverage
+behavior, code-homed per the code-routing rule. Filed as
+[`plans/backlog/rhino-bin-resolver-shim-coverage/`](../../backlog/rhino-bin-resolver-shim-coverage/README.md).
+
 ## 2026-08-29 — Phase 9c follow-up: three findings surfaced only once external projects flipped to F
 
 Pushing the 9c commit surfaced three problems the crate-deletion commit itself couldn't have caught
@@ -860,6 +996,14 @@ Verification: full `rhino-cli:test:unit` (1204/1204, including the new scenario)
 `rhino-fsharp-wave-e-p7-18` (`97641d50a`, `1832a0aee`, `264e32db9`, `4a3c127b3`), pushed and
 confirmed via `git ls-remote`.
 
+**Terminal state**: Split. (1) The 28 `cargo run` → `dotnet run` invocation-site fixes
+are fully shipped (confirmed — zero live invocation sites remain outside `plans/done/**` history).
+(2) The `globFeatureFiles` leading-`./` fix is shipped (confirmed in `Dispatch.fs`) and permanently
+regression-tested via a dedicated subprocess-based Gherkin scenario + step binding, per the entry.
+(3) The `governance readme-index` "FAILED" text vs. gate PASS/FAIL semantics is routed inline as a
+new dated addendum on `docs/reference/sdlc-gate-standard.md`, matching that page's own established
+addendum convention (see the 2026-08-09/2026-08-13 notes already there).
+
 ## 2026-08-29 — Phase 9d: CI teardown
 
 **Course-example count**: `find . -name '*.rs' -not -path './node_modules/*' -not -path
@@ -909,6 +1053,11 @@ job's own guard, and the `has-ts`/`has-rust` analogy comment — reworded to `ha
 `setup-dotnet`. Post-edit `pr-quality-gate.yml` carries exactly one `setup-rust` (the `format` job,
 retained for the 198 course-example files) and zero `has-rust`/`clippy` occurrences. `actionlint`
 exits 0 on every touched workflow file.
+
+**Terminal state**: Discard — migration-mechanical CI teardown, fully shipped and
+self-documenting in `.github/workflows/pr-quality-gate.yml`. The one flagged loose thread (26-27
+stale `compat:min-version` echo stubs — reconfirmed at 27 today) is filed as
+[`plans/backlog/remove-stale-compat-min-version-stubs/`](../../backlog/remove-stale-compat-min-version-stubs/README.md).
 
 ## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real `GATE_CHANGED_BASE` leak bug
 
@@ -1009,6 +1158,18 @@ artifacts: this entry, the `changedPaths` surface-scoping fix, and the corrected
 both `gh run rerun --failed`'s artifact-reuse semantics and workflow-level `env:` blocks' blast
 radius for future incidents.
 
+**Terminal state**: Split. The concrete correctness fix is shipped with its own
+durable in-code decision record — see the doc comment directly above `changedPaths` in
+`apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs` (confirmed present, states the PrePush/Ci
+surface-scoping rule verbatim) plus the `GateExecutionSteps` regression test. The two investigative
+CI-methodology facts (`gh run rerun --failed` reuses upstream job artifacts rather than rebuilding
+them; a workflow-level `env:` block applies to every job, not just its intended call sites) are
+generalizable CI-debugging knowledge whose natural home is
+`repo-governance/development/quality/ci-blocker-resolution/the-investigation-process-steps-1-4.md` —
+**deliberately not written into `repo-governance/`**, standing plan constraint. The analyzer
+type-annotation fixes (`.ToString(CultureInfo.InvariantCulture)`, `StringComparison.Ordinal`) are
+shipped in `Formatters.fs`/`Gate.fs`.
+
 ## 2026-08-30 — Phase 9e: descriptive documentation sweep (ose-public)
 
 Enumerating command per the plan step:
@@ -1080,6 +1241,19 @@ archived docs, unrelated to Rust/rhino-cli). The one hit naming a file this swee
 that heading either. 9e introduces zero new broken links; the 531-count baseline is pre-existing
 link-rot in archived plan docs and belongs to `docs-link-checker`'s domain, not this sweep's.
 
+**Terminal state**: Routed — this entry IS the record of already-executed routing.
+Every cited file (`components.md`, `technology-stack.md`, `applications.md`, `ci-cd.md`,
+`nx-workspace-visualization.md`, `dependency-compatibility.md`, `platform-bindings.md`,
+`sdlc-gate-standard.md`, `monorepo-structure.md`, `project-dependency-graph.md`,
+`ci-standards/SKILL.md`, `programming-languages/README.md` and `typescript/README.md`,
+`setup-development-environment.md`) already carries the edit — spot-verified above (Phase 10's
+benchmark link, the licensing table row, and the F#/Rust rows in `programming-languages/README.md`
+all confirmed present). The 22 `repo-governance/` files in the verdict table (including
+`rust-cli-linting.md` and `phase-7-rust-ecosystem.md`) are **deliberately not edited — standing plan
+constraint**, exactly as this entry itself already states. No further action; the two
+discovered-but-deferred doc-accuracy gaps (coverage-threshold table, pre-existing link rot) remain
+correctly out of scope, as this entry itself already records.
+
 ## 2026-08-30 — Phase 9e: descriptive documentation sweep (ose-private)
 
 Authored fresh in `ose-private`, not copied from `ose-public` — the plan's own instruction
@@ -1147,6 +1321,14 @@ Same pattern as `ose-public`'s entry above: broken-link baseline is pre-existing
 archived `plans/done/**` docs, unrelated to Rust/rhino-cli. 9e introduces zero new broken links in
 `ose-private` either.
 
+**Terminal state**: Routed (ose-private) — this entry is the record of
+`ose-private`'s own already-executed sweep; not touched further from this `ose-public`-only session,
+per this task's repo scope. The one "collateral, out-of-scope" finding (`coralpolyp-be`/`coralpolyp-fe`
+stale "Active" claims in `ose-private`'s `programming-languages/README.md`) is a
+repo-relevance-gated, `ose-private`-only documentation fix outside this session's reach — flagged
+here for a future `ose-private` housekeeping pass, not filed as a `plans/backlog/` item in this
+repo.
+
 ## 2026-08-30 — 9d gap-fix: ose-private's leftover format-job `setup-rust`
 
 Discovered during the Phase 9 Gate audit, not during 9d itself. 9d's own checklist had an unchecked
@@ -1191,6 +1373,10 @@ app currently exists in `ose-private` (`find . -iname '*coralpolyp*'` matches on
 Rust→F# wording, not the coralpolyp-be citation itself) and is out of this sweep's scope, same class
 as ose-public's `ci-standards/SKILL.md` coverage-threshold discovery. Flagged here, not fixed.
 
+**Terminal state**: Discard — fully shipped and merged (`ose-private` PR #127,
+`50a8316421`). The `dotnet` job's own retained `setup-rust` is justified and durable via the parity
+argument stated in the entry itself; no separate write needed.
+
 ## 2026-08-30 — Phase 9 Gate: live break/restore proofs
 
 Three of the Gate's own acceptance clauses required a live "deliberate temporary break that turns
@@ -1228,6 +1414,11 @@ failure, not a soft warning. Reran with `/p:Threshold=90` → passes again, same
 
 All three failure signatures are the actual gate mechanism firing (rustfmt's real diff, mix
 format's real exit code, coverlet.msbuild's real threshold check) — not test-harness artifacts.
+
+**Terminal state**: Discard — one-off gate-verification exercises proving mechanisms
+that already exist as permanent CI gates (`format-verify-rustfmt`, the Elixir formatter-wrapper
+test, `coverlet.msbuild`'s threshold enforcement). No new durable surface needed beyond those
+already-shipped gates.
 
 ## 2026-08-30 — Phase 10: "After" measurements and the durable comparison home
 
@@ -1275,6 +1466,12 @@ spike, not the real port) is left in place as a historical record but is now pre
 "Phase 10 — Measured Outcome" section that marks every one of its rows as confirmed, wrong, or
 not-re-validated, per the Phase 10 acceptance clause that no projection may survive unlabelled.
 
+**Terminal state**: Verified — `docs/explanation/software-engineering/programming-languages/rhino-cli-rust-to-fsharp-benchmark.md`
+exists, is linked from that directory's `README.md`, and its comparison table matches this entry's
+figures exactly (B1/B4/B5/B6/B8, and B7 provisional). `tech-docs.md`'s "Phase 10 — Measured Outcome"
+table is likewise consistent (both checked line-by-line against this entry and the entry below). Not
+touched further, per this task's instruction.
+
 ## 2026-08-30 — Phase 10: "after" measurements in ose-private, and a live CI-stall incident
 
 Same nine rows measured in `ose-private` (branch `rhino-fsharp-10-benchmark-measure`, off
@@ -1305,6 +1502,12 @@ Durable comparison home (`docs/explanation/software-engineering/programming-lang
 rhino-cli-rust-to-fsharp-benchmark.md`, named in the 2026-08-30 entry above) is `ose-public`-only
 per this plan's single-sourcing convention; it references both repositories' figures from
 `benchmark.md` rather than duplicating a second copy.
+
+**Terminal state**: Verified — figures cross-checked against the same durable
+comparison doc as the entry above; consistent (B4 9.70s reproduces the ~28x edit-rebuild regression
+as structural, not a one-repository artifact). The CI-stall incident (`upload-artifact`
+progress-stall) is a confirmed-transient external failure already handled per this plan's standing
+constraints (rerun, exclude from sample); no separate durable surface needed.
 
 ## 2026-08-30 — Phase 11a: rules-propagation Step 0-3 (ose-public)
 
@@ -1414,6 +1617,13 @@ below), and is the reason the Step 1 ledger names no `repo-governance/` path.
 **Step 5 — eviction**: no admission, no eviction needed. Step 4 admitted none of R1-R4 to the
 instruction surface, so Step 5 is a no-op by its own stated condition.
 
+**Terminal state**: Verified/already-terminal — R1-R3's `repo-governance/` fallback
+destinations are **deliberately not written into `repo-governance/`**, exactly as this entry's own
+Step 4 already states (standing plan constraint, matching the Phase 9e precedent it cites by line
+number). R4 is already placed at `docs/explanation/software-engineering/programming-languages/README.md`
+and `.../rust/README.md` (verified present in the Phase 9e entry above and by direct grep during this
+triage). No further action.
+
 ## 2026-08-30 — Phase 11a: rules-propagation Step 6-9 (ose-public)
 
 **Step 6 — write and tidy**: the only writes this phase makes are this file and
@@ -1473,6 +1683,10 @@ shows exactly `learnings.md` (modified) and `generated-reports/rules-propagation
 (new) — both on the Step 1 ledger. `delivery.md`'s checkbox ticks land in the same commit. No
 unledgered path.
 
+**Terminal state**: Verified/already-terminal — this entry records its own Step 8
+verification (bindings/sync/harness checks all exit 0) and Step 8.4 ledger reconciliation
+(`git status --porcelain` matched the Step 1 ledger). No further action.
+
 ## 2026-08-30 — Phase 11a: rules-propagation repeated independently in ose-private
 
 Same nine-step propagation run repeated in `ose-private` (scratch branch off `origin/main`, no
@@ -1511,3 +1725,7 @@ instruction-surface candidate).
 
 Sibling obligation discharged: this entry and `ose-private`'s own (uncommitted, ephemeral)
 manifest are the `ose-private` half `ose-public`'s Phase 11a named as owed.
+
+**Terminal state**: Verified/already-terminal — same R1-R3 deferral and R4 "N/A —
+nothing to place" verdict as `ose-public`'s run; recorded here per this plan's sibling-obligation
+requirement. No further action.

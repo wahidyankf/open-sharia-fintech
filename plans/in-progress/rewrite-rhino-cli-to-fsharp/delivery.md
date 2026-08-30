@@ -15733,37 +15733,37 @@ generate`; `validate` exits 0. `ose-private` side pending — recorded as this s
 
 ## Phase 12: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
       `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only; public-governance content may route to `ose-public`; never cross-route
       private content into a public repo.
-- [ ] [AI] Route each surviving entry to exactly one durable home — the benchmark comparison already
+- [x] [AI] Route each surviving entry to exactly one durable home — the benchmark comparison already
       has one from Phase 10, so verify rather than duplicate it. `fsharp-source-root` already has one
       too: Phase 9c's decision step writes the final path into
       [tech-docs §Target layout](./tech-docs.md#target-layout) in the same commit as the
       `learnings.md` entry — verify that write landed (`tech-docs.md` no longer reads "TBD" at that
       line) rather than discarding the `learnings.md` entry as "not generalizable"; the entry is
       protected by name for exactly this reason.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning
       into that brief instead of creating a new file.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
+- [x] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
       discarded with reason) directly in `learnings.md`.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead of individual entries.
 
 ### Phase 12 Gate
 
 > All checks below must pass before starting Plan Archival.
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed /
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed /
       discarded) or the explicit "none" escape is present — no entry left open.
-- [ ] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
+- [x] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
       corresponding `plans/backlog/` folder.
 
 > **Pause Safety**: all learnings are triaged to durable homes or explicitly discarded; nothing is

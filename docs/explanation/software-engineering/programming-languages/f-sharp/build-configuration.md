@@ -374,6 +374,39 @@ COPY --from=build /app/publish .
 ENTRYPOINT ["./ZakatService"]
 ```
 
+### NativeAOT and Trimming Considerations
+
+**The self-contained example above sets `-p:PublishTrimmed=true`. Trimming and NativeAOT
+(`-p:PublishAot=true`) share the same reflection-hostile failure mode**, discovered and measured
+during the `rewrite-rhino-cli-to-fsharp` migration's Phase 1 publish-mode spike
+(`local-tmp/publish-spike/`, `net10.0`, `osx-arm64`/`linux-x64`). Before enabling either flag on a
+new F# project, verify against these three constructs, in order of how often this repo's F# code
+uses them:
+
+1. **`sprintf`/`printfn` crash at runtime** with `System.NotSupportedException:
+MethodInfo.MakeGenericMethod() is not compatible with AOT compilation`. F#'s printf engine parses
+   format strings via reflection at first use, which trimming/AOT's static analysis cannot resolve.
+   **Fix**: use string interpolation (`$"...{expr}..."`) and `Console.WriteLine`/`.ToString()`
+   instead — neither goes through `Microsoft.FSharp.Core.PrintfImpl`.
+2. **`Argu` fails at runtime** with `Argu.ArguParseException: ERROR: unrecognized argument: ...` even
+   though it publishes with only warnings (`IL2104`/`IL3053`). `Argu` builds its argument spec by
+   reflecting over discriminated-union case metadata, which trimming removes by default.
+   **Fix**: `System.CommandLine` (proven AOT-clean in the same spike — zero trim/AOT warnings, correct
+   runtime behavior) is the safe alternative if a trimmed or AOT publish is required.
+3. **`System.Text.Json`'s default reflection-based serializer is disabled**, crashing with
+   `System.InvalidOperationException: Reflection-based serialization has been disabled for this
+application`. **Fix**: a source-generated `JsonSerializerContext` per serialized type (the
+   standard .NET mitigation) — there is no drop-in library substitute the way there is for Argu.
+
+None of these three is caught by `dotnet build`; they only surface at **publish time** (as
+warnings) or **runtime** (as crashes), so a green `dotnet build` proves nothing about
+trim/AOT-safety. `rewrite-rhino-cli-to-fsharp` selected **self-contained, non-trimmed** publishing for
+this exact reason — the JSON-serialization mitigation was judged disproportionate scope for that
+migration. A future project may reach a different conclusion once the JSON mitigation is worth
+building, but must re-verify all three constructs (and any other reflection-based library it
+depends on) before shipping a trimmed or NativeAOT publish, not just the two Argu/JSON constructs
+this note names.
+
 ## Enforcement
 
 - **Nx targets** - All build, test, lint commands run through Nx for monorepo consistency

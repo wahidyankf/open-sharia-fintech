@@ -348,3 +348,18 @@ that date — `instruction-size:` is still the live section name in `ose-private
 rename opens a cross-repo parity obligation (a `repo-config.yml` schema-section rename is exactly the
 class of change the [Parity Status](#parity-status) table exists to track); propagation to
 `ose-private` is not yet scheduled against a specific plan at the time of this note.
+
+**Gate-output-semantics note (2026-08-30, not part of the 2026-07-01 verification pass above)**: a
+single check's own verbose output text (e.g. `governance readme-index validate` printing
+`FAILED: N finding(s)`) is **not** the same signal as that check's PASS/FAIL status on `gate run`'s
+own summary line. `rhino-cli`'s `format_text`/`format_json` reporters compute a check's own
+"FAILED"/`status` text purely from whether its finding list is non-empty, independent of the
+registry's `fail-kinds` filtering — which is what actually decides whether that non-empty finding
+list fails the gate's exit code. `gate run` always executes every declared check regardless of
+individual outcome and prints each one's real PASS/FAIL verdict on its own summary line; a check's
+mid-stream "FAILED" text is informational, not that verdict. Discovered during
+`rewrite-rhino-cli-to-fsharp`'s Phase 9c follow-up, where a real `parity-manifest` gate failure was
+mistaken for a `governance-readme-index` failure because of pre-existing, already-deferred
+"unannotated" findings printing "FAILED" text on a check whose actual summary line read `PASS`. When
+debugging a suspected gate failure, run `rhino-bin.sh gate run --surface=<s> --group=<g>` and read
+its final per-check summary line, not any individual check's own verbose mid-stream text.
