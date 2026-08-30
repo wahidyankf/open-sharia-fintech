@@ -11,7 +11,10 @@ execution checklist.
 
 ## Active Plans
 
-No plans currently in progress. See [`../backlog/`](../backlog/README.md) for plans ready to start.
+- [adopt-beavernest-test-automation](./adopt-beavernest-test-automation/README.md) — coordinate
+  `ose-public` and `ose-private` adoption of enforced unit/integration/E2E ownership, native 99%
+  line coverage, exact 100% Gherkin/BDD coverage, logical specs/C4 structure, direct `project.json`
+  commands, no proxy manifests, and DDD engineering-spec retirement. Planning only; not executed.
 
 ## Instructions
 
