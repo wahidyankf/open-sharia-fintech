@@ -722,11 +722,17 @@ When("I set the baseline source to {string}", async ({ page }, source: string) =
   const radioLabels: Record<string, string> = {
     "savings target": "Monthly savings target",
     "reference role": "Reference role",
+    "Match a role": "Match a role",
     "my salary": "My salary",
   };
   const radioLabel = radioLabels[source] ?? source;
-  await page.getByRole("radio", { name: radioLabel }).click();
-  await page.waitForLoadState("networkidle");
+  const radio = page.getByRole("radio", { name: radioLabel });
+  await radio.click();
+  await expect(radio).toHaveAttribute("aria-checked", "true");
+
+  if (radioLabel === "Match a role") {
+    await expect(page.getByLabel("Reference city")).toBeVisible();
+  }
 });
 
 When("I enter a monthly savings target of {string} USD", async ({ page }, amount: string) => {
