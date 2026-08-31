@@ -82,7 +82,7 @@
       "options": {
         "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
       },
-      "cache": true,
+      "cache": false,
       "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/tests/unit/**/*.fs"],
       "outputs": ["{projectRoot}/src/tests/unit/coverage.json"]
     },
