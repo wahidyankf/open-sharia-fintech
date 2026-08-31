@@ -28,7 +28,7 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    the primary split.
 2. **A machine ceiling sits above everything: 300 changed files**, past which a hosted AI
    code-review assistant refuses outright — **observed behavior, not a published limit**, seen only
-   in its runtime error text. Rule 4's 20-file cap normally holds every PR far below it.
+   in its runtime error text. Rule 4's default 20-file budget normally holds every PR far below it.
 3. **Split PRs run sequentially from one reused worktree**, never one per PR — land a slice,
    fast-forward from `origin/main`, open the next. This preserves merge precondition (c): each
    slice is reviewed against a base already on `main`, not stacked on an unmerged sibling. See
@@ -41,9 +41,11 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    not a hard ceiling. A larger code diff is valid when it remains one natural, cohesive,
    independently reviewable, verifiable, and revertible seam; declare its measured size, seam,
    rejected split alternatives, and review proof. The independent **1,000** other/document-type
-   ceiling and **20** hand-authored-file ceiling remain hard; deletions count as zero. The child
-   defines file categories, generated-mirror exclusions, the natural-seam exception record, and
-   the narrow plan-document exemption.
+   ceiling and **300** changed-file machine ceiling remain hard. **20** hand-authored files is the
+   default review budget; a named delivery may exceed it only through the child rule's exact,
+   plan-and-PR-disclosed file-budget natural-seam exception. Deletions count as zero. The child
+   defines file categories, generated-mirror exclusions, both natural-seam records, and the narrow
+   plan-document exemption.
    **Use one PR for as much of one natural, independently stable seam as belongs together.** Split
    at a real seam, never solely to make the code counter read 500 or less.
 5. **A slice must be self-consistent on `main` the moment it merges** — see
@@ -52,9 +54,9 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    hard rule-4 bound; the linked plan-document exemption waives only its applicable hard LOC
    ceiling.
 
-**Enforcement disposition — unenforced by decision.** No deterministic gate can decide whether a
-larger code diff is one natural seam, classify every handwritten file, or decide whether a plan diff
-is initial establishment or a pure move. The PR template exposes category totals, split reasoning,
-and exception claims for author and reviewer inspection.
+**Enforcement disposition — unenforced by decision.** A deterministic gate can measure the diff and
+validate an exception record, but cannot decide whether a proposed split preserves a natural seam.
+The PR template exposes category totals, split reasoning, and exception claims for author and
+reviewer inspection.
 
 **See**: [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md).

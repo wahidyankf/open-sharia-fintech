@@ -22,8 +22,8 @@ See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-
 
 - **Start here:**
 - **Skip these paths:** <!-- e.g. generated mirrors: .agents/, .opencode/, .codex/ -->
-- **Size:** <!-- Added lines only: code/program C has a strong target of 500, not a hard ceiling; other/document O≤1,000; no combined ceiling; deletions count zero; hand-authored files≤20.
-  When C exceeds 500, state the measured C, natural cohesive seam, viable split points considered and rejected, and how the larger diff was reviewed and proved. Size alone is not a reason to split a natural seam.
+- **Size:** <!-- Added lines only: code/program C has a strong target of 500, not a hard ceiling; other/document O≤1,000; no combined ceiling; deletions count zero; 20 hand-authored files is the default review budget; total files≤300.
+  When C exceeds 500 or hand-authored files exceed 20, state the measured C, O, hand-authored-file, and total-file counts; natural cohesive seam; exact finite allocation; viable split points considered and rejected; build-validity constraint; review/proof approach; recovery; and matching plan record. Size alone is not a reason to split a natural seam.
   If claiming the narrow plan-document LOC exemption, state whether this is initial establishment or a pure backlog/in-progress move. Confirm the entire hand-authored diff contains only qualifying plan Markdown documents and indexes plus referenced required non-executable plan assets: high-fidelity binary mockups, exported images, and editable diagram/design sources under the plan's assets/ directory.
   Executable source or scripts, runtime/build/tool configuration or manifests, automated tests or fixtures, runnable prototypes, unreferenced assets, and unrelated files revoke the exemption. -->
 
