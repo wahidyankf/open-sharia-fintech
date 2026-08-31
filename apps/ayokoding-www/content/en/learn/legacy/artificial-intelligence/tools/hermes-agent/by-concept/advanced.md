@@ -799,31 +799,31 @@ The SQLite database lives at `~/.hermes/sessions.db`. Its schema has three prima
 ```sql
 -- sessions table: one row per Hermes session
 CREATE TABLE sessions (
-    id TEXT PRIMARY KEY,              -- Session ID: ses_YYYYMMDD_HHMMSS_xxxx
-    started_at TEXT NOT NULL,         -- ISO 8601 timestamp
-    ended_at TEXT,                    -- NULL if session is still active
-    model TEXT NOT NULL,              -- Primary model used
-    total_tokens INTEGER DEFAULT 0,   -- Cumulative token count
-    total_cost_usd REAL DEFAULT 0.0,  -- Cumulative cost in USD
-    metadata TEXT                     -- JSON blob for extensible metadata
+  id TEXT PRIMARY KEY, -- Session ID: ses_YYYYMMDD_HHMMSS_xxxx
+  started_at TEXT NOT NULL, -- ISO 8601 timestamp
+  ended_at TEXT, -- NULL if session is still active
+  model TEXT NOT NULL, -- Primary model used
+  total_tokens INTEGER DEFAULT 0, -- Cumulative token count
+  total_cost_usd REAL DEFAULT 0.0, -- Cumulative cost in USD
+  metadata TEXT -- JSON blob for extensible metadata
 );
 
 -- messages table: one row per message in any session
 CREATE TABLE messages (
-    id TEXT PRIMARY KEY,
-    session_id TEXT NOT NULL REFERENCES sessions(id),
-    role TEXT NOT NULL,               -- 'user' | 'assistant' | 'tool'
-    content TEXT NOT NULL,            -- Full message text (indexed by FTS5)
-    tool_name TEXT,                   -- Non-null for role='tool'
-    tokens INTEGER,                   -- Token count for this message
-    created_at TEXT NOT NULL
+  id TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES sessions (id),
+  role TEXT NOT NULL, -- 'user' | 'assistant' | 'tool'
+  content TEXT NOT NULL, -- Full message text (indexed by FTS5)
+  tool_name TEXT, -- Non-null for role='tool'
+  tokens INTEGER, -- Token count for this message
+  created_at TEXT NOT NULL
 );
 
 -- FTS5 virtual table: full-text search index over message content
-CREATE VIRTUAL TABLE messages_fts USING fts5(
-    content,                          -- Indexed column (message text)
-    content='messages',               -- Backing table
-    content_rowid='rowid'             -- Row linkage
+CREATE VIRTUAL TABLE messages_fts USING fts5 (
+  content, -- Indexed column (message text)
+  content = 'messages', -- Backing table
+  content_rowid = 'rowid' -- Row linkage
 );
 ```
 

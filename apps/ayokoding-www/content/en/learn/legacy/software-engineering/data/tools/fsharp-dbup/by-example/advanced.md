@@ -206,21 +206,24 @@ Adding a column with a `DEFAULT` value and `NOT NULL` in older PostgreSQL versio
 -- File: 0064-add-status-column-phase1.sql
 -- => Phase 1: add nullable column with no server default
 -- => This is instantaneous on all PostgreSQL versions — no table rewrite
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS status TEXT;
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS status TEXT;
+
 -- => status column exists; all existing rows have status = NULL
 -- => Application code must tolerate NULL status during the migration window
-
 -- Add a default at the column level for new inserts
 -- => DEFAULT 'pending' applies only to INSERT statements going forward
 -- => Existing rows remain NULL until the backfill migration runs
-ALTER TABLE orders ALTER COLUMN status SET DEFAULT 'pending';
--- => After this statement: new rows get status='pending'; old rows still NULL
+ALTER TABLE orders
+ALTER COLUMN status
+SET DEFAULT 'pending';
 
+-- => After this statement: new rows get status='pending'; old rows still NULL
 -- Add the NOT NULL constraint as NOT VALID (skips existing rows)
 -- => NOT VALID means PostgreSQL validates only new/updated rows, not the full table
 -- => This is an instant metadata operation; no table scan
-ALTER TABLE orders ADD CONSTRAINT orders_status_not_null
-    CHECK (status IS NOT NULL) NOT VALID;
+ALTER TABLE orders ADD CONSTRAINT orders_status_not_null CHECK (status IS NOT NULL) NOT VALID;
+
 -- => Constraint exists but is marked invalid; existing NULLs are tolerated temporarily
 ```
 
@@ -238,11 +241,12 @@ Removing a column safely requires three coordinated releases: first make applica
 -- File: 0065-remove-legacy-notes-phase1.sql
 -- => Phase 1 (Release N): Deploy BEFORE any application change
 -- => No SQL needed — this file documents the phase for audit trail
-
 -- Phase 1 goal: ensure all application queries use SELECT <explicit columns>
 -- instead of SELECT * so they do not depend on "notes" being present.
 -- Deploy this empty migration to record that phase 1 is complete in the journal.
-SELECT 1;
+SELECT
+  1;
+
 -- => SELECT 1 is a no-op DML statement; DbUp executes and journals it
 -- => The journal entry marks phase 1 complete in every environment
 ```
@@ -251,8 +255,9 @@ SELECT 1;
 -- File: 0065-remove-legacy-notes-phase2.sql
 -- => Phase 2 (Release N+1): Drop the column after application code is clean
 -- => All app instances must be on Release N before this migration runs
+ALTER TABLE users
+DROP COLUMN IF EXISTS notes;
 
-ALTER TABLE users DROP COLUMN IF EXISTS notes;
 -- => DROP COLUMN IF EXISTS: safe if the column was already removed in a prior run
 -- => IF EXISTS prevents errors in environments where the column was never added
 -- => PostgreSQL marks the column as dropped in pg_attribute immediately
@@ -326,23 +331,21 @@ PostgreSQL's standard `CREATE INDEX` acquires a `ShareLock` that blocks all writ
 -- File: 0067-create-index-concurrently.sql
 -- => CREATE INDEX CONCURRENTLY must run OUTSIDE a transaction block
 -- => DbUp's WithTransactionPerScript wraps each script; use WithoutTransaction for this file
-
 -- Disable the transaction for this script using DbUp's script annotation
 -- => DbUp recognizes the comment prefix "-- DbUp:NoTransaction" and skips the transaction wrapper
 -- DbUp:NoTransaction
-
 -- Create a non-blocking index on orders.customer_id
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_id
-    ON orders (customer_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_id ON orders (customer_id);
+
 -- => CONCURRENTLY: two-phase build; reads existing rows twice; allows concurrent writes
 -- => IF NOT EXISTS: idempotent; safe to re-run if deployment fails mid-way
 -- => Estimated time: ~1s per million rows on typical hardware
 -- => Lock acquired: ShareUpdateExclusiveLock — blocks only DDL, not DML
-
 -- Create a partial index for active orders only (reduces index size)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_active_status
-    ON orders (created_at DESC)
-    WHERE status = 'active';
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_active_status ON orders (created_at DESC)
+WHERE
+  status = 'active';
+
 -- => Partial index: only rows where status='active' are indexed
 -- => Smaller index = faster maintenance; fits common query pattern WHERE status='active'
 -- => If the query planner ignores this index, check that the WHERE predicate matches exactly
@@ -1023,34 +1026,38 @@ The `pgcrypto` extension enables column-level encryption, password hashing, and 
 -- File: 0078-enable-pgcrypto.sql
 -- => Run this script with superuser credentials (separate from application credentials)
 -- => pgcrypto provides gen_random_bytes, crypt, gen_random_uuid, pgp_sym_encrypt, etc.
-
 -- Enable the pgcrypto extension if not already present
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- => IF NOT EXISTS: idempotent; no error if extension is already installed
 -- => Extension is installed into the public schema by default
 -- => After this statement: pgcrypto functions are available database-wide
-
 -- Create a table that stores hashed passwords using pgcrypto
 CREATE TABLE IF NOT EXISTS credentials (
-    id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => gen_random_uuid(): generates a v4 UUID using cryptographically secure random bytes
-    -- => Provided by pgcrypto; faster than uuid-ossp's uuid_generate_v4()
-    user_id       UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: deleting a user automatically removes their credentials row
-    password_hash TEXT        NOT NULL,
-    -- => Stores the bcrypt hash; never the plaintext password
-    -- => bcrypt hash format: $2b$<cost>$<22-char-salt><31-char-hash>
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => gen_random_uuid(): generates a v4 UUID using cryptographically secure random bytes
+  -- => Provided by pgcrypto; faster than uuid-ossp's uuid_generate_v4()
+  user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: deleting a user automatically removes their credentials row
+  password_hash TEXT NOT NULL,
+  -- => Stores the bcrypt hash; never the plaintext password
+  -- => bcrypt hash format: $2b$<cost>$<22-char-salt><31-char-hash>
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
 
 -- Example: insert a hashed password (for migration seed data or tests)
 -- => crypt(password, gen_salt('bf', 12)): bcrypt with cost factor 12
 -- => Cost 12: ~300ms per hash on modern hardware; adjust per OWASP guidance
-INSERT INTO credentials (user_id, password_hash)
-SELECT id, crypt('initial-admin-password', gen_salt('bf', 12))
-FROM   users
-WHERE  email = 'admin@example.com'
-ON CONFLICT DO NOTHING;
+INSERT INTO
+  credentials (user_id, password_hash)
+SELECT
+  id,
+  crypt ('initial-admin-password', gen_salt ('bf', 12))
+FROM
+  users
+WHERE
+  email = 'admin@example.com' ON CONFLICT DO NOTHING;
+
 -- => ON CONFLICT DO NOTHING: idempotent; does not re-hash if the row already exists
 -- => In production: replace 'initial-admin-password' with a vault-fetched secret
 ```

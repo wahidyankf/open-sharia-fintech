@@ -656,25 +656,39 @@ EF Core uses a special `__EFMigrationsHistory` table in each database to track w
 ```sql
 -- Structure of __EFMigrationsHistory (PostgreSQL)
 -- => EF Core creates this automatically on first database update
-SELECT column_name, data_type, character_maximum_length
-FROM information_schema.columns
-WHERE table_name = '__EFMigrationsHistory';
+SELECT
+  column_name,
+  data_type,
+  character_maximum_length
+FROM
+  information_schema.columns
+WHERE
+  table_name = '__EFMigrationsHistory';
+
 -- => column_name: MigrationId  | data_type: character varying | max_length: 150
 -- => column_name: ProductVersion | data_type: character varying | max_length: 32
-
 -- Querying applied migrations directly
-SELECT "MigrationId", "ProductVersion"
-FROM "__EFMigrationsHistory"
-ORDER BY "MigrationId";
+SELECT
+  "MigrationId",
+  "ProductVersion"
+FROM
+  "__EFMigrationsHistory"
+ORDER BY
+  "MigrationId";
+
 -- => Output:
 -- =>   MigrationId                              | ProductVersion
 -- =>   20260101000001_InitialCreate             | 10.0.1
 -- =>   20260201000001_AddEmailToUsers           | 10.0.1
 -- =>   20260301000001_AddProductTable           | 10.0.1
-
 -- Checking if a specific migration was applied
-SELECT COUNT(*) FROM "__EFMigrationsHistory"
-WHERE "MigrationId" = '20260327000001_AddIndexes';
+SELECT
+  COUNT(*)
+FROM
+  "__EFMigrationsHistory"
+WHERE
+  "MigrationId" = '20260327000001_AddIndexes';
+
 -- => 0 = not applied (pending)
 -- => 1 = applied
 ```
@@ -1610,20 +1624,22 @@ dotnet ef migrations script --output ./sql/upgrade.sql --verbose
 ```sql
 -- Example generated SQL output for a simple migration:
 -- => Each migration's Up() is translated to raw SQL
-
 -- Migration: 20260327000001_InitialCreate
 CREATE TABLE "users" (
-    "id" uuid NOT NULL,                    -- => Guid maps to uuid
-    "email" character varying(255) NOT NULL,
-    CONSTRAINT "pk_users" PRIMARY KEY ("id")
+  "id" uuid NOT NULL, -- => Guid maps to uuid
+  "email" character varying(255) NOT NULL,
+  CONSTRAINT "pk_users" PRIMARY KEY ("id")
 );
+
 -- => EF Core uses quoted identifiers in PostgreSQL (double quotes)
-
 CREATE UNIQUE INDEX "ix_users_email" ON "users" ("email");
--- => CreateIndex with unique: true generates CREATE UNIQUE INDEX
 
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20260327000001_InitialCreate', '10.0.1');
+-- => CreateIndex with unique: true generates CREATE UNIQUE INDEX
+INSERT INTO
+  "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES
+  ('20260327000001_InitialCreate', '10.0.1');
+
 -- => History tracking row appended after each migration's SQL
 ```
 

@@ -425,8 +425,8 @@ Tracking table:
 
 ```sql
 CREATE TABLE IF NOT EXISTS _migrations (
-  id          TEXT PRIMARY KEY,
-  applied_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  id TEXT PRIMARY KEY,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT now ()
 );
 ```
 

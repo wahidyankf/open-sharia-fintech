@@ -42,17 +42,18 @@ graph TD
 -- => Goose reads this directive to find the forward migration block
 -- => All SQL statements between here and "-- +goose Down" run on "goose up"
 CREATE TABLE products (
-    id   SERIAL      NOT NULL PRIMARY KEY,
-    -- => SERIAL auto-increments; equivalent to INTEGER with a sequence
-    name VARCHAR(255) NOT NULL
-    -- => Required product name; NOT NULL enforces non-empty value at DB level
+  id SERIAL NOT NULL PRIMARY KEY,
+  -- => SERIAL auto-increments; equivalent to INTEGER with a sequence
+  name VARCHAR(255) NOT NULL
+  -- => Required product name; NOT NULL enforces non-empty value at DB level
 );
--- => Creates "products" table with 2 columns
 
+-- => Creates "products" table with 2 columns
 -- +goose Down
 -- => Goose reads this directive to find the rollback block
 -- => All SQL statements here run on "goose down"
 DROP TABLE IF EXISTS products;
+
 -- => Removes "products" table; IF EXISTS prevents error if table was never created
 ```
 
@@ -68,20 +69,20 @@ The Goose CLI is the primary interface for applying migrations during developmen
 
 ```sql
 -- File: db/migrations/00001_create_settings.sql
-
 -- +goose Up
 -- => Forward migration: creates the settings table
 CREATE TABLE settings (
-    key   VARCHAR(255) NOT NULL PRIMARY KEY,
-    -- => Natural primary key using the setting key string itself
-    value TEXT         NOT NULL DEFAULT ''
-    -- => TEXT allows unlimited length; DEFAULT '' prevents NULL values
+  key VARCHAR(255) NOT NULL PRIMARY KEY,
+  -- => Natural primary key using the setting key string itself
+  value TEXT NOT NULL DEFAULT ''
+  -- => TEXT allows unlimited length; DEFAULT '' prevents NULL values
 );
--- => Creates settings table with 2 columns
 
+-- => Creates settings table with 2 columns
 -- +goose Down
 -- => Rollback migration: removes the settings table
 DROP TABLE IF EXISTS settings;
+
 -- => IF EXISTS guard makes this safe to run even if Up never completed
 ```
 
@@ -114,35 +115,35 @@ A users table is the canonical first migration in most applications. This exampl
 
 ```sql
 -- File: db/migrations/00001_create_users.sql
-
 -- +goose Up
 CREATE TABLE users (
-    id                    UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => UUID primary key; gen_random_uuid() generates v4 UUIDs (PostgreSQL 13+ built-in)
-    -- => UUIDs prevent enumeration attacks (attacker can't guess id=2, id=3)
-    username              VARCHAR(50)  NOT NULL UNIQUE,
-    -- => Max 50 chars enforced at DB level; UNIQUE creates an implicit index
-    email                 VARCHAR(255) NOT NULL UNIQUE,
-    -- => RFC 5321 allows up to 254 chars; UNIQUE prevents duplicate registrations
-    password_hash         VARCHAR(255) NOT NULL,
-    -- => Store hashed passwords only (e.g., bcrypt output); never plaintext
-    display_name          VARCHAR(255) NOT NULL DEFAULT '',
-    -- => Optional display name; DEFAULT '' avoids NULL handling in application code
-    role                  VARCHAR(20)  NOT NULL DEFAULT 'USER',
-    -- => Role-based access control; DEFAULT 'USER' assigns least-privilege role
-    status                VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
-    -- => Account lifecycle state; application enforces valid values
-    failed_login_attempts INTEGER     NOT NULL DEFAULT 0,
-    -- => Tracks brute-force attempts; application locks account after threshold
-    created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- => TIMESTAMPTZ stores with timezone offset; NOW() auto-populates on INSERT
-    updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    -- => Application must update this on each UPDATE (or use a trigger)
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => UUID primary key; gen_random_uuid() generates v4 UUIDs (PostgreSQL 13+ built-in)
+  -- => UUIDs prevent enumeration attacks (attacker can't guess id=2, id=3)
+  username VARCHAR(50) NOT NULL UNIQUE,
+  -- => Max 50 chars enforced at DB level; UNIQUE creates an implicit index
+  email VARCHAR(255) NOT NULL UNIQUE,
+  -- => RFC 5321 allows up to 254 chars; UNIQUE prevents duplicate registrations
+  password_hash VARCHAR(255) NOT NULL,
+  -- => Store hashed passwords only (e.g., bcrypt output); never plaintext
+  display_name VARCHAR(255) NOT NULL DEFAULT '',
+  -- => Optional display name; DEFAULT '' avoids NULL handling in application code
+  role VARCHAR(20) NOT NULL DEFAULT 'USER',
+  -- => Role-based access control; DEFAULT 'USER' assigns least-privilege role
+  status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+  -- => Account lifecycle state; application enforces valid values
+  failed_login_attempts INTEGER NOT NULL DEFAULT 0,
+  -- => Tracks brute-force attempts; application locks account after threshold
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => TIMESTAMPTZ stores with timezone offset; NOW() auto-populates on INSERT
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => Application must update this on each UPDATE (or use a trigger)
 );
--- => Creates users table with 10 columns and a UUID primary key
 
+-- => Creates users table with 10 columns and a UUID primary key
 -- +goose Down
 DROP TABLE IF EXISTS users;
+
 -- => IF EXISTS prevents error if migration was partially applied
 ```
 
@@ -158,17 +159,17 @@ Adding a column to an existing table is the most common schema migration after i
 
 ```sql
 -- File: db/migrations/00002_add_phone_to_users.sql
-
 -- +goose Up
 ALTER TABLE users
-    ADD COLUMN phone VARCHAR(20);
+ADD COLUMN phone VARCHAR(20);
+
 -- => Adds nullable "phone" column to existing users table
 -- => No DEFAULT means existing rows get NULL for this column
 -- => Nullable is intentional: phone is optional data we're collecting going forward
-
 -- +goose Down
 ALTER TABLE users
-    DROP COLUMN IF EXISTS phone;
+DROP COLUMN IF EXISTS phone;
+
 -- => Removes "phone" column and all its data from users
 -- => IF EXISTS prevents error if the column was never added (partial Up failure)
 -- => WARNING: data in this column is permanently deleted on rollback
@@ -186,17 +187,16 @@ Indexes are separate from table creation and deserve their own migration. This e
 
 ```sql
 -- File: db/migrations/00003_add_email_index_to_users.sql
-
 -- +goose Up
-CREATE INDEX idx_users_email
-    ON users (email);
+CREATE INDEX idx_users_email ON users (email);
+
 -- => Creates B-tree index named "idx_users_email" on users.email
 -- => Naming convention: idx_{table}_{column(s)} makes indexes identifiable in pg_indexes
 -- => Index accelerates: SELECT * FROM users WHERE email = 'x@example.com'
 -- => Index has overhead: each INSERT/UPDATE to email column updates the index
-
 -- +goose Down
 DROP INDEX IF EXISTS idx_users_email;
+
 -- => Removes the index; IF EXISTS prevents error if index was never created
 -- => Dropping index does NOT affect the data in the table
 ```
@@ -213,19 +213,18 @@ A unique constraint enforces data integrity at the database level — no two row
 
 ```sql
 -- File: db/migrations/00004_add_unique_username.sql
-
 -- +goose Up
-ALTER TABLE users
-    ADD CONSTRAINT uq_users_username UNIQUE (username);
+ALTER TABLE users ADD CONSTRAINT uq_users_username UNIQUE (username);
+
 -- => Adds named unique constraint on users.username
 -- => Naming convention: uq_{table}_{column} distinguishes constraints from indexes
 -- => PostgreSQL creates a unique index automatically to enforce the constraint
 -- => FAILS if duplicate usernames already exist in the table
 -- => Run a deduplication query before applying if data exists
-
 -- +goose Down
 ALTER TABLE users
-    DROP CONSTRAINT IF EXISTS uq_users_username;
+DROP CONSTRAINT IF EXISTS uq_users_username;
+
 -- => Removes the unique constraint (and its underlying index)
 -- => IF EXISTS prevents error if constraint was never added
 ```
@@ -242,18 +241,18 @@ Dropping a column deletes its data permanently. The safe pattern involves first 
 
 ```sql
 -- File: db/migrations/00005_drop_legacy_bio_from_users.sql
-
 -- +goose Up
 ALTER TABLE users
-    DROP COLUMN IF EXISTS bio;
+DROP COLUMN IF EXISTS bio;
+
 -- => Removes "bio" column and all its data from every row
 -- => IF EXISTS prevents error if column was already removed (idempotent)
 -- => WARNING: This is irreversible data loss — backup before applying in production
 -- => Deploy this AFTER removing all application code that reads/writes "bio"
-
 -- +goose Down
 ALTER TABLE users
-    ADD COLUMN bio TEXT;
+ADD COLUMN bio TEXT;
+
 -- => Re-adds "bio" column as nullable TEXT
 -- => Data that was in "bio" before the Up migration is GONE — cannot restore
 -- => Down migration only restores the schema shape, not the data
@@ -310,11 +309,10 @@ graph TD
 ```sql
 -- File: db/migrations/00001_create_users.sql
 -- => Version 1: first migration applied to a fresh database
-
 -- +goose Up
 CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL);
--- => Minimal users table for demonstration
 
+-- => Minimal users table for demonstration
 -- +goose Down
 DROP TABLE IF EXISTS users;
 ```
@@ -352,9 +350,15 @@ goose -dir ./db/migrations postgres \
 ```sql
 -- Goose creates and manages this table automatically
 -- You can query it directly to inspect migration history
-SELECT version_id, is_applied, tstamp
-FROM goose_db_version
-ORDER BY version_id;
+SELECT
+  version_id,
+  is_applied,
+  tstamp
+FROM
+  goose_db_version
+ORDER BY
+  version_id;
+
 -- => version_id | is_applied | tstamp
 -- => ----------+------------+----------------------------
 -- =>          1 | true       | 2026-03-27 00:01:15+07
@@ -375,16 +379,16 @@ The `goose down` command rolls back the most recently applied migration by execu
 
 ```sql
 -- File: db/migrations/00004_add_broken_column.sql
-
 -- +goose Up
 ALTER TABLE users
-    ADD COLUMN broken_feature VARCHAR(50) NOT NULL DEFAULT 'bad_default';
+ADD COLUMN broken_feature VARCHAR(50) NOT NULL DEFAULT 'bad_default';
+
 -- => Adds a column that turns out to cause problems in production
 -- => This is the migration we need to roll back
-
 -- +goose Down
 ALTER TABLE users
-    DROP COLUMN IF EXISTS broken_feature;
+DROP COLUMN IF EXISTS broken_feature;
+
 -- => Removes the column; this is what "goose down" will execute
 ```
 
@@ -493,32 +497,32 @@ Foreign key constraints enforce referential integrity between tables — a row i
 ```sql
 -- File: db/migrations/00002_create_refresh_tokens.sql
 -- => Must run AFTER 00001_create_users.sql because it references users(id)
-
 -- +goose Up
 CREATE TABLE refresh_tokens (
-    id         UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => UUID primary key; consistent with users table convention
-    user_id    UUID         NOT NULL REFERENCES users(id),
-    -- => Foreign key to users.id; REFERENCES creates the FK constraint
-    -- => NOT NULL means every token must belong to a user (no orphan tokens)
-    -- => INSERT fails if user_id does not exist in users.id
-    token_hash VARCHAR(512) NOT NULL UNIQUE,
-    -- => Store hash of token (not plaintext); UNIQUE prevents hash collisions
-    expires_at TIMESTAMPTZ  NOT NULL,
-    -- => Token expiration time; application logic checks this on validation
-    revoked    BOOLEAN      NOT NULL DEFAULT FALSE,
-    -- => Explicit revocation flag; DEFAULT FALSE means tokens start valid
-    created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
-    -- => Creation timestamp for audit and expiry calculation
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => UUID primary key; consistent with users table convention
+  user_id UUID NOT NULL REFERENCES users (id),
+  -- => Foreign key to users.id; REFERENCES creates the FK constraint
+  -- => NOT NULL means every token must belong to a user (no orphan tokens)
+  -- => INSERT fails if user_id does not exist in users.id
+  token_hash VARCHAR(512) NOT NULL UNIQUE,
+  -- => Store hash of token (not plaintext); UNIQUE prevents hash collisions
+  expires_at TIMESTAMPTZ NOT NULL,
+  -- => Token expiration time; application logic checks this on validation
+  revoked BOOLEAN NOT NULL DEFAULT FALSE,
+  -- => Explicit revocation flag; DEFAULT FALSE means tokens start valid
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => Creation timestamp for audit and expiry calculation
 );
--- => Creates refresh_tokens table with foreign key to users
 
+-- => Creates refresh_tokens table with foreign key to users
 CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens (user_id);
+
 -- => Index on user_id accelerates: SELECT * FROM refresh_tokens WHERE user_id = $1
 -- => Without this index, looking up tokens for a user requires a full table scan
-
 -- +goose Down
 DROP TABLE IF EXISTS refresh_tokens;
+
 -- => Drops refresh_tokens first; users table still exists after this Down block
 -- => Order matters: cannot drop users while refresh_tokens still references it
 ```
@@ -535,19 +539,19 @@ Adding a `NOT NULL` column to an existing table with rows requires a `DEFAULT` v
 
 ```sql
 -- File: db/migrations/00006_add_tier_to_users.sql
-
 -- +goose Up
 ALTER TABLE users
-    ADD COLUMN tier VARCHAR(20) NOT NULL DEFAULT 'free';
+ADD COLUMN tier VARCHAR(20) NOT NULL DEFAULT 'free';
+
 -- => Adds "tier" column to existing users table
 -- => NOT NULL requires a DEFAULT so existing rows get a value
 -- => DEFAULT 'free' means: all existing users start on the free tier
 -- => New inserts without specifying tier also get 'free'
 -- => PostgreSQL sets 'free' for all existing rows atomically
-
 -- +goose Down
 ALTER TABLE users
-    DROP COLUMN IF EXISTS tier;
+DROP COLUMN IF EXISTS tier;
+
 -- => Removes tier column; all tier data is lost on rollback
 ```
 
@@ -563,30 +567,31 @@ PostgreSQL supports custom ENUM types that restrict a column to a fixed set of v
 
 ```sql
 -- File: db/migrations/00007_add_status_enum.sql
-
 -- +goose Up
 CREATE TYPE account_status AS ENUM (
-    'active',
-    -- => Valid value: user can log in and use the system
-    'suspended',
-    -- => Valid value: user temporarily blocked (e.g., payment failure)
-    'deleted'
-    -- => Valid value: soft-deleted user account
+  'active',
+  -- => Valid value: user can log in and use the system
+  'suspended',
+  -- => Valid value: user temporarily blocked (e.g., payment failure)
+  'deleted'
+  -- => Valid value: soft-deleted user account
 );
+
 -- => Creates a custom PostgreSQL ENUM type named "account_status"
 -- => Values are case-sensitive; 'Active' != 'active'
-
 ALTER TABLE users
-    ADD COLUMN account_status account_status NOT NULL DEFAULT 'active';
+ADD COLUMN account_status account_status NOT NULL DEFAULT 'active';
+
 -- => Adds column using the custom ENUM type
 -- => Only 'active', 'suspended', 'deleted' are valid values
 -- => INSERT with account_status='banned' would raise: invalid input value for enum
-
 -- +goose Down
 ALTER TABLE users
-    DROP COLUMN IF EXISTS account_status;
+DROP COLUMN IF EXISTS account_status;
+
 -- => Must drop the column before dropping the type it references
 DROP TYPE IF EXISTS account_status;
+
 -- => Removes the ENUM type definition from PostgreSQL catalog
 -- => IF EXISTS prevents error if type was never created
 ```
@@ -603,20 +608,27 @@ Goose migrations can contain both DDL (schema changes) and DML (data changes). S
 
 ```sql
 -- File: db/migrations/00008_seed_default_settings.sql
-
 -- +goose Up
-INSERT INTO settings (key, value) VALUES
-    ('max_login_attempts', '5'),
-    -- => Application reads this to enforce brute-force lockout threshold
-    ('session_timeout_minutes', '60'),
-    -- => Application reads this to expire user sessions after 60 minutes
-    ('maintenance_mode', 'false');
+INSERT INTO
+  settings (key, value)
+VALUES
+  ('max_login_attempts', '5'),
+  -- => Application reads this to enforce brute-force lockout threshold
+  ('session_timeout_minutes', '60'),
+  -- => Application reads this to expire user sessions after 60 minutes
+  ('maintenance_mode', 'false');
+
 -- => Seeds 3 default configuration values into settings table
 -- => These values exist in every environment (dev, staging, prod) after migration
-
 -- +goose Down
 DELETE FROM settings
-WHERE key IN ('max_login_attempts', 'session_timeout_minutes', 'maintenance_mode');
+WHERE
+  key IN (
+    'max_login_attempts',
+    'session_timeout_minutes',
+    'maintenance_mode'
+  );
+
 -- => Removes only the seeded rows; does not delete other settings
 -- => Targeted DELETE is safer than TRUNCATE TABLE which removes all rows
 ```
@@ -634,33 +646,35 @@ A single Goose migration file can contain multiple SQL statements separated by s
 ```sql
 -- File: db/migrations/00009_create_audit_system.sql
 -- => Creates the entire audit system (tables + indexes) in one migration
-
 -- +goose Up
 CREATE TABLE audit_logs (
-    id         BIGSERIAL    NOT NULL PRIMARY KEY,
-    -- => BIGSERIAL: auto-increment 64-bit integer (handles high-volume logs)
-    user_id    UUID,
-    -- => Nullable: system events may not have an associated user
-    action     VARCHAR(100) NOT NULL,
-    -- => Action performed: 'user.login', 'expense.create', 'admin.delete_user'
-    resource   VARCHAR(255),
-    -- => Affected resource: 'users/uuid-here', 'expenses/uuid-here'
-    metadata   TEXT,
-    -- => JSON string with additional context; TEXT avoids JSONB overhead for logs
-    created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
-    -- => Log entry timestamp; indexed below for time-range queries
+  id BIGSERIAL NOT NULL PRIMARY KEY,
+  -- => BIGSERIAL: auto-increment 64-bit integer (handles high-volume logs)
+  user_id UUID,
+  -- => Nullable: system events may not have an associated user
+  action VARCHAR(100) NOT NULL,
+  -- => Action performed: 'user.login', 'expense.create', 'admin.delete_user'
+  resource VARCHAR(255),
+  -- => Affected resource: 'users/uuid-here', 'expenses/uuid-here'
+  metadata TEXT,
+  -- => JSON string with additional context; TEXT avoids JSONB overhead for logs
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => Log entry timestamp; indexed below for time-range queries
 );
--- => Creates audit_logs table for comprehensive event tracking
 
-CREATE INDEX idx_audit_logs_user_id   ON audit_logs (user_id);
+-- => Creates audit_logs table for comprehensive event tracking
+CREATE INDEX idx_audit_logs_user_id ON audit_logs (user_id);
+
 -- => Accelerates: SELECT * FROM audit_logs WHERE user_id = $1
-CREATE INDEX idx_audit_logs_action    ON audit_logs (action);
+CREATE INDEX idx_audit_logs_action ON audit_logs (action);
+
 -- => Accelerates: SELECT * FROM audit_logs WHERE action = 'user.login'
 CREATE INDEX idx_audit_logs_created_at ON audit_logs (created_at);
--- => Accelerates time-range queries: WHERE created_at > NOW() - INTERVAL '7 days'
 
+-- => Accelerates time-range queries: WHERE created_at > NOW() - INTERVAL '7 days'
 -- +goose Down
 DROP TABLE IF EXISTS audit_logs;
+
 -- => Drops the table AND all its indexes (indexes are dropped with the table)
 -- => Does NOT need separate DROP INDEX statements
 ```
@@ -1014,26 +1028,25 @@ A composite index covers multiple columns and accelerates queries that filter on
 
 ```sql
 -- File: db/migrations/00010_add_composite_indexes_to_expenses.sql
-
 -- +goose Up
-CREATE INDEX idx_expenses_user_id_date
-    ON expenses (user_id, date);
+CREATE INDEX idx_expenses_user_id_date ON expenses (user_id, date);
+
 -- => Composite index on (user_id, date) columns
 -- => Accelerates: WHERE user_id = $1 AND date BETWEEN $2 AND $3
 -- => Also accelerates: WHERE user_id = $1 (uses leftmost column prefix rule)
 -- => Does NOT accelerate: WHERE date = $1 (date is not the leftmost column)
 -- => Column order rule: put the most selective / most frequently filtered column first
+CREATE INDEX idx_expenses_user_id_category ON expenses (user_id, category);
 
-CREATE INDEX idx_expenses_user_id_category
-    ON expenses (user_id, category);
 -- => Second composite index for category-based filtering per user
 -- => Accelerates: WHERE user_id = $1 AND category = $2
 -- => Typical query: "show all food expenses for user X"
-
 -- +goose Down
 DROP INDEX IF EXISTS idx_expenses_user_id_date;
+
 -- => Remove date composite index
 DROP INDEX IF EXISTS idx_expenses_user_id_category;
+
 -- => Remove category composite index
 ```
 
@@ -1049,29 +1062,26 @@ A `CHECK` constraint validates column values against a boolean expression at the
 
 ```sql
 -- File: db/migrations/00011_add_check_constraints_to_expenses.sql
-
 -- +goose Up
-ALTER TABLE expenses
-    ADD CONSTRAINT chk_expenses_amount_positive
-        CHECK (amount > 0);
+ALTER TABLE expenses ADD CONSTRAINT chk_expenses_amount_positive CHECK (amount > 0);
+
 -- => Enforces: every expense amount must be positive
 -- => INSERT with amount = -50 raises: ERROR: new row violates check constraint
 -- => UPDATE that sets amount to 0 also raises the error
 -- => Naming: chk_{table}_{rule} distinguishes CHECK constraints
+ALTER TABLE expenses ADD CONSTRAINT chk_expenses_type_valid CHECK (type IN ('EXPENSE', 'INCOME'));
 
-ALTER TABLE expenses
-    ADD CONSTRAINT chk_expenses_type_valid
-        CHECK (type IN ('EXPENSE', 'INCOME'));
 -- => Restricts "type" column to exactly two valid values
 -- => Alternative to ENUM: VARCHAR with CHECK is easier to modify later
 -- => Adding a new valid type only requires: ALTER TABLE expenses DROP CONSTRAINT + ADD CONSTRAINT
-
 -- +goose Down
 ALTER TABLE expenses
-    DROP CONSTRAINT IF EXISTS chk_expenses_amount_positive;
+DROP CONSTRAINT IF EXISTS chk_expenses_amount_positive;
+
 -- => Remove amount check; amounts can be negative again
 ALTER TABLE expenses
-    DROP CONSTRAINT IF EXISTS chk_expenses_type_valid;
+DROP CONSTRAINT IF EXISTS chk_expenses_type_valid;
+
 -- => Remove type check; any string can be stored in type column
 ```
 
@@ -1087,39 +1097,40 @@ A junction table (also called a bridge, associative, or join table) implements a
 
 ```sql
 -- File: db/migrations/00012_create_expense_tags.sql
-
 -- +goose Up
 CREATE TABLE tags (
-    id   UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => UUID primary key for the tag entity
-    name VARCHAR(100) NOT NULL UNIQUE,
-    -- => Tag name must be unique across the system (e.g., 'food', 'transport')
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => UUID primary key for the tag entity
+  name VARCHAR(100) NOT NULL UNIQUE,
+  -- => Tag name must be unique across the system (e.g., 'food', 'transport')
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Tags reference table; tags exist independently of expenses
-
 CREATE TABLE expense_tags (
-    expense_id UUID NOT NULL REFERENCES expenses(id) ON DELETE CASCADE,
-    -- => FK to expenses; ON DELETE CASCADE: removing an expense removes its tags
-    tag_id     UUID NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
-    -- => FK to tags; ON DELETE CASCADE: removing a tag removes its expense associations
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- => When this expense-tag association was created
-    PRIMARY KEY (expense_id, tag_id)
-    -- => Composite primary key prevents duplicate associations
-    -- => Same expense cannot be tagged with same tag twice
+  expense_id UUID NOT NULL REFERENCES expenses (id) ON DELETE CASCADE,
+  -- => FK to expenses; ON DELETE CASCADE: removing an expense removes its tags
+  tag_id UUID NOT NULL REFERENCES tags (id) ON DELETE CASCADE,
+  -- => FK to tags; ON DELETE CASCADE: removing a tag removes its expense associations
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => When this expense-tag association was created
+  PRIMARY KEY (expense_id, tag_id)
+  -- => Composite primary key prevents duplicate associations
+  -- => Same expense cannot be tagged with same tag twice
 );
--- => Junction table implementing many-to-many: one expense has many tags, one tag has many expenses
 
+-- => Junction table implementing many-to-many: one expense has many tags, one tag has many expenses
 CREATE INDEX idx_expense_tags_tag_id ON expense_tags (tag_id);
+
 -- => Index on tag_id accelerates: SELECT * FROM expense_tags WHERE tag_id = $1
 -- => (expense_id, tag_id) PRIMARY KEY already creates an index with expense_id first)
 -- => This index covers tag_id-first lookups which the PK index doesn't
-
 -- +goose Down
 DROP TABLE IF EXISTS expense_tags;
+
 -- => Drop junction table first (has FKs to both tags and expenses)
 DROP TABLE IF EXISTS tags;
+
 -- => Drop tags table after junction table is removed
 ```
 
@@ -1135,37 +1146,36 @@ Consistent timestamp column patterns across all tables enable time-based queries
 
 ```sql
 -- File: db/migrations/00013_create_documents.sql
-
 -- +goose Up
 CREATE TABLE documents (
-    id         UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    title      VARCHAR(255) NOT NULL,
-    body       TEXT         NOT NULL DEFAULT '',
-    -- => TEXT stores unlimited length content; DEFAULT '' avoids NULL body
-
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- => TIMESTAMPTZ: timezone-aware timestamp; stores UTC, displays in local TZ
-    -- => DEFAULT NOW(): auto-populated on INSERT; no application code needed
-    created_by  VARCHAR(255) NOT NULL DEFAULT 'system',
-    -- => Who created this record; 'system' for migrations/seeds, user ID for app
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- => Must be updated by application on every UPDATE (no auto-trigger here)
-    updated_by  VARCHAR(255) NOT NULL DEFAULT 'system',
-    -- => Who last updated this record
-    deleted_at  TIMESTAMPTZ,
-    -- => NULL = not deleted; non-NULL = soft deleted at this timestamp
-    -- => Nullable intentionally: NULL is the common case (not deleted)
-    deleted_by  VARCHAR(255)
-    -- => NULL = not deleted; non-NULL = user ID who deleted this record
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  title VARCHAR(255) NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  -- => TEXT stores unlimited length content; DEFAULT '' avoids NULL body
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => TIMESTAMPTZ: timezone-aware timestamp; stores UTC, displays in local TZ
+  -- => DEFAULT NOW(): auto-populated on INSERT; no application code needed
+  created_by VARCHAR(255) NOT NULL DEFAULT 'system',
+  -- => Who created this record; 'system' for migrations/seeds, user ID for app
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Must be updated by application on every UPDATE (no auto-trigger here)
+  updated_by VARCHAR(255) NOT NULL DEFAULT 'system',
+  -- => Who last updated this record
+  deleted_at TIMESTAMPTZ,
+  -- => NULL = not deleted; non-NULL = soft deleted at this timestamp
+  -- => Nullable intentionally: NULL is the common case (not deleted)
+  deleted_by VARCHAR(255)
+  -- => NULL = not deleted; non-NULL = user ID who deleted this record
 );
--- => Creates documents table with full audit trail and soft delete support
 
+-- => Creates documents table with full audit trail and soft delete support
 CREATE INDEX idx_documents_deleted_at ON documents (deleted_at)
-    WHERE deleted_at IS NULL;
+WHERE
+  deleted_at IS NULL;
+
 -- => Partial index: only indexes non-deleted rows (WHERE deleted_at IS NULL)
 -- => Most queries filter on active (non-deleted) documents
 -- => Partial index is much smaller and faster than a full index on deleted_at
-
 -- +goose Down
 DROP TABLE IF EXISTS documents;
 ```
@@ -1182,36 +1192,33 @@ UUID primary keys are the production standard for distributed systems. This exam
 
 ```sql
 -- File: db/migrations/00014_create_api_keys.sql
-
 -- +goose Up
-
 -- Approach 1: gen_random_uuid() - PostgreSQL 13+ built-in, no extension needed
 CREATE TABLE api_keys (
-    id         UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => gen_random_uuid(): generates v4 (random) UUID
-    -- => Built into PostgreSQL 13+; no CREATE EXTENSION needed
-    -- => Generates: 550e8400-e29b-41d4-a716-446655440000 (example format)
-    user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    -- => FK to users; cascade delete removes API keys when user is deleted
-    key_hash   VARCHAR(512) NOT NULL UNIQUE,
-    -- => Store hash of the API key, never the plaintext key
-    name       VARCHAR(100) NOT NULL,
-    -- => Human-readable key name: 'CI/CD Pipeline', 'Mobile App v2'
-    expires_at TIMESTAMPTZ,
-    -- => NULL = never expires; non-NULL = expires at this time
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => gen_random_uuid(): generates v4 (random) UUID
+  -- => Built into PostgreSQL 13+; no CREATE EXTENSION needed
+  -- => Generates: 550e8400-e29b-41d4-a716-446655440000 (example format)
+  user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- => FK to users; cascade delete removes API keys when user is deleted
+  key_hash VARCHAR(512) NOT NULL UNIQUE,
+  -- => Store hash of the API key, never the plaintext key
+  name VARCHAR(100) NOT NULL,
+  -- => Human-readable key name: 'CI/CD Pipeline', 'Mobile App v2'
+  expires_at TIMESTAMPTZ,
+  -- => NULL = never expires; non-NULL = expires at this time
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
--- => Creates api_keys with PostgreSQL 13+ UUID generation
 
+-- => Creates api_keys with PostgreSQL 13+ UUID generation
 -- Approach 2: uuid-ossp extension (older PostgreSQL compatibility)
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";  -- Run once per database
 -- id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4()
 -- => uuid_generate_v4() requires the uuid-ossp extension
 -- => Use gen_random_uuid() when targeting PostgreSQL 13+ (preferred)
-
 CREATE INDEX idx_api_keys_user_id ON api_keys (user_id);
--- => Accelerates: SELECT * FROM api_keys WHERE user_id = $1
 
+-- => Accelerates: SELECT * FROM api_keys WHERE user_id = $1
 -- +goose Down
 DROP TABLE IF EXISTS api_keys;
 ```
@@ -1228,34 +1235,33 @@ Idempotent migrations can be applied multiple times without error. The `IF NOT E
 
 ```sql
 -- File: db/migrations/00015_create_notifications.sql
-
 -- +goose Up
 CREATE TABLE IF NOT EXISTS notifications (
-    -- => IF NOT EXISTS: migration succeeds even if table already exists
-    -- => Use when: recovering from a partial failure that left the table partially created
-    -- => Normal Goose runs don't need this (goose_db_version tracks completion)
-    -- => But IF NOT EXISTS adds robustness for disaster recovery scenarios
-    id         UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    title      VARCHAR(255) NOT NULL,
-    body       TEXT         NOT NULL,
-    read_at    TIMESTAMPTZ,
-    -- => NULL = unread; non-NULL = read at this timestamp
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  -- => IF NOT EXISTS: migration succeeds even if table already exists
+  -- => Use when: recovering from a partial failure that left the table partially created
+  -- => Normal Goose runs don't need this (goose_db_version tracks completion)
+  -- => But IF NOT EXISTS adds robustness for disaster recovery scenarios
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  body TEXT NOT NULL,
+  read_at TIMESTAMPTZ,
+  -- => NULL = unread; non-NULL = read at this timestamp
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
 
-CREATE INDEX IF NOT EXISTS idx_notifications_user_id
-    ON notifications (user_id);
--- => IF NOT EXISTS: index creation skipped if index already exists
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_notifications_read_at
-    ON notifications (read_at)
-    WHERE read_at IS NULL;
+-- => IF NOT EXISTS: index creation skipped if index already exists
+CREATE INDEX IF NOT EXISTS idx_notifications_read_at ON notifications (read_at)
+WHERE
+  read_at IS NULL;
+
 -- => Partial index on unread notifications only
 -- => IF NOT EXISTS makes this safe to re-run
-
 -- +goose Down
 DROP TABLE IF EXISTS notifications;
+
 -- => IF EXISTS: safe even if table was already removed by prior partial rollback
 ```
 
@@ -1276,28 +1282,27 @@ Dropping a table is a destructive, irreversible operation (without a backup). Th
 -- =>   1. All application code migrated to use refresh_tokens
 -- =>   2. Data migration complete (sessions data no longer needed)
 -- =>   3. Backup taken of sessions table data
-
 -- +goose Up
 -- Step 1: Remove foreign keys referencing this table (if any)
 -- (No FKs to sessions in this example, but check before dropping)
-
 -- Step 2: Drop the table
 DROP TABLE IF EXISTS sessions;
+
 -- => Removes sessions table and ALL its data permanently
 -- => IF EXISTS prevents error if table was already dropped manually
 -- => CASCADE would also drop dependent views/FKs: DROP TABLE IF EXISTS sessions CASCADE
 -- => Do NOT use CASCADE unless you've verified what depends on this table
-
 -- +goose Down
 -- WARNING: Down migration cannot restore dropped data
 -- This recreates the table schema only (data is lost permanently after Up)
 CREATE TABLE sessions (
-    id         UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token_hash VARCHAR(512) NOT NULL UNIQUE,
-    expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  token_hash VARCHAR(512) NOT NULL UNIQUE,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Restores table structure but NOT data
 -- => Down migration is schema-only; data from before the Up is unrecoverable
 ```
@@ -1316,10 +1321,15 @@ Goose creates and manages a `goose_db_version` table to track which migrations h
 -- Goose creates this table automatically on first run
 -- You do NOT write this migration — Goose manages it
 -- Inspect it to understand migration state:
+SELECT
+  version_id,
+  is_applied,
+  tstamp
+FROM
+  goose_db_version
+ORDER BY
+  version_id;
 
-SELECT version_id, is_applied, tstamp
-FROM goose_db_version
-ORDER BY version_id;
 -- => version_id | is_applied | tstamp
 -- => ----------+------------+------------------------------
 -- =>          0 | true       | 2026-03-27 00:00:01.123+07
@@ -1330,20 +1340,29 @@ ORDER BY version_id;
 -- => version_id matches the number prefix in the migration filename
 -- => is_applied=true: migration is currently applied to the schema
 -- => is_applied=false: migration was applied then rolled back (Down was run)
-
 -- Check the current database version (highest applied version)
-SELECT MAX(version_id)
-FROM goose_db_version
-WHERE is_applied = true;
+SELECT
+  MAX(version_id)
+FROM
+  goose_db_version
+WHERE
+  is_applied = true;
+
 -- => Returns 3 (the current schema version)
 -- => This is what "goose version" reads and displays
-
 -- Goose APPENDS rows on rollback (is_applied=false) rather than deleting them
 -- This preserves a complete history of all apply/rollback operations
-SELECT version_id, is_applied, tstamp
-FROM goose_db_version
-WHERE version_id = 3
-ORDER BY tstamp;
+SELECT
+  version_id,
+  is_applied,
+  tstamp
+FROM
+  goose_db_version
+WHERE
+  version_id = 3
+ORDER BY
+  tstamp;
+
 -- => version_id | is_applied | tstamp
 -- => ----------+------------+----------------------------
 -- =>          3 | true       | 2026-03-27 00:01:16+07

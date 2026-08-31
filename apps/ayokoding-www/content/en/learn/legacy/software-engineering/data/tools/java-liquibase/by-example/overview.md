@@ -102,13 +102,13 @@ Included for examples where execution flow, table relationships, or command sequ
 -- => Header declares this file as Liquibase-managed SQL
 -- => changeset id "001-create-products" with author "author" runs exactly once
 -- => dbms:postgresql restricts execution to PostgreSQL only
-
 CREATE TABLE products (
-    id   UUID NOT NULL DEFAULT gen_random_uuid(),
-    -- => gen_random_uuid() generates a v4 UUID; requires pgcrypto or PostgreSQL 13+
-    name VARCHAR(255) NOT NULL
-    -- => NOT NULL enforced at database level; Liquibase does not add application-level validation
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => gen_random_uuid() generates a v4 UUID; requires pgcrypto or PostgreSQL 13+
+  name VARCHAR(255) NOT NULL
+  -- => NOT NULL enforced at database level; Liquibase does not add application-level validation
 );
+
 -- rollback DROP TABLE products;
 -- => rollback block tells Liquibase how to undo this changeset
 -- => executed when running liquibase rollback or rollbackCount

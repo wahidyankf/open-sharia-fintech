@@ -80,11 +80,12 @@ graph LR
 ```sql
 -- => Creates the users table (applied when migrating up)
 CREATE TABLE IF NOT EXISTS users (
-  id      TEXT PRIMARY KEY,            -- => Primary key; TEXT for UUIDs
-  username TEXT NOT NULL UNIQUE,       -- => Unique login handle; NOT NULL enforced
-  email    TEXT NOT NULL UNIQUE,       -- => Unique contact address
-  created_at TEXT NOT NULL             -- => ISO-8601 timestamp stored as text
+  id TEXT PRIMARY KEY, -- => Primary key; TEXT for UUIDs
+  username TEXT NOT NULL UNIQUE, -- => Unique login handle; NOT NULL enforced
+  email TEXT NOT NULL UNIQUE, -- => Unique contact address
+  created_at TEXT NOT NULL -- => ISO-8601 timestamp stored as text
 );
+
 -- => Migratus executes this file in a transaction by default
 ```
 
@@ -93,6 +94,7 @@ CREATE TABLE IF NOT EXISTS users (
 ```sql
 -- => Drops the users table (applied when rolling back)
 DROP TABLE IF EXISTS users;
+
 -- => IF EXISTS prevents error if table was already removed manually
 -- => Always mirror every up.sql change with a matching down.sql
 ```
@@ -428,17 +430,17 @@ The fundamental DDL operation in any migration is `CREATE TABLE`. This example s
 ```sql
 -- File: resources/migrations/001-create-users.up.sql
 -- => Creates the users table with common column patterns
-
 CREATE TABLE IF NOT EXISTS users (
-  id            TEXT PRIMARY KEY,        -- => UUID stored as text; application generates the value
-  username      TEXT NOT NULL UNIQUE,    -- => Login handle; UNIQUE enforces no duplicates at DB level
-  email         TEXT NOT NULL UNIQUE,    -- => Contact address; UNIQUE index created automatically
-  password_hash TEXT NOT NULL,           -- => Bcrypt or Argon2 hash; never store plaintext
-  display_name  TEXT NOT NULL DEFAULT '',-- => Optional display name; empty string default
-  role          TEXT NOT NULL DEFAULT 'USER', -- => Enum-like role; enforced by CHECK (see Example 22)
-  created_at    TEXT NOT NULL,           -- => ISO-8601 timestamp; application sets this
-  updated_at    TEXT NOT NULL            -- => Last modification timestamp
+  id TEXT PRIMARY KEY, -- => UUID stored as text; application generates the value
+  username TEXT NOT NULL UNIQUE, -- => Login handle; UNIQUE enforces no duplicates at DB level
+  email TEXT NOT NULL UNIQUE, -- => Contact address; UNIQUE index created automatically
+  password_hash TEXT NOT NULL, -- => Bcrypt or Argon2 hash; never store plaintext
+  display_name TEXT NOT NULL DEFAULT '', -- => Optional display name; empty string default
+  role TEXT NOT NULL DEFAULT 'USER', -- => Enum-like role; enforced by CHECK (see Example 22)
+  created_at TEXT NOT NULL, -- => ISO-8601 timestamp; application sets this
+  updated_at TEXT NOT NULL -- => Last modification timestamp
 );
+
 -- => IF NOT EXISTS prevents error if migration is re-run manually
 -- => Migratus wraps this in a transaction; error causes rollback
 ```
@@ -446,8 +448,8 @@ CREATE TABLE IF NOT EXISTS users (
 ```sql
 -- File: resources/migrations/001-create-users.down.sql
 -- => Drops the users table, reversing the up migration
-
 DROP TABLE IF EXISTS users;
+
 -- => IF EXISTS prevents error if table was removed manually before rollback
 -- => All rows, indexes, and constraints are dropped with the table
 ```
@@ -465,17 +467,17 @@ DROP TABLE IF EXISTS users;
 ```sql
 -- File: resources/migrations/006-add-users-status.up.sql
 -- => Adds status column to existing users table
-
 ALTER TABLE users
-  ADD COLUMN status TEXT NOT NULL DEFAULT 'ACTIVE';
+ADD COLUMN status TEXT NOT NULL DEFAULT 'ACTIVE';
+
 -- => ADD COLUMN appends the new column to the table
 -- => DEFAULT 'ACTIVE' back-fills existing rows immediately
 -- => NOT NULL is safe here because DEFAULT provides a value for existing rows
 -- => Without DEFAULT, NOT NULL ADD COLUMN fails if table has existing rows
-
 -- Add a second column in the same migration:
 ALTER TABLE users
-  ADD COLUMN failed_login_attempts INTEGER NOT NULL DEFAULT 0;
+ADD COLUMN failed_login_attempts INTEGER NOT NULL DEFAULT 0;
+
 -- => Integer counter; default 0 for all existing users
 -- => Multiple ALTER TABLE statements in one up.sql file are allowed
 ```
@@ -483,10 +485,13 @@ ALTER TABLE users
 ```sql
 -- File: resources/migrations/006-add-users-status.down.sql
 -- => Removes columns added in up migration (in reverse order)
+ALTER TABLE users
+DROP COLUMN IF EXISTS failed_login_attempts;
 
-ALTER TABLE users DROP COLUMN IF EXISTS failed_login_attempts;
 -- => Remove second column first (reverse of up order)
-ALTER TABLE users DROP COLUMN IF EXISTS status;
+ALTER TABLE users
+DROP COLUMN IF EXISTS status;
+
 -- => Remove first column last
 -- => IF EXISTS prevents error if column was already removed manually
 ```
@@ -504,25 +509,23 @@ Indexes improve query performance but do not change the data model. This example
 ```sql
 -- File: resources/migrations/007-add-users-indexes.up.sql
 -- => Adds query performance indexes to the users table
-
 -- Standard index for frequent lookup by email:
-CREATE INDEX IF NOT EXISTS idx_users_email
-  ON users (email);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+
 -- => Speeds up WHERE email = '...' queries
 -- => IF NOT EXISTS prevents error on re-run
 -- => Index name convention: idx_{table}_{column(s)}
-
 -- Partial index for active users only:
-CREATE INDEX IF NOT EXISTS idx_users_active
-  ON users (username)
-  WHERE status = 'ACTIVE';
+CREATE INDEX IF NOT EXISTS idx_users_active ON users (username)
+WHERE
+  status = 'ACTIVE';
+
 -- => Only indexes rows where status = 'ACTIVE'
 -- => Smaller index; faster for queries that always filter by status
 -- => WHERE clause mirrors common application query pattern
-
 -- Composite index for multi-column lookups:
-CREATE INDEX IF NOT EXISTS idx_users_role_status
-  ON users (role, status);
+CREATE INDEX IF NOT EXISTS idx_users_role_status ON users (role, status);
+
 -- => Covers queries filtering on both role AND status
 -- => Column order matters: role is the leading column
 -- => Query must include role to use this index efficiently
@@ -531,10 +534,12 @@ CREATE INDEX IF NOT EXISTS idx_users_role_status
 ```sql
 -- File: resources/migrations/007-add-users-indexes.down.sql
 -- => Drops indexes added in the up migration
-
 DROP INDEX IF EXISTS idx_users_role_status;
+
 DROP INDEX IF EXISTS idx_users_active;
+
 DROP INDEX IF EXISTS idx_users_email;
+
 -- => Indexes are dropped in reverse creation order (good practice)
 -- => IF EXISTS prevents errors if already removed
 ```
@@ -552,19 +557,15 @@ Foreign key constraints enforce referential integrity at the database level. Thi
 ```sql
 -- File: resources/migrations/008-add-expenses-user-fk.up.sql
 -- => Adds foreign key relationship between expenses and users
-
 -- First ensure the expenses table exists (created in an earlier migration):
 ALTER TABLE expenses
-  ADD COLUMN IF NOT EXISTS user_id TEXT NOT NULL DEFAULT '';
+ADD COLUMN IF NOT EXISTS user_id TEXT NOT NULL DEFAULT '';
+
 -- => Add column first if it does not exist
 -- => DEFAULT '' allows back-fill; will be updated to proper values
-
 -- Then add the foreign key constraint:
-ALTER TABLE expenses
-  ADD CONSTRAINT fk_expenses_user
-  FOREIGN KEY (user_id)
-  REFERENCES users (id)
-  ON DELETE CASCADE;
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
 -- => FOREIGN KEY (user_id) references the id column of users table
 -- => ON DELETE CASCADE: deleting a user auto-deletes their expenses
 -- => Constraint name fk_{child_table}_{parent_table} is a clear convention
@@ -574,9 +575,9 @@ ALTER TABLE expenses
 ```sql
 -- File: resources/migrations/008-add-expenses-user-fk.down.sql
 -- => Removes the foreign key constraint (column remains)
-
 ALTER TABLE expenses
-  DROP CONSTRAINT IF EXISTS fk_expenses_user;
+DROP CONSTRAINT IF EXISTS fk_expenses_user;
+
 -- => Removes only the constraint, not the column
 -- => IF EXISTS prevents error if constraint was already removed
 -- => Data in user_id column is preserved
@@ -595,19 +596,16 @@ Unique constraints enforce data integrity by preventing duplicate values. This e
 ```sql
 -- File: resources/migrations/009-add-unique-constraints.up.sql
 -- => Adds unique constraints to enforce data integrity rules
-
 -- Single-column unique constraint:
-ALTER TABLE users
-  ADD CONSTRAINT uq_users_username UNIQUE (username);
+ALTER TABLE users ADD CONSTRAINT uq_users_username UNIQUE (username);
+
 -- => Prevents two users from having the same username
 -- => Constraint name uq_{table}_{column} is self-documenting
 -- => PostgreSQL automatically creates a unique index to enforce this
 -- => Fails if duplicate usernames already exist in the table
-
 -- Composite unique constraint (multi-column):
-ALTER TABLE refresh_tokens
-  ADD CONSTRAINT uq_refresh_tokens_user_hash
-  UNIQUE (user_id, token_hash);
+ALTER TABLE refresh_tokens ADD CONSTRAINT uq_refresh_tokens_user_hash UNIQUE (user_id, token_hash);
+
 -- => Prevents the same user from having duplicate token hashes
 -- => Both columns together must be unique; either alone may repeat
 -- => Useful for junction tables and token management
@@ -616,13 +614,13 @@ ALTER TABLE refresh_tokens
 ```sql
 -- File: resources/migrations/009-add-unique-constraints.down.sql
 -- => Removes unique constraints (preserves data)
-
 ALTER TABLE refresh_tokens
-  DROP CONSTRAINT IF EXISTS uq_refresh_tokens_user_hash;
--- => Removes composite unique constraint
+DROP CONSTRAINT IF EXISTS uq_refresh_tokens_user_hash;
 
+-- => Removes composite unique constraint
 ALTER TABLE users
-  DROP CONSTRAINT IF EXISTS uq_users_username;
+DROP CONSTRAINT IF EXISTS uq_users_username;
+
 -- => Removes single-column unique constraint
 -- => Drops the underlying unique index automatically
 ```
@@ -735,19 +733,17 @@ Adding `NOT NULL` constraints to new columns on existing tables requires providi
 ```sql
 -- File: resources/migrations/010-add-display-name.up.sql
 -- => Adds display_name column with NOT NULL constraint safely
-
 -- CORRECT: NOT NULL with DEFAULT (works on tables with existing rows)
 ALTER TABLE users
-  ADD COLUMN display_name TEXT NOT NULL DEFAULT '';
+ADD COLUMN display_name TEXT NOT NULL DEFAULT '';
+
 -- => DEFAULT '' satisfies NOT NULL for all existing rows immediately
 -- => New rows without explicit display_name also get empty string
 -- => Two-phase approach: add with default, remove default later if desired
-
 -- WRONG (do not do this on a populated table):
 -- ALTER TABLE users ADD COLUMN display_name TEXT NOT NULL;
 -- => ERROR: column "display_name" of relation "users" contains null values
 -- => Fails because existing rows get NULL, violating NOT NULL constraint
-
 -- Optional: Remove the default after backfilling real values
 -- ALTER TABLE users ALTER COLUMN display_name DROP DEFAULT;
 -- => Run this in a LATER migration after application populates all rows
@@ -757,8 +753,9 @@ ALTER TABLE users
 ```sql
 -- File: resources/migrations/010-add-display-name.down.sql
 -- => Removes display_name column
+ALTER TABLE users
+DROP COLUMN IF EXISTS display_name;
 
-ALTER TABLE users DROP COLUMN IF EXISTS display_name;
 -- => Drops column and any associated default constraint
 ```
 
@@ -775,15 +772,14 @@ UUID primary keys avoid sequential ID exposure and support distributed generatio
 ```sql
 -- File: resources/migrations/011-create-orders-uuid.up.sql
 -- => Creates a table using UUID primary keys generated by PostgreSQL
-
 -- Option A: Use gen_random_uuid() (PostgreSQL 13+, no extension needed)
 CREATE TABLE IF NOT EXISTS orders (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
   -- => UUID type; gen_random_uuid() generates v4 UUID automatically
   -- => Application can omit id; database generates it
-  user_id     UUID NOT NULL,             -- => FK to users.id (also UUID)
-  total       NUMERIC(12,2) NOT NULL,    -- => Monetary amount; 12 digits, 2 decimal places
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  user_id UUID NOT NULL, -- => FK to users.id (also UUID)
+  total NUMERIC(12, 2) NOT NULL, -- => Monetary amount; 12 digits, 2 decimal places
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   -- => Timestamp with timezone; NOW() defaults to current time
 );
 
@@ -814,17 +810,16 @@ Timestamp columns record when records were created and modified. This example sh
 ```sql
 -- File: resources/migrations/012-add-timestamps.up.sql
 -- => Adds standard audit timestamp columns to an existing table
-
 ALTER TABLE expenses
-  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  -- => TIMESTAMPTZ stores UTC time with timezone offset
-  -- => DEFAULT NOW() auto-fills on INSERT when application omits the column
-  -- => TIMESTAMPTZ preferred over TIMESTAMP for multi-timezone applications
-  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
-  -- => Applications must explicitly update this on UPDATE operations
-  -- => PostgreSQL does NOT auto-update updated_at (unlike MySQL's ON UPDATE)
-  -- => Use a trigger or application logic to keep updated_at current
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+-- => TIMESTAMPTZ stores UTC time with timezone offset
+-- => DEFAULT NOW() auto-fills on INSERT when application omits the column
+-- => TIMESTAMPTZ preferred over TIMESTAMP for multi-timezone applications
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ();
 
+-- => Applications must explicitly update this on UPDATE operations
+-- => PostgreSQL does NOT auto-update updated_at (unlike MySQL's ON UPDATE)
+-- => Use a trigger or application logic to keep updated_at current
 -- Note: Multiple ADD COLUMN clauses in one ALTER TABLE statement are atomic
 -- => Both columns added in a single DDL transaction
 ```
@@ -832,8 +827,9 @@ ALTER TABLE expenses
 ```sql
 -- File: resources/migrations/012-add-timestamps.down.sql
 ALTER TABLE expenses
-  DROP COLUMN IF EXISTS updated_at,
-  DROP COLUMN IF EXISTS created_at;
+DROP COLUMN IF EXISTS updated_at,
+DROP COLUMN IF EXISTS created_at;
+
 -- => Multiple DROP COLUMN in one statement; atomic operation
 ```
 
@@ -850,15 +846,15 @@ PostgreSQL supports native `ENUM` types, but SQL-string enums (using `TEXT` with
 ```sql
 -- File: resources/migrations/013-create-status-enum.up.sql
 -- => Demonstrates enum-like columns via CHECK constraint (preferred) vs native ENUM
-
 -- Approach A: TEXT with CHECK constraint (migration-friendly)
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS account_status TEXT NOT NULL DEFAULT 'ACTIVE'
-    CHECK (account_status IN ('ACTIVE', 'SUSPENDED', 'DELETED'));
+ADD COLUMN IF NOT EXISTS account_status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (
+  account_status IN ('ACTIVE', 'SUSPENDED', 'DELETED')
+);
+
 -- => CHECK constraint acts as an enum at the database level
 -- => Adding new values = ALTER TABLE users ADD CHECK (... IN (..., 'NEW_VALUE'))
 -- => No type to drop; works across all SQL databases
-
 -- Approach B: Native PostgreSQL ENUM type (avoid in migrated schemas)
 -- CREATE TYPE user_status AS ENUM ('ACTIVE', 'SUSPENDED', 'DELETED');
 -- ALTER TABLE users ADD COLUMN status user_status NOT NULL DEFAULT 'ACTIVE';
@@ -869,7 +865,9 @@ ALTER TABLE users
 
 ```sql
 -- File: resources/migrations/013-create-status-enum.down.sql
-ALTER TABLE users DROP COLUMN IF EXISTS account_status;
+ALTER TABLE users
+DROP COLUMN IF EXISTS account_status;
+
 -- => Drops column and its CHECK constraint together
 ```
 
@@ -912,9 +910,15 @@ ALTER TABLE users
 
 ```sql
 -- File: resources/migrations/014-add-check-constraints.down.sql
-ALTER TABLE users    DROP CONSTRAINT IF EXISTS chk_users_username_length;
-ALTER TABLE expenses DROP CONSTRAINT IF EXISTS chk_expenses_currency_valid;
-ALTER TABLE expenses DROP CONSTRAINT IF EXISTS chk_expenses_amount_positive;
+ALTER TABLE users
+DROP CONSTRAINT IF EXISTS chk_users_username_length;
+
+ALTER TABLE expenses
+DROP CONSTRAINT IF EXISTS chk_expenses_currency_valid;
+
+ALTER TABLE expenses
+DROP CONSTRAINT IF EXISTS chk_expenses_amount_positive;
+
 -- => Dropped in reverse order as a convention (mirrors up migration)
 ```
 
@@ -931,26 +935,22 @@ Composite indexes cover queries that filter or sort on multiple columns simultan
 ```sql
 -- File: resources/migrations/015-add-composite-indexes.up.sql
 -- => Adds composite indexes optimised for common query patterns
-
 -- Composite index for filtering and sorting expenses by user and date:
-CREATE INDEX IF NOT EXISTS idx_expenses_user_date
-  ON expenses (user_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_expenses_user_date ON expenses (user_id, date DESC);
+
 -- => Covers: WHERE user_id = ? ORDER BY date DESC
 -- => Leading column user_id filters first (most selective)
 -- => DESC on date matches common "most recent first" sort
 -- => Index scan is efficient for paginated expense lists per user
-
 -- Composite index for token lookup by user and revocation status:
-CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_revoked
-  ON refresh_tokens (user_id, revoked);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_revoked ON refresh_tokens (user_id, revoked);
+
 -- => Covers: WHERE user_id = ? AND revoked = 0
 -- => Filters active tokens for a specific user efficiently
 -- => Both columns have low cardinality individually; composite gives selectivity
-
 -- Covering index (includes extra column to avoid table lookup):
-CREATE INDEX IF NOT EXISTS idx_users_email_covering
-  ON users (email)
-  INCLUDE (id, display_name);
+CREATE INDEX IF NOT EXISTS idx_users_email_covering ON users (email) INCLUDE (id, display_name);
+
 -- => Index-only scan for: SELECT id, display_name FROM users WHERE email = ?
 -- => INCLUDE columns are stored in the index leaf pages
 -- => Avoids heap table access for these specific queries
@@ -959,7 +959,9 @@ CREATE INDEX IF NOT EXISTS idx_users_email_covering
 ```sql
 -- File: resources/migrations/015-add-composite-indexes.down.sql
 DROP INDEX IF EXISTS idx_users_email_covering;
+
 DROP INDEX IF EXISTS idx_refresh_tokens_user_revoked;
+
 DROP INDEX IF EXISTS idx_expenses_user_date;
 ```
 
@@ -976,27 +978,23 @@ Many-to-many relationships require a junction table (also called a join table or
 ```sql
 -- File: resources/migrations/016-create-user-roles.up.sql
 -- => Creates junction table for many-to-many user-role relationship
-
 CREATE TABLE IF NOT EXISTS user_roles (
-  user_id  TEXT NOT NULL,               -- => FK to users.id
-  role_id  TEXT NOT NULL,               -- => FK to roles.id (roles table created separately)
-  granted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  user_id TEXT NOT NULL, -- => FK to users.id
+  role_id TEXT NOT NULL, -- => FK to roles.id (roles table created separately)
+  granted_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
   -- => When this role was granted; audit trail
-  granted_by TEXT,                      -- => Who granted the role; nullable (system grants)
-
-  PRIMARY KEY (user_id, role_id),       -- => Composite PK prevents duplicate grants
-                                        -- => Same as UNIQUE(user_id, role_id) but also defines PK
-  CONSTRAINT fk_user_roles_user
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+  granted_by TEXT, -- => Who granted the role; nullable (system grants)
+  PRIMARY KEY (user_id, role_id), -- => Composite PK prevents duplicate grants
+  -- => Same as UNIQUE(user_id, role_id) but also defines PK
+  CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
   -- => Deleting a user removes all their role grants
-  CONSTRAINT fk_user_roles_role
-    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE
+  CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE
   -- => Deleting a role removes all user grants for that role
 );
 
 -- Index on role_id for reverse lookup (find all users with a role):
-CREATE INDEX IF NOT EXISTS idx_user_roles_role
-  ON user_roles (role_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_role ON user_roles (role_id);
+
 -- => Covers: SELECT user_id FROM user_roles WHERE role_id = ?
 -- => user_id index covered by PRIMARY KEY; role_id needs explicit index
 ```
@@ -1004,6 +1002,7 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_role
 ```sql
 -- File: resources/migrations/016-create-user-roles.down.sql
 DROP TABLE IF EXISTS user_roles;
+
 -- => Cascade constraints dropped with table
 ```
 
@@ -1020,15 +1019,32 @@ Reference data and initial configuration values can be inserted in migration fil
 ```sql
 -- File: resources/migrations/017-seed-roles.up.sql
 -- => Inserts initial role data required by the application
-
-INSERT INTO roles (id, name, description, created_at) VALUES
-  ('role-admin',   'ADMIN',   'Full system access',      NOW()),
+INSERT INTO
+  roles (id, name, description, created_at)
+VALUES
+  (
+    'role-admin',
+    'ADMIN',
+    'Full system access',
+    NOW ()
+  ),
   -- => Admin role; id is application-generated UUID string
-  ('role-manager', 'MANAGER', 'Team management access',  NOW()),
+  (
+    'role-manager',
+    'MANAGER',
+    'Team management access',
+    NOW ()
+  ),
   -- => Manager role; second row in the same INSERT
-  ('role-user',    'USER',    'Standard user access',    NOW())
+  (
+    'role-user',
+    'USER',
+    'Standard user access',
+    NOW ()
+  )
   -- => Default user role; third row
-ON CONFLICT (id) DO NOTHING;
+  ON CONFLICT (id) DO NOTHING;
+
 -- => ON CONFLICT DO NOTHING makes the INSERT idempotent
 -- => If roles already exist (e.g., migration re-run), skip silently
 -- => Without this, re-running the migration causes PRIMARY KEY violation errors
@@ -1037,8 +1053,10 @@ ON CONFLICT (id) DO NOTHING;
 ```sql
 -- File: resources/migrations/017-seed-roles.down.sql
 -- => Removes seeded roles (only if no user_roles references them)
+DELETE FROM roles
+WHERE
+  id IN ('role-admin', 'role-manager', 'role-user');
 
-DELETE FROM roles WHERE id IN ('role-admin', 'role-manager', 'role-user');
 -- => Explicit ID list ensures only seeded rows are deleted
 -- => Will fail with FK violation if user_roles still references these IDs
 -- => Consider disabling FK checks or clearing user_roles first in a real rollback
@@ -1057,31 +1075,29 @@ A single migration file can contain multiple SQL statements. This is useful for 
 ```sql
 -- File: resources/migrations/018-create-audit-log.up.sql
 -- => Multiple SQL statements; all execute in the same transaction
-
 -- Create the audit log table:
 CREATE TABLE IF NOT EXISTS audit_log (
-  id          TEXT PRIMARY KEY,
-  table_name  TEXT NOT NULL,             -- => Which table was affected
-  operation   TEXT NOT NULL,             -- => 'INSERT', 'UPDATE', or 'DELETE'
-  record_id   TEXT NOT NULL,             -- => ID of the affected record
-  changed_by  TEXT,                      -- => User who made the change; NULL for system ops
-  changed_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  old_values  TEXT,                      -- => JSON of previous values (nullable for INSERT)
-  new_values  TEXT                       -- => JSON of new values (nullable for DELETE)
+  id TEXT PRIMARY KEY,
+  table_name TEXT NOT NULL, -- => Which table was affected
+  operation TEXT NOT NULL, -- => 'INSERT', 'UPDATE', or 'DELETE'
+  record_id TEXT NOT NULL, -- => ID of the affected record
+  changed_by TEXT, -- => User who made the change; NULL for system ops
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  old_values TEXT, -- => JSON of previous values (nullable for INSERT)
+  new_values TEXT -- => JSON of new values (nullable for DELETE)
 );
+
 -- => Statement 1 complete
-
 -- Add index for common lookup patterns:
-CREATE INDEX IF NOT EXISTS idx_audit_log_table_record
-  ON audit_log (table_name, record_id);
--- => Statement 2: covers WHERE table_name = ? AND record_id = ?
+CREATE INDEX IF NOT EXISTS idx_audit_log_table_record ON audit_log (table_name, record_id);
 
-CREATE INDEX IF NOT EXISTS idx_audit_log_changed_by
-  ON audit_log (changed_by)
-  WHERE changed_by IS NOT NULL;
+-- => Statement 2: covers WHERE table_name = ? AND record_id = ?
+CREATE INDEX IF NOT EXISTS idx_audit_log_changed_by ON audit_log (changed_by)
+WHERE
+  changed_by IS NOT NULL;
+
 -- => Statement 3: partial index; only indexed rows where changed_by is set
 -- => Skips NULL rows; useful for user-activity audit queries
-
 -- => All three statements execute atomically in one transaction
 -- => If statement 2 or 3 fails, statement 1 is also rolled back
 ```
@@ -1089,6 +1105,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_changed_by
 ```sql
 -- File: resources/migrations/018-create-audit-log.down.sql
 DROP TABLE IF EXISTS audit_log;
+
 -- => Dropping the table cascades to its indexes automatically
 ```
 
@@ -1105,29 +1122,27 @@ DROP TABLE IF EXISTS audit_log;
 ```sql
 -- File: resources/migrations/019-idempotent-ddl-patterns.up.sql
 -- => Demonstrates IF NOT EXISTS / IF EXISTS guards for safe re-runnable migrations
-
 -- Table creation guard:
-CREATE TABLE IF NOT EXISTS settings (
-  key   TEXT PRIMARY KEY,
-  value TEXT NOT NULL
-);
--- => Creates table only if it does not exist; no error on re-run
+CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 
+-- => Creates table only if it does not exist; no error on re-run
 -- Column addition guard:
 ALTER TABLE settings
-  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW ();
+
 -- => Adds column only if absent; PostgreSQL supports IF NOT EXISTS for ADD COLUMN
 -- => MySQL/SQLite handle this differently; check your database dialect
-
 -- Index creation guard:
 CREATE INDEX IF NOT EXISTS idx_settings_key ON settings (key);
--- => Creates index only if no index with this name exists
 
+-- => Creates index only if no index with this name exists
 -- Sequence guard (PostgreSQL):
-CREATE SEQUENCE IF NOT EXISTS order_seq START WITH 1000;
+CREATE SEQUENCE IF NOT EXISTS order_seq START
+WITH
+  1000;
+
 -- => Creates sequence only if it does not exist
 -- => Useful for custom ID generators
-
 -- Drop guard (down direction):
 -- DROP TABLE IF EXISTS settings;
 -- DROP INDEX IF EXISTS idx_settings_key;
@@ -1148,38 +1163,34 @@ CREATE SEQUENCE IF NOT EXISTS order_seq START WITH 1000;
 ```sql
 -- File: resources/migrations/020-cascade-deletes.up.sql
 -- => Configures cascade delete for parent-child table relationships
-
 -- Refresh tokens cascade with user deletion:
-ALTER TABLE refresh_tokens
-  ADD CONSTRAINT fk_refresh_tokens_user
-  FOREIGN KEY (user_id) REFERENCES users (id)
-  ON DELETE CASCADE;
+ALTER TABLE refresh_tokens ADD CONSTRAINT fk_refresh_tokens_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
 -- => Deleting a user automatically deletes all their refresh tokens
 -- => No orphan tokens remain after account deletion
 -- => Application does not need to explicitly delete tokens before deleting user
-
 -- Expenses cascade with user deletion:
-ALTER TABLE expenses
-  ADD CONSTRAINT fk_expenses_user_cascade
-  FOREIGN KEY (user_id) REFERENCES users (id)
-  ON DELETE CASCADE;
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_user_cascade FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
 -- => Deleting a user automatically deletes all their expenses
 -- => Permanent data loss: cascade is appropriate for owned child data
-
 -- Attachments cascade with expense deletion:
-ALTER TABLE attachments
-  ADD CONSTRAINT fk_attachments_expense
-  FOREIGN KEY (expense_id) REFERENCES expenses (id)
-  ON DELETE CASCADE;
+ALTER TABLE attachments ADD CONSTRAINT fk_attachments_expense FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE;
+
 -- => Multi-level cascade: delete user -> deletes expenses -> deletes attachments
 -- => Cascades chain through the entire ownership hierarchy
 ```
 
 ```sql
 -- File: resources/migrations/020-cascade-deletes.down.sql
-ALTER TABLE attachments  DROP CONSTRAINT IF EXISTS fk_attachments_expense;
-ALTER TABLE expenses     DROP CONSTRAINT IF EXISTS fk_expenses_user_cascade;
-ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
+ALTER TABLE attachments
+DROP CONSTRAINT IF EXISTS fk_attachments_expense;
+
+ALTER TABLE expenses
+DROP CONSTRAINT IF EXISTS fk_expenses_user_cascade;
+
+ALTER TABLE refresh_tokens
+DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
 ```
 
 **Key Takeaway**: Use `ON DELETE CASCADE` for owned child data (tokens, attachments, line items) where the child has no meaning without the parent, and use `ON DELETE RESTRICT` (the default) for shared reference data (categories, tags) where deletion should be blocked until children are handled.
@@ -1196,17 +1207,17 @@ Dropping tables and columns is irreversible in most databases. This example show
 -- File: resources/migrations/021-drop-legacy-columns.up.sql
 -- => Removes columns that are no longer used by the application
 -- => IMPORTANT: Only run AFTER deploying application code that no longer reads these columns
-
 -- Safe column drop (column no longer referenced by any code):
 ALTER TABLE users
-  DROP COLUMN IF EXISTS legacy_session_token,
-  -- => Remove old session token column (replaced by refresh_tokens table)
-  DROP COLUMN IF EXISTS old_avatar_url;
-  -- => Remove old avatar URL (migrated to object storage in migration 015)
-  -- => IF EXISTS prevents error if columns were never added (staging env drift)
+DROP COLUMN IF EXISTS legacy_session_token,
+-- => Remove old session token column (replaced by refresh_tokens table)
+DROP COLUMN IF EXISTS old_avatar_url;
 
+-- => Remove old avatar URL (migrated to object storage in migration 015)
+-- => IF EXISTS prevents error if columns were never added (staging env drift)
 -- Safe table drop:
 DROP TABLE IF EXISTS legacy_user_preferences;
+
 -- => Table replaced by settings table in migration 019
 -- => Verify zero traffic to this table in production before dropping
 -- => Consider: SELECT COUNT(*) FROM legacy_user_preferences; first
@@ -1215,17 +1226,14 @@ DROP TABLE IF EXISTS legacy_user_preferences;
 ```sql
 -- File: resources/migrations/021-drop-legacy-columns.down.sql
 -- => Restore dropped columns (data is lost; this restores structure only)
-
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS old_avatar_url TEXT,
-  -- => Column restored but all data is gone (permanent loss)
-  ADD COLUMN IF NOT EXISTS legacy_session_token TEXT;
-  -- => Down migration can only restore column structure, not data
+ADD COLUMN IF NOT EXISTS old_avatar_url TEXT,
+-- => Column restored but all data is gone (permanent loss)
+ADD COLUMN IF NOT EXISTS legacy_session_token TEXT;
 
-CREATE TABLE IF NOT EXISTS legacy_user_preferences (
-  user_id TEXT PRIMARY KEY,
-  preferences TEXT
-);
+-- => Down migration can only restore column structure, not data
+CREATE TABLE IF NOT EXISTS legacy_user_preferences (user_id TEXT PRIMARY KEY, preferences TEXT);
+
 -- => Table structure restored but data is permanently lost
 -- => This is why drop migrations require careful pre-deployment validation
 ```

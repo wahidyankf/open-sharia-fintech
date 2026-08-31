@@ -195,16 +195,18 @@ graph LR
 
 ```sql
 -- File: db/migrations/00040_add_status_to_orders_phase1.sql
-
 -- +goose Up
 -- => Phase 1: add the column as NULL; no table rewrite, metadata-only change in PG 12+
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS status VARCHAR(50) NULL;
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS status VARCHAR(50) NULL;
+
 -- => NULL: rows inserted before this migration have NULL status; app code must handle NULL
 -- => IF NOT EXISTS: safe to re-run if migration was partially applied
-
 -- +goose Down
 -- => Rollback: remove the column; safe because no NOT NULL constraint exists yet
-ALTER TABLE orders DROP COLUMN IF EXISTS status;
+ALTER TABLE orders
+DROP COLUMN IF EXISTS status;
+
 -- => IF EXISTS: prevents error if phase 1 never completed
 ```
 
@@ -212,33 +214,44 @@ ALTER TABLE orders DROP COLUMN IF EXISTS status;
 
 ```sql
 -- File: db/migrations/00041_add_status_to_orders_phase2.sql
-
 -- +goose Up
 -- +goose NO TRANSACTION
 -- => NO TRANSACTION: batched updates in a loop; each batch is its own transaction
-UPDATE orders SET status = 'active' WHERE status IS NULL;
+UPDATE orders
+SET
+  status = 'active'
+WHERE
+  status IS NULL;
+
 -- => Sets a sensible default for all pre-existing rows
 -- => For tables > 1M rows, replace with a Go migration using batched UPDATEs (see Example 66)
-
 -- +goose Down
 -- => Rollback phase 2: restore NULLs so phase 1 Down can drop the column cleanly
-UPDATE orders SET status = NULL WHERE status = 'active';
+UPDATE orders
+SET
+  status = NULL
+WHERE
+  status = 'active';
 ```
 
 **Phase 3 migration — add NOT NULL constraint:**
 
 ```sql
 -- File: db/migrations/00042_add_status_to_orders_phase3.sql
-
 -- +goose Up
 -- => Phase 3: enforce NOT NULL now that all rows have a value
-ALTER TABLE orders ALTER COLUMN status SET NOT NULL;
+ALTER TABLE orders
+ALTER COLUMN status
+SET
+  NOT NULL;
+
 -- => PostgreSQL validates the constraint by scanning the table; no rewrite needed in PG 11+
 -- => Fast because all rows already have non-NULL values from phase 2
-
 -- +goose Down
 -- => Rollback: remove the constraint so the column becomes nullable again
-ALTER TABLE orders ALTER COLUMN status DROP NOT NULL;
+ALTER TABLE orders
+ALTER COLUMN status
+DROP NOT NULL;
 ```
 
 **Key Takeaway**: Split `NOT NULL` column additions into three migrations — add as nullable, backfill data, then enforce the constraint — to avoid table rewrites and downtime.
@@ -269,15 +282,19 @@ graph LR
 
 ```sql
 -- File: db/migrations/00043_deprecate_legacy_notes_phase1.sql
-
 -- +goose Up
 -- => Phase 1: remove DEFAULT so new rows do not populate this column
 -- => Application must be updated to not SELECT/INSERT this column before phase 2
-ALTER TABLE orders ALTER COLUMN legacy_notes DROP DEFAULT;
--- => After this, app code should treat the column as non-existent
+ALTER TABLE orders
+ALTER COLUMN legacy_notes
+DROP DEFAULT;
 
+-- => After this, app code should treat the column as non-existent
 -- +goose Down
-ALTER TABLE orders ALTER COLUMN legacy_notes SET DEFAULT '';
+ALTER TABLE orders
+ALTER COLUMN legacy_notes
+SET DEFAULT '';
+
 -- => Restores the default; safe rollback if app code change is reverted
 ```
 
@@ -285,15 +302,17 @@ ALTER TABLE orders ALTER COLUMN legacy_notes SET DEFAULT '';
 
 ```sql
 -- File: db/migrations/00044_deprecate_legacy_notes_phase2.sql
-
 -- +goose Up
 -- => Phase 2: safe to drop now that no running application code reads this column
-ALTER TABLE orders DROP COLUMN IF EXISTS legacy_notes;
--- => ACCESS EXCLUSIVE lock is brief; column removal is fast in PostgreSQL
+ALTER TABLE orders
+DROP COLUMN IF EXISTS legacy_notes;
 
+-- => ACCESS EXCLUSIVE lock is brief; column removal is fast in PostgreSQL
 -- +goose Down
 -- => Rollback: re-add the column so old app versions can run again if needed
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS legacy_notes TEXT NULL DEFAULT '';
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS legacy_notes TEXT NULL DEFAULT '';
+
 -- => Cannot restore data; this only restores the schema structure
 ```
 
@@ -309,25 +328,32 @@ PostgreSQL table renames acquire a brief `ACCESS EXCLUSIVE` lock, but applicatio
 
 ```sql
 -- File: db/migrations/00045_rename_accounts_to_wallets.sql
-
 -- +goose Up
 -- +goose NO TRANSACTION
 -- => NO TRANSACTION: two separate DDL steps that each need their own lock state
-
 -- Step 1: rename the table
-ALTER TABLE accounts RENAME TO wallets;
--- => ACCESS EXCLUSIVE lock; completes in milliseconds; old name is now invalid
+ALTER TABLE accounts
+RENAME TO wallets;
 
+-- => ACCESS EXCLUSIVE lock; completes in milliseconds; old name is now invalid
 -- Step 2: create a view with the old name so legacy code keeps working
-CREATE OR REPLACE VIEW accounts AS SELECT * FROM wallets;
+CREATE
+OR REPLACE VIEW accounts AS
+SELECT
+  *
+FROM
+  wallets;
+
 -- => Any SELECT/INSERT/UPDATE against "accounts" now goes through this view
 -- => INSERT and UPDATE on simple views work transparently in PostgreSQL
 -- => Complex views (joins, aggregates) may require INSTEAD OF triggers for writes
-
 -- +goose Down
 -- => Rollback: remove the view and rename back
 DROP VIEW IF EXISTS accounts;
-ALTER TABLE wallets RENAME TO accounts;
+
+ALTER TABLE wallets
+RENAME TO accounts;
+
 -- => Restores original structure; ORDER MATTERS: drop view before renaming
 ```
 
@@ -459,25 +485,24 @@ func downNormalizePhones(_ context.Context, _ *sql.DB) error {
 
 ```sql
 -- File: db/migrations/00047_idx_orders_customer_status.sql
-
 -- +goose Up
 -- +goose NO TRANSACTION
 -- => CRITICAL: CREATE INDEX CONCURRENTLY must run outside a transaction
 -- => Without NO TRANSACTION, Goose wraps this in a transaction and PG returns an error
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_status ON orders (customer_id, status)
+WHERE
+  status IN ('pending', 'processing');
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_status
-    ON orders (customer_id, status)
-    WHERE status IN ('pending', 'processing');
 -- => Partial index: only indexes rows matching the WHERE clause
 -- => Smaller index size; faster writes for rows in other statuses
 -- => CONCURRENTLY: allows reads AND writes during index build (no ACCESS EXCLUSIVE lock)
 -- => Build time: proportional to table size; can take minutes on large tables
 -- => IF NOT EXISTS: idempotent; safe to re-run if migration was interrupted
-
 -- +goose Down
 -- +goose NO TRANSACTION
 -- => DROP INDEX CONCURRENTLY also requires no transaction
 DROP INDEX CONCURRENTLY IF EXISTS idx_orders_customer_status;
+
 -- => CONCURRENTLY: drops without locking the table for writes
 ```
 
@@ -943,14 +968,13 @@ graph LR
 
 ```sql
 -- File: db/migrations/00050_create_regions.sql
-
 -- +goose Up
 -- => Creates the regions lookup table before the Go seeder runs
 CREATE TABLE regions (
-    id   SERIAL       NOT NULL PRIMARY KEY,
-    code VARCHAR(10)  NOT NULL UNIQUE,
-    -- => UNIQUE constraint: prevents duplicate region codes
-    name VARCHAR(255) NOT NULL
+  id SERIAL NOT NULL PRIMARY KEY,
+  code VARCHAR(10) NOT NULL UNIQUE,
+  -- => UNIQUE constraint: prevents duplicate region codes
+  name VARCHAR(255) NOT NULL
 );
 
 -- +goose Down
@@ -1334,19 +1358,19 @@ graph TD
 ```sql
 -- File: db/migrations/00055_add_tier_to_accounts.sql
 -- => Blue-green compatible migration: backward-compatible schema change
-
 -- +goose Up
 -- => Rule 1: new columns must be nullable or have a default
 -- => This allows the old (blue) app to keep INSERTing without supplying the new column
-ALTER TABLE accounts ADD COLUMN IF NOT EXISTS tier VARCHAR(20) NULL DEFAULT 'standard';
+ALTER TABLE accounts
+ADD COLUMN IF NOT EXISTS tier VARCHAR(20) NULL DEFAULT 'standard';
+
 -- => NULL: old app INSERT statements omit this column; DB stores NULL or default
 -- => DEFAULT 'standard': new app reads this column; gets sensible value on old rows
-
 -- => Rule 2: do NOT rename columns or tables in a blue-green migration
 -- => Rule 3: do NOT add NOT NULL constraints without defaults during the switch window
-
 -- +goose Down
-ALTER TABLE accounts DROP COLUMN IF EXISTS tier;
+ALTER TABLE accounts
+DROP COLUMN IF EXISTS tier;
 ```
 
 **Static analysis helper for blue-green compatibility:**
@@ -1398,32 +1422,37 @@ Feature flag migrations add schema that new features need while the feature is s
 -- File: db/migrations/00056_add_feature_recommendations_schema.sql
 -- => Adds schema for recommendations feature behind feature flag
 -- => Schema is deployed before the feature is enabled; app code gates access to it
-
 -- +goose Up
 -- => Create table now; application code reads it only when flag is ON
 CREATE TABLE IF NOT EXISTS recommendations (
-    id          UUID         NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-    -- => gen_random_uuid(): PostgreSQL 13+ built-in; no pgcrypto needed
-    user_id     BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    -- => CASCADE: deleting a user removes their recommendations automatically
-    item_id     BIGINT       NOT NULL,
-    score       NUMERIC(5,4) NOT NULL CHECK (score >= 0 AND score <= 1),
-    -- => NUMERIC(5,4): 5 digits total, 4 decimal places; stores scores 0.0000-1.0000
-    -- => CHECK constraint: enforces valid probability range at DB level
-    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    expires_at  TIMESTAMPTZ  NULL
-    -- => expires_at NULL means recommendation never expires
+  id UUID NOT NULL DEFAULT gen_random_uuid () PRIMARY KEY,
+  -- => gen_random_uuid(): PostgreSQL 13+ built-in; no pgcrypto needed
+  user_id BIGINT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- => CASCADE: deleting a user removes their recommendations automatically
+  item_id BIGINT NOT NULL,
+  score NUMERIC(5, 4) NOT NULL CHECK (
+    score >= 0
+    AND score <= 1
+  ),
+  -- => NUMERIC(5,4): 5 digits total, 4 decimal places; stores scores 0.0000-1.0000
+  -- => CHECK constraint: enforces valid probability range at DB level
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  expires_at TIMESTAMPTZ NULL
+  -- => expires_at NULL means recommendation never expires
 );
 
-CREATE INDEX IF NOT EXISTS idx_recommendations_user_score
-    ON recommendations (user_id, score DESC)
-    WHERE expires_at IS NULL OR expires_at > NOW();
+CREATE INDEX IF NOT EXISTS idx_recommendations_user_score ON recommendations (user_id, score DESC)
+WHERE
+  expires_at IS NULL
+  OR expires_at > NOW ();
+
 -- => Partial index: only non-expired recommendations
 -- => score DESC: supports "top N recommendations for user" queries efficiently
-
 -- +goose Down
-DROP INDEX  IF EXISTS idx_recommendations_user_score;
-DROP TABLE  IF EXISTS recommendations;
+DROP INDEX IF EXISTS idx_recommendations_user_score;
+
+DROP TABLE IF EXISTS recommendations;
+
 -- => Drop index before table: avoids dependency conflicts
 ```
 
@@ -1642,26 +1671,31 @@ Sensitive columns like Social Security numbers or API keys require encryption at
 
 ```sql
 -- File: db/migrations/00060_add_encrypted_ssn.sql
-
 -- +goose Up
 -- => Step 1: enable pgcrypto extension if not already present
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- => pgcrypto provides pgp_sym_encrypt/decrypt and gen_random_bytes
 -- => IF NOT EXISTS: idempotent; safe to re-run on a DB where it is already installed
-
 -- => Step 2: add encrypted column alongside plaintext for migration window
-ALTER TABLE employees ADD COLUMN IF NOT EXISTS ssn_encrypted BYTEA NULL;
+ALTER TABLE employees
+ADD COLUMN IF NOT EXISTS ssn_encrypted BYTEA NULL;
+
 -- => BYTEA: stores raw binary output of pgp_sym_encrypt
 -- => NULL initially: backfill Go migration will populate this from ssn_plaintext
-
 -- => Step 3: add deterministic hash column for equality lookups
-ALTER TABLE employees ADD COLUMN IF NOT EXISTS ssn_hash TEXT NULL;
+ALTER TABLE employees
+ADD COLUMN IF NOT EXISTS ssn_hash TEXT NULL;
+
 -- => ssn_hash = SHA-256(ssn_plaintext); enables "find by SSN" without decrypting
 -- => Cannot index ssn_encrypted directly (different ciphertext each time due to random IV)
-
 -- +goose Down
-ALTER TABLE employees DROP COLUMN IF EXISTS ssn_hash;
-ALTER TABLE employees DROP COLUMN IF EXISTS ssn_encrypted;
+ALTER TABLE employees
+DROP COLUMN IF EXISTS ssn_hash;
+
+ALTER TABLE employees
+DROP COLUMN IF EXISTS ssn_encrypted;
+
 -- => Do NOT drop the pgcrypto extension (other tables may depend on it)
 ```
 
@@ -1838,27 +1872,33 @@ Soft delete preserves rows by marking them as deleted rather than physically rem
 
 ```sql
 -- File: db/migrations/00063_add_soft_delete_to_users.sql
-
 -- +goose Up
 -- => Add soft delete columns to users table
-ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ NULL;
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ NULL;
+
 -- => NULL means the row is active; non-NULL means the row is soft-deleted
 -- => TIMESTAMPTZ: records when deletion occurred with timezone awareness
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS deleted_by TEXT NULL;
 
-ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_by TEXT NULL;
 -- => Who deleted the row; useful for audit and compliance reporting
-
 -- => Partial index: speeds up all queries that exclude soft-deleted rows
-CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_active
-    ON users (email)
-    WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_active ON users (email)
+WHERE
+  deleted_at IS NULL;
+
 -- => Unique constraint only on active rows: allows email reuse after soft delete
 -- => Without WHERE: soft-deleted rows would block re-registration with same email
-
 -- +goose Down
-DROP INDEX  IF EXISTS idx_users_email_active;
-ALTER TABLE users DROP COLUMN IF EXISTS deleted_by;
-ALTER TABLE users DROP COLUMN IF EXISTS deleted_at;
+DROP INDEX IF EXISTS idx_users_email_active;
+
+ALTER TABLE users
+DROP COLUMN IF EXISTS deleted_by;
+
+ALTER TABLE users
+DROP COLUMN IF EXISTS deleted_at;
+
 -- => Drop index before columns: prevents constraint violations during rollback
 ```
 

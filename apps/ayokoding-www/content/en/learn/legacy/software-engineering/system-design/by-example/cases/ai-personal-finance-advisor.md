@@ -1767,12 +1767,18 @@ WHERE user_id = 'uuid' AND date > NOW() - INTERVAL '30 days';
 
 ```sql
 -- Add composite index for common query pattern
-CREATE INDEX idx_transactions_user_date
-ON transactions(user_id, transaction_date DESC);
+CREATE INDEX idx_transactions_user_date ON transactions (user_id, transaction_date DESC);
 
 -- Verify index is used
-EXPLAIN SELECT * FROM transactions
-WHERE user_id = 'uuid' AND transaction_date > '2025-11-01';
+EXPLAIN
+SELECT
+  *
+FROM
+  transactions
+WHERE
+  user_id = 'uuid'
+  AND transaction_date > '2025-11-01';
+
 -- Should show: Index Scan using idx_transactions_user_date
 ```
 

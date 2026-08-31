@@ -117,10 +117,12 @@ Every example follows a **mandatory five-part structure**:
 
 ```sql
 -- V1__create_users.sql
-CREATE TABLE users (          -- => DDL statement: creates "users" table in database
-  id   UUID NOT NULL,         -- => UUID column: primary key (non-nullable)
-  name VARCHAR(100) NOT NULL  -- => VARCHAR column: max 100 chars, required
-);                            -- => Flyway records this file in flyway_schema_history on success
+CREATE TABLE users ( -- => DDL statement: creates "users" table in database
+  id UUID NOT NULL, -- => UUID column: primary key (non-nullable)
+  name VARCHAR(100) NOT NULL -- => VARCHAR column: max 100 chars, required
+);
+
+-- => Flyway records this file in flyway_schema_history on success
 ```
 
 ```kotlin
@@ -252,9 +254,11 @@ Every example uses **educational annotations** to show exactly what happens:
 
 ```sql
 -- V3__add_index.sql
-CREATE INDEX idx_users_email   -- => Creates B-tree index on users.email
-  ON users (email);            -- => Flyway runs this once; records in flyway_schema_history
-                               -- => Speeds up: WHERE email = '...' queries
+CREATE INDEX idx_users_email -- => Creates B-tree index on users.email
+ON users (email);
+
+-- => Flyway runs this once; records in flyway_schema_history
+-- => Speeds up: WHERE email = '...' queries
 ```
 
 ```kotlin

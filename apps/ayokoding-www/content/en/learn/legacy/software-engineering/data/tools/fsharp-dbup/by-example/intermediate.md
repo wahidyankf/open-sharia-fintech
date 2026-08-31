@@ -364,17 +364,21 @@ let engine =
 -- File: always-run/create-or-replace-expense-totals-view.sql
 -- => RunAlways script: re-executed on every deployment to keep view definition current
 -- => No journal entry written; idempotent by design (CREATE OR REPLACE)
-
-CREATE OR REPLACE VIEW expense_totals AS
+CREATE
+OR REPLACE VIEW expense_totals AS
 -- => CREATE OR REPLACE atomically updates view definition without dropping dependent objects
 SELECT
-    user_id,
-    -- => DATE_TRUNC groups timestamps to month boundary: 2026-03-15 becomes 2026-03-01
-    DATE_TRUNC('month', date) AS month,
-    SUM(amount)               AS total_amount,
-    COUNT(*)                  AS transaction_count
-FROM expenses
-GROUP BY user_id, DATE_TRUNC('month', date);
+  user_id,
+  -- => DATE_TRUNC groups timestamps to month boundary: 2026-03-15 becomes 2026-03-01
+  DATE_TRUNC ('month', date) AS month,
+  SUM(amount) AS total_amount,
+  COUNT(*) AS transaction_count
+FROM
+  expenses
+GROUP BY
+  user_id,
+  DATE_TRUNC ('month', date);
+
 -- => View definition updated on every deployment; no migration version bump required
 ```
 
@@ -501,36 +505,46 @@ Data migrations move or transform existing rows as part of schema evolution. The
 -- File: 011-migrate-expense-tags-to-junction-table.sql
 -- => Assumes: new "tags" table and "expense_tags" junction table already created
 -- => Goal: populate junction table from a legacy comma-separated "tags" text column
-
 -- Step 1: Create the normalised tags reference table (idempotent)
 CREATE TABLE IF NOT EXISTS tags (
-    id   SERIAL       PRIMARY KEY,
-    -- => UNIQUE prevents duplicate tag names; index created automatically by UNIQUE
-    name VARCHAR(100) NOT NULL UNIQUE
+  id SERIAL PRIMARY KEY,
+  -- => UNIQUE prevents duplicate tag names; index created automatically by UNIQUE
+  name VARCHAR(100) NOT NULL UNIQUE
 );
+
 -- => After: tags table exists (empty on first run)
-
 -- Step 2: Populate tags from distinct values in the expenses.tags text column
-INSERT INTO tags (name)
-SELECT DISTINCT TRIM(tag)
--- => regexp_split_to_table splits "food,travel" into rows: "food", "travel"
--- => TRIM removes accidental whitespace around commas
-FROM expenses, regexp_split_to_table(expenses.tags, ',') AS tag
--- => Filter: skip rows where tags column is null or empty string
-WHERE expenses.tags IS NOT NULL AND expenses.tags <> ''
--- => ON CONFLICT DO NOTHING: idempotent — re-running script skips existing tag names
-ON CONFLICT (name) DO NOTHING;
--- => After: tags table contains one row per unique tag name extracted from all expenses
+INSERT INTO
+  tags (name)
+SELECT DISTINCT
+  TRIM(tag)
+  -- => regexp_split_to_table splits "food,travel" into rows: "food", "travel"
+  -- => TRIM removes accidental whitespace around commas
+FROM
+  expenses,
+  regexp_split_to_table (expenses.tags, ',') AS tag
+  -- => Filter: skip rows where tags column is null or empty string
+WHERE
+  expenses.tags IS NOT NULL
+  AND expenses.tags <> ''
+  -- => ON CONFLICT DO NOTHING: idempotent — re-running script skips existing tag names
+  ON CONFLICT (name) DO NOTHING;
 
+-- => After: tags table contains one row per unique tag name extracted from all expenses
 -- Step 3: Populate junction table linking expenses to their normalised tag ids
-INSERT INTO expense_tags (expense_id, tag_id)
-SELECT e.id, t.id
-FROM expenses e
-JOIN tags t
-    -- => Match normalised tag name to the tags table
-    ON t.name = ANY(string_to_array(e.tags, ','))
--- => ON CONFLICT DO NOTHING: idempotent guard for reruns
-ON CONFLICT (expense_id, tag_id) DO NOTHING;
+INSERT INTO
+  expense_tags (expense_id, tag_id)
+SELECT
+  e.id,
+  t.id
+FROM
+  expenses e
+  JOIN tags t
+  -- => Match normalised tag name to the tags table
+  ON t.name = ANY (string_to_array (e.tags, ','))
+  -- => ON CONFLICT DO NOTHING: idempotent guard for reruns
+  ON CONFLICT (expense_id, tag_id) DO NOTHING;
+
 -- => After: expense_tags junction table fully populated from legacy data
 ```
 
@@ -548,29 +562,31 @@ Seed data (lookup tables, default configuration, reference currency codes) is in
 -- File: seed/001-insert-currency-codes.sql
 -- => Seed data: ISO 4217 currency codes for the expenses module
 -- => ON CONFLICT DO NOTHING makes this script idempotent across all environments
-
 CREATE TABLE IF NOT EXISTS currencies (
-    -- => code is the natural primary key for ISO 4217 (USD, EUR, IDR, etc.)
-    code           CHAR(3)      PRIMARY KEY,
-    name           VARCHAR(100) NOT NULL,
-    -- => decimal_places is 0 for JPY, 2 for USD, 3 for KWD
-    decimal_places INT          NOT NULL DEFAULT 2
+  -- => code is the natural primary key for ISO 4217 (USD, EUR, IDR, etc.)
+  code CHAR(3) PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  -- => decimal_places is 0 for JPY, 2 for USD, 3 for KWD
+  decimal_places INT NOT NULL DEFAULT 2
 );
--- => Table created if not exists; existing table and data are untouched
 
-INSERT INTO currencies (code, name, decimal_places) VALUES
-    -- => Most common currencies first; complete ISO 4217 list omitted for brevity
-    ('USD', 'US Dollar',         2),
-    ('EUR', 'Euro',              2),
-    ('GBP', 'British Pound',     2),
-    ('IDR', 'Indonesian Rupiah', 0),
-    ('JPY', 'Japanese Yen',      0),
-    ('SGD', 'Singapore Dollar',  2),
-    ('MYR', 'Malaysian Ringgit', 2),
-    ('SAR', 'Saudi Riyal',       2)
--- => ON CONFLICT (code) DO NOTHING: if row with same code exists, skip silently
--- => Prevents duplicate key errors when script runs on a database with existing seed data
-ON CONFLICT (code) DO NOTHING;
+-- => Table created if not exists; existing table and data are untouched
+INSERT INTO
+  currencies (code, name, decimal_places)
+VALUES
+  -- => Most common currencies first; complete ISO 4217 list omitted for brevity
+  ('USD', 'US Dollar', 2),
+  ('EUR', 'Euro', 2),
+  ('GBP', 'British Pound', 2),
+  ('IDR', 'Indonesian Rupiah', 0),
+  ('JPY', 'Japanese Yen', 0),
+  ('SGD', 'Singapore Dollar', 2),
+  ('MYR', 'Malaysian Ringgit', 2),
+  ('SAR', 'Saudi Riyal', 2)
+  -- => ON CONFLICT (code) DO NOTHING: if row with same code exists, skip silently
+  -- => Prevents duplicate key errors when script runs on a database with existing seed data
+  ON CONFLICT (code) DO NOTHING;
+
 -- => After: currencies table contains at least these 8 rows; may contain more from prior seeds
 ```
 
@@ -588,24 +604,20 @@ ON CONFLICT (code) DO NOTHING;
 -- File: 012-add-cascade-foreign-key.sql
 -- => Adds ON DELETE CASCADE and ON UPDATE CASCADE to attachments.expense_id foreign key
 -- => Safe migration: drop old constraint, add new one with cascade behaviour
-
 -- Remove the existing non-cascading foreign key
 ALTER TABLE attachments
-    DROP CONSTRAINT IF EXISTS attachments_expense_id_fkey;
--- => IF NOT EXISTS prevents error if constraint was already dropped in a prior run
+DROP CONSTRAINT IF EXISTS attachments_expense_id_fkey;
 
+-- => IF NOT EXISTS prevents error if constraint was already dropped in a prior run
 -- Re-add with both cascade behaviours
-ALTER TABLE attachments
-    ADD CONSTRAINT attachments_expense_id_fkey
-        FOREIGN KEY (expense_id)
-        REFERENCES expenses (id)
-        -- => ON DELETE CASCADE: deleting an expense automatically deletes its attachments
-        ON DELETE CASCADE
-        -- => ON UPDATE CASCADE: if expense id changes, attachment's expense_id updates too
-        ON UPDATE CASCADE;
+ALTER TABLE attachments ADD CONSTRAINT attachments_expense_id_fkey FOREIGN KEY (expense_id) REFERENCES expenses (id)
+-- => ON DELETE CASCADE: deleting an expense automatically deletes its attachments
+ON DELETE CASCADE
+-- => ON UPDATE CASCADE: if expense id changes, attachment's expense_id updates too
+ON UPDATE CASCADE;
+
 -- => After: attachments.expense_id references expenses.id with full cascade semantics
 -- => Attempting to insert an attachment with a non-existent expense_id still raises FK violation
-
 -- Verify constraint exists after migration (informational; not executed by DbUp)
 -- SELECT conname, confdeltype, confupdtype
 -- FROM pg_constraint WHERE conname = 'attachments_expense_id_fkey';
@@ -626,22 +638,22 @@ A composite primary key enforces uniqueness over multiple columns, modelling rel
 -- File: 013-create-user-settings.sql
 -- => Per-user settings table: uniqueness is the (user_id, setting_key) combination
 -- => No surrogate UUID primary key needed; the composite is the natural key
-
 CREATE TABLE user_settings (
-    user_id     UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    -- => setting_key is a namespaced dotted string: "notifications.email.enabled"
-    setting_key VARCHAR(255) NOT NULL,
-    -- => value stored as TEXT; application parses to typed value (bool, int, JSON)
-    value       TEXT,
-    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    -- => Composite PRIMARY KEY: combination of user_id + setting_key must be unique
-    -- => Prevents duplicate settings rows for the same user and key
-    CONSTRAINT pk_user_settings PRIMARY KEY (user_id, setting_key)
+  user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- => setting_key is a namespaced dotted string: "notifications.email.enabled"
+  setting_key VARCHAR(255) NOT NULL,
+  -- => value stored as TEXT; application parses to typed value (bool, int, JSON)
+  value TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Composite PRIMARY KEY: combination of user_id + setting_key must be unique
+  -- => Prevents duplicate settings rows for the same user and key
+  CONSTRAINT pk_user_settings PRIMARY KEY (user_id, setting_key)
 );
--- => After: user_settings table with composite PK enforcing per-user key uniqueness
 
+-- => After: user_settings table with composite PK enforcing per-user key uniqueness
 -- Index on user_id alone for "get all settings for user X" queries
 CREATE INDEX ix_user_settings_user_id ON user_settings (user_id);
+
 -- => The composite PK creates an index on (user_id, setting_key)
 -- => This additional index on (user_id) only speeds up full-user-settings fetches
 -- => Composite PK index already covers queries filtering by both columns
@@ -660,28 +672,28 @@ A partial index covers only the rows that satisfy a `WHERE` clause. It is smalle
 ```sql
 -- File: 014-add-partial-indexes.sql
 -- => Partial indexes on expenses and users for common filtered queries
-
 -- Index only active (non-deleted) expenses per user
-CREATE INDEX IF NOT EXISTS ix_expenses_active_user
-    ON expenses (user_id, date DESC)
-    -- => WHERE clause: only rows with deleted_at IS NULL are indexed
-    -- => Index is much smaller than a full (user_id, date) index on large tables
-    WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS ix_expenses_active_user ON expenses (user_id, date DESC)
+-- => WHERE clause: only rows with deleted_at IS NULL are indexed
+-- => Index is much smaller than a full (user_id, date) index on large tables
+WHERE
+  deleted_at IS NULL;
+
 -- => After: queries with WHERE deleted_at IS NULL can use this index efficiently
 -- => Example: SELECT * FROM expenses WHERE user_id = $1 AND deleted_at IS NULL ORDER BY date DESC
-
 -- Index only locked-out users (failed_login_attempts >= 5)
-CREATE INDEX IF NOT EXISTS ix_users_locked_out
-    ON users (failed_login_attempts)
-    -- => Only rows with >= 5 failed attempts are indexed; typically a tiny fraction of users
-    WHERE failed_login_attempts >= 5;
--- => After: admin query "find all locked-out users" uses this tiny index instead of full scan
+CREATE INDEX IF NOT EXISTS ix_users_locked_out ON users (failed_login_attempts)
+-- => Only rows with >= 5 failed attempts are indexed; typically a tiny fraction of users
+WHERE
+  failed_login_attempts >= 5;
 
+-- => After: admin query "find all locked-out users" uses this tiny index instead of full scan
 -- Unique partial index: enforce uniqueness only for active rows
-CREATE UNIQUE INDEX IF NOT EXISTS ix_users_active_email
-    ON users (email)
-    -- => Multiple soft-deleted users can share the same email; only active users must be unique
-    WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS ix_users_active_email ON users (email)
+-- => Multiple soft-deleted users can share the same email; only active users must be unique
+WHERE
+  deleted_at IS NULL;
+
 -- => After: INSERT of duplicate email with deleted_at IS NULL fails; reuse of deleted email allowed
 ```
 
@@ -753,30 +765,33 @@ A view is a named SQL query stored in the database. Views simplify complex joins
 -- File: always-run/001-create-expense-summary-view.sql
 -- => RunAlways script; CREATE OR REPLACE updates view definition on every deployment
 -- => View joins expenses and currencies to enrich expense rows with currency metadata
-
-CREATE OR REPLACE VIEW expense_summary AS
+CREATE
+OR REPLACE VIEW expense_summary AS
 SELECT
-    e.id,
-    e.user_id,
-    e.amount,
-    e.currency,
-    -- => c.name and c.decimal_places joined from currencies reference table
-    c.name             AS currency_name,
-    c.decimal_places,
-    e.category,
-    e.description,
-    e.date,
-    e.type,
-    -- => Computed column: amount formatted with correct decimal places using ROUND
-    ROUND(e.amount, c.decimal_places) AS formatted_amount,
-    e.created_at,
-    e.updated_at,
-    e.deleted_at
-FROM expenses e
--- => LEFT JOIN: expenses without a matching currency row still appear (with NULL currency columns)
-LEFT JOIN currencies c ON c.code = e.currency
--- => Filter: view shows only non-deleted expenses by default
-WHERE e.deleted_at IS NULL;
+  e.id,
+  e.user_id,
+  e.amount,
+  e.currency,
+  -- => c.name and c.decimal_places joined from currencies reference table
+  c.name AS currency_name,
+  c.decimal_places,
+  e.category,
+  e.description,
+  e.date,
+  e.type,
+  -- => Computed column: amount formatted with correct decimal places using ROUND
+  ROUND(e.amount, c.decimal_places) AS formatted_amount,
+  e.created_at,
+  e.updated_at,
+  e.deleted_at
+FROM
+  expenses e
+  -- => LEFT JOIN: expenses without a matching currency row still appear (with NULL currency columns)
+  LEFT JOIN currencies c ON c.code = e.currency
+  -- => Filter: view shows only non-deleted expenses by default
+WHERE
+  e.deleted_at IS NULL;
+
 -- => After: SELECT * FROM expense_summary returns enriched, non-deleted expense rows
 -- => Application queries expense_summary instead of expenses to avoid join duplication
 ```
@@ -795,35 +810,40 @@ A materialized view stores query results as a physical table. Queries against it
 -- File: always-run/002-create-monthly-summary-matview.sql
 -- => Materialized view: precomputed monthly expense totals per user
 -- => Much faster than re-running the aggregation query on every report request
-
 DROP MATERIALIZED VIEW IF EXISTS monthly_expense_summary;
+
 -- => Drop-then-recreate is the safest pattern for always-run materialized view scripts
 -- => PostgreSQL does not support CREATE OR REPLACE for materialized views
-
 CREATE MATERIALIZED VIEW monthly_expense_summary AS
 SELECT
-    user_id,
-    -- => DATE_TRUNC('month', date) truncates date to first day of month: 2026-03-15 -> 2026-03-01
-    DATE_TRUNC('month', date)  AS month,
-    currency,
-    SUM(amount)                AS total_amount,
-    COUNT(*)                   AS transaction_count,
-    -- => MIN/MAX give the date range of expenses in the period
-    MIN(date)                  AS earliest_date,
-    MAX(date)                  AS latest_date
-FROM expenses
--- => Aggregate only non-deleted expenses
-WHERE deleted_at IS NULL
-GROUP BY user_id, DATE_TRUNC('month', date), currency
--- => ORDER BY improves sequential scan performance for time-ordered report queries
-ORDER BY user_id, month DESC;
+  user_id,
+  -- => DATE_TRUNC('month', date) truncates date to first day of month: 2026-03-15 -> 2026-03-01
+  DATE_TRUNC ('month', date) AS month,
+  currency,
+  SUM(amount) AS total_amount,
+  COUNT(*) AS transaction_count,
+  -- => MIN/MAX give the date range of expenses in the period
+  MIN(date) AS earliest_date,
+  MAX(date) AS latest_date
+FROM
+  expenses
+  -- => Aggregate only non-deleted expenses
+WHERE
+  deleted_at IS NULL
+GROUP BY
+  user_id,
+  DATE_TRUNC ('month', date),
+  currency
+  -- => ORDER BY improves sequential scan performance for time-ordered report queries
+ORDER BY
+  user_id,
+  month DESC;
+
 -- => After: materialized view contains one row per (user_id, month, currency) combination
-
 -- Create index on the materialized view for fast user lookups
-CREATE INDEX ix_monthly_expense_summary_user_month
-    ON monthly_expense_summary (user_id, month DESC);
--- => Index on the matview itself; queries filtering by user_id and month use B-tree
+CREATE INDEX ix_monthly_expense_summary_user_month ON monthly_expense_summary (user_id, month DESC);
 
+-- => Index on the matview itself; queries filtering by user_id and month use B-tree
 -- Refresh command (run from application code or cron job):
 -- REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_expense_summary;
 -- => CONCURRENTLY allows reads during refresh; requires a unique index on the matview
@@ -1258,27 +1278,23 @@ GIN (Generalised Inverted Index) indexes on `JSONB` columns enable fast key exis
 ```sql
 -- File: 021-add-gin-index-metadata.sql
 -- => Adds GIN index on expenses.metadata JSONB column for fast containment queries
-
 -- GIN index on the entire JSONB document
-CREATE INDEX IF NOT EXISTS ix_expenses_metadata_gin
-    ON expenses USING GIN (metadata);
+CREATE INDEX IF NOT EXISTS ix_expenses_metadata_gin ON expenses USING GIN (metadata);
+
 -- => GIN index covers all keys in the JSONB document
 -- => Supports: @> (containment), ? (key exists), ?| (any key), ?& (all keys) operators
 -- => After: WHERE metadata @> '{"source":"api"}' uses the GIN index
-
 -- Alternative: jsonb_path_ops operator class (smaller index, fewer operators)
 -- CREATE INDEX IF NOT EXISTS ix_expenses_metadata_path
 --     ON expenses USING GIN (metadata jsonb_path_ops);
 -- => jsonb_path_ops: smaller GIN index that supports only @> (not ? or ?|)
 -- => Choose jsonb_path_ops when only containment queries are needed
-
 -- Targeted index on a specific JSONB key (when one key dominates queries)
-CREATE INDEX IF NOT EXISTS ix_expenses_metadata_source
-    ON expenses ((metadata->>'source'));
+CREATE INDEX IF NOT EXISTS ix_expenses_metadata_source ON expenses ((metadata - > > 'source'));
+
 -- => (metadata->>'source') extracts the 'source' key as text for a B-tree expression index
 -- => More selective than GIN for single-key equality queries
 -- => Smaller than full GIN index; faster for the targeted query pattern
-
 -- Example queries and which index they use (informational):
 -- ix_expenses_metadata_gin:    WHERE metadata @> '{"source":"api","version":2}'
 -- ix_expenses_metadata_source: WHERE metadata->>'source' = 'api'
@@ -1299,49 +1315,54 @@ Table partitioning splits a large table's data across multiple physical child ta
 -- File: 022-partition-expenses-by-year.sql
 -- => Demonstrates the migration pattern for creating a partitioned expenses table
 -- => Production migration would also include data movement from the original table
-
 -- Step 1: Create the partitioned parent table
 CREATE TABLE expenses_partitioned (
-    id          UUID          NOT NULL DEFAULT gen_random_uuid(),
-    user_id     UUID          NOT NULL,
-    amount      DECIMAL(19,4) NOT NULL,
-    currency    VARCHAR(10)   NOT NULL,
-    category    VARCHAR(100)  NOT NULL,
-    description VARCHAR       NOT NULL,
-    -- => date is the partition key; range partitioning splits by year
-    date        DATE          NOT NULL,
-    type        VARCHAR(20)   NOT NULL,
-    created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
--- => PARTITION BY RANGE: data routed to partitions based on date value ranges
-) PARTITION BY RANGE (date);
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL,
+  amount DECIMAL(19, 4) NOT NULL,
+  currency VARCHAR(10) NOT NULL,
+  category VARCHAR(100) NOT NULL,
+  description VARCHAR NOT NULL,
+  -- => date is the partition key; range partitioning splits by year
+  date DATE NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => PARTITION BY RANGE: data routed to partitions based on date value ranges
+)
+PARTITION BY
+  RANGE (date);
+
 -- => After: partitioned parent table exists but has no storage; child partitions hold data
-
 -- Step 2: Create year partitions (add more as years pass)
-CREATE TABLE expenses_2024
-    PARTITION OF expenses_partitioned
-    -- => FOR VALUES FROM ... TO ...: date >= '2024-01-01' AND date < '2025-01-01'
-    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE expenses_2024 PARTITION OF expenses_partitioned
+-- => FOR VALUES FROM ... TO ...: date >= '2024-01-01' AND date < '2025-01-01'
+FOR
+VALUES
+FROM
+  ('2024-01-01') TO ('2025-01-01');
+
 -- => 2024 partition created; holds all expenses with date in calendar year 2024
+CREATE TABLE expenses_2025 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2025-01-01') TO ('2026-01-01');
 
-CREATE TABLE expenses_2025
-    PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
 -- => 2025 partition holds calendar year 2025 data
+CREATE TABLE expenses_2026 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2026-01-01') TO ('2027-01-01');
 
-CREATE TABLE expenses_2026
-    PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
 -- => 2026 partition for current year data
-
 -- Step 3: Create default partition for rows outside defined ranges
-CREATE TABLE expenses_other
-    PARTITION OF expenses_partitioned DEFAULT;
+CREATE TABLE expenses_other PARTITION OF expenses_partitioned DEFAULT;
+
 -- => Default partition: catches rows where date < 2024-01-01 or >= 2027-01-01
 -- => Without default partition: INSERT outside defined ranges fails with error
-
 -- Indexes on partitions are inherited from parent table index definitions
 CREATE INDEX ON expenses_partitioned (user_id, date DESC);
+
 -- => PostgreSQL automatically creates this index on all existing and future partitions
 -- => Queries with WHERE user_id = $1 AND date BETWEEN $2 AND $3 use partition pruning + index
 ```

@@ -108,9 +108,8 @@ Migratus wraps each SQL migration in a transaction by default. You can override 
 -- => Disables auto-transaction for this file only
 -- => Required because CREATE INDEX CONCURRENTLY cannot run inside a transaction
 -- => PostgreSQL raises: ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_name ON products (name);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_name
-  ON products (name);
 -- => CONCURRENTLY builds index without holding a full table lock
 -- => Other writes continue during index creation (long-running DDL safe for production)
 -- => IF NOT EXISTS prevents error on re-run
@@ -122,6 +121,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_name
 -- migratus-no-transaction
 -- => Also disable transaction in the down file for the same reason
 DROP INDEX CONCURRENTLY IF EXISTS idx_products_name;
+
 -- => CONCURRENTLY drops index without blocking reads or writes
 -- => Matches the non-transactional up migration symmetrically
 ```
@@ -323,23 +323,28 @@ Data migrations copy and transform existing rows into a new table structure. Com
 -- resources/migrations/008-normalise-user-emails.up.sql
 -- => Data migration: populate new email_addresses table from users.email column
 -- => Runs inside a transaction; either all rows migrate or none do
-
 CREATE TABLE IF NOT EXISTS email_addresses (
-  id      BIGSERIAL PRIMARY KEY,         -- => Auto-incrementing surrogate key
-  user_id TEXT      NOT NULL,            -- => FK referencing users(id)
-  email   TEXT      NOT NULL,            -- => Extracted from users.email
-  type    TEXT      NOT NULL DEFAULT 'primary', -- => All migrated emails are primary
-  FOREIGN KEY (user_id) REFERENCES users (id)  -- => Enforce referential integrity
+  id BIGSERIAL PRIMARY KEY, -- => Auto-incrementing surrogate key
+  user_id TEXT NOT NULL, -- => FK referencing users(id)
+  email TEXT NOT NULL, -- => Extracted from users.email
+  type TEXT NOT NULL DEFAULT 'primary', -- => All migrated emails are primary
+  FOREIGN KEY (user_id) REFERENCES users (id) -- => Enforce referential integrity
 );
--- => Creates destination table before inserting
 
-INSERT INTO email_addresses (user_id, email, type)
-SELECT id,
-       LOWER(TRIM(email)),              -- => Normalise: lowercase and strip whitespace
-       'primary'
-FROM   users
-WHERE  email IS NOT NULL               -- => Skip users with no email stored
-  AND  TRIM(email) <> '';              -- => Skip blank-string emails
+-- => Creates destination table before inserting
+INSERT INTO
+  email_addresses (user_id, email, type)
+SELECT
+  id,
+  LOWER(TRIM(email)), -- => Normalise: lowercase and strip whitespace
+  'primary'
+FROM
+  users
+WHERE
+  email IS NOT NULL -- => Skip users with no email stored
+  AND TRIM(email) <> '';
+
+-- => Skip blank-string emails
 -- => INSERT...SELECT is atomic: all or nothing inside the wrapping transaction
 -- => LOWER(TRIM(...)) normalises inconsistent email casing from legacy data
 ```
@@ -347,6 +352,7 @@ WHERE  email IS NOT NULL               -- => Skip users with no email stored
 ```sql
 -- resources/migrations/008-normalise-user-emails.down.sql
 DROP TABLE IF EXISTS email_addresses;
+
 -- => Drops the table and all migrated data
 -- => Original users.email column is untouched; data is recoverable
 ```
@@ -366,23 +372,26 @@ Seed migrations insert reference data (lookup tables, default configuration, ini
 -- => Seed migration: insert ISO 4217 currency codes required by the application
 -- => INSERT ... ON CONFLICT DO NOTHING makes this idempotent
 -- => Safe to re-run if migration tracking table is reset during disaster recovery
-
-INSERT INTO currencies (code, name, symbol)
+INSERT INTO
+  currencies (code, name, symbol)
 VALUES
-  ('USD', 'United States Dollar', '$'),  -- => ISO 4217 code, human name, display symbol
-  ('EUR', 'Euro',                 '€'),
-  ('GBP', 'Pound Sterling',       '£'),
-  ('IDR', 'Indonesian Rupiah',    'Rp'),
-  ('MYR', 'Malaysian Ringgit',    'RM')
-ON CONFLICT (code) DO NOTHING;           -- => Skip if currency already exists
-                                         -- => Prevents unique constraint violation on re-run
-                                         -- => Requires UNIQUE constraint on currencies(code)
+  ('USD', 'United States Dollar', '$'), -- => ISO 4217 code, human name, display symbol
+  ('EUR', 'Euro', '€'),
+  ('GBP', 'Pound Sterling', '£'),
+  ('IDR', 'Indonesian Rupiah', 'Rp'),
+  ('MYR', 'Malaysian Ringgit', 'RM') ON CONFLICT (code) DO NOTHING;
+
+-- => Skip if currency already exists
+-- => Prevents unique constraint violation on re-run
+-- => Requires UNIQUE constraint on currencies(code)
 ```
 
 ```sql
 -- resources/migrations/009-seed-currencies.down.sql
 DELETE FROM currencies
-WHERE code IN ('USD', 'EUR', 'GBP', 'IDR', 'MYR');
+WHERE
+  code IN ('USD', 'EUR', 'GBP', 'IDR', 'MYR');
+
 -- => Targeted DELETE removes only the rows this migration inserted
 -- => Does not delete currencies added by later migrations or application code
 ```
@@ -400,26 +409,24 @@ WHERE code IN ('USD', 'EUR', 'GBP', 'IDR', 'MYR');
 ```sql
 -- resources/migrations/010-add-order-items.up.sql
 -- => Creates order_items table with cascading FK to orders
-
 CREATE TABLE IF NOT EXISTS orders (
-  id         TEXT PRIMARY KEY,           -- => UUID stored as TEXT; application generates
-  total      NUMERIC(12, 2) NOT NULL,   -- => Fixed precision for monetary amounts
+  id TEXT PRIMARY KEY, -- => UUID stored as TEXT; application generates
+  total NUMERIC(12, 2) NOT NULL, -- => Fixed precision for monetary amounts
   created_at TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
-  id         BIGSERIAL PRIMARY KEY,      -- => Surrogate integer key for items
-  order_id   TEXT NOT NULL,              -- => FK references orders(id)
+  id BIGSERIAL PRIMARY KEY, -- => Surrogate integer key for items
+  order_id TEXT NOT NULL, -- => FK references orders(id)
   product_id TEXT NOT NULL,
-  quantity   INTEGER NOT NULL CHECK (quantity > 0), -- => Inline CHECK constraint
+  quantity INTEGER NOT NULL CHECK (quantity > 0), -- => Inline CHECK constraint
   unit_price NUMERIC(12, 2) NOT NULL,
-
-  FOREIGN KEY (order_id) REFERENCES orders (id)
-    ON UPDATE CASCADE                    -- => If orders.id changes, order_items.order_id updates automatically
-    ON DELETE CASCADE                    -- => If order deleted, all its items are deleted
-    DEFERRABLE INITIALLY DEFERRED       -- => FK check deferred to end of transaction
-                                         -- => Allows inserting items before the order row in same tx
+  FOREIGN KEY (order_id) REFERENCES orders (id) ON UPDATE CASCADE -- => If orders.id changes, order_items.order_id updates automatically
+  ON DELETE CASCADE -- => If order deleted, all its items are deleted
+  DEFERRABLE INITIALLY DEFERRED -- => FK check deferred to end of transaction
+  -- => Allows inserting items before the order row in same tx
 );
+
 -- => DEFERRABLE INITIALLY DEFERRED is a PostgreSQL extension for flexible insert ordering
 ```
 
@@ -437,25 +444,24 @@ Composite primary keys use multiple columns together as the unique identifier. T
 -- resources/migrations/011-create-user-roles.up.sql
 -- => Creates user_roles junction table with composite PK
 -- => A user can have multiple roles; a role can belong to many users
-
 CREATE TABLE IF NOT EXISTS user_roles (
-  user_id    TEXT NOT NULL,              -- => FK to users(id)
-  role_id    BIGINT NOT NULL,            -- => FK to roles(id)
-  granted_at TEXT NOT NULL,             -- => When this role was assigned
-  granted_by TEXT,                       -- => Who assigned it (nullable: may be system-assigned)
-
-  PRIMARY KEY (user_id, role_id),       -- => Composite PK: pair is unique, no surrogate key needed
-                                         -- => Automatically creates a composite index
+  user_id TEXT NOT NULL, -- => FK to users(id)
+  role_id BIGINT NOT NULL, -- => FK to roles(id)
+  granted_at TEXT NOT NULL, -- => When this role was assigned
+  granted_by TEXT, -- => Who assigned it (nullable: may be system-assigned)
+  PRIMARY KEY (user_id, role_id), -- => Composite PK: pair is unique, no surrogate key needed
+  -- => Automatically creates a composite index
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
   -- => Removing a user removes all their role assignments
   FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE
   -- => Removing a role removes all user assignments for that role
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_roles_role_id
-  ON user_roles (role_id);              -- => Index on role_id for queries filtering by role
-                                         -- => The composite PK already indexes (user_id, role_id)
-                                         -- => This index supports role_id-first lookups efficiently
+CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
+
+-- => Index on role_id for queries filtering by role
+-- => The composite PK already indexes (user_id, role_id)
+-- => This index supports role_id-first lookups efficiently
 ```
 
 ```sql
@@ -477,17 +483,17 @@ Partial indexes index only rows matching a `WHERE` predicate. They are smaller, 
 -- resources/migrations/012-add-active-user-index.up.sql
 -- => Partial index: index only active users (status = 'active')
 -- => Most queries filter on active users; indexing inactive users wastes space
+CREATE INDEX IF NOT EXISTS idx_users_active_email ON users (email)
+WHERE
+  status = 'active';
 
-CREATE INDEX IF NOT EXISTS idx_users_active_email
-  ON users (email)
-  WHERE status = 'active';
 -- => Index size: proportional to number of active users, not total users
 -- => Query planner uses this index for: SELECT * FROM users WHERE status='active' AND email=?
 -- => The WHERE condition in the query must match the partial index predicate exactly
+CREATE INDEX IF NOT EXISTS idx_expenses_pending ON expenses (user_id, created_at DESC)
+WHERE
+  status = 'pending';
 
-CREATE INDEX IF NOT EXISTS idx_expenses_pending
-  ON expenses (user_id, created_at DESC)
-  WHERE status = 'pending';
 -- => Multi-column partial index for pending expenses ordered by creation date
 -- => Supports: SELECT * FROM expenses WHERE user_id=? AND status='pending' ORDER BY created_at DESC
 -- => LIMIT queries benefit most: index already sorted, planner stops at LIMIT rows
@@ -496,6 +502,7 @@ CREATE INDEX IF NOT EXISTS idx_expenses_pending
 ```sql
 -- resources/migrations/012-add-active-user-index.down.sql
 DROP INDEX IF EXISTS idx_users_active_email;
+
 DROP INDEX IF EXISTS idx_expenses_pending;
 ```
 
@@ -512,29 +519,34 @@ PostgreSQL's `tsvector` type and GIN indexes enable efficient full-text search w
 ```sql
 -- resources/migrations/013-add-fts-to-products.up.sql
 -- => Full-text search: add tsvector column and GIN index to products table
-
 ALTER TABLE products
-  ADD COLUMN IF NOT EXISTS search_vector tsvector;
+ADD COLUMN IF NOT EXISTS search_vector tsvector;
+
 -- => tsvector stores pre-processed lexemes (stemmed tokens) for full-text search
 -- => Generated from text columns; must be updated when source columns change
-
 UPDATE products
-SET search_vector =
-  to_tsvector('english',               -- => 'english' stemmer: "running" -> "run"
-    COALESCE(name, '') || ' ' ||        -- => Concatenate name field (handle nulls)
-    COALESCE(description, ''));         -- => Include description field
+SET
+  search_vector = to_tsvector (
+    'english', -- => 'english' stemmer: "running" -> "run"
+    COALESCE(name, '') || ' ' || -- => Concatenate name field (handle nulls)
+    COALESCE(description, '')
+  );
+
+-- => Include description field
 -- => Populates existing rows; new rows require trigger or application-level update
 -- => to_tsvector normalises text: strips punctuation, applies stemming, removes stop words
+CREATE INDEX IF NOT EXISTS idx_products_fts ON products USING GIN (search_vector);
 
-CREATE INDEX IF NOT EXISTS idx_products_fts
-  ON products USING GIN (search_vector); -- => GIN index required for tsvector queries
-                                          -- => GIN: Generalised Inverted Index; maps lexemes to row IDs
+-- => GIN index required for tsvector queries
+-- => GIN: Generalised Inverted Index; maps lexemes to row IDs
 ```
 
 ```sql
 -- resources/migrations/013-add-fts-to-products.down.sql
 DROP INDEX IF EXISTS idx_products_fts;
-ALTER TABLE products DROP COLUMN IF EXISTS search_vector;
+
+ALTER TABLE products
+DROP COLUMN IF EXISTS search_vector;
 ```
 
 **Key Takeaway**: Add a `tsvector` column populated by `to_tsvector` and a GIN index to enable `WHERE search_vector @@ to_tsquery(?)` full-text queries without changing your schema's logical structure.
@@ -663,7 +675,9 @@ CREATE TRIGGER expenses_audit_update
 ```sql
 -- resources/migrations/016-add-audit-trigger.down.sql
 DROP TRIGGER IF EXISTS expenses_audit_update ON expenses;
-DROP FUNCTION IF EXISTS log_expense_update();
+
+DROP FUNCTION IF EXISTS log_expense_update ();
+
 DROP TABLE IF EXISTS expense_audit_log;
 ```
 
@@ -714,7 +728,8 @@ $$;
 
 ```sql
 -- resources/migrations/017-add-transfer-procedure.down.sql
-DROP PROCEDURE IF EXISTS transfer_expense_category(TEXT, TEXT, TEXT, NUMERIC);
+DROP PROCEDURE IF EXISTS transfer_expense_category (TEXT, TEXT, TEXT, NUMERIC);
+
 -- => Must specify parameter types to uniquely identify overloaded procedures
 ```
 
@@ -948,7 +963,9 @@ WHERE metadata IS NULL;
 ```sql
 -- resources/migrations/020-add-metadata-jsonb.down.sql
 DROP INDEX IF EXISTS idx_expenses_metadata_gin;
-ALTER TABLE expenses DROP COLUMN IF EXISTS metadata;
+
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS metadata;
 ```
 
 **Key Takeaway**: Use `JSONB` over `JSON` for new columns because it supports GIN indexing and efficient containment/existence operators; add a GIN index immediately to enable `@>` and `?` queries without sequential scans.
@@ -988,7 +1005,9 @@ CREATE INDEX IF NOT EXISTS idx_expenses_tags_gin
 ```sql
 -- resources/migrations/021-add-tags-array.down.sql
 DROP INDEX IF EXISTS idx_expenses_tags_gin;
-ALTER TABLE expenses DROP COLUMN IF EXISTS tags;
+
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS tags;
 ```
 
 **Key Takeaway**: PostgreSQL array columns with GIN indexes support containment (`@>`), overlap (`&&`), and membership (`= ANY(...)`) operators efficiently, eliminating junction tables for simple tag or label associations.
@@ -1004,24 +1023,21 @@ GIN (Generalised Inverted Index) indexes map individual JSONB keys and values to
 ```sql
 -- resources/migrations/022-add-advanced-jsonb-indexes.up.sql
 -- => Multiple GIN index strategies for JSONB query patterns
-
 -- Strategy 1: Default GIN (jsonb_ops) - most common
-CREATE INDEX IF NOT EXISTS idx_products_attrs_gin
-  ON products USING GIN (attributes);
+CREATE INDEX IF NOT EXISTS idx_products_attrs_gin ON products USING GIN (attributes);
+
 -- => jsonb_ops operator class (default for JSONB GIN)
 -- => Supports: @> (contains), @? (path exists), @@ (jsonpath match)
 -- => Does NOT support: > < = comparisons on values
-
 -- Strategy 2: jsonb_path_ops - faster containment queries, smaller index
-CREATE INDEX IF NOT EXISTS idx_products_attrs_path_gin
-  ON products USING GIN (attributes jsonb_path_ops);
+CREATE INDEX IF NOT EXISTS idx_products_attrs_path_gin ON products USING GIN (attributes jsonb_path_ops);
+
 -- => jsonb_path_ops only supports @> operator
 -- => 20-40% smaller index; faster for pure containment queries
 -- => Use when you only ever query with @>
-
 -- Strategy 3: Expression index on JSONB key extraction
-CREATE INDEX IF NOT EXISTS idx_products_category
-  ON products ((attributes->>'category'));
+CREATE INDEX IF NOT EXISTS idx_products_category ON products ((attributes - > > 'category'));
+
 -- => attributes->>'category' extracts category as TEXT
 -- => B-tree index on extracted value; supports =, <, >, BETWEEN
 -- => Useful when queries always filter on a specific known key
@@ -1031,7 +1047,9 @@ CREATE INDEX IF NOT EXISTS idx_products_category
 ```sql
 -- resources/migrations/022-add-advanced-jsonb-indexes.down.sql
 DROP INDEX IF EXISTS idx_products_attrs_gin;
+
 DROP INDEX IF EXISTS idx_products_attrs_path_gin;
+
 DROP INDEX IF EXISTS idx_products_category;
 ```
 
@@ -1048,44 +1066,50 @@ Table partitioning splits a large table into smaller physical partitions managed
 ```sql
 -- resources/migrations/023-partition-expenses-by-year.up.sql
 -- => Range partition expenses by year; each year is a separate physical table
-
 -- Step 1: Create the partitioned parent table
 CREATE TABLE IF NOT EXISTS expenses_partitioned (
-  id          TEXT NOT NULL,
-  user_id     TEXT NOT NULL,
-  amount      NUMERIC(12,2) NOT NULL,
-  date        DATE NOT NULL,            -- => Partition key must be NOT NULL
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-) PARTITION BY RANGE (date);            -- => Range partitioning on date column
-                                         -- => Rows routed to partition by date value
+  id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  amount NUMERIC(12, 2) NOT NULL,
+  date DATE NOT NULL, -- => Partition key must be NOT NULL
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+)
+PARTITION BY
+  RANGE (date);
 
+-- => Range partitioning on date column
+-- => Rows routed to partition by date value
 -- Step 2: Create year partitions
-CREATE TABLE IF NOT EXISTS expenses_2024
-  PARTITION OF expenses_partitioned
-  FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE IF NOT EXISTS expenses_2024 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2024-01-01') TO ('2025-01-01');
+
 -- => Partition covers: 2024-01-01 <= date < 2025-01-01 (upper bound exclusive)
+CREATE TABLE IF NOT EXISTS expenses_2025 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2025-01-01') TO ('2026-01-01');
 
-CREATE TABLE IF NOT EXISTS expenses_2025
-  PARTITION OF expenses_partitioned
-  FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
 -- => Each partition is a real table; can have its own indexes
-
 -- Step 3: Default partition catches rows outside defined ranges
-CREATE TABLE IF NOT EXISTS expenses_default
-  PARTITION OF expenses_partitioned DEFAULT;
--- => Without DEFAULT, inserting a 2026 date raises: no partition found
+CREATE TABLE IF NOT EXISTS expenses_default PARTITION OF expenses_partitioned DEFAULT;
 
+-- => Without DEFAULT, inserting a 2026 date raises: no partition found
 -- Step 4: Add primary key (must include partition key)
-ALTER TABLE expenses_partitioned
-  ADD CONSTRAINT expenses_part_pkey PRIMARY KEY (id, date);
+ALTER TABLE expenses_partitioned ADD CONSTRAINT expenses_part_pkey PRIMARY KEY (id, date);
+
 -- => PostgreSQL requires partition key in PK for partitioned tables
 ```
 
 ```sql
 -- resources/migrations/023-partition-expenses-by-year.down.sql
 DROP TABLE IF EXISTS expenses_default;
+
 DROP TABLE IF EXISTS expenses_2025;
+
 DROP TABLE IF EXISTS expenses_2024;
+
 DROP TABLE IF EXISTS expenses_partitioned;
 ```
 
@@ -1124,8 +1148,11 @@ ALTER TABLE expenses
 
 ```sql
 -- resources/migrations/024-add-generated-columns.down.sql
-ALTER TABLE expenses DROP COLUMN IF EXISTS amount_display;
-ALTER TABLE expenses DROP COLUMN IF EXISTS amount_in_cents;
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS amount_display;
+
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS amount_in_cents;
 ```
 
 **Key Takeaway**: Generated columns eliminate the dual-write problem where applications must update both the source value and its computed derivative; the database keeps them in sync unconditionally.

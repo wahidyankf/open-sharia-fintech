@@ -14,7 +14,7 @@ triaged across all four repo tracks' Phases 0-5 (`ose-public` PR #139, `ose-prim
   same file. This exact defect was named-and-deferred as "routing only, not a finding" in cycle 1's
   own posted review and survived a second full fixer cycle before finally being caught and fixed in
   cycle 3 — three dogfood cycles to fully converge on one bulk terminology change.
-- **Observation**: `pr-review-fixer`'s Fix Path had no instruction to grep the *old* term repo-wide
+- **Observation**: `pr-review-fixer`'s Fix Path had no instruction to grep the _old_ term repo-wide
   before replying `Fixed`; a fix scoped to only the finding's cited file/lines reliably misses a
   second instance the citing specialist did not happen to read in full.
 - **Why it might generalize**: any future terminology or count bump (discipline count, agent count,

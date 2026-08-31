@@ -282,7 +282,12 @@ Output Vector:
 Traditional databases find exact matches:
 
 ```sql
-SELECT * FROM documents WHERE title = 'Q4 Report';
+SELECT
+  *
+FROM
+  documents
+WHERE
+  title = 'Q4 Report';
 ```
 
 Vector databases find **similar** content:

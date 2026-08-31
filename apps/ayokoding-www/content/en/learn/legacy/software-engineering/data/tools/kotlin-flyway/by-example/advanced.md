@@ -206,9 +206,10 @@ graph LR
 -- => Phase 1: adding a nullable column requires only a brief ACCESS EXCLUSIVE lock
 -- => On PostgreSQL 11+ with a constant DEFAULT, the lock is near-instant
 -- => Application code deployed in phase 1 must treat NULL status as "pending"
+ALTER TABLE orders -- => Orders table may be large; lock duration matters
+ADD COLUMN IF NOT EXISTS status TEXT;
 
-ALTER TABLE orders                          -- => Orders table may be large; lock duration matters
-  ADD COLUMN IF NOT EXISTS status TEXT;     -- => nullable = no DEFAULT constraint written per-row
+-- => nullable = no DEFAULT constraint written per-row
 -- => PostgreSQL adds the column to the catalog only; no row rewrite occurs
 -- => IF NOT EXISTS makes this idempotent — safe to re-run on failed deployments
 ```
@@ -252,9 +253,12 @@ END $$;
 -- File: V12__add_status_not_null_constraint.sql
 -- => Phase 3: PostgreSQL 12+ validates NOT NULL without full table scan when column has no NULLs
 -- => This ALTER acquires ACCESS EXCLUSIVE lock briefly to update catalog metadata
-
 ALTER TABLE orders
-  ALTER COLUMN status SET NOT NULL;   -- => safe: all rows now have non-NULL status from V11
+ALTER COLUMN status
+SET
+  NOT NULL;
+
+-- => safe: all rows now have non-NULL status from V11
 -- => If any NULL rows remain, this statement fails — protecting data integrity
 -- => Application can now rely on status being non-null without defensive NULL checks
 ```
@@ -306,9 +310,10 @@ graph TD
 -- File: V21__drop_legacy_notes_column.sql
 -- => Execute ONLY after the new application version is fully deployed everywhere
 -- => Running this while old app instances are live causes "column does not exist" errors
-
 ALTER TABLE orders
-  DROP COLUMN IF EXISTS legacy_notes;   -- => removes column from catalog and frees storage
+DROP COLUMN IF EXISTS legacy_notes;
+
+-- => removes column from catalog and frees storage
 -- => IF EXISTS: idempotent — migration safe to re-run if it failed mid-way
 -- => PostgreSQL marks the column as dropped immediately; storage reclaimed by VACUUM later
 -- => All old values in legacy_notes are permanently deleted; ensure backups exist first
@@ -329,28 +334,38 @@ PostgreSQL has no lock-free table rename. The safe pattern uses a view to bridge
 -- => Step 1: create the new table with the correct name
 -- => Step 2: create a view under the old name for backward compatibility
 -- => Step 3 (future migration): drop the view after code is updated
-
 -- Step 1: create the correctly-named table with same schema
-CREATE TABLE billing_documents (                -- => new canonical name for the relation
-    id          SERIAL          PRIMARY KEY,    -- => preserved: same PK definition
-    customer_id INT             NOT NULL,       -- => preserved: same FK reference
-    amount      DECIMAL(12,2)   NOT NULL,       -- => preserved: financial precision
-    issued_at   TIMESTAMPTZ     NOT NULL        -- => preserved: timezone-aware timestamp
-                DEFAULT NOW()                   -- => preserved: server-side default
+CREATE TABLE billing_documents ( -- => new canonical name for the relation
+  id SERIAL PRIMARY KEY, -- => preserved: same PK definition
+  customer_id INT NOT NULL, -- => preserved: same FK reference
+  amount DECIMAL(12, 2) NOT NULL, -- => preserved: financial precision
+  issued_at TIMESTAMPTZ NOT NULL -- => preserved: timezone-aware timestamp
+  DEFAULT NOW () -- => preserved: server-side default
 );
+
 -- => billing_documents is empty; data migration in next step
-
 -- Step 2: migrate data from old table (run once; may need batching for large tables)
-INSERT INTO billing_documents
-    SELECT id, customer_id, amount, issued_at
-    FROM invoices;
+INSERT INTO
+  billing_documents
+SELECT
+  id,
+  customer_id,
+  amount,
+  issued_at
+FROM
+  invoices;
+
 -- => copies all rows; if invoices is huge, use batched copy pattern from Example 66
-
 -- Step 3: create a view under the old name so old code still works
-CREATE OR REPLACE VIEW invoices AS
-    SELECT * FROM billing_documents;    -- => old app code querying "invoices" now hits the view
--- => view is read-write-transparent for simple SELECT/INSERT/UPDATE/DELETE if no joins
+CREATE
+OR REPLACE VIEW invoices AS
+SELECT
+  *
+FROM
+  billing_documents;
 
+-- => old app code querying "invoices" now hits the view
+-- => view is read-write-transparent for simple SELECT/INSERT/UPDATE/DELETE if no joins
 -- Step 4 (separate future migration V31): drop the old table and view
 -- DROP VIEW IF EXISTS invoices;
 -- DROP TABLE IF EXISTS invoices_old;
@@ -424,22 +439,24 @@ ALTER TABLE transactions
 -- => CONCURRENTLY builds the index in the background while reads/writes continue
 -- => REQUIRES: this migration must NOT run inside a transaction
 -- => Flyway workaround: set mixed=true and use a DO block, or disable transaction
-
 -- IMPORTANT: add to Flyway config or annotation:
 -- flyway.mixed=true  (allows DDL and non-transactional statements in same migration)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_id ON orders (customer_id);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_id
-  ON orders (customer_id);
 -- => CONCURRENTLY: table remains fully readable and writable during index build
 -- => IF NOT EXISTS: idempotent — safe if migration is re-run after partial failure
 -- => Build takes longer than standard CREATE INDEX but causes zero query blocking
 -- => Index is usable immediately after the statement completes
-
 -- Verify index was created
-SELECT indexname, indexdef
-FROM pg_indexes
-WHERE tablename = 'orders'
+SELECT
+  indexname,
+  indexdef
+FROM
+  pg_indexes
+WHERE
+  tablename = 'orders'
   AND indexname = 'idx_orders_customer_id';
+
 -- => indexname: idx_orders_customer_id
 -- => indexdef: CREATE INDEX idx_orders_customer_id ON public.orders USING btree (customer_id)
 ```
@@ -475,7 +492,8 @@ graph LR
 -- File: V55__add_display_name_column.sql
 -- => Adds display_name as nullable; new rows get NULL until app writes it
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS display_name TEXT;
+ADD COLUMN IF NOT EXISTS display_name TEXT;
+
 -- => nullable: no per-row rewrite; metadata-only change in PostgreSQL 11+
 ```
 
@@ -485,20 +503,26 @@ ALTER TABLE users
 -- File: V56__backfill_display_name.sql
 -- => Derives display_name from existing first_name and last_name columns
 -- => CONCAT_WS skips NULL parts; handles users with only one name stored
-
 UPDATE users
-  SET display_name = CONCAT_WS(' ', first_name, last_name)
-  WHERE display_name IS NULL              -- => only touch rows not yet backfilled
-    AND (first_name IS NOT NULL           -- => at least one name component must exist
-      OR last_name IS NOT NULL);
+SET
+  display_name = CONCAT_WS (' ', first_name, last_name)
+WHERE
+  display_name IS NULL -- => only touch rows not yet backfilled
+  AND (
+    first_name IS NOT NULL -- => at least one name component must exist
+    OR last_name IS NOT NULL
+  );
+
 -- => CONCAT_WS(' ', 'Alice', 'Smith')  => 'Alice Smith'
 -- => CONCAT_WS(' ', NULL, 'Smith')     => 'Smith'   (NULL parts skipped)
 -- => CONCAT_WS(' ', 'Alice', NULL)     => 'Alice'   (NULL parts skipped)
-
 UPDATE users
-  SET display_name = email                -- => fall back to email as display name
-  WHERE display_name IS NULL
-    AND email IS NOT NULL;
+SET
+  display_name = email -- => fall back to email as display name
+WHERE
+  display_name IS NULL
+  AND email IS NOT NULL;
+
 -- => covers users with no first_name or last_name stored
 ```
 
@@ -508,7 +532,10 @@ UPDATE users
 -- File: V57__display_name_not_null.sql
 -- => Safe only after V56 ensures no NULL values remain
 ALTER TABLE users
-  ALTER COLUMN display_name SET NOT NULL;
+ALTER COLUMN display_name
+SET
+  NOT NULL;
+
 -- => PostgreSQL 12+ validates this near-instantly when no NULL rows exist
 -- => Application can now skip defensive NULL checks on display_name
 ```
@@ -711,19 +738,17 @@ graph TD
 -- File: V65__add_payment_method_column_blue_green_safe.sql
 -- => Must be backward-compatible: blue app must still work AFTER this migration runs
 -- => Blue app does not know about payment_method; it must not crash on its presence
-
 -- Safe: adding a nullable column with a default
 -- => Blue app ignores the new column in its SELECT/INSERT (it does not name it)
 -- => Green app writes payment_method; blue app leaves it NULL
 ALTER TABLE transactions
-  ADD COLUMN IF NOT EXISTS payment_method TEXT DEFAULT 'CARD';
+ADD COLUMN IF NOT EXISTS payment_method TEXT DEFAULT 'CARD';
+
 -- => DEFAULT 'CARD' is stored as column default; no row rewrite in PostgreSQL 11+
 -- => Blue SELECT * queries return the new column but blue code ignores the extra field
 -- => Blue INSERT queries omit payment_method; PostgreSQL fills in the DEFAULT
-
 -- NOT safe for blue-green: dropping a column blue app still reads
 -- DROP COLUMN legacy_status  -- => breaks blue app immediately; never do this during cutover window
-
 -- NOT safe for blue-green: renaming a column blue app references
 -- ALTER TABLE transactions RENAME COLUMN amount TO total_amount  -- => breaks blue app
 ```
@@ -743,33 +768,38 @@ Feature flags let you deploy database changes ahead of the feature launch. The s
 -- => Creates tables for the new subscription feature
 -- => Feature is disabled by default; application reads the feature_flags table
 -- => Schema exists in production before the feature is enabled; no rush migrations on launch day
-
 -- The new feature's tables
 CREATE TABLE IF NOT EXISTS subscription_plans (
-    id          SERIAL          PRIMARY KEY,    -- => unique plan identifier
-    plan_name   VARCHAR(100)    NOT NULL,       -- => e.g., 'BASIC', 'PRO', 'ENTERPRISE'
-    price_cents INT             NOT NULL,       -- => store monetary values as integers (avoid float)
-    billing_cycle VARCHAR(20)   NOT NULL        -- => 'MONTHLY' | 'ANNUAL'
-                DEFAULT 'MONTHLY',
-    is_active   BOOLEAN         NOT NULL DEFAULT TRUE
-    -- => soft-disable plans without deleting them
+  id SERIAL PRIMARY KEY, -- => unique plan identifier
+  plan_name VARCHAR(100) NOT NULL, -- => e.g., 'BASIC', 'PRO', 'ENTERPRISE'
+  price_cents INT NOT NULL, -- => store monetary values as integers (avoid float)
+  billing_cycle VARCHAR(20) NOT NULL -- => 'MONTHLY' | 'ANNUAL'
+  DEFAULT 'MONTHLY',
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
+  -- => soft-disable plans without deleting them
 );
 
 CREATE TABLE IF NOT EXISTS user_subscriptions (
-    id              SERIAL          PRIMARY KEY,
-    user_id         INT             NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    -- => cascade: deleting a user also deletes their subscriptions
-    plan_id         INT             NOT NULL REFERENCES subscription_plans(id),
-    started_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
-    -- => TIMESTAMPTZ stores UTC; application converts to local for display
-    expires_at      TIMESTAMPTZ,                -- => NULL = active; non-NULL = expiry date
-    cancelled_at    TIMESTAMPTZ                 -- => NULL = not cancelled
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- => cascade: deleting a user also deletes their subscriptions
+  plan_id INT NOT NULL REFERENCES subscription_plans (id),
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => TIMESTAMPTZ stores UTC; application converts to local for display
+  expires_at TIMESTAMPTZ, -- => NULL = active; non-NULL = expiry date
+  cancelled_at TIMESTAMPTZ -- => NULL = not cancelled
 );
 
 -- Feature flag record controlling visibility (application reads this at startup)
-INSERT INTO feature_flags (flag_name, is_enabled, description)
-  VALUES ('subscription_feature', FALSE, 'Subscription plans and billing UI')
-  ON CONFLICT (flag_name) DO NOTHING;
+INSERT INTO
+  feature_flags (flag_name, is_enabled, description)
+VALUES
+  (
+    'subscription_feature',
+    FALSE,
+    'Subscription plans and billing UI'
+  ) ON CONFLICT (flag_name) DO NOTHING;
+
 -- => ON CONFLICT DO NOTHING: idempotent — migration safe to re-run
 -- => Application checks: SELECT is_enabled FROM feature_flags WHERE flag_name = 'subscription_feature'
 -- => is_enabled = FALSE: application hides subscription UI; tables exist but are not used
@@ -898,32 +928,33 @@ Encrypting sensitive columns at the database level using PostgreSQL's `pgcrypto`
 -- => Enables pgcrypto extension and adds an encrypted SSN column
 -- => pgcrypto provides pgp_sym_encrypt/pgp_sym_decrypt for symmetric encryption
 -- => Key management: the encryption key lives in application config, NOT in the database
-
 -- Step 1: enable pgcrypto (requires superuser; run via migration_user with SUPERUSER or via DBA)
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
--- => pgcrypto provides: pgp_sym_encrypt, pgp_sym_decrypt, gen_salt, crypt, digest
 
+-- => pgcrypto provides: pgp_sym_encrypt, pgp_sym_decrypt, gen_salt, crypt, digest
 -- Step 2: add encrypted column (bytea stores binary ciphertext)
 ALTER TABLE customers
-  ADD COLUMN IF NOT EXISTS ssn_encrypted BYTEA;
--- => BYTEA stores arbitrary binary data; pgp_sym_encrypt returns BYTEA
+ADD COLUMN IF NOT EXISTS ssn_encrypted BYTEA;
 
+-- => BYTEA stores arbitrary binary data; pgp_sym_encrypt returns BYTEA
 -- Step 3: backfill encrypted values from plaintext column (if migrating existing data)
 -- WARNING: this reads the plaintext ssn column; ensure connection is TLS-only
 UPDATE customers
-  SET ssn_encrypted = pgp_sym_encrypt(
-      ssn,                                -- => plaintext source column
-      current_setting('app.encryption_key') -- => key from PostgreSQL session variable
-      -- => set in connection string: options='-c app.encryption_key=your-secret-key'
+SET
+  ssn_encrypted = pgp_sym_encrypt (
+    ssn, -- => plaintext source column
+    current_setting ('app.encryption_key') -- => key from PostgreSQL session variable
+    -- => set in connection string: options='-c app.encryption_key=your-secret-key'
   )
-  WHERE ssn IS NOT NULL                   -- => only encrypt rows that have SSN data
-    AND ssn_encrypted IS NULL;            -- => idempotent: skip already-encrypted rows
+WHERE
+  ssn IS NOT NULL -- => only encrypt rows that have SSN data
+  AND ssn_encrypted IS NULL;
 
+-- => idempotent: skip already-encrypted rows
 -- Step 4: verify encryption worked on a sample row (for migration validation)
 -- SELECT pgp_sym_decrypt(ssn_encrypted, current_setting('app.encryption_key'))
 --   FROM customers LIMIT 1;
 -- => Output: original SSN value (proves round-trip works before dropping plaintext column)
-
 -- Step 5: drop plaintext column after verification (separate migration V76)
 -- ALTER TABLE customers DROP COLUMN IF EXISTS ssn;
 -- => run in V76 after confirming ssn_encrypted backfill is complete and app reads from it

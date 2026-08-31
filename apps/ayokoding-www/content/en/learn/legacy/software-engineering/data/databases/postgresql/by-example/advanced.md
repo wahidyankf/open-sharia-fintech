@@ -1543,14 +1543,19 @@ WHERE id IN (
 ```sql
 EXPLAIN ANALYZE
 -- => Analyzes JOIN with DISTINCT performance
-SELECT DISTINCT c.name, c.email
--- => DISTINCT removes duplicate customers
--- => (customers with multiple recent orders)
-FROM customers c
-JOIN orders o ON c.id = o.customer_id
--- => Explicit join relationship
--- => More readable than IN subquery
-WHERE o.order_date >= '2024-01-01';
+SELECT DISTINCT
+  c.name,
+  c.email
+  -- => DISTINCT removes duplicate customers
+  -- => (customers with multiple recent orders)
+FROM
+  customers c
+  JOIN orders o ON c.id = o.customer_id
+  -- => Explicit join relationship
+  -- => More readable than IN subquery
+WHERE
+  o.order_date >= '2024-01-01';
+
 -- => Filter applied to orders table
 -- => Filters before join (more efficient)
 -- => JOIN execution plan:
@@ -1572,17 +1577,25 @@ WHERE o.order_date >= '2024-01-01';
 ```sql
 EXPLAIN ANALYZE
 -- => Analyzes correlated subquery performance
-SELECT c.name,
-       (SELECT COUNT(*)
-        -- => Subquery in SELECT list
-        FROM orders o
-        WHERE o.customer_id = c.id
-        -- => Correlated with outer query (references c.id)
-        -- => Correlated subquery executes ONCE per customer
-        -- => 50,000 separate executions
-        AND o.order_date >= '2024-01-01') AS recent_orders
-        -- => Counts recent orders per customer
-FROM customers c;
+SELECT
+  c.name,
+  (
+    SELECT
+      COUNT(*)
+      -- => Subquery in SELECT list
+    FROM
+      orders o
+    WHERE
+      o.customer_id = c.id
+      -- => Correlated with outer query (references c.id)
+      -- => Correlated subquery executes ONCE per customer
+      -- => 50,000 separate executions
+      AND o.order_date >= '2024-01-01'
+  ) AS recent_orders
+  -- => Counts recent orders per customer
+FROM
+  customers c;
+
 -- => Scans all 50,000 customers
 -- => Correlated subquery plan:
 -- => Seq Scan on customers
@@ -1599,22 +1612,30 @@ FROM customers c;
 ```sql
 EXPLAIN ANALYZE
 -- => Analyzes LEFT JOIN with GROUP BY performance
-SELECT c.name,
-       COALESCE(o.recent_orders, 0) AS recent_orders
-       -- => COALESCE converts NULL to 0
-       -- => Handles customers with no recent orders
-FROM customers c
-LEFT JOIN (
+SELECT
+  c.name,
+  COALESCE(o.recent_orders, 0) AS recent_orders
+  -- => COALESCE converts NULL to 0
+  -- => Handles customers with no recent orders
+FROM
+  customers c
+  LEFT JOIN (
     -- => Subquery in FROM clause (executes once)
-    SELECT customer_id, COUNT(*) AS recent_orders
-    -- => Counts orders per customer
-    FROM orders
-    WHERE order_date >= '2024-01-01'
-    -- => Filters to recent orders
-    GROUP BY customer_id
-    -- => Groups by customer (aggregates once)
-    -- => Subquery executes ONCE, not per row
-) o ON c.id = o.customer_id;
+    SELECT
+      customer_id,
+      COUNT(*) AS recent_orders
+      -- => Counts orders per customer
+    FROM
+      orders
+    WHERE
+      order_date >= '2024-01-01'
+      -- => Filters to recent orders
+    GROUP BY
+      customer_id
+      -- => Groups by customer (aggregates once)
+      -- => Subquery executes ONCE, not per row
+  ) o ON c.id = o.customer_id;
+
 -- => Joins aggregated results to customers
 -- => LEFT JOIN preserves all customers
 -- => JOIN with aggregation plan:
@@ -1635,14 +1656,21 @@ LEFT JOIN (
 
 ```sql
 EXPLAIN ANALYZE
-SELECT name
-FROM customers
-WHERE id NOT IN (
-    SELECT customer_id
-    FROM orders
-    WHERE total > 1000
-    -- => Finds customers with NO high-value orders
-);
+SELECT
+  name
+FROM
+  customers
+WHERE
+  id NOT IN (
+    SELECT
+      customer_id
+    FROM
+      orders
+    WHERE
+      total > 1000
+      -- => Finds customers with NO high-value orders
+  );
+
 -- => NOT IN plan:
 -- => Hash Anti Join or Seq Scan with NOT IN filter
 -- => Problem: Returns NO rows if subquery contains NULL
@@ -1656,15 +1684,22 @@ WHERE id NOT IN (
 
 ```sql
 EXPLAIN ANALYZE
-SELECT name
-FROM customers c
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM orders o
-    WHERE o.customer_id = c.id
+SELECT
+  name
+FROM
+  customers c
+WHERE
+  NOT EXISTS (
+    SELECT
+      1
+    FROM
+      orders o
+    WHERE
+      o.customer_id = c.id
       AND o.total > 1000
       -- => Checks existence, not specific values
-);
+  );
+
 -- => NOT EXISTS plan:
 -- => Hash Anti Join
 -- => Correctly handles NULL values
@@ -1678,12 +1713,17 @@ WHERE NOT EXISTS (
 
 ```sql
 EXPLAIN ANALYZE
-SELECT c.name
-FROM customers c
-LEFT JOIN orders o ON c.id = o.customer_id AND o.total > 1000
--- => LEFT JOIN preserves all customers
--- => Filter applied in ON clause
-WHERE o.id IS NULL;
+SELECT
+  c.name
+FROM
+  customers c
+  LEFT JOIN orders o ON c.id = o.customer_id
+  AND o.total > 1000
+  -- => LEFT JOIN preserves all customers
+  -- => Filter applied in ON clause
+WHERE
+  o.id IS NULL;
+
 -- => Filters to customers with NO matching orders
 -- => LEFT JOIN + IS NULL plan:
 -- => Hash Left Join
@@ -3841,6 +3881,7 @@ pg_restore reconstructs databases from pg_dump backups - essential for disaster 
 
 ```sql
 CREATE DATABASE example_79;
+
 -- => Creates empty target database for restore
 -- => Must exist before pg_restore can populate it
 -- => In production, you may use pg_restore -C flag to auto-create

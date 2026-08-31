@@ -628,11 +628,11 @@ data class Task(
 
 ```sql
 CREATE TABLE tasks (
-    id BIGSERIAL PRIMARY KEY,         -- Auto-increment ID
-    title VARCHAR(200) NOT NULL,      -- NOT NULL, max 200 chars
-    description TEXT,                 -- TEXT type, nullable
-    status VARCHAR(255) NOT NULL,     -- NOT NULL status
-    created_at TIMESTAMP NOT NULL     -- Timestamp field
+  id BIGSERIAL PRIMARY KEY, -- Auto-increment ID
+  title VARCHAR(200) NOT NULL, -- NOT NULL, max 200 chars
+  description TEXT, -- TEXT type, nullable
+  status VARCHAR(255) NOT NULL, -- NOT NULL status
+  created_at TIMESTAMP NOT NULL -- Timestamp field
 );
 ```
 

@@ -113,18 +113,19 @@ Adding a new column to a live table is safe in PostgreSQL when the column is nul
 ```sql
 -- resources/migrations/020-add-phone-to-users.up.sql
 -- => Zero-downtime column addition: nullable column, no DEFAULT requiring rewrite
-
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS phone TEXT;
+ADD COLUMN IF NOT EXISTS phone TEXT;
+
 -- => TEXT column: nullable by default; no table rewrite occurs
 -- => IF NOT EXISTS: idempotent; safe to re-run if migration partially applied
 -- => PostgreSQL acquires ACCESS EXCLUSIVE briefly (catalog only, not row scan)
 -- => Application reads NULL for existing rows until they update their phone field
-
 -- Optional: add a CHECK constraint once column exists
-ALTER TABLE users
-  ADD CONSTRAINT chk_phone_format
-  CHECK (phone IS NULL OR length(phone) >= 7);
+ALTER TABLE users ADD CONSTRAINT chk_phone_format CHECK (
+  phone IS NULL
+  OR length (phone) >= 7
+);
+
 -- => Constraint validated ONLY for new/updated rows (NOT VALID omitted here intentionally)
 -- => Existing NULL values pass: IS NULL branch short-circuits
 ```
@@ -132,7 +133,8 @@ ALTER TABLE users
 ```sql
 -- resources/migrations/020-add-phone-to-users.down.sql
 ALTER TABLE users
-  DROP COLUMN IF EXISTS phone;
+DROP COLUMN IF EXISTS phone;
+
 -- => Drops column and all data; IF EXISTS prevents error on re-rollback
 -- => Also drops the chk_phone_format constraint automatically
 ```
@@ -179,7 +181,8 @@ graph LR
 ```sql
 -- resources/migrations/021-drop-legacy-notes.up.sql
 ALTER TABLE users
-  DROP COLUMN IF EXISTS legacy_notes;
+DROP COLUMN IF EXISTS legacy_notes;
+
 -- => Safe now: no live application code queries this column
 -- => IF NOT EXISTS prevents errors if column was already removed manually
 -- => Takes ACCESS EXCLUSIVE lock briefly; row data freed immediately
@@ -216,13 +219,18 @@ Table renames in PostgreSQL are instantaneous (catalog update only) but break an
 -- migratus-no-transaction
 -- => Using no-transaction here because we chain DDL + view creation
 -- => Some PostgreSQL versions behave better outside a transaction for this combo
+ALTER TABLE expenses
+RENAME TO transactions;
 
-ALTER TABLE expenses RENAME TO transactions;
 -- => Instantaneous: only updates pg_class catalog entry
 -- => All existing indexes, constraints, sequences move with the table
+CREATE
+OR REPLACE VIEW expenses AS
+SELECT
+  *
+FROM
+  transactions;
 
-CREATE OR REPLACE VIEW expenses AS
-  SELECT * FROM transactions;
 -- => Legacy alias: old application code using "expenses" still works
 -- => VIEW expenses proxies to transactions; transparent for SELECT queries
 -- => INSERT/UPDATE/DELETE on simple views also work in PostgreSQL (auto-updatable views)
@@ -232,8 +240,11 @@ CREATE OR REPLACE VIEW expenses AS
 -- resources/migrations/022-rename-expenses-to-transactions.down.sql
 -- migratus-no-transaction
 DROP VIEW IF EXISTS expenses;
+
 -- => Remove alias before reversing rename
-ALTER TABLE transactions RENAME TO expenses;
+ALTER TABLE transactions
+RENAME TO expenses;
+
 -- => Restore original name; safe if view dropped first
 ```
 
@@ -305,19 +316,18 @@ PostgreSQL's `CREATE INDEX CONCURRENTLY` builds an index without blocking writes
 -- migratus-no-transaction
 -- => CONCURRENTLY cannot run inside a transaction block
 -- => Migratus default wraps in transaction; this directive disables it for this file
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email ON users (email);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email
-  ON users (email);
 -- => CONCURRENTLY: two-phase build using snapshot isolation
 -- => Phase 1: scans table, builds index snapshot (other writes continue)
 -- => Phase 2: catches up with writes that occurred during phase 1
 -- => Final: marks index valid; future queries can use it
 -- => IF NOT EXISTS: idempotent; safe if migration was interrupted mid-build
-
 -- For partial indexes with CONCURRENTLY:
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_active_created
-  ON users (created_at DESC)
-  WHERE status = 'active';
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_active_created ON users (created_at DESC)
+WHERE
+  status = 'active';
+
 -- => Partial index: only indexes active users; smaller, faster to update
 -- => DESC: pre-sorted for ORDER BY created_at DESC queries (avoids sort step)
 ```
@@ -327,7 +337,9 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_active_created
 -- migratus-no-transaction
 -- => DROP INDEX CONCURRENTLY also requires no-transaction
 DROP INDEX CONCURRENTLY IF EXISTS idx_users_email;
+
 DROP INDEX CONCURRENTLY IF EXISTS idx_users_active_created;
+
 -- => CONCURRENTLY: waits for in-flight transactions before marking index invalid
 -- => IF EXISTS: safe to re-run if partially rolled back
 ```
@@ -359,7 +371,8 @@ graph TD
 ```sql
 -- resources/migrations/025-add-display-name-nullable.up.sql
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS display_name TEXT;
+ADD COLUMN IF NOT EXISTS display_name TEXT;
+
 -- => Nullable: no DEFAULT means no table rewrite; zero-downtime addition
 -- => Application writes NULL for new rows until backfill completes
 ```
@@ -390,7 +403,10 @@ ALTER TABLE users
 ```sql
 -- resources/migrations/027-set-display-name-not-null.up.sql
 ALTER TABLE users
-  ALTER COLUMN display_name SET NOT NULL;
+ALTER COLUMN display_name
+SET
+  NOT NULL;
+
 -- => Safe now: every existing row has a non-null display_name after backfill
 -- => PostgreSQL validates constraint on all rows before applying; fails if any NULL remains
 -- => In PostgreSQL 12+, adding NOT VALID then VALIDATE CONSTRAINT allows background validation
@@ -658,21 +674,20 @@ Migrations that support feature flags add schema elements used by new features b
 -- resources/migrations/028-add-feature-flags-table.up.sql
 -- => Feature flag table: controls which features are enabled per tenant
 CREATE TABLE IF NOT EXISTS feature_flags (
-  id          BIGSERIAL PRIMARY KEY,
-  flag_name   TEXT NOT NULL,            -- => Unique feature identifier (e.g. 'new_checkout')
-  tenant_id   TEXT,                     -- => NULL = global flag; non-null = tenant-specific
-  enabled     BOOLEAN NOT NULL DEFAULT FALSE,
+  id BIGSERIAL PRIMARY KEY,
+  flag_name TEXT NOT NULL, -- => Unique feature identifier (e.g. 'new_checkout')
+  tenant_id TEXT, -- => NULL = global flag; non-null = tenant-specific
+  enabled BOOLEAN NOT NULL DEFAULT FALSE,
   -- => Default FALSE: new flags are disabled until explicitly enabled
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-
-  UNIQUE (flag_name, tenant_id)         -- => Ensures one row per flag+tenant combination
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now (),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now (),
+  UNIQUE (flag_name, tenant_id) -- => Ensures one row per flag+tenant combination
   -- => NULLS are distinct in PostgreSQL UNIQUE constraints: two rows with same flag_name
   -- => and NULL tenant_id are considered DIFFERENT; use COALESCE(tenant_id,'') to prevent
 );
 
-CREATE INDEX IF NOT EXISTS idx_feature_flags_name_tenant
-  ON feature_flags (flag_name, tenant_id);
+CREATE INDEX IF NOT EXISTS idx_feature_flags_name_tenant ON feature_flags (flag_name, tenant_id);
+
 -- => Composite index: lookup by flag_name alone, or by flag_name + tenant_id
 -- => Most common query: WHERE flag_name = ? AND (tenant_id = ? OR tenant_id IS NULL)
 ```
@@ -766,6 +781,7 @@ The `pgcrypto` extension enables column-level encryption in PostgreSQL. Migratio
 -- resources/migrations/029-install-pgcrypto.up.sql
 -- => pgcrypto: PostgreSQL extension for cryptographic functions
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- => IF NOT EXISTS: idempotent; safe if extension already installed on the cluster
 -- => pgcrypto provides: gen_random_uuid(), crypt(), gen_salt(), pgp_sym_encrypt()
 -- => Must be installed once per database; typically a one-time setup migration
@@ -775,14 +791,13 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- resources/migrations/030-create-secrets-table.up.sql
 -- => Table storing encrypted secrets using pgcrypto symmetric encryption
 CREATE TABLE IF NOT EXISTS secrets (
-  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
   -- => gen_random_uuid(): pgcrypto function; cryptographically random UUID v4
-  owner_id     TEXT NOT NULL,
-  secret_name  TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  secret_name TEXT NOT NULL,
   secret_value BYTEA NOT NULL,
   -- => BYTEA: binary data type; stores encrypted ciphertext (not readable as text)
-  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now (),
   UNIQUE (owner_id, secret_name)
   -- => One secret per owner+name pair; enforce uniqueness at DB level
 );
@@ -878,8 +893,11 @@ CREATE TRIGGER trg_audit_users
 ```sql
 -- resources/migrations/031-create-audit-log.down.sql
 DROP TRIGGER IF EXISTS trg_audit_users ON users;
-DROP FUNCTION IF EXISTS log_audit_change();
+
+DROP FUNCTION IF EXISTS log_audit_change ();
+
 DROP TABLE IF EXISTS audit_log;
+
 -- => Order matters: drop trigger before function before table
 ```
 
@@ -896,22 +914,22 @@ Soft deletes mark rows as deleted without removing them from the database, prese
 ```sql
 -- resources/migrations/032-add-soft-delete-to-orders.up.sql
 -- => Soft delete: mark rows deleted without physical removal
-
 ALTER TABLE orders
-  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
 -- => TIMESTAMPTZ: timezone-aware timestamp; NULL means "not deleted"
 -- => Nullable by design: NULL = active, non-null = soft-deleted
+CREATE INDEX IF NOT EXISTS idx_orders_active ON orders (user_id, created_at DESC)
+WHERE
+  deleted_at IS NULL;
 
-CREATE INDEX IF NOT EXISTS idx_orders_active
-  ON orders (user_id, created_at DESC)
-  WHERE deleted_at IS NULL;
 -- => Partial index: only indexes active (non-deleted) orders
 -- => WHERE deleted_at IS NULL matches all standard application queries
 -- => Application always filters WHERE deleted_at IS NULL; index used automatically
+CREATE INDEX IF NOT EXISTS idx_orders_deleted ON orders (deleted_at)
+WHERE
+  deleted_at IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS idx_orders_deleted
-  ON orders (deleted_at)
-  WHERE deleted_at IS NOT NULL;
 -- => Second partial index: for admin queries that specifically list deleted orders
 -- => Keeps deleted record lookups fast without bloating the active-record index
 ```
@@ -1358,7 +1376,8 @@ $$;
 
 ```sql
 -- resources/migrations/034-create-archive-procedure.down.sql
-DROP PROCEDURE IF EXISTS archive_old_orders(INTEGER);
+DROP PROCEDURE IF EXISTS archive_old_orders (INTEGER);
+
 -- => Must match parameter type in signature for DROP to find the right overload
 ```
 

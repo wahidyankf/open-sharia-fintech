@@ -88,23 +88,29 @@ Define tables with primary keys, data types, and constraints.
 ```sql
 -- Users table with authentication
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample users
-INSERT INTO users (username, email, password_hash)
+INSERT INTO
+  users (username, email, password_hash)
 VALUES
-    ('alice', 'alice@example.com', '$2a$10$...'),
-    ('bob', 'bob@example.com', '$2a$10$...'),
-    ('charlie', 'charlie@example.com', '$2a$10$...');
+  ('alice', 'alice@example.com', '$2a$10$...'),
+  ('bob', 'bob@example.com', '$2a$10$...'),
+  ('charlie', 'charlie@example.com', '$2a$10$...');
 
 -- Verify insertion
-SELECT id, username, email FROM users;
+SELECT
+  id,
+  username,
+  email
+FROM
+  users;
 ```
 
 **Output**:
@@ -131,26 +137,64 @@ SELECT id, username, email FROM users;
 ```sql
 -- Products table with categories
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
-    category VARCHAR(50) NOT NULL,
-    stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
+  category VARCHAR(50) NOT NULL,
+  stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample products
-INSERT INTO products (name, description, price, category, stock_quantity)
+INSERT INTO
+  products (
+    name,
+    description,
+    price,
+    category,
+    stock_quantity
+  )
 VALUES
-    ('Laptop', 'High-performance laptop', 999.99, 'Electronics', 50),
-    ('Mouse', 'Wireless optical mouse', 19.99, 'Electronics', 200),
-    ('Desk Chair', 'Ergonomic office chair', 299.99, 'Furniture', 30),
-    ('Coffee Mug', 'Ceramic coffee mug', 9.99, 'Kitchen', 100);
+  (
+    'Laptop',
+    'High-performance laptop',
+    999.99,
+    'Electronics',
+    50
+  ),
+  (
+    'Mouse',
+    'Wireless optical mouse',
+    19.99,
+    'Electronics',
+    200
+  ),
+  (
+    'Desk Chair',
+    'Ergonomic office chair',
+    299.99,
+    'Furniture',
+    30
+  ),
+  (
+    'Coffee Mug',
+    'Ceramic coffee mug',
+    9.99,
+    'Kitchen',
+    100
+  );
 
 -- Verify insertion
-SELECT id, name, price, category, stock_quantity FROM products;
+SELECT
+  id,
+  name,
+  price,
+  category,
+  stock_quantity
+FROM
+  products;
 ```
 
 **Output**:
@@ -181,24 +225,39 @@ Link tables together using foreign keys.
 ```sql
 -- Orders table linking to users
 CREATE TABLE orders (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending'
-        CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
-    total_amount NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (
+    status IN (
+      'pending',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled'
+    )
+  ),
+  total_amount NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample orders
-INSERT INTO orders (user_id, status, total_amount)
+INSERT INTO
+  orders (user_id, status, total_amount)
 VALUES
-    (1, 'delivered', 1019.98),  -- Alice
-    (2, 'processing', 299.99),  -- Bob
-    (1, 'pending', 9.99);       -- Alice
+  (1, 'delivered', 1019.98), -- Alice
+  (2, 'processing', 299.99), -- Bob
+  (1, 'pending', 9.99);
 
+-- Alice
 -- Verify insertion
-SELECT id, user_id, status, total_amount FROM orders;
+SELECT
+  id,
+  user_id,
+  status,
+  total_amount
+FROM
+  orders;
 ```
 
 **Output**:
@@ -224,24 +283,33 @@ SELECT id, user_id, status, total_amount FROM orders;
 ```sql
 -- Order items (many-to-many: orders ↔ products)
 CREATE TABLE order_items (
-    id SERIAL PRIMARY KEY,
-    order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
-    quantity INTEGER NOT NULL CHECK (quantity > 0),
-    price_at_purchase NUMERIC(10, 2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL REFERENCES products (id) ON DELETE RESTRICT,
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  price_at_purchase NUMERIC(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample order items
-INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
+INSERT INTO
+  order_items (order_id, product_id, quantity, price_at_purchase)
 VALUES
-    (1, 1, 1, 999.99),  -- Order 1: 1 Laptop
-    (1, 2, 1, 19.99),   -- Order 1: 1 Mouse
-    (2, 3, 1, 299.99),  -- Order 2: 1 Desk Chair
-    (3, 4, 1, 9.99);    -- Order 3: 1 Coffee Mug
+  (1, 1, 1, 999.99), -- Order 1: 1 Laptop
+  (1, 2, 1, 19.99), -- Order 1: 1 Mouse
+  (2, 3, 1, 299.99), -- Order 2: 1 Desk Chair
+  (3, 4, 1, 9.99);
 
+-- Order 3: 1 Coffee Mug
 -- Verify insertion
-SELECT id, order_id, product_id, quantity, price_at_purchase FROM order_items;
+SELECT
+  id,
+  order_id,
+  product_id,
+  quantity,
+  price_at_purchase
+FROM
+  order_items;
 ```
 
 **Output**:
@@ -271,15 +339,17 @@ Combine data from multiple tables using joins.
 ```sql
 -- Get orders with user information
 SELECT
-    o.id AS order_id,
-    u.username,
-    u.email,
-    o.status,
-    o.total_amount,
-    o.created_at
-FROM orders o
-INNER JOIN users u ON o.user_id = u.id
-ORDER BY o.created_at DESC;
+  o.id AS order_id,
+  u.username,
+  u.email,
+  o.status,
+  o.total_amount,
+  o.created_at
+FROM
+  orders o
+  INNER JOIN users u ON o.user_id = u.id
+ORDER BY
+  o.created_at DESC;
 ```
 
 **Output**:
@@ -304,15 +374,21 @@ ORDER BY o.created_at DESC;
 ```sql
 -- Get all products with total quantity sold (including products with no sales)
 SELECT
-    p.id,
-    p.name,
-    p.category,
-    p.price,
-    COALESCE(SUM(oi.quantity), 0) AS total_sold
-FROM products p
-LEFT JOIN order_items oi ON p.id = oi.product_id
-GROUP BY p.id, p.name, p.category, p.price
-ORDER BY total_sold DESC;
+  p.id,
+  p.name,
+  p.category,
+  p.price,
+  COALESCE(SUM(oi.quantity), 0) AS total_sold
+FROM
+  products p
+  LEFT JOIN order_items oi ON p.id = oi.product_id
+GROUP BY
+  p.id,
+  p.name,
+  p.category,
+  p.price
+ORDER BY
+  total_sold DESC;
 ```
 
 **Output**:
@@ -339,18 +415,21 @@ ORDER BY total_sold DESC;
 ```sql
 -- Get complete order details (order, user, items, products)
 SELECT
-    o.id AS order_id,
-    u.username,
-    o.status,
-    p.name AS product_name,
-    oi.quantity,
-    oi.price_at_purchase,
-    (oi.quantity * oi.price_at_purchase) AS item_total
-FROM orders o
-INNER JOIN users u ON o.user_id = u.id
-INNER JOIN order_items oi ON o.id = oi.order_id
-INNER JOIN products p ON oi.product_id = p.id
-ORDER BY o.id, oi.id;
+  o.id AS order_id,
+  u.username,
+  o.status,
+  p.name AS product_name,
+  oi.quantity,
+  oi.price_at_purchase,
+  (oi.quantity * oi.price_at_purchase) AS item_total
+FROM
+  orders o
+  INNER JOIN users u ON o.user_id = u.id
+  INNER JOIN order_items oi ON o.id = oi.order_id
+  INNER JOIN products p ON oi.product_id = p.id
+ORDER BY
+  o.id,
+  oi.id;
 ```
 
 **Output**:
@@ -374,11 +453,14 @@ Compute summaries using aggregate functions.
 ```sql
 -- Count orders grouped by status
 SELECT
-    status,
-    COUNT(*) AS order_count
-FROM orders
-GROUP BY status
-ORDER BY order_count DESC;
+  status,
+  COUNT(*) AS order_count
+FROM
+  orders
+GROUP BY
+  status
+ORDER BY
+  order_count DESC;
 ```
 
 **Output**:
@@ -397,14 +479,17 @@ ORDER BY order_count DESC;
 ```sql
 -- Calculate total revenue by product category
 SELECT
-    p.category,
-    COUNT(DISTINCT oi.order_id) AS num_orders,
-    SUM(oi.quantity) AS total_quantity,
-    SUM(oi.quantity * oi.price_at_purchase) AS total_revenue
-FROM products p
-INNER JOIN order_items oi ON p.id = oi.product_id
-GROUP BY p.category
-ORDER BY total_revenue DESC;
+  p.category,
+  COUNT(DISTINCT oi.order_id) AS num_orders,
+  SUM(oi.quantity) AS total_quantity,
+  SUM(oi.quantity * oi.price_at_purchase) AS total_revenue
+FROM
+  products p
+  INNER JOIN order_items oi ON p.id = oi.product_id
+GROUP BY
+  p.category
+ORDER BY
+  total_revenue DESC;
 ```
 
 **Output**:
@@ -431,14 +516,19 @@ ORDER BY total_revenue DESC;
 ```sql
 -- Find users with more than 1 order
 SELECT
-    u.username,
-    COUNT(o.id) AS order_count,
-    SUM(o.total_amount) AS total_spent
-FROM users u
-INNER JOIN orders o ON u.id = o.user_id
-GROUP BY u.id, u.username
-HAVING COUNT(o.id) > 1
-ORDER BY total_spent DESC;
+  u.username,
+  COUNT(o.id) AS order_count,
+  SUM(o.total_amount) AS total_spent
+FROM
+  users u
+  INNER JOIN orders o ON u.id = o.user_id
+GROUP BY
+  u.id,
+  u.username
+HAVING
+  COUNT(o.id) > 1
+ORDER BY
+  total_spent DESC;
 ```
 
 **Output**:
@@ -492,10 +582,16 @@ CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 
 ```sql
 -- Create composite index for common query pattern
-CREATE INDEX idx_orders_user_status ON orders(user_id, status);
+CREATE INDEX idx_orders_user_status ON orders (user_id, status);
 
 -- This index speeds up queries filtering by both user_id and status
-SELECT * FROM orders WHERE user_id = 1 AND status = 'delivered';
+SELECT
+  *
+FROM
+  orders
+WHERE
+  user_id = 1
+  AND status = 'delivered';
 ```
 
 **Index benefits**:
@@ -510,9 +606,13 @@ SELECT * FROM orders WHERE user_id = 1 AND status = 'delivered';
 ```sql
 -- Analyze query execution plan
 EXPLAIN ANALYZE
-SELECT p.name, p.price
-FROM products p
-WHERE p.category = 'Electronics';
+SELECT
+  p.name,
+  p.price
+FROM
+  products p
+WHERE
+  p.category = 'Electronics';
 ```
 
 **Output**:
@@ -544,22 +644,33 @@ BEGIN;
 
 -- Deduct product stock
 UPDATE products
-SET stock_quantity = stock_quantity - 1
-WHERE id = 1;
+SET
+  stock_quantity = stock_quantity - 1
+WHERE
+  id = 1;
 
 -- Create order
-INSERT INTO orders (user_id, status, total_amount)
-VALUES (3, 'pending', 999.99);
+INSERT INTO
+  orders (user_id, status, total_amount)
+VALUES
+  (3, 'pending', 999.99);
 
 -- Create order item
-INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
-VALUES (currval('orders_id_seq'), 1, 1, 999.99);
+INSERT INTO
+  order_items (order_id, product_id, quantity, price_at_purchase)
+VALUES
+  (currval ('orders_id_seq'), 1, 1, 999.99);
 
 -- Commit transaction (make changes permanent)
 COMMIT;
 
 -- Verify changes
-SELECT stock_quantity FROM products WHERE id = 1;
+SELECT
+  stock_quantity
+FROM
+  products
+WHERE
+  id = 1;
 ```
 
 **Output**:
@@ -585,17 +696,29 @@ BEGIN;
 
 -- Try to create order with negative stock
 UPDATE products
-SET stock_quantity = stock_quantity - 100
-WHERE id = 2;
+SET
+  stock_quantity = stock_quantity - 100
+WHERE
+  id = 2;
 
 -- Check constraint violation (stock would be negative)
-SELECT stock_quantity FROM products WHERE id = 2;
+SELECT
+  stock_quantity
+FROM
+  products
+WHERE
+  id = 2;
 
 -- Rollback transaction (undo changes)
 ROLLBACK;
 
 -- Verify rollback - stock unchanged
-SELECT stock_quantity FROM products WHERE id = 2;
+SELECT
+  stock_quantity
+FROM
+  products
+WHERE
+  id = 2;
 ```
 
 **Output**:
@@ -622,27 +745,41 @@ Store flexible, semi-structured data using JSONB.
 
 ```sql
 -- Add metadata column to products
-ALTER TABLE products ADD COLUMN metadata JSONB;
+ALTER TABLE products
+ADD COLUMN metadata JSONB;
 
 -- Update products with JSON metadata
 UPDATE products
-SET metadata = '{"brand": "TechCorp", "warranty_years": 2, "features": ["SSD", "16GB RAM", "Backlit Keyboard"]}'
-WHERE id = 1;
+SET
+  metadata = '{"brand": "TechCorp", "warranty_years": 2, "features": ["SSD", "16GB RAM", "Backlit Keyboard"]}'
+WHERE
+  id = 1;
 
 UPDATE products
-SET metadata = '{"brand": "TechCorp", "wireless": true, "dpi": 1600}'
-WHERE id = 2;
+SET
+  metadata = '{"brand": "TechCorp", "wireless": true, "dpi": 1600}'
+WHERE
+  id = 2;
 
 UPDATE products
-SET metadata = '{"brand": "ComfortSeating", "adjustable": true, "material": "mesh"}'
-WHERE id = 3;
+SET
+  metadata = '{"brand": "ComfortSeating", "adjustable": true, "material": "mesh"}'
+WHERE
+  id = 3;
 
 UPDATE products
-SET metadata = '{"brand": "KitchenPro", "capacity_ml": 350, "dishwasher_safe": true}'
-WHERE id = 4;
+SET
+  metadata = '{"brand": "KitchenPro", "capacity_ml": 350, "dishwasher_safe": true}'
+WHERE
+  id = 4;
 
 -- Verify JSON data
-SELECT id, name, metadata FROM products;
+SELECT
+  id,
+  name,
+  metadata
+FROM
+  products;
 ```
 
 **Output**:
@@ -661,9 +798,13 @@ SELECT id, name, metadata FROM products;
 
 ```sql
 -- Query products by JSON field
-SELECT name, metadata->>'brand' AS brand
-FROM products
-WHERE metadata->>'brand' = 'TechCorp';
+SELECT
+  name,
+  metadata - > > 'brand' AS brand
+FROM
+  products
+WHERE
+  metadata - > > 'brand' = 'TechCorp';
 ```
 
 **Output**:
@@ -725,17 +866,27 @@ Search text content efficiently.
 
 ```sql
 -- Add tsvector column for full-text search
-ALTER TABLE products ADD COLUMN search_vector tsvector;
+ALTER TABLE products
+ADD COLUMN search_vector tsvector;
 
 -- Populate search vector from name and description
 UPDATE products
-SET search_vector = to_tsvector('english', name || ' ' || COALESCE(description, ''));
+SET
+  search_vector = to_tsvector (
+    'english',
+    name || ' ' || COALESCE(description, '')
+  );
 
 -- Create GIN index for fast full-text search
 CREATE INDEX idx_products_search ON products USING GIN (search_vector);
 
 -- Verify search vectors
-SELECT id, name, search_vector FROM products;
+SELECT
+  id,
+  name,
+  search_vector
+FROM
+  products;
 ```
 
 **Output**:
@@ -807,22 +958,26 @@ Write readable queries with temporary named results.
 
 ```sql
 -- Calculate order totals using CTE
-WITH order_totals AS (
+WITH
+  order_totals AS (
     SELECT
-        order_id,
-        SUM(quantity * price_at_purchase) AS calculated_total
-    FROM order_items
-    GROUP BY order_id
-)
+      order_id,
+      SUM(quantity * price_at_purchase) AS calculated_total
+    FROM
+      order_items
+    GROUP BY
+      order_id
+  )
 SELECT
-    o.id,
-    u.username,
-    o.total_amount AS stored_total,
-    ot.calculated_total,
-    (o.total_amount = ot.calculated_total) AS totals_match
-FROM orders o
-INNER JOIN users u ON o.user_id = u.id
-INNER JOIN order_totals ot ON o.id = ot.order_id;
+  o.id,
+  u.username,
+  o.total_amount AS stored_total,
+  ot.calculated_total,
+  (o.total_amount = ot.calculated_total) AS totals_match
+FROM
+  orders o
+  INNER JOIN users u ON o.user_id = u.id
+  INNER JOIN order_totals ot ON o.id = ot.order_id;
 ```
 
 **Output**:
@@ -840,34 +995,44 @@ INNER JOIN order_totals ot ON o.id = ot.order_id;
 
 ```sql
 -- Find top customers and their favorite categories
-WITH customer_spending AS (
+WITH
+  customer_spending AS (
     SELECT
-        u.id AS user_id,
-        u.username,
-        SUM(o.total_amount) AS total_spent
-    FROM users u
-    INNER JOIN orders o ON u.id = o.user_id
-    GROUP BY u.id, u.username
-),
-customer_categories AS (
+      u.id AS user_id,
+      u.username,
+      SUM(o.total_amount) AS total_spent
+    FROM
+      users u
+      INNER JOIN orders o ON u.id = o.user_id
+    GROUP BY
+      u.id,
+      u.username
+  ),
+  customer_categories AS (
     SELECT
-        u.id AS user_id,
-        p.category,
-        COUNT(*) AS purchase_count
-    FROM users u
-    INNER JOIN orders o ON u.id = o.user_id
-    INNER JOIN order_items oi ON o.id = oi.order_id
-    INNER JOIN products p ON oi.product_id = p.id
-    GROUP BY u.id, p.category
-)
+      u.id AS user_id,
+      p.category,
+      COUNT(*) AS purchase_count
+    FROM
+      users u
+      INNER JOIN orders o ON u.id = o.user_id
+      INNER JOIN order_items oi ON o.id = oi.order_id
+      INNER JOIN products p ON oi.product_id = p.id
+    GROUP BY
+      u.id,
+      p.category
+  )
 SELECT
-    cs.username,
-    cs.total_spent,
-    cc.category AS favorite_category,
-    cc.purchase_count
-FROM customer_spending cs
-INNER JOIN customer_categories cc ON cs.user_id = cc.user_id
-ORDER BY cs.total_spent DESC, cc.purchase_count DESC;
+  cs.username,
+  cs.total_spent,
+  cc.category AS favorite_category,
+  cc.purchase_count
+FROM
+  customer_spending cs
+  INNER JOIN customer_categories cc ON cs.user_id = cc.user_id
+ORDER BY
+  cs.total_spent DESC,
+  cc.purchase_count DESC;
 ```
 
 **Output**:
