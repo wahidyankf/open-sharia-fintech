@@ -73,4 +73,5 @@ EVIDENCE  P0-R-PUB  O-PUB-WEB-TOKEN  froze validated Web UI Token owner record  
 EVIDENCE  P0-R-PUB  O-PUB-TS-ENV  froze validated TypeScript Environment Loader owner record  passed  local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/owners/O-PUB-TS-ENV.md  efbe1fa2011a7d11975b652fd33b2e1897496203
 EVIDENCE  P0-R-PUB  O-PUB-FS-ENV  froze validated F# Environment Loader owner record  passed  local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/owners/O-PUB-FS-ENV.md  efbe1fa2011a7d11975b652fd33b2e1897496203
 EVIDENCE  P0-R-PUB  O-PUB-FS-CORE  froze validated F# Crane Core owner record  passed  local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/owners/O-PUB-FS-CORE.md  efbe1fa2011a7d11975b652fd33b2e1897496203
+EVIDENCE  P0-R-PUB  P0-RHINO-PARITY-DISCOVERY  compared the shared Rhino tree and bounded the private transition exception plus unrelated README drift  passed  local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/resolvers/shared-rhino-parity.tsv  de0a4f248ee63f0dae21d96cb94b788d33d70b02
 ```
