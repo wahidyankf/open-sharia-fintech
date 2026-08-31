@@ -74,6 +74,19 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 │       `bounded-contexts.yaml` source-of-truth link when that DDD tree is retired
 ├── [E] specs/apps/organiclever/containers/container.md — remove its inbound DDD-enforcement link
 │       when that DDD tree is retired
+├── [E] specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,
+│       components/app-web/{README.md,architecture.md},behavior/organiclever-app-web/gherkin/README.md}
+│       — remove live consumers of the retired DDD registry
+├── [E] .claude/skills/apps-organiclever-www-developing-content/{SKILL.md,README.md,
+│       reference/{bounded-context-architecture.md,common-patterns.md,domain-driven-design.md}}
+│       — retire OrganicLever DDD registry guidance and preserve applicable layer guidance
+├── [E] .claude/skills/{README.md,specs-scaffolding/reference/surface-profile-trees.md,
+│       specs-validating-structure/reference/fixer-execution-and-safety.md}
+│       — remove retired OrganicLever DDD registry consumers
+├── [E] repo-governance/conventions/structure/specs-directory-structure/
+│       deterministic-validation-allowlist-code-lang-multi-perspective-severity.md
+│       — align the documented DDD-area default with `repo-config.yml`
+├── [G] .agents/skills/<matching-non-vendored-.claude-sources> — regenerate canonical skill mirrors
 ├── [D] specs/apps/ose/ddd/<DISC-DDD-SPEC-FILE>
 ├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/<DISC-DDD-SPEC-FILE>
 ├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature

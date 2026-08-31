@@ -1324,6 +1324,24 @@ the missing field.
       edit. Re-materialize the public prospective catalog; require 62 bindings, a duplicate-free
       22-path `D-P1-PUB` allocation, a source/estimate bijection, and an unchanged 84-unit
       catalog cardinality. Do not reorder Phase 4 or carry its registry behavior into Phase 1.
+- [x] [AI] `P0-DDD-DEPENDENCY-CLOSURE-ALLOCATION-AMENDMENT-04` — Completed. The required
+      strict rules audit, run before `D-P1-PUB` can commit, found the retiring OrganicLever DDD
+      registry had six further live specification consumers and nine canonical guidance or
+      registry-consumer sources. Reassign the exact six specification paths
+      `specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,components/app-web/README.md,components/app-web/architecture.md,behavior/organiclever-app-web/gherkin/README.md}`
+      from their later OrganicLever owner deliveries to `D-P1-PUB`. Also allocate the exact
+      canonical sources `.claude/skills/apps-organiclever-www-developing-content/{SKILL.md,README.md,reference/bounded-context-architecture.md,reference/common-patterns.md,reference/domain-driven-design.md}`,
+      `.claude/skills/specs-scaffolding/reference/surface-profile-trees.md`,
+      `.claude/skills/specs-validating-structure/reference/fixer-execution-and-safety.md`,
+      `.claude/skills/README.md`, and
+      `repo-governance/conventions/structure/specs-directory-structure/deterministic-validation-allowlist-code-lang-multi-perspective-severity.md`,
+      together with their eight generated `.agents/skills/**` counterparts. The generic
+      `DddSteps.fs` fixture remains allocated to `D-P3-PUB`: it constructs a temporary fixture
+      tree and has no live repository link. Re-materialize the public prospective catalog;
+      require 62 bindings, a duplicate-free 45-path `D-P1-PUB` allocation, a source/estimate
+      bijection, the matching generated-ownership rows, and an unchanged 84-unit catalog
+      cardinality. This is a finite dependency-closure transfer, not an expansion of product
+      scope.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
@@ -1513,16 +1531,18 @@ the missing field.
 - **Outcome:** no OrganicLever DDD spec/enforcement remains; preserved behavior stays green.
 - **Acceptance criteria:** [AC-TEST-07, AC-TEST-08, AC-DDD-01, and AC-RULES-01](./prd.md#acceptance-criteria).
 - [ ] [AI] Inventory OrganicLever DDD engineering surfaces with
-      `rtk rg -n -i "domain-driven|DDD|bounded context|domain model" specs/apps/organiclever repo-governance docs apps/organiclever-* libs`; classify every match as delete or preserve in
+      `rtk rg -n -i "domain-driven|DDD|bounded context|domain model" specs/apps/organiclever repo-governance docs apps/organiclever-* libs .claude .agents`; classify every match as delete or preserve in
       `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/ddd-classification.md`. Expect no `pending`; stop on ambiguous education,
       production, or generic architecture content.
 - [ ] [AI] Put only delete-classified paths in `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/delete-paths.txt`, then run
       `rtk git rm --pathspec-from-file=plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/delete-paths.txt` from the public worktree. Expect every path removed and no preserve row
       touched; stop if Git names an unlisted path.
 - [ ] [AI] Remove only links, registry keys, targets, and index entries whose consumer was deleted;
-      `specs/apps/organiclever/components/app-web/component-web.md` and
-      `specs/apps/organiclever/containers/container.md` are the exact two allocated inbound-link
-      edits and must be changed only to remove references to the deleted DDD tree;
+      the eight allocated specification consumers
+      `specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,components/app-web/README.md,components/app-web/architecture.md,behavior/organiclever-app-web/gherkin/README.md,components/app-web/component-web.md,containers/container.md}`
+      must be changed only to remove references to the deleted DDD tree; the nine allocated
+      canonical guidance or registry-consumer sources and their generated `.agents` mirrors must
+      remove or revise the corresponding retired instruction without changing generic machinery;
       `repo-config.yml` is the exact allocated sequential shared configuration edit and must
       remove only the `organiclever` `specs.ddd-areas` entry before the deletion;
       run `rtk rg -n -i "domain-driven|DDD" specs/apps/organiclever repo-governance docs` and compare
