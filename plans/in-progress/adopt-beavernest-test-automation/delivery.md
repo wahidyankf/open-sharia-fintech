@@ -1302,6 +1302,15 @@ the missing field.
       Re-materialize the public prospective catalog; require 62 bindings, a duplicate-free 23-path
       `D-P2-PUB` allocation, an estimate bijection, and an unchanged 84-unit catalog. This finite
       inbound-consumer transfer closes links atomically with the 12-path deletion and adds no product scope.
+- [x] [AI] `P0-OSE-DDD-ENFORCEMENT-CLOSURE-ALLOCATION-AMENDMENT-08` — Completed. Before the first
+      `D-P2-PUB` deletion, allocate `repo-config.yml` as the one remaining enforced consumer of
+      `specs/apps/ose/ddd/bounded-contexts.yaml`: replace only the `ose` member of
+      `specs.ddd-areas` with the empty list. This prevents the config-aware structure validator from
+      requiring a deleted registry. Retain the generic `ddd-areas` configuration, all validator code,
+      all domain-area configuration, and every generic DDD mechanism for Phase 3. Re-materialize the
+      public prospective catalog; require 62 bindings, a duplicate-free 24-path `D-P2-PUB` allocation,
+      an estimate bijection, and an unchanged 84-unit catalog. This finite enforcement-consumer transfer
+      closes the deletion's sole build-blocking dependency without changing product scope.
 - [x] [AI] In public run
       `rtk rg --files -g 'apps/*/package.json' -g 'libs/*/package.json' apps libs`; expect the 20
       direct project manifests currently listed in the technical matrix. Name a direct consumer or
@@ -1696,8 +1705,10 @@ the missing field.
       `apps/ose-app-web/src/contexts/{ai-orchestration,gap-analysis,internal-policy,regulatory-source}/README.md`,
       `apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs`, and
       `specs/apps/ose/{README.md,behavior/README.md,components/platform-be/README.md,components/platform-web/README.md,behavior/platform-be/gherkin/README.md,behavior/platform-web/gherkin/README.md}`
-      must remove only their link or obsolete DDD-registry claim; generic feature-context wording
-      remains in place for Phase 3; run `rtk rg -n -i "domain-driven|DDD" specs/apps/ose repo-governance docs` and compare every
+      must remove only their link or obsolete DDD-registry claim; `repo-config.yml` must replace only
+      the `ose` member of `specs.ddd-areas` with `[]` so the config-aware validator no longer requires
+      the deleted OSE registry. Generic feature-context wording, generic DDD validator machinery, and
+      domain-area configuration remain in place for Phase 3; run `rtk rg -n -i "domain-driven|DDD" specs/apps/ose repo-governance docs` and compare every
       remaining match to preserve rows. Expect no active OSE DDD engineering surface and identical
       preserve hashes; save `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-2/R-PUB/deletion-proof.txt`.
 - [ ] [AI] Run `rtk npm run lint:md`, `rtk npm run format:md:check`, and
