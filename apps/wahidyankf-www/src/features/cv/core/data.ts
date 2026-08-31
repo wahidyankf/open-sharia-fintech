@@ -358,6 +358,23 @@ export const cvData: CVEntry[] = [
     type: "language",
   },
   {
+    title: "Master's Program, Electrical Systems Engineering (not completed)",
+    organization: "Paderborn University, Germany",
+    period: "October 2013 - October 2016",
+    details: [
+      "English-taught program; 42 of 120 ECTS credited, weighted grade 1.95 (German scale)",
+      "Selected completed modules: Introduction to Algorithm (1.7), Projects I - Energy Structure (1.0), Management of Technical Projects (1.7)",
+    ],
+    type: "education",
+  },
+  {
+    title: "German Language Study",
+    organization: "VHS Aachen, Germany",
+    period: "October 2012 - October 2013",
+    details: ["One year of German-language study ahead of postgraduate studies in Germany"],
+    type: "education",
+  },
+  {
     title: "Bachelor of Engineering (B.Eng.)",
     organization: "Institut Teknologi Bandung",
     period: "July 2005 - July 2011",
