@@ -151,10 +151,11 @@ Before implementation in each delivery unit, estimate the diff. Treat 500 handwr
 additions as a strong recommendation, not a hard cap. A larger natural cohesive seam may proceed
 only when its record includes measured size, why the grouping is more reviewable, verifiable, and
 revertible, split alternatives and why each was rejected, review proof, and recovery. The 1,000
-documentation-addition and 300-total-file ceilings remain hard. Twenty hand-authored files is the
-default review budget, not a reason to split a cohesive unit mechanically. Split first at a
-build-valid test-layer, behavior-domain, project, or governance seam; a binding may exceed the
-default budget only through the binding-specific record below.
+documentation-addition and 300-total-file ceilings remain hard except for the sole, narrow
+single-source other/document exception recorded below. Twenty hand-authored files is the default
+review budget, not a reason to split a cohesive unit mechanically. Split first at a build-valid
+test-layer, behavior-domain, project, or governance seam; a binding may exceed the default budget
+only through the binding-specific record below.
 
 ### Binding-Specific File-Budget Exception Record
 
@@ -167,13 +168,34 @@ allocation; its natural cohesive seam; the build-validity constraint; every viab
 why it is not independently reviewable, verifiable, or revertible; review proof; recovery; and the
 matching PR-body disclosure. `PS-03`, `DB-04C`, and `DB-13A3` remeasure the same values and stop on
 an absent, stale, incomplete, or mismatched record. No exception waives `O <= 1,000`, total files
-`<= 300`, scope discipline, exact-head gates, or recovery.
+`<= 300`, scope discipline, exact-head gates, or recovery. The sole narrow other/document exception
+below is separate: it does not relax the file budget and it does not authorize any other binding.
 
-The Phase-0 `-le 17` and `-le 20` allocation assertions below express this plan's default first
-split, not permission to combine leaves mechanically. If a finite allocation fails one, stop before
-materialization; prove whether a smaller build-valid natural seam exists. Only after it is disproved
-may the named binding receive the full record above and a matching checklist amendment. Never bypass
-an assertion in-place, merge unrelated leaves, or treat a raw owner inventory as a cohesive delivery.
+### Single-Source Other/Document Exception Record
+
+`D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING` is the only delivery permitted to use the narrow
+`O <= 1,100` rule. Its exact finite allocation is one existing non-generated source,
+`specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature`,
+and exactly one canonical non-generated behavior target,
+`specs/apps/ayokoding/www/behaviors/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature`;
+the public delivery-state paths are the only additional admitted paths. The source has exactly
+1,010 lines. The target preserves that one calculator behavior contract and must not include
+navigation, another tool, a parent index, or a convenience edit.
+
+The exception record before RED must state `Single-source other/document exception: required`, the
+binding, `Measured other/document additions: 1010`, the exact source and target, the finite
+allocation, the one-source/one-target semantic constraint, rejected viable splits, review proof,
+recovery, the plan record, and the matching PR-body disclosure. `PS-03` and `DB-13A3` reject an
+`O > 1,100` result, a source at or below 1,000 lines, a missing/mismatched record, more than one
+behavior/contract target, or any added semantic scope. All other bindings retain `O <= 1,000`.
+
+The Phase-0 `-le 17` and `-le 20` allocation assertions below express a default first split over
+**source allocations**, not a false final-path count. A source-to-target move materially changes
+both repository-relative paths and the public plan-state paths are admitted separately. If the
+complete finite candidate fails a default, stop before materialization; prove whether a smaller
+build-valid natural seam exists. Only after it is disproved may the named binding receive the full
+record above and a matching checklist amendment. Never bypass an assertion in-place, merge
+unrelated leaves, or treat a raw owner inventory as a cohesive delivery.
 
 For every prospective and final size gate, canonical category `C` includes all non-generated,
 non-Markdown source, test, script, configuration, data, and manifest additions; category `O`
@@ -336,52 +358,55 @@ removed while another DAG node can still read it.
 
 ### Delivery Boundaries
 
-| Binding ID                        | Phase(s) | Repository and natural unit                                                     | Branch basename                        |
-| --------------------------------- | -------- | ------------------------------------------------------------------------------- | -------------------------------------- |
-| `D-P0-PUB-PORTABLE-RULES`         | 0        | public portable formal-plan delivery-record rule and bindings                   | `plan-rules-portable-delivery-records` |
-| `D-P0-PRI-PORTABLE-RULES`         | 0        | private counterpart: portable formal-plan delivery-record rule and bindings     | `plan-rules-portable-delivery-records` |
-| `D-P0-PUB-FILE-BUDGET-RULES`      | 0        | public conditional file-budget natural-seam contract and bindings               | `plan-rules-file-budget-exception`     |
-| `D-P0-PRI-FILE-BUDGET-RULES`      | 0        | private counterpart: conditional file-budget natural-seam contract and bindings | `plan-rules-file-budget-exception`     |
-| `D-P0-PUB-PREFLIGHT`              | 0        | public rules-quality preflight executable-path correction                       | `plan-rules-preflight-path`            |
-| `D-P0-PRI-PREFLIGHT`              | 0        | private counterpart: rules-quality preflight executable-path correction         | `plan-rules-preflight-path`            |
-| `D-P0-PUB-PLAN-AMENDMENT`         | 0        | Phase 0 reconciliation and portable plan-state amendment                        | `plan-p0-delivery-amendment`           |
-| `D-P0-PUB-PARITY-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino parity discovery and plan-state reconciliation                    | `plan-p0-rhino-parity-reconciliation`  |
-| `D-P0-PRI-RHINO-README-PARITY`    | 0        | private Rhino README parity plus generated manifest                             | `rhino-cli-readme-parity`              |
-| `D-P0-PUB-CORPUS-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino corpus cardinality, destination, and parity reconciliation        | `plan-p0-rhino-corpus-reconciliation`  |
-| `D-P0-PRI-RHINO-C4-PARITY`        | 0        | private Rhino C4 corpus parity for the four finite drifted documents            | `rhino-cli-c4-parity`                  |
-| `D-P1-PUB`                        | 1        | public OrganicLever DDD retirement                                              | `test-contract-ol-ddd-retirement`      |
-| `D-P2-PUB`                        | 2        | public OSE DDD retirement                                                       | `test-contract-ose-ddd-retirement`     |
-| `D-P3-PUB` / `D-P3-PRI`           | 3        | Rhino/generic DDD, one PR per repo                                              | `test-contract-ddd-tooling-retirement` |
-| `D-P4-PUB` / `D-P4-PRI`           | 4        | validator foundation, one PR per repo                                           | `test-contract-validator-foundation`   |
-| `D-P5-PUB` / `D-P5-PRI`           | 5        | specs/C4 foundation, one PR per repo                                            | `test-contract-specs-c4-foundation`    |
-| `D-O-PUB-CRANE`                   | 6        | `O-PUB-CRANE`                                                                   | `test-contract-crane-cli`              |
-| `D-O-PUB-RHINO` / `D-O-PRI-RHINO` | 7        | Rhino, one PR per repo                                                          | `test-contract-rhino-cli`              |
-| `D-O-PUB-FS-CORE`                 | 8A       | `O-PUB-FS-CORE`                                                                 | `test-contract-fsharp-crane-core`      |
-| `D-O-PUB-FS-ENV`                  | 8B       | `O-PUB-FS-ENV`                                                                  | `test-contract-fsharp-env-loader`      |
-| `D-O-PUB-TS-ENV`                  | 9        | `O-PUB-TS-ENV`                                                                  | `test-contract-ts-env-loader`          |
-| `D-O-PUB-WEB-TOKEN`               | 10A      | `O-PUB-WEB-TOKEN`                                                               | `test-contract-web-ui-token`           |
-| `D-O-PRI-TS-TOKEN`                | 10B      | `O-PRI-TS-TOKEN`                                                                | `test-contract-ts-ui-tokens`           |
-| `D-O-PUB-WEB-UI`                  | 11A      | `O-PUB-WEB-UI`                                                                  | `test-contract-web-ui`                 |
-| `D-O-PRI-TS-UI`                   | 11B      | `O-PRI-TS-UI`                                                                   | `test-contract-ts-ui`                  |
-| `D-O-PUB-AYO`                     | 12       | `O-PUB-AYO`                                                                     | `test-contract-ayokoding-www`          |
-| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID`                                                                   | `test-contract-wahidyankf-www`         |
-| `D-O-PUB-OL-WEB`                  | 14       | `O-PUB-OL-WEB`                                                                  | `test-contract-organiclever-app-web`   |
-| `D-O-PUB-OL-BE`                   | 15       | `O-PUB-OL-BE`                                                                   | `test-contract-organiclever-be`        |
-| `D-O-PUB-OL-WWW`                  | 16       | `O-PUB-OL-WWW`                                                                  | `test-contract-organiclever-www`       |
-| `D-O-PUB-OSE-WEB`                 | 17       | `O-PUB-OSE-WEB`                                                                 | `test-contract-ose-app-web`            |
-| `D-O-PUB-OSE-BE`                  | 18       | `O-PUB-OSE-BE`                                                                  | `test-contract-ose-be`                 |
-| `D-O-PUB-OSE-WWW`                 | 19       | `O-PUB-OSE-WWW`                                                                 | `test-contract-ose-www`                |
-| `D-P20-PRI`                       | 20A      | private closure                                                                 | `test-contract-rollout-closure`        |
-| `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
+| Binding ID                        | Phase(s) | Repository and natural unit                                                     | Branch basename                          |
+| --------------------------------- | -------- | ------------------------------------------------------------------------------- | ---------------------------------------- |
+| `D-P0-PUB-PORTABLE-RULES`         | 0        | public portable formal-plan delivery-record rule and bindings                   | `plan-rules-portable-delivery-records`   |
+| `D-P0-PRI-PORTABLE-RULES`         | 0        | private counterpart: portable formal-plan delivery-record rule and bindings     | `plan-rules-portable-delivery-records`   |
+| `D-P0-PUB-FILE-BUDGET-RULES`      | 0        | public conditional file-budget natural-seam contract and bindings               | `plan-rules-file-budget-exception`       |
+| `D-P0-PRI-FILE-BUDGET-RULES`      | 0        | private counterpart: conditional file-budget natural-seam contract and bindings | `plan-rules-file-budget-exception`       |
+| `D-P0-PUB-PREFLIGHT`              | 0        | public rules-quality preflight executable-path correction                       | `plan-rules-preflight-path`              |
+| `D-P0-PRI-PREFLIGHT`              | 0        | private counterpart: rules-quality preflight executable-path correction         | `plan-rules-preflight-path`              |
+| `D-P0-PUB-PLAN-AMENDMENT`         | 0        | Phase 0 reconciliation and portable plan-state amendment                        | `plan-p0-delivery-amendment`             |
+| `D-P0-PUB-PARITY-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino parity discovery and plan-state reconciliation                    | `plan-p0-rhino-parity-reconciliation`    |
+| `D-P0-PRI-RHINO-README-PARITY`    | 0        | private Rhino README parity plus generated manifest                             | `rhino-cli-readme-parity`                |
+| `D-P0-PUB-CORPUS-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino corpus cardinality, destination, and parity reconciliation        | `plan-p0-rhino-corpus-reconciliation`    |
+| `D-P0-PRI-RHINO-C4-PARITY`        | 0        | private Rhino C4 corpus parity for the four finite drifted documents            | `rhino-cli-c4-parity`                    |
+| `D-P0-PUB-SINGLE-SOURCE-O-RULES`  | 0        | public narrow single-source other/document exception and generated bindings     | `plan-rules-single-file-other-exception` |
+| `D-P0-PRI-SINGLE-SOURCE-O-RULES`  | 0        | private counterpart: same narrow single-source exception and bindings           | `plan-rules-single-file-other-exception` |
+| `D-P0-PUB-PHYSICAL-ALLOCATION`    | 0        | physical source–target allocation, seam, catalog, and size-gate amendment       | `plan-amend-physical-allocation`         |
+| `D-P1-PUB`                        | 1        | public OrganicLever DDD retirement                                              | `test-contract-ol-ddd-retirement`        |
+| `D-P2-PUB`                        | 2        | public OSE DDD retirement                                                       | `test-contract-ose-ddd-retirement`       |
+| `D-P3-PUB` / `D-P3-PRI`           | 3        | Rhino/generic DDD, one PR per repo                                              | `test-contract-ddd-tooling-retirement`   |
+| `D-P4-PUB` / `D-P4-PRI`           | 4        | validator foundation, one PR per repo                                           | `test-contract-validator-foundation`     |
+| `D-P5-PUB` / `D-P5-PRI`           | 5        | specs/C4 foundation, one PR per repo                                            | `test-contract-specs-c4-foundation`      |
+| `D-O-PUB-CRANE`                   | 6        | `O-PUB-CRANE`                                                                   | `test-contract-crane-cli`                |
+| `D-O-PUB-RHINO` / `D-O-PRI-RHINO` | 7        | Rhino, one PR per repo                                                          | `test-contract-rhino-cli`                |
+| `D-O-PUB-FS-CORE`                 | 8A       | `O-PUB-FS-CORE`                                                                 | `test-contract-fsharp-crane-core`        |
+| `D-O-PUB-FS-ENV`                  | 8B       | `O-PUB-FS-ENV`                                                                  | `test-contract-fsharp-env-loader`        |
+| `D-O-PUB-TS-ENV`                  | 9        | `O-PUB-TS-ENV`                                                                  | `test-contract-ts-env-loader`            |
+| `D-O-PUB-WEB-TOKEN`               | 10A      | `O-PUB-WEB-TOKEN`                                                               | `test-contract-web-ui-token`             |
+| `D-O-PRI-TS-TOKEN`                | 10B      | `O-PRI-TS-TOKEN`                                                                | `test-contract-ts-ui-tokens`             |
+| `D-O-PUB-WEB-UI`                  | 11A      | `O-PUB-WEB-UI`                                                                  | `test-contract-web-ui`                   |
+| `D-O-PRI-TS-UI`                   | 11B      | `O-PRI-TS-UI`                                                                   | `test-contract-ts-ui`                    |
+| `D-O-PUB-AYO`                     | 12       | `O-PUB-AYO`                                                                     | `test-contract-ayokoding-www`            |
+| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID`                                                                   | `test-contract-wahidyankf-www`           |
+| `D-O-PUB-OL-WEB`                  | 14       | `O-PUB-OL-WEB`                                                                  | `test-contract-organiclever-app-web`     |
+| `D-O-PUB-OL-BE`                   | 15       | `O-PUB-OL-BE`                                                                   | `test-contract-organiclever-be`          |
+| `D-O-PUB-OL-WWW`                  | 16       | `O-PUB-OL-WWW`                                                                  | `test-contract-organiclever-www`         |
+| `D-O-PUB-OSE-WEB`                 | 17       | `O-PUB-OSE-WEB`                                                                 | `test-contract-ose-app-web`              |
+| `D-O-PUB-OSE-BE`                  | 18       | `O-PUB-OSE-BE`                                                                  | `test-contract-ose-be`                   |
+| `D-O-PUB-OSE-WWW`                 | 19       | `O-PUB-OSE-WWW`                                                                 | `test-contract-ose-www`                  |
+| `D-P20-PRI`                       | 20A      | private closure                                                                 | `test-contract-rollout-closure`          |
+| `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`          |
 
-The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Sixteen prerequisite PRs precede them: one public/private counterpart pair for portable
-delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, eight distinct public
-Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
-96 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
-both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
-alters the 80-unit implementation catalog.
+The 82 concrete delivery-unit PRs are the declared implementation catalog (57 public and 25
+private). Eighteen prerequisite PRs have already established the portable delivery-record,
+file-budget, preflight, Phase-0 reconciliation, private-Rhino parity, and narrow single-source
+other/document rule seams. This physical-allocation amendment is the nineteenth prerequisite;
+therefore the plan has **101 PRs** in total. Each prerequisite is a separate documentation/rule or
+discovery seam; both members of every rule counterpart pair must merge before the first Phase 1
+edit, and none broadens the 82-unit implementation catalog beyond the two Ayo seam corrections
+recorded here.
 
 ### Phase 0 Rhino parity discovery
 
@@ -421,71 +446,73 @@ discovery also does not complete the declared-footprint resolution or authorize 
 The parent rows `D-P4-*`, `D-O-*-RHINO`, `D-O-PUB-AYO`, and `D-O-*-WEB-UI` are compact coordination
 closeouts, not containers for their former implementation corpus. Their known implementation file
 footprints already exceed the 20 hand-authored-file ceiling, so the following leaf lifecycle
-bindings are mandatory before editing. Phase 0 writes the exact finite path allocation named in
-the last column; one implementation path appears in exactly one leaf, and every leaf uses the full
-concrete DB lifecycle in sequence. Only after all leaves merge may the parent closeout use its
-existing DB checklist for at most 17 implementation/configuration paths, cross-leaf verification,
-and governance reconciliation; no implementation path may reappear there. For public rows, the
-stated maximum covers implementation, tests, governance, and manifests only; every prospective
-candidate then adds the mandatory `delivery.md` and `implementation-notes.md` rows and reserves
-`learnings.md`, producing at most 20 hand-authored paths except a named, finite file-budget
-natural-seam exception. Private maxima retain their ignored evidence model. Generated mirrors
+bindings are mandatory before editing. Phase 0 writes the exact finite **source** allocation named
+in the last column; one source path appears in exactly one leaf, and every leaf uses the full
+concrete DB lifecycle in sequence. Its candidate then adds every distinct target, deletion, and
+public plan-state path before the file budget is measured. Only after all leaves merge may the
+parent closeout use its existing DB checklist for at most 17 implementation/configuration paths,
+cross-leaf verification, and governance reconciliation; no implementation path may reappear there.
+For public rows, the stated maximum is therefore not a final changed-file cap. The complete
+candidate must fit the 20-file default or carry a named, finite file-budget natural-seam exception;
+private candidates follow the same review rule with their ignored evidence model. Generated mirrors
 remain in total-file accounting.
 
-| Coordination group | Mandatory leaf lifecycle binding          | Natural build-valid seam                                                          | Maximum implementation/configuration paths | Frozen Phase 0 allocation                                                   |
-| ------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- | -----------------------------------------: | --------------------------------------------------------------------------- |
-| `D-P4-PUB`         | `D-P4-PUB-REGISTRY`                       | registry/schema, CLI dispatch/help, compile registration, registry tests          |                                         17 | `phase-0/delivery-splits/D-P4-PUB-REGISTRY.paths.txt`                       |
-| `D-P4-PUB`         | `D-P4-PUB-BDD`                            | exact-BDD fixtures, policy module, focused tests, and target wiring               |                                         17 | `phase-0/delivery-splits/D-P4-PUB-BDD.paths.txt`                            |
-| `D-P4-PUB`         | `D-P4-PUB-COVERAGE`                       | 99% coverage fixtures, policy module, focused tests, and target wiring            |                                         17 | `phase-0/delivery-splits/D-P4-PUB-COVERAGE.paths.txt`                       |
-| `D-P4-PUB`         | `D-P4-PUB-LAYOUT-MANIFEST`                | physical-layer and direct-manifest policy plus focused tests                      |                                         17 | `phase-0/delivery-splits/D-P4-PUB-LAYOUT-MANIFEST.paths.txt`                |
-| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-A`                     | four check-specific JSON fixtures per `CRANE,RHINO,FS-CORE,TS-ENV` owner          |                                         16 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-A.paths.txt`                     |
-| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-B`                     | four check-specific JSON fixtures per `WEB-TOKEN,WEB-UI,AYO,WAHID,OL-WEB` owner   |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-B.paths.txt`                     |
-| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-C`                     | four check-specific JSON fixtures per `OL-BE,OL-WWW,OSE-WEB,OSE-BE,OSE-WWW` owner |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-C.paths.txt`                     |
-| `D-P4-PUB`         | `D-P4-PUB-GOVERNANCE`                     | canonical rules, consumers, compact enforcement summary, generated bindings       |                                         17 | `phase-0/delivery-splits/D-P4-PUB-GOVERNANCE.paths.txt`                     |
-| `D-P4-PRI`         | `D-P4-PRI-REGISTRY-PARITY`                | byte-identical registry/CLI parity                                                |                                         20 | `phase-0/delivery-splits/D-P4-PRI-REGISTRY-PARITY.paths.txt`                |
-| `D-P4-PRI`         | `D-P4-PRI-POLICY-PARITY`                  | byte-identical policy/test parity                                                 |                                         20 | `phase-0/delivery-splits/D-P4-PRI-POLICY-PARITY.paths.txt`                  |
-| `D-P4-PRI`         | `D-P4-PRI-FIXTURES`                       | twelve private owner fixture files plus their compact manifest                    |                                         14 | `phase-0/delivery-splits/D-P4-PRI-FIXTURES.paths.txt`                       |
-| `D-P4-PRI`         | `D-P4-PRI-GOVERNANCE`                     | private canonical consumers and compact parity proof                              |                                         20 | `phase-0/delivery-splits/D-P4-PRI-GOVERNANCE.paths.txt`                     |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-UNIT`                      | project-root unit moves, unit runner, coverage                                    |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-UNIT.paths.txt`                      |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-INTEGRATION-E2E`           | integration/E2E moves, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-INTEGRATION-E2E.paths.txt`           |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CONTRACT`                  | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-CONTRACT.paths.txt`                  |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-METADATA`           | root/C4/behavior indexes and non-Gherkin metadata                                 |                                         13 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-METADATA.paths.txt`           |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-HARNESS`            | harness behavior corpus                                                           |                                         16 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-HARNESS.paths.txt`            |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-SPECS`              | non-DDD specs behavior corpus                                                     |                                         14 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-SPECS.paths.txt`              |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-DOCUMENTS`          | Markdown and convention behavior corpus                                           |                                         12 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-DOCUMENTS.paths.txt`          |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-GOVERNANCE`         | repository-governance/config behavior corpus                                      |                                         12 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-GOVERNANCE.paths.txt`         |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-GATES-SYSTEM`       | gate, system, and Git behavior corpus                                             |                                         14 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-GATES-SYSTEM.paths.txt`       |
-| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-COVERAGE-ENV`       | coverage, environment, and contracts behavior corpus                              |                                         15 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-COVERAGE-ENV.paths.txt`       |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-UNIT`                      | private unit/parity moves and coverage                                            |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-UNIT.paths.txt`                      |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-INTEGRATION-E2E`           | private integration/E2E and adapters                                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-INTEGRATION-E2E.paths.txt`           |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CONTRACT`                  | private targets, manifest, governance, compact proof                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-CONTRACT.paths.txt`                  |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-METADATA`           | private byte-identical root/C4/behavior metadata                                  |                                         13 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-METADATA.paths.txt`           |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-HARNESS`            | private byte-identical harness behavior corpus                                    |                                         16 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-HARNESS.paths.txt`            |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-SPECS`              | private byte-identical non-DDD specs corpus                                       |                                         14 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-SPECS.paths.txt`              |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-DOCUMENTS`          | private byte-identical Markdown/convention corpus                                 |                                         12 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-DOCUMENTS.paths.txt`          |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-GOVERNANCE`         | private byte-identical governance/config corpus                                   |                                         12 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-GOVERNANCE.paths.txt`         |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-GATES-SYSTEM`       | private byte-identical gate/system/Git corpus                                     |                                         14 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-GATES-SYSTEM.paths.txt`       |
-| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-COVERAGE-ENV`       | private byte-identical coverage/env/contracts corpus                              |                                         15 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-COVERAGE-ENV.paths.txt`       |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-UNIT`                        | unit tests, unit runner, coverage                                                 |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-UNIT.paths.txt`                        |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-INTEGRATION-E2E`             | integration/E2E tests, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-INTEGRATION-E2E.paths.txt`             |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CONTRACT`                    | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-CONTRACT.paths.txt`                    |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-METADATA`             | root/C4/behavior indexes and non-Gherkin metadata                                 |                                         15 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-METADATA.paths.txt`             |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-BACKEND`              | AyoKoding backend behavior corpus                                                 |                                         12 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-BACKEND.paths.txt`              |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-BUILD-TOOLS`          | AyoKoding build-tool behavior corpus                                              |                                          8 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-BUILD-TOOLS.paths.txt`          |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-SHELL-CONTENT`    | app-shell, content, i18n, and search corpus                                       |                                         12 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-SHELL-CONTENT.paths.txt`    |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS` | navigation and tools corpus                                                       |                                         13 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS.paths.txt` |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-COURSE-DISCOVERY`     | course landing/discovery corpus                                                   |                                          9 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-COURSE-DISCOVERY.paths.txt`     |
-| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-COURSE-FLOW`          | remaining course-path flow corpus                                                 |                                         11 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-COURSE-FLOW.paths.txt`          |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-UNIT`                     | unit/component tests, unit runner, coverage                                       |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-UNIT.paths.txt`                     |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-INTEGRATION-E2E`          | integration/E2E tests, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-INTEGRATION-E2E.paths.txt`          |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CONTRACT`                 | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CONTRACT.paths.txt`                 |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-METADATA`          | web-ui root/C4/non-feature metadata                                               |                                         10 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-METADATA.paths.txt`          |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-CONTROLS`          | ten independent control-component behaviors                                       |                                         10 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-CONTROLS.paths.txt`          |
-| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-COMPOSITION`       | eleven composition/navigation component behaviors                                 |                                         11 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-COMPOSITION.paths.txt`       |
-| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-UNIT`                      | private unit/component tests and coverage                                         |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-UNIT.paths.txt`                      |
-| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-INTEGRATION-E2E`           | private integration/E2E tests and adapters                                        |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-INTEGRATION-E2E.paths.txt`           |
-| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CONTRACT`                  | private targets, manifest, governance, compact proof                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CONTRACT.paths.txt`                  |
-| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CORPUS`                    | private ts-ui logical specs/C4 corpus                                             |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CORPUS.paths.txt`                    |
+| Coordination group | Mandatory leaf lifecycle binding              | Natural build-valid seam                                                          | Maximum implementation/configuration paths | Frozen Phase 0 allocation                                                       |
+| ------------------ | --------------------------------------------- | --------------------------------------------------------------------------------- | -----------------------------------------: | ------------------------------------------------------------------------------- |
+| `D-P4-PUB`         | `D-P4-PUB-REGISTRY`                           | registry/schema, CLI dispatch/help, compile registration, registry tests          |                                         17 | `phase-0/delivery-splits/D-P4-PUB-REGISTRY.paths.txt`                           |
+| `D-P4-PUB`         | `D-P4-PUB-BDD`                                | exact-BDD fixtures, policy module, focused tests, and target wiring               |                                         17 | `phase-0/delivery-splits/D-P4-PUB-BDD.paths.txt`                                |
+| `D-P4-PUB`         | `D-P4-PUB-COVERAGE`                           | 99% coverage fixtures, policy module, focused tests, and target wiring            |                                         17 | `phase-0/delivery-splits/D-P4-PUB-COVERAGE.paths.txt`                           |
+| `D-P4-PUB`         | `D-P4-PUB-LAYOUT-MANIFEST`                    | physical-layer and direct-manifest policy plus focused tests                      |                                         17 | `phase-0/delivery-splits/D-P4-PUB-LAYOUT-MANIFEST.paths.txt`                    |
+| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-A`                         | four check-specific JSON fixtures per `CRANE,RHINO,FS-CORE,TS-ENV` owner          |                                         16 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-A.paths.txt`                         |
+| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-B`                         | four check-specific JSON fixtures per `WEB-TOKEN,WEB-UI,AYO,WAHID,OL-WEB` owner   |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-B.paths.txt`                         |
+| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-C`                         | four check-specific JSON fixtures per `OL-BE,OL-WWW,OSE-WEB,OSE-BE,OSE-WWW` owner |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-C.paths.txt`                         |
+| `D-P4-PUB`         | `D-P4-PUB-GOVERNANCE`                         | canonical rules, consumers, compact enforcement summary, generated bindings       |                                         17 | `phase-0/delivery-splits/D-P4-PUB-GOVERNANCE.paths.txt`                         |
+| `D-P4-PRI`         | `D-P4-PRI-REGISTRY-PARITY`                    | byte-identical registry/CLI parity                                                |                                         20 | `phase-0/delivery-splits/D-P4-PRI-REGISTRY-PARITY.paths.txt`                    |
+| `D-P4-PRI`         | `D-P4-PRI-POLICY-PARITY`                      | byte-identical policy/test parity                                                 |                                         20 | `phase-0/delivery-splits/D-P4-PRI-POLICY-PARITY.paths.txt`                      |
+| `D-P4-PRI`         | `D-P4-PRI-FIXTURES`                           | twelve private owner fixture files plus their compact manifest                    |                                         14 | `phase-0/delivery-splits/D-P4-PRI-FIXTURES.paths.txt`                           |
+| `D-P4-PRI`         | `D-P4-PRI-GOVERNANCE`                         | private canonical consumers and compact parity proof                              |                                         20 | `phase-0/delivery-splits/D-P4-PRI-GOVERNANCE.paths.txt`                         |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-UNIT`                          | project-root unit moves, unit runner, coverage                                    |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-UNIT.paths.txt`                          |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-INTEGRATION-E2E`               | integration/E2E moves, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-INTEGRATION-E2E.paths.txt`               |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CONTRACT`                      | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-RHINO-CONTRACT.paths.txt`                      |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-METADATA`               | root/C4/behavior indexes and non-Gherkin metadata                                 |                                         13 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-METADATA.paths.txt`               |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-HARNESS`                | harness behavior corpus                                                           |                                         16 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-HARNESS.paths.txt`                |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-SPECS`                  | non-DDD specs behavior corpus                                                     |                                         14 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-SPECS.paths.txt`                  |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-DOCUMENTS`              | Markdown and convention behavior corpus                                           |                                         12 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-DOCUMENTS.paths.txt`              |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-GOVERNANCE`             | repository-governance/config behavior corpus                                      |                                         12 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-GOVERNANCE.paths.txt`             |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-GATES-SYSTEM`           | gate, system, and Git behavior corpus                                             |                                         14 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-GATES-SYSTEM.paths.txt`           |
+| `D-O-PUB-RHINO`    | `D-O-PUB-RHINO-CORPUS-COVERAGE-ENV`           | coverage, environment, and contracts behavior corpus                              |                                         15 | `phase-0/delivery-splits/D-O-PUB-RHINO-CORPUS-COVERAGE-ENV.paths.txt`           |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-UNIT`                          | private unit/parity moves and coverage                                            |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-UNIT.paths.txt`                          |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-INTEGRATION-E2E`               | private integration/E2E and adapters                                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-INTEGRATION-E2E.paths.txt`               |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CONTRACT`                      | private targets, manifest, governance, compact proof                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-RHINO-CONTRACT.paths.txt`                      |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-METADATA`               | private byte-identical root/C4/behavior metadata                                  |                                         13 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-METADATA.paths.txt`               |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-HARNESS`                | private byte-identical harness behavior corpus                                    |                                         16 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-HARNESS.paths.txt`                |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-SPECS`                  | private byte-identical non-DDD specs corpus                                       |                                         14 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-SPECS.paths.txt`                  |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-DOCUMENTS`              | private byte-identical Markdown/convention corpus                                 |                                         12 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-DOCUMENTS.paths.txt`              |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-GOVERNANCE`             | private byte-identical governance/config corpus                                   |                                         12 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-GOVERNANCE.paths.txt`             |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-GATES-SYSTEM`           | private byte-identical gate/system/Git corpus                                     |                                         14 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-GATES-SYSTEM.paths.txt`           |
+| `D-O-PRI-RHINO`    | `D-O-PRI-RHINO-CORPUS-COVERAGE-ENV`           | private byte-identical coverage/env/contracts corpus                              |                                         15 | `phase-0/delivery-splits/D-O-PRI-RHINO-CORPUS-COVERAGE-ENV.paths.txt`           |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-UNIT`                            | unit tests, unit runner, coverage                                                 |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-UNIT.paths.txt`                            |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-INTEGRATION-E2E`                 | integration/E2E tests, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-INTEGRATION-E2E.paths.txt`                 |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CONTRACT`                        | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-AYO-CONTRACT.paths.txt`                        |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-METADATA`                 | root/C4/behavior indexes and non-Gherkin metadata                                 |                                         15 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-METADATA.paths.txt`                 |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-BACKEND`                  | AyoKoding backend behavior corpus                                                 |                                         12 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-BACKEND.paths.txt`                  |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-BUILD-TOOLS`              | AyoKoding build-tool behavior corpus                                              |                                          8 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-BUILD-TOOLS.paths.txt`              |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-SHELL-CONTENT`        | app-shell, content, i18n, and search corpus                                       |                                         12 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-SHELL-CONTENT.paths.txt`        |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION`           | navigation behavior corpus                                                        |                                          9 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-NAVIGATION.paths.txt`           |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-TOOLS`                | ordinary tools behavior corpus                                                    |                                          3 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-TOOLS.paths.txt`                |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING` | one calculator behavior contract; sole narrow O exception                         |                                          1 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING.paths.txt` |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-COURSE-DISCOVERY`         | course landing/discovery corpus                                                   |                                          9 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-COURSE-DISCOVERY.paths.txt`         |
+| `D-O-PUB-AYO`      | `D-O-PUB-AYO-CORPUS-COURSE-FLOW`              | remaining course-path flow corpus                                                 |                                         11 | `phase-0/delivery-splits/D-O-PUB-AYO-CORPUS-COURSE-FLOW.paths.txt`              |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-UNIT`                         | unit/component tests, unit runner, coverage                                       |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-UNIT.paths.txt`                         |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-INTEGRATION-E2E`              | integration/E2E tests, adapters, delegated runners                                |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-INTEGRATION-E2E.paths.txt`              |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CONTRACT`                     | direct targets, manifest, governance, compact proof                               |                                         17 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CONTRACT.paths.txt`                     |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-METADATA`              | web-ui root/C4/non-feature metadata                                               |                                         10 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-METADATA.paths.txt`              |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-CONTROLS`              | ten independent control-component behaviors                                       |                                         10 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-CONTROLS.paths.txt`              |
+| `D-O-PUB-WEB-UI`   | `D-O-PUB-WEB-UI-CORPUS-COMPOSITION`           | eleven composition/navigation component behaviors                                 |                                         11 | `phase-0/delivery-splits/D-O-PUB-WEB-UI-CORPUS-COMPOSITION.paths.txt`           |
+| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-UNIT`                          | private unit/component tests and coverage                                         |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-UNIT.paths.txt`                          |
+| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-INTEGRATION-E2E`               | private integration/E2E tests and adapters                                        |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-INTEGRATION-E2E.paths.txt`               |
+| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CONTRACT`                      | private targets, manifest, governance, compact proof                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CONTRACT.paths.txt`                      |
+| `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CORPUS`                        | private ts-ui logical specs/C4 corpus                                             |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CORPUS.paths.txt`                        |
 
 `D-P4-PUB-FIXTURES-A` owns four complete owner packets, hence 16 implementation paths and at most
 19 hand-authored paths with its reserved plan-state files. Its former `O-PUB-FS-ENV` packet belongs
@@ -496,8 +523,38 @@ implementation paths and at most 23 hand-authored paths with the three reserved 
 Each exception must record the exact count, one-check schema/CLI constraint, rejected cross-owner
 check split, review proof, recovery path, and PR disclosure; category O remains at most 1,000
 additions and total files at most 300. Splitting B or C by check would replace its owner-cohort
-delivery with cross-owner deliveries, change the 80-unit implementation catalog, and lose the
+delivery with cross-owner deliveries, change the 82-unit implementation catalog, and lose the
 complete-owner-packet seam; it is not permitted.
+
+### Physical Move-Pair Reconciliation
+
+The old fixed source-allocation maxima did not measure a move as the reviewed delivery sees it:
+the retiring source, canonical target, and public delivery-state files are all distinct paths. The
+physical resolver records every source-to-target pair before materialization. A binding with more
+than 20 complete candidate paths must retain its named semantic owner, test root, or corpus leaf
+when a smaller allocation would either split one build-valid test root, leave its canonical
+behavior/C4 index half-migrated, or separate a behavior contract from its source/target pair. Its
+file-budget record is therefore mandatory; it is never a blanket owner-inventory exception.
+
+The reconciliation keeps the existing owner and corpus seams. It does not create count-driven
+micro-PRs. The one substantive seam correction is Ayo's former mixed navigation/tools leaf:
+navigation, ordinary tools, and the calculator contract are independently reviewable. The
+calculator is further isolated because it is the only source above 1,000 document lines. A smaller
+calculator split is impossible: its single existing behavior source must become exactly one
+canonical behavior target.
+
+| Catalog change                                  |             Source allocation | Complete-candidate decision                                                              | Reason and required evidence                                                                                                                                                       |
+| ----------------------------------------------- | ----------------------------: | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION`             |         9 source/target pairs | named file-budget record                                                                 | One navigation behavior corpus; splitting individual redirect contracts would leave its navigation index and behavior set non-atomic.                                              |
+| `D-O-PUB-AYO-CORPUS-WEB-TOOLS`                  |         3 source/target pairs | within default unless the measured candidate adds an independently required control path | Three ordinary tool documents only; calculator excluded.                                                                                                                           |
+| `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING`   |          1 source/target pair | single-source O record; normal file budget                                               | Exact one-source/one-target calculator contract; no unrelated tool or navigation file.                                                                                             |
+| Existing named owner, test-root, or corpus leaf | resolver-defined finite pairs | named file-budget record only when complete candidate exceeds 20                         | Preserve the declared build-valid owner/test-root or canonical corpus seam; record exact counts, rejected smaller seams, review proof, recovery, plan location, and PR disclosure. |
+
+The record name is `natural-seam-exception.md` in the binding's ignored delivery evidence, while
+this section is the durable plan record. Every record must match the current candidate exactly;
+`PS-03`, `DB-04C`, and `DB-13A3` reject a stale or more-broad record. A move pair is not an
+addition exemption: category `C`/`O`, all paths, the 300-file ceiling, and current-head reviews
+remain measured.
 
 Each leaf branch basename is the parent basename plus the lowercase final suffix, for example
 `test-contract-web-ui-unit`. Execute leaves top-to-bottom within their coordination group and
@@ -680,6 +737,19 @@ validate-mapping --project <exact-project> --require-state <identity|redirected>
   splits, review proof, recovery, plan record, and PR-body disclosure. Every concrete
   `*-PRE-01..03`, `*-EARLY-01..03`, or owner `OM-18A..C` executes `PS-01..03` with its exact paths;
   no later gate recreates its branch.
+
+- **Procedure** `PS-03S single-source-other-document-gate` — This procedure replaces `PS-03` only
+  for `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING`. Use the same candidate, gate, and exception
+  paths as `PS-03`, calculate `C`, `O`, hand-authored count, and total files identically, then
+  enforce `O <= 1,100` and total files `<= 300`; require the ordinary natural-seam record if
+  `C > 500`. Require exactly one candidate source
+  row with the existing calculator path, exactly one candidate target row with the canonical
+  calculator target path, no other behavior/contract source or target, and a source line count of
+  exactly 1,010. Require the complete record named in [Single-Source Other/Document Exception
+  Record](#single-source-otherdocument-exception-record), reject `pending`, `unknown`, `TBD`, or
+  `TODO`, and write the measured facts and `Single-source other/document exception: 1` to the
+  ignored gate and PR body. A source/target mismatch, extra semantic row, missing PR disclosure,
+  or any other binding invoking this procedure is a stop condition.
 
 ## Controlled Runbook DB — Complete PR Lifecycle
 
@@ -1180,9 +1250,11 @@ the missing field.
       `rtk git ls-files -- specs/apps/ayokoding`. Use `CORPUS-BACKEND` only for
       `behavior/ayokoding-be/**`, `CORPUS-BUILD-TOOLS` only for
       `behavior/ayokoding-build-tools/**`, `CORPUS-WEB-SHELL-CONTENT` only for the www Gherkin
-      directories `app-shell|content|i18n|search`, `CORPUS-WEB-NAVIGATION-TOOLS` only for
-      `navigation|tools`, and the two course leaves only for the exact course-path basenames recorded
-      below; every remaining C4/index path is `CORPUS-METADATA`. The discovery set is
+      directories `app-shell|content|i18n|search`, `CORPUS-WEB-NAVIGATION` only for `navigation/**`,
+      `CORPUS-WEB-TOOLS` only for the three ordinary `tools/**` paths, and
+      `CORPUS-WEB-TOOLS-COST-OF-LIVING` only for the calculator source/target pair. The two course
+      leaves use the exact course-path basenames recorded below; every remaining C4/index path is
+      `CORPUS-METADATA`. The discovery set is
       `landing-hero`, `category-landing-arc-chooser`, `category-landing-empty-state`,
       `paths-hub-category-grouping`, `arc-landing-one-role`, `arc-landing-two-role`,
       `skills-path-landing-body`, and `skills-fixed-arc-statement`, plus course-paths `README.md`;
@@ -1191,9 +1263,12 @@ the missing field.
       preserves its complete source-relative Gherkin suffix under
       `specs/apps/ayokoding/www/behaviors/` with the same fragment convention. Run
       `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-AYO.allocation.tsv"; u="$r/D-O-PUB-AYO.source-universe.txt"; rtk git ls-files -- specs/apps/ayokoding | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 80; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|BACKEND|BUILD-TOOLS|WEB-SHELL-CONTENT|WEB-NAVIGATION-TOOLS|COURSE-DISCOVERY|COURSE-FLOW)$/ || \$3 == \"\" || \$4 == \"\" || (\$2 == \"CORPUS-METADATA\" && \$3 !~ /^specs\/apps\/ayokoding\/www\/architecture\.md#legacy-[a-z0-9-]+$/) { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/apps/ayokoding -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 46'`;
-      expect exit 0, leaf source counts `15,12,8,12,13,9,11`, and an exact match between each
-      allocation leaf column and its corresponding `.paths.txt`. Manually assigning a path outside
-      its stated prefix/exact-basename rule is a failed gate, even if the counts happen to match.
+      The displayed command's former `CORPUS-WEB-NAVIGATION-TOOLS` regex is superseded by
+      `P0-AYO-NAVIGATION-TOOLS-ALLOCATION-01`: accept only
+      `CORPUS-(METADATA|BACKEND|BUILD-TOOLS|WEB-SHELL-CONTENT|WEB-NAVIGATION|WEB-TOOLS|WEB-TOOLS-COST-OF-LIVING|COURSE-DISCOVERY|COURSE-FLOW)`;
+      require leaf source counts `15,12,8,12,9,3,1,9,11`; and retain the same exhaustive,
+      duplicate-free source/target checks. Manually assigning a path outside its stated
+      prefix/exact-basename rule is a failed gate, even if the counts happen to match.
 - [ ] [AI] `P0-SPLIT-WEB-UI-MEMBERSHIP` — Create the web-ui four-column map from
       `rtk git ls-files -- specs/libs/web-ui`. `CORPUS-CONTROLS` is restricted to exact behavior
       domains `alert|badge|button|hue-picker|icon|input|label|progress-ring|textarea|toggle`;
@@ -1272,15 +1347,39 @@ the missing field.
 - [ ] [AI] `P0-PROSPECTIVE-CATALOG-01` -- After the boundary reconciliation, derive the authoritative
       declared catalog from the first prospective checkbox of every concrete delivery binding. Run
       independently in each repository and write only that repository's ignored
-      `phase-0/prospective-bindings.txt`; the public catalog is public-only and has 55 bindings,
+      `phase-0/prospective-bindings.txt`; the public catalog is public-only and has 57 bindings,
       the private catalog is private-only and has 25 bindings, and the combined planned PR count
-      is 80. Each row must have exactly one finite allocation source and a matching planned-line
+      is 82. Each row must have exactly one finite allocation source and a matching planned-line
       estimate source. Record the measured public, private, and combined counts in the
       reconciliation proof. Stop if any concrete binding lacks a finite allocation,
       allocation/estimate provenance, or an explicit permitted exception record. A later split or
       consolidation is allowed only through a plan amendment that changes the affected checklist
       IDs, catalog cardinalities, boundary table, and every corresponding allocation before its
       delivery begins.
+
+- [ ] [AI] `P0-PHYSICAL-ALLOCATION-AMENDMENT-01` -- The physical reconciliation replaces the stale
+      public `55`/combined `80` catalog values with public `57`/combined `82`. In
+      `P0-PROSPECTIVE-MATERIALIZE-01` and `P0-PROSPECTIVE-VERIFY-01`, replace each public
+      source-allocation assertion of `<= 17` with: retain the source allocation as the exact
+      resolver output; exclude the three plan-state paths; and require a non-empty matching
+      `natural-seam-exception.md` whenever the **complete** candidate exceeds 20 hand-authored
+      paths. The private source allocation follows the same complete-candidate rule. Update their
+      public expected count from `55` to `57` and their combined expectation from `80` to `82`.
+      Do not reduce a source allocation merely to make the old assertion pass. The all-plan count
+      is now **101 PRs**: 18 already completed Phase-0 PRs, this physical-allocation amendment,
+      and 82 remaining declared delivery PRs. Record the exact measured counts, public/private
+      catalog hashes, and the calculator source/target proof in the ignored reconciliation record.
+
+- [ ] [AI] `P0-AYO-NAVIGATION-TOOLS-ALLOCATION-01` -- Replace the former mixed
+      `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS` allocation before any prospective candidate is
+      written. Route the nine `gherkin/navigation/**` source/target pairs only to
+      `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION`; route `tools/README.md`, `tools/ai-benchmark.feature`,
+      and `tools/tools-index.feature` only to `D-O-PUB-AYO-CORPUS-WEB-TOOLS`; route only
+      `tools/cost-of-living-calculator.feature` to
+      `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING`. Require the three allocations to be
+      non-empty, pairwise disjoint, exhaustive over the former 13 sources, and each destination to
+      match the same repository-relative directory and filename. Stop on a moved README, a shared
+      path, a mixed source/target pair, or an extra semantic target.
 - [x] [AI] Materialize the initialized public owner ledger from only the 15 frozen public owner
       files with
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0; tmp="$root/owner-ledger.tmp"; { printf "# Owner Ledger\n\n"; for f in "$root"/owners/O-PUB-*.md; do printf "## %s\n\n" "$(basename "$f" .md)"; sed -n "/^Project:/p;/^Root:/p;/^Targets:/p;/^Coverage:/p;/^Corpus:/p;/^C4:/p;/^Manifest:/p;/^Recovery:/p;/^Size:/p" "$f"; printf "\n"; done; } > "$tmp"; mv "$tmp" "$root/owner-ledger.md"'`;
@@ -1354,7 +1453,7 @@ the missing field.
 - [ ] [AI] `P0-SIZE-P4-PRI-LEAVES` — Repeat the exact positive-provenance estimate action in private local-tmp for `REGISTRY-PARITY POLICY-PARITY FIXTURES GOVERNANCE`; require four non-empty validated TSVs and no public export.
 - [ ] [AI] `P0-SIZE-RHINO-PUB-LEAVES` — Populate and validate positive-provenance estimate TSVs for public Rhino `UNIT INTEGRATION-E2E CONTRACT CORPUS-METADATA CORPUS-HARNESS CORPUS-SPECS CORPUS-DOCUMENTS CORPUS-GOVERNANCE CORPUS-GATES-SYSTEM CORPUS-COVERAGE-ENV`; require exact planned-new membership for all ten leaves.
 - [ ] [AI] `P0-SIZE-RHINO-PRI-LEAVES` — Repeat the exact ten-leaf Rhino estimate action in private local-tmp and require byte-identical estimates for byte-identical shared paths; stop on public/private contradiction.
-- [ ] [AI] `P0-SIZE-AYO-PUB-LEAVES` — Populate and validate positive-provenance estimate TSVs for Ayo `UNIT INTEGRATION-E2E CONTRACT CORPUS-METADATA CORPUS-BACKEND CORPUS-BUILD-TOOLS CORPUS-WEB-SHELL-CONTENT CORPUS-WEB-NAVIGATION-TOOLS CORPUS-COURSE-DISCOVERY CORPUS-COURSE-FLOW`; require exact membership for all ten leaves.
+- [ ] [AI] `P0-SIZE-AYO-PUB-LEAVES` — Populate and validate positive-provenance estimate TSVs for Ayo `UNIT INTEGRATION-E2E CONTRACT CORPUS-METADATA CORPUS-BACKEND CORPUS-BUILD-TOOLS CORPUS-WEB-SHELL-CONTENT CORPUS-WEB-NAVIGATION CORPUS-WEB-TOOLS CORPUS-WEB-TOOLS-COST-OF-LIVING CORPUS-COURSE-DISCOVERY CORPUS-COURSE-FLOW`; require exact membership for all twelve leaves. For `CORPUS-WEB-TOOLS-COST-OF-LIVING`, require the exact 1,010-line existing source and one canonical target before estimating; its prospective gate is `PS-03S`, never `PS-03`.
 - [ ] [AI] `P0-SIZE-WEB-UI-PUB-LEAVES` — Populate and validate positive-provenance estimate TSVs for web-ui `UNIT INTEGRATION-E2E CONTRACT CORPUS-METADATA CORPUS-CONTROLS CORPUS-COMPOSITION`; require exact membership for all six leaves.
 - [ ] [AI] `P0-SIZE-TS-UI-PRI-LEAVES` — Populate and validate private local-tmp positive-provenance estimate TSVs for ts-ui `UNIT INTEGRATION-E2E CONTRACT CORPUS`; require exact membership for all four leaves.
 
@@ -6755,6 +6854,37 @@ widen the owner allocation.
 - [ ] [AI] `RP-OWNER-O-PUB-AYO-10D` — Without changing files after `RP-OWNER-O-PUB-AYO-10C`, execute the strict rules-quality-gate validation a second time; expect a different audit UUID, the same source head, and zero CRITICAL/HIGH/MEDIUM findings. Any edit or threshold finding invalidates both passes and restarts at `RP-OWNER-O-PUB-AYO-10C`. Save mode, UUID, counts, source-head SHA, and report path to `plans/in-progress/adopt-beavernest-test-automation/evidence/rules/RP-OWNER-O-PUB-AYO/10d-rules-pass-2.md`.
 - [ ] [AI] `RP-OWNER-O-PUB-AYO-11` — In R-PUB:worktrees/adopt-beavernest-test-automation, run `rtk npm run lint:md`, `rtk npm run format:md:check`, `rtk nx run rhino-cli:test:quick`, and `rtk nx affected -t build,test:quick,lint`. Expect every command exit 0; stop on the first failure and record root cause before rerun. Save commands and outputs in `plans/in-progress/adopt-beavernest-test-automation/evidence/rules/RP-OWNER-O-PUB-AYO/11-validation.txt`.
 - [ ] [AI] `RP-OWNER-O-PUB-AYO-12` — In R-PUB:worktrees/adopt-beavernest-test-automation, finalize inventory, conflict/precedence/supersession, placement/eviction, canonical/config/enforcement/index changes, three-way dispositions, bindings, quality-gate results, and sibling obligation in `plans/in-progress/adopt-beavernest-test-automation/evidence/rules/RP-OWNER-O-PUB-AYO/12-manifest.md`; run `rtk rg -n "Final status:|Sibling obligation:|Quality gate:|Manifest complete:" plans/in-progress/adopt-beavernest-test-automation/evidence/rules/RP-OWNER-O-PUB-AYO/12-manifest.md`. Expect terminal values and no pending row; stop otherwise.
+
+#### Ayo navigation/tools resolution and additional leaves
+
+The earlier `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS` checklist is retained as the exhaustive
+delivery-lifecycle template for the renamed `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION` binding. Its
+preflight, branch, runtime, PR-body, exact-head, and merge evidence use the canonical navigation
+binding name and the navigation-only finite allocation. It must not admit any `tools/**` path.
+
+- [ ] [AI] `D-O-PUB-AYO-CORPUS-WEB-TOOLS-PRE-01..03` — From current `origin/main`, create the
+      ordinary-tools branch, materialize the exact three source/target pairs in
+      `D-O-PUB-AYO-CORPUS-WEB-TOOLS.paths.txt`, and execute `PS-01`, `PS-02`, and `PS-03` with
+      binding `D-O-PUB-AYO-CORPUS-WEB-TOOLS`. The candidate must exclude every navigation path and
+      `cost-of-living-calculator.feature`; require a normal `O <= 1,000` result.
+- [ ] [AI] `D-O-PUB-AYO-CORPUS-WEB-TOOLS-DB-01..16` — Execute the complete generic `DB-01` through
+      `DB-16` lifecycle with binding `D-O-PUB-AYO-CORPUS-WEB-TOOLS`, its ignored runtime root, the
+      exact current head/base, one PR, PR-quality gate, and exactly one leak review. The PR body
+      identifies the ordinary tools behavior corpus, its finite source/target allocation, cost,
+      benefit, recovery, and measured size.
+
+- [ ] [AI] `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING-PRE-01..03` — From the merge-synced
+      ordinary-tools head, create the calculator branch and materialize exactly the source and
+      target named in [Single-Source Other/Document Exception Record](#single-source-otherdocument-exception-record),
+      plus the public delivery-state rows. Execute `PS-01`, `PS-02`, and `PS-03S`; do not invoke
+      `PS-03`. Stop unless the source measures exactly 1,010 lines, the target is the one canonical
+      calculator behavior target, and the matching exception record is complete.
+- [ ] [AI] `D-O-PUB-AYO-CORPUS-WEB-TOOLS-COST-OF-LIVING-DB-01..16` — Execute the complete generic
+      `DB-01` through `DB-16` lifecycle with the calculator binding, current head/base, one PR,
+      PR-quality gate, and exactly one leak review. `DB-04C` and `DB-13A3` use the single-source
+      exception criteria: `O <= 1,100`, exactly 1,010 measured O additions, exactly one semantic
+      source/target pair, no supplementary tool or navigation scope, and a PR body that explains
+      the exception and recovery. The 300-file ceiling and every non-O rule remain unchanged.
 
 ### Phase 12 Gate
 
