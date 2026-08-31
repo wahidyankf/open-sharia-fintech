@@ -1553,6 +1553,11 @@ the missing field.
 - **Input:** Phase 0 OrganicLever DDD delete/preserve rows in `R-PUB`.
 - **Outcome:** no OrganicLever DDD spec/enforcement remains; preserved behavior stays green.
 - **Acceptance criteria:** [AC-TEST-07, AC-TEST-08, AC-DDD-01, and AC-RULES-01](./prd.md#acceptance-criteria).
+
+> **Execution state:** the 69 allocated implementation paths are prepared with regenerated
+> canonical bindings. The runtime ledger records local validation; the unchecked Phase 1 items
+> remain authoritative until the exact-head PR lifecycle completes the affected-task matrix.
+
 - [ ] [AI] Inventory OrganicLever DDD engineering surfaces with
       `rtk rg -n -i "domain-driven|DDD|bounded context|domain model" specs/apps/organiclever repo-governance docs apps/organiclever-* libs .claude .agents`; classify every match as delete or preserve in
       `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/ddd-classification.md`. Expect no `pending`; stop on ambiguous education,

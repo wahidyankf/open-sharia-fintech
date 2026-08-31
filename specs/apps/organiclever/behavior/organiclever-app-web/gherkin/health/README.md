@@ -1,6 +1,6 @@
 # health — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app health bounded context.
+UI-semantic scenarios for the OrganicLever app health feature context.
 
 ## Feature Files
 

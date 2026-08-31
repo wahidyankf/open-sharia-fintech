@@ -45,16 +45,6 @@
 **Action**: Updated scenario count in README from 76 to 78
 **File**: `specs/apps/organiclever/behavior/organiclever-be/README.md`
 **Verified**: Yes — count now matches actual feature files
-
-## Requires Review
-
-### Review 1: Adoption Gap — DDD not adopted for organiclever web
-
-**Finding**: [MEDIUM] Category 9 — ddd/ absent for full-stack app
-**Reason not auto-fixed**: BDD/DDD/Contracts adoption requires explicit team decision
-**Recommended action**: Create a plan item to adopt DDD for organiclever-app-web, following
-the organiclever pilot pattern
-**Reference**: App README vs Specs Convention Standard 6
 ```
 
 ## Safety Rules

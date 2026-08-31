@@ -12,7 +12,7 @@ Component-level specifications for the OrganicLever public marketing site
 and assets extracted from the former `organiclever-app-web` `landing` context.
 
 - **Framework**: Next.js 16 (App Router, React 19, Tailwind CSS 4)
-- **Shape**: `src/app` + `src/features/{home, app-shell}` (flat, no DDD)
+- **Shape**: `src/app` + `src/features/{home, app-shell}` (flat feature folders)
 - **Design system**: `@open-sharia-enterprise/web-ui` + `@open-sharia-enterprise/web-ui-token`
 - **No** local-first database, functional-effects runtime, or state-machine library
 - **Dev port**: 3200

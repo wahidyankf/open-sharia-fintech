@@ -2,13 +2,12 @@
 
 **Audience:** Engineers, Technical Product/Project Managers
 
-The OrganicLever web app (`organiclever-app-web`) is structured around **DDD (Domain-Driven
-Design) bounded contexts** (a software architecture approach that groups related code by
-business capability). Each bounded context owns its `domain`, `application`,
+The OrganicLever web app (`organiclever-app-web`) is organized into feature contexts that group
+related code by business capability. Each feature context owns its `domain`, `application`,
 `infrastructure`, and `presentation` layers — and ESLint enforces the layering rules at
 error severity.
 
-## Bounded contexts
+## Feature contexts
 
 | Context           | Responsibility                                                 |
 | ----------------- | -------------------------------------------------------------- |
@@ -22,8 +21,7 @@ error severity.
 | `landing`         | Marketing landing page at `/`                                  |
 | `routing`         | Disabled-route 404 guards (`/login`, `/profile`)               |
 
-See [bounded-context-map.md](../../ddd/bounded-context-map.md) for strategic-pattern
-relationships and ESLint boundary rules between contexts.
+ESLint enforces the boundary rules between feature contexts.
 
 ## Project layout
 
@@ -33,7 +31,7 @@ apps/organiclever-app-web/
 │   ├── app/                        # Next.js App Router (thin page wrappers only)
 │   │   ├── app/                    # /app/* routes (home, history, progress, settings, workout)
 │   │   └── system/status/be/       # Server-rendered backend diagnostic page
-│   ├── contexts/                   # Bounded-context implementations
+│   ├── contexts/                   # Feature-context implementations
 │   │   ├── app-shell/              # Navigation chrome, i18n, entry-logging overlays
 │   │   ├── health/                 # Backend health diagnostic (dormant BE client)
 │   │   ├── journal/                # Event log — system of record
@@ -50,7 +48,7 @@ apps/organiclever-app-web/
 └── test/unit/steps/                # Vitest-cucumber step implementations
 ```
 
-Each bounded context follows the same internal layout:
+Each feature context follows the same internal layout:
 
 ```
 src/contexts/<bc>/
@@ -90,8 +88,5 @@ they are not dead code, just dormant:
 
 ## Related
 
-- [Bounded-context map](../../ddd/bounded-context-map.md) — strategic patterns between
-  contexts, ADR, ESLint config
-- [Ubiquitous language](../../ddd/ubiquitous-language/README.md) — per-context glossaries
 - [Behavior specs](../../behavior/organiclever-app-web/gherkin/README.md) — Gherkin acceptance criteria
 - [Routes and screens](./routes-and-screens.md) — URL routing and screen inventory

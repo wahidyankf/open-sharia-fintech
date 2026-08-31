@@ -1,6 +1,6 @@
 # routine — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app routine bounded context.
+UI-semantic scenarios for the OrganicLever app routine feature context.
 
 ## Feature Files
 

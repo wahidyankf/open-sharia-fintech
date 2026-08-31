@@ -35,10 +35,9 @@ flat product-surface convention.
 
 ### `organiclever-app-web/gherkin/`
 
-Organized by bounded context (one folder per context, matching the
-[DDD registry](../ddd/bounded-contexts.yaml)).
+Organized by feature context (one folder per product area).
 
-| Bounded Context | Features                                   | Count  |
+| Feature Context | Features                                   | Count  |
 | --------------- | ------------------------------------------ | ------ |
 | app-shell       | `entry-loggers`, `navigation`              | 2      |
 | health          | `system-status-be`                         | 1      |
@@ -52,7 +51,7 @@ Organized by bounded context (one folder per context, matching the
 
 ### `organiclever-www/gherkin/`
 
-Greenfield-simple marketing surface (no DDD bounded contexts).
+Greenfield-simple marketing surface (no feature-context layering).
 
 | Domain        | Features        | Count |
 | ------------- | --------------- | ----- |

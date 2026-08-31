@@ -1,8 +1,7 @@
 # OrganicLever Frontend Gherkin Specs
 
-Gherkin feature files for the OrganicLever frontend application, organized by bounded
-context. Each folder maps to one bounded context from the
-[bounded-context map](../../../ddd/bounded-context-map.md).
+Gherkin feature files for the OrganicLever frontend application, organized by feature
+context. Each folder groups a related product capability.
 
 ## Structure
 
@@ -34,20 +33,14 @@ specs/apps/organiclever/behavior/organiclever-app-web/gherkin/
     └── workout-session.feature
 ```
 
-## Ubiquitous Language
-
-Every domain term used in step text is defined in
-[ubiquitous-language/](../../../ddd/ubiquitous-language/README.md). Gherkin steps use only
-glossary terms; code identifiers match the `Code identifier(s)` column verbatim.
-
 ## Conventions
 
 - **File naming**: `[domain-capability].feature` (kebab-case)
 - **Step language**: UI-semantic only — clicks, types, sees, navigates (no HTTP verbs or
   status codes)
 - **User story block**: Every `Feature:` block opens with `As a … / I want … / So that …`
-- **Term discipline**: Step text uses glossary terms only — not implementation identifiers
-  or route segments
+- **Term discipline**: Step text uses product language, not implementation identifiers or route
+  segments
 
 ## Relationship to organiclever-be
 
@@ -62,8 +55,6 @@ definitions in `apps/organiclever-app-web/test/unit/steps/`.
 
 ## Related
 
-- **Ubiquitous language**: [ubiquitous-language/](../../../ddd/ubiquitous-language/README.md)
-- **Bounded-context map**: [bounded-context-map.md](../../../ddd/bounded-context-map.md)
 - **Backend counterpart**: [be gherkin specs](../../organiclever-be/gherkin/README.md)
 - **Parent**: [web component specs](../../../components/app-web/README.md)
 

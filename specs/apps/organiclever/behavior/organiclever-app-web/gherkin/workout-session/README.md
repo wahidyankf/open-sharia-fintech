@@ -1,6 +1,6 @@
 # workout-session — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app workout session bounded context.
+UI-semantic scenarios for the OrganicLever app workout session feature context.
 
 ## Feature Files
 

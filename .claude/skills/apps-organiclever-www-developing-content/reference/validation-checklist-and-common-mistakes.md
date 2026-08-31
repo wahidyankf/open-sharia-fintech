@@ -10,7 +10,6 @@ Before committing changes:
 - [ ] Images use Next.js `<Image>` component (not `<img>`)
 - [ ] Links use Next.js `<Link>` component (not `<a>` for internal links)
 - [ ] All interactive elements are keyboard accessible
-- [ ] New domain terms added to the relevant ubiquitous-language glossary
 - [ ] `nx run organiclever-www:lint` exits 0 (0 boundary errors)
 
 ## Common Mistakes
@@ -19,7 +18,7 @@ Before committing changes:
 
 **Wrong**: Business logic in `page.tsx`
 
-**Right**: Business logic in the bounded context's `application/` or `presentation/` layers; `page.tsx` only renders the screen component.
+**Right**: Business logic in the feature context's `application/` or `presentation/` layers; `page.tsx` only renders the screen component.
 
 ### ❌ Mistake 2: Importing from another context's internal files
 

@@ -2,19 +2,19 @@
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-www                      | ayokoding-web                  | ose-web                 |
-| ------------------- | ------------------------------------- | ------------------------------ | ----------------------- |
-| **Framework**       | Next.js 16 (App Router)               | Next.js 16 (App Router)        | Next.js 16 (App Router) |
-| **Architecture**    | DDD bounded contexts                  | Feature folders                | Feature folders         |
-| **Storage**         | PGlite (local-first, IndexedDB)       | tRPC + database                | tRPC + database         |
-| **Auth**            | None (local-first)                    | None                           | None                    |
-| **State**           | XState + Effect TS                    | React state                    | React state             |
-| **Build**           | Next.js (Vercel)                      | Next.js (Vercel)               | Next.js (Vercel)        |
-| **Prod Branch**     | prod-organiclever-www                 | prod-ayokoding-www             | prod-ose-www            |
-| **Languages**       | English                               | Bilingual (Indonesian/English) | English only            |
-| **Complexity**      | Full DDD life journal + local storage | Fullstack bilingual platform   | Simple landing page     |
-| **Prod URL**        | www.organiclever.com                  | ayokoding.com                  | oseplatform.com         |
-| **Primary Purpose** | Local-first life journal + landing    | Educational platform           | Project landing page    |
+| Aspect              | organiclever-www                   | ayokoding-web                  | ose-web                 |
+| ------------------- | ---------------------------------- | ------------------------------ | ----------------------- |
+| **Framework**       | Next.js 16 (App Router)            | Next.js 16 (App Router)        | Next.js 16 (App Router) |
+| **Architecture**    | Feature contexts                   | Feature folders                | Feature folders         |
+| **Storage**         | PGlite (local-first, IndexedDB)    | tRPC + database                | tRPC + database         |
+| **Auth**            | None (local-first)                 | None                           | None                    |
+| **State**           | XState + Effect TS                 | React state                    | React state             |
+| **Build**           | Next.js (Vercel)                   | Next.js (Vercel)               | Next.js (Vercel)        |
+| **Prod Branch**     | prod-organiclever-www              | prod-ayokoding-www             | prod-ose-www            |
+| **Languages**       | English                            | Bilingual (Indonesian/English) | English only            |
+| **Complexity**      | Full life journal + local storage  | Fullstack bilingual platform   | Simple landing page     |
+| **Prod URL**        | www.organiclever.com               | ayokoding.com                  | oseplatform.com         |
+| **Primary Purpose** | Local-first life journal + landing | Educational platform           | Project landing page    |
 
 ## Development Commands
 

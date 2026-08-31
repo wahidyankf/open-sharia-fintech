@@ -4,7 +4,7 @@ UI-semantic Gherkin scenarios for the OrganicLever app frontend (Next.js 16).
 
 ## Contents
 
-- **[gherkin/](./gherkin/README.md)** — Feature files organized by bounded context domain.
+- **[gherkin/](./gherkin/README.md)** — Feature files organized by feature context.
   Consumed by `apps/organiclever-app-web-e2e` (Playwright FE E2E).
 
 ## Background step

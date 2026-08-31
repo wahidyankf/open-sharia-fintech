@@ -7,7 +7,7 @@
 **organiclever-www** (`apps/organiclever-www/`):
 
 - **Framework**: Next.js 16 with App Router
-- **Architecture**: DDD bounded contexts (`domain` / `application` / `infrastructure` / `presentation`)
+- **Architecture**: Feature contexts (`domain` / `application` / `infrastructure` / `presentation`)
 - **Storage**: PGlite (Postgres-WASM, IndexedDB-backed) — local-first, no backend required
 - **Effects**: Effect TS for typed functional effects in infrastructure layer
 - **State machines**: XState for UI FSMs (app-shell, workout-session)
@@ -37,7 +37,7 @@ apps/organiclever-www/
 │   ├── app/                        # Next.js App Router (thin wrappers only)
 │   │   ├── app/                    # /app/* routes (home, history, progress, settings, workout…)
 │   │   └── system/status/be/       # Server-rendered diagnostic page
-│   ├── contexts/                   # Bounded-context implementations
+│   ├── contexts/                   # Feature-context implementations
 │   │   ├── app-shell/              # Navigation chrome, i18n, entry-logging overlays
 │   │   ├── health/                 # Backend health diagnostic (dormant BE client)
 │   │   ├── journal/                # Event log — system of record (PGlite)
@@ -52,7 +52,7 @@ apps/organiclever-www/
 │   │   └── utils/                  # format-relative-time, fmt
 │   ├── generated-contracts/        # Auto-generated from OpenAPI spec (gitignored)
 │   └── test/                       # Test helpers and fixtures
-├── test/unit/steps/                # Vitest-cucumber step implementations (per bounded context)
-├── docs/explanation/               # Architecture docs (bounded-context map)
+├── test/unit/steps/                # Vitest-cucumber step implementations (per feature context)
+├── docs/explanation/               # Architecture documentation
 └── project.json                    # Nx project configuration
 ```

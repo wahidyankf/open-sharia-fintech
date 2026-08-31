@@ -1,6 +1,6 @@
 # routing — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app routing bounded context.
+UI-semantic scenarios for the OrganicLever app routing feature context.
 
 ## Feature Files
 

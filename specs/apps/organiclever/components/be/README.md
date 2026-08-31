@@ -96,7 +96,7 @@ The canonical input pattern used in `project.json`:
 
 ## Adding a Feature File
 
-1. Identify the bounded context (e.g., `authentication`, `health`)
+1. Identify the feature context (e.g., `authentication`, `health`)
 2. Create the folder if it does not exist: `specs/apps/organiclever/behavior/organiclever-be/gherkin/[context]/`
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Open with `Feature:` then a user story block (`As a … / I want … / So that …`)

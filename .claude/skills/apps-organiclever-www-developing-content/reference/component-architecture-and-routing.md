@@ -2,16 +2,16 @@
 
 ## Component Architecture
 
-Components live inside the bounded context that owns them, not in a global `src/components/` folder.
+Components live inside the feature context that owns them, not in a global `src/components/` folder.
 
 ### Where Components Live
 
-- **Context-owned**: `src/contexts/<bc>/presentation/components/` — components that belong to a specific bounded context
+- **Context-owned**: `src/contexts/<bc>/presentation/components/` — components that belong to a specific feature context
 - **Shared primitives**: `@open-sharia-enterprise/web-ui` — the shared design system library. Import from here, not from `src/`
 - **App routing chrome**: `src/app/` — Next.js `page.tsx` and `layout.tsx` thin wrappers only; no business logic
 
 ```typescript
-// Correct — import from bounded context barrel
+// Correct — import from feature context barrel
 import { JournalList } from "@/contexts/journal/presentation";
 import { HistoryScreen } from "@/contexts/stats/presentation";
 
@@ -55,4 +55,4 @@ src/app/
 └── system/status/be/page.tsx   # Diagnostic page (force-dynamic, no cache)
 ```
 
-Every `page.tsx` is a thin wrapper — it imports from the relevant bounded context's `presentation/` barrel and renders the screen component. No business logic in `page.tsx`.
+Every `page.tsx` is a thin wrapper — it imports from the relevant feature context's `presentation/` barrel and renders the screen component. No business logic in `page.tsx`.

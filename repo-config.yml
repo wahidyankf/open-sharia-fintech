@@ -248,7 +248,6 @@ specs:
   # hardcoded apps_with_ddd() allowlist into explicit config.
   # An area NOT listed must NOT carry ddd/ (unlisted area with ddd/ = error).
   ddd-areas:
-    - organiclever
     - ose
 
   # Areas eligible for specs:domain:coverage (explicit allowlist; distinct from
