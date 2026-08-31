@@ -1861,67 +1861,71 @@ SQL databases (PostgreSQL, MySQL) store data in structured tables with enforced 
 -- sql_vs_nosql_schema.sql
 -- SQL schema for a simple e-commerce order system
 -- Demonstrates relational model with normalization
-
 -- Users table: one row per user, structured columns
 CREATE TABLE users (
-    id          SERIAL PRIMARY KEY,        -- Auto-incrementing unique identifier
-    email       VARCHAR(255) UNIQUE NOT NULL,  -- Enforced uniqueness at DB level
-    name        VARCHAR(100) NOT NULL,
-    created_at  TIMESTAMPTZ DEFAULT NOW()  -- Timezone-aware timestamp
+  id SERIAL PRIMARY KEY, -- Auto-incrementing unique identifier
+  email VARCHAR(255) UNIQUE NOT NULL, -- Enforced uniqueness at DB level
+  name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW () -- Timezone-aware timestamp
 );
+
 -- => Schema enforced: every row must have email and name
 -- => UNIQUE constraint prevents duplicate emails at database level (not just application)
-
 -- Products table: normalized, not embedded in orders
 CREATE TABLE products (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(200) NOT NULL,
-    price_cents INTEGER NOT NULL CHECK (price_cents > 0),  -- Store money as integers!
-    stock       INTEGER NOT NULL DEFAULT 0
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  price_cents INTEGER NOT NULL CHECK (price_cents > 0), -- Store money as integers!
+  stock INTEGER NOT NULL DEFAULT 0
 );
+
 -- => price_cents as integer avoids floating-point rounding errors (never store money as float)
 -- => CHECK constraint enforces business rule at database level
-
 -- Orders table: references users (foreign key)
 CREATE TABLE orders (
-    id          SERIAL PRIMARY KEY,
-    user_id     INTEGER REFERENCES users(id) ON DELETE RESTRICT,
-    -- => REFERENCES enforces referential integrity: cannot create order for non-existent user
-    -- => ON DELETE RESTRICT: cannot delete user who has orders (prevents orphaned orders)
-    status      VARCHAR(20) NOT NULL DEFAULT 'pending'
-                CHECK (status IN ('pending', 'paid', 'shipped', 'cancelled')),
-    -- => CHECK constraint acts as application-layer enum validation
-    created_at  TIMESTAMPTZ DEFAULT NOW()
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users (id) ON DELETE RESTRICT,
+  -- => REFERENCES enforces referential integrity: cannot create order for non-existent user
+  -- => ON DELETE RESTRICT: cannot delete user who has orders (prevents orphaned orders)
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (
+    status IN ('pending', 'paid', 'shipped', 'cancelled')
+  ),
+  -- => CHECK constraint acts as application-layer enum validation
+  created_at TIMESTAMPTZ DEFAULT NOW ()
 );
 
 -- Order items: junction table linking orders to products
 CREATE TABLE order_items (
-    id          SERIAL PRIMARY KEY,
-    order_id    INTEGER REFERENCES orders(id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: deleting an order also deletes its items
-    product_id  INTEGER REFERENCES products(id) ON DELETE RESTRICT,
-    quantity    INTEGER NOT NULL CHECK (quantity > 0),
-    unit_price_cents INTEGER NOT NULL  -- Snapshot price at time of order
-    -- => Store price at order time — product price may change later
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES orders (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: deleting an order also deletes its items
+  product_id INTEGER REFERENCES products (id) ON DELETE RESTRICT,
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  unit_price_cents INTEGER NOT NULL -- Snapshot price at time of order
+  -- => Store price at order time — product price may change later
 );
 
 -- JOIN query: fetch full order details across 4 tables
 -- SQL shines here: one query spans all related data
 SELECT
-    o.id         AS order_id,
-    u.name       AS customer,
-    u.email,
-    p.name       AS product,
-    oi.quantity,
-    oi.unit_price_cents / 100.0  AS unit_price,
-    -- => Divide by 100 for display; store as cents to avoid float issues
-    (oi.quantity * oi.unit_price_cents) / 100.0  AS line_total
-FROM orders o
-    JOIN users u       ON u.id = o.user_id
-    JOIN order_items oi ON oi.order_id = o.id
-    JOIN products p    ON p.id = oi.product_id
-WHERE o.status = 'paid'
-ORDER BY o.created_at DESC;
+  o.id AS order_id,
+  u.name AS customer,
+  u.email,
+  p.name AS product,
+  oi.quantity,
+  oi.unit_price_cents / 100.0 AS unit_price,
+  -- => Divide by 100 for display; store as cents to avoid float issues
+  (oi.quantity * oi.unit_price_cents) / 100.0 AS line_total
+FROM
+  orders o
+  JOIN users u ON u.id = o.user_id
+  JOIN order_items oi ON oi.order_id = o.id
+  JOIN products p ON p.id = oi.product_id
+WHERE
+  o.status = 'paid'
+ORDER BY
+  o.created_at DESC;
+
 -- => Returns: order_id, customer, email, product, quantity, unit_price, line_total
 -- => SQL JOIN reads across tables without data duplication — normalization pays off here
 ```
@@ -2079,63 +2083,83 @@ A database index is a data structure (typically a B-tree) that lets the database
 ```sql
 -- database_indexing.sql
 -- Demonstrates index creation, usage, and trade-offs
-
 -- Create a large users table (conceptually)
 CREATE TABLE users (
-    id         SERIAL PRIMARY KEY,      -- Primary key creates index automatically
-    email      VARCHAR(255) NOT NULL,   -- NOT NULL but no index yet
-    username   VARCHAR(100) NOT NULL,
-    country    VARCHAR(2),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+  id SERIAL PRIMARY KEY, -- Primary key creates index automatically
+  email VARCHAR(255) NOT NULL, -- NOT NULL but no index yet
+  username VARCHAR(100) NOT NULL,
+  country VARCHAR(2),
+  created_at TIMESTAMPTZ DEFAULT NOW ()
 );
+
 -- => Primary key (id) is auto-indexed — lookups by id are O(log n)
 -- => email, username, country are NOT indexed yet — lookups require full table scan
-
 -- Scenario 1: Slow query — no index on email
 -- EXPLAIN shows "Seq Scan" (sequential/full-table scan)
-EXPLAIN SELECT * FROM users WHERE email = 'alice@example.com';
+EXPLAIN
+SELECT
+  *
+FROM
+  users
+WHERE
+  email = 'alice@example.com';
+
 -- => Seq Scan on users (cost=0.00..12500.00 rows=1 width=64)
 -- => "Seq Scan" means reading every row — O(n) where n is table size
 -- => Cost 12500 means expensive: 1 million rows * cost per row
-
 -- Fix: Add an index on email for fast lookups
 CREATE UNIQUE INDEX idx_users_email ON users (email);
+
 -- => UNIQUE: enforces uniqueness AND creates index
 -- => Index name: idx_users_email (convention: idx_tablename_column)
 -- => B-tree index created: lookups now O(log n) instead of O(n)
-
 -- After index: same query uses index scan
-EXPLAIN SELECT * FROM users WHERE email = 'alice@example.com';
+EXPLAIN
+SELECT
+  *
+FROM
+  users
+WHERE
+  email = 'alice@example.com';
+
 -- => Index Scan using idx_users_email on users (cost=0.56..8.58 rows=1 width=64)
 -- => Cost dropped from 12500 to 8.58 — ~1500x speedup for this query!
 -- => "Index Scan" means B-tree traversal: O(log n)
-
 -- Scenario 2: Composite index for multi-column queries
 CREATE INDEX idx_users_country_created ON users (country, created_at DESC);
+
 -- => Composite index: covers queries filtering on country AND sorting by created_at
 -- => Column ORDER matters: country first means index works for:
 -- =>   WHERE country = 'US'                      (uses index)
 -- =>   WHERE country = 'US' ORDER BY created_at  (uses index)
 -- => But NOT for: WHERE created_at > '2026-01-01' (country is first column)
-
 -- Query that uses the composite index efficiently
-SELECT id, username, created_at
-FROM users
-WHERE country = 'US'
-ORDER BY created_at DESC
-LIMIT 20;
+SELECT
+  id,
+  username,
+  created_at
+FROM
+  users
+WHERE
+  country = 'US'
+ORDER BY
+  created_at DESC
+LIMIT
+  20;
+
 -- => Index scan on idx_users_country_created
 -- => Retrieves only US users, pre-sorted by created_at — no additional sort step
-
 -- Index trade-off demonstration
 -- Every INSERT must update ALL indexes on the table
-INSERT INTO users (email, username, country)
-VALUES ('bob@example.com', 'bob', 'UK');
+INSERT INTO
+  users (email, username, country)
+VALUES
+  ('bob@example.com', 'bob', 'UK');
+
 -- => Updates: B-tree for PRIMARY KEY (id)
 -- =>          B-tree for idx_users_email (email)
 -- =>          B-tree for idx_users_country_created (country, created_at)
 -- => Write overhead: 3 index updates per INSERT (acceptable; indexes are worth it for read-heavy tables)
-
 -- When NOT to index
 -- Columns with low cardinality (few distinct values) benefit less from B-tree indexes
 -- Example: a "status" column with only 3 values (active, inactive, deleted)

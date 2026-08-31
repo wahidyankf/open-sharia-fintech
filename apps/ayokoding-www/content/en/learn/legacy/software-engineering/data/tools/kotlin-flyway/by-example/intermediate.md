@@ -166,10 +166,12 @@ graph TD
 -- => Flyway discovers callback SQL files by their exact name (no version prefix)
 -- => beforeMigrate.sql runs once before ANY migration in this flyway.migrate() call
 -- => Runs inside its own transaction (separate from each migration's transaction)
-
 -- Log migration start to an audit table
-INSERT INTO migration_log (event, occurred_at)
-  VALUES ('MIGRATION_STARTED', NOW());
+INSERT INTO
+  migration_log (event, occurred_at)
+VALUES
+  ('MIGRATION_STARTED', NOW ());
+
 -- => Records timestamp when this deployment's migration batch began
 -- => migration_log must already exist before this callback can insert into it
 ```
@@ -259,14 +261,30 @@ flyway.migrate()                  // => Execute migrations; all ${...} tokens re
 -- File: src/main/resources/db/migration/V4__seed_roles.sql
 -- => ${defaultRole} and ${adminEmail} are replaced by Flyway before execution
 -- => Useful for environment-specific values (dev vs prod default data)
+INSERT INTO
+  roles (name, is_default)
+VALUES
+  ('${defaultRole}', true);
 
-INSERT INTO roles (name, is_default)
-  VALUES ('${defaultRole}', true);
 -- => After substitution: VALUES ('USER', true)
 -- => Allows the same migration file to work across environments with different defaults
+INSERT INTO
+  users (
+    username,
+    email,
+    display_name,
+    password_hash,
+    role
+  )
+VALUES
+  (
+    'admin',
+    '${adminEmail}',
+    'Administrator',
+    'placeholder_hash',
+    'ADMIN'
+  );
 
-INSERT INTO users (username, email, display_name, password_hash, role)
-  VALUES ('admin', '${adminEmail}', 'Administrator', 'placeholder_hash', 'ADMIN');
 -- => After substitution: VALUES ('admin', 'admin@example.com', ...)
 -- => Different admin email per environment without separate migration files
 ```
@@ -308,14 +326,13 @@ flyway.migrate()                  // => Apply pending migrations in version orde
 -- File: src/main/resources/db/migration/V5__create_audit_events.sql
 -- => Create a table in the "audit" schema (separate from the "app" schema)
 -- => Schema prefix "audit." makes the target explicit regardless of search_path
-
-CREATE TABLE audit.events (                  -- => Table in "audit" schema
-  id          UUID         NOT NULL DEFAULT gen_random_uuid(),
+CREATE TABLE audit.events ( -- => Table in "audit" schema
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
   -- => UUID primary key; auto-generated
-  table_name  VARCHAR(100) NOT NULL,         -- => Which table was modified
-  operation   VARCHAR(10)  NOT NULL,         -- => INSERT, UPDATE, or DELETE
-  row_id      UUID         NOT NULL,         -- => Primary key of the affected row
-  changed_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  table_name VARCHAR(100) NOT NULL, -- => Which table was modified
+  operation VARCHAR(10) NOT NULL, -- => INSERT, UPDATE, or DELETE
+  row_id UUID NOT NULL, -- => Primary key of the affected row
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
   -- => Timestamp with timezone for the modification
   CONSTRAINT pk_audit_events PRIMARY KEY (id)
   -- => Named primary key for future reference
@@ -661,22 +678,25 @@ Data migrations copy and transform data between tables. The `INSERT...SELECT` pa
 -- File: src/main/resources/db/migration/V7__migrate_legacy_categories.sql
 -- => Data migration: copy rows from old "product_categories" to new "categories" table
 -- => INSERT...SELECT is atomic: either all rows migrate or none do (within the transaction)
-
 -- Assume new "categories" table already exists (created in V6)
-INSERT INTO categories (id, name, slug, created_at)
--- => Target table columns listed explicitly to avoid position-dependent errors
+INSERT INTO
+  categories (id, name, slug, created_at)
+  -- => Target table columns listed explicitly to avoid position-dependent errors
 SELECT
-    gen_random_uuid(),            -- => Generate a new UUID for each migrated row
-    pc.name,                      -- => Copy name column directly
-    LOWER(REPLACE(pc.name, ' ', '-')),
-    -- => Derive slug from name: lowercase, spaces replaced with hyphens
-    -- => Example: "Sports Equipment" -> "sports-equipment"
-    pc.created_at                 -- => Preserve original creation timestamp
-FROM product_categories pc        -- => Source table (legacy schema)
-WHERE pc.active = true;           -- => Only migrate active categories; skip archived ones
+  gen_random_uuid (), -- => Generate a new UUID for each migrated row
+  pc.name, -- => Copy name column directly
+  LOWER(REPLACE (pc.name, ' ', '-')),
+  -- => Derive slug from name: lowercase, spaces replaced with hyphens
+  -- => Example: "Sports Equipment" -> "sports-equipment"
+  pc.created_at -- => Preserve original creation timestamp
+FROM
+  product_categories pc -- => Source table (legacy schema)
+WHERE
+  pc.active = true;
+
+-- => Only migrate active categories; skip archived ones
 -- => SQL: INSERT INTO categories SELECT ... FROM product_categories WHERE active = true
 -- => If product_categories has 500 rows, this creates 500 rows in categories in one statement
-
 -- Verify migration (optional, informational)
 -- SELECT COUNT(*) FROM categories;
 -- => Should equal the count of active rows in product_categories
@@ -698,31 +718,34 @@ Repeatable migrations (`R__` prefix) re-run whenever their checksum changes, mak
 -- => Flyway recalculates checksum on every migrate() call
 -- => Re-executes this file whenever its content changes
 -- => Always runs AFTER all versioned (V__) migrations complete
-
 -- Use INSERT ... ON CONFLICT (upsert) for idempotent seed data
 -- => Idempotency is critical: repeatable migrations may run many times
-INSERT INTO expense_categories (code, label, is_active)
+INSERT INTO
+  expense_categories (code, label, is_active)
 VALUES
-    ('FOOD',       'Food & Dining',    true),
-    -- => Category code=FOOD; label visible in UI; active=true
-    ('TRANSPORT',  'Transportation',   true),
-    -- => Category code=TRANSPORT
-    ('HEALTH',     'Healthcare',       true),
-    -- => Category code=HEALTH
-    ('EDUCATION',  'Education',        true),
-    -- => Category code=EDUCATION
-    ('UTILITIES',  'Utilities',        true),
-    -- => Category code=UTILITIES
-    ('OTHER',      'Other',            true)
-    -- => Catch-all category for uncategorized expenses
-ON CONFLICT (code)
--- => ON CONFLICT: if a row with this code already exists...
-DO UPDATE SET
-    label     = EXCLUDED.label,
-    -- => EXCLUDED refers to the row that would have been inserted
-    -- => Update label if it changed in the migration file
-    is_active = EXCLUDED.is_active;
-    -- => Update is_active status to match the migration file's current value
+  ('FOOD', 'Food & Dining', true),
+  -- => Category code=FOOD; label visible in UI; active=true
+  ('TRANSPORT', 'Transportation', true),
+  -- => Category code=TRANSPORT
+  ('HEALTH', 'Healthcare', true),
+  -- => Category code=HEALTH
+  ('EDUCATION', 'Education', true),
+  -- => Category code=EDUCATION
+  ('UTILITIES', 'Utilities', true),
+  -- => Category code=UTILITIES
+  ('OTHER', 'Other', true)
+  -- => Catch-all category for uncategorized expenses
+  ON CONFLICT (code)
+  -- => ON CONFLICT: if a row with this code already exists...
+  DO
+UPDATE
+SET
+  label = EXCLUDED.label,
+  -- => EXCLUDED refers to the row that would have been inserted
+  -- => Update label if it changed in the migration file
+  is_active = EXCLUDED.is_active;
+
+-- => Update is_active status to match the migration file's current value
 -- => Full upsert: safe to run on empty table (INSERT) or populated table (UPDATE)
 ```
 
@@ -739,37 +762,32 @@ DO UPDATE SET
 ```sql
 -- File: src/main/resources/db/migration/V8__create_expense_attachments.sql
 -- => Creates attachments table with a foreign key that cascades updates and deletes
-
 CREATE TABLE expense_attachments (
-  id          UUID          NOT NULL DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
   -- => UUID primary key for the attachment itself
-  expense_id  UUID          NOT NULL,
+  expense_id UUID NOT NULL,
   -- => Foreign key referencing the expenses table
-  filename    VARCHAR(255)  NOT NULL,
+  filename VARCHAR(255) NOT NULL,
   -- => Original filename as uploaded
-  storage_key VARCHAR(500)  NOT NULL,
+  storage_key VARCHAR(500) NOT NULL,
   -- => Object storage key (e.g., S3 path); longer than filename
-  mime_type   VARCHAR(100)  NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
   -- => MIME type: "image/jpeg", "application/pdf", etc.
-  file_size   BIGINT        NOT NULL,
+  file_size BIGINT NOT NULL,
   -- => File size in bytes; BIGINT handles files up to ~9 exabytes
-  created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
   -- => Upload timestamp with timezone
-  CONSTRAINT pk_expense_attachments
-    PRIMARY KEY (id),
+  CONSTRAINT pk_expense_attachments PRIMARY KEY (id),
   -- => Named primary key on id
-  CONSTRAINT fk_attachments_expense
-    FOREIGN KEY (expense_id)
-    REFERENCES expenses (id)
-    ON DELETE CASCADE
-    -- => DELETE CASCADE: deleting an expense deletes its attachments automatically
-    ON UPDATE CASCADE
-    -- => UPDATE CASCADE: if expenses.id changes, expense_attachments.expense_id updates automatically
-    -- => Rarely triggered for UUID PKs; important for natural-key schemas
+  CONSTRAINT fk_attachments_expense FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE
+  -- => DELETE CASCADE: deleting an expense deletes its attachments automatically
+  ON UPDATE CASCADE
+  -- => UPDATE CASCADE: if expenses.id changes, expense_attachments.expense_id updates automatically
+  -- => Rarely triggered for UUID PKs; important for natural-key schemas
 );
 
-CREATE INDEX idx_expense_attachments_expense_id
-    ON expense_attachments (expense_id);
+CREATE INDEX idx_expense_attachments_expense_id ON expense_attachments (expense_id);
+
 -- => Index on foreign key column: prevents full table scan when fetching expense's attachments
 -- => PostgreSQL does not automatically index foreign key columns (unlike MySQL InnoDB)
 ```
@@ -788,30 +806,25 @@ Some entities are uniquely identified by the combination of multiple columns rat
 -- File: src/main/resources/db/migration/V9__create_user_permissions.sql
 -- => user_permissions uses a composite primary key: (user_id, permission_code)
 -- => This prevents a user from being granted the same permission twice at the DB level
-
 CREATE TABLE user_permissions (
-  user_id         UUID         NOT NULL,
+  user_id UUID NOT NULL,
   -- => References users.id; part of composite PK
-  permission_code VARCHAR(50)  NOT NULL,
+  permission_code VARCHAR(50) NOT NULL,
   -- => Permission identifier: "READ_EXPENSES", "WRITE_EXPENSES", "ADMIN"
-  granted_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  granted_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
   -- => When this permission was granted
-  granted_by      VARCHAR(255) NOT NULL,
+  granted_by VARCHAR(255) NOT NULL,
   -- => Who granted the permission (username or system)
-  CONSTRAINT pk_user_permissions
-    PRIMARY KEY (user_id, permission_code),
-    -- => Composite PK: the pair (user_id, permission_code) must be unique
-    -- => Prevents: INSERT (user_id=X, 'READ_EXPENSES') twice for same user
-  CONSTRAINT fk_user_permissions_user
-    FOREIGN KEY (user_id)
-    REFERENCES users (id)
-    ON DELETE CASCADE
-    -- => Deleting a user removes all their permissions automatically
+  CONSTRAINT pk_user_permissions PRIMARY KEY (user_id, permission_code),
+  -- => Composite PK: the pair (user_id, permission_code) must be unique
+  -- => Prevents: INSERT (user_id=X, 'READ_EXPENSES') twice for same user
+  CONSTRAINT fk_user_permissions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  -- => Deleting a user removes all their permissions automatically
 );
 
 -- Index on permission_code alone (user_id already indexed as leading PK column)
-CREATE INDEX idx_user_permissions_code
-    ON user_permissions (permission_code);
+CREATE INDEX idx_user_permissions_code ON user_permissions (permission_code);
+
 -- => Supports queries like "find all users with ADMIN permission"
 -- => user_id is already the leading column of the composite PK index
 ```
@@ -829,30 +842,30 @@ A partial index indexes only rows satisfying a `WHERE` clause. This reduces inde
 ```sql
 -- File: src/main/resources/db/migration/V10__add_partial_indexes.sql
 -- => Partial indexes: index only the rows that queries actually filter on
-
 -- Partial index: only active (non-deleted) users
-CREATE UNIQUE INDEX idx_users_email_active
-    ON users (email)
-    WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX idx_users_email_active ON users (email)
+WHERE
+  deleted_at IS NULL;
+
 -- => Only indexes rows where deleted_at IS NULL (active users)
 -- => Size: proportional to active users, not total users
 -- => Enforces email uniqueness among active users only
 -- => A deleted user's email can be reused by a new registration
 -- => Regular UNIQUE constraint would prevent email reuse after soft-delete
-
 -- Partial index for pending expenses (recent data, frequently queried)
-CREATE INDEX idx_expenses_pending_by_user
-    ON expenses (user_id, date DESC)
-    WHERE date >= CURRENT_DATE - INTERVAL '90 days';
+CREATE INDEX idx_expenses_pending_by_user ON expenses (user_id, date DESC)
+WHERE
+  date >= CURRENT_DATE - INTERVAL '90 days';
+
 -- => Only indexes expenses from the last 90 days
 -- => Supports "show recent expenses" queries with user_id filter + date ordering
 -- => Old expenses are excluded: they rarely appear in active user dashboards
 -- => Smaller index = faster writes and faster scans for the common case
-
 -- Index on non-null optional column (only index rows where column has a value)
-CREATE INDEX idx_attachments_storage_key
-    ON expense_attachments (storage_key)
-    WHERE storage_key IS NOT NULL;
+CREATE INDEX idx_attachments_storage_key ON expense_attachments (storage_key)
+WHERE
+  storage_key IS NOT NULL;
+
 -- => Only indexes rows with a storage_key value
 -- => Avoids indexing NULL entries which are never searched by storage key
 ```
@@ -871,30 +884,28 @@ PostgreSQL's `tsvector` type and GIN indexes enable full-text search directly in
 -- File: src/main/resources/db/migration/V11__add_fulltext_search.sql
 -- => Full-text search: tsvector computed column + GIN index
 -- => Enables searches like "find all expenses mentioning 'coffee' in description"
-
 -- Add a computed tsvector column for full-text search on expenses
 ALTER TABLE expenses
-    ADD COLUMN search_vector tsvector
-    GENERATED ALWAYS AS (
-        to_tsvector('english',
-            COALESCE(description, '') || ' ' || COALESCE(category, '')
-        )
-    ) STORED;
+ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
+  to_tsvector (
+    'english',
+    COALESCE(description, '') || ' ' || COALESCE(category, '')
+  )
+) STORED;
+
 -- => tsvector: PostgreSQL text search document type
 -- => GENERATED ALWAYS AS ... STORED: computed column stored on disk (PostgreSQL 12+)
 -- => to_tsvector('english', ...): parse text into lexemes using English dictionary
 -- => Lexemes: normalized word forms ("running" -> "run", "expenses" -> "expens")
 -- => COALESCE: replace NULL with empty string to avoid NULL concatenation issues
 -- => Combines description + category into one searchable document
-
 -- GIN index on the tsvector column for fast text search
-CREATE INDEX idx_expenses_search_vector
-    ON expenses USING GIN (search_vector);
+CREATE INDEX idx_expenses_search_vector ON expenses USING GIN (search_vector);
+
 -- => GIN (Generalized Inverted Index): optimal index type for tsvector columns
 -- => Maps each lexeme to the rows containing it (inverted index)
 -- => Supports @@ operator: search_vector @@ to_tsquery('english', 'coffee')
 -- => Much faster than LIKE '%coffee%' which requires full table scan
-
 -- Example query (documentation only; not executed by migration):
 -- SELECT * FROM expenses WHERE search_vector @@ to_tsquery('english', 'coffee & food');
 -- => Finds expenses whose description/category contains both "coffee" and "food" lexemes
@@ -914,32 +925,38 @@ Database views encapsulate complex joins and aggregations behind a simple table-
 -- File: src/main/resources/db/migration/V12__create_expense_summary_view.sql
 -- => View: encapsulates a complex aggregation query behind a simple name
 -- => Applications can SELECT FROM expense_summary as if it were a table
-
 CREATE VIEW expense_summary AS
 -- => CREATE VIEW: defines a named query stored in the database catalog
 -- => Does NOT store data; executes the SELECT each time the view is queried
 SELECT
-    e.user_id,                           -- => The user who owns these expenses
-    e.currency,                          -- => Currency of the expenses
-    e.category,                          -- => Expense category (FOOD, TRANSPORT, etc.)
-    DATE_TRUNC('month', e.date) AS month,
-    -- => DATE_TRUNC('month'): truncate date to first day of its month
-    -- => Example: 2026-03-15 -> 2026-03-01
-    -- => Enables GROUP BY month without a separate month column
-    COUNT(*)              AS total_count,
-    -- => Number of expenses in this (user, currency, category, month) group
-    SUM(e.amount)         AS total_amount,
-    -- => Sum of all expense amounts in this group
-    AVG(e.amount)         AS avg_amount,
-    -- => Average expense amount in this group
-    MIN(e.date)           AS earliest_date,
-    -- => Earliest expense date in this period
-    MAX(e.date)           AS latest_date
-    -- => Most recent expense date in this period
-FROM expenses e
-WHERE e.deleted_at IS NULL
--- => Exclude soft-deleted expenses from the summary
-GROUP BY e.user_id, e.currency, e.category, DATE_TRUNC('month', e.date);
+  e.user_id, -- => The user who owns these expenses
+  e.currency, -- => Currency of the expenses
+  e.category, -- => Expense category (FOOD, TRANSPORT, etc.)
+  DATE_TRUNC ('month', e.date) AS month,
+  -- => DATE_TRUNC('month'): truncate date to first day of its month
+  -- => Example: 2026-03-15 -> 2026-03-01
+  -- => Enables GROUP BY month without a separate month column
+  COUNT(*) AS total_count,
+  -- => Number of expenses in this (user, currency, category, month) group
+  SUM(e.amount) AS total_amount,
+  -- => Sum of all expense amounts in this group
+  AVG(e.amount) AS avg_amount,
+  -- => Average expense amount in this group
+  MIN(e.date) AS earliest_date,
+  -- => Earliest expense date in this period
+  MAX(e.date) AS latest_date
+  -- => Most recent expense date in this period
+FROM
+  expenses e
+WHERE
+  e.deleted_at IS NULL
+  -- => Exclude soft-deleted expenses from the summary
+GROUP BY
+  e.user_id,
+  e.currency,
+  e.category,
+  DATE_TRUNC ('month', e.date);
+
 -- => One row per (user, currency, category, month) combination
 ```
 
@@ -957,30 +974,34 @@ A materialized view stores query results on disk. Unlike regular views (which ex
 -- File: src/main/resources/db/migration/V13__create_monthly_totals_materialized_view.sql
 -- => Materialized view: stores aggregation results on disk for fast reads
 -- => Trades fresh data for query speed; must be refreshed explicitly
-
 CREATE MATERIALIZED VIEW monthly_expense_totals AS
 -- => MATERIALIZED VIEW: stores results in a physical table-like structure
 -- => Query executes once at CREATE time (and again at each REFRESH)
 -- => Reads from this view are instant (no computation): SELECT * FROM monthly_expense_totals
 SELECT
-    user_id,                                -- => User identity
-    currency,                               -- => Currency of expenses
-    DATE_TRUNC('month', date) AS month,    -- => Month bucket for aggregation
-    SUM(amount)  AS total_amount,           -- => Total spending this month
-    COUNT(*)     AS expense_count           -- => Number of expenses this month
-FROM expenses
-WHERE deleted_at IS NULL                    -- => Only non-deleted expenses
-GROUP BY user_id, currency, DATE_TRUNC('month', date)
-WITH DATA;
+  user_id, -- => User identity
+  currency, -- => Currency of expenses
+  DATE_TRUNC ('month', date) AS month, -- => Month bucket for aggregation
+  SUM(amount) AS total_amount, -- => Total spending this month
+  COUNT(*) AS expense_count -- => Number of expenses this month
+FROM
+  expenses
+WHERE
+  deleted_at IS NULL -- => Only non-deleted expenses
+GROUP BY
+  user_id,
+  currency,
+  DATE_TRUNC ('month', date)
+WITH
+  DATA;
+
 -- => WITH DATA: populate the view immediately during creation
 -- => Alternative: WITH NO DATA creates empty view, populate later with REFRESH
-
 -- Index the materialized view for fast lookups by user
-CREATE INDEX idx_monthly_totals_user
-    ON monthly_expense_totals (user_id, month DESC);
+CREATE INDEX idx_monthly_totals_user ON monthly_expense_totals (user_id, month DESC);
+
 -- => B-tree index: fast lookup for "all months for user X sorted newest first"
 -- => Materialized views support indexes; regular views do not
-
 -- Note: Refresh command (run outside migrations, e.g., nightly cron):
 -- REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_expense_totals;
 -- => CONCURRENTLY: refresh without locking the view for reads (requires unique index)
@@ -1102,9 +1123,9 @@ PostgreSQL's `jsonb` type stores JSON as a parsed binary format that supports in
 ```sql
 -- File: src/main/resources/db/migration/V16__add_metadata_columns.sql
 -- => Add JSONB columns for flexible, schema-free metadata storage
-
 ALTER TABLE expenses
-    ADD COLUMN metadata JSONB DEFAULT '{}' NOT NULL;
+ADD COLUMN metadata JSONB DEFAULT '{}' NOT NULL;
+
 -- => JSONB: binary-parsed JSON; supports operators (->>, @>, ?, etc.)
 -- => DEFAULT '{}': empty JSON object as default (not NULL)
 -- => NOT NULL: ensures metadata always has a value (empty object {} is valid)
@@ -1112,22 +1133,20 @@ ALTER TABLE expenses
 -- =>   JSONB: faster reads, supports indexes, normalizes key order
 -- =>   JSON: faster writes, preserves original formatting and key order
 -- => Production preference: JSONB for data you will query; JSON for raw storage only
-
 ALTER TABLE users
-    ADD COLUMN preferences JSONB DEFAULT '{
+ADD COLUMN preferences JSONB DEFAULT '{
       "theme": "light",
       "currency": "IDR",
       "notifications": true
     }' NOT NULL;
+
 -- => Default preferences for all existing users when this migration runs
 -- => Each key-value pair in the default is a user preference
 -- => New user registrations should explicitly set preferences in application code
-
 -- Example JSONB queries (documentation, not executed by migration):
 -- SELECT id, metadata->>'receipt_url' FROM expenses WHERE metadata ? 'receipt_url';
 -- => ->>: extract text value for key
 -- => ?: check if key exists
-
 -- SELECT id FROM users WHERE preferences @> '{"theme": "dark"}';
 -- => @>: containment operator: does preferences contain {"theme": "dark"}?
 ```
@@ -1187,27 +1206,25 @@ GIN (Generalized Inverted Index) indexes enable efficient operator queries on `j
 ```sql
 -- File: src/main/resources/db/migration/V18__add_gin_indexes.sql
 -- => GIN indexes for JSONB columns: enable fast containment and key-existence queries
-
 -- GIN index on expenses.metadata for JSONB operators
-CREATE INDEX idx_expenses_metadata_gin
-    ON expenses USING GIN (metadata);
+CREATE INDEX idx_expenses_metadata_gin ON expenses USING GIN (metadata);
+
 -- => GIN USING GIN: required index type for JSONB operators @>, ?, ?|, ?&
 -- => Supports: metadata @> '{"category": "food"}' (containment)
 -- =>           metadata ? 'receipt_url' (key existence)
 -- =>           metadata ?| ARRAY['receipt_url', 'merchant'] (any key exists)
 -- =>           metadata ?& ARRAY['receipt_url', 'merchant'] (all keys exist)
 -- => Does NOT support: metadata->>'amount' > '100' (expression, needs separate index)
-
 -- GIN index on users.preferences for containment queries
-CREATE INDEX idx_users_preferences_gin
-    ON users USING GIN (preferences);
+CREATE INDEX idx_users_preferences_gin ON users USING GIN (preferences);
+
 -- => Supports: preferences @> '{"theme": "dark"}' (user preference lookup)
 -- => Useful for analytics: "how many users prefer dark theme?"
-
 -- Expression index for extracting a specific JSONB key as text (for equality/range queries)
-CREATE INDEX idx_expenses_metadata_receipt
-    ON expenses ((metadata->>'receipt_url'))
-    WHERE metadata ? 'receipt_url';
+CREATE INDEX idx_expenses_metadata_receipt ON expenses ((metadata - > > 'receipt_url'))
+WHERE
+  metadata ? 'receipt_url';
+
 -- => Expression index: indexes the result of metadata->>'receipt_url'
 -- => Partial: only indexes rows where receipt_url key exists
 -- => Supports: WHERE metadata->>'receipt_url' = 'https://...' (equality)
@@ -1228,36 +1245,41 @@ PostgreSQL table partitioning splits a large table into smaller physical partiti
 -- File: src/main/resources/db/migration/V19__create_partitioned_audit_log.sql
 -- => Range-partitioned table: one partition per year for audit_log
 -- => Queries filtering by year touch only one partition, not the full table
-
 CREATE TABLE audit_log (
-  id          BIGSERIAL    NOT NULL,
+  id BIGSERIAL NOT NULL,
   -- => BIGSERIAL: auto-incrementing BIGINT; use BIGSERIAL for high-volume audit tables
-  table_name  VARCHAR(100) NOT NULL,   -- => Which table was audited
-  operation   VARCHAR(10)  NOT NULL,   -- => INSERT, UPDATE, DELETE
-  row_id      UUID         NOT NULL,   -- => Primary key of the audited row
-  changed_by  VARCHAR(255) NOT NULL,   -- => Who made the change
-  changed_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  table_name VARCHAR(100) NOT NULL, -- => Which table was audited
+  operation VARCHAR(10) NOT NULL, -- => INSERT, UPDATE, DELETE
+  row_id UUID NOT NULL, -- => Primary key of the audited row
+  changed_by VARCHAR(255) NOT NULL, -- => Who made the change
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
   -- => Timestamp: the partition key column
-  old_values  JSONB,                  -- => Previous row values (NULL for INSERT)
-  new_values  JSONB                   -- => New row values (NULL for DELETE)
-) PARTITION BY RANGE (changed_at);
+  old_values JSONB, -- => Previous row values (NULL for INSERT)
+  new_values JSONB -- => New row values (NULL for DELETE)
+)
+PARTITION BY
+  RANGE (changed_at);
+
 -- => PARTITION BY RANGE (changed_at): partition on the changed_at timestamp column
 -- => Range partitioning: each partition covers a contiguous range of values
-
 -- Create initial year partitions
-CREATE TABLE audit_log_2025
-    PARTITION OF audit_log
-    FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
+CREATE TABLE audit_log_2025 PARTITION OF audit_log FOR
+VALUES
+FROM
+  ('2025-01-01') TO ('2026-01-01');
+
 -- => Partition for 2025: stores rows where changed_at >= 2025-01-01 AND < 2026-01-01
+CREATE TABLE audit_log_2026 PARTITION OF audit_log FOR
+VALUES
+FROM
+  ('2026-01-01') TO ('2027-01-01');
 
-CREATE TABLE audit_log_2026
-    PARTITION OF audit_log
-    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
 -- => Partition for 2026: new rows for 2026 go here automatically (partition pruning)
-
 -- Index on each partition (partitioned tables do not auto-inherit parent indexes)
 CREATE INDEX idx_audit_log_2025_changed_at ON audit_log_2025 (changed_at DESC);
+
 CREATE INDEX idx_audit_log_2026_changed_at ON audit_log_2026 (changed_at DESC);
+
 -- => Each partition needs its own index for efficient range queries within the partition
 ```
 
@@ -1275,34 +1297,32 @@ Generated columns compute their value automatically from an expression involving
 -- File: src/main/resources/db/migration/V20__add_generated_columns.sql
 -- => Generated columns: automatically computed from other columns
 -- => GENERATED ALWAYS AS ... STORED: value persisted on disk; updated on every row change
-
 ALTER TABLE expenses
-    ADD COLUMN amount_idr NUMERIC(20, 2)
-    GENERATED ALWAYS AS (
-        CASE currency
-            WHEN 'IDR' THEN amount
-            -- => IDR to IDR: no conversion needed; return amount as-is
-            WHEN 'USD' THEN amount * 15000
-            -- => USD to IDR: approximate exchange rate (use live rate in application logic)
-            WHEN 'EUR' THEN amount * 16500
-            -- => EUR to IDR: approximate exchange rate
-            ELSE amount
-            -- => Unknown currency: return amount unchanged
-        END
-    ) STORED;
+ADD COLUMN amount_idr NUMERIC(20, 2) GENERATED ALWAYS AS (
+  CASE currency
+    WHEN 'IDR' THEN amount
+    -- => IDR to IDR: no conversion needed; return amount as-is
+    WHEN 'USD' THEN amount * 15000
+    -- => USD to IDR: approximate exchange rate (use live rate in application logic)
+    WHEN 'EUR' THEN amount * 16500
+    -- => EUR to IDR: approximate exchange rate
+    ELSE amount
+    -- => Unknown currency: return amount unchanged
+  END
+) STORED;
+
 -- => STORED: computed value persisted in the row; costs storage but reads are instant
 -- => VIRTUAL (not yet supported in PostgreSQL): computed at query time, no storage cost
 -- => Application cannot INSERT or UPDATE amount_idr directly; PostgreSQL rejects it
 -- => Updated automatically whenever amount or currency changes
-
 -- Generated column for full name
 ALTER TABLE users
-    ADD COLUMN full_name VARCHAR(355)
-    GENERATED ALWAYS AS (
-        display_name
-        -- => For this schema: full_name is an alias for display_name
-        -- => In schemas with first_name + last_name: (first_name || ' ' || last_name)
-    ) STORED;
+ADD COLUMN full_name VARCHAR(355) GENERATED ALWAYS AS (
+  display_name
+  -- => For this schema: full_name is an alias for display_name
+  -- => In schemas with first_name + last_name: (first_name || ' ' || last_name)
+) STORED;
+
 -- => Enables ORDER BY full_name, WHERE full_name ILIKE '%search%'
 -- => Without generated column: every query would repeat the concatenation expression
 ```

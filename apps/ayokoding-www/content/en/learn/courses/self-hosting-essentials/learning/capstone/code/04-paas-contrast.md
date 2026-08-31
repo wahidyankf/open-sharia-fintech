@@ -19,13 +19,13 @@ curl -sI https://paas.example.com/health     # => expect: HTTP/2 200 -- the SAME
 
 ## The trade-off note (the co-20/co-22 deliverable)
 
-| Dimension      | Self-hosted (Steps 1-3)            | PaaS (this step)                  |
-|----------------|------------------------------------|------------------------------------|
-| Setup          | ~5 scripts (setup, unit, proxy...) | `git push` + 2 CLI commands        |
-| TLS            | Caddy + ACME, configured by hand   | `letsencrypt:enable`, one command  |
-| Resilience     | systemd Restart= + boot hook       | PaaS supervisor, built in          |
-| Control        | Full -- the whole box is yours     | Constrained -- the runtime is theirs |
-| Visibility     | Full substrate (journalctl, ss)    | Only the app's logs + the leaks    |
+| Dimension  | Self-hosted (Steps 1-3)            | PaaS (this step)                     |
+| ---------- | ---------------------------------- | ------------------------------------ |
+| Setup      | ~5 scripts (setup, unit, proxy...) | `git push` + 2 CLI commands          |
+| TLS        | Caddy + ACME, configured by hand   | `letsencrypt:enable`, one command    |
+| Resilience | systemd Restart= + boot hook       | PaaS supervisor, built in            |
+| Control    | Full -- the whole box is yours     | Constrained -- the runtime is theirs |
+| Visibility | Full substrate (journalctl, ss)    | Only the app's logs + the leaks      |
 
 **Recommendation (name a force, not a preference):**
 

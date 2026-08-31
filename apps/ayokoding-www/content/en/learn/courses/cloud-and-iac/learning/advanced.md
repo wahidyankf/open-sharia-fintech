@@ -95,11 +95,11 @@ Complete policy artifact: [`ex-43-iam-least-privilege/policy.json`](./code/ex-43
 
 **Context**: Let a workload receive temporary credentials through an attached role rather than embedded keys.
 
-| Decision | Recorded choice |
-| --- | --- |
-| Workload identity | `service-reader` role mapped by the target platform |
-| Credential lifetime | Provider-issued temporary credentials |
-| Static access keys | Prohibited in code, images, and manifests |
+| Decision            | Recorded choice                                     |
+| ------------------- | --------------------------------------------------- |
+| Workload identity   | `service-reader` role mapped by the target platform |
+| Credential lifetime | Provider-issued temporary credentials               |
+| Static access keys  | Prohibited in code, images, and manifests           |
 
 Complete non-code decision artifact:
 [`ex-44-iam-role-workload/workload-role.md`](./code/ex-44-iam-role-workload/workload-role.md).
@@ -112,11 +112,11 @@ Complete non-code decision artifact:
 
 **Context**: Pass a secret reference to an application and resolve its value through an approved runtime identity.
 
-| Decision | Recorded choice |
-| --- | --- |
-| Configuration value | A provider-specific secret reference only |
-| Retrieval identity | `service-reader-role` workload identity |
-| Secret value | Retrieved at runtime; never committed or shown |
+| Decision            | Recorded choice                                |
+| ------------------- | ---------------------------------------------- |
+| Configuration value | A provider-specific secret reference only      |
+| Retrieval identity  | `service-reader-role` workload identity        |
+| Secret value        | Retrieved at runtime; never committed or shown |
 
 Complete non-code decision artifact:
 [`ex-45-secrets-manager/runtime-secret.md`](./code/ex-45-secrets-manager/runtime-secret.md).

@@ -43,11 +43,12 @@ graph TD
 -- => Flyway reads this filename to determine: version=1, description="create products"
 -- => "V" prefix = versioned migration (runs exactly once, in version order)
 -- => "__" double underscore = separator between version and description
+CREATE TABLE products ( -- => DDL: creates a new relation named "products"
+  id SERIAL NOT NULL, -- => SERIAL: auto-incrementing integer (1, 2, 3...)
+  name VARCHAR(100) NOT NULL -- => VARCHAR(100): string up to 100 characters, required
+);
 
-CREATE TABLE products (             -- => DDL: creates a new relation named "products"
-  id   SERIAL      NOT NULL,        -- => SERIAL: auto-incrementing integer (1, 2, 3...)
-  name VARCHAR(100) NOT NULL        -- => VARCHAR(100): string up to 100 characters, required
-);                                  -- => Flyway records success in flyway_schema_history on completion
+-- => Flyway records success in flyway_schema_history on completion
 ```
 
 **Key Takeaway**: The `V1__create_products.sql` filename format is mandatory — version number, double underscore separator, and description tell Flyway when to run the file and what to call it in the schema history.
@@ -63,27 +64,31 @@ Flyway enforces a strict filename pattern. Deviations result in the file being i
 ```sql
 -- Valid Flyway versioned migration filenames:
 -- => Pattern: V<version>__<description>.sql (case-sensitive "V", double underscore)
-
 -- V1__create_users.sql          -- => version=1, description="create users"
 -- V2__create_tokens.sql         -- => version=2, description="create tokens"
 -- V2_1__add_index.sql           -- => version=2.1 (dotted versions allowed)
 -- V10__drop_old_table.sql       -- => version=10 (numeric ordering, not lexicographic)
 -- V100__add_audit_columns.sql   -- => version=100 (always comes after V10)
-
 -- Invalid filenames (Flyway ignores or rejects these):
 -- V1_create_users.sql           -- => WRONG: single underscore = not a Flyway migration
 -- v1__create_users.sql          -- => WRONG: lowercase "v" = ignored by default
 -- V01__create_users.sql         -- => WARNING: leading zeros allowed but discouraged
 -- V1__create users.sql          -- => WRONG: spaces in description not recommended
-
 -- Description rules (the part after __):
 -- => Use underscores for spaces: V3__add_foreign_key.sql
 -- => No special characters except underscores and hyphens
 -- => Description appears in flyway_schema_history.description column
+SELECT
+  version,
+  description,
+  checksum,
+  success
+FROM
+  flyway_schema_history -- => Flyway records each migration here
+ORDER BY
+  installed_rank;
 
-SELECT version, description, checksum, success
-FROM flyway_schema_history            -- => Flyway records each migration here
-ORDER BY installed_rank;              -- => installed_rank reflects actual execution order
+-- => installed_rank reflects actual execution order
 -- => version: "1", "2", "2.1", "10" (stored as strings)
 -- => description: "create users", "create tokens", "add index" (underscores -> spaces)
 -- => checksum: integer hash of file contents (Flyway uses this to detect tampering)
@@ -190,24 +195,25 @@ Versioned migrations create database tables through standard SQL DDL executed ex
 ```sql
 -- File: src/main/resources/db/migration/V1__create_users.sql
 -- => Flyway executes this file once; records it in flyway_schema_history as version "1"
-
-CREATE TABLE users (                      -- => DDL: creates relation "users" in current schema
-  id            UUID          NOT NULL    -- => UUID primary key column; cannot be NULL
-                DEFAULT gen_random_uuid(),-- => PostgreSQL: generate UUID automatically on INSERT
-  username      VARCHAR(50)   NOT NULL,   -- => Unique handle; max 50 characters; required
-  email         VARCHAR(255)  NOT NULL,   -- => Email address; max 255 chars (RFC 5321 limit)
-  display_name  VARCHAR(100)  NOT NULL,   -- => Human-readable name; max 100 chars; required
-  password_hash VARCHAR(255)  NOT NULL,   -- => bcrypt/Argon2 hash string; never store plaintext
-  created_at    TIMESTAMPTZ   NOT NULL    -- => Creation timestamp with timezone
-                DEFAULT NOW(),            -- => PostgreSQL: default to current time on INSERT
-  updated_at    TIMESTAMPTZ   NOT NULL    -- => Last modification timestamp with timezone
-                DEFAULT NOW(),            -- => PostgreSQL: default to current time on INSERT
-  CONSTRAINT pk_users PRIMARY KEY (id),  -- => Named primary key constraint on id column
+CREATE TABLE users ( -- => DDL: creates relation "users" in current schema
+  id UUID NOT NULL -- => UUID primary key column; cannot be NULL
+  DEFAULT gen_random_uuid (), -- => PostgreSQL: generate UUID automatically on INSERT
+  username VARCHAR(50) NOT NULL, -- => Unique handle; max 50 characters; required
+  email VARCHAR(255) NOT NULL, -- => Email address; max 255 chars (RFC 5321 limit)
+  display_name VARCHAR(100) NOT NULL, -- => Human-readable name; max 100 chars; required
+  password_hash VARCHAR(255) NOT NULL, -- => bcrypt/Argon2 hash string; never store plaintext
+  created_at TIMESTAMPTZ NOT NULL -- => Creation timestamp with timezone
+  DEFAULT NOW (), -- => PostgreSQL: default to current time on INSERT
+  updated_at TIMESTAMPTZ NOT NULL -- => Last modification timestamp with timezone
+  DEFAULT NOW (), -- => PostgreSQL: default to current time on INSERT
+  CONSTRAINT pk_users PRIMARY KEY (id), -- => Named primary key constraint on id column
   CONSTRAINT uq_users_username UNIQUE (username),
-                                          -- => Unique constraint: no two users share a username
-  CONSTRAINT uq_users_email    UNIQUE (email)
-                                          -- => Unique constraint: no two users share an email
-);                                        -- => Flyway records: version=1, description="create users", success=true
+  -- => Unique constraint: no two users share a username
+  CONSTRAINT uq_users_email UNIQUE (email)
+  -- => Unique constraint: no two users share an email
+);
+
+-- => Flyway records: version=1, description="create users", success=true
 ```
 
 **Key Takeaway**: Name all constraints explicitly (`pk_users`, `uq_users_username`) so you can reference them by name in later migrations when you need to drop or alter them.
@@ -224,17 +230,17 @@ Schema evolution happens through new migration files. You never modify an alread
 -- File: src/main/resources/db/migration/V2__add_user_status.sql
 -- => New migration: adds columns to existing "users" table created in V1
 -- => Flyway runs this after V1; V1 must already be in flyway_schema_history
+ALTER TABLE users -- => Modifies the existing "users" table
+ADD COLUMN status VARCHAR(10) -- => New column: status (short string)
+NOT NULL -- => Cannot be NULL; requires a default for existing rows
+DEFAULT 'ACTIVE', -- => Existing rows get 'ACTIVE' automatically
+ADD COLUMN failed_login_count INT -- => New column: failed login counter
+NOT NULL -- => Cannot be NULL; requires a default
+DEFAULT 0;
 
-ALTER TABLE users                         -- => Modifies the existing "users" table
-  ADD COLUMN status VARCHAR(10)           -- => New column: status (short string)
-              NOT NULL                    -- => Cannot be NULL; requires a default for existing rows
-              DEFAULT 'ACTIVE',           -- => Existing rows get 'ACTIVE' automatically
-  ADD COLUMN failed_login_count INT       -- => New column: failed login counter
-              NOT NULL                    -- => Cannot be NULL; requires a default
-              DEFAULT 0;                  -- => Existing rows get 0 (no failed logins yet)
-                                          -- => PostgreSQL applies defaults to existing rows instantly
-                                          -- => Flyway records V2 in flyway_schema_history on success
-
+-- => Existing rows get 0 (no failed logins yet)
+-- => PostgreSQL applies defaults to existing rows instantly
+-- => Flyway records V2 in flyway_schema_history on success
 -- Verify the change:
 -- SELECT column_name, data_type, column_default
 -- FROM information_schema.columns
@@ -255,23 +261,25 @@ Indexes speed up queries by allowing PostgreSQL to find rows without scanning th
 ```sql
 -- File: src/main/resources/db/migration/V3__add_user_indexes.sql
 -- => Creates indexes to speed up common query patterns on the users table
+CREATE INDEX idx_users_email -- => Named index (use "idx_<table>_<column>" convention)
+ON users (email);
 
-CREATE INDEX idx_users_email              -- => Named index (use "idx_<table>_<column>" convention)
-  ON users (email);                       -- => B-tree index on users.email column
-                                          -- => Speeds up: WHERE email = 'alice@example.com'
-                                          -- => Speeds up: JOIN ON users.email = ...
-                                          -- => PostgreSQL default index type: B-tree (equality + range)
+-- => B-tree index on users.email column
+-- => Speeds up: WHERE email = 'alice@example.com'
+-- => Speeds up: JOIN ON users.email = ...
+-- => PostgreSQL default index type: B-tree (equality + range)
+CREATE INDEX idx_users_status -- => Named index for status column
+ON users (status);
 
-CREATE INDEX idx_users_status             -- => Named index for status column
-  ON users (status);                      -- => B-tree index on users.status
-                                          -- => Speeds up: WHERE status = 'ACTIVE' queries
-                                          -- => Useful when filtering large tables by status
+-- => B-tree index on users.status
+-- => Speeds up: WHERE status = 'ACTIVE' queries
+-- => Useful when filtering large tables by status
+CREATE INDEX idx_users_created_at -- => Named index for time-based queries
+ON users (created_at DESC);
 
-CREATE INDEX idx_users_created_at         -- => Named index for time-based queries
-  ON users (created_at DESC);             -- => B-tree index, descending order
-                                          -- => Speeds up: ORDER BY created_at DESC LIMIT 10
-                                          -- => Most recent users returned first without full scan
-
+-- => B-tree index, descending order
+-- => Speeds up: ORDER BY created_at DESC LIMIT 10
+-- => Most recent users returned first without full scan
 -- NOTE: Indexes slow down INSERT/UPDATE/DELETE slightly (must maintain index structures)
 -- => Add indexes only for columns used in WHERE, JOIN ON, or ORDER BY in hot queries
 -- => Flyway records all three CREATE INDEX statements in flyway_schema_history as version "3"
@@ -290,22 +298,22 @@ Foreign keys enforce referential integrity — they ensure a row in one table ca
 ```sql
 -- File: src/main/resources/db/migration/V4__create_orders.sql
 -- => Creates orders table with foreign key reference to users table
+CREATE TABLE orders ( -- => New table: orders
+  id UUID NOT NULL -- => UUID primary key
+  DEFAULT gen_random_uuid (), -- => Auto-generated UUID on INSERT
+  user_id UUID NOT NULL, -- => Column referencing users.id (NOT NULL = required)
+  total DECIMAL(10, 2) NOT NULL, -- => DECIMAL: 10 total digits, 2 decimal places
+  created_at TIMESTAMPTZ NOT NULL -- => Timestamp with timezone
+  DEFAULT NOW (), -- => Defaults to current time
+  CONSTRAINT pk_orders PRIMARY KEY (id), -- => Named primary key on id
+  CONSTRAINT fk_orders_user -- => Named foreign key constraint
+  FOREIGN KEY (user_id) -- => orders.user_id must match...
+  REFERENCES users (id) -- => ...an existing users.id value
+  ON DELETE CASCADE -- => If the referenced user is deleted, delete their orders too
+  -- => Alternative: ON DELETE SET NULL, ON DELETE RESTRICT
+);
 
-CREATE TABLE orders (                           -- => New table: orders
-  id         UUID NOT NULL                      -- => UUID primary key
-               DEFAULT gen_random_uuid(),       -- => Auto-generated UUID on INSERT
-  user_id    UUID NOT NULL,                     -- => Column referencing users.id (NOT NULL = required)
-  total      DECIMAL(10, 2) NOT NULL,           -- => DECIMAL: 10 total digits, 2 decimal places
-  created_at TIMESTAMPTZ NOT NULL               -- => Timestamp with timezone
-               DEFAULT NOW(),                  -- => Defaults to current time
-  CONSTRAINT pk_orders PRIMARY KEY (id),        -- => Named primary key on id
-  CONSTRAINT fk_orders_user                     -- => Named foreign key constraint
-    FOREIGN KEY (user_id)                       -- => orders.user_id must match...
-    REFERENCES users (id)                       -- => ...an existing users.id value
-    ON DELETE CASCADE                           -- => If the referenced user is deleted, delete their orders too
-                                                -- => Alternative: ON DELETE SET NULL, ON DELETE RESTRICT
-);                                              -- => Flyway records V4 in flyway_schema_history on success
-
+-- => Flyway records V4 in flyway_schema_history on success
 -- Effect of ON DELETE CASCADE:
 -- DELETE FROM users WHERE id = '<some-uuid>';
 -- => Automatically deletes all orders WHERE user_id = '<some-uuid>'
@@ -325,24 +333,24 @@ Unique constraints prevent duplicate values in a column or combination of column
 ```sql
 -- File: src/main/resources/db/migration/V5__add_unique_constraints.sql
 -- => Adds uniqueness guarantees to columns that must not contain duplicates
-
 -- Single-column unique constraint
-ALTER TABLE users
-  ADD CONSTRAINT uq_users_display_name     -- => Named constraint (drop by name later if needed)
-    UNIQUE (display_name);                 -- => No two users may share the same display_name
-                                           -- => PostgreSQL raises: ERROR: duplicate key value violates unique constraint
-                                           -- => on INSERT or UPDATE that would create a duplicate
+ALTER TABLE users ADD CONSTRAINT uq_users_display_name -- => Named constraint (drop by name later if needed)
+UNIQUE (display_name);
 
+-- => No two users may share the same display_name
+-- => PostgreSQL raises: ERROR: duplicate key value violates unique constraint
+-- => on INSERT or UPDATE that would create a duplicate
 -- Multi-column unique constraint (composite uniqueness)
-CREATE TABLE user_roles (                  -- => Junction table: user-role assignments
-  user_id UUID NOT NULL,                   -- => References users.id
-  role    VARCHAR(50) NOT NULL,            -- => Role name (e.g., 'ADMIN', 'EDITOR')
-  CONSTRAINT pk_user_roles                 -- => Named composite primary key
-    PRIMARY KEY (user_id, role),           -- => Composite PK: each user-role pair is unique
-  CONSTRAINT uq_user_roles_assignment      -- => Explicit named unique constraint
-    UNIQUE (user_id, role)                 -- => Enforces uniqueness at the constraint level
-);                                         -- => Flyway records V5 on success
+CREATE TABLE user_roles ( -- => Junction table: user-role assignments
+  user_id UUID NOT NULL, -- => References users.id
+  role VARCHAR(50) NOT NULL, -- => Role name (e.g., 'ADMIN', 'EDITOR')
+  CONSTRAINT pk_user_roles -- => Named composite primary key
+  PRIMARY KEY (user_id, role), -- => Composite PK: each user-role pair is unique
+  CONSTRAINT uq_user_roles_assignment -- => Explicit named unique constraint
+  UNIQUE (user_id, role) -- => Enforces uniqueness at the constraint level
+);
 
+-- => Flyway records V5 on success
 -- Difference: UNIQUE vs PRIMARY KEY
 -- PRIMARY KEY = UNIQUE + NOT NULL on all columns + only one per table
 -- UNIQUE = allows NULL (one NULL per column by default in PostgreSQL) + multiple per table
@@ -361,26 +369,27 @@ Flyway creates and maintains the `flyway_schema_history` table automatically in 
 ```sql
 -- flyway_schema_history is created automatically by Flyway on first run
 -- => Do NOT create, modify, or drop this table manually
-
 -- View current migration state:
 SELECT
-  installed_rank,    -- => Execution order (1, 2, 3...) — reflects actual run order
-  version,           -- => Migration version string: "1", "2", "2.1", null (for repeatable)
-  description,       -- => Derived from filename: "create users", "add columns"
-  type,              -- => "SQL" (SQL file), "BASELINE" (manual baseline entry)
-  script,            -- => Full filename: "V1__create_users.sql"
-  checksum,          -- => Integer hash of file contents (detects file modification)
-  installed_by,      -- => Database user that ran the migration
-  installed_on,      -- => Timestamp when migration was applied
-  execution_time,    -- => Milliseconds the migration took to run
-  success            -- => true = applied cleanly, false = failed mid-way
-FROM flyway_schema_history
-ORDER BY installed_rank;
+  installed_rank, -- => Execution order (1, 2, 3...) — reflects actual run order
+  version, -- => Migration version string: "1", "2", "2.1", null (for repeatable)
+  description, -- => Derived from filename: "create users", "add columns"
+  type, -- => "SQL" (SQL file), "BASELINE" (manual baseline entry)
+  script, -- => Full filename: "V1__create_users.sql"
+  checksum, -- => Integer hash of file contents (detects file modification)
+  installed_by, -- => Database user that ran the migration
+  installed_on, -- => Timestamp when migration was applied
+  execution_time, -- => Milliseconds the migration took to run
+  success -- => true = applied cleanly, false = failed mid-way
+FROM
+  flyway_schema_history
+ORDER BY
+  installed_rank;
+
 -- => Example output after applying V1, V2, V3:
 -- => rank=1, version="1", description="create users", success=true, checksum=1234567890
 -- => rank=2, version="2", description="add columns",  success=true, checksum=-987654321
 -- => rank=3, version="3", description="add indexes",  success=true, checksum=1122334455
-
 -- CRITICAL: Flyway uses checksum to detect if an applied migration file was modified
 -- => If V1__create_users.sql is edited after being applied, flyway.migrate() throws:
 -- => FlywayException: Validate failed: Migration checksum mismatch for migration version 1
@@ -561,18 +570,21 @@ Repeatable migrations use the `R__` prefix instead of `V<version>__`. They have 
 -- => "R__" prefix = repeatable migration (no version number)
 -- => Runs whenever the file's checksum changes (i.e., file is modified)
 -- => Always runs AFTER all versioned migrations (V1, V2, V3...)
+CREATE
+OR REPLACE VIEW active_users AS -- => CREATE OR REPLACE: safe to run multiple times
+SELECT -- => Defines which columns the view exposes
+  id, -- => User ID
+  username, -- => Username
+  email, -- => Email address
+  display_name, -- => Display name
+  created_at -- => Creation timestamp
+FROM
+  users -- => Reads from the users table
+WHERE
+  status = 'ACTIVE';
 
-CREATE OR REPLACE VIEW active_users AS   -- => CREATE OR REPLACE: safe to run multiple times
-  SELECT                                 -- => Defines which columns the view exposes
-    id,                                  -- => User ID
-    username,                            -- => Username
-    email,                               -- => Email address
-    display_name,                        -- => Display name
-    created_at                           -- => Creation timestamp
-  FROM users                             -- => Reads from the users table
-  WHERE status = 'ACTIVE';              -- => Filters: only ACTIVE users visible through this view
-                                         -- => No data is stored: view is a stored query
-
+-- => Filters: only ACTIVE users visible through this view
+-- => No data is stored: view is a stored query
 -- When this file is modified and flyway.migrate() is called:
 -- => Flyway detects checksum change
 -- => Drops and recreates the view with the new definition
@@ -594,30 +606,33 @@ A single migration file can contain multiple SQL statements. Flyway executes the
 -- File: src/main/resources/db/migration/V6__create_categories_and_tags.sql
 -- => Multiple DDL statements in one file: all execute atomically
 -- => If statement 2 fails, statement 1 is rolled back (PostgreSQL DDL is transactional)
-
-CREATE TABLE categories (                  -- => First statement: create categories table
-  id   UUID         NOT NULL              -- => UUID primary key
-         DEFAULT gen_random_uuid(),       -- => Auto-generated UUID
-  name VARCHAR(100) NOT NULL,             -- => Category name: required, max 100 chars
-  slug VARCHAR(100) NOT NULL,             -- => URL-safe version of name (e.g., "tech-news")
+CREATE TABLE categories ( -- => First statement: create categories table
+  id UUID NOT NULL -- => UUID primary key
+  DEFAULT gen_random_uuid (), -- => Auto-generated UUID
+  name VARCHAR(100) NOT NULL, -- => Category name: required, max 100 chars
+  slug VARCHAR(100) NOT NULL, -- => URL-safe version of name (e.g., "tech-news")
   CONSTRAINT pk_categories PRIMARY KEY (id),
-                                           -- => Named primary key
+  -- => Named primary key
   CONSTRAINT uq_categories_slug UNIQUE (slug)
-                                           -- => Slugs must be globally unique
-);                                         -- => End of first statement
+  -- => Slugs must be globally unique
+);
 
-CREATE TABLE tags (                        -- => Second statement: create tags table
-  id   UUID        NOT NULL               -- => UUID primary key
-         DEFAULT gen_random_uuid(),       -- => Auto-generated UUID
-  name VARCHAR(50) NOT NULL,              -- => Tag name: required, max 50 chars
-  CONSTRAINT pk_tags PRIMARY KEY (id),    -- => Named primary key
-  CONSTRAINT uq_tags_name UNIQUE (name)   -- => Tag names must be globally unique
-);                                         -- => End of second statement
+-- => End of first statement
+CREATE TABLE tags ( -- => Second statement: create tags table
+  id UUID NOT NULL -- => UUID primary key
+  DEFAULT gen_random_uuid (), -- => Auto-generated UUID
+  name VARCHAR(50) NOT NULL, -- => Tag name: required, max 50 chars
+  CONSTRAINT pk_tags PRIMARY KEY (id), -- => Named primary key
+  CONSTRAINT uq_tags_name UNIQUE (name) -- => Tag names must be globally unique
+);
 
-CREATE INDEX idx_categories_slug           -- => Third statement: index for slug lookups
-  ON categories (slug);                   -- => Speeds up: WHERE slug = 'tech-news'
-                                           -- => All three statements are in one transaction
-                                           -- => Flyway records V6 as one entry in flyway_schema_history
+-- => End of second statement
+CREATE INDEX idx_categories_slug -- => Third statement: index for slug lookups
+ON categories (slug);
+
+-- => Speeds up: WHERE slug = 'tech-news'
+-- => All three statements are in one transaction
+-- => Flyway records V6 as one entry in flyway_schema_history
 ```
 
 **Key Takeaway**: Group logically related DDL statements in a single migration file so they apply atomically — either all succeed or all roll back — keeping the schema in a consistent state.
@@ -633,23 +648,26 @@ Adding a `NOT NULL` column to an existing table requires a `DEFAULT` to populate
 ```sql
 -- File: src/main/resources/db/migration/V7__add_not_null_columns.sql
 -- => Adds NOT NULL columns to existing tables that already contain data
-
 -- CORRECT: Add NOT NULL column WITH a DEFAULT (works for existing rows)
 ALTER TABLE users
-  ADD COLUMN account_type VARCHAR(20) NOT NULL DEFAULT 'STANDARD';
-                                              -- => All existing rows get 'STANDARD' as account_type
-                                              -- => New rows must provide account_type (or use default)
-                                              -- => Migration succeeds even if users table has 1 million rows
+ADD COLUMN account_type VARCHAR(20) NOT NULL DEFAULT 'STANDARD';
 
+-- => All existing rows get 'STANDARD' as account_type
+-- => New rows must provide account_type (or use default)
+-- => Migration succeeds even if users table has 1 million rows
 -- CORRECT: Add NOT NULL column, then remove the default (application always provides value)
 ALTER TABLE categories
-  ADD COLUMN position INT NOT NULL DEFAULT 0; -- => Step 1: Add with default (existing rows get 0)
-                                              -- => Step 2 (optional, in same or later migration):
-ALTER TABLE categories
-  ALTER COLUMN position DROP DEFAULT;         -- => Removes default; application must now provide position
-                                              -- => Existing rows keep their 0 values
-                                              -- => Future INSERTs without position will fail (intended)
+ADD COLUMN position INT NOT NULL DEFAULT 0;
 
+-- => Step 1: Add with default (existing rows get 0)
+-- => Step 2 (optional, in same or later migration):
+ALTER TABLE categories
+ALTER COLUMN position
+DROP DEFAULT;
+
+-- => Removes default; application must now provide position
+-- => Existing rows keep their 0 values
+-- => Future INSERTs without position will fail (intended)
 -- WRONG (would fail if table has existing rows):
 -- ALTER TABLE users ADD COLUMN account_type VARCHAR(20) NOT NULL;
 -- => ERROR: column "account_type" contains null values
@@ -669,23 +687,22 @@ UUIDs as primary keys are preferred in distributed systems because they are glob
 ```sql
 -- File: src/main/resources/db/migration/V8__create_orders_with_uuid.sql
 -- => Demonstrates UUID primary key pattern used throughout production Ktor applications
+CREATE TABLE orders ( -- => Creates orders table
+  id UUID NOT NULL -- => UUID column; 128-bit identifier
+  DEFAULT gen_random_uuid (), -- => PostgreSQL 13+: generates UUIDv4 automatically
+  -- => Example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+  user_id UUID NOT NULL, -- => Foreign key to users.id (also UUID)
+  order_total DECIMAL(10, 2) NOT NULL, -- => Monetary amount: 10 digits, 2 decimal places
+  status VARCHAR(20) NOT NULL -- => Order status string
+  DEFAULT 'PENDING', -- => New orders start as PENDING
+  created_at TIMESTAMPTZ NOT NULL -- => Creation timestamp with timezone
+  DEFAULT NOW (), -- => Defaults to current time
+  CONSTRAINT pk_orders PRIMARY KEY (id), -- => UUID is the primary key
+  CONSTRAINT fk_orders_user -- => Named foreign key
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE -- => Delete orders when user is deleted
+);
 
-CREATE TABLE orders (                           -- => Creates orders table
-  id          UUID         NOT NULL            -- => UUID column; 128-bit identifier
-                DEFAULT gen_random_uuid(),     -- => PostgreSQL 13+: generates UUIDv4 automatically
-                                               -- => Example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
-  user_id     UUID         NOT NULL,           -- => Foreign key to users.id (also UUID)
-  order_total DECIMAL(10,2) NOT NULL,          -- => Monetary amount: 10 digits, 2 decimal places
-  status      VARCHAR(20)  NOT NULL            -- => Order status string
-                DEFAULT 'PENDING',             -- => New orders start as PENDING
-  created_at  TIMESTAMPTZ  NOT NULL            -- => Creation timestamp with timezone
-                DEFAULT NOW(),                 -- => Defaults to current time
-  CONSTRAINT pk_orders PRIMARY KEY (id),       -- => UUID is the primary key
-  CONSTRAINT fk_orders_user                   -- => Named foreign key
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE                          -- => Delete orders when user is deleted
-);                                             -- => Flyway records V8 in flyway_schema_history
-
+-- => Flyway records V8 in flyway_schema_history
 -- Querying by UUID requires quoting as string:
 -- SELECT * FROM orders WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 -- => PostgreSQL casts string to UUID type automatically
@@ -705,28 +722,29 @@ Timestamp columns with `DEFAULT NOW()` automatically record when rows are create
 ```sql
 -- File: src/main/resources/db/migration/V9__add_audit_timestamps.sql
 -- => Adds standard audit timestamp columns to a table that was created without them
-
 ALTER TABLE orders
-  ADD COLUMN updated_at TIMESTAMPTZ NOT NULL    -- => Tracks last modification time
-    DEFAULT NOW();                              -- => Existing rows get current timestamp as updated_at
-                                               -- => New rows default to insert time
+ADD COLUMN updated_at TIMESTAMPTZ NOT NULL -- => Tracks last modification time
+DEFAULT NOW ();
 
+-- => Existing rows get current timestamp as updated_at
+-- => New rows default to insert time
 -- Pattern for tables created fresh: include timestamps in CREATE TABLE
-CREATE TABLE invoices (                        -- => New table with timestamps from the start
-  id         UUID        NOT NULL DEFAULT gen_random_uuid(),
-                                               -- => UUID PK with auto-generation
-  order_id   UUID        NOT NULL,             -- => FK to orders table
-  amount     DECIMAL(10,2) NOT NULL,           -- => Invoice amount
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                               -- => Automatically set on INSERT
-                                               -- => Application should never set this manually
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                               -- => Set on INSERT; application must UPDATE this on changes
-                                               -- => PostgreSQL has no auto-update trigger by default
-                                               -- => Application code (Exposed ORM) or triggers handle update
+CREATE TABLE invoices ( -- => New table with timestamps from the start
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => UUID PK with auto-generation
+  order_id UUID NOT NULL, -- => FK to orders table
+  amount DECIMAL(10, 2) NOT NULL, -- => Invoice amount
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Automatically set on INSERT
+  -- => Application should never set this manually
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Set on INSERT; application must UPDATE this on changes
+  -- => PostgreSQL has no auto-update trigger by default
+  -- => Application code (Exposed ORM) or triggers handle update
   CONSTRAINT pk_invoices PRIMARY KEY (id)
-);                                             -- => Flyway records V9 in flyway_schema_history
+);
 
+-- => Flyway records V9 in flyway_schema_history
 -- NOTE: updated_at does NOT auto-update on row changes in PostgreSQL
 -- => Unlike MySQL's ON UPDATE CURRENT_TIMESTAMP, PostgreSQL requires explicit updates
 -- => ORM frameworks (Kotlin Exposed) handle this automatically via timestamps() helper
@@ -745,26 +763,27 @@ PostgreSQL native `ENUM` types provide stricter type safety than `VARCHAR` colum
 ```sql
 -- File: src/main/resources/db/migration/V10__create_status_enum.sql
 -- => Creates a PostgreSQL custom ENUM type and uses it in a table
+CREATE TYPE order_status AS ENUM ( -- => Creates custom PostgreSQL ENUM type
+  'PENDING', -- => Valid values for this type (stored as strings in DB)
+  'PROCESSING', -- => Flyway records checksum of this file
+  'SHIPPED', -- => PostgreSQL rejects any value not in this list
+  'DELIVERED', -- => Type is enforced at the database level
+  'CANCELLED' -- => Changing enums later requires ALTER TYPE or migration
+);
 
-CREATE TYPE order_status AS ENUM (    -- => Creates custom PostgreSQL ENUM type
-  'PENDING',                          -- => Valid values for this type (stored as strings in DB)
-  'PROCESSING',                       -- => Flyway records checksum of this file
-  'SHIPPED',                          -- => PostgreSQL rejects any value not in this list
-  'DELIVERED',                        -- => Type is enforced at the database level
-  'CANCELLED'                         -- => Changing enums later requires ALTER TYPE or migration
-);                                    -- => Type is now available for column definitions
-
-CREATE TABLE shipments (              -- => Table using the custom enum type
-  id         UUID         NOT NULL DEFAULT gen_random_uuid(),
-  order_id   UUID         NOT NULL,
-  status     order_status NOT NULL    -- => Column type is the custom ENUM
-               DEFAULT 'PENDING',    -- => New shipments start as PENDING
-                                     -- => PostgreSQL rejects: INSERT ... status = 'UNKNOWN'
-                                     -- => ERROR: invalid input value for enum order_status: "UNKNOWN"
-  shipped_at TIMESTAMPTZ,            -- => NULL until actually shipped
+-- => Type is now available for column definitions
+CREATE TABLE shipments ( -- => Table using the custom enum type
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  order_id UUID NOT NULL,
+  status order_status NOT NULL -- => Column type is the custom ENUM
+  DEFAULT 'PENDING', -- => New shipments start as PENDING
+  -- => PostgreSQL rejects: INSERT ... status = 'UNKNOWN'
+  -- => ERROR: invalid input value for enum order_status: "UNKNOWN"
+  shipped_at TIMESTAMPTZ, -- => NULL until actually shipped
   CONSTRAINT pk_shipments PRIMARY KEY (id)
-);                                    -- => Flyway records V10 in flyway_schema_history
+);
 
+-- => Flyway records V10 in flyway_schema_history
 -- To add a new enum value later (separate migration):
 -- ALTER TYPE order_status ADD VALUE 'RETURNED';
 -- => PostgreSQL supports adding values to enums without recreating the type
@@ -825,30 +844,31 @@ Composite indexes span multiple columns and accelerate queries that filter or so
 ```sql
 -- File: src/main/resources/db/migration/V12__add_composite_indexes.sql
 -- => Composite (multi-column) indexes for queries that filter on multiple columns
-
 -- Composite index on (user_id, created_at)
 -- => Accelerates: WHERE user_id = ? ORDER BY created_at DESC
 -- => Accelerates: WHERE user_id = ? AND created_at > ?
 -- => Does NOT help: WHERE created_at > ? (without user_id)
-CREATE INDEX idx_orders_user_created
-  ON orders (user_id, created_at DESC);   -- => Leftmost column first: user_id drives the lookup
-                                           -- => Second column: created_at for sorting within user's orders
-                                           -- => DESC: most-recent-first traversal without sort step
+CREATE INDEX idx_orders_user_created ON orders (user_id, created_at DESC);
 
+-- => Leftmost column first: user_id drives the lookup
+-- => Second column: created_at for sorting within user's orders
+-- => DESC: most-recent-first traversal without sort step
 -- Composite index on (status, created_at)
 -- => Accelerates: WHERE status = 'PENDING' ORDER BY created_at ASC
 -- => Useful for: processing queues sorted by arrival time
-CREATE INDEX idx_orders_status_created
-  ON orders (status, created_at ASC);     -- => Filter by status, then sort by time within status
-                                           -- => ASC: oldest PENDING orders first (FIFO processing)
+CREATE INDEX idx_orders_status_created ON orders (status, created_at ASC);
 
+-- => Filter by status, then sort by time within status
+-- => ASC: oldest PENDING orders first (FIFO processing)
 -- Partial index (indexes only a subset of rows)
 -- => Accelerates: WHERE status = 'PENDING' without full table scan
 -- => Smaller index: only PENDING rows indexed (not DELIVERED, CANCELLED, etc.)
-CREATE INDEX idx_orders_pending
-  ON orders (created_at)                  -- => Index the timestamp column
-  WHERE status = 'PENDING';              -- => Include only PENDING rows in the index
-                                          -- => Flyway records V12 in flyway_schema_history
+CREATE INDEX idx_orders_pending ON orders (created_at) -- => Index the timestamp column
+WHERE
+  status = 'PENDING';
+
+-- => Include only PENDING rows in the index
+-- => Flyway records V12 in flyway_schema_history
 ```
 
 **Key Takeaway**: Place the most selective column (fewest matching rows) first in composite indexes; partial indexes dramatically reduce index size when queries always filter on a fixed value like `status = 'PENDING'`.
@@ -864,32 +884,29 @@ Many-to-many relationships (users to roles, products to categories) require a ju
 ```sql
 -- File: src/main/resources/db/migration/V13__create_user_tags_junction.sql
 -- => Junction table for many-to-many relationship: users <-> tags
-
 -- Scenario: A user can have many tags; a tag can belong to many users
+CREATE TABLE user_tags ( -- => Junction table: records user-tag associations
+  user_id UUID NOT NULL, -- => FK to users.id (which user)
+  tag_id UUID NOT NULL, -- => FK to tags.id (which tag)
+  assigned_at TIMESTAMPTZ NOT NULL -- => When the tag was assigned to the user
+  DEFAULT NOW (), -- => Defaults to current time
+  assigned_by VARCHAR(255) NOT NULL -- => Who assigned the tag (audit field)
+  DEFAULT 'system', -- => Default to 'system' for programmatic assignment
+  CONSTRAINT pk_user_tags -- => Composite primary key
+  PRIMARY KEY (user_id, tag_id), -- => Each user-tag pair can only exist once
+  -- => Prevents duplicate tag assignments
+  CONSTRAINT fk_user_tags_user -- => Named FK to users
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE, -- => Remove user's tags when user is deleted
+  CONSTRAINT fk_user_tags_tag -- => Named FK to tags
+  FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE -- => Remove tag assignments when tag is deleted
+);
 
-CREATE TABLE user_tags (                       -- => Junction table: records user-tag associations
-  user_id    UUID         NOT NULL,            -- => FK to users.id (which user)
-  tag_id     UUID         NOT NULL,            -- => FK to tags.id (which tag)
-  assigned_at TIMESTAMPTZ NOT NULL             -- => When the tag was assigned to the user
-               DEFAULT NOW(),                 -- => Defaults to current time
-  assigned_by VARCHAR(255) NOT NULL            -- => Who assigned the tag (audit field)
-               DEFAULT 'system',              -- => Default to 'system' for programmatic assignment
-  CONSTRAINT pk_user_tags                     -- => Composite primary key
-    PRIMARY KEY (user_id, tag_id),            -- => Each user-tag pair can only exist once
-                                              -- => Prevents duplicate tag assignments
-  CONSTRAINT fk_user_tags_user               -- => Named FK to users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE,                        -- => Remove user's tags when user is deleted
-  CONSTRAINT fk_user_tags_tag                -- => Named FK to tags
-    FOREIGN KEY (tag_id)
-    REFERENCES tags(id)
-    ON DELETE CASCADE                         -- => Remove tag assignments when tag is deleted
-);                                            -- => Flyway records V13 in flyway_schema_history
+-- => Flyway records V13 in flyway_schema_history
+CREATE INDEX idx_user_tags_tag_id -- => Index for reverse lookup: "which users have this tag?"
+ON user_tags (tag_id);
 
-CREATE INDEX idx_user_tags_tag_id             -- => Index for reverse lookup: "which users have this tag?"
-  ON user_tags (tag_id);                     -- => pk_user_tags already covers user_id (leftmost column)
-                                              -- => This index covers tag_id-first lookups
+-- => pk_user_tags already covers user_id (leftmost column)
+-- => This index covers tag_id-first lookups
 ```
 
 **Key Takeaway**: Use composite primary keys `(user_id, tag_id)` in junction tables to enforce uniqueness at the database level, and add a reverse index on the second foreign key column for efficient queries from both directions.
@@ -905,27 +922,38 @@ Migrations can include `INSERT` statements to populate reference data alongside 
 ```sql
 -- File: src/main/resources/db/migration/V14__seed_reference_data.sql
 -- => Inserts required reference/lookup data that the application depends on at startup
-
 -- Seed default categories (application assumes these exist)
-INSERT INTO categories (id, name, slug) VALUES
-  (gen_random_uuid(), 'Technology',  'technology'),   -- => Row 1: Technology category
-  (gen_random_uuid(), 'Finance',     'finance'),      -- => Row 2: Finance category
-  (gen_random_uuid(), 'Health',      'health'),       -- => Row 3: Health category
-  (gen_random_uuid(), 'Education',   'education'),    -- => Row 4: Education category
-  (gen_random_uuid(), 'Sports',      'sports');       -- => Row 5: Sports category
-                                                      -- => gen_random_uuid(): each row gets a unique UUID
-                                                      -- => Flyway executes the entire INSERT as one statement
+INSERT INTO
+  categories (id, name, slug)
+VALUES
+  (gen_random_uuid (), 'Technology', 'technology'), -- => Row 1: Technology category
+  (gen_random_uuid (), 'Finance', 'finance'), -- => Row 2: Finance category
+  (gen_random_uuid (), 'Health', 'health'), -- => Row 3: Health category
+  (gen_random_uuid (), 'Education', 'education'), -- => Row 4: Education category
+  (gen_random_uuid (), 'Sports', 'sports');
 
+-- => Row 5: Sports category
+-- => gen_random_uuid(): each row gets a unique UUID
+-- => Flyway executes the entire INSERT as one statement
 -- Seed default system roles (application uses these in authorization logic)
-INSERT INTO user_roles (user_id, role)               -- => Junction table: assign roles to system user
+INSERT INTO
+  user_roles (user_id, role) -- => Junction table: assign roles to system user
 SELECT
-  u.id,                                              -- => System user's UUID
-  r.role                                             -- => Each role to assign
-FROM users u                                         -- => users table
-CROSS JOIN (VALUES ('ADMIN'), ('EDITOR')) AS r(role) -- => Cross join: one row per role
-WHERE u.username = 'system_admin';                   -- => Only seed for the system_admin user
-                                                     -- => If system_admin doesn't exist, inserts 0 rows (safe)
-                                                     -- => Flyway records V14 in flyway_schema_history
+  u.id, -- => System user's UUID
+  r.role -- => Each role to assign
+FROM
+  users u -- => users table
+  CROSS JOIN (
+    VALUES
+      ('ADMIN'),
+      ('EDITOR')
+  ) AS r (role) -- => Cross join: one row per role
+WHERE
+  u.username = 'system_admin';
+
+-- => Only seed for the system_admin user
+-- => If system_admin doesn't exist, inserts 0 rows (safe)
+-- => Flyway records V14 in flyway_schema_history
 ```
 
 **Key Takeaway**: Seed required reference data in migrations alongside the DDL that creates the tables — this guarantees the data exists in every environment (development, staging, production) as soon as the table is created.
@@ -941,28 +969,23 @@ WHERE u.username = 'system_admin';                   -- => Only seed for the sys
 ```sql
 -- File: src/main/resources/db/migration/V15__add_cascade_constraints.sql
 -- => Demonstrates ON DELETE CASCADE for maintaining referential integrity
-
 -- Hierarchy: users -> orders -> order_items
 -- Deleting a user should delete their orders; deleting an order should delete its items
-
-CREATE TABLE order_items (                            -- => Child table of orders
-  id         UUID         NOT NULL DEFAULT gen_random_uuid(),
-  order_id   UUID         NOT NULL,                  -- => FK to orders.id (required)
-  product_id UUID         NOT NULL,                  -- => FK to products.id (required)
-  quantity   INT          NOT NULL,                  -- => Number of units ordered
-  unit_price DECIMAL(10,2) NOT NULL,                 -- => Price per unit at time of order
+CREATE TABLE order_items ( -- => Child table of orders
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  order_id UUID NOT NULL, -- => FK to orders.id (required)
+  product_id UUID NOT NULL, -- => FK to products.id (required)
+  quantity INT NOT NULL, -- => Number of units ordered
+  unit_price DECIMAL(10, 2) NOT NULL, -- => Price per unit at time of order
   CONSTRAINT pk_order_items PRIMARY KEY (id),
-  CONSTRAINT fk_order_items_order                   -- => Named FK to orders table
-    FOREIGN KEY (order_id)
-    REFERENCES orders(id)
-    ON DELETE CASCADE,                               -- => Delete items when order is deleted
-  CONSTRAINT fk_order_items_product                 -- => Named FK to products table
-    FOREIGN KEY (product_id)
-    REFERENCES products(id)
-    ON DELETE RESTRICT                               -- => Prevent deleting a product with existing order items
-                                                     -- => RESTRICT: raises error if deletion would orphan items
-);                                                   -- => Flyway records V15 in flyway_schema_history
+  CONSTRAINT fk_order_items_order -- => Named FK to orders table
+  FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE, -- => Delete items when order is deleted
+  CONSTRAINT fk_order_items_product -- => Named FK to products table
+  FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT -- => Prevent deleting a product with existing order items
+  -- => RESTRICT: raises error if deletion would orphan items
+);
 
+-- => Flyway records V15 in flyway_schema_history
 -- Behavior demonstration:
 -- DELETE FROM orders WHERE id = '<order-uuid>';
 -- => Triggers: DELETE FROM order_items WHERE order_id = '<order-uuid>' (CASCADE)
@@ -983,30 +1006,32 @@ CREATE TABLE order_items (                            -- => Child table of order
 ```sql
 -- File: src/main/resources/db/migration/V16__guarded_operations.sql
 -- => IF NOT EXISTS / IF EXISTS guards for safer migrations
-
 -- Create table only if it doesn't already exist
-CREATE TABLE IF NOT EXISTS audit_logs (          -- => CREATE TABLE IF NOT EXISTS: skip if table exists
-  id         UUID        NOT NULL DEFAULT gen_random_uuid(),
-  table_name VARCHAR(100) NOT NULL,             -- => Which table was changed
-  record_id  UUID        NOT NULL,              -- => Which record was changed
-  action     VARCHAR(10) NOT NULL,              -- => INSERT, UPDATE, DELETE
-  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),-- => When the change occurred
-  changed_by VARCHAR(255),                      -- => Who made the change (nullable: system actions)
+CREATE TABLE IF NOT EXISTS audit_logs ( -- => CREATE TABLE IF NOT EXISTS: skip if table exists
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  table_name VARCHAR(100) NOT NULL, -- => Which table was changed
+  record_id UUID NOT NULL, -- => Which record was changed
+  action VARCHAR(10) NOT NULL, -- => INSERT, UPDATE, DELETE
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW (), -- => When the change occurred
+  changed_by VARCHAR(255), -- => Who made the change (nullable: system actions)
   CONSTRAINT pk_audit_logs PRIMARY KEY (id)
-);                                              -- => Safe to run multiple times; skips if exists
+);
 
+-- => Safe to run multiple times; skips if exists
 -- Create index only if it doesn't already exist
-CREATE INDEX IF NOT EXISTS idx_audit_logs_table_record
-  ON audit_logs (table_name, record_id);       -- => IF NOT EXISTS: skip if index already present
-                                               -- => Idempotent: running V16 twice doesn't fail
+CREATE INDEX IF NOT EXISTS idx_audit_logs_table_record ON audit_logs (table_name, record_id);
 
+-- => IF NOT EXISTS: skip if index already present
+-- => Idempotent: running V16 twice doesn't fail
 -- Add column only if it doesn't already exist
 ALTER TABLE users
-  ADD COLUMN IF NOT EXISTS bio TEXT;           -- => IF NOT EXISTS: skip if column already exists
-                                               -- => PostgreSQL 9.6+: supported for ADD COLUMN
-                                               -- => TEXT type: unlimited length string (e.g., user biography)
-                                               -- => Nullable: users don't need a bio (no NOT NULL)
-                                               -- => Flyway records V16 in flyway_schema_history
+ADD COLUMN IF NOT EXISTS bio TEXT;
+
+-- => IF NOT EXISTS: skip if column already exists
+-- => PostgreSQL 9.6+: supported for ADD COLUMN
+-- => TEXT type: unlimited length string (e.g., user biography)
+-- => Nullable: users don't need a bio (no NOT NULL)
+-- => Flyway records V16 in flyway_schema_history
 ```
 
 **Key Takeaway**: Use `IF NOT EXISTS` / `IF EXISTS` guards when a migration may run in environments where the object already exists — but prefer clean, authoritative migrations without guards for new greenfield tables to keep intentions clear.
@@ -1022,33 +1047,35 @@ Dropping tables and columns in migrations requires care: dependent objects (fore
 ```sql
 -- File: src/main/resources/db/migration/V17__drop_deprecated_columns.sql
 -- => Safely removes deprecated tables and columns
-
 -- Step 1: Drop dependent foreign key constraints before dropping the column they reference
 ALTER TABLE orders
-  DROP CONSTRAINT IF EXISTS fk_orders_legacy_product_id;
-                                               -- => IF EXISTS: no error if constraint already removed
-                                               -- => Must drop FK constraints before dropping the referenced column
+DROP CONSTRAINT IF EXISTS fk_orders_legacy_product_id;
 
+-- => IF EXISTS: no error if constraint already removed
+-- => Must drop FK constraints before dropping the referenced column
 -- Step 2: Drop the deprecated column
 ALTER TABLE orders
-  DROP COLUMN IF EXISTS legacy_product_id;    -- => IF EXISTS: no error if column was already removed
-                                               -- => Data in legacy_product_id is permanently lost
-                                               -- => No undo without a backup
+DROP COLUMN IF EXISTS legacy_product_id;
 
+-- => IF EXISTS: no error if column was already removed
+-- => Data in legacy_product_id is permanently lost
+-- => No undo without a backup
 -- Drop entire deprecated table (after removing all FKs referencing it)
-DROP TABLE IF EXISTS legacy_sessions;         -- => IF EXISTS: skip if table was already dropped
-                                               -- => Flyway runs this once; records in flyway_schema_history
+DROP TABLE IF EXISTS legacy_sessions;
 
+-- => IF EXISTS: skip if table was already dropped
+-- => Flyway runs this once; records in flyway_schema_history
 -- CAUTION: Two-migration pattern for zero-downtime drops
 -- => Migration N: Stop writing to column/table (application code change)
 -- => Migration N+1 (next deploy): Drop the column/table
 -- => This prevents the situation where code expects a column that was just dropped
 -- => Zero-downtime deploys require: stop using before dropping (not: drop then stop using)
-
 -- Drop with CASCADE to remove all dependent objects automatically
-DROP TABLE IF EXISTS old_analytics CASCADE;   -- => CASCADE: drops all views, FKs referencing old_analytics
-                                               -- => Use CASCADE carefully: silently drops dependent objects
-                                               -- => List them explicitly instead when possible
+DROP TABLE IF EXISTS old_analytics CASCADE;
+
+-- => CASCADE: drops all views, FKs referencing old_analytics
+-- => Use CASCADE carefully: silently drops dependent objects
+-- => List them explicitly instead when possible
 ```
 
 **Key Takeaway**: Use `IF EXISTS` guards on drop operations and follow the two-migration pattern for zero-downtime deployments: first deploy stops using the column, second deploy drops it — never drop a column and update code in the same deployment.

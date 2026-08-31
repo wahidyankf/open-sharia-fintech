@@ -220,29 +220,37 @@ graph TD
 -- liquibase formatted sql
 -- => Zero-downtime column addition follows the expand-contract pattern
 -- => Phase 1: Add nullable column (instant; no table lock)
-
 -- changeset demo-be:063-add-display-name-nullable dbms:postgresql
 -- => runOrder: first to ensure this column exists before backfill changesets
-ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(100);
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS display_name VARCHAR(100);
+
 -- => ADD COLUMN is a metadata-only operation in PostgreSQL; no table rewrite
 -- => IF NOT EXISTS prevents failure if migration is retried after partial success
 -- => NULL is the default for all existing rows; application layer must handle NULL
 -- => No DEFAULT required here because we will backfill in a separate step
 -- rollback ALTER TABLE users DROP COLUMN IF EXISTS display_name;
-
 -- changeset demo-be:063-backfill-display-name dbms:postgresql runOnChange:false
 -- => Phase 2: Backfill existing rows in batches (see Example 66 for batch pattern)
 -- => runOnChange:false (default) ensures this runs exactly once
-UPDATE users SET display_name = username WHERE display_name IS NULL;
+UPDATE users
+SET
+  display_name = username
+WHERE
+  display_name IS NULL;
+
 -- => Copies username to display_name for all pre-existing rows
 -- => On large tables, replace this with a batched update (see Example 66)
 -- => After this runs, no NULL display_name values exist in the table
 -- rollback UPDATE users SET display_name = NULL WHERE display_name = username;
-
 -- changeset demo-be:063-display-name-not-null dbms:postgresql
 -- => Phase 3: Add NOT NULL constraint after backfill completes
 -- => Only safe AFTER all rows have a value (Phase 2 completed)
-ALTER TABLE users ALTER COLUMN display_name SET NOT NULL;
+ALTER TABLE users
+ALTER COLUMN display_name
+SET
+  NOT NULL;
+
 -- => In PostgreSQL 12+: uses a fast constraint validation (no full table scan)
 -- => with VALIDATE CONSTRAINT pattern (see Example 64 for explicit validation)
 -- rollback ALTER TABLE users ALTER COLUMN display_name DROP NOT NULL;
@@ -274,12 +282,13 @@ graph LR
 ```sql
 -- liquibase formatted sql
 -- => Phase 3 of column removal: database change runs AFTER application already ignores the column
-
 -- changeset demo-be:064-drop-legacy-phone-column dbms:postgresql
 -- => PREREQUISITE: All application code must already be deployed that does NOT read/write this column
 -- => If any running application instance still selects 'phone', this will cause errors
 -- => Use blue-green deployment (see Example 72) to ensure old instances are drained first
-ALTER TABLE users DROP COLUMN IF EXISTS phone;
+ALTER TABLE users
+DROP COLUMN IF EXISTS phone;
+
 -- => DROP COLUMN acquires AccessExclusiveLock briefly (milliseconds for metadata update)
 -- => IF EXISTS prevents failure if column was already dropped by a parallel process
 -- => Dropped column's storage is reclaimed lazily by VACUUM, not immediately
@@ -340,32 +349,37 @@ Renaming a table breaks all existing queries referencing the old name. The safe 
 ```sql
 -- liquibase formatted sql
 -- => Zero-downtime table rename via view shim
-
 -- changeset demo-be:065-create-accounts-table dbms:postgresql
 -- => Phase 1: Create the new table with the desired name
 CREATE TABLE accounts (
-    id            UUID         NOT NULL DEFAULT gen_random_uuid(),
-    -- => New table uses identical schema to "users" table being renamed
-    username      VARCHAR(50)  NOT NULL,
-    email         VARCHAR(255) NOT NULL,
-    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_accounts PRIMARY KEY (id)
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => New table uses identical schema to "users" table being renamed
+  username VARCHAR(50) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_accounts PRIMARY KEY (id)
 );
--- rollback DROP TABLE IF EXISTS accounts;
 
+-- rollback DROP TABLE IF EXISTS accounts;
 -- changeset demo-be:065-create-users-compatibility-view dbms:postgresql
 -- => Phase 2: Create view over new table so old queries still work
-CREATE OR REPLACE VIEW users AS SELECT * FROM accounts;
+CREATE
+OR REPLACE VIEW users AS
+SELECT
+  *
+FROM
+  accounts;
+
 -- => Any query to "users" now reads from "accounts"
 -- => INSERT/UPDATE/DELETE through a view require rules or INSTEAD OF triggers
 -- => For read-only compatibility, a simple view is sufficient
 -- => Application should be updated to query "accounts" directly in parallel
 -- rollback DROP VIEW IF EXISTS users;
-
 -- changeset demo-be:065-drop-users-view dbms:postgresql
 -- => Phase 3: Drop compatibility view AFTER all application code uses "accounts"
 -- => Run this changeset in a separate deployment sprint
 DROP VIEW IF EXISTS users;
+
 -- => At this point, any remaining query to "users" will fail with "relation does not exist"
 -- => Verify no application code references "users" before deploying this changeset
 -- rollback CREATE OR REPLACE VIEW users AS SELECT * FROM accounts;
@@ -463,13 +477,12 @@ Standard `CREATE INDEX` holds a `ShareLock` that blocks all writes to the table 
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:067-create-index-concurrently dbms:postgresql runInTransaction:false
 -- => runInTransaction:false is REQUIRED for CONCURRENTLY
 -- => PostgreSQL raises "ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block"
 -- => Without runInTransaction:false, Liquibase wraps this in BEGIN...COMMIT, causing the error
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_expenses_amount_date
-    ON expenses (amount DESC, date DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_expenses_amount_date ON expenses (amount DESC, date DESC);
+
 -- => CONCURRENTLY: two-phase build; first pass reads table, second pass catches up with changes
 -- => Writes to the table proceed normally during both phases
 -- => Build takes 2-5x longer than standard CREATE INDEX but does not block production traffic
@@ -494,35 +507,38 @@ Backfilling a new column from existing data requires a strategy that handles NUL
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:068-add-email-domain-column dbms:postgresql
 -- => Phase 1: Add the column as nullable (instant; no table rewrite)
-ALTER TABLE users ADD COLUMN IF NOT EXISTS email_domain VARCHAR(100);
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS email_domain VARCHAR(100);
+
 -- => email_domain will store the domain part of the email address
 -- => NULL for all existing rows until the backfill changeset executes
 -- rollback ALTER TABLE users DROP COLUMN IF EXISTS email_domain;
-
 -- changeset demo-be:068-backfill-email-domain dbms:postgresql
 -- => Phase 2: Derive email_domain from existing email column
 UPDATE users
-SET email_domain = LOWER(SPLIT_PART(email, '@', 2))
--- => SPLIT_PART(email, '@', 2): extracts text after '@' delimiter
--- => LOWER: normalizes to lowercase for consistent grouping in queries
--- => Example: 'Alice@Example.COM' -> 'example.com'
-WHERE email_domain IS NULL
--- => Idempotency guard: only updates rows not yet backfilled
--- => Safe to re-run if migration is interrupted; re-running skips already-done rows
-AND email IS NOT NULL
--- => Skip rows with NULL email (should not exist due to NOT NULL constraint, but defensive)
-AND email LIKE '%@%';
+SET
+  email_domain = LOWER(SPLIT_PART (email, '@', 2))
+  -- => SPLIT_PART(email, '@', 2): extracts text after '@' delimiter
+  -- => LOWER: normalizes to lowercase for consistent grouping in queries
+  -- => Example: 'Alice@Example.COM' -> 'example.com'
+WHERE
+  email_domain IS NULL
+  -- => Idempotency guard: only updates rows not yet backfilled
+  -- => Safe to re-run if migration is interrupted; re-running skips already-done rows
+  AND email IS NOT NULL
+  -- => Skip rows with NULL email (should not exist due to NOT NULL constraint, but defensive)
+  AND email LIKE '%@%';
+
 -- => Skip malformed emails without '@'; avoids SPLIT_PART returning empty string
 -- rollback UPDATE users SET email_domain = NULL;
-
 -- changeset demo-be:068-index-email-domain dbms:postgresql runInTransaction:false
 -- => Phase 3: Create supporting index after backfill to avoid index maintenance overhead during bulk update
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_domain
-    ON users (email_domain)
-    WHERE email_domain IS NOT NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_domain ON users (email_domain)
+WHERE
+  email_domain IS NOT NULL;
+
 -- => Partial index: only indexes rows with non-null email_domain
 -- => Partial index is smaller and faster to scan for filtered queries
 -- rollback DROP INDEX CONCURRENTLY IF EXISTS idx_users_email_domain;
@@ -721,17 +737,18 @@ Liquibase uses the `DATABASECHANGELOGLOCK` table to prevent concurrent migration
 
 ```sql
 -- SQL: Inspect lock state directly in PostgreSQL
-
 SELECT
-    id,
-    -- => Lock row id; always 1 for the primary lock
-    locked,
-    -- => BOOLEAN: true means a migration is in progress (or crashed holding the lock)
-    lockgranted,
-    -- => TIMESTAMPTZ: when the lock was acquired; NULL if not locked
-    lockedby
-    -- => VARCHAR: hostname + PID of the process holding the lock
-FROM databasechangeloglock;
+  id,
+  -- => Lock row id; always 1 for the primary lock
+  locked,
+  -- => BOOLEAN: true means a migration is in progress (or crashed holding the lock)
+  lockgranted,
+  -- => TIMESTAMPTZ: when the lock was acquired; NULL if not locked
+  lockedby
+  -- => VARCHAR: hostname + PID of the process holding the lock
+FROM
+  databasechangeloglock;
+
 -- => Example output when lock is stuck:
 -- => id=1, locked=true, lockgranted='2026-03-27 02:15:00+07', lockedby='deploy-server-01/12345'
 -- => If lockgranted is >5 minutes ago and no migration is running, the lock is stale
@@ -805,21 +822,23 @@ graph TD
 ```sql
 -- liquibase formatted sql
 -- => Blue-green compatible migration: adds new column that both old and new app handle
-
 -- changeset demo-be:072-add-status-v2-column dbms:postgresql
 -- => COMPATIBLE with blue (v1) and green (v2) application simultaneously
 -- => Blue app: ignores new column (no SELECT, INSERT, UPDATE references to it)
 -- => Green app: reads and writes new column
 -- => Column is nullable so blue app INSERTs without providing a value succeed
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS status_v2 VARCHAR(20);
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS status_v2 VARCHAR(20);
+
 -- => Nullable column addition is backward compatible: old app ignores it, new app uses it
 -- rollback ALTER TABLE orders DROP COLUMN IF EXISTS status_v2;
-
 -- changeset demo-be:072-cleanup-old-status dbms:postgresql
 -- => CLEANUP: run AFTER blue environment is drained and all traffic is on green (v2)
 -- => This changeset is NOT backward compatible; old app code would fail after this
 -- => Tag this changeset: liquibase tag cleanup-072 (see Example 80)
-ALTER TABLE orders DROP COLUMN IF EXISTS status;
+ALTER TABLE orders
+DROP COLUMN IF EXISTS status;
+
 -- => Safe now: no blue instances remain; only green (v2) app reads status_v2
 -- rollback ALTER TABLE orders ADD COLUMN status VARCHAR(20);
 ```
@@ -837,33 +856,35 @@ Feature flag migrations decouple schema deployment from feature activation. The 
 ```sql
 -- liquibase formatted sql
 -- => Feature flag migration: schema deployed ahead of feature activation
-
 -- changeset demo-be:073-create-feature-flags-table dbms:postgresql
 CREATE TABLE feature_flags (
-    name       VARCHAR(100) NOT NULL,
-    -- => Feature flag identifier, e.g., 'recommendations-v2'
-    enabled    BOOLEAN      NOT NULL DEFAULT false,
-    -- => Default false: all features start disabled in every environment
-    percentage INT          NOT NULL DEFAULT 0,
-    -- => Rollout percentage: 0-100; enables gradual rollout to subset of users
-    updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    -- => Track when flag was last changed for audit purposes
-    CONSTRAINT pk_feature_flags PRIMARY KEY (name),
-    CONSTRAINT chk_percentage CHECK (percentage BETWEEN 0 AND 100)
-    -- => Constraint ensures percentage is always a valid 0-100 value
+  name VARCHAR(100) NOT NULL,
+  -- => Feature flag identifier, e.g., 'recommendations-v2'
+  enabled BOOLEAN NOT NULL DEFAULT false,
+  -- => Default false: all features start disabled in every environment
+  percentage INT NOT NULL DEFAULT 0,
+  -- => Rollout percentage: 0-100; enables gradual rollout to subset of users
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Track when flag was last changed for audit purposes
+  CONSTRAINT pk_feature_flags PRIMARY KEY (name),
+  CONSTRAINT chk_percentage CHECK (percentage BETWEEN 0 AND 100)
+  -- => Constraint ensures percentage is always a valid 0-100 value
 );
--- rollback DROP TABLE IF EXISTS feature_flags;
 
+-- rollback DROP TABLE IF EXISTS feature_flags;
 -- changeset demo-be:073-seed-initial-flags dbms:postgresql context:!prod
 -- => context:!prod: runs in dev and staging but NOT production
 -- => Production flag values are managed via admin UI or deployment scripts, not migrations
-INSERT INTO feature_flags (name, enabled, percentage) VALUES
-    ('recommendations-v2', false, 0),
-    -- => New recommendation engine: disabled by default, activate via admin panel
-    ('dark-mode', true, 100),
-    -- => Dark mode: enabled for 100% of users in non-prod environments
-    ('new-checkout-flow', false, 10);
-    -- => Gradual checkout flow rollout: 10% in staging for initial testing
+INSERT INTO
+  feature_flags (name, enabled, percentage)
+VALUES
+  ('recommendations-v2', false, 0),
+  -- => New recommendation engine: disabled by default, activate via admin panel
+  ('dark-mode', true, 100),
+  -- => Dark mode: enabled for 100% of users in non-prod environments
+  ('new-checkout-flow', false, 10);
+
+-- => Gradual checkout flow rollout: 10% in staging for initial testing
 -- rollback DELETE FROM feature_flags WHERE name IN ('recommendations-v2','dark-mode','new-checkout-flow');
 ```
 
@@ -1092,28 +1113,34 @@ Soft delete preserves records by marking them as deleted rather than removing th
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:077-add-soft-delete-to-products dbms:postgresql
 ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
 -- => NULL means the record is active
 -- => Non-null timestamp means the record was soft-deleted at that time
 -- => Application: UPDATE products SET deleted_at = NOW() WHERE id = $1 (instead of DELETE)
 -- rollback ALTER TABLE products DROP COLUMN IF EXISTS deleted_at;
-
 -- changeset demo-be:077-index-active-products dbms:postgresql runInTransaction:false
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_active
-    ON products (created_at DESC)
-    WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_active ON products (created_at DESC)
+WHERE
+  deleted_at IS NULL;
+
 -- => Partial index: only indexes rows where deleted_at IS NULL (active records)
 -- => Query: SELECT * FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC
 -- =>   Uses this index for fast active-record retrieval
 -- => Deleted records are not indexed; reduces index size as records accumulate
 -- rollback DROP INDEX CONCURRENTLY IF EXISTS idx_products_active;
-
 -- changeset demo-be:077-create-active-products-view dbms:postgresql
-CREATE OR REPLACE VIEW active_products AS
-    SELECT * FROM products WHERE deleted_at IS NULL;
+CREATE
+OR REPLACE VIEW active_products AS
+SELECT
+  *
+FROM
+  products
+WHERE
+  deleted_at IS NULL;
+
 -- => View filters deleted records automatically
 -- => Application code querying active_products never sees deleted records
 -- => Simplifies queries: no WHERE deleted_at IS NULL needed in every query
@@ -1264,20 +1291,19 @@ databaseChangeLog:
 ```sql
 -- liquibase formatted sql
 -- => File: 003-create-orders.yaml - demonstrates FK dependency on users and products
-
 -- changeset demo-be:003-create-orders-table dbms:postgresql
 CREATE TABLE orders (
-    id         UUID        NOT NULL DEFAULT gen_random_uuid(),
-    user_id    UUID        NOT NULL,
-    -- => References users(id); changeset 001 must have run before this
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_orders PRIMARY KEY (id),
-    CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-        -- => ON DELETE CASCADE: deleting a user also deletes all their orders
-        -- => Only safe if cascade behavior matches business requirements
-        ON UPDATE NO ACTION
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL,
+  -- => References users(id); changeset 001 must have run before this
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_orders PRIMARY KEY (id),
+  CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  -- => ON DELETE CASCADE: deleting a user also deletes all their orders
+  -- => Only safe if cascade behavior matches business requirements
+  ON UPDATE NO ACTION
 );
+
 -- rollback DROP TABLE IF EXISTS orders;
 ```
 
@@ -1449,27 +1475,27 @@ Squashing combines many historical changesets into a single baseline changeset. 
 -- liquibase formatted sql
 -- => File: 000-baseline-schema.sql
 -- => Squashed baseline: represents the cumulative schema after changesets 001-060
-
 -- changeset demo-be:000-baseline-schema dbms:postgresql
 -- => IMPORTANT: This changeset is guarded to run ONLY on fresh databases
 -- => Existing environments have DATABASECHANGELOG entries for 001-060; they skip this
 -- => New environments have an empty DATABASECHANGELOG; this runs instead of 001-060
 CREATE TABLE IF NOT EXISTS users (
-    id            UUID         NOT NULL DEFAULT gen_random_uuid(),
-    username      VARCHAR(50)  NOT NULL,
-    email         VARCHAR(255) NOT NULL,
-    display_name  VARCHAR(100) NOT NULL,
-    -- => display_name added in changeset 063; baseline includes it directly
-    tier          VARCHAR(10)  NOT NULL DEFAULT 'bronze',
-    -- => tier added in changeset 066 backfill; baseline includes final state
-    deleted_at    TIMESTAMPTZ,
-    -- => soft delete column added in changeset 077
-    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_users PRIMARY KEY (id),
-    CONSTRAINT uq_users_username UNIQUE (username),
-    CONSTRAINT uq_users_email UNIQUE (email),
-    CONSTRAINT chk_users_tier CHECK (tier IN ('bronze','silver','gold'))
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  username VARCHAR(50) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  display_name VARCHAR(100) NOT NULL,
+  -- => display_name added in changeset 063; baseline includes it directly
+  tier VARCHAR(10) NOT NULL DEFAULT 'bronze',
+  -- => tier added in changeset 066 backfill; baseline includes final state
+  deleted_at TIMESTAMPTZ,
+  -- => soft delete column added in changeset 077
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_users PRIMARY KEY (id),
+  CONSTRAINT uq_users_username UNIQUE (username),
+  CONSTRAINT uq_users_email UNIQUE (email),
+  CONSTRAINT chk_users_tier CHECK (tier IN ('bronze', 'silver', 'gold'))
 );
+
 -- => IF NOT EXISTS: safe re-run guard; does nothing if table already exists
 -- rollback DROP TABLE IF EXISTS users;
 ```
@@ -1530,9 +1556,10 @@ A production migration checklist captures the review steps that prevent the most
 -- MONITORING:
 -- [ ] Alert exists for migration failure? YES / NO
 -- [ ] Deployment runbook updated? YES / NO
-
 -- changeset demo-be:084-add-shipping-address dbms:postgresql
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address JSONB;
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS shipping_address JSONB;
+
 -- => JSONB stores structured address without schema rigidity
 -- => Nullable: backward compatible; old app version does not write this column
 -- rollback ALTER TABLE orders DROP COLUMN IF EXISTS shipping_address;
@@ -1569,27 +1596,30 @@ graph TD
 
 ```sql
 -- SQL: Query DATABASECHANGELOG for monitoring and alerting
-
 -- Recent migration history with execution timing
 SELECT
-    id,
-    -- => Changeset id as defined in the changelog file
-    author,
-    -- => Author attribute from changeset declaration
-    filename,
-    -- => Source changelog file path
-    dateexecuted,
-    -- => TIMESTAMPTZ when the changeset completed successfully
-    orderexecuted,
-    -- => Sequence number; ORDER BY this for chronological migration history
-    exectype,
-    -- => 'EXECUTED': ran normally | 'MARK_RAN': skipped via precondition | 'RERAN': re-executed
-    md5sum
-    -- => Checksum of changeset content; changes if the changeset is modified after execution
-    -- => Liquibase fails with "checksum mismatch" if a changeset is edited after execution
-FROM databasechangelog
-ORDER BY orderexecuted DESC
-LIMIT 20;
+  id,
+  -- => Changeset id as defined in the changelog file
+  author,
+  -- => Author attribute from changeset declaration
+  filename,
+  -- => Source changelog file path
+  dateexecuted,
+  -- => TIMESTAMPTZ when the changeset completed successfully
+  orderexecuted,
+  -- => Sequence number; ORDER BY this for chronological migration history
+  exectype,
+  -- => 'EXECUTED': ran normally | 'MARK_RAN': skipped via precondition | 'RERAN': re-executed
+  md5sum
+  -- => Checksum of changeset content; changes if the changeset is modified after execution
+  -- => Liquibase fails with "checksum mismatch" if a changeset is edited after execution
+FROM
+  databasechangelog
+ORDER BY
+  orderexecuted DESC
+LIMIT
+  20;
+
 -- => Shows the 20 most recently applied changesets; use for post-deploy verification
 ```
 

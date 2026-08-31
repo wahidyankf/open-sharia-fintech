@@ -384,10 +384,10 @@ You are now connected to database "myapp" as user "postgres".
 ```sql
 -- Create a users table
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -443,15 +443,18 @@ Execute basic SQL operations: INSERT, SELECT, UPDATE, DELETE.
 
 ```sql
 -- Insert single user
-INSERT INTO users (username, email)
-VALUES ('alice', 'alice@example.com');
+INSERT INTO
+  users (username, email)
+VALUES
+  ('alice', 'alice@example.com');
 
 -- Insert multiple users
-INSERT INTO users (username, email)
+INSERT INTO
+  users (username, email)
 VALUES
-    ('bob', 'bob@example.com'),
-    ('charlie', 'charlie@example.com'),
-    ('diana', 'diana@example.com');
+  ('bob', 'bob@example.com'),
+  ('charlie', 'charlie@example.com'),
+  ('diana', 'diana@example.com');
 ```
 
 **Expected output**:
@@ -467,19 +470,41 @@ The number after `INSERT 0` indicates rows inserted.
 
 ```sql
 -- Select all users
-SELECT * FROM users;
+SELECT
+  *
+FROM
+  users;
 
 -- Select specific columns
-SELECT id, username FROM users;
+SELECT
+  id,
+  username
+FROM
+  users;
 
 -- Select with condition
-SELECT * FROM users WHERE username = 'alice';
+SELECT
+  *
+FROM
+  users
+WHERE
+  username = 'alice';
 
 -- Select with sorting
-SELECT * FROM users ORDER BY created_at DESC;
+SELECT
+  *
+FROM
+  users
+ORDER BY
+  created_at DESC;
 
 -- Select with limit
-SELECT * FROM users LIMIT 2;
+SELECT
+  *
+FROM
+  users
+LIMIT
+  2;
 ```
 
 **Expected output (SELECT \* FROM users)**:
@@ -499,13 +524,17 @@ SELECT * FROM users LIMIT 2;
 ```sql
 -- Update single user
 UPDATE users
-SET email = 'alice.updated@example.com'
-WHERE username = 'alice';
+SET
+  email = 'alice.updated@example.com'
+WHERE
+  username = 'alice';
 
 -- Update multiple users
 UPDATE users
-SET created_at = CURRENT_TIMESTAMP
-WHERE id IN (2, 3);
+SET
+  created_at = CURRENT_TIMESTAMP
+WHERE
+  id IN (2, 3);
 ```
 
 **Expected output**:
@@ -519,10 +548,14 @@ UPDATE 2
 
 ```sql
 -- Delete single user
-DELETE FROM users WHERE username = 'diana';
+DELETE FROM users
+WHERE
+  username = 'diana';
 
 -- Delete with condition
-DELETE FROM users WHERE id > 10;
+DELETE FROM users
+WHERE
+  id > 10;
 ```
 
 **Expected output**:
@@ -536,10 +569,18 @@ DELETE 0
 
 ```sql
 -- Count all users
-SELECT COUNT(*) FROM users;
+SELECT
+  COUNT(*)
+FROM
+  users;
 
 -- Count with condition
-SELECT COUNT(*) FROM users WHERE created_at > '2026-01-29';
+SELECT
+  COUNT(*)
+FROM
+  users
+WHERE
+  created_at > '2026-01-29';
 ```
 
 **Expected output**:

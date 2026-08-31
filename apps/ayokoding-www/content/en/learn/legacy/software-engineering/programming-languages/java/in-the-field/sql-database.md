@@ -474,9 +474,9 @@ Flyway applies SQL migrations in order, tracking applied versions.
 
 ```sql
 CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -772,8 +772,9 @@ Add database indexes for WHERE/JOIN columns.
 **SQL**:
 
 ```sql
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_users_email ON users (email);
+
+CREATE INDEX idx_orders_user_id ON orders (user_id);
 ```
 
 ### 7. Batch Large Operations

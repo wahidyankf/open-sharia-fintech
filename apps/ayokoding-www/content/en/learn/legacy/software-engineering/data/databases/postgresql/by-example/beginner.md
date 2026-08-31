@@ -53,22 +53,26 @@ docker exec -it postgres-tutorial psql -U postgres
 
 ```sql
 -- Simple query to verify connection
-SELECT version();
+SELECT
+  version ();
+
 -- => Calls built-in function version() (no parameters needed)
 -- => Returns single row with single column (text)
 -- => Example output: "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 12.2.0, 64-bit"
 -- => Confirms PostgreSQL server is running and accessible
-
 -- Check current date and time
-SELECT NOW();
+SELECT
+  NOW ();
+
 -- => Calls built-in function NOW() (returns current timestamp)
 -- => Returns single row: type TIMESTAMPTZ (timestamp with timezone)
 -- => Example output: "2025-12-29 08:08:50.123456+00"
 -- => Microsecond precision (6 decimal places)
 -- => Timezone offset shown as +00 (UTC)
-
 -- Simple arithmetic
-SELECT 2 + 2 AS result;
+SELECT
+  2 + 2 AS result;
+
 -- => AS result creates column alias (displayed as column name)
 -- => Returns single row with single column named 'result'
 -- => Output: 4 (type INTEGER)

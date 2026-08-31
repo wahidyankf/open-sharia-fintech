@@ -34,43 +34,47 @@ graph TD
 ```sql
 -- liquibase formatted sql
 -- => File contains three changesets: one context-free, two context-specific
-
 -- changeset demo-be:010-create-config-table dbms:postgresql
 -- => No context attribute: runs in every environment unconditionally
 CREATE TABLE app_config (
-    key   VARCHAR(100) NOT NULL,
-    -- => Configuration key, e.g. "feature.dark-mode"
-    value VARCHAR(500) NOT NULL,
-    -- => Configuration value stored as string; parse in application layer
-    CONSTRAINT pk_app_config PRIMARY KEY (key)
-    -- => key is the primary key; no surrogate id needed for lookup-by-key tables
+  key VARCHAR(100) NOT NULL,
+  -- => Configuration key, e.g. "feature.dark-mode"
+  value VARCHAR(500) NOT NULL,
+  -- => Configuration value stored as string; parse in application layer
+  CONSTRAINT pk_app_config PRIMARY KEY (key)
+  -- => key is the primary key; no surrogate id needed for lookup-by-key tables
 );
--- rollback DROP TABLE app_config;
 
+-- rollback DROP TABLE app_config;
 -- changeset demo-be:011-seed-dev-config dbms:postgresql context:dev
 -- => context:dev means this changeset only runs when "dev" context is active
 -- => Spring Boot: spring.liquibase.contexts=dev
 -- => CLI: liquibase update --contexts=dev
 -- => This changeset is invisible to prod runs (never enters DATABASECHANGELOG in prod)
-INSERT INTO app_config (key, value) VALUES
-    ('feature.dark-mode', 'true'),
-    -- => Development seed: enable dark mode by default for local testing
-    ('feature.rate-limit', '1000'),
-    -- => High rate limit for dev to avoid friction during local development
-    ('debug.verbose-sql', 'true');
-    -- => Verbose SQL logging enabled only in dev environment
--- rollback DELETE FROM app_config WHERE key IN ('feature.dark-mode','feature.rate-limit','debug.verbose-sql');
+INSERT INTO
+  app_config (key, value)
+VALUES
+  ('feature.dark-mode', 'true'),
+  -- => Development seed: enable dark mode by default for local testing
+  ('feature.rate-limit', '1000'),
+  -- => High rate limit for dev to avoid friction during local development
+  ('debug.verbose-sql', 'true');
 
+-- => Verbose SQL logging enabled only in dev environment
+-- rollback DELETE FROM app_config WHERE key IN ('feature.dark-mode','feature.rate-limit','debug.verbose-sql');
 -- changeset demo-be:012-seed-prod-config dbms:postgresql context:prod
 -- => context:prod runs only in production; same changeset ID space as dev seed
 -- => Two separate changesets cover each environment without runtime branching
-INSERT INTO app_config (key, value) VALUES
-    ('feature.dark-mode', 'false'),
-    -- => Production default: dark mode off until user toggles
-    ('feature.rate-limit', '100'),
-    -- => Conservative rate limit for production traffic protection
-    ('debug.verbose-sql', 'false');
-    -- => No verbose SQL in production; reduces log storage costs
+INSERT INTO
+  app_config (key, value)
+VALUES
+  ('feature.dark-mode', 'false'),
+  -- => Production default: dark mode off until user toggles
+  ('feature.rate-limit', '100'),
+  -- => Conservative rate limit for production traffic protection
+  ('debug.verbose-sql', 'false');
+
+-- => No verbose SQL in production; reduces log storage costs
 -- rollback DELETE FROM app_config WHERE key IN ('feature.dark-mode','feature.rate-limit','debug.verbose-sql');
 ```
 
@@ -596,27 +600,27 @@ Data change rollbacks require explicit strategies because Liquibase cannot autom
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:024-normalize-phone-numbers dbms:postgresql
 -- => Data normalization: strip non-digit characters from phone_number column
 -- => Cannot be auto-rolled back; explicit rollback required
-
 -- Backup original values to a shadow column before modifying
-ALTER TABLE users ADD COLUMN phone_number_original VARCHAR(50);
+ALTER TABLE users
+ADD COLUMN phone_number_original VARCHAR(50);
+
 -- => Shadow column preserves pre-migration state for rollback
 -- => Rollback restores from this column; then drops it
-
 UPDATE users
 SET
-    phone_number_original = phone_number,
-    -- => Capture original value before normalization
-    phone_number = REGEXP_REPLACE(phone_number, '[^0-9+]', '', 'g')
-    -- => Remove all non-digit, non-plus characters
-    -- => 'g' flag: replace all occurrences (not just first)
-    -- => Result: "+6281234567890" from "(+62) 812-3456-7890"
-WHERE phone_number IS NOT NULL;
--- => Scoped to non-null rows; NULL phone_number rows are unchanged
+  phone_number_original = phone_number,
+  -- => Capture original value before normalization
+  phone_number = REGEXP_REPLACE (phone_number, '[^0-9+]', '', 'g')
+  -- => Remove all non-digit, non-plus characters
+  -- => 'g' flag: replace all occurrences (not just first)
+  -- => Result: "+6281234567890" from "(+62) 812-3456-7890"
+WHERE
+  phone_number IS NOT NULL;
 
+-- => Scoped to non-null rows; NULL phone_number rows are unchanged
 -- rollback UPDATE users SET phone_number = phone_number_original WHERE phone_number_original IS NOT NULL;
 -- rollback ALTER TABLE users DROP COLUMN phone_number_original;
 -- => Rollback order: restore first, then drop shadow column
@@ -1041,42 +1045,45 @@ Materialized views store query results on disk, enabling fast reads at the cost 
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:029-create-materialized-view dbms:postgresql
 -- => Materialized views store query results; Liquibase createView does not support MATERIALIZED
 -- => Use raw SQL changeset for PostgreSQL-specific materialized view syntax
-
 CREATE MATERIALIZED VIEW expense_monthly_summary AS
 SELECT
-    user_id,
-    -- => User identifier; join to users table for display name
-    DATE_TRUNC('month', date) AS month,
-    -- => Truncate to month start: '2024-03-15' becomes '2024-03-01'
-    -- => Enables grouping by calendar month
-    category,
-    -- => Expense category for category-level monthly breakdown
-    COUNT(*)       AS expense_count,
-    -- => Number of expenses in this category/month for this user
-    SUM(amount)    AS total_amount,
-    -- => Total spending in category/month/user combination
-    AVG(amount)    AS avg_amount
-    -- => Average expense size for detecting anomalies
-FROM expenses
-WHERE deleted_at IS NULL
--- => Exclude soft-deleted expenses from materialized view
-GROUP BY user_id, DATE_TRUNC('month', date), category
--- => Three-level grouping: each row represents one user+month+category combination
-WITH DATA;
+  user_id,
+  -- => User identifier; join to users table for display name
+  DATE_TRUNC ('month', date) AS month,
+  -- => Truncate to month start: '2024-03-15' becomes '2024-03-01'
+  -- => Enables grouping by calendar month
+  category,
+  -- => Expense category for category-level monthly breakdown
+  COUNT(*) AS expense_count,
+  -- => Number of expenses in this category/month for this user
+  SUM(amount) AS total_amount,
+  -- => Total spending in category/month/user combination
+  AVG(amount) AS avg_amount
+  -- => Average expense size for detecting anomalies
+FROM
+  expenses
+WHERE
+  deleted_at IS NULL
+  -- => Exclude soft-deleted expenses from materialized view
+GROUP BY
+  user_id,
+  DATE_TRUNC ('month', date),
+  category
+  -- => Three-level grouping: each row represents one user+month+category combination
+WITH
+  DATA;
+
 -- => WITH DATA populates the view immediately on creation
 -- => WITH NO DATA creates an empty view; use REFRESH MATERIALIZED VIEW to populate later
-
 -- Create unique index required for CONCURRENT refresh
-CREATE UNIQUE INDEX idx_expense_monthly_summary_pk
-    ON expense_monthly_summary (user_id, month, category);
+CREATE UNIQUE INDEX idx_expense_monthly_summary_pk ON expense_monthly_summary (user_id, month, category);
+
 -- => UNIQUE INDEX enables REFRESH MATERIALIZED VIEW CONCURRENTLY
 -- => CONCURRENTLY refresh does not lock reads; required for production use
 -- => Without UNIQUE INDEX, CONCURRENTLY option is unavailable
-
 -- rollback DROP MATERIALIZED VIEW IF EXISTS expense_monthly_summary;
 -- => Dropping the view automatically drops its indexes
 ```
@@ -1514,22 +1521,21 @@ PostgreSQL's `JSONB` type stores JSON documents with binary indexing and operato
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:035-add-metadata-column dbms:postgresql
 -- => Add JSONB column for flexible, schema-less metadata storage
 -- => JSONB (binary JSON) vs JSON: JSONB is indexed and queryable; JSON is stored as text
+ALTER TABLE expenses
+ADD COLUMN metadata JSONB;
 
-ALTER TABLE expenses ADD COLUMN metadata JSONB;
 -- => metadata is nullable (no NOT NULL): existing rows get NULL metadata
 -- => JSONB stores JSON with duplicate key removal and whitespace normalization
 -- => JSON preserves exact text (including duplicates and whitespace)
-
 -- Create a GIN index for efficient JSONB containment queries
 CREATE INDEX idx_expenses_metadata ON expenses USING GIN (metadata);
+
 -- => GIN index enables: WHERE metadata @> '{"category": "food"}'::JSONB
 -- => @> is the "contains" operator: checks if left JSONB contains right JSONB
 -- => Without GIN index: containment queries require sequential scan
-
 -- rollback DROP INDEX IF EXISTS idx_expenses_metadata;
 -- rollback ALTER TABLE expenses DROP COLUMN metadata;
 -- => Drop index before column (explicit ordering avoids ambiguity)
@@ -1728,47 +1734,53 @@ PostgreSQL declarative partitioning splits a large table into smaller physical p
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:038-partition-expenses-by-date dbms:postgresql
 -- => Range partitioning by expense date; each partition covers one year
 -- => Partitioning improves query performance and enables efficient data archival
-
 -- Create the partitioned parent table
 CREATE TABLE expenses_partitioned (
-    id          UUID          NOT NULL DEFAULT gen_random_uuid(),
-    user_id     UUID          NOT NULL,
-    amount      NUMERIC(19,4) NOT NULL,
-    date        DATE          NOT NULL,
-    -- => date is the partition key; must be included in PRIMARY KEY for partitioned tables
-    description VARCHAR(500)  NOT NULL,
-    created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_expenses_partitioned PRIMARY KEY (id, date)
-    -- => Composite PRIMARY KEY including partition key (date): PostgreSQL requirement
-    -- => Simple PRIMARY KEY (id) is not allowed on range-partitioned tables
-) PARTITION BY RANGE (date);
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL,
+  amount NUMERIC(19, 4) NOT NULL,
+  date DATE NOT NULL,
+  -- => date is the partition key; must be included in PRIMARY KEY for partitioned tables
+  description VARCHAR(500) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_expenses_partitioned PRIMARY KEY (id, date)
+  -- => Composite PRIMARY KEY including partition key (date): PostgreSQL requirement
+  -- => Simple PRIMARY KEY (id) is not allowed on range-partitioned tables
+)
+PARTITION BY
+  RANGE (date);
+
 -- => PARTITION BY RANGE: partition based on date ranges
 -- => Parent table is empty; all data lives in child partitions
-
 -- Create year-specific partitions
-CREATE TABLE expenses_2024 PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE expenses_2024 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2024-01-01') TO ('2025-01-01');
+
 -- => Partition covers: 2024-01-01 <= date < 2025-01-01
 -- => TO value is exclusive: '2025-01-01' belongs to the next partition
+CREATE TABLE expenses_2025 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2025-01-01') TO ('2026-01-01');
 
-CREATE TABLE expenses_2025 PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
 -- => 2025 partition; add new year partitions via future changesets
+CREATE TABLE expenses_2026 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2026-01-01') TO ('2027-01-01');
 
-CREATE TABLE expenses_2026 PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
 -- => 2026 partition; add before January 2026 to avoid insertion errors
-
 -- Create a default partition for out-of-range dates
 CREATE TABLE expenses_default PARTITION OF expenses_partitioned DEFAULT;
+
 -- => DEFAULT partition catches rows that do not match any range partition
 -- => Without DEFAULT: INSERT of a date outside defined ranges raises an error
 -- => Monitor expenses_default size; large growth indicates missing partitions
-
 -- rollback DROP TABLE IF EXISTS expenses_partitioned CASCADE;
 -- => CASCADE drops all partitions automatically (they are children of the parent)
 ```

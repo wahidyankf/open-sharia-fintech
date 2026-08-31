@@ -478,10 +478,11 @@ public class AppConfig {
 -- => Create zakat_records table
 -- => Stores Zakat payment records
 CREATE TABLE IF NOT EXISTS zakat_records (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,    -- => Auto-increment ID
-    amount DECIMAL(15, 2) NOT NULL,          -- => Zakat amount (15 digits, 2 decimals)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- => Timestamp
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, -- => Auto-increment ID
+  amount DECIMAL(15, 2) NOT NULL, -- => Zakat amount (15 digits, 2 decimals)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- => Timestamp
 );
+
 -- => Table created when ApplicationContext initializes
 ```
 

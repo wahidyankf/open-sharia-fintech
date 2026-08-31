@@ -120,14 +120,17 @@ Every example follows a **mandatory five-part structure**:
 
 ```sql
 -- +goose Up
-CREATE TABLE users (                        -- => Begin table definition
-    id UUID NOT NULL PRIMARY KEY            -- => UUID primary key, non-null
-        DEFAULT gen_random_uuid(),          -- => PostgreSQL generates UUID automatically
-    username VARCHAR(50) NOT NULL UNIQUE    -- => Max 50 chars, enforces uniqueness
-);                                          -- => Table created with constraints
+CREATE TABLE users ( -- => Begin table definition
+  id UUID NOT NULL PRIMARY KEY -- => UUID primary key, non-null
+  DEFAULT gen_random_uuid (), -- => PostgreSQL generates UUID automatically
+  username VARCHAR(50) NOT NULL UNIQUE -- => Max 50 chars, enforces uniqueness
+);
 
+-- => Table created with constraints
 -- +goose Down
-DROP TABLE IF EXISTS users;                 -- => Safely removes table; IF EXISTS prevents errors
+DROP TABLE IF EXISTS users;
+
+-- => Safely removes table; IF EXISTS prevents errors
 ```
 
 ```go
@@ -285,19 +288,20 @@ Every example uses **educational annotations** to show exactly what happens:
 -- +goose Up
 -- => Goose reads this directive to find the "apply" block
 CREATE TABLE products (
-    id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => UUID primary key; gen_random_uuid() requires pgcrypto or PostgreSQL 13+
-    name        VARCHAR(255) NOT NULL,
-    -- => Required product name; VARCHAR(255) allows up to 255 characters
-    price       DECIMAL(10,2) NOT NULL,
-    -- => Monetary value; DECIMAL(10,2) = up to 8 digits before decimal, 2 after
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    -- => Timezone-aware timestamp; DEFAULT NOW() auto-populated on INSERT
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => UUID primary key; gen_random_uuid() requires pgcrypto or PostgreSQL 13+
+  name VARCHAR(255) NOT NULL,
+  -- => Required product name; VARCHAR(255) allows up to 255 characters
+  price DECIMAL(10, 2) NOT NULL,
+  -- => Monetary value; DECIMAL(10,2) = up to 8 digits before decimal, 2 after
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => Timezone-aware timestamp; DEFAULT NOW() auto-populated on INSERT
 );
--- => Creates products table with 4 columns and 1 auto-generated primary key
 
+-- => Creates products table with 4 columns and 1 auto-generated primary key
 -- +goose Down
 DROP TABLE IF EXISTS products;
+
 -- => Removes products table; IF EXISTS prevents error if already dropped
 ```
 

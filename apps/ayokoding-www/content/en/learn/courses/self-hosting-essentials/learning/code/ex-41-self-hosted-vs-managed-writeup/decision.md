@@ -8,14 +8,14 @@ for: a documented recommendation, not a vague "it depends."
 
 ## The trade-off, in one table
 
-| Dimension      | Self-hosted (this box)              | Managed PaaS                      |
-| -------------- | ----------------------------------- | --------------------------------- |
-| Control        | Full -- the whole box is yours      | Constrained -- runtime is theirs  |
-| Setup effort   | High (Examples 1-24, by hand)       | Low (one `git push`)              |
-| Cost (small)   | ~$5/mo VM                           | free tier, then ~$7-20/mo tier    |
-| Ops burden     | YOU patch, back up, wake at 3am     | platform absorbs patching and TLS |
-| Debuggability  | full substrate visibility           | only the app's logs and the leaks |
-| Lock-in        | none (standard Linux)               | some (PaaS conventions, buildpacks) |
+| Dimension     | Self-hosted (this box)          | Managed PaaS                        |
+| ------------- | ------------------------------- | ----------------------------------- |
+| Control       | Full -- the whole box is yours  | Constrained -- runtime is theirs    |
+| Setup effort  | High (Examples 1-24, by hand)   | Low (one `git push`)                |
+| Cost (small)  | ~$5/mo VM                       | free tier, then ~$7-20/mo tier      |
+| Ops burden    | YOU patch, back up, wake at 3am | platform absorbs patching and TLS   |
+| Debuggability | full substrate visibility       | only the app's logs and the leaks   |
+| Lock-in       | none (standard Linux)           | some (PaaS conventions, buildpacks) |
 
 ## The recommendation (name a force, not a preference)
 

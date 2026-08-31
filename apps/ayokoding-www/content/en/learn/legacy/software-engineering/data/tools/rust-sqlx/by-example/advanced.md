@@ -176,19 +176,20 @@ Adding a nullable column with a default requires only an `ALTER TABLE` that take
 -- File: migrations/20240201000000_add_nullable_column.sql
 -- => Phase 1 of zero-downtime column addition: add nullable column
 -- => PostgreSQL adds nullable columns without rewriting the table
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS preferences JSONB;
+ADD COLUMN IF NOT EXISTS preferences JSONB;
+
 -- => ADD COLUMN IF NOT EXISTS: idempotent; safe to run on already-migrated databases
 -- => JSONB: binary JSON; no DEFAULT here means existing rows have NULL preferences
 -- => This ALTER takes only an AccessExclusiveLock for milliseconds (metadata only)
 -- => No table rewrite: existing rows are not touched
-
 -- => Phase 2 (separate migration or background job): backfill the default value
 -- => Do NOT add DEFAULT with UPDATE here; that rewrites the entire table
 -- => Instead: set server-side default for new rows, backfill old rows separately
 ALTER TABLE users
-    ALTER COLUMN preferences SET DEFAULT '{}';
+ALTER COLUMN preferences
+SET DEFAULT '{}';
+
 -- => Future INSERT statements will use '{}' when preferences is omitted
 -- => Existing NULL rows are NOT updated by this statement
 -- => Table is still online; no rows were rewritten
@@ -224,8 +225,8 @@ graph LR
 -- => stop reading and writing the legacy_notes column.
 -- => The column still exists so old pods (during rolling deploy) do not error.
 -- => Add a comment to the column documenting removal intent and timeline.
-
 COMMENT ON COLUMN users.legacy_notes IS 'DEPRECATED: removed in migration 20240201020000. Do not reference in new code.';
+
 -- => COMMENT is metadata only; takes no lock on table data
 -- => Documents intent in the database catalog for any future schema inspectors
 ```
@@ -236,9 +237,9 @@ COMMENT ON COLUMN users.legacy_notes IS 'DEPRECATED: removed in migration 202402
 -- File: migrations/20240201020000_drop_legacy_column.sql
 -- => Phase 2: All application instances no longer reference legacy_notes.
 -- => Safe to drop the column now.
-
 ALTER TABLE users
-    DROP COLUMN IF EXISTS legacy_notes;
+DROP COLUMN IF EXISTS legacy_notes;
+
 -- => DROP COLUMN IF EXISTS: idempotent; no error if already removed
 -- => Takes AccessExclusiveLock briefly for catalog update
 -- => Column data is reclaimed by VACUUM; not immediately freed on disk
@@ -259,17 +260,22 @@ Renaming a table while the application is running breaks queries in the old code
 -- File: migrations/20240201030000_rename_table_phase1.sql
 -- => Phase 1: Create new table with the target name; keep old table alive
 -- => Application still writes to old table name in this deploy
-
 CREATE TABLE user_profiles (
-    -- => New canonical table name
-    LIKE users INCLUDING ALL
-    -- => LIKE ... INCLUDING ALL: copies columns, constraints, indexes, defaults
-    -- => Does NOT copy data; creates empty table with identical structure
+  -- => New canonical table name
+  LIKE users INCLUDING ALL
+  -- => LIKE ... INCLUDING ALL: copies columns, constraints, indexes, defaults
+  -- => Does NOT copy data; creates empty table with identical structure
 );
--- => user_profiles table now exists; old users table unchanged
 
+-- => user_profiles table now exists; old users table unchanged
 -- => Create view so new-name references resolve during transition
-CREATE OR REPLACE VIEW users_v2 AS SELECT * FROM user_profiles;
+CREATE
+OR REPLACE VIEW users_v2 AS
+SELECT
+  *
+FROM
+  user_profiles;
+
 -- => Applications reading users_v2 see user_profiles data
 -- => This view is the bridge for any new code referencing the new name before rename completes
 ```
@@ -277,14 +283,15 @@ CREATE OR REPLACE VIEW users_v2 AS SELECT * FROM user_profiles;
 ```sql
 -- File: migrations/20240201040000_rename_table_phase2.sql
 -- => Phase 2: All code uses new name; drop old table and any transition views
-
 DROP VIEW IF EXISTS users_v2;
--- => Transition view no longer needed; new code reads user_profiles directly
 
+-- => Transition view no longer needed; new code reads user_profiles directly
 -- => If old table had data and you migrated it in between deploys:
 -- => DROP TABLE users; (only after confirming data migration complete)
 -- => For a true rename with data: use ALTER TABLE ... RENAME TO
-ALTER TABLE users RENAME TO user_profiles;
+ALTER TABLE users
+RENAME TO user_profiles;
+
 -- => Atomic rename: takes AccessExclusiveLock for milliseconds
 -- => All indexes and constraints on users are automatically renamed too
 -- => Sequences (from SERIAL/BIGSERIAL) retain their names; rename manually if needed
@@ -356,26 +363,21 @@ END $$;
 -- File: migrations/20240201060000_add_concurrent_index.sql
 -- => CREATE INDEX CONCURRENTLY: does not block reads or writes
 -- => Takes longer than regular CREATE INDEX but safe for production tables
-
 -- IMPORTANT: CONCURRENTLY cannot run inside an explicit transaction block
 -- => SQLx wraps migrations in transactions by default
 -- => Use the no-transaction annotation or run this migration outside transaction context
-
 -- no-transaction
 -- => This comment instructs SQLx to NOT wrap this migration in a transaction
 -- => IMPORTANT: the recognized annotation is "-- no-transaction" (with hyphen)
 -- => Using "-- no_tx" (underscore) is silently ignored; migration runs in a transaction and fails
 -- => Required for CONCURRENTLY statements; PostgreSQL enforces this restriction
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_id_status ON orders (customer_id, status);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_orders_customer_id_status
-ON orders (customer_id, status);
 -- => Composite index on (customer_id, status): optimizes queries filtering both
 -- => IF NOT EXISTS: idempotent; safe to run if index was partially created before
 -- => CONCURRENTLY: scans table multiple times while accepting concurrent writes
 -- => Index is marked INVALID during build; becomes VALID when complete
 -- => If CONCURRENTLY fails: index left in INVALID state; drop and recreate
-
 -- => Verify index after creation:
 -- => SELECT indexname, indisvalid FROM pg_indexes JOIN pg_index ON ...
 -- => WHERE indexname = 'idx_orders_customer_id_status';
@@ -394,27 +396,35 @@ A data backfill migration transforms existing data to satisfy a new schema const
 ```sql
 -- File: migrations/20240201070000_backfill_user_slugs.sql
 -- => Add a slug column and backfill from username; add unique constraint after
-
 -- Step 1: Add column as nullable; no table rewrite
-ALTER TABLE users ADD COLUMN IF NOT EXISTS slug TEXT;
--- => Nullable: existing rows have NULL slug; no DEFAULT avoids table rewrite
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS slug TEXT;
 
+-- => Nullable: existing rows have NULL slug; no DEFAULT avoids table rewrite
 -- Step 2: Backfill slugs from usernames using SQL string functions
 UPDATE users
-SET slug = LOWER(REGEXP_REPLACE(username, '[^a-zA-Z0-9]+', '-', 'g'))
--- => REGEXP_REPLACE: replace sequences of non-alphanumeric chars with hyphen
--- => LOWER: normalize to lowercase for consistent URL-safe slugs
-WHERE slug IS NULL;
+SET
+  slug = LOWER(
+    REGEXP_REPLACE (username, '[^a-zA-Z0-9]+', '-', 'g')
+  )
+  -- => REGEXP_REPLACE: replace sequences of non-alphanumeric chars with hyphen
+  -- => LOWER: normalize to lowercase for consistent URL-safe slugs
+WHERE
+  slug IS NULL;
+
 -- => Idempotency guard: only update rows without a slug
 -- => For large tables: replace with a batched DO $$ loop (see Example 66)
-
 -- Step 3: Add NOT NULL constraint after backfill
-ALTER TABLE users ALTER COLUMN slug SET NOT NULL;
+ALTER TABLE users
+ALTER COLUMN slug
+SET
+  NOT NULL;
+
 -- => Safe now because all rows have a non-null slug
 -- => PostgreSQL validates constraint without rewriting the table (catalog change)
-
 -- Step 4: Add unique index on the populated column
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_slug_unique ON users (slug);
+
 -- => Unique index created after data is clean; fails if duplicates exist
 -- => If duplicates: de-duplicate in Step 2 before adding this constraint
 ```
@@ -614,15 +624,14 @@ graph TD
 -- => This migration must be forward-compatible: blue app ignores new column
 -- => Green app reads and writes the new column
 -- => Both versions must operate correctly on this schema simultaneously
-
 ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS fulfillment_method TEXT;
+ADD COLUMN IF NOT EXISTS fulfillment_method TEXT;
+
 -- => Nullable column: blue app never sets it (rows have NULL); that is acceptable
 -- => Green app writes fulfillment_method on new orders
 -- => Blue app queries omit this column from SELECT; PostgreSQL ignores it
 -- => If traffic switch fails: blue app runs against schema with extra nullable column
 -- => Extra nullable column with no NOT NULL constraint never breaks old queries
-
 -- => What NOT to do in a blue-green migration:
 -- => DO NOT: DROP COLUMN (breaks blue app immediately)
 -- => DO NOT: ADD COLUMN ... NOT NULL without DEFAULT (breaks blue INSERT)
@@ -853,26 +862,26 @@ Soft delete marks rows as deleted without removing them from the database. The m
 -- File: migrations/20240201150000_add_soft_delete.sql
 -- => Soft delete: mark rows as deleted instead of removing them
 -- => Supports audit trails, recovery, and referential integrity with archived rows
-
 ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
 -- => NULL means active (not deleted); timestamp means deleted at that moment
 -- => TIMESTAMPTZ: timezone-aware; records the exact deletion moment in UTC
-
 -- => Partial index on active rows only: queries filtering WHERE deleted_at IS NULL
 -- => scan only this index, not the full table including soft-deleted rows
-CREATE INDEX IF NOT EXISTS idx_products_active
-ON products (id)
-WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_products_active ON products (id)
+WHERE
+  deleted_at IS NULL;
+
 -- => Partial index: includes only rows where deleted_at IS NULL
 -- => Size: proportional to active rows only; does not grow with deleted rows
 -- => Query: SELECT * FROM products WHERE deleted_at IS NULL AND id = $1
 -- => => Uses this index; skips deleted rows at index scan time
-
 -- => Unique constraint on active rows only (allow same SKU for deleted products)
-CREATE UNIQUE INDEX IF NOT EXISTS idx_products_active_sku
-ON products (sku)
-WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_products_active_sku ON products (sku)
+WHERE
+  deleted_at IS NULL;
+
 -- => Partial unique index: two rows can have the same sku if one is deleted
 -- => Allows re-using SKUs after soft-deleting a product
 -- => INSERT with duplicate sku fails only when deleted_at IS NULL on both rows

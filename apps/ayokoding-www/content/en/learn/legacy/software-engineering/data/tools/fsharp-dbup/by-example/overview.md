@@ -250,13 +250,14 @@ Every example uses **educational annotations** to show exactly what happens:
 ```sql
 -- Example 1: Creates the users table with UUID primary key
 CREATE TABLE users (
-    -- => UUID type requires the pgcrypto extension or PostgreSQL 13+ gen_random_uuid()
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => VARCHAR without length limit stores up to 1 GB; add CHECK constraint for practical limits
-    username VARCHAR NOT NULL,
-    -- => TIMESTAMPTZ stores timezone-aware instants; prefer over TIMESTAMP for distributed systems
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  -- => UUID type requires the pgcrypto extension or PostgreSQL 13+ gen_random_uuid()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => VARCHAR without length limit stores up to 1 GB; add CHECK constraint for practical limits
+  username VARCHAR NOT NULL,
+  -- => TIMESTAMPTZ stores timezone-aware instants; prefer over TIMESTAMP for distributed systems
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => After execution: users table exists in schemaversions journal as 001-create-users.sql
 ```
 

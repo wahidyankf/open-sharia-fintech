@@ -80,23 +80,28 @@ Set output formatting for readability:
 ```sql
 -- Create authors table
 CREATE TABLE authors (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    country TEXT,
-    birth_year INTEGER CHECK (birth_year > 1800),
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  country TEXT,
+  birth_year INTEGER CHECK (birth_year > 1800),
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample authors
-INSERT INTO authors (name, country, birth_year) VALUES
-    ('George Orwell', 'United Kingdom', 1903),
-    ('Jane Austen', 'United Kingdom', 1775),
-    ('Gabriel García Márquez', 'Colombia', 1927),
-    ('Haruki Murakami', 'Japan', 1949),
-    ('Chimamanda Ngozi Adichie', 'Nigeria', 1977);
+INSERT INTO
+  authors (name, country, birth_year)
+VALUES
+  ('George Orwell', 'United Kingdom', 1903),
+  ('Jane Austen', 'United Kingdom', 1775),
+  ('Gabriel García Márquez', 'Colombia', 1927),
+  ('Haruki Murakami', 'Japan', 1949),
+  ('Chimamanda Ngozi Adichie', 'Nigeria', 1977);
 
 -- Verify insertion
-SELECT * FROM authors;
+SELECT
+  *
+FROM
+  authors;
 ```
 
 **Output**:
@@ -116,29 +121,92 @@ id  name                       country         birth_year  created_at
 ```sql
 -- Create books table with foreign key to authors
 CREATE TABLE books (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    author_id INTEGER NOT NULL,
-    published_year INTEGER,
-    isbn TEXT UNIQUE,
-    pages INTEGER CHECK (pages > 0),
-    category TEXT NOT NULL,
-    available_copies INTEGER DEFAULT 1 CHECK (available_copies >= 0),
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES authors(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  author_id INTEGER NOT NULL,
+  published_year INTEGER,
+  isbn TEXT UNIQUE,
+  pages INTEGER CHECK (pages > 0),
+  category TEXT NOT NULL,
+  available_copies INTEGER DEFAULT 1 CHECK (available_copies >= 0),
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (author_id) REFERENCES authors (id)
 );
 
 -- Insert sample books
-INSERT INTO books (title, author_id, published_year, isbn, pages, category, available_copies) VALUES
-    ('1984', 1, 1949, '978-0451524935', 328, 'Fiction', 3),
-    ('Animal Farm', 1, 1945, '978-0451526342', 112, 'Fiction', 2),
-    ('Pride and Prejudice', 2, 1813, '978-0141439518', 432, 'Fiction', 5),
-    ('One Hundred Years of Solitude', 3, 1967, '978-0060883287', 417, 'Fiction', 2),
-    ('Kafka on the Shore', 4, 2002, '978-1400079278', 480, 'Fiction', 1),
-    ('Americanah', 5, 2013, '978-0307455925', 477, 'Fiction', 2);
+INSERT INTO
+  books (
+    title,
+    author_id,
+    published_year,
+    isbn,
+    pages,
+    category,
+    available_copies
+  )
+VALUES
+  (
+    '1984',
+    1,
+    1949,
+    '978-0451524935',
+    328,
+    'Fiction',
+    3
+  ),
+  (
+    'Animal Farm',
+    1,
+    1945,
+    '978-0451526342',
+    112,
+    'Fiction',
+    2
+  ),
+  (
+    'Pride and Prejudice',
+    2,
+    1813,
+    '978-0141439518',
+    432,
+    'Fiction',
+    5
+  ),
+  (
+    'One Hundred Years of Solitude',
+    3,
+    1967,
+    '978-0060883287',
+    417,
+    'Fiction',
+    2
+  ),
+  (
+    'Kafka on the Shore',
+    4,
+    2002,
+    '978-1400079278',
+    480,
+    'Fiction',
+    1
+  ),
+  (
+    'Americanah',
+    5,
+    2013,
+    '978-0307455925',
+    477,
+    'Fiction',
+    2
+  );
 
 -- Verify insertion
-SELECT * FROM books LIMIT 3;
+SELECT
+  *
+FROM
+  books
+LIMIT
+  3;
 ```
 
 **Output**:
@@ -156,23 +224,28 @@ id  title              author_id  published_year  isbn             pages  catego
 ```sql
 -- Create library members table
 CREATE TABLE members (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    join_date TEXT DEFAULT CURRENT_TIMESTAMP,
-    membership_type TEXT DEFAULT 'standard' CHECK (membership_type IN ('standard', 'premium')),
-    active INTEGER DEFAULT 1 CHECK (active IN (0, 1))
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  join_date TEXT DEFAULT CURRENT_TIMESTAMP,
+  membership_type TEXT DEFAULT 'standard' CHECK (membership_type IN ('standard', 'premium')),
+  active INTEGER DEFAULT 1 CHECK (active IN (0, 1))
 );
 
 -- Insert sample members
-INSERT INTO members (name, email, membership_type) VALUES
-    ('Alice Johnson', 'alice@example.com', 'premium'),
-    ('Bob Smith', 'bob@example.com', 'standard'),
-    ('Carol White', 'carol@example.com', 'premium'),
-    ('David Brown', 'david@example.com', 'standard');
+INSERT INTO
+  members (name, email, membership_type)
+VALUES
+  ('Alice Johnson', 'alice@example.com', 'premium'),
+  ('Bob Smith', 'bob@example.com', 'standard'),
+  ('Carol White', 'carol@example.com', 'premium'),
+  ('David Brown', 'david@example.com', 'standard');
 
 -- Verify insertion
-SELECT * FROM members;
+SELECT
+  *
+FROM
+  members;
 ```
 
 **Output**:
@@ -191,30 +264,39 @@ id  name            email                membership_type  join_date            a
 ```sql
 -- Create loans table (tracks book borrowing)
 CREATE TABLE loans (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    book_id INTEGER NOT NULL,
-    member_id INTEGER NOT NULL,
-    loan_date TEXT DEFAULT CURRENT_TIMESTAMP,
-    due_date TEXT NOT NULL,
-    return_date TEXT,
-    status TEXT DEFAULT 'borrowed' CHECK (status IN ('borrowed', 'returned', 'overdue')),
-    FOREIGN KEY (book_id) REFERENCES books(id),
-    FOREIGN KEY (member_id) REFERENCES members(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  book_id INTEGER NOT NULL,
+  member_id INTEGER NOT NULL,
+  loan_date TEXT DEFAULT CURRENT_TIMESTAMP,
+  due_date TEXT NOT NULL,
+  return_date TEXT,
+  status TEXT DEFAULT 'borrowed' CHECK (status IN ('borrowed', 'returned', 'overdue')),
+  FOREIGN KEY (book_id) REFERENCES books (id),
+  FOREIGN KEY (member_id) REFERENCES members (id)
 );
 
 -- Insert sample loans
-INSERT INTO loans (book_id, member_id, loan_date, due_date, status) VALUES
-    (1, 1, '2026-01-15', '2026-02-15', 'borrowed'),
-    (3, 1, '2026-01-10', '2026-02-10', 'returned'),
-    (2, 2, '2026-01-20', '2026-02-20', 'borrowed'),
-    (4, 3, '2026-01-18', '2026-02-18', 'borrowed'),
-    (5, 4, '2026-01-12', '2026-02-12', 'returned');
+INSERT INTO
+  loans (book_id, member_id, loan_date, due_date, status)
+VALUES
+  (1, 1, '2026-01-15', '2026-02-15', 'borrowed'),
+  (3, 1, '2026-01-10', '2026-02-10', 'returned'),
+  (2, 2, '2026-01-20', '2026-02-20', 'borrowed'),
+  (4, 3, '2026-01-18', '2026-02-18', 'borrowed'),
+  (5, 4, '2026-01-12', '2026-02-12', 'returned');
 
 -- Update return_date for returned books
-UPDATE loans SET return_date = '2026-01-25' WHERE status = 'returned';
+UPDATE loans
+SET
+  return_date = '2026-01-25'
+WHERE
+  status = 'returned';
 
 -- Verify insertion
-SELECT * FROM loans;
+SELECT
+  *
+FROM
+  loans;
 ```
 
 **Output**:
@@ -237,9 +319,15 @@ Query data with SELECT statements.
 
 ```sql
 -- Find books published after 1950
-SELECT title, published_year FROM books
-WHERE published_year > 1950
-ORDER BY published_year;
+SELECT
+  title,
+  published_year
+FROM
+  books
+WHERE
+  published_year > 1950
+ORDER BY
+  published_year;
 ```
 
 **Output**:
@@ -256,9 +344,15 @@ Americanah                     2013
 
 ```sql
 -- Find books with "the" in title (case-insensitive)
-SELECT title, published_year FROM books
-WHERE LOWER(title) LIKE '%the%'
-ORDER BY published_year;
+SELECT
+  title,
+  published_year
+FROM
+  books
+WHERE
+  LOWER(title) LIKE '%the%'
+ORDER BY
+  published_year;
 ```
 
 **Output**:
@@ -273,9 +367,17 @@ Kafka on the Shore  2002
 
 ```sql
 -- Find fiction books with more than 400 pages
-SELECT title, pages, category FROM books
-WHERE category = 'Fiction' AND pages > 400
-ORDER BY pages DESC;
+SELECT
+  title,
+  pages,
+  category
+FROM
+  books
+WHERE
+  category = 'Fiction'
+  AND pages > 400
+ORDER BY
+  pages DESC;
 ```
 
 **Output**:
@@ -298,13 +400,15 @@ Join related data from multiple tables.
 ```sql
 -- Get books with author information
 SELECT
-    b.title,
-    a.name AS author_name,
-    b.published_year,
-    a.country
-FROM books b
-INNER JOIN authors a ON b.author_id = a.id
-ORDER BY b.published_year;
+  b.title,
+  a.name AS author_name,
+  b.published_year,
+  a.country
+FROM
+  books b
+  INNER JOIN authors a ON b.author_id = a.id
+ORDER BY
+  b.published_year;
 ```
 
 **Output**:
@@ -325,18 +429,21 @@ Americanah                     Chimamanda Ngozi Adichie   Nigeria
 ```sql
 -- Get current loans with book and member details
 SELECT
-    m.name AS member_name,
-    b.title AS book_title,
-    a.name AS author_name,
-    l.loan_date,
-    l.due_date,
-    l.status
-FROM loans l
-INNER JOIN books b ON l.book_id = b.id
-INNER JOIN authors a ON b.author_id = a.id
-INNER JOIN members m ON l.member_id = m.id
-WHERE l.status = 'borrowed'
-ORDER BY l.due_date;
+  m.name AS member_name,
+  b.title AS book_title,
+  a.name AS author_name,
+  l.loan_date,
+  l.due_date,
+  l.status
+FROM
+  loans l
+  INNER JOIN books b ON l.book_id = b.id
+  INNER JOIN authors a ON b.author_id = a.id
+  INNER JOIN members m ON l.member_id = m.id
+WHERE
+  l.status = 'borrowed'
+ORDER BY
+  l.due_date;
 ```
 
 **Output**:
@@ -354,18 +461,21 @@ Bob Smith      Animal Farm                    George Orwell             2026-01-
 ```sql
 -- Get all books with current loan status (including books not borrowed)
 SELECT
-    b.title,
-    a.name AS author_name,
-    b.available_copies,
-    CASE
-        WHEN l.id IS NULL THEN 'Not borrowed'
-        WHEN l.status = 'borrowed' THEN 'Currently borrowed'
-        ELSE l.status
-    END AS loan_status
-FROM books b
-INNER JOIN authors a ON b.author_id = a.id
-LEFT JOIN loans l ON b.id = l.book_id AND l.status = 'borrowed'
-ORDER BY b.title;
+  b.title,
+  a.name AS author_name,
+  b.available_copies,
+  CASE
+    WHEN l.id IS NULL THEN 'Not borrowed'
+    WHEN l.status = 'borrowed' THEN 'Currently borrowed'
+    ELSE l.status
+  END AS loan_status
+FROM
+  books b
+  INNER JOIN authors a ON b.author_id = a.id
+  LEFT JOIN loans l ON b.id = l.book_id
+  AND l.status = 'borrowed'
+ORDER BY
+  b.title;
 ```
 
 **Output**:
@@ -390,12 +500,17 @@ Compute summaries with aggregate functions.
 ```sql
 -- Count books per author
 SELECT
-    a.name AS author_name,
-    COUNT(b.id) AS book_count
-FROM authors a
-LEFT JOIN books b ON a.author_id = b.author_id
-GROUP BY a.id, a.name
-ORDER BY book_count DESC, author_name;
+  a.name AS author_name,
+  COUNT(b.id) AS book_count
+FROM
+  authors a
+  LEFT JOIN books b ON a.author_id = b.author_id
+GROUP BY
+  a.id,
+  a.name
+ORDER BY
+  book_count DESC,
+  author_name;
 ```
 
 **Output**:
@@ -415,13 +530,15 @@ Jane Austen                  1
 ```sql
 -- Calculate average pages per category
 SELECT
-    category,
-    COUNT(*) AS book_count,
-    AVG(pages) AS avg_pages,
-    MIN(pages) AS min_pages,
-    MAX(pages) AS max_pages
-FROM books
-GROUP BY category;
+  category,
+  COUNT(*) AS book_count,
+  AVG(pages) AS avg_pages,
+  MIN(pages) AS min_pages,
+  MAX(pages) AS max_pages
+FROM
+  books
+GROUP BY
+  category;
 ```
 
 **Output**:
@@ -437,14 +554,19 @@ Fiction   6           374.33     112        480
 ```sql
 -- Find authors with more than 1 book
 SELECT
-    a.name AS author_name,
-    COUNT(b.id) AS book_count,
-    AVG(b.pages) AS avg_pages
-FROM authors a
-INNER JOIN books b ON a.id = b.author_id
-GROUP BY a.id, a.name
-HAVING COUNT(b.id) > 1
-ORDER BY book_count DESC;
+  a.name AS author_name,
+  COUNT(b.id) AS book_count,
+  AVG(b.pages) AS avg_pages
+FROM
+  authors a
+  INNER JOIN books b ON a.id = b.author_id
+GROUP BY
+  a.id,
+  a.name
+HAVING
+  COUNT(b.id) > 1
+ORDER BY
+  book_count DESC;
 ```
 
 **Output**:
@@ -460,15 +582,30 @@ George Orwell  2           220.0
 ```sql
 -- Count loans per member
 SELECT
-    m.name AS member_name,
-    m.membership_type,
-    COUNT(l.id) AS total_loans,
-    SUM(CASE WHEN l.status = 'borrowed' THEN 1 ELSE 0 END) AS current_loans,
-    SUM(CASE WHEN l.status = 'returned' THEN 1 ELSE 0 END) AS returned_loans
-FROM members m
-LEFT JOIN loans l ON m.id = l.member_id
-GROUP BY m.id, m.name, m.membership_type
-ORDER BY total_loans DESC;
+  m.name AS member_name,
+  m.membership_type,
+  COUNT(l.id) AS total_loans,
+  SUM(
+    CASE
+      WHEN l.status = 'borrowed' THEN 1
+      ELSE 0
+    END
+  ) AS current_loans,
+  SUM(
+    CASE
+      WHEN l.status = 'returned' THEN 1
+      ELSE 0
+    END
+  ) AS returned_loans
+FROM
+  members m
+  LEFT JOIN loans l ON m.id = l.member_id
+GROUP BY
+  m.id,
+  m.name,
+  m.membership_type
+ORDER BY
+  total_loans DESC;
 ```
 
 **Output**:
@@ -490,12 +627,22 @@ Use nested queries for complex conditions.
 
 ```sql
 -- Find books by authors from United Kingdom
-SELECT title, published_year
-FROM books
-WHERE author_id IN (
-    SELECT id FROM authors WHERE country = 'United Kingdom'
-)
-ORDER BY published_year;
+SELECT
+  title,
+  published_year
+FROM
+  books
+WHERE
+  author_id IN (
+    SELECT
+      id
+    FROM
+      authors
+    WHERE
+      country = 'United Kingdom'
+  )
+ORDER BY
+  published_year;
 ```
 
 **Output**:
@@ -513,12 +660,25 @@ Animal Farm          1945
 ```sql
 -- Find books with more pages than average
 SELECT
-    title,
-    pages,
-    (SELECT AVG(pages) FROM books) AS avg_pages
-FROM books
-WHERE pages > (SELECT AVG(pages) FROM books)
-ORDER BY pages DESC;
+  title,
+  pages,
+  (
+    SELECT
+      AVG(pages)
+    FROM
+      books
+  ) AS avg_pages
+FROM
+  books
+WHERE
+  pages > (
+    SELECT
+      AVG(pages)
+    FROM
+      books
+  )
+ORDER BY
+  pages DESC;
 ```
 
 **Output**:
@@ -537,17 +697,53 @@ One Hundred Years of Solitude  417    374.33
 ```sql
 -- Find members who have borrowed more books than average
 SELECT
-    name,
-    (SELECT COUNT(*) FROM loans WHERE member_id = members.id) AS loan_count,
-    (SELECT AVG(loan_count) FROM (
-        SELECT COUNT(*) AS loan_count FROM loans GROUP BY member_id
-    )) AS avg_loan_count
-FROM members
-WHERE (SELECT COUNT(*) FROM loans WHERE member_id = members.id) >
-      (SELECT AVG(loan_count) FROM (
-          SELECT COUNT(*) AS loan_count FROM loans GROUP BY member_id
-      ))
-ORDER BY loan_count DESC;
+  name,
+  (
+    SELECT
+      COUNT(*)
+    FROM
+      loans
+    WHERE
+      member_id = members.id
+  ) AS loan_count,
+  (
+    SELECT
+      AVG(loan_count)
+    FROM
+      (
+        SELECT
+          COUNT(*) AS loan_count
+        FROM
+          loans
+        GROUP BY
+          member_id
+      )
+  ) AS avg_loan_count
+FROM
+  members
+WHERE
+  (
+    SELECT
+      COUNT(*)
+    FROM
+      loans
+    WHERE
+      member_id = members.id
+  ) > (
+    SELECT
+      AVG(loan_count)
+    FROM
+      (
+        SELECT
+          COUNT(*) AS loan_count
+        FROM
+          loans
+        GROUP BY
+          member_id
+      )
+  )
+ORDER BY
+  loan_count DESC;
 ```
 
 **Output**:
@@ -567,11 +763,23 @@ Modify existing data with UPDATE and DELETE.
 ```sql
 -- Mark overdue loan
 UPDATE loans
-SET status = 'overdue'
-WHERE id = 1 AND date('now') > due_date;
+SET
+  status = 'overdue'
+WHERE
+  id = 1
+  AND date('now') > due_date;
 
 -- Verify update
-SELECT id, book_id, member_id, status, due_date FROM loans WHERE id = 1;
+SELECT
+  id,
+  book_id,
+  member_id,
+  status,
+  due_date
+FROM
+  loans
+WHERE
+  id = 1;
 ```
 
 ### Update with Calculation
@@ -579,11 +787,21 @@ SELECT id, book_id, member_id, status, due_date FROM loans WHERE id = 1;
 ```sql
 -- Decrease available copies when book is borrowed
 UPDATE books
-SET available_copies = available_copies - 1
-WHERE id = 6 AND available_copies > 0;
+SET
+  available_copies = available_copies - 1
+WHERE
+  id = 6
+  AND available_copies > 0;
 
 -- Verify update
-SELECT id, title, available_copies FROM books WHERE id = 6;
+SELECT
+  id,
+  title,
+  available_copies
+FROM
+  books
+WHERE
+  id = 6;
 ```
 
 ### Conditional Delete
@@ -591,11 +809,22 @@ SELECT id, title, available_copies FROM books WHERE id = 6;
 ```sql
 -- Delete inactive members with no loans
 DELETE FROM members
-WHERE active = 0
-  AND id NOT IN (SELECT DISTINCT member_id FROM loans);
+WHERE
+  active = 0
+  AND id NOT IN (
+    SELECT DISTINCT
+      member_id
+    FROM
+      loans
+  );
 
 -- Verify deletion
-SELECT COUNT(*) AS inactive_members_deleted FROM members WHERE active = 0;
+SELECT
+  COUNT(*) AS inactive_members_deleted
+FROM
+  members
+WHERE
+  active = 0;
 ```
 
 ### Safe Update with Transaction
@@ -605,15 +834,38 @@ SELECT COUNT(*) AS inactive_members_deleted FROM members WHERE active = 0;
 BEGIN;
 
 -- Update book status
-UPDATE books SET available_copies = available_copies - 1 WHERE id = 3;
+UPDATE books
+SET
+  available_copies = available_copies - 1
+WHERE
+  id = 3;
 
 -- Create loan
-INSERT INTO loans (book_id, member_id, loan_date, due_date)
-VALUES (3, 2, date('now'), date('now', '+30 days'));
+INSERT INTO
+  loans (book_id, member_id, loan_date, due_date)
+VALUES
+  (3, 2, date('now'), date('now', '+30 days'));
 
 -- Verify both operations
-SELECT * FROM loans WHERE book_id = 3 ORDER BY id DESC LIMIT 1;
-SELECT id, title, available_copies FROM books WHERE id = 3;
+SELECT
+  *
+FROM
+  loans
+WHERE
+  book_id = 3
+ORDER BY
+  id DESC
+LIMIT
+  1;
+
+SELECT
+  id,
+  title,
+  available_copies
+FROM
+  books
+WHERE
+  id = 3;
 
 -- Commit transaction
 COMMIT;
@@ -626,15 +878,17 @@ COMMIT;
 ```sql
 -- Categorize books by length
 SELECT
-    title,
-    pages,
-    CASE
-        WHEN pages < 200 THEN 'Short'
-        WHEN pages BETWEEN 200 AND 400 THEN 'Medium'
-        ELSE 'Long'
-    END AS length_category
-FROM books
-ORDER BY pages;
+  title,
+  pages,
+  CASE
+    WHEN pages < 200 THEN 'Short'
+    WHEN pages BETWEEN 200 AND 400  THEN 'Medium'
+    ELSE 'Long'
+  END AS length_category
+FROM
+  books
+ORDER BY
+  pages;
 ```
 
 **Output**:
@@ -655,15 +909,17 @@ Kafka on the Shore             480    Long
 ```sql
 -- Show loan status with default for NULL return_date
 SELECT
-    l.id,
-    b.title,
-    m.name AS member_name,
-    l.loan_date,
-    COALESCE(l.return_date, 'Not returned yet') AS return_date
-FROM loans l
-INNER JOIN books b ON l.book_id = b.id
-INNER JOIN members m ON l.member_id = m.id
-ORDER BY l.id;
+  l.id,
+  b.title,
+  m.name AS member_name,
+  l.loan_date,
+  COALESCE(l.return_date, 'Not returned yet') AS return_date
+FROM
+  loans l
+  INNER JOIN books b ON l.book_id = b.id
+  INNER JOIN members m ON l.member_id = m.id
+ORDER BY
+  l.id;
 ```
 
 **Output**:
@@ -683,12 +939,20 @@ id  title                          member_name    loan_date            return_da
 ```sql
 -- Rank books by pages within each category
 SELECT
-    title,
-    category,
-    pages,
-    RANK() OVER (PARTITION BY category ORDER BY pages DESC) AS rank_in_category
-FROM books
-ORDER BY category, rank_in_category;
+  title,
+  category,
+  pages,
+  RANK() OVER (
+    PARTITION BY
+      category
+    ORDER BY
+      pages DESC
+  ) AS rank_in_category
+FROM
+  books
+ORDER BY
+  category,
+  rank_in_category;
 ```
 
 **Output**:

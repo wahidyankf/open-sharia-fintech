@@ -40,12 +40,12 @@ graph TD
 -- => File name format: <version>_<description>.sql
 -- => Version prefix determines execution order (lexicographic sort)
 -- => SQLx applies this file if no row exists in _sqlx_migrations for version 0001
-
-CREATE TABLE users (               -- => DDL statement: creates the users table
-    id BIGSERIAL PRIMARY KEY,      -- => Auto-incrementing 64-bit integer primary key
-    username TEXT NOT NULL,        -- => Text column, NULL values rejected by database
-    email TEXT NOT NULL            -- => Second required text column
+CREATE TABLE users ( -- => DDL statement: creates the users table
+  id BIGSERIAL PRIMARY KEY, -- => Auto-incrementing 64-bit integer primary key
+  username TEXT NOT NULL, -- => Text column, NULL values rejected by database
+  email TEXT NOT NULL -- => Second required text column
 );
+
 -- => After execution: users table exists in the database schema
 -- => _sqlx_migrations row inserted: version=1, description="create_users", applied_at=now()
 ```
@@ -92,14 +92,14 @@ Reversible migrations consist of two paired files: a `.up.sql` file containing t
 -- File: migrations/20240101120000_create_products.up.sql
 -- => Forward migration: applied by `sqlx migrate run`
 -- => Purpose: introduce the products table into the schema
-
-CREATE TABLE products (                    -- => Creates new products table
-    id BIGSERIAL PRIMARY KEY,              -- => Auto-incrementing primary key
-    name TEXT NOT NULL,                    -- => Product name, required
-    price_cents INTEGER NOT NULL,          -- => Price stored as integer cents (no float rounding)
-    created_at TIMESTAMPTZ NOT NULL        -- => Timezone-aware timestamp column
-        DEFAULT CURRENT_TIMESTAMP          -- => Defaults to now() on INSERT
+CREATE TABLE products ( -- => Creates new products table
+  id BIGSERIAL PRIMARY KEY, -- => Auto-incrementing primary key
+  name TEXT NOT NULL, -- => Product name, required
+  price_cents INTEGER NOT NULL, -- => Price stored as integer cents (no float rounding)
+  created_at TIMESTAMPTZ NOT NULL -- => Timezone-aware timestamp column
+  DEFAULT CURRENT_TIMESTAMP -- => Defaults to now() on INSERT
 );
+
 -- => After .up.sql runs: products table exists in schema
 ```
 
@@ -107,8 +107,8 @@ CREATE TABLE products (                    -- => Creates new products table
 -- File: migrations/20240101120000_create_products.down.sql
 -- => Reversal migration: applied by `sqlx migrate revert`
 -- => Purpose: undo exactly what the .up.sql file did
-
 DROP TABLE IF EXISTS products;
+
 -- => Removes products table from schema
 -- => IF EXISTS prevents error if table was already removed manually
 -- => After .down.sql runs: products table no longer exists
@@ -160,32 +160,27 @@ A `CREATE TABLE` statement defines a new table with its columns, data types, and
 ```sql
 -- File: migrations/20240101120000_create_accounts.sql
 -- => Creates the accounts table with essential financial columns
-
 CREATE TABLE accounts (
-    id BIGSERIAL PRIMARY KEY,
-    -- => BIGSERIAL: 64-bit auto-incrementing integer (PostgreSQL)
-    -- => PRIMARY KEY: unique, NOT NULL, indexed automatically
-
-    owner_name TEXT NOT NULL,
-    -- => TEXT: variable-length string with no length limit
-    -- => NOT NULL: INSERT rejected if this column is omitted or NULL
-
-    balance_cents BIGINT NOT NULL DEFAULT 0,
-    -- => BIGINT: 64-bit integer for large monetary values
-    -- => DEFAULT 0: value used when column is omitted in INSERT
-
-    currency CHAR(3) NOT NULL DEFAULT 'USD',
-    -- => CHAR(3): fixed 3-character string for ISO 4217 currency codes
-    -- => DEFAULT 'USD': fallback currency when not specified
-
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    -- => BOOLEAN: true/false value
-    -- => DEFAULT TRUE: new accounts start active
-
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-    -- => TIMESTAMPTZ: timestamp with time zone (PostgreSQL)
-    -- => DEFAULT CURRENT_TIMESTAMP: auto-set to now() on INSERT
+  id BIGSERIAL PRIMARY KEY,
+  -- => BIGSERIAL: 64-bit auto-incrementing integer (PostgreSQL)
+  -- => PRIMARY KEY: unique, NOT NULL, indexed automatically
+  owner_name TEXT NOT NULL,
+  -- => TEXT: variable-length string with no length limit
+  -- => NOT NULL: INSERT rejected if this column is omitted or NULL
+  balance_cents BIGINT NOT NULL DEFAULT 0,
+  -- => BIGINT: 64-bit integer for large monetary values
+  -- => DEFAULT 0: value used when column is omitted in INSERT
+  currency CHAR(3) NOT NULL DEFAULT 'USD',
+  -- => CHAR(3): fixed 3-character string for ISO 4217 currency codes
+  -- => DEFAULT 'USD': fallback currency when not specified
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  -- => BOOLEAN: true/false value
+  -- => DEFAULT TRUE: new accounts start active
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  -- => TIMESTAMPTZ: timestamp with time zone (PostgreSQL)
+  -- => DEFAULT CURRENT_TIMESTAMP: auto-set to now() on INSERT
 );
+
 -- => After execution: accounts table exists with 6 columns
 -- => Indexes created automatically: accounts_pkey on id
 ```
@@ -204,17 +199,17 @@ CREATE TABLE accounts (
 -- File: migrations/20240102090000_add_phone_to_accounts.sql
 -- => Adds optional phone_number column to accounts table
 -- => Existing rows receive NULL for the new column
-
 ALTER TABLE accounts
-    ADD COLUMN phone_number TEXT;
+ADD COLUMN phone_number TEXT;
+
 -- => Adds phone_number column with no constraint (nullable)
 -- => Existing rows: phone_number = NULL
 -- => New rows: phone_number defaults to NULL if not provided
 -- => Table rewrite: NOT required (nullable column addition is metadata-only)
-
 -- Add a non-nullable column with a default (safe pattern)
 ALTER TABLE accounts
-    ADD COLUMN notification_email TEXT NOT NULL DEFAULT '';
+ADD COLUMN notification_email TEXT NOT NULL DEFAULT '';
+
 -- => Adds column, backfills all existing rows with '' (empty string)
 -- => Table rewrite: required to backfill existing rows
 -- => On large tables: can take minutes and lock the table in older PostgreSQL
@@ -234,26 +229,25 @@ An index speeds up queries that filter or sort on indexed columns by creating an
 ```sql
 -- File: migrations/20240103100000_add_indexes_to_accounts.sql
 -- => Adds indexes to support common query patterns on accounts table
-
 -- Single-column index for equality lookups
-CREATE INDEX idx_accounts_owner_name
-    ON accounts (owner_name);
+CREATE INDEX idx_accounts_owner_name ON accounts (owner_name);
+
 -- => Creates B-tree index on owner_name column
 -- => Speeds up: WHERE owner_name = 'Alice' queries
 -- => Cost: additional disk space + write overhead on INSERT/UPDATE/DELETE
-
 -- Index for filtering by active status (partial index)
-CREATE INDEX idx_accounts_active
-    ON accounts (is_active)
-    WHERE is_active = TRUE;
+CREATE INDEX idx_accounts_active ON accounts (is_active)
+WHERE
+  is_active = TRUE;
+
 -- => Partial index: only indexes rows where is_active = TRUE
 -- => Smaller than full index; faster for queries that only look at active accounts
 -- => WHERE is_active = TRUE queries benefit; WHERE is_active = FALSE does not
-
 -- Unique index enforces uniqueness while also enabling fast lookups
-CREATE UNIQUE INDEX idx_accounts_phone_unique
-    ON accounts (phone_number)
-    WHERE phone_number IS NOT NULL;
+CREATE UNIQUE INDEX idx_accounts_phone_unique ON accounts (phone_number)
+WHERE
+  phone_number IS NOT NULL;
+
 -- => Unique index: prevents duplicate non-NULL phone numbers
 -- => Partial (WHERE IS NOT NULL): multiple NULLs allowed (only non-NULL values must be unique)
 -- => Both uniqueness constraint + fast lookup for phone_number queries
@@ -272,31 +266,24 @@ A foreign key constraint enforces referential integrity between two tables: ever
 ```sql
 -- File: migrations/20240104110000_create_transactions.sql
 -- => Creates transactions table with a foreign key to accounts
-
 CREATE TABLE transactions (
-    id BIGSERIAL PRIMARY KEY,
-    -- => Auto-incrementing primary key for transactions
-
-    account_id BIGINT NOT NULL,
-    -- => References accounts.id; NOT NULL means every transaction belongs to an account
-
-    CONSTRAINT fk_transactions_account
-        FOREIGN KEY (account_id)
-        REFERENCES accounts (id),
-    -- => Named constraint: fk_transactions_account (named constraints are easier to drop later)
-    -- => FOREIGN KEY (account_id): this column is the referencing side
-    -- => REFERENCES accounts (id): account_id must match a value in accounts.id
-    -- => Default behavior: RESTRICT - prevents DELETE of account if transactions exist
-
-    amount_cents BIGINT NOT NULL,
-    -- => Transaction amount in integer cents
-
-    transaction_type TEXT NOT NULL,
-    -- => 'debit' or 'credit'; consider CHECK constraint (see Example 22)
-
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-    -- => Timestamp when transaction was created
+  id BIGSERIAL PRIMARY KEY,
+  -- => Auto-incrementing primary key for transactions
+  account_id BIGINT NOT NULL,
+  -- => References accounts.id; NOT NULL means every transaction belongs to an account
+  CONSTRAINT fk_transactions_account FOREIGN KEY (account_id) REFERENCES accounts (id),
+  -- => Named constraint: fk_transactions_account (named constraints are easier to drop later)
+  -- => FOREIGN KEY (account_id): this column is the referencing side
+  -- => REFERENCES accounts (id): account_id must match a value in accounts.id
+  -- => Default behavior: RESTRICT - prevents DELETE of account if transactions exist
+  amount_cents BIGINT NOT NULL,
+  -- => Transaction amount in integer cents
+  transaction_type TEXT NOT NULL,
+  -- => 'debit' or 'credit'; consider CHECK constraint (see Example 22)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  -- => Timestamp when transaction was created
 );
+
 -- => After execution: transactions table created with foreign key constraint
 -- => Attempting INSERT with non-existent account_id raises: ERROR 23503 foreign_key_violation
 ```
@@ -314,19 +301,16 @@ A unique constraint ensures that no two rows in a table have the same value in t
 ```sql
 -- File: migrations/20240105120000_add_unique_constraints.sql
 -- => Adds unique constraints to prevent duplicate business-key values
-
 -- Single-column unique constraint
-ALTER TABLE accounts
-    ADD CONSTRAINT uq_accounts_email UNIQUE (notification_email);
+ALTER TABLE accounts ADD CONSTRAINT uq_accounts_email UNIQUE (notification_email);
+
 -- => Named unique constraint: uq_accounts_email
 -- => Prevents two accounts with the same notification_email value
 -- => NULL values are NOT checked for uniqueness (multiple NULLs allowed)
 -- => Violation raises: ERROR 23505 unique_violation
-
 -- Multi-column unique constraint (composite unique)
-ALTER TABLE transactions
-    ADD CONSTRAINT uq_transactions_idempotency
-    UNIQUE (account_id, transaction_type, created_at);
+ALTER TABLE transactions ADD CONSTRAINT uq_transactions_idempotency UNIQUE (account_id, transaction_type, created_at);
+
 -- => Composite unique: combination of all three columns must be unique
 -- => Prevents duplicate transaction submissions at the same instant
 -- => Individual columns CAN have duplicates; only the combination is constrained
@@ -378,9 +362,9 @@ A reversible migration pair consists of a `.up.sql` file (forward change) and a 
 ```sql
 -- File: migrations/20240106090000_add_account_tier.up.sql
 -- => Forward migration: adds account_tier column to accounts
-
 ALTER TABLE accounts
-    ADD COLUMN account_tier TEXT NOT NULL DEFAULT 'standard';
+ADD COLUMN account_tier TEXT NOT NULL DEFAULT 'standard';
+
 -- => Adds account_tier column with default 'standard'
 -- => Existing rows: account_tier = 'standard' (backfilled by DEFAULT)
 -- => New rows without explicit tier: account_tier = 'standard'
@@ -391,14 +375,13 @@ ALTER TABLE accounts
 -- File: migrations/20240106090000_add_account_tier.down.sql
 -- => Reversal migration: removes account_tier column added by .up.sql
 -- => Must be the exact inverse of .up.sql
-
 ALTER TABLE accounts
-    DROP COLUMN account_tier;
+DROP COLUMN account_tier;
+
 -- => Removes account_tier column and all its data
 -- => CAUTION: DROP COLUMN destroys data permanently
 -- => After .down.sql: accounts.account_tier no longer exists
 -- => _sqlx_migrations row for version 20240106090000 is deleted
-
 -- To revert:
 -- sqlx migrate revert --database-url postgres://user:pass@localhost/mydb
 -- => Applies the most recent .down.sql file
@@ -685,11 +668,12 @@ Sequential integer prefixes (001, 002, 003) provide a simpler alternative to tim
 -- => Version 001: first migration, applied first
 -- => Simple integer prefix, zero-padded to 3 digits for consistent sorting
 CREATE TABLE IF NOT EXISTS users (
-    id VARCHAR(36) PRIMARY KEY,        -- => UUID stored as string (compatible with AnyPool)
-    username VARCHAR(50) NOT NULL UNIQUE, -- => 50-char limit; UNIQUE enforced by database
-    email VARCHAR(255) NOT NULL UNIQUE,   -- => Email unique constraint
-    created_at VARCHAR(50) NOT NULL       -- => ISO 8601 timestamp as string (AnyPool compatible)
+  id VARCHAR(36) PRIMARY KEY, -- => UUID stored as string (compatible with AnyPool)
+  username VARCHAR(50) NOT NULL UNIQUE, -- => 50-char limit; UNIQUE enforced by database
+  email VARCHAR(255) NOT NULL UNIQUE, -- => Email unique constraint
+  created_at VARCHAR(50) NOT NULL -- => ISO 8601 timestamp as string (AnyPool compatible)
 );
+
 -- => After 001: users table exists
 ```
 
@@ -697,15 +681,15 @@ CREATE TABLE IF NOT EXISTS users (
 -- File: migrations/002_tokens.sql
 -- => Version 002: applied after 001 (lexicographic sort: "002" > "001")
 -- => Can reference users table because 001 already created it
-
 CREATE TABLE IF NOT EXISTS refresh_tokens (
-    id VARCHAR(36) PRIMARY KEY,
-    user_id VARCHAR(36) NOT NULL REFERENCES users(id),
-    -- => Foreign key to users.id; version ordering guarantees users table exists first
-    token_hash VARCHAR(512) NOT NULL UNIQUE,
-    expires_at VARCHAR(50) NOT NULL,
-    created_at VARCHAR(50) NOT NULL
+  id VARCHAR(36) PRIMARY KEY,
+  user_id VARCHAR(36) NOT NULL REFERENCES users (id),
+  -- => Foreign key to users.id; version ordering guarantees users table exists first
+  token_hash VARCHAR(512) NOT NULL UNIQUE,
+  expires_at VARCHAR(50) NOT NULL,
+  created_at VARCHAR(50) NOT NULL
 );
+
 -- => After 002: refresh_tokens table exists with foreign key to users
 ```
 
@@ -722,27 +706,34 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 ```sql
 -- File: migrations/20240110090000_add_status_to_users.sql
 -- => Adds status column with NOT NULL + DEFAULT to existing users table
-
 ALTER TABLE users
-    ADD COLUMN status TEXT NOT NULL DEFAULT 'active';
+ADD COLUMN status TEXT NOT NULL DEFAULT 'active';
+
 -- => Adds status column
 -- => NOT NULL: future inserts must provide a value (or rely on DEFAULT)
 -- => DEFAULT 'active': existing rows receive 'active'; new rows default to 'active'
 -- => Safe on populated tables because the DEFAULT satisfies NOT NULL for existing rows
-
 -- Add a column with NOT NULL but no DEFAULT (fails if table has rows)
 -- ALTER TABLE users ADD COLUMN display_name TEXT NOT NULL;
 -- => ERROR: column "display_name" of relation "users" contains null values
 -- => This would fail if any rows exist because existing rows have NULL
-
 -- Correct approach for NOT NULL without DEFAULT on populated table:
-ALTER TABLE users ADD COLUMN display_name TEXT;
+ALTER TABLE users
+ADD COLUMN display_name TEXT;
+
 -- => Step 1: Add as nullable first (always succeeds regardless of row count)
+UPDATE users
+SET
+  display_name = username
+WHERE
+  display_name IS NULL;
 
-UPDATE users SET display_name = username WHERE display_name IS NULL;
 -- => Step 2: Backfill existing rows with a meaningful value
+ALTER TABLE users
+ALTER COLUMN display_name
+SET
+  NOT NULL;
 
-ALTER TABLE users ALTER COLUMN display_name SET NOT NULL;
 -- => Step 3: Add NOT NULL constraint after backfill (now safe, all rows have values)
 ```
 
@@ -759,20 +750,18 @@ UUIDs (Universally Unique Identifiers) as primary keys allow clients to generate
 ```sql
 -- File: migrations/20240111100000_create_orders.sql
 -- => Creates orders table with UUID primary key
-
 -- PostgreSQL: native UUID type with auto-generation
 CREATE TABLE orders (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => UUID type: 128-bit identifier stored as 16 bytes (compact in PostgreSQL)
-    -- => DEFAULT gen_random_uuid(): PostgreSQL generates a random UUID v4 on INSERT
-    -- => No sequence needed; UUIDs are globally unique without a central counter
-
-    customer_email TEXT NOT NULL,
-    total_cents BIGINT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => UUID type: 128-bit identifier stored as 16 bytes (compact in PostgreSQL)
+  -- => DEFAULT gen_random_uuid(): PostgreSQL generates a random UUID v4 on INSERT
+  -- => No sequence needed; UUIDs are globally unique without a central counter
+  customer_email TEXT NOT NULL,
+  total_cents BIGINT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
--- => After execution: orders table with UUID primary key
 
+-- => After execution: orders table with UUID primary key
 -- SQLite compatible variant: UUID stored as TEXT (used with AnyPool)
 -- CREATE TABLE orders (
 --     id VARCHAR(36) PRIMARY KEY,
@@ -848,30 +837,29 @@ PostgreSQL supports custom ENUM types that restrict a column to a predefined set
 ```sql
 -- File: migrations/20240113120000_create_order_status_enum.sql
 -- => Creates PostgreSQL enum type for order status values
-
 CREATE TYPE order_status AS ENUM (
-    'pending',      -- => Order received but not yet processed
-    'processing',   -- => Payment confirmed, items being prepared
-    'shipped',      -- => Items dispatched to carrier
-    'delivered',    -- => Items received by customer
-    'cancelled'     -- => Order cancelled before delivery
+  'pending', -- => Order received but not yet processed
+  'processing', -- => Payment confirmed, items being prepared
+  'shipped', -- => Items dispatched to carrier
+  'delivered', -- => Items received by customer
+  'cancelled' -- => Order cancelled before delivery
 );
+
 -- => Creates a named enum type in the database schema
 -- => Values are case-sensitive: 'pending' != 'Pending'
 -- => Only listed values accepted; others raise ERROR 22P02 invalid_text_representation
-
 CREATE TABLE orders_v2 (
-    id BIGSERIAL PRIMARY KEY,
-    customer_email TEXT NOT NULL,
-    status order_status NOT NULL DEFAULT 'pending',
-    -- => Uses the enum type we just created
-    -- => DEFAULT 'pending': new orders start as pending
-    -- => Violation: INSERT with status='unknown' raises type error immediately
-    total_cents BIGINT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  customer_email TEXT NOT NULL,
+  status order_status NOT NULL DEFAULT 'pending',
+  -- => Uses the enum type we just created
+  -- => DEFAULT 'pending': new orders start as pending
+  -- => Violation: INSERT with status='unknown' raises type error immediately
+  total_cents BIGINT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
--- => After execution: orders_v2 table with status restricted to enum values
 
+-- => After execution: orders_v2 table with status restricted to enum values
 -- CAUTION: Adding values to an enum requires ALTER TYPE
 -- ALTER TYPE order_status ADD VALUE 'refunded' AFTER 'delivered';
 -- => Safe to add values; removing values requires recreating the type
@@ -890,24 +878,21 @@ CHECK constraints enforce that a column value satisfies a boolean expression at 
 ```sql
 -- File: migrations/20240114090000_add_check_constraints.sql
 -- => Adds CHECK constraints for business rule enforcement
+ALTER TABLE accounts ADD CONSTRAINT chk_accounts_balance_non_negative CHECK (balance_cents >= 0);
 
-ALTER TABLE accounts
-    ADD CONSTRAINT chk_accounts_balance_non_negative
-    CHECK (balance_cents >= 0);
 -- => Named constraint: chk_accounts_balance_non_negative
 -- => Enforces: balance_cents cannot be negative
 -- => Violation: ERROR 23514 check_violation with constraint name in message
 -- => INSERT/UPDATE rejected if balance_cents < 0
+ALTER TABLE transactions ADD CONSTRAINT chk_transactions_amount_positive CHECK (amount_cents > 0);
 
-ALTER TABLE transactions
-    ADD CONSTRAINT chk_transactions_amount_positive
-    CHECK (amount_cents > 0);
 -- => All transactions must have a positive amount
 -- => Signed direction (debit vs credit) stored in transaction_type column instead
+ALTER TABLE accounts ADD CONSTRAINT chk_accounts_currency_format CHECK (
+  char_length(currency) = 3
+  AND currency = upper(currency)
+);
 
-ALTER TABLE accounts
-    ADD CONSTRAINT chk_accounts_currency_format
-    CHECK (char_length(currency) = 3 AND currency = upper(currency));
 -- => Multi-condition CHECK: currency must be exactly 3 characters AND uppercase
 -- => Enforces ISO 4217 format at database level: 'USD' valid, 'us' invalid
 -- => AND operator: both conditions must be true
@@ -926,26 +911,22 @@ A composite index covers multiple columns and can speed up queries that filter o
 ```sql
 -- File: migrations/20240115100000_add_composite_indexes.sql
 -- => Adds composite indexes to support multi-column query patterns
-
 -- Composite index on (account_id, created_at) for time-range queries within an account
-CREATE INDEX idx_transactions_account_time
-    ON transactions (account_id, created_at DESC);
+CREATE INDEX idx_transactions_account_time ON transactions (account_id, created_at DESC);
+
 -- => B-tree index on two columns; rows sorted by account_id ASC, then created_at DESC
 -- => Supports: WHERE account_id = 42 ORDER BY created_at DESC  (left-prefix: account_id)
 -- => Supports: WHERE account_id = 42 AND created_at > '2024-01-01'  (both columns)
 -- => Does NOT support efficiently: WHERE created_at > '2024-01-01'  (no left-prefix)
-
 -- Composite unique index for idempotency key pattern
-CREATE UNIQUE INDEX idx_transactions_idempotency
-    ON transactions (account_id, transaction_type, created_at);
+CREATE UNIQUE INDEX idx_transactions_idempotency ON transactions (account_id, transaction_type, created_at);
+
 -- => Unique composite: prevents exact duplicate transactions (same account, type, time)
 -- => UNIQUE enforces no two rows have same (account_id, transaction_type, created_at) combination
 -- => Supports deduplication during bulk imports or retried operations
-
 -- Covering index: include additional columns to avoid table lookups
-CREATE INDEX idx_accounts_lookup
-    ON accounts (owner_name)
-    INCLUDE (balance_cents, currency);
+CREATE INDEX idx_accounts_lookup ON accounts (owner_name) INCLUDE (balance_cents, currency);
+
 -- => Index on owner_name; INCLUDE adds balance_cents and currency to index leaf pages
 -- => Queries: SELECT balance_cents, currency FROM accounts WHERE owner_name = 'Alice'
 -- => Covered by index: no table heap access needed (index-only scan)
@@ -965,33 +946,29 @@ A junction table (also called a join table or associative table) implements a ma
 ```sql
 -- File: migrations/20240116110000_create_account_tags.sql
 -- => Implements many-to-many: accounts <-> tags
-
 CREATE TABLE tags (
-    id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,       -- => Tag names must be unique ('premium', 'verified', etc.)
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE, -- => Tag names must be unique ('premium', 'verified', etc.)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
 -- => Tags table: one row per distinct tag
-
 CREATE TABLE account_tags (
-    account_id BIGINT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-    -- => Foreign key to accounts.id
-    -- => ON DELETE CASCADE: when account is deleted, all its tags are removed automatically
-
-    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
-    -- => Foreign key to tags.id
-    -- => ON DELETE CASCADE: when tag is deleted, all associations are removed automatically
-
-    assigned_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    -- => When this association was created
-
-    PRIMARY KEY (account_id, tag_id)
-    -- => Composite primary key: each (account, tag) pair is unique
-    -- => Prevents the same tag from being assigned to the same account twice
-    -- => Also creates a B-tree index on (account_id, tag_id)
+  account_id BIGINT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
+  -- => Foreign key to accounts.id
+  -- => ON DELETE CASCADE: when account is deleted, all its tags are removed automatically
+  tag_id BIGINT NOT NULL REFERENCES tags (id) ON DELETE CASCADE,
+  -- => Foreign key to tags.id
+  -- => ON DELETE CASCADE: when tag is deleted, all associations are removed automatically
+  assigned_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  -- => When this association was created
+  PRIMARY KEY (account_id, tag_id)
+  -- => Composite primary key: each (account, tag) pair is unique
+  -- => Prevents the same tag from being assigned to the same account twice
+  -- => Also creates a B-tree index on (account_id, tag_id)
 );
--- => After execution: many accounts can have many tags; each association is one row
 
+-- => After execution: many accounts can have many tags; each association is one row
 -- Query: get all tags for a specific account
 -- SELECT t.name FROM tags t
 -- JOIN account_tags at ON t.id = at.tag_id
@@ -1013,26 +990,27 @@ Migration files can contain `INSERT` statements as well as DDL. This pattern pop
 -- File: migrations/20240117090000_seed_account_tiers.sql
 -- => Inserts reference data for account tiers
 -- => This data is required for the application to function
-
 CREATE TABLE account_tiers (
-    id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,          -- => 'standard', 'premium', 'enterprise'
-    monthly_fee_cents INTEGER NOT NULL, -- => Monthly fee in cents
-    max_transactions INTEGER NOT NULL,  -- => Maximum transactions per month
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE, -- => 'standard', 'premium', 'enterprise'
+  monthly_fee_cents INTEGER NOT NULL, -- => Monthly fee in cents
+  max_transactions INTEGER NOT NULL, -- => Maximum transactions per month
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
--- => Creates account_tiers lookup table
 
-INSERT INTO account_tiers (name, monthly_fee_cents, max_transactions) VALUES
-    ('standard',   0,     1000),
--- => Standard tier: free, 1000 transactions/month
-    ('premium',    999,   10000),
--- => Premium tier: $9.99/month, 10000 transactions/month
-    ('enterprise', 4999,  NULL);
+-- => Creates account_tiers lookup table
+INSERT INTO
+  account_tiers (name, monthly_fee_cents, max_transactions)
+VALUES
+  ('standard', 0, 1000),
+  -- => Standard tier: free, 1000 transactions/month
+  ('premium', 999, 10000),
+  -- => Premium tier: $9.99/month, 10000 transactions/month
+  ('enterprise', 4999, NULL);
+
 -- => NULL for max_transactions means unlimited (no constraint)
 -- => NULL only valid here because max_transactions column allows NULL
 -- => After INSERT: 3 rows in account_tiers
-
 -- IMPORTANT: seed data in migrations is immutable after deployment
 -- => Do NOT modify seed data in the same migration after it has been applied
 -- => Instead: write a new migration to UPDATE or INSERT additional rows
@@ -1053,27 +1031,24 @@ A single migration file can contain multiple SQL statements separated by semicol
 -- File: migrations/20240118100000_create_audit_system.sql
 -- => Creates multiple related tables and indexes in one migration
 -- => All executed atomically: all succeed or all roll back
-
 CREATE TABLE audit_log (
-    id BIGSERIAL PRIMARY KEY,
-    table_name TEXT NOT NULL,        -- => Which table was affected
-    operation TEXT NOT NULL,         -- => 'INSERT', 'UPDATE', or 'DELETE'
-    row_id TEXT NOT NULL,            -- => Primary key of affected row (as text)
-    old_data JSONB,                  -- => Previous row data (NULL for INSERT)
-    new_data JSONB,                  -- => New row data (NULL for DELETE)
-    performed_by TEXT NOT NULL,      -- => Username or service that made the change
-    performed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  table_name TEXT NOT NULL, -- => Which table was affected
+  operation TEXT NOT NULL, -- => 'INSERT', 'UPDATE', or 'DELETE'
+  row_id TEXT NOT NULL, -- => Primary key of affected row (as text)
+  old_data JSONB, -- => Previous row data (NULL for INSERT)
+  new_data JSONB, -- => New row data (NULL for DELETE)
+  performed_by TEXT NOT NULL, -- => Username or service that made the change
+  performed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
 -- => First statement: audit_log table created
+CREATE INDEX idx_audit_log_table_time ON audit_log (table_name, performed_at DESC);
 
-CREATE INDEX idx_audit_log_table_time
-    ON audit_log (table_name, performed_at DESC);
 -- => Second statement: index for querying audit log by table and time
+CREATE INDEX idx_audit_log_row ON audit_log (table_name, row_id);
 
-CREATE INDEX idx_audit_log_row
-    ON audit_log (table_name, row_id);
 -- => Third statement: index for querying audit history of a specific row
-
 -- All three statements run in the same transaction
 -- => If CREATE INDEX fails: audit_log table is also rolled back
 -- => Database sees either all three changes or none
@@ -1094,23 +1069,21 @@ CREATE INDEX idx_audit_log_row
 -- File: migrations/001_users.sql
 -- => Uses IF NOT EXISTS guards for all DDL statements
 -- => Safe to run multiple times against the same database
-
 CREATE TABLE IF NOT EXISTS users (
-    -- => IF NOT EXISTS: skip CREATE if users table already exists
-    -- => Without IF NOT EXISTS: ERROR 42P07 duplicate_table if table exists
-    id VARCHAR(36) PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    created_at VARCHAR(50) NOT NULL
+  -- => IF NOT EXISTS: skip CREATE if users table already exists
+  -- => Without IF NOT EXISTS: ERROR 42P07 duplicate_table if table exists
+  id VARCHAR(36) PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  created_at VARCHAR(50) NOT NULL
 );
+
 -- => If users table exists: no error, no change
 -- => If users table absent: table created with all columns
+CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
-CREATE INDEX IF NOT EXISTS idx_users_username
-    ON users (username);
 -- => IF NOT EXISTS: skip index creation if idx_users_username already exists
 -- => Without IF NOT EXISTS: ERROR 42P07 if index exists
-
 -- For ALTER TABLE, use DO blocks (PostgreSQL) or accept the error in application code
 -- DO $$
 -- BEGIN
@@ -1135,26 +1108,24 @@ CREATE INDEX IF NOT EXISTS idx_users_username
 ```sql
 -- File: migrations/20240120110000_remove_legacy_sessions.sql
 -- => Removes the legacy sessions table replaced by refresh_tokens
-
 -- Safe drop: succeeds whether table exists or not
 DROP TABLE IF EXISTS legacy_sessions;
+
 -- => IF EXISTS: returns success even if legacy_sessions does not exist
 -- => Without IF EXISTS: ERROR 42P01 undefined_table if table absent
 -- => IRREVERSIBLE: all data in legacy_sessions is permanently deleted
 -- => Write a .down.sql to re-create the table if rollback is needed
-
 -- Drop a column from an existing table
 ALTER TABLE users
-    DROP COLUMN IF EXISTS legacy_session_token;
+DROP COLUMN IF EXISTS legacy_session_token;
+
 -- => IF EXISTS: no error if column already absent
 -- => Removes legacy_session_token column and all its data
 -- => IRREVERSIBLE: column data is permanently lost
-
 -- CAUTION: check for dependent objects before dropping
 -- DROP TABLE accounts;
 -- => ERROR 2BP01 dependent_objects_still_exist if transactions.account_id references accounts
 -- => Must drop dependent tables first, or use CASCADE
-
 -- Drop with CASCADE (drops all dependent objects too)
 -- DROP TABLE IF EXISTS accounts CASCADE;
 -- => Drops accounts AND drops transactions.fk_transactions_account foreign key
@@ -1174,27 +1145,27 @@ ALTER TABLE users
 ```sql
 -- File: migrations/20240121090000_create_documents_with_cascade.sql
 -- => Creates a documents system with cascade delete behavior
-
 CREATE TABLE documents (
-    id BIGSERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    owner_id BIGINT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: deleting an account automatically deletes all its documents
-    -- => Prevents orphaned documents with no owner
-    -- => Alternative: ON DELETE RESTRICT (default) prevents account deletion if documents exist
-    -- => Alternative: ON DELETE SET NULL (sets owner_id to NULL on account deletion)
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  owner_id BIGINT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: deleting an account automatically deletes all its documents
+  -- => Prevents orphaned documents with no owner
+  -- => Alternative: ON DELETE RESTRICT (default) prevents account deletion if documents exist
+  -- => Alternative: ON DELETE SET NULL (sets owner_id to NULL on account deletion)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE document_sections (
-    id BIGSERIAL PRIMARY KEY,
-    document_id BIGINT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
-    -- => Cascade from documents: deleting a document deletes all its sections
-    -- => Combined with the documents cascade: deleting an account cascades through
-    -- => accounts -> documents -> document_sections (two levels of cascade)
-    section_order INTEGER NOT NULL,
-    content TEXT NOT NULL
+  id BIGSERIAL PRIMARY KEY,
+  document_id BIGINT NOT NULL REFERENCES documents (id) ON DELETE CASCADE,
+  -- => Cascade from documents: deleting a document deletes all its sections
+  -- => Combined with the documents cascade: deleting an account cascades through
+  -- => accounts -> documents -> document_sections (two levels of cascade)
+  section_order INTEGER NOT NULL,
+  content TEXT NOT NULL
 );
+
 -- => After execution: three-level cascade chain
 -- => DELETE FROM accounts WHERE id = 42;
 -- => => Deletes: account row 42
@@ -1237,7 +1208,6 @@ graph TD
 -- The _sqlx_migrations table (created automatically by SQLx)
 -- Inspect it with:
 -- SELECT * FROM _sqlx_migrations ORDER BY version;
-
 -- Table structure (approximate):
 -- CREATE TABLE _sqlx_migrations (
 --     version BIGINT PRIMARY KEY,
@@ -1262,7 +1232,6 @@ graph TD
 --     execution_time BIGINT NOT NULL
 --     -- => execution_time: nanoseconds the migration took to execute
 -- );
-
 -- Query to see all applied migrations and their checksums:
 -- SELECT version, description, installed_on, success, execution_time
 -- FROM _sqlx_migrations

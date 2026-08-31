@@ -476,10 +476,11 @@ DROP TABLE IF EXISTS zakat_records;
 
 -- => Create zakat_records table
 CREATE TABLE zakat_records (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,    -- => Auto-increment ID
-    amount DECIMAL(15, 2) NOT NULL,          -- => Zakat amount (precise)
-    created_at TIMESTAMP NOT NULL            -- => Payment timestamp
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, -- => Auto-increment ID
+  amount DECIMAL(15, 2) NOT NULL, -- => Zakat amount (precise)
+  created_at TIMESTAMP NOT NULL -- => Payment timestamp
 );
+
 -- => Table initialized when ApplicationContext starts
 ```
 

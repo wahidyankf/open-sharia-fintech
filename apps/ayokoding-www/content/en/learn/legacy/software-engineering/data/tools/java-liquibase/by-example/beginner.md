@@ -57,7 +57,6 @@ The `-- liquibase formatted sql` header transforms a plain SQL file into a Liqui
 -- liquibase formatted sql
 -- => REQUIRED first line: declares this file as a Liquibase-managed SQL changelog
 -- => Without this line, Liquibase treats the file as raw SQL (not tracked)
-
 -- changeset organiclever:001-create-users-table dbms:postgresql
 -- => Declares a changeset with:
 -- =>   author: "organiclever"
@@ -65,26 +64,25 @@ The `-- liquibase formatted sql` header transforms a plain SQL file into a Liqui
 -- =>   dbms: "postgresql" - only runs against PostgreSQL databases
 -- => Liquibase identifies a changeset by (author + id + filename) tuple
 -- => Running this changeset a second time is a NO-OP (already in DATABASECHANGELOG)
-
 CREATE TABLE users (
-    id            UUID         NOT NULL DEFAULT gen_random_uuid(),
-    -- => gen_random_uuid() requires pgcrypto extension or PostgreSQL 13+
-    username      VARCHAR(50)  NOT NULL,
-    -- => VARCHAR(50) enforced at database level
-    password_hash VARCHAR(255) NOT NULL,
-    -- => Storing hash, not plaintext password
-    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    -- => TIMESTAMPTZ stores timezone-aware timestamps
-    updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    -- => Application must explicitly update updated_at on edits
-    CONSTRAINT pk_users PRIMARY KEY (id),
-    -- => Named primary key constraint for clear error messages
-    CONSTRAINT uq_users_username UNIQUE (username)
-    -- => Unique constraint prevents duplicate usernames
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => gen_random_uuid() requires pgcrypto extension or PostgreSQL 13+
+  username VARCHAR(50) NOT NULL,
+  -- => VARCHAR(50) enforced at database level
+  password_hash VARCHAR(255) NOT NULL,
+  -- => Storing hash, not plaintext password
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => TIMESTAMPTZ stores timezone-aware timestamps
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Application must explicitly update updated_at on edits
+  CONSTRAINT pk_users PRIMARY KEY (id),
+  -- => Named primary key constraint for clear error messages
+  CONSTRAINT uq_users_username UNIQUE (username)
+  -- => Unique constraint prevents duplicate usernames
 );
+
 -- => Liquibase executes this DDL as a single transaction
 -- => On success: inserts a row into DATABASECHANGELOG
-
 -- rollback DROP TABLE users;
 -- => Tells Liquibase how to undo this changeset
 -- => Executed when running: liquibase rollbackCount 1
@@ -103,40 +101,37 @@ Changeset IDs must be unique within a file; the combination of author, ID, and f
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:001-create-products dbms:postgresql
 -- => author: "demo-be" (team or project identifier, not personal name)
 -- => id: "001-create-products" (sequential number + short description)
 -- => The DATABASECHANGELOG table stores: id, author, filename, dateexecuted, md5sum
 -- => md5sum detects if a changeset was modified after execution (illegal modification)
 -- => Modifying an executed changeset causes Liquibase to abort with "checksum mismatch"
-
 CREATE TABLE products (
-    id   UUID NOT NULL DEFAULT gen_random_uuid(),
-    -- => UUIDs avoid integer ID collisions in distributed insert scenarios
-    name VARCHAR(255) NOT NULL
-    -- => Simple name column; will be extended in later changesets
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => UUIDs avoid integer ID collisions in distributed insert scenarios
+  name VARCHAR(255) NOT NULL
+  -- => Simple name column; will be extended in later changesets
 );
+
 -- => DATABASECHANGELOG row inserted after successful execution:
 -- =>   ID: "001-create-products"
 -- =>   AUTHOR: "demo-be"
 -- =>   FILENAME: "db/changelog/changes/001-create-products.sql"
 -- =>   DATEEXECUTED: <current timestamp>
 -- =>   MD5SUM: <hash of changeset content>
-
 -- rollback DROP TABLE products;
 -- => Rollback is the inverse of the changeset
 -- => Must be safe to run after any subsequent migration that adds columns/constraints
-
 -- changeset demo-be:002-add-product-price dbms:postgresql
 -- => Second changeset in the same file; runs after 001 in the same transaction batch
 -- => ID must be unique within the file; "002-add-product-price" differs from "001-create-products"
 -- => Author is consistent ("demo-be") across the file
+ALTER TABLE products
+ADD COLUMN price DECIMAL(19, 4) NOT NULL DEFAULT 0;
 
-ALTER TABLE products ADD COLUMN price DECIMAL(19,4) NOT NULL DEFAULT 0;
 -- => Adds price column with a safe default (avoids NOT NULL violation on existing rows)
 -- => DECIMAL(19,4): 19 total digits, 4 decimal places (suitable for currency)
-
 -- rollback ALTER TABLE products DROP COLUMN price;
 -- => Drops price column, returning products table to post-001 state
 ```
@@ -477,11 +472,11 @@ Liquibase command 'rollback' was executed successfully.
 -- => Liquibase stores rollback SQL separately from forward SQL
 -- => If a changeset has no rollback block, rollbackCount fails with:
 -- =>   "No rollback information available"
-
 -- changeset demo-be:007-standardize-schema dbms:postgresql
-ALTER TABLE users RENAME COLUMN created_by TO created_by_user;
--- => Forward: rename column
+ALTER TABLE users
+RENAME COLUMN created_by TO created_by_user;
 
+-- => Forward: rename column
 -- rollback ALTER TABLE users RENAME COLUMN created_by_user TO created_by;
 -- => Rollback: restore original column name
 -- => Note: rollback is the exact inverse, not just "undo"
@@ -555,7 +550,6 @@ The `liquibase tag` command inserts a specially marked row into `DATABASECHANGEL
 ```sql
 -- What Liquibase does internally when you run the tag command
 -- Inserts a special row into DATABASECHANGELOG
-
 -- The tag is stored in the TAG column of the most recent DATABASECHANGELOG row
 -- => SELECT * FROM DATABASECHANGELOG ORDER BY DATEEXECUTED DESC LIMIT 1;
 -- =>   ID: "007-standardize-schema"
@@ -740,43 +734,37 @@ Pure SQL changelogs are the most natural format for teams where DBAs write migra
 -- => REQUIRED: First line must be exactly "-- liquibase formatted sql"
 -- => Liquibase detects this header to parse the file as a changelog
 -- => Files without this header are rejected with: "liquibase.exception.ChangeLogParseException"
-
 -- changeset demo-be:003-create-refresh-tokens dbms:postgresql
 -- => changeset declaration starts a new changeset block
 -- => Everything between this line and the next -- changeset (or end of file) is the changeset SQL
 -- => dbms:postgresql: only executes against PostgreSQL; skipped against other databases
 -- => stripComments is true by default: Liquibase strips SQL comments before executing
-
 CREATE TABLE refresh_tokens (
-    id            UUID        NOT NULL DEFAULT gen_random_uuid(),
-    -- => UUID primary key with database-generated value
-    user_id       UUID        NOT NULL,
-    -- => Foreign key to users.id (FK constraint added in separate changeset)
-    token_hash    VARCHAR(255) NOT NULL,
-    -- => Store hash of token, never the raw token value (security principle)
-    expires_at    TIMESTAMPTZ NOT NULL,
-    -- => Expiry stored in database enables server-side token invalidation
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_refresh_tokens PRIMARY KEY (id),
-    CONSTRAINT uq_refresh_tokens_hash UNIQUE (token_hash)
-    -- => Unique constraint enables fast token lookup by hash
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  -- => UUID primary key with database-generated value
+  user_id UUID NOT NULL,
+  -- => Foreign key to users.id (FK constraint added in separate changeset)
+  token_hash VARCHAR(255) NOT NULL,
+  -- => Store hash of token, never the raw token value (security principle)
+  expires_at TIMESTAMPTZ NOT NULL,
+  -- => Expiry stored in database enables server-side token invalidation
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_refresh_tokens PRIMARY KEY (id),
+  CONSTRAINT uq_refresh_tokens_hash UNIQUE (token_hash)
+  -- => Unique constraint enables fast token lookup by hash
 );
+
 -- => END of changeset 003-create-refresh-tokens SQL block
 -- => Liquibase executes all SQL above as a single transaction
-
 -- rollback DROP TABLE refresh_tokens;
 -- => Rollback block immediately follows the forward SQL
 -- => Liquibase stores rollback SQL separately from forward SQL in DATABASECHANGELOG
-
 -- changeset demo-be:003b-add-fk-refresh-tokens-user dbms:postgresql
 -- => Second changeset in the same file; separate ID (003b vs 003)
 -- => Separating FK addition from table creation allows flexible ordering
+ALTER TABLE refresh_tokens ADD CONSTRAINT fk_refresh_tokens_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
 
-ALTER TABLE refresh_tokens
-    ADD CONSTRAINT fk_refresh_tokens_user
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 -- => FK added after both tables exist; avoids forward-reference issue
-
 -- rollback ALTER TABLE refresh_tokens DROP CONSTRAINT fk_refresh_tokens_user;
 ```
 
@@ -878,13 +866,20 @@ databaseChangeLog:
 
 ```sql
 -- SQL Liquibase generates for addNotNullConstraint (PostgreSQL)
-
 -- Step 1: Update NULL values to the default
-UPDATE users SET status = 'ACTIVE' WHERE status IS NULL;
--- => Runs first to prevent constraint violation
+UPDATE users
+SET
+  status = 'ACTIVE'
+WHERE
+  status IS NULL;
 
+-- => Runs first to prevent constraint violation
 -- Step 2: Add NOT NULL constraint
-ALTER TABLE users ALTER COLUMN status SET NOT NULL;
+ALTER TABLE users
+ALTER COLUMN status
+SET
+  NOT NULL;
+
 -- => Now safe because no NULL values remain
 ```
 
@@ -1346,52 +1341,45 @@ A single SQL changelog file can contain multiple changesets, each with its own I
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:005-create-expenses dbms:postgresql
 -- => First changeset: creates the expenses table
 CREATE TABLE expenses (
-    id          UUID           NOT NULL DEFAULT gen_random_uuid(),
-    user_id     UUID           NOT NULL,
-    -- => FK to users.id; defined separately in next changeset
-    amount      DECIMAL(19,4)  NOT NULL,
-    -- => DECIMAL(19,4): 15 integer digits + 4 decimal places
-    currency    VARCHAR(3)     NOT NULL,
-    -- => ISO 4217 currency code: "USD", "EUR", "IDR"
-    category    VARCHAR(100)   NOT NULL,
-    description VARCHAR(500)   NOT NULL,
-    date        DATE           NOT NULL,
-    -- => DATE stores calendar date without time (no timezone)
-    type        VARCHAR(10)    NOT NULL,
-    -- => "INCOME" or "EXPENSE"; consider ENUM type for stronger validation
-    created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    CONSTRAINT pk_expenses PRIMARY KEY (id)
-    -- => Named primary key constraint
+  id UUID NOT NULL DEFAULT gen_random_uuid (),
+  user_id UUID NOT NULL,
+  -- => FK to users.id; defined separately in next changeset
+  amount DECIMAL(19, 4) NOT NULL,
+  -- => DECIMAL(19,4): 15 integer digits + 4 decimal places
+  currency VARCHAR(3) NOT NULL,
+  -- => ISO 4217 currency code: "USD", "EUR", "IDR"
+  category VARCHAR(100) NOT NULL,
+  description VARCHAR(500) NOT NULL,
+  date DATE NOT NULL,
+  -- => DATE stores calendar date without time (no timezone)
+  type VARCHAR(10) NOT NULL,
+  -- => "INCOME" or "EXPENSE"; consider ENUM type for stronger validation
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  CONSTRAINT pk_expenses PRIMARY KEY (id)
+  -- => Named primary key constraint
 );
--- => DATABASECHANGELOG: insert row for changeset "005-create-expenses"
 
+-- => DATABASECHANGELOG: insert row for changeset "005-create-expenses"
 -- rollback DROP TABLE expenses;
 -- => Rollback drops the entire table; subsequent changesets adding FKs must also have rollbacks
-
 -- changeset demo-be:005b-add-fk-expenses-user dbms:postgresql
 -- => Second changeset: adds FK after both tables exist
-ALTER TABLE expenses
-    ADD CONSTRAINT fk_expenses_user
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
 -- => Separate FK changeset allows rolling back only the FK without dropping the table
 -- => ON DELETE CASCADE: deleting a user deletes all their expenses
-
 -- rollback ALTER TABLE expenses DROP CONSTRAINT fk_expenses_user;
 -- => Rollback removes only the FK constraint; expenses table remains
-
 -- changeset demo-be:005c-add-fk-expenses-expense-types dbms:postgresql
 -- => Third changeset: add check constraint for type column
-ALTER TABLE expenses
-    ADD CONSTRAINT chk_expenses_type
-    CHECK (type IN ('INCOME', 'EXPENSE'));
+ALTER TABLE expenses ADD CONSTRAINT chk_expenses_type CHECK (type IN ('INCOME', 'EXPENSE'));
+
 -- => CHECK constraint enforces valid values at database level
 -- => More portable than ENUM for multi-database setups
-
 -- rollback ALTER TABLE expenses DROP CONSTRAINT chk_expenses_type;
 ```
 
@@ -1407,21 +1395,25 @@ The rollback block is the developer-provided undo operation for a changeset. For
 
 ```sql
 -- liquibase formatted sql
-
 -- changeset demo-be:007-standardize-schema dbms:postgresql
 -- => Complex changeset with multiple DDL operations
 -- => Each sub-operation must be reversible in the rollback block
+ALTER TABLE users
+RENAME COLUMN created_by TO created_by_user;
 
-ALTER TABLE users RENAME COLUMN created_by TO created_by_user;
 -- => Rename column: requires manual rollback (auto-rollback not available for RENAME)
-ALTER TABLE users RENAME COLUMN updated_by TO updated_by_user;
+ALTER TABLE users
+RENAME COLUMN updated_by TO updated_by_user;
+
 -- => Second rename: both must be reversed in rollback
+ALTER TABLE users
+ADD COLUMN deleted_at TIMESTAMPTZ;
 
-ALTER TABLE users ADD COLUMN deleted_at TIMESTAMPTZ;
 -- => Add soft-delete column (nullable: existing rows show as not deleted)
-ALTER TABLE users ADD COLUMN deleted_by VARCHAR(255);
--- => Add soft-delete audit column
+ALTER TABLE users
+ADD COLUMN deleted_by VARCHAR(255);
 
+-- => Add soft-delete audit column
 -- rollback ALTER TABLE users DROP COLUMN deleted_by;
 -- rollback ALTER TABLE users DROP COLUMN deleted_at;
 -- => Rollback reverses added columns first (reverse order of forward operations)
@@ -1470,16 +1462,13 @@ Liquibase creates a `DATABASECHANGELOG` table in the target database to track ex
 ```sql
 -- DATABASECHANGELOG table DDL (created automatically by Liquibase on first run)
 -- => Liquibase creates this table if it does not exist
-
 -- SELECT * FROM DATABASECHANGELOG ORDER BY DATEEXECUTED;
 -- Example rows:
-
 -- ID                           | AUTHOR    | FILENAME                                          | DATEEXECUTED         | ORDEREXECUTED | MD5SUM                                    | DESCRIPTION   | COMMENTS | TAG        | LIQUIBASE | CONTEXTS | LABELS | DEPLOYMENT_ID
 -- 001-create-users-table       | organiclever | db/changelog/changes/001-create-users-table.sql | 2026-03-27 10:00:00 | 1             | 9:abc123...                               | sql           |          |            | 4.27.0    |          |        | 123456789
 -- 002-alter-users-add-columns  | demo-be   | db/changelog/changes/002-alter-users.sql          | 2026-03-27 10:00:01 | 2             | 9:def456...                               | sql           |          |            | 4.27.0    |          |        | 123456789
 -- 007-standardize-schema       | demo-be   | db/changelog/changes/007-standardize-schema.sql   | 2026-03-27 10:00:05 | 7             | 9:ghi789...                               | sql           |          | v1.0.0     | 4.27.0    |          |        | 123456789
 -- => TAG column: set by "liquibase tag" command on the latest changeset row
-
 -- Column meanings:
 -- ID: changeset id (from -- changeset author:ID)
 -- AUTHOR: changeset author
@@ -1495,23 +1484,38 @@ Liquibase creates a `DATABASECHANGELOG` table in the target database to track ex
 
 ```sql
 -- Common diagnostic queries
-
 -- Check if a specific changeset was applied
-SELECT id, author, dateexecuted, md5sum
-FROM DATABASECHANGELOG
-WHERE id = '005-create-expenses'
+SELECT
+  id,
+  author,
+  dateexecuted,
+  md5sum
+FROM
+  DATABASECHANGELOG
+WHERE
+  id = '005-create-expenses'
   AND author = 'demo-be';
+
 -- => Returns one row if applied; zero rows if pending
-
 -- List all changesets from the most recent deployment
-SELECT id, author, dateexecuted, description
-FROM DATABASECHANGELOG
-WHERE deployment_id = (
-    SELECT MAX(deployment_id) FROM DATABASECHANGELOG
-)
-ORDER BY orderexecuted;
--- => Shows exactly what ran in the last "liquibase update" invocation
+SELECT
+  id,
+  author,
+  dateexecuted,
+  description
+FROM
+  DATABASECHANGELOG
+WHERE
+  deployment_id = (
+    SELECT
+      MAX(deployment_id)
+    FROM
+      DATABASECHANGELOG
+  )
+ORDER BY
+  orderexecuted;
 
+-- => Shows exactly what ran in the last "liquibase update" invocation
 -- Find changesets with modified checksums (indicates illegal post-execution edit)
 -- => Liquibase checks MD5SUM automatically on every update run
 -- => A mismatch causes: "ERROR: Validation Failed: ... was: 9:abc... now: 9:xyz..."
@@ -1529,13 +1533,11 @@ Liquibase creates a `DATABASECHANGELOGLOCK` table to prevent concurrent migratio
 
 ```sql
 -- DATABASECHANGELOGLOCK table DDL (created automatically by Liquibase on first run)
-
 -- SELECT * FROM DATABASECHANGELOGLOCK;
 -- Normal state (no active migration):
 -- ID | LOCKED | LOCKGRANTED         | LOCKEDBY
 -- 1  | false  | NULL                | NULL
 -- => LOCKED=false: no migration in progress; next liquibase update will proceed normally
-
 -- During active migration:
 -- ID | LOCKED | LOCKGRANTED              | LOCKEDBY
 -- 1  | true   | 2026-03-27 10:00:00.000  | pod-abc123 (192.168.1.5)
@@ -1546,13 +1548,11 @@ Liquibase creates a `DATABASECHANGELOGLOCK` table to prevent concurrent migratio
 
 ```sql
 -- What happens when a second Liquibase process tries to run during an active lock
-
 -- Liquibase output:
 -- "Waiting for changelog lock...."  (retries every 5 seconds by default)
 -- After 5 minutes: "Could not acquire change log lock. Currently locked by pod-abc123"
 -- => The second process aborts with an exception
 -- => This prevents two concurrent migrations from corrupting DATABASECHANGELOG
-
 -- Common production scenario: Kubernetes rolling deployment
 -- Pod 1 (old version) starts: acquires lock, runs migrations
 -- Pod 2 (new version) starts: tries to acquire lock, WAITS

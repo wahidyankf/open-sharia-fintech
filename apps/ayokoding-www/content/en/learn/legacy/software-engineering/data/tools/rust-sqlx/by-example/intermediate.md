@@ -46,39 +46,39 @@ graph TD
 -- => Wrapping in BEGIN/COMMIT ensures atomicity
 -- => SQLx itself wraps migrations in transactions by default for PostgreSQL
 -- => Explicit transaction here for clarity and for databases that need it
-
 BEGIN;
+
 -- => Start transaction; all subsequent statements are part of this unit
-
 CREATE TABLE orders (
-    id BIGSERIAL PRIMARY KEY,
-    -- => Auto-incrementing primary key
-    customer_id BIGINT NOT NULL,
-    -- => Foreign key to customers table (not shown here)
-    status TEXT NOT NULL DEFAULT 'pending',
-    -- => Order lifecycle state; default is pending on creation
-    total_cents BIGINT NOT NULL DEFAULT 0,
-    -- => Total stored in cents; avoids floating-point rounding
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-    -- => Timestamp with timezone; records creation moment
+  id BIGSERIAL PRIMARY KEY,
+  -- => Auto-incrementing primary key
+  customer_id BIGINT NOT NULL,
+  -- => Foreign key to customers table (not shown here)
+  status TEXT NOT NULL DEFAULT 'pending',
+  -- => Order lifecycle state; default is pending on creation
+  total_cents BIGINT NOT NULL DEFAULT 0,
+  -- => Total stored in cents; avoids floating-point rounding
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  -- => Timestamp with timezone; records creation moment
 );
+
 -- => orders table created inside transaction
-
 CREATE TABLE order_items (
-    id BIGSERIAL PRIMARY KEY,
-    -- => Each line item has its own surrogate key
-    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    -- => Foreign key: deleting an order cascades to remove its items
-    product_sku TEXT NOT NULL,
-    -- => Product identifier; TEXT allows alphanumeric SKUs
-    quantity INTEGER NOT NULL CHECK (quantity > 0),
-    -- => Quantity must be positive; CHECK enforced by database
-    unit_price_cents BIGINT NOT NULL
-    -- => Per-unit price in cents at time of order
+  id BIGSERIAL PRIMARY KEY,
+  -- => Each line item has its own surrogate key
+  order_id BIGINT NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  -- => Foreign key: deleting an order cascades to remove its items
+  product_sku TEXT NOT NULL,
+  -- => Product identifier; TEXT allows alphanumeric SKUs
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  -- => Quantity must be positive; CHECK enforced by database
+  unit_price_cents BIGINT NOT NULL
+  -- => Per-unit price in cents at time of order
 );
--- => order_items table created inside same transaction
 
+-- => order_items table created inside same transaction
 COMMIT;
+
 -- => Both tables created atomically; if any statement failed, neither exists
 -- => _sqlx_migrations records this version only after COMMIT succeeds
 ```
@@ -97,19 +97,19 @@ SQLx supports PostgreSQL, SQLite, MySQL, and MSSQL through a common interface. W
 -- File: migrations/postgres/20240110110000_create_events.sql
 -- => PostgreSQL-specific migration using native types
 -- => Use when running against PostgreSQL only
-
 CREATE TABLE events (
-    id BIGSERIAL PRIMARY KEY,
-    -- => BIGSERIAL: PostgreSQL-specific auto-increment type
-    -- => Equivalent to BIGINT with a sequence attached
-    event_type TEXT NOT NULL,
-    -- => TEXT: PostgreSQL's preferred variable-length string type
-    payload JSONB NOT NULL DEFAULT '{}',
-    -- => JSONB: binary JSON storage, indexed and queryable
-    -- => Not available in SQLite; requires database-specific handling
-    occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    -- => TIMESTAMPTZ: timezone-aware timestamp (PostgreSQL-specific name)
+  id BIGSERIAL PRIMARY KEY,
+  -- => BIGSERIAL: PostgreSQL-specific auto-increment type
+  -- => Equivalent to BIGINT with a sequence attached
+  event_type TEXT NOT NULL,
+  -- => TEXT: PostgreSQL's preferred variable-length string type
+  payload JSONB NOT NULL DEFAULT '{}',
+  -- => JSONB: binary JSON storage, indexed and queryable
+  -- => Not available in SQLite; requires database-specific handling
+  occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  -- => TIMESTAMPTZ: timezone-aware timestamp (PostgreSQL-specific name)
 );
+
 -- => This migration only applies when DATABASE_URL points to PostgreSQL
 ```
 
@@ -117,20 +117,20 @@ CREATE TABLE events (
 -- File: migrations/sqlite/20240110110000_create_events.sql
 -- => SQLite-compatible migration using portable types
 -- => Use when running against SQLite (e.g., in-memory tests)
-
 CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    -- => INTEGER PRIMARY KEY: SQLite's equivalent to BIGSERIAL
-    -- => AUTOINCREMENT prevents reuse of deleted row IDs
-    event_type TEXT NOT NULL,
-    -- => TEXT: SQLite stores all strings as TEXT
-    payload TEXT NOT NULL DEFAULT '{}',
-    -- => TEXT: SQLite has no native JSON type; store as text
-    -- => Application code must serialize/deserialize JSON manually
-    occurred_at TEXT NOT NULL DEFAULT (datetime('now'))
-    -- => TEXT: SQLite stores dates as ISO 8601 strings
-    -- => datetime('now') produces UTC timestamp string
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  -- => INTEGER PRIMARY KEY: SQLite's equivalent to BIGSERIAL
+  -- => AUTOINCREMENT prevents reuse of deleted row IDs
+  event_type TEXT NOT NULL,
+  -- => TEXT: SQLite stores all strings as TEXT
+  payload TEXT NOT NULL DEFAULT '{}',
+  -- => TEXT: SQLite has no native JSON type; store as text
+  -- => Application code must serialize/deserialize JSON manually
+  occurred_at TEXT NOT NULL DEFAULT (datetime ('now'))
+  -- => TEXT: SQLite stores dates as ISO 8601 strings
+  -- => datetime('now') produces UTC timestamp string
 );
+
 -- => Compatible with sqlite::memory: used in test pools
 ```
 
@@ -281,9 +281,9 @@ PostgreSQL's `JSONB` type stores structured data as binary JSON with indexing su
 ```sql
 -- File: migrations/20240110140000_add_metadata_column.sql
 -- => Adds a JSONB column to an existing table for flexible structured data
-
 ALTER TABLE products
-    ADD COLUMN metadata JSONB NOT NULL DEFAULT '{}';
+ADD COLUMN metadata JSONB NOT NULL DEFAULT '{}';
+
 -- => JSONB: binary JSON, validated on insert, indexable via GIN
 -- => NOT NULL: every product must have a metadata object (even if empty)
 -- => DEFAULT '{}': new products get an empty JSON object automatically
@@ -405,22 +405,20 @@ Foreign key constraints enforce referential integrity between tables. The `ON UP
 ```sql
 -- File: migrations/20240110160000_create_categories.sql
 -- => Creates a category hierarchy with cascading foreign keys
-
 CREATE TABLE categories (
-    id BIGSERIAL PRIMARY KEY,
-    -- => Surrogate primary key
-    code TEXT NOT NULL UNIQUE,
-    -- => Business identifier; UNIQUE ensures no duplicate codes
-    -- => ON UPDATE CASCADE will propagate changes to this column
-    name TEXT NOT NULL
-    -- => Display name for the category
+  id BIGSERIAL PRIMARY KEY,
+  -- => Surrogate primary key
+  code TEXT NOT NULL UNIQUE,
+  -- => Business identifier; UNIQUE ensures no duplicate codes
+  -- => ON UPDATE CASCADE will propagate changes to this column
+  name TEXT NOT NULL
+  -- => Display name for the category
 );
--- => categories table created; code column is the cascading target
 
+-- => categories table created; code column is the cascading target
 ALTER TABLE products
-    ADD COLUMN category_code TEXT REFERENCES categories(code)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL;
+ADD COLUMN category_code TEXT REFERENCES categories (code) ON UPDATE CASCADE ON DELETE SET NULL;
+
 -- => Foreign key references categories.code (not categories.id)
 -- => ON UPDATE CASCADE: if categories.code changes, products.category_code updates automatically
 -- => ON DELETE SET NULL: if category is deleted, products.category_code becomes NULL
@@ -441,24 +439,23 @@ A composite primary key uses two or more columns together to uniquely identify a
 -- File: migrations/20240110170000_create_product_warehouse.sql
 -- => Junction table for many-to-many: products <-> warehouses
 -- => Composite primary key prevents duplicate warehouse-product combinations
-
 CREATE TABLE product_warehouse (
-    product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    -- => One half of the composite key; references products table
-    -- => ON DELETE CASCADE: removing a product removes its warehouse entries
-    warehouse_id BIGINT NOT NULL REFERENCES warehouses(id) ON DELETE CASCADE,
-    -- => Other half of the composite key; references warehouses table
-    -- => ON DELETE CASCADE: removing a warehouse removes its product entries
-    quantity INTEGER NOT NULL DEFAULT 0,
-    -- => Stock quantity for this product at this warehouse
-    last_restocked_at TIMESTAMPTZ,
-    -- => Nullable: NULL means never restocked since record creation
-
-    PRIMARY KEY (product_id, warehouse_id)
-    -- => Composite primary key: (product_id, warehouse_id) pair must be unique
-    -- => Prevents inserting the same product-warehouse combination twice
-    -- => Automatically creates a composite index on both columns
+  product_id BIGINT NOT NULL REFERENCES products (id) ON DELETE CASCADE,
+  -- => One half of the composite key; references products table
+  -- => ON DELETE CASCADE: removing a product removes its warehouse entries
+  warehouse_id BIGINT NOT NULL REFERENCES warehouses (id) ON DELETE CASCADE,
+  -- => Other half of the composite key; references warehouses table
+  -- => ON DELETE CASCADE: removing a warehouse removes its product entries
+  quantity INTEGER NOT NULL DEFAULT 0,
+  -- => Stock quantity for this product at this warehouse
+  last_restocked_at TIMESTAMPTZ,
+  -- => Nullable: NULL means never restocked since record creation
+  PRIMARY KEY (product_id, warehouse_id)
+  -- => Composite primary key: (product_id, warehouse_id) pair must be unique
+  -- => Prevents inserting the same product-warehouse combination twice
+  -- => Automatically creates a composite index on both columns
 );
+
 -- => Junction table ready; each row represents one product's presence in one warehouse
 ```
 
@@ -510,20 +507,20 @@ A partial index covers only rows that satisfy a condition. This creates a smalle
 ```sql
 -- File: migrations/20240110180000_add_partial_indexes.sql
 -- => Partial indexes reduce index size and enforce conditional constraints
-
 -- Index: only active users, for fast login lookups
-CREATE INDEX idx_users_email_active
-    ON users (email)
-    WHERE status = 'ACTIVE';
+CREATE INDEX idx_users_email_active ON users (email)
+WHERE
+  status = 'ACTIVE';
+
 -- => Index covers only rows where status = 'ACTIVE'
 -- => Fast for: SELECT * FROM users WHERE email = $1 AND status = 'ACTIVE'
 -- => Smaller than full index: inactive/deleted users excluded
 -- => Query planner uses this index when WHERE clause matches the index predicate
-
 -- Unique partial index: email must be unique among active users only
-CREATE UNIQUE INDEX idx_users_email_unique_active
-    ON users (email)
-    WHERE status = 'ACTIVE';
+CREATE UNIQUE INDEX idx_users_email_unique_active ON users (email)
+WHERE
+  status = 'ACTIVE';
+
 -- => UNIQUE: enforces uniqueness constraint scoped to active users
 -- => A deleted user's email can be reused by a new active user
 -- => Without UNIQUE here, a separate UNIQUE column constraint would block reuse
@@ -543,20 +540,21 @@ PostgreSQL's `tsvector` type stores preprocessed text for full-text search. A `G
 ```sql
 -- File: migrations/20240110190000_add_fulltext_search.sql
 -- => Adds full-text search capability to the products table
-
 ALTER TABLE products
-    ADD COLUMN search_vector tsvector
-        GENERATED ALWAYS AS (
-            to_tsvector('english', name || ' ' || COALESCE(description, ''))
-        ) STORED;
+ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
+  to_tsvector (
+    'english',
+    name || ' ' || COALESCE(description, '')
+  )
+) STORED;
+
 -- => tsvector: preprocessed lexeme list for full-text search
 -- => GENERATED ALWAYS AS ... STORED: computed column, auto-updated on changes
 -- => to_tsvector('english', ...): tokenize and stem using English dictionary
 -- => Concatenates name and description into one searchable document
 -- => COALESCE handles NULL description by substituting empty string
+CREATE INDEX idx_products_search ON products USING GIN (search_vector);
 
-CREATE INDEX idx_products_search
-    ON products USING GIN (search_vector);
 -- => USING GIN: specifies GIN index type; required for tsvector containment queries
 -- => Required for @@ full-text search operator to use index scan
 -- => Without this index, full-text queries fall back to sequential scan
@@ -608,22 +606,22 @@ The `IF NOT EXISTS` pattern prevents migration errors when re-running a migratio
 ```sql
 -- File: migrations/20240110200000_add_optional_columns.sql
 -- => Uses IF NOT EXISTS to make column additions safe to re-run
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS phone_number TEXT;
+ADD COLUMN IF NOT EXISTS phone_number TEXT;
+
 -- => IF NOT EXISTS: no error if phone_number already exists
 -- => Without IF NOT EXISTS: migration fails if column was added manually
 -- => Useful for: recovery after partially-applied migrations
 -- => PostgreSQL 9.6+; not available in older versions or SQLite
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+
 -- => IF NOT EXISTS applies to each ADD COLUMN independently
 -- => email_verified added only if not already present
 -- => DEFAULT FALSE: existing rows get FALSE for this new column
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+
 -- => Nullable column: no DEFAULT needed (existing rows get NULL)
 -- => NULL represents "never logged in" which is semantically correct
 ```
@@ -641,17 +639,19 @@ The `INSERT ... ON CONFLICT DO NOTHING` pattern inserts seed data only when the 
 ```sql
 -- File: migrations/20240110210000_seed_categories.sql
 -- => Inserts reference data idempotently; safe to re-run
+INSERT INTO
+  categories (code, name)
+VALUES
+  ('ELECTRONICS', 'Electronics'),
+  -- => Insert electronics category; conflict on code column skips row
+  ('CLOTHING', 'Clothing'),
+  -- => Insert clothing category
+  ('FOOD', 'Food & Beverages'),
+  -- => Insert food category
+  ('BOOKS', 'Books & Media')
+  -- => Insert books category
+  ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO categories (code, name) VALUES
-    ('ELECTRONICS', 'Electronics'),
-    -- => Insert electronics category; conflict on code column skips row
-    ('CLOTHING', 'Clothing'),
-    -- => Insert clothing category
-    ('FOOD', 'Food & Beverages'),
-    -- => Insert food category
-    ('BOOKS', 'Books & Media')
-    -- => Insert books category
-ON CONFLICT (code) DO NOTHING;
 -- => ON CONFLICT (code): triggers when a row with the same code exists
 -- => DO NOTHING: skip the insert without error; existing row unchanged
 -- => Allows this migration to run multiple times without duplicating rows
@@ -686,34 +686,32 @@ graph LR
 ```sql
 -- File: migrations/20240101000001_create_users.sql
 -- => Version 20240101000001: runs first (earliest timestamp)
-
 CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    -- => users table must exist before posts can reference it
-    username TEXT NOT NULL UNIQUE
-    -- => Unique username; referenced by post author display
+  id BIGSERIAL PRIMARY KEY,
+  -- => users table must exist before posts can reference it
+  username TEXT NOT NULL UNIQUE
+  -- => Unique username; referenced by post author display
 );
--- => Migration 1 complete; users table available for foreign keys
 
+-- => Migration 1 complete; users table available for foreign keys
 -- File: migrations/20240101000002_create_posts.sql
 -- => Version 20240101000002: runs second (after users exists)
-
 CREATE TABLE posts (
-    id BIGSERIAL PRIMARY KEY,
-    -- => Surrogate primary key for each post
-    author_id BIGINT NOT NULL REFERENCES users(id),
-    -- => Foreign key to users.id; would fail if 20240101000001 hadn't run first
-    -- => SQLx guarantees order: 20240101000001 always applied before 20240101000002
-    title TEXT NOT NULL
-    -- => Post title; required
+  id BIGSERIAL PRIMARY KEY,
+  -- => Surrogate primary key for each post
+  author_id BIGINT NOT NULL REFERENCES users (id),
+  -- => Foreign key to users.id; would fail if 20240101000001 hadn't run first
+  -- => SQLx guarantees order: 20240101000001 always applied before 20240101000002
+  title TEXT NOT NULL
+  -- => Post title; required
 );
--- => Migration 2 complete; posts table with valid foreign key to users
 
+-- => Migration 2 complete; posts table with valid foreign key to users
 -- File: migrations/20240101000003_add_post_stats.sql
 -- => Version 20240101000003: runs third (after posts exists)
-
 ALTER TABLE posts
-    ADD COLUMN view_count BIGINT NOT NULL DEFAULT 0;
+ADD COLUMN view_count BIGINT NOT NULL DEFAULT 0;
+
 -- => Modifies posts table; requires 20240101000002 to have run first
 -- => SQLx's ordered execution guarantees this
 ```
@@ -1001,24 +999,26 @@ A SQL view defines a named query that behaves like a table in SELECT statements.
 -- File: migrations/20240110230000_create_active_users_view.sql
 -- => Creates a view that filters soft-deleted users
 -- => Views are computed on every query; no data stored separately
-
 CREATE VIEW active_users AS
-    SELECT
-        id,
-        -- => Include primary key for joins and lookups
-        username,
-        -- => Display name fields included
-        email,
-        -- => Email exposed; only active users appear
-        role,
-        -- => Role included for permission checks
-        created_at
-        -- => Timestamp for reporting
-    FROM users
-    WHERE deleted_at IS NULL;
-    -- => Predicate filters out soft-deleted rows
-    -- => Application code queries active_users instead of users directly
-    -- => Adding new columns to users requires recreating the view
+SELECT
+  id,
+  -- => Include primary key for joins and lookups
+  username,
+  -- => Display name fields included
+  email,
+  -- => Email exposed; only active users appear
+  role,
+  -- => Role included for permission checks
+  created_at
+  -- => Timestamp for reporting
+FROM
+  users
+WHERE
+  deleted_at IS NULL;
+
+-- => Predicate filters out soft-deleted rows
+-- => Application code queries active_users instead of users directly
+-- => Adding new columns to users requires recreating the view
 ```
 
 ```rust
@@ -1063,27 +1063,29 @@ A materialized view stores the result of a query on disk and refreshes it on dem
 ```sql
 -- File: migrations/20240110240000_create_sales_summary_view.sql
 -- => Creates a materialized view for expensive aggregation query
-
 CREATE MATERIALIZED VIEW daily_sales_summary AS
-    SELECT
-        DATE_TRUNC('day', created_at) AS sale_date,
-        -- => DATE_TRUNC: truncate timestamp to day boundary for grouping
-        -- => PostgreSQL function; not available in SQLite
-        category,
-        -- => Group by product category
-        COUNT(*) AS order_count,
-        -- => Total number of orders per day per category
-        SUM(total_cents) AS total_revenue_cents
-        -- => Sum of all order totals in cents
-    FROM orders
-    GROUP BY DATE_TRUNC('day', created_at), category;
+SELECT
+  DATE_TRUNC ('day', created_at) AS sale_date,
+  -- => DATE_TRUNC: truncate timestamp to day boundary for grouping
+  -- => PostgreSQL function; not available in SQLite
+  category,
+  -- => Group by product category
+  COUNT(*) AS order_count,
+  -- => Total number of orders per day per category
+  SUM(total_cents) AS total_revenue_cents
+  -- => Sum of all order totals in cents
+FROM
+  orders
+GROUP BY
+  DATE_TRUNC ('day', created_at),
+  category;
+
 -- => Result stored on disk; aggregation query runs once at creation
 -- => Subsequent queries against daily_sales_summary read cached result
 -- => Data becomes stale after new orders; requires explicit REFRESH
-
 -- Create index on materialized view for fast date lookups
-CREATE INDEX idx_daily_sales_sale_date
-    ON daily_sales_summary (sale_date);
+CREATE INDEX idx_daily_sales_sale_date ON daily_sales_summary (sale_date);
+
 -- => Indexes work on materialized views just like regular tables
 -- => Supports fast range queries: WHERE sale_date BETWEEN ... AND ...
 ```
@@ -1223,34 +1225,40 @@ PostgreSQL range partitioning divides a large table into smaller physical partit
 ```sql
 -- File: migrations/20240110270000_create_events_partitioned.sql
 -- => Range-partitioned events table; each partition covers one month
-
 CREATE TABLE events_partitioned (
-    id BIGSERIAL NOT NULL,
-    -- => NOT NULL on id; BIGSERIAL doesn't auto-add PRIMARY KEY to partitioned tables
-    event_type TEXT NOT NULL,
-    -- => Event category for filtering
-    payload JSONB NOT NULL DEFAULT '{}',
-    -- => Event data stored as binary JSON
-    occurred_at TIMESTAMPTZ NOT NULL
-    -- => Partition key: must be in partition range for INSERT to succeed
-) PARTITION BY RANGE (occurred_at);
+  id BIGSERIAL NOT NULL,
+  -- => NOT NULL on id; BIGSERIAL doesn't auto-add PRIMARY KEY to partitioned tables
+  event_type TEXT NOT NULL,
+  -- => Event category for filtering
+  payload JSONB NOT NULL DEFAULT '{}',
+  -- => Event data stored as binary JSON
+  occurred_at TIMESTAMPTZ NOT NULL
+  -- => Partition key: must be in partition range for INSERT to succeed
+)
+PARTITION BY
+  RANGE (occurred_at);
+
 -- => PARTITION BY RANGE: declarative partitioning on occurred_at column
 -- => Physical partitions defined below; this is the parent table only
-
 -- Create partition for January 2024
-CREATE TABLE events_2024_01 PARTITION OF events_partitioned
-    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+CREATE TABLE events_2024_01 PARTITION OF events_partitioned FOR
+VALUES
+FROM
+  ('2024-01-01') TO ('2024-02-01');
+
 -- => Covers: occurred_at >= '2024-01-01' AND occurred_at < '2024-02-01'
 -- => INSERTs with January timestamps route to this partition automatically
 -- => SELECTs with January date range scan only this partition
-
 -- Create partition for February 2024
-CREATE TABLE events_2024_02 PARTITION OF events_partitioned
-    FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
--- => Covers February; new partitions added monthly via migration or cron job
+CREATE TABLE events_2024_02 PARTITION OF events_partitioned FOR
+VALUES
+FROM
+  ('2024-02-01') TO ('2024-03-01');
 
+-- => Covers February; new partitions added monthly via migration or cron job
 -- Default partition catches out-of-range inserts
 CREATE TABLE events_default PARTITION OF events_partitioned DEFAULT;
+
 -- => DEFAULT partition: receives rows that don't fit any range partition
 -- => Prevents INSERT errors for unexpected timestamp values
 ```
@@ -1268,20 +1276,16 @@ Generated columns compute their value automatically from other columns in the sa
 ```sql
 -- File: migrations/20240110280000_add_computed_columns.sql
 -- => Adds generated columns to orders table
-
 ALTER TABLE orders
-    ADD COLUMN total_with_tax_cents BIGINT
-        GENERATED ALWAYS AS (total_cents + (total_cents / 10))
-        STORED;
+ADD COLUMN total_with_tax_cents BIGINT GENERATED ALWAYS AS (total_cents + (total_cents / 10)) STORED;
+
 -- => GENERATED ALWAYS AS: computed from expression; cannot be set by INSERT/UPDATE
 -- => Expression: adds 10% tax (integer division; no fractional cents)
 -- => STORED: computed value saved on disk; fast to read, slight write overhead
 -- => Updates to total_cents automatically recompute total_with_tax_cents
-
 ALTER TABLE orders
-    ADD COLUMN is_large_order BOOLEAN
-        GENERATED ALWAYS AS (total_cents > 100000)
-        STORED;
+ADD COLUMN is_large_order BOOLEAN GENERATED ALWAYS AS (total_cents > 100000) STORED;
+
 -- => Boolean flag: TRUE when order exceeds 1000.00 (stored as cents)
 -- => Useful for filtering large orders without application-level threshold logic
 -- => Threshold change requires migration to update the expression
@@ -1300,16 +1304,14 @@ A GIN (Generalized Inverted Index) on a JSONB column enables fast containment qu
 ```sql
 -- File: migrations/20240110290000_add_jsonb_gin_index.sql
 -- => Creates a GIN index on the metadata JSONB column for fast containment queries
+CREATE INDEX idx_products_metadata_gin ON products USING GIN (metadata);
 
-CREATE INDEX idx_products_metadata_gin
-    ON products USING GIN (metadata);
 -- => USING GIN: specifies GIN index type; required for JSONB @> operator
 -- => Indexes the entire JSONB document; supports all containment queries
 -- => Index size: larger than B-tree but covers arbitrary key paths
-
 -- Alternative: GIN index with jsonb_path_ops operator class
-CREATE INDEX idx_products_metadata_path_gin
-    ON products USING GIN (metadata jsonb_path_ops);
+CREATE INDEX idx_products_metadata_path_gin ON products USING GIN (metadata jsonb_path_ops);
+
 -- => jsonb_path_ops: smaller index, faster for @> queries, only supports @>
 -- => Default GIN (without operator class) also supports ?, ?|, ?& operators
 -- => Choose jsonb_path_ops when you only need @> containment queries
@@ -1362,27 +1364,25 @@ An expression index indexes the result of an expression rather than a raw column
 ```sql
 -- File: migrations/20240110300000_add_expression_indexes.sql
 -- => Expression indexes for case-insensitive search and computed predicates
-
 -- Case-insensitive email lookup with uniqueness
-CREATE UNIQUE INDEX idx_users_email_lower
-    ON users (LOWER(email));
+CREATE UNIQUE INDEX idx_users_email_lower ON users (LOWER(email));
+
 -- => Indexes LOWER(email) expression result
 -- => Enables fast: SELECT * FROM users WHERE LOWER(email) = LOWER($1)
 -- => UNIQUE: prevents duplicate emails differing only in case
 -- => Without this index, case-insensitive lookup requires sequential scan
-
 -- Index on extracted JSONB field
-CREATE INDEX idx_products_supplier_country
-    ON products ((metadata->>'supplier'));
+CREATE INDEX idx_products_supplier_country ON products ((metadata - > > 'supplier'));
+
 -- => metadata->>'supplier': extracts supplier field as TEXT from JSONB
 -- => ->>: JSONB operator; extracts value as text (not JSONB sub-document)
 -- => Parentheses required around expression in index definition
 -- => Much smaller than full GIN index; targets one specific field only
-
 -- Partial expression index for active recent orders
-CREATE INDEX idx_orders_active_recent
-    ON orders (created_at DESC)
-    WHERE status = 'pending';
+CREATE INDEX idx_orders_active_recent ON orders (created_at DESC)
+WHERE
+  status = 'pending';
+
 -- => Partial expression index: covers only pending orders sorted by date
 -- => Fast for: SELECT * FROM orders WHERE status = 'pending' ORDER BY created_at DESC
 -- => Index is small: only pending orders stored, not all orders
@@ -1401,9 +1401,9 @@ A batch migration updates or transforms large tables in chunks to avoid holding 
 ```sql
 -- File: migrations/20240110310000_backfill_normalized_email.sql
 -- => Step 1: Add nullable column (fast; no data written yet)
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS normalized_email TEXT;
+ADD COLUMN IF NOT EXISTS normalized_email TEXT;
+
 -- => Add column as nullable first; avoids table rewrite with DEFAULT
 -- => NULL means "not yet backfilled" for this column
 -- => IF NOT EXISTS: safe to re-run if migration was interrupted

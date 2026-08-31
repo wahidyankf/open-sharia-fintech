@@ -270,10 +270,10 @@ Create a `users` table:
 
 ```sql
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -323,15 +323,18 @@ Execute basic SQL operations: INSERT, SELECT, UPDATE, DELETE.
 
 ```sql
 -- Insert single user
-INSERT INTO users (username, email)
-VALUES ('alice', 'alice@example.com');
+INSERT INTO
+  users (username, email)
+VALUES
+  ('alice', 'alice@example.com');
 
 -- Insert multiple users
-INSERT INTO users (username, email)
+INSERT INTO
+  users (username, email)
 VALUES
-    ('bob', 'bob@example.com'),
-    ('charlie', 'charlie@example.com'),
-    ('diana', 'diana@example.com');
+  ('bob', 'bob@example.com'),
+  ('charlie', 'charlie@example.com'),
+  ('diana', 'diana@example.com');
 ```
 
 **Expected output**:
@@ -346,19 +349,41 @@ No output means success.
 
 ```sql
 -- Select all users
-SELECT * FROM users;
+SELECT
+  *
+FROM
+  users;
 
 -- Select specific columns
-SELECT id, username FROM users;
+SELECT
+  id,
+  username
+FROM
+  users;
 
 -- Select with condition
-SELECT * FROM users WHERE username = 'alice';
+SELECT
+  *
+FROM
+  users
+WHERE
+  username = 'alice';
 
 -- Select with sorting
-SELECT * FROM users ORDER BY created_at DESC;
+SELECT
+  *
+FROM
+  users
+ORDER BY
+  created_at DESC;
 
 -- Select with limit
-SELECT * FROM users LIMIT 2;
+SELECT
+  *
+FROM
+  users
+LIMIT
+  2;
 ```
 
 **Expected output** (SELECT \* FROM users):
@@ -377,13 +402,17 @@ SELECT * FROM users LIMIT 2;
 ```sql
 -- Update single user
 UPDATE users
-SET email = 'alice.updated@example.com'
-WHERE username = 'alice';
+SET
+  email = 'alice.updated@example.com'
+WHERE
+  username = 'alice';
 
 -- Update multiple users
 UPDATE users
-SET created_at = CURRENT_TIMESTAMP
-WHERE id IN (2, 3);
+SET
+  created_at = CURRENT_TIMESTAMP
+WHERE
+  id IN (2, 3);
 ```
 
 **Expected output**:
@@ -396,10 +425,14 @@ sqlite>
 
 ```sql
 -- Delete single user
-DELETE FROM users WHERE username = 'diana';
+DELETE FROM users
+WHERE
+  username = 'diana';
 
 -- Delete with condition
-DELETE FROM users WHERE id > 10;
+DELETE FROM users
+WHERE
+  id > 10;
 ```
 
 **Expected output**:
@@ -412,10 +445,18 @@ sqlite>
 
 ```sql
 -- Count all users
-SELECT COUNT(*) FROM users;
+SELECT
+  COUNT(*)
+FROM
+  users;
 
 -- Count with condition
-SELECT COUNT(*) FROM users WHERE created_at > '2026-01-29';
+SELECT
+  COUNT(*)
+FROM
+  users
+WHERE
+  created_at > '2026-01-29';
 ```
 
 **Expected output**:
@@ -566,29 +607,21 @@ SQLite uses dynamic typing with five storage classes.
 ```sql
 -- Integer types
 CREATE TABLE numbers (
-    small_int INTEGER,
-    big_int BIGINT,
-    tiny_int TINYINT
+  small_int INTEGER,
+  big_int BIGINT,
+  tiny_int TINYINT
 );
 
 -- Text types
-CREATE TABLE texts (
-    name TEXT,
-    description VARCHAR(255),
-    bio CLOB
-);
+CREATE TABLE texts (name TEXT, description VARCHAR(255), bio CLOB);
 
 -- Real types
-CREATE TABLE decimals (
-    price REAL,
-    weight DOUBLE,
-    ratio FLOAT
-);
+CREATE TABLE decimals (price REAL, weight DOUBLE, ratio FLOAT);
 
 -- Date/time stored as TEXT or INTEGER
 CREATE TABLE events (
-    event_time TEXT,                -- ISO 8601 format
-    timestamp INTEGER               -- Unix timestamp
+  event_time TEXT, -- ISO 8601 format
+  timestamp INTEGER -- Unix timestamp
 );
 ```
 
@@ -647,12 +680,19 @@ Work with multiple databases simultaneously:
 ATTACH DATABASE 'other.db' AS other;
 
 -- Query across databases
-SELECT u.username, o.order_id
-FROM users u
-JOIN other.orders o ON u.id = o.user_id;
+SELECT
+  u.username,
+  o.order_id
+FROM
+  users u
+  JOIN other.orders o ON u.id = o.user_id;
 
 -- Copy table between databases
-CREATE TABLE other.users AS SELECT * FROM main.users;
+CREATE TABLE other.users AS
+SELECT
+  *
+FROM
+  main.users;
 
 -- Detach database
 DETACH DATABASE other;
@@ -684,8 +724,9 @@ PRAGMA journal_mode = WAL;
 PRAGMA cache_size;
 
 -- Set cache size (negative = KB, positive = pages)
-PRAGMA cache_size = -8000;  -- 8MB cache
+PRAGMA cache_size = -8000;
 
+-- 8MB cache
 -- Show database integrity
 PRAGMA integrity_check;
 
@@ -694,18 +735,21 @@ PRAGMA quick_check;
 
 -- Show database statistics
 PRAGMA database_list;
-PRAGMA table_info(users);
+
+PRAGMA table_info (users);
 ```
 
 ### Performance Settings
 
 ```sql
 -- Disable synchronous writes (faster but less safe)
-PRAGMA synchronous = OFF;   -- Use only for testing
+PRAGMA synchronous = OFF;
 
+-- Use only for testing
 -- Enable memory-mapped I/O
-PRAGMA mmap_size = 268435456;  -- 256MB
+PRAGMA mmap_size = 268435456;
 
+-- 256MB
 -- Set temp store to memory
 PRAGMA temp_store = MEMORY;
 ```
@@ -720,43 +764,91 @@ Master fundamental SQL patterns for daily use.
 
 ```sql
 -- WHERE clause
-SELECT * FROM users WHERE id > 2;
+SELECT
+  *
+FROM
+  users
+WHERE
+  id > 2;
 
 -- Multiple conditions
-SELECT * FROM users WHERE id > 1 AND username LIKE 'a%';
+SELECT
+  *
+FROM
+  users
+WHERE
+  id > 1
+  AND username LIKE 'a%';
 
 -- IN operator
-SELECT * FROM users WHERE id IN (1, 2, 3);
+SELECT
+  *
+FROM
+  users
+WHERE
+  id IN (1, 2, 3);
 
 -- ORDER BY
-SELECT * FROM users ORDER BY created_at DESC;
+SELECT
+  *
+FROM
+  users
+ORDER BY
+  created_at DESC;
 
 -- LIMIT and OFFSET (pagination)
-SELECT * FROM users LIMIT 10 OFFSET 20;  -- Page 3 (rows 21-30)
+SELECT
+  *
+FROM
+  users
+LIMIT
+  10
+OFFSET
+  20;
+
+-- Page 3 (rows 21-30)
 ```
 
 ### Aggregation
 
 ```sql
 -- Count rows
-SELECT COUNT(*) FROM users;
+SELECT
+  COUNT(*)
+FROM
+  users;
 
 -- Count non-null values
-SELECT COUNT(email) FROM users;
+SELECT
+  COUNT(email)
+FROM
+  users;
 
 -- Distinct values
-SELECT COUNT(DISTINCT username) FROM users;
+SELECT
+  COUNT(DISTINCT username)
+FROM
+  users;
 
 -- Group by
-SELECT username, COUNT(*) as order_count
-FROM orders
-GROUP BY username;
+SELECT
+  username,
+  COUNT(*) as order_count
+FROM
+  orders
+GROUP BY
+  username;
 
 -- Group by with filtering
-SELECT username, COUNT(*) as order_count
-FROM orders
-GROUP BY username
-HAVING COUNT(*) > 5;
+SELECT
+  username,
+  COUNT(*) as order_count
+FROM
+  orders
+GROUP BY
+  username
+HAVING
+  COUNT(*) > 5;
 ```
 
 ### Joins
@@ -764,21 +856,27 @@ HAVING COUNT(*) > 5;
 ```sql
 -- Create related table
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
-    user_id INTEGER,
-    product TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER,
+  product TEXT,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- INNER JOIN
-SELECT u.username, o.product
-FROM users u
-INNER JOIN orders o ON u.id = o.user_id;
+SELECT
+  u.username,
+  o.product
+FROM
+  users u
+  INNER JOIN orders o ON u.id = o.user_id;
 
 -- LEFT JOIN (include all users, even without orders)
-SELECT u.username, o.product
-FROM users u
-LEFT JOIN orders o ON u.id = o.user_id;
+SELECT
+  u.username,
+  o.product
+FROM
+  users u
+  LEFT JOIN orders o ON u.id = o.user_id;
 ```
 
 ## Next Steps

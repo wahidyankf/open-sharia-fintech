@@ -246,25 +246,23 @@ By default, Goose wraps each SQL migration in a transaction. The `-- +goose NO T
 
 ```sql
 -- File: db/migrations/00023_concurrent_index.sql
-
 -- +goose NO TRANSACTION
 -- => Instructs Goose to NOT wrap this file in a BEGIN/COMMIT block
 -- => Required because CREATE INDEX CONCURRENTLY cannot run inside a transaction
 -- => Without this directive, you would get:
 -- => ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block
-
 -- +goose Up
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_expenses_category_date
-    ON expenses (category, date DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_expenses_category_date ON expenses (category, date DESC);
+
 -- => CONCURRENTLY: builds index without locking the table against writes
 -- => Table remains fully readable and writable during index creation
 -- => Trade-off: takes longer to build than standard CREATE INDEX
 -- => IF NOT EXISTS: makes this idempotent — safe to re-run after partial failure
 -- => Composite index on (category, date DESC): optimizes queries like:
 -- =>   SELECT * FROM expenses WHERE category = 'food' ORDER BY date DESC
-
 -- +goose Down
 DROP INDEX CONCURRENTLY IF EXISTS idx_expenses_category_date;
+
 -- => CONCURRENTLY on DROP also avoids write locks during index removal
 -- => IF EXISTS prevents error if the index was never fully created
 ```
@@ -362,18 +360,18 @@ Complex migrations that drop columns, rename tables, or change data formats are 
 -- File: db/migrations/00025_rename_amount_to_total.sql
 -- => Demonstrates "safe rename" using ADD COLUMN + backfill + DROP (3 migrations)
 -- => This file is Phase 1 of 3: add the new column alongside the old one
-
 -- +goose Up
 ALTER TABLE expenses
-    ADD COLUMN total DECIMAL(19,4);
+ADD COLUMN total DECIMAL(19, 4);
+
 -- => Adds "total" column as nullable (no DEFAULT, no NOT NULL yet)
 -- => Existing rows get NULL for total — application must tolerate this during migration
 -- => Phase 2 migration will backfill total = amount for all rows
 -- => Phase 3 migration will add NOT NULL constraint and drop amount
-
 -- +goose Down
 ALTER TABLE expenses
-    DROP COLUMN IF EXISTS total;
+DROP COLUMN IF EXISTS total;
+
 -- => Safe rollback: only removes the column we added in this migration
 -- => amount column is untouched — no data loss possible
 -- => IF EXISTS handles the case where Up partially failed before creating total
@@ -382,19 +380,23 @@ ALTER TABLE expenses
 ```sql
 -- File: db/migrations/00026_backfill_total_from_amount.sql
 -- => Phase 2 of 3: copy data from old column to new column
-
 -- +goose Up
 UPDATE expenses
-    SET total = amount
-    WHERE total IS NULL;
+SET
+  total = amount
+WHERE
+  total IS NULL;
+
 -- => Backfill: copy all existing amount values into total
 -- => WHERE total IS NULL: idempotent — safe to re-run (won't overwrite manual data)
 -- => After this migration: all rows have both amount and total set to same value
-
 -- +goose Down
 UPDATE expenses
-    SET total = NULL
-    WHERE total IS NOT NULL;
+SET
+  total = NULL
+WHERE
+  total IS NOT NULL;
+
 -- => Clears the backfill; restores total to NULL for all rows
 -- => amount column still holds all original data — no data loss
 ```
@@ -771,28 +773,29 @@ A partial index indexes only the rows that match a WHERE condition. This dramati
 
 ```sql
 -- File: db/migrations/00031_partial_indexes_expenses.sql
-
 -- +goose Up
-CREATE INDEX idx_expenses_active_user
-    ON expenses (user_id, date DESC)
-    WHERE deleted_at IS NULL;
+CREATE INDEX idx_expenses_active_user ON expenses (user_id, date DESC)
+WHERE
+  deleted_at IS NULL;
+
 -- => Partial index: only indexes rows where deleted_at IS NULL (non-deleted expenses)
 -- => If 80% of expenses are soft-deleted, this index is 5x smaller than a full index
 -- => Optimizes: SELECT * FROM expenses WHERE user_id = $1 AND deleted_at IS NULL ORDER BY date DESC
 -- => Query must include WHERE deleted_at IS NULL for PostgreSQL to use this partial index
 -- => The predicate in the query must match the predicate in the index definition
+CREATE INDEX idx_expenses_pending_category ON expenses (category)
+WHERE
+  type = 'PENDING';
 
-CREATE INDEX idx_expenses_pending_category
-    ON expenses (category)
-    WHERE type = 'PENDING';
 -- => Another partial index: only PENDING expenses (a minority of all rows)
 -- => Accelerates: SELECT * FROM expenses WHERE category = 'food' AND type = 'PENDING'
 -- => PostgreSQL query planner uses this when the WHERE clause matches the index predicate
-
 -- +goose Down
 DROP INDEX IF EXISTS idx_expenses_pending_category;
+
 -- => Drop in reverse creation order (last created, first dropped)
 DROP INDEX IF EXISTS idx_expenses_active_user;
+
 -- => IF EXISTS guards prevent errors if Up migration partially failed
 ```
 
@@ -808,33 +811,35 @@ PostgreSQL's full-text search uses `tsvector` and `tsquery` types with GIN index
 
 ```sql
 -- File: db/migrations/00032_add_fulltext_search.sql
-
 -- +goose NO TRANSACTION
 -- => GIN index creation with CONCURRENTLY requires no transaction block
-
 -- +goose Up
 ALTER TABLE expenses
-    ADD COLUMN search_vector tsvector
-    GENERATED ALWAYS AS (
-        to_tsvector('english', coalesce(description, '') || ' ' || coalesce(category, ''))
-        -- => Concatenates description and category into a searchable tsvector
-        -- => 'english' configures stemming (running -> run, searches -> search)
-        -- => coalesce handles NULL values: NULL || ' text' would produce NULL without it
-    ) STORED;
+ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
+  to_tsvector (
+    'english',
+    coalesce(description, '') || ' ' || coalesce(category, '')
+  )
+  -- => Concatenates description and category into a searchable tsvector
+  -- => 'english' configures stemming (running -> run, searches -> search)
+  -- => coalesce handles NULL values: NULL || ' text' would produce NULL without it
+) STORED;
+
 -- => GENERATED ALWAYS AS ... STORED: PostgreSQL computes and stores the value on INSERT/UPDATE
 -- => The column is automatically kept in sync with description and category
 -- => STORED is required for GIN indexes on generated columns (cannot index virtual columns)
+CREATE INDEX CONCURRENTLY idx_expenses_search ON expenses USING GIN (search_vector);
 
-CREATE INDEX CONCURRENTLY idx_expenses_search
-    ON expenses USING GIN (search_vector);
 -- => GIN (Generalized Inverted Index) is required for tsvector columns
 -- => GIN indexes the individual lexemes (word stems) inside the tsvector
 -- => CONCURRENTLY: non-blocking index creation on the live table
-
 -- +goose Down
 DROP INDEX CONCURRENTLY IF EXISTS idx_expenses_search;
+
 -- => Drop index first before removing the column it indexes
-ALTER TABLE expenses DROP COLUMN IF EXISTS search_vector;
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS search_vector;
+
 -- => Removes generated column and its storage
 ```
 
@@ -850,35 +855,39 @@ A database view is a named SQL query stored in the database. Views simplify comp
 
 ```sql
 -- File: db/migrations/00033_create_expense_summary_view.sql
-
 -- +goose Up
 CREATE VIEW expense_summary AS
-    SELECT
-        user_id,
-        -- => Group by user_id: one row per user in the result
-        category,
-        -- => Include category: gives per-user per-category breakdown
-        DATE_TRUNC('month', date) AS month,
-        -- => DATE_TRUNC rounds date down to the first of the month
-        -- => Enables: GROUP BY user_id, category, month for monthly reports
-        SUM(amount)   AS total_amount,
-        -- => Aggregate: total spend per user per category per month
-        COUNT(*)      AS transaction_count,
-        -- => Count of individual transactions in this grouping
-        AVG(amount)   AS average_amount
-        -- => Average transaction size; useful for anomaly detection
-    FROM expenses
-    WHERE deleted_at IS NULL
-    -- => Exclude soft-deleted rows from the view
-    GROUP BY user_id, category, DATE_TRUNC('month', date);
+SELECT
+  user_id,
+  -- => Group by user_id: one row per user in the result
+  category,
+  -- => Include category: gives per-user per-category breakdown
+  DATE_TRUNC ('month', date) AS month,
+  -- => DATE_TRUNC rounds date down to the first of the month
+  -- => Enables: GROUP BY user_id, category, month for monthly reports
+  SUM(amount) AS total_amount,
+  -- => Aggregate: total spend per user per category per month
+  COUNT(*) AS transaction_count,
+  -- => Count of individual transactions in this grouping
+  AVG(amount) AS average_amount
+  -- => Average transaction size; useful for anomaly detection
+FROM
+  expenses
+WHERE
+  deleted_at IS NULL
+  -- => Exclude soft-deleted rows from the view
+GROUP BY
+  user_id,
+  category,
+  DATE_TRUNC ('month', date);
+
 -- => View stores the SELECT definition, not the result; runs fresh on every query
+COMMENT ON VIEW expense_summary IS 'Aggregated expense totals by user, category, and month. Excludes soft-deleted rows.';
 
-COMMENT ON VIEW expense_summary IS
-    'Aggregated expense totals by user, category, and month. Excludes soft-deleted rows.';
 -- => View comments appear in pg_description; visible in psql \d+ and pgAdmin
-
 -- +goose Down
 DROP VIEW IF EXISTS expense_summary;
+
 -- => Drops the view definition; underlying expenses table is unaffected
 ```
 
@@ -894,35 +903,38 @@ A materialized view stores the query result physically on disk, unlike a regular
 
 ```sql
 -- File: db/migrations/00034_create_materialized_monthly_report.sql
-
 -- +goose NO TRANSACTION
 -- => CREATE INDEX CONCURRENTLY on materialized view requires no transaction
-
 -- +goose Up
 CREATE MATERIALIZED VIEW monthly_expense_report AS
-    SELECT
-        user_id,
-        DATE_TRUNC('month', date) AS report_month,
-        -- => Truncates to month; all dates in March 2026 become 2026-03-01
-        SUM(amount)   AS total_amount,
-        COUNT(*)      AS transaction_count,
-        MIN(date)     AS earliest_date,
-        MAX(date)     AS latest_date
-        -- => MIN/MAX capture the actual date range within the month
-    FROM expenses
-    WHERE deleted_at IS NULL
-    GROUP BY user_id, DATE_TRUNC('month', date)
-    WITH DATA;
+SELECT
+  user_id,
+  DATE_TRUNC ('month', date) AS report_month,
+  -- => Truncates to month; all dates in March 2026 become 2026-03-01
+  SUM(amount) AS total_amount,
+  COUNT(*) AS transaction_count,
+  MIN(date) AS earliest_date,
+  MAX(date) AS latest_date
+  -- => MIN/MAX capture the actual date range within the month
+FROM
+  expenses
+WHERE
+  deleted_at IS NULL
+GROUP BY
+  user_id,
+  DATE_TRUNC ('month', date)
+WITH
+  DATA;
+
 -- => WITH DATA: populates the materialized view immediately on creation
 -- => WITHOUT DATA would create an empty view that must be refreshed manually
+CREATE INDEX CONCURRENTLY idx_monthly_report_user_month ON monthly_expense_report (user_id, report_month DESC);
 
-CREATE INDEX CONCURRENTLY idx_monthly_report_user_month
-    ON monthly_expense_report (user_id, report_month DESC);
 -- => Index on the materialized view: queries against it benefit from the index
 -- => CONCURRENTLY: builds index without locking the materialized view
-
 -- +goose Down
 DROP MATERIALIZED VIEW IF EXISTS monthly_expense_report;
+
 -- => Drops both the stored data and the index (index is attached to the view)
 ```
 
@@ -1323,36 +1335,33 @@ A foreign key with `ON UPDATE CASCADE` automatically updates the child table's f
 
 ```sql
 -- File: db/migrations/00039_create_categories.sql
-
 -- +goose Up
 CREATE TABLE expense_categories (
-    code        VARCHAR(50)  NOT NULL PRIMARY KEY,
-    -- => Natural primary key: category code (e.g., 'FOOD', 'TRANSPORT')
-    -- => VARCHAR primary key: meaningful to humans; no separate id needed
-    label       VARCHAR(255) NOT NULL,
-    -- => Human-readable label for the category
-    parent_code VARCHAR(50)  REFERENCES expense_categories(code)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
-    -- => Self-referential FK: supports category hierarchies (e.g., FOOD > FAST_FOOD)
-    -- => ON UPDATE CASCADE: if 'FOOD' code changes to 'GROCERY', child rows update automatically
-    -- => ON DELETE SET NULL: if a parent category is deleted, children become root categories
-    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  code VARCHAR(50) NOT NULL PRIMARY KEY,
+  -- => Natural primary key: category code (e.g., 'FOOD', 'TRANSPORT')
+  -- => VARCHAR primary key: meaningful to humans; no separate id needed
+  label VARCHAR(255) NOT NULL,
+  -- => Human-readable label for the category
+  parent_code VARCHAR(50) REFERENCES expense_categories (code) ON UPDATE CASCADE ON DELETE SET NULL,
+  -- => Self-referential FK: supports category hierarchies (e.g., FOOD > FAST_FOOD)
+  -- => ON UPDATE CASCADE: if 'FOOD' code changes to 'GROCERY', child rows update automatically
+  -- => ON DELETE SET NULL: if a parent category is deleted, children become root categories
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
 
 ALTER TABLE expenses
-    ADD COLUMN category_code VARCHAR(50)
-    REFERENCES expense_categories(code)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT;
+ADD COLUMN category_code VARCHAR(50) REFERENCES expense_categories (code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
 -- => ON UPDATE CASCADE: if a category code is renamed, all expense rows update automatically
 -- => ON DELETE RESTRICT: prevents deleting a category that has expenses; requires reassignment first
 -- => This is the correct default for business data: do not cascade deletes to financial records
-
 -- +goose Down
-ALTER TABLE expenses DROP COLUMN IF EXISTS category_code;
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS category_code;
+
 -- => Remove the FK column before dropping the referenced table
 DROP TABLE IF EXISTS expense_categories;
+
 -- => Drop the categories table after removing all FK references to it
 ```
 
@@ -1368,30 +1377,27 @@ A composite primary key uses two or more columns together as the unique identifi
 
 ```sql
 -- File: db/migrations/00040_create_expense_tags.sql
-
 -- +goose Up
 CREATE TABLE expense_tags (
-    expense_id UUID        NOT NULL REFERENCES expenses(id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: deleting an expense automatically removes its tags
-    -- => This is correct: tags are not meaningful without their expense
-    tag        VARCHAR(50) NOT NULL,
-    -- => Short string tag: 'travel', 'reimbursable', 'recurring', etc.
-    tagged_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- => When this tag was applied; useful for tag history queries
-    tagged_by  VARCHAR(255) NOT NULL DEFAULT 'user',
-    -- => Who applied the tag; supports audit queries
-
-    PRIMARY KEY (expense_id, tag)
-    -- => Composite PK: a given expense can have each tag at most once
-    -- => Replaces the need for a separate id column on this join table
-    -- => INSERT ... ON CONFLICT (expense_id, tag) DO NOTHING for idempotent tagging
+  expense_id UUID NOT NULL REFERENCES expenses (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: deleting an expense automatically removes its tags
+  -- => This is correct: tags are not meaningful without their expense
+  tag VARCHAR(50) NOT NULL,
+  -- => Short string tag: 'travel', 'reimbursable', 'recurring', etc.
+  tagged_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => When this tag was applied; useful for tag history queries
+  tagged_by VARCHAR(255) NOT NULL DEFAULT 'user',
+  -- => Who applied the tag; supports audit queries
+  PRIMARY KEY (expense_id, tag)
+  -- => Composite PK: a given expense can have each tag at most once
+  -- => Replaces the need for a separate id column on this join table
+  -- => INSERT ... ON CONFLICT (expense_id, tag) DO NOTHING for idempotent tagging
 );
 
-CREATE INDEX idx_expense_tags_tag
-    ON expense_tags (tag);
+CREATE INDEX idx_expense_tags_tag ON expense_tags (tag);
+
 -- => Index on tag alone: accelerates "find all expenses with tag X" queries
 -- => The PK index already covers (expense_id, tag); this covers (tag, expense_id)
-
 -- +goose Down
 DROP TABLE IF EXISTS expense_tags;
 ```
@@ -1410,35 +1416,40 @@ PostgreSQL's declarative partitioning splits a large table into smaller physical
 -- File: db/migrations/00041_partition_expenses_by_year.sql
 -- => Converts the expenses table to a partitioned table
 -- => WARNING: requires migrating existing data; plan for maintenance window in production
-
 -- +goose Up
 -- Step 1: Create the new partitioned parent table
 CREATE TABLE expenses_partitioned (
-    LIKE expenses INCLUDING ALL
-    -- => LIKE ... INCLUDING ALL: copies column definitions, constraints, indexes, defaults
-    -- => Creates a structurally identical table; data is NOT copied
-) PARTITION BY RANGE (date);
+  LIKE expenses INCLUDING ALL
+  -- => LIKE ... INCLUDING ALL: copies column definitions, constraints, indexes, defaults
+  -- => Creates a structurally identical table; data is NOT copied
+)
+PARTITION BY
+  RANGE (date);
+
 -- => PARTITION BY RANGE (date): partitions rows by the date column value
 -- => PostgreSQL routes INSERT/SELECT to the correct partition automatically
-
 -- Step 2: Create initial yearly partitions
-CREATE TABLE expenses_2024
-    PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE expenses_2024 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2024-01-01') TO ('2025-01-01');
+
 -- => Covers all dates where date >= 2024-01-01 AND date < 2025-01-01
 -- => Upper bound is exclusive; lower bound is inclusive
+CREATE TABLE expenses_2025 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2025-01-01') TO ('2026-01-01');
 
-CREATE TABLE expenses_2025
-    PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
+CREATE TABLE expenses_2026 PARTITION OF expenses_partitioned FOR
+VALUES
+FROM
+  ('2026-01-01') TO ('2027-01-01');
 
-CREATE TABLE expenses_2026
-    PARTITION OF expenses_partitioned
-    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
 -- => Create one partition per year; add future partitions before they're needed
-
 -- +goose Down
 DROP TABLE IF EXISTS expenses_partitioned CASCADE;
+
 -- => CASCADE drops all partitions (expenses_2024, expenses_2025, expenses_2026)
 -- => The original expenses table is unaffected by this Down block
 ```
@@ -1455,34 +1466,33 @@ A generated column derives its value from an expression over other columns in th
 
 ```sql
 -- File: db/migrations/00042_add_amount_in_usd.sql
-
 -- +goose Up
 ALTER TABLE expenses
-    ADD COLUMN amount_usd DECIMAL(19,4)
-    GENERATED ALWAYS AS (
-        CASE currency
-            WHEN 'USD' THEN amount
-            -- => No conversion needed: amount is already in USD
-            WHEN 'EUR' THEN amount * 1.08
-            -- => Approximate conversion; real systems use a rates table
-            WHEN 'IDR' THEN amount * 0.000064
-            -- => Indonesian Rupiah to USD; approximate exchange rate
-            ELSE amount
-            -- => Unknown currencies: preserve original amount
-        END
-    ) STORED;
+ADD COLUMN amount_usd DECIMAL(19, 4) GENERATED ALWAYS AS (
+  CASE currency
+    WHEN 'USD' THEN amount
+    -- => No conversion needed: amount is already in USD
+    WHEN 'EUR' THEN amount * 1.08
+    -- => Approximate conversion; real systems use a rates table
+    WHEN 'IDR' THEN amount * 0.000064
+    -- => Indonesian Rupiah to USD; approximate exchange rate
+    ELSE amount
+    -- => Unknown currencies: preserve original amount
+  END
+) STORED;
+
 -- => GENERATED ALWAYS AS: value is computed from the expression, not from INSERT/UPDATE
 -- => STORED: value is physically stored on disk; indexes can be built on it
 -- => PostgreSQL recomputes and updates this column automatically when amount or currency changes
 -- => Queries can use amount_usd directly without repeating the CASE expression
+CREATE INDEX idx_expenses_amount_usd ON expenses (amount_usd);
 
-CREATE INDEX idx_expenses_amount_usd
-    ON expenses (amount_usd);
 -- => Index on generated column: enables efficient ORDER BY amount_usd, range filters
-
 -- +goose Down
 DROP INDEX IF EXISTS idx_expenses_amount_usd;
-ALTER TABLE expenses DROP COLUMN IF EXISTS amount_usd;
+
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS amount_usd;
 ```
 
 **Key Takeaway**: Generated columns encode derived-value logic once in the database schema, preventing the duplication of CASE expressions or conversion formulas across every application query that needs the computed value.
@@ -1497,26 +1507,26 @@ PostgreSQL's `JSONB` type stores JSON data in a binary format that supports inde
 
 ```sql
 -- File: db/migrations/00043_add_metadata_jsonb.sql
-
 -- +goose Up
 ALTER TABLE expenses
-    ADD COLUMN metadata JSONB NOT NULL DEFAULT '{}';
+ADD COLUMN metadata JSONB NOT NULL DEFAULT '{}';
+
 -- => JSONB: binary JSON; faster to query than JSON (text)
 -- => NOT NULL DEFAULT '{}': every row starts with an empty object
 -- => Avoids NULL checks in application code when reading metadata
 -- => Use for: receipt OCR data, tags map, external IDs from payment processors
+ALTER TABLE expenses ADD CONSTRAINT chk_expenses_metadata_is_object CHECK (jsonb_typeof (metadata) = 'object');
 
-ALTER TABLE expenses
-    ADD CONSTRAINT chk_expenses_metadata_is_object
-    CHECK (jsonb_typeof(metadata) = 'object');
 -- => jsonb_typeof returns 'object', 'array', 'string', 'number', 'boolean', 'null'
 -- => Ensures metadata is always a JSON object, not an array like [1,2,3]
 -- => This constraint fires on INSERT and UPDATE; prevents schema misuse
-
 -- +goose Down
-ALTER TABLE expenses DROP CONSTRAINT IF EXISTS chk_expenses_metadata_is_object;
+ALTER TABLE expenses
+DROP CONSTRAINT IF EXISTS chk_expenses_metadata_is_object;
+
 -- => Drop constraint before column (constraint references the column)
-ALTER TABLE expenses DROP COLUMN IF EXISTS metadata;
+ALTER TABLE expenses
+DROP COLUMN IF EXISTS metadata;
 ```
 
 **Key Takeaway**: Use `JSONB NOT NULL DEFAULT '{}'` for flexible attribute storage, and add a `CHECK (jsonb_typeof(metadata) = 'object')` constraint to enforce that the column always contains a JSON object rather than an array or scalar.
@@ -1566,27 +1576,24 @@ A GIN (Generalized Inverted Index) on a JSONB column enables efficient queries u
 
 ```sql
 -- File: db/migrations/00045_gin_indexes_jsonb_tags.sql
-
 -- +goose NO TRANSACTION
 -- => Both GIN indexes below use CONCURRENTLY
-
 -- +goose Up
-CREATE INDEX CONCURRENTLY idx_expenses_metadata_gin
-    ON expenses USING GIN (metadata);
+CREATE INDEX CONCURRENTLY idx_expenses_metadata_gin ON expenses USING GIN (metadata);
+
 -- => GIN on JSONB: indexes every key-value pair and nested path in metadata
 -- => Enables fast: WHERE metadata @> '{"receipt_url": "https://..."}'
 -- =>          and: WHERE metadata ? 'receipt_url'  (key exists check)
 -- => Full GIN index is large; use jsonb_path_ops for smaller index if you only need @>
+CREATE INDEX CONCURRENTLY idx_expenses_tags_gin ON expenses USING GIN (tags);
 
-CREATE INDEX CONCURRENTLY idx_expenses_tags_gin
-    ON expenses USING GIN (tags);
 -- => GIN on TEXT[]: indexes each element in the array
 -- => Enables fast: WHERE tags @> ARRAY['food', 'reimbursable']  (array contains)
 -- =>          and: WHERE 'food' = ANY(tags)  (element membership)
 -- => Without this index, ANY(tags) requires a sequential scan of the entire array per row
-
 -- +goose Down
 DROP INDEX CONCURRENTLY IF EXISTS idx_expenses_tags_gin;
+
 DROP INDEX CONCURRENTLY IF EXISTS idx_expenses_metadata_gin;
 ```
 

@@ -1682,21 +1682,21 @@ packages: [python3.12, python3.12-venv, ufw, caddy, sqlite3, curl, ca-certificat
 package_update: true
 users:
   - name: deploy
-    sudo: ALL=(ALL) NOPASSWD:ALL  # first-boot convenience; NARROW after setup
+    sudo: ALL=(ALL) NOPASSWD:ALL # first-boot convenience; NARROW after setup
     shell: /bin/bash
     ssh_authorized_keys: [ssh-ed25519 AAAA... replace-with-your-public-key]
 runcmd:
-  - [ ufw, --force, reset ]
-  - [ ufw, default, deny, incoming ]
-  - [ ufw, default, allow, outgoing ]
-  - [ ufw, allow, 22/tcp ]
-  - [ ufw, allow, 80/tcp ]
-  - [ ufw, allow, 443/tcp ]
-  - [ ufw, --force, enable ]
-  - [ install, -d, -o, deploy, -g, deploy, -m, 755, /opt/myapp ]
-  - [ sudo, -u, deploy, python3.12, -m, venv, /opt/myapp/venv ]
-  - [ systemctl, enable, --now, myapp ]
-  - [ systemctl, enable, --now, caddy ]
+  - [ufw, --force, reset]
+  - [ufw, default, deny, incoming]
+  - [ufw, default, allow, outgoing]
+  - [ufw, allow, 22/tcp]
+  - [ufw, allow, 80/tcp]
+  - [ufw, allow, 443/tcp]
+  - [ufw, --force, enable]
+  - [install, -d, -o, deploy, -g, deploy, -m, 755, /opt/myapp]
+  - [sudo, -u, deploy, python3.12, -m, venv, /opt/myapp/venv]
+  - [systemctl, enable, --now, myapp]
+  - [systemctl, enable, --now, caddy]
 ```
 
 **Run**: paste as the new VM's user-data at creation; on first SSH it already has the service running

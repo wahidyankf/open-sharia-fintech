@@ -2563,12 +2563,12 @@ Use `schema.sql` and `data.sql` for simple initialization. For production, use F
 -- src/main/resources/schema.sql
 -- Executed during Spring Boot startup (before application ready)
 -- Creates database schema (tables, indexes, constraints)
-
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- Auto-increment primary key
-    email VARCHAR(255) NOT NULL UNIQUE,     -- Unique constraint on email
-    name VARCHAR(255)                       -- Nullable name field
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, -- Auto-increment primary key
+  email VARCHAR(255) NOT NULL UNIQUE, -- Unique constraint on email
+  name VARCHAR(255) -- Nullable name field
 );
+
 -- => Spring executes this on startup
 -- => IF NOT EXISTS prevents errors on restart
 ```
@@ -2577,13 +2577,18 @@ CREATE TABLE IF NOT EXISTS users (
 -- src/main/resources/data.sql
 -- Executed after schema.sql completes
 -- Populates tables with initial data
+INSERT INTO
+  users (email, name)
+VALUES
+  ('alice@example.com', 'Alice');
 
-INSERT INTO users (email, name) VALUES ('alice@example.com', 'Alice');
 -- => Inserts first user (id auto-generated to 1)
+INSERT INTO
+  users (email, name)
+VALUES
+  ('bob@example.com', 'Bob');
 
-INSERT INTO users (email, name) VALUES ('bob@example.com', 'Bob');
 -- => Inserts second user (id auto-generated to 2)
-
 -- Note: These run on every startup!
 -- Use ON CONFLICT or check existence to prevent duplicates
 ```
@@ -2605,12 +2610,12 @@ INSERT INTO users (email, name) VALUES ('bob@example.com', 'Bob');
 -- Flyway migration file naming: V{version}__{description}.sql
 -- Version number must be unique and incrementing (1, 2, 3, ...)
 -- __ (double underscore) separates version from description
-
 CREATE TABLE users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255)
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255)
 );
+
 -- => Flyway executes this ONCE (tracks in flyway_schema_history table)
 -- => Subsequent startups skip this migration
 -- => New migrations add V2__, V3__, etc.
@@ -2653,33 +2658,40 @@ SQL files are identical for Kotlin projects:
 ```sql
 -- src/main/resources/schema.sql
 -- Same as Java version - SQL is database language, not JVM language specific
-
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255)
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255)
 );
+
 -- => Works identically in Kotlin Spring Boot projects
 ```
 
 ```sql
 -- src/main/resources/data.sql
 -- Same as Java version
+INSERT INTO
+  users (email, name)
+VALUES
+  ('alice@example.com', 'Alice');
 
-INSERT INTO users (email, name) VALUES ('alice@example.com', 'Alice');
-INSERT INTO users (email, name) VALUES ('bob@example.com', 'Bob');
+INSERT INTO
+  users (email, name)
+VALUES
+  ('bob@example.com', 'Bob');
+
 -- => Executes identically in Kotlin projects
 ```
 
 ```sql
 -- src/main/resources/db/migration/V1__Create_users_table.sql
 -- Flyway migration - identical for Kotlin and Java
-
 CREATE TABLE users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255)
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255)
 );
+
 -- => Flyway tracks migrations identically regardless of JVM language
 ```
 

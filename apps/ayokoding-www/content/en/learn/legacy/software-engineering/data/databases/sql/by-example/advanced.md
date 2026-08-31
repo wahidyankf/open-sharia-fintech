@@ -817,76 +817,98 @@ graph TD
 
 ```sql
 -- Enable foreign key constraints (SQLite specific)
-PRAGMA foreign_keys = ON;                              -- => Enables referential integrity enforcement
-                                                         -- => Without this, foreign keys are ignored
+PRAGMA foreign_keys = ON;
 
+-- => Enables referential integrity enforcement
+-- => Without this, foreign keys are ignored
 -- Parent table: Authors (the "one" side)
-CREATE TABLE authors (                                  -- => Stores author information
-    id INTEGER PRIMARY KEY,                             -- => Unique author identifier
-    name TEXT NOT NULL,                                 -- => Author name (required)
-    email TEXT UNIQUE                                   -- => Email address (must be unique across authors)
+CREATE TABLE authors ( -- => Stores author information
+  id INTEGER PRIMARY KEY, -- => Unique author identifier
+  name TEXT NOT NULL, -- => Author name (required)
+  email TEXT UNIQUE -- => Email address (must be unique across authors)
 );
 
 -- Child table: Books (the "many" side)
-CREATE TABLE books (                                    -- => Stores book information
-    id INTEGER PRIMARY KEY,                             -- => Unique book identifier
-    title TEXT NOT NULL,                                -- => Book title (required)
-    author_id INTEGER NOT NULL,                         -- => Foreign key to authors table
-                                                         -- => Links each book to exactly one author
-    published_year INTEGER,                             -- => Year published (optional)
-    FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE
-                                                         -- => Enforces referential integrity
-                                                         -- => CASCADE: Deleting author deletes all their books
+CREATE TABLE books ( -- => Stores book information
+  id INTEGER PRIMARY KEY, -- => Unique book identifier
+  title TEXT NOT NULL, -- => Book title (required)
+  author_id INTEGER NOT NULL, -- => Foreign key to authors table
+  -- => Links each book to exactly one author
+  published_year INTEGER, -- => Year published (optional)
+  FOREIGN KEY (author_id) REFERENCES authors (id) ON DELETE CASCADE
+  -- => Enforces referential integrity
+  -- => CASCADE: Deleting author deletes all their books
 );
 
 -- Insert authors (parent records)
-INSERT INTO authors (id, name, email)
+INSERT INTO
+  authors (id, name, email)
 VALUES
-    (1, 'Alice Author', 'alice@books.com'),             -- => Author with ID 1
-    (2, 'Bob Writer', 'bob@books.com');                 -- => Author with ID 2
+  (1, 'Alice Author', 'alice@books.com'), -- => Author with ID 1
+  (2, 'Bob Writer', 'bob@books.com');
 
+-- => Author with ID 2
 -- Insert books (child records linked to authors)
-INSERT INTO books (id, title, author_id, published_year)
+INSERT INTO
+  books (id, title, author_id, published_year)
 VALUES
-    (1, 'SQL Mastery', 1, 2020),                        -- => Alice's first book
-    (2, 'Database Design', 1, 2021),                    -- => Alice's second book
-    (3, 'Query Optimization', 1, 2022),                 -- => Alice's third book
-    (4, 'Data Modeling', 2, 2021);                      -- => Bob's only book
--- => Alice (ID 1) has 3 books, Bob (ID 2) has 1 book
+  (1, 'SQL Mastery', 1, 2020), -- => Alice's first book
+  (2, 'Database Design', 1, 2021), -- => Alice's second book
+  (3, 'Query Optimization', 1, 2022), -- => Alice's third book
+  (4, 'Data Modeling', 2, 2021);
 
+-- => Bob's only book
+-- => Alice (ID 1) has 3 books, Bob (ID 2) has 1 book
 -- Example A: Query with INNER JOIN to show relationships
 SELECT
-    a.name AS author,                                   -- => Author name from parent table
-    b.title AS book,                                    -- => Book title from child table
-    b.published_year                                    -- => Publication year
-FROM authors a
-INNER JOIN books b ON a.id = b.author_id                -- => Match books to their authors
-                                                         -- => INNER JOIN excludes authors without books
-ORDER BY a.name, b.published_year;                      -- => Sort by author, then chronologically
+  a.name AS author, -- => Author name from parent table
+  b.title AS book, -- => Book title from child table
+  b.published_year -- => Publication year
+FROM
+  authors a
+  INNER JOIN books b ON a.id = b.author_id -- => Match books to their authors
+  -- => INNER JOIN excludes authors without books
+ORDER BY
+  a.name,
+  b.published_year;
+
+-- => Sort by author, then chronologically
 -- => Output: Alice Author | SQL Mastery | 2020
 -- =>         Alice Author | Database Design | 2021
 -- =>         Alice Author | Query Optimization | 2022
 -- =>         Bob Writer | Data Modeling | 2021
-
 -- Example B: Count books per author (including authors with zero books)
 SELECT
-    a.name AS author,                                   -- => Author name
-    COUNT(b.id) AS num_books                            -- => Number of books by this author
-                                                         -- => COUNT(column) returns 0 for NULL (no books)
-FROM authors a
-LEFT JOIN books b ON a.id = b.author_id                 -- => Include ALL authors (even without books)
-                                                         -- => LEFT JOIN keeps authors with NULL book matches
-GROUP BY a.id, a.name                                   -- => Aggregate by author
-ORDER BY num_books DESC;                                -- => Most prolific authors first
+  a.name AS author, -- => Author name
+  COUNT(b.id) AS num_books -- => Number of books by this author
+  -- => COUNT(column) returns 0 for NULL (no books)
+FROM
+  authors a
+  LEFT JOIN books b ON a.id = b.author_id -- => Include ALL authors (even without books)
+  -- => LEFT JOIN keeps authors with NULL book matches
+GROUP BY
+  a.id,
+  a.name -- => Aggregate by author
+ORDER BY
+  num_books DESC;
+
+-- => Most prolific authors first
 -- => Output: Alice Author | 3, Bob Writer | 1
 -- => If Alice had no books, still shows: Alice Author | 0
-
 -- Example C: CASCADE delete demonstration
-DELETE FROM authors WHERE id = 1;                       -- => Delete Alice Author
+DELETE FROM authors
+WHERE
+  id = 1;
+
+-- => Delete Alice Author
 -- => CASCADE effect: Automatically deletes all books with author_id = 1
 -- => Books 1, 2, 3 are deleted because they reference deleted author
+SELECT
+  *
+FROM
+  books;
 
-SELECT * FROM books;                                    -- => Query remaining books
+-- => Query remaining books
 -- => Output: Only Bob's book remains (id=4, title='Data Modeling')
 -- => Alice's 3 books were cascaded deleted
 ```
@@ -920,112 +942,146 @@ graph TD
 
 ```sql
 -- Enable foreign key enforcement
-PRAGMA foreign_keys = ON;                              -- => Required for referential integrity
+PRAGMA foreign_keys = ON;
 
+-- => Required for referential integrity
 -- First entity: Students
-CREATE TABLE students (                                 -- => Stores student information
-    id INTEGER PRIMARY KEY,                             -- => Unique student identifier
-    name TEXT NOT NULL,                                 -- => Student name (required)
-    email TEXT UNIQUE                                   -- => Email address (must be unique)
+CREATE TABLE students ( -- => Stores student information
+  id INTEGER PRIMARY KEY, -- => Unique student identifier
+  name TEXT NOT NULL, -- => Student name (required)
+  email TEXT UNIQUE -- => Email address (must be unique)
 );
 
 -- Second entity: Courses
-CREATE TABLE courses (                                  -- => Stores course information
-    id INTEGER PRIMARY KEY,                             -- => Unique course identifier
-    title TEXT NOT NULL,                                -- => Course title (required)
-    credits INTEGER                                     -- => Credit hours for this course
+CREATE TABLE courses ( -- => Stores course information
+  id INTEGER PRIMARY KEY, -- => Unique course identifier
+  title TEXT NOT NULL, -- => Course title (required)
+  credits INTEGER -- => Credit hours for this course
 );
 
 -- Junction table: Enables many-to-many relationship
-CREATE TABLE enrollments (                              -- => Links students to courses
-    id INTEGER PRIMARY KEY,                             -- => Unique enrollment identifier
-    student_id INTEGER NOT NULL,                        -- => Foreign key to students
-    course_id INTEGER NOT NULL,                         -- => Foreign key to courses
-    enrollment_date TEXT,                               -- => When student enrolled (optional metadata)
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-                                                         -- => Deleting student removes their enrollments
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
-                                                         -- => Deleting course removes all enrollments
-    UNIQUE(student_id, course_id)                       -- => Prevent duplicate enrollments
-                                                         -- => Student can't enroll in same course twice
+CREATE TABLE enrollments ( -- => Links students to courses
+  id INTEGER PRIMARY KEY, -- => Unique enrollment identifier
+  student_id INTEGER NOT NULL, -- => Foreign key to students
+  course_id INTEGER NOT NULL, -- => Foreign key to courses
+  enrollment_date TEXT, -- => When student enrolled (optional metadata)
+  FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE,
+  -- => Deleting student removes their enrollments
+  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE,
+  -- => Deleting course removes all enrollments
+  UNIQUE (student_id, course_id) -- => Prevent duplicate enrollments
+  -- => Student can't enroll in same course twice
 );
 
 -- Insert students
-INSERT INTO students (id, name, email)
+INSERT INTO
+  students (id, name, email)
 VALUES
-    (1, 'Alice', 'alice@university.edu'),               -- => Student 1
-    (2, 'Bob', 'bob@university.edu'),                   -- => Student 2
-    (3, 'Charlie', 'charlie@university.edu');           -- => Student 3
+  (1, 'Alice', 'alice@university.edu'), -- => Student 1
+  (2, 'Bob', 'bob@university.edu'), -- => Student 2
+  (3, 'Charlie', 'charlie@university.edu');
 
+-- => Student 3
 -- Insert courses
-INSERT INTO courses (id, title, credits)
+INSERT INTO
+  courses (id, title, credits)
 VALUES
-    (1, 'Database Systems', 3),                         -- => 3-credit course
-    (2, 'Web Development', 3),                          -- => 3-credit course
-    (3, 'Machine Learning', 4);                         -- => 4-credit course
+  (1, 'Database Systems', 3), -- => 3-credit course
+  (2, 'Web Development', 3), -- => 3-credit course
+  (3, 'Machine Learning', 4);
 
+-- => 4-credit course
 -- Insert enrollments (many-to-many links)
-INSERT INTO enrollments (student_id, course_id, enrollment_date)
+INSERT INTO
+  enrollments (student_id, course_id, enrollment_date)
 VALUES
-    (1, 1, '2025-01-01'),                               -- => Alice enrolled in Database Systems
-    (1, 2, '2025-01-01'),                               -- => Alice enrolled in Web Development
-    (2, 1, '2025-01-02'),                               -- => Bob enrolled in Database Systems
-    (2, 3, '2025-01-02'),                               -- => Bob enrolled in Machine Learning
-    (3, 2, '2025-01-03'),                               -- => Charlie enrolled in Web Development
-    (3, 3, '2025-01-03');                               -- => Charlie enrolled in Machine Learning
+  (1, 1, '2025-01-01'), -- => Alice enrolled in Database Systems
+  (1, 2, '2025-01-01'), -- => Alice enrolled in Web Development
+  (2, 1, '2025-01-02'), -- => Bob enrolled in Database Systems
+  (2, 3, '2025-01-02'), -- => Bob enrolled in Machine Learning
+  (3, 2, '2025-01-03'), -- => Charlie enrolled in Web Development
+  (3, 3, '2025-01-03');
+
+-- => Charlie enrolled in Machine Learning
 -- => Alice: 2 courses, Bob: 2 courses, Charlie: 2 courses
 -- => Database Systems: 2 students, Web Development: 2 students, Machine Learning: 2 students
-
 -- Example A: Find all courses for a specific student
 SELECT
-    s.name AS student,                                  -- => Student name
-    c.title AS course,                                  -- => Course title
-    c.credits                                           -- => Credit hours
-FROM students s
-INNER JOIN enrollments e ON s.id = e.student_id         -- => Join student to enrollments
-INNER JOIN courses c ON e.course_id = c.id              -- => Join enrollments to courses
-                                                         -- => Two JOINs traverse the many-to-many
-WHERE s.name = 'Alice';                                 -- => Filter for specific student
+  s.name AS student, -- => Student name
+  c.title AS course, -- => Course title
+  c.credits -- => Credit hours
+FROM
+  students s
+  INNER JOIN enrollments e ON s.id = e.student_id -- => Join student to enrollments
+  INNER JOIN courses c ON e.course_id = c.id -- => Join enrollments to courses
+  -- => Two JOINs traverse the many-to-many
+WHERE
+  s.name = 'Alice';
+
+-- => Filter for specific student
 -- => Output: Database Systems | 3, Web Development | 3
 -- => Shows Alice's enrolled courses with credit hours
-
 -- Example B: Find all students in a specific course
 SELECT
-    c.title AS course,                                  -- => Course title
-    s.name AS student,                                  -- => Student name
-    e.enrollment_date                                   -- => When they enrolled
-FROM courses c
-INNER JOIN enrollments e ON c.id = e.course_id          -- => Join course to enrollments
-INNER JOIN students s ON e.student_id = s.id            -- => Join enrollments to students
-WHERE c.title = 'Database Systems'                      -- => Filter for specific course
-ORDER BY e.enrollment_date;                             -- => Chronological enrollment order
+  c.title AS course, -- => Course title
+  s.name AS student, -- => Student name
+  e.enrollment_date -- => When they enrolled
+FROM
+  courses c
+  INNER JOIN enrollments e ON c.id = e.course_id -- => Join course to enrollments
+  INNER JOIN students s ON e.student_id = s.id -- => Join enrollments to students
+WHERE
+  c.title = 'Database Systems' -- => Filter for specific course
+ORDER BY
+  e.enrollment_date;
+
+-- => Chronological enrollment order
 -- => Output: Database Systems | Alice | 2025-01-01
 -- =>         Database Systems | Bob | 2025-01-02
-
 -- Example C: Count courses and total credits per student
 SELECT
-    s.name AS student,                                  -- => Student name
-    COUNT(e.id) AS num_courses,                         -- => Number of enrolled courses
-    SUM(c.credits) AS total_credits                     -- => Sum of all enrolled course credits
-FROM students s
-LEFT JOIN enrollments e ON s.id = e.student_id          -- => Include students with no enrollments
-LEFT JOIN courses c ON e.course_id = c.id               -- => Get course details
-GROUP BY s.id, s.name;                                  -- => Aggregate by student
+  s.name AS student, -- => Student name
+  COUNT(e.id) AS num_courses, -- => Number of enrolled courses
+  SUM(c.credits) AS total_credits -- => Sum of all enrolled course credits
+FROM
+  students s
+  LEFT JOIN enrollments e ON s.id = e.student_id -- => Include students with no enrollments
+  LEFT JOIN courses c ON e.course_id = c.id -- => Get course details
+GROUP BY
+  s.id,
+  s.name;
+
+-- => Aggregate by student
 -- => Output: Alice | 2 | 6 (Database 3 + Web 3)
 -- =>         Bob | 2 | 7 (Database 3 + ML 4)
 -- =>         Charlie | 2 | 7 (Web 3 + ML 4)
-
 -- Example D: Find students sharing courses with Alice
-WITH alice_courses AS (                                 -- => CTE gets Alice's course IDs
-    SELECT course_id FROM enrollments WHERE student_id = 1
-                                                         -- => Returns course IDs 1 and 2
-)
-SELECT DISTINCT s.name                                  -- => Distinct student names
-FROM students s
-INNER JOIN enrollments e ON s.id = e.student_id         -- => Get all enrollments
-WHERE e.course_id IN (SELECT course_id FROM alice_courses)
-                                                         -- => Filter for Alice's courses
-  AND s.id != 1;                                        -- => Exclude Alice herself
+WITH
+  alice_courses AS ( -- => CTE gets Alice's course IDs
+    SELECT
+      course_id
+    FROM
+      enrollments
+    WHERE
+      student_id = 1
+      -- => Returns course IDs 1 and 2
+  )
+SELECT DISTINCT
+  s.name -- => Distinct student names
+FROM
+  students s
+  INNER JOIN enrollments e ON s.id = e.student_id -- => Get all enrollments
+WHERE
+  e.course_id IN (
+    SELECT
+      course_id
+    FROM
+      alice_courses
+  )
+  -- => Filter for Alice's courses
+  AND s.id != 1;
+
+-- => Exclude Alice herself
 -- => Output: Bob (shares Database Systems), Charlie (shares Web Development)
 -- => Shows students with at least one common course
 ```
@@ -1065,92 +1121,129 @@ graph TD
 
 ```sql
 -- Enable foreign key enforcement
-PRAGMA foreign_keys = ON;                              -- => Required for cascade operations
+PRAGMA foreign_keys = ON;
 
+-- => Required for cascade operations
 -- Self-referencing table for hierarchical data
-CREATE TABLE categories (                               -- => Stores category hierarchy
-    id INTEGER PRIMARY KEY,                             -- => Unique category identifier
-    name TEXT NOT NULL,                                 -- => Category name
-    parent_id INTEGER,                                  -- => Foreign key to parent category (same table)
-                                                         -- => NULL for top-level categories
-    FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE CASCADE
-                                                         -- => Self-reference: points to another row in same table
-                                                         -- => CASCADE: Deleting parent deletes all children
+CREATE TABLE categories ( -- => Stores category hierarchy
+  id INTEGER PRIMARY KEY, -- => Unique category identifier
+  name TEXT NOT NULL, -- => Category name
+  parent_id INTEGER, -- => Foreign key to parent category (same table)
+  -- => NULL for top-level categories
+  FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE CASCADE
+  -- => Self-reference: points to another row in same table
+  -- => CASCADE: Deleting parent deletes all children
 );
 
 -- Insert hierarchical category data
-INSERT INTO categories (id, name, parent_id)
+INSERT INTO
+  categories (id, name, parent_id)
 VALUES
-    (1, 'Electronics', NULL),                           -- => Top level (no parent)
-    (2, 'Computers', 1),                                -- => Child of Electronics
-    (3, 'Laptops', 2),                                  -- => Child of Computers (grandchild of Electronics)
-    (4, 'Desktops', 2),                                 -- => Child of Computers
-    (5, 'Phones', 1),                                   -- => Child of Electronics
-    (6, 'Smartphones', 5),                              -- => Child of Phones
-    (7, 'Feature Phones', 5),                           -- => Child of Phones
-    (8, 'Home & Garden', NULL),                         -- => Top level (separate tree)
-    (9, 'Furniture', 8);                                -- => Child of Home & Garden
--- => Creates two tree structures: Electronics (7 nodes) and Home & Garden (2 nodes)
+  (1, 'Electronics', NULL), -- => Top level (no parent)
+  (2, 'Computers', 1), -- => Child of Electronics
+  (3, 'Laptops', 2), -- => Child of Computers (grandchild of Electronics)
+  (4, 'Desktops', 2), -- => Child of Computers
+  (5, 'Phones', 1), -- => Child of Electronics
+  (6, 'Smartphones', 5), -- => Child of Phones
+  (7, 'Feature Phones', 5), -- => Child of Phones
+  (8, 'Home & Garden', NULL), -- => Top level (separate tree)
+  (9, 'Furniture', 8);
 
+-- => Child of Home & Garden
+-- => Creates two tree structures: Electronics (7 nodes) and Home & Garden (2 nodes)
 -- Example A: Find direct children of a specific category
 SELECT
-    c.name AS category,                                 -- => Child category name
-    p.name AS parent                                    -- => Parent category name
-FROM categories c
-LEFT JOIN categories p ON c.parent_id = p.id           -- => Self-join: join table to itself
-                                                         -- => Alias 'c' for child, 'p' for parent
-WHERE c.parent_id = 1                                   -- => Filter for Electronics' children only
-ORDER BY c.name;                                        -- => Alphabetical sort
+  c.name AS category, -- => Child category name
+  p.name AS parent -- => Parent category name
+FROM
+  categories c
+  LEFT JOIN categories p ON c.parent_id = p.id -- => Self-join: join table to itself
+  -- => Alias 'c' for child, 'p' for parent
+WHERE
+  c.parent_id = 1 -- => Filter for Electronics' children only
+ORDER BY
+  c.name;
+
+-- => Alphabetical sort
 -- => Output: Computers | Electronics, Phones | Electronics
 -- => Shows immediate children, not all descendants
-
 -- Example B: Find all top-level categories (roots of hierarchy trees)
-SELECT name                                             -- => Category name
-FROM categories
-WHERE parent_id IS NULL;                                -- => No parent means top level
+SELECT
+  name -- => Category name
+FROM
+  categories
+WHERE
+  parent_id IS NULL;
+
+-- => No parent means top level
 -- => Output: Electronics, Home & Garden
 -- => These are the roots of two separate hierarchy trees
-
 -- Example C: Build full path to category using recursive CTE
-WITH RECURSIVE category_path AS (                       -- => Recursive CTE builds path upward
+WITH RECURSIVE
+  category_path AS ( -- => Recursive CTE builds path upward
     -- Base case: Start with target category (Laptops)
-    SELECT id, name, parent_id, name AS path            -- => Initial path is just the category name
-    FROM categories
-    WHERE id = 3                                        -- => Starting point: Laptops (ID 3)
-
-    UNION ALL                                           -- => Combine base case with recursive case
-
+    SELECT
+      id,
+      name,
+      parent_id,
+      name AS path -- => Initial path is just the category name
+    FROM
+      categories
+    WHERE
+      id = 3 -- => Starting point: Laptops (ID 3)
+    UNION ALL -- => Combine base case with recursive case
     -- Recursive case: Prepend parent to path
-    SELECT c.id, c.name, c.parent_id, c.name || ' > ' || cp.path
-                                                         -- => Build path: "Parent > Child"
-                                                         -- => Example: "Computers > Laptops"
-    FROM categories c
-    INNER JOIN category_path cp ON c.id = cp.parent_id  -- => Join current path to its parent
-                                                         -- => Walks up the tree one level per iteration
-)
-SELECT path                                             -- => Final path string
-FROM category_path
-WHERE parent_id IS NULL;                                -- => Stop at root (no parent)
+    SELECT
+      c.id,
+      c.name,
+      c.parent_id,
+      c.name || ' > ' || cp.path
+      -- => Build path: "Parent > Child"
+      -- => Example: "Computers > Laptops"
+    FROM
+      categories c
+      INNER JOIN category_path cp ON c.id = cp.parent_id -- => Join current path to its parent
+      -- => Walks up the tree one level per iteration
+  )
+SELECT
+  path -- => Final path string
+FROM
+  category_path
+WHERE
+  parent_id IS NULL;
+
+-- => Stop at root (no parent)
 -- => Output: Electronics > Computers > Laptops
 -- => Shows complete ancestry from root to target
-
 -- Example D: Count all descendants of a category
-WITH RECURSIVE descendants AS (                         -- => Recursive CTE finds all descendants
+WITH RECURSIVE
+  descendants AS ( -- => Recursive CTE finds all descendants
     -- Base case: Start with target category (Electronics)
-    SELECT id, name, 0 AS level                         -- => Root starts at level 0
-    FROM categories
-    WHERE id = 1                                        -- => Electronics (ID 1)
-
-    UNION ALL                                           -- => Combine with recursive results
-
+    SELECT
+      id,
+      name,
+      0 AS level -- => Root starts at level 0
+    FROM
+      categories
+    WHERE
+      id = 1 -- => Electronics (ID 1)
+    UNION ALL -- => Combine with recursive results
     -- Recursive case: Find children and increment level
-    SELECT c.id, c.name, d.level + 1                    -- => Increment depth level
-    FROM categories c
-    INNER JOIN descendants d ON c.parent_id = d.id      -- => Find children of current level
-                                                         -- => Walks down the tree, level by level
-)
-SELECT COUNT(*) - 1 AS num_descendants                  -- => Count all nodes
-FROM descendants;                                       -- => Subtract 1 to exclude root itself
+    SELECT
+      c.id,
+      c.name,
+      d.level + 1 -- => Increment depth level
+    FROM
+      categories c
+      INNER JOIN descendants d ON c.parent_id = d.id -- => Find children of current level
+      -- => Walks down the tree, level by level
+  )
+SELECT
+  COUNT(*) - 1 AS num_descendants -- => Count all nodes
+FROM
+  descendants;
+
+-- => Subtract 1 to exclude root itself
 -- => Output: 5 (Computers, Laptops, Desktops, Phones, Smartphones, Feature Phones)
 -- => Excludes Electronics itself from count
 ```
@@ -1169,110 +1262,160 @@ Polymorphic associations allow one table to reference multiple parent tables. Im
 
 ```sql
 -- Parent table 1: Posts
-CREATE TABLE posts (                                    -- => First parent entity type
-    id INTEGER PRIMARY KEY,                             -- => Unique post identifier
-    title TEXT,                                         -- => Post title
-    content TEXT                                        -- => Post content
+CREATE TABLE posts ( -- => First parent entity type
+  id INTEGER PRIMARY KEY, -- => Unique post identifier
+  title TEXT, -- => Post title
+  content TEXT -- => Post content
 );
 
 -- Parent table 2: Photos
-CREATE TABLE photos (                                   -- => Second parent entity type
-    id INTEGER PRIMARY KEY,                             -- => Unique photo identifier
-    url TEXT,                                           -- => Photo URL
-    caption TEXT                                        -- => Photo caption
+CREATE TABLE photos ( -- => Second parent entity type
+  id INTEGER PRIMARY KEY, -- => Unique photo identifier
+  url TEXT, -- => Photo URL
+  caption TEXT -- => Photo caption
 );
 
 -- Polymorphic child table
-CREATE TABLE comments (                                 -- => Can reference posts OR photos
-    id INTEGER PRIMARY KEY,                             -- => Unique comment identifier
-    content TEXT,                                       -- => Comment text
-    commentable_type TEXT,                              -- => Type discriminator: 'post' or 'photo'
-                                                         -- => Determines which parent table to join
-    commentable_id INTEGER,                             -- => ID in parent table (posts.id or photos.id)
-                                                         -- => Cannot use foreign key - ambiguous reference
-    created_at TEXT                                     -- => Comment timestamp
+CREATE TABLE comments ( -- => Can reference posts OR photos
+  id INTEGER PRIMARY KEY, -- => Unique comment identifier
+  content TEXT, -- => Comment text
+  commentable_type TEXT, -- => Type discriminator: 'post' or 'photo'
+  -- => Determines which parent table to join
+  commentable_id INTEGER, -- => ID in parent table (posts.id or photos.id)
+  -- => Cannot use foreign key - ambiguous reference
+  created_at TEXT -- => Comment timestamp
 );
+
 -- => Polymorphic pattern: type + id columns replace foreign key
 -- => Trade-off: Flexibility vs. referential integrity
-
 -- Insert sample posts
-INSERT INTO posts (id, title, content)
+INSERT INTO
+  posts (id, title, content)
 VALUES
-    (1, 'SQL Tutorial', 'Learn SQL basics'),            -- => Post ID 1
-    (2, 'Advanced Queries', 'Master complex queries');  -- => Post ID 2
+  (1, 'SQL Tutorial', 'Learn SQL basics'), -- => Post ID 1
+  (2, 'Advanced Queries', 'Master complex queries');
 
+-- => Post ID 2
 -- Insert sample photos
-INSERT INTO photos (id, url, caption)
+INSERT INTO
+  photos (id, url, caption)
 VALUES
-    (1, 'https://example.com/photo1.jpg', 'Sunset'),    -- => Photo ID 1
-    (2, 'https://example.com/photo2.jpg', 'Mountain');  -- => Photo ID 2
+  (1, 'https://example.com/photo1.jpg', 'Sunset'), -- => Photo ID 1
+  (2, 'https://example.com/photo2.jpg', 'Mountain');
 
+-- => Photo ID 2
 -- Insert polymorphic comments
-INSERT INTO comments (id, content, commentable_type, commentable_id, created_at)
+INSERT INTO
+  comments (
+    id,
+    content,
+    commentable_type,
+    commentable_id,
+    created_at
+  )
 VALUES
-    (1, 'Great post!', 'post', 1, '2025-01-15 10:00:00'),
-                                                         -- => Comment on post ID 1
-    (2, 'Very helpful', 'post', 1, '2025-01-15 11:00:00'),
-                                                         -- => Another comment on post ID 1
-    (3, 'Beautiful photo', 'photo', 1, '2025-01-15 12:00:00'),
-                                                         -- => Comment on photo ID 1
-    (4, 'Amazing view', 'photo', 2, '2025-01-15 13:00:00');
-                                                         -- => Comment on photo ID 2
--- => Same comments table serves both posts and photos
+  (
+    1,
+    'Great post!',
+    'post',
+    1,
+    '2025-01-15 10:00:00'
+  ),
+  -- => Comment on post ID 1
+  (
+    2,
+    'Very helpful',
+    'post',
+    1,
+    '2025-01-15 11:00:00'
+  ),
+  -- => Another comment on post ID 1
+  (
+    3,
+    'Beautiful photo',
+    'photo',
+    1,
+    '2025-01-15 12:00:00'
+  ),
+  -- => Comment on photo ID 1
+  (
+    4,
+    'Amazing view',
+    'photo',
+    2,
+    '2025-01-15 13:00:00'
+  );
 
+-- => Comment on photo ID 2
+-- => Same comments table serves both posts and photos
 -- Example A: Find comments on a specific post
 SELECT
-    c.content AS comment,                               -- => Comment text
-    c.created_at                                        -- => Comment timestamp
-FROM comments c
-WHERE c.commentable_type = 'post'                       -- => Filter for post comments only
-  AND c.commentable_id = 1                              -- => Specific post ID
-ORDER BY c.created_at;                                  -- => Chronological order
+  c.content AS comment, -- => Comment text
+  c.created_at -- => Comment timestamp
+FROM
+  comments c
+WHERE
+  c.commentable_type = 'post' -- => Filter for post comments only
+  AND c.commentable_id = 1 -- => Specific post ID
+ORDER BY
+  c.created_at;
+
+-- => Chronological order
 -- => Output: 'Great post!' | 2025-01-15 10:00:00
 -- =>         'Very helpful' | 2025-01-15 11:00:00
-
 -- Example B: Find comments on a specific photo
 SELECT
-    c.content AS comment,                               -- => Comment text
-    c.created_at                                        -- => Comment timestamp
-FROM comments c
-WHERE c.commentable_type = 'photo'                      -- => Filter for photo comments only
-  AND c.commentable_id = 1;                             -- => Specific photo ID
--- => Output: 'Beautiful photo' | 2025-01-15 12:00:00
+  c.content AS comment, -- => Comment text
+  c.created_at -- => Comment timestamp
+FROM
+  comments c
+WHERE
+  c.commentable_type = 'photo' -- => Filter for photo comments only
+  AND c.commentable_id = 1;
 
+-- => Specific photo ID
+-- => Output: 'Beautiful photo' | 2025-01-15 12:00:00
 -- Example C: Join comments with parent entities (UNION pattern)
 SELECT
-    'post' AS type,                                     -- => Literal type label
-    p.title AS title,                                   -- => Post title
-    c.content AS comment                                -- => Comment text
-FROM posts p
-INNER JOIN comments c ON c.commentable_type = 'post' AND c.commentable_id = p.id
-                                                         -- => Join comments with type='post' to posts table
-                                                         -- => Two conditions: type match + ID match
-
-UNION ALL                                               -- => Combine with photo comments
-
+  'post' AS type, -- => Literal type label
+  p.title AS title, -- => Post title
+  c.content AS comment -- => Comment text
+FROM
+  posts p
+  INNER JOIN comments c ON c.commentable_type = 'post'
+  AND c.commentable_id = p.id
+  -- => Join comments with type='post' to posts table
+  -- => Two conditions: type match + ID match
+UNION ALL -- => Combine with photo comments
 SELECT
-    'photo' AS type,                                    -- => Literal type label
-    ph.caption AS title,                                -- => Photo caption
-    c.content AS comment                                -- => Comment text
-FROM photos ph
-INNER JOIN comments c ON c.commentable_type = 'photo' AND c.commentable_id = ph.id
-                                                         -- => Join comments with type='photo' to photos table
+  'photo' AS type, -- => Literal type label
+  ph.caption AS title, -- => Photo caption
+  c.content AS comment -- => Comment text
+FROM
+  photos ph
+  INNER JOIN comments c ON c.commentable_type = 'photo'
+  AND c.commentable_id = ph.id
+  -- => Join comments with type='photo' to photos table
+ORDER BY
+  type,
+  title;
 
-ORDER BY type, title;                                   -- => Sort by entity type, then title
+-- => Sort by entity type, then title
 -- => Output: photo | Mountain | Amazing view
 -- =>         photo | Sunset | Beautiful photo
 -- =>         post | Advanced Queries | ...
 -- =>         post | SQL Tutorial | Great post!
 -- =>         post | SQL Tutorial | Very helpful
-
 -- Example D: Count comments by parent entity type
 SELECT
-    commentable_type AS type,                           -- => Entity type (post/photo)
-    COUNT(*) AS num_comments                            -- => Count comments per type
-FROM comments
-GROUP BY commentable_type;                              -- => Aggregate by type
+  commentable_type AS type, -- => Entity type (post/photo)
+  COUNT(*) AS num_comments -- => Count comments per type
+FROM
+  comments
+GROUP BY
+  commentable_type;
+
+-- => Aggregate by type
 -- => Output: photo | 2, post | 2
 -- => Shows distribution of comments across entity types
 ```
@@ -1291,99 +1434,207 @@ Type 2 SCDs track historical changes by creating new rows with effective dates. 
 
 ```sql
 -- Slowly Changing Dimension (Type 2) table
-CREATE TABLE customer_scd (                             -- => Historical customer data tracking
-    id INTEGER PRIMARY KEY,                             -- => Unique row identifier (not customer ID)
-    customer_id INTEGER NOT NULL,                       -- => Business key (same across versions)
-    name TEXT NOT NULL,                                 -- => Customer name
-    email TEXT,                                         -- => Customer email (may change)
-    address TEXT,                                       -- => Customer address (may change)
-    effective_date TEXT NOT NULL,                       -- => When this version became effective
-    end_date TEXT,                                      -- => When this version ended (NULL = current)
-    is_current INTEGER NOT NULL DEFAULT 1,              -- => Flag: 1 = current, 0 = historical
-                                                         -- => Enables fast current-state queries
-    CHECK (is_current IN (0, 1))                        -- => Constraint: only 0 or 1 allowed
+CREATE TABLE customer_scd ( -- => Historical customer data tracking
+  id INTEGER PRIMARY KEY, -- => Unique row identifier (not customer ID)
+  customer_id INTEGER NOT NULL, -- => Business key (same across versions)
+  name TEXT NOT NULL, -- => Customer name
+  email TEXT, -- => Customer email (may change)
+  address TEXT, -- => Customer address (may change)
+  effective_date TEXT NOT NULL, -- => When this version became effective
+  end_date TEXT, -- => When this version ended (NULL = current)
+  is_current INTEGER NOT NULL DEFAULT 1, -- => Flag: 1 = current, 0 = historical
+  -- => Enables fast current-state queries
+  CHECK (is_current IN (0, 1)) -- => Constraint: only 0 or 1 allowed
 );
 
 -- Insert initial customer version
-INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
-VALUES (1, 100, 'Alice Smith', 'alice@old.com', '123 Old St', '2024-01-01', NULL, 1);
+INSERT INTO
+  customer_scd (
+    id,
+    customer_id,
+    name,
+    email,
+    address,
+    effective_date,
+    end_date,
+    is_current
+  )
+VALUES
+  (
+    1,
+    100,
+    'Alice Smith',
+    'alice@old.com',
+    '123 Old St',
+    '2024-01-01',
+    NULL,
+    1
+  );
+
 -- => Row ID 1, customer 100, first version, currently active
-
 -- Example A: Customer changes email (version 1 → version 2)
-BEGIN TRANSACTION;                                      -- => Ensure atomicity of update + insert
+BEGIN TRANSACTION;
 
+-- => Ensure atomicity of update + insert
 -- Step 1: Close previous version
 UPDATE customer_scd
-SET end_date = '2024-06-01',                            -- => Mark when old version expired
-    is_current = 0                                      -- => Flag as historical
-WHERE customer_id = 100 AND is_current = 1;             -- => Find current version for customer 100
+SET
+  end_date = '2024-06-01', -- => Mark when old version expired
+  is_current = 0 -- => Flag as historical
+WHERE
+  customer_id = 100
+  AND is_current = 1;
+
+-- => Find current version for customer 100
 -- => Row 1 now shows: effective='2024-01-01', end='2024-06-01', is_current=0
-
 -- Step 2: Insert new current version
-INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
-VALUES (2, 100, 'Alice Smith', 'alice@new.com', '123 Old St', '2024-06-01', NULL, 1);
-                                                         -- => New row with updated email
-                                                         -- => effective_date matches old row's end_date
+INSERT INTO
+  customer_scd (
+    id,
+    customer_id,
+    name,
+    email,
+    address,
+    effective_date,
+    end_date,
+    is_current
+  )
+VALUES
+  (
+    2,
+    100,
+    'Alice Smith',
+    'alice@new.com',
+    '123 Old St',
+    '2024-06-01',
+    NULL,
+    1
+  );
+
+-- => New row with updated email
+-- => effective_date matches old row's end_date
 -- => Row 2 shows: effective='2024-06-01', end=NULL, is_current=1
+COMMIT;
 
-COMMIT;                                                 -- => Commit both operations atomically
-
+-- => Commit both operations atomically
 -- Example B: Customer changes address (version 2 → version 3)
 BEGIN TRANSACTION;
 
 UPDATE customer_scd
-SET end_date = '2025-01-01',                            -- => Close version 2
-    is_current = 0
-WHERE customer_id = 100 AND is_current = 1;             -- => Find current version
+SET
+  end_date = '2025-01-01', -- => Close version 2
+  is_current = 0
+WHERE
+  customer_id = 100
+  AND is_current = 1;
 
-INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
-VALUES (3, 100, 'Alice Smith', 'alice@new.com', '456 New Ave', '2025-01-01', NULL, 1);
-                                                         -- => New row with updated address
-COMMIT;
--- => Now have 3 versions: Row 1 (old email), Row 2 (new email), Row 3 (new address)
-
--- Example C: Query current customer state
-SELECT customer_id, name, email, address                -- => Current attributes
-FROM customer_scd
-WHERE is_current = 1;                                   -- => Filter for active versions only
--- => Output: 100 | Alice Smith | alice@new.com | 456 New Ave
--- => Fast query using is_current index
-
--- Example D: View full historical timeline
-SELECT
+-- => Find current version
+INSERT INTO
+  customer_scd (
+    id,
     customer_id,
+    name,
     email,
     address,
-    effective_date,                                     -- => When version started
-    COALESCE(end_date, 'Current') AS end_date,          -- => When version ended (or 'Current')
-    CASE WHEN is_current = 1 THEN 'Yes' ELSE 'No' END AS is_current
-                                                         -- => Human-readable current flag
-FROM customer_scd
-WHERE customer_id = 100                                 -- => All versions of customer 100
-ORDER BY effective_date;                                -- => Chronological order
+    effective_date,
+    end_date,
+    is_current
+  )
+VALUES
+  (
+    3,
+    100,
+    'Alice Smith',
+    'alice@new.com',
+    '456 New Ave',
+    '2025-01-01',
+    NULL,
+    1
+  );
+
+-- => New row with updated address
+COMMIT;
+
+-- => Now have 3 versions: Row 1 (old email), Row 2 (new email), Row 3 (new address)
+-- Example C: Query current customer state
+SELECT
+  customer_id,
+  name,
+  email,
+  address -- => Current attributes
+FROM
+  customer_scd
+WHERE
+  is_current = 1;
+
+-- => Filter for active versions only
+-- => Output: 100 | Alice Smith | alice@new.com | 456 New Ave
+-- => Fast query using is_current index
+-- Example D: View full historical timeline
+SELECT
+  customer_id,
+  email,
+  address,
+  effective_date, -- => When version started
+  COALESCE(end_date, 'Current') AS end_date, -- => When version ended (or 'Current')
+  CASE
+    WHEN is_current = 1 THEN 'Yes'
+    ELSE 'No'
+  END AS is_current
+  -- => Human-readable current flag
+FROM
+  customer_scd
+WHERE
+  customer_id = 100 -- => All versions of customer 100
+ORDER BY
+  effective_date;
+
+-- => Chronological order
 -- => Output: 3 rows showing complete change history
 -- => Row 1: old email, old address, 2024-01-01 to 2024-06-01
 -- => Row 2: new email, old address, 2024-06-01 to 2025-01-01
 -- => Row 3: new email, new address, 2025-01-01 to Current
-
 -- Example E: Point-in-time query (historical state reconstruction)
-SELECT customer_id, name, email, address
-FROM customer_scd
-WHERE customer_id = 100
-  AND effective_date <= '2024-08-01'                    -- => Version must have started by this date
-  AND (end_date IS NULL OR end_date > '2024-08-01')     -- => Version must still be active on this date
-                                                         -- => Finds version valid on 2024-08-01
-LIMIT 1;
+SELECT
+  customer_id,
+  name,
+  email,
+  address
+FROM
+  customer_scd
+WHERE
+  customer_id = 100
+  AND effective_date <= '2024-08-01' -- => Version must have started by this date
+  AND (
+    end_date IS NULL
+    OR end_date > '2024-08-01'
+  ) -- => Version must still be active on this date
+  -- => Finds version valid on 2024-08-01
+LIMIT
+  1;
+
 -- => Output: 100 | Alice Smith | alice@new.com | 123 Old St
 -- => Shows state as of 2024-08-01 (version 2: new email, old address)
-
 -- Example F: Create view for simplified current-state access
-CREATE VIEW customers_current AS                        -- => Virtual table showing only current versions
-SELECT customer_id, name, email, address, effective_date
-FROM customer_scd
-WHERE is_current = 1;                                   -- => Filters for active versions
+CREATE VIEW customers_current AS -- => Virtual table showing only current versions
+SELECT
+  customer_id,
+  name,
+  email,
+  address,
+  effective_date
+FROM
+  customer_scd
+WHERE
+  is_current = 1;
 
-SELECT * FROM customers_current;                        -- => Query like a regular customer table
+-- => Filters for active versions
+SELECT
+  *
+FROM
+  customers_current;
+
+-- => Query like a regular customer table
 -- => Output: 100 | Alice Smith | alice@new.com | 456 New Ave | 2025-01-01
 -- => Hides SCD complexity from applications needing only current state
 ```
@@ -2095,103 +2346,142 @@ Soft deletes mark records as deleted instead of removing them. Enables undelete 
 ```sql
 -- Soft delete pattern: use timestamp instead of DELETE
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY,           -- => Unique user identifier
-    email TEXT UNIQUE NOT NULL,       -- => User email (unique constraint)
-    name TEXT,                        -- => User display name
-    deleted_at TEXT                   -- => NULL = active, timestamp = deleted
+  id INTEGER PRIMARY KEY, -- => Unique user identifier
+  email TEXT UNIQUE NOT NULL, -- => User email (unique constraint)
+  name TEXT, -- => User display name
+  deleted_at TEXT -- => NULL = active, timestamp = deleted
 );
+
 -- => users table created with soft delete support
 -- => deleted_at NULL means active user
-
 -- Insert test users (all active initially)
-INSERT INTO users (id, email, name, deleted_at)
+INSERT INTO
+  users (id, email, name, deleted_at)
 VALUES
-    (1, 'alice@example.com', 'Alice', NULL),     -- => Alice active
-    (2, 'bob@example.com', 'Bob', NULL),         -- => Bob active
-    (3, 'charlie@example.com', 'Charlie', NULL); -- => Charlie active
--- => 3 users inserted, all with deleted_at = NULL (active)
+  (1, 'alice@example.com', 'Alice', NULL), -- => Alice active
+  (2, 'bob@example.com', 'Bob', NULL), -- => Bob active
+  (3, 'charlie@example.com', 'Charlie', NULL);
 
+-- => Charlie active
+-- => 3 users inserted, all with deleted_at = NULL (active)
 -- Soft delete (UPDATE instead of DELETE)
 UPDATE users
-SET deleted_at = datetime('now')     -- => Set deletion timestamp
-WHERE id = 2;
+SET
+  deleted_at = datetime ('now') -- => Set deletion timestamp
+WHERE
+  id = 2;
+
 -- => Bob's deleted_at set to current timestamp
 -- => Record still exists in database (not physically deleted)
 -- => Enables undelete and preserves foreign key references
-
 -- Query active users only (application default behavior)
-SELECT * FROM users WHERE deleted_at IS NULL;
+SELECT
+  *
+FROM
+  users
+WHERE
+  deleted_at IS NULL;
+
 -- => Returns: id=1 (Alice), id=3 (Charlie)
 -- => Bob excluded (deleted_at is not NULL)
 -- => Applications should ALWAYS filter by deleted_at IS NULL
-
 -- Query deleted users (for admin/audit purposes)
-SELECT * FROM users WHERE deleted_at IS NOT NULL;
+SELECT
+  *
+FROM
+  users
+WHERE
+  deleted_at IS NOT NULL;
+
 -- => Returns: id=2 (Bob) with deletion timestamp
 -- => Shows when Bob was deleted
 -- => Supports audit requirements and compliance
-
 -- Undelete (restore deleted user)
 UPDATE users
-SET deleted_at = NULL                -- => Clear deletion timestamp
-WHERE id = 2;
+SET
+  deleted_at = NULL -- => Clear deletion timestamp
+WHERE
+  id = 2;
+
 -- => Bob's deleted_at set back to NULL
 -- => Bob becomes active again
 -- => User can log in and access data
 -- => "Undo delete" feature for UI
-
 -- Create view to simplify active user queries
 CREATE VIEW users_active AS
-SELECT id, email, name               -- => Only active user fields
-FROM users
-WHERE deleted_at IS NULL;            -- => Filter out deleted users
+SELECT
+  id,
+  email,
+  name -- => Only active user fields
+FROM
+  users
+WHERE
+  deleted_at IS NULL;
+
+-- => Filter out deleted users
 -- => users_active view created
 -- => Applications query this instead of users table directly
-
 -- Query active users via view (simpler code)
-SELECT * FROM users_active;
+SELECT
+  *
+FROM
+  users_active;
+
 -- => Returns: Alice, Bob (restored), Charlie
 -- => No need to remember deleted_at IS NULL filter
 -- => Cleaner application code
-
 -- Soft delete with foreign keys (child records preserved)
 CREATE TABLE posts (
-    id INTEGER PRIMARY KEY,           -- => Unique post identifier
-    user_id INTEGER NOT NULL,         -- => Foreign key to users
-    title TEXT,                       -- => Post title
-    deleted_at TEXT,                  -- => Soft delete for posts too
-    FOREIGN KEY (user_id) REFERENCES users(id)  -- => References users.id
+  id INTEGER PRIMARY KEY, -- => Unique post identifier
+  user_id INTEGER NOT NULL, -- => Foreign key to users
+  title TEXT, -- => Post title
+  deleted_at TEXT, -- => Soft delete for posts too
+  FOREIGN KEY (user_id) REFERENCES users (id) -- => References users.id
 );
+
 -- => posts table created with soft delete
 -- => Foreign key prevents deleting users with DELETE (would cascade)
-
-INSERT INTO posts (id, user_id, title, deleted_at)
+INSERT INTO
+  posts (id, user_id, title, deleted_at)
 VALUES
-    (1, 1, 'Alice Post 1', NULL),    -- => Alice's first post (active)
-    (2, 1, 'Alice Post 2', NULL),    -- => Alice's second post (active)
-    (3, 2, 'Bob Post 1', NULL);      -- => Bob's post (active)
--- => 3 posts inserted, all active
+  (1, 1, 'Alice Post 1', NULL), -- => Alice's first post (active)
+  (2, 1, 'Alice Post 2', NULL), -- => Alice's second post (active)
+  (3, 2, 'Bob Post 1', NULL);
 
+-- => Bob's post (active)
+-- => 3 posts inserted, all active
 -- Soft delete user (posts remain intact)
-UPDATE users SET deleted_at = datetime('now') WHERE id = 1;
+UPDATE users
+SET
+  deleted_at = datetime ('now')
+WHERE
+  id = 1;
+
 -- => Alice soft deleted
 -- => Alice's posts (id=1,2) still exist in posts table
 -- => Foreign key constraint NOT violated (record still exists)
 -- => Hard DELETE would fail if ON DELETE RESTRICT
-
 -- Query active users with their active posts
-SELECT u.name, p.title               -- => User name and post title
-FROM users_active u                   -- => Only active users
-INNER JOIN posts p ON u.id = p.user_id  -- => Join with posts
-WHERE p.deleted_at IS NULL;          -- => Only active posts
+SELECT
+  u.name,
+  p.title -- => User name and post title
+FROM
+  users_active u -- => Only active users
+  INNER JOIN posts p ON u.id = p.user_id -- => Join with posts
+WHERE
+  p.deleted_at IS NULL;
+
+-- => Only active posts
 -- => Returns: Bob's posts only
 -- => Alice excluded (soft deleted user)
 -- => Proper filtering requires BOTH tables' deleted_at
-
 -- Permanent delete (after retention period)
 DELETE FROM users
-WHERE deleted_at IS NOT NULL         -- => Only soft-deleted users
-  AND deleted_at < datetime('now', '-90 days');  -- => Deleted 90+ days ago
+WHERE
+  deleted_at IS NOT NULL -- => Only soft-deleted users
+  AND deleted_at < datetime ('now', '-90 days');
+
+-- => Deleted 90+ days ago
 -- => Physically removes users soft-deleted over 90 days ago
 -- => Compliance requirement: retain for 90 days, then purge
 -- => Run this as scheduled cleanup job (weekly/monthly)
@@ -2231,158 +2521,232 @@ graph LR
 ```sql
 -- Main table (business data)
 CREATE TABLE products (
-    id INTEGER PRIMARY KEY,           -- => Unique product identifier
-    name TEXT NOT NULL,               -- => Product name (required)
-    price REAL NOT NULL,              -- => Current price (required)
-    updated_at TEXT                   -- => Last update timestamp
+  id INTEGER PRIMARY KEY, -- => Unique product identifier
+  name TEXT NOT NULL, -- => Product name (required)
+  price REAL NOT NULL, -- => Current price (required)
+  updated_at TEXT -- => Last update timestamp
 );
+
 -- => Note: only stores CURRENT state; history lives in products_audit
 -- => products table created (contains current state only)
-
 -- Audit log table (historical changes)
 CREATE TABLE products_audit (
-    id INTEGER PRIMARY KEY,           -- => Unique audit record ID
-    product_id INTEGER NOT NULL,      -- => Reference to products.id
-    action TEXT NOT NULL,             -- => Operation: INSERT, UPDATE, DELETE
-    old_values TEXT,                  -- => JSON snapshot before change (NULL for INSERT)
-    new_values TEXT,                  -- => JSON snapshot after change (NULL for DELETE)
-    changed_by TEXT,                  -- => User email/ID who made change
-    changed_at TEXT NOT NULL          -- => Timestamp of change
+  id INTEGER PRIMARY KEY, -- => Unique audit record ID
+  product_id INTEGER NOT NULL, -- => Reference to products.id
+  action TEXT NOT NULL, -- => Operation: INSERT, UPDATE, DELETE
+  old_values TEXT, -- => JSON snapshot before change (NULL for INSERT)
+  new_values TEXT, -- => JSON snapshot after change (NULL for DELETE)
+  changed_by TEXT, -- => User email/ID who made change
+  changed_at TEXT NOT NULL -- => Timestamp of change
 );
+
 -- => products_audit table created (append-only log)
 -- => Stores complete change history
-
 -- Initial insert (create new product)
-INSERT INTO products (id, name, price, updated_at)
-VALUES (1, 'Laptop', 1000.00, datetime('now'));
--- => Product created: id=1, name=Laptop, price=1000
+INSERT INTO
+  products (id, name, price, updated_at)
+VALUES
+  (1, 'Laptop', 1000.00, datetime ('now'));
 
+-- => Product created: id=1, name=Laptop, price=1000
 -- Log the insert (manual approach)
-INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
-VALUES (
-    1,                                -- => Product ID being audited
-    'INSERT',                         -- => Action type
-    NULL,                             -- => No old values (new record)
-    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),  -- => New values as JSON
-    'alice@example.com',              -- => User who created product
-    datetime('now')                   -- => Creation timestamp
-);
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    old_values,
+    new_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    1, -- => Product ID being audited
+    'INSERT', -- => Action type
+    NULL, -- => No old values (new record)
+    JSON_OBJECT ('name', 'Laptop', 'price', 1000.00), -- => New values as JSON
+    'alice@example.com', -- => User who created product
+    datetime ('now') -- => Creation timestamp
+  );
+
 -- => Audit record created: tracks who created product and when
 -- => JSON format allows flexible querying of specific fields
-
 -- Update product (change price)
 UPDATE products
-SET price = 1200.00, updated_at = datetime('now')
-WHERE id = 1;
--- => Product updated: price changed from 1000 to 1200
+SET
+  price = 1200.00,
+  updated_at = datetime ('now')
+WHERE
+  id = 1;
 
+-- => Product updated: price changed from 1000 to 1200
 -- Log the update (manual approach)
-INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
-VALUES (
-    1,                                -- => Product ID being audited
-    'UPDATE',                         -- => Action type
-    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),  -- => Old values (before update)
-    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),  -- => New values (after update)
-    'bob@example.com',                -- => User who updated product
-    datetime('now')                   -- => Update timestamp
-);
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    old_values,
+    new_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    1, -- => Product ID being audited
+    'UPDATE', -- => Action type
+    JSON_OBJECT ('name', 'Laptop', 'price', 1000.00), -- => Old values (before update)
+    JSON_OBJECT ('name', 'Laptop', 'price', 1200.00), -- => New values (after update)
+    'bob@example.com', -- => User who updated product
+    datetime ('now') -- => Update timestamp
+  );
+
 -- => Audit record created: tracks price change from 1000 to 1200
 -- => Both old and new values preserved for comparison
-
 -- Delete product
-DELETE FROM products WHERE id = 1;   -- => Remove product from main table
+DELETE FROM products
+WHERE
+  id = 1;
+
+-- => Remove product from main table
 -- => Product physically deleted from products table
 -- => But full history preserved in products_audit
-
 -- Log the delete (manual approach)
-INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
-VALUES (
-    1,                                -- => Product ID being audited
-    'DELETE',                         -- => Action type
-    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),  -- => Final state before deletion
-    NULL,                             -- => No new values (record deleted)
-    'charlie@example.com',            -- => User who deleted product
-    datetime('now')                   -- => Deletion timestamp
-);
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    old_values,
+    new_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    1, -- => Product ID being audited
+    'DELETE', -- => Action type
+    JSON_OBJECT ('name', 'Laptop', 'price', 1200.00), -- => Final state before deletion
+    NULL, -- => No new values (record deleted)
+    'charlie@example.com', -- => User who deleted product
+    datetime ('now') -- => Deletion timestamp
+  );
+
 -- => Audit record created: product gone from products table but history preserved
 -- => Can reconstruct product state at any point in time
-
 -- Query audit history for specific product
 SELECT
-    action,                           -- => What happened
-    old_values,                       -- => Before state
-    new_values,                       -- => After state
-    changed_by,                       -- => Who did it
-    changed_at                        -- => When it happened
-FROM products_audit
-WHERE product_id = 1                  -- => Filter by product
-ORDER BY changed_at;                  -- => Chronological order
+  action, -- => What happened
+  old_values, -- => Before state
+  new_values, -- => After state
+  changed_by, -- => Who did it
+  changed_at -- => When it happened
+FROM
+  products_audit
+WHERE
+  product_id = 1 -- => Filter by product
+ORDER BY
+  changed_at;
+
+-- => Chronological order
 -- => Returns: INSERT (alice), UPDATE (bob), DELETE (charlie)
 -- => Complete lifecycle history of product
-
 -- Find who changed price above 1000 (compliance query)
-SELECT DISTINCT changed_by            -- => Unique users
-FROM products_audit
-WHERE JSON_EXTRACT(new_values, '$.price') > 1000;  -- => Extract price from JSON
+SELECT DISTINCT
+  changed_by -- => Unique users
+FROM
+  products_audit
+WHERE
+  JSON_EXTRACT (new_values, '$.price') > 1000;
+
+-- => Extract price from JSON
 -- => Returns: bob@example.com
 -- => JSON querying enables field-specific audits without schema changes
-
 -- Audit report: All changes in last 7 days (recent activity)
 SELECT
-    product_id,                       -- => Which product
-    action,                           -- => What happened
-    changed_by,                       -- => Who did it
-    changed_at                        -- => When
-FROM products_audit
-WHERE changed_at >= datetime('now', '-7 days')  -- => Last week
-ORDER BY changed_at DESC;             -- => Most recent first
+  product_id, -- => Which product
+  action, -- => What happened
+  changed_by, -- => Who did it
+  changed_at -- => When
+FROM
+  products_audit
+WHERE
+  changed_at >= datetime ('now', '-7 days') -- => Last week
+ORDER BY
+  changed_at DESC;
+
+-- => Most recent first
 -- => Typical compliance/security report
 -- => Shows recent activity for investigation
-
 -- Simplified trigger-based approach (automatic auditing)
-CREATE TRIGGER products_audit_insert
-AFTER INSERT ON products              -- => Fire after INSERT completes
+CREATE TRIGGER products_audit_insert AFTER INSERT ON products -- => Fire after INSERT completes
 BEGIN
-    INSERT INTO products_audit (product_id, action, new_values, changed_by, changed_at)
-    VALUES (
-        NEW.id,                       -- => NEW refers to inserted row
-        'INSERT',                     -- => Action type
-        JSON_OBJECT('name', NEW.name, 'price', NEW.price),  -- => Capture new values
-        'system',                     -- => In real app, get from session context
-        datetime('now')               -- => Current timestamp
-    );
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    new_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    NEW.id, -- => NEW refers to inserted row
+    'INSERT', -- => Action type
+    JSON_OBJECT ('name', NEW.name, 'price', NEW.price), -- => Capture new values
+    'system', -- => In real app, get from session context
+    datetime ('now') -- => Current timestamp
+  );
+
 END;
+
 -- => Trigger created: automatically logs every INSERT
 -- => Application code doesn't need manual audit logging
-
-CREATE TRIGGER products_audit_update
-AFTER UPDATE ON products              -- => Fire after UPDATE completes
+CREATE TRIGGER products_audit_update AFTER
+UPDATE ON products -- => Fire after UPDATE completes
 BEGIN
-    INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
-    VALUES (
-        NEW.id,                       -- => NEW refers to updated row
-        'UPDATE',                     -- => Action type
-        JSON_OBJECT('name', OLD.name, 'price', OLD.price),  -- => OLD has pre-update values
-        JSON_OBJECT('name', NEW.name, 'price', NEW.price),  -- => NEW has post-update values
-        'system',                     -- => Get from session context
-        datetime('now')               -- => Current timestamp
-    );
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    old_values,
+    new_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    NEW.id, -- => NEW refers to updated row
+    'UPDATE', -- => Action type
+    JSON_OBJECT ('name', OLD.name, 'price', OLD.price), -- => OLD has pre-update values
+    JSON_OBJECT ('name', NEW.name, 'price', NEW.price), -- => NEW has post-update values
+    'system', -- => Get from session context
+    datetime ('now') -- => Current timestamp
+  );
+
 END;
+
 -- => Trigger created: automatically logs every UPDATE
 -- => Captures before/after state for comparison
-
-CREATE TRIGGER products_audit_delete
-AFTER DELETE ON products              -- => Fire after DELETE completes
+CREATE TRIGGER products_audit_delete AFTER DELETE ON products -- => Fire after DELETE completes
 BEGIN
-    INSERT INTO products_audit (product_id, action, old_values, changed_by, changed_at)
-    VALUES (
-        OLD.id,                       -- => OLD refers to deleted row (NEW doesn't exist)
-        'DELETE',                     -- => Action type
-        JSON_OBJECT('name', OLD.name, 'price', OLD.price),  -- => Final state before deletion
-        'system',                     -- => Get from session context
-        datetime('now')               -- => Current timestamp
-    );
+INSERT INTO
+  products_audit (
+    product_id,
+    action,
+    old_values,
+    changed_by,
+    changed_at
+  )
+VALUES
+  (
+    OLD.id, -- => OLD refers to deleted row (NEW doesn't exist)
+    'DELETE', -- => Action type
+    JSON_OBJECT ('name', OLD.name, 'price', OLD.price), -- => Final state before deletion
+    'system', -- => Get from session context
+    datetime ('now') -- => Current timestamp
+  );
+
 END;
+
 -- => Trigger created: automatically logs every DELETE
 -- => Preserves deleted data in audit log
 ```
@@ -2402,110 +2766,169 @@ Optimistic locking prevents lost updates in concurrent environments using versio
 ```sql
 -- Optimistic locking: detect concurrent modifications without locks
 CREATE TABLE inventory (
-    id INTEGER PRIMARY KEY,           -- => Unique product identifier
-    product_name TEXT NOT NULL,       -- => Product name
-    quantity INTEGER NOT NULL,        -- => Current stock quantity
-    version INTEGER NOT NULL DEFAULT 1  -- => Version number for conflict detection
+  id INTEGER PRIMARY KEY, -- => Unique product identifier
+  product_name TEXT NOT NULL, -- => Product name
+  quantity INTEGER NOT NULL, -- => Current stock quantity
+  version INTEGER NOT NULL DEFAULT 1 -- => Version number for conflict detection
 );
+
 -- => inventory table created with version column
 -- => version increments on every update
-
 -- Insert initial product
-INSERT INTO inventory (id, product_name, quantity, version)
-VALUES (1, 'Widget A', 100, 1);
+INSERT INTO
+  inventory (id, product_name, quantity, version)
+VALUES
+  (1, 'Widget A', 100, 1);
+
 -- => Product created: quantity=100, version=1
 -- => version starts at 1
-
 -- Scenario: Two concurrent users editing same product
 -- User 1 reads current state
-SELECT * FROM inventory WHERE id = 1;
+SELECT
+  *
+FROM
+  inventory
+WHERE
+  id = 1;
+
 -- => Returns: id=1, product_name=Widget A, quantity=100, version=1
 -- => User 1 sees version=1 (remembers this for update)
-
 -- User 2 reads current state (at same time)
-SELECT * FROM inventory WHERE id = 1;
+SELECT
+  *
+FROM
+  inventory
+WHERE
+  id = 1;
+
 -- => Returns: id=1, product_name=Widget A, quantity=100, version=1
 -- => User 2 also sees version=1
 -- => Both users have same starting point
-
 -- User 1 updates first (decreases quantity by 5)
 UPDATE inventory
-SET quantity = 95, version = version + 1  -- => Increment version
-WHERE id = 1 AND version = 1;        -- => Only update if version still 1
+SET
+  quantity = 95,
+  version = version + 1 -- => Increment version
+WHERE
+  id = 1
+  AND version = 1;
+
+-- => Only update if version still 1
 -- => Success: 1 row updated
 -- => New state: quantity=95, version=2
 -- => WHERE clause ensures version hasn't changed since read
-
 -- User 2 tries to update (using stale version)
 UPDATE inventory
-SET quantity = 90, version = version + 1  -- => Try to set quantity=90
-WHERE id = 1 AND version = 1;        -- => Expects version=1 (stale!)
+SET
+  quantity = 90,
+  version = version + 1 -- => Try to set quantity=90
+WHERE
+  id = 1
+  AND version = 1;
+
+-- => Expects version=1 (stale!)
 -- => Fails: 0 rows updated
 -- => version is now 2 (User 1 updated it)
 -- => Conflict detected: User 2's read is outdated
-
 -- User 2 must re-read and retry (conflict resolution)
-SELECT * FROM inventory WHERE id = 1;
+SELECT
+  *
+FROM
+  inventory
+WHERE
+  id = 1;
+
 -- => Returns: quantity=95, version=2
 -- => User 2 sees User 1's changes
 -- => Application can show conflict: "Quantity changed to 95 by another user"
-
 -- User 2 retries with new version
 UPDATE inventory
-SET quantity = 90, version = version + 1  -- => Set quantity=90
-WHERE id = 1 AND version = 2;        -- => Use current version=2
+SET
+  quantity = 90,
+  version = version + 1 -- => Set quantity=90
+WHERE
+  id = 1
+  AND version = 2;
+
+-- => Use current version=2
 -- => Success: 1 row updated
 -- => New state: quantity=90, version=3
-
 -- Application pattern with error handling
-BEGIN TRANSACTION;                   -- => Start transaction
+BEGIN TRANSACTION;
 
-SELECT id, quantity, version FROM inventory WHERE id = 1;
+-- => Start transaction
+SELECT
+  id,
+  quantity,
+  version
+FROM
+  inventory
+WHERE
+  id = 1;
+
 -- => Application reads: quantity=90, version=3
 -- => Store version in application memory
-
 -- Application calculates new quantity (business logic)
 -- new_quantity = current_quantity - purchase_amount
 -- new_quantity = 90 - 10 = 80
-
 -- Attempt update with version check
 UPDATE inventory
-SET quantity = 80, version = version + 1  -- => Update to 80, increment version
-WHERE id = 1 AND version = 3;        -- => Only if version unchanged
+SET
+  quantity = 80,
+  version = version + 1 -- => Update to 80, increment version
+WHERE
+  id = 1
+  AND version = 3;
+
+-- => Only if version unchanged
 -- => Check affected row count
 -- => If affected_rows == 0: version conflict (another update happened)
 -- => If affected_rows == 1: success (no conflict)
-
 -- Application checks result:
 -- If 0 rows affected: ROLLBACK and retry entire operation
 -- If 1 row affected: COMMIT (successful update)
+COMMIT;
 
-COMMIT;                              -- => Commit if successful
+-- => Commit if successful
 -- => version now 4, quantity=80
-
 -- Timestamp-based optimistic locking (alternative approach)
 -- => Use last update timestamp instead of version number
 CREATE TABLE documents (
-    id INTEGER PRIMARY KEY,           -- => Unique document identifier
-    content TEXT,                     -- => Document content
-    updated_at TEXT NOT NULL          -- => Last update timestamp
+  id INTEGER PRIMARY KEY, -- => Unique document identifier
+  content TEXT, -- => Document content
+  updated_at TEXT NOT NULL -- => Last update timestamp
 );
--- => documents table created with timestamp column
 
-INSERT INTO documents (id, content, updated_at)
-VALUES (1, 'Original content', datetime('now'));
+-- => documents table created with timestamp column
+INSERT INTO
+  documents (id, content, updated_at)
+VALUES
+  (1, 'Original content', datetime ('now'));
+
 -- => Document created with current timestamp
 -- => updated_at = '2025-12-29 02:07:25' (example)
-
 -- Read with timestamp (user remembers timestamp)
-SELECT id, content, updated_at FROM documents WHERE id = 1;
+SELECT
+  id,
+  content,
+  updated_at
+FROM
+  documents
+WHERE
+  id = 1;
+
 -- => Returns: content='Original content', updated_at='2025-12-29 02:07:25'
 -- => Application stores updated_at for later comparison
-
 -- Update with timestamp check (detect if modified since read)
 UPDATE documents
-SET content = 'Updated content', updated_at = datetime('now')  -- => New timestamp
-WHERE id = 1 AND updated_at = '2025-12-29 02:07:25';  -- => Match old timestamp
+SET
+  content = 'Updated content',
+  updated_at = datetime ('now') -- => New timestamp
+WHERE
+  id = 1
+  AND updated_at = '2025-12-29 02:07:25';
+
+-- => Match old timestamp
 -- => Success if timestamp matches (no concurrent update)
 -- => Fails if timestamp changed (concurrent update detected)
 -- => If 0 rows affected: conflict (document modified by someone else)
@@ -2526,95 +2949,162 @@ Idempotent operations can be retried safely without side effects. Use unique con
 ```sql
 -- Idempotent operations: safe to retry without side effects
 CREATE TABLE payments (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment internal ID
-    transaction_id TEXT UNIQUE NOT NULL,  -- => External idempotency key (client-generated)
-    user_id INTEGER NOT NULL,         -- => Customer making payment
-    amount REAL NOT NULL,             -- => Payment amount
-    status TEXT NOT NULL,             -- => Payment status
-    created_at TEXT NOT NULL          -- => When payment was created
+  id INTEGER PRIMARY KEY, -- => Auto-increment internal ID
+  transaction_id TEXT UNIQUE NOT NULL, -- => External idempotency key (client-generated)
+  user_id INTEGER NOT NULL, -- => Customer making payment
+  amount REAL NOT NULL, -- => Payment amount
+  status TEXT NOT NULL, -- => Payment status
+  created_at TEXT NOT NULL -- => When payment was created
 );
+
 -- => payments table created with UNIQUE constraint on transaction_id
 -- => Prevents duplicate payments with same transaction_id
-
 -- First payment attempt (successful)
-INSERT INTO payments (transaction_id, user_id, amount, status, created_at)
-VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
+INSERT INTO
+  payments (
+    transaction_id,
+    user_id,
+    amount,
+    status,
+    created_at
+  )
+VALUES
+  (
+    'txn-12345',
+    100,
+    50.00,
+    'completed',
+    datetime ('now')
+  );
+
 -- => Success: 1 row inserted
 -- => Payment recorded: $50 charged to user 100
 -- => transaction_id='txn-12345' recorded
-
 -- Duplicate payment attempt (network retry after timeout)
-INSERT INTO payments (transaction_id, user_id, amount, status, created_at)
-VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
+INSERT INTO
+  payments (
+    transaction_id,
+    user_id,
+    amount,
+    status,
+    created_at
+  )
+VALUES
+  (
+    'txn-12345',
+    100,
+    50.00,
+    'completed',
+    datetime ('now')
+  );
+
 -- => ERROR: UNIQUE constraint failed: payments.transaction_id
 -- => Database prevents duplicate charge
 -- => Client must catch error and check if payment exists
-
 -- Idempotent pattern: INSERT OR IGNORE (silent deduplication)
-INSERT OR IGNORE INTO payments (transaction_id, user_id, amount, status, created_at)
-VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
+INSERT
+OR IGNORE INTO payments (
+  transaction_id,
+  user_id,
+  amount,
+  status,
+  created_at
+)
+VALUES
+  (
+    'txn-12345',
+    100,
+    50.00,
+    'completed',
+    datetime ('now')
+  );
+
 -- => Success: 0 rows inserted (transaction_id already exists)
 -- => No error thrown, idempotent behavior
 -- => Safe to retry: first attempt inserts, subsequent attempts ignored
-
 -- Check if payment exists before processing (application pattern)
-SELECT id FROM payments WHERE transaction_id = 'txn-12345';
+SELECT
+  id
+FROM
+  payments
+WHERE
+  transaction_id = 'txn-12345';
+
 -- => Returns: id=1 (payment exists)
 -- => Application skips payment processing
 -- => Returns same response as first attempt (idempotent)
-
 -- Idempotent upsert with unique key (create or update pattern)
 CREATE TABLE user_sessions (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment session ID
-    session_token TEXT UNIQUE NOT NULL,  -- => Session token (idempotency key)
-    user_id INTEGER NOT NULL,         -- => User owning session
-    expires_at TEXT NOT NULL,         -- => Session expiration
-    created_at TEXT NOT NULL          -- => When session created/refreshed
+  id INTEGER PRIMARY KEY, -- => Auto-increment session ID
+  session_token TEXT UNIQUE NOT NULL, -- => Session token (idempotency key)
+  user_id INTEGER NOT NULL, -- => User owning session
+  expires_at TEXT NOT NULL, -- => Session expiration
+  created_at TEXT NOT NULL -- => When session created/refreshed
 );
+
 -- => user_sessions table created
 -- => UNIQUE constraint on session_token
-
 -- Create or refresh session (upsert pattern)
-INSERT INTO user_sessions (session_token, user_id, expires_at, created_at)
-VALUES ('token-abc123', 100, datetime('now', '+1 day'), datetime('now'))
-ON CONFLICT(session_token) DO UPDATE SET
-    expires_at = datetime('now', '+1 day'),  -- => Refresh expiration
-    created_at = datetime('now');     -- => Update creation time
+INSERT INTO
+  user_sessions (session_token, user_id, expires_at, created_at)
+VALUES
+  (
+    'token-abc123',
+    100,
+    datetime ('now', '+1 day'),
+    datetime ('now')
+  ) ON CONFLICT (session_token) DO
+UPDATE
+SET
+  expires_at = datetime ('now', '+1 day'), -- => Refresh expiration
+  created_at = datetime ('now');
+
+-- => Update creation time
 -- => First call: creates new session
 -- => Subsequent calls: refresh expiration (idempotent)
 -- => Safe to retry: always results in valid session
-
 -- Retry-safe pattern with status transitions (state machine)
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment order ID
-    order_number TEXT UNIQUE NOT NULL,  -- => External order number (idempotency key)
-    user_id INTEGER NOT NULL,         -- => Customer placing order
-    status TEXT NOT NULL CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
-    created_at TEXT NOT NULL          -- => Order creation time
+  id INTEGER PRIMARY KEY, -- => Auto-increment order ID
+  order_number TEXT UNIQUE NOT NULL, -- => External order number (idempotency key)
+  user_id INTEGER NOT NULL, -- => Customer placing order
+  status TEXT NOT NULL CHECK (
+    status IN ('pending', 'processing', 'completed', 'failed')
+  ),
+  created_at TEXT NOT NULL -- => Order creation time
 );
+
 -- => orders table created with status state machine
 -- => Valid transitions: pending -> processing -> completed/failed
-
 -- Create order
-INSERT INTO orders (order_number, user_id, status, created_at)
-VALUES ('ORD-001', 100, 'pending', datetime('now'));
+INSERT INTO
+  orders (order_number, user_id, status, created_at)
+VALUES
+  ('ORD-001', 100, 'pending', datetime ('now'));
+
 -- => Order created in pending state
 -- => order_number='ORD-001' is idempotency key
-
 -- Idempotent status transition (only move forward if in expected state)
 UPDATE orders
-SET status = 'processing'            -- => Transition to processing
-WHERE order_number = 'ORD-001'       -- => Specific order
-  AND status = 'pending';            -- => Only if currently pending
+SET
+  status = 'processing' -- => Transition to processing
+WHERE
+  order_number = 'ORD-001' -- => Specific order
+  AND status = 'pending';
+
+-- => Only if currently pending
 -- => Success: 1 row updated
 -- => Order transitioned: pending -> processing
 -- => WHERE clause ensures valid state transition
-
 -- Retry same transition (idempotent - already transitioned)
 UPDATE orders
-SET status = 'processing'            -- => Try same transition
-WHERE order_number = 'ORD-001'       -- => Same order
-  AND status = 'pending';            -- => Expects pending state
+SET
+  status = 'processing' -- => Try same transition
+WHERE
+  order_number = 'ORD-001' -- => Same order
+  AND status = 'pending';
+
+-- => Expects pending state
 -- => Result: 0 rows updated
 -- => Order already in processing state (not pending)
 -- => Safe to retry: no harm, no error
@@ -2636,120 +3126,158 @@ Rate limiting prevents abuse by restricting actions per time window. Track event
 ```sql
 -- Rate limiting: track API requests within time windows
 CREATE TABLE api_requests (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment request ID
-    api_key TEXT NOT NULL,            -- => API key making request
-    endpoint TEXT NOT NULL,           -- => API endpoint called
-    request_time TEXT NOT NULL        -- => When request was made
+  id INTEGER PRIMARY KEY, -- => Auto-increment request ID
+  api_key TEXT NOT NULL, -- => API key making request
+  endpoint TEXT NOT NULL, -- => API endpoint called
+  request_time TEXT NOT NULL -- => When request was made
 );
--- => api_requests table created (logs all API requests)
 
+-- => api_requests table created (logs all API requests)
 -- Index for fast rate limit queries (api_key + time range)
-CREATE INDEX idx_api_requests_key_time ON api_requests(api_key, request_time);
+CREATE INDEX idx_api_requests_key_time ON api_requests (api_key, request_time);
+
 -- => Composite index created
 -- => Optimizes queries: WHERE api_key = X AND request_time >= Y
-
 -- Record API request (log each request)
-INSERT INTO api_requests (api_key, endpoint, request_time)
-VALUES ('key-12345', '/api/users', datetime('now'));
+INSERT INTO
+  api_requests (api_key, endpoint, request_time)
+VALUES
+  ('key-12345', '/api/users', datetime ('now'));
+
 -- => Request logged: api_key=key-12345, endpoint=/api/users
 -- => request_time = current timestamp
-
 -- Check rate limit: max 100 requests per hour
-WITH recent_requests AS (
-    SELECT COUNT(*) AS request_count  -- => Count requests in window
-    FROM api_requests
-    WHERE api_key = 'key-12345'       -- => For specific API key
-      AND request_time >= datetime('now', '-1 hour')  -- => Last hour only
-)
+WITH
+  recent_requests AS (
+    SELECT
+      COUNT(*) AS request_count -- => Count requests in window
+    FROM
+      api_requests
+    WHERE
+      api_key = 'key-12345' -- => For specific API key
+      AND request_time >= datetime ('now', '-1 hour') -- => Last hour only
+  )
 SELECT
-    CASE
-        WHEN request_count >= 100 THEN 'RATE_LIMIT_EXCEEDED'  -- => Over limit
-        ELSE 'OK'                     -- => Under limit
-    END AS status,
-    request_count,                    -- => Current usage
-    100 - request_count AS remaining  -- => Requests left
-FROM recent_requests;
+  CASE
+    WHEN request_count >= 100 THEN 'RATE_LIMIT_EXCEEDED' -- => Over limit
+    ELSE 'OK' -- => Under limit
+  END AS status,
+  request_count, -- => Current usage
+  100 - request_count AS remaining -- => Requests left
+FROM
+  recent_requests;
+
 -- => Returns: status='OK', request_count=1, remaining=99
 -- => Application uses this to decide: allow or reject request
-
 -- Application pattern: Check before allowing request
 -- Step 1: Count recent requests (rate limit check)
-WITH rate_check AS (
-    SELECT COUNT(*) AS count          -- => Count requests in window
-    FROM api_requests
-    WHERE api_key = 'key-12345'       -- => For specific API key
-      AND request_time >= datetime('now', '-1 hour')  -- => Sliding 1-hour window
-)
+WITH
+  rate_check AS (
+    SELECT
+      COUNT(*) AS count -- => Count requests in window
+    FROM
+      api_requests
+    WHERE
+      api_key = 'key-12345' -- => For specific API key
+      AND request_time >= datetime ('now', '-1 hour') -- => Sliding 1-hour window
+  )
 SELECT
-    CASE WHEN count < 100 THEN 1 ELSE 0 END AS allowed  -- => 1=allow, 0=deny
-FROM rate_check;
+  CASE
+    WHEN count < 100 THEN 1
+    ELSE 0
+  END AS allowed -- => 1=allow, 0=deny
+FROM
+  rate_check;
+
 -- => Returns: allowed=1 (under limit)
 -- => Application checks this before processing request
-
 -- Step 2: If allowed=1, record request and process
-INSERT INTO api_requests (api_key, endpoint, request_time)
-VALUES ('key-12345', '/api/users', datetime('now'));
+INSERT INTO
+  api_requests (api_key, endpoint, request_time)
+VALUES
+  ('key-12345', '/api/users', datetime ('now'));
+
 -- => Request logged (increments count for next rate check)
 -- => Application proceeds with request processing
-
 -- Sliding window rate limit (more accurate, memory-efficient)
 CREATE TABLE rate_limit_sliding (
-    api_key TEXT PRIMARY KEY,        -- => One row per API key
-    request_timestamps TEXT          -- => JSON array of recent timestamps
+  api_key TEXT PRIMARY KEY, -- => One row per API key
+  request_timestamps TEXT -- => JSON array of recent timestamps
 );
+
 -- => rate_limit_sliding table created
 -- => Stores only recent timestamps (no historical data)
-
 -- Initialize API key with empty timestamp array
-INSERT OR IGNORE INTO rate_limit_sliding (api_key, request_timestamps)
-VALUES ('key-67890', '[]');
+INSERT
+OR IGNORE INTO rate_limit_sliding (api_key, request_timestamps)
+VALUES
+  ('key-67890', '[]');
+
 -- => API key initialized: request_timestamps = []
 -- => INSERT OR IGNORE: idempotent initialization
-
 -- Add new request to sliding window (append timestamp)
 UPDATE rate_limit_sliding
-SET request_timestamps = JSON_INSERT(
-    request_timestamps,               -- => Existing JSON array
-    '$[#]',                           -- => Append position (end of array)
-    datetime('now')                   -- => Current timestamp
-)
-WHERE api_key = 'key-67890';
+SET
+  request_timestamps = JSON_INSERT (
+    request_timestamps, -- => Existing JSON array
+    '$[#]', -- => Append position (end of array)
+    datetime ('now') -- => Current timestamp
+  )
+WHERE
+  api_key = 'key-67890';
+
 -- => New timestamp appended to array
 -- => request_timestamps = ['2025-12-29 03:15:22']
-
 -- Remove timestamps older than 1 hour (cleanup stale data)
-WITH filtered_timestamps AS (
+WITH
+  filtered_timestamps AS (
     SELECT
-        api_key,                                        -- => API key identifier
-        JSON_GROUP_ARRAY(value) AS recent_timestamps  -- => Rebuild array from filtered rows
-    FROM rate_limit_sliding,
-         JSON_EACH(request_timestamps)  -- => Expand JSON array to individual rows
-    WHERE api_key = 'key-67890'       -- => For specific API key
-      AND datetime(value) >= datetime('now', '-1 hour')  -- => Keep only timestamps in last hour
-    GROUP BY api_key                                    -- => Reaggregate filtered timestamps
-)
+      api_key, -- => API key identifier
+      JSON_GROUP_ARRAY (value) AS recent_timestamps -- => Rebuild array from filtered rows
+    FROM
+      rate_limit_sliding,
+      JSON_EACH (request_timestamps) -- => Expand JSON array to individual rows
+    WHERE
+      api_key = 'key-67890' -- => For specific API key
+      AND datetime (value) >= datetime ('now', '-1 hour') -- => Keep only timestamps in last hour
+    GROUP BY
+      api_key -- => Reaggregate filtered timestamps
+  )
 UPDATE rate_limit_sliding
-SET request_timestamps = (SELECT recent_timestamps FROM filtered_timestamps)
-WHERE api_key = 'key-67890';
+SET
+  request_timestamps = (
+    SELECT
+      recent_timestamps
+    FROM
+      filtered_timestamps
+  )
+WHERE
+  api_key = 'key-67890';
+
 -- => Old timestamps removed (only last hour kept)
 -- => Keeps array size bounded (prevents unbounded growth)
-
 -- Check limit (count timestamps in array)
 SELECT
-    api_key,                                            -- => API key identifier
-    JSON_ARRAY_LENGTH(request_timestamps) AS request_count,  -- => Count timestamps in JSON array
-    CASE
-        WHEN JSON_ARRAY_LENGTH(request_timestamps) >= 100 THEN 'EXCEEDED'  -- => At or over limit
-        ELSE 'OK'                     -- => Under limit
-    END AS status                                       -- => Allow or deny decision
-FROM rate_limit_sliding
-WHERE api_key = 'key-67890';                            -- => Filter to specific API key
+  api_key, -- => API key identifier
+  JSON_ARRAY_LENGTH (request_timestamps) AS request_count, -- => Count timestamps in JSON array
+  CASE
+    WHEN JSON_ARRAY_LENGTH (request_timestamps) >= 100 THEN 'EXCEEDED' -- => At or over limit
+    ELSE 'OK' -- => Under limit
+  END AS status -- => Allow or deny decision
+FROM
+  rate_limit_sliding
+WHERE
+  api_key = 'key-67890';
+
+-- => Filter to specific API key
 -- => Returns: request_count=1, status='OK'
 -- => Application uses this to enforce rate limit
-
 -- Cleanup old requests periodically (prevent table growth)
 DELETE FROM api_requests
-WHERE request_time < datetime('now', '-24 hours');  -- => Delete older than 24 hours
+WHERE
+  request_time < datetime ('now', '-24 hours');
+
+-- => Delete older than 24 hours
 -- => Removes old requests (keeps last 24 hours for analytics)
 -- => Run as scheduled job (hourly/daily)
 ```
@@ -2921,124 +3449,196 @@ graph TD
 -- Monthly partitioning pattern (separate tables per month)
 -- => Partitioning: split large tables by time range for performance
 CREATE TABLE events_2025_01 (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment event ID
-    event_type TEXT,                  -- => Event category
-    user_id INTEGER,                  -- => User who triggered event
-    data TEXT,                        -- => Event payload (JSON)
-    created_at TEXT CHECK (created_at >= '2025-01-01' AND created_at < '2025-02-01')  -- => Partition boundary
+  id INTEGER PRIMARY KEY, -- => Auto-increment event ID
+  event_type TEXT, -- => Event category
+  user_id INTEGER, -- => User who triggered event
+  data TEXT, -- => Event payload (JSON)
+  created_at TEXT CHECK (
+    created_at >= '2025-01-01'
+    AND created_at < '2025-02-01'
+  ) -- => Partition boundary
 );
+
 -- => events_2025_01 table created (Jan 2025 partition)
 -- => CHECK constraint enforces partition boundary
-
 CREATE TABLE events_2025_02 (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment event ID
-    event_type TEXT,                  -- => Event category
-    user_id INTEGER,                  -- => User who triggered event
-    data TEXT,                        -- => Event payload (JSON)
-    created_at TEXT CHECK (created_at >= '2025-02-01' AND created_at < '2025-03-01')  -- => Partition boundary
+  id INTEGER PRIMARY KEY, -- => Auto-increment event ID
+  event_type TEXT, -- => Event category
+  user_id INTEGER, -- => User who triggered event
+  data TEXT, -- => Event payload (JSON)
+  created_at TEXT CHECK (
+    created_at >= '2025-02-01'
+    AND created_at < '2025-03-01'
+  ) -- => Partition boundary
 );
+
 -- => events_2025_02 table created (Feb 2025 partition)
 -- => Same structure as Jan partition, boundary shifted one month forward
+CREATE INDEX idx_events_2025_01_type_time ON events_2025_01 (event_type, created_at);
 
-CREATE INDEX idx_events_2025_01_type_time ON events_2025_01(event_type, created_at);
 -- => Composite index on (event_type, created_at) for efficient filtered queries
 -- => Enables fast lookup: "show all login events in first half of January"
-CREATE INDEX idx_events_2025_02_type_time ON events_2025_02(event_type, created_at);
--- => Same index structure for February partition
+CREATE INDEX idx_events_2025_02_type_time ON events_2025_02 (event_type, created_at);
 
+-- => Same index structure for February partition
 -- Insert into correct partition
-INSERT INTO events_2025_01 (event_type, user_id, data, created_at)
-VALUES ('login', 100, '{"ip": "192.168.1.1"}', '2025-01-15 10:00:00');
+INSERT INTO
+  events_2025_01 (event_type, user_id, data, created_at)
+VALUES
+  (
+    'login',
+    100,
+    '{"ip": "192.168.1.1"}',
+    '2025-01-15 10:00:00'
+  );
+
 -- => Inserted into January partition (date 2025-01-15 satisfies CHECK constraint)
 -- => Application must route inserts to the correct partition table
+INSERT INTO
+  events_2025_02 (event_type, user_id, data, created_at)
+VALUES
+  (
+    'purchase',
+    200,
+    '{"amount": 99.99}',
+    '2025-02-20 14:30:00'
+  );
 
-INSERT INTO events_2025_02 (event_type, user_id, data, created_at)
-VALUES ('purchase', 200, '{"amount": 99.99}', '2025-02-20 14:30:00');
 -- => Inserted into February partition (date 2025-02-20 satisfies Feb CHECK constraint)
-
 -- Query specific partition (fast)
-SELECT * FROM events_2025_01             -- => Only scans Jan partition (not Feb or others)
-WHERE event_type = 'login'               -- => Filter on indexed column
-  AND created_at >= '2025-01-01'         -- => Start of query range
-  AND created_at < '2025-01-15';         -- => End of query range (exclusive)
+SELECT
+  *
+FROM
+  events_2025_01 -- => Only scans Jan partition (not Feb or others)
+WHERE
+  event_type = 'login' -- => Filter on indexed column
+  AND created_at >= '2025-01-01' -- => Start of query range
+  AND created_at < '2025-01-15';
+
+-- => End of query range (exclusive)
 -- => Queries single partition only
 -- => Composite index (event_type, created_at) makes this highly efficient
-
 -- Query across partitions with UNION
-SELECT * FROM events_2025_01             -- => Query Jan partition
-WHERE event_type = 'login'               -- => Filter for login events
-UNION ALL                                -- => Combine results (no deduplication)
-SELECT * FROM events_2025_02             -- => Query Feb partition
-WHERE event_type = 'login';              -- => Same filter applied to each partition
+SELECT
+  *
+FROM
+  events_2025_01 -- => Query Jan partition
+WHERE
+  event_type = 'login' -- => Filter for login events
+UNION ALL -- => Combine results (no deduplication)
+SELECT
+  *
+FROM
+  events_2025_02 -- => Query Feb partition
+WHERE
+  event_type = 'login';
+
+-- => Same filter applied to each partition
 -- => Combines results from multiple partitions
 -- => Each partition is queried independently, then results merged
-
 -- Create view for unified access
-CREATE VIEW events_all AS               -- => Virtual table combining all partitions
-SELECT * FROM events_2025_01             -- => Include Jan partition rows
-UNION ALL                                -- => Append Feb partition rows
-SELECT * FROM events_2025_02;            -- => View now covers both partitions
--- => events_all view created: abstracts partition structure from queries
+CREATE VIEW events_all AS -- => Virtual table combining all partitions
+SELECT
+  *
+FROM
+  events_2025_01 -- => Include Jan partition rows
+UNION ALL -- => Append Feb partition rows
+SELECT
+  *
+FROM
+  events_2025_02;
 
-SELECT * FROM events_all                 -- => Query through unified view
-WHERE created_at >= '2025-01-15' AND created_at < '2025-02-15';
+-- => View now covers both partitions
+-- => events_all view created: abstracts partition structure from queries
+SELECT
+  *
+FROM
+  events_all -- => Query through unified view
+WHERE
+  created_at >= '2025-01-15'
+  AND created_at < '2025-02-15';
+
 -- => Queries both partitions automatically
 -- => View routes to underlying partition tables transparently
-
 -- Retention policy: Drop old partitions
-DROP TABLE IF EXISTS events_2024_12;  -- => Remove December 2024 partition entirely
+DROP TABLE IF EXISTS events_2024_12;
+
+-- => Remove December 2024 partition entirely
 -- => IF EXISTS prevents error if partition doesn't exist
 -- => Instant operation: drops entire partition vs DELETE scanning billions of rows
-
 -- Create new partition for next month
 CREATE TABLE events_2025_03 (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment event ID
-    event_type TEXT,                  -- => Event category
-    user_id INTEGER,                  -- => User who triggered event
-    data TEXT,                        -- => Event payload (JSON)
-    created_at TEXT CHECK (created_at >= '2025-03-01' AND created_at < '2025-04-01')  -- => March boundary
+  id INTEGER PRIMARY KEY, -- => Auto-increment event ID
+  event_type TEXT, -- => Event category
+  user_id INTEGER, -- => User who triggered event
+  data TEXT, -- => Event payload (JSON)
+  created_at TEXT CHECK (
+    created_at >= '2025-03-01'
+    AND created_at < '2025-04-01'
+  ) -- => March boundary
 );
+
 -- => March 2025 partition created, ready to receive new events
+CREATE INDEX idx_events_2025_03_type_time ON events_2025_03 (event_type, created_at);
 
-CREATE INDEX idx_events_2025_03_type_time ON events_2025_03(event_type, created_at);
 -- => Index on new partition follows same pattern as other partitions
-
 -- Archive old partitions (export to CSV or backup database)
 -- => Best practice: export to S3/cold storage before dropping
 -- Then drop table to free space
 -- => Frees disk space immediately without affecting active partitions
-
 -- Alternative: Single table with partition key for application-level routing
 CREATE TABLE events_partitioned (
-    id INTEGER PRIMARY KEY,           -- => Auto-increment event ID
-    partition_key TEXT NOT NULL,      -- => 'YYYY-MM' format (e.g., '2025-01')
-                                       -- => Application sets this column on each insert
-    event_type TEXT,                  -- => Event category
-    user_id INTEGER,                  -- => User who triggered event
-    data TEXT,                        -- => Event payload (JSON)
-    created_at TEXT                   -- => Full timestamp for ordering
+  id INTEGER PRIMARY KEY, -- => Auto-increment event ID
+  partition_key TEXT NOT NULL, -- => 'YYYY-MM' format (e.g., '2025-01')
+  -- => Application sets this column on each insert
+  event_type TEXT, -- => Event category
+  user_id INTEGER, -- => User who triggered event
+  data TEXT, -- => Event payload (JSON)
+  created_at TEXT -- => Full timestamp for ordering
 );
--- => Single table alternative: all data in one table, logically partitioned
 
-CREATE INDEX idx_events_partitioned ON events_partitioned(partition_key, event_type, created_at);
+-- => Single table alternative: all data in one table, logically partitioned
+CREATE INDEX idx_events_partitioned ON events_partitioned (partition_key, event_type, created_at);
+
 -- => Leading column is partition_key: queries filtering by month hit only relevant rows
 -- => Trailing columns (event_type, created_at) enable efficient secondary filters
-
 -- Insert with partition key
-INSERT INTO events_partitioned (partition_key, event_type, user_id, data, created_at)
-VALUES (STRFTIME('%Y-%m', '2025-01-15'), 'login', 100, '{}', '2025-01-15 10:00:00');
+INSERT INTO
+  events_partitioned (
+    partition_key,
+    event_type,
+    user_id,
+    data,
+    created_at
+  )
+VALUES
+  (
+    STRFTIME ('%Y-%m', '2025-01-15'),
+    'login',
+    100,
+    '{}',
+    '2025-01-15 10:00:00'
+  );
+
 -- => STRFTIME('%Y-%m', ...) extracts '2025-01' from the timestamp
 -- => partition_key set automatically, routes queries to correct month
-
 -- Query with partition key filter
-SELECT * FROM events_partitioned
-WHERE partition_key = '2025-01'          -- => Restrict to January data only
-  AND event_type = 'login';              -- => Further filter by event type
+SELECT
+  *
+FROM
+  events_partitioned
+WHERE
+  partition_key = '2025-01' -- => Restrict to January data only
+  AND event_type = 'login';
+
+-- => Further filter by event type
 -- => Index on partition_key makes this efficient
 -- => Only rows matching partition_key='2025-01' are scanned
-
 -- Delete old partitions
-DELETE FROM events_partitioned WHERE partition_key < '2024-12';
+DELETE FROM events_partitioned
+WHERE
+  partition_key < '2024-12';
+
 -- => Removes all events before December 2024
 -- => Unlike DROP TABLE, this works within single-table approach
 -- => Less efficient than DROP TABLE for separate-table partitioning
@@ -3059,169 +3659,240 @@ Connection pooling reuses database connections for efficiency. Simulate pool beh
 ```sql
 -- Connection pool state table
 CREATE TABLE connection_pool (
-    connection_id INTEGER PRIMARY KEY,  -- => Unique connection identifier (1-N)
-                                         -- => PRIMARY KEY auto-creates index for fast lookups
-    status TEXT NOT NULL CHECK (status IN ('idle', 'active')),
-                                         -- => Connection state: idle (available) or active (in use)
-                                         -- => CHECK constraint enforces only valid states
-                                         -- => NOT NULL prevents unknown states
-    last_used_at TEXT NOT NULL,          -- => Timestamp when connection last used
-                                         -- => Used for LRU (Least Recently Used) selection
-                                         -- => ISO8601 format: 'YYYY-MM-DD HH:MM:SS'
-    created_at TEXT NOT NULL             -- => When connection created
-                                         -- => Tracks connection age for leak detection
+  connection_id INTEGER PRIMARY KEY, -- => Unique connection identifier (1-N)
+  -- => PRIMARY KEY auto-creates index for fast lookups
+  status TEXT NOT NULL CHECK (status IN ('idle', 'active')),
+  -- => Connection state: idle (available) or active (in use)
+  -- => CHECK constraint enforces only valid states
+  -- => NOT NULL prevents unknown states
+  last_used_at TEXT NOT NULL, -- => Timestamp when connection last used
+  -- => Used for LRU (Least Recently Used) selection
+  -- => ISO8601 format: 'YYYY-MM-DD HH:MM:SS'
+  created_at TEXT NOT NULL -- => When connection created
+  -- => Tracks connection age for leak detection
 );
+
 -- => Table simulates connection pool state
 -- => Real pools manage TCP connections, this manages metadata
-
 -- Initialize pool with 10 connections
-INSERT INTO connection_pool (connection_id, status, last_used_at, created_at)
+INSERT INTO
+  connection_pool (connection_id, status, last_used_at, created_at)
 SELECT
-    value,                               -- => Connection ID from sequence (1-10)
-    'idle',                              -- => All start idle (available for use)
-    datetime('now'),                     -- => Initial last_used_at set to creation time
-                                         -- => UTC timestamp in ISO8601 format
-    datetime('now')                      -- => Creation timestamp (same as last_used_at initially)
-FROM (
-    WITH RECURSIVE nums AS (             -- => Generate sequence 1 to 10
-        SELECT 1 AS value                -- => Base case: start at 1
-        UNION ALL                        -- => Recursive case: add 1 each iteration
-        SELECT value + 1 FROM nums WHERE value < 10  -- => Stop at 10
-    )
-    SELECT value FROM nums               -- => Extract values 1, 2, 3...10
-);
+  value, -- => Connection ID from sequence (1-10)
+  'idle', -- => All start idle (available for use)
+  datetime ('now'), -- => Initial last_used_at set to creation time
+  -- => UTC timestamp in ISO8601 format
+  datetime ('now') -- => Creation timestamp (same as last_used_at initially)
+FROM
+  (
+    WITH RECURSIVE
+      nums AS ( -- => Generate sequence 1 to 10
+        SELECT
+          1 AS value -- => Base case: start at 1
+        UNION ALL -- => Recursive case: add 1 each iteration
+        SELECT
+          value + 1
+        FROM
+          nums
+        WHERE
+          value < 10 -- => Stop at 10
+      )
+    SELECT
+      value
+    FROM
+      nums -- => Extract values 1, 2, 3...10
+  );
+
 -- => Inserts 10 rows with IDs 1-10
 -- => Pool starts with 10 idle connections ready for use
 -- => All have same creation time (pool initialized atomically)
-
 -- Acquire connection from pool
-WITH available_connection AS (           -- => CTE finds idle connection
-    SELECT connection_id                 -- => Get connection ID only
-    FROM connection_pool                 -- => Search pool table
-    WHERE status = 'idle'                -- => Filter to available connections only
-                                         -- => Excludes active connections
-    ORDER BY last_used_at                -- => LRU: pick least recently used first
-                                         -- => Spreads usage evenly across pool
-    LIMIT 1                              -- => Take only one connection
-                                         -- => Ensures single-threaded acquisition (in transaction)
-)
-UPDATE connection_pool                   -- => Mark connection as active
-SET status = 'active',                   -- => Change state from idle to active
-                                         -- => Prevents other queries from acquiring it
-    last_used_at = datetime('now')       -- => Update timestamp to now
-                                         -- => Records when connection acquired
-WHERE connection_id = (SELECT connection_id FROM available_connection)
-                                         -- => Update only the selected connection
-                                         -- => Subquery returns single ID from CTE
-RETURNING connection_id;                 -- => Return acquired connection ID to caller
+WITH
+  available_connection AS ( -- => CTE finds idle connection
+    SELECT
+      connection_id -- => Get connection ID only
+    FROM
+      connection_pool -- => Search pool table
+    WHERE
+      status = 'idle' -- => Filter to available connections only
+      -- => Excludes active connections
+    ORDER BY
+      last_used_at -- => LRU: pick least recently used first
+      -- => Spreads usage evenly across pool
+    LIMIT
+      1 -- => Take only one connection
+      -- => Ensures single-threaded acquisition (in transaction)
+  )
+UPDATE connection_pool -- => Mark connection as active
+SET
+  status = 'active', -- => Change state from idle to active
+  -- => Prevents other queries from acquiring it
+  last_used_at = datetime ('now') -- => Update timestamp to now
+  -- => Records when connection acquired
+WHERE
+  connection_id = (
+    SELECT
+      connection_id
+    FROM
+      available_connection
+  )
+  -- => Update only the selected connection
+  -- => Subquery returns single ID from CTE
+  RETURNING connection_id;
+
+-- => Return acquired connection ID to caller
 -- => Returns connection_id that was acquired (e.g., 1)
 -- => Caller uses this ID to identify which connection to use
 -- => If no idle connections, returns nothing (pool exhausted)
-
 -- Release connection back to pool
-UPDATE connection_pool                   -- => Return connection to idle state
-SET status = 'idle',                     -- => Change status from active to idle
-                                         -- => Makes connection available for reuse
-    last_used_at = datetime('now')       -- => Update last_used_at to current time
-                                         -- => Tracks when connection returned (for LRU)
-WHERE connection_id = 1;                 -- => Release specific connection (ID 1)
-                                         -- => In real systems, caller specifies which connection
+UPDATE connection_pool -- => Return connection to idle state
+SET
+  status = 'idle', -- => Change status from active to idle
+  -- => Makes connection available for reuse
+  last_used_at = datetime ('now') -- => Update last_used_at to current time
+  -- => Tracks when connection returned (for LRU)
+WHERE
+  connection_id = 1;
+
+-- => Release specific connection (ID 1)
+-- => In real systems, caller specifies which connection
 -- => Connection 1 now available for next acquisition
 -- => No data returned (UPDATE without RETURNING)
-
 -- Monitor pool utilization
 SELECT
-    status,                              -- => Connection state (idle or active)
-    COUNT(*) AS count,                   -- => Number of connections in this state
-                                         -- => Shows pool distribution
-    ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM connection_pool), 2) AS percentage
-                                         -- => Percentage of pool in this state
-                                         -- => Subquery gets total pool size for denominator
-                                         -- => ROUND to 2 decimal places for readability
-FROM connection_pool                     -- => Source: all connections
-GROUP BY status;                         -- => Aggregate by state
-                                         -- => Creates one row per status value
+  status, -- => Connection state (idle or active)
+  COUNT(*) AS count, -- => Number of connections in this state
+  -- => Shows pool distribution
+  ROUND(
+    100.0 * COUNT(*) / (
+      SELECT
+        COUNT(*)
+      FROM
+        connection_pool
+    ),
+    2
+  ) AS percentage
+  -- => Percentage of pool in this state
+  -- => Subquery gets total pool size for denominator
+  -- => ROUND to 2 decimal places for readability
+FROM
+  connection_pool -- => Source: all connections
+GROUP BY
+  status;
+
+-- => Aggregate by state
+-- => Creates one row per status value
 -- => Returns 2 rows (assuming both states present):
 -- => idle: 9 (90.00%) - available connections
 -- => active: 1 (10.00%) - connections in use
 -- => Helps detect pool saturation (low idle percentage)
-
 -- Detect connection leaks (active too long)
 SELECT
-    connection_id,                       -- => ID of potentially leaked connection
-    status,                              -- => Should be 'active' (WHERE filter guarantees this)
-    last_used_at,                        -- => When connection was last acquired
-                                         -- => Shows how long it's been active
-    CAST((JULIANDAY('now') - JULIANDAY(last_used_at)) * 24 * 60 AS INTEGER) AS minutes_active
-                                         -- => Calculate duration in minutes
-                                         -- => JULIANDAY converts datetime to fractional days
-                                         -- => Subtract to get day difference
-                                         -- => Multiply by 24*60 to get minutes
-                                         -- => CAST to INTEGER removes fractional minutes
-FROM connection_pool                     -- => Check all connections
-WHERE status = 'active'                  -- => Only check active connections
-                                         -- => Idle connections can't be leaked
-  AND last_used_at < datetime('now', '-5 minutes');
-                                         -- => Filter to connections active > 5 minutes
-                                         -- => Threshold detects forgotten releases
+  connection_id, -- => ID of potentially leaked connection
+  status, -- => Should be 'active' (WHERE filter guarantees this)
+  last_used_at, -- => When connection was last acquired
+  -- => Shows how long it's been active
+  CAST(
+    (JULIANDAY ('now') - JULIANDAY (last_used_at)) * 24 * 60 AS INTEGER
+  ) AS minutes_active
+  -- => Calculate duration in minutes
+  -- => JULIANDAY converts datetime to fractional days
+  -- => Subtract to get day difference
+  -- => Multiply by 24*60 to get minutes
+  -- => CAST to INTEGER removes fractional minutes
+FROM
+  connection_pool -- => Check all connections
+WHERE
+  status = 'active' -- => Only check active connections
+  -- => Idle connections can't be leaked
+  AND last_used_at < datetime ('now', '-5 minutes');
+
+-- => Filter to connections active > 5 minutes
+-- => Threshold detects forgotten releases
 -- => Returns connections active for > 5 minutes (potential leaks)
 -- => Example: connection_id=1, status='active', minutes_active=7
 -- => Empty result means no leaks detected
 -- => Production systems alert on this query
-
 -- Force release leaked connections
-UPDATE connection_pool                   -- => Auto-recover from connection leaks
-SET status = 'idle',                     -- => Reset to idle state
-                                         -- => Forcibly releases leaked connections
-    last_used_at = datetime('now')       -- => Update timestamp to now
-                                         -- => Records when leak was recovered
-WHERE status = 'active'                  -- => Only process active connections
-  AND last_used_at < datetime('now', '-5 minutes');
-                                         -- => Same threshold as leak detection
-                                         -- => Automatically releases connections active > 5 minutes
+UPDATE connection_pool -- => Auto-recover from connection leaks
+SET
+  status = 'idle', -- => Reset to idle state
+  -- => Forcibly releases leaked connections
+  last_used_at = datetime ('now') -- => Update timestamp to now
+  -- => Records when leak was recovered
+WHERE
+  status = 'active' -- => Only process active connections
+  AND last_used_at < datetime ('now', '-5 minutes');
+
+-- => Same threshold as leak detection
+-- => Automatically releases connections active > 5 minutes
 -- => Recovers leaked connections for reuse
 -- => Prevents pool exhaustion from application bugs
 -- => Production systems log which connections were force-released
-
 -- Dynamic pool sizing: Add connection if all busy
-WITH pool_stats AS (                     -- => Calculate current pool state
+WITH
+  pool_stats AS ( -- => Calculate current pool state
     SELECT
-        COUNT(*) AS total,               -- => Current pool size (active + idle)
-        COUNT(CASE WHEN status = 'idle' THEN 1 END) AS idle,
-                                         -- => Count idle connections
-                                         -- => CASE returns 1 for idle, NULL otherwise
-                                         -- => COUNT ignores NULL, counts only 1s
-        MAX(connection_id) AS max_id     -- => Highest connection ID currently in pool
-                                         -- => Used to assign ID to new connection
-    FROM connection_pool                 -- => Aggregate across entire pool
-)
-INSERT INTO connection_pool (connection_id, status, last_used_at, created_at)
+      COUNT(*) AS total, -- => Current pool size (active + idle)
+      COUNT(
+        CASE
+          WHEN status = 'idle' THEN 1
+        END
+      ) AS idle,
+      -- => Count idle connections
+      -- => CASE returns 1 for idle, NULL otherwise
+      -- => COUNT ignores NULL, counts only 1s
+      MAX(connection_id) AS max_id -- => Highest connection ID currently in pool
+      -- => Used to assign ID to new connection
+    FROM
+      connection_pool -- => Aggregate across entire pool
+  )
+INSERT INTO
+  connection_pool (connection_id, status, last_used_at, created_at)
 SELECT
-    max_id + 1,                          -- => New connection ID (next sequential ID)
-                                         -- => Ensures no ID collision
-    'idle',                              -- => New connection starts idle
-                                         -- => Available immediately after creation
-    datetime('now'),                     -- => Last used = creation time (never used yet)
-    datetime('now')                      -- => Creation timestamp
-FROM pool_stats                          -- => Use computed stats
-WHERE idle = 0 AND total < 20;           -- => Only add if pool exhausted (no idle)
-                                         -- => AND pool under max size (20 connections)
-                                         -- => Prevents unbounded growth
+  max_id + 1, -- => New connection ID (next sequential ID)
+  -- => Ensures no ID collision
+  'idle', -- => New connection starts idle
+  -- => Available immediately after creation
+  datetime ('now'), -- => Last used = creation time (never used yet)
+  datetime ('now') -- => Creation timestamp
+FROM
+  pool_stats -- => Use computed stats
+WHERE
+  idle = 0
+  AND total < 20;
+
+-- => Only add if pool exhausted (no idle)
+-- => AND pool under max size (20 connections)
+-- => Prevents unbounded growth
 -- => Dynamically grows pool when needed
 -- => Example: Pool has 10 active, 0 idle → adds connection 11
 -- => If pool already at 20, no new connection (hard limit)
 -- => Production systems use more sophisticated growth algorithms
 -- => Adds connection if pool exhausted (up to max)
-
 -- Shrink pool: Remove excess idle connections
 DELETE FROM connection_pool
-WHERE connection_id IN (
-    SELECT connection_id
-    FROM connection_pool
-    WHERE status = 'idle'
-    ORDER BY last_used_at
-    LIMIT (SELECT MAX(0, COUNT(*) - 10) FROM connection_pool WHERE status = 'idle')
-);
+WHERE
+  connection_id IN (
+    SELECT
+      connection_id
+    FROM
+      connection_pool
+    WHERE
+      status = 'idle'
+    ORDER BY
+      last_used_at
+    LIMIT
+      (
+        SELECT
+          MAX(0, COUNT(*) - 10)
+        FROM
+          connection_pool
+        WHERE
+          status = 'idle'
+      )
+  );
+
 -- => Keeps minimum 10 idle connections
 ```
 
@@ -3239,186 +3910,251 @@ Multi-tenancy isolates data by tenant using row-level filtering. Single database
 
 ```sql
 -- Shared schema approach
-CREATE TABLE tenants (               -- => Master table for tenant organizations
-    id INTEGER PRIMARY KEY,           -- => Unique tenant identifier
-                                      -- => Used as foreign key in all tenant-scoped tables
-    name TEXT UNIQUE NOT NULL,        -- => Tenant organization name
-                                      -- => UNIQUE prevents duplicate tenant names
-                                      -- => NOT NULL ensures every tenant has name
-    created_at TEXT NOT NULL          -- => When tenant was created (ISO8601)
+CREATE TABLE tenants ( -- => Master table for tenant organizations
+  id INTEGER PRIMARY KEY, -- => Unique tenant identifier
+  -- => Used as foreign key in all tenant-scoped tables
+  name TEXT UNIQUE NOT NULL, -- => Tenant organization name
+  -- => UNIQUE prevents duplicate tenant names
+  -- => NOT NULL ensures every tenant has name
+  created_at TEXT NOT NULL -- => When tenant was created (ISO8601)
 );
+
 -- => Multi-tenancy master table
 -- => Each tenant gets unique ID (1, 2, 3...)
 -- => All tenant data references this ID
-
-CREATE TABLE users (                  -- => User accounts scoped to tenants
-    id INTEGER PRIMARY KEY,           -- => Global user identifier
-                                      -- => Unique across ALL tenants
-    tenant_id INTEGER NOT NULL,       -- => Which tenant this user belongs to
-                                      -- => CRITICAL: Must filter by this in all queries
-    email TEXT NOT NULL,              -- => User email address
-                                      -- => Not globally unique, unique per tenant
-    name TEXT,                        -- => User display name (nullable)
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id),
-                                      -- => Enforce referential integrity
-                                      -- => Prevents orphaned users (tenant must exist)
-    UNIQUE(tenant_id, email)          -- => Email unique within tenant, not globally
-                                      -- => alice@example.com can exist in tenant 1 and 2
+CREATE TABLE users ( -- => User accounts scoped to tenants
+  id INTEGER PRIMARY KEY, -- => Global user identifier
+  -- => Unique across ALL tenants
+  tenant_id INTEGER NOT NULL, -- => Which tenant this user belongs to
+  -- => CRITICAL: Must filter by this in all queries
+  email TEXT NOT NULL, -- => User email address
+  -- => Not globally unique, unique per tenant
+  name TEXT, -- => User display name (nullable)
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+  -- => Enforce referential integrity
+  -- => Prevents orphaned users (tenant must exist)
+  UNIQUE (tenant_id, email) -- => Email unique within tenant, not globally
+  -- => alice@example.com can exist in tenant 1 and 2
 );
+
 -- => Users belong to single tenant
 -- => Tenant 1 users can't see/interact with Tenant 2 users
-
-CREATE TABLE documents (              -- => Document storage scoped to tenants
-    id INTEGER PRIMARY KEY,           -- => Global document identifier
-    tenant_id INTEGER NOT NULL,       -- => Tenant owner (CRITICAL for isolation)
-                                      -- => Every document belongs to exactly one tenant
-    user_id INTEGER NOT NULL,         -- => Which user created document
-                                      -- => Must belong to same tenant (enforced by app)
-    title TEXT,                       -- => Document title
-    content TEXT,                     -- => Document body/content
-    created_at TEXT NOT NULL,         -- => Creation timestamp (ISO8601)
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id),
-                                      -- => Document's tenant must exist
-    FOREIGN KEY (user_id) REFERENCES users(id)
-                                      -- => Document creator must exist
+CREATE TABLE documents ( -- => Document storage scoped to tenants
+  id INTEGER PRIMARY KEY, -- => Global document identifier
+  tenant_id INTEGER NOT NULL, -- => Tenant owner (CRITICAL for isolation)
+  -- => Every document belongs to exactly one tenant
+  user_id INTEGER NOT NULL, -- => Which user created document
+  -- => Must belong to same tenant (enforced by app)
+  title TEXT, -- => Document title
+  content TEXT, -- => Document body/content
+  created_at TEXT NOT NULL, -- => Creation timestamp (ISO8601)
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+  -- => Document's tenant must exist
+  FOREIGN KEY (user_id) REFERENCES users (id)
+  -- => Document creator must exist
 );
+
 -- => Documents scoped to tenants
 -- => Tenant isolation enforced by filtering tenant_id in queries
-
 -- Create indexes with tenant_id first
-CREATE INDEX idx_users_tenant ON users(tenant_id);
-                                      -- => Index tenant_id for fast filtering
-                                      -- => WHERE tenant_id = X uses this index
-                                      -- => Tenant queries avoid full table scans
-CREATE INDEX idx_documents_tenant ON documents(tenant_id);
-                                      -- => Same benefit for documents table
-                                      -- => Composite indexes often use (tenant_id, other_col)
+CREATE INDEX idx_users_tenant ON users (tenant_id);
+
+-- => Index tenant_id for fast filtering
+-- => WHERE tenant_id = X uses this index
+-- => Tenant queries avoid full table scans
+CREATE INDEX idx_documents_tenant ON documents (tenant_id);
+
+-- => Same benefit for documents table
+-- => Composite indexes often use (tenant_id, other_col)
 -- => Indexes critical for multi-tenant performance
 -- => Without them, tenant queries scan entire table
-
 -- Insert tenants
-INSERT INTO tenants (id, name, created_at)
+INSERT INTO
+  tenants (id, name, created_at)
 VALUES
-    (1, 'Acme Corp', '2025-01-01'),   -- => Tenant 1: Acme Corporation
-                                      -- => Created on Jan 1, 2025
-    (2, 'TechStart Inc', '2025-01-02'); -- => Tenant 2: TechStart Inc
-                                      -- => Created on Jan 2, 2025
+  (1, 'Acme Corp', '2025-01-01'), -- => Tenant 1: Acme Corporation
+  -- => Created on Jan 1, 2025
+  (2, 'TechStart Inc', '2025-01-02');
+
+-- => Tenant 2: TechStart Inc
+-- => Created on Jan 2, 2025
 -- => 2 tenants in system
 -- => Each gets isolated data space
-
 -- Insert users (isolated by tenant)
-INSERT INTO users (id, tenant_id, email, name)
+INSERT INTO
+  users (id, tenant_id, email, name)
 VALUES
-    (1, 1, 'alice@acme.com', 'Alice'),     -- => User 1 belongs to tenant 1 (Acme)
-    (2, 1, 'bob@acme.com', 'Bob'),         -- => User 2 belongs to tenant 1 (Acme)
-    (3, 2, 'charlie@techstart.com', 'Charlie'); -- => User 3 belongs to tenant 2 (TechStart)
+  (1, 1, 'alice@acme.com', 'Alice'), -- => User 1 belongs to tenant 1 (Acme)
+  (2, 1, 'bob@acme.com', 'Bob'), -- => User 2 belongs to tenant 1 (Acme)
+  (3, 2, 'charlie@techstart.com', 'Charlie');
+
+-- => User 3 belongs to tenant 2 (TechStart)
 -- => 3 users total: 2 in Acme, 1 in TechStart
 -- => Users can't cross tenant boundaries
 -- => Alice and Bob share tenant, Charlie isolated
-
 -- Insert documents
-INSERT INTO documents (id, tenant_id, user_id, title, content, created_at)
+INSERT INTO
+  documents (
+    id,
+    tenant_id,
+    user_id,
+    title,
+    content,
+    created_at
+  )
 VALUES
-    (1, 1, 1, 'Q1 Report', 'Acme Q1 data', '2025-01-15'),
-                                      -- => Doc 1: Acme's Q1 report by Alice
-    (2, 1, 2, 'Roadmap', 'Acme roadmap', '2025-01-16'),
-                                      -- => Doc 2: Acme's roadmap by Bob
-    (3, 2, 3, 'Strategy', 'TechStart strategy', '2025-01-17');
-                                      -- => Doc 3: TechStart's strategy by Charlie
+  (
+    1,
+    1,
+    1,
+    'Q1 Report',
+    'Acme Q1 data',
+    '2025-01-15'
+  ),
+  -- => Doc 1: Acme's Q1 report by Alice
+  (2, 1, 2, 'Roadmap', 'Acme roadmap', '2025-01-16'),
+  -- => Doc 2: Acme's roadmap by Bob
+  (
+    3,
+    2,
+    3,
+    'Strategy',
+    'TechStart strategy',
+    '2025-01-17'
+  );
+
+-- => Doc 3: TechStart's strategy by Charlie
 -- => 3 documents: 2 owned by Acme, 1 by TechStart
 -- => Each document scoped to tenant that created it
-
 -- CRITICAL: Always filter by tenant_id
-SELECT * FROM documents               -- => Query documents table
-WHERE tenant_id = 1;                  -- => Filter to Acme Corp only (tenant 1)
-                                      -- => CRITICAL: Never query without tenant_id filter
-                                      -- => Returns only tenant 1's documents
+SELECT
+  *
+FROM
+  documents -- => Query documents table
+WHERE
+  tenant_id = 1;
+
+-- => Filter to Acme Corp only (tenant 1)
+-- => CRITICAL: Never query without tenant_id filter
+-- => Returns only tenant 1's documents
 -- => Returns documents 1 and 2 (Acme's documents)
 -- => Document 3 invisible to this query (belongs to tenant 2)
 -- => Application must ALWAYS provide tenant_id from session
+SELECT
+  *
+FROM
+  documents -- => Query documents table
+WHERE
+  tenant_id = 2;
 
-SELECT * FROM documents               -- => Query documents table
-WHERE tenant_id = 2;                  -- => Filter to TechStart only (tenant 2)
-                                      -- => Isolates TechStart's data
+-- => Filter to TechStart only (tenant 2)
+-- => Isolates TechStart's data
 -- => Returns document 3 (TechStart's document)
 -- => Documents 1 and 2 invisible (belong to tenant 1)
 -- => Each tenant sees only their own data
-
 -- Join across tables (maintain tenant filtering)
 SELECT
-    d.title,                          -- => Document title
-    u.name AS author,                 -- => User who created document
-    t.name AS tenant                  -- => Tenant organization name
-FROM documents d                      -- => Start with documents
-INNER JOIN users u ON d.user_id = u.id AND d.tenant_id = u.tenant_id
-                                      -- => Join to users table
-                                      -- => CRITICAL: Include tenant_id in join condition
-                                      -- => Prevents cross-tenant user lookup
-                                      -- => d.tenant_id = u.tenant_id enforces same tenant
-INNER JOIN tenants t ON d.tenant_id = t.id
-                                      -- => Join to tenants for name display
-WHERE d.tenant_id = 1;                -- => Filter to Acme Corp documents
-                                      -- => Entire join scoped to single tenant
+  d.title, -- => Document title
+  u.name AS author, -- => User who created document
+  t.name AS tenant -- => Tenant organization name
+FROM
+  documents d -- => Start with documents
+  INNER JOIN users u ON d.user_id = u.id
+  AND d.tenant_id = u.tenant_id
+  -- => Join to users table
+  -- => CRITICAL: Include tenant_id in join condition
+  -- => Prevents cross-tenant user lookup
+  -- => d.tenant_id = u.tenant_id enforces same tenant
+  INNER JOIN tenants t ON d.tenant_id = t.id
+  -- => Join to tenants for name display
+WHERE
+  d.tenant_id = 1;
+
+-- => Filter to Acme Corp documents
+-- => Entire join scoped to single tenant
 -- => Returns Acme documents with authors from Acme users
 -- => Charlie (tenant 2) never appears in results
 -- => Tenant filtering prevents cross-tenant data leakage
-
 -- Create view for application convenience
 CREATE VIEW documents_with_context AS -- => Pre-joined view for common queries
 SELECT
-    d.id,                             -- => Document ID
-    d.tenant_id,                      -- => CRITICAL: Include tenant_id for filtering
-                                      -- => View queries MUST filter by this
-    d.title,                          -- => Document title
-    d.content,                        -- => Document body
-    u.name AS author,                 -- => Author name from users table
-    t.name AS tenant_name,            -- => Tenant name from tenants table
-    d.created_at                      -- => Creation timestamp
-FROM documents d                      -- => Base table: documents
-INNER JOIN users u ON d.user_id = u.id AND d.tenant_id = u.tenant_id
-                                      -- => Join users with tenant_id constraint
-                                      -- => Ensures user and document in same tenant
-INNER JOIN tenants t ON d.tenant_id = t.id
-                                      -- => Join tenants for name
+  d.id, -- => Document ID
+  d.tenant_id, -- => CRITICAL: Include tenant_id for filtering
+  -- => View queries MUST filter by this
+  d.title, -- => Document title
+  d.content, -- => Document body
+  u.name AS author, -- => Author name from users table
+  t.name AS tenant_name, -- => Tenant name from tenants table
+  d.created_at -- => Creation timestamp
+FROM
+  documents d -- => Base table: documents
+  INNER JOIN users u ON d.user_id = u.id
+  AND d.tenant_id = u.tenant_id
+  -- => Join users with tenant_id constraint
+  -- => Ensures user and document in same tenant
+  INNER JOIN tenants t ON d.tenant_id = t.id
+  -- => Join tenants for name
 ;
+
 -- => View simplifies application queries
 -- => Still requires tenant_id filtering when queried
-
 -- Application sets tenant context and queries view
-SELECT * FROM documents_with_context  -- => Query pre-joined view
-WHERE tenant_id = 1;                  -- => Filter to Acme Corp
-                                      -- => Application provides tenant_id from session
+SELECT
+  *
+FROM
+  documents_with_context -- => Query pre-joined view
+WHERE
+  tenant_id = 1;
+
+-- => Filter to Acme Corp
+-- => Application provides tenant_id from session
 -- => Returns Acme documents with all context
 -- => Same security rules apply to views
-
 -- Prevent cross-tenant data leakage
 -- Wrong: Missing tenant_id filter
-SELECT * FROM documents WHERE id = 3; -- => SECURITY VULNERABILITY!
-                                      -- => No tenant_id filter
-                                      -- => Returns document regardless of tenant
+SELECT
+  *
+FROM
+  documents
+WHERE
+  id = 3;
+
+-- => SECURITY VULNERABILITY!
+-- => No tenant_id filter
+-- => Returns document regardless of tenant
 -- => Returns TechStart document (document 3)
 -- => Security issue if application doesn't verify tenant ownership
 -- => Attacker could enumerate IDs to access all tenant data
-
 -- Correct: Always include tenant_id
-SELECT * FROM documents WHERE id = 3 AND tenant_id = 1;
-                                      -- => Includes tenant_id filter
-                                      -- => Document 3 belongs to tenant 2, not tenant 1
+SELECT
+  *
+FROM
+  documents
+WHERE
+  id = 3
+  AND tenant_id = 1;
+
+-- => Includes tenant_id filter
+-- => Document 3 belongs to tenant 2, not tenant 1
 -- => Returns no rows (document 3 belongs to tenant 2)
 -- => Even if attacker knows document ID 3 exists, can't access it
 -- => Tenant filtering provides security boundary
-
 -- Aggregate per tenant
 SELECT
-    t.name AS tenant,                 -- => Tenant organization name
-    COUNT(d.id) AS num_documents      -- => Count documents per tenant
-                                      -- => COUNT(d.id) counts non-NULL document IDs
-FROM tenants t                        -- => Start with all tenants
-LEFT JOIN documents d ON t.id = d.tenant_id
-                                      -- => LEFT JOIN includes tenants with no documents
-                                      -- => If tenant has no documents, COUNT returns 0
-GROUP BY t.id, t.name;                -- => Group by tenant
-                                      -- => Creates one row per tenant
+  t.name AS tenant, -- => Tenant organization name
+  COUNT(d.id) AS num_documents -- => Count documents per tenant
+  -- => COUNT(d.id) counts non-NULL document IDs
+FROM
+  tenants t -- => Start with all tenants
+  LEFT JOIN documents d ON t.id = d.tenant_id
+  -- => LEFT JOIN includes tenants with no documents
+  -- => If tenant has no documents, COUNT returns 0
+GROUP BY
+  t.id,
+  t.name;
+
+-- => Group by tenant
+-- => Creates one row per tenant
 -- => Returns document counts for all tenants:
 -- => Acme Corp: 2 (documents 1 and 2)
 -- => TechStart Inc: 1 (document 3)
@@ -3439,219 +4175,330 @@ Monitor database health with query performance metrics, connection stats, and re
 
 ```sql
 -- Query performance log
-CREATE TABLE query_log (              -- => Stores query execution metrics
-    id INTEGER PRIMARY KEY,           -- => Unique log entry identifier
-                                      -- => Auto-increments for each execution
-    query_hash TEXT NOT NULL,         -- => Hash of normalized query (groups similar queries)
-                                      -- => e.g., "SELECT * FROM users WHERE id = ?" always same hash
-                                      -- => Parameters removed for grouping
-    query_text TEXT,                  -- => Actual query text (for reference)
-                                      -- => Helps identify what query_hash represents
-    execution_time_ms INTEGER NOT NULL,  -- => How long query took (milliseconds)
-                                          -- => Critical metric for performance analysis
-    rows_returned INTEGER,            -- => How many rows query returned
-                                      -- => Helps identify queries scanning too much data
-    executed_at TEXT NOT NULL         -- => When query ran (ISO8601 timestamp)
-                                      -- => For time-series analysis
+CREATE TABLE query_log ( -- => Stores query execution metrics
+  id INTEGER PRIMARY KEY, -- => Unique log entry identifier
+  -- => Auto-increments for each execution
+  query_hash TEXT NOT NULL, -- => Hash of normalized query (groups similar queries)
+  -- => e.g., "SELECT * FROM users WHERE id = ?" always same hash
+  -- => Parameters removed for grouping
+  query_text TEXT, -- => Actual query text (for reference)
+  -- => Helps identify what query_hash represents
+  execution_time_ms INTEGER NOT NULL, -- => How long query took (milliseconds)
+  -- => Critical metric for performance analysis
+  rows_returned INTEGER, -- => How many rows query returned
+  -- => Helps identify queries scanning too much data
+  executed_at TEXT NOT NULL -- => When query ran (ISO8601 timestamp)
+  -- => For time-series analysis
 );
+
 -- => Performance monitoring table
 -- => Application logs every query execution here
 -- => Enables detection of slow queries and degradation trends
+CREATE INDEX idx_query_log_time ON query_log (executed_at);
 
-CREATE INDEX idx_query_log_time ON query_log(executed_at);
-                                      -- => Index on timestamp for time-based queries
-                                      -- => "Last hour" queries use this index
-CREATE INDEX idx_query_log_hash ON query_log(query_hash);
-                                      -- => Index on query hash for grouping
-                                      -- => GROUP BY query_hash uses this
+-- => Index on timestamp for time-based queries
+-- => "Last hour" queries use this index
+CREATE INDEX idx_query_log_hash ON query_log (query_hash);
+
+-- => Index on query hash for grouping
+-- => GROUP BY query_hash uses this
 -- => Indexes critical for fast metric queries
 -- => Without them, analyzing logs is slow (ironic for performance monitoring)
-
 -- Log query execution
-INSERT INTO query_log (query_hash, query_text, execution_time_ms, rows_returned, executed_at)
+INSERT INTO
+  query_log (
+    query_hash,
+    query_text,
+    execution_time_ms,
+    rows_returned,
+    executed_at
+  )
 VALUES
-    ('hash123', 'SELECT * FROM users WHERE country = ?', 45, 150, '2025-01-15 10:00:00'),
-                                      -- => First execution: 45ms, 150 rows
-                                      -- => Same query_hash for all country lookups
-    ('hash123', 'SELECT * FROM users WHERE country = ?', 42, 145, '2025-01-15 10:05:00'),
-                                      -- => Second execution: 42ms, 145 rows (similar performance)
-                                      -- => query_hash groups these together
-    ('hash456', 'SELECT COUNT(*) FROM orders', 320, 1, '2025-01-15 10:10:00');
-                                      -- => Different query: 320ms (slow!), 1 row
-                                      -- => Separate query_hash for different query pattern
+  (
+    'hash123',
+    'SELECT * FROM users WHERE country = ?',
+    45,
+    150,
+    '2025-01-15 10:00:00'
+  ),
+  -- => First execution: 45ms, 150 rows
+  -- => Same query_hash for all country lookups
+  (
+    'hash123',
+    'SELECT * FROM users WHERE country = ?',
+    42,
+    145,
+    '2025-01-15 10:05:00'
+  ),
+  -- => Second execution: 42ms, 145 rows (similar performance)
+  -- => query_hash groups these together
+  (
+    'hash456',
+    'SELECT COUNT(*) FROM orders',
+    320,
+    1,
+    '2025-01-15 10:10:00'
+  );
+
+-- => Different query: 320ms (slow!), 1 row
+-- => Separate query_hash for different query pattern
 -- => 3 log entries: 2 executions of hash123, 1 of hash456
 -- => Simulates application logging query executions
 -- => Production systems log thousands per second
-
 -- Find slow queries (> 100ms)
 SELECT
-    query_hash,                       -- => Query identifier (groups similar queries)
-    query_text,                       -- => Actual query text for reference
-    AVG(execution_time_ms) AS avg_time_ms,  -- => Average execution time
-                                            -- => Smooths out outliers
-    MAX(execution_time_ms) AS max_time_ms,  -- => Worst case execution time
-                                            -- => Shows performance spikes
-    COUNT(*) AS execution_count       -- => How many times query executed
-                                      -- => High-frequency queries need optimization priority
-FROM query_log                        -- => Source: all logged queries
-WHERE executed_at >= datetime('now', '-1 hour')  -- => Last hour only
-                                                  -- => Focuses on recent performance
-GROUP BY query_hash, query_text       -- => Aggregate by query pattern
-                                      -- => One row per unique query
-HAVING AVG(execution_time_ms) > 100   -- => Filter to slow queries (>100ms average)
-                                      -- => HAVING filters after aggregation
-ORDER BY avg_time_ms DESC;            -- => Slowest queries first
-                                      -- => Prioritize optimization targets
+  query_hash, -- => Query identifier (groups similar queries)
+  query_text, -- => Actual query text for reference
+  AVG(execution_time_ms) AS avg_time_ms, -- => Average execution time
+  -- => Smooths out outliers
+  MAX(execution_time_ms) AS max_time_ms, -- => Worst case execution time
+  -- => Shows performance spikes
+  COUNT(*) AS execution_count -- => How many times query executed
+  -- => High-frequency queries need optimization priority
+FROM
+  query_log -- => Source: all logged queries
+WHERE
+  executed_at >= datetime ('now', '-1 hour') -- => Last hour only
+  -- => Focuses on recent performance
+GROUP BY
+  query_hash,
+  query_text -- => Aggregate by query pattern
+  -- => One row per unique query
+HAVING
+  AVG(execution_time_ms) > 100 -- => Filter to slow queries (>100ms average)
+  -- => HAVING filters after aggregation
+ORDER BY
+  avg_time_ms DESC;
+
+-- => Slowest queries first
+-- => Prioritize optimization targets
 -- => Returns queries needing optimization
 -- => Example: hash456 with avg 320ms appears at top
 -- => Production threshold might be 50ms (stricter)
-
 -- Query performance trends
-WITH hourly_stats AS (                -- => CTE calculates hourly metrics
+WITH
+  hourly_stats AS ( -- => CTE calculates hourly metrics
     SELECT
-        STRFTIME('%Y-%m-%d %H:00:00', executed_at) AS hour,
-                                      -- => Round timestamp to hour boundary
-                                      -- => Groups all queries in same hour
-                                      -- => Example: 10:37:42 → 10:00:00
-        AVG(execution_time_ms) AS avg_time,  -- => Average query time per hour
-                                             -- => Shows performance degradation trends
-        COUNT(*) AS query_count       -- => Number of queries per hour
-                                      -- => Shows load patterns
-    FROM query_log                    -- => Source: query logs
-    WHERE executed_at >= datetime('now', '-24 hours')  -- => Last 24 hours
-                                                        -- => One day of trend data
-    GROUP BY hour                     -- => Aggregate by hour bucket
-                                      -- => Creates hourly time series
-)
-SELECT * FROM hourly_stats ORDER BY hour;  -- => Sort chronologically
-                                           -- => Shows trend over time
+      STRFTIME ('%Y-%m-%d %H:00:00', executed_at) AS hour,
+      -- => Round timestamp to hour boundary
+      -- => Groups all queries in same hour
+      -- => Example: 10:37:42 → 10:00:00
+      AVG(execution_time_ms) AS avg_time, -- => Average query time per hour
+      -- => Shows performance degradation trends
+      COUNT(*) AS query_count -- => Number of queries per hour
+      -- => Shows load patterns
+    FROM
+      query_log -- => Source: query logs
+    WHERE
+      executed_at >= datetime ('now', '-24 hours') -- => Last 24 hours
+      -- => One day of trend data
+    GROUP BY
+      hour -- => Aggregate by hour bucket
+      -- => Creates hourly time series
+  )
+SELECT
+  *
+FROM
+  hourly_stats
+ORDER BY
+  hour;
+
+-- => Sort chronologically
+-- => Shows trend over time
 -- => Shows performance trend over last 24 hours
 -- => Example output: Hour | avg_time | query_count
 -- => 2025-01-15 09:00:00 | 42 | 150
 -- => 2025-01-15 10:00:00 | 135 | 180 (degrading!)
 -- => Helps detect "queries getting slower over time"
-
 -- Table statistics
-CREATE TABLE table_stats (            -- => Stores metadata about tables
-    table_name TEXT PRIMARY KEY,      -- => Name of table being tracked
-                                      -- => One row per table
-    row_count INTEGER,                -- => Number of rows in table
-                                      -- => For capacity planning
-    index_count INTEGER,              -- => Number of indexes on table
-                                      -- => More indexes = faster reads, slower writes
-    last_analyzed TEXT                -- => When stats last collected
-                                      -- => Tracks freshness of metrics
+CREATE TABLE table_stats ( -- => Stores metadata about tables
+  table_name TEXT PRIMARY KEY, -- => Name of table being tracked
+  -- => One row per table
+  row_count INTEGER, -- => Number of rows in table
+  -- => For capacity planning
+  index_count INTEGER, -- => Number of indexes on table
+  -- => More indexes = faster reads, slower writes
+  last_analyzed TEXT -- => When stats last collected
+  -- => Tracks freshness of metrics
 );
+
 -- => Metadata table for monitoring table health
 -- => Updated periodically (cron job or scheduled task)
-
 -- Collect stats (run periodically)
-INSERT OR REPLACE INTO table_stats (table_name, row_count, index_count, last_analyzed)
-                                      -- => Upsert: insert or update if exists
-                                      -- => PRIMARY KEY on table_name prevents duplicates
+INSERT
+OR REPLACE INTO table_stats (table_name, row_count, index_count, last_analyzed)
+-- => Upsert: insert or update if exists
+-- => PRIMARY KEY on table_name prevents duplicates
 SELECT
-    name AS table_name,               -- => Table name from sqlite_master
-    (SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND tbl_name = name) AS index_count,
-                                      -- => Subquery counts indexes per table
-                                      -- => Queries sqlite_master (metadata table)
-    0 AS row_count,                   -- => Placeholder (would need per-table COUNT)
-                                      -- => Real implementation: SELECT COUNT(*) FROM <table>
-    datetime('now') AS last_analyzed  -- => Current timestamp
-FROM sqlite_master                    -- => System table with table metadata
-WHERE type = 'table' AND name NOT LIKE 'sqlite_%';  -- => User tables only
-                                                     -- => Excludes system tables (sqlite_*)
+  name AS table_name, -- => Table name from sqlite_master
+  (
+    SELECT
+      COUNT(*)
+    FROM
+      sqlite_master
+    WHERE
+      type = 'index'
+      AND tbl_name = name
+  ) AS index_count,
+  -- => Subquery counts indexes per table
+  -- => Queries sqlite_master (metadata table)
+  0 AS row_count, -- => Placeholder (would need per-table COUNT)
+  -- => Real implementation: SELECT COUNT(*) FROM <table>
+  datetime ('now') AS last_analyzed -- => Current timestamp
+FROM
+  sqlite_master -- => System table with table metadata
+WHERE
+  type = 'table'
+  AND name NOT LIKE 'sqlite_%';
+
+-- => User tables only
+-- => Excludes system tables (sqlite_*)
 -- => Collects metadata for all user tables
 -- => Run this hourly or daily to track table growth
 -- => Production version would calculate actual row counts
-
 -- Database size monitoring
 SELECT
-    SUM(pgsize) / 1024.0 / 1024.0 AS size_mb  -- => Total database size in megabytes
-                                               -- => SUM(pgsize) gets bytes
-                                               -- => Divide by 1024^2 for MB
-FROM dbstat;                          -- => Virtual table with page statistics
-                                      -- => dbstat shows space usage per table/index
+  SUM(pgsize) / 1024.0 / 1024.0 AS size_mb -- => Total database size in megabytes
+  -- => SUM(pgsize) gets bytes
+  -- => Divide by 1024^2 for MB
+FROM
+  dbstat;
+
+-- => Virtual table with page statistics
+-- => dbstat shows space usage per table/index
 -- => Returns database size in MB
 -- => Example: 245.67 (database is ~246 MB)
 -- => Alert when approaching storage limits
 -- => Triggers VACUUM or archival if too large
-
 -- Connection monitoring (from pool table in Example 83)
-CREATE TABLE connection_stats (       -- => Time-series connection metrics
-    recorded_at TEXT PRIMARY KEY,     -- => Timestamp of snapshot
-                                      -- => One row per snapshot (minute/hour)
-    active_connections INTEGER,       -- => Connections in use
-    idle_connections INTEGER,         -- => Connections available
-    total_connections INTEGER         -- => Pool size (active + idle)
+CREATE TABLE connection_stats ( -- => Time-series connection metrics
+  recorded_at TEXT PRIMARY KEY, -- => Timestamp of snapshot
+  -- => One row per snapshot (minute/hour)
+  active_connections INTEGER, -- => Connections in use
+  idle_connections INTEGER, -- => Connections available
+  total_connections INTEGER -- => Pool size (active + idle)
 );
+
 -- => Tracks connection pool health over time
 -- => Helps detect connection leaks (active climbing over time)
-
-INSERT INTO connection_stats (recorded_at, active_connections, idle_connections, total_connections)
+INSERT INTO
+  connection_stats (
+    recorded_at,
+    active_connections,
+    idle_connections,
+    total_connections
+  )
 SELECT
-    datetime('now'),                  -- => Current timestamp (snapshot time)
-    COUNT(CASE WHEN status = 'active' THEN 1 END),  -- => Count active connections
-                                                     -- => CASE returns 1 for active, NULL otherwise
-    COUNT(CASE WHEN status = 'idle' THEN 1 END),    -- => Count idle connections
-    COUNT(*)                          -- => Total connections
-FROM connection_pool;                 -- => From Example 83's connection_pool table
+  datetime ('now'), -- => Current timestamp (snapshot time)
+  COUNT(
+    CASE
+      WHEN status = 'active' THEN 1
+    END
+  ), -- => Count active connections
+  -- => CASE returns 1 for active, NULL otherwise
+  COUNT(
+    CASE
+      WHEN status = 'idle' THEN 1
+    END
+  ), -- => Count idle connections
+  COUNT(*) -- => Total connections
+FROM
+  connection_pool;
+
+-- => From Example 83's connection_pool table
 -- => Records current connection state
 -- => Run every minute to build time series
 -- => Enables "active connections trending up" alerts
-
 -- Resource alerts
-WITH current_metrics AS (             -- => CTE calculates current health metrics
+WITH
+  current_metrics AS ( -- => CTE calculates current health metrics
     SELECT
-        (SELECT AVG(execution_time_ms) FROM query_log WHERE executed_at >= datetime('now', '-5 minutes')) AS avg_query_time,
-                                      -- => Average query time in last 5 minutes
-                                      -- => Short window for fast alert response
-        (SELECT COUNT(*) FROM connection_pool WHERE status = 'active') AS active_connections,
-                                      -- => Current active connection count
-                                      -- => From Example 83 table
-        (SELECT SUM(pgsize) / 1024.0 / 1024.0 FROM dbstat) AS db_size_mb
-                                      -- => Current database size
-                                      -- => From dbstat virtual table
-)
+      (
+        SELECT
+          AVG(execution_time_ms)
+        FROM
+          query_log
+        WHERE
+          executed_at >= datetime ('now', '-5 minutes')
+      ) AS avg_query_time,
+      -- => Average query time in last 5 minutes
+      -- => Short window for fast alert response
+      (
+        SELECT
+          COUNT(*)
+        FROM
+          connection_pool
+        WHERE
+          status = 'active'
+      ) AS active_connections,
+      -- => Current active connection count
+      -- => From Example 83 table
+      (
+        SELECT
+          SUM(pgsize) / 1024.0 / 1024.0
+        FROM
+          dbstat
+      ) AS db_size_mb
+      -- => Current database size
+      -- => From dbstat virtual table
+  )
 SELECT
-    CASE                              -- => Evaluate alert conditions
-        WHEN avg_query_time > 500 THEN 'ALERT: High query latency'
-                                      -- => Slow queries detected (>500ms average)
-        WHEN active_connections > 15 THEN 'ALERT: High connection usage'
-                                      -- => Connection pool near exhaustion
-        WHEN db_size_mb > 1000 THEN 'ALERT: Database size exceeded 1GB'
-                                      -- => Database too large for capacity
-        ELSE 'OK'                     -- => All metrics within thresholds
-    END AS health_status,             -- => Alert message or OK
-    avg_query_time,                   -- => Include metric values for context
-    active_connections,               -- => Current active count
-    db_size_mb                        -- => Current size
-FROM current_metrics;                 -- => Query CTE metrics
+  CASE -- => Evaluate alert conditions
+    WHEN avg_query_time > 500 THEN 'ALERT: High query latency'
+    -- => Slow queries detected (>500ms average)
+    WHEN active_connections > 15 THEN 'ALERT: High connection usage'
+    -- => Connection pool near exhaustion
+    WHEN db_size_mb > 1000 THEN 'ALERT: Database size exceeded 1GB'
+    -- => Database too large for capacity
+    ELSE 'OK' -- => All metrics within thresholds
+  END AS health_status, -- => Alert message or OK
+  avg_query_time, -- => Include metric values for context
+  active_connections, -- => Current active count
+  db_size_mb -- => Current size
+FROM
+  current_metrics;
+
+-- => Query CTE metrics
 -- => Returns health status with context metrics
 -- => Production systems send alerts via webhook/email/messaging platforms
 -- => Example: "ALERT: High query latency | avg_query_time=650 | active=8 | size=234"
-
 -- Automated maintenance recommendations
 SELECT
-    'Run VACUUM' AS recommendation    -- => Suggests running VACUUM
-WHERE (SELECT SUM(pgsize) FROM dbstat WHERE name LIKE '%_freelist%') > 100000
-                                      -- => Freelist pages > threshold
-                                      -- => Freelist = freed space not yet reclaimed
-                                      -- => VACUUM recovers this space
-
+  'Run VACUUM' AS recommendation -- => Suggests running VACUUM
+WHERE
+  (
+    SELECT
+      SUM(pgsize)
+    FROM
+      dbstat
+    WHERE
+      name LIKE '%_freelist%'
+  ) > 100000
+  -- => Freelist pages > threshold
+  -- => Freelist = freed space not yet reclaimed
+  -- => VACUUM recovers this space
 UNION ALL
-
-SELECT 'Analyze slow queries'         -- => Suggests investigating slow queries
-WHERE EXISTS (
-    SELECT 1 FROM query_log           -- => Check if any slow queries exist
-    WHERE executed_at >= datetime('now', '-1 hour')  -- => Recent hour
-      AND execution_time_ms > 1000    -- => Very slow (>1 second)
-)
-
+SELECT
+  'Analyze slow queries' -- => Suggests investigating slow queries
+WHERE
+  EXISTS (
+    SELECT
+      1
+    FROM
+      query_log -- => Check if any slow queries exist
+    WHERE
+      executed_at >= datetime ('now', '-1 hour') -- => Recent hour
+      AND execution_time_ms > 1000 -- => Very slow (>1 second)
+  )
 UNION ALL
+SELECT
+  'Add index to ' || table_name -- => Suggests adding indexes
+FROM
+  table_stats -- => Check table_stats metadata
+WHERE
+  index_count = 0;
 
-SELECT 'Add index to ' || table_name  -- => Suggests adding indexes
-FROM table_stats                      -- => Check table_stats metadata
-WHERE index_count = 0;                -- => Tables without indexes
+-- => Tables without indexes
 -- => Returns list of maintenance recommendations
 -- => UNION ALL combines multiple suggestions
 -- => Example output:

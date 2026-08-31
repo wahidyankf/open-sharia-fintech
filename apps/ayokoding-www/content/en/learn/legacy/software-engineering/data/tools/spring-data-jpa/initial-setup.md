@@ -538,7 +538,10 @@ Open browser and visit `http://localhost:8080/h2-console`:
 **Run SQL query** to verify table:
 
 ```sql
-SELECT * FROM users;
+SELECT
+  *
+FROM
+  users;
 ```
 
 **Expected result**: Empty table with columns: id, username, email, age, created_at, updated_at.

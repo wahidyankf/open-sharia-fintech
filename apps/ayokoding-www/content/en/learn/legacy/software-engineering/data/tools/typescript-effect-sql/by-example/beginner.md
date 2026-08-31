@@ -559,10 +559,10 @@ The `effect_sql_migrations` table is the migration tracking mechanism. The migra
 -- => The effect_sql_migrations table is created automatically by PgMigrator
 -- => Its structure (conceptually) is:
 CREATE TABLE IF NOT EXISTS effect_sql_migrations (
-  migration_id   TEXT        NOT NULL PRIMARY KEY,
+  migration_id TEXT NOT NULL PRIMARY KEY,
   -- => Stores the migration key from the registry (e.g., "0001_create_users")
   -- => PRIMARY KEY prevents the same migration from being recorded twice
-  applied_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   -- => Timestamp of when the migration was applied
   -- => Useful for auditing and debugging
 );

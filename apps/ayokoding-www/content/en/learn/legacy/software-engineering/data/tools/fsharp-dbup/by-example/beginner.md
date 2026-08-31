@@ -25,18 +25,18 @@ A DbUp migration script is a plain SQL file containing DDL or DML statements exe
 -- File: 001-create-users.sql
 -- => DbUp identifies scripts by filename; name must be unique across all scripts
 -- => Sequential numeric prefix (001, 002, ...) controls execution order
-
 -- Create the users table with essential audit columns
 CREATE TABLE users (
-    -- => UUID primary key avoids sequential integer exposure and supports distributed inserts
-    id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => VARCHAR without explicit length stores up to 1 GB; add CHECK for practical max
-    username     VARCHAR      NOT NULL,
-    email        VARCHAR      NOT NULL,
-    -- => TIMESTAMPTZ stores UTC instant + timezone offset; safe across DST transitions
-    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  -- => UUID primary key avoids sequential integer exposure and supports distributed inserts
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => VARCHAR without explicit length stores up to 1 GB; add CHECK for practical max
+  username VARCHAR NOT NULL,
+  email VARCHAR NOT NULL,
+  -- => TIMESTAMPTZ stores UTC instant + timezone offset; safe across DST transitions
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => After execution: table "users" exists; DbUp records "001-create-users.sql" in schemaversions
 -- => Subsequent runs skip this script because the journal entry already exists
 ```
@@ -191,13 +191,13 @@ DbUp executes scripts in lexicographic order by default, so numeric prefixes mus
 -- File: 001-create-users.sql
 -- => First migration; creates the foundational users table
 -- => "001" prefix ensures this runs before "002"; lexicographic sort: "001" < "002" < "010"
-
 CREATE TABLE users (
-    id         UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => username must be unique; constraint added in this script not a later one
-    username   VARCHAR NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => username must be unique; constraint added in this script not a later one
+  username VARCHAR NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => After run: schemaversions contains row with ScriptName = "001-create-users.sql"
 ```
 
@@ -205,16 +205,16 @@ CREATE TABLE users (
 -- File: 002-create-expenses.sql
 -- => Second migration; depends on users table created in 001
 -- => Numeric prefix guarantees 001 runs first; without prefix, "create-expenses" sorts before "create-users"
-
 CREATE TABLE expenses (
-    id      UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => Foreign key references users(id); DbUp must have run 001 first
-    user_id UUID    NOT NULL REFERENCES users (id),
-    amount  DECIMAL(18, 6) NOT NULL,
-    -- => DATE stores calendar date without time; use for business dates (invoice date, expense date)
-    date    DATE    NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => Foreign key references users(id); DbUp must have run 001 first
+  user_id UUID NOT NULL REFERENCES users (id),
+  amount DECIMAL(18, 6) NOT NULL,
+  -- => DATE stores calendar date without time; use for business dates (invoice date, expense date)
+  date DATE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => After run: expenses table exists; schemaversions has "002-create-expenses.sql"
 ```
 
@@ -250,17 +250,20 @@ graph TD
 ```sql
 -- After running 001-create-users.sql and 002-create-expenses.sql:
 -- DbUp creates schemaversions automatically on first run if it does not exist
-
 -- => Inspect the journal table to see migration history
-SELECT scriptname, applied
-FROM   schemaversions
-ORDER  BY applied;
+SELECT
+  scriptname,
+  applied
+FROM
+  schemaversions
+ORDER BY
+  applied;
+
 -- => Returns:
 -- =>   scriptname                   | applied
 -- =>   -----------------------------|------------------------------
 -- =>   001-create-users.sql         | 2026-03-27 00:01:12.345+07
 -- =>   002-create-expenses.sql      | 2026-03-27 00:01:12.389+07
-
 -- => On second PerformUpgrade() call, DbUp reads these rows and skips both scripts
 -- => Only scripts NOT in schemaversions will execute
 ```
@@ -326,29 +329,23 @@ A `CREATE TABLE` script is the most fundamental DbUp migration. Define the table
 ```sql
 -- File: 003-create-attachments.sql
 -- => Creates the attachments table; depends on expenses table from 002
-
 CREATE TABLE attachments (
-    -- => UUID primary key; no sequential integer leak, safe for distributed systems
-    id           UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-
-    -- => Foreign key to expenses; restricts orphan attachments at the DB level
-    expense_id   UUID    NOT NULL REFERENCES expenses (id),
-
-    -- => filename stores the original upload name; VARCHAR sufficient, no BYTEA needed
-    filename     VARCHAR NOT NULL,
-
-    -- => content_type stores MIME type e.g. "image/jpeg"; VARCHAR not ENUM for flexibility
-    content_type VARCHAR NOT NULL,
-
-    -- => BIGINT for file size in bytes; INT overflows at ~2 GB, BIGINT handles up to 9 EB
-    file_size    BIGINT  NOT NULL,
-
-    -- => BYTEA stores binary file content inline; consider object storage for files > 1 MB
-    data         BYTEA   NOT NULL,
-
-    -- => created_at only; attachments are immutable (upload once, never edit)
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  -- => UUID primary key; no sequential integer leak, safe for distributed systems
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => Foreign key to expenses; restricts orphan attachments at the DB level
+  expense_id UUID NOT NULL REFERENCES expenses (id),
+  -- => filename stores the original upload name; VARCHAR sufficient, no BYTEA needed
+  filename VARCHAR NOT NULL,
+  -- => content_type stores MIME type e.g. "image/jpeg"; VARCHAR not ENUM for flexibility
+  content_type VARCHAR NOT NULL,
+  -- => BIGINT for file size in bytes; INT overflows at ~2 GB, BIGINT handles up to 9 EB
+  file_size BIGINT NOT NULL,
+  -- => BYTEA stores binary file content inline; consider object storage for files > 1 MB
+  data BYTEA NOT NULL,
+  -- => created_at only; attachments are immutable (upload once, never edit)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Table created; DbUp records "003-create-attachments.sql" in schemaversions
 -- => Foreign key expense_id enforces referential integrity without application-level checks
 ```
@@ -367,23 +364,27 @@ CREATE TABLE attachments (
 -- File: 004-add-display-name-to-users.sql
 -- => Adds display_name column to existing users table
 -- => Pattern: add nullable first, then backfill, then add NOT NULL constraint
-
 -- Step 1: Add column as nullable (fast metadata operation, no table lock)
 ALTER TABLE users
-    ADD COLUMN display_name VARCHAR;
+ADD COLUMN display_name VARCHAR;
+
 -- => display_name is NULL for all existing rows immediately after this statement
 -- => No table rewrite; PostgreSQL 11+ handles nullable ADD COLUMN in O(1)
-
 -- Step 2: Backfill existing rows with a sensible default
 UPDATE users
-SET    display_name = username
-WHERE  display_name IS NULL;
+SET
+  display_name = username
+WHERE
+  display_name IS NULL;
+
 -- => Sets display_name to username for every existing row
 -- => Runs as a full table scan; consider batching for tables > 1M rows
-
 -- Step 3: Add NOT NULL constraint after backfill
 ALTER TABLE users
-    ALTER COLUMN display_name SET NOT NULL;
+ALTER COLUMN display_name
+SET
+  NOT NULL;
+
 -- => Validates that no NULL values remain (fast CHECK scan, not full rewrite in PostgreSQL 12+)
 -- => display_name is now NOT NULL for all existing and future rows
 ```
@@ -402,23 +403,20 @@ Indexes speed up query filtering and joins but add overhead to writes. Create in
 -- File: 005-add-indexes-to-users.sql
 -- => Adds performance indexes to the users table
 -- => Run after 001-create-users.sql; users table must already exist
-
 -- Unique index on email: enforces uniqueness AND speeds up login lookups
-CREATE UNIQUE INDEX ix_users_email
-    ON users (email);
+CREATE UNIQUE INDEX ix_users_email ON users (email);
+
 -- => Creates B-tree index; UNIQUE means duplicate emails fail at the DB level
 -- => INSERT/UPDATE with duplicate email returns error code 23505 (unique_violation)
 -- => Lookup by email: O(log n) instead of O(n) full scan
-
 -- Unique index on username: login and mention lookups by username
-CREATE UNIQUE INDEX ix_users_username
-    ON users (username);
+CREATE UNIQUE INDEX ix_users_username ON users (username);
+
 -- => Same structure; username lookups are now O(log n)
 -- => Two unique indexes: any INSERT must pass both uniqueness checks
-
 -- Non-unique index on created_at: speeds up date-range queries
-CREATE INDEX ix_users_created_at
-    ON users (created_at DESC);
+CREATE INDEX ix_users_created_at ON users (created_at DESC);
+
 -- => DESC order matches "ORDER BY created_at DESC" queries (newest first)
 -- => Useful for admin dashboards showing recently registered users
 -- => After this script: schemaversions records "005-add-indexes-to-users.sql"
@@ -438,15 +436,11 @@ Foreign key constraints enforce referential integrity between tables at the data
 -- File: 006-add-foreign-key-expenses-to-users.sql
 -- => Adds foreign key from expenses.user_id to users.id
 -- => Requires: users table (001) and expenses table (002) already applied
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
-ALTER TABLE expenses
-    ADD CONSTRAINT fk_expenses_user_id
-    FOREIGN KEY (user_id)
-    REFERENCES users (id);
 -- => Validates: all existing expenses.user_id values exist in users.id
 -- => If any orphan rows exist, this statement FAILS with error 23503 (foreign_key_violation)
 -- => After constraint added: INSERT/UPDATE with non-existent user_id is rejected by DB
-
 -- Verify the constraint exists
 -- SELECT conname, contype
 -- FROM   pg_constraint
@@ -468,15 +462,12 @@ Unique constraints prevent duplicate values in one or more columns without requi
 -- File: 007-add-unique-constraint-revoked-tokens.sql
 -- => Adds unique constraint on jti column of revoked_tokens table
 -- => Prevents duplicate token revocations from being recorded
-
 -- Add unique constraint on token jti (JWT ID)
-ALTER TABLE revoked_tokens
-    ADD CONSTRAINT uq_revoked_tokens_jti
-    UNIQUE (jti);
+ALTER TABLE revoked_tokens ADD CONSTRAINT uq_revoked_tokens_jti UNIQUE (jti);
+
 -- => Creates unique B-tree index named uq_revoked_tokens_jti
 -- => Duplicate INSERT with same jti fails with error 23505 (unique_violation)
 -- => Application should catch 23505 and treat it as idempotent (token already revoked)
-
 -- Multi-column unique constraint example: composite uniqueness
 -- ALTER TABLE refresh_tokens
 --     ADD CONSTRAINT uq_refresh_tokens_user_hash
@@ -500,20 +491,18 @@ Setting a column to `NOT NULL` after it already contains nulls requires a backfi
 -- File: 008-add-not-null-created-by.sql
 -- => Adds created_by and updated_by audit columns to users table
 -- => Uses safe three-step pattern: add nullable, backfill, enforce NOT NULL
-
 -- Step 1: Add columns as nullable with empty-string defaults for new rows
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS created_by VARCHAR(255) NOT NULL DEFAULT 'system',
-    ADD COLUMN IF NOT EXISTS updated_by VARCHAR(255) NOT NULL DEFAULT 'system';
+ADD COLUMN IF NOT EXISTS created_by VARCHAR(255) NOT NULL DEFAULT 'system',
+ADD COLUMN IF NOT EXISTS updated_by VARCHAR(255) NOT NULL DEFAULT 'system';
+
 -- => IF NOT EXISTS prevents error if column already exists (idempotent guard)
 -- => DEFAULT 'system' fills existing rows immediately in PostgreSQL 11+
 -- => New rows without explicit created_by/updated_by get 'system' automatically
 -- => After this statement: all rows have created_by = 'system' and updated_by = 'system'
-
 -- Step 2 (optional): Override default for specific rows if business logic requires
 -- UPDATE users SET created_by = 'migration' WHERE created_at < '2026-01-01';
 -- => Backfill can be scoped to date ranges or other predicates for partial overrides
-
 -- No Step 3 needed: DEFAULT 'system' with NOT NULL added atomically in PostgreSQL 11+
 -- => PostgreSQL 11+ handles NOT NULL + DEFAULT in ADD COLUMN as a metadata-only operation
 -- => No table rewrite; no lock on existing rows
@@ -662,10 +651,11 @@ DbUp executes scripts in the order determined by their names (lexicographic sort
 -- File: 001-create-users.sql
 -- => First: foundation table; no dependencies
 CREATE TABLE users (
-    id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    username   VARCHAR     NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  username VARCHAR NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Completes; schemaversions: ["001-create-users.sql"]
 ```
 
@@ -673,12 +663,13 @@ CREATE TABLE users (
 -- File: 002-create-expenses.sql
 -- => Second: depends on users; runs after 001
 CREATE TABLE expenses (
-    id      UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => Foreign key references users.id; 001 must have run first
-    user_id UUID    NOT NULL REFERENCES users (id),
-    amount  DECIMAL(18, 6) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => Foreign key references users.id; 001 must have run first
+  user_id UUID NOT NULL REFERENCES users (id),
+  amount DECIMAL(18, 6) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Completes; schemaversions: ["001-create-users.sql", "002-create-expenses.sql"]
 ```
 
@@ -686,12 +677,13 @@ CREATE TABLE expenses (
 -- File: 003-create-attachments.sql
 -- => Third: depends on expenses; runs after 002
 CREATE TABLE attachments (
-    id         UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => Foreign key references expenses.id; 002 must have run first
-    expense_id UUID  NOT NULL REFERENCES expenses (id),
-    filename   VARCHAR NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => Foreign key references expenses.id; 002 must have run first
+  expense_id UUID NOT NULL REFERENCES expenses (id),
+  filename VARCHAR NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => Completes; schemaversions: ["001...", "002...", "003-create-attachments.sql"]
 -- => All three tables now exist; dependency chain satisfied by ordering guarantees
 ```
@@ -710,15 +702,15 @@ Dropping a column removes it from the table schema permanently. The safe pattern
 -- File: 010-drop-url-from-attachments.sql
 -- => Removes the url column that was superseded by object storage URLs computed at runtime
 -- => Safe to drop: application code no longer reads or writes attachments.url
-
 -- Drop dependent index first (if any exist on this column)
 DROP INDEX IF EXISTS ix_attachments_url;
+
 -- => IF EXISTS prevents error if index was never created or was already dropped
 -- => Must drop before column; column drop with dependent index fails
-
 -- Drop the column
 ALTER TABLE attachments
-    DROP COLUMN IF EXISTS url;
+DROP COLUMN IF EXISTS url;
+
 -- => IF EXISTS: idempotent; no error if column was already dropped (re-run safe)
 -- => Removes url column and any index referencing only url
 -- => Existing rows are unaffected; row size decreases by one column
@@ -739,14 +731,15 @@ Dropping a table permanently removes it and all its data. Use `DROP TABLE IF EXI
 -- File: 011-drop-legacy-sessions.sql
 -- => Drops the legacy sessions table replaced by refresh_tokens in migration 005
 -- => Dependency check: no other table has a foreign key referencing sessions
-
 -- Drop any indexes on the table first (CASCADE handles this, but explicit is clearer)
 DROP INDEX IF EXISTS ix_sessions_user_id;
-DROP INDEX IF EXISTS ix_sessions_token;
--- => Explicit index drops document what is being removed; CASCADE would handle them too
 
+DROP INDEX IF EXISTS ix_sessions_token;
+
+-- => Explicit index drops document what is being removed; CASCADE would handle them too
 -- Drop the table itself
 DROP TABLE IF EXISTS sessions;
+
 -- => IF EXISTS: safe to run even if table was already dropped or never existed
 -- => Removes table definition, all rows, all column constraints, all table-level grants
 -- => Does NOT drop functions or triggers referencing this table (rare but possible)
@@ -768,25 +761,21 @@ UUID primary keys are the recommended choice for distributed systems, public-fac
 -- File: 001-create-users-uuid.sql
 -- => Demonstrates UUID primary key configuration for PostgreSQL
 -- => gen_random_uuid() is built-in since PostgreSQL 13; use pgcrypto extension for < 13
-
 -- Enable pgcrypto for PostgreSQL < 13 (safe to run on 13+ too; no-op if already installed)
 -- CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- => Uncomment if targeting PostgreSQL 12 or older
 -- => gen_random_uuid() becomes available after extension load
-
 CREATE TABLE users (
-    -- => UUID type: 128-bit value stored as 16 bytes; displayed as 32 hex + 4 dashes
-    -- => DEFAULT gen_random_uuid(): database generates version-4 UUID on INSERT
-    -- => Version-4 UUID is cryptographically random; collision probability negligible
-    id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-
-    username   VARCHAR     NOT NULL,
-
-    -- => UNIQUE ensures no two users share the same email
-    email      VARCHAR     NOT NULL UNIQUE,
-
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  -- => UUID type: 128-bit value stored as 16 bytes; displayed as 32 hex + 4 dashes
+  -- => DEFAULT gen_random_uuid(): database generates version-4 UUID on INSERT
+  -- => Version-4 UUID is cryptographically random; collision probability negligible
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  username VARCHAR NOT NULL,
+  -- => UNIQUE ensures no two users share the same email
+  email VARCHAR NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => After INSERT without explicit id: id is e.g. "550e8400-e29b-41d4-a716-446655440000"
 -- => Query by id: WHERE id = '550e8400-e29b-41d4-a716-446655440000'::uuid
 -- => PostgreSQL casts text literals to UUID automatically with ::uuid cast operator
@@ -806,15 +795,13 @@ Timestamp columns with server-side defaults ensure that audit trails are accurat
 -- File: 012-add-timestamps-to-expenses.sql
 -- => Demonstrates TIMESTAMPTZ columns with server-side defaults
 -- => Use NOW() for created_at; use triggers or application logic for updated_at
-
 ALTER TABLE expenses
-    -- => Add created_at as TIMESTAMPTZ with server-side default
-    -- => IF NOT EXISTS: safe to run even if column was added in a prior migration
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    -- => updated_at starts equal to created_at; application must update it on writes
-    -- => Some teams use a PostgreSQL trigger to auto-update; see intermediate examples
-    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+-- => Add created_at as TIMESTAMPTZ with server-side default
+-- => IF NOT EXISTS: safe to run even if column was added in a prior migration
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+-- => updated_at starts equal to created_at; application must update it on writes
+-- => Some teams use a PostgreSQL trigger to auto-update; see intermediate examples
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ();
 
 -- => TIMESTAMPTZ stores the instant in UTC internally regardless of the session timezone
 -- => Displays in local time when session timezone is set (e.g. Asia/Jakarta shows +07:00)
@@ -836,16 +823,14 @@ PostgreSQL supports native `ENUM` types, but they are difficult to modify (addin
 -- File: 013-add-status-to-users.sql
 -- => Adds a status column using VARCHAR + CHECK constraint (preferred over ENUM type)
 -- => CHECK constraint approach: easy to add new values in future migrations
-
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE';
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE';
+
 -- => VARCHAR(20) caps status values at 20 characters; prevents runaway string growth
 -- => DEFAULT 'ACTIVE' means existing users are immediately active
-
 -- Add CHECK constraint to enforce allowed values
-ALTER TABLE users
-    ADD CONSTRAINT ck_users_status
-    CHECK (status IN ('ACTIVE', 'SUSPENDED', 'DELETED'));
+ALTER TABLE users ADD CONSTRAINT ck_users_status CHECK (status IN ('ACTIVE', 'SUSPENDED', 'DELETED'));
+
 -- => Any INSERT or UPDATE with status outside this list fails with error 23514 (check_violation)
 -- => Error message: "new row for relation "users" violates check constraint "ck_users_status""
 -- => Adding a new value later: ALTER TABLE users DROP CONSTRAINT ck_users_status;
@@ -867,25 +852,22 @@ CHECK constraints enforce domain invariants at the database level, rejecting row
 -- File: 014-add-check-constraints-to-expenses.sql
 -- => Adds business-rule constraints to the expenses table
 -- => Constraints enforce domain invariants that application code cannot guarantee alone
-
 -- Constraint 1: amount must be positive (no zero or negative expenses)
-ALTER TABLE expenses
-    ADD CONSTRAINT ck_expenses_amount_positive
-    CHECK (amount > 0);
+ALTER TABLE expenses ADD CONSTRAINT ck_expenses_amount_positive CHECK (amount > 0);
+
 -- => Any INSERT/UPDATE with amount <= 0 fails with 23514 (check_violation)
 -- => Existing rows with amount <= 0 will FAIL this migration; clean data first
-
 -- Constraint 2: quantity must be positive when provided
-ALTER TABLE expenses
-    ADD CONSTRAINT ck_expenses_quantity_positive
-    CHECK (quantity IS NULL OR quantity > 0);
+ALTER TABLE expenses ADD CONSTRAINT ck_expenses_quantity_positive CHECK (
+  quantity IS NULL
+  OR quantity > 0
+);
+
 -- => IS NULL OR: allows NULL (optional field) but rejects zero/negative when set
 -- => Tip: check existing data with: SELECT count(*) FROM expenses WHERE quantity IS NOT NULL AND quantity <= 0
-
 -- Constraint 3: date must not be in the future (no future-dated expenses)
-ALTER TABLE expenses
-    ADD CONSTRAINT ck_expenses_date_not_future
-    CHECK (date <= CURRENT_DATE);
+ALTER TABLE expenses ADD CONSTRAINT ck_expenses_date_not_future CHECK (date <= CURRENT_DATE);
+
 -- => CURRENT_DATE evaluates at INSERT/UPDATE time; not a static snapshot
 -- => Existing rows with future dates FAIL; audit data before running this migration
 ```
@@ -904,21 +886,18 @@ Composite (multi-column) indexes accelerate queries that filter or sort on multi
 -- File: 015-add-composite-indexes-to-expenses.sql
 -- => Adds composite indexes to optimize common expense query patterns
 -- => Index column order matches the most common WHERE clause column order
-
 -- Composite index: user_id + date (supports "get expenses for user in date range")
-CREATE INDEX ix_expenses_user_id_date
-    ON expenses (user_id, date DESC);
+CREATE INDEX ix_expenses_user_id_date ON expenses (user_id, date DESC);
+
 -- => Covers: WHERE user_id = $1 AND date BETWEEN $2 AND $3 ORDER BY date DESC
 -- => Also covers: WHERE user_id = $1 (uses leading column ix_expenses_user_id_date)
 -- => Does NOT cover: WHERE date = $1 alone (date is trailing column; leading column missing)
 -- => DESC on date: matches ORDER BY date DESC for newest-first expense listings
-
 -- Composite index: user_id + category (supports "get expenses by category for user")
-CREATE INDEX ix_expenses_user_id_category
-    ON expenses (user_id, category);
+CREATE INDEX ix_expenses_user_id_category ON expenses (user_id, category);
+
 -- => Covers: WHERE user_id = $1 AND category = $2
 -- => Useful for expense summary reports grouped by category per user
-
 -- After these indexes: schemaversions records "015-add-composite-indexes-to-expenses.sql"
 -- => Query planner chooses between ix_expenses_user_id_date and ix_expenses_user_id_category
 -- => based on query predicates; run EXPLAIN ANALYZE to verify index usage
@@ -938,28 +917,27 @@ Junction tables (also called association tables or link tables) represent many-t
 -- File: 016-create-expense-tags.sql
 -- => Creates the expense_tags junction table for many-to-many expense-to-tag relationship
 -- => An expense can have many tags; a tag can apply to many expenses
-
 -- First create the tags reference table
 CREATE TABLE tags (
-    id   UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- => name must be unique; two tags with same name would be duplicates
-    name VARCHAR NOT NULL UNIQUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  -- => name must be unique; two tags with same name would be duplicates
+  name VARCHAR NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
--- => Tags are shared across users; expenses link to tags via junction table
 
+-- => Tags are shared across users; expenses link to tags via junction table
 -- Create the junction table
 CREATE TABLE expense_tags (
-    -- => Composite primary key: each (expense_id, tag_id) pair is unique
-    expense_id UUID NOT NULL REFERENCES expenses (id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: when expense is deleted, remove all its tag associations
-    tag_id     UUID NOT NULL REFERENCES tags (id) ON DELETE CASCADE,
-    -- => ON DELETE CASCADE: when tag is deleted, remove all expense associations
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    -- => Composite PK prevents duplicate (expense_id, tag_id) associations
-    PRIMARY KEY (expense_id, tag_id)
+  -- => Composite primary key: each (expense_id, tag_id) pair is unique
+  expense_id UUID NOT NULL REFERENCES expenses (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: when expense is deleted, remove all its tag associations
+  tag_id UUID NOT NULL REFERENCES tags (id) ON DELETE CASCADE,
+  -- => ON DELETE CASCADE: when tag is deleted, remove all expense associations
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  -- => Composite PK prevents duplicate (expense_id, tag_id) associations
+  PRIMARY KEY (expense_id, tag_id)
 );
+
 -- => Query expenses with their tags: JOIN expense_tags ON expenses.id = expense_tags.expense_id
 -- => Query tags for a specific expense: WHERE expense_tags.expense_id = $1
 -- => After script: schemaversions records "016-create-expense-tags.sql"
@@ -979,24 +957,25 @@ Seed data migrations insert reference data (lookup tables, default roles, initia
 -- File: 017-seed-default-roles.sql
 -- => Inserts default user roles required for application authorization
 -- => ON CONFLICT DO NOTHING: idempotent; safe to run even if roles already exist
-
 CREATE TABLE IF NOT EXISTS roles (
-    -- => IF NOT EXISTS: extra safety; role may have been created in a prior migration
-    id   UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR NOT NULL UNIQUE,
-    description VARCHAR NOT NULL DEFAULT ''
+  -- => IF NOT EXISTS: extra safety; role may have been created in a prior migration
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  name VARCHAR NOT NULL UNIQUE,
+  description VARCHAR NOT NULL DEFAULT ''
 );
--- => Creates roles table if it does not exist; no error if it does
 
+-- => Creates roles table if it does not exist; no error if it does
 -- Seed default roles using ON CONFLICT DO NOTHING for idempotency
-INSERT INTO roles (name, description) VALUES
-    -- => 'ADMIN' role: full access to all resources
-    ('ADMIN',     'Full administrative access'),
-    -- => 'USER' role: standard user access
-    ('USER',      'Standard user access'),
-    -- => 'READONLY' role: view-only access
-    ('READONLY',  'Read-only access to all resources')
-ON CONFLICT (name) DO NOTHING;
+INSERT INTO
+  roles (name, description)
+VALUES
+  -- => 'ADMIN' role: full access to all resources
+  ('ADMIN', 'Full administrative access'),
+  -- => 'USER' role: standard user access
+  ('USER', 'Standard user access'),
+  -- => 'READONLY' role: view-only access
+  ('READONLY', 'Read-only access to all resources') ON CONFLICT (name) DO NOTHING;
+
 -- => ON CONFLICT (name): if a role with this name already exists, skip the INSERT
 -- => DO NOTHING: no update, no error; idempotent upsert for seed data
 -- => After execution: roles table has at least these three rows
@@ -1017,29 +996,29 @@ ON CONFLICT (name) DO NOTHING;
 -- File: 018-add-password-reset-token.sql
 -- => Adds password_reset_token column to users table
 -- => IF NOT EXISTS guards make this script safe to run multiple times
-
 -- Add column with IF NOT EXISTS guard
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS password_reset_token VARCHAR(255);
+ADD COLUMN IF NOT EXISTS password_reset_token VARCHAR(255);
+
 -- => IF NOT EXISTS: no error if column already exists (e.g., added manually during incident)
 -- => Without IF NOT EXISTS: "ERROR: column password_reset_token of relation users already exists"
 -- => The column is nullable; NULL means no pending reset; non-NULL means reset in progress
-
 -- Create index with IF NOT EXISTS guard
-CREATE INDEX IF NOT EXISTS ix_users_password_reset_token
-    ON users (password_reset_token)
-    WHERE password_reset_token IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ix_users_password_reset_token ON users (password_reset_token)
+WHERE
+  password_reset_token IS NOT NULL;
+
 -- => IF NOT EXISTS: safe to re-run; existing index not recreated
 -- => Partial index (WHERE IS NOT NULL): only indexes rows with a pending reset
 -- => Partial index is smaller and faster for the common case where most rows have NULL
-
 -- Add table-level guard for safe table creation
 CREATE TABLE IF NOT EXISTS audit_log (
-    id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    table_name VARCHAR     NOT NULL,
-    operation  VARCHAR     NOT NULL,
-    changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+  table_name VARCHAR NOT NULL,
+  operation VARCHAR NOT NULL,
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
 );
+
 -- => IF NOT EXISTS: no error if audit_log was already created by another migration
 ```
 
@@ -1057,20 +1036,16 @@ CREATE TABLE IF NOT EXISTS audit_log (
 -- File: 019-add-cascade-delete-to-attachments.sql
 -- => Modifies attachments.expense_id foreign key to add ON DELETE CASCADE
 -- => When an expense is deleted, all its attachments are automatically deleted
-
 -- Step 1: Drop the existing foreign key constraint (no IF EXISTS for constraints)
 ALTER TABLE attachments
-    DROP CONSTRAINT IF EXISTS attachments_expense_id_fkey;
+DROP CONSTRAINT IF EXISTS attachments_expense_id_fkey;
+
 -- => IF EXISTS: safe even if constraint name differs from PostgreSQL's default naming
 -- => PostgreSQL default name: <table>_<column>_fkey (e.g., attachments_expense_id_fkey)
 -- => If constraint was named explicitly in a prior migration, use that name instead
-
 -- Step 2: Re-add the foreign key with ON DELETE CASCADE
-ALTER TABLE attachments
-    ADD CONSTRAINT attachments_expense_id_fkey
-    FOREIGN KEY (expense_id)
-    REFERENCES expenses (id)
-    ON DELETE CASCADE;
+ALTER TABLE attachments ADD CONSTRAINT attachments_expense_id_fkey FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE;
+
 -- => ON DELETE CASCADE: DELETE FROM expenses WHERE id = $1 also deletes all matching attachments
 -- => ON DELETE RESTRICT (default): DELETE FROM expenses fails if attachments reference it
 -- => ON DELETE SET NULL: sets expense_id to NULL instead of deleting (only for nullable columns)
