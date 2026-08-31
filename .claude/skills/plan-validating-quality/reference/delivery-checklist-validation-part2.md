@@ -62,7 +62,10 @@
   Delivery Boundaries, PR-size/addition rules, atomicity, or the phase/boundary distinction. Treat
   500 handwritten code additions as a strong recommendation, not a hard ceiling: above 500 require
   measured size, a natural cohesive seam, rejected split alternatives, and review proof. Enforce
-  the independent other/document, hand-authored-file, and machine ceilings as hard bounds unless
-  their canonical exception applies.
+  the independent other/document and machine ceilings as hard bounds. A plan exceeding the default
+  20 hand-authored-file budget is valid only with the canonical binding-specific file-budget
+  natural-seam exception: exact finite allocation; measured C/O/hand-authored/total counts;
+  build-validity constraint; viable rejected splits; review proof; recovery; and matching plan/PR
+  disclosure. Missing any field is **HIGH**.
 - Phase transitions have explicit verification steps (e.g. "Verify `nx run app:typecheck` passes").
 - Input/Outcome/Proof prose is not a task; every action checkbox is an independent harness task.
