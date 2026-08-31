@@ -1292,6 +1292,16 @@ the missing field.
       `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-WEB-UI.allocation.tsv"; u="$r/D-O-PUB-WEB-UI.source-universe.txt"; rtk git ls-files -- specs/libs/web-ui | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 31; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|CONTROLS|COMPOSITION)$/ || \$3 == \"\" || \$4 == \"\" || (\$2 == \"CORPUS-METADATA\" && \$3 !~ /^specs\/libs\/web-ui\/architecture\.md#legacy-[a-z0-9-]+$/) { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/libs/web-ui -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 21'`;
       expect exit 0, leaf source counts `10,10,11`, and exact leaf-file membership. Stop on a
       prefix mismatch instead of moving a component to whichever PR has room.
+- [x] [AI] `P0-OSE-DDD-CONSUMER-CLOSURE-ALLOCATION-AMENDMENT-07` — Completed. Before the first
+      `D-P2-PUB` repository edit, allocate the eleven live consumers of the retiring OSE DDD tree
+      to the same delivery: `apps/ose-app-web/src/contexts/{ai-orchestration,gap-analysis,internal-policy,regulatory-source}/README.md`,
+      `apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs`,
+      `specs/apps/ose/{README.md,behavior/README.md,components/platform-be/README.md,components/platform-web/README.md,behavior/platform-be/gherkin/README.md,behavior/platform-web/gherkin/README.md}`.
+      Each changes only to remove its retired DDD-tree reference or obsolete registry claim; bounded
+      feature-context wording and unrelated generic DDD machinery remain unchanged for later phases.
+      Re-materialize the public prospective catalog; require 62 bindings, a duplicate-free 23-path
+      `D-P2-PUB` allocation, an estimate bijection, and an unchanged 84-unit catalog. This finite
+      inbound-consumer transfer closes links atomically with the 12-path deletion and adds no product scope.
 - [x] [AI] In public run
       `rtk rg --files -g 'apps/*/package.json' -g 'libs/*/package.json' apps libs`; expect the 20
       direct project manifests currently listed in the technical matrix. Name a direct consumer or
@@ -1682,7 +1692,12 @@ the missing field.
       `rtk git rm --pathspec-from-file=plans/in-progress/adopt-beavernest-test-automation/evidence/phase-2/R-PUB/delete-paths.txt`. Expect every path removed and no preserve row touched; stop if Git names
       an unlisted path.
 - [ ] [AI] Remove only links, registry keys, targets, and index entries whose consumer was deleted;
-      run `rtk rg -n -i "domain-driven|DDD" specs/apps/ose repo-governance docs` and compare every
+      the eleven allocated inbound consumers
+      `apps/ose-app-web/src/contexts/{ai-orchestration,gap-analysis,internal-policy,regulatory-source}/README.md`,
+      `apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs`, and
+      `specs/apps/ose/{README.md,behavior/README.md,components/platform-be/README.md,components/platform-web/README.md,behavior/platform-be/gherkin/README.md,behavior/platform-web/gherkin/README.md}`
+      must remove only their link or obsolete DDD-registry claim; generic feature-context wording
+      remains in place for Phase 3; run `rtk rg -n -i "domain-driven|DDD" specs/apps/ose repo-governance docs` and compare every
       remaining match to preserve rows. Expect no active OSE DDD engineering surface and identical
       preserve hashes; save `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-2/R-PUB/deletion-proof.txt`.
 - [ ] [AI] Run `rtk npm run lint:md`, `rtk npm run format:md:check`, and
