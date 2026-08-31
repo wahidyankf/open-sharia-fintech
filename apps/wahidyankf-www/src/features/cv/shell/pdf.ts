@@ -1,22 +1,19 @@
 import PDFDocument from "pdfkit";
 import type { CvPdfDocumentModel, CvPdfSection } from "../core/pdf";
 
+// Matches the color palette used by the reference ATS resume in
+// wkf-knowledge/career-materials/generate-cv-ats-pdf.py.
 const COLORS = {
-  heading: "#111827",
-  subheading: "#374151",
-  meta: "#4b5563",
-  body: "#1f2937",
-  rule: "#d1d5db",
+  navy: "#1F4E79",
+  gray: "#6B7280",
+  black: "#000000",
 };
 
+const FOOTER_MARGIN_FROM_BOTTOM = 34;
+
 const addSectionHeading = (pdf: PDFKit.PDFDocument, title: string): void => {
-  pdf.moveDown(0.6);
-  pdf.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.heading).text(title.toUpperCase());
-  pdf
-    .moveTo(pdf.x, pdf.y)
-    .lineTo(pdf.page.width - pdf.page.margins.right, pdf.y)
-    .strokeColor(COLORS.rule)
-    .stroke();
+  pdf.moveDown(0.7);
+  pdf.font("Helvetica-Bold").fontSize(11).fillColor(COLORS.navy).text(title);
   pdf.moveDown(0.3);
 };
 
@@ -25,34 +22,60 @@ const addSections = (pdf: PDFKit.PDFDocument, heading: string, entries: CvPdfSec
 
   addSectionHeading(pdf, heading);
   entries.forEach((entry) => {
-    pdf.font("Helvetica-Bold").fontSize(11).fillColor(COLORS.heading).text(entry.title);
+    pdf.font("Helvetica-Bold").fontSize(10).fillColor(COLORS.black).text(entry.title);
     const subtitle = [entry.organization, entry.period].filter(Boolean).join(" · ");
     if (subtitle) {
-      pdf.font("Helvetica-Oblique").fontSize(9.5).fillColor(COLORS.meta).text(subtitle);
+      pdf.font("Helvetica-Bold").fontSize(9.5).fillColor(COLORS.black).text(subtitle);
     }
-    pdf.moveDown(0.2);
-    pdf.font("Helvetica").fontSize(9.5).fillColor(COLORS.body);
-    entry.details.forEach((bullet) => pdf.text(`•  ${bullet}`, { indent: 10 }));
-    entry.meta.forEach((line) => pdf.fontSize(8.5).fillColor(COLORS.meta).text(line));
-    pdf.moveDown(0.5);
+    pdf.moveDown(0.15);
+    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
+    entry.details.forEach((bullet) => pdf.text(`-  ${bullet}`, { indent: 10, lineGap: 1 }));
+    entry.meta.forEach((line) => pdf.fontSize(8.5).fillColor(COLORS.gray).text(line, { lineGap: 1 }));
+    pdf.moveDown(0.4);
   });
 };
 
-export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument => {
-  const pdf = new PDFDocument({ size: "A4", margins: { top: 48, bottom: 48, left: 56, right: 56 } });
+const addFooters = (pdf: PDFKit.PDFDocument, name: string): void => {
+  const range = pdf.bufferedPageRange();
+  for (let i = range.start; i < range.start + range.count; i += 1) {
+    pdf.switchToPage(i);
+    const { left, right, bottom } = pdf.page.margins;
+    // Drawing this close to the bottom edge sits inside the page's normal bottom
+    // margin band; pdfkit treats any text() beyond the margin-defined content
+    // area as an overflow and silently starts a new page. Zero the bottom
+    // margin for this one draw so it lands on the current page instead.
+    pdf.page.margins.bottom = 0;
+    pdf
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(COLORS.gray)
+      .text(`${name} | Page ${i - range.start + 1}`, left, pdf.page.height - FOOTER_MARGIN_FROM_BOTTOM, {
+        width: pdf.page.width - left - right,
+        align: "right",
+      });
+    pdf.page.margins.bottom = bottom;
+  }
+};
 
-  pdf.font("Helvetica-Bold").fontSize(20).fillColor(COLORS.heading).text(document.name);
-  pdf.font("Helvetica").fontSize(12).fillColor(COLORS.subheading).text(document.tagline);
-  pdf.moveDown(0.3);
-  pdf.font("Helvetica").fontSize(9).fillColor(COLORS.meta).text(document.contactLine);
-  pdf.moveDown();
+export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument => {
+  const pdf = new PDFDocument({
+    size: "A4",
+    bufferPages: true,
+    margins: { top: 40, bottom: 51, left: 45, right: 45 },
+  });
+
+  pdf.font("Helvetica-Bold").fontSize(18).fillColor(COLORS.black).text(document.name, { align: "center" });
+  pdf.font("Helvetica-Bold").fontSize(10.5).fillColor(COLORS.navy).text(document.tagline, { align: "center" });
+  pdf.moveDown(0.2);
+  pdf.font("Helvetica").fontSize(8.5).fillColor(COLORS.black).text(document.contactLine, { align: "center" });
+  pdf.moveDown(0.6);
 
   if (document.summary.length > 0) {
     addSectionHeading(pdf, "Summary");
-    pdf.font("Helvetica").fontSize(10).fillColor(COLORS.body);
+    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
     document.summary.forEach((paragraph) => {
-      pdf.text(paragraph);
-      pdf.moveDown(0.4);
+      pdf.text(paragraph, { lineGap: 1 });
+      pdf.moveDown(0.3);
     });
   }
 
@@ -62,10 +85,11 @@ export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument =>
 
   if (document.languages.length > 0) {
     addSectionHeading(pdf, "Languages");
-    pdf.font("Helvetica").fontSize(9.5).fillColor(COLORS.body);
+    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
     document.languages.forEach(({ name, proficiency }) => pdf.text(`${name} — ${proficiency}`));
   }
 
+  addFooters(pdf, document.name);
   pdf.end();
   return pdf;
 };
