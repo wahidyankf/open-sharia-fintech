@@ -375,11 +375,11 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Twelve prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Thirteen prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, four distinct public
+public/private counterpart pair for the rules-quality preflight correction, five distinct public
 Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
-92 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+93 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
 both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
 alters the 80-unit implementation catalog.
 
@@ -1039,17 +1039,17 @@ the missing field.
       delegation and no web/marketing ownership. Save `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/owners/O-PUB-OSE-BE.md`.
 - [x] [AI] Freeze `O-PUB-OSE-WWW` with `rtk nx show project ose-www --json`; expect both delegated
       E2E rows and no app/backend ownership. Save `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/owners/O-PUB-OSE-WWW.md`.
-- [x] [AI] `P0-CORPUS-OL-01` — Before any specs edit, snapshot every current OrganicLever corpus
-      source with `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; rtk mkdir -p "$root"; rtk rg --files specs/apps/organiclever | rtk sort -u > "$root/organiclever-all.txt"; test -s "$root/organiclever-all.txt"; test "$(rtk sort -u "$root/organiclever-all.txt" | rtk wc -l | rtk tr -d " ")" = "$(rtk wc -l < "$root/organiclever-all.txt" | rtk tr -d " ")"'`; expect one non-empty, duplicate-free source-of-truth list. Stop on an unreadable path and save the command output beside the snapshot.
-- [x] [AI] `P0-CORPUS-OL-02` — Read each `organiclever-all.txt` path and assign it to exactly one
+- [ ] [AI] `P0-CORPUS-OL-01` — Before any specs edit, snapshot every current OrganicLever corpus
+      source, including tracked hidden files, with `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; rtk mkdir -p "$root"; rtk git ls-files -- specs/apps/organiclever | rtk sort -u > "$root/organiclever-all.txt"; test "$(rtk wc -l < "$root/organiclever-all.txt" | rtk tr -d " ")" -eq 107; test "$(rtk sort -u "$root/organiclever-all.txt" | rtk wc -l | rtk tr -d " ")" = "$(rtk wc -l < "$root/organiclever-all.txt" | rtk tr -d " ")"'`; expect the 107-path, duplicate-free tracked source-of-truth list. Stop on an unreadable path and save the command output beside the snapshot.
+- [ ] [AI] `P0-CORPUS-OL-02` — Read each `organiclever-all.txt` path and assign it to exactly one
       semantic owner in `organiclever-assignment.tsv` as `<path><TAB><O-PUB-OL-WEB|O-PUB-OL-BE|O-PUB-OL-WWW><TAB><ownership reason>`. Web UI/application behavior belongs to `O-PUB-OL-WEB`; API/contracts/backend behavior belongs to `O-PUB-OL-BE`; public marketing/site behavior belongs to `O-PUB-OL-WWW`. Run `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; all="$root/organiclever-all.txt"; map="$root/organiclever-assignment.tsv"; test -s "$map"; test "$(rtk wc -l < "$all" | rtk tr -d " ")" = "$(rtk wc -l < "$map" | rtk tr -d " ")"; rtk cut -f1 "$map" | rtk sort -u | rtk diff -u "$all" -; rtk awk -F "$(rtk printf "\\t")" "NF != 3 || \$2 !~ /^(O-PUB-OL-WEB|O-PUB-OL-BE|O-PUB-OL-WWW)$/ || \$3 == \"\" { exit 1 }" "$map"'`; expect exit 0, exhaustive/mutually exclusive assignment, and a reason for every row. Stop on a shared/ambiguous path; resolve semantic ownership instead of copying it to two manifests.
-- [x] [AI] `P0-CORPUS-OL-03` — Materialize the three immutable OrganicLever owner manifests with
+- [ ] [AI] `P0-CORPUS-OL-03` — Materialize the three immutable OrganicLever owner manifests with
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; map="$root/organiclever-assignment.tsv"; for owner in O-PUB-OL-WEB O-PUB-OL-BE O-PUB-OL-WWW; do rtk awk -F "$(rtk printf "\\t")" -v owner="$owner" "\$2 == owner { print \$1 }" "$map" | rtk sort -u > "$root/$owner.sources.txt"; test -s "$root/$owner.sources.txt"; done; { rtk sed -n "1,9999p" "$root/O-PUB-OL-WEB.sources.txt"; rtk sed -n "1,9999p" "$root/O-PUB-OL-BE.sources.txt"; rtk sed -n "1,9999p" "$root/O-PUB-OL-WWW.sources.txt"; } | rtk sort -u | rtk diff -u "$root/organiclever-all.txt" -'`; expect exit 0 and three non-overlapping manifests whose union equals the snapshot exactly. These files are frozen inputs for the three `OM-14` tasks; later discovery is forbidden.
-- [x] [AI] `P0-CORPUS-OSE-01` — Before any specs edit, snapshot every current OSE corpus source with
-      `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; rtk mkdir -p "$root"; rtk rg --files specs/apps/ose | rtk sort -u > "$root/ose-all.txt"; test -s "$root/ose-all.txt"; test "$(rtk sort -u "$root/ose-all.txt" | rtk wc -l | rtk tr -d " ")" = "$(rtk wc -l < "$root/ose-all.txt" | rtk tr -d " ")"'`; expect one non-empty, duplicate-free source-of-truth list. Stop on an unreadable path and save the command output beside the snapshot.
-- [x] [AI] `P0-CORPUS-OSE-02` — Read each `ose-all.txt` path and assign it to exactly one semantic owner
+- [ ] [AI] `P0-CORPUS-OSE-01` — Before any specs edit, snapshot every current OSE corpus source,
+      including tracked hidden files, with `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; rtk mkdir -p "$root"; rtk git ls-files -- specs/apps/ose | rtk sort -u > "$root/ose-all.txt"; test "$(rtk wc -l < "$root/ose-all.txt" | rtk tr -d " ")" -eq 90; test "$(rtk sort -u "$root/ose-all.txt" | rtk wc -l | rtk tr -d " ")" = "$(rtk wc -l < "$root/ose-all.txt" | rtk tr -d " ")"'`; expect the 90-path, duplicate-free tracked source-of-truth list. Stop on an unreadable path and save the command output beside the snapshot.
+- [ ] [AI] `P0-CORPUS-OSE-02` — Read each `ose-all.txt` path and assign it to exactly one semantic owner
       in `ose-assignment.tsv` as `<path><TAB><O-PUB-OSE-WEB|O-PUB-OSE-BE|O-PUB-OSE-WWW><TAB><ownership reason>`. Application UI behavior belongs to `O-PUB-OSE-WEB`; API/contracts/backend behavior belongs to `O-PUB-OSE-BE`; public marketing/site behavior belongs to `O-PUB-OSE-WWW`. Run `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; all="$root/ose-all.txt"; map="$root/ose-assignment.tsv"; test -s "$map"; test "$(rtk wc -l < "$all" | rtk tr -d " ")" = "$(rtk wc -l < "$map" | rtk tr -d " ")"; rtk cut -f1 "$map" | rtk sort -u | rtk diff -u "$all" -; rtk awk -F "$(rtk printf "\\t")" "NF != 3 || \$2 !~ /^(O-PUB-OSE-WEB|O-PUB-OSE-BE|O-PUB-OSE-WWW)$/ || \$3 == \"\" { exit 1 }" "$map"'`; expect exit 0, exhaustive/mutually exclusive assignment, and a reason for every row. Stop on a shared/ambiguous path; resolve semantic ownership instead of copying it to two manifests.
-- [x] [AI] `P0-CORPUS-OSE-03` — Materialize the three immutable OSE owner manifests with
+- [ ] [AI] `P0-CORPUS-OSE-03` — Materialize the three immutable OSE owner manifests with
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/corpus-ownership; map="$root/ose-assignment.tsv"; for owner in O-PUB-OSE-WEB O-PUB-OSE-BE O-PUB-OSE-WWW; do rtk awk -F "$(rtk printf "\\t")" -v owner="$owner" "\$2 == owner { print \$1 }" "$map" | rtk sort -u > "$root/$owner.sources.txt"; test -s "$root/$owner.sources.txt"; done; { rtk sed -n "1,9999p" "$root/O-PUB-OSE-WEB.sources.txt"; rtk sed -n "1,9999p" "$root/O-PUB-OSE-BE.sources.txt"; rtk sed -n "1,9999p" "$root/O-PUB-OSE-WWW.sources.txt"; } | rtk sort -u | rtk diff -u "$root/ose-all.txt" -'`; expect exit 0 and three non-overlapping manifests whose union equals the snapshot exactly. These files are frozen inputs for the three `OM-14` tasks; later discovery is forbidden.
 - [x] [AI] Freeze `O-PRI-RHINO` with `rtk nx show project rhino-cli --json` and
       `rtk rg --files apps/rhino-cli specs/apps/rhino`; expect one private Rhino owner and save
@@ -1141,6 +1141,14 @@ the missing field.
       expect byte-identical public/private membership and source content after the dedicated C4
       parity correction. A prefix mismatch, any non-retired count other than 96,
       omitted hidden path, duplicate destination, or retained DDD row blocks Phase 7.
+- [ ] [AI] `P0-SPECS-DESTINATION-PRECEDENCE-01` — Before any non-Rhino corpus allocation, apply one
+      ordered classification to every tracked source: direct DDD deletion first; then a current
+      contract path to the owning `contracts/` target; then C4/index metadata to the owner's
+      canonical `architecture.md`; then only the remaining Gherkin source to the owner's recursive
+      `behaviors/` target. A source receives exactly one row and no generic behavior discovery may
+      create a second allocation. Every destination is a repository-relative target plus a fragment.
+      The fragment is `legacy-<source-path-stem>`, where the stem is the lower-case source path
+      without its extension and each maximal non-alphanumeric run becomes one hyphen.
 - [ ] [AI] `P0-SPLIT-AYO-MEMBERSHIP` — Create the Ayo four-column map from
       `rtk git ls-files -- specs/apps/ayokoding`. Use `CORPUS-BACKEND` only for
       `behavior/ayokoding-be/**`, `CORPUS-BUILD-TOOLS` only for
@@ -1151,8 +1159,11 @@ the missing field.
       `landing-hero`, `category-landing-arc-chooser`, `category-landing-empty-state`,
       `paths-hub-category-grouping`, `arc-landing-one-role`, `arc-landing-two-role`,
       `skills-path-landing-body`, and `skills-fixed-arc-statement`, plus course-paths `README.md`;
-      all other course-path files are `CORPUS-COURSE-FLOW`. Run
-      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-AYO.allocation.tsv"; u="$r/D-O-PUB-AYO.source-universe.txt"; rtk git ls-files -- specs/apps/ayokoding | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 80; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|BACKEND|BUILD-TOOLS|WEB-SHELL-CONTENT|WEB-NAVIGATION-TOOLS|COURSE-DISCOVERY|COURSE-FLOW)$/ || \$3 == \"\" || \$4 == \"\" { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/apps/ayokoding -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 46'`;
+      all other course-path files are `CORPUS-COURSE-FLOW`. Every Ayo metadata row targets
+      `specs/apps/ayokoding/www/architecture.md#legacy-<source-path-stem>`; every non-metadata row
+      preserves its complete source-relative Gherkin suffix under
+      `specs/apps/ayokoding/www/behaviors/` with the same fragment convention. Run
+      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-AYO.allocation.tsv"; u="$r/D-O-PUB-AYO.source-universe.txt"; rtk git ls-files -- specs/apps/ayokoding | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 80; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|BACKEND|BUILD-TOOLS|WEB-SHELL-CONTENT|WEB-NAVIGATION-TOOLS|COURSE-DISCOVERY|COURSE-FLOW)$/ || \$3 == \"\" || \$4 == \"\" || (\$2 == \"CORPUS-METADATA\" && \$3 !~ /^specs\/apps\/ayokoding\/www\/architecture\.md#legacy-[a-z0-9-]+$/) { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/apps/ayokoding -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 46'`;
       expect exit 0, leaf source counts `15,12,8,12,13,9,11`, and an exact match between each
       allocation leaf column and its corresponding `.paths.txt`. Manually assigning a path outside
       its stated prefix/exact-basename rule is a failed gate, even if the counts happen to match.
@@ -1160,8 +1171,11 @@ the missing field.
       `rtk git ls-files -- specs/libs/web-ui`. `CORPUS-CONTROLS` is restricted to exact behavior
       domains `alert|badge|button|hue-picker|icon|input|label|progress-ring|textarea|toggle`;
       `CORPUS-COMPOSITION` is restricted to `app-header|card|code-block|dialog|info-tip|resizable-panel|sheet|side-nav|stat-card|tab-bar`;
-      every non-feature C4/index path is `CORPUS-METADATA`. Run
-      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-WEB-UI.allocation.tsv"; u="$r/D-O-PUB-WEB-UI.source-universe.txt"; rtk git ls-files -- specs/libs/web-ui | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 31; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|CONTROLS|COMPOSITION)$/ || \$3 == \"\" || \$4 == \"\" { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/libs/web-ui -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 21'`;
+      every non-feature C4/index path is `CORPUS-METADATA`. Every web-ui metadata row targets
+      `specs/libs/web-ui/architecture.md#legacy-<source-path-stem>`; every non-metadata row preserves
+      its complete source-relative Gherkin suffix under `specs/libs/web-ui/behaviors/` with the
+      same fragment convention. Run
+      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-WEB-UI.allocation.tsv"; u="$r/D-O-PUB-WEB-UI.source-universe.txt"; rtk git ls-files -- specs/libs/web-ui | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 31; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$2 !~ /^CORPUS-(METADATA|CONTROLS|COMPOSITION)$/ || \$3 == \"\" || \$4 == \"\" || (\$2 == \"CORPUS-METADATA\" && \$3 !~ /^specs\/libs\/web-ui\/architecture\.md#legacy-[a-z0-9-]+$/) { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk proxy find specs/libs/web-ui -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 21'`;
       expect exit 0, leaf source counts `10,10,11`, and exact leaf-file membership. Stop on a
       prefix mismatch instead of moving a component to whichever PR has room.
 - [x] [AI] In public run
@@ -1177,6 +1191,8 @@ the missing field.
       in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/ddd.md`. Expect no retained DDD-specific `specs/**` file.
 - [x] [AI] Repeat the exact DDD scan in private and save `local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/phase-0/R-PRI/ddd.md`; expect no
       retained DDD-specific `specs/**` file and no cross-repository preserve-hash contradiction.
+- [ ] [AI] `P0-DDD-DIRECT-PATH-SETS-01` — Supplement the content scan with exact tracked direct
+      DDD-deletion inventories. In public run `rtk bash -lc 'out=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/ddd-direct-deletions.txt; rtk mkdir -p "$(rtk dirname "$out")"; { rtk git ls-files -- specs/apps/organiclever/ddd; rtk git ls-files -- specs/apps/ose/ddd; rtk git ls-files -- specs/apps/rhino/behavior/rhino-cli/gherkin/ddd; rtk git ls-files -- specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature; } | rtk sort -u > "$out"; test "$(rtk wc -l < "$out" | rtk tr -d " ")" -eq 35; test "$(rtk rg "^specs/apps/organiclever/ddd/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 19; test "$(rtk rg "^specs/apps/ose/ddd/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 12; test "$(rtk rg "^specs/apps/rhino/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 4'`. In private write the analogous Rhino-only tracked path set to `R-PRI/ddd-direct-deletions.txt`; expect 4 rows. Each listed path has marker `D`, deletion owner, and Phase 1, 2, or 3 binding in the declared-footprint ledger. Do not infer a deletion from text search alone or retain a direct DDD source because it has no matching text result.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
