@@ -344,7 +344,9 @@ removed while another DAG node can still read it.
 | `D-P0-PRI-FILE-BUDGET-RULES`      | 0        | private counterpart: conditional file-budget natural-seam contract and bindings | `plan-rules-file-budget-exception`     |
 | `D-P0-PUB-PREFLIGHT`              | 0        | public rules-quality preflight executable-path correction                       | `plan-rules-preflight-path`            |
 | `D-P0-PRI-PREFLIGHT`              | 0        | private counterpart: rules-quality preflight executable-path correction         | `plan-rules-preflight-path`            |
-| `D-P0-PUB-PLAN-AMENDMENT`         | 0        | Phase 0 reconciliation and portable plan-state amendment                        | `plan-phase-zero-reconciliation`       |
+| `D-P0-PUB-PLAN-AMENDMENT`         | 0        | Phase 0 reconciliation and portable plan-state amendment                        | `plan-p0-delivery-amendment`           |
+| `D-P0-PUB-PARITY-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino parity discovery and plan-state reconciliation                    | `plan-p0-rhino-parity-reconciliation`  |
+| `D-P0-PRI-RHINO-README-PARITY`    | 0        | private Rhino README parity plus generated manifest                             | `rhino-cli-readme-parity`              |
 | `D-P1-PUB`                        | 1        | public OrganicLever DDD retirement                                              | `test-contract-ol-ddd-retirement`      |
 | `D-P2-PUB`                        | 2        | public OSE DDD retirement                                                       | `test-contract-ose-ddd-retirement`     |
 | `D-P3-PUB` / `D-P3-PRI`           | 3        | Rhino/generic DDD, one PR per repo                                              | `test-contract-ddd-tooling-retirement` |
@@ -371,12 +373,28 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Seven prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Nine prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, and this public Phase 0
-plan amendment. Therefore this plan has 87 PRs in total. Each prerequisite is a separate
-documentation/rule seam; both members of every counterpart pair must merge before the first Phase 1
-edit, and none alters the 80-unit implementation catalog.
+public/private counterpart pair for the rules-quality preflight correction, two distinct public
+Phase 0 plan amendments, and one isolated private Rhino README-parity correction. Therefore this
+plan has 89 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
+alters the 80-unit implementation catalog.
+
+### Phase 0 Rhino parity discovery
+
+Phase 0 compared the shared Rhino tree at both current `main` revisions. Of 99 shared paths, the
+only intentionally private transition exception is the named DDD-retirement unit-test source, its
+compile registration, and the resulting parity-manifest checksum difference. That exception remains
+owned by the Phase 3 private Rhino delivery; it is not evidence that other shared paths may drift.
+
+The comparison also found a stale private README whose content did not match the canonical public
+F# documentation. `D-P0-PRI-RHINO-README-PARITY` corrects only that README and regenerates its
+derived parity manifest. It is deliberately separate from Phase 3: documentation alignment and DDD
+retirement change different behavior, can be reviewed independently, and can each be reverted
+without recovering the other. Its PR must record the measured file accounting, the retained named
+exception, the parity proof, and the independent revert path. This discovery does not complete the
+declared-footprint resolution or authorize any split allocation.
 
 The parent rows `D-P4-*`, `D-O-*-RHINO`, `D-O-PUB-AYO`, and `D-O-*-WEB-UI` are compact coordination
 closeouts, not containers for their former implementation corpus. Their known implementation file
