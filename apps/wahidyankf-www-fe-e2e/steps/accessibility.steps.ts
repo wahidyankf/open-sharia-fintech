@@ -33,7 +33,7 @@ Then("the theme toggle button exposes an aria-label", async ({ page }) => {
 
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/accessibility.feature:Interactive controls expose accessible names
 Then("every navigation link exposes link text or an aria-label", async ({ page }) => {
-  const linkNames = ["Home", "CV", "Personal Projects"];
+  const linkNames = ["Home", "CV", "Independent Projects"];
   for (const name of linkNames) {
     await expect(page.getByRole("link", { name: new RegExp(`^${name}$`) }).first()).toBeVisible();
   }
