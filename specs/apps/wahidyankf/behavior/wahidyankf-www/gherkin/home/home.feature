@@ -30,7 +30,7 @@ Feature: Home page
     When a visitor opens the home page
     Then a Quick Links card is visible
     And the card contains a "View My CV" link to /cv
-    And the card contains a "Browse My Personal Projects" link to /personal-projects
+    And the card contains a "Browse My Independent Projects" link to /personal-projects
 
   @unit @e2e
   Scenario: Home renders the Connect With Me card with five external links

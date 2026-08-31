@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, FolderOpen, Github, Linkedin, Mail, Star, Code, Package } from "lucide-react";
+import { Briefcase, FolderOpen, Github, Linkedin, Mail, Sparkles, Star, Code, Package } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -8,8 +8,10 @@ import {
   getTopSkillsLastFiveYears,
   getTopLanguagesLastFiveYears,
   getTopFrameworksLastFiveYears,
+  getTopAISkillsLastFiveYears,
   formatDuration,
 } from "@/features/cv/core/data";
+import { projects } from "@/features/personal-projects/core/projects";
 import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { useState, useEffect } from "react";
 import { filterItems } from "@/features/search/core/search";
@@ -31,10 +33,17 @@ export function HomeContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const aboutMe = cvData.find((entry) => entry.type === "about");
-  const topSkills = getTopSkillsLastFiveYears(cvData);
-  const topLanguages = getTopLanguagesLastFiveYears(cvData);
-  const topFrameworks = getTopFrameworksLastFiveYears(cvData);
+  const skillSources = [...cvData.filter((entry) => entry.type === "work"), ...projects];
+  const topSkills = getTopSkillsLastFiveYears(skillSources);
+  const topLanguages = getTopLanguagesLastFiveYears(skillSources);
+  const topFrameworks = getTopFrameworksLastFiveYears(skillSources);
+  const topAISkills = getTopAISkillsLastFiveYears(skillSources);
 
+  const filteredAISkills = filterItems(
+    topAISkills.map((item) => ({ ...item, duration: item.duration.toString() })),
+    searchTerm,
+    ["name"],
+  );
   const filteredSkills = filterItems(
     topSkills.map((item) => ({ ...item, duration: item.duration.toString() })),
     searchTerm,
@@ -117,6 +126,31 @@ export function HomeContent() {
         <section className="mb-8 border border-green-400 p-4">
           <h2 className="mb-4 text-xl text-yellow-400 sm:text-2xl md:text-3xl">Skills & Expertise</h2>
           <div className="space-y-4">
+            {/* Top AI-Related Skills */}
+            {filteredAISkills.length > 0 && (
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-green-300">
+                  Top AI-Related Skills Used in The Last 5 Years
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {filteredAISkills.map(({ name, duration }) => (
+                    <button
+                      key={name}
+                      onClick={() => handleItemClick(name)}
+                      className="group flex items-center bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+                    >
+                      <Sparkles className="mr-2 h-4 w-4 text-yellow-400" />
+                      <span className="mr-2 transition-colors duration-200 group-hover:text-white">
+                        <HighlightText text={name} searchTerm={searchTerm} />
+                      </span>
+                      <span className="text-xs text-green-300 transition-colors duration-200 group-hover:text-white">
+                        (total: {formatDuration(Number(duration))})
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {/* Top Skills */}
             <div>
               <h3 className="mb-2 text-lg font-semibold text-green-300">Top Skills Used in The Last 5 Years</h3>
@@ -197,7 +231,7 @@ export function HomeContent() {
               className="flex items-center text-yellow-400 transition-colors duration-200 hover:text-green-400"
             >
               <FolderOpen className="mr-2 h-5 w-5" />
-              Browse My Personal Projects
+              Browse My Independent Projects
             </Link>
           </div>
         </section>

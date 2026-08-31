@@ -10,20 +10,20 @@ Feature: Responsive layout across viewports
   @unit @e2e
   Scenario: Desktop viewport shows a fixed left sidebar
     When a visitor opens the home page at 1440 by 900 viewport
-    Then a left sidebar is visible with Home, CV, and Personal Projects links
+    Then a left sidebar is visible with Home, CV, and Independent Projects links
     And no bottom tab bar is rendered
 
   @unit @e2e
   Scenario: Tablet viewport hides the sidebar and renders a bottom tab bar
     When a visitor opens the home page at 768 by 1024 viewport
     Then no left sidebar is visible
-    And a bottom tab bar is visible with Home, CV, and Personal Projects items
+    And a bottom tab bar is visible with Home, CV, and Independent Projects items
 
   @unit @e2e
   Scenario: Mobile viewport hides the sidebar and renders a bottom tab bar
     When a visitor opens the home page at 375 by 812 viewport
     Then no left sidebar is visible
-    And a bottom tab bar is visible with Home, CV, and Personal Projects items
+    And a bottom tab bar is visible with Home, CV, and Independent Projects items
 
   @unit @e2e
   Scenario: The theme toggle is always reachable

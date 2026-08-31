@@ -37,11 +37,11 @@ describeFeature(feature, ({ Scenario, Background }) => {
     // bar becomes hidden.
     When("a visitor opens the home page at 1440 by 900 viewport", () => {});
 
-    Then("a left sidebar is visible with Home, CV, and Personal Projects links", () => {
+    Then("a left sidebar is visible with Home, CV, and Independent Projects links", () => {
       render(React.createElement(Navigation));
       const desktopNav = screen.getByTestId("desktop-nav");
       expect(desktopNav.className).toContain("lg:block");
-      for (const name of ["Home", "CV", "Personal Projects"]) {
+      for (const name of ["Home", "CV", "Independent Projects"]) {
         expect(screen.getAllByRole("link", { name }).length).toBeGreaterThan(0);
       }
     });
@@ -66,11 +66,11 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/responsive.feature:Tablet viewport hides the sidebar and renders a bottom tab bar
-    And("a bottom tab bar is visible with Home, CV, and Personal Projects items", () => {
+    And("a bottom tab bar is visible with Home, CV, and Independent Projects items", () => {
       render(React.createElement(Navigation));
       const mobileNav = screen.getByTestId("mobile-nav");
       expect(mobileNav.className).toContain("flex");
-      for (const name of ["Home", "CV", "Personal Projects"]) {
+      for (const name of ["Home", "CV", "Independent Projects"]) {
         expect(screen.getAllByRole("link", { name }).length).toBeGreaterThan(0);
       }
     });
@@ -88,11 +88,11 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/responsive.feature:Mobile viewport hides the sidebar and renders a bottom tab bar
-    And("a bottom tab bar is visible with Home, CV, and Personal Projects items", () => {
+    And("a bottom tab bar is visible with Home, CV, and Independent Projects items", () => {
       render(React.createElement(Navigation));
       const mobileNav = screen.getByTestId("mobile-nav");
       expect(mobileNav.className).toContain("flex");
-      for (const name of ["Home", "CV", "Personal Projects"]) {
+      for (const name of ["Home", "CV", "Independent Projects"]) {
         expect(screen.getAllByRole("link", { name }).length).toBeGreaterThan(0);
       }
     });

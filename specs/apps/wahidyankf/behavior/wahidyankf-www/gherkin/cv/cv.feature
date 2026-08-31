@@ -26,3 +26,8 @@ Feature: CV page
   Scenario: CV cross-linked via scrollTop query scrolls into the entries
     When a visitor opens the CV page with search term "TypeScript" and scrollTop true
     Then the page scrolls past Highlights into the matching entries
+
+  @unit @e2e
+  Scenario: CV offers a downloadable PDF
+    When a visitor opens the CV page
+    Then a "Download CV (PDF)" link pointing at the generated PDF is visible

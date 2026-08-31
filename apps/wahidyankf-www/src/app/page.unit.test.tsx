@@ -75,6 +75,7 @@ vi.mock("@/features/cv/core/data", () => ({
     { name: "React", duration: 60 },
     { name: "Next.js", duration: 45 },
   ],
+  getTopAISkillsLastFiveYears: () => [{ name: "AI-Agent Orchestration", duration: 10 }],
   formatDuration: (duration: number) => `${duration} months`,
 }));
 
@@ -125,7 +126,7 @@ describe("Home component", () => {
   it("renders quick links", () => {
     render(<HomeContent />);
     expect(screen.getByText("View My CV")).toBeInTheDocument();
-    expect(screen.getByText("Browse My Personal Projects")).toBeInTheDocument();
+    expect(screen.getByText("Browse My Independent Projects")).toBeInTheDocument();
   });
 
   it("renders connect with me links", () => {

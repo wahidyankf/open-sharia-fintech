@@ -34,3 +34,10 @@ Then("the page scrolls past Highlights into the matching entries", async ({ page
   const searchInput = page.getByPlaceholder(/Search CV entries/i);
   await expect(searchInput).toBeVisible();
 });
+
+// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV offers a downloadable PDF
+Then('a "Download CV \\(PDF\\)" link pointing at the generated PDF is visible', async ({ page }) => {
+  const downloadLink = page.getByRole("link", { name: /Download CV \(PDF\)/ });
+  await expect(downloadLink).toBeVisible();
+  await expect(downloadLink).toHaveAttribute("href", "/wahidyankf-kresna-fridayoka-cv.pdf");
+});

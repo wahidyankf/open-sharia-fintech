@@ -40,7 +40,7 @@ const routes = [
     source: "personal-projects/page.tsx",
     contentSource: "../features/personal-projects/shell/PersonalProjectsContent.tsx",
     Component: Projects,
-    visibleContent: "Personal Projects",
+    visibleContent: "Independent Projects",
   },
 ] as const;
 

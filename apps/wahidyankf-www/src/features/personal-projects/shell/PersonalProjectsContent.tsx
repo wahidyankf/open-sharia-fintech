@@ -2,7 +2,8 @@
 
 import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { projects, filterProjects } from "@/features/personal-projects/core/projects";
-import { Github, Globe, Youtube } from "lucide-react";
+import { calculateDuration, formatDuration } from "@/features/cv/core/data";
+import { Code, Github, Globe, Package, Sparkles, Star, Youtube } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
@@ -37,11 +38,18 @@ function ProjectsContent() {
     router.push(newURL, { scroll: false });
   };
 
+  const handleSkillClick = (skill: string) => {
+    setSearchTerm(skill);
+    updateURL(skill);
+  };
+
   const filteredProjects = filterProjects(projects, searchTerm);
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-grow">
-      <h1 className="mb-8 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">Personal Projects</h1>
+      <h1 className="mb-8 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">
+        Independent Projects
+      </h1>
 
       <SearchComponent
         searchTerm={searchTerm}
@@ -57,6 +65,12 @@ function ProjectsContent() {
               <HighlightText text={project.title} searchTerm={searchTerm} />
             </h2>
             <p className="mb-2 text-green-300">
+              <HighlightText text={project.period} searchTerm={searchTerm} />
+              <span className="ml-2 text-yellow-400">
+                (<HighlightText text={formatDuration(calculateDuration(project.period))} searchTerm={searchTerm} />)
+              </span>
+            </p>
+            <p className="mb-2 text-green-300">
               <HighlightText text={project.description} searchTerm={searchTerm} />
             </p>
             <ul className="mb-2 list-inside list-disc text-green-200">
@@ -66,6 +80,32 @@ function ProjectsContent() {
                 </li>
               ))}
             </ul>
+            {(() => {
+              const tags = [
+                ...project.aiSkills.map((name) => ({ name, icon: Sparkles })),
+                ...project.skills.map((name) => ({ name, icon: Star })),
+                ...project.programmingLanguages.map((name) => ({ name, icon: Code })),
+                ...project.frameworks.map((name) => ({ name, icon: Package })),
+              ];
+              return (
+                tags.length > 0 && (
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    {tags.map(({ name, icon: Icon }, tagIndex) => (
+                      <button
+                        key={tagIndex}
+                        onClick={() => handleSkillClick(name)}
+                        className="group flex items-center bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+                      >
+                        <Icon className="mr-2 h-4 w-4 text-yellow-400" />
+                        <span className="transition-colors duration-200 group-hover:text-white">
+                          <HighlightText text={name} searchTerm={searchTerm} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )
+              );
+            })()}
             <div className="mt-4">
               {Object.entries(project.links).map(([key, value]) => (
                 <a

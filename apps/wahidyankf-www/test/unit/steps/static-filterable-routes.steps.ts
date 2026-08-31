@@ -18,7 +18,7 @@ let renderedCv: HTMLElement | undefined;
 const publicPortfolioPages = [
   { Component: Home, content: "Welcome to My Portfolio" },
   { Component: CV, content: "Curriculum Vitae" },
-  { Component: PersonalProjects, content: "Personal Projects" },
+  { Component: PersonalProjects, content: "Independent Projects" },
 ] as const;
 let renderedStaticPortfolioPages: string[] = [];
 let crawlerRobots: ReturnType<typeof robots> | undefined;
@@ -80,6 +80,7 @@ vi.mock("@/features/cv/core/data", () => ({
   getTopSkillsLastFiveYears: () => [],
   getTopLanguagesLastFiveYears: () => [],
   getTopFrameworksLastFiveYears: () => [],
+  getTopAISkillsLastFiveYears: () => [],
   formatDuration: (duration: number) => `${duration} months`,
   parseDate: vi.fn((date: string) => new Date(date)),
   calculateDuration: vi.fn(() => 12),

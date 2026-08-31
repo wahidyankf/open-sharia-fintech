@@ -76,6 +76,7 @@ vi.mock("@/features/cv/core/data", () => ({
   getTopSkillsLastFiveYears: () => [{ name: "React", duration: 60 }],
   getTopLanguagesLastFiveYears: () => [{ name: "JavaScript", duration: 60 }],
   getTopFrameworksLastFiveYears: () => [{ name: "Next.js", duration: 60 }],
+  getTopAISkillsLastFiveYears: () => [{ name: "AI-Agent Orchestration", duration: 10 }],
   formatDuration: (duration: number) => `${duration} months`,
   parseDate: vi.fn((dateStr: string) => new Date(dateStr)),
   calculateDuration: vi.fn(() => 12),
@@ -104,6 +105,13 @@ describe("CV component", () => {
   it("renders the SearchComponent", () => {
     render(<CvContent />);
     expect(screen.getByTestId("search-component")).toBeInTheDocument();
+  });
+
+  it("renders a Download CV (PDF) link pointing at the generated PDF", () => {
+    render(<CvContent />);
+    const downloadLink = screen.getByRole("link", { name: /Download CV \(PDF\)/ });
+    expect(downloadLink).toHaveAttribute("href", "/wahidyankf-kresna-fridayoka-cv.pdf");
+    expect(downloadLink).toHaveAttribute("download");
   });
 
   it("prefills and filters from a shared search URL", () => {

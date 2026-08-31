@@ -26,6 +26,15 @@
         "cwd": "{projectRoot}"
       }
     },
+    "generate:cv-pdf": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "npx tsx scripts/generate-cv-pdf.ts",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/public/wahidyankf-kresna-fridayoka-cv.pdf"]
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

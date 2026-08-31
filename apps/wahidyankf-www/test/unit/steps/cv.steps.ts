@@ -81,4 +81,16 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByPlaceholderText("Search CV entries...")).toBeInTheDocument();
     });
   });
+
+  Scenario("CV offers a downloadable PDF", ({ When, Then }) => {
+    When("a visitor opens the CV page", () => {});
+
+    // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV offers a downloadable PDF
+    Then('a "Download CV (PDF)" link pointing at the generated PDF is visible', () => {
+      render(React.createElement(CvContent));
+      const downloadLink = screen.getByRole("link", { name: /Download CV \(PDF\)/ });
+      expect(downloadLink).toHaveAttribute("href", "/wahidyankf-kresna-fridayoka-cv.pdf");
+      expect(downloadLink).toHaveAttribute("download");
+    });
+  });
 });
