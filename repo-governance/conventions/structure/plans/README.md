@@ -40,7 +40,7 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether work may share a PR or await another merge.
 - [Boundary Test](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing a delivery boundary.
 - [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
-- [Addition Targets, Limits, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Strong C=500, hard O/file bounds, and the plan-document LOC exemption.
+- [Addition Limits, File-Budget Exception, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — C=500, hard O/machine bounds, file-budget exception, and plan-document LOC exemption.
 - [The Atomicity Exception (PR-Size Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
 - [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.

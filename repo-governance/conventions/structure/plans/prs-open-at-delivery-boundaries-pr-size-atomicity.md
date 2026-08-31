@@ -19,9 +19,10 @@ delivery-boundary rule 5; qualify it when citing.
 
 [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) rule 1 splits a sweep by surface.
 [Rule 4](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) sets the strong 500-code
-target plus hard other/document and file caps. Its natural-seam record governs code diffs above 500,
-and its narrow plan-document exemption waives only the applicable hard LOC ceiling. Atomicity is
-broader: a remaining hard rule-4 bound may yield.
+target, hard other/document and machine limits, and a default hand-authored-file budget. Its
+natural-seam records govern code diffs above 500 and narrowly justified file-budget exceptions, and
+its narrow plan-document exemption waives only the applicable hard LOC ceiling. Atomicity is broader:
+a remaining hard rule-4 bound may yield.
 
 ## The Rule
 
@@ -29,15 +30,16 @@ broader: a remaining hard rule-4 bound may yield.
 when each states a rule the others do not. Where one rule is stated on two — a `repo-governance/`
 convention and the `.claude/` binding executing it — those two are **one slice**, merged together,
 even past any rule-4 bound. A size bound never outranks correctness: a `main` stating one rule two
-contradicting ways is worse than a large PR.
+contradicting ways is worse than a large PR. The default file budget separately requires its own
+exact natural-seam record; atomicity does not erase that disclosure.
 
 ## What the Exception Does Not Carry
 
 It admits **only the paired surfaces, and only for rules this PR changes**. Nothing else rides
 along — an unrelated fix in a file the slice happens to touch is still scope creep, and rules 1-3
 still bound what enters. Outside atomicity and rule 4's narrow plan-document added-line exemption,
-the remaining hard rule-4 bounds stay binding. The 500 code target separately permits a documented
-natural-seam exception.
+the remaining hard rule-4 bounds stay binding. The 500 code target and the default file budget each
+separately permit only their documented natural-seam exception.
 
 **A surface is a rule-1 category, not a directory.** Governance text is one surface however many
 subdirectories of `repo-governance/` a rule spans; agents plus their mirrors are one surface across
