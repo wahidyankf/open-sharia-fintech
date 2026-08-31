@@ -101,7 +101,6 @@ export const cvData: CVEntry[] = [
     locationType: "Remote",
     details: [
       "Led Hijra Group's Financing domain (Bank and Alami P2P Lending), Risk Management & Reporting, and Data Engineering teams of up to 25 engineers across backend, frontend, mobile/React Native, SEIT, SQA, and data engineering. Maintained an 8% voluntary-turnover rate (2 of 25 team members) and stabilized the team through strategic reprioritization after organizational restructuring.",
-      "Managed performance through fair and lawful PIP processes, with only one employee not successfully completing the plan.",
       "Spearheaded the Bank's financing products—home and commercial financing—product-engineering back office, and user onboarding on web and mobile applications, including sales and risk-management dashboards. This foundational work established a key revenue stream for Hijra Group.",
       "Drove Supply Chain Financing (SCF) adoption, contributing to 50% of total financing-application disbursements in Alami P2P Lending.",
       "Optimized Alami's back-office system, reducing the financing application submission-to-disbursement SLA by 25%, from 14 to 10 days.",

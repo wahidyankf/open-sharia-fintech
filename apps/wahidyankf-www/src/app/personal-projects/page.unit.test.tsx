@@ -74,9 +74,9 @@ describe("Personal Projects component", () => {
   it("renders all projects initially", () => {
     render(<PersonalProjectsContent />);
     expect(screen.getByText("Open Sharia Enterprise (OSE)")).toBeInTheDocument();
+    expect(screen.getByText("BeaverNest")).toBeInTheDocument();
     expect(screen.getByText("AyoKoding")).toBeInTheDocument();
-    expect(screen.getByText("Organic Lever")).toBeInTheDocument();
-    expect(screen.getByText("The Organic")).toBeInTheDocument();
+    expect(screen.getByText("OrganicLever")).toBeInTheDocument();
   });
 
   it("initializes search from the URL", () => {
@@ -84,7 +84,7 @@ describe("Personal Projects component", () => {
     render(<PersonalProjectsContent />);
     expect(screen.getByTestId("search-component")).toHaveValue("AyoKoding");
     expect(screen.getByText("AyoKoding")).toBeInTheDocument();
-    expect(screen.queryByText("Organic Lever")).not.toBeInTheDocument();
+    expect(screen.queryByText("OrganicLever")).not.toBeInTheDocument();
   });
 
   it("filters projects based on search term", async () => {
@@ -94,8 +94,7 @@ describe("Personal Projects component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("AyoKoding")).toBeInTheDocument();
-      expect(screen.queryByText("Organic Lever")).not.toBeInTheDocument();
-      expect(screen.queryByText("The Organic")).not.toBeInTheDocument();
+      expect(screen.queryByText("OrganicLever")).not.toBeInTheDocument();
     });
   });
 
@@ -126,7 +125,8 @@ describe("Personal Projects component", () => {
       name: /Repository/i,
     });
     expect(repositoryLinks[0]).toHaveAttribute("href", "https://github.com/wahidyankf/ose-public");
-    expect(repositoryLinks[1]).toHaveAttribute("href", "https://github.com/organiclever/ayokoding");
+    expect(repositoryLinks[1]).toHaveAttribute("href", "https://github.com/wahidyankf/beaver-nest");
+    expect(repositoryLinks[2]).toHaveAttribute("href", "https://github.com/organiclever/ayokoding");
 
     const websiteLinks = screen.getAllByRole("link", { name: /Website/i });
     expect(websiteLinks[0]).toHaveAttribute("href", "https://oseplatform.com/");

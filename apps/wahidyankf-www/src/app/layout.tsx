@@ -7,22 +7,24 @@ import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Wahidyan Kresna Fridayoka | Software Engineer",
+  title: "Wahidyan Kresna Fridayoka | Engineering Leader — Digital Banking, Fintech & RegTech",
   description:
-    "Portfolio and CV of Wahidyan Kresna Fridayoka, a seasoned Software Engineer specializing in Frontend Engineering and Engineering Management.",
+    "Portfolio and CV of Wahidyan Kresna Fridayoka, an engineering leader with nearly nine years of experience in Sharia-compliant digital banking, fintech, and RegTech, leading cross-functional engineering teams and open-source work.",
   icons: [
     { rel: "icon", url: "/favicon.ico" },
     { rel: "apple-touch-icon", url: "/favicon.ico" },
   ],
   keywords: [
-    "Software Engineer",
+    "Engineering Leadership",
     "Engineering Manager",
+    "Digital Banking",
+    "Sharia-Compliant Fintech",
+    "RegTech",
     "Software System Designer",
-    "Financing Engineer",
     "Financing Engineer",
     "Software Testing",
     "Core Banking",
-    "Functional Programming",
+    "ISO 27001",
   ],
   authors: [{ name: "Wahidyan Kresna Fridayoka" }],
   creator: "Wahidyan Kresna Fridayoka",
@@ -31,15 +33,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.wahidyankf.com",
     siteName: "Wahidyan Kresna Fridayoka",
-    title: "Wahidyan Kresna Fridayoka | Software Engineer",
+    title: "Wahidyan Kresna Fridayoka | Engineering Leader — Digital Banking, Fintech & RegTech",
     description:
-      "Portfolio and CV of Wahidyan Kresna Fridayoka, a seasoned Software Engineer specializing in Frontend Engineering and Engineering Management.",
+      "Portfolio and CV of Wahidyan Kresna Fridayoka, an engineering leader with nearly nine years of experience in Sharia-compliant digital banking, fintech, and RegTech, leading cross-functional engineering teams and open-source work.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wahidyan Kresna Fridayoka | Software Engineer",
+    title: "Wahidyan Kresna Fridayoka | Engineering Leader — Digital Banking, Fintech & RegTech",
     description:
-      "Portfolio and CV of Wahidyan Kresna Fridayoka, a seasoned Software Engineer specializing in Frontend Engineering and Engineering Management.",
+      "Portfolio and CV of Wahidyan Kresna Fridayoka, an engineering leader with nearly nine years of experience in Sharia-compliant digital banking, fintech, and RegTech, leading cross-functional engineering teams and open-source work.",
     creator: "@wahidyankf", // Replace with your Twitter handle if you have one
   },
   robots: {
