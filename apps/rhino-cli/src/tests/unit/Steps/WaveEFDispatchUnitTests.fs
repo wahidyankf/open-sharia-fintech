@@ -95,7 +95,7 @@ let private newDddAreaFixture () : string =
     writeFile
         root
         (sprintf "specs/apps/%s/ddd/bounded-contexts.yaml" app)
-        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    code_lang: [fs]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
+        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
 
     root
 
@@ -636,6 +636,21 @@ let ``route runs specs structure validate for a configured fixture ddd-area app`
 
     Assert.Equal(0, code)
     Assert.Contains("0 finding(s)", out)
+
+[<Fact>]
+let ``route reports an unsupported DDD fixture code language`` () =
+    let root = newDddAreaFixture ()
+
+    writeFile
+        root
+        "specs/apps/fixture-app/ddd/bounded-contexts.yaml"
+        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    code_lang: [not-a-language]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "specs"; "structure"; "validate"; "fixture-app" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("unsupported code_lang \"not-a-language\"", out)
 
 [<Fact>]
 let ``route runs specs domain-coverage validate for a real eligible domain area`` () =
