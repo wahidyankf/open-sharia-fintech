@@ -1353,6 +1353,18 @@ the missing field.
       `D-P1-PUB` allocation, an estimate bijection, matching generated ownership, and an
       unchanged 84-unit catalog. This is the final local index closure for the finite Phase 1
       dependency set and creates no product change.
+- [x] [AI] `P0-DDD-STRICT-CONSUMER-CLOSURE-ALLOCATION-AMENDMENT-06` — Completed. The first
+      strict Phase 1 rules-quality audit found four remaining canonical OrganicLever skill sources
+      and fourteen live OrganicLever specification consumers that still prescribed the retired
+      DDD-era framing. Reassign the exact specification paths
+      `specs/apps/organiclever/{product/overview.md,components/be/README.md,components/web/README.md,components/app-web/routes-and-screens.md,behavior/organiclever-app-web/README.md,behavior/organiclever-be/README.md,behavior/organiclever-app-web/gherkin/{app-shell,health,journal,routine,routing,settings,stats,workout-session}/README.md}`
+      and canonical sources
+      `.claude/skills/apps-organiclever-www-developing-content/reference/{comparison-and-development-commands.md,component-architecture-and-routing.md,core-concepts-and-directory-structure.md,validation-checklist-and-common-mistakes.md}`, together with their four generated
+      `.agents/skills/**` mirrors, to `D-P1-PUB`. They must use feature-context wording and may
+      not retain a live retired DDD registry claim. Re-materialize the public prospective catalog;
+      require 62 bindings, a duplicate-free 69-path `D-P1-PUB` allocation, an estimate bijection,
+      matching generated ownership, and an unchanged 84-unit catalog. This finite consumer closure
+      corrects strict-audit findings without expanding product scope.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
@@ -1549,10 +1561,11 @@ the missing field.
       `rtk git rm --pathspec-from-file=plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/delete-paths.txt` from the public worktree. Expect every path removed and no preserve row
       touched; stop if Git names an unlisted path.
 - [ ] [AI] Remove only links, registry keys, targets, and index entries whose consumer was deleted;
-      the eight allocated specification consumers
-      `specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,components/app-web/README.md,components/app-web/architecture.md,behavior/organiclever-app-web/gherkin/README.md,components/app-web/component-web.md,containers/container.md}`
+      the twenty-two allocated specification consumers
+      `specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,components/app-web/README.md,components/app-web/architecture.md,behavior/organiclever-app-web/gherkin/README.md,components/app-web/component-web.md,containers/container.md,product/overview.md,components/be/README.md,components/web/README.md,components/app-web/routes-and-screens.md,behavior/organiclever-app-web/README.md,behavior/organiclever-be/README.md,behavior/organiclever-app-web/gherkin/{app-shell,health,journal,routine,routing,settings,stats,workout-session}/README.md}`
       must be changed only to remove references to the deleted DDD tree; the ten allocated
-      canonical guidance or registry-consumer sources and their generated `.agents` mirrors must
+      canonical guidance or registry-consumer sources, four strict-consumer closure canonical
+      sources, and their generated `.agents` mirrors must
       remove or revise the corresponding retired instruction without changing generic machinery;
       `repo-config.yml` is the exact allocated sequential shared configuration edit and must
       remove only the `organiclever` `specs.ddd-areas` entry before the deletion;
