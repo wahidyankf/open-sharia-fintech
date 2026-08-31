@@ -2,22 +2,26 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 
-# Copy app package.json and strip workspace dependency before install
+# Copy app package.json and strip workspace dependencies before install.
+# Each is grafted into node_modules from the workspace below.
 COPY apps/wahidyankf-www/package.json ./
 RUN node -e " \
   const pkg = JSON.parse(require('fs').readFileSync('package.json','utf8')); \
   delete pkg.dependencies['@open-sharia-enterprise/web-ui']; \
+  delete pkg.dependencies['@open-sharia-enterprise/ts-env-loader']; \
   require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2)); \
 " && npm install --ignore-scripts
 
-# Install web-ui transitive dependencies not already in wahidyankf-www
-RUN npm install --save radix-ui@^1.0.0 cmdk@1.1.1 --ignore-scripts
+# Install workspace-library transitive dependencies not already in wahidyankf-www.
+RUN npm install --save radix-ui@^1.0.0 cmdk@1.1.1 dotenv@16.4.7 --ignore-scripts
 
 # Copy workspace libs as resolvable node_modules packages
 COPY libs/web-ui/src/ ./node_modules/@open-sharia-enterprise/web-ui/src/
 COPY libs/web-ui/package.json ./node_modules/@open-sharia-enterprise/web-ui/
 COPY libs/web-ui-token/src/ ./node_modules/@open-sharia-enterprise/web-ui-token/src/
 COPY libs/web-ui-token/package.json ./node_modules/@open-sharia-enterprise/web-ui-token/
+COPY libs/ts-env-loader/src/ ./node_modules/@open-sharia-enterprise/ts-env-loader/src/
+COPY libs/ts-env-loader/package.json ./node_modules/@open-sharia-enterprise/ts-env-loader/
 
 COPY apps/wahidyankf-www/src/ ./src/
 COPY apps/wahidyankf-www/public/ ./public/
