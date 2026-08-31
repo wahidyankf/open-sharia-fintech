@@ -63,7 +63,8 @@ let private realRepoRoot () : string =
 
 /// A minimal, internally consistent DDD-area spec tree. It keeps dispatch
 /// coverage for config-driven DDD branches independent of the live delivery
-/// state of this repository.
+/// state of this repository, including the non-empty registry path that runs
+/// bounded-context and glossary validation.
 let private newDddAreaFixture () : string =
     let root = newTempDir ()
     let app = "fixture-app"
@@ -83,10 +84,18 @@ let private newDddAreaFixture () : string =
         (sprintf "specs/apps/%s/behavior/surface/gherkin/domain/fixture.feature" app)
         "Feature: Fixture\n\n  Scenario: Works\n    Given a fixture\n    When it runs\n    Then it passes\n"
 
+    writeFile root "apps/fixture-app/src/contexts/journal/domain/Fixture.fs" "module Fixture\n"
+    writeFile root "apps/fixture-app/src/contexts/journal/application/Fixture.fs" "module Fixture\n"
+
+    writeFile
+        root
+        (sprintf "specs/apps/%s/ddd/ubiquitous-language/journal.md" app)
+        "# Ubiquitous Language — journal\n\n**Bounded context**: `journal`\n**Maintainer**: fixture\n**Last reviewed**: 2026-09-01\n\n## Term index\n\n| Term | Code identifier(s) | Used in features |\n| ---- | ------------------ | ---------------- |\n"
+
     writeFile
         root
         (sprintf "specs/apps/%s/ddd/bounded-contexts.yaml" app)
-        "version: 2\napp: fixture-app\ncontexts: []\n"
+        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    code_lang: [fs]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
 
     root
 
