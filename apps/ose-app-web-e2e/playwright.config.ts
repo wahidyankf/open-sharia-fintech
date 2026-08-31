@@ -39,6 +39,23 @@ const extraHTTPHeaders: Record<string, string> = vercelBypass
 // runs every scenario by default.
 const grepInvert = process.env.PLAYWRIGHT_GREP_INVERT ? new RegExp(process.env.PLAYWRIGHT_GREP_INVERT) : undefined;
 
+// CI supplies WEB_BASE_URL for an already-running staging or local-stack app.
+// A developer running this E2E target directly gets the same deterministic
+// server lifecycle from Playwright instead of needing a separate terminal.
+const webServer = process.env.WEB_BASE_URL
+  ? undefined
+  : {
+      command: "npx nx run ose-app-web:dev",
+      url: "http://localhost:3300",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+      cwd: "../..",
+      env: {
+        APP_ENV: "test",
+        OSE_APP_WEB_PORT: "3300",
+      },
+    };
+
 export default defineConfig({
   testDir,
   timeout: 60000,
@@ -55,6 +72,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     extraHTTPHeaders,
   },
+  webServer,
   projects: [
     {
       name: "chromium",
