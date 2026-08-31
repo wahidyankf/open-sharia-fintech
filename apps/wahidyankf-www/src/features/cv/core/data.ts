@@ -11,6 +11,7 @@ export type CVEntry = {
   skills?: string[];
   programmingLanguages?: string[];
   frameworks?: string[];
+  aiSkills?: string[];
 };
 
 export const cvData: CVEntry[] = [
@@ -62,6 +63,7 @@ export const cvData: CVEntry[] = [
     ],
     programmingLanguages: ["JavaScript", "SQL", "Java", "TypeScript", "Python"],
     frameworks: ["React.js", "React Native", "Next.js", "Spring Boot"],
+    aiSkills: ["AI-augmented SDLC"],
     type: "work",
   },
   {
@@ -460,6 +462,7 @@ export type SkillSource = {
   skills?: string[];
   programmingLanguages?: string[];
   frameworks?: string[];
+  aiSkills?: string[];
 };
 
 /**
@@ -519,3 +522,6 @@ export const getTopLanguagesLastFiveYears = (data: SkillSource[]): SkillTotal[] 
 
 export const getTopFrameworksLastFiveYears = (data: SkillSource[]): SkillTotal[] =>
   topItemsLastFiveYears(data, (entry) => entry.frameworks);
+
+export const getTopAISkillsLastFiveYears = (data: SkillSource[]): SkillTotal[] =>
+  topItemsLastFiveYears(data, (entry) => entry.aiSkills);

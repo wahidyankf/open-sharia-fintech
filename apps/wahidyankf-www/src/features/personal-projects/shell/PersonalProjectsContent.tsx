@@ -3,7 +3,7 @@
 import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { projects, filterProjects } from "@/features/personal-projects/core/projects";
 import { calculateDuration, formatDuration } from "@/features/cv/core/data";
-import { Code, Github, Globe, Package, Star, Youtube } from "lucide-react";
+import { Code, Github, Globe, Package, Sparkles, Star, Youtube } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
@@ -80,6 +80,7 @@ function ProjectsContent() {
             </ul>
             {(() => {
               const tags = [
+                ...project.aiSkills.map((name) => ({ name, icon: Sparkles })),
                 ...project.skills.map((name) => ({ name, icon: Star })),
                 ...project.programmingLanguages.map((name) => ({ name, icon: Code })),
                 ...project.frameworks.map((name) => ({ name, icon: Package })),

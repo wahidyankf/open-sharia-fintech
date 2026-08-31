@@ -8,6 +8,7 @@ export type Project = {
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
+  aiSkills: string[];
   links: {
     [key: string]: string;
   };
@@ -24,9 +25,10 @@ export const projects: Project[] = [
       "AI-agent-orchestrated development workflow across the monorepo",
       "MIT licensed — fully open-source across all apps and libs",
     ],
-    skills: ["Nx Monorepo", "Gherkin/BDD", "AI-Agent Orchestration"],
+    skills: ["Nx Monorepo", "Gherkin/BDD"],
     programmingLanguages: ["TypeScript", "F#", "Rust"],
     frameworks: [],
+    aiSkills: ["AI-Agent Orchestration", "AI Engineering"],
     links: {
       repository: "https://github.com/wahidyankf/ose-public",
       website: "https://oseplatform.com/",
@@ -46,6 +48,7 @@ export const projects: Project[] = [
     skills: ["Software Testing"],
     programmingLanguages: ["Elixir"],
     frameworks: ["Phoenix LiveView"],
+    aiSkills: ["AI Engineering"],
     links: {
       repository: "https://github.com/wahidyankf/beaver-nest",
     },
@@ -61,8 +64,9 @@ export const projects: Project[] = [
       "Includes a YouTube channel for video content",
     ],
     skills: ["Software Engineering Education"],
-    programmingLanguages: [],
+    programmingLanguages: ["Clojure", "Python", "Dart", "Java"],
     frameworks: [],
+    aiSkills: [],
     links: {
       repository: "https://github.com/organiclever/ayokoding",
       website: "https://ayokoding.com/",
@@ -81,6 +85,7 @@ export const projects: Project[] = [
     skills: [],
     programmingLanguages: ["TypeScript", "F#"],
     frameworks: ["Next.js", "Effect TS", "XState"],
+    aiSkills: [],
     links: {
       website: "https://www.organiclever.com/",
     },
@@ -97,5 +102,6 @@ export function filterProjects(projects: Project[], filter: ProjectFilter): Proj
     "skills",
     "programmingLanguages",
     "frameworks",
+    "aiSkills",
   ]);
 }

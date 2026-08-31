@@ -76,6 +76,7 @@ vi.mock("@/features/cv/core/data", () => ({
   getTopSkillsLastFiveYears: () => [{ name: "React", duration: 60 }],
   getTopLanguagesLastFiveYears: () => [{ name: "JavaScript", duration: 60 }],
   getTopFrameworksLastFiveYears: () => [{ name: "Next.js", duration: 60 }],
+  getTopAISkillsLastFiveYears: () => [{ name: "AI-Agent Orchestration", duration: 10 }],
   formatDuration: (duration: number) => `${duration} months`,
   parseDate: vi.fn((dateStr: string) => new Date(dateStr)),
   calculateDuration: vi.fn(() => 12),

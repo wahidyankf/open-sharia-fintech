@@ -80,6 +80,7 @@ vi.mock("@/features/cv/core/data", () => ({
   getTopSkillsLastFiveYears: () => [],
   getTopLanguagesLastFiveYears: () => [],
   getTopFrameworksLastFiveYears: () => [],
+  getTopAISkillsLastFiveYears: () => [],
   formatDuration: (duration: number) => `${duration} months`,
   parseDate: vi.fn((date: string) => new Date(date)),
   calculateDuration: vi.fn(() => 12),

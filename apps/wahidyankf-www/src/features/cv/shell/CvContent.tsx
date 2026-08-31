@@ -12,6 +12,7 @@ import {
   Languages,
   Linkedin,
   Mail,
+  Sparkles,
   Star,
   ToggleLeft,
   ToggleRight,
@@ -31,6 +32,7 @@ import {
   getTopSkillsLastFiveYears,
   getTopLanguagesLastFiveYears,
   getTopFrameworksLastFiveYears,
+  getTopAISkillsLastFiveYears,
 } from "@/features/cv/core/data";
 import { projects } from "@/features/personal-projects/core/projects";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
@@ -75,12 +77,14 @@ const ClickableItem = ({
 
 // Update the DynamicSkillsComponent
 const DynamicSkillsComponent = ({
+  aiSkills,
   skills,
   languages,
   frameworks,
   searchTerm,
   handleItemClick,
 }: {
+  aiSkills: TopItem[];
   skills: TopItem[];
   languages: TopItem[];
   frameworks: TopItem[];
@@ -88,6 +92,26 @@ const DynamicSkillsComponent = ({
   handleItemClick: (item: string) => void;
 }) => (
   <>
+    {aiSkills.length > 0 && (
+      <>
+        <h4 className="mt-4 mb-2 text-lg font-semibold text-yellow-400">
+          Top AI-Related Skills Used in The Last 5 Years
+        </h4>
+        <ul className="mb-4 grid list-none grid-cols-1 gap-2 sm:grid-cols-2">
+          {aiSkills.map(({ name, duration }, index) => (
+            <li key={index}>
+              <ClickableItem
+                name={name}
+                duration={duration}
+                icon={<Sparkles className="mr-2 h-4 w-4 text-yellow-400" />}
+                searchTerm={searchTerm}
+                handleItemClick={handleItemClick}
+              />
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
     <h4 className="mt-4 mb-2 text-lg font-semibold text-yellow-400">Top Skills Used in The Last 5 Years</h4>
     <ul className="mb-4 grid list-none grid-cols-1 gap-2 sm:grid-cols-2">
       {skills.map(({ name, duration }, index) => (
@@ -139,6 +163,7 @@ const DynamicSkillsComponent = ({
 const CVEntryComponent = ({
   entry,
   searchTerm,
+  topAISkills,
   topSkills,
   topLanguages,
   topFrameworks,
@@ -146,6 +171,7 @@ const CVEntryComponent = ({
 }: {
   entry: CVEntry;
   searchTerm: string;
+  topAISkills?: TopItem[];
   topSkills?: TopItem[];
   topLanguages?: TopItem[];
   topFrameworks?: TopItem[];
@@ -196,6 +222,25 @@ const CVEntryComponent = ({
     )}
     {entry.type === "work" && (
       <>
+        {entry.aiSkills && entry.aiSkills.length > 0 && (
+          <div className="mt-2">
+            <h4 className="text-md font-semibold text-yellow-400">AI Skills:</h4>
+            <ul className="mb-2 grid list-none grid-cols-2 gap-2">
+              {entry.aiSkills.map((skill, index) => (
+                <li key={index}>
+                  <ClickableItem
+                    name={skill}
+                    duration={0}
+                    icon={<Sparkles className="mr-2 h-4 w-4 text-yellow-400" />}
+                    searchTerm={searchTerm}
+                    handleItemClick={handleItemClick}
+                    showDuration={false}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {entry.skills && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-yellow-400">Skills:</h4>
@@ -255,8 +300,9 @@ const CVEntryComponent = ({
         )}
       </>
     )}
-    {entry.type === "about" && topSkills && topLanguages && topFrameworks && (
+    {entry.type === "about" && topAISkills && topSkills && topLanguages && topFrameworks && (
       <DynamicSkillsComponent
+        aiSkills={topAISkills}
         skills={topSkills}
         languages={topLanguages}
         frameworks={topFrameworks}
@@ -315,6 +361,7 @@ const CVSection = ({
   entries,
   icon,
   searchTerm,
+  topAISkills,
   topSkills,
   topLanguages,
   topFrameworks,
@@ -324,6 +371,7 @@ const CVSection = ({
   entries: CVEntry[];
   icon: React.ReactNode;
   searchTerm: string;
+  topAISkills?: TopItem[];
   topSkills?: TopItem[];
   topLanguages?: TopItem[];
   topFrameworks?: TopItem[];
@@ -344,6 +392,7 @@ const CVSection = ({
           key={index}
           entry={entry}
           searchTerm={searchTerm}
+          topAISkills={topAISkills}
           topSkills={topSkills}
           topLanguages={topLanguages}
           topFrameworks={topFrameworks}
@@ -517,12 +566,14 @@ export function CvContent() {
       "skills",
       "programmingLanguages",
       "frameworks",
+      "aiSkills",
     ]) || []; // Provide an empty array as fallback
 
   const skillSources = [...cvData.filter((entry) => entry.type === "work"), ...projects];
   const topSkills = getTopSkillsLastFiveYears(skillSources);
   const topLanguages = getTopLanguagesLastFiveYears(skillSources);
   const topFrameworks = getTopFrameworksLastFiveYears(skillSources);
+  const topAISkills = getTopAISkillsLastFiveYears(skillSources);
 
   const aboutEntry = filteredEntries.find((entry) => entry.type === "about") || null;
   const workEntries = filteredEntries.filter((entry) => entry.type === "work");
@@ -555,6 +606,7 @@ export function CvContent() {
                   entries={[aboutEntry]}
                   icon={<User className="h-6 w-6" />}
                   searchTerm={searchTerm}
+                  topAISkills={topAISkills}
                   topSkills={topSkills}
                   topLanguages={topLanguages}
                   topFrameworks={topFrameworks}

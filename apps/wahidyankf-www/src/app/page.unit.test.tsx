@@ -75,6 +75,7 @@ vi.mock("@/features/cv/core/data", () => ({
     { name: "React", duration: 60 },
     { name: "Next.js", duration: 45 },
   ],
+  getTopAISkillsLastFiveYears: () => [{ name: "AI-Agent Orchestration", duration: 10 }],
   formatDuration: (duration: number) => `${duration} months`,
 }));
 
