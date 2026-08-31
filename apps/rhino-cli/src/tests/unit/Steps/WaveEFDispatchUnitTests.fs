@@ -10,12 +10,12 @@
 ///
 /// Read-only leaves are driven against this checkout's own real repository
 /// root (via `RhinoCli.Infrastructure.GitRoot.findRoot`), the same technique
-/// `GovernanceSteps.fs`'s `findRepoRoot` already uses — these validators are
-/// exactly the ones this repo's own CI keeps green, so a clean exit code is
-/// the correct assertion without hand-building a fixture. Leaves that write
-/// (`bindings generate`, `sync promote`, `scaffold dart`, `readme-index
-/// rewrite-paths`, `e2e-coverage validate`) always use a throwaway temp
-/// directory instead, never the real checkout.
+/// `GovernanceSteps.fs`'s `findRepoRoot` already uses. Routes whose coverage
+/// depends on mutable repository declarations use a throwaway fixture instead:
+/// a delivery must not make a coverage result depend on unrelated repository
+/// state. Leaves that write (`bindings generate`, `sync promote`, `scaffold
+/// dart`, `readme-index rewrite-paths`, `e2e-coverage validate`) always use a
+/// throwaway temp directory too, never the real checkout.
 module RhinoCli.Tests.Unit.Steps.WaveEFDispatchUnitTests
 
 open System
@@ -60,6 +60,35 @@ let private realRepoRoot () : string =
     match RhinoCli.Infrastructure.GitRoot.findRoot () with
     | Error message -> failwith message
     | Ok root -> root
+
+/// A minimal, internally consistent DDD-area spec tree. It keeps dispatch
+/// coverage for config-driven DDD branches independent of the live delivery
+/// state of this repository.
+let private newDddAreaFixture () : string =
+    let root = newTempDir ()
+    let app = "fixture-app"
+
+    writeFile
+        root
+        "repo-config.yml"
+        "specs:\n  ddd-areas:\n    - fixture-app\n  domain-areas: []\ngates: []\nharness: []\n"
+
+    for folder in [ "product"; "system-context"; "containers"; "components"; "behavior" ] do
+        let path = sprintf "specs/apps/%s/%s" app folder
+        writeFile root (path + "/README.md") "# Fixture\n"
+        writeFile root (path + "/fixture.md") "# Fixture\n"
+
+    writeFile
+        root
+        (sprintf "specs/apps/%s/behavior/surface/gherkin/domain/fixture.feature" app)
+        "Feature: Fixture\n\n  Scenario: Works\n    Given a fixture\n    When it runs\n    Then it passes\n"
+
+    writeFile
+        root
+        (sprintf "specs/apps/%s/ddd/bounded-contexts.yaml" app)
+        "version: 2\napp: fixture-app\ncontexts: []\n"
+
+    root
 
 // ---------------------------------------------------------------------------
 // repo-governance * — read-only, safe against the real checkout
@@ -585,17 +614,19 @@ let ``route rewrite-paths help wins when --map is present`` () =
     Assert.NotEmpty out
 
 // ---------------------------------------------------------------------------
-// DDD-area branches — real repo has real ddd-areas/domain-areas in
-// repo-config.yml (organiclever, ose / organiclever-be, ose-be)
+// DDD-area branches — use a fixture so phase deliveries can freely retire a
+// live DDD area without changing this dispatch test's coverage.
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``route runs specs structure validate for a real ddd-area app`` () =
-    let code, _, _ =
-        runCaptured (okRoot (realRepoRoot ())) [| "specs"; "structure"; "validate"; "organiclever" |]
-    // Only asserting the leaf executes its DDD (bc/ul) branch without
-    // crashing — organiclever's own spec health is out of scope here.
-    Assert.True(code = 0 || code = 1)
+let ``route runs specs structure validate for a configured fixture ddd-area app`` () =
+    let root = newDddAreaFixture ()
+
+    let code, out, _ =
+        runCaptured (okRoot root) [| "specs"; "structure"; "validate"; "fixture-app" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("0 finding(s)", out)
 
 [<Fact>]
 let ``route runs specs domain-coverage validate for a real eligible domain area`` () =
@@ -848,11 +879,13 @@ let ``route scaffolds a Dart contracts package`` () =
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``route runs specs counts validate with no folder using the repo-config ddd-areas default`` () =
-    let code, _, _ =
-        runCaptured (okRoot (realRepoRoot ())) [| "specs"; "counts"; "validate" |]
+let ``route runs specs counts validate with no folder using the fixture ddd-areas default`` () =
+    let root = newDddAreaFixture ()
 
-    Assert.True(code = 0 || code = 1)
+    let code, out, _ = runCaptured (okRoot root) [| "specs"; "counts"; "validate" |]
+
+    Assert.Equal(0, code)
+    Assert.Contains("specs/apps/fixture-app", out)
 
 [<Fact>]
 let ``route runs specs counts validate against a comma-separated --apps flag`` () =
