@@ -3,9 +3,7 @@
 Audience: Engineers, Technical Product/Project Managers
 
 Component-level specifications for OrganicLever — what lives inside each container,
-sliced by surface (backend, frontend). DDD bounded-context registry, ubiquitous-language
-glossaries, and bounded-context map live one level above at `../ddd/` because the ubiquitous
-language belongs to the bounded context, not to one implementation surface.
+sliced by surface (backend, frontend).
 
 ## Children
 
@@ -16,13 +14,12 @@ language belongs to the bounded context, not to one implementation surface.
 - `app-web/` — Frontend (Next.js 16) component specs.
   - `component-web.md` — moved from `c4/` in Phase 2A.
   - `README.md` — moved from legacy flat-root `web/README.md` in Phase 2A.
-  - `architecture.md` — bounded-context tree, layer rules. Authored in Phase 3.
+  - `architecture.md` — feature-context tree and layer rules. Authored in Phase 3.
   - `routes-and-screens.md` — routes/screens/entry-flows tables. Authored in Phase 3.
   - `design-system.md` — palette, typography, dark mode, tokens. Authored in Phase 3.
 
 ## Related
 
-- [`../ddd/`](../ddd/README.md) — DDD artifacts (registry + glossaries + map) consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../containers/`](../containers/README.md) — C4 L2
 - [`../behavior/`](../behavior/README.md) — Gherkin scenarios that exercise the components

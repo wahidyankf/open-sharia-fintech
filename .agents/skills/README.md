@@ -83,7 +83,7 @@ below.
 - [Apps Ayokoding Www Authoring Annotated Concept](./apps-ayokoding-www-authoring-annotated-concept/README.md) — Annotated-concept authoring for ayokoding-web
 - [Apps Ayokoding Www Developing Content](./apps-ayokoding-www-developing-content/README.md) — ayokoding-web bilingual content development guide
 - [Apps Deploying Vercel Branches](./apps-deploying-vercel-branches/README.md) — shared deployer-agent branch force-push procedure
-- [Apps Organiclever Www Developing Content](./apps-organiclever-www-developing-content/README.md) — organiclever-www DDD/PGlite/Effect TS development
+- [Apps Organiclever Www Developing Content](./apps-organiclever-www-developing-content/README.md) — organiclever-www feature-context/PGlite/Effect TS development
 - [Apps Ose Www Developing Content](./apps-ose-www-developing-content/README.md) — ose-web content creation conventions
 
 ### PR review pipeline

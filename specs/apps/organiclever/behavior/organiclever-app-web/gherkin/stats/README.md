@@ -1,6 +1,6 @@
 # stats — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app stats bounded context.
+UI-semantic scenarios for the OrganicLever app stats feature context.
 
 ## Feature Files
 

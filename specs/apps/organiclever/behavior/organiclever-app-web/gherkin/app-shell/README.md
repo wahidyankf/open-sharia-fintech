@@ -1,6 +1,6 @@
 # app-shell — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app shell bounded context.
+UI-semantic scenarios for the OrganicLever app shell feature context.
 
 ## Feature Files
 

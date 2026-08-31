@@ -24,8 +24,6 @@ surface-profile: cli-only
 # Create a missing README in an existing directory
 target: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health
 
-# Scaffold a specific subfolder within an existing spec area
-target: specs/apps/organiclever/ddd
 ```
 
 ## Full-Stack Profile

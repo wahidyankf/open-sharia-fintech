@@ -29,17 +29,10 @@ specs/apps/organiclever/
 │   └── app-web/           # Next.js frontend component specs
 │       ├── README.md
 │       └── component-web.md
-├── ddd/                   # DDD artifacts (platform-agnostic; shared by all surfaces)
-│   ├── README.md
-│   ├── bounded-contexts.yaml
-│   ├── bounded-context-map.md
-│   └── ubiquitous-language/
-│       ├── README.md
-│       └── *.md           # One glossary file per bounded context
 └── behavior/              # Gherkin scenarios (HTTP-semantic + UI-semantic)
     ├── README.md
     ├── organiclever-be/gherkin/        # Backend Gherkin scenarios
-    └── organiclever-app-web/gherkin/   # Frontend Gherkin scenarios (per bounded context)
+    └── organiclever-app-web/gherkin/   # Frontend Gherkin scenarios (per feature context)
 ```
 
 ## Containers
@@ -58,11 +51,11 @@ a row here, not changing the schema.
 The `app-web` container's system-status page consumes the `be` container's health endpoint.
 Otherwise `app-web` is local-first today.
 
-## Bounded Contexts
+## Feature Contexts
 
 Counts are Gherkin features per container. `--` means no features in that container today.
 
-| Bounded Context | `be` features | `app-web` features | `www` features | Description                                                    |
+| Feature Context | `be` features | `app-web` features | `www` features | Description                                                    |
 | --------------- | ------------- | ------------------ | -------------- | -------------------------------------------------------------- |
 | app-shell       | --            | 2                  | --             | Navigation chrome, accessibility, entry-logging overlays       |
 | db              | 1             | --                 | --             | Database schema migrations                                     |
@@ -79,77 +72,12 @@ Counts are Gherkin features per container. `--` means no features in that contai
 
 ## Spec Artifacts
 
-- **[ddd/](./ddd/README.md)** — DDD artifacts:
-  [bounded-contexts.yaml](./ddd/bounded-contexts.yaml) (registry) and
-  [ubiquitous-language/](./ddd/ubiquitous-language/README.md) (glossaries);
-  consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - **[system-context/](./system-context/README.md)**, **[containers/](./containers/README.md)**,
   **[components/](./components/README.md)** — C4 architecture diagrams (L1/L2/L3)
 - **[components/be/](./components/be/README.md)** — Backend API component specs
   ([Gherkin features](./behavior/organiclever-be/gherkin/README.md))
 - **[components/app-web/](./components/app-web/README.md)** — Frontend component specs
   ([Gherkin features](./behavior/organiclever-app-web/gherkin/README.md))
-
-## DDD Registry (`bounded-contexts.yaml`)
-
-`bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
-`organiclever-app-web`. `specs structure validate` reads it in two rule layers (`bc:` and `ul:`) to enforce structural and
-vocabulary invariants automatically in `nx run organiclever-app-web:test:quick`.
-
-### Schema
-
-Each entry under `contexts:` declares:
-
-| Field           | What it means                                                                                                         |
-| --------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `name`          | Identifier — must match the folder name under `src/contexts/`                                                         |
-| `summary`       | One-paragraph human description                                                                                       |
-| `layers`        | Ordered list of DDD layers that must exist as subfolders (e.g. `[domain, application, infrastructure, presentation]`) |
-| `code`          | Filesystem path to the context's implementation root                                                                  |
-| `glossary`      | Path to the context's ubiquitous-language Markdown file                                                               |
-| `gherkin`       | Path to the context's Gherkin scenario directory                                                                      |
-| `relationships` | List of inter-context relationships with `to`, `kind`, and `role`                                                     |
-
-Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
-For `customer-supplier` and `conformist`, both sides must declare the relationship
-(symmetry enforced by the `bc:` layer).
-
-### The `bc:` layer — structural parity
-
-Reads the registry and verifies the **filesystem** matches exactly:
-
-- Every declared `code:` path exists with **exactly** the declared `layers:` subfolders
-  (extra or missing layer = error)
-- Every declared `glossary:` file exists on disk
-- Every declared `gherkin:` directory exists and contains ≥1 `.feature` file
-- No **orphan** directories exist under `src/contexts/` that aren't in the registry
-- Relationship declarations are symmetric across both context entries
-
-### The `ul:` layer — glossary parity
-
-Reads the registry to locate every `glossary:` file, then validates each:
-
-- Required frontmatter keys present (`Bounded context`, `Maintainer`, `Last reviewed`)
-- Terms table header matches canonical columns
-- Code identifiers (backtick-wrapped in the table) exist somewhere in the declared
-  `code:` path — stale identifiers from renamed types or deleted functions are caught here
-- Feature file references in the table resolve to real `.feature` files under the
-  declared `gherkin:` path
-- Same term in two glossaries → both must carry mutual `Forbidden-synonyms` cross-links
-
-### Severity and escape hatch
-
-Both layers always run at `error` severity — a finding fails the build. `specs structure validate`
-exposes no severity override, so there is no escape hatch: fix the finding or fix the registry.
-
-### Adding a new bounded context
-
-1. Add an entry to `bounded-contexts.yaml` with all six fields.
-2. Create the code directory with the declared layer subfolders.
-3. Create the glossary file at the declared path (use an existing one as a template).
-4. Create the gherkin directory and add at least one `.feature` file.
-5. Run `nx run organiclever-app-web:test:quick` — the `bc:` and `ul:` layers will confirm
-   the registry matches the filesystem before any unit tests run.
 
 ## Spec Consumption
 
@@ -164,9 +92,8 @@ All backends consume the backend Gherkin specs at **all three test levels**:
 
 **Audience note**: This folder is written for engineers and SWE-background TPMs (the
 kind embedded with a developer-tools or productivity team — not non-technical PMs). The
-C4 diagrams and DDD-applied vocabulary (bounded context, ubiquitous language, aggregate)
-will be familiar if you have worked with system diagrams and event-storming. If you are
-new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
+C4 diagrams and feature-context vocabulary will be familiar if you have worked with system
+diagrams and event-storming.
 
 **Reading order**:
 
@@ -179,10 +106,10 @@ new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
    Also see [containers/deployment.md](./containers/deployment.md) for environments
    and Docker image details.
 4. **[components/app-web/](./components/app-web/README.md)** — Frontend internals:
-   bounded-context architecture, routes and screens, design system.
+   feature-context architecture, routes and screens, design system.
    [components/be/api.md](./components/be/api.md) covers the backend API surface.
 5. **[behavior/](./behavior/README.md)** — What the system is supposed to do, expressed
-   as Gherkin (Given-When-Then) acceptance criteria per bounded context. The same files
+   as Gherkin (Given-When-Then) acceptance criteria per feature context. The same files
    drive automated tests.
 
 **In plain language**:

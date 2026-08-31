@@ -35,9 +35,9 @@ These commands run as part of the `specs-quality-gate` workflow deterministic-of
 
 - Positional `<folder>` or `<app>` — single-target legacy behavior preserved.
 - `--apps <csv>` — multi-app validation across an explicit list.
-- No positional, no flag — defaults to the `AppsWithDDD` allowlist (`organiclever`, `ose`).
+- No positional, no flag — defaults to the `specs.ddd-areas` list in `repo-config.yml` (`ose`).
 
-The single source of truth for the allowlist is `apps/rhino-cli/src/internal/allowlist.rs`. Pre-push and CI surfaces invoke the four targets without arguments so adding a new app is a one-line edit there.
+The single source of truth for the allowlist is `repo-config.yml` under `specs.ddd-areas`. Pre-push and CI surfaces invoke the four targets without arguments so adding a new app is a one-line edit there.
 
 ## Per-bounded-context `code_lang:` field (DDD validators)
 

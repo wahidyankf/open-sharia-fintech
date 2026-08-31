@@ -1,6 +1,6 @@
-# organiclever-www — Bounded-Context Architecture
+# organiclever-www — Feature-context Architecture
 
-Every feature lives inside one bounded context under `src/contexts/<bc>/`:
+Every feature lives inside one feature context under `src/contexts/<bc>/`:
 
 ```
 src/contexts/<bc>/
@@ -20,14 +20,13 @@ src/contexts/<bc>/
 
 **Published API barrels**: each context exposes `domain/index.ts`, `application/index.ts`, `infrastructure/index.ts`, and `presentation/index.ts`. Consumers always import from the barrel, never from internal files.
 
-## Adding a Feature (Bounded-Context-Aware Workflow)
+## Adding a Feature (Feature-context Workflow)
 
-1. Identify which bounded context owns the feature. Consult [`specs/apps/organiclever/ddd/bounded-context-map.md`](../../../../specs/apps/organiclever/ddd/bounded-context-map.md).
-2. Ensure the domain term appears in [`specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md`](../../../../specs/apps/organiclever/ddd/ubiquitous-language/README.md). Add it if missing — same commit as the code change.
-3. Write or update the Gherkin spec in `specs/apps/organiclever/behavior/organiclever-www/gherkin/<bc>/`.
-4. Implement: Red (failing step) → Green (minimal code) → Refactor.
-5. Keep all new code inside the correct context layer. If it touches IO, it goes in `infrastructure/`. If it is a use-case, it goes in `application/`. Never break the layer rules.
-6. Run `nx run organiclever-www:lint` to confirm 0 boundary errors before committing.
+1. Identify the feature context that owns the feature.
+2. Write or update the Gherkin spec in `specs/apps/organiclever/behavior/organiclever-www/gherkin/<bc>/`.
+3. Implement: Red (failing step) → Green (minimal code) → Refactor.
+4. Keep all new code inside the correct context layer. If it touches IO, it goes in `infrastructure/`. If it is a use-case, it goes in `application/`. Never break the layer rules.
+5. Run `nx run organiclever-www:lint` to confirm 0 boundary errors before committing.
 
 ## XState Machine Placement Rule
 

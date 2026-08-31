@@ -4,7 +4,7 @@ Level 2 of the C4 model. Shows the runtime containers inside the OrganicLever sy
 the Next.js 16 frontend (landing site + life-journal app + system-status diagnostic page) and
 the F#/Giraffe backend REST API (health endpoint only today).
 
-The frontend is a Next.js App Router application structured around DDD bounded contexts. Today there are
+The frontend is a Next.js App Router application organized into feature contexts. Today there are
 no authenticated screens and no remote sync — productivity-tracking data lives in the user's
 browser via PGlite (Postgres-WASM, IndexedDB-backed). UI state machines run via XState
 (`appMachine` for the navigation shell, `journalMachine` for event-log writes,
@@ -19,7 +19,7 @@ graph TD
     OPS("Operations Engineer"):::actor_ops
 
     subgraph SYSTEM["OrganicLever"]
-        FE["Next.js Frontend<br/>──────────────────<br/>Next.js 16, TypeScript<br/>9 bounded contexts<br/>XState · Effect TS<br/><br/>Landing + life-journal app<br/>System-status diagnostic"]:::container_fe
+        FE["Next.js Frontend<br/>──────────────────<br/>Next.js 16, TypeScript<br/>9 feature contexts<br/>XState · Effect TS<br/><br/>Landing + life-journal app<br/>System-status diagnostic"]:::container_fe
 
         PGLITE[("PGlite (in-browser)<br/>──────────────────<br/>Postgres-WASM<br/>IndexedDB-backed<br/><br/>journal · routine · settings")]:::storage
 
@@ -47,11 +47,8 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 - **Backend Gherkin** (`specs/apps/organiclever/behavior/organiclever-be/gherkin/`) feeds `organiclever-be`
   BDD scenarios at the `test:unit` and `test:integration` levels.
 - **Frontend Gherkin** (`specs/apps/organiclever/behavior/organiclever-app-web/gherkin/`) feeds `organiclever-app-web`
-  BDD scenarios at the `test:unit` level (organized by bounded context, with `vitest-cucumber`)
+  BDD scenarios at the `test:unit` level (organized by feature context, with `vitest-cucumber`)
   and `organiclever-app-web-e2e` Playwright scenarios at the `test:e2e` level.
-- **DDD enforcement** (`specs/apps/organiclever/ddd/`) is validated by
-  `rhino-cli specs structure validate` (its `bc:` and `ul:` layers), both run as part of `test:quick` for
-  `organiclever-app-web`.
 - **Main CI** runs `typecheck`, `lint`, `test:quick` for both containers on a 4x/day schedule plus manual dispatch (no push trigger); `pr-quality-gate.yml` is what runs them per PR and per push to `main`.
 - **E2E CI** runs the full Docker Compose stack on a twice-daily cron.
 

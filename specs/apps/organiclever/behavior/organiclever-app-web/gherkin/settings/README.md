@@ -1,6 +1,6 @@
 # settings — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app settings bounded context.
+UI-semantic scenarios for the OrganicLever app settings feature context.
 
 ## Feature Files
 

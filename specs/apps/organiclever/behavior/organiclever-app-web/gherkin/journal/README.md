@@ -1,6 +1,6 @@
 # journal — organiclever-app-web Gherkin Domain
 
-UI-semantic scenarios for the OrganicLever app journal bounded context.
+UI-semantic scenarios for the OrganicLever app journal feature context.
 
 ## Feature Files
 

@@ -1,7 +1,7 @@
 # Component Diagram: Next.js Frontend
 
 Level 3 of the C4 model. Shows the logical components inside the Next.js 16 frontend container.
-No authenticated screens today. The frontend is structured around 9 DDD bounded contexts
+No authenticated screens today. The frontend is organized into 9 feature contexts
 (`src/contexts/<bc>/{domain,application,infrastructure,presentation}`), with PGlite
 (Postgres-WASM, IndexedDB-backed) as the local-first system of record.
 
@@ -26,9 +26,9 @@ No authenticated screens today. The frontend is structured around 9 DDD bounded 
 The architecture is presented as three views of one graph, split by hop so each view stays readable.
 Together they carry every component and every relationship.
 
-### View 1: Routing — End User → App Router → Bounded Contexts
+### View 1: Routing — End User → App Router → Feature Contexts
 
-Thin App Router page and layout wrappers dispatch into the nine bounded contexts; no business logic
+Thin App Router page and layout wrappers dispatch into the nine feature contexts; no business logic
 lives in the router itself.
 
 ```mermaid
@@ -171,7 +171,7 @@ graph LR
     classDef external fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
 ```
 
-**Layer rules** (enforced by ESLint `boundaries` at error severity, plus the `bc:` layer of `specs structure validate`):
+**Layer rules** (enforced by ESLint `boundaries` at error severity):
 
 - `domain` ← no project imports
 - `application` ← `domain` only
@@ -179,12 +179,12 @@ graph LR
 - `presentation` ← `domain` + `application`
 - Cross-context: only via the target context's `application/index.ts` or `presentation/index.ts` barrel
 
-## Gherkin Coverage by Bounded Context
+## Gherkin Coverage by Feature Context
 
-Each bounded context owns its Gherkin features under
+Each feature context owns its Gherkin features under
 [`specs/apps/organiclever/behavior/organiclever-app-web/gherkin/<bc>/`](../../behavior/organiclever-app-web/gherkin/README.md):
 
-| Bounded Context | Features                                       | Count  |
+| Feature Context | Features                                       | Count  |
 | --------------- | ---------------------------------------------- | ------ |
 | app-shell       | `accessibility`, `entry-loggers`, `navigation` | 3      |
 | health          | `system-status-be`                             | 1      |
@@ -196,19 +196,6 @@ Each bounded context owns its Gherkin features under
 | stats           | `history-screen`, `progress-screen`            | 2      |
 | workout-session | `workout-session`                              | 1      |
 | **Total**       |                                                | **16** |
-
-## DDD Enforcement
-
-Two `rhino-cli specs` subcommands run automatically as part of `test:quick`:
-
-- **The `bc:` layer of `specs structure validate`** — verifies every context's `code:`, `glossary:`, and
-  `gherkin:` paths exist with the declared layer subfolders, no orphans, relationship symmetry.
-- **The `ul:` layer of `specs structure validate`** — verifies every glossary file is well-formed, code
-  identifiers in backticks resolve in the BC code path, feature references resolve to real
-  `.feature` files, and term collisions across glossaries carry mutual `Forbidden-synonyms`
-  cross-links.
-
-Source of truth: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../ddd/bounded-contexts.yaml).
 
 ## Testing
 
@@ -222,7 +209,5 @@ Source of truth: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../ddd
 
 - **Container diagram**: [container.md](../../containers/container.md)
 - **Backend component diagram**: [component-be.md](../be/component-be.md)
-- **Frontend bounded-context map**: [`ddd/bounded-context-map.md`](../../ddd/bounded-context-map.md)
-- **DDD registry**: [`ddd/`](../../ddd/README.md)
 - **Frontend gherkin specs**: [`behavior/organiclever-app-web/gherkin/`](../../behavior/organiclever-app-web/gherkin/README.md)
 - **Parent**: [organiclever specs](../../README.md)
