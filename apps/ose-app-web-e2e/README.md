@@ -9,11 +9,11 @@ the app’s Gherkin examples into Playwright-BDD scenarios. 🚦
 # Install Chromium once on this machine
 npm exec nx -- run ose-app-web-e2e:install
 
-# Start the app and the API it relies on
-npm exec nx -- run ose-app-web:dev
+# Playwright starts the web app automatically. Start the API only for
+# scenarios that require local full-stack behavior.
 npm exec nx -- run ose-be:dev
 
-# In another terminal, run the browser scenarios
+# Run the browser scenarios
 npm exec nx -- run ose-app-web-e2e:test:e2e
 ```
 
@@ -22,8 +22,9 @@ Use `npm exec nx -- run ose-app-web-e2e:test:e2e:ui` to debug interactively, or
 
 ## Target a running environment
 
-The default app URL is `http://localhost:3300`. Set `WEB_BASE_URL` for a different running
-environment. Keep credentials and deployment-access tokens in uncommitted local configuration only.
+The default app URL is `http://localhost:3300`; Playwright starts it automatically when
+`WEB_BASE_URL` is unset. Set `WEB_BASE_URL` to target a different already-running environment.
+Keep credentials and deployment-access tokens in uncommitted local configuration only.
 
 ## Checks and specs
 
