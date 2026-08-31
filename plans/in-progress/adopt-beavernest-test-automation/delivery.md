@@ -1573,9 +1573,8 @@ the missing field.
 - **Outcome:** no OrganicLever DDD spec/enforcement remains; preserved behavior stays green.
 - **Acceptance criteria:** [AC-TEST-07, AC-TEST-08, AC-DDD-01, and AC-RULES-01](./prd.md#acceptance-criteria).
 
-> **Execution state:** the 69 allocated implementation paths are prepared with regenerated
-> canonical bindings. The runtime ledger records local validation; the unchecked Phase 1 items
-> remain authoritative until the exact-head PR lifecycle completes the affected-task matrix.
+> **Execution state:** the 69 allocated implementation paths and their exact-head PR lifecycle are
+> complete. The runtime ledger remains the authoritative Phase 1 validation record.
 
 - [ ] [AI] Inventory OrganicLever DDD engineering surfaces with
       `rtk rg -n -i "domain-driven|DDD|bounded context|domain model" specs/apps/organiclever repo-governance docs apps/organiclever-* libs .claude .agents`; classify every match as delete or preserve in
@@ -1693,6 +1692,11 @@ the missing field.
 - **Input:** Phase 0 OSE DDD delete/preserve rows in `R-PUB`.
 - **Outcome:** no OSE DDD spec/enforcement remains; generic machinery waits for Phase 3.
 - **Acceptance criteria:** [AC-TEST-07, AC-TEST-08, AC-DDD-01, and AC-RULES-01](./prd.md#acceptance-criteria).
+
+> **Execution state:** the 24 allocated implementation paths are prepared after the enforced
+> `repo-config.yml` closure. The runtime ledger records the finite classification, prospective
+> validation, and later exact-head delivery checks.
+
 - [ ] [AI] Inventory OSE DDD engineering surfaces with
       `rtk rg -n -i "domain-driven|DDD|bounded context|domain model" specs/apps/ose repo-governance docs apps/ose-* libs`; classify every match as delete or preserve in
       `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-2/R-PUB/ddd-classification.md`. Expect no `pending`; stop on ambiguous education,

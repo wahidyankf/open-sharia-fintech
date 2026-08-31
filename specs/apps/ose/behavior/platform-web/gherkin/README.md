@@ -4,8 +4,7 @@ UI-semantic Gherkin scenarios for `ose-web`. Step style: `clicks`, `types`, `see
 `navigates`. Background: `Given the app is running`. Consumed by `apps/ose-www-fe-e2e`
 (Playwright).
 
-Organized per bounded context (one folder per BC, matching
-`../../../ddd/bounded-contexts.yaml`).
+Organized per bounded context (one folder per BC).
 
 ## Coverage
 
@@ -14,7 +13,7 @@ Organized per bounded context (one folder per BC, matching
 | app-shell       | `app-shell/` | `accessibility`, `navigation`, `responsive`, `theme` | 4 files   |
 | landing         | `landing/`   | `landing-page`                                       | 1 file    |
 
-Build-tooling scenarios (not DDD bounded contexts, exempt from the "per BC" convention above):
+Build-tooling scenarios (outside the per-BC convention above):
 
 | Domain | Folder    | Features           | Scenarios |
 | ------ | --------- | ------------------ | --------- |
@@ -38,8 +37,6 @@ names.
 
 - **Parent**: [`../../README.md`](../../README.md)
 - **api perspective counterpart**: [`../../api/gherkin/`](../../platform-be/gherkin/README.md)
-- **DDD registry**: `../../../ddd/bounded-contexts.yaml`
-
 - [app-shell — platform-web Gherkin Domain](./app-shell/README.md)
 - [config — platform-web Gherkin Domain](./config/README.md)
 - [landing — platform-web Gherkin Domain](./landing/README.md)

@@ -31,10 +31,6 @@ specs/apps/ose/
 │   ├── be/                     # ose-be (F#/Giraffe) component specs
 │   ├── platform-be/            # ose-www tRPC HTTP perspective
 │   └── platform-web/           # ose-www UI perspective
-├── ddd/                        # DDD artifacts (ose-app)
-│   ├── bounded-contexts.yaml   # Machine-readable context registry
-│   ├── bounded-context-map.md  # Visual context map
-│   └── ubiquitous-language/    # Per-context glossaries
 └── behavior/                   # Gherkin scenarios
     ├── be/gherkin/             # ose-be HTTP-semantic scenarios
     ├── app-web/gherkin/        # ose-app-web UI-semantic scenarios
@@ -88,8 +84,6 @@ Content and marketing site for the OSE Platform.
 
 ## Spec Artifacts
 
-- **[ddd/](./ddd/README.md)** — DDD artifacts (ose-app): bounded-contexts.yaml registry,
-  ubiquitous-language glossaries; consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - **[containers/](./containers/README.md)** — C4 architecture diagrams (L2)
 - **[containers/contracts/](./containers/contracts/README.md)** — OpenAPI 3.1 contract spec
   (ose-app only); generates types for ose-be and ose-app-web via `codegen` Nx target

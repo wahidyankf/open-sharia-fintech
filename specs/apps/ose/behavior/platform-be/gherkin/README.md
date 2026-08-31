@@ -9,8 +9,7 @@ tRPC HTTP-semantic Gherkin scenarios for `ose-web`. Step style: `sends GET/POST`
 > [`../../../containers/container.md`](../../../containers/container.md) for the
 > slug-vs-container distinction.
 
-Organized per bounded context (one folder per BC, matching
-`../../../ddd/bounded-contexts.yaml`).
+Organized per bounded context (one folder per BC).
 
 ## Coverage
 
@@ -41,8 +40,6 @@ path (`/feed.xml`, `/sitemap.xml`).
 
 - **Parent**: [`../../README.md`](../../README.md)
 - **web perspective counterpart**: [`../../web/gherkin/`](../../platform-web/gherkin/README.md)
-- **DDD registry**: `../../../ddd/bounded-contexts.yaml`
-
 - [content — platform-be Gherkin Domain](./content/README.md)
 - [health — platform-be Gherkin Domain](./health/README.md)
 - [rss-feed — platform-be Gherkin Domain](./rss-feed/README.md)

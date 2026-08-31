@@ -30,7 +30,6 @@ per bounded context.
 
 - **Container diagram**: [`../../containers/container.md`](../../containers/container.md)
 - **api perspective**: [`../api/`](../platform-be/README.md)
-- **DDD registry**: `../../ddd/bounded-contexts.yaml`
 - **Parent**: [`../README.md`](../README.md)
 
 - [Component Diagram: UI (Frontend)](./component-web.md)
