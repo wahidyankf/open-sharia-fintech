@@ -240,10 +240,11 @@ fixture consumer specified in `target-contract-and-project-matrix.md`; no discov
 environment variable, or owner-specific parser may add another fixture path.
 
 `<DISC-BEHAVIOR-FILE>`, `<DISC-CONTRACT-FILE>`, `<DISC-LEGACY-SPEC-FILE>`, and
-`<DISC-DDD-SPEC-FILE>` are the exact relative files recorded by
-`rtk rg --files specs/apps specs/libs` in the Phase 0 corpus and DDD ledgers. Every old path maps to
-one new behavior/contract path or one deletion; new empty placeholders and unledgered files are
-forbidden.
+`<DISC-DDD-SPEC-FILE>` are the exact relative **tracked** files recorded by
+`rtk git ls-files -- specs/apps specs/libs | rtk sort -u` in the Phase 0 corpus and DDD ledgers.
+This discovery includes tracked hidden files, and every source allocator must consume this same
+source-of-truth list rather than a plain `rg --files` result. Every old path maps to one new
+behavior/contract path or one deletion; new empty placeholders and unledgered files are forbidden.
 
 `<DISC-SHARED-RHINO-FILE>` is a path in the finite shared-path parity manifest produced by
 `rtk git ls-tree -r --name-only origin/main apps/rhino-cli` in each repository and intersected
