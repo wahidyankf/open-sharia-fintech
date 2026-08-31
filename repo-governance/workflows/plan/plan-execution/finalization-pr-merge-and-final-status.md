@@ -25,7 +25,8 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
    audit are confirmed,
    clean up a `worktree-to-pr` worktree in the same session. `main-to-pr` created no plan worktree,
    so this step is N/A for that mode.
-   1. Resolve the exact Provisioned Worktree Identity path, reconcile `git worktree list --porcelain`,
+   1. Resolve the Provisioned Worktree Identity's declared repository-relative route against the
+      selected repository root, reconcile the resulting runtime path with `git worktree list --porcelain`,
       and inventory plan-created/current branches. Missing identity, path conflict, or unclassified
       branch blocks removal; never infer ownership from a familiar path.
    2. Apply the canonical
@@ -38,11 +39,11 @@ when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree a
    3. When every check passes, purge only plan-local regenerable build output, preserving diagnostic
       evidence and shared caches. If this is a bare repository whose pre-push hook requires a
       working tree, delete each verified live remote branch from inside the linked worktree before
-      removal. Then remove the exact path immediately without another confirmation prompt, from the
+      removal. Then remove the resolved runtime path immediately without another confirmation prompt, from the
       repository root:
 
       ```bash
-      git worktree remove <exact-plan-worktree-path>
+      git worktree remove <resolved-runtime-path>
       ```
 
       Use the non-force command only, then complete the canonical

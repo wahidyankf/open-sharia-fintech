@@ -19,8 +19,9 @@ Run all six before any `git worktree remove`.
 
 **1. Resolve the recorded worktree and every branch it used.**
 
-Reconcile its exact path with `git worktree list --porcelain`; the initial branch may differ from the
-final checkout. Build the removal inventory from the append-only Delivery Branch Inventory plus:
+Resolve its declared repository-relative route against the selected repository root and reconcile
+the resulting runtime path with `git worktree list --porcelain`; the initial branch may differ from
+the final checkout. Build the removal inventory from the append-only Delivery Branch Inventory plus:
 
 ```bash
 git -C <worktree> branch --show-current

@@ -35,9 +35,10 @@ a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan'
 repo reaches this terminal gate independently of whether the plan's other repos are still in flight.
 
 **No confirmation prompt is required for an exact, self-created plan worktree.** Once all mandatory
-pre-removal checks pass, the AI executor removes the exact path recorded in the plan immediately.
-This authority never extends to a repository root, wildcard, worktree absent from the plan's
-Provisioned Worktree Identity, or worktree created by another actor; those remain out of scope.
+pre-removal checks pass, the AI executor removes the runtime path resolved from the plan's declared
+repository-relative route immediately. This authority never extends to a repository root, wildcard,
+worktree absent from the plan's Provisioned Worktree Identity, or worktree created by another actor;
+those remain out of scope. The resolved host path is runtime evidence, never committed plan content.
 
 ## Contents
 

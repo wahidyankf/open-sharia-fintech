@@ -8,14 +8,15 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
    - No sync evidence: **MEDIUM** finding (the gate may have run unrecorded; flag for manual review).
 
 2. **Eligible worktree cleanup was immediate and precondition-gated**
-   - On `pass`, resolve the exact path and creator from the Provisioned Worktree Identity and
-     reconcile it with `git worktree list --porcelain`; the file-touch ledger is file tracking only.
+   - On `pass`, resolve the declared repository-relative route and creator from the Provisioned
+     Worktree Identity against the selected repository root, then reconcile the resulting runtime
+     path with `git worktree list --porcelain`; the file-touch ledger is file tracking only.
    - Inventory plan-created/current branches. Verify the worktree is clean/idle, branches have no
      unpushed commit, and every PR-mode branch meets the canonical merged-PR/head and
      remote-or-auto-deletion proof. A direct push needs its recorded `origin/main` commit and no
      open PR; any other missing/mismatched proof retains and escalates.
    - When all checks pass, require complete cleanup of all three artifact classes without another
-     confirmation prompt: non-force removal of the exact path, canonical cleanup of eligible
+     confirmation prompt: non-force removal of the reconciled runtime path, canonical cleanup of eligible
      plan-created local/remote branches (using the bare-repository order exception where needed),
      and purge of only plan-local regenerable build output.
    - Require evidence that diagnostic artifacts were preserved and shared caches were not removed.
