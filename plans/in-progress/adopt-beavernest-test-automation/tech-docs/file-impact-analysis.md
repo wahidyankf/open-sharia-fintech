@@ -233,8 +233,10 @@ path blocks the delivery unit. `<DISC-NESTED-ROOT>` is the finite path segment i
 new test paths listed explicitly in the tree. The owner delivery packet saves this finite path list
 before its RED step; any additional production path requires a plan amendment.
 
-`<DISC-PUBLIC-OWNER-ID>` is bounded to the 15 public stable owner IDs declared in `delivery.md`'s
-Stable Owner IDs table. Each owner gets exactly the four named JSON files in the tree. The three
+`<DISC-PUBLIC-OWNER-ID>` is bounded to the 14 public stable owner IDs other than `O-PUB-FS-ENV`
+declared in `delivery.md`'s Stable Owner IDs table. Each such owner gets exactly the four named JSON
+files in the tree. `O-PUB-FS-ENV` owns its complete eight-file bootstrap packet shown separately.
+The three
 private owner IDs are enumerated literally in the private tree. Phase 4 implements the single
 fixture consumer specified in `target-contract-and-project-matrix.md`; no discovery glob, ad hoc
 environment variable, or owner-specific parser may add another fixture path.

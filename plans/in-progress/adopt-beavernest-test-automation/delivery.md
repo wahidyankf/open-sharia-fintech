@@ -375,11 +375,11 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Fifteen prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Sixteen prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, six distinct public
+public/private counterpart pair for the rules-quality preflight correction, eight distinct public
 Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
-95 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+96 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
 both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
 alters the 80-unit implementation catalog.
 
@@ -438,7 +438,7 @@ remain in total-file accounting.
 | `D-P4-PUB`         | `D-P4-PUB-BDD`                            | exact-BDD fixtures, policy module, focused tests, and target wiring               |                                         17 | `phase-0/delivery-splits/D-P4-PUB-BDD.paths.txt`                            |
 | `D-P4-PUB`         | `D-P4-PUB-COVERAGE`                       | 99% coverage fixtures, policy module, focused tests, and target wiring            |                                         17 | `phase-0/delivery-splits/D-P4-PUB-COVERAGE.paths.txt`                       |
 | `D-P4-PUB`         | `D-P4-PUB-LAYOUT-MANIFEST`                | physical-layer and direct-manifest policy plus focused tests                      |                                         17 | `phase-0/delivery-splits/D-P4-PUB-LAYOUT-MANIFEST.paths.txt`                |
-| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-A`                     | four check-specific JSON fixtures per `CRANE,RHINO,FS-CORE,FS-ENV,TS-ENV` owner   |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-A.paths.txt`                     |
+| `D-P4-PUB`         | `D-P4-PUB-FIXTURES-A`                     | four check-specific JSON fixtures per `CRANE,RHINO,FS-CORE,TS-ENV` owner          |                                         16 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-A.paths.txt`                     |
 | `D-P4-PUB`         | `D-P4-PUB-FIXTURES-B`                     | four check-specific JSON fixtures per `WEB-TOKEN,WEB-UI,AYO,WAHID,OL-WEB` owner   |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-B.paths.txt`                     |
 | `D-P4-PUB`         | `D-P4-PUB-FIXTURES-C`                     | four check-specific JSON fixtures per `OL-BE,OL-WWW,OSE-WEB,OSE-BE,OSE-WWW` owner |                                         20 | `phase-0/delivery-splits/D-P4-PUB-FIXTURES-C.paths.txt`                     |
 | `D-P4-PUB`         | `D-P4-PUB-GOVERNANCE`                     | canonical rules, consumers, compact enforcement summary, generated bindings       |                                         17 | `phase-0/delivery-splits/D-P4-PUB-GOVERNANCE.paths.txt`                     |
@@ -487,14 +487,17 @@ remain in total-file accounting.
 | `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CONTRACT`                  | private targets, manifest, governance, compact proof                              |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CONTRACT.paths.txt`                  |
 | `D-O-PRI-TS-UI`    | `D-O-PRI-TS-UI-CORPUS`                    | private ts-ui logical specs/C4 corpus                                             |                                         20 | `phase-0/delivery-splits/D-O-PRI-TS-UI-CORPUS.paths.txt`                    |
 
-Each public fixture cohort has a declared finite natural-seam exception: five complete owner
+`D-P4-PUB-FIXTURES-A` owns four complete owner packets, hence 16 implementation paths and at most
+19 hand-authored paths with its reserved plan-state files. Its former `O-PUB-FS-ENV` packet belongs
+only to `D-O-PUB-FS-ENV`, which owns the complete eight-fixture bootstrap packet. `D-P4-PUB-FIXTURES-B`
+and `D-P4-PUB-FIXTURES-C` each have a declared finite natural-seam exception: five complete owner
 packets require exactly four independently selectable one-check fixture files each, hence 20
-implementation paths. With the three reserved public plan-state paths, each delivery can have at
-most 23 hand-authored files. The exception must record the exact count, one-check schema/CLI
-constraint, rejected cross-owner check split, review proof, recovery path, and PR disclosure;
-category O remains at most 1,000 additions and total files at most 300. Splitting by check would
-replace the three declared owner-cohort deliveries with four cross-owner deliveries, change the
-80-unit implementation catalog, and lose the complete-owner-packet seam; it is not permitted.
+implementation paths and at most 23 hand-authored paths with the three reserved plan-state files.
+Each exception must record the exact count, one-check schema/CLI constraint, rejected cross-owner
+check split, review proof, recovery path, and PR disclosure; category O remains at most 1,000
+additions and total files at most 300. Splitting B or C by check would replace its owner-cohort
+delivery with cross-owner deliveries, change the 80-unit implementation catalog, and lose the
+complete-owner-packet seam; it is not permitted.
 
 Each leaf branch basename is the parent basename plus the lowercase final suffix, for example
 `test-contract-web-ui-unit`. Execute leaves top-to-bottom within their coordination group and
@@ -1082,14 +1085,17 @@ the missing field.
       this proof is complete.
 
 - [ ] [AI] `P0-FIXTURE-CARDINALITY-EXCEPTION-01` — Reconcile the Phase 4 fixture allocation before
-      allocation. For each of `FIXTURES-A`, `FIXTURES-B`, and `FIXTURES-C`, record exactly five owner
-      directories times these four check-specific filenames: `layout-misplaced.json`,
-      `coverage-98.json`, `bdd-missing-step.json`, and `manifest-proxy.json`. Record the approved
-      exception as 20 implementation/configuration files plus the three reserved public plan-state
-      paths, with the exact finite allocation, one-check fixture-schema/CLI constraint, rejected
-      check-split alternative, review proof, recovery path, and required PR disclosure. Reject any
-      multi-case fixture, incomplete owner packet, or allocation above 20 fixture paths; preserve
-      category O at most 1,000 additions and total files at most 300.
+      allocation. `FIXTURES-A` contains exactly four owner directories—CRANE, RHINO, FS-CORE, and
+      TS-ENV—times these four check-specific filenames: `layout-misplaced.json`,
+      `coverage-98.json`, `bdd-missing-step.json`, and `manifest-proxy.json`; it has exactly 16
+      fixture paths. `O-PUB-FS-ENV` is excluded from that leaf and owns its complete eight-fixture
+      bootstrap packet. `FIXTURES-B` and `FIXTURES-C` each contain exactly five owner directories
+      times those four filenames and record the approved exception as 20 implementation/configuration
+      files plus the three reserved public plan-state paths, with the exact finite allocation,
+      one-check fixture-schema/CLI constraint, rejected check-split alternative, review proof,
+      recovery path, and required PR disclosure. Reject any multi-case fixture, incomplete owner
+      packet, duplicate `O-PUB-FS-ENV` path, or allocation above its stated count; preserve category
+      O at most 1,000 additions and total files at most 300.
 
 - [ ] [AI] `P0-SPLIT-P4-PUB` — Before Phase 4, create the public split root
       `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits/`.
@@ -1103,9 +1109,10 @@ the missing field.
       `apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj`,
       `apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj`, and `apps/rhino-cli/project.json`;
       record the before/after SHA for each shared file in both leaves. Run
-      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; p=D-P4-PUB; leaves="REGISTRY BDD COVERAGE LAYOUT-MANIFEST FIXTURES-A FIXTURES-B FIXTURES-C GOVERNANCE"; all="$r/$p.all-hand-authored.txt"; shared="$r/$p.shared-plumbing.txt"; rtk printf "%s\n" apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj apps/rhino-cli/project.json > "$shared"; test -s "$all"; rtk sort -u -o "$all" "$all"; union="$r/$p.union.txt"; : > "$union"; for leaf in $leaves; do f="$r/$p-$leaf.paths.txt"; test -s "$f"; limit=17; case "$leaf" in FIXTURES-A|FIXTURES-B|FIXTURES-C) limit=20;; esac; test "$(rtk wc -l < "$f" | rtk tr -d " ")" -le "$limit"; rtk sort -u "$f" >> "$union"; done; rtk sort "$union" | rtk uniq -d | rtk diff -u "$shared" -; rtk sort -u "$union" | rtk diff -u "$all" -'`;
-      expect exit 0. Stop on an omitted, duplicated, directory-placeholder, greater-than-17
-      non-fixture row, or greater-than-20 fixture row; do not execute the parent coordination group as one delivery.
+      `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; p=D-P4-PUB; leaves="REGISTRY BDD COVERAGE LAYOUT-MANIFEST FIXTURES-A FIXTURES-B FIXTURES-C GOVERNANCE"; all="$r/$p.all-hand-authored.txt"; shared="$r/$p.shared-plumbing.txt"; rtk printf "%s\n" apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj apps/rhino-cli/project.json > "$shared"; test -s "$all"; rtk sort -u -o "$all" "$all"; union="$r/$p.union.txt"; : > "$union"; for leaf in $leaves; do f="$r/$p-$leaf.paths.txt"; test -s "$f"; limit=17; case "$leaf" in FIXTURES-B|FIXTURES-C) limit=20;; esac; test "$(rtk wc -l < "$f" | rtk tr -d " ")" -le "$limit"; rtk sort -u "$f" >> "$union"; done; rtk sort "$union" | rtk uniq -d | rtk diff -u "$shared" -; rtk sort -u "$union" | rtk diff -u "$all" -'`;
+      expect exit 0. Stop on an omitted, duplicated, directory-placeholder, greater-than-17 row,
+      or greater-than-20 `FIXTURES-B`/`FIXTURES-C` row; do not execute the parent coordination group
+      as one delivery.
 - [ ] [AI] `P0-SPLIT-P4-PRI` — Before private Phase 4, populate
       `local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/phase-0/delivery-splits/D-P4-PRI.all-hand-authored.txt`
       from the exact private Phase 4 paths in the file-impact analysis and allocate every row to the
@@ -1343,7 +1350,7 @@ the missing field.
       positive-integer, and exact-provenance validation. Expect exit 0 and no private path copied
       into public evidence; stop on any mismatch.
 
-- [ ] [AI] `P0-SIZE-P4-PUB-LEAVES` — For exact suffixes `REGISTRY BDD COVERAGE LAYOUT-MANIFEST FIXTURES-A FIXTURES-B FIXTURES-C GOVERNANCE`, populate one sibling `D-P4-PUB-<suffix>.planned-new-lines.tsv` from file-impact/allocation provenance; validate three fields, positive integer lines, unique paths, and exact agreement with planned-new rows in its allocation. Require each fixture suffix to contain exactly 20 planned fixture paths and its pre-RED natural-seam exception to record the one-check contract, finite count, rejected check split, review proof, recovery path, and PR disclosure. Stop on zero, missing, invented provenance, incomplete owner packet, or an unrecorded exception.
+- [ ] [AI] `P0-SIZE-P4-PUB-LEAVES` — For exact suffixes `REGISTRY BDD COVERAGE LAYOUT-MANIFEST FIXTURES-A FIXTURES-B FIXTURES-C GOVERNANCE`, populate one sibling `D-P4-PUB-<suffix>.planned-new-lines.tsv` from file-impact/allocation provenance; validate three fields, positive integer lines, unique paths, and exact agreement with planned-new rows in its allocation. Require `FIXTURES-A` to contain exactly 16 planned fixture paths and `FIXTURES-B`/`FIXTURES-C` exactly 20 each; require only the latter two pre-RED natural-seam exceptions to record the one-check contract, finite count, rejected check split, review proof, recovery path, and PR disclosure. Stop on zero, missing, invented provenance, incomplete owner packet, duplicate FS-ENV path, or an unrecorded required exception.
 - [ ] [AI] `P0-SIZE-P4-PRI-LEAVES` — Repeat the exact positive-provenance estimate action in private local-tmp for `REGISTRY-PARITY POLICY-PARITY FIXTURES GOVERNANCE`; require four non-empty validated TSVs and no public export.
 - [ ] [AI] `P0-SIZE-RHINO-PUB-LEAVES` — Populate and validate positive-provenance estimate TSVs for public Rhino `UNIT INTEGRATION-E2E CONTRACT CORPUS-METADATA CORPUS-HARNESS CORPUS-SPECS CORPUS-DOCUMENTS CORPUS-GOVERNANCE CORPUS-GATES-SYSTEM CORPUS-COVERAGE-ENV`; require exact planned-new membership for all ten leaves.
 - [ ] [AI] `P0-SIZE-RHINO-PRI-LEAVES` — Repeat the exact ten-leaf Rhino estimate action in private local-tmp and require byte-identical estimates for byte-identical shared paths; stop on public/private contradiction.
@@ -2253,9 +2260,9 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 
 - [ ] [AI] `D-P4-PUB-FIXTURES-A-PRE-01` — Immediately before `D-P4-PUB-FIXTURES-A`'s first edit, execute canonical `PS-01` in `R-PUB:worktrees/adopt-beavernest-test-automation` for binding `D-P4-PUB-FIXTURES-A` with repository `R-PUB:worktrees/adopt-beavernest-test-automation`, branch `test-contract-validator-foundation-fixtures-a`, estimate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-FIXTURES-A/estimates.tsv`, allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-FIXTURES-A/allocation.txt`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/`, generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/natural-seam-exception.md`. Run the exact `PS-01 prospective-inputs` command; expect a clean exact branch and every non-empty schema-valid input. Stop before RED on any failure and save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-inputs.txt`.
 - [ ] [AI] `D-P4-PUB-FIXTURES-A-PRE-02` — Execute canonical `PS-02` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-FIXTURES-A` using allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-FIXTURES-A/allocation.txt`, estimates `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-FIXTURES-A/estimates.tsv`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/`, and authoritative generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`. Run the exact `PS-02 prospective-manifest` command; expect one deduplicated eight-field row per allocation and same-PR path, the three reserved public plan-state paths, positive planned-new provenance, and one authoritative ownership match for every generated row. Stop and correct the manifest on any failure; save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-manifest-validation.txt`.
-- [ ] [AI] `D-P4-PUB-FIXTURES-A-PRE-03` — Execute canonical `PS-03` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-FIXTURES-A` using candidate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-current.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/natural-seam-exception.md`. Run the exact `PS-03 prospective-gate` command; expect category C measured against the 500-line recommendation, category O at most 1,000 additions, at most 23 hand-authored files only through the recorded finite natural-seam exception, and at most 300 total files. Stop before RED on a hard-ceiling breach or an incomplete natural-seam exception; retain the gate at the exact runtime path.
-- [ ] [AI] `D-P4-PUB-FIXTURES-A-RED` — Add only the four allocated check-specific JSON fixtures per CRANE, RHINO, FS-CORE, FS-ENV, and TS-ENV owner; each fixture contains its one named negative mutation. Run `rtk nx run rhino-cli:test:unit`; expect each mutation to fail for its intended owner/check identity, never compile/crash. Save raw output under the binding runtime root.
-- [ ] [AI] `D-P4-PUB-FIXTURES-A-GREEN` — Add the minimum positive case to each same twenty allocated JSON files and the allocated registry row; do not add counterpart files. Rerun `rtk nx run rhino-cli:test:unit`; expect every positive pass and negative rejection. Save raw output and append one status row to the compact summary.
+- [ ] [AI] `D-P4-PUB-FIXTURES-A-PRE-03` — Execute canonical `PS-03` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-FIXTURES-A` using candidate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-current.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-FIXTURES-A/natural-seam-exception.md`. Run the exact `PS-03 prospective-gate` command; expect category C measured against the 500-line recommendation, category O at most 1,000 additions, at most 20 hand-authored files, and at most 300 total files. Stop before RED on a hard-ceiling breach; do not create a size exception for this leaf.
+- [ ] [AI] `D-P4-PUB-FIXTURES-A-RED` — Add only the four allocated check-specific JSON fixtures per CRANE, RHINO, FS-CORE, and TS-ENV owner; each fixture contains its one named negative mutation. Run `rtk nx run rhino-cli:test:unit`; expect each mutation to fail for its intended owner/check identity, never compile/crash. Save raw output under the binding runtime root.
+- [ ] [AI] `D-P4-PUB-FIXTURES-A-GREEN` — Add the minimum positive case to each same sixteen allocated JSON files and the allocated registry row; do not add counterpart files. Rerun `rtk nx run rhino-cli:test:unit`; expect every positive pass and negative rejection. Save raw output and append one status row to the compact summary.
 - [ ] [AI] `D-P4-PUB-FIXTURES-A-REFACTOR` — Deduplicate only allocated fixture data/manifest fields, rerun unit and quick targets, and require identical diagnostics. Save `fixtures-a-refactor.txt`.
 - **Proof:** `D-P4-PUB-FIXTURES-A` has a complete allocation-bounded TDD trio.
 
