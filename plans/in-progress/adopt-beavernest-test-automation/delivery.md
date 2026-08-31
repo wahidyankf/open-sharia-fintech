@@ -375,11 +375,11 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Thirteen prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Fourteen prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, five distinct public
+public/private counterpart pair for the rules-quality preflight correction, six distinct public
 Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
-93 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+94 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
 both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
 alters the 80-unit implementation catalog.
 
