@@ -12,13 +12,13 @@ when_to_use: Use when running the preflight command, debugging its exit code, or
 
 ```bash
 rtk mkdir -p generated-reports
-rtk ./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json \
+rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o json \
   --skip vendor-audit --skip governance-word-budget \
-  > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json
+  > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json'
 ```
 
 The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path is
-`apps/rhino-cli/dist/rhino-cli`.
+`apps/rhino-cli/src/dist/rhino-cli-fsharp`.
 
 > **Recommendation**: Pin `RHINO_AUDIT_NOW=<RFC3339>` per workflow run to enable the SHA-256 hash-reuse optimization (the `ran_at` field is derived from this env var; without it the timestamp defaults to `time.Now()` and the hash always changes). See [`apps/rhino-cli/README.md`](../../../../apps/rhino-cli/README.md#global-flags) for details.
 
@@ -28,7 +28,7 @@ The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path i
   - Exit 1 (findings): Retained domain findings are present; pass the JSON path to the checker and
     count them in the domain result.
   - Exit 2 (invocation error): Terminate with `fail`. Re-run
-    `rtk ./apps/rhino-cli/dist/rhino-cli repo-governance audit -o text --skip vendor-audit --skip governance-word-budget`;
+    `rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o text --skip vendor-audit --skip governance-word-budget'`;
     rebuild with `rtk nx build rhino-cli` when needed.
 
 The two lifecycle-owned skips are mandatory in this workflow, not an operator hatch. `--exclude`

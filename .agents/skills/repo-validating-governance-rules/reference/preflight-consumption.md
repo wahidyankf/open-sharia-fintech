@@ -3,7 +3,7 @@
 **Inputs**: `preflight-report` plus, for `rules-quality-gate`, exact `delegated-gate-ids` and the
 lifecycle evidence ledger. The report path points to `generated-reports/repo-governance-audit__*.json`,
 produced by the orchestrating workflow (`repo-governance/workflows/rules/rules-quality-gate.md`)
-running `./apps/rhino-cli/dist/rhino-cli repo-governance audit -o json`.
+running `./apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o json`.
 
 **Procedure**:
 
