@@ -17,7 +17,7 @@ const document: CvPdfDocumentModel = {
     },
   ],
   education: [],
-  certifications: [],
+  honors: [],
   languages: [{ name: "English", proficiency: "Native" }],
 };
 

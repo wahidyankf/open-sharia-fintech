@@ -43,6 +43,13 @@ const fixture: CVEntry[] = [
     details: ["Credential ID: abc123"],
   },
   {
+    type: "honor",
+    title: "Example Award",
+    organization: "Example Institute",
+    period: "October 2021",
+    details: ["Associated with: Example role"],
+  },
+  {
     type: "language",
     title: "Languages",
     organization: "",
@@ -99,15 +106,20 @@ describe("buildCvPdfDocument", () => {
         meta: [],
       },
     ]);
-    expect(doc.certifications).toEqual([
+    expect(doc.honors).toEqual([
       {
-        title: "Example Certification",
+        title: "Example Award",
         organization: "Example Institute",
-        period: "June 2021",
-        details: ["Credential ID: abc123"],
+        period: "October 2021",
+        details: ["Associated with: Example role"],
         meta: [],
       },
     ]);
+  });
+
+  it("does not surface certification entries in the PDF model", () => {
+    const doc = buildCvPdfDocument(fixture);
+    expect(doc).not.toHaveProperty("certifications");
   });
 
   it("splits the pipe-delimited language entry into name/proficiency pairs", () => {

@@ -58,7 +58,7 @@ export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument =>
 
   addSections(pdf, "Experience", document.experience);
   addSections(pdf, "Education", document.education);
-  addSections(pdf, "Certifications", document.certifications);
+  addSections(pdf, "Honors & Awards", document.honors);
 
   if (document.languages.length > 0) {
     addSectionHeading(pdf, "Languages");

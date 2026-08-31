@@ -20,7 +20,7 @@ export type CvPdfDocumentModel = {
   summary: string[];
   experience: CvPdfSection[];
   education: CvPdfSection[];
-  certifications: CvPdfSection[];
+  honors: CvPdfSection[];
   languages: CvPdfLanguage[];
 };
 
@@ -65,7 +65,7 @@ export const buildCvPdfDocument = (data: CVEntry[]): CvPdfDocumentModel => {
     summary: about?.details ?? [],
     experience: data.filter((entry) => entry.type === "work").map(toSection),
     education: data.filter((entry) => entry.type === "education").map(toSection),
-    certifications: data.filter((entry) => entry.type === "certification").map(toSection),
+    honors: data.filter((entry) => entry.type === "honor").map(toSection),
     languages: (languageEntry?.details ?? []).map(toLanguage),
   };
 };
