@@ -375,11 +375,11 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Eleven prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Twelve prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, three distinct public
+public/private counterpart pair for the rules-quality preflight correction, four distinct public
 Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
-91 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+92 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
 both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
 alters the 80-unit implementation catalog.
 
@@ -1276,7 +1276,7 @@ the missing field.
       value. Stop and complete the specific row; save the validation to
       `local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/phase-0/owner-ledger-validation.txt`.
 - [ ] [AI] Before the first public implementation change, in the public execution worktree run
-      `rtk bash -lc 'current="$(rtk git branch --show-current)"; test "$current" = "adopt-beavernest-test-automation" || { printf "unexpected provisioning branch: %s\n" "$current" >&2; exit 1; }; rtk git switch -c test-contract-ol-ddd-retirement; test "$(rtk git branch --show-current)" = "test-contract-ol-ddd-retirement"'`;
+      `rtk bash -lc 'current="$(rtk git branch --show-current)"; test "$current" = "worktree/adopt-beavernest-test-automation" || { printf "unexpected provisioning branch: %s\n" "$current" >&2; exit 1; }; rtk git switch -c test-contract-ol-ddd-retirement; test "$(rtk git branch --show-current)" = "test-contract-ol-ddd-retirement"'`;
       expect exit 0 and the first declared public delivery branch. Stop without force if either
       branch identity is different or the destination already exists; inspect the repository
       ledger and worktree list instead of reusing it. Save the before/after branch names to
@@ -1284,7 +1284,7 @@ the missing field.
       and append `first delivery branch: test-contract-ol-ddd-retirement` to the public repository
       ledger; expect exactly one such row.
 - [ ] [AI] Before the first private implementation change, in the private execution worktree run
-      `rtk bash -lc 'current="$(rtk git branch --show-current)"; test "$current" = "adopt-beavernest-test-automation" || { printf "unexpected provisioning branch: %s\n" "$current" >&2; exit 1; }; rtk git switch -c test-contract-ddd-tooling-retirement; test "$(rtk git branch --show-current)" = "test-contract-ddd-tooling-retirement"'`;
+      `rtk bash -lc 'current="$(rtk git branch --show-current)"; test "$current" = "worktree/adopt-beavernest-test-automation" || { printf "unexpected provisioning branch: %s\n" "$current" >&2; exit 1; }; rtk git switch -c test-contract-ddd-tooling-retirement; test "$(rtk git branch --show-current)" = "test-contract-ddd-tooling-retirement"'`;
       expect exit 0 and the first declared private delivery branch. Stop without force if either
       branch identity is different or the destination already exists. Save the before/after branch
       names to
