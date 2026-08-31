@@ -126,7 +126,7 @@ describe("Home component", () => {
   it("renders quick links", () => {
     render(<HomeContent />);
     expect(screen.getByText("View My CV")).toBeInTheDocument();
-    expect(screen.getByText("Browse My Personal Projects")).toBeInTheDocument();
+    expect(screen.getByText("Browse My Independent Projects")).toBeInTheDocument();
   });
 
   it("renders connect with me links", () => {

@@ -26,7 +26,7 @@ describe("Navigation", () => {
       const homeLink = within(mobileNav).getByRole("link", { name: "Home" });
       const cvLink = within(mobileNav).getByRole("link", { name: "CV" });
       const projectsLink = within(mobileNav).getByRole("link", {
-        name: "Personal Projects",
+        name: "Independent Projects",
       });
 
       expect(homeLink).toBeDefined();
@@ -60,7 +60,7 @@ describe("Navigation", () => {
       const homeLink = within(desktopNav).getByRole("link", { name: "Home" });
       const cvLink = within(desktopNav).getByRole("link", { name: "CV" });
       const projectsLink = within(desktopNav).getByRole("link", {
-        name: "Personal Projects",
+        name: "Independent Projects",
       });
 
       expect(homeLink).toBeDefined();

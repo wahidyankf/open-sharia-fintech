@@ -66,7 +66,7 @@ describe("Personal Projects component", () => {
 
   it("renders the main sections", () => {
     render(<PersonalProjectsContent />);
-    expect(screen.getByText("Personal Projects")).toBeInTheDocument();
+    expect(screen.getByText("Independent Projects")).toBeInTheDocument();
     expect(screen.getByTestId("search-component")).toBeInTheDocument();
     expect(screen.getByTestId("navigation")).toBeInTheDocument();
   });

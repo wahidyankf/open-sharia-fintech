@@ -231,7 +231,7 @@ export function HomeContent() {
               className="flex items-center text-yellow-400 transition-colors duration-200 hover:text-green-400"
             >
               <FolderOpen className="mr-2 h-5 w-5" />
-              Browse My Personal Projects
+              Browse My Independent Projects
             </Link>
           </div>
         </section>

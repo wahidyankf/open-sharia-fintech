@@ -11,7 +11,7 @@ export const Navigation: React.FC = () => {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/cv", label: "CV" },
-    { href: "/personal-projects", label: "Personal Projects" },
+    { href: "/personal-projects", label: "Independent Projects" },
   ];
 
   return (

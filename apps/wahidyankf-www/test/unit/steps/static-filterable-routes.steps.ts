@@ -18,7 +18,7 @@ let renderedCv: HTMLElement | undefined;
 const publicPortfolioPages = [
   { Component: Home, content: "Welcome to My Portfolio" },
   { Component: CV, content: "Curriculum Vitae" },
-  { Component: PersonalProjects, content: "Personal Projects" },
+  { Component: PersonalProjects, content: "Independent Projects" },
 ] as const;
 let renderedStaticPortfolioPages: string[] = [];
 let crawlerRobots: ReturnType<typeof robots> | undefined;

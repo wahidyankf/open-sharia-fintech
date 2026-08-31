@@ -113,7 +113,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     And("every navigation link exposes link text or an aria-label", () => {
       render(React.createElement(HomeContent));
       const desktopNav = screen.getByTestId("desktop-nav");
-      for (const name of ["Home", "CV", "Personal Projects"]) {
+      for (const name of ["Home", "CV", "Independent Projects"]) {
         expect(within(desktopNav).getByRole("link", { name })).toBeInTheDocument();
       }
     });

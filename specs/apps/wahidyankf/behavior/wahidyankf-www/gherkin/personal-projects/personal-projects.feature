@@ -10,7 +10,7 @@ Feature: Personal projects page
   @unit @e2e
   Scenario: Personal projects page renders the heading
     When a visitor opens the personal projects page
-    Then the H1 shows "Personal Projects"
+    Then the H1 shows "Independent Projects"
 
   @unit @e2e
   Scenario: Personal projects page renders a search input

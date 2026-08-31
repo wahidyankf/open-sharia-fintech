@@ -87,9 +87,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the Quick Links card with two internal links
-    And('the card contains a "Browse My Personal Projects" link to /personal-projects', () => {
+    And('the card contains a "Browse My Independent Projects" link to /personal-projects', () => {
       render(React.createElement(HomeContent));
-      expect(screen.getByRole("link", { name: "Browse My Personal Projects" })).toHaveAttribute(
+      expect(screen.getByRole("link", { name: "Browse My Independent Projects" })).toHaveAttribute(
         "href",
         "/personal-projects",
       );

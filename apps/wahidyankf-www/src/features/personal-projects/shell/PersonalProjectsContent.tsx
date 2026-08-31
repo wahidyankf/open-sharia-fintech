@@ -47,7 +47,9 @@ function ProjectsContent() {
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-grow">
-      <h1 className="mb-8 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">Personal Projects</h1>
+      <h1 className="mb-8 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">
+        Independent Projects
+      </h1>
 
       <SearchComponent
         searchTerm={searchTerm}

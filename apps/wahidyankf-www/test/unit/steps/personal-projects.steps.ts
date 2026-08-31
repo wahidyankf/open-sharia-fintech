@@ -43,9 +43,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the personal projects page", () => {});
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page renders the heading
-    Then('the H1 shows "Personal Projects"', () => {
+    Then('the H1 shows "Independent Projects"', () => {
       render(React.createElement(PersonalProjectsContent));
-      expect(screen.getByRole("heading", { level: 1, name: "Personal Projects" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 1, name: "Independent Projects" })).toBeInTheDocument();
     });
   });
 
