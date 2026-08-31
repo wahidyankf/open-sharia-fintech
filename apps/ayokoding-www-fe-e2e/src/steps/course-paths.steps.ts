@@ -245,8 +245,8 @@ Then('a "Compare all paths" link to \\/en\\/learn\\/paths is visible below the c
 // omitted-course / path-order-nav / paths-hub-category-grouping)
 // ---------------------------------------------------------------------------
 
-// canonical-fallback.feature, scenario 1 — multi-badge affordance (just-enough-python belongs to
-// both interview-ready/backend-track and immediately-effective/frontend-track).
+// canonical-fallback.feature, scenario 1 — production manifests place
+// just-enough-python in four career paths.
 Given(
   "a reader opens a course URL \\/en\\/learn\\/courses\\/<course-id> with no path context query parameter",
   async ({ page }) => {
@@ -266,8 +266,34 @@ Then("the course body renders in full with the content-tree breadcrumb and its p
 
 Then('a "this course is part of" affordance lists every path that includes the course', async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "This course is part of" });
+  const paths = [
+    {
+      pathId: "careers/fundamentally-strong/software-engineer",
+      title: "Fundamentally Strong Software Engineer",
+    },
+    {
+      pathId: "careers/immediately-effective/ai-engineer",
+      title: "Immediately Effective AI Engineer",
+    },
+    {
+      pathId: "careers/immediately-effective/software-engineer",
+      title: "Immediately Effective Software Engineer",
+    },
+    {
+      pathId: "careers/interview-ready/software-engineer",
+      title: "Interview-Ready Software Engineer",
+    },
+  ];
+
   await expect(nav).toBeVisible();
-  await expect(nav.getByRole("link")).toHaveCount(2);
+  await expect(nav.getByRole("link")).toHaveCount(paths.length);
+
+  for (const path of paths) {
+    await expect(nav.getByRole("link", { name: path.title })).toHaveAttribute(
+      "href",
+      `/en/learn/paths/${path.pathId}?path=${path.pathId}`,
+    );
+  }
 });
 
 // canonical-fallback.feature, scenario 2 — generic sidebar unchanged.

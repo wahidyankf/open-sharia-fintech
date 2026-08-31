@@ -1028,20 +1028,18 @@ Then("a more senior role becomes the marked minimum", async ({ page }) => {
 // ── No role can reach the bar ─────────────────────────────────────────────────
 
 When("I set a savings target higher than any role's essential savings in any city", async ({ page }) => {
-  // Use id directly — getByLabel resolves to 2 elements (label + input)
+  // Use the locator rather than page.keyboard: under the fully parallel cross-browser run,
+  // Firefox can lose the global keyboard target while React updates the controlled input.
+  // `fill` keeps the interaction scoped to this field and `toHaveValue` proves the debounced
+  // field retained the target before the assertion observes the recomputed ladder.
   const input = page.locator("#target-amount-input");
-  await input.click({ clickCount: 3 });
-  await page.keyboard.type("999999");
-  await page.keyboard.press("Tab");
-  await page.waitForLoadState("networkidle");
+  await input.fill("999999999");
+  await input.press("Tab");
+  await expect(input).toHaveValue("999999999");
 });
 
 Then("the tool states that no role clears the bar", async ({ page }) => {
-  // Poll until React re-renders no-qualifier-message — webkit may lag on state update
-  await page.waitForFunction(() => document.querySelector("[data-testid='no-qualifier-message']") !== null, undefined, {
-    timeout: 15000,
-  });
-  await expect(page.locator("[data-testid='no-qualifier-message']")).toBeVisible();
+  await expect(page.locator("[data-testid='no-qualifier-message']")).toBeVisible({ timeout: 60000 });
 });
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No role can reach the bar
