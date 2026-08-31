@@ -1316,6 +1316,14 @@ the missing field.
       duplicate-free 21-path `D-P1-PUB` allocation, source/estimate bijection, and unchanged
       catalog cardinality. This amendment transfers existing consumer paths between concrete
       deliveries; it neither adds a delivery unit nor expands product scope.
+- [x] [AI] `P0-DDD-CONFIG-SEQUENTIAL-ALLOCATION-AMENDMENT-03` — Completed. Allocate the
+      one exact `repo-config.yml` edit to `D-P1-PUB`: remove `organiclever` from
+      `specs.ddd-areas` in the same PR as the deleted tree, so the existing structure validator
+      no longer requires a directory that Phase 1 retires. This is an explicit sequential shared
+      configuration path: `D-P4-PUB-REGISTRY` retains its later, distinct validator-foundation
+      edit. Re-materialize the public prospective catalog; require 62 bindings, a duplicate-free
+      22-path `D-P1-PUB` allocation, a source/estimate bijection, and an unchanged 84-unit
+      catalog cardinality. Do not reorder Phase 4 or carry its registry behavior into Phase 1.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
@@ -1515,6 +1523,8 @@ the missing field.
       `specs/apps/organiclever/components/app-web/component-web.md` and
       `specs/apps/organiclever/containers/container.md` are the exact two allocated inbound-link
       edits and must be changed only to remove references to the deleted DDD tree;
+      `repo-config.yml` is the exact allocated sequential shared configuration edit and must
+      remove only the `organiclever` `specs.ddd-areas` entry before the deletion;
       run `rtk rg -n -i "domain-driven|DDD" specs/apps/organiclever repo-governance docs` and compare
       every remaining match to the preserve rows. Expect no active OrganicLever DDD engineering
       surface and identical preserve hashes; save `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/deletion-proof.txt`.
