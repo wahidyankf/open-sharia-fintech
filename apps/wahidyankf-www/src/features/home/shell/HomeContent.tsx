@@ -10,6 +10,7 @@ import {
   getTopFrameworksLastFiveYears,
   formatDuration,
 } from "@/features/cv/core/data";
+import { projects } from "@/features/personal-projects/core/projects";
 import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { useState, useEffect } from "react";
 import { filterItems } from "@/features/search/core/search";
@@ -31,9 +32,10 @@ export function HomeContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const aboutMe = cvData.find((entry) => entry.type === "about");
-  const topSkills = getTopSkillsLastFiveYears(cvData);
-  const topLanguages = getTopLanguagesLastFiveYears(cvData);
-  const topFrameworks = getTopFrameworksLastFiveYears(cvData);
+  const skillSources = [...cvData.filter((entry) => entry.type === "work"), ...projects];
+  const topSkills = getTopSkillsLastFiveYears(skillSources);
+  const topLanguages = getTopLanguagesLastFiveYears(skillSources);
+  const topFrameworks = getTopFrameworksLastFiveYears(skillSources);
 
   const filteredSkills = filterItems(
     topSkills.map((item) => ({ ...item, duration: item.duration.toString() })),

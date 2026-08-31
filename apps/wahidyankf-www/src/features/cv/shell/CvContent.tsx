@@ -32,6 +32,7 @@ import {
   getTopLanguagesLastFiveYears,
   getTopFrameworksLastFiveYears,
 } from "@/features/cv/core/data";
+import { projects } from "@/features/personal-projects/core/projects";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 import { parseMarkdownLinks } from "@/features/cv/shell/markdown";
 
@@ -66,8 +67,7 @@ const ClickableItem = ({
     </div>
     {showDuration && (
       <span className="text-xs text-green-300 transition-colors duration-200 group-hover:text-white">
-        (total:{" "}
-        <HighlightText text={formatDuration(duration)} searchTerm={searchTerm} />)
+        (total: <HighlightText text={formatDuration(duration)} searchTerm={searchTerm} />)
       </span>
     )}
   </button>
@@ -519,9 +519,10 @@ export function CvContent() {
       "frameworks",
     ]) || []; // Provide an empty array as fallback
 
-  const topSkills = getTopSkillsLastFiveYears(cvData);
-  const topLanguages = getTopLanguagesLastFiveYears(cvData);
-  const topFrameworks = getTopFrameworksLastFiveYears(cvData);
+  const skillSources = [...cvData.filter((entry) => entry.type === "work"), ...projects];
+  const topSkills = getTopSkillsLastFiveYears(skillSources);
+  const topLanguages = getTopLanguagesLastFiveYears(skillSources);
+  const topFrameworks = getTopFrameworksLastFiveYears(skillSources);
 
   const aboutEntry = filteredEntries.find((entry) => entry.type === "about") || null;
   const workEntries = filteredEntries.filter((entry) => entry.type === "work");

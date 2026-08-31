@@ -451,17 +451,31 @@ export const formatDuration = (months: number): string => {
 
 type SkillTotal = { name: string; duration: number };
 
+// A dated engagement — a CV work entry or a personal project — that can carry
+// skills, programming languages, and/or frameworks into the shared rollup.
+// Structural typing lets callers pass CVEntry[] or Project[] (or a mix)
+// without this module importing either feature's concrete type.
+export type SkillSource = {
+  period: string;
+  skills?: string[];
+  programmingLanguages?: string[];
+  frameworks?: string[];
+};
+
 /**
- * Aggregates one facet of the work history (skills, languages, or frameworks).
+ * Aggregates one facet (skills, languages, or frameworks) across every dated
+ * source passed in — CV work entries and personal projects alike.
  *
  * The five-year window decides *which* items are listed: an item appears only
- * if it was used in a role active within the window. The duration reported
- * alongside each item is a lifetime total across the whole career, so it is not
- * truncated by that window.
+ * if it was used in an engagement active within the window. The duration
+ * reported alongside each item is a lifetime total across all sources, so it
+ * is not truncated by that window. Overlapping date ranges for the same item
+ * (e.g. a skill used in a job and a concurrent side project) are merged, not
+ * double-counted — see calculateTotalDuration.
  */
 const topItemsLastFiveYears = (
-  data: CVEntry[],
-  selectItems: (entry: CVEntry) => string[] | undefined,
+  data: SkillSource[],
+  selectItems: (entry: SkillSource) => string[] | undefined,
 ): SkillTotal[] => {
   const fiveYearsAgo = new Date();
   fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
@@ -471,9 +485,8 @@ const topItemsLastFiveYears = (
   } = {};
 
   data
-    .filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work")
+    .filter((entry) => !!entry.period)
     .forEach((entry) => {
-      if (!entry.period) return;
       const [startStr, endStr] = entry.period.split(" - ");
       if (!startStr || !endStr) return;
       const start = parseDate(startStr);
@@ -498,11 +511,11 @@ const topItemsLastFiveYears = (
     .slice(0, 10);
 };
 
-export const getTopSkillsLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+export const getTopSkillsLastFiveYears = (data: SkillSource[]): SkillTotal[] =>
   topItemsLastFiveYears(data, (entry) => entry.skills);
 
-export const getTopLanguagesLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+export const getTopLanguagesLastFiveYears = (data: SkillSource[]): SkillTotal[] =>
   topItemsLastFiveYears(data, (entry) => entry.programmingLanguages);
 
-export const getTopFrameworksLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+export const getTopFrameworksLastFiveYears = (data: SkillSource[]): SkillTotal[] =>
   topItemsLastFiveYears(data, (entry) => entry.frameworks);
