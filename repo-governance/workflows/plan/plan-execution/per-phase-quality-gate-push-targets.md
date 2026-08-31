@@ -27,7 +27,8 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
      PR only at the unit's declared delivery boundary. Its body is the reader's entry point and
      applies [Bounding PR Size](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md):
      target 500 or fewer handwritten code/program-type additions as a strong recommendation, while
-     independently enforcing at most 1,000 handwritten other/document-type additions and at most 20
+     independently enforcing at most 1,000 handwritten other/document-type additions, except the
+     canonical bounded single-source other/document exception at most 1,100, and at most 20
      hand-authored files. A code diff above 500 remains valid only with its measured size, natural
      cohesive seam, rejected split alternatives, and review proof recorded. Claim the plan-document
      LOC exemption only for a qualifying initial establishment or backlog/in-progress pure move. At an

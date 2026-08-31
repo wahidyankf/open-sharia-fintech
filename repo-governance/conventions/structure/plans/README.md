@@ -27,7 +27,7 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
   bootcamp-executable checkbox.
 - [Execution-Grade Clarity](./execution-grade-clarity.md) — Writing or reviewing a delivery.md checkbox for execution-grade clarity.
 - [Schema and Migration Contracts](./schema-and-migration-contracts.md) — Making schema changes, compatibility, migration, rollback, and no-loss proof executable.
-- [Delivery Reconciliation and Conditional Recovery](./delivery-reconciliation-and-recovery.md) — Places governance and architecture reconciliation with the change and gives conditional recovery work explicit terminal states. Use when delivery may change repository rules, documented C4 elements, or invoke rollback/recovery work.
+- [Delivery Reconciliation and Conditional Recovery](./delivery-reconciliation-and-recovery.md) — Reconciles governance/C4 changes and conditional recovery within delivery.
 - [[AI] vs [HUMAN]](./executor-tagging-tags-and-bias.md) — Deciding whether a delivery.md checkbox should be tagged [AI], [HUMAN], or [AI+HUMAN].
 - [Git-Mechanical Steps Are [AI]](./executor-tagging-git-mechanical-steps.md) — Tagging a worktree-provisioning, push, or worktree-removal step in delivery.md.
 - [Placement, Legend, and Execution Semantics](./executor-tagging-placement-legend-and-execution-semantics.md) — Adding the executor-tag legend to a delivery.md file or handling a [HUMAN] stop during execution.
@@ -40,7 +40,8 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether work may share a PR or await another merge.
 - [Boundary Test](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing a delivery boundary.
 - [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
-- [Addition Limits, File-Budget Exception, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — C=500, hard O/machine bounds, file-budget exception, and plan-document LOC exemption.
+- [Addition Limits, File-Budget Exception, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — C=500; O/machine limits; file-budget and plan-document exceptions.
+- [Single-Source Other/Document Natural-Seam Exception](./prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — Narrow O=1,100 exception for one canonical source.
 - [The Atomicity Exception (PR-Size Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
 - [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.

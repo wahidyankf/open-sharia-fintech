@@ -41,7 +41,8 @@ repo's own posted reviews all ran against PRs of 15,000-56,000 lines and 160-3,5
    not a hard ceiling. A larger code diff is valid when it remains one natural, cohesive,
    independently reviewable, verifiable, and revertible seam; declare its measured size, seam,
    rejected split alternatives, and review proof. The independent **1,000** other/document-type
-   ceiling and **300** changed-file machine ceiling remain hard. **20** hand-authored files is the
+   ceiling remains hard except for the child rule's bounded single-source other/document exception;
+   the **300** changed-file machine ceiling remains hard. **20** hand-authored files is the
    default review budget; a named delivery may exceed it only through the child rule's exact,
    plan-and-PR-disclosed file-budget natural-seam exception. Deletions count as zero. The child
    defines file categories, generated-mirror exclusions, both natural-seam records, and the narrow
