@@ -39,9 +39,15 @@ describe("RootLayout", () => {
     expect(screen.getByTestId("scroll-to-top")).toBeInTheDocument();
   });
 
-  it("does not reference the absent og-image.jpg asset", () => {
-    expect(metadata.openGraph?.images).toBeUndefined();
-    expect(metadata.twitter?.images).toBeUndefined();
+  it("references the og-image.jpg asset for OpenGraph and Twitter previews", () => {
+    expect(metadata.openGraph?.images).toEqual([
+      { url: "https://www.wahidyankf.com/og-image.jpg", width: 1200, height: 630 },
+    ]);
+    expect(metadata.twitter?.images).toEqual(["https://www.wahidyankf.com/og-image.jpg"]);
+  });
+
+  it("does not reference a Twitter handle", () => {
+    expect(metadata.twitter?.creator).toBeUndefined();
   });
 
   it("uses the canonical public URL for OpenGraph metadata", () => {

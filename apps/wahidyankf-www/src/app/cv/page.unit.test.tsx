@@ -107,6 +107,13 @@ describe("CV component", () => {
     expect(screen.getByTestId("search-component")).toBeInTheDocument();
   });
 
+  it("renders a Download CV (PDF) link pointing at the generated PDF", () => {
+    render(<CvContent />);
+    const downloadLink = screen.getByRole("link", { name: /Download CV \(PDF\)/ });
+    expect(downloadLink).toHaveAttribute("href", "/wahidyankf-kresna-fridayoka-cv.pdf");
+    expect(downloadLink).toHaveAttribute("download");
+  });
+
   it("prefills and filters from a shared search URL", () => {
     window.history.replaceState({}, "", "/cv?search=Software");
     render(<CvContent />);

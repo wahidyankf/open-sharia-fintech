@@ -5,6 +5,7 @@ import { filterItems } from "@/features/search/core/search";
 import {
   Award,
   Briefcase,
+  Download,
   FileCheck,
   GithubIcon,
   Globe,
@@ -586,9 +587,20 @@ export function CvContent() {
     <main className="flex min-h-screen flex-col bg-gray-900 p-4 pb-20 text-green-400 sm:p-8 md:p-12 lg:ml-80 lg:p-16 lg:pb-0">
       <Navigation />
       <div className="mx-auto w-full max-w-4xl flex-grow">
-        <h1 className="mb-8 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">
+        <h1 className="mb-4 text-center text-2xl font-bold text-yellow-400 sm:text-3xl md:text-4xl">
           Curriculum Vitae
         </h1>
+
+        <div className="mb-8 flex justify-center">
+          <a
+            href="/wahidyankf-kresna-fridayoka-cv.pdf"
+            download
+            className="flex items-center bg-gray-800 px-4 py-2 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700 hover:text-white"
+          >
+            <Download className="mr-2 h-4 w-4 text-yellow-400" />
+            Download CV (PDF)
+          </a>
+        </div>
 
         <SearchComponent
           searchTerm={searchTerm}

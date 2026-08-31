@@ -36,13 +36,14 @@ export const metadata: Metadata = {
     title: "Wahidyan Kresna Fridayoka | Engineering Leader — Digital Banking, Fintech & RegTech",
     description:
       "Portfolio and CV of Wahidyan Kresna Fridayoka, an engineering leader with nearly nine years of experience in Sharia-compliant digital banking, fintech, and RegTech, leading cross-functional engineering teams and open-source work.",
+    images: [{ url: "https://www.wahidyankf.com/og-image.jpg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Wahidyan Kresna Fridayoka | Engineering Leader — Digital Banking, Fintech & RegTech",
     description:
       "Portfolio and CV of Wahidyan Kresna Fridayoka, an engineering leader with nearly nine years of experience in Sharia-compliant digital banking, fintech, and RegTech, leading cross-functional engineering teams and open-source work.",
-    creator: "@wahidyankf", // Replace with your Twitter handle if you have one
+    images: ["https://www.wahidyankf.com/og-image.jpg"],
   },
   robots: {
     index: true,
