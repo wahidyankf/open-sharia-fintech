@@ -12,9 +12,9 @@ const COLORS = {
 const FOOTER_MARGIN_FROM_BOTTOM = 34;
 
 const addSectionHeading = (pdf: PDFKit.PDFDocument, title: string): void => {
-  pdf.moveDown(0.7);
-  pdf.font("Helvetica-Bold").fontSize(11).fillColor(COLORS.navy).text(title);
-  pdf.moveDown(0.3);
+  pdf.moveDown(0.8);
+  pdf.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.navy).text(title);
+  pdf.moveDown(0.35);
 };
 
 const addSections = (pdf: PDFKit.PDFDocument, heading: string, entries: CvPdfSection[]): void => {
@@ -22,16 +22,19 @@ const addSections = (pdf: PDFKit.PDFDocument, heading: string, entries: CvPdfSec
 
   addSectionHeading(pdf, heading);
   entries.forEach((entry) => {
-    pdf.font("Helvetica-Bold").fontSize(10).fillColor(COLORS.black).text(entry.title);
+    pdf.font("Helvetica-Bold").fontSize(11.5).fillColor(COLORS.black).text(entry.title);
     const subtitle = [entry.organization, entry.period].filter(Boolean).join(" · ");
     if (subtitle) {
-      pdf.font("Helvetica-Bold").fontSize(9.5).fillColor(COLORS.black).text(subtitle);
+      pdf.font("Helvetica-Bold").fontSize(10.5).fillColor(COLORS.black).text(subtitle);
     }
-    pdf.moveDown(0.15);
-    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
-    entry.details.forEach((bullet) => pdf.text(`-  ${bullet}`, { indent: 10, lineGap: 1 }));
-    entry.meta.forEach((line) => pdf.fontSize(8.5).fillColor(COLORS.gray).text(line, { lineGap: 1 }));
-    pdf.moveDown(0.4);
+    pdf.moveDown(0.25);
+    pdf.font("Helvetica").fontSize(10.5).fillColor(COLORS.black);
+    entry.details.forEach((bullet) => {
+      pdf.text(`-  ${bullet}`, { indent: 10, lineGap: 3 });
+      pdf.moveDown(0.15);
+    });
+    entry.meta.forEach((line) => pdf.fontSize(9.5).fillColor(COLORS.gray).text(line, { lineGap: 2 }));
+    pdf.moveDown(0.6);
   });
 };
 
@@ -47,7 +50,7 @@ const addFooters = (pdf: PDFKit.PDFDocument, name: string): void => {
     pdf.page.margins.bottom = 0;
     pdf
       .font("Helvetica")
-      .fontSize(8)
+      .fontSize(9)
       .fillColor(COLORS.gray)
       .text(`${name} | Page ${i - range.start + 1}`, left, pdf.page.height - FOOTER_MARGIN_FROM_BOTTOM, {
         width: pdf.page.width - left - right,
@@ -61,21 +64,22 @@ export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument =>
   const pdf = new PDFDocument({
     size: "A4",
     bufferPages: true,
-    margins: { top: 40, bottom: 51, left: 45, right: 45 },
+    margins: { top: 44, bottom: 54, left: 50, right: 50 },
   });
 
-  pdf.font("Helvetica-Bold").fontSize(18).fillColor(COLORS.black).text(document.name, { align: "center" });
-  pdf.font("Helvetica-Bold").fontSize(10.5).fillColor(COLORS.navy).text(document.tagline, { align: "center" });
-  pdf.moveDown(0.2);
-  pdf.font("Helvetica").fontSize(8.5).fillColor(COLORS.black).text(document.contactLine, { align: "center" });
-  pdf.moveDown(0.6);
+  pdf.font("Helvetica-Bold").fontSize(22).fillColor(COLORS.black).text(document.name, { align: "center" });
+  pdf.moveDown(0.15);
+  pdf.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.navy).text(document.tagline, { align: "center" });
+  pdf.moveDown(0.3);
+  pdf.font("Helvetica").fontSize(10).fillColor(COLORS.black).text(document.contactLine, { align: "center" });
+  pdf.moveDown(0.8);
 
   if (document.summary.length > 0) {
     addSectionHeading(pdf, "Summary");
-    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
+    pdf.font("Helvetica").fontSize(10.5).fillColor(COLORS.black);
     document.summary.forEach((paragraph) => {
-      pdf.text(paragraph, { lineGap: 1 });
-      pdf.moveDown(0.3);
+      pdf.text(paragraph, { lineGap: 3 });
+      pdf.moveDown(0.4);
     });
   }
 
@@ -85,8 +89,11 @@ export const renderCvPdf = (document: CvPdfDocumentModel): PDFKit.PDFDocument =>
 
   if (document.languages.length > 0) {
     addSectionHeading(pdf, "Languages");
-    pdf.font("Helvetica").fontSize(9).fillColor(COLORS.black);
-    document.languages.forEach(({ name, proficiency }) => pdf.text(`${name} — ${proficiency}`));
+    pdf.font("Helvetica").fontSize(10.5).fillColor(COLORS.black);
+    document.languages.forEach(({ name, proficiency }) => {
+      pdf.text(`${name} — ${proficiency}`, { lineGap: 3 });
+      pdf.moveDown(0.15);
+    });
   }
 
   addFooters(pdf, document.name);
