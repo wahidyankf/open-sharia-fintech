@@ -1342,6 +1342,17 @@ the missing field.
       bijection, the matching generated-ownership rows, and an unchanged 84-unit catalog
       cardinality. This is a finite dependency-closure transfer, not an expansion of product
       scope.
+- [x] [AI] `P0-DDD-REFERENCE-INDEX-ALLOCATION-AMENDMENT-05` — Completed. Before the first
+      Phase 1 edit, perform a transitive local-link closure check on every canonical source
+      scheduled for deletion. The check found that
+      `.claude/skills/apps-organiclever-www-developing-content/reference/README.md` links to the
+      allocated `reference/domain-driven-design.md` source. Allocate that canonical index and its
+      generated `.agents/skills/apps-organiclever-www-developing-content/reference/README.md`
+      mirror to `D-P1-PUB`; the index must remove the deleted child with its annotation. Re-run
+      the direct allocation materializer and require 62 bindings, a duplicate-free 47-path
+      `D-P1-PUB` allocation, an estimate bijection, matching generated ownership, and an
+      unchanged 84-unit catalog. This is the final local index closure for the finite Phase 1
+      dependency set and creates no product change.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
@@ -1540,7 +1551,7 @@ the missing field.
 - [ ] [AI] Remove only links, registry keys, targets, and index entries whose consumer was deleted;
       the eight allocated specification consumers
       `specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,components/app-web/README.md,components/app-web/architecture.md,behavior/organiclever-app-web/gherkin/README.md,components/app-web/component-web.md,containers/container.md}`
-      must be changed only to remove references to the deleted DDD tree; the nine allocated
+      must be changed only to remove references to the deleted DDD tree; the ten allocated
       canonical guidance or registry-consumer sources and their generated `.agents` mirrors must
       remove or revise the corresponding retired instruction without changing generic machinery;
       `repo-config.yml` is the exact allocated sequential shared configuration edit and must
