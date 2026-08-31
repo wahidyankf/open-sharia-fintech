@@ -21,7 +21,8 @@ Every PR is human-readable; there are no machine-only PRs. A person must review 
 Count handwritten **added** lines and hand-authored files:
 
 - Code/program-type additions (`C`) have a **strong recommended target of 500**, not a hard ceiling.
-- Other/document-type additions (`O`) must not exceed **1,000**.
+- Other/document-type additions (`O`) must not exceed **1,000**, except through the narrow
+  [Single-Source Other/Document Natural-Seam Exception](#single-source-otherdocument-natural-seam-exception).
 - `C` and `O` are measured independently; a mixed PR has no combined ceiling.
 - Deleted lines count as zero.
 - A PR should contain no more than **20 hand-authored files**. This is the default review budget;
@@ -60,9 +61,15 @@ total counts; exact allocation; cohesive seam/build constraint; every rejected v
 recovery; and matching PR declaration. Final delivery remeasures the whole diff and rejects a missing,
 stale, incomplete, or mismatched record. The PR body repeats counts, seam, splits, proof, and recovery.
 
-The exception never waives `O = 1,000`, the 300-file ceiling, surface/scope rules, verification, or
-recovery. It is invalid if a smaller build-valid seam exists, allocation is not finite before editing,
-or a split is rejected only to reduce PR count or effort.
+The exception never waives `O = 1,000` except through the separate
+[single-source exception](#single-source-otherdocument-natural-seam-exception), the 300-file ceiling,
+surface/scope rules, verification, or recovery. It is invalid if a smaller build-valid seam exists,
+allocation is not finite before editing, or a split is rejected only to reduce PR count or effort.
+
+## Single-Source Other/Document Natural-Seam Exception
+
+One named delivery may reach `O = 1,100` only under the
+[single-source exception conditions](./prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md).
 
 ## Narrow Plan-Document LOC Exemption
 

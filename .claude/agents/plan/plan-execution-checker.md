@@ -58,9 +58,10 @@ against the delivered state. Rule propagation and exact as-built C4 reconciliati
 their changing phase; recovery ends executed or `Not triggered` with evidence.
 Outcome cohesion does not relax natural delivery seams, PR-size rules, or atomicity. Above the
 strong 500-line code target, require evidence of the natural seam, rejected splits, and review
-proof; never fail on size alone, retain the hard other/document and machine bounds, and permit a
-default 20-file-budget exceedance only with its canonical binding-specific plan/PR disclosure. Do
-not report migration findings
+proof; never fail on size alone, retain default-hard other/document and machine bounds, allow the
+bounded single-source other/document exception only with its exact source, target, `O` measurement,
+semantic constraint, and plan/PR record, and permit a default 20-file-budget exceedance only with its
+canonical binding-specific plan/PR disclosure. Do not report migration findings
 against archived plans or the existing Rhino plan.
 Before archival, verify the completion date was resolved only after all pre-archival gates,
 including the preliminary audit, passed and the same repository-local value appears in the

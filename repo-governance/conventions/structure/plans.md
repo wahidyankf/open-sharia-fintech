@@ -69,6 +69,7 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — qualification.
 - [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — surface bounds.
 - [PRs Open — Addition Targets and Limits](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — strong C target, hard O/machine bounds, conditional file-budget exception, and plan-doc exemption.
+- [PRs Open — Single-Source Other/Document Exception](./plans/prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — narrow O=1,100 exception for one canonical source.
 - [PRs Open — Atomicity](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — rule 5.
 - [PRs Open — PR Body](./plans/prs-open-at-delivery-boundaries-pr-body.md) — why, entry, skip.
 - [Delivery Boundaries](./plans/delivery-boundaries-and-applicability.md) — table.
