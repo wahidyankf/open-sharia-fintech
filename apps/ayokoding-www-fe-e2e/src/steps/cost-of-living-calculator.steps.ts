@@ -80,9 +80,11 @@ Given(
   async ({ page }, tabName: string, _role: string, _household: string) => {
     await page.goto("/en/tools/cost-of-living-calculator");
     await page.getByRole("tab", { name: tabName }).click();
+    await page.waitForURL(/tab=min-role/);
     await page.locator("#target-amount-input").fill("1000");
     await page.keyboard.press("Tab");
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL(/target=1000/);
+    await expect(page.getByTestId("qualifying-divider")).toBeVisible();
   },
 );
 
@@ -988,8 +990,10 @@ When(
     await page.waitForURL(/schoolkids=2/);
     const areaLabel = area === "center" ? "City center" : "Rural";
     // Area is a SegmentedControl (radiogroup), not a <select>
-    await page.getByRole("radio", { name: areaLabel }).click();
-    await page.waitForLoadState("networkidle");
+    const areaRadio = page.getByRole("radio", { name: areaLabel });
+    await areaRadio.click();
+    await expect(areaRadio).toHaveAttribute("aria-checked", "true");
+    if (area === "rural") await page.waitForURL(/area=rural/);
   },
 );
 
@@ -998,10 +1002,8 @@ Then(
   async ({ page }, _role: string) => {
     const divider = page.locator("[data-testid='qualifying-divider']");
     const noQual = page.locator("[data-testid='no-qualifier-message']");
-    // `waitForLoadState("networkidle")` in the preceding step settles network requests, but the
-    // React re-render this triggers can still lag behind under full-suite parallel load — a bare
-    // `.isVisible()` sampled the DOM once and flaked. `expect.poll` retries the predicate until
-    // one of the two elements actually renders, matching Playwright's normal auto-wait behavior.
+    // The preceding step verifies each URL-state mutation. This additional poll tolerates the
+    // resulting React re-render under full-suite parallel load rather than sampling the DOM once.
     await expect
       .poll(async () => (await divider.isVisible()) || (await noQual.isVisible()), {
         timeout: 60000,
