@@ -47,6 +47,6 @@ USER app
 EXPOSE 3201
 ENV WAHIDYANKF_WWW_PORT=3201 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${WAHIDYANKF_WWW_PORT}/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:${WAHIDYANKF_WWW_PORT}/ || exit 1
 
 CMD ["node", "scripts/next-with-port.mjs", "start", "--env", "WAHIDYANKF_WWW_PORT", "--default", "3201", "-H", "0.0.0.0"]
