@@ -78,7 +78,7 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 │       components/app-web/{README.md,architecture.md},behavior/organiclever-app-web/gherkin/README.md}
 │       — remove live consumers of the retired DDD registry
 ├── [E] .claude/skills/apps-organiclever-www-developing-content/{SKILL.md,README.md,
-│       reference/{bounded-context-architecture.md,common-patterns.md,domain-driven-design.md}}
+│       reference/{README.md,bounded-context-architecture.md,common-patterns.md,domain-driven-design.md}}
 │       — retire OrganicLever DDD registry guidance and preserve applicable layer guidance
 ├── [E] .claude/skills/{README.md,specs-scaffolding/reference/surface-profile-trees.md,
 │       specs-validating-structure/reference/fixer-execution-and-safety.md}
