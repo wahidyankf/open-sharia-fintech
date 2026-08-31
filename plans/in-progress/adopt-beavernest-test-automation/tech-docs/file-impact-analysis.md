@@ -110,6 +110,13 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 └── [N] generated-reports/rules-propagation__<uuid>__manifest.md
 ```
 
+### OrganicLever DDD retirement sequential configuration allocation
+
+Before the later Phase 4 registry-foundation edit, `D-P1-PUB` makes one exact `repo-config.yml`
+change: remove `organiclever` from `specs.ddd-areas` when Phase 1 deletes its DDD tree. The
+existing Phase 4 registry allocation retains the same path only for its later distinct foundation
+change. This is bounded sequential shared plumbing, not shared ownership or an added delivery unit.
+
 ### FS-ENV finite delivery allocation
 
 `D-O-PUB-FS-ENV` has exactly 17 implementation/configuration paths. This list is the Phase-0
