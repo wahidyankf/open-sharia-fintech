@@ -54,6 +54,7 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 ├── [E] libs/fsharp-env-loader/project.json — add seed target, then bind the active driver/corpus
 ├── [N] libs/fsharp-env-loader/tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs
 ├── [E] libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj — compile the behavior driver/tests
+├── [E] specs/LICENSE — retain the repository-root MIT notice unchanged; it is not a delivery change path
 ├── [E] specs/README.md
 ├── [E] specs/apps/README.md
 ├── [N] specs/apps/ayokoding/www/{README.md,architecture.md,behaviors/<DISC-BEHAVIOR-FILE>.feature}
@@ -96,7 +97,7 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 ├── [N] plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md — sole tracked sanitized evidence ledger
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/{R-PUB,owners,corpus-ownership,delivery-splits}/<declared-file>
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/registry/{registry-owner-projects.tsv,registry-delegate-projects.tsv,registry-behavior-free-projects.tsv,registry-project-closure.tsv,registry-project-closure.sha,nx-projects.txt}
-├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/<binding-from-55-row-catalog>/{allocation.txt,estimates.tsv}
+├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/<binding-from-62-row-catalog>/{allocation.txt,estimates.tsv}
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/{owners,rules,delivery,gates,orchestration,final,post-archive}/<resolver-declared-path>
 ├── [D] plans/in-progress/adopt-beavernest-test-automation/<13-plan-documents> — move sources from the preliminary allocation, including the three plan-state files
 ├── [N] plans/done/<completion-date>__adopt-beavernest-test-automation/<13-plan-documents> — actual destinations from `move.tsv`
@@ -200,8 +201,8 @@ runtime:
 ├── [G] .codex/<generated-from-admitted-.claude-source>
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/phase-0/{R-PRI,owners,corpus-ownership,delivery-splits}/<declared-file>
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/phase-0/registry/{registry-owner-projects.tsv,registry-delegate-projects.tsv,registry-behavior-free-projects.tsv,registry-project-closure.tsv,registry-project-closure.sha,nx-projects.txt}
-├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/prospective/<binding-from-25-row-catalog>/{allocation.txt,estimates.tsv}
-├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/delivery/<binding-from-25-row-catalog>/{manifest.tsv,summary.md,<resolver-declared-path>}
+├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/prospective/<binding-from-22-row-catalog>/{allocation.txt,estimates.tsv}
+├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/delivery/<binding-from-22-row-catalog>/{manifest.tsv,summary.md,<resolver-declared-path>}
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/evidence/runtime/private/{owners,rules,gates,final,post-archive}/<resolver-declared-path>
 ├── [N, ignored] local-tmp/adopt-beavernest-test-automation/public-export/<manifest-admitted-path>
 └── [N] generated-reports/rules-propagation__<uuid>__manifest.md
@@ -267,7 +268,7 @@ the recorded `repo-governance/**` and `docs/explanation/software-engineering/**`
 An empty result for a named subject, an unclassified match, or any path absent from this ledger
 blocks the rules unit and requires a plan amendment rather than a broader glob.
 
-`<binding-from-55-row-catalog>` and `<binding-from-25-row-catalog>` are not open globs: Phase 0
+`<binding-from-62-row-catalog>` and `<binding-from-22-row-catalog>` are not open globs: Phase 0
 materializes their exact public and private binding rows, verifies the frozen split-file bijection,
 and hashes each allocation and estimate. `<declared-file>` and `<resolver-declared-path>` mean only
 the finite filenames assigned by the resolver table and concrete checklist task. The private
@@ -287,6 +288,238 @@ case without a plan amendment:
   `deleted-dependency`.
 - Specs logical corpus: `duplicate-owner`, `unowned-feature`, `stale-link`, `missing-entry`,
   `old-new-split`, `proposal-in-as-built-c4`.
+
+### Phase 4 finite allocation
+
+The following entries replace every Phase 4 `<named-case>` and governance placeholder. They are
+the complete implementation/configuration allocations before the three public plan-state paths are
+reserved. A shared plumbing path may occur in a later sequential leaf only where that leaf's
+declared RED/GREEN changes it; it is never an unbounded ownership claim.
+
+`D-P4-PUB-REGISTRY` and `D-P4-PRI-REGISTRY-PARITY` each contain exactly these eight paths:
+
+```text
+repo-config.yml
+apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
+apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
+apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
+apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
+apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
+apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs
+```
+
+`D-P4-PUB-BDD` contains exactly these fourteen paths:
+
+```text
+apps/rhino-cli/project.json
+apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
+apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs
+apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
+apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-feature.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-example.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-scenario.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-step.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-binding.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/missing-owner-adapter.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/unused-binding.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/duplicate-binding.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd/rounded-999-of-1000.json
+```
+
+`D-P4-PUB-COVERAGE` contains exactly these fourteen paths:
+
+```text
+apps/rhino-cli/project.json
+apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
+apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs
+apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
+apps/rhino-cli/src/tests/unit/Steps/TestContractCoverageUnitTests.fs
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/98-percent.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/missing-threshold.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/lower-threshold.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/conflicting-threshold.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/echo-placeholder.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/broad-exclusion.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/omitted-slice.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/overlapping-output.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/e2e-no-denominator.json
+```
+
+`D-P4-PUB-LAYOUT-MANIFEST` contains exactly these fourteen paths:
+
+```text
+apps/rhino-cli/project.json
+apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
+apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout/src-root.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout/generic-test-root.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout/dunder-tests-root.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout/overlapping-runner.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout/executable-support.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/unclassified.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/no-consumer.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/forwarding-script.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/npm-prefix.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/proxy-script.json
+apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/deleted-dependency.json
+```
+
+`D-P4-PUB-FIXTURES-A` contains exactly these sixteen complete owner-packet paths:
+
+```text
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-CRANE/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-CRANE/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-CRANE/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-CRANE/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-FS-CORE/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-FS-CORE/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-FS-CORE/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-FS-CORE/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-TS-ENV/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-TS-ENV/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-TS-ENV/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-TS-ENV/manifest-proxy.json
+```
+
+`D-P4-PUB-FIXTURES-B` contains exactly these twenty complete owner-packet paths and carries its
+finite complete-owner natural-seam exception:
+
+```text
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-AYO/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-AYO/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-AYO/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-AYO/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WEB/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WEB/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WEB/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WEB/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WAHID/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WAHID/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WAHID/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WAHID/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-TOKEN/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-TOKEN/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-TOKEN/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-TOKEN/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-UI/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-UI/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-UI/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-WEB-UI/manifest-proxy.json
+```
+
+`D-P4-PUB-FIXTURES-C` contains exactly these twenty complete owner-packet paths and carries the
+same finite complete-owner natural-seam exception:
+
+```text
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-BE/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-BE/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-BE/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-BE/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WWW/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WWW/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WWW/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OL-WWW/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-BE/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-BE/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-BE/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-BE/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WEB/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WEB/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WEB/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WEB/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WWW/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WWW/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WWW/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-OSE-WWW/manifest-proxy.json
+```
+
+Every public fixture entry is one of the four exact owner-fixture basenames in the owner RED
+fixture injection contract; no FS-ENV path may appear in these three lists.
+
+`D-P4-PRI-POLICY-PARITY` is the exact 38-path union of the 29 fixture paths listed for the three
+public policy leaves above and these nine private shared paths:
+
+```text
+apps/rhino-cli/project.json
+apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
+apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
+apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs
+apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs
+apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
+apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs
+apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs
+apps/rhino-cli/src/tests/unit/Steps/TestContractCoverageUnitTests.fs
+```
+
+It is the named private Phase 4 file-budget exception, in addition to the public complete-owner
+packet exceptions for `D-P4-PUB-FIXTURES-B` and `D-P4-PUB-FIXTURES-C`: the private delivery is the complete,
+byte-identical shared-foundation parity proof after the four public leaves, not a second policy
+design. Its finite exception must reject the partial-parity alternative because no individual
+partial port proves the required whole shared contract or leaves a valid final private test-project
+compile closure.
+
+`D-P4-PRI-FIXTURES` owns only these twelve repository paths; its compact manifest is ignored
+evidence and is never a delivery path:
+
+```text
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-RHINO/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-RHINO/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-RHINO/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-RHINO/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-TOKEN/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-TOKEN/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-TOKEN/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-TOKEN/manifest-proxy.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-UI/layout-misplaced.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-UI/coverage-98.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-UI/bdd-missing-step.json
+apps/rhino-cli/tests/fixtures/test-contract/owners/O-PRI-TS-UI/manifest-proxy.json
+```
+
+The public governance list contains exactly these thirteen canonical paths; generated bindings are
+derived from the two named `.claude/` sources and are accounted for by their generated-ownership
+map, not hand-authored allocation rows:
+
+```text
+AGENTS.md
+repo-governance/development/infra/nx-targets.md
+repo-governance/development/infra/nx-targets/mandatory-targets-summary-matrix.md
+repo-governance/development/quality/three-level-testing-standard.md
+repo-governance/development/quality/feature-change-completeness.md
+repo-governance/development/quality/code-coverage.md
+repo-governance/development/quality/gherkin-bdd-coverage.md
+repo-governance/conventions/structure/specs-directory-structure.md
+repo-governance/conventions/structure/app-readme-vs-specs.md
+docs/explanation/software-engineering/development/test-driven-development-tdd/three-tier-testing.md
+.claude/agents/general/ci-checker.md
+.claude/agents/general/ci-fixer.md
+.claude/skills/ci-standards/SKILL.md
+```
+
+The private governance list has the same intent and count, with its repository-existing counterparts
+for the two non-shared documents:
+
+```text
+AGENTS.md
+repo-governance/development/infra/nx-targets.md
+repo-governance/development/infra/nx-targets/mandatory-targets-by-project-type.md
+repo-governance/development/quality/three-level-testing-standard.md
+repo-governance/development/quality/feature-change-completeness.md
+repo-governance/development/quality/code-coverage.md
+repo-governance/development/quality/gherkin-bdd-coverage.md
+repo-governance/conventions/structure/specs-directory-structure.md
+repo-governance/conventions/structure/specs-directory-structure/enforcement-and-related.md
+docs/explanation/software-engineering/development/test-driven-development-tdd/three-tier-testing.md
+.claude/agents/general/ci-checker.md
+.claude/agents/general/ci-fixer.md
+.claude/skills/ci-standards/SKILL.md
+```
 
 ### Bounded adapter edits
 
