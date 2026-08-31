@@ -70,6 +70,10 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 ├── [N] specs/libs/fsharp-env-loader/behaviors/environment-loading.feature
 ├── [D] specs/libs/{fsharp-crane-core,ts-env-loader,web-ui,web-ui-token}/{product,system-context,containers,components,behavior}/<DISC-LEGACY-SPEC-FILE>
 ├── [D] specs/apps/organiclever/ddd/<DISC-DDD-SPEC-FILE>
+├── [E] specs/apps/organiclever/components/app-web/component-web.md — remove its inbound
+│       `bounded-contexts.yaml` source-of-truth link when that DDD tree is retired
+├── [E] specs/apps/organiclever/containers/container.md — remove its inbound DDD-enforcement link
+│       when that DDD tree is retired
 ├── [D] specs/apps/ose/ddd/<DISC-DDD-SPEC-FILE>
 ├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/<DISC-DDD-SPEC-FILE>
 ├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature

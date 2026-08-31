@@ -1307,6 +1307,15 @@ the missing field.
       retained DDD-specific `specs/**` file and no cross-repository preserve-hash contradiction.
 - [x] [AI] `P0-DDD-DIRECT-PATH-SETS-01` — Supplement the content scan with exact tracked direct
       DDD-deletion inventories. In public run `rtk bash -lc 'out=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/ddd-direct-deletions.txt; rtk mkdir -p "$(rtk dirname "$out")"; { rtk git ls-files -- specs/apps/organiclever/ddd; rtk git ls-files -- specs/apps/ose/ddd; rtk git ls-files -- specs/apps/rhino/behavior/rhino-cli/gherkin/ddd; rtk git ls-files -- specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature; } | rtk sort -u > "$out"; test "$(rtk wc -l < "$out" | rtk tr -d " ")" -eq 35; test "$(rtk rg "^specs/apps/organiclever/ddd/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 19; test "$(rtk rg "^specs/apps/ose/ddd/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 12; test "$(rtk rg "^specs/apps/rhino/" "$out" | rtk wc -l | rtk tr -d " ")" -eq 4'`. In private write the analogous Rhino-only tracked path set to `R-PRI/ddd-direct-deletions.txt`; expect 4 rows. Each listed path has marker `D`, deletion owner, and Phase 1, 2, or 3 binding in the declared-footprint ledger. Do not infer a deletion from text search alone or retain a direct DDD source because it has no matching text result.
+- [x] [AI] `P0-DDD-CONSUMER-ALLOCATION-AMENDMENT-02` — Completed. Before the first
+      `D-P1-PUB` repository edit, reassign the two live inbound consumers
+      `specs/apps/organiclever/components/app-web/component-web.md` and
+      `specs/apps/organiclever/containers/container.md` from their later owner lifecycles to
+      `D-P1-PUB`. They remove only links to the retired DDD tree and must land atomically with
+      that deletion. Re-materialize the public prospective catalog; require 62 bindings, a
+      duplicate-free 21-path `D-P1-PUB` allocation, source/estimate bijection, and unchanged
+      catalog cardinality. This amendment transfers existing consumer paths between concrete
+      deliveries; it neither adds a delivery unit nor expands product scope.
 - [x] [AI] In public run
       `rtk rg -n "domain-coverage|behavior|coverage|layout|package-manifest|RepoConfig|TestCoverage|Specs" apps/rhino-cli/src repo-config.yml apps/rhino-cli/project.json`;
       record only existing anchor paths/symbols in `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/rules-subjects.md`. Expect at
@@ -1503,6 +1512,9 @@ the missing field.
       `rtk git rm --pathspec-from-file=plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/delete-paths.txt` from the public worktree. Expect every path removed and no preserve row
       touched; stop if Git names an unlisted path.
 - [ ] [AI] Remove only links, registry keys, targets, and index entries whose consumer was deleted;
+      `specs/apps/organiclever/components/app-web/component-web.md` and
+      `specs/apps/organiclever/containers/container.md` are the exact two allocated inbound-link
+      edits and must be changed only to remove references to the deleted DDD tree;
       run `rtk rg -n -i "domain-driven|DDD" specs/apps/organiclever repo-governance docs` and compare
       every remaining match to the preserve rows. Expect no active OrganicLever DDD engineering
       surface and identical preserve hashes; save `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-1/R-PUB/deletion-proof.txt`.
