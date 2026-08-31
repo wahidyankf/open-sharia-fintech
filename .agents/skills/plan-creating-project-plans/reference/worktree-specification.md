@@ -43,7 +43,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 
 ### Provisioned Worktree Identity
 
-- Exact path: `/absolute/repo/worktrees/<plan-identifier>`
+- Declared repository-relative route: `worktrees/<plan-identifier>/`
 - Initial branch: `<plan-identifier>-base`
 - Created by: `<executor identity or session>`
 - Created at: `<ISO-8601 UTC timestamp>`
@@ -53,6 +53,10 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 | Branch                   | Mode          | Lifecycle state | Proof                                            |
 | ------------------------ | ------------- | --------------- | ------------------------------------------------ |
 | `<plan-identifier>-base` | `provisioned` | `active`        | `git worktree add` at `<ISO-8601 UTC timestamp>` |
+
+The plan must not record an absolute, home, tool-prefix, drive, UNC, or other host-specific path.
+Resolve its declared route only at runtime against the selected repository root; retain any resolved
+path only in ignored runtime evidence after reconciliation with `git worktree list --porcelain`.
 
 Append every plan-created delivery branch before use. A `*-to-pr` entry records its merged PR and
 40-character reviewed-head SHA; direct push records its verified `origin/main` commit. Before

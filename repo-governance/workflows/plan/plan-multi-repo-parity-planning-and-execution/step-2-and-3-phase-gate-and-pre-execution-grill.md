@@ -43,7 +43,8 @@ question per message; interactive multiple-choice tool when available.
    invoker available to confirm them during this run, or should execution stop at the first
    `[HUMAN]` item and resume later?
 5. **Worktree cleanup evidence**: confirm each plan has a Provisioned Worktree Identity recording
-   its exact path, branch, and creator. After delivery, the executor removes only that exact worktree
+   its repository-relative route, branch, and creator. After delivery, the executor resolves that
+   route against the selected repository and removes only the reconciled worktree
    when replacement proof, the terminal audit in `{final-report}`, final `pass`, clean/idle, and
    no-unpushed checks all pass. A failed terminal or safety check retains it, reopens execution, and
    escalates. This is not a preference or confirmation gate.

@@ -9,8 +9,9 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
    no plan worktree. If this compatibility procedure is reused by a repository that permits such a
    worktree mode, require confirmed delivery, a passing workflow-owned terminal audit in
    `{final-report}`, and final `pass` before cleanup.
-   1. Resolve the exact path from the plan's Provisioned Worktree Identity and reconcile it with
-      `git worktree list --porcelain`. Inventory every plan-created/current branch; the initial
+   1. Resolve the declared repository-relative route from the plan's Provisioned Worktree Identity
+      against the selected repository root and reconcile the resulting runtime path with `git
+worktree list --porcelain`. Inventory every plan-created/current branch; the initial
       identity branch may differ after normal switching. Missing identity, path conflict, or
       unclassified branch blocks removal; never derive ownership from a familiar path.
    2. Apply the canonical
@@ -24,11 +25,11 @@ when_to_use: Use when cleaning up a plan's worktree after a direct push, or movi
    3. When every check passes, purge only plan-local regenerable build output, preserving diagnostic
       evidence and shared caches. If this is a bare repository whose pre-push hook requires a
       working tree, delete each verified live remote branch from inside the linked worktree before
-      removal. Then remove the exact path immediately without another confirmation prompt, from the
+      removal. Then remove the resolved runtime path immediately without another confirmation prompt, from the
       repository root:
 
       ```bash
-      git worktree remove <exact-plan-worktree-path>
+      git worktree remove <resolved-runtime-path>
       ```
 
       Use the non-force command only, then complete the canonical

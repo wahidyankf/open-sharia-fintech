@@ -29,11 +29,15 @@ pure-docs and otherwise small formal plans included. Apply prospectively.
    repository per plan, reused across every delivery unit; a second distinct path is a defect even
    if each is individually well-formatted.
 6. **Identity record and initialized inventory** — normally, `## Worktree` contains a Provisioned Worktree
-   Identity with exact path, initial branch, creator, and UTC creation time, plus a Delivery Branch
-   Inventory whose initial branch entry is `provisioned`/`active` and proves the exact creation command
-   and timestamp. Missing identity, inventory, or initial proof: **HIGH**. An inventory that omits a
+   Identity with the declared repository-relative `worktrees/<plan-identifier>/` route, initial branch,
+   creator, and UTC creation time, plus a Delivery Branch Inventory whose initial branch entry is
+   `provisioned`/`active` and proves the creation command and timestamp. A real absolute, home,
+   tool-prefix, drive, UNC, or other machine-specific path in that identity is **HIGH**. Missing
+   identity, inventory, or initial proof: **HIGH**. An inventory that omits a
    plan-created/current branch, leaves an active entry at cleanup, or lacks a merged-PR reviewed-head
-   SHA for a `*-to-pr` delivery: **HIGH**. The sole authoring-worktree exception passes authoring
+   SHA for a `*-to-pr` delivery: **HIGH**. Scan the complete committed `delivery.md`: any real
+   absolute, home, tool-prefix, drive, UNC, or other machine-specific local path is **HIGH**, even
+   outside the identity section. The sole authoring-worktree exception passes authoring
    review only when the plan records `Provisioning status: pending`, names the different active
    authoring worktree, cites the user's explicit stay-in-worktree constraint, and explains its
    dependency on unlanded work there. It must omit rather than fake identity/inventory and must make
@@ -42,5 +46,6 @@ pure-docs and otherwise small formal plans included. Apply prospectively.
 
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree
-path for this repository: **HIGH**. Missing/incomplete identity or inventory outside the documented
-authoring exception: **HIGH**.
+path for this repository: **HIGH**. Machine-specific worktree identity path: **HIGH**.
+Missing/incomplete identity or inventory outside the documented authoring exception: **HIGH**.
+Machine-specific local path anywhere in committed `delivery.md`: **HIGH**.

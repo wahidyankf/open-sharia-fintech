@@ -19,21 +19,22 @@ created: 2026-05-03
 
 When removing a worktree:
 
-1. Resolve the exact path from the plan's Provisioned Worktree Identity, then reconcile it with
-   `git worktree list --porcelain`. Inventory every plan-created and current branch from the Delivery
-   Branch Inventory and `git -C <exact-path> branch --show-current`; a missing identity, path
+1. Resolve the declared repository-relative route from the plan's Provisioned Worktree Identity
+   against the selected repository root, then reconcile the resulting runtime path with `git
+worktree list --porcelain`. Inventory every plan-created and current branch from the Delivery
+   Branch Inventory and `git -C <resolved-runtime-path> branch --show-current`; a missing identity, path
    conflict, or unclassified branch blocks removal.
 2. Apply the canonical [mandatory pre-removal checks](../../../development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md): each PR-mode branch needs its exact merged-PR/head
    proof plus either a matching live `origin/<branch>` tip or a verified GitHub automatic-deletion
    event when the repository enables it; direct-push entries need their recorded commit on
    `origin/main` and no open PR. Any other missing/mismatched proof retains and escalates; do not
    use `origin/main` ancestry for a squash-merged PR branch.
-3. Verify the exact worktree is clean and idle (`git -C <exact-path> status --porcelain`) and every
+3. Verify the resolved worktree is clean and idle (`git -C <resolved-runtime-path> status --porcelain`) and every
    inventoried branch has no unpushed commit.
 4. When every check passes, purge only plan-local regenerable build output while preserving
    diagnostic evidence and shared caches. For a bare repository whose push hook requires a working
    tree, clean verified live remote branches from inside the linked worktree before removal. Then
-   immediately run non-force `git worktree remove <exact-path>`, complete the canonical
+   immediately run non-force `git worktree remove <resolved-runtime-path>`, complete the canonical
    [branch cleanup](../../../development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md),
    and run `git worktree prune`. If any check or removal fails, retain the worktree and evidence and
    escalate; never force removal or prompt for an otherwise eligible exact plan path.

@@ -37,20 +37,22 @@ claude --worktree <plan-identifier>
 
 ## Worktree Identity Record
 
-Record this immutable block in the plan's `## Worktree` section when that section is authored.
-It is the cleanup authority; the file-touch ledger records files only.
+Record this immutable, repository-neutral block in the plan's `## Worktree` section when that
+section is authored. It is the cleanup authority; the file-touch ledger records files only.
 
 ```markdown
 ### Provisioned Worktree Identity
 
-- Exact path: `/absolute/repo/worktrees/<plan-identifier>`
+- Declared repository-relative route: `worktrees/<plan-identifier>/`
 - Initial branch: `<plan-identifier>-base`
 - Created by: `<executor identity or session>`
 - Created at: `<ISO-8601 UTC timestamp>`
 ```
 
-Record actual `git worktree add` values immutably. Missing or conflicting identity blocks removal;
-the initial branch proves provisioning, not final checkout.
+Record the declared route, actual initial branch, creator, and creation time immutably. At runtime,
+resolve the route against the selected repository root and reconcile the resulting exact path with
+`git worktree list --porcelain`; never commit that host-specific result in the plan. Missing or
+conflicting identity blocks removal; the initial branch proves provisioning, not final checkout.
 
 For a declared multi-repository parity objective, also include the common objective slug, worktree
 basename, and corresponding branch mapping defined by
@@ -71,8 +73,9 @@ Keep an append-only inventory beside the identity; add initial and plan-created 
 
 Before removal, classify every entry as delivered, unused, or retained/escalated; active or
 unrecorded branches block cleanup. `*-to-pr` records merged PR plus reviewed-head SHA; direct push
-records verified `origin/main`. Include `git -C <exact-path> branch --show-current`. This inventory,
-not the file ledger, controls branch cleanup.
+records verified `origin/main`. At cleanup, run `git -C <resolved-runtime-path> branch --show-current`
+only after deriving that path from the declared route and verifying it with `git worktree list
+--porcelain`. This inventory, not the file ledger, controls branch cleanup.
 
 **Provision the worktree BEFORE defining the plan, and author inside it by default.** Later moves
 split its history and defeat the pre-execution check.

@@ -23,6 +23,11 @@ identifier `auth-rewrite`.
 missing the `worktrees/` prefix → prepend it; identifier mismatches the plan-folder → rewrite to
 match.
 
+**How to fix a machine-specific identity path**: replace an absolute, home, tool-prefix, drive, or
+UNC path in a Provisioned Worktree Identity with the canonical repository-relative route
+`worktrees/<plan-identifier>/`. Preserve the initial branch, creator, and UTC timestamp; move any
+resolved host path to ignored runtime evidence and never retain it in `delivery.md`.
+
 **How to fix missing provisioning command**: insert the canonical fenced bash block immediately
 under the path declaration: ` ```bash\nclaude --worktree <plan-identifier>\n``` `.
 

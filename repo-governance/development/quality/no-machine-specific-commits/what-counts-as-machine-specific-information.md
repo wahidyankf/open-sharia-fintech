@@ -33,6 +33,19 @@ C:\Users\bob\AppData\Local\Programs\...
 
 **Acceptable alternatives:** relative paths, workspace-relative paths, or paths derived at runtime from environment variables such as `$HOME`, `$GOPATH`, or `$PROJECT_ROOT`.
 
+## Formal Plan Delivery Documents
+
+Committed formal-plan delivery documents, including `plans/**/delivery.md`, must identify a
+worktree only by its repository-relative route, such as `worktrees/<plan-identifier>/`. They must
+not record a resolved host path, a home-directory path, a tool-installation prefix, a Windows drive
+path, or a UNC path. During execution and cleanup, resolve that route against the selected
+repository root and reconcile the resulting runtime path with `git worktree list --porcelain`.
+
+Keep any runtime path evidence under an ignored runtime-evidence root. A plan may retain its
+portable route, branch, creator, and timestamp as its committed identity. `plan-checker` rejects a
+nonportable worktree identity, and the required PR leak review inspects the complete changed
+delivery document for real machine-specific absolute paths.
+
 ## Usernames Embedded in Paths or Configuration
 
 A username embedded in a path (e.g., `/Users/jane/`) is machine-specific by definition. The same applies to usernames used as literal database credentials or API identifiers in source files.
