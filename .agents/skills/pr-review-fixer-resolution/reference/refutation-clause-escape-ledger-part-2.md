@@ -3,6 +3,8 @@
 Entries 8 onward, continuing [part 1](./refutation-clause-escape-ledger.md). These were closed by an
 invariant that already covered them, or by deleting a component that could not satisfy one.
 
+<!-- markdownlint-disable MD029 -->
+
 8. A batched `cat <path>...` passed a check written in the singular: one tracked path produced one
    line of output, and an untracked path beside it contributed none. Closed by one check per path.
 9. `git log --oneline` printed commit subjects from a path's entire history, which a check on that
@@ -35,3 +37,5 @@ invariant that already covered them, or by deleting a component that could not s
 Entries 12 and 14 are one escape twice: the first fix swapped the component and kept the assumption;
 only the second removed what was being assumed about. That is the argument for keeping the
 invariants short and the allowlist shorter.
+
+<!-- markdownlint-enable MD029 -->
