@@ -247,7 +247,10 @@ forbidden.
 
 `<DISC-SHARED-RHINO-FILE>` is a path in the finite shared-path parity manifest produced by
 `rtk git ls-tree -r --name-only origin/main apps/rhino-cli` in each repository and intersected
-byte-for-byte before Phase 3. A private-only or public-only path is not authorized by this marker.
+byte-for-byte before Phase 3. The only bounded exception is the named private DDD-retirement test
+source, its compile registration, and the resulting parity-manifest checksum delta, as recorded in
+the Phase 0 delivery record. A private-only or public-only path outside that three-part exception
+is not authorized by this marker.
 
 `<DISC-RULE-FILE>`, `<DISC-RULE-CONSUMER>`, and `<DISC-RULE-SOURCE>` are finite, recorded paths,
 not permission to edit a directory. Before the first rules-propagation edit in each repository, run

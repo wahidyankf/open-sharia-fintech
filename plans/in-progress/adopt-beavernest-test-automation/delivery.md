@@ -347,6 +347,8 @@ removed while another DAG node can still read it.
 | `D-P0-PUB-PLAN-AMENDMENT`         | 0        | Phase 0 reconciliation and portable plan-state amendment                        | `plan-p0-delivery-amendment`           |
 | `D-P0-PUB-PARITY-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino parity discovery and plan-state reconciliation                    | `plan-p0-rhino-parity-reconciliation`  |
 | `D-P0-PRI-RHINO-README-PARITY`    | 0        | private Rhino README parity plus generated manifest                             | `rhino-cli-readme-parity`              |
+| `D-P0-PUB-CORPUS-PLAN-AMENDMENT`  | 0        | Phase 0 Rhino corpus cardinality, destination, and parity reconciliation        | `plan-p0-rhino-corpus-reconciliation`  |
+| `D-P0-PRI-RHINO-C4-PARITY`        | 0        | private Rhino C4 corpus parity for the four finite drifted documents            | `rhino-cli-c4-parity`                  |
 | `D-P1-PUB`                        | 1        | public OrganicLever DDD retirement                                              | `test-contract-ol-ddd-retirement`      |
 | `D-P2-PUB`                        | 2        | public OSE DDD retirement                                                       | `test-contract-ose-ddd-retirement`     |
 | `D-P3-PUB` / `D-P3-PRI`           | 3        | Rhino/generic DDD, one PR per repo                                              | `test-contract-ddd-tooling-retirement` |
@@ -373,11 +375,11 @@ removed while another DAG node can still read it.
 | `D-P20-PUB`                       | 20B–22   | public closure, KC, audit, archive                                              | `test-contract-rollout-closure`        |
 
 The 80 concrete delivery-unit PRs remain the declared implementation catalog (55 public and 25
-private). Nine prerequisite PRs precede them: one public/private counterpart pair for portable
+private). Eleven prerequisite PRs precede them: one public/private counterpart pair for portable
 delivery records, one public/private counterpart pair for the conditional file-budget contract, one
-public/private counterpart pair for the rules-quality preflight correction, two distinct public
-Phase 0 plan amendments, and one isolated private Rhino README-parity correction. Therefore this
-plan has 89 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
+public/private counterpart pair for the rules-quality preflight correction, three distinct public
+Phase 0 plan amendments, and two isolated private Rhino parity corrections. Therefore this plan has
+91 PRs in total. Each prerequisite is a separate documentation/rule or discovery seam;
 both members of every rule counterpart pair must merge before the first Phase 1 edit, and none
 alters the 80-unit implementation catalog.
 
@@ -395,6 +397,26 @@ retirement change different behavior, can be reviewed independently, and can eac
 without recovering the other. Its PR must record the measured file accounting, the retained named
 exception, the parity proof, and the independent revert path. This discovery does not complete the
 declared-footprint resolution or authorize any split allocation.
+
+### Phase 0 Rhino corpus discovery
+
+The tracked Rhino corpus has 100 paths and 69 feature files in each repository. Four DDD paths are
+reserved for Phase 3 retirement, leaving 96 non-retired corpus paths across the seven declared
+Rhino corpus leaves. The previous reference to 76 was incorrect and is replaced by the executable
+96-path rule below. The four-column allocation map records a unique target **and fragment** for each
+source. For `CORPUS-METADATA`, the physical target is `specs/apps/rhino/cli/architecture.md` and its
+fragment is `legacy-<source-path-stem>`, where the stem is the lower-case source path without its
+extension and every maximal run of non-alphanumeric characters is replaced by one hyphen. The
+corresponding Phase 7 delivery creates those named architecture sections; one physical document may
+therefore receive several unique, independently traceable legacy sections.
+
+The public/private corpus path sets match, but four private C4 documents have drifted from canonical
+public content: `specs/apps/rhino/product/overview.md`,
+`specs/apps/rhino/components/cli/component-cli.md`, `specs/apps/rhino/containers/container.md`, and
+`specs/apps/rhino/system-context/context.md`. `D-P0-PRI-RHINO-C4-PARITY` aligns exactly those four
+documents before source-hash parity is accepted. It is not combined with Phase 3 DDD retirement or
+the README correction: each has a different review subject and a safe independent revert. This
+discovery also does not complete the declared-footprint resolution or authorize split allocation.
 
 The parent rows `D-P4-*`, `D-O-*-RHINO`, `D-O-PUB-AYO`, and `D-O-*-WEB-UI` are compact coordination
 closeouts, not containers for their former implementation corpus. Their known implementation file
@@ -1110,11 +1132,14 @@ the missing field.
       `gherkin/{test-coverage,spec-coverage,env,env-contract,contracts}/**` to
       `CORPUS-COVERAGE-ENV`; all remaining C4/index paths to `CORPUS-METADATA`; and only
       `gherkin/ddd/**` plus `gherkin/specs/domain-coverage.feature` to
-      `RETIRED-BY-PHASE-3`. Validate the public map with
+      `RETIRED-BY-PHASE-3`. A destination is a repository-relative target plus fragment. For
+      `CORPUS-METADATA`, use the deterministic `architecture.md#legacy-<source-path-stem>` convention
+      defined in the Phase 0 Rhino corpus discovery record. Validate the public map with
       `rtk bash -lc 'r=local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/delivery-splits; m="$r/D-O-PUB-RHINO.allocation.tsv"; u="$r/D-O-PUB-RHINO.source-universe.txt"; rtk git ls-files -- specs/apps/rhino | rtk sort -u > "$u"; test "$(rtk wc -l < "$u" | rtk tr -d " ")" -eq 100; rtk awk -F "$(rtk printf "\t")" "NF != 4 || \$1 == \"\" || \$3 == \"\" || \$4 == \"\" { exit 1 }" "$m"; rtk cut -f1 "$m" | rtk sort -u | rtk diff -u "$u" -; test "$(rtk cut -f1 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk cut -f3 "$m" | rtk sort | rtk uniq -d | rtk wc -l | rtk tr -d " ")" -eq 0; test "$(rtk awk -F "$(rtk printf "\t")" "\$2 == \"RETIRED-BY-PHASE-3\"" "$m" | rtk wc -l | rtk tr -d " ")" -eq 4; test "$(rtk proxy find specs/apps/rhino -type f -name "*.feature" -print | rtk wc -l | rtk tr -d " ")" -eq 69'`;
       expect exit 0. Run the same command with the private local-tmp root, then diff the sorted maps
       after replacing only the repository evidence-root prefix and compare SHA-256 for every source;
-      expect byte-identical public/private membership. A prefix mismatch, 76 assigned to Rhino,
+      expect byte-identical public/private membership and source content after the dedicated C4
+      parity correction. A prefix mismatch, any non-retired count other than 96,
       omitted hidden path, duplicate destination, or retained DDD row blocks Phase 7.
 - [ ] [AI] `P0-SPLIT-AYO-MEMBERSHIP` — Create the Ayo four-column map from
       `rtk git ls-files -- specs/apps/ayokoding`. Use `CORPUS-BACKEND` only for
