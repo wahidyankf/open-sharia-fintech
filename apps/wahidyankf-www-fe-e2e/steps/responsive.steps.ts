@@ -21,8 +21,8 @@ When("a visitor opens the home page at 375 by 812 viewport", async ({ page }) =>
   await page.waitForLoadState("load");
 });
 
-Then("a left sidebar is visible with Home, CV, and Personal Projects links", async ({ page }) => {
-  for (const name of [/^Home$/, /^CV$/, /^Personal Projects$/]) {
+Then("a left sidebar is visible with Home, CV, and Independent Projects links", async ({ page }) => {
+  for (const name of [/^Home$/, /^CV$/, /^Independent Projects$/]) {
     await expect(page.getByRole("link", { name }).first()).toBeVisible();
   }
 });
@@ -39,8 +39,8 @@ Then("no left sidebar is visible", async ({ page }) => {
 
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/responsive.feature:Tablet viewport hides the sidebar and renders a bottom tab bar
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/responsive.feature:Mobile viewport hides the sidebar and renders a bottom tab bar
-Then("a bottom tab bar is visible with Home, CV, and Personal Projects items", async ({ page }) => {
-  for (const name of [/^Home$/, /^CV$/, /^Personal Projects$/]) {
+Then("a bottom tab bar is visible with Home, CV, and Independent Projects items", async ({ page }) => {
+  for (const name of [/^Home$/, /^CV$/, /^Independent Projects$/]) {
     await expect(page.getByRole("link", { name }).first()).toBeVisible();
   }
 });

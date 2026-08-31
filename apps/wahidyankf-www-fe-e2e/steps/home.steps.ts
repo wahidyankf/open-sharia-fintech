@@ -48,8 +48,8 @@ Then('the card contains a "View My CV" link to \\/cv', async ({ page }) => {
 });
 
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the Quick Links card with two internal links
-Then('the card contains a "Browse My Personal Projects" link to \\/personal-projects', async ({ page }) => {
-  const link = page.getByRole("link", { name: /Browse My Personal Projects/i });
+Then('the card contains a "Browse My Independent Projects" link to \\/personal-projects', async ({ page }) => {
+  const link = page.getByRole("link", { name: /Browse My Independent Projects/i });
   await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", "/personal-projects");
 });

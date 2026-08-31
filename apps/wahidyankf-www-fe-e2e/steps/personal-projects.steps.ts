@@ -9,8 +9,8 @@ When("a visitor opens the personal projects page", async ({ page }) => {
 });
 
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page renders the heading
-Then('the H1 shows "Personal Projects"', async ({ page }) => {
-  await expect(page.getByRole("heading", { level: 1, name: /Personal Projects/ })).toBeVisible();
+Then('the H1 shows "Independent Projects"', async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 1, name: /Independent Projects/ })).toBeVisible();
 });
 
 // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page renders a search input
@@ -32,3 +32,35 @@ Then(
     expect(externalLinks).toBeGreaterThan(0);
   },
 );
+
+// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Each project card shows how long the project has been running
+Then("every project card shows a duration next to its start date", async ({ page }) => {
+  const cards = page.locator('[id^="project-"]');
+  const count = await cards.count();
+  expect(count).toBeGreaterThan(0);
+  for (let i = 0; i < count; i += 1) {
+    await expect(cards.nth(i).getByText(/\(\d+\s+(year|month)/i).first()).toBeVisible();
+  }
+});
+
+// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Each project card exposes clickable skill tags
+Then("every project card exposes at least one clickable skill tag", async ({ page }) => {
+  const cards = page.locator('[id^="project-"]');
+  const count = await cards.count();
+  expect(count).toBeGreaterThan(0);
+  for (let i = 0; i < count; i += 1) {
+    const buttonCount = await cards.nth(i).getByRole("button").count();
+    expect(buttonCount).toBeGreaterThan(0);
+  }
+});
+
+When('a visitor opens the personal projects page and clicks the "TypeScript" skill tag', async ({ page }) => {
+  await page.goto("/personal-projects");
+  await page.waitForLoadState("load");
+  await page.getByRole("button", { name: "TypeScript" }).first().click();
+});
+
+// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Clicking a skill tag filters the project list
+Then("the URL becomes \\/personal-projects?search=TypeScript", async ({ page }) => {
+  await expect(page).toHaveURL(/\/personal-projects\?search=TypeScript/);
+});
