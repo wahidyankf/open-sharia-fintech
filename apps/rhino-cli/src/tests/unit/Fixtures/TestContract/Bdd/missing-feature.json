@@ -1,0 +1,36 @@
+{
+  "schema": "ose-test-contract-bdd-fixture/v1",
+  "case": "missing-feature",
+  "project": "widget-app",
+  "owner": "widget-app",
+  "adapter": "unit",
+  "disposition": "required",
+  "driver": "apps/widget-app/src/testing/bdd/unit-driver.ts",
+  "corpus": [
+    {
+      "path": "specs/apps/widget/behavior/widget-app/gherkin/checkout.feature",
+      "scenarios": [
+        {
+          "name": "Checkout succeeds",
+          "examples": 1,
+          "steps": ["Given a cart with one item", "When I check out", "Then I see a receipt"]
+        }
+      ]
+    },
+    {
+      "path": "specs/apps/widget/behavior/widget-app/gherkin/search.feature",
+      "scenarios": [
+        {
+          "name": "Search returns a match",
+          "examples": 1,
+          "steps": ["Given an indexed catalog", "When I search for a widget", "Then I see the widget"]
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    "specs/apps/widget/behavior/widget-app/gherkin/checkout.feature|Checkout succeeds|1|Given a cart with one item",
+    "specs/apps/widget/behavior/widget-app/gherkin/checkout.feature|Checkout succeeds|1|When I check out",
+    "specs/apps/widget/behavior/widget-app/gherkin/checkout.feature|Checkout succeeds|1|Then I see a receipt"
+  ]
+}

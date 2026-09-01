@@ -54,6 +54,7 @@
     <Compile Include="Steps/WaveEFApplicationUnitTests.fs" />
     <Compile Include="Steps/DddRetirementUnitTests.fs" />
     <Compile Include="Steps/TestContractRegistryUnitTests.fs" />
+    <Compile Include="Steps/TestContractBddUnitTests.fs" />
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
     <Compile Include="Steps/SpecsSteps.fs" />
@@ -65,6 +66,10 @@
     <Compile Include="Steps/GateExecutionSteps.fs" />
     <Compile Include="Steps/GateValidationSteps.fs" />
     <Compile Include="Steps/ParityManifestSteps.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Fixtures/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

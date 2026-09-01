@@ -62,3 +62,39 @@ any build, test, or coverage transcript into a tracked evidence file, and scan a
 file for an absolute home-directory path before staging it rather than relying on the leak review
 to find it.
 Route:
+
+## L-4: The frozen Phase 4 shared-plumbing allowlist is narrower than its own splits
+
+Repository relevance: public
+Observation: the Phase 0 command that materializes `D-P4-PUB.shared-plumbing.txt` writes exactly
+three paths (`RhinoCli.Application.fsproj`, `RhinoCli.UnitTests.fsproj`, `apps/rhino-cli/project.json`)
+and then requires that list to equal the duplicate set of the eight `D-P4-PUB-*.paths.txt` leaves.
+Recomputing that duplicate set from the frozen splits yields five paths: the two extra ones are
+`apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs` and
+`apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs`, which `D-P4-PUB-REGISTRY`
+and `D-P4-PUB-LAYOUT-MANIFEST` both claim. The command therefore cannot pass as written, and the
+artifact was never materialized. It did not block `D-P4-PUB-BDD`, whose three shared paths are all
+inside the narrow allowlist, but `D-P4-PUB-LAYOUT-MANIFEST` will touch two paths the allowlist does
+not name.
+Durable prevention: derive a shared-path allowlist from the leaf splits rather than restating it,
+so a hand-written list can never disagree with the splits it is checked against; where a plan does
+restate one, make the check the single source and the prose the derived text.
+Route:
+
+## L-5: The evidence-ledger gate demands a separator the Markdown lint forbids
+
+Repository relevance: public
+Observation: every `DB-04D` requires
+`awk -F '\t' '$1 == "EVIDENCE" && $2 == "<binding>"'` to count at least one row in
+`implementation-notes.md`, so the ledger rows must be tab-separated. The rows have always been
+separated by two spaces instead, which makes that count zero for every binding. Rewriting the
+`D-P4-PUB-BDD` rows with real tabs made the count correct and then failed the commit: the ledger
+lives in a fenced block inside a Markdown file, and `markdownlint` `MD010/no-hard-tabs` reported 35
+errors across those seven lines. The two rules cannot both be satisfied in the current file, so the
+rows were restored to two spaces and the gate's intent — at least one sanitized evidence row exists
+for this binding — was proved with a separator-agnostic check instead.
+Durable prevention: move the evidence ledger out of Markdown into a real `.tsv` file that
+`markdownlint` never sees and the gate can parse by field, or restate the gate to match the
+separator the lint permits. A gate whose passing condition is forbidden by another gate on the same
+file is unsatisfiable, not merely inconvenient.
+Route:
