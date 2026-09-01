@@ -1800,6 +1800,19 @@ gates:
         glob: ".github/workflows/*.{yml,yaml}"
       ci: { scope: all-file-type }
 
+  - id: artifact-retention
+    type: check
+    # Self-discovers `.github/workflows/*` when invoked with no file arguments,
+    # matching actionlint's all-file-type CI shape above.
+    command: scripts/verify-artifact-retention.sh
+    kind: external
+    ci-group: shell-docker-actions
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: ".github/workflows/*.{yml,yaml}"
+      ci: { scope: all-file-type }
+
   - id: shellcheck
     type: check
     command: shellcheck --severity=warning
