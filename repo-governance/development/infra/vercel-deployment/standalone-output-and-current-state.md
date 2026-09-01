@@ -44,7 +44,6 @@ Include any directory that contains build-time generated files the runtime depen
 | `ayokoding-www`    | `apps/ayokoding-www/vercel.json`    | Set (fixed after incident)                  | Runs `generate-indexes` and `generate-search-data` first |
 | `organiclever-www` | `apps/organiclever-www/vercel.json` | Not set (no build-time targets at present)  | At risk if build-time targets are added                  |
 | `ose-www`          | `apps/ose-www/vercel.json`          | Set (`generate-search-data` + `next build`) | Next.js build with search data generation                |
-| `wahidyankf-www`   | `apps/wahidyankf-www/vercel.json`   | Set                                         | Adopted 2026-04-19; deploys via `prod-wahidyankf-www`    |
 
 ## When to Check
 

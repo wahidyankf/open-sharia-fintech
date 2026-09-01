@@ -41,7 +41,6 @@ all use the same MIT text.
 | `apps/ose-app-web/`          | MIT     |       |
 | `apps/ose-www/`              | MIT     |       |
 | `apps/rhino-cli/`            | MIT     |       |
-| `apps/wahidyankf-www/`       | MIT     |       |
 | `specs/`                     | MIT     |       |
 | `libs/fsharp-crane-core/`    | MIT     |       |
 | `libs/fsharp-env-loader/`    | MIT     |       |

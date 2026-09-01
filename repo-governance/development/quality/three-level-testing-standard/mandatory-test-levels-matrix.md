@@ -31,7 +31,7 @@ The table below states which test levels are mandatory per app type:
 backends (real PostgreSQL), CLI apps (real filesystem), and **product app-web clients** (`*-app-web`,
 e.g. `organiclever-app-web`, `ose-app-web`) that integrate with a real backend API (mocked in-process
 via MSW). **Content platforms and marketing front-ends** (`*-www`, e.g. `ayokoding-www`, `ose-www`,
-`organiclever-www`, `wahidyankf-www`) have **no integration tier**: their `test:integration` target is a
+`organiclever-www`) have **no integration tier**: their `test:integration` target is a
 no-op `echo`, and their full Gherkin contract is consumed at the **unit** tier (all external
 dependencies mocked) plus the **e2e** tier. A site that renders content and calls a typed tRPC layer
 does not integrate a separate backend service, so a middle tier would only duplicate unit coverage.

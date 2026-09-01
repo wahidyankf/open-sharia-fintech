@@ -73,8 +73,8 @@ a developer's `.env.local` values are never silently clobbered by a stray tier f
 
 ### Next.js
 
-All six Next.js apps (`ayokoding-www`, `ose-www`, `organiclever-www`, `ose-app-web`,
-`organiclever-app-web`, `wahidyankf-www`) use the same loader pattern, canonically implemented at
+All five Next.js apps (`ayokoding-www`, `ose-www`, `organiclever-www`, `ose-app-web`,
+`organiclever-app-web`) use the same loader pattern, canonically implemented at
 `apps/ayokoding-www/src/env-loader.ts`. It calls `dotenv.config({ override: false })` against the
 resolved `.env.<tier>` path, then runs immediately as a module-level side effect
 (`loadTierEnv()` at the bottom of the file).

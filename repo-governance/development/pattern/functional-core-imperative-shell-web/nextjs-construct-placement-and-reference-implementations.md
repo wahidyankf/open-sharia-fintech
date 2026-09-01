@@ -35,5 +35,3 @@ All three Next.js content apps follow this pattern identically:
 - `apps/ose-www/` — content/landing/search/seo/rss-feed features, each split into `core/` (parsers, schemas, builders)
   and `shell/` (fs repositories, tRPC routers, React components)
 - `apps/ayokoding-www/` — content/i18n/navigation/search features in the same split
-- `apps/wahidyankf-www/` — portfolio features; pure CV/project/search data and helpers in `core/`, React UI in
-  `shell/`

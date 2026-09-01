@@ -96,13 +96,12 @@ graph LR
 ### Environment Branches
 
 - **Purpose**: Deployment triggers only
-- **Branches**: `prod-ose-www`, `prod-ayokoding-www`, `prod-wahidyankf-www`, `stag-organiclever-app-web`, `stag-organiclever-be`
+- **Branches**: `prod-ose-www`, `prod-ayokoding-www`, `stag-organiclever-app-web`, `stag-organiclever-be`
 - **Policy**: NEVER commit directly to these branches outside CI automation
 - **Workflows** (here, "deploy" means a **branch force-push** — Vercel builds web from the pushed branch;
   a be-build-deploy workflow fires for backends):
   - `ayokoding-www-test-local-deploy-prod.yml` (6 AM / 6 PM WIB) → `prod-ayokoding-www`
   - `ose-www-test-local-deploy-prod.yml` (6 AM / 6 PM WIB) → `prod-ose-www`
-  - `wahidyankf-www-test-local-deploy-prod.yml` (scheduled) → `prod-wahidyankf-www`
   - `organiclever-app-test-local-deploy-stag.yml` (3 AM / 3 PM WIB) → `stag-organiclever-app-web`
     and `stag-organiclever-be` (deploys to **staging**, not production)
   - `organiclever-app-test-stag.yml` (+2.5h after the stag deploy) — gated FE E2E

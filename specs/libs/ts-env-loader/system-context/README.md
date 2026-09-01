@@ -4,8 +4,8 @@ C4 Level 1 system context for `ts-env-loader`.
 
 ## Actors and consumers
 
-- **`ayokoding-www`, `organiclever-app-web`, `organiclever-www`, `ose-app-web`, `ose-www`,
-  `wahidyankf-www`** — each app calls `loadTierEnv()` explicitly as the first statement of its own
+- **`ayokoding-www`, `organiclever-app-web`, `organiclever-www`, `ose-app-web`,
+  `ose-www`** — each app calls `loadTierEnv()` explicitly as the first statement of its own
   composition root (e.g. the first import of `next.config.ts`, before `./env.ts`).
 - **`process.env`** (or an app-supplied `EnvRecord`) — the target record `loadTierEnv()` reads
   `APP_ENV` from and populates with tier-file values.

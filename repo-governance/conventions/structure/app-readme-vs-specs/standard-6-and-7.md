@@ -37,7 +37,6 @@ This standard defines adoption expectations per app type and rollout timeline. "
 | `organiclever` | Adopted (pilot)  | Adopted (pilot) |
 | `ose`          | SHOULD — backlog | SHOULD          |
 | `ayokoding`    | Adopted          | NOT APPLICABLE  |
-| `wahidyankf`   | SHOULD — backlog | NOT APPLICABLE  |
 | `rhino`        | Adopted          | NOT APPLICABLE  |
 
 ### Validation hooks

@@ -22,9 +22,8 @@
  * PROCESS SHAPE: the `--server` form stays single-process — it imports the standalone server into
  * this very process. The `dev`/`start` form must spawn, because Next's CLI is a separate binary and
  * Node has no `execve`, so the wrapper stays resident as the child's parent for the process's whole
- * life. Only `organiclever-www` and `wahidyankf-www` take that path in a container image (they are
- * the two apps without `output: "standalone"`), so only those two images carry a second resident
- * Node process. Signals are forwarded and re-raised so an orchestrator still sees the conventional
+ * life. Only `organiclever-www` takes that path in a container image (it is the one app without
+ * `output: "standalone"`), so only that image carries a second resident Node process. Signals are forwarded and re-raised so an orchestrator still sees the conventional
  * 128+N status rather than a synthesised exit code.
  *
  * CONTAINER REQUIREMENT: the resolver is imported by a path relative to THIS file, so any image

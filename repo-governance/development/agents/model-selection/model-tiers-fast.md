@@ -28,7 +28,7 @@ when_to_use: Use when deciding whether a new agent should declare the fast (haik
 
 **Agent examples**:
 
-- **Deployers** (apps-ayokoding-www-deployer, apps-ose-www-deployer, apps-organiclever-app-web-deployer, apps-wahidyankf-www-deployer) -- execute git branch operations and deployment commands following a fixed procedure
+- **Deployers** (apps-ayokoding-www-deployer, apps-ose-www-deployer, apps-organiclever-app-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
 - **Link checkers** (docs-link-checker, apps-ayokoding-www-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
 - **apps-ayokoding-www-link-fixer** -- applies checker-identified broken links via deterministic URL replacement; no independent analysis required
 - **docs-file-manager** -- performs deterministic file operations (move, rename, delete) with `git mv`, kebab-case pattern matching, and mechanical link updates; no judgment calls required

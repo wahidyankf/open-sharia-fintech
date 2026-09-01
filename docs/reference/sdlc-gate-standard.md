@@ -250,7 +250,7 @@ hide alongside the known one. Tracked as a follow-up idea brief:
 The following variations are not flagged as drift:
 
 - **App set and per-app deploy CRONs** — `ose-public` ships content/web apps (`ose-www`,
-  `ayokoding-www`, `organiclever-www`, `wahidyankf-www`, `*-app-web`, `*-be`); `ose-private` ships
+  `ayokoding-www`, `organiclever-www`, `*-app-web`, `*-be`); `ose-private` ships
   `coralpolyp`. Each repo keeps only the deploy CRON workflows for apps it actually ships, and both
   repos' deploy CRONs push to real Vercel/self-hosted environments.
 - **Language gate jobs** — the PR gate's per-language jobs (golang, jvm, dotnet, python, rust, elixir,

@@ -128,10 +128,6 @@ config_file = "agents/apps-ose-www-content-maker.toml"
 description = "Deploys ose-web to production environment branch (prod-ose-www) after validation. Vercel listens to production branch for automatic builds."
 config_file = "agents/apps-ose-www-deployer.toml"
 
-[agents.apps-wahidyankf-www-deployer]
-description = "Deploys wahidyankf-www to production environment branch (prod-wahidyankf-www) after validation. Vercel listens to production branch for automatic builds."
-config_file = "agents/apps-wahidyankf-www-deployer.toml"
-
 [agents.apps-web-ui-storybook-deployer]
 description = "Deploys web-ui Storybook to Vercel via force-push to prod-web-ui"
 config_file = "agents/apps-web-ui-storybook-deployer.toml"

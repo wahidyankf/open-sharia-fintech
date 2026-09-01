@@ -8,7 +8,7 @@ Component-level specifications for the OrganicLever public marketing site
 ## Surface
 
 `organiclever-www` is a greenfield-simple Next.js 16 marketing site built on the
-`features/` shape (the `wahidyankf-www` pattern). It carries the landing content
+`features/` module-root shape its sibling www apps share. It carries the landing content
 and assets extracted from the former `organiclever-app-web` `landing` context.
 
 - **Framework**: Next.js 16 (App Router, React 19, Tailwind CSS 4)

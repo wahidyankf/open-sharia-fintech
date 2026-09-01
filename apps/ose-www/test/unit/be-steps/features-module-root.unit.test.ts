@@ -1,6 +1,6 @@
 /**
- * Structure guard: `src/features/` is the module root for ose-www (matching the
- * wahidyankf-www pattern), each feature splits into a functional `core/` (pure)
+ * Structure guard: `src/features/` is the module root for ose-www (the same
+ * shape organiclever-www uses), each feature splits into a functional `core/` (pure)
  * and an imperative `shell/` (IO + UI + wiring), and the tRPC content/feed
  * pipeline remains reachable through the new layout.
  *

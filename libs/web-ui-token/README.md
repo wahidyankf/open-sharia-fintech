@@ -70,7 +70,7 @@ Warm OKLCH design system for the OrganicLever applications (`organiclever-app-we
 @import "@open-sharia-enterprise/web-ui-token/src/organiclever.css";
 ```
 
-Other apps (`ayokoding-www`, `ose-www`, `wahidyankf-www`) import only `tokens.css`.
+Other apps (`ayokoding-www`, `ose-www`) import only `tokens.css`.
 The warm OKLCH tokens are intentionally opt-in.
 
 ## Customization Layers

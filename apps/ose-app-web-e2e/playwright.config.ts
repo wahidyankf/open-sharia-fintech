@@ -15,9 +15,9 @@ const testDir = defineBddConfig({
   // by tag — rather than the glob-wide `missingSteps: "skip-scenario"` — is safe and keeps
   // default 'fail-on-gen': bddgen still hard-fails generation if any non-`@unit` scenario lacks a
   // matching step def, instead of permanently weakening that safety net for every future scenario
-  // in this app. Contrast with organiclever-www-fe-e2e/organiclever-app-web-e2e/
-  // wahidyankf-www-fe-e2e, where this same tag filter was tried and reverted because those apps
-  // tag real, already-implemented e2e scenarios `@unit @e2e` too.
+  // in this app. Contrast with organiclever-www-fe-e2e/organiclever-app-web-e2e, where this same
+  // tag filter was tried and reverted because those apps tag real, already-implemented e2e
+  // scenarios `@unit @e2e` too.
   tags: "not @unit",
 });
 

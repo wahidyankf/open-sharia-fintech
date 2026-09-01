@@ -176,21 +176,6 @@ single enforced gate definition on PRs and pushes to `main`.
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 
-### wahidyankf-www Test + Deploy Workflow
-
-**File**: `.github/workflows/wahidyankf-www-test-local-deploy-prod.yml`
-
-**Trigger**: Scheduled or manual `workflow_dispatch`
-
-**Steps:**
-
-1. Detect changes in `apps/wahidyankf-www/` vs `prod-wahidyankf-www` branch
-2. If changes exist (or `force_deploy=true`): setup Node (Volta)
-3. Install dependencies and run `nx build wahidyankf-www`
-4. Force-push `main` to `prod-wahidyankf-www`; Vercel auto-builds
-
-**Purpose**: Automated deployments for www.wahidyankf.com with change detection to avoid unnecessary builds
-
 ### OrganicLever App Test + Local-Deploy Staging Workflow
 
 **File**: `.github/workflows/organiclever-app-test-local-deploy-stag.yml`
