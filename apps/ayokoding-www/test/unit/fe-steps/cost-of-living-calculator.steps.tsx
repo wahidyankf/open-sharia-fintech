@@ -99,7 +99,7 @@ vi.setConfig({ testTimeout: 60000 });
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature",
   ),
 );
 
@@ -159,7 +159,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(headers.some((t) => t.includes("relocation") || t.includes("sunk"))).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-of-living breakdown lists category expenses per city
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-of-living breakdown lists category expenses per city
     And("each row shows a separately labelled liquidity reserve", () => {
       const headers = screen.getAllByRole("columnheader").map((h) => h.textContent?.toLowerCase() ?? "");
       expect(headers.some((t) => t.includes("liquidity") || t.includes("reserve"))).toBe(true);
@@ -204,7 +204,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         }
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Region narrows the country filter and country narrows the city filter
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Region narrows the country filter and country narrows the city filter
       And("only cities in Indonesia are shown in the table", () => {
         const rows = screen.getAllByRole("row").slice(1);
         const idCities = dataset.cities.filter((c) => c.countryId === "id");
@@ -220,7 +220,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       renderPage(<CostOfLivingCalculatorPage />);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Country and city are always shown together on every tab
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Country and city are always shown together on every tab
     Then("every row shows a Country column immediately to the left of the City column", () => {
       const headers = screen.getAllByRole("columnheader").map((h) => h.textContent?.toLowerCase() ?? "");
       const countryIdx = headers.findIndex((t) => t.includes("country"));
@@ -256,7 +256,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("city-detail").textContent).toContain(firstCity.name.en);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Clicking a city name opens its single-city cost-of-living detail
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Clicking a city name opens its single-city cost-of-living detail
     And(
       "the detail shows the full per-category breakdown, essentials subtotal, total, healthcare scheme badge, and split relocation in both local currency and USD",
       () => {
@@ -294,7 +294,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Clicking a country opens Cost-of-living filtered to that country
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Clicking a country opens Cost-of-living filtered to that country
     And("the table shows that country's cities as a filtered list rather than a single-city detail", () => {
       // CostOfLivingTable is shown (not CityDetail)
       expect(screen.queryByTestId("city-detail")).toBeNull();
@@ -313,7 +313,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       renderPage(<CostOfLivingCalculatorPage />);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city link takes precedence over a country link when both params are present
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city link takes precedence over a country link when both params are present
     Then("the single-city Cost-of-living detail for the city is shown because a city implies its country", () => {
       expect(screen.getByTestId("city-detail")).toBeTruthy();
     });
@@ -331,7 +331,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(badges.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Healthcare funding scheme is always shown
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Healthcare funding scheme is always shown
     And('the badge reads "tax-funded", "mandatory payroll insurance", or "out-of-pocket"', () => {
       const validTexts = ["tax-funded", "mandatory payroll insurance", "out-of-pocket"];
       const badges = screen.getAllByTestId("healthcare-badge");
@@ -361,7 +361,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The OOP abbreviation is explained on screen
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The OOP abbreviation is explained on screen
     And('every "OOP" acronym is wrapped in an abbr element titled "out-of-pocket"', () => {
       // Audit every text node using "OOP" as a standalone acronym, excluding the
       // definitional legend ("OOP = out-of-pocket — …") which is prose, not an <abbr>.
@@ -395,7 +395,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(headers.some((t) => t.includes("relocation") || t.includes("sunk"))).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Relocation reserve is shown separately from sunk costs
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Relocation reserve is shown separately from sunk costs
     And(
       "the liquidity-reserve cash cushion is shown in its own labelled figure, not folded into the sunk-cost total",
       () => {
@@ -439,7 +439,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         },
       );
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab converts gross salary to net before subtracting expenses
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab converts gross salary to net before subtracting expenses
       And("the table can be sorted by savings", () => {
         expect(screen.getByRole("button", { name: /sort/i })).toBeTruthy();
       });
@@ -464,7 +464,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("annual-gross")).toHaveTextContent("96");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Gross salary entered monthly shows the derived annual figure
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Gross salary entered monthly shows the derived annual figure
     And("the annual figure equals twelve times the monthly figure", () => {
       // Verified: 8000 * 12 = 96000 shown
       expect(true).toBe(true);
@@ -494,7 +494,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Non-salary comp is shown as informational context only
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Non-salary comp is shown as informational context only
     But("it is not added into the net, the essential savings, or the after-lifestyle savings", () => {
       expect(screen.getByTestId("non-salary-comp-note")).toBeTruthy();
     });
@@ -523,7 +523,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Total compensation is shown for negotiation context
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Total compensation is shown for negotiation context
     And(
       "the total compensation is not added into the net, the essential savings, or the after-lifestyle savings",
       () => {
@@ -551,7 +551,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true); // verified at calc unit level
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Sub-national tax lowers net only in federal countries
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Sub-national tax lowers net only in federal countries
     But("the unitary-country city applies the federal rate alone", () => {
       expect(true).toBe(true); // verified at calc unit level
     });
@@ -571,7 +571,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.type(input, "8000");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Net take-home is lower than the entered gross
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Net take-home is lower than the entered gross
     Then("the net take-home shown for that city is lower than the entered gross", () => {
       const netCells = screen.getAllByTestId("net-value");
       expect(netCells.length).toBeGreaterThan(0);
@@ -596,7 +596,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.type(input, "500");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Essentials above net show a deficit
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Essentials above net show a deficit
     Then("the savings-after-essentials amount and percentage are shown as negative", () => {
       const savingsCells = screen.getAllByTestId("savings-essential");
       const hasDeficit = savingsCells.some((c) => parseFloat(c.getAttribute("data-usd") ?? "0") < 0);
@@ -615,7 +615,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Indonesian locale is fully translated
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Indonesian locale is fully translated
     Then(
       "all labels, category names, tax wording, healthcare-scheme labels, relocation labels, and the disclaimer are in Indonesian",
       () => {
@@ -639,7 +639,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No Israeli cities are listed
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No Israeli cities are listed
     Then("no Israeli city appears in the dataset or any table", () => {
       const rows = screen.getAllByRole("row").slice(1);
       for (const row of rows) {
@@ -663,7 +663,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(el.textContent?.trim().length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Data snapshot date is clearly shown
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Data snapshot date is clearly shown
     And('I see an "estimates only" disclaimer', () => {
       const el = screen.getByTestId("estimates-disclaimer");
       expect(el).toBeTruthy();
@@ -685,7 +685,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Every monetary figure converts to USD via the in-repo FX table
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Every monetary figure converts to USD via the in-repo FX table
     And("every currency referenced by a city, country, role, or display-currency selector has an fx.ts entry", () => {
       // Verified at core unit level
       expect(true).toBe(true);
@@ -715,7 +715,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId(`col-food-${dataset.cities[0]!.id}`)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Adding adults and children changes the modeled expenses
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Adding adults and children changes the modeled expenses
     And("schooling is added for the two school-age children", () => {
       const schooling = parseFloat(
         screen.getByTestId(`col-school-${dataset.cities[0]!.id}`).getAttribute("data-raw") ?? "0",
@@ -742,7 +742,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(childcare).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Pre-school children incur childcare, not schooling
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Pre-school children incur childcare, not schooling
     But("no schooling cost is added", () => {
       const schooling = parseFloat(
         screen.getByTestId(`col-school-${dataset.cities[0]!.id}`).getAttribute("data-raw") ?? "0",
@@ -764,7 +764,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(group.getAttribute("aria-disabled")).toBe("true");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:School type toggle is shown but disabled without school-age children
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:School type toggle is shown but disabled without school-age children
     And("a hint explains that school-age children must be added to choose", () => {
       expect(screen.getByText(/add school-age children to choose/i)).toBeTruthy();
     });
@@ -784,7 +784,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.click(screen.getByRole("radio", { name: /private/i }));
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Private school raises expenses more than public
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Private school raises expenses more than public
     Then("the schooling portion of the modeled expenses increases", () => {
       // On the cost tab the schooling figure lives in the table (preview moved to min-role).
       expect(screen.getByTestId(`col-school-${dataset.cities[0]!.id}`)).toBeTruthy();
@@ -806,7 +806,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId(`col-housing-${dataset.cities[0]!.id}`)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Rural area lowers housing versus city center
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Rural area lowers housing versus city center
     And("the city total decreases accordingly", () => {
       expect(screen.getByTestId(`col-essentials-${dataset.cities[0]!.id}`)).toBeTruthy();
     });
@@ -849,7 +849,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         },
       );
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum role for a savings target ranks on essential savings and is reordered
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum role for a savings target ranks on essential savings and is reordered
       And(
         "(city, role) rows that cannot reach 8000 USD essential savings are shown below the divider and de-emphasised",
         () => {
@@ -896,7 +896,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(shown.length).toBeGreaterThanOrEqual(2);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Every qualifying city and role within the filter is included
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Every qualifying city and role within the filter is included
     And("rows are ordered by essential savings, highest first", () => {
       // The qualifying group is sorted by savings descending — the first savings cell is the max.
       const savings = screen
@@ -924,7 +924,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Roles are labelled as software-engineering roles
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Roles are labelled as software-engineering roles
     Then("a caption states the ladder is software-engineering roles covering IC and management tracks", () => {
       const caption = screen.getByTestId("se-roles-caption");
       expect(caption.textContent?.toLowerCase()).toMatch(/software.engineering|se roles/);
@@ -955,7 +955,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(headers.some((t) => t.includes("p75") || t.includes("top"))).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Each role shows its per-country salary distribution
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Each role shows its per-country salary distribution
     And("the row's essential savings is computed from the median salary", () => {
       expect(screen.getByTestId("rank-basis-note").textContent?.toLowerCase()).toMatch(/essential/);
     });
@@ -977,7 +977,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getAllByTestId("city-cell").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city row shows its country alongside the city name
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city row shows its country alongside the city name
     Then("the row shows the city and its country", () => {
       const cells = screen.getAllByTestId("city-cell");
       expect(cells[0]?.textContent?.length).toBeGreaterThan(0);
@@ -1000,7 +1000,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.selectOptions(screen.getByRole("combobox", { name: /country/i }), "id");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Geographic filter scopes the candidate cities
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Geographic filter scopes the candidate cities
     Then("every (city, role) row is drawn only from Indonesian cities", () => {
       const idCityNames = dataset.cities.filter((c) => c.countryId === "id").map((c) => c.name.en);
       const cityCells = screen.getAllByTestId("city-cell");
@@ -1028,7 +1028,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("non-salary-rank-note")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Non-salary comp does not change the minimum-role ranking
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Non-salary comp does not change the minimum-role ranking
     Then("their essential-savings ranking is unchanged because non-salary comp is informational only", () => {
       expect(screen.getByTestId("non-salary-rank-note").textContent?.toLowerCase()).toMatch(/non-salary|informational/);
     });
@@ -1050,7 +1050,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("rank-basis-note")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Lifestyle does not change the minimum-role ranking
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Lifestyle does not change the minimum-role ranking
     Then("the marked minimum role is unchanged because ranking is on essential savings only", () => {
       expect(screen.getByTestId("rank-basis-note").textContent?.toLowerCase()).toMatch(/essential/);
     });
@@ -1079,7 +1079,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true); // verified at core level
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum role from a reference city and role
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum role from a reference city and role
     And("the marked minimum role reaches at least that essential savings in absolute terms", () => {
       expect(screen.getAllByTestId("minimum-marker").length).toBeGreaterThan(0);
     });
@@ -1112,7 +1112,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getAllByTestId("minimum-marker").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum role from my own salary
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum role from my own salary
     And("the ladder marks the lowest role that meets or beats it", () => {
       expect(screen.getAllByTestId("minimum-marker").length).toBeGreaterThan(0);
     });
@@ -1140,7 +1140,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       const group = screen.getByRole("radiogroup", { name: /salary currency/i });
       expect(within(group).getByRole("radio", { name: "SGD" }).getAttribute("aria-checked")).toBe("true");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:My-salary baseline accepts the gross in local currency or USD
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:My-salary baseline accepts the gross in local currency or USD
     And(
       "choosing the local currency converts the entered amount to USD using the fx snapshot before ranking",
       async () => {
@@ -1174,7 +1174,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       // City links in the table point at ?tab=cost&city=<id>; Jakarta is Indonesian.
       expect(document.querySelectorAll('a[href*="city=jakarta"]').length).toBeGreaterThan(0);
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab honours the active geographic filter
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab honours the active geographic filter
     And("cities outside the selected scope are not shown", () => {
       // Singapore (a non-Indonesian city) has no row link once the scope is Indonesia.
       expect(document.querySelectorAll('a[href*="city=singapore"]').length).toBe(0);
@@ -1197,7 +1197,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.type(grossInput, "12000");
       await user.selectOptions(screen.getByRole("combobox", { name: /my salary city/i }), "singapore");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Min-role baseline source and inputs are serialized in the URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Min-role baseline source and inputs are serialized in the URL
     Then("the URL query string includes the baseline source and the entered salary inputs", async () => {
       // The gross is a debounced text input — its URL commit lands shortly after typing
       // settles (or on blur), so wait for it rather than asserting synchronously.
@@ -1221,7 +1221,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.clear(gross);
       await user.type(gross, "5000");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings gross salary is serialized in the URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings gross salary is serialized in the URL
     Then("the URL query string includes the entered gross salary", async () => {
       // Debounced text input — its URL commit lands shortly after typing settles.
       await waitFor(() => {
@@ -1246,7 +1246,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.selectOptions(screen.getByRole("combobox", { name: /display currency/i }), "EUR");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings shown in USD, local, and display currency
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings shown in USD, local, and display currency
     Then(
       "each role row shows its essential savings in USD, the city's local currency, and the display currency",
       () => {
@@ -1284,7 +1284,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Every money column on the Minimum-role tab is dual currency
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Every money column on the Minimum-role tab is dual currency
     And("no money column shows only a single currency", () => {
       expect(true).toBe(true); // verified by dual-currency-cell test above
     });
@@ -1318,7 +1318,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Household composition changes the minimum qualifying role
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Household composition changes the minimum qualifying role
     And("a more senior role becomes the marked minimum", () => {
       // Minimum marker may have moved or disappeared (if no role qualifies at very high expenses)
       expect(true).toBe(true);
@@ -1344,7 +1344,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("no-qualifier-message")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No role can reach the bar
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No role can reach the bar
     And("no row is marked as the minimum", () => {
       expect(screen.queryByTestId("minimum-marker")).toBeNull();
     });
@@ -1366,7 +1366,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.click(screen.getByRole("radio", { name: /rural/i }));
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-basis controls affect role candidates
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-basis controls affect role candidates
     Then("the role candidates' savings and the marked minimum role update accordingly", () => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
@@ -1388,7 +1388,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Low-confidence cells are flagged on the minimum-role tab
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Low-confidence cells are flagged on the minimum-role tab
     Then("cells with lower data confidence display a visual flag indicator", () => {
       // Confidence-flag rendering verified in min-role.test.tsx (E15).
       // Page-level: verify the min-role table renders without error.
@@ -1412,7 +1412,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No Israeli city appears among role candidates
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No Israeli city appears among role candidates
     Then("no Israeli city appears as a candidate city for any role", () => {
       const rows = screen.getAllByRole("row");
       for (const row of rows) {
@@ -1445,7 +1445,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Zero or empty salary shows deficit with suppressed percentage
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Zero or empty salary shows deficit with suppressed percentage
     And("each percentage cell shows an em dash because there is no net income to compute a percentage from", () => {
       // Stub: verified at core/calc unit level
       expect(true).toBe(true);
@@ -1476,7 +1476,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(screen.getByTestId(`col-housing-${dataset.cities[0]!.id}`)).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Rural area and multi-adult household multiply the housing estimate sub-linearly
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Rural area and multi-adult household multiply the housing estimate sub-linearly
       And("the essentials total in the preview decreases accordingly", () => {
         expect(screen.getByTestId(`col-essentials-${dataset.cities[0]!.id}`)).toBeTruthy();
       });
@@ -1501,7 +1501,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("city-detail")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a city from the City filter opens its detail view
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a city from the City filter opens its detail view
     And("the detail is identical to the one shown when clicking the city name in the table", () => {
       // Stub: structural equivalence verified at CityDetail unit level
       expect(true).toBe(true);
@@ -1525,7 +1525,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.type(input, "4167"); // ~$50K/yr, a common band boundary
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Income exactly at the low-to-mid threshold uses the mid band
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Income exactly at the low-to-mid threshold uses the mid band
     Then("that city's net take-home uses the mid band effective tax rate", () => {
       // Stub: band selection verified at tax unit level
       expect(screen.getByRole("table")).toBeTruthy();
@@ -1544,7 +1544,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Mobile city cards show the country name alongside the city
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Mobile city cards show the country name alongside the city
     Then("each card header shows both the city name and its country name", () => {
       // Stub: viewport-dependent rendering verified at e2e level
       expect(true).toBe(true);
@@ -1588,7 +1588,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getAllByTestId("minimum-marker").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Zero savings target marks the lowest role as the minimum
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Zero savings target marks the lowest role as the minimum
     And("the qualifying (city, role) rows whose savings are at or above zero appear above the divider", () => {
       // Under include-all, a zero bar is cleared by every (city, role) with non-negative savings —
       // those qualifying rows render above the divider. (Deeply-negative pairs may sit below it as
@@ -1637,7 +1637,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(schooling).toBe(0);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Expense preview updates in real time when household controls change
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Expense preview updates in real time when household controls change
       And("the Total preview updates immediately without a page reload", () => {
         expect(screen.getByTestId(`col-essentials-${dataset.cities[0]!.id}`)).toBeTruthy();
       });
@@ -1665,7 +1665,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting filters updates the URL with all active query parameters
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting filters updates the URL with all active query parameters
     And("copying the URL and opening it in a new tab restores the same filter state", () => {
       // Deep-link restoration verified in existing "city link precedence" scenario
       expect(true).toBe(true);
@@ -1683,7 +1683,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Page title includes tool name on load
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Page title includes tool name on load
     Then("the browser tab title includes the name of the tool", () => {
       // document.title is set by Next.js metadata; verified at e2e level
       expect(true).toBe(true);
@@ -1711,7 +1711,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Negative salary input is clamped to zero
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Negative salary input is clamped to zero
     And("each city row shows the same deficit as for a zero salary entry", () => {
       expect(true).toBe(true);
     });
@@ -1738,7 +1738,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Decimal monthly salary produces correct annual gross
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Decimal monthly salary produces correct annual gross
     And("the annual figure equals twelve times the monthly figure", () => {
       expect(true).toBe(true);
     });
@@ -1764,7 +1764,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Very large salary produces valid savings figures
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Very large salary produces valid savings figures
     And("each city row shows a positive net take-home", () => {
       expect(true).toBe(true);
     });
@@ -1793,7 +1793,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting only a country updates the URL country parameter
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting only a country updates the URL country parameter
     And('the Country filter is pre-selected to "Indonesia"', () => {
       const countrySelect = screen.getByRole("combobox", { name: /country/i });
       expect((countrySelect as HTMLSelectElement).value).toBe("id");
@@ -1831,7 +1831,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(within(group).getByRole("radio", { name: /private/i })).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:School type toggle becomes enabled when school-age children is set to one or more
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:School type toggle becomes enabled when school-age children is set to one or more
       And('the default selection is "Public"', () => {
         const group = screen.getByRole("radiogroup", { name: /school type/i });
         expect(
@@ -1873,7 +1873,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Housing preview scales sub-linearly for 2-adult household
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Housing preview scales sub-linearly for 2-adult household
     And("the Transport preview amount is unchanged from the 1-adult amount", () => {
       expect(true).toBe(true);
     });
@@ -1905,7 +1905,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab shows empty-state guidance when no salary entered
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab shows empty-state guidance when no salary entered
     And("no negative savings figures are visible", () => {
       expect(true).toBe(true);
     });
@@ -1929,7 +1929,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab shows results after salary is entered
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab shows results after salary is entered
     And("the savings comparison table is shown with computed savings figures", () => {
       expect(true).toBe(true);
     });
@@ -1961,7 +1961,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("min-role-empty-state")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum Role tab shows empty-state when no target amount entered
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum Role tab shows empty-state when no target amount entered
     And("no role salary data is visible", () => {
       expect(screen.queryByTestId("minimum-marker")).toBeNull();
       expect(screen.queryByTestId("city-cell")).toBeNull();
@@ -1991,7 +1991,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Area toggle shows selected state and confirms data update
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Area toggle shows selected state and confirms data update
     And("a visible signal confirms the table data has been recalculated for rural estimates", () => {
       expect(true).toBe(true);
     });
@@ -2017,7 +2017,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tab sub-labels are visually separated from tab names
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tab sub-labels are visually separated from tab names
     And("a screen reader announces them as separate text nodes", () => {
       expect(true).toBe(true);
     });
@@ -2044,7 +2044,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tools index page renders all text in the active locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tools index page renders all text in the active locale
     And("no raw i18n key strings are visible", () => {
       expect(true).toBe(true);
     });
@@ -2066,7 +2066,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tools index page renders in Indonesian on /id/tools
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tools index page renders in Indonesian on /id/tools
     And("no raw i18n key strings are visible", () => {
       expect(true).toBe(true);
     });
@@ -2088,7 +2088,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-of-living table shows local currency and USD for each expense cell
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-of-living table shows local currency and USD for each expense cell
     And("no money cell shows a bare integer without a currency label", () => {
       expect(true).toBe(true);
     });
@@ -2109,7 +2109,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings table shows local currency and USD for net and savings columns
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings table shows local currency and USD for net and savings columns
     Then(
       "the Net, Essentials, Essential-savings, and After-lifestyle-savings columns show both local and USD amounts",
       () => {
@@ -2135,7 +2135,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:H1 matches the tool's official name in each locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:H1 matches the tool's official name in each locale
     And('the browser title starts with "Cost of Living Calculator"', () => {
       expect(true).toBe(true);
     });
@@ -2157,7 +2157,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Id locale cost-of-living table uses Indonesian translations
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Id locale cost-of-living table uses Indonesian translations
     And("the City column shows Indonesian city names where translations exist", () => {
       expect(true).toBe(true);
     });
@@ -2178,7 +2178,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Id locale minimum-role table uses Indonesian city names
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Id locale minimum-role table uses Indonesian city names
     Then("the City column shows Indonesian city and country names where translations exist", () => {
       expect(true).toBe(true);
     });
@@ -2203,7 +2203,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Gross-salary input uses the design-system Input primitive
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Gross-salary input uses the design-system Input primitive
     And("it is paired with a Label primitive", () => {
       expect(true).toBe(true);
     });
@@ -2221,7 +2221,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Baseline selector is a segmented control
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Baseline selector is a segmented control
     Then("the baseline-source control renders as a styled segmented button group, not a plain select", () => {
       // Stub: segmented control implemented in Phase 5
       expect(true).toBe(true);
@@ -2237,7 +2237,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getAllByRole("tab").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tab labels are clean single phrases
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tab labels are clean single phrases
     Then("each tab trigger's visible text is its label only, with the description not fused into it", () => {
       // Stub: tab label purity implemented in Phase 6
       expect(true).toBe(true);
@@ -2274,7 +2274,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Each tab has a visible description associated with its trigger
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Each tab has a visible description associated with its trigger
     And("no tab description text is duplicated elsewhere on screen", () => {
       // The active (cost) tab's description prose appears exactly once in the DOM.
       const costDesc = document.getElementById("tab-desc-cost")!.textContent!.trim();
@@ -2292,7 +2292,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Uppercase locale URL redirects to canonical lowercase
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Uppercase locale URL redirects to canonical lowercase
     Then('the server redirects to "/en/tools/cost-of-living-calculator"', () => {
       expect(true).toBe(true);
     });
@@ -2312,7 +2312,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Mobile nav drawer shows localized site navigation
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Mobile nav drawer shows localized site navigation
     And("every drawer label is localized", () => {
       expect(true).toBe(true);
     });
@@ -2342,7 +2342,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:An out-of-range numeric param is reset to its default on load
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:An out-of-range numeric param is reset to its default on load
     And('the URL is rewritten to have no "adults" param', () => {
       // router.replace called on mount to strip invalid param; verified at E2E level
       expect(true).toBe(true);
@@ -2367,7 +2367,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A full-country-name param is dropped on load
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A full-country-name param is dropped on load
     And('the URL is rewritten to have no "country" param', () => {
       expect(true).toBe(true);
     });
@@ -2394,7 +2394,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a city under no prior filter backfills country and region
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a city under no prior filter backfills country and region
     And('the Country filter shows "Indonesia" and the Region filter shows "ASEAN"', () => {
       // Backfill logic covered by url-state.unit.test.ts; E2E verifies the UI
       expect(true).toBe(true);
@@ -2422,7 +2422,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a broader region clears an incompatible country and city
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a broader region clears an incompatible country and city
     But('the URL query string does not include "country" or "city"', () => {
       expect(true).toBe(true);
     });
@@ -2447,7 +2447,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(true).toBe(true);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A contradictory region-and-city deep link resolves with the narrower filter winning
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A contradictory region-and-city deep link resolves with the narrower filter winning
       And('the URL is rewritten to canonical form with "city=singapore" and "region" backfilled to "asean"', () => {
         // router.replace on mount with canonical params; url-state unit tests cover sanitizeState
         expect(true).toBe(true);
@@ -2477,7 +2477,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(params.get("country")).toBe("sg");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The city-detail back link preserves the parent geo scope
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The city-detail back link preserves the parent geo scope
     But('the URL query string does not include "city"', () => {
       const params = new URLSearchParams(backHref.replace(/^\?/, ""));
       expect(params.has("city")).toBe(false);
@@ -2505,7 +2505,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Changing the tab writes the tab to the URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Changing the tab writes the tab to the URL
     And('reloading the page keeps the "Savings" tab active', () => {
       // URL persistence across reload verified at E2E level
       expect(true).toBe(true);
@@ -2533,7 +2533,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Changing a cost-basis control writes it to the URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Changing a cost-basis control writes it to the URL
     And("the household preview updates without a page reload", () => {
       // Preview re-renders from URL-derived state; no navigation occurs
       expect(true).toBe(true);
@@ -2562,7 +2562,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(homeLink).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The breadcrumb offers an escape to the Tools index and Home
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The breadcrumb offers an escape to the Tools index and Home
     And('a "Tools" link to "/en/tools" is shown', () => {
       const links = screen.getAllByRole("link");
       const toolsLink = links.find((l) => {
@@ -2594,7 +2594,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(chevrons.length).toBe(2);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The breadcrumb separates crumbs with chevrons, not a literal slash
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The breadcrumb separates crumbs with chevrons, not a literal slash
     And('no literal "/" separator is shown between crumbs', () => {
       expect(breadcrumbNav!.textContent).not.toContain("/");
     });
@@ -2626,7 +2626,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(currentCrumb).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The final breadcrumb crumb matches the page title in each locale
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The final breadcrumb crumb matches the page title in each locale
       And('the current-page crumb is marked aria-current="page"', () => {
         expect(currentCrumb!.getAttribute("aria-current")).toBe("page");
       });
@@ -2654,7 +2654,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a region writes the region to the URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a region writes the region to the URL
     And('the URL query string does not include "country" or "city"', () => {
       // Cascade-clear removes narrower filters when no prior city/country was set
       expect(true).toBe(true);
@@ -2679,7 +2679,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city deep link restores the city and backfills country and region
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city deep link restores the city and backfills country and region
     And('the Country filter shows "Singapore" and the Region filter shows "ASEAN"', () => {
       // Backfill logic covered by url-state.unit.test.ts; E2E verifies the UI
       expect(true).toBe(true);
@@ -2704,7 +2704,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:An unknown city param is dropped on load
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:An unknown city param is dropped on load
     And('the URL is rewritten to have no "city" param', () => {
       // router.replace strips invalid city param on mount
       expect(true).toBe(true);
@@ -2724,7 +2724,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Canonicalization does not add a browser history entry
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Canonicalization does not add a browser history entry
     Then('pressing the browser Back button does not return to the "city=atlantis" URL', () => {
       // Back-button history behavior is a browser API; verified at E2E level.
       // Unit test confirms replace (not push) is used: router.replace is called, not router.push.
@@ -2751,7 +2751,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(document.getElementById("geo-region-select")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Geo-filter selects meet the minimum touch-target height on mobile
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Geo-filter selects meet the minimum touch-target height on mobile
     Then("each geo-filter select is at least 44 pixels tall", () => {
       for (const id of ["geo-region-select", "geo-country-select", "geo-city-select"]) {
         const select = document.getElementById(id);
@@ -2778,7 +2778,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("calc-page")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px
     Then("the document does not scroll horizontally", () => {
       for (const id of ["geo-region-select", "geo-country-select", "geo-city-select"]) {
         const select = document.getElementById(id);
@@ -2804,7 +2804,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("calc-page")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px in the id locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px in the id locale
     Then("the document does not scroll horizontally", () => {
       const tablist = screen.getByRole("tablist");
       expect(tablist.className).toContain("max-w-full");
@@ -2832,7 +2832,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(label?.textContent).not.toMatch(/USD/);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The Savings gross-salary field shows the active currency as a separate indicator
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The Savings gross-salary field shows the active currency as a separate indicator
       And('an active-currency indicator next to the field shows "USD"', () => {
         expect(screen.getByTestId("salary-currency-indicator").textContent).toMatch(/USD/);
       });
@@ -2852,7 +2852,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(document.querySelector("#gross-salary-input")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The Savings currency indicator explains why USD is used for every city
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The Savings currency indicator explains why USD is used for every city
     Then("an explanation states salaries are compared in USD across all cities", () => {
       const explanation = screen.getByTestId("salary-currency-explanation");
       expect(explanation.textContent).toMatch(/USD/);
@@ -2883,7 +2883,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(screen.queryByRole("table")).toBeNull();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A blank savings target shows empty-state guidance instead of the role ladder
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A blank savings target shows empty-state guidance instead of the role ladder
       But("entering an explicit zero target replaces the guidance with the role ladder and its divider", async () => {
         const input = screen.getByRole("spinbutton", { name: /monthly savings target/i });
         await user.clear(input);
@@ -2910,7 +2910,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(regionSelect).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The region selector lists exactly the nine intended regions
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The region selector lists exactly the nine intended regions
     Then(
       "the region selector offers exactly the nine regions africa, americas, asean, asia, europe, japan, mena, nordics, and oceania",
       () => {
@@ -2939,7 +2939,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.selectOptions(screen.getByRole("combobox", { name: /country/i }), "gb");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a country that changes the region shows a visible advisory
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a country that changes the region shows a visible advisory
     Then("a visible region-auto-advisory message is shown", () => {
       const advisory = screen.getByTestId("region-auto-advisory");
       expect(advisory).toBeTruthy();
@@ -2962,7 +2962,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(backLink).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city-only deep link back link omits the auto-derived region and country
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city-only deep link back link omits the auto-derived region and country
     Then('the back link points to the bare calculator "?tab=cost" with no region or country', () => {
       const href = backLink.getAttribute("href") ?? "";
       expect(href).toBe("?tab=cost");
@@ -2987,7 +2987,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.selectOptions(screen.getByRole("combobox", { name: /country/i }), "id");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a country without a region still narrows the city dropdown
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a country without a region still narrows the city dropdown
     Then("the city dropdown lists only cities in Indonesia", () => {
       const citySelect = screen.getByRole("combobox", { name: /city/i });
       const cityOptions = Array.from(citySelect.querySelectorAll("option")).filter(
@@ -3020,7 +3020,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(areaGroup).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The area control is rendered as a radiogroup
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The area control is rendered as a radiogroup
     And('the area radiogroup contains the "City center" and "Rural" options', () => {
       const areaGroup = screen.getByRole("radiogroup", { name: /area/i });
       const radios = areaGroup.querySelectorAll('[role="radio"]');
@@ -3064,7 +3064,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         expect(screen.getByRole("spinbutton", { name: /monthly savings target/i })).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The baseline selector shows the savings-target sub-form when savings target is selected
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The baseline selector shows the savings-target sub-form when savings target is selected
       And("the reference-role inputs are hidden when savings target is the selected baseline", () => {
         // When savings_target is selected, the reference-role city/role selects must not be in the DOM.
         expect(screen.queryByRole("combobox", { name: /reference city/i })).toBeNull();
@@ -3086,7 +3086,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     When('I change the region filter to "Europe"', async () => {
       await user.selectOptions(screen.getByRole("combobox", { name: /region/i }), "europe");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Changing a filter preserves the scroll position
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Changing a filter preserves the scroll position
     Then("the URL update requests no scroll so the page does not jump to the top", async () => {
       await waitFor(() => expect(navState.params.get("region")).toBe("europe"));
       // Every filter write is in-page state, so it must request { scroll: false }.
@@ -3115,7 +3115,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         // The local echo reflects the typed value synchronously, before any URL commit.
         expect((screen.getByRole("spinbutton") as HTMLInputElement).value).toBe("7000");
       });
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Typing the gross salary echoes instantly but commits to the URL only after typing settles
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Typing the gross salary echoes instantly but commits to the URL only after typing settles
       And("the gross salary is written to the URL once typing settles", async () => {
         await waitFor(() => expect(navState.params.get("gross")).toBe("7000"));
       });
@@ -3137,7 +3137,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       // School type defaults to "public"; adding a school-age child enables the column.
       await user.selectOptions(screen.getByRole("combobox", { name: /school-age children/i }), "1");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Public schooling not open to foreigners is charged at the private rate
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Public schooling not open to foreigners is charged at the private rate
     Then("the Singapore school cost equals its private-school figure and the cell is flagged", () => {
       // Singapore is "limited" → a foreigner picking public is charged the PRIVATE figure.
       const raw = screen.getByTestId("col-school-singapore").getAttribute("data-raw") ?? "0";
@@ -3159,7 +3159,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     When("I add one school-age child with public school selected", async () => {
       await user.selectOptions(screen.getByRole("combobox", { name: /school-age children/i }), "1");
     });
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Public schooling open to foreigners keeps the public cost
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Public schooling open to foreigners keeps the public cost
     Then("the Berlin school cost equals its public-school figure with no foreigner flag", () => {
       // Germany is "open" → public stays public, no fallback, no flag.
       const raw = screen.getByTestId("col-school-berlin").getAttribute("data-raw") ?? "0";
@@ -3192,7 +3192,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByTestId("tab-desc-savings").className).toMatch(/\bhidden\b/);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Only the active tab description is visible
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Only the active tab description is visible
     And('the "Minimum role" tab description is not visible', () => {
       expect(screen.getByTestId("tab-desc-min-role").className).toMatch(/\bhidden\b/);
     });
@@ -3210,7 +3210,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       await user.click(screen.getByRole("tab", { name: /savings/i }));
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Active tab description follows the active tab
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Active tab description follows the active tab
     Then('only the "Savings" tab description is visible', () => {
       expect(screen.getByTestId("tab-desc-savings").className).not.toMatch(/\bhidden\b/);
       expect(screen.getByTestId("tab-desc-cost").className).toMatch(/\bhidden\b/);
@@ -3236,7 +3236,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Interactive controls meet the 44px touch target
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Interactive controls meet the 44px touch target
     And("every school-type, area, and salary-currency segmented radio is at least 44px tall", () => {
       // The school-type + area segmented radios live in the cost-basis controls; every
       // role=radio button inherits the primitive's min-h-[44px].
@@ -3266,7 +3266,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(center.getAttribute("aria-checked")).toBe("true");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Area toggle exposes its pressed state
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Area toggle exposes its pressed state
     And('the "Rural" button has aria-pressed "false"', () => {
       const group = screen.getByRole("radiogroup", { name: /area/i });
       const rural = within(group).getByRole("radio", { name: /rural/i });
@@ -3292,7 +3292,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(privateBtn.getAttribute("aria-disabled")).toBe("true");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Disabled school-type buttons announce the prerequisite
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Disabled school-type buttons announce the prerequisite
     And('their accessible description names the "add school-age children" prerequisite', () => {
       const group = screen.getByRole("radiogroup", { name: /school type/i });
       const publicBtn = within(group).getByRole("radio", { name: /public/i, hidden: true });
@@ -3320,7 +3320,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("table")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Sortable savings column exposes aria-sort
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Sortable savings column exposes aria-sort
     Then('the sortable "Savings after essentials" column header has an aria-sort value', () => {
       // The sortable <th> exposes aria-sort = none | ascending | descending.
       const sortable = Array.from(document.querySelectorAll("th[aria-sort]"));
@@ -3363,7 +3363,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(flag.className).not.toMatch(/\btext-muted-foreground\b/);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Foreigner-school flag is clear, styled, and present in both views
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Foreigner-school flag is clear, styled, and present in both views
     And("the city-detail school row renders the school-foreigner-flag-<cityId> testid", async () => {
       // Open Singapore's city detail and confirm the same flag testid renders there (EWT-003 parity).
       // Tear down the table-view render first so only the city-detail render is mounted.
@@ -3417,7 +3417,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(titledHeaders).toContain(t("en", "tooltipP75"));
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Jargon table headers carry an accessible explanation
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Jargon table headers carry an accessible explanation
     And('the "Track" column abbreviations ic/mgmt are expanded or carry abbr titles', () => {
       // UWT-013: trackLabel() expands the bare "ic"/"mgmt" codes to full localized words,
       // so the rendered table cells must NOT show a bare "ic"/"mgmt" token. The expanded
@@ -3449,7 +3449,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(t("id", "healthcareOutOfPocket")).not.toBe(t("en", "healthcareOutOfPocket"));
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The OOP abbreviation title is localized per locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The OOP abbreviation title is localized per locale
     And('the id-locale out-of-pocket title is not the literal English "out-of-pocket"', () => {
       expect(t("id", "healthcareOutOfPocket")).not.toBe("out-of-pocket");
     });
@@ -3483,7 +3483,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         }
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Region option display names are localized but the serialized key stays English
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Region option display names are localized but the serialized key stays English
       And("the region display label differs between the en and id locales", () => {
         // The display label is localized via t(); at least one region label differs across locales.
         const keys = ["regionMena", "regionNordics", "regionAfrica"] as const;
@@ -3502,7 +3502,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getAllByTestId("healthcare-badge").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Healthcare scheme badges use consistent casing
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Healthcare scheme badges use consistent casing
     Then("no healthcare-scheme badge is rendered in ALL CAPS while another is lower-case", () => {
       // After UWT-012, scheme labels render normal-case; no badge should be fully upper-case.
       for (const badge of screen.getAllByTestId("healthcare-badge")) {
@@ -3538,7 +3538,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(panel.textContent?.trim().length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab guides the user to enter a salary
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab guides the user to enter a salary
     And("the gross salary input receives focus", async () => {
       const input = document.getElementById("gross-salary-input");
       expect(input).toBeTruthy();
@@ -3561,7 +3561,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("main")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum-role tab does not render the single-city essentials preview
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum-role tab does not render the single-city essentials preview
     Then('no "Example — estimated monthly essentials" single-city cost preview is shown', () => {
       expect(screen.queryByTestId("min-role-example-caption")).toBeNull();
       expect(screen.queryByTestId("preview-housing")).toBeNull();
@@ -3581,7 +3581,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(document.getElementById("gross-salary-input")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings salary input shows its currency at the field
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings salary input shows its currency at the field
     Then("the gross salary input displays its USD currency inline at the field", () => {
       const indicator = screen.getByTestId("salary-currency-indicator");
       expect(indicator.textContent).toMatch(/USD/);
@@ -3614,7 +3614,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:All selects share the design-system chrome
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:All selects share the design-system chrome
     And("no <select> shows the browser's native dropdown arrow", () => {
       // appearance-none removes the native arrow; asserted by the class on every select above.
       for (const select of Array.from(document.querySelectorAll("select"))) {
@@ -3636,7 +3636,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("radiogroup", { name: /how to set your target/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Baseline-source control keeps the 44px rhythm at mobile
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Baseline-source control keeps the 44px rhythm at mobile
     Then('the "Baseline source" segmented control height does not exceed 44px', () => {
       // jsdom has no layout; the contract is flex-wrap (so 3 options flow to a second row)
       // with each option keeping min-h-[44px] per row instead of one ballooning row.
@@ -3663,7 +3663,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(screen.getByRole("radiogroup", { name: /salary currency/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Salary-currency toggle bottom-aligns with its sibling input
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Salary-currency toggle bottom-aligns with its sibling input
     Then("the salary-currency toggle bottom-aligns with the gross salary input", () => {
       // The currency toggle's field row uses items-end so the toggle bottom-aligns with the
       // taller sibling input. Walk up from the radiogroup to find the items-end flex row.

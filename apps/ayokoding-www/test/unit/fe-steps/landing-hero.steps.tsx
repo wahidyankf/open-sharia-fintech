@@ -28,10 +28,7 @@ const heroManifests: PathManifest[] = [
 ];
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/landing-hero.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/landing-hero.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -50,7 +47,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("link", { name: /Start the Frontend Track path/ })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/landing-hero.feature:The landing hero surfaces the four goal paths directly
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/landing-hero.feature:The landing hero surfaces the four goal paths directly
     And('a "Compare all paths" link to /en/learn/paths is visible below the cards', () => {
       expect(screen.getByRole("link", { name: "Compare all paths →" }).getAttribute("href")).toBe("/en/learn/paths");
     });

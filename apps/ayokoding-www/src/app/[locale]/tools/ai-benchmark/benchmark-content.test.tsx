@@ -111,7 +111,7 @@ describe("BenchmarkContent — Rule-15 UWT-007 regression guard (F2, Phase 12 PR
 
 describe("BenchmarkContent — document order (AC-56)", () => {
   it("renders the chart before the roster, and the roster before the legend and sources disclosures", async () => {
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
     const { BenchmarkContent } = await import("./benchmark-content");
     render(<BenchmarkContent />);
 

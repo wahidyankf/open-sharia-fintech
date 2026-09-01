@@ -16,13 +16,13 @@ Then('the response tree should contain top-level nodes for "programming", "ai", 
   expect(tree.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Navigation tree structure matches the filesystem hierarchy
+// @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Navigation tree structure matches the filesystem hierarchy
 Then("each node should reflect its position in the directory hierarchy", async () => {
   const tree = state.treeResult as Record<string, unknown>[];
   expect(tree[0]).toHaveProperty("slug");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Navigation nodes are ordered by weight ascending
+// @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Navigation nodes are ordered by weight ascending
 Then('the children of "programming" should appear in order: weight 10, weight 20, weight 30', async () => {
   const tree = state.treeResult as { weight: number }[];
   for (let i = 1; i < tree.length; i++) {
@@ -37,7 +37,7 @@ Then('the "programming" node should have a non-empty "children" array', async ()
   expect(Array.isArray(sectionNode?.children)).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Section nodes include a children array
+// @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Section nodes include a children array
 Then('each child should include a "slug" and "title"', async () => {
   const tree = state.treeResult as { isSection: boolean; children: { slug: string }[] }[];
   const sectionNode = tree.find((n) => n.isSection && n.children.length > 0);

@@ -18,7 +18,7 @@ When("the breadcrumb renders its ancestor segments", async ({ page }) => {
   await expect(breadcrumb).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
 Then("each ancestor crumb links to its bare content URL", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const links = breadcrumb.getByRole("link");
@@ -84,7 +84,7 @@ Then("every content link resolves directly to its bare URL with status 200", asy
   );
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
 Then("no internal content link resolves through a 308 redirect", async ({ page }) => {
   const navLinks = page.locator("nav a[href]");
   const count = await navLinks.count();
@@ -124,7 +124,7 @@ When("the sitemap entries are produced", async ({ page }) => {
   expect(body).toBeTruthy();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
 Then("every moved-content entry uses a bare URL", async ({ page }) => {
   const body = await page.content();
   // A relocated legacy domain's URL is present, and no entry anywhere carries
@@ -175,7 +175,7 @@ When("the feed items are produced", async () => {
   expect(feedBody.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
 Then("every content item link uses a bare URL", async () => {
   // At least one real content link is present, and no item link anywhere
   // carries a /c/ segment (the retired content namespace, DD-48).
@@ -202,7 +202,7 @@ Then("the canonical alternate is {string}", async ({ page }, expectedCanonical: 
   expect(canonical).toContain(expectedCanonical);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
 Then("the language alternates include en and x-default", async ({ page }) => {
   const enAlternate = await page.locator("link[hreflang='en']").getAttribute("href");
   const xDefaultAlternate = await page.locator("link[hreflang='x-default']").getAttribute("href");

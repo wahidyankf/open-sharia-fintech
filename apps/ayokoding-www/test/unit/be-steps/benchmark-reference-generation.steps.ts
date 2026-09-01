@@ -6,7 +6,7 @@ import { substituteMarkers, type GeneratedTables } from "../../../src/scripts/ge
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature",
+    "../../specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature",
   ),
 );
 
@@ -64,7 +64,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature:Generate replaces only the inner text between a marker pair
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature:Generate replaces only the inner text between a marker pair
     Then("the stale inner text should be replaced by the generated block", () => {
       expect(caughtError).toBeUndefined();
       expect(output).toContain("opencode-go/x");
@@ -86,7 +86,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(output).toContain("Trailing prose that must also survive.");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature:Bytes outside the markers are preserved byte-for-byte
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature:Bytes outside the markers are preserved byte-for-byte
     And("the BEGIN and END marker tags should remain in place", () => {
       expect(output).toContain("<!-- BEGIN GENERATED: roster -->");
       expect(output).toContain("<!-- END GENERATED: roster -->");
@@ -107,7 +107,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature:A missing END marker throws under the marker-first guard
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature:A missing END marker throws under the marker-first guard
     Then("it should throw an error naming the unclosed roster marker", () => {
       expect(caughtError).toBeInstanceOf(Error);
       expect(String((caughtError as Error)?.message ?? caughtError)).toMatch(/roster/);
@@ -120,7 +120,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       output = substituteMarkers(firstRunOutput, tables);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature:Generate mode is idempotent
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature:Generate mode is idempotent
     Then("the two outputs should be byte-identical with no duplicated content", () => {
       expect(output).toBe(firstRunOutput);
       // Exactly one rendered row — a second pass must not duplicate the generated block.
@@ -133,7 +133,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       validateDrifted = validateWouldExitNonZero(doc, tables);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/benchmark-reference-generation/benchmark-reference-generation.feature:Validate mode exits non-zero on drift
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/benchmark-reference-generation/benchmark-reference-generation.feature:Validate mode exits non-zero on drift
     Then("it should detect drift and signal a non-zero exit", () => {
       // The Background doc carries stale inner content, so regeneration differs from the
       // original — the exact condition `main()` uses to call `process.exit(1)`.

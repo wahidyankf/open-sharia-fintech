@@ -7,7 +7,7 @@ When(/a visitor is on a page under the \/en locale/, async ({ page }) => {
   await page.goto("/en");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/i18n.feature:Language switcher displays the current locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Language switcher displays the current locale
 Then('the language switcher should display "English" as the current language', async ({ page }) => {
   const langButton = page.getByRole("button", { name: /switch language|english/i });
   await expect(langButton).toBeVisible();
@@ -27,7 +27,7 @@ When("the visitor selects Indonesian from the language switcher", async ({ page 
   await idOption.click();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/i18n.feature:Switching language redirects to the locale-specific URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Switching language redirects to the locale-specific URL
 Then(/the visitor should be redirected to the Indonesian version of that page at \/id\/some-page/, async ({ page }) => {
   await expect(page).toHaveURL(/\/id/);
 });
@@ -42,7 +42,7 @@ Then("navigation labels and UI text should be displayed in Indonesian", async ({
   await expect(heading).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/i18n.feature:UI labels change to the selected language
+// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:UI labels change to the selected language
 Then("the page title and headings should reflect the Indonesian locale content", async ({ page }) => {
   const heading = page.getByRole("heading", { level: 1 });
   await expect(heading).toBeVisible();
@@ -58,7 +58,7 @@ Then(/they should be redirected to \/en/, async ({ page }) => {
   await expect(page).toHaveURL(/\/en/);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/i18n.feature:Root URL redirects to the default locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Root URL redirects to the default locale
 Then("the English version of the home page should be displayed", async ({ page }) => {
   await expect(page).toHaveTitle(/.+/);
   const heading = page.getByRole("heading", { level: 1 });

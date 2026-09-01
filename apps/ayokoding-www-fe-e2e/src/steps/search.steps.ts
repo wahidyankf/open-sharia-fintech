@@ -13,7 +13,7 @@ Then("the search dialog should open", async ({ page }) => {
   await expect(searchDialog).toBeVisible({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
 Then("the search input should have focus", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const searchInput = searchDialog.getByRole("combobox");
@@ -45,7 +45,7 @@ Then("search results should appear after a debounce delay", async ({ page }) => 
   });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Typing in the search input shows debounced results
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Typing in the search input shows debounced results
 Then("results should update when the visitor changes the query", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const searchInput = searchDialog.getByRole("combobox");
@@ -76,7 +76,7 @@ Then("the search dialog should close", async ({ page }) => {
   await expect(searchDialog).toBeHidden({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Clicking a search result navigates to that page
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Clicking a search result navigates to that page
 Then("the visitor should be navigated to the page for that result", async ({ page }) => {
   // After clicking a result the URL should have changed from /en
   await page.waitForLoadState("domcontentloaded");
@@ -88,7 +88,7 @@ When("the visitor presses Escape", async ({ page }) => {
   await page.keyboard.press("Escape");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Escape key closes the search dialog
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Escape key closes the search dialog
 Then("focus should return to the page behind the dialog", async ({ page }) => {
   // After Escape, the dialog should be gone and the body/page should be focusable
   const searchDialog = page.getByRole("dialog");
@@ -120,7 +120,7 @@ Then("each result should display the section path indicating where the page live
   await expect(firstOption).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Search results show title, section path, and excerpt
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Search results show title, section path, and excerpt
 Then("each result should display a text excerpt showing the matching content", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const firstOption = searchDialog.getByRole("option").first();
@@ -138,7 +138,7 @@ When("the visitor types a query naming the AI Model Benchmark tool", async ({ pa
   await expect(results.getByRole("option").first()).toBeVisible({ timeout: 15000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Global search surfaces the Tools pages
+// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Global search surfaces the Tools pages
 Then("a result linking to the AI Model Benchmark tool page is shown", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const benchmarkResult = searchDialog.getByRole("option", { name: /AI Model Benchmark/i });

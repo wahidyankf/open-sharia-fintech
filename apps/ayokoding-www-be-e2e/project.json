@@ -55,7 +55,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-be/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature"],
       "options": {
         "command": "if grep -rn -E --include='*.ts' --exclude-dir=node_modules --exclude-dir=.features-gen --exclude-dir=test-results --exclude-dir=playwright-report '\\$?test\\.skip\\([^,)]*\\)' .; then echo 'ERROR: unconditional test.skip() found in test files above - use test.skip(condition, reason) for legitimate environment guards, or remove'; exit 1; fi && npx bddgen && npx playwright test",
         "cwd": "apps/ayokoding-www-be-e2e"
@@ -114,12 +114,12 @@
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ayokoding-www-be-e2e --features \"../../specs/apps/ayokoding/behavior/ayokoding-be/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
+        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ayokoding-www-be-e2e --features \"../../specs/apps/ayokoding/www/behaviors/backend/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
         "cwd": "apps/ayokoding-www-be-e2e"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
         "{projectRoot}/src/steps/**/*.steps.ts",
         "{projectRoot}/playwright.config.ts",
         "{projectRoot}/e2e-coverage-baseline.json"
@@ -140,6 +140,6 @@
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"],
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature"]
   }
 }

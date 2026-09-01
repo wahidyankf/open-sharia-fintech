@@ -5,10 +5,7 @@ import { expect } from "vitest";
 
 const configSource = readFileSync(path.resolve(process.cwd(), "next.config.ts"), "utf8");
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/i18n/locale-redirects.feature"),
 );
 
 function expectPermanentRedirect(source: string, destination: string) {
@@ -44,7 +41,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(configSource).toContain("...localeEntryRedirects");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature:The root URL enters the default locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/locale-redirects.feature:The root URL enters the default locale
     Then('the visitor reaches the default locale at "/en"', () => {
       expectPermanentRedirect("/", "/en");
     });
@@ -62,7 +59,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(configSource).toContain("...localeEntryRedirects");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature:Uppercase locale URLs redirect to lowercase canonical URLs
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/locale-redirects.feature:Uppercase locale URLs redirect to lowercase canonical URLs
     Then('the visitor is permanently redirected to "<destination_url>"', () => {
       expectPermanentRedirect(source, destination);
     });

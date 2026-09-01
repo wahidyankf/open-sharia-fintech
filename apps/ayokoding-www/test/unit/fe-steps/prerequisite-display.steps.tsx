@@ -22,7 +22,7 @@ const prerequisites = [{ title: "Version Control and Git", slug: "learn/courses/
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/prerequisite-display.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/prerequisite-display.feature",
   ),
 );
 
@@ -54,7 +54,7 @@ describeFeature(feature, ({ Scenario }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/prerequisite-display.feature:A course page surfaces its declared prerequisites
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/prerequisite-display.feature:A course page surfaces its declared prerequisites
     And("the prerequisite list renders even in the canonical no-path view", () => {
       cleanup();
       render(<PrerequisiteList locale="en" prerequisites={prerequisites} />);

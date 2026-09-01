@@ -4,7 +4,7 @@ import { t } from "./translations";
 // Gherkin (underpins): "A non-mermaid code block renders a copy button"; "The copy button is
 // labelled in Indonesian on the Indonesian site" — a pure-data key test that supplies the
 // localized copy/copied labels those scenarios rely on, without binding either scenario's steps
-// itself (see specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature).
+// itself (see specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature).
 describe("t — code-block copy button keys", () => {
   it("returns the English copy label", () => {
     expect(t("en", "copy")).toBe("Copy");

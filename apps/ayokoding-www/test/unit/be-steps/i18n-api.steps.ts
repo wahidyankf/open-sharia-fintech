@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -27,7 +27,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:English content is served when locale is "en"
+    // @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:English content is served when locale is "en"
     And('the response "html" should contain English-language content', () => {
       expect(result.length).toBeGreaterThan(0);
     });
@@ -48,7 +48,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:Indonesian content is served when locale is "id"
+    // @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:Indonesian content is served when locale is "id"
     And('the response "html" should contain Indonesian-language content', () => {
       expect(result.length).toBeGreaterThan(0);
     });
@@ -66,7 +66,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:Requesting a slug prefixed with an invalid locale returns not found
+    // @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:Requesting a slug prefixed with an invalid locale returns not found
     Then("the response should indicate the page was not found", () => {
       expect(error).toBeTruthy();
     });

@@ -700,7 +700,7 @@ describe("BenchmarkChart — sort dropdown has no duplicate/invalid empty option
 // harness) shows a "not reported" placeholder — new user-facing behaviour introduced by the merge
 // (the retired `price-chart.tsx` used to omit such models from the plot entirely) that had no unit
 // test or owning Gherkin scenario (pr-review-synthesis-maker MEDIUM finding); the Gherkin scenario
-// itself lives at `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`.
+// itself lives at `specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature`.
 describe("BenchmarkChart — AC-48 rated model with no reported price", () => {
   afterEach(() => {
     cleanup();

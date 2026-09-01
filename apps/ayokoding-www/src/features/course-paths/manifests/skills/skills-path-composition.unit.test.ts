@@ -7,7 +7,7 @@ const appRoot = process.cwd();
 const feature = await loadFeature(
   path.resolve(
     appRoot,
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-composition.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-composition.feature",
   ),
 );
 
@@ -62,7 +62,7 @@ describeFeature(feature, ({ ScenarioOutline }) => {
         expect(manifest.pathId).toBe(pathId);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-composition.feature:A two-segment skills path ID resolves to its full shared accounting slice
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-composition.feature:A two-segment skills path ID resolves to its full shared accounting slice
       Then("it contains its published accounting order", () => {
         expect(manifest.courseOrder).toEqual(
           pathId === "skills/sharia-accounting" ? [...expectedCourseOrder, ...shariaExtension] : expectedCourseOrder,

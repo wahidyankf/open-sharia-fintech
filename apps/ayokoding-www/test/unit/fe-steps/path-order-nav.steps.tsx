@@ -143,10 +143,7 @@ function MobileNavConsumer() {
 }
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -172,7 +169,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(pageNav.getByRole("link", { name: /Data Structures/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature:Prev and next follow the active path's order
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:Prev and next follow the active path's order
     And("both links preserve the path context query parameter", () => {
       const pageNav = within(screen.getByRole("navigation", { name: "Page navigation" }));
       expect(pageNav.getByRole("link", { name: /Git/i }).getAttribute("href")).toBe(
@@ -222,7 +219,7 @@ describeFeature(feature, ({ Scenario }) => {
         expect(current.className).toContain("font-semibold");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature:The path rail shows the whole ordered arc beside a course at desktop width
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail shows the whole ordered arc beside a course at desktop width
       And("the rail offers a link back to the full path and to the whole course library", () => {
         expect(screen.getByRole("link", { name: /view full path/i })).toBeTruthy();
         expect(screen.getByRole("link", { name: /browse all courses/i })).toBeTruthy();
@@ -251,7 +248,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("navigation", { name: "Python Fundamentals course list" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature:The path rail collapses into the existing navigation drawer on a phone
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail collapses into the existing navigation drawer on a phone
     And("focus moves into the drawer and returns to the control when the drawer is dismissed", () => {
       // Radix's Dialog primitive (the shipped Sheet is built on it, unmodified — no custom
       // focus-trap code exists in this plan's diff) already owns focus-in/focus-return; live

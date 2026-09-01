@@ -125,7 +125,7 @@ Then("each row shows a Country column immediately to the left of the City column
   expect(cityIdx).toBe(countryIdx + 1);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Country and city are always shown together on every tab
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Country and city are always shown together on every tab
 Then("every row shows a Country column immediately to the left of the City column", async ({ page }) => {
   const headers = page.locator("table thead th");
   const texts = await headers.allTextContents();
@@ -159,7 +159,7 @@ Then("each row shows a separate one-time relocation sunk-cost total", async ({ p
   expect(texts.some((t) => t.includes("reloc"))).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-of-living breakdown lists category expenses per city
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-of-living breakdown lists category expenses per city
 Then("each row shows a separately labelled liquidity reserve", async ({ page }) => {
   const headers = page.locator("table thead th");
   const texts = (await headers.allTextContents()).map((t) => t.trim().toLowerCase());
@@ -200,7 +200,7 @@ Then("the City filter lists only Indonesian cities", async ({ page }) => {
   expect(opts.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Region narrows the country filter and country narrows the city filter
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Region narrows the country filter and country narrows the city filter
 Then("only cities in Indonesia are shown in the table", async ({ page }) => {
   const rows = page.locator("table tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
@@ -245,7 +245,7 @@ Then("the City filter is pre-selected to that city", async ({ page }) => {
   expect(page.url()).toMatch(/city=/);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Clicking a city name opens its single-city cost-of-living detail
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Clicking a city name opens its single-city cost-of-living detail
 Then(
   "the detail shows the full per-category breakdown, essentials subtotal, total, healthcare scheme badge, and split relocation in both local currency and USD",
   async ({ page }) => {
@@ -278,7 +278,7 @@ Then("the Country filter is pre-selected to that country with its Region set", a
   expect(page.url()).toMatch(/country=/);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Clicking a country opens Cost-of-living filtered to that country
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Clicking a country opens Cost-of-living filtered to that country
 Then("the table shows that country's cities as a filtered list rather than a single-city detail", async ({ page }) => {
   const rows = page.locator("table tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
@@ -291,7 +291,7 @@ When("the page resolves the deep link at {string}", async ({ page }, _urlPattern
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city link takes precedence over a country link when both params are present
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city link takes precedence over a country link when both params are present
 Then(
   "the single-city Cost-of-living detail for the city is shown because a city implies its country",
   async ({ page }) => {
@@ -322,7 +322,7 @@ Then("a healthcare funding-scheme badge is shown for that city's country", async
   await expect(badge).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Healthcare funding scheme is always shown
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Healthcare funding scheme is always shown
 Then("the badge reads {string}, {string}, or {string}", async ({ page }, _v1: string, _v2: string, _v3: string) => {
   const badge = page.locator("[data-testid='city-detail'] [data-testid='healthcare-badge']");
   await expect(badge).toBeVisible();
@@ -367,7 +367,7 @@ Then("the one-time relocation sunk-cost total is shown distinct from the monthly
   expect(texts.some((t) => t.includes("total"))).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Relocation reserve is shown separately from sunk costs
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Relocation reserve is shown separately from sunk costs
 Then(
   "the liquidity-reserve cash cushion is shown in its own labelled figure, not folded into the sunk-cost total",
   async ({ page }) => {
@@ -422,7 +422,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab converts gross salary to net before subtracting expenses
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab converts gross salary to net before subtracting expenses
 Then("the table can be sorted by savings", async ({ page }) => {
   const sortBtn = page.getByRole("button", { name: "Sort by savings" });
   await expect(sortBtn).toBeVisible();
@@ -439,8 +439,8 @@ Then("the annual gross is shown as {string} USD", async ({ page }, expectedAnnua
   await expect(annualEl).toHaveText(new RegExp(withOptionalCommas), { timeout: 10000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Gross salary entered monthly shows the derived annual figure
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Decimal monthly salary produces correct annual gross
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Gross salary entered monthly shows the derived annual figure
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Decimal monthly salary produces correct annual gross
 Then("the annual figure equals twelve times the monthly figure", async ({ page }) => {
   const annualEl = page.locator("[data-testid='annual-gross']");
   await expect(annualEl).toBeAttached({ timeout: 5000 });
@@ -479,7 +479,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Total compensation is shown for negotiation context
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Total compensation is shown for negotiation context
 Then(
   "the total compensation is not added into the net, the essential savings, or the after-lifestyle savings",
   async ({ page }) => {
@@ -500,7 +500,7 @@ Then("the federal-country city applies its city sub-national rate on top of the 
   await expect(subNational).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Sub-national tax lowers net only in federal countries
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Sub-national tax lowers net only in federal countries
 Then("the unitary-country city applies the federal rate alone", async ({ page }) => {
   const allRows = page.locator("table tbody tr");
   expect(await allRows.count()).toBeGreaterThan(1);
@@ -516,7 +516,7 @@ When("I enter a gross monthly salary above a city's tax band threshold", async (
   await page.keyboard.press("Tab");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Net take-home is lower than the entered gross
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Net take-home is lower than the entered gross
 Then("the net take-home shown for that city is lower than the entered gross", async ({ page }) => {
   // Wait for React to update at least one net-value cell to non-zero
   await expect(page.locator("[data-testid='net-value']:not([data-usd='0'])").first()).toBeAttached({ timeout: 8000 });
@@ -541,7 +541,7 @@ When("I enter a gross salary whose net is lower than that city's modeled essenti
   await page.keyboard.press("Tab");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Essentials above net show a deficit
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Essentials above net show a deficit
 Then("the savings-after-essentials amount and percentage are shown as negative", async ({ page }) => {
   const savingsCells = page.locator("[data-testid='savings-essential']");
   const count = await savingsCells.count();
@@ -558,7 +558,7 @@ Then("the savings-after-essentials amount and percentage are shown as negative",
 
 // ── Indonesian locale ─────────────────────────────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Indonesian locale is fully translated
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Indonesian locale is fully translated
 Then(
   "all labels, category names, tax wording, healthcare-scheme labels, relocation labels, and the disclaimer are in Indonesian",
   async ({ page }) => {
@@ -570,7 +570,7 @@ Then(
 
 // ── No Israeli cities ─────────────────────────────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No Israeli cities are listed
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No Israeli cities are listed
 Then("no Israeli city appears in the dataset or any table", async ({ page }) => {
   const tableText = await page.locator("table").first().textContent();
   const lower = tableText?.toLowerCase() ?? "";
@@ -588,7 +588,7 @@ Then("I see a prominent {string} label with the dataset snapshot date", async ({
   expect((text ?? "").trim().length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Data snapshot date is clearly shown
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Data snapshot date is clearly shown
 Then("I see an {string} disclaimer", async ({ page }, _text: string) => {
   const el = page.locator("[data-testid='estimates-disclaimer']");
   await expect(el).toBeVisible();
@@ -605,7 +605,7 @@ Then("the conversion uses the rate for that currency stored in the in-repo fx.ts
   expect(await rows.count()).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Every monetary figure converts to USD via the in-repo FX table
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Every monetary figure converts to USD via the in-repo FX table
 Then(
   "every currency referenced by a city, country, role, or display-currency selector has an fx.ts entry",
   async ({ page }) => {
@@ -632,7 +632,7 @@ Then("the modeled food and healthcare increase near per-capita", async ({ page }
   expect(await rows.count()).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Adding adults and children changes the modeled expenses
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Adding adults and children changes the modeled expenses
 Then("schooling is added for the two school-age children", async ({ page }) => {
   const headers = page.locator("table thead th");
   const texts = (await headers.allTextContents()).map((t) => t.trim().toLowerCase());
@@ -656,7 +656,7 @@ Then("the childcare expense is added for the one pre-school child", async ({ pag
   expect(texts.some((t) => t.includes("childcare"))).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Pre-school children incur childcare, not schooling
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Pre-school children incur childcare, not schooling
 Then("no schooling cost is added", async ({ page }) => {
   // The school-type toggle is shown-but-disabled (not hidden) when there are no school-age
   // children — see the "School type toggle is shown but disabled without school-age children"
@@ -691,7 +691,7 @@ When("I switch the school type from {string} to {string}", async ({ page }, _fro
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Private school raises expenses more than public
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Private school raises expenses more than public
 Then("the schooling portion of the modeled expenses increases", async ({ page }) => {
   const rows = page.locator("table tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
@@ -711,7 +711,7 @@ Then("the modeled housing expense decreases", async ({ page }) => {
   expect(await rows.count()).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Rural area lowers housing versus city center
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Rural area lowers housing versus city center
 Then("the city total decreases accordingly", async ({ page }) => {
   const rows = page.locator("table tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
@@ -791,7 +791,7 @@ Then(
 );
 // ── Roles labelled as software-engineering ────────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Roles are labelled as software-engineering roles
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Roles are labelled as software-engineering roles
 Then(
   "a caption states the ladder is software-engineering roles covering IC and management tracks",
   async ({ page }) => {
@@ -816,7 +816,7 @@ Then("the role shows its country's p25, median, and p75 salary distribution", as
   expect(texts.some((t) => t.includes("P75"))).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Each role shows its per-country salary distribution
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Each role shows its per-country salary distribution
 Then("the row's essential savings is computed from the median salary", async ({ page }) => {
   const headers = page.locator("table thead th");
   const texts = (await headers.allTextContents()).map((t) => t.trim().toLowerCase());
@@ -866,7 +866,7 @@ When("I compare two roles whose non-salary comp differs but whose median salary 
   await page.locator("table tbody tr").first().waitFor({ state: "visible" });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Non-salary comp does not change the minimum-role ranking
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Non-salary comp does not change the minimum-role ranking
 Then("their essential-savings ranking is unchanged because non-salary comp is informational only", async ({ page }) => {
   const noteEl = page.locator("[data-testid='non-salary-rank-note']");
   await expect(noteEl).toBeVisible();
@@ -880,7 +880,7 @@ When("I change a city's lifestyle assumption", async ({ page }) => {
   await page.locator("table tbody tr").first().waitFor({ state: "visible" });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Lifestyle does not change the minimum-role ranking
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Lifestyle does not change the minimum-role ranking
 Then("the marked minimum role is unchanged because ranking is on essential savings only", async ({ page }) => {
   const noteEl = page.locator("[data-testid='rank-basis-note']");
   await expect(noteEl).toBeVisible();
@@ -912,7 +912,7 @@ Then("the baseline savings bar equals that role's essential savings in Jakarta",
   await expect(marker).toBeVisible({ timeout: 15000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum role from a reference city and role
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum role from a reference city and role
 Then("the marked minimum role reaches at least that essential savings in absolute terms", async ({ page }) => {
   // See the comment above — ties are valid, `.first()` avoids a strict-mode violation.
   const marker = page.locator("[data-testid='minimum-marker']").first();
@@ -944,7 +944,7 @@ When("I choose a display currency", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings shown in USD, local, and display currency
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings shown in USD, local, and display currency
 Then(
   "each role row shows its essential savings in USD, the city's local currency, and the display currency",
   async ({ page }) => {
@@ -1012,7 +1012,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Household composition changes the minimum qualifying role
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Household composition changes the minimum qualifying role
 Then("a more senior role becomes the marked minimum", async ({ page }) => {
   // The minimum-role marker can render on more than one row when several cities tie at the same
   // minimum-qualifying role rank (see min-role.tsx's RoleRow `isMin` prop — this is correct,
@@ -1050,7 +1050,7 @@ Then("the tool states that no role clears the bar", async ({ page }) => {
   await expect(page.locator("[data-testid='no-qualifier-message']")).toBeVisible({ timeout: 60000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No role can reach the bar
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No role can reach the bar
 Then("no row is marked as the minimum", async ({ page }) => {
   const marker = page.locator("[data-testid='minimum-marker']");
   expect(await marker.count()).toBe(0);
@@ -1064,7 +1064,7 @@ When("I change the household type or area", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-basis controls affect role candidates
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-basis controls affect role candidates
 Then("the role candidates' savings and the marked minimum role update accordingly", async ({ page }) => {
   const rows = page.locator("table tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
@@ -1080,14 +1080,14 @@ When("the table renders", async ({ page }) => {
   await page.locator("table tbody tr").first().waitFor({ state: "visible" });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Low-confidence cells are flagged on the minimum-role tab
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Low-confidence cells are flagged on the minimum-role tab
 Then("cells with lower data confidence display a visual flag indicator", async ({ page }) => {
   await page.locator("table").first().waitFor({ state: "visible" });
 });
 
 // ── No Israeli city in role candidates ───────────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:No Israeli city appears among role candidates
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:No Israeli city appears among role candidates
 Then("no Israeli city appears as a candidate city for any role", async ({ page }) => {
   const tableText = await page.locator("table").first().textContent();
   const lower = tableText?.toLowerCase() ?? "";
@@ -1113,7 +1113,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Zero or empty salary shows deficit with suppressed percentage
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Zero or empty salary shows deficit with suppressed percentage
 Then(
   "each percentage cell shows an em dash because there is no net income to compute a percentage from",
   async ({ page }) => {
@@ -1135,7 +1135,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Rural area and multi-adult household multiply the housing estimate sub-linearly
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Rural area and multi-adult household multiply the housing estimate sub-linearly
 Then("the essentials total in the preview decreases accordingly", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1153,7 +1153,7 @@ Then("the single-city cost-of-living detail for that city is shown", async ({ pa
   void page; // stub — full implementation pending
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a city from the City filter opens its detail view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a city from the City filter opens its detail view
 Then("the detail is identical to the one shown when clicking the city name in the table", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1164,7 +1164,7 @@ When("I enter a gross monthly salary at exactly the low-to-mid band threshold fo
   void page; // stub — full implementation pending
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Income exactly at the low-to-mid threshold uses the mid band
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Income exactly at the low-to-mid threshold uses the mid band
 Then("that city's net take-home uses the mid band effective tax rate", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1190,7 +1190,7 @@ When("the mobile city cards render", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Mobile city cards show the country name alongside the city
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Mobile city cards show the country name alongside the city
 Then("each card header shows both the city name and its country name", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1245,7 +1245,7 @@ Then("the Childcare and School preview amounts remain zero", async ({ page }) =>
   void page; // stub — full implementation pending
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Expense preview updates in real time when household controls change
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Expense preview updates in real time when household controls change
 Then("the Total preview updates immediately without a page reload", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1276,7 +1276,7 @@ Then("the URL updates to include query parameters reflecting those selections", 
   await expect.poll(() => page.url()).toMatch(/country=|city=/);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting filters updates the URL with all active query parameters
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting filters updates the URL with all active query parameters
 Then("copying the URL and opening it in a new tab restores the same filter state", async ({ page }) => {
   void page; // stub — full implementation pending
 });
@@ -1291,7 +1291,7 @@ When("the page finishes loading with default filter state", async ({ page }) => 
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Page title includes tool name on load
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Page title includes tool name on load
 Then("the browser tab title includes the name of the tool", async ({ page }) => {
   const title = await page.title();
   expect(title.toLowerCase()).toMatch(/cost.of.living|calculator|kalkulator/i);
@@ -1313,7 +1313,7 @@ Then("the annual gross displayed is {string}", async ({ page }, _expected: strin
   await expect(annualEl).toBeAttached({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Negative salary input is clamped to zero
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Negative salary input is clamped to zero
 Then("each city row shows the same deficit as for a zero salary entry", async ({ page }) => {
   void page; // stub — behavioral equivalence verified by unit tests
 });
@@ -1346,7 +1346,7 @@ Then("no city row shows {string} or {string} in any column", async ({ page }, v1
   }
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Very large salary produces valid savings figures
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Very large salary produces valid savings figures
 Then("each city row shows a positive net take-home", async ({ page }) => {
   void page; // stub — verified by unit tests
 });
@@ -1367,7 +1367,7 @@ Then("opening that URL in a new tab shows only Indonesian cities in the table", 
   void page; // stub — multi-tab behavior
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting only a country updates the URL country parameter
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting only a country updates the URL country parameter
 Then("the Country filter is pre-selected to {string}", async ({ page }, _country: string) => {
   void _country;
   expect(page.url()).toMatch(/country=/);
@@ -1408,7 +1408,7 @@ Then("the Food preview amount is exactly 1.5 times the 1-adult amount", async ({
   void page; // stub — exact coefficient verified by unit tests
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Housing preview scales sub-linearly for 2-adult household
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Housing preview scales sub-linearly for 2-adult household
 Then("the Transport preview amount is unchanged from the 1-adult amount", async ({ page }) => {
   void page; // stub — exact coefficient verified by unit tests
 });
@@ -1437,7 +1437,7 @@ Then("an instructional message is shown", async ({ page }) => {
   void page; // stub — instructional empty-state message not yet implemented
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab shows empty-state guidance when no salary entered
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab shows empty-state guidance when no salary entered
 Then("no negative savings figures are visible", async ({ page }) => {
   void page; // stub — verified by unit tests (empty state hides table)
 });
@@ -1459,7 +1459,7 @@ Then("the instructional message disappears", async ({ page }) => {
   void page; // stub — transition verified by unit tests
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings tab shows results after salary is entered
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings tab shows results after salary is entered
 Then("the savings comparison table is shown with computed savings figures", async ({ page }) => {
   await page.waitForSelector("[data-testid='savings-table'][data-hydrated='true']", { timeout: 12000 });
   await expect(page.locator("[data-testid='savings-table']")).toBeVisible();
@@ -1480,7 +1480,7 @@ Then("the role comparison table is not shown", async ({ page }) => {
   void page; // stub — empty-state hide behavior not yet implemented in min-role.tsx
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum Role tab shows empty-state when no target amount entered
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Minimum Role tab shows empty-state when no target amount entered
 Then("no role salary data is visible", async ({ page }) => {
   void page; // stub — verified by unit tests (empty state hides table)
 });
@@ -1537,7 +1537,7 @@ Then("the two pieces of text do not run together without a visual separator", as
   void page; // stub — verified by unit tests
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tab sub-labels are visually separated from tab names
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tab sub-labels are visually separated from tab names
 Then("a screen reader announces them as separate text nodes", async ({ page }) => {
   void page; // stub — a11y attribute verified by unit tests
 });
@@ -1561,8 +1561,8 @@ Then("the page heading and the calculator link display readable English labels",
   await expect(main.getByRole("link", { name: /cost of living/i })).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tools index page renders all text in the active locale
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tools index page renders in Indonesian on /id/tools
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tools index page renders all text in the active locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tools index page renders in Indonesian on /id/tools
 Then("no raw i18n key strings are visible", async ({ page }) => {
   const bodyText = await page.locator("body").textContent();
   expect(bodyText).not.toMatch(/toolsPage[A-Z]/);
@@ -1597,7 +1597,7 @@ Then("every monetary cell shows the local currency amount and the USD equivalent
   void page; // stub — dual-currency rendering verified by unit tests
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Cost-of-living table shows local currency and USD for each expense cell
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Cost-of-living table shows local currency and USD for each expense cell
 Then("no money cell shows a bare integer without a currency label", async ({ page }) => {
   void page; // stub — dual-currency rendering verified by unit tests
 });
@@ -1607,7 +1607,7 @@ Given("the user is on the Savings tab with a gross salary entered", async ({ pag
   await page.waitForSelector("[data-testid='savings-table'][data-hydrated='true']", { timeout: 12000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Savings table shows local currency and USD for net and savings columns
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Savings table shows local currency and USD for net and savings columns
 Then(
   "the Net, Essentials, Essential-savings, and After-lifestyle-savings columns show both local and USD amounts",
   async ({ page }) => {
@@ -1626,7 +1626,7 @@ Then("the H1 reads {string}", async ({ page }, expectedH1: string) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText(expectedH1);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:H1 matches the tool's official name in each locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:H1 matches the tool's official name in each locale
 Then("the browser title starts with {string}", async ({ page }, _expectedTitle: string) => {
   void _expectedTitle;
   const title = await page.title();
@@ -1649,7 +1649,7 @@ Then("the Country column shows Indonesian country names where translations exist
   void page; // stub — i18n locale names verified by unit tests
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Id locale cost-of-living table uses Indonesian translations
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Id locale cost-of-living table uses Indonesian translations
 Then("the City column shows Indonesian city names where translations exist", async ({ page }) => {
   void page; // stub — i18n locale names verified by unit tests
 });
@@ -1693,13 +1693,13 @@ Then("the gross-salary field renders with a visible border, design-token radius,
   await expect(input).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Gross-salary input uses the design-system Input primitive
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Gross-salary input uses the design-system Input primitive
 Then("it is paired with a Label primitive", async ({ page }) => {
   const label = page.locator("label[for='gross-salary-input']");
   await expect(label).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Baseline selector is a segmented control
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Baseline selector is a segmented control
 Then("the baseline-source control renders as a styled segmented button group, not a plain select", async ({ page }) => {
   void page; // stub — design-system primitive verified by unit tests
 });
@@ -1713,7 +1713,7 @@ When("the tab bar renders", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Tab labels are clean single phrases
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Tab labels are clean single phrases
 Then("each tab trigger's visible text is its label only, with the description not fused into it", async ({ page }) => {
   const tabs = page.getByRole("tab");
   const count = await tabs.count();
@@ -1731,7 +1731,7 @@ When("the middleware processes the request", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Uppercase locale URL redirects to canonical lowercase
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Uppercase locale URL redirects to canonical lowercase
 Then("the server redirects to {string}", async ({ page }, expectedPath: string) => {
   expect(page.url()).toContain(expectedPath);
 });
@@ -1771,7 +1771,7 @@ Then("it shows the site's top-level navigation links", async ({ page }) => {
   void page;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Mobile nav drawer shows localized site navigation
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Mobile nav drawer shows localized site navigation
 Then("every drawer label is localized", async ({ page }) => {
   void page; // stub — localization verified by unit tests
 });
@@ -1861,9 +1861,9 @@ Then("the Adults control shows {string}", async ({ page }, value: string) => {
   await expect(adultsSelect).toHaveValue(value, { timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:An out-of-range numeric param is reset to its default on load
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A full-country-name param is dropped on load
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:An unknown city param is dropped on load
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:An out-of-range numeric param is reset to its default on load
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A full-country-name param is dropped on load
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:An unknown city param is dropped on load
 Then("the URL is rewritten to have no {string} param", async ({ page }, paramName: string) => {
   // Auto-retry until the canonicalize router.replace removes the param. A fixed
   // timeout raced the replace on slower engines (firefox); polling is deterministic.
@@ -1885,8 +1885,8 @@ Then("the City filter returns to {string}", async ({ page }, _label: string) => 
   await expect(citySelect).toHaveValue("");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a city under no prior filter backfills country and region
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city deep link restores the city and backfills country and region
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a city under no prior filter backfills country and region
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city deep link restores the city and backfills country and region
 Then(
   "the Country filter shows {string} and the Region filter shows {string}",
   async ({ page }, country: string, region: string) => {
@@ -1949,8 +1949,8 @@ Then("the URL query string includes {string} and {string}", async ({ page }, par
   }
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a broader region clears an incompatible country and city
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a region writes the region to the URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a broader region clears an incompatible country and city
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a region writes the region to the URL
 Then("the URL query string does not include {string} or {string}", async ({ page }, param1: string, param2: string) => {
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(500);
@@ -1961,7 +1961,7 @@ Then("the URL query string does not include {string} or {string}", async ({ page
   expect(url.searchParams.has(key2)).toBe(false);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The city-detail back link preserves the parent geo scope
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The city-detail back link preserves the parent geo scope
 Then("the URL query string does not include {string}", async ({ page }, paramStr: string) => {
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(500);
@@ -1978,7 +1978,7 @@ Then("the single-city Cost-of-living detail for Singapore is shown", async ({ pa
   await expect(page.locator("[data-testid='city-detail']")).toBeVisible({ timeout: 8000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A contradictory region-and-city deep link resolves with the narrower filter winning
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A contradictory region-and-city deep link resolves with the narrower filter winning
 Then(
   "the URL is rewritten to canonical form with {string} and {string} backfilled to {string}",
   async ({ page }, primaryParam: string, backfillKey: string, backfillVal: string) => {
@@ -2000,7 +2000,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Changing the tab writes the tab to the URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Changing the tab writes the tab to the URL
 Then("reloading the page keeps the {string} tab active", async ({ page }, tabName: string) => {
   await page.reload();
   await page.waitForLoadState("networkidle");
@@ -2010,7 +2010,7 @@ Then("reloading the page keeps the {string} tab active", async ({ page }, tabNam
   expect(isSelected).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Changing a cost-basis control writes it to the URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Changing a cost-basis control writes it to the URL
 Then("the household preview updates without a page reload", async ({ page }) => {
   // Verifies the preview panel is visible and reflects updated state (no navigation)
   // The preview is always rendered; its presence confirms no full page reload occurred
@@ -2023,7 +2023,7 @@ Then("the household preview updates without a page reload", async ({ page }) => 
   void page;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The breadcrumb offers an escape to the Tools index and Home
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The breadcrumb offers an escape to the Tools index and Home
 Then("a {string} link to {string} is shown", async ({ page }, linkText: string, href: string) => {
   const link = page.getByRole("link", { name: new RegExp(linkText, "i") });
   await expect(link.first()).toBeVisible();
@@ -2031,7 +2031,7 @@ Then("a {string} link to {string} is shown", async ({ page }, linkText: string, 
   expect(linkHref).toContain(href);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Canonicalization does not add a browser history entry
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Canonicalization does not add a browser history entry
 Then("pressing the browser Back button does not return to the {string} URL", async ({ page }, qs: string) => {
   // Ensure the canonicalize router.replace has stripped the dirty param BEFORE
   // pressing Back — otherwise goBack can race the replace and land on the dirty
@@ -2057,7 +2057,7 @@ When("the geo-filter selects render", async ({ page }) => {
   await expect(page.locator("#geo-region-select")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Geo-filter selects meet the minimum touch-target height on mobile
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Geo-filter selects meet the minimum touch-target height on mobile
 Then("each geo-filter select is at least 44 pixels tall", async ({ page }) => {
   for (const id of ["#geo-region-select", "#geo-country-select", "#geo-city-select"]) {
     const box = await page.locator(id).boundingBox();
@@ -2082,8 +2082,8 @@ When("the calculator page renders", async ({ page }) => {
   await expect(page.getByTestId("calc-page")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px in the id locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The calculator page has no horizontal overflow at 320px in the id locale
 Then("the document does not scroll horizontally", async ({ page }) => {
   const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(scrollWidth).toBeLessThanOrEqual(320);
@@ -2097,7 +2097,7 @@ Then("the crumbs are separated by chevron icons", async ({ page }) => {
   expect(await chevrons.count()).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The breadcrumb separates crumbs with chevrons, not a literal slash
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The breadcrumb separates crumbs with chevrons, not a literal slash
 Then(/^no literal "\/" separator is shown between crumbs$/, async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const separatorListItems = breadcrumb.locator("li", { hasText: /^\s*\/\s*$/ });
@@ -2113,14 +2113,14 @@ Then("the current-page crumb text reads {string}", async ({ page }, expected: st
   await expect(current).toHaveText(expected);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The final breadcrumb crumb matches the page title in each locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The final breadcrumb crumb matches the page title in each locale
 Then('the current-page crumb is marked aria-current="page"', async ({ page }) => {
   await expect(page.locator('[aria-current="page"]')).toBeVisible();
 });
 
 // ── AC-OOP: abbr element wraps every OOP acronym ─────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The OOP abbreviation is explained on screen
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The OOP abbreviation is explained on screen
 Then(
   "every {string} acronym is wrapped in an abbr element titled {string}",
   async ({ page }, acronym: string, title: string) => {
@@ -2159,7 +2159,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Each tab has a visible description associated with its trigger
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Each tab has a visible description associated with its trigger
 Then("no tab description text is duplicated elsewhere on screen", async ({ page }) => {
   // Each tab description should appear only once in the DOM (one <p> per tab, not repeated)
   for (const id of ["tab-desc-cost", "tab-desc-savings", "tab-desc-min-role"]) {
@@ -2186,7 +2186,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The Savings gross-salary field shows the active currency as a separate indicator
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The Savings gross-salary field shows the active currency as a separate indicator
 Then("an active-currency indicator next to the field shows {string}", async ({ page }, currencyCode: string) => {
   const indicator = page.locator("[data-testid='salary-currency-indicator']");
   await expect(indicator).toBeVisible();
@@ -2194,7 +2194,7 @@ Then("an active-currency indicator next to the field shows {string}", async ({ p
   expect(text?.trim()).toContain(currencyCode);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The Savings currency indicator explains why USD is used for every city
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The Savings currency indicator explains why USD is used for every city
 Then("an explanation states salaries are compared in USD across all cities", async ({ page }) => {
   const explanation = page.locator("[data-testid='salary-currency-explanation']");
   await expect(explanation).toBeVisible();
@@ -2230,7 +2230,7 @@ Then("a minimum-role empty-state guidance message is shown", async ({ page }) =>
   await expect(page.locator("[data-testid='min-role-empty-state']")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A blank savings target shows empty-state guidance instead of the role ladder
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A blank savings target shows empty-state guidance instead of the role ladder
 Then(
   "entering an explicit zero target replaces the guidance with the role ladder and its divider",
   async ({ page }) => {
@@ -2252,7 +2252,7 @@ When("the region filter renders", async ({ page }) => {
   await expect(page.locator("#geo-region-select")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The region selector lists exactly the nine intended regions
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The region selector lists exactly the nine intended regions
 Then(
   "the region selector offers exactly the nine regions africa, americas, asean, asia, europe, japan, mena, nordics, and oceania",
   async ({ page }) => {
@@ -2285,7 +2285,7 @@ When("I select a country whose region differs from the current selection", async
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a country that changes the region shows a visible advisory
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a country that changes the region shows a visible advisory
 Then("a visible region-auto-advisory message is shown", async ({ page }) => {
   const advisory = page.locator("[data-testid='region-auto-advisory']");
   await expect(advisory).toBeVisible();
@@ -2298,7 +2298,7 @@ When("I read the single-city detail back link", async ({ page }) => {
   await expect(page.locator("[data-testid='city-detail']")).toBeVisible({ timeout: 8000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:A city-only deep link back link omits the auto-derived region and country
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:A city-only deep link back link omits the auto-derived region and country
 Then(
   "the back link points to the bare calculator {string} with no region or country",
   async ({ page }, _expectedHref: string) => {
@@ -2331,7 +2331,7 @@ When(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Selecting a country without a region still narrows the city dropdown
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Selecting a country without a region still narrows the city dropdown
 Then("the city dropdown lists only cities in Indonesia", async ({ page }) => {
   const citySelect = page.locator("#geo-city-select");
   const options = await citySelect.locator("option:not([value=''])").allTextContents();
@@ -2358,7 +2358,7 @@ Then('the area segmented control has role="radiogroup"', async ({ page }) => {
   expect(role).toBe("radiogroup");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The area control is rendered as a radiogroup
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The area control is rendered as a radiogroup
 Then("the area radiogroup contains the {string} and {string} options", async ({ page }, opt1: string, opt2: string) => {
   const radiogroup = page.locator('[role="radiogroup"]').filter({ hasText: new RegExp(opt1, "i") });
   await expect(radiogroup.first()).toBeAttached();
@@ -2395,7 +2395,7 @@ Then("the savings-target input is visible when savings target is the selected ba
   await expect(targetInput).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:The baseline selector shows the savings-target sub-form when savings target is selected
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The baseline selector shows the savings-target sub-form when savings target is selected
 Then("the reference-role inputs are hidden when savings target is the selected baseline", async ({ page }) => {
   // When savings target is active, the reference-role sub-form (ref-city-select) must not be visible
   const refCitySelect = page.locator("#ref-city-select");

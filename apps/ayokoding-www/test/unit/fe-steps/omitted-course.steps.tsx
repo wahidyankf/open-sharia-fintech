@@ -91,10 +91,7 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 import { renderCoursePathPage } from "../render-course-path-page";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/omitted-course.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/omitted-course.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -120,7 +117,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.queryByText("Python Fundamentals")).toBeNull();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/omitted-course.feature:A course omitted from a path shows no path nav for that path
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/omitted-course.feature:A course omitted from a path shows no path nav for that path
     And("neither the path rail nor the path banner is shown for that path", () => {
       expect(screen.queryByRole("navigation", { name: /course list/i })).toBeNull();
       expect(screen.queryByText(/on path/i)).toBeNull();

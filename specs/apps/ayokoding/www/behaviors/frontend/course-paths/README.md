@@ -20,7 +20,7 @@ also binds each one. 5 scenarios across 4 feature files remain genuinely `@wip`:
 - **[breadcrumb.feature](./breadcrumb.feature)**'s "A legacy fundamentally-strong URL redirects to
   the canonical course URL" — its base redirect is already shipped and step-bound by the archived
   `ayokoding-learning-path-01-url-restructure`
-  (`specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature`,
+  (`specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature`,
   `@unit @e2e`); only the "redirect preserves path context" clause is unowned — that plan is closed
   and will not reopen, and this plan's `prd.md` disclaims owning the scenario itself.
 

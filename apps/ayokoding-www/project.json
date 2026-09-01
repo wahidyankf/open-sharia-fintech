@@ -128,13 +128,13 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/behavior/ayokoding-www/gherkin specs/apps/ayokoding/behavior/ayokoding-be/gherkin specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin apps/ayokoding-www"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/www/behaviors/frontend specs/apps/ayokoding/www/behaviors/backend specs/apps/ayokoding/www/behaviors/build-tools apps/ayokoding-www"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-be/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/build-tools/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     },
@@ -182,9 +182,9 @@
   },
   "namedInputs": {
     "specs": [
-      "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**/*.feature",
-      "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-be/gherkin/**/*.feature",
-      "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/**/*.feature"
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature",
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/build-tools/**/*.feature"
     ]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]

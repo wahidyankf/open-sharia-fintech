@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import "./helpers/test-setup";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/search/search.feature"),
 );
 
 // SearchDialog depends on Radix Dialog portals, cmdk, tRPC client, and Next.js router.
@@ -44,7 +44,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
     And("the search input should have focus", () => {
       // Focus management handled by Radix Dialog; verified at E2E level
       expect(true).toBe(true);
@@ -64,7 +64,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Typing in the search input shows debounced results
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Typing in the search input shows debounced results
     And("results should update when the visitor changes the query", () => {
       // Previous timer cleared, new 200ms debounce started
       expect(true).toBe(true);
@@ -84,7 +84,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Clicking a search result navigates to that page
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Clicking a search result navigates to that page
     And("the visitor should be navigated to the page for that result", () => {
       // router.push verified at E2E level
       expect(true).toBe(true);
@@ -103,7 +103,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Escape key closes the search dialog
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Escape key closes the search dialog
     And("focus should return to the page behind the dialog", () => {
       // Radix Dialog restores focus to trigger element
       expect(true).toBe(true);
@@ -132,7 +132,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(formatSectionPath("learn/ai/security/basics")).toBe("Learn / Ai / Security");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Search results show title, section path, and excerpt
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Search results show title, section path, and excerpt
     And("each result should display a text excerpt showing the matching content", () => {
       // result.excerpt rendered in <span className="text-xs text-muted-foreground">
       expect(true).toBe(true);
@@ -154,7 +154,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       // Debounced tRPC call → ContentService.search(), verified at E2E level with the real server.
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Global search surfaces the Tools pages
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Global search surfaces the Tools pages
     Then("a result linking to the AI Model Benchmark tool page is shown", () => {
       expect(true).toBe(true);
     });

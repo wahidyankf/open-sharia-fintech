@@ -25,13 +25,13 @@ Then("the main content area should be visible", async ({ page }) => {
   await expect(main).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Desktop viewport shows sidebar, content, and table of contents
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows sidebar, content, and table of contents
 Then("the table of contents should be visible", async ({ page }) => {
   const toc = page.getByRole("navigation", { name: /table of contents/i });
   await expect(toc).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Laptop viewport shows sidebar and content but hides table of contents
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Laptop viewport shows sidebar and content but hides table of contents
 Then("the table of contents should not be visible", async ({ page }) => {
   const toc = page.getByRole("navigation", { name: /table of contents/i });
   await expect(toc).toBeHidden();
@@ -42,7 +42,7 @@ Then("a hamburger menu button should be visible in the header", async ({ page })
   await expect(hamburger).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Mobile viewport shows hamburger menu and hides sidebar
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger menu and hides sidebar
 Then("the sidebar navigation should not be visible", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
   await expect(sidebar).toBeHidden();
@@ -64,7 +64,7 @@ Then("a sidebar drawer should slide into view", async ({ page }) => {
   await expect(page.locator("body")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Mobile hamburger menu opens the sidebar drawer
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile hamburger menu opens the sidebar drawer
 Then("the sidebar navigation links should be visible inside the drawer", async ({ page }) => {
   await expect(page.locator("body")).toBeVisible();
 });

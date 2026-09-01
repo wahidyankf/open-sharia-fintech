@@ -33,7 +33,7 @@ Then('each result should include a "slug" field', async () => {
   expect(results[0]).toHaveProperty("slug");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/search/search-api.feature:Search returns matching results with title, slug, and excerpt
+// @covers specs/apps/ayokoding/www/behaviors/backend/search/search-api.feature:Search returns matching results with title, slug, and excerpt
 Then('each result should include an "excerpt" field', async () => {
   const results = state.searchResults as unknown[];
   expect(results[0]).toHaveProperty("excerpt");
@@ -46,7 +46,7 @@ When('the client calls search.query with locale "en" and query "programming"', a
   state.searchResults = extractTrpcData(body);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/search/search-api.feature:Search results include locale information
+// @covers specs/apps/ayokoding/www/behaviors/backend/search/search-api.feature:Search results include locale information
 Then('each result should include a "locale" field matching "en"', async () => {
   const results = state.searchResults as { locale: string }[];
   for (const result of results) {
@@ -62,7 +62,7 @@ When('the client calls search.query with locale "id" and query "security"', asyn
   state.searchResults = extractTrpcData(body);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/search/search-api.feature:Search is scoped to the requested locale
+// @covers specs/apps/ayokoding/www/behaviors/backend/search/search-api.feature:Search is scoped to the requested locale
 Then("the response should contain no results", async () => {
   const results = state.searchResults as unknown[];
   expect(results.length).toBe(0);
@@ -75,7 +75,7 @@ When('the client calls search.query with locale "en" and an empty query', async 
   state.errorResult = body;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/search/search-api.feature:Empty query returns an error
+// @covers specs/apps/ayokoding/www/behaviors/backend/search/search-api.feature:Empty query returns an error
 Then("the response should indicate an invalid input error", async () => {
   const arr = state.errorResult as unknown[];
   expect(arr[0]).toHaveProperty("error");

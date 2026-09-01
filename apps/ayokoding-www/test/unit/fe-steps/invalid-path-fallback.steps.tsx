@@ -91,7 +91,7 @@ import { renderCoursePathPage } from "../render-course-path-page";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/invalid-path-fallback.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/invalid-path-fallback.feature",
   ),
 );
 
@@ -118,7 +118,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.queryByRole("navigation", { name: "Page navigation" })).toBeNull();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/invalid-path-fallback.feature:An invalid path context falls back to the canonical view
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/invalid-path-fallback.feature:An invalid path context falls back to the canonical view
     And("no error is shown", () => {
       // Reaching this assertion at all proves ContentPage() did not throw — the fixture course
       // has no path-membership beyond a non-matching `?path=`, so no exception propagated.

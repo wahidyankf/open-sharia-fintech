@@ -12,7 +12,7 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
   features: [
-    path.join(workspaceRoot, "specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**/*.feature"),
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/frontend/**/*.feature"),
     // The resizable-panel primitive's own Gherkin lives under libs/web-ui (see
     // specs/libs/web-ui/behavior/README.md). Its drag/clamp/keyboard scenarios are bound a
     // second time here — real browser, real docs page — alongside their existing web-ui
@@ -34,7 +34,7 @@ const testDir = defineBddConfig({
   // considered as a narrower alternative — e.g. `tags: "@e2e"` + `missingSteps: "fail-on-gen"`,
   // keeping the hard-fail guarantee for every scenario declaring e2e intent while excluding
   // plain-`@unit` scenarios (42 repo-wide, confirmed via
-  // `grep -rhoE "^\s*@unit\s*$" specs/apps/ayokoding/behavior/ayokoding-www/gherkin/ | wc -l`)
+  // `grep -rhoE "^\s*@unit\s*$" specs/apps/ayokoding/www/behaviors/frontend/ | wc -l`)
   // that were never meant to run at e2e level. It does not solve this project's actual blocker:
   // every one of the ~104 gap scenarios is ALREADY tagged `@unit @e2e` (149 such scenarios exist
   // repo-wide; zero scenarios anywhere carry a literal `@unit-only` tag, despite earlier

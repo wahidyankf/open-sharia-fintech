@@ -25,7 +25,7 @@ When("they navigate the path rail, banner, breadcrumb, prerequisite list, and pr
   // carry an accessible label, a keyboard-operable control, and (for the current item) `aria-current`.
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
 Then("each is a labelled landmark reachable and operable by keyboard with visible focus", async ({ page }) => {
   // Path rail — desktop viewport (Playwright's default project runs at >= md width).
   const rail = page.getByRole("navigation", { name: FIXTURE_RAIL_LABEL });

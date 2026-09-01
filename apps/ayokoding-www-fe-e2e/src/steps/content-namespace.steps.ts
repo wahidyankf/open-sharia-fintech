@@ -36,8 +36,8 @@ Then("the response status should be {int}", async ({ page }, expectedStatus: num
   expect(capture.status).toBe(expectedStatus);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
 Then("the response Location header should equal {string}", async ({ page }, expectedLocation: string) => {
   const capture = await page.evaluate(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,9 +58,9 @@ Then("the page should load successfully", async ({ page }) => {
   expect(readyState).toBe("complete");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:About page keeps its top-level URL and is not redirected
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Indonesian terms page keeps its top-level URL and is not redirected
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Tools index keeps its top-level URL and is not redirected
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:About page keeps its top-level URL and is not redirected
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Indonesian terms page keeps its top-level URL and is not redirected
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Tools index keeps its top-level URL and is not redirected
 Then("the current URL should not contain {string}", async ({ page }, fragment: string) => {
   await page.waitForLoadState("networkidle");
   expect(page.url()).not.toContain(fragment);
@@ -70,7 +70,7 @@ Then("the current URL should not contain {string}", async ({ page }, fragment: s
 // Bare content-URL navigation assertions (DD-48 de-namespacing)
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
 Then("a breadcrumb nav should be present", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: /breadcrumb/i })).toBeVisible();
 });
@@ -85,7 +85,7 @@ Then("the browse index should show a section card for {string}", async ({ page }
   await expect(link).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
 Then("the breadcrumb should start with a Home link", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const homeLink = breadcrumb.getByRole("link").first();

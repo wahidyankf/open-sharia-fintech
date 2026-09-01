@@ -5,10 +5,7 @@ import { testCaller } from "./helpers/test-caller";
 import type { TreeNode } from "@/features/content/core/types";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -33,7 +30,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(learnNode).toBeDefined();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Navigation tree structure matches the filesystem hierarchy
+    // @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Navigation tree structure matches the filesystem hierarchy
     And("each node should reflect its position in the directory hierarchy", () => {
       const firstNode = result[0]!;
       expect(firstNode).toHaveProperty("slug");
@@ -51,7 +48,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = (await testCaller.content.getTree({ locale: "en" })) as TreeNode[];
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Navigation nodes are ordered by weight ascending
+    // @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Navigation nodes are ordered by weight ascending
     Then('the children of "programming" should appear in order: weight 10, weight 20, weight 30', () => {
       for (let i = 1; i < result.length; i++) {
         expect(result[i]!.weight).toBeGreaterThanOrEqual(result[i - 1]!.weight);
@@ -76,7 +73,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(Array.isArray(sectionNode?.children)).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/navigation/navigation-api.feature:Section nodes include a children array
+    // @covers specs/apps/ayokoding/www/behaviors/backend/navigation/navigation-api.feature:Section nodes include a children array
     And('each child should include a "slug" and "title"', () => {
       const sectionNode = result.find((n) => n.isSection && n.children.length > 0);
       expect(sectionNode).toBeDefined();

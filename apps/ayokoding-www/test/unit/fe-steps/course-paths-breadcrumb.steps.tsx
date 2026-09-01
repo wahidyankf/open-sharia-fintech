@@ -35,10 +35,7 @@ const pathContext = {
 };
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/breadcrumb.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature"),
 );
 
 // This file binds exactly one of this feature's three scenarios. The other two stay unbound here:
@@ -78,7 +75,7 @@ describeFeature(
         expect(current.getAttribute("aria-current")).toBe("page");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/breadcrumb.feature:The breadcrumb reflects the active path
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature:The breadcrumb reflects the active path
       And(
         "the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved",
         () => {

@@ -31,7 +31,7 @@ const fundamentallyStrong = manifest({ pathId: "careers/fundamentally-strong/rol
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-arc-chooser.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-arc-chooser.feature",
   ),
 );
 
@@ -58,7 +58,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(nav.getAllByRole("link").length).toBe(3);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
     And("the immediately-effective arc card previews exactly two member roles", () => {
       // No `contentMap` is passed, so the arc title falls back to `humanizeKebabSlug` (UWT-001
       // fix) — "Immediately Effective", not the raw "immediately-effective" slug.

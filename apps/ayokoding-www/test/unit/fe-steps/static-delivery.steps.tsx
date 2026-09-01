@@ -20,10 +20,7 @@ function markdownFileCount(directory: string): number {
 }
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature"),
 );
 
 describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
@@ -47,7 +44,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(markdownFileCount(contentDirectory)).toBeGreaterThanOrEqual(2000);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A content page is prerendered at build time
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A content page is prerendered at build time
     And("the content catch-all route is not marked as dynamically rendered", () => {
       expect(contentPageSource).not.toMatch(/dynamic\s*=\s*["']force-dynamic["']/);
       expect(contentPageSource).not.toMatch(/fetchCache\s*=\s*["']force-no-store["']/);
@@ -66,7 +63,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
 
     // A local runner has no Vercel CDN. Preview/production checks own the HIT assertion; this
     // source-level binding keeps the local contract to static cacheability.
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page remains cacheable
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a content page remains cacheable
     Then("the response does not carry a no-store cache directive", () => {
       expect(contentPageSource).not.toMatch(/\bforce-dynamic\b/);
       expect(contentPageSource).not.toMatch(/\bcache\s*:\s*["']no-store["']/);
@@ -86,7 +83,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(contentPageSource).toContain("generateStaticParams");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
     Then("the deployed response is served from the CDN cache", () => {
       expect(nextConfigSource).not.toMatch(/dynamic\s*=\s*["']force-dynamic["']/);
     });
@@ -103,7 +100,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(appRouterSource).toContain("coursePathProcedures");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
     Then("every runtime data endpoint responds successfully", () => {
       expect(nextConfigSource).toMatch(/"\/api\/trpc\/\[trpc\]"\s*:/);
       expect(nextConfigSource).toContain('"./content/**/*"');
@@ -121,7 +118,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(localeLayoutSource).toContain("<html lang={(await params).locale}");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the localized page locale
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:The document language reflects the localized page locale
     Then('the html element declares the "<language_code>" language code', () => {
       expect(String(variables.locale)).toBe(String(variables.language_code));
     });

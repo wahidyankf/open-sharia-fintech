@@ -31,12 +31,13 @@ When a new endpoint is added to the OpenAPI spec in `organiclever-contracts`, bo
 
 ## ayokoding-www specs
 
-`specs/apps/ayokoding/` maintains C4 diagrams and Gherkin scenarios for the Next.js 16 fullstack platform:
+`specs/apps/ayokoding/www/` is a [logical owner corpus](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md) for the one site AyoKoding deploys:
 
-- `specs/apps/ayokoding/system-context/`, `containers/`, `components/` — C4 diagrams kept current with the Next.js App Router structure and tRPC routers
-- `specs/apps/ayokoding/behavior/organiclever-be/gherkin/` — Scenarios for tRPC procedures consumed by `ayokoding-www-be-e2e`
+- `specs/apps/ayokoding/www/architecture.md` — the as-built C4 view, kept current with the App Router structure and the tRPC routers
+- `specs/apps/ayokoding/www/behaviors/backend/` — scenarios for tRPC procedures, consumed by `ayokoding-www-be-e2e`
+- `specs/apps/ayokoding/www/behaviors/frontend/` — scenarios for what a learner sees
 
-When a new tRPC router is added to `apps/ayokoding-www/`, a new component entry appears in the C4 component diagram and new scenarios are added to the Gherkin directory.
+When a new tRPC router is added to `apps/ayokoding-www/`, `architecture.md` gains the component and `behaviors/backend/` gains the scenarios, in the same delivery unit.
 
 ## CLI apps
 
