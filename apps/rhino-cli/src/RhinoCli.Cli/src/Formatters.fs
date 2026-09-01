@@ -1146,7 +1146,7 @@ let dartScaffoldMarkdown (result: Contracts.DartScaffoldResult) : string =
         + (result.ModelFiles |> List.map (sprintf "- `%s`\n") |> String.concat "")
 
 // ---------------------------------------------------------------------------
-// specs behavior-coverage / domain-coverage
+// specs behavior-coverage
 // [Repo-grounded — `application/speccoverage/reporter.rs`]
 // ---------------------------------------------------------------------------
 

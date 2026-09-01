@@ -1,6 +1,6 @@
 ---
 name: specs-scaffolding
-description: Mechanics for specs-maker — the four surface-profile directory trees, README/feature-file/C4-diagram/DDD content generation, and the PM-readability/placement/structure conventions every scaffolded file follows.
+description: Mechanics for specs-maker — the four surface-profile directory trees, README/feature-file/C4-diagram content generation, and the PM-readability/placement/structure conventions every scaffolded file follows.
 when_to_use: When implementing or maintaining specs-maker, or any agent that scaffolds new spec areas under specs/.
 ---
 
@@ -17,7 +17,7 @@ the caller names, following the C4-aware five-folder shape.
 - [surface-profile-trees.md](reference/surface-profile-trees.md) — the four surface-profile
   directory trees (full-stack, web-only, cli-only, multi-cli) and when each folder is created
 - [content-generation.md](reference/content-generation.md) — README inference, Gherkin
-  feature file generation, C4 Mermaid diagram generation, DDD artifact scaffolding
+  feature file generation, C4 Mermaid diagram generation
 - [conventions.md](reference/conventions.md) — the PM-readability contract, feature file
   placement rules, README structure, background steps by surface, folder listing order
 
@@ -27,8 +27,6 @@ the caller names, following the C4-aware five-folder shape.
   which spec areas should exist, never creates content elsewhere.
 - **Only scaffold what the surface profile needs.** Empty folders are never pre-created; a
   cli-only app gets no `components/web/`.
-- **DDD is opt-in.** Scaffolded only when explicitly targeted, never added automatically during
-  full app tree scaffolding — adoption is a team decision.
 - **Follow established patterns, no novel structures.** Every generated file matches the
   conventions in reference module 03.
 

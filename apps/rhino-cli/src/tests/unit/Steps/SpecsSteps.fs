@@ -1,12 +1,10 @@
-/// TickSpec step definitions binding the 13 feature files under
+/// TickSpec step definitions binding the 12 feature files under
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/` to
 /// `RhinoCli.Application.Specs`'s ports, mirroring the single monolithic
 /// Rust `tests/specs_tree.rs` runner that owns all of them
 /// [Repo-grounded — `apps/rhino-cli/tests/specs_tree.rs`].
 ///
-/// This PR adds `domain-coverage.feature`'s 2 scenarios to the
-/// `behavior-coverage.feature` wiring an earlier PR laid down. Follows
-/// `TestCoverageSteps.fs`'s per-scenario slicing convention: each xunit
+/// Follows `TestCoverageSteps.fs`'s per-scenario slicing convention: each xunit
 /// `[<Fact>]` below runs exactly one scenario, extracted from the real,
 /// frozen feature file.
 module RhinoCli.Tests.Unit.Steps.SpecsSteps
@@ -28,15 +26,12 @@ let private BcFeaturePath = "specs/apps/example/foo.feature"
 /// instance-level mutable fields the idiomatic state-threading mechanism
 /// here.
 type SpecsSteps() =
-    // ---- behavior-coverage.feature / domain-coverage.feature (pure engine) state ----
+    // ---- behavior-coverage.feature (pure engine) state ----
     let mutable bcScenarios: ScenarioSpec list = []
     let mutable bcMarkers: CoversMarker list = []
     let mutable bcEnvelope: ProjectEnvelope = { Levels = Set.empty }
     let mutable bcViolations: BehaviorCoverageViolation list = []
     let mutable bcExemptCount: int = 0
-    let mutable dcProjectName: string = ""
-    let mutable dcDomainAreas: string list = []
-    let mutable dcEligible: bool = false
 
     // ---- e2e-coverage.feature state ----
 
@@ -171,11 +166,6 @@ type SpecsSteps() =
                   "" ]
             )
         )
-
-    let specAddBoundedContexts (app: string) : unit =
-        let dir = Path.Combine(specFixtureRoot (), "specs", "apps", app, "ddd")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, "bounded-contexts.yaml"), "contexts: []\n")
 
     /// Records one validator run's findings, rendered output, and exit code.
     let specRecord (findings: SpecFinding list) : unit =
@@ -441,68 +431,6 @@ type SpecsSteps() =
     member _.``it does not fail and reports the scenario in the exempt count``() =
         Assert.Empty(bcViolations: BehaviorCoverageViolation list)
         Assert.Equal(1, bcExemptCount)
-
-    // ---- Given / When / Then (`domain-coverage.feature`) ----
-
-    [<Given>]
-    member _.``a project listed in the specs.domain-areas allowlist``() =
-        dcDomainAreas <- [ "ose-be" ]
-        dcProjectName <- "ose-be"
-
-    [<Given>]
-    member _.``a domain scenario not covered at its required level by any \x40covers marker``() =
-        bcScenarios <-
-            bcScenarios
-            @ [ { FeaturePath = "specs/apps/ose/behavior/be/domain/foo.feature"
-                  Title = "Uncovered domain scenario"
-                  LevelTags = Set.ofList [ Unit ]
-                  IsWip = false } ]
-
-        bcEnvelope <- { Levels = Set.ofList [ Unit ] }
-
-    [<Given>]
-    member _.``a project not listed in the specs.domain-areas allowlist``() =
-        dcDomainAreas <- [ "ose-be" ]
-        dcProjectName <- "rhino-cli"
-
-    [<Given>]
-    member _.``that project has domain/\*\* feature files``() =
-        bcScenarios <-
-            bcScenarios
-            @ [ { FeaturePath = "specs/apps/rhino/behavior/rhino-cli/domain/bar.feature"
-                  Title = "Domain scenario for skipped project"
-                  LevelTags = Set.ofList [ Unit ]
-                  IsWip = false } ]
-
-        bcEnvelope <- { Levels = Set.ofList [ Unit ] }
-
-    [<When>]
-    member _.``rhino-cli specs domain-coverage validate runs``() =
-        dcEligible <- isEligible dcProjectName dcDomainAreas
-
-        bcViolations <-
-            if dcEligible then
-                validate (filterDomainScenarios bcScenarios) bcMarkers bcEnvelope
-            else
-                []
-
-    [<Then>]
-    member _.``it fails and names the uncovered domain scenario``() =
-        Assert.True(dcEligible, "project must be eligible for this scenario")
-
-        Assert.True(
-            bcViolations
-            |> List.exists (function
-                | MissingCoverage(_, title, _) -> title = "Uncovered domain scenario"
-                | _ -> false),
-            sprintf "got: %A" bcViolations
-        )
-
-    [<Then>]
-    member _.``the project is skipped and no violation is reported``() =
-        Assert.False(dcEligible, "project must be skipped (not in domain-areas allowlist)")
-        Assert.Empty(bcViolations: BehaviorCoverageViolation list)
-
 
     // ---- Given (`e2e-coverage.feature`) ----
 
@@ -995,7 +923,6 @@ type SpecsSteps() =
         specApp <- "testapp"
         specCreateTree "testapp" true |> ignore
         specAddFeatureFile "testapp"
-        specAddBoundedContexts "testapp"
 
     [<When>]
     member _.``the developer runs rhino-cli specs audit``() =
@@ -1037,27 +964,26 @@ type SpecsSteps() =
     // ---- Given (`validate-adoption.feature`) ----
 
     [<Given>]
-    member _.``an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and a bounded-contexts.yaml at specs/apps/testapp/ddd/bounded-contexts.yaml``
+    member _.``an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and no ddd tree at specs/apps/testapp/ddd``
         ()
         =
         specApp <- "testapp"
         specCreateTree "testapp" true |> ignore
         specAddFeatureFile "testapp"
-        specAddBoundedContexts "testapp"
 
     [<Given>]
     member _.``an app "testapp" that has no feature files under specs/apps/testapp/behavior/``() =
         specApp <- "testapp"
         specCreateTree "testapp" true |> ignore
-        specAddBoundedContexts "testapp"
 
     [<Given>]
-    member _.``an app "testapp" that has feature files but no bounded-contexts.yaml at specs/apps/testapp/ddd/bounded-contexts.yaml``
-        ()
-        =
+    member _.``an app "testapp" that has feature files and a retired ddd tree at specs/apps/testapp/ddd``() =
         specApp <- "testapp"
         specCreateTree "testapp" true |> ignore
         specAddFeatureFile "testapp"
+
+        Directory.CreateDirectory(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "ddd"))
+        |> ignore
 
     [<Given>]
     member _.``an app "unknownapp" with no spec tree at all``() =
@@ -1198,8 +1124,8 @@ type SpecsSteps() =
         Assert.Contains("no feature files", specOutput, StringComparison.Ordinal)
 
     [<Then>]
-    member _.``the output contains "bounded-contexts.yaml"``() =
-        Assert.Contains("bounded-contexts.yaml", specOutput, StringComparison.Ordinal)
+    member _.``the output contains "retired ddd/ tree"``() =
+        Assert.Contains("retired ddd/ tree", specOutput, StringComparison.Ordinal)
 
     [<Then>]
     member _.``the output contains "empty subfolder"``() =
@@ -1823,14 +1749,6 @@ let ``A wip scenario is exempt from coverage`` () =
     FeatureRunner.run "behavior-coverage.feature" "A @wip scenario is exempt from coverage"
 
 [<Fact>]
-let ``An uncovered domain scenario fails the gate`` () =
-    FeatureRunner.run "domain-coverage.feature" "An uncovered domain scenario fails the gate"
-
-[<Fact>]
-let ``A project not in the domain-areas allowlist is skipped`` () =
-    FeatureRunner.run "domain-coverage.feature" "A project not in the domain-areas allowlist is skipped"
-
-[<Fact>]
 let ``A project's current unbound gaps exactly match its checked-in baseline`` () =
     FeatureRunner.run "e2e-coverage.feature" "A project's current unbound gaps exactly match its checked-in baseline"
 
@@ -1897,24 +1815,22 @@ let ``Every specs validator passes on a repository with no spec violations`` () 
     FeatureRunner.run "specs-audit.feature" "Every specs validator passes on a repository with no spec violations"
 
 [<Fact>]
-let ``app with BDD feature files and bounded-contexts yaml passes validation`` () =
-    FeatureRunner.run
-        "validate-adoption.feature"
-        "app with BDD feature files and bounded-contexts.yaml passes validation"
+let ``app with BDD feature files and no retired ddd tree passes validation`` () =
+    FeatureRunner.run "validate-adoption.feature" "app with BDD feature files and no retired ddd tree passes validation"
 
 [<Fact>]
 let ``app missing behavior feature files reports a finding`` () =
     FeatureRunner.run "validate-adoption.feature" "app missing behavior feature files reports a finding"
 
 [<Fact>]
-let ``app missing bounded-contexts yaml reports a finding`` () =
-    FeatureRunner.run "validate-adoption.feature" "app missing bounded-contexts.yaml reports a finding"
+let ``app with a surviving retired ddd tree reports a finding`` () =
+    FeatureRunner.run "validate-adoption.feature" "app with a surviving retired ddd tree reports a finding"
 
 [<Fact>]
-let ``unknown app with no spec tree at all reports findings for both adoptions`` () =
+let ``unknown app with no spec tree at all reports a behavior adoption finding`` () =
     FeatureRunner.run
         "validate-adoption.feature"
-        "unknown app with no spec tree at all reports findings for both adoptions"
+        "unknown app with no spec tree at all reports a behavior adoption finding"
 
 [<Fact>]
 let ``folder with spec files in all subfolders passes validation`` () =

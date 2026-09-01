@@ -11,8 +11,7 @@
 /// gate wiring, env contracts, word budgets, and the full Doctor tool
 /// roster. This port models only `harness[].{name,tier,agent-dir,mirrors,
 /// forbid-dir,skills-dir,skills-mirrors,vendored,catalog,ownership}`,
-/// `gates[].{id,args}`, `specs.{ddd-areas,domain-areas}`,
-/// `doctor.dotnet-global-json`, and `harness-catalog.{document,verified}` —
+/// `gates[].{id,args}`, `doctor.dotnet-global-json`, and `harness-catalog.{document,verified}` —
 /// the fields these three feature files' scenarios read — and deserializes
 /// the rest of the document with
 /// `IgnoreUnmatchedProperties` rather than Rust's `deny_unknown_fields`, so
@@ -192,12 +191,6 @@ type DoctorConfig =
     { DotnetGlobalJson: string option
       SkipTools: string list }
 
-/// The `specs:` section, trimmed to the data-driven-behaviour scenario's
-/// fields [Repo-grounded — `repo_config/mod.rs::SpecsConfig`].
-type SpecsConfig =
-    { DddAreas: string list
-      DomainAreas: string list }
-
 /// Document-level settings for the generated platform-binding catalog: where
 /// it lives, and the date its claims were last verified against upstream
 /// [Repo-grounded — `repo_config/mod.rs::HarnessCatalog`].
@@ -208,7 +201,6 @@ type HarnessCatalog = { Document: string; Verified: string }
 type RepoConfig =
     { Harness: HarnessEntry list
       Gates: GateEntry list
-      Specs: SpecsConfig
       Doctor: DoctorConfig
       HarnessCatalog: HarnessCatalog option }
 
@@ -218,7 +210,6 @@ type RepoConfig =
 let empty: RepoConfig =
     { Harness = []
       Gates = []
-      Specs = { DddAreas = []; DomainAreas = [] }
       Doctor =
         { DotnetGlobalJson = None
           SkipTools = [] }
@@ -300,22 +291,16 @@ type DoctorConfigDto =
       SkipTools: ResizeArray<string> }
 
 [<CLIMutable>]
-type SpecsConfigDto =
-    { DddAreas: ResizeArray<string>
-      DomainAreas: ResizeArray<string> }
-
-[<CLIMutable>]
 type HarnessCatalogDto = { Document: string; Verified: string }
 
 [<CLIMutable>]
 type RepoConfigDto =
     { Harness: ResizeArray<HarnessEntryDto>
       Gates: ResizeArray<GateEntryDto>
-      Specs: SpecsConfigDto
       Doctor: DoctorConfigDto
       HarnessCatalog: HarnessCatalogDto }
 
-/// Matches `repo-config.yml`'s kebab-case keys (`agent-dir`, `ddd-areas`,
+/// Matches `repo-config.yml`'s kebab-case keys (`agent-dir`,
 /// `dotnet-global-json`, ...) against the DTOs' PascalCase properties without
 /// per-property `[<YamlMember>]` attributes, and tolerates every real
 /// `repo-config.yml` key this port does not model (see module doc comment).
@@ -482,13 +467,6 @@ let private toGateEntry (dto: GateEntryDto) : GateEntry =
       Verifies = Option.ofObj dto.Verifies
       Category = Option.ofObj dto.Category
       CiGroup = Option.ofObj dto.CiGroup }
-
-let private toSpecsConfig (dto: SpecsConfigDto) : SpecsConfig =
-    match box dto with
-    | null -> { DddAreas = []; DomainAreas = [] }
-    | _ ->
-        { DddAreas = toOptionList dto.DddAreas
-          DomainAreas = toOptionList dto.DomainAreas }
 
 let private toDoctorConfig (dto: DoctorConfigDto) : DoctorConfig =
     match box dto with
@@ -775,7 +753,6 @@ let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
                 |> Result.map (fun harness ->
                     { Harness = harness
                       Gates = toOptionList dto.Gates |> List.map toGateEntry
-                      Specs = toSpecsConfig dto.Specs
                       Doctor = toDoctorConfig dto.Doctor
                       HarnessCatalog =
                         match box dto.HarnessCatalog with

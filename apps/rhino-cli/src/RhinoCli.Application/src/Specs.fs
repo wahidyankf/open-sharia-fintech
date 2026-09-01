@@ -2,10 +2,7 @@
 /// [Repo-grounded — `apps/rhino-cli/src/application/behavior_coverage/types.rs`,
 /// `apps/rhino-cli/src/application/behavior_coverage/validator.rs`] for
 /// `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/behavior-coverage.feature`'s
-/// 6 scenarios, plus the `domain/**`-scoped allowlist gate
-/// [Repo-grounded — `apps/rhino-cli/src/application/domain_coverage/mod.rs`]
-/// for `domain-coverage.feature`'s 2 scenarios, which reuses [`validate`]
-/// rather than duplicating it.
+/// 6 scenarios.
 ///
 /// Scope: this first PR against the `specs` subsystem ports only what
 /// [`validate`] itself needs — [`TestLevel`], [`ScenarioSpec`],
@@ -131,19 +128,6 @@ let validate
                     [])
 
     scenarioViolations @ markerViolations
-
-/// `true` iff `projectName` is listed in `domainAreas`.
-///
-/// A project absent from the allowlist is skipped even if it has `domain/**`
-/// feature files.
-let isEligible (projectName: string) (domainAreas: string list) : bool =
-    domainAreas |> List.contains projectName
-
-/// Returns only those scenarios whose `FeaturePath` contains a `domain`
-/// path component.
-let filterDomainScenarios (scenarios: ScenarioSpec list) : ScenarioSpec list =
-    scenarios
-    |> List.filter (fun s -> s.FeaturePath.Split('/') |> Array.contains "domain")
 
 // ---------------------------------------------------------------------------
 // `specs e2e-coverage validate` — playwright-bdd unbound-scenario gap detector
@@ -793,9 +777,8 @@ let countNonReadmeMdFiles (dir: string) : int =
                 && not (String.Equals(name, "README.md", StringComparison.OrdinalIgnoreCase))))
         |> Seq.length
 
-/// The two adoption findings shared by [`validateSpecAdoption`] and
-/// [`validateSpecAdoptionDddAware`]: a missing `behavior/` directory, or one
-/// holding no `.feature` file at all.
+/// The two behavior-adoption findings [`validateSpecAdoption`] reports: a
+/// missing `behavior/` directory, or one holding no `.feature` file at all.
 let private behaviorAdoptionFindings (repoRoot: string) (app: string) : SpecFinding list =
     let behaviorDir = Path.Combine(repoRoot, "specs/apps", app, "behavior")
 
@@ -814,46 +797,20 @@ let private behaviorAdoptionFindings (repoRoot: string) (app: string) : SpecFind
     else
         []
 
-/// The missing-`bounded-contexts.yaml` finding shared by both adoption
-/// validators.
-let private missingBoundedContextsFinding (app: string) : SpecFinding =
-    { Category = "adoption"
-      Criticality = "HIGH"
-      File = sprintf "specs/apps/%s/ddd" app
-      Evidence = sprintf "missing bounded-contexts.yaml at specs/apps/%s/ddd/bounded-contexts.yaml" app
-      Expected = sprintf "create specs/apps/%s/ddd/bounded-contexts.yaml" app }
-
 /// Checks that `app` has adopted the spec conventions: a `behavior/` folder
-/// holding at least one `.feature` file, and a
-/// `ddd/bounded-contexts.yaml`.
+/// holding at least one `.feature` file, and no retired `ddd/` tree. DDD is no
+/// longer an engineering-facing specification surface, so any surviving
+/// `specs/apps/<app>/ddd/` directory is a finding rather than a requirement.
 let validateSpecAdoption (repoRoot: string) (app: string) : SpecFinding list =
-    let bcYaml =
-        Path.Combine(repoRoot, "specs/apps", app, "ddd", "bounded-contexts.yaml")
-
-    behaviorAdoptionFindings repoRoot app
-    @ (if File.Exists bcYaml then
-           []
-       else
-           [ missingBoundedContextsFinding app ])
-
-/// Config-aware adoption validator: requires `ddd/` only when `isDddArea` is
-/// true, and flags an unexpected `ddd/` directory when it is not.
-let validateSpecAdoptionDddAware (repoRoot: string) (app: string) (isDddArea: bool) : SpecFinding list =
     let dddDir = Path.Combine(repoRoot, "specs/apps", app, "ddd")
-    let bcYaml = Path.Combine(dddDir, "bounded-contexts.yaml")
 
     let dddFindings =
-        if isDddArea then
-            if File.Exists bcYaml then
-                []
-            else
-                [ missingBoundedContextsFinding app ]
-        elif Directory.Exists dddDir then
+        if Directory.Exists dddDir then
             [ { Category = "adoption"
                 Criticality = "HIGH"
                 File = sprintf "specs/apps/%s/ddd" app
-                Evidence = sprintf "unexpected ddd/ at specs/apps/%s/ddd — area not listed in specs.ddd-areas" app
-                Expected = sprintf "remove specs/apps/%s/ddd/ or add %s to specs.ddd-areas in repo-config.yml" app app } ]
+                Evidence = sprintf "retired ddd/ tree still present at specs/apps/%s/ddd" app
+                Expected = sprintf "remove specs/apps/%s/ddd/" app } ]
         else
             []
 
@@ -1181,9 +1138,8 @@ let formatCardinalityText (findings: GherkinCardinalityFinding list) : string =
 // `specs-audit.feature`.
 // ---------------------------------------------------------------------------
 
-/// Member validators `specs audit` runs, in order. `behavior-coverage`,
-/// `domain-coverage`, `bc`, and `ul` are excluded because they need
-/// domain-specific positional arguments `audit` cannot default.
+/// Member validators `specs audit` runs, in order. `behavior-coverage` is
+/// excluded because it needs positional arguments `audit` cannot default.
 let specsAuditMembers: string list =
     [ "structure-validate"; "validate-links"; "gherkin-cardinality" ]
 

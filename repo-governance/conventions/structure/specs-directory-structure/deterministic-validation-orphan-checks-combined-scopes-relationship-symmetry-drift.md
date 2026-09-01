@@ -1,7 +1,7 @@
 ---
-title: "Deterministic Validation: Orphan Checks, Combined Scopes, Relationship Symmetry, and Drift Detection"
-description: The reverse-direction step orphan check, combined multi-perspective coverage runs, DDD relationship symmetry checks, and the current (unimplemented) drift-detection commands
-when_to_use: Read this when debugging an orphan-step coverage failure, wiring a combined gherkin-scopes coverage run, or checking a DDD relationship-symmetry finding.
+title: "Deterministic Validation: Orphan Checks, Combined Scopes, and Drift Detection"
+description: The reverse-direction step orphan check, combined multi-perspective coverage runs, and the current (unimplemented) drift-detection commands
+when_to_use: Read this when debugging an orphan-step coverage failure or wiring a combined gherkin-scopes coverage run.
 category: explanation
 subcategory: conventions
 tags:
@@ -16,7 +16,7 @@ tags:
 created: 2026-04-02
 ---
 
-# Deterministic Validation: Orphan Checks, Combined Scopes, Relationship Symmetry, and Drift Detection
+# Deterministic Validation: Orphan Checks, Combined Scopes, and Drift Detection
 
 ## Reverse-direction step orphan check (Fix #15)
 
@@ -32,10 +32,6 @@ The validator handles Scenario Outline forms in both directions: outline steps a
 ## Combined gherkin scopes per app
 
 `rhino-cli specs coverage` accepts a variadic specs-dirs list (`specs coverage <specs-dir> [<specs-dir>...] <app-dir>`). Apps with multiple gherkin perspectives (ose-www has web + api; ayokoding-www has web + api + cli) declare a single combined run in `project.json` so impls shared across scopes don't false-positive on per-scope orphan checks.
-
-## Expanded relationship symmetry (DDD validators)
-
-`bcregistry/validator.go` flags asymmetric relationships for `customer-supplier`, `conformist`, `partnership`, and `shared-kernel` kinds. `anticorruption-layer` and `open-host-service` are intentionally one-way and silent. Unknown relationship kinds (e.g., typos like `shered-kernel`) produce an explicit "unknown relationship kind" finding via the new `checkRelationshipKinds` pass.
 
 ## Drift detection
 

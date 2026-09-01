@@ -7,8 +7,8 @@ membership. For READMEs that exist, retain semantic assessment of useful overvie
 Without delegation, the lifecycle command owns existence for the five top-level folders
 (`product/`, `system-context/`, `containers/`, `components/`, `behavior/`), per-surface subfolders
 (`components/be|web|cli/`, `behavior/<product>-<surface>/gherkin/`), all domain subdirectories
-under `behavior/<product>-<surface>/gherkin/<domain>/` (required for every surface), DDD
-subdirectories (`ddd/`, `ddd/ubiquitous-language/`), and `containers/contracts/` when present.
+under `behavior/<product>-<surface>/gherkin/<domain>/` (required for every surface), and
+`containers/contracts/` when present.
 Check semantic quality recursively. **HIGH**: README exists but is empty or lacks required
 overview/contents information.
 

@@ -6,7 +6,7 @@
 #
 # Sections defined here:
 #   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
-#   coverage         — per-project test-level registry (specs:behavior:coverage + specs:domain:coverage)
+#   coverage         — per-project test-level registry (specs:behavior:coverage)
 #   specs            — spec-tree structure config (specs:structure-validation)
 #   governance-word-budget — per-surface instruction-file word budgets (rhino-cli governance word-budget validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
@@ -242,19 +242,6 @@ coverage:
     #   linting (the 2 *-contracts projects) — not a Gherkin-driven test level this
     #   registry models. Adding a levels: [] or levels: [unit] entry here would
     #   misleadingly claim behavior-spec coverage that doesn't exist.
-
-specs:
-  # Areas that must carry a ddd/ folder (bounded-context registry). Lifts the
-  # hardcoded apps_with_ddd() allowlist into explicit config.
-  # An area NOT listed must NOT carry ddd/ (unlisted area with ddd/ = error).
-  ddd-areas: []
-
-  # Areas eligible for specs:domain:coverage (explicit allowlist; distinct from
-  # ddd-areas). A project NOT listed is skipped even if it has domain/** features.
-  # Today: the *-be backends that own domain-bounded-context feature files.
-  domain-areas:
-    - organiclever-be
-    - ose-be
 
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at

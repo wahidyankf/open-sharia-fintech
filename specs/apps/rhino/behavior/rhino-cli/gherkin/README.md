@@ -11,7 +11,6 @@ Feature files are grouped into domain subdirectories, one per subcommand family:
 behavior/rhino-cli/gherkin/
 ├── contracts/              # contracts subcommand family (scaffolding generators)
 ├── convention/             # convention subcommand family
-├── ddd/                    # ddd subcommand family
 ├── env/                    # env subcommand family
 ├── env-contract/           # env validate's IaC (terraform/ansible) dispatch surface
 ├── gate/                   # gate-registry command family
@@ -43,13 +42,6 @@ behavior/rhino-cli/gherkin/
 | `convention-audit.feature`              | `convention audit`            | 1         |
 | `repo-governance-emoji-audit.feature`   | `convention emoji validate`   | 6         |
 | `repo-governance-license-audit.feature` | `convention license validate` | 4         |
-
-### ddd
-
-| File             | Command(s)                               | Scenarios |
-| ---------------- | ---------------------------------------- | --------- |
-| `ddd-bc.feature` | `specs structure validate` (`bc:` layer) | 11        |
-| `ddd-ul.feature` | `specs structure validate` (`ul:` layer) | 7         |
 
 ### env
 
@@ -154,7 +146,6 @@ behavior/rhino-cli/gherkin/
 | File                              | Command(s)                                                                                  | Scenarios |
 | --------------------------------- | ------------------------------------------------------------------------------------------- | --------- |
 | `behavior-coverage.feature`       | `specs behavior-coverage validate`                                                          | 6         |
-| `domain-coverage.feature`         | `specs behavior-coverage validate` (domain allowlist gate)                                  | 2         |
 | `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                               | 13        |
 | `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 3         |
 | `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                        | 1         |
@@ -199,7 +190,6 @@ for the canonical purpose of this folder.
 
 - [Contracts Domain](./contracts/README.md)
 - [rhino — behavior/rhino-cli/gherkin/convention](./convention/README.md)
-- [rhino — behavior/rhino-cli/gherkin/ddd](./ddd/README.md)
 - [rhino — behavior/rhino-cli/gherkin/env](./env/README.md)
 - [Env-Contract Domain](./env-contract/README.md)
 - [Gate Gherkin Specs](./gate/README.md)

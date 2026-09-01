@@ -327,7 +327,6 @@ specs/apps/[domain]/
 ├── components/             # C4 L3 — internal structure
 │   ├── be/                 # Full-stack only
 │   └── web/                # Web and full-stack
-├── ddd/                    # Domain-Driven Design artefacts (when adopted)
 └── behavior/               # Gherkin feature files — domain subdirs required
     ├── be/gherkin/[domain]/ # Backend acceptance specs
     ├── web/gherkin/[domain]/ # Frontend acceptance specs

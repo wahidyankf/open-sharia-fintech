@@ -32,7 +32,6 @@ created: 2026-05-09
 
 - Routes tables listing URL paths (belongs in `components/web/routes-and-screens.md`)
 - API endpoint tables (belongs in `components/be/api.md`)
-- Bounded-context maps or narrative descriptions (belongs in `ddd/`)
 - Architecture diagrams showing internal structure deeper than one level (belongs in `components/`)
 - Design system palettes, font specs, or component variant catalogs (belongs in `components/web/design-system.md`)
 - Full `src/contexts/<bc>/...` directory recursion (belongs in architecture.md)

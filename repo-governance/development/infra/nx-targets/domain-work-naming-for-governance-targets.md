@@ -25,7 +25,6 @@ operation. This distinguishes governance targets from language-level lifecycle t
 | Target                                 | What it validates                                                                          |
 | -------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `specs:behavior:coverage`              | Gherkin feature/scenario coverage at the behavior level (renamed from `specs:coverage`)    |
-| `specs:domain:coverage`                | Domain-area coverage gated by the `specs.domain-areas` allowlist in `repo-config.yml`      |
 | `specs:structure-validation`           | Adoption + tree shape + counts validated together (merged from three removed leaf targets) |
 | `specs:gherkin-cardinality-validation` | Each Gherkin keyword used within cardinality bounds                                        |
 | `links:validation`                     | Internal links in all non-excluded `.md` files                                             |

@@ -24,7 +24,6 @@ created: 2026-04-02
 - **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within the `behavior/` tree
 - **Domain subdirectory rules** for grouping related feature files
 - **C4 diagram placement** within `system-context/`, `containers/`, and `components/`
-- **DDD artifact placement** within `components/<surface>/ddd/`
 - **OpenAPI contract placement** within `containers/contracts/`
 - **README.md index files** at each navigational level
 - **Per-surface variants** (full-stack, web-only, CLI-only, multi-CLI)

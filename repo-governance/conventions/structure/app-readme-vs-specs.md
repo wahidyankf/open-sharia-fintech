@@ -32,7 +32,7 @@ This convention draws a hard boundary. App and infra READMEs contain only dev-ru
 - [Standard 4 — Spec Tree Shape: Per-Surface Variants, Creation Rules, and Migration](./app-readme-vs-specs/standard-4-variants-creation-rules-and-migration.md) — how the tree varies by surface profile, plus the flat-root migration path.
 - [Standard 5 — PM-Readability Contract (Glossary)](./app-readme-vs-specs/standard-5-pm-readability-glossary.md) — which terms need glossing on first use.
 - [Standard 5 — PM-Readability Contract (Rules 1-6)](./app-readme-vs-specs/standard-5-pm-readability-rules.md) — the six authoring rules for PM-readable specs files.
-- [Standard 6 and 7 — BDD/DDD/Contracts Adoption, and Cross-Link Integrity](./app-readme-vs-specs/standard-6-and-7.md) — adoption expectations by surface profile and app, plus README-to-specs navigation requirements.
+- [Standard 6 and 7 — BDD/Contracts Adoption, and Cross-Link Integrity](./app-readme-vs-specs/standard-6-and-7.md) — adoption expectations by surface profile and app, plus README-to-specs navigation requirements.
 - [Examples: README Trim and PM-Readable Header](./app-readme-vs-specs/examples-readme-trim-and-pm-readable-header.md) — worked before/after examples of a README trim and a PM-readable spec header.
 - [Example: Spec Tree Migration](./app-readme-vs-specs/examples-spec-tree-migration.md) — a worked flat-root-to-C4-aware migration example and checklist.
 - [Validation and Refinement Log](./app-readme-vs-specs/validation-and-refinement-log.md) — deterministic and LLM-semantic enforcement checks, and the convention's change history.

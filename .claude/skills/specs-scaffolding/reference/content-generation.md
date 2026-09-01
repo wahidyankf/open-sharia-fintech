@@ -26,20 +26,3 @@ Generate Mermaid-based C4 diagrams following the accessible color palette
   container.
 - Component Web (`components/web/component-web.md`) — C4 L3: internal structure of web
   container.
-
-## Scaffold DDD Artifacts
-
-When `target` includes `components/<surface>/ddd/`, scaffold:
-
-```
-{target}/ddd/
-├── README.md
-├── bounded-contexts.yaml     # registry stub
-├── bounded-context-map.md    # PM-readable narrative + Mermaid diagram
-└── ubiquitous-language/
-    ├── README.md
-    └── {bc}.md               # one per bounded context (if known)
-```
-
-DDD scaffolding is only created when explicitly targeted — it is never added automatically during
-full app tree scaffolding. Adoption is a team decision.

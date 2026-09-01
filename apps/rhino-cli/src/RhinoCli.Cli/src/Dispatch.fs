@@ -1716,9 +1716,9 @@ let private runRepoGovernanceAuditLeaf (repoRoot: string) (format: OutputFormat)
     printResultAndExitCode output err
 
 /// `specs counts validate` [Repo-grounded — `specs_validate_counts.rs::run_at_root`].
-/// A positional folder wins over `--apps`; with neither, the folder list is
-/// `repo-config.yml`'s `specs.ddd-areas`, so the default scan targets are repo
-/// data rather than a hard-coded allowlist.
+/// A positional folder wins over `--apps`; with neither, there is nothing to
+/// scan, because the retired `specs.ddd-areas` allowlist was the only source of
+/// a default folder list.
 let private specsCountsValidateRun (repoRoot: string) (rawArgs: string list) : string * string option =
     let positional = collectPositionals [ "--apps" ] rawArgs
 
@@ -1731,14 +1731,7 @@ let private specsCountsValidateRun (repoRoot: string) (rawArgs: string list) : s
     let folders =
         match positional with
         | folder :: _ -> [ folder ]
-        | [] ->
-            let defaults =
-                if List.isEmpty apps then
-                    (RepoConfig.loadOrDefault repoRoot).Specs.DddAreas
-                else
-                    apps
-
-            defaults |> List.map (sprintf "specs/apps/%s")
+        | [] -> apps |> List.map (sprintf "specs/apps/%s")
 
     let sb = Text.StringBuilder()
     let mutable total = 0
@@ -1768,11 +1761,8 @@ let private runSpecsCountsValidateLeaf (repoRoot: string) (rawArgs: string list)
 
 /// `specs structure validate` [Repo-grounded —
 /// `specs_structure_validate.rs::run_at_root`]. Layers adoption → tree →
-/// counts for every app, plus the bounded-context and glossary layers for
-/// apps `repo-config.yml` declares a DDD area.
+/// counts for every app.
 let private specsStructureValidateRun (repoRoot: string) (rawArgs: string list) : string * string option =
-    let config = RepoConfig.loadOrDefault repoRoot
-    let dddAreas = config.Specs.DddAreas
     let positional = collectPositionals [ "--apps" ] rawArgs
 
     let flagApps =
@@ -1800,8 +1790,7 @@ let private specsStructureValidateRun (repoRoot: string) (rawArgs: string list) 
     let mutable total = 0
 
     for app in apps do
-        let isDddArea = List.contains app dddAreas
-        let adoption = Specs.validateSpecAdoptionDddAware repoRoot app isDddArea
+        let adoption = Specs.validateSpecAdoption repoRoot app
 
         for f in adoption do
             sb.Append(sprintf "adoption: %s: HIGH: %s\n" f.File f.Evidence) |> ignore
@@ -1818,57 +1807,9 @@ let private specsStructureValidateRun (repoRoot: string) (rawArgs: string list) 
         for f in counts do
             sb.Append(sprintf "counts: %s: HIGH: %s\n" f.File f.Evidence) |> ignore
 
-        let mutable bcCount = 0
-        let mutable ulCount = 0
+        total <- total + List.length adoption + List.length tree + List.length counts
 
-        if isDddArea then
-            match
-                Ddd.validateBoundedContexts
-                    { RepoRoot = repoRoot
-                      App = app
-                      Severity = None }
-            with
-            | Ok findings ->
-                for f in findings do
-                    sb.Append(sprintf "bc: %s: %s: %s\n" f.File (Ddd.severityCode f.Severity) f.Message)
-                    |> ignore
-
-                bcCount <- List.length findings
-            | Error message ->
-                sb.Append(sprintf "bc: %s: HIGH: %s\n" app message) |> ignore
-                bcCount <- 1
-
-            match
-                Glossary.validateAll
-                    { RepoRoot = repoRoot
-                      App = app
-                      Severity = None }
-            with
-            | Ok findings ->
-                for f in findings do
-                    sb.Append(sprintf "ul: %s: %s: %s\n" f.File (Ddd.severityCode f.Severity) f.Message)
-                    |> ignore
-
-                ulCount <- List.length findings
-            | Error message ->
-                sb.Append(sprintf "ul: %s: HIGH: %s\n" app message) |> ignore
-                ulCount <- 1
-
-        total <-
-            total
-            + List.length adoption
-            + List.length tree
-            + List.length counts
-            + bcCount
-            + ulCount
-
-        if
-            List.isEmpty adoption
-            && List.isEmpty tree
-            && List.isEmpty counts
-            && bcCount = 0
-            && ulCount = 0
-        then
+        if List.isEmpty adoption && List.isEmpty tree && List.isEmpty counts then
             sb.Append(sprintf "specs structure validate: 0 finding(s) for \"%s\"\n" app)
             |> ignore
 
@@ -1950,9 +1891,8 @@ let private runSpecsScaffoldDartLeaf (format: OutputFormat) (rawArgs: string lis
         printResultAndExitCode output None
 
 /// `specs audit` [Repo-grounded — `specs_audit.rs::run`]. Runs the three
-/// default-argument validators in order; `behavior-coverage`, `domain-coverage`,
-/// `bc`, and `ul` are excluded because they need positional arguments `audit`
-/// cannot default.
+/// default-argument validators in order; `behavior-coverage` is excluded
+/// because it needs positional arguments `audit` cannot default.
 let private runSpecsAuditLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
     let skip = collectRepeatableFlag [ "--skip" ] rawArgs
     let members = [ "structure-validate"; "validate-links"; "gherkin-cardinality" ]
@@ -2309,35 +2249,6 @@ let private runSpecsBehaviorCoverageLeaf (repoRoot: string) (format: OutputForma
                     (List.length result.OrphanStepImpls)
 
                 1
-
-/// `specs domain-coverage validate` [Repo-grounded —
-/// `specs_coverage.rs::run_domain`]. A project absent from
-/// `repo-config.yml`'s `specs.domain-areas` is skipped, not scanned.
-let private runSpecsDomainCoverageLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
-    let paths = collectPositionals coverageValueFlags rawArgs
-
-    if List.length paths < 2 then
-        printMissingPathsError "specs domain-coverage validate" rawArgs (List.length paths)
-    else
-        let appDirPath = List.last paths
-        let projectName = IO.Path.GetFileName(appDirPath.TrimEnd('/'))
-        let config = RepoConfig.loadOrDefault repoRoot
-
-        if Specs.isEligible projectName config.Specs.DomainAreas then
-            runSpecsBehaviorCoverageLeaf repoRoot format rawArgs
-        else
-            let message =
-                sprintf
-                    "specs domain-coverage validate: skipped — \"%s\" is not listed in repo-config.yml's specs.domain-areas"
-                    projectName
-
-            match format with
-            | Text -> printfn "%s" message
-            | Json ->
-                printfn "{\"skipped\":true,\"project\":\"%s\",\"reason\":\"not in specs.domain-areas\"}" projectName
-            | Markdown -> printfn "- %s" message
-
-            0
 
 /// Resolves a `--features` glob relative to `projectDir`, returning matched
 /// `.feature` paths [Repo-grounded — `specs_e2e_coverage.rs::collect_declared`,
@@ -2858,7 +2769,6 @@ let private routeTable: (string list * string) list =
       [ "specs"; "gherkin-cardinality"; "validate" ], "specs-gherkin-cardinality-validate"
       [ "specs"; "scaffold"; "dart" ], "specs-scaffold-dart"
       [ "specs"; "behavior-coverage"; "validate" ], "specs-behavior-coverage-validate"
-      [ "specs"; "domain-coverage"; "validate" ], "specs-domain-coverage-validate"
       [ "harness"; "duplication"; "validate" ], "harness-duplication-validate"
       [ "harness"; "claude"; "validate" ], "harness-claude-validate"
       [ "harness"; "sync"; "validate" ], "harness-sync-validate"
@@ -2935,17 +2845,6 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                 eprintfn "Error: %s" message
                 1
             | Ok format -> runSpecsBehaviorCoverageLeaf repoRoot format rest
-    elif path = Some "specs-domain-coverage-validate" then
-        match getRepoRoot () with
-        | Error message ->
-            eprintfn "Error: failed to find git repository root: %s" message
-            1
-        | Ok repoRoot ->
-            match parseOutputFormat rest with
-            | Error message ->
-                eprintfn "Error: %s" message
-                1
-            | Ok format -> runSpecsDomainCoverageLeaf repoRoot format rest
     elif path = Some "governance-readme-index-rewrite-paths" then
         match getRepoRoot () with
         | Error message ->
@@ -3035,6 +2934,5 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "harness-catalog-validate" -> runHarnessCatalogValidateLeaf repoRoot format rest
                     | "harness-audit" -> runHarnessAuditLeaf repoRoot format rest
                     | "specs-behavior-coverage-validate" -> runSpecsBehaviorCoverageLeaf repoRoot format rest
-                    | "specs-domain-coverage-validate" -> runSpecsDomainCoverageLeaf repoRoot format rest
                     | "specs-audit" -> runSpecsAuditLeaf repoRoot format rest
                     | _ -> 2

@@ -22,7 +22,6 @@ open System
 open System.IO
 open Xunit
 open RhinoCli.Cli.Dispatch
-open RhinoCli.Application.Ddd
 open RhinoCli.Domain.Types
 
 let private newTempDir () =
@@ -63,18 +62,14 @@ let private realRepoRoot () : string =
     | Error message -> failwith message
     | Ok root -> root
 
-/// A minimal, internally consistent DDD-area spec tree. It keeps dispatch
-/// coverage for config-driven DDD branches independent of the live delivery
-/// state of this repository, including the non-empty registry path that runs
-/// bounded-context and glossary validation.
-let private newDddAreaFixture () : string =
+/// A minimal, internally consistent spec tree. It keeps dispatch coverage
+/// independent of the live delivery
+/// state of this repository.
+let private newSpecsAreaFixture () : string =
     let root = newTempDir ()
     let app = "fixture-app"
 
-    writeFile
-        root
-        "repo-config.yml"
-        "specs:\n  ddd-areas:\n    - fixture-app\n  domain-areas: []\ngates: []\nharness: []\n"
+    writeFile root "repo-config.yml" "gates: []\nharness: []\n"
 
     for folder in [ "product"; "system-context"; "containers"; "components"; "behavior" ] do
         let path = sprintf "specs/apps/%s/%s" app folder
@@ -89,34 +84,7 @@ let private newDddAreaFixture () : string =
     writeFile root "apps/fixture-app/src/contexts/journal/domain/Fixture.fs" "module Fixture\n"
     writeFile root "apps/fixture-app/src/contexts/journal/application/Fixture.fs" "module Fixture\n"
 
-    writeFile
-        root
-        (sprintf "specs/apps/%s/ddd/ubiquitous-language/journal.md" app)
-        "# Ubiquitous Language — journal\n\n**Bounded context**: `journal`\n**Maintainer**: fixture\n**Last reviewed**: 2026-09-01\n\n## Term index\n\n| Term | Code identifier(s) | Used in features |\n| ---- | ------------------ | ---------------- |\n"
-
-    writeFile
-        root
-        (sprintf "specs/apps/%s/ddd/bounded-contexts.yaml" app)
-        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
-
     root
-
-// ---------------------------------------------------------------------------
-// DDD application contracts — direct unit coverage for parser branches that
-// dispatch-only fixtures cannot observe independently.
-// ---------------------------------------------------------------------------
-
-[<Fact>]
-let ``DDD severity treats unknown text as blocking`` () =
-    let severity = parseSeverity "fatal"
-
-    Assert.Equal(Severity.Blocking, severity)
-
-[<Fact>]
-let ``DDD marks open-host-service as a unidirectional relationship`` () =
-    match relationshipKindIsAsymmetric "open-host-service" with
-    | Some isAsymmetric -> Assert.False(isAsymmetric)
-    | None -> Assert.Fail("open-host-service must be a supported relationship kind")
 
 // ---------------------------------------------------------------------------
 // repo-governance * — read-only, safe against the real checkout
@@ -240,8 +208,8 @@ let ``route reports a nonzero exit code when repo-governance audit finds a forbi
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``route runs specs counts validate and reports missing DDD folders for a raw gherkin path`` () =
-    // `specs counts validate` expects a DDD-shaped folder (product/system-context/
+let ``route runs specs counts validate and reports missing folders for a raw gherkin path`` () =
+    // `specs counts validate` expects a spec-shaped folder (product/system-context/
     // containers/components/behavior); pointing it straight at a gherkin dir is a
     // real findings-present arm, not a defect — exercises the failure-formatting
     // path the same way Wave D's "cheapest lines to win" lesson recommends.
@@ -371,60 +339,6 @@ let ``route reports missing PATHS on specs behavior-coverage validate with one p
 
     Assert.Equal(2, code)
     Assert.Contains("values required by", err)
-
-[<Fact>]
-let ``route skips specs domain-coverage validate for a project outside specs domain-areas`` () =
-    let code, out, _ =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"
-               "domain-coverage"
-               "validate"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
-               "not-a-real-domain-area" |]
-
-    Assert.Equal(0, code)
-    Assert.Contains("skipped", out)
-
-[<Fact>]
-let ``route renders specs domain-coverage validate skip message as JSON`` () =
-    let code, out, _ =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"
-               "domain-coverage"
-               "validate"
-               "-o"
-               "json"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
-               "not-a-real-domain-area" |]
-
-    Assert.Equal(0, code)
-    Assert.Contains("\"skipped\":true", out)
-
-[<Fact>]
-let ``route renders specs domain-coverage validate skip message as markdown`` () =
-    let code, out, _ =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"
-               "domain-coverage"
-               "validate"
-               "-o"
-               "markdown"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
-               "not-a-real-domain-area" |]
-
-    Assert.Equal(0, code)
-    Assert.NotEmpty out
-
-[<Fact>]
-let ``route reports missing PATHS on specs domain-coverage validate`` () =
-    let code, _, err =
-        runCaptured (okRoot (realRepoRoot ())) [| "specs"; "domain-coverage"; "validate" |]
-
-    Assert.Equal(2, code)
-    Assert.Contains("required arguments were not provided", err)
 
 // ---------------------------------------------------------------------------
 // harness * — read-only members, safe against the real checkout
@@ -642,13 +556,13 @@ let ``route rewrite-paths help wins when --map is present`` () =
     Assert.NotEmpty out
 
 // ---------------------------------------------------------------------------
-// DDD-area branches — use a fixture so phase deliveries can freely retire a
-// live DDD area without changing this dispatch test's coverage.
+// `specs structure validate` — driven against a throwaway fixture so phase
+// deliveries can freely change live spec trees without moving this coverage.
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``route runs specs structure validate for a configured fixture ddd-area app`` () =
-    let root = newDddAreaFixture ()
+let ``route runs specs structure validate for a fixture app`` () =
+    let root = newSpecsAreaFixture ()
 
     let code, out, _ =
         runCaptured (okRoot root) [| "specs"; "structure"; "validate"; "fixture-app" |]
@@ -657,35 +571,15 @@ let ``route runs specs structure validate for a configured fixture ddd-area app`
     Assert.Contains("0 finding(s)", out)
 
 [<Fact>]
-let ``route reports an unsupported DDD fixture code language`` () =
-    let root = newDddAreaFixture ()
-
-    writeFile
-        root
-        "specs/apps/fixture-app/ddd/bounded-contexts.yaml"
-        "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    code_lang: [not-a-language]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
+let ``route reports a surviving retired ddd tree`` () =
+    let root = newSpecsAreaFixture ()
+    writeFile root "specs/apps/fixture-app/ddd/bounded-contexts.yaml" "version: 2\n"
 
     let code, out, _ =
         runCaptured (okRoot root) [| "specs"; "structure"; "validate"; "fixture-app" |]
 
     Assert.Equal(1, code)
-    Assert.Contains("unsupported code_lang \"not-a-language\"", out)
-
-[<Fact>]
-let ``route runs specs domain-coverage validate for a real eligible domain area`` () =
-    let code, _, _ =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"
-               "domain-coverage"
-               "validate"
-               "--shared-steps"
-               "--exclude-dir"
-               "messaging"
-               "specs/apps/organiclever/behavior/organiclever-be/gherkin"
-               "apps/organiclever-be" |]
-
-    Assert.True(code = 0 || code = 1)
+    Assert.Contains("retired ddd/ tree still present", out)
 
 // ---------------------------------------------------------------------------
 // route's own dispatch-table branches
@@ -840,8 +734,7 @@ let ``route reports a partial --unit-dir/--integration-dir/--e2e-dir set as an e
     Assert.Contains("must provide all three or none", err)
 
 // ---------------------------------------------------------------------------
-// `specs structure validate` — the adoption/tree/counts finding loops and the
-// DDD bounded-context/glossary Error arms
+// `specs structure validate` — the adoption/tree/counts finding loops
 // ---------------------------------------------------------------------------
 
 [<Fact>]
@@ -851,21 +744,6 @@ let ``route reports findings for a non-existent app on specs structure validate`
 
     Assert.Equal(1, code)
     Assert.Contains("finding(s) found by specs structure validate", err)
-
-[<Fact>]
-let ``route reports a missing bounded-context registry for a declared DDD area`` () =
-    let root = newTempDir ()
-
-    writeFile
-        root
-        "repo-config.yml"
-        "specs:\n  ddd-areas:\n    - fakearea\n  domain-areas: []\ngates: []\nharness: []\n"
-
-    let code, out, _ =
-        runCaptured (okRoot root) [| "specs"; "structure"; "validate"; "fakearea" |]
-
-    Assert.Equal(1, code)
-    Assert.Contains("registry not found for app \"fakearea\"", out)
 
 // ---------------------------------------------------------------------------
 // `specs e2e-coverage validate` — the glob-expansion branch of
@@ -922,13 +800,13 @@ let ``route scaffolds a Dart contracts package`` () =
 // ---------------------------------------------------------------------------
 
 [<Fact>]
-let ``route runs specs counts validate with no folder using the fixture ddd-areas default`` () =
-    let root = newDddAreaFixture ()
+let ``route runs specs counts validate with no folder and no --apps`` () =
+    let root = newSpecsAreaFixture ()
 
-    let code, out, _ = runCaptured (okRoot root) [| "specs"; "counts"; "validate" |]
+    let code, out, err = runCaptured (okRoot root) [| "specs"; "counts"; "validate" |]
 
     Assert.Equal(0, code)
-    Assert.Contains("specs/apps/fixture-app", out)
+    Assert.Equal("", out + err)
 
 [<Fact>]
 let ``route runs specs counts validate against a comma-separated --apps flag`` () =
@@ -1067,14 +945,6 @@ let ``route reports a repo-root lookup failure on specs behavior-coverage valida
     Assert.Contains("failed to find git repository root", err)
 
 [<Fact>]
-let ``route reports a repo-root lookup failure on specs domain-coverage validate`` () =
-    let code, _, err =
-        runCaptured failingRoot [| "specs"; "domain-coverage"; "validate"; "a"; "b" |]
-
-    Assert.Equal(1, code)
-    Assert.Contains("failed to find git repository root", err)
-
-[<Fact>]
 let ``route reports a repo-root lookup failure on governance readme-index rewrite-paths`` () =
     let code, _, err =
         runCaptured failingRoot [| "governance"; "readme-index"; "rewrite-paths"; "--map"; "x" |]
@@ -1118,16 +988,6 @@ let ``route reports an invalid --output value on specs behavior-coverage validat
         runCaptured
             (okRoot (realRepoRoot ()))
             [| "specs"; "behavior-coverage"; "validate"; "-o"; "not-a-format"; "a"; "b" |]
-
-    Assert.Equal(1, code)
-    Assert.NotEmpty err
-
-[<Fact>]
-let ``route reports an invalid --output value on specs domain-coverage validate`` () =
-    let code, _, err =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"; "domain-coverage"; "validate"; "-o"; "not-a-format"; "a"; "b" |]
 
     Assert.Equal(1, code)
     Assert.NotEmpty err

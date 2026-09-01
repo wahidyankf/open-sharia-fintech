@@ -41,7 +41,6 @@ Not every project has all directories. Presence of subdirectories depends on the
 
 - **`containers/contracts/`**: Present for apps with OpenAPI contract specs (e.g., `organiclever`)
 - **`components/be/`**: Present for apps with a backend container (e.g., `organiclever`)
-- **`ddd/`**: Present when DDD is adopted (lives at the app root, not under `components/web/`, because the ubiquitous language belongs to the bounded context, not to one implementation surface)
 - **`behavior/<product>-be/gherkin/`**: Present for apps with backend Gherkin specs (e.g., `behavior/organiclever-be/gherkin/`)
 - **`behavior/<product>-cli/gherkin/`**: Present for CLI apps (e.g., `behavior/rhino-cli/gherkin/`)
 

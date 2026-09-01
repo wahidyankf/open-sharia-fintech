@@ -51,7 +51,7 @@ Does NOT create new feature files or scenarios (that is `specs-maker`); does NOT
 outside the validated folder list; does NOT modify Gherkin step content (manual/domain-specific);
 does NOT fix test code or step definitions (per-language developer agents); does NOT run tests
 (CI); does NOT perform flat-root-to-C4-aware tree migrations (plan-level operation); does NOT make
-BDD/DDD/API-contract adoption decisions (team decisions).
+BDD/API-contract adoption decisions (team decisions).
 
 ## Principles Implemented/Respected
 
@@ -63,7 +63,7 @@ categorization).
 ## Reference Documentation
 
 [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) —
-content split rule, PM-readability contract, BDD/DDD/Contracts adoption.
+content split rule, PM-readability contract, BDD/Contracts adoption.
 [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) —
 canonical path patterns and domain subdirectory rules.
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
