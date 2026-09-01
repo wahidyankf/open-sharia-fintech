@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding
 /// `iac-env-validation.feature`'s single scenario to
 /// `RhinoCli.Application.Env`'s `validateAll` dispatch [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract/iac-env-validation.feature`,
+/// `specs/apps/rhino/cli/behaviors/env-contract/iac-env-validation.feature`,
 /// `apps/rhino-cli/src/application/env/validate.rs::validate_all`].
 ///
 /// Follows `EnvValidateSteps.fs`'s `FeatureRunner`/`extractScenario`
@@ -183,9 +183,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "env-contract",
                 "iac-env-validation.feature"
             )

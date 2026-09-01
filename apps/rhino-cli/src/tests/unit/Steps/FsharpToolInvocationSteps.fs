@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `fsharp-tool-invocation.feature`'s 1
 /// scenario to `RhinoCli.Application.Doctor`'s F# lint-target Fantomas
 /// tool-invocation check [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`].
+/// `specs/apps/rhino/cli/behaviors/system/fsharp-tool-invocation.feature`].
 /// No Rust source underlies this feature — `apps/rhino-cli/src` never
 /// invoked Fantomas — so unlike every other `Steps.fs` file in this
 /// directory there is no cucumber-rs counterpart to mirror.
@@ -123,9 +123,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "system",
                 "fsharp-tool-invocation.feature"
             )

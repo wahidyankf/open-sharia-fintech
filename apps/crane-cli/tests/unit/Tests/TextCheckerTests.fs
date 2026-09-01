@@ -19,7 +19,7 @@ let ``Finding type has category field`` () =
 
     Assert.Equal("text-completeness", f.Category)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/content/text-check.feature:Complete conversion produces no findings
+// @covers specs/apps/crane/cli/behaviors/content/text-check.feature:Complete conversion produces no findings
 [<Fact>]
 let ``checkText returns empty list when all chunks present in MD`` () =
     let chunks = [ "hello world this is section one content" ]
@@ -27,7 +27,7 @@ let ``checkText returns empty list when all chunks present in MD`` () =
     let result = checkText chunks mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/content/text-check.feature:Missing section produces a CRITICAL finding
+// @covers specs/apps/crane/cli/behaviors/content/text-check.feature:Missing section produces a CRITICAL finding
 [<Fact>]
 let ``checkText returns finding for missing chunk`` () =
     let chunks = [ "Missing section here" ]
@@ -37,7 +37,7 @@ let ``checkText returns finding for missing chunk`` () =
     Assert.Equal("CRITICAL", result.[0].Criticality)
     Assert.Equal("text-completeness", result.[0].Category)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/content/text-check.feature:Whitespace normalization prevents false positives
+// @covers specs/apps/crane/cli/behaviors/content/text-check.feature:Whitespace normalization prevents false positives
 [<Fact>]
 let ``checkText treats multiple consecutive spaces as equivalent via normalization`` () =
     let chunks = [ "hello    world   with  extra    spaces" ]
@@ -55,7 +55,7 @@ let ``segmentIsPresent returns true for exact substring`` () =
     let found = segmentIsPresent "hello world" "hello world some more text"
     Assert.True(found)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/content/text-check.feature:Fuzzy match accepts minor OCR spelling variation
+// @covers specs/apps/crane/cli/behaviors/content/text-check.feature:Fuzzy match accepts minor OCR spelling variation
 [<Fact>]
 let ``segmentIsPresent handles fuzzy single-word match`` () =
     let found = segmentIsPresent "Organisation" "Organization some text"

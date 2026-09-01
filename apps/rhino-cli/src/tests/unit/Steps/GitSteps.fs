@@ -1,4 +1,4 @@
-/// TickSpec step definitions binding `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature`'s
+/// TickSpec step definitions binding `specs/apps/rhino/cli/behaviors/git/git-lockfile.feature`'s
 /// 3 scenarios to `RhinoCli.Application.Git.syncAtRoot`
 /// [Repo-grounded — `apps/rhino-cli/src/commands/git/lockfile.rs`].
 ///
@@ -240,7 +240,7 @@ type GitSteps() =
         Assert.Equal<string list>(stagedBefore, stagedFiles root)
 
 /// Reads one named `Scenario:` block out of the real, frozen
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-lockfile.feature`
+/// `specs/apps/rhino/cli/behaviors/git/git-lockfile.feature`
 /// file (leaving the file itself untouched) and runs it through TickSpec
 /// bound only against `GitSteps` — see `EnvSteps.fs`'s `FeatureRunner` for
 /// why this is per-scenario rather than per-file.
@@ -259,9 +259,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "git",
                 "git-lockfile.feature"
             )

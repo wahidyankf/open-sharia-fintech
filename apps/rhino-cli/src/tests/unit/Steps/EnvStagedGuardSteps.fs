@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `specs/env-staged-guard.feature`'s 3
 /// scenarios (the third a `Scenario Outline` with 6 `Examples` rows) to
 /// `RhinoCli.Application.Env`'s `env staged-guard validate` port
-/// [Repo-grounded — `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature`,
+/// [Repo-grounded — `specs/apps/rhino/cli/behaviors/specs/env-staged-guard.feature`,
 /// `apps/rhino-cli/src/commands/env_staged_guard.rs`]. Relocated into Wave B
 /// from a mis-scheduled Wave E slot — see `Env.fs`'s module doc comment.
 ///
@@ -95,9 +95,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "specs",
                 "env-staged-guard.feature"
             )

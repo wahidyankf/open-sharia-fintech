@@ -4,7 +4,7 @@
 
 `apps/rhino-cli/scripts/rhino-bin.sh` originally resolved the rhino-cli binary through a three-tier
 Rust-era mechanism (`RHINO_CLI_BIN` override → prebuilt `target/gate/rhino-cli` → `cargo build
---profile gate` on demand), and `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature`
+--profile gate` on demand), and `specs/apps/rhino/cli/behaviors/gate/gate-binary-resolution.feature`
 carried four scenarios exercising exactly that logic. `rewrite-rhino-cli-to-fsharp`'s Phase 9a
 retired the whole file when Phase 9c's crate deletion made every one of those scenarios describe a
 mechanism that would no longer exist. Phase 9c then simplified the shim to one resolution path:
@@ -85,7 +85,7 @@ jobs), which are already exercised by their own existing tests.
 ## Technical Approach
 
 Add a new `.feature` file (e.g.
-`specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution-fsharp.feature`, naming it
+`specs/apps/rhino/cli/behaviors/gate/gate-binary-resolution-fsharp.feature`, naming it
 distinctly from the retired Rust-era file since it covers a different mechanism) with the three
 scenarios above. Given the subject is a shell script's environment-variable and filesystem-based
 branching, a subprocess-driven test (spawn `rhino-bin.sh` with controlled env vars and a temp
@@ -111,7 +111,7 @@ Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human ju
 ### Phase 1: Author and prove (ose-public)
 
 - [ ] [AI] Write the three Gherkin scenarios above into a new `.feature` file under
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/`.
+      `specs/apps/rhino/cli/behaviors/gate/`.
 - [ ] [AI] Implement step bindings (TickSpec if expressible; otherwise a plain `xunit.v3` test per
       this repo's TickSpec-fallback protocol, recorded as such if invoked).
 - [ ] [AI] Prove each scenario fails against a deliberately-broken shim (e.g., swap the precedence

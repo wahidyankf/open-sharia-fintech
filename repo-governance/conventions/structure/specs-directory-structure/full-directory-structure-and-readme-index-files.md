@@ -42,7 +42,7 @@ Not every project has all directories. Presence of subdirectories depends on the
 - **`containers/contracts/`**: Present for apps with OpenAPI contract specs (e.g., `organiclever`)
 - **`components/be/`**: Present for apps with a backend container (e.g., `organiclever`)
 - **`behavior/<product>-be/gherkin/`**: Present for apps with backend Gherkin specs (e.g., `behavior/organiclever-be/gherkin/`)
-- **`behavior/<product>-cli/gherkin/`**: Present for CLI apps (e.g., `behavior/rhino-cli/gherkin/`)
+- **`behavior/<product>-cli/gherkin/`**: Present for a CLI app still on this tree
 
 ## README Index Files
 

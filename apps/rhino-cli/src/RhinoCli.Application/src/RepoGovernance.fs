@@ -3,7 +3,7 @@
 /// prints
 /// [Repo-grounded — `apps/rhino-cli/src/application/repo_governance/layer_coherence.rs`,
 /// `apps/rhino-cli/src/commands/governance_layer_coherence.rs`], binding
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-layer-coherence.feature`.
+/// `specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-layer-coherence.feature`.
 module RhinoCli.Application.RepoGovernance
 
 open System

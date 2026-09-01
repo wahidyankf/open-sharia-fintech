@@ -1,69 +1,12 @@
-# crane-cli Specs
+# Crane
 
-Gherkin behavioral specifications for
-[crane-cli](../../../apps/crane-cli/README.md) — the Content Retrieval And Normalization
-Engine CLI.
+Specifications for the Crane product family. Crane ships one logical owner today.
 
-## Purpose
+## Contents
 
-These specs define the **observable behavior** of every crane-cli command: what inputs the
-command accepts, what JSON it writes to stdout, and what exit code it returns. They are the
-single source of truth for correctness and serve as the contract between the CLI implementation
-and its consumers (the `pdf-to-md` agents and the quality gate workflow).
+- [Crane CLI](./cli/README.md) — the specification corpus for `crane-cli`, the Content Retrieval
+  And Normalization Engine: its architecture and its recursive Gherkin behaviors.
 
-## Structure
+## Related
 
-```
-specs/apps/crane/
-├── README.md                          — This file
-├── product/README.md                  — Product framing (vision, personas, scope)
-├── system-context/README.md           — C4 L1 actors and external systems
-├── containers/README.md               — C4 L2 deployable units
-├── components/cli/README.md           — C4 L3 CLI internals
-└── behavior/crane-cli/gherkin/
-    ├── README.md                      — Feature file inventory
-    ├── pdf/
-    │   └── pdf-commands.feature       — crane pdf info/type/extract
-    ├── content/
-    │   ├── text-check.feature         — crane text check/search
-    │   ├── heading-check.feature      — crane heading infer/check
-    │   └── nesting-check.feature      — crane nesting infer/check
-    ├── media/
-    │   ├── table-check.feature        — crane table detect/check
-    │   ├── figure-check.feature       — crane figure detect/check
-    │   ├── mermaid-validate.feature   — crane mermaid validate
-    │   └── ocr-quality.feature        — crane ocr quality/extract
-    ├── reporting/
-    │   ├── report-management.feature  — crane report init/finalize
-    │   └── skiplist-management.feature — crane skiplist add/check/list
-    └── system/
-        ├── check-all.feature          — crane check-all command
-        └── version.feature            — crane version command
-```
-
-## Running the Tests
-
-BDD unit tests consume these specs via `pytest-bdd`. Step definitions live in
-`apps/crane-cli/tests/unit/steps/`.
-
-```bash
-# Run all BDD unit tests
-nx run crane-cli:test:unit
-
-# Run BDD tests with coverage (pre-push gate)
-nx run crane-cli:test:quick
-
-# Validate all scenarios are implemented
-nx run crane-cli:specs:behavior:coverage
-```
-
-## Coverage Requirement
-
-All scenarios in every feature file must be implemented in a corresponding step file.
-`nx run crane-cli:specs:behavior:coverage` enforces this using rhino-cli.
-
-- [crane — behavior](./behavior/README.md)
-- [crane — components](./components/README.md)
-- [crane — containers](./containers/README.md)
-- [crane — product](./product/README.md)
-- [crane — system-context](./system-context/README.md)
+- [`apps/crane-cli/README.md`](../../../apps/crane-cli/README.md) — the implementing project.

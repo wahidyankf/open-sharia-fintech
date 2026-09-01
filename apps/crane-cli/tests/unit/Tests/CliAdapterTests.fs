@@ -6,7 +6,7 @@ module CraneCli.Tests.Unit.Tests.CliAdapterTests
 /// Core.Logic function of their own to unit test directly, and the integration
 /// test project's TickSpec Steps/*.fs files never execute (Suite.fs's gherkinRoot
 /// fallback path is stale — it looks for "behavior/cli/gherkin", which does not
-/// exist, instead of "behavior/crane-cli/gherkin" — so it always falls back to a
+/// exist, instead of "cli/behaviors" — so it always falls back to a
 /// single no-op placeholder scenario). run() itself is public and safe to call
 /// directly with a FakePdfAdapter, so these scenarios are exercised here instead.
 open System
@@ -43,7 +43,7 @@ let private withTempMdFile (content: string) (f: string -> unit) =
         if File.Exists(path) then
             File.Delete(path)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/pdf/pdf-commands.feature:Get page count from text PDF
+// @covers specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature:Get page count from text PDF
 [<Fact>]
 let ``run pdf info returns pages and size_bytes as valid JSON`` () =
     let adapter = FakePdfAdapter("sample pdf text content", 42, 123456L) :> IPdfPort
@@ -55,7 +55,7 @@ let ``run pdf info returns pages and size_bytes as valid JSON`` () =
     Assert.Equal(42, doc.RootElement.GetProperty("pages").GetInt32())
     Assert.True(doc.RootElement.GetProperty("size_bytes").GetInt64() > 0L)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/pdf/pdf-commands.feature:Text-based PDF is detected
+// @covers specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature:Text-based PDF is detected
 [<Fact>]
 let ``run pdf type returns type text and exit code 0 for word-rich sample`` () =
     let wordRichText = String.replicate 12 "word "
@@ -67,7 +67,7 @@ let ``run pdf type returns type text and exit code 0 for word-rich sample`` () =
     Assert.Contains("\"type\":\"text\"", output)
     Assert.Equal(0, code)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/pdf/pdf-commands.feature:Image-only PDF is detected
+// @covers specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature:Image-only PDF is detected
 [<Fact>]
 let ``run pdf type returns type image and exit code 1 for sparse sample`` () =
     let sparseText = "scan noise"
@@ -79,7 +79,7 @@ let ``run pdf type returns type image and exit code 1 for sparse sample`` () =
     Assert.Contains("\"type\":\"image\"", output)
     Assert.Equal(1, code)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/system/check-all.feature:Aggregator with matching PDF and MD produces no findings
+// @covers specs/apps/crane/cli/behaviors/system/check-all.feature:Aggregator with matching PDF and MD produces no findings
 [<Fact>]
 let ``run check-all returns empty findings and exit code 0 when PDF and MD match`` () =
     let sampleText = "no headings or tables or figures appear in this content"
@@ -92,7 +92,7 @@ let ``run check-all returns empty findings and exit code 0 when PDF and MD match
         Assert.Equal("[]", output.Trim())
         Assert.Equal(0, code))
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/system/check-all.feature:Aggregator with mismatched MD produces findings tagged by dimension
+// @covers specs/apps/crane/cli/behaviors/system/check-all.feature:Aggregator with mismatched MD produces findings tagged by dimension
 [<Fact>]
 let ``run check-all returns findings and exit code 1 when MD is missing PDF content`` () =
     let sampleText = "no headings or tables or figures appear in this content"
@@ -105,7 +105,7 @@ let ``run check-all returns findings and exit code 1 when MD is missing PDF cont
         Assert.NotEqual<string>("[]", output.Trim())
         Assert.Equal(1, code))
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/system/version.feature:--version prints a version string
+// @covers specs/apps/crane/cli/behaviors/system/version.feature:--version prints a version string
 [<Fact>]
 let ``run --version prints a SemVer-shaped version string`` () =
     let adapter = FakePdfAdapter("", 0, 0L) :> IPdfPort

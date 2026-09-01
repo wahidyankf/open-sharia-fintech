@@ -15,13 +15,13 @@ when_to_use: Use when naming the command/test/feature files for a new CLI comman
 
 ## File Naming Convention
 
-| Artifact         | Pattern                                                                 | Example                                                             |
-| ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Parent cmd       | `{domain}.rs`                                                           | `agents.rs`                                                         |
-| Command file     | `{domain}_{action}.rs`                                                  | `agents_validate_sync.rs`                                           |
-| Unit test        | `{domain}_{action}_test.rs`                                             | `agents_validate_sync_test.rs`                                      |
-| Integration test | `tests/{domain}_{action}_integration_test.rs`                           | `agents_validate_sync_integration_test.rs`                          |
-| Feature file     | `specs/{app}/behavior/<product>-cli/gherkin/{domain}/{command}.feature` | `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature` |
+| Artifact         | Pattern                                                                 | Example                                                |
+| ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------ |
+| Parent cmd       | `{domain}.rs`                                                           | `agents.rs`                                            |
+| Command file     | `{domain}_{action}.rs`                                                  | `agents_validate_sync.rs`                              |
+| Unit test        | `{domain}_{action}_test.rs`                                             | `agents_validate_sync_test.rs`                         |
+| Integration test | `tests/{domain}_{action}_integration_test.rs`                           | `agents_validate_sync_integration_test.rs`             |
+| Feature file     | `specs/{app}/behavior/<product>-cli/gherkin/{domain}/{command}.feature` | `specs/apps/rhino/cli/behaviors/system/doctor.feature` |
 
 **Unit test files** (`{domain}_{action}_test.rs`) serve dual purpose: they contain both Gherkin step definitions (consuming the command's `@tag` scenarios) and any non-BDD pure function tests for edge cases not covered by the Gherkin scenarios. The step definitions in unit test files use injected I/O function types instead of real filesystem access.
 

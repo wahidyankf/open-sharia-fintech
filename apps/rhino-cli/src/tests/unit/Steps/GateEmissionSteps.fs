@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `gate-emission.feature`'s five scenarios
 /// to `RhinoCli.Cli.Gate`'s `lint-staged` emitter
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/gate-emission.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
 /// Each scenario writes a self-contained `repo-config.yml` and `package.json`
@@ -230,17 +230,7 @@ type GateEmissionSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-emission.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-emission.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =

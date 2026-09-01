@@ -201,7 +201,7 @@ follows from it. Everything in "Drift" below must converge to one form.
 
 `apps/rhino-cli` is held to a stricter, second-pass target beyond the gate mechanics above: **zero
 carve-outs**. `apps/rhino-cli`'s `src/` (including `src/tests/`), `project.json`, and `LICENSE`, plus
-the Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**` (every `.feature` file and
+the Gherkin behavior tree at `specs/apps/rhino/cli/behaviors/**` (every `.feature` file and
 every `README.md`), are byte-identical across `ose-public` and `ose-private`. The
 canonical source carries the
 **union command surface** — every repo's `rhino-cli` binary exposes the full command superset, and a

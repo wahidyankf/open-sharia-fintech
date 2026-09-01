@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `cargo-target-share.feature`'s 18
 /// scenarios to `RhinoCli.Application.Doctor`'s cargo target-share port
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature`,
+/// `specs/apps/rhino/cli/behaviors/system/cargo-target-share.feature`,
 /// `apps/rhino-cli/tests/cargo_target_share.rs`].
 ///
 /// Follows `EnvInitSteps.fs`'s per-scenario slicing convention: each xunit
@@ -775,9 +775,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "system",
                 "cargo-target-share.feature"
             )

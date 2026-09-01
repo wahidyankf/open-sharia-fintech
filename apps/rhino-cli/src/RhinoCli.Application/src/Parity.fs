@@ -26,7 +26,7 @@ let private boundaryPaths =
     [ "apps/rhino-cli/src"
       "apps/rhino-cli/project.json"
       "apps/rhino-cli/LICENSE"
-      "specs/apps/rhino/behavior/rhino-cli/gherkin" ]
+      "specs/apps/rhino/cli/behaviors" ]
 
 /// Runs `git` isolated from ambient/hook-inherited state, pinned to
 /// `repoRoot`, and returns `(exitCode, stdoutBytes, stderrText)`.

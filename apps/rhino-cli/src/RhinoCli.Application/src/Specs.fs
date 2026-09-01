@@ -1,7 +1,7 @@
 /// Port of the per-level `@covers` behavior coverage engine
 /// [Repo-grounded — `apps/rhino-cli/src/application/behavior_coverage/types.rs`,
 /// `apps/rhino-cli/src/application/behavior_coverage/validator.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/behavior-coverage.feature`'s
+/// `specs/apps/rhino/cli/behaviors/specs/behavior-coverage.feature`'s
 /// 6 scenarios.
 ///
 /// Scope: this first PR against the `specs` subsystem ports only what
@@ -133,7 +133,7 @@ let validate
 // `specs e2e-coverage validate` — playwright-bdd unbound-scenario gap detector
 // [Repo-grounded — `apps/rhino-cli/src/application/e2e_coverage/{types,diff,
 // parser,reporter}.rs` and `apps/rhino-cli/src/commands/specs_e2e_coverage.rs`]
-// for `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature`'s
+// for `specs/apps/rhino/cli/behaviors/specs/e2e-coverage.feature`'s
 // 13 scenarios.
 // ---------------------------------------------------------------------------
 

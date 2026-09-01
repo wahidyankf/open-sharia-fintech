@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `harness/agents-bindings.feature`'s 10
 /// scenarios to `RhinoCli.Application.Harness`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/agents-bindings.feature`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/commands/harness_generate_bindings.rs`].
 ///
@@ -3121,9 +3121,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "harness",
                 fileName
             )

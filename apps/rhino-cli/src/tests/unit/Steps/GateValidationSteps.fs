@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `gate-validation.feature`'s 26
 /// scenarios [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/gate-validation.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
 /// Unlike `GateExecutionSteps.fs`, `gate validate`'s production entry point
@@ -746,17 +746,7 @@ type GateValidationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-validation.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-validation.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =

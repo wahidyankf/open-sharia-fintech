@@ -54,9 +54,9 @@ Feature: Agent Configuration Synchronisation
 Alternatively, a command with its own distinct domain gets its own feature file:
 
 ```
-specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature                       <- single @doctor tag
-specs/apps/rhino/behavior/rhino-cli/gherkin/agents/agents-sync.feature                  <- @agents-sync + @agents-validate-sync
-specs/apps/rhino/behavior/rhino-cli/gherkin/agents/agents-validate-claude.feature       <- single @agents-validate-claude tag
+specs/apps/rhino/cli/behaviors/system/doctor.feature                       <- single @doctor tag
+specs/apps/rhino/cli/behaviors/agents/agents-sync.feature                  <- @agents-sync + @agents-validate-sync
+specs/apps/rhino/cli/behaviors/agents/agents-validate-claude.feature       <- single @agents-validate-claude tag
 ```
 
 ## 3. Unit & Integration Test to Tag (mandatory)

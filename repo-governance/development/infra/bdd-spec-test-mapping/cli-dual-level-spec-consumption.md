@@ -53,7 +53,7 @@ Integration steps drive commands via process invocation against controlled `/tmp
 The `@agents-validate-sync` tag lives inside `agents-sync.feature` (shared feature file) and is consumed at both levels:
 
 ```
-specs/apps/rhino/behavior/rhino-cli/gherkin/agents/agents-sync.feature  (contains @agents-sync + @agents-validate-sync)
+specs/apps/rhino/cli/behaviors/agents/agents-sync.feature  (contains @agents-sync + @agents-validate-sync)
   -> Unit steps in:       apps/rhino-cli/src/commands/agents_validate_sync_test.rs
   -> Integration steps in: apps/rhino-cli/tests/agents_validate_sync_integration_test.rs
 ```

@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `doctor.feature`'s 17 scenarios to
 /// `RhinoCli.Application.Doctor`'s tool-check engine [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`,
+/// `specs/apps/rhino/cli/behaviors/system/doctor.feature`,
 /// `apps/rhino-cli/tests/doctor.rs`].
 ///
 /// Named `DoctorToolCheckSteps` rather than `DoctorSteps` (already taken by
@@ -442,9 +442,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "system",
                 "doctor.feature"
             )

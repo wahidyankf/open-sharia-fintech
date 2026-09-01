@@ -4,7 +4,7 @@
 /// utility functions
 /// [Repo-grounded — `apps/rhino-cli/src/internal/contracts/dart_scaffold.rs`,
 /// `apps/rhino-cli/src/internal/contracts/types.rs`], binding
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/contracts-dart-scaffold.feature`.
+/// `specs/apps/rhino/cli/behaviors/contracts/contracts-dart-scaffold.feature`.
 module RhinoCli.Application.Contracts
 
 open System.IO

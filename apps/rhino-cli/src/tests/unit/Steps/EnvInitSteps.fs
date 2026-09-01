@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `env-init.feature`'s 4 scenarios to
 /// `RhinoCli.Application.Env`'s `env init` port [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-init.feature`,
+/// `specs/apps/rhino/cli/behaviors/env/env-init.feature`,
 /// `apps/rhino-cli/src/commands/env_init.rs`].
 ///
 /// Follows `EnvSteps.fs`'s per-scenario slicing convention: each xunit
@@ -156,9 +156,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "env",
                 "env-init.feature"
             )

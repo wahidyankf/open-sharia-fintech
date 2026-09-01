@@ -6,9 +6,9 @@
 /// `apps/rhino-cli/src/application/testcoverage/exclude.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/merge.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/lcov.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-diff.feature`'s
+/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-diff.feature`'s
 /// 4 scenarios and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-merge.feature`'s
+/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-merge.feature`'s
 /// 3 scenarios.
 ///
 /// Scope: the first PR against the test-coverage subsystem ported only the
@@ -1185,7 +1185,7 @@ let formatMarkdown (r: CoverageResult) (perFile: bool) (belowThreshold: float) :
 // ---------------------------------------------------------------------------
 // `test-coverage validate` entry point [Repo-grounded —
 // `test_coverage_validate.rs::run`] for
-// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-validate.feature`'s
+// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-validate.feature`'s
 // 10 scenarios
 // ---------------------------------------------------------------------------
 

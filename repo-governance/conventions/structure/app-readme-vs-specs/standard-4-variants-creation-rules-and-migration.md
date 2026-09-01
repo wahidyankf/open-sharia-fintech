@@ -23,7 +23,7 @@ created: 2026-05-09
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | Full-stack (e.g., `organiclever`) | All five top-level folders; `components/be/` + `components/web/` + `containers/contracts/`; `behavior/organiclever-be/gherkin/` + `behavior/organiclever-app-web/gherkin/` | None — full tree                                        |
 | Web-only (no current example)     | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/<app>-www/gherkin/`                                                                             | `containers/contracts/` (no API), `components/be/`      |
-| CLI-only (e.g., `rhino`)          | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/rhino-cli/gherkin/`                                                                             | `components/{be,web}/`, `containers/contracts/`         |
+| CLI-only (no current example)     | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/<product>-cli/gherkin/`                                                                         | `components/{be,web}/`, `containers/contracts/`         |
 | Multi-CLI (no current example)    | Same as CLI-only, with multiple `components/cli/<binary>/` + `behavior/<product>-cli/gherkin/` pairs alongside web layers if applicable                                    | Nothing additional omitted — same shape, more populated |
 
 ## Creation rules

@@ -154,7 +154,7 @@ coverage:
     # implementation and the whole spec surface is covered uniformly.
     - name: rhino-cli
       levels: [unit, integration]
-      specs: "specs/apps/rhino/behavior/rhino-cli/**"
+      specs: "specs/apps/rhino/cli/behaviors/**"
 
     # ose domain
     - name: ose-be
@@ -560,11 +560,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/rhino/behavior/rhino-cli/**"
+          corpus: "specs/apps/rhino/cli/behaviors/**"
           levels: [unit, integration]
         canonical:
           owner: rhino-cli
-          corpus: "specs/apps/rhino/behavior/rhino-cli/**"
+          corpus: "specs/apps/rhino/cli/behaviors/**"
           runtimes:
             - level: integration
               project: rhino-cli
@@ -1083,7 +1083,7 @@ testing:
         lifecycle-state: active
         owner: rhino-cli
         corpus:
-          - "specs/apps/rhino/behavior/rhino-cli/**"
+          - "specs/apps/rhino/cli/behaviors/**"
         adapters:
           unit:
             disposition: required

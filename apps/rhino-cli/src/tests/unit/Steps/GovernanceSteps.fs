@@ -2,7 +2,7 @@
 /// `governance-readme-index.feature`'s 18 scenarios (one a `Scenario
 /// Outline` with 3 `Examples` rows) to `RhinoCli.Application.Governance`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature`,
+/// `specs/apps/rhino/cli/behaviors/governance/governance-readme-index.feature`,
 /// `apps/rhino-cli/src/application/governance/readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_validate_readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_generate_readme_index.rs`,
@@ -602,9 +602,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "governance",
                 "governance-readme-index.feature"
             )
@@ -1209,9 +1208,8 @@ module private WordBudgetFeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "governance",
                 "governance-word-budget.feature"
             )

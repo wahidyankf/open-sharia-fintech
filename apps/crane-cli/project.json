@@ -59,7 +59,7 @@
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/unit/**/*.fs",
         "{projectRoot}/crane-cli.fsproj",
-        "{workspaceRoot}/specs/apps/crane/behavior/crane-cli/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"
       ]
     },
     "test:coverage": {
@@ -72,7 +72,7 @@
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/unit/**/*.fs",
         "{projectRoot}/crane-cli.fsproj",
-        "{workspaceRoot}/specs/apps/crane/behavior/crane-cli/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"
       ]
     },
     "test:quick": {
@@ -101,13 +101,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/crane/behavior/crane-cli/gherkin apps/crane-cli"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/crane/cli/behaviors apps/crane-cli"
       },
       "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/crane/behavior/crane-cli/gherkin/**/*.feature",
-        "{projectRoot}/src/**/*.fs"
-      ]
+      "inputs": ["{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -149,7 +146,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/crane/behavior/crane-cli/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"]
   },
   "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:crane"],
   "implicitDependencies": ["fsharp-crane-core"]

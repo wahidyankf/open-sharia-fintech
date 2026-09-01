@@ -18,7 +18,7 @@ The deleted feature files each carried:
 Scenario: JSON output produces structured results
 ```
 
-The successor spec, `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-links.feature`,
+The successor spec, `specs/apps/rhino/cli/behaviors/md/docs-validate-links.feature`,
 has 10 scenarios covering valid links, broken links, external URLs, `--staged-only`, `--exclude`,
 repo-wide scan, and anchor cases — none of them exercises `--output json` / `-o json`.
 

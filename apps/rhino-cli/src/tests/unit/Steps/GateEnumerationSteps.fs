@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `gate-enumeration.feature`'s eight
 /// scenarios to `RhinoCli.Cli.Gate`'s per-surface projection
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/gate-enumeration.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 module RhinoCli.Tests.Unit.Steps.GateEnumerationSteps
 
@@ -233,17 +233,7 @@ type GateEnumerationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-enumeration.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-enumeration.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =

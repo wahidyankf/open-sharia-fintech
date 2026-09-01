@@ -13,7 +13,7 @@ markdown) as the retired Rust and Go implementations it replaced. Built with `Ar
 (declarative argument parsing) across four projects — `RhinoCli.Domain`, `RhinoCli.Infrastructure`,
 `RhinoCli.Application`, `RhinoCli.Cli` — plus the `RhinoCli.Program` entry point, consuming the
 Gherkin specs in
-[`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/).
+[`specs/apps/rhino/cli/behaviors/`](../../specs/apps/rhino/cli/behaviors/).
 
 ## Status
 
@@ -111,13 +111,13 @@ scenario or `Scenario Outline` title is entirely absent from the generated `.spe
 an `Examples:` table with zero data rows — folded into the same new-gap/baseline flow as an
 ordinary unbound scenario), or when `--features-gen` names a directory that does not exist (run
 `npx bddgen` first). See
-[`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
+[`e2e-coverage.feature`](../../specs/apps/rhino/cli/behaviors/specs/e2e-coverage.feature)
 for the full behavior contract.
 
 ## Adding a Gherkin Scenario: One Binding Site
 
 A new scenario anywhere under
-[`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/README.md)
+[`specs/apps/rhino/cli/behaviors/`](../../specs/apps/rhino/cli/behaviors/README.md)
 needs exactly one binding: a `[<Given>]`/`[<When>]`/`[<Then>]`-style method on the relevant
 `*Steps.fs` class under `src/tests/unit/Steps/`, discovered by
 [TickSpec](https://github.com/fsprojects/TickSpec) at test-run time. Unlike the retired Rust
@@ -155,4 +155,4 @@ for the bump-review process.
   history; not linked here — `plans/done/` is repo-specific and this README is byte-identical
   across sibling repos)
 - Gherkin specs (shared with the retired Rust and Go binaries):
-  [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/)
+  [`specs/apps/rhino/cli/behaviors/`](../../specs/apps/rhino/cli/behaviors/)

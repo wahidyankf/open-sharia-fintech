@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding the `repo-config` namespace's single
 /// Gherkin feature file to `RhinoCli.Application.RepoConfig`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature`].
+/// `specs/apps/rhino/cli/behaviors/repo-config/data-driven.feature`].
 ///
 /// Follows `ConventionSteps.fs`'s per-scenario slicing convention: each xunit
 /// `[<Fact>]` below runs exactly one scenario, extracted from the real,
@@ -316,9 +316,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "repo-config",
                 "data-driven.feature"
             )
