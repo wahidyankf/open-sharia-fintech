@@ -293,26 +293,26 @@ archival.
 Repository IDs never change: `R-PUB` is `ose-public`; `R-PRI` is `ose-private`. Owner IDs remain
 stable even when Phase 0 finds a project renamed or removed; record `_absent on execution base_`.
 
-| Stable owner ID   | Repository | Owner and delegated projects                     |
-| ----------------- | ---------- | ------------------------------------------------ |
-| `O-PUB-CRANE`     | `R-PUB`    | `crane-cli`                                      |
-| `O-PUB-RHINO`     | `R-PUB`    | `rhino-cli`                                      |
-| `O-PUB-FS-CORE`   | `R-PUB`    | `fsharp-crane-core`                              |
-| `O-PUB-FS-ENV`    | `R-PUB`    | `fsharp-env-loader`                              |
-| `O-PUB-TS-ENV`    | `R-PUB`    | `ts-env-loader`                                  |
-| `O-PUB-WEB-TOKEN` | `R-PUB`    | `web-ui-token`                                   |
-| `O-PUB-WEB-UI`    | `R-PUB`    | `web-ui`                                         |
-| `O-PUB-AYO`       | `R-PUB`    | `ayokoding-www`, `ayokoding-www-{fe,be}-e2e`     |
-| `O-PUB-WAHID`     | `R-PUB`    | `wahidyankf-www`, `wahidyankf-www-fe-e2e`        |
-| `O-PUB-OL-WEB`    | `R-PUB`    | `organiclever-app-web`, its E2E project          |
-| `O-PUB-OL-BE`     | `R-PUB`    | `organiclever-be`, contracts, and API E2E        |
-| `O-PUB-OL-WWW`    | `R-PUB`    | `organiclever-www`, both E2E projects            |
-| `O-PUB-OSE-WEB`   | `R-PUB`    | `ose-app-web`, its E2E project                   |
-| `O-PUB-OSE-BE`    | `R-PUB`    | `ose-be`, contracts, and API E2E                 |
-| `O-PUB-OSE-WWW`   | `R-PUB`    | `ose-www`, both E2E projects                     |
-| `O-PRI-RHINO`     | `R-PRI`    | active Rhino implementation(s), one corpus owner |
-| `O-PRI-TS-TOKEN`  | `R-PRI`    | `ts-ui-tokens`                                   |
-| `O-PRI-TS-UI`     | `R-PRI`    | `ts-ui`                                          |
+| Stable owner ID   | Repository | Owner and delegated projects                                       |
+| ----------------- | ---------- | ------------------------------------------------------------------ |
+| `O-PUB-CRANE`     | `R-PUB`    | `crane-cli`                                                        |
+| `O-PUB-RHINO`     | `R-PUB`    | `rhino-cli`                                                        |
+| `O-PUB-FS-CORE`   | `R-PUB`    | `fsharp-crane-core`                                                |
+| `O-PUB-FS-ENV`    | `R-PUB`    | `fsharp-env-loader`                                                |
+| `O-PUB-TS-ENV`    | `R-PUB`    | `ts-env-loader`                                                    |
+| `O-PUB-WEB-TOKEN` | `R-PUB`    | `web-ui-token`                                                     |
+| `O-PUB-WEB-UI`    | `R-PUB`    | `web-ui`                                                           |
+| `O-PUB-AYO`       | `R-PUB`    | `ayokoding-www`, `ayokoding-www-{fe,be}-e2e`                       |
+| `O-PUB-WAHID`     | `R-PUB`    | `wahidyankf-www`, `wahidyankf-www-fe-e2e` — DESCOPED, see Phase 13 |
+| `O-PUB-OL-WEB`    | `R-PUB`    | `organiclever-app-web`, its E2E project                            |
+| `O-PUB-OL-BE`     | `R-PUB`    | `organiclever-be`, contracts, and API E2E                          |
+| `O-PUB-OL-WWW`    | `R-PUB`    | `organiclever-www`, both E2E projects                              |
+| `O-PUB-OSE-WEB`   | `R-PUB`    | `ose-app-web`, its E2E project                                     |
+| `O-PUB-OSE-BE`    | `R-PUB`    | `ose-be`, contracts, and API E2E                                   |
+| `O-PUB-OSE-WWW`   | `R-PUB`    | `ose-www`, both E2E projects                                       |
+| `O-PRI-RHINO`     | `R-PRI`    | active Rhino implementation(s), one corpus owner                   |
+| `O-PRI-TS-TOKEN`  | `R-PRI`    | `ts-ui-tokens`                                                     |
+| `O-PRI-TS-UI`     | `R-PRI`    | `ts-ui`                                                            |
 
 Each owner row records actual project names/root/project files; runner config and test files; one
 target layer per test; native coverage commands, thresholds, exclusions, and outputs; corpus/C4
@@ -389,7 +389,7 @@ removed while another DAG node can still read it.
 | `D-O-PUB-WEB-UI`                  | 11A      | `O-PUB-WEB-UI` coordination group; six finite leaves are the PRs                | `test-contract-web-ui`                   |
 | `D-O-PRI-TS-UI`                   | 11B      | `O-PRI-TS-UI` coordination group; four finite leaves are the PRs                | `test-contract-ts-ui`                    |
 | `D-O-PUB-AYO`                     | 12       | `O-PUB-AYO` coordination group; 21 finite leaves are the PRs                    | `test-contract-ayokoding-www`            |
-| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID`                                                                   | `test-contract-wahidyankf-www`           |
+| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID` — DESCOPED, not executed; see Phase 13                            | `test-contract-wahidyankf-www`           |
 | `D-O-PUB-OL-WEB`                  | 14       | `O-PUB-OL-WEB`                                                                  | `test-contract-organiclever-app-web`     |
 | `D-O-PUB-OL-BE`                   | 15       | `O-PUB-OL-BE`                                                                   | `test-contract-organiclever-be`          |
 | `D-O-PUB-OL-WWW`                  | 16       | `O-PUB-OL-WWW`                                                                  | `test-contract-organiclever-www`         |
@@ -7712,6 +7712,30 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 - [ ] [AI] `D-O-PUB-AYO-DB-16D` — In `R-PUB:worktrees/adopt-beavernest-test-automation` run `rtk nx affected -t build,test:quick,lint`; expect every applicable task exit 0 on the new branch. Stop and classify a preexisting failure before implementation. Save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-O-PUB-AYO/16d-baseline.txt`.
 
 ## Phase 13: Migrate `O-PUB-WAHID`
+
+> **DESCOPED — do not execute.** On 2026-09-01 the user recorded that a separate workstream is
+> removing `wahidyankf-www` (wahidyankf.com) together with `wahidyankf-www-fe-e2e`,
+> `specs/apps/wahidyankf/**`, and everything tied to them. No action in this phase had begun, so
+> nothing is unwound. The whole of Phase 13 — `D-O-PUB-WAHID`, `RP-OWNER-O-PUB-WAHID`, and the
+> Phase 13 Gate — is dropped, and the plan's public PR total falls by this delivery's count.
+>
+> Two conditional rules survive the drop:
+>
+> 1. **Registry rows are removed with the project, never before it.** `testing.projects[]` and
+>    `testing.compatibility.mappings[]` are a bijection with `rtk nx show projects --json`, so
+>    deleting the `wahidyankf-www` and `wahidyankf-www-fe-e2e` rows while the projects still exist
+>    fails `test-contract registry validate`. Whichever change removes the projects removes the two
+>    project rows, the two mappings, and the two frozen `coverage.projects` entries in that same
+>    change. If a rebase lands the removal without touching the registry, the next delivery in this
+>    plan repairs it before any other edit and reruns
+>    `test-contract registry validate` plus `validate-mapping --all --require-count <nx-count>`.
+> 2. **Every frozen count that named these two projects moves to the new Nx total.** The Phase 0
+>    closure, the `--require-count` arguments, and the Phase 20 contraction counts follow
+>    `rtk nx show projects --json` at the time they run, not the number frozen while the projects
+>    still existed.
+>
+> If the removal has not landed by the time this plan reaches Phase 13, this phase stays blocked
+> and the user decides whether to reinstate it — it is never resumed by default.
 
 - **Input:** complete site and frontend-harness rows.
 - **Outcome:** the site has non-overlapping runtime/static proof and direct targets.
