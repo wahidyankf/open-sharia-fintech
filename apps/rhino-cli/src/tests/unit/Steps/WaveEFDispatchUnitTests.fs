@@ -22,6 +22,8 @@ open System
 open System.IO
 open Xunit
 open RhinoCli.Cli.Dispatch
+open RhinoCli.Application.Ddd
+open RhinoCli.Domain.Types
 
 let private newTempDir () =
     let dir =
@@ -98,6 +100,23 @@ let private newDddAreaFixture () : string =
         "version: 2\napp: fixture-app\ncontexts:\n  - name: journal\n    summary: Fixture bounded context\n    layers: [domain, application]\n    code: [apps/fixture-app/src/contexts/journal]\n    glossary: specs/apps/fixture-app/ddd/ubiquitous-language/journal.md\n    gherkin: [specs/apps/fixture-app/behavior/surface/gherkin/domain]\n"
 
     root
+
+// ---------------------------------------------------------------------------
+// DDD application contracts — direct unit coverage for parser branches that
+// dispatch-only fixtures cannot observe independently.
+// ---------------------------------------------------------------------------
+
+[<Fact>]
+let ``DDD severity treats unknown text as blocking`` () =
+    let severity = parseSeverity "fatal"
+
+    Assert.Equal(Severity.Blocking, severity)
+
+[<Fact>]
+let ``DDD marks open-host-service as a unidirectional relationship`` () =
+    match relationshipKindIsAsymmetric "open-host-service" with
+    | Some isAsymmetric -> Assert.False(isAsymmetric)
+    | None -> Assert.Fail("open-host-service must be a supported relationship kind")
 
 // ---------------------------------------------------------------------------
 // repo-governance * — read-only, safe against the real checkout
