@@ -5,12 +5,12 @@
 
   Determining projects to restore...
   All projects are up-to-date for restore.
-  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
-  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
-  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
-  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
-  RhinoCli.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/adopt-beavernest-test-automation/apps/rhino-cli/src/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  RhinoCli.Infrastructure -> <repo-root>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> <repo-root>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> <repo-root>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <repo-root>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.UnitTests -> <repo-root>/apps/rhino-cli/src/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
+Test run for <repo-root>/apps/rhino-cli/src/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 [xUnit.net 00:01:31.56]     RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.the identity to redirected mapping transition is allowed [FAIL]
 [xUnit.net 00:01:31.56]     RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.the snapshot parser rejects a --project option as unknown [FAIL]

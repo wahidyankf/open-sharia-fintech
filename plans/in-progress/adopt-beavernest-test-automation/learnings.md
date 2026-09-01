@@ -47,3 +47,18 @@ Durable prevention: treat CI as the only authority for the G-Research analyzer r
 constructs those rules police in the first place — never apply `string` to an unannotated
 expression in `apps/rhino-cli` F# sources; parse and compare typed values instead.
 Route:
+
+## L-3: Captured tool transcripts leak the absolute worktree path
+
+Repository relevance: public
+Observation: `dotnet test` prints each built assembly and the test-run target as a fully resolved
+path, so an evidence file captured verbatim from `nx run <project>:test:unit` carried six lines of
+`/Users/<user>/.../worktrees/<name>/...` into a tracked file. The leak review caught it; no local
+gate did, because absolute paths are neither a lint nor a formatting failure. The same pattern is
+already present in several merged `plans/done/**` evidence files, so this is a class rather than a
+one-off slip.
+Durable prevention: normalize the repository-root prefix to a portable placeholder when capturing
+any build, test, or coverage transcript into a tracked evidence file, and scan a candidate evidence
+file for an absolute home-directory path before staging it rather than relying on the leak review
+to find it.
+Route:
