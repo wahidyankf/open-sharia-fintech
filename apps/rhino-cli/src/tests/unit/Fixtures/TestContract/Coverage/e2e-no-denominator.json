@@ -1,0 +1,13 @@
+{
+  "schema": "ose-test-contract-coverage-fixture/v1",
+  "case": "a governed E2E-only owner has no native coverage denominator",
+  "project": "widget-app",
+  "owner": "widget-app",
+  "adapter": "e2e",
+  "profile": "no-denominator",
+  "reason": "e2e drives a deployed surface; the native runner produces no line denominator",
+  "thresholds": [],
+  "target": { "name": "test:e2e", "command": "playwright test" },
+  "exclusions": [],
+  "slices": []
+}

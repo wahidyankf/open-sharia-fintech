@@ -98,3 +98,46 @@ Durable prevention: move the evidence ledger out of Markdown into a real `.tsv` 
 separator the lint permits. A gate whose passing condition is forbidden by another gate on the same
 file is unsatisfiable, not merely inconvenient.
 Route:
+
+## L-6: A case-insensitive ignore rule silently untracked a frozen allocation directory
+
+Repository relevance: public
+Observation: `D-P4-PUB-COVERAGE`'s frozen allocation places nine fixtures under
+`apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/`. The repository's `.gitignore`
+carries a bare `coverage/` rule for native coverage output, and `core.ignorecase` is true on this
+platform, so that rule matched the capitalized `Coverage/` directory. All nine fixtures existed on
+disk, were copied beside the test assembly by the `Fixtures/**/*.json` content glob, and made every
+contract case pass — while `git status --untracked-files=all` never listed them. The delivery would
+have committed a validator with no corpus and a green local suite. `git check-ignore -v` on one
+fixture named the rule; a scoped negation directly beneath the existing
+`!apps/rhino-cli/internal/coverage/` precedent re-included exactly that directory.
+Durable prevention: after creating any allocation directory, assert that every planned path is
+actually visible to Git — `git check-ignore -v <path>` must exit non-zero, or the file must appear
+in `git status --untracked-files=all` — before treating a passing test run as evidence. A build
+system that reads a file by glob and a version-control system that ignores it disagree silently, and
+the test suite reports the build system's view.
+Route:
+
+## L-7: A stale `obj/` evaluation made the local F# analyzer skip the file the delivery added
+
+Repository relevance: public
+Observation: `rhino-cli:lint` runs the G-Research analyzers over each project. Locally the target
+exited 0 on the committed `D-P4-PUB-COVERAGE` head; CI failed the same head with this exact
+error:
+
+```text
+TestContractCoverage.fs(469,24): Error GRA-TYPE-ANNOTATE-001 : Please annotate your type when using the `string` function.
+```
+
+Same analyzer version (0.22.0), same tool manifest, same flags. Running the
+analyzer with `--verbosity d` showed why: it resolves a project's compile list through a design-time
+MSBuild evaluation backed by `obj/`, and the local `obj/` predated the new file, so the analyzer
+reported "Running analyzers for" 13 files that did not include `TestContractCoverage.fs`. It
+analyzed a compile list from before the delivery and exited 0 — a silent false pass, not a
+disagreement about the rule. After `dotnet build` refreshed `obj/`, the same command listed 18 files
+including the new one and reproduced the CI error exactly.
+Durable prevention: whenever a delivery adds a `.fs` file, build the owning project before trusting
+`lint`, and assert the analyzer's own file list contains the added path rather than reading its exit
+code. An analyzer that silently narrows its input reports success for work it never inspected; the
+exit code cannot distinguish "clean" from "not looked at".
+Route:

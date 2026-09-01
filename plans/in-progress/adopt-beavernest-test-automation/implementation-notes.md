@@ -127,4 +127,12 @@ EVIDENCE  D-P4-PUB-BDD  D-P4-PUB-BDD-RED  54 BDD contract cases failed against a
 EVIDENCE  D-P4-PUB-BDD  D-P4-PUB-BDD-GREEN  recursive enumeration and integer equality implemented in TestContractBdd.fs; every negative rejected with owner, adapter, item, covered, total and remediation, every exact positive passes, 1578 unit tests  passed  plans/in-progress/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/bdd-green.txt
 EVIDENCE  D-P4-PUB-BDD  D-P4-PUB-BDD-REFACTOR  extracted only item and report normalization inside TestContractBdd.fs; unchanged integer counts and diagnostics, 1578 unit tests, test:quick exit 0  passed  plans/in-progress/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/bdd-refactor.txt
 EVIDENCE  D-P4-PUB-BDD  D-P4-PUB-BDD-SHARED-PLUMBING  recorded the three allowlisted shared paths with pre-edit and post-refactor blob SHAs and their exact diffs; no unallowlisted shared edit  passed  plans/in-progress/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/bdd-shared-plumbing.tsv
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-PRE-01  asserted each input's exit code with an explicit PASS token after a false clean-tree pass  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-PRE-02  validated the 23-row eight-field prospective manifest against the 14-path frozen allocation  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-PRE-03  measured C=580, O=531, 23 hand-authored files, 23 total files and recorded the combined code and file-budget exception  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-RED  48 new contract cases failed against the compile-only stub with 1583 preexisting cases untouched  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-GREEN  1631 of 1631 unit cases passed once the validator replaced the stub  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-REFACTOR  shared the exclusion predicate; test:unit and test:quick both exit 0 with unchanged diagnostics  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-SHARED-PLUMBING  recorded the three allowlisted shared paths whose BDD after-SHA equals this leaf's before-SHA  passed
+EVIDENCE  D-P4-PUB-COVERAGE  D-P4-PUB-COVERAGE-GITIGNORE  a case-insensitive coverage/ rule silently untracked all nine fixtures; a scoped negation restored them and is counted as a 23rd path  passed
 ```
