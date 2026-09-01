@@ -26,7 +26,7 @@ let ``extractOCRSections finds OCR comment tags`` () =
     let result = extractOCRSections mdText
     Assert.Equal(1, result.Length)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/media/ocr-quality.feature:Clean OCR section produces no finding
+// @covers specs/apps/crane/cli/behaviors/media/ocr-quality.feature:Clean OCR section produces no finding
 [<Fact>]
 let ``checkOCRQuality returns empty for clean OCR`` () =
     let content =
@@ -38,7 +38,7 @@ let ``checkOCRQuality returns empty for clean OCR`` () =
     let result = checkOCRQuality mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/media/ocr-quality.feature:High error rate produces CRITICAL finding
+// @covers specs/apps/crane/cli/behaviors/media/ocr-quality.feature:High error rate produces CRITICAL finding
 [<Fact>]
 let ``checkOCRQuality returns CRITICAL for high error rate`` () =
     // 20 non-ASCII + 80 digits = 20% > 10% -> CRITICAL
@@ -72,7 +72,7 @@ let ``checkOCRQuality returns MEDIUM for error rate above 2 percent`` () =
     Assert.NotEmpty(result)
     Assert.Equal("MEDIUM", result.[0].Criticality)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/media/ocr-quality.feature:No OCR-tagged sections produces no finding
+// @covers specs/apps/crane/cli/behaviors/media/ocr-quality.feature:No OCR-tagged sections produces no finding
 [<Fact>]
 let ``checkOCRQuality returns empty for no OCR tags`` () =
     let result = checkOCRQuality "## Heading\n\nSome normal text"

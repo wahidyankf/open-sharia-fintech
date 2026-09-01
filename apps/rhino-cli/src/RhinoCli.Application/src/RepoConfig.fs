@@ -1,9 +1,9 @@
 /// Port of the slice of the Rust `repo_config` namespace needed by the
 /// scenarios in
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature`
+/// `specs/apps/rhino/cli/behaviors/repo-config/data-driven.feature`
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`
+/// `specs/apps/rhino/cli/behaviors/repo-config-validate/repo-config-validate.feature`,
+/// and `specs/apps/rhino/cli/behaviors/harness/harness-catalog.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/repo_config/mod.rs`,
 /// `apps/rhino-cli/src/commands/repo_config_validate.rs`].
 ///
@@ -184,7 +184,7 @@ let fixedArguments (gate: GateEntry) : string list =
 
 /// The `doctor:` section, trimmed to the .NET SDK path scenario's field plus
 /// `skip-tools` (needed by
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s "A
+/// `specs/apps/rhino/cli/behaviors/system/doctor.feature`'s "A
 /// repo-config-declared tool is skipped from the check" scenario)
 /// [Repo-grounded — `repo_config/mod.rs::DoctorConfig`].
 type DoctorConfig =

@@ -2,7 +2,7 @@
 /// `repo-config-validate.feature`'s five scenarios to
 /// `RhinoCli.Application.RepoConfig`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature`,
+/// `specs/apps/rhino/cli/behaviors/repo-config-validate/repo-config-validate.feature`,
 /// `apps/rhino-cli/tests/repo_config_validate.rs`].
 ///
 /// Follows `RepoConfigSteps.fs`'s per-scenario slicing convention: each xunit
@@ -483,9 +483,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "repo-config-validate",
                 "repo-config-validate.feature"
             )

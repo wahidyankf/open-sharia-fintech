@@ -31,7 +31,7 @@ let ``stableKey is deterministic`` () =
     let key2 = stableKey "test.md" "category" "description"
     Assert.Equal(key1, key2)
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/reporting/skiplist-management.feature:New entry is written to the skip list file
+// @covers specs/apps/crane/cli/behaviors/reporting/skiplist-management.feature:New entry is written to the skip list file
 [<Fact>]
 let ``add creates new entry and returns true`` () =
     withTempPath (fun () ->
@@ -46,7 +46,7 @@ let ``add creates new entry and returns true`` () =
             | Error msg -> Assert.Fail(sprintf "list failed: %s" msg)
         | Error msg -> Assert.Fail(sprintf "add failed: %s" msg))
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/reporting/skiplist-management.feature:Duplicate entry is not written twice
+// @covers specs/apps/crane/cli/behaviors/reporting/skiplist-management.feature:Duplicate entry is not written twice
 [<Fact>]
 let ``add returns false for duplicate entry`` () =
     withTempPath (fun () ->
@@ -61,7 +61,7 @@ let ``add returns false for duplicate entry`` () =
             | Error msg -> Assert.Fail(sprintf "list failed: %s" msg)
         | Error msg -> Assert.Fail(sprintf "add failed: %s" msg))
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/reporting/skiplist-management.feature:Known false positive returns match true
+// @covers specs/apps/crane/cli/behaviors/reporting/skiplist-management.feature:Known false positive returns match true
 [<Fact>]
 let ``check returns true for existing entry`` () =
     withTempPath (fun () ->
@@ -71,7 +71,7 @@ let ``check returns true for existing entry`` () =
         | Ok found -> Assert.True(found)
         | Error msg -> Assert.Fail(sprintf "check failed: %s" msg))
 
-// @covers specs/apps/crane/behavior/crane-cli/gherkin/reporting/skiplist-management.feature:Unknown entry returns match false
+// @covers specs/apps/crane/cli/behaviors/reporting/skiplist-management.feature:Unknown entry returns match false
 [<Fact>]
 let ``check returns false for non-existing entry`` () =
     withTempPath (fun () ->

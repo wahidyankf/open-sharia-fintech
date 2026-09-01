@@ -1,25 +1,25 @@
 /// Port of the slice of the Rust `application::agents` namespace needed by the
 /// scenarios in
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`
+/// `specs/apps/rhino/cli/behaviors/harness/agents-bindings.feature`
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/agents-detect-duplication.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/agents-skills-mirror.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/agents-sync.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/agents-validate-claude.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/codex-binding.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-pre-push.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/governance-word-budget-pre-push.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-rule.feature`,
+/// `specs/apps/rhino/cli/behaviors/harness/governance-word-budget-rule.feature`,
 /// and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`,
-/// and `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-sync-triage.feature`
+/// `specs/apps/rhino/cli/behaviors/harness/harness-audit.feature`,
+/// and `specs/apps/rhino/cli/behaviors/harness/harness-catalog.feature`,
+/// and `specs/apps/rhino/cli/behaviors/harness/harness-ownership.feature`,
+/// and `specs/apps/rhino/cli/behaviors/harness/harness-sync-triage.feature`
 /// [Repo-grounded — `apps/rhino-cli/src/application/agents/agent_validator.rs`,
 /// `apps/rhino-cli/src/application/agents/bindings.rs`,
 /// `apps/rhino-cli/src/application/agents/catalog.rs`,
@@ -3531,7 +3531,7 @@ let runPrePushWordBudgetGate
 // envelope whose `result.categories` includes a single `governance-word-budget`
 // entry built from the already-ported word-budget checker. The remaining
 // categories arrive with
-// `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-audit.feature`.
+// `specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-audit.feature`.
 // `repo-governance` is not yet in `FSHARP_NAMESPACES`, so this is reached
 // directly by tests rather than through CLI argv routing, the same precedent
 // every other scenario in this module follows.

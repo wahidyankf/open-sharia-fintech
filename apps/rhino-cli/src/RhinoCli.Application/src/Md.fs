@@ -4,9 +4,9 @@
 /// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`,
 /// `apps/rhino-cli/src/application/docs/heading_hierarchy.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_heading_hierarchy.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature`'s
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`'s
 /// 11 scenarios and
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`'s
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`'s
 /// 12 scenarios.
 ///
 /// Scope: this PR (Wave D PR2) additionally ports the heading-hierarchy
@@ -37,7 +37,7 @@
 /// flowchart,graph,state,validator}.rs`,
 /// `apps/rhino-cli/src/infrastructure/mermaid/reporter.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_mermaid.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-mermaid.feature`'s
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`'s
 /// 39 scenarios. Unlike the three validators above, several of this
 /// feature's scenarios assert on rendered JSON/Markdown/text output and on
 /// parser internals (edge counts, rank depth) directly, so this section
@@ -246,7 +246,7 @@ let private mkWarn (path: string) (message: string) : Finding =
 /// scenarios, and "Software-engineering doc missing title fails", "...missing
 /// category field fails", "...category other than software fails", and
 /// "...deprecated software category emits warn not fail" — all from
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature`.
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`.
 let private validateSoftwareSchema (path: string) (fm: IDictionary<obj, obj>) : Finding list =
     let titleFinding =
         if hasNonEmptyString fm "title" then
@@ -305,7 +305,7 @@ let private validateSoftwareSchema (path: string) (fm: IDictionary<obj, obj>) : 
 /// Gherkin (binds) — "Governance doc with only title fails once when_to_use
 /// and description are armed" and "Governance doc with title, description,
 /// and when_to_use passes the lighter schema" —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature`.
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`.
 let private validateGovernanceSchema (path: string) (fm: IDictionary<obj, obj>) : Finding list =
     let titleFinding =
         if hasNonEmptyString fm "title" then
@@ -617,7 +617,7 @@ let private collectHeadings (content: string) : Heading list =
 /// levels passes", "File with two H1 headings fails", "File with H2 followed
 /// directly by H4 (skipping H3) fails", and "Single-line file with no
 /// headings is ignored (passes)" — all from
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`.
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`.
 /// One finding from [`analyzeHeadingsDetailed`], carrying the `line`/`kind`
 /// fields the CLI's JSON/Markdown rendering needs beyond generic `Finding`
 /// [Repo-grounded — `heading_hierarchy.rs::DocsHeadingFinding`].
@@ -754,7 +754,7 @@ let private isProseAllowlisted (repoRel: string) : bool =
 /// finding", "app-internals-default-deny — deep app files yield no finding",
 /// and "project-docs-subtree-allowlisted — app and lib docs trees trigger
 /// findings" — all from
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`.
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`.
 let validateDocsHeadingHierarchyAllowlisted (repoRoot: string) (excludePrefixes: string list) : Finding list =
     collectFilesSkipping namingSkipDirs repoRoot
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -828,7 +828,7 @@ let validateDocsHeadingHierarchy (paths: string list) : Result<Finding list, str
 /// Gherkin (binds) — "staged-prose-heading-blocks — staged docs file with bad
 /// heading hierarchy blocks commit" and "staged-skill-file-exempt — staged
 /// SKILL.md with bad heading hierarchy does not block commit" — both from
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature`.
+/// `specs/apps/rhino/cli/behaviors/git/git-pre-commit.feature`.
 let validateDocsHeadingHierarchyForPaths (repoRoot: string) (paths: string list) : Finding list =
     let allowlisted =
         paths
@@ -2521,7 +2521,7 @@ let private collectMermaidFiles (opts: MermaidScanOptions) : string list =
 /// [Repo-grounded — `md_validate_mermaid.rs::run`].
 ///
 /// Gherkin (binds) — this function backs all of
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-mermaid.feature`'s
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`'s
 /// 39 scenarios; see `MdSteps.fs`'s `docs-validate-mermaid.feature` section
 /// for the per-scenario step-definition bindings.
 let validateMermaidDocs (opts: MermaidScanOptions) : MermaidValidationResult =

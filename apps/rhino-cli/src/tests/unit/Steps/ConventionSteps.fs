@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding the `convention` namespace's three
 /// Gherkin feature files to `RhinoCli.Application.Convention`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/convention/convention-audit.feature`,
+/// `specs/apps/rhino/cli/behaviors/convention/convention-audit.feature`,
 /// `.../repo-governance-emoji-audit.feature`,
 /// `.../repo-governance-license-audit.feature`].
 ///
@@ -219,9 +219,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "convention"
             )
         )

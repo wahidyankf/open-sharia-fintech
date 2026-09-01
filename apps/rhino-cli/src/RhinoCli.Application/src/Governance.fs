@@ -4,7 +4,7 @@
 /// `apps/rhino-cli/src/commands/governance_validate_readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_generate_readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_rewrite_readme_index_paths.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature`'s
+/// `specs/apps/rhino/cli/behaviors/governance/governance-readme-index.feature`'s
 /// 18 scenarios. First `governance`-namespace port in Wave D (previous PRs
 /// all ported the `md` namespace).
 ///
@@ -31,7 +31,7 @@
 /// Also ports the `governance word-budget` gate
 /// [Repo-grounded — `apps/rhino-cli/src/application/governance/word_budget.rs`,
 /// `apps/rhino-cli/src/commands/governance_validate_word_budget.rs`] for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`'s
+/// `specs/apps/rhino/cli/behaviors/governance/governance-word-budget.feature`'s
 /// 20 scenarios (Wave D PR9). Findings use a bespoke `WordBudgetFinding`
 /// record carrying a three-tier `WordBudgetSeverity`
 /// (`Within`/`Warn`/`Fail`, named to avoid the `Ok` case literal — see

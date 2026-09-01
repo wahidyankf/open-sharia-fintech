@@ -2,7 +2,7 @@
 /// `RhinoCli.Application.RepoConfig`'s gate-registry schema and semantic
 /// findings, plus `RhinoCli.Cli.Gate`'s per-surface projection
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/gate-declaration.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
 /// Each scenario writes a self-contained `repo-config.yml` into a throwaway
@@ -294,17 +294,7 @@ type GateDeclarationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-declaration.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-declaration.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =

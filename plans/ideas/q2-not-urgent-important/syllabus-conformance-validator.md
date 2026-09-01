@@ -62,7 +62,7 @@ A `rhino-cli md syllabus validate [--corpus <path>]` subcommand that:
   two never disagree.
 
 Wire it into the same pre-commit / pre-push / CI positions as the other `md` validators, and add its
-Gherkin behavior tree under `specs/apps/rhino/behavior/rhino-cli/gherkin/**` per the byte-identity
+Gherkin behavior tree under `specs/apps/rhino/cli/behaviors/**` per the byte-identity
 boundary.
 
 ## Rough scope & non-goals

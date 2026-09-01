@@ -532,9 +532,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "repo-governance"
             )
         )

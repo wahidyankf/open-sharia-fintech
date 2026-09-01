@@ -15,7 +15,7 @@ specification is retained, migrated to the new logical corpus, or classified as 
 - `specs/apps/organiclever/ddd/**`
 - `specs/apps/ose/ddd/**`
 - Rhino DDD behavior features and their README/index entries under both repositories'
-  `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/**`
+  `specs/apps/rhino/cli/behaviors/ddd/**`
 - Rhino `specs/domain-coverage.feature` and its index entry
 - DDD-specific cross-links and normative sections in active OSE/OrganicLever specs
 - Any other DDD-specific directory, feature, vocabulary artifact, index, or diagram discovered

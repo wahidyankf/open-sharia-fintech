@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `env-validate-app-drift.feature`'s 3
 /// scenarios to `RhinoCli.Application.Env`'s `validateAppSurface` port
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-validate-app-drift.feature`,
+/// `specs/apps/rhino/cli/behaviors/env/env-validate-app-drift.feature`,
 /// `apps/rhino-cli/src/application/env/validate.rs`].
 ///
 /// Follows `EnvRestoreSteps.fs`'s per-scenario slicing convention: each
@@ -169,9 +169,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "env",
                 "env-validate-app-drift.feature"
             )

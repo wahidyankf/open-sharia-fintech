@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `env-restore.feature`'s 16 scenarios to
 /// `RhinoCli.Application.Env`'s `restore` port [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-restore.feature`,
+/// `specs/apps/rhino/cli/behaviors/env/env-restore.feature`,
 /// `apps/rhino-cli/src/application/env/backup.rs`,
 /// `apps/rhino-cli/src/commands/env_restore.rs`].
 ///
@@ -389,9 +389,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "env",
                 "env-restore.feature"
             )

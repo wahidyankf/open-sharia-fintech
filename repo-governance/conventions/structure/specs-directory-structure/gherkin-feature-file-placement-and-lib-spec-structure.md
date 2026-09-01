@@ -58,13 +58,13 @@ A domain folder may contain one or many feature files.
 **CLI specs** use the same domain subdirectory rule as BE and web. Group features by command domain (e.g., `system/`, `env/`, `links/`). Single-feature domains are fine when the CLI surface area is small:
 
 ```
-specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature
-specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-backup.feature
-specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature
-specs/apps/crane/behavior/crane-cli/gherkin/pdf/pdf-commands.feature
+specs/apps/rhino/cli/behaviors/system/doctor.feature
+specs/apps/rhino/cli/behaviors/env/env-backup.feature
+specs/apps/rhino/cli/behaviors/spec-coverage/spec-coverage-validate.feature
+specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature
 ```
 
-`rhino-cli specs validate-tree` enforces this rule: a `.feature` file placed directly under `behavior/<product>-<surface>/gherkin/` (with no domain subdirectory) is a HIGH finding.
+`rhino-cli specs validate-tree` enforces this rule: a `.feature` file placed directly under `behavior/<product>-<surface>/gherkin/` (with no domain subdirectory) is a HIGH finding. The four examples above sit in [logical owner corpora](./logical-owner-corpus.md), which keep the same domain subdirectory under `behaviors/`.
 
 ## Lib Spec Structure
 

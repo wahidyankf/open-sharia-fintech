@@ -546,13 +546,18 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 >
 > 1. the validator learns the logical owner-corpus shape and keeps accepting the legacy five-folder
 >    tree, so no family is broken by the rule change alone;
-> 2. one unit per family — `rhino`, `crane`, `libs`, `ose`, `organiclever`, `ayokoding` — moving
->    that family's corpus and every reference to it; and
+> 2. one unit per family — `rhino` with `crane`, `libs`, `ose`, `organiclever`, `ayokoding` —
+>    moving that family's corpus and every reference to it; and
 > 3. the validator drops legacy support once no family declares it.
 >
 > Detection is positive rather than negative: a product is measured against the new shape as soon as
 > one of its immediate subdirectories carries an `architecture.md`. That is what makes a per-family
 > sequence safe — an unmigrated family keeps its old rules until its own unit lands.
+>
+> Step 1 landed as `ose-public#430`. The two CLI families move together because they are the only
+> two products the legacy `CLI-only` convention row names as its example: migrating one alone would
+> leave that row describing a shape no product uses while still claiming one does. `rhino` is a
+> parity path, so its move carries an identical `ose-private` landing; `crane` exists only here.
 
 ### `D-P5-PRI` delivery lifecycle
 

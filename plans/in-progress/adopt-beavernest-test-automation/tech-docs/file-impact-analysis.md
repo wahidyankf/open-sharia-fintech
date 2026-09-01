@@ -88,8 +88,8 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 │       — align the documented DDD-area default with `repo-config.yml`
 ├── [G] .agents/skills/<matching-non-vendored-.claude-sources> — regenerate canonical skill mirrors
 ├── [D] specs/apps/ose/ddd/<DISC-DDD-SPEC-FILE>
-├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/<DISC-DDD-SPEC-FILE>
-├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature
+├── [D] specs/apps/rhino/cli/behaviors/ddd/<DISC-DDD-SPEC-FILE>
+├── [D] specs/apps/rhino/cli/behaviors/specs/domain-coverage.feature
 ├── [E] repo-governance/development/infra/nx-targets.md
 ├── [E] repo-governance/development/infra/nx-targets/<DISC-RULE-FILE>.md
 ├── [E] repo-governance/development/quality/three-level-testing-standard.md
@@ -205,8 +205,8 @@ runtime:
 ├── [N] apps/rhino-cli/tests/{unit,integration,e2e}/<DISC-TEST-FILE>
 ├── [N] libs/{ts-ui,ts-ui-tokens}/tests/{unit,integration,e2e}/<DISC-TEST-FILE>
 ├── [D] apps/rhino-cli/tests/ddd.rs
-├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/<DISC-DDD-SPEC-FILE>
-├── [D] specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature
+├── [D] specs/apps/rhino/cli/behaviors/ddd/<DISC-DDD-SPEC-FILE>
+├── [D] specs/apps/rhino/cli/behaviors/specs/domain-coverage.feature
 ├── [N] specs/apps/rhino/cli/{README.md,architecture.md,behaviors/<DISC-BEHAVIOR-FILE>.feature}
 ├── [N] specs/libs/{ts-ui,ts-ui-tokens}/{README.md,architecture.md,behaviors/<DISC-BEHAVIOR-FILE>.feature}
 ├── [D] specs/apps/rhino/{product,system-context,containers,components,behavior}/<DISC-LEGACY-SPEC-FILE>

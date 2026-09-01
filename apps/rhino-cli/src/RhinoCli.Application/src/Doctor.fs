@@ -1,6 +1,6 @@
 /// Port of `rhino-cli doctor`'s cargo shared-target-directory symlinking and
 /// prune-cache GC step for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature`'s
+/// `specs/apps/rhino/cli/behaviors/system/cargo-target-share.feature`'s
 /// 18 scenarios [Repo-grounded —
 /// `apps/rhino-cli/src/application/doctor/target_share.rs`,
 /// `apps/rhino-cli/src/commands/doctor.rs`]. Redirects each Rust crate's
@@ -14,7 +14,7 @@
 /// resolution, worktree enumeration, check/fix/prune/sweep, and their text
 /// formatters). This file now also carries the tool-check engine —
 /// `checker.rs`/`fixer.rs`/`reporter.rs`/`tools.rs` — for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s 17
+/// `specs/apps/rhino/cli/behaviors/system/doctor.feature`'s 17
 /// scenarios, below the "Tool-check engine" banner comment. CLI argument
 /// parsing and dispatch wiring (`commands/doctor.rs::run`) remain out of
 /// scope for both features — every scenario here, like the target-share ones
@@ -24,7 +24,7 @@
 /// Below the "F# lint-target Fantomas tool-invocation check" banner comment,
 /// this file also carries an F#-native meta-check with no Rust equivalent
 /// (`apps/rhino-cli/src` never invoked Fantomas) for
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`'s
+/// `specs/apps/rhino/cli/behaviors/system/fsharp-tool-invocation.feature`'s
 /// 1 scenario: every locally discovered Nx `project.json` `lint` target that
 /// invokes Fantomas must restore the local `.NET` tool manifest first and
 /// must never invoke a bare global `fantomas` binary.
@@ -615,7 +615,7 @@ let formatSweepReport (outcome: SweepOutcome) : string =
 // ---------------------------------------------------------------------------
 // Tool-check engine [Repo-grounded — `application/doctor/mod.rs`,
 // `checker.rs`, `fixer.rs`, `reporter.rs`, `tools.rs`] for
-// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`'s 17
+// `specs/apps/rhino/cli/behaviors/system/doctor.feature`'s 17
 // scenarios.
 // ---------------------------------------------------------------------------
 
@@ -2083,7 +2083,7 @@ let formatDoctorMarkdown (result: DoctorResult) : string =
 // ---------------------------------------------------------------------------
 // F# lint-target Fantomas tool-invocation check [F#-native meta-check — no
 // Rust equivalent; `apps/rhino-cli/src` never invoked Fantomas] for
-// `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`'s
+// `specs/apps/rhino/cli/behaviors/system/fsharp-tool-invocation.feature`'s
 // 1 scenario.
 // ---------------------------------------------------------------------------
 

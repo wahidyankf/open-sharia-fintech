@@ -1,5 +1,5 @@
 /// TickSpec step definitions binding the 12 feature files under
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/` to
+/// `specs/apps/rhino/cli/behaviors/specs/` to
 /// `RhinoCli.Application.Specs`'s ports, mirroring the single monolithic
 /// Rust `tests/specs_tree.rs` runner that owns all of them
 /// [Repo-grounded — `apps/rhino-cli/tests/specs_tree.rs`].
@@ -1780,9 +1780,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "specs"
             )
         )

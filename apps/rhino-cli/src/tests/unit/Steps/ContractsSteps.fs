@@ -128,9 +128,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "contracts",
                 "contracts-dart-scaffold.feature"
             )

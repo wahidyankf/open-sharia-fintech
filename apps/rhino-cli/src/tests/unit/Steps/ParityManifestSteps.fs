@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `parity-manifest.feature`'s 5 scenarios
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/parity-manifest.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
 /// `parity manifest generate`/`validate` already ship as F# —
@@ -157,7 +157,7 @@ type ParityManifestSteps() =
           "apps/rhino-cli/Cargo.lock", "version = 4\n"
           "apps/rhino-cli/project.json", "{}\n"
           "apps/rhino-cli/LICENSE", "MIT\n"
-          "specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature", "Feature: fixture parity\n" ]
+          "specs/apps/rhino/cli/behaviors/gate/parity-manifest.feature", "Feature: fixture parity\n" ]
         |> List.iter (fun (path, contents) -> write path contents)
 
         initGit ()
@@ -245,17 +245,7 @@ type ParityManifestSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "parity-manifest.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "parity-manifest.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =

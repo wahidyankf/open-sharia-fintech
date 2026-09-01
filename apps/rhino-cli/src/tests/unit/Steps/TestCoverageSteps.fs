@@ -3,9 +3,9 @@
 /// `test-coverage-validate.feature`'s 10 scenarios to
 /// `RhinoCli.Application.TestCoverage`'s diff-coverage, merge-coverage, and
 /// validate ports [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-diff.feature`,
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-merge.feature`,
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/test-coverage-validate.feature`,
+/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-diff.feature`,
+/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-merge.feature`,
+/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-validate.feature`,
 /// `apps/rhino-cli/src/application/testcoverage/diff.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/merge.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/lcov.rs`,
@@ -461,9 +461,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "test-coverage"
             )
         )

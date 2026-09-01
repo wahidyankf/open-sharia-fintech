@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding the resequenced `git-pre-commit.feature`'s
 /// 5 scenarios to the git pre-commit hook's `md links validate`, `md mermaid
 /// validate`, and `md heading-hierarchy validate` steps
-/// [Repo-grounded — `specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature`,
+/// [Repo-grounded — `specs/apps/rhino/cli/behaviors/git/git-pre-commit.feature`,
 /// `apps/rhino-cli/tests/git_hooks.rs`].
 ///
 /// **Integration-tier**, unlike every other Wave D feature file: the Rust
@@ -361,9 +361,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "git",
                 "git-pre-commit.feature"
             )

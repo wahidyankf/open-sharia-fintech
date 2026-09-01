@@ -85,11 +85,11 @@ let private expectOk (case: string) (actual: Result<'a, Failure>) : 'a =
 /// The synthetic owner corpus used by the in-memory fixtures below. It is
 /// deliberately narrower than the repository's own frozen legacy glob so a
 /// fixture case can never be mistaken for a real-file assertion.
-let private rhinoCorpus = "specs/apps/rhino/behavior/rhino-cli/gherkin/**"
+let private rhinoCorpus = "specs/apps/rhino/cli/behaviors/**"
 
 /// The repository's real frozen `coverage.projects` values for `rhino-cli`,
 /// used only by the two cases that parse the tracked `repo-config.yml`.
-let private rhinoLegacySpecs = "specs/apps/rhino/behavior/rhino-cli/**"
+let private rhinoLegacySpecs = "specs/apps/rhino/cli/behaviors/**"
 let private rhinoLegacyLevels = [ "unit"; "integration" ]
 
 /// Walks up from the test assembly's directory to the first ancestor holding
@@ -1000,7 +1000,7 @@ let ``a legacy raw specs path rendering change that preserves the normalized ide
             Legacy =
                 [ { Name = "rhino-cli"
                     Levels = [ "unit" ]
-                    Specs = "./specs/apps/rhino/behavior/rhino-cli/gherkin/**" } ] }
+                    Specs = "./specs/apps/rhino/cli/behaviors/**" } ] }
 
     validateTransition baseRegistry after
     |> expectOk "legacy-raw-path-change-stable-identity"
@@ -1025,7 +1025,7 @@ let ``losing a normalized runtime identity is rejected`` () =
 
 [<Fact>]
 let ``an absolute corpus path is rejected`` () =
-    let absolute = "/specs/apps/rhino/behavior/rhino-cli/gherkin/**"
+    let absolute = "/specs/apps/rhino/cli/behaviors/**"
 
     let registry =
         withBehavior
@@ -2346,7 +2346,7 @@ let private layoutMutation =
 
 let private bddMutation =
     [ "    \"kind\": \"bdd-remove-binding\","
-      "    \"feature\": \"specs/apps/rhino/behavior/rhino-cli/gherkin/specs/parity.feature\","
+      "    \"feature\": \"specs/apps/rhino/cli/behaviors/specs/parity.feature\","
       "    \"scenario\": \"The manifest is current\","
       "    \"step\": \"Then the manifest is current\","
       "    \"adapter\": \"unit\"" ]

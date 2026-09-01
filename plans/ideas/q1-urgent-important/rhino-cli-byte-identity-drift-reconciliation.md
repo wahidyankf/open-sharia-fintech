@@ -15,7 +15,7 @@ propagate it automatically.
 
 `apps/rhino-cli` is governed by a byte-identity rule with **zero carve-outs** across the two sync-loop
 repos: `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and the shared Gherkin behavior
-tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**` must all match byte for byte. Two separate
+tree at `specs/apps/rhino/cli/behaviors/**` must all match byte for byte. Two separate
 violations are live.
 
 **Violation 1 — the `optimize-cis`-era measured set.** Measured on **2026-08-09** during cycle 7 of
@@ -27,7 +27,7 @@ drawn from a wider **17-file measured set** —
 `src/commands/md_validate_frontmatter_dates.rs`, `src/commands/repo_config_validate.rs`,
 `tests/agents.rs`, `tests/cursor_binding.rs`, `tests/docs.rs`, `tests/gate_dispatch.rs`,
 `tests/gate_format_verify_wrappers.rs`, `tests/gate_specs.rs`, `tests/specs_tree.rs`, and three files
-under `specs/apps/rhino/behavior/rhino-cli/gherkin/` (`gate/gate-declaration.feature`,
+under `specs/apps/rhino/cli/behaviors/` (`gate/gate-declaration.feature`,
 `gate/gate-execution.feature`, `README.md`). The original PR-review finding (`AR5`) reported 14 and
 never named two of the diverging files, and a 17th surfaced during cycle-8 re-verification. Treat
 the 17 as the superset to re-check, not a confirmed actionable list — **re-measure against

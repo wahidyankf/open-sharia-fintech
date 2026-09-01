@@ -60,7 +60,7 @@ A total of 1 test files matched the specified pattern.
    contract case 'fixture-check-agreement': expected misuse but got NotImplemented "test-contract validate fixture: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.mutating a frozen legacy corpus is rejected [< 1 ms]
   Error Message:
-   contract case 'immutable-legacy-half': field 'testing.compatibility.mappings[].legacy.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/behavior/rhino-cli/gherkin/**' to 'specs/apps/rhino/behavior/**'; expected a contract failure but got NotImplemented "test-contract registry transition: not implemented"
+   contract case 'immutable-legacy-half': field 'testing.compatibility.mappings[].legacy.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/cli/behaviors/**' to 'specs/apps/rhino/behavior/**'; expected a contract failure but got NotImplemented "test-contract registry transition: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.registry validate forbid-legacy rejects a surviving frozen legacy block [< 1 ms]
   Error Message:
    contract case 'forbid-legacy': field 'coverage.projects' on project 'rhino-cli' moved from 'present' to 'absent'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
@@ -228,7 +228,7 @@ Options:
    contract case 'canonical-snapshot-legacy-absent': expected success but got NotImplemented "test-contract registry snapshot: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.an absolute corpus path is rejected [< 1 ms]
   Error Message:
-   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/behavior/rhino-cli/gherkin/**' to '/specs/apps/rhino/behavior/rhino-cli/gherkin/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
+   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/cli/behaviors/**' to '/specs/apps/rhino/cli/behaviors/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.a tracked byte mutation during a read is rejected [< 1 ms]
   Error Message:
    contract case 'tracked-byte-mutation': field 'repo-config.yml' on project 'rhino-cli' moved from 'aa5c4d03745fb13de774871b96eebe26052d5b97cd5c137c19ce16332bf5fb2a' to '0000000000000000000000000000000000000000000000000000000000000000'; expected a contract failure but got NotImplemented "test-contract registry tracked-byte check: not implemented"
@@ -403,7 +403,7 @@ Options:
    contract case 'legacy-snapshot': expected success but got NotImplemented "test-contract registry snapshot: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.a bootstrap owner carrying a corpus is rejected [< 1 ms]
   Error Message:
-   contract case 'bootstrap-forbids-corpus': field 'behavior.corpus' on project 'rhino-cli' moved from '<empty>' to 'specs/apps/rhino/behavior/rhino-cli/gherkin/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
+   contract case 'bootstrap-forbids-corpus': field 'behavior.corpus' on project 'rhino-cli' moved from '<empty>' to 'specs/apps/rhino/cli/behaviors/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.a delegated adapter carries both a project and a driver [< 1 ms]
   Error Message:
    contract case 'adapter-delegated-complete': expected success but got NotImplemented "test-contract registry validate: not implemented"
@@ -440,7 +440,7 @@ Options:
 
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.an empty corpus glob entry is rejected [< 1 ms]
   Error Message:
-   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/behavior/rhino-cli/gherkin/**' to '<blank>'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
+   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/cli/behaviors/**' to '<blank>'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.a coverage floor other than the single repository minimum is rejected [< 1 ms]
   Error Message:
    contract case 'coverage-floor': field 'testing.coverage.minimum-line' on project 'rhino-cli' moved from '99' to '80'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
@@ -489,7 +489,7 @@ Options:
    contract case 'fixture-path-absolute': expected misuse but got NotImplemented "test-contract validate fixture: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.a traversal corpus path is rejected [< 1 ms]
   Error Message:
-   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/behavior/rhino-cli/gherkin/**' to 'specs/apps/rhino/../../../etc/gherkin/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
+   contract case 'repository-relative-paths': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/cli/behaviors/**' to 'specs/apps/rhino/../../../etc/gherkin/**'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.changing a behavior id across a revision is rejected as an unstable identity [< 1 ms]
   Error Message:
    contract case 'stable-behavior-id': field 'behavior.id' on project 'rhino-cli' moved from 'rhino-cli:default' to 'rhino-cli:core'; expected a contract failure but got NotImplemented "test-contract registry transition: not implemented"
@@ -532,7 +532,7 @@ Options:
    contract case 'active-forbids-seed': field 'behavior.seed' on project 'rhino-cli' moved from '<absent>' to 'test:behavior:seed'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.an active owner with an empty resolved corpus is rejected [< 1 ms]
   Error Message:
-   contract case 'active-requires-corpus': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/behavior/rhino-cli/gherkin/**' to '<empty>'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
+   contract case 'active-requires-corpus': field 'behavior.corpus' on project 'rhino-cli' moved from 'specs/apps/rhino/cli/behaviors/**' to '<empty>'; expected a contract failure but got NotImplemented "test-contract registry validate: not implemented"
   Failed RhinoCli.Tests.Unit.Steps.TestContractRegistryUnitTests.the canonical testing root carries schema coverage compatibility mappings and projects [< 1 ms]
   Error Message:
    contract case 'canonical-root-shape': expected success but got NotImplemented "test-contract registry parse: not implemented"

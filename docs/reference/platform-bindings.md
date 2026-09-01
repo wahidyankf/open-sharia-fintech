@@ -296,7 +296,7 @@ To add a new generated binding:
 1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs, and `skills-dir` / `skills-mirrors` / `vendored:` if the harness needs a skills mirror). Also add an `ownership:` list classifying every binding path this entry claims as `generated`, `vendored`, or `source` — `harness ownership validate` is a pre-push gate and fails on any tracked binding file with no declared class.
 2. Add a `catalog:` block to that registry entry, then run `rhino-cli harness catalog generate` — never hand-edit the table above, which is machine-owned inside its generated region.
 3. Implement the converter in `apps/rhino-cli/src/RhinoCli.Application/src/Harness.fs` and wire it into `harness bindings generate`.
-4. Add TickSpec step definitions and Gherkin scenarios under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
+4. Add TickSpec step definitions and Gherkin scenarios under `specs/apps/rhino/cli/behaviors/`.
 5. Update this document's Translation Artifacts section.
 6. `git add` every path touched by steps 1-5, **then** run `rhino-cli parity manifest generate`
    and stage the regenerated `apps/rhino-cli/parity-manifest.sha256`. The staging order is

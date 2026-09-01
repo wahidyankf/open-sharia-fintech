@@ -62,13 +62,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli/src"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/rhino/cli/behaviors apps/rhino-cli/src"
       },
       "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature",
-        "{projectRoot}/src/**/*.fs"
-      ]
+      "inputs": ["{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
     "test:behavior:coverage:unit": {
       "executor": "nx:run-commands",
@@ -77,7 +74,7 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
         "{projectRoot}/src/**/*.fs"
       ]
@@ -89,7 +86,7 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
         "{projectRoot}/src/**/*.fs"
       ]
@@ -101,7 +98,7 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
         "{projectRoot}/src/**/*.fs"
       ]
@@ -159,7 +156,7 @@
       "inputs": [
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/src/tests/unit/**/*.fs",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature"
       ]
     },
     "specs:structure-validation": {
@@ -239,6 +236,6 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature"]
   }
 }

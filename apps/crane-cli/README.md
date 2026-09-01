@@ -34,7 +34,7 @@ npm exec nx -- run crane-cli:test:integration
 ```
 
 The executable is written to `apps/crane-cli/dist/` by the build target. Its behavior specifications
-live in [the Crane Gherkin suite](../../specs/apps/crane/behavior/crane-cli/gherkin/README.md).
+live in [the Crane Gherkin suite](../../specs/apps/crane/cli/behaviors/README.md).
 
 ## Code map
 

@@ -4,8 +4,8 @@
 /// `RhinoCli.Application.Md.validateDocsHeadingHierarchy`/
 /// `validateDocsHeadingHierarchyAllowlisted`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-frontmatter.feature`,
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-heading-hierarchy.feature`,
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`,
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`,
 /// `apps/rhino-cli/src/application/docs/frontmatter.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`,
 /// `apps/rhino-cli/src/application/docs/heading_hierarchy.rs`,
@@ -30,7 +30,7 @@
 /// Also binds `docs-validate-mermaid.feature`'s 39 scenarios to
 /// `RhinoCli.Application.Md.validateMermaidDocs`/`parseMermaidDiagram`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-mermaid.feature`,
+/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`,
 /// `apps/rhino-cli/tests/docs.rs`'s `DocsWorld` mermaid step definitions].
 /// This feature's fixtures and assertions are ported directly from
 /// `docs.rs` (the Rust source's own cucumber-rs step definitions) rather
@@ -45,7 +45,7 @@
 /// Also binds `md-audit.feature`'s 1 scenario to
 /// `RhinoCli.Application.Md.runAudit`
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/md/md-audit.feature`,
+/// `specs/apps/rhino/cli/behaviors/md/md-audit.feature`,
 /// `apps/rhino-cli/src/commands/md_audit.rs`]. `runAudit` only dispatches the
 /// five member validators this file has ported so far (`frontmatter-dates`
 /// and `readme-index` are not yet ported — see `runAudit`'s doc comment in
@@ -1479,9 +1479,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "md"
             )
         )

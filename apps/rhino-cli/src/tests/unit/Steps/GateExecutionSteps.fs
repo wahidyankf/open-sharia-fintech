@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `gate-execution.feature`'s 30 scenarios
 /// [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`,
+/// `specs/apps/rhino/cli/behaviors/gate/gate-execution.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
 /// Most scenarios spawn the real, prebuilt F# CLI binary against a
@@ -1388,17 +1388,7 @@ type GateExecutionSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-execution.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-execution.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -1443,17 +1433,7 @@ module private FeatureRunner =
         scenario.Action.Invoke()
 
     let gateDeclarationFeaturePath: string =
-        Path.Combine(
-            repoRoot,
-            "specs",
-            "apps",
-            "rhino",
-            "behavior",
-            "rhino-cli",
-            "gherkin",
-            "gate",
-            "gate-declaration.feature"
-        )
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-declaration.feature")
 
 [<Fact>]
 let ``Rhino CLI kind receives derived files`` () =

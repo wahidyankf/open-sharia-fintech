@@ -214,12 +214,7 @@ let ``route runs specs counts validate and reports missing folders for a raw ghe
     // real findings-present arm, not a defect — exercises the failure-formatting
     // path the same way Wave D's "cheapest lines to win" lesson recommends.
     let code, _, err =
-        runCaptured
-            (okRoot (realRepoRoot ()))
-            [| "specs"
-               "counts"
-               "validate"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin" |]
+        runCaptured (okRoot (realRepoRoot ())) [| "specs"; "counts"; "validate"; "specs/apps/rhino/cli/behaviors" |]
 
     Assert.Equal(1, code)
     Assert.Contains("finding(s) found by specs validate-counts", err)
@@ -240,7 +235,7 @@ let ``route runs specs gherkin-cardinality validate against a real spec folder``
             [| "specs"
                "gherkin-cardinality"
                "validate"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin" |]
+               "specs/apps/rhino/cli/behaviors" |]
 
     Assert.Equal(0, code)
     Assert.NotEmpty out
@@ -253,7 +248,7 @@ let ``route renders specs gherkin-cardinality validate as JSON`` () =
             [| "specs"
                "gherkin-cardinality"
                "validate"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
+               "specs/apps/rhino/cli/behaviors"
                "-o"
                "json" |]
 
@@ -268,7 +263,7 @@ let ``route renders specs gherkin-cardinality validate as markdown`` () =
             [| "specs"
                "gherkin-cardinality"
                "validate"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
+               "specs/apps/rhino/cli/behaviors"
                "-o"
                "markdown" |]
 
@@ -301,7 +296,7 @@ let ``route runs specs behavior-coverage validate against rhino-cli's own gherki
                "behavior-coverage"
                "validate"
                "--shared-steps"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
+               "specs/apps/rhino/cli/behaviors"
                "apps/rhino-cli/src" |]
 
     Assert.Equal(0, code)
@@ -318,7 +313,7 @@ let ``route renders specs behavior-coverage validate as JSON`` () =
                "--shared-steps"
                "-o"
                "json"
-               "specs/apps/rhino/behavior/rhino-cli/gherkin"
+               "specs/apps/rhino/cli/behaviors"
                "apps/rhino-cli/src" |]
 
     Assert.Equal(0, code)

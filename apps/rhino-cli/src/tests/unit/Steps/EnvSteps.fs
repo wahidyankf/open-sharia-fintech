@@ -1,6 +1,6 @@
 /// TickSpec step definitions binding `env-backup.feature`'s 21 scenarios to
 /// `RhinoCli.Application.Env` [Repo-grounded —
-/// `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-backup.feature`,
+/// `specs/apps/rhino/cli/behaviors/env/env-backup.feature`,
 /// `apps/rhino-cli/src/application/env/backup.rs`,
 /// `apps/rhino-cli/src/commands/env_backup.rs`].
 ///
@@ -489,9 +489,8 @@ module private FeatureRunner =
                 "specs",
                 "apps",
                 "rhino",
-                "behavior",
-                "rhino-cli",
-                "gherkin",
+                "cli",
+                "behaviors",
                 "env",
                 "env-backup.feature"
             )
