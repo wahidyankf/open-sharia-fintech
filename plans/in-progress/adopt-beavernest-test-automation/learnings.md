@@ -34,3 +34,16 @@ Durable prevention: any repository tool that enumerates Nx projects from `projec
 back to the containing directory name, and should be checked against `nx show projects --json`
 rather than against a hand-listed project set.
 Route:
+
+## L-2: The local F# analyzer run does not reproduce every CI analyzer diagnostic
+
+Repository relevance: public
+Observation: `rhino-cli:lint` passed locally — with the Nx cache skipped, and again when the
+offending expression was deliberately restored — while the same target in CI failed with
+`GRA-TYPE-ANNOTATE-001 : Please annotate your type when using the 'string' function`. Both sides
+load g-research.fsharp.analyzers 0.22.0 through the same command, and the verbose local log shows
+the file being analyzed, so a green local lint is not evidence that the analyzer gate will pass.
+Durable prevention: treat CI as the only authority for the G-Research analyzer rules, and avoid the
+constructs those rules police in the first place — never apply `string` to an unannotated
+expression in `apps/rhino-cli` F# sources; parse and compare typed values instead.
+Route:

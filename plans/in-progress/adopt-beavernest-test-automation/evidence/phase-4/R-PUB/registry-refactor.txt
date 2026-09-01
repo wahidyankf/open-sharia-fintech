@@ -40,3 +40,33 @@ $ nx run rhino-cli:test:unit
 Passed!  - Failed:     0, Passed:  1473, Skipped:     0, Total:  1473 - RhinoCli.UnitTests.dll (net10.0)
 $ nx run rhino-cli:test:quick
 Successfully ran target test:quick for project rhino-cli and 2 tasks it depends on
+
+--- CI FIX (head 006b17ab) -------------------------------------------------
+
+The .NET quality gate rejected the first pushed head with exactly one
+diagnostic:
+
+  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs(3021,47):
+  Error GRA-TYPE-ANNOTATE-001 : Please annotate your type when using the
+  `string` function.
+
+Root cause: `validate-mapping --require-count` compared the requested count to
+`string report.Mappings`. The fix parses the flag into an `int` and compares
+numerically, so the `string` call disappears and a non-numeric argument is now
+CLI misuse (exit 2) instead of a silent count mismatch.
+
+The local analyzer does not reproduce the diagnostic. Re-running the exact
+lint command with the pre-fix expression restored still reported
+"No messages found from the analyzer(s)" at g-research.fsharp.analyzers 0.22.0,
+so CI is the only authority for this rule class here.
+
+$ nx run rhino-cli:lint --skip-nx-cache
+Successfully ran target lint for project rhino-cli and 1 task it depends on
+
+$ nx run rhino-cli:test:quick --skip-nx-cache
+Passed!  - Failed:     0, Passed:  1476, Skipped:     0, Total:  1476 - RhinoCli.UnitTests.dll (net10.0)
+Successfully ran target test:quick for project rhino-cli and 2 tasks it depends on
+
+The three added tests pin the flag's whole contract: a matching count exits 0,
+a disagreeing count exits 1 naming both numbers, and a non-numeric count exits
+2 with the misuse diagnostic.

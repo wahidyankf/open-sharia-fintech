@@ -1833,3 +1833,60 @@ let ``the owner fixture validate leaf exposes its owner check and fixture option
             containsOrdinal option text,
             sprintf "contract case 'fixture-help-options': expected '%s' in help but got: %s" option text
         )
+
+[<Fact>]
+let ``registry validate-mapping accepts a --require-count that matches the mapping total`` () =
+    let exitCode, text =
+        runCaptured
+            [| "test-contract"
+               "registry"
+               "validate-mapping"
+               "--all"
+               "--require-count"
+               "0" |]
+
+    Assert.True(
+        (exitCode = 0),
+        sprintf "contract case 'require-count-match': expected exit 0 but got %d with output: %s" exitCode text
+    )
+
+    Assert.True(
+        containsOrdinal "mappings=0" text,
+        sprintf "contract case 'require-count-match': expected 'mappings=0' in output but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate-mapping reports a contract failure when --require-count disagrees`` () =
+    let exitCode, text =
+        runCaptured
+            [| "test-contract"
+               "registry"
+               "validate-mapping"
+               "--all"
+               "--require-count"
+               "3" |]
+
+    Assert.Equal(1, exitCode)
+
+    Assert.True(
+        containsOrdinal "--require-count 3 but the registry declares 0" text,
+        sprintf "contract case 'require-count-mismatch': expected both counts in the diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate-mapping rejects a non-numeric --require-count as misuse`` () =
+    let exitCode, text =
+        runCaptured
+            [| "test-contract"
+               "registry"
+               "validate-mapping"
+               "--all"
+               "--require-count"
+               "three" |]
+
+    Assert.Equal(2, exitCode)
+
+    Assert.True(
+        containsOrdinal "--require-count expects a non-negative integer" text,
+        sprintf "contract case 'require-count-misuse': expected the misuse diagnostic but got: %s" text
+    )

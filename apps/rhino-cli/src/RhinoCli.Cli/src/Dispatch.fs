@@ -6,6 +6,7 @@
 module RhinoCli.Cli.Dispatch
 
 open System
+open System.Globalization
 open RhinoCli.Domain.Types
 open RhinoCli.Application
 
@@ -3017,17 +3018,26 @@ let private runTestContractValidateMappingLeaf (repoRoot: string) (args: string 
                     with
                     | Error failure -> reportTestContractFailure failure
                     | Ok report ->
-                        match stringFlag [ "--require-count" ] args with
-                        | Some raw when raw <> string report.Mappings ->
-                            eprintfn
-                                "Error: testing.compatibility.mappings[]: --require-count %s but the registry declares %d"
-                                raw
-                                report.Mappings
-
-                            1
-                        | _ ->
+                        let succeed () =
                             printfn "registry-mapping-valid state=%s mappings=%d" report.State report.Mappings
                             0
+
+                        match stringFlag [ "--require-count" ] args with
+                        | None -> succeed ()
+                        | Some raw ->
+                            match Int32.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture) with
+                            | true, expected when expected = report.Mappings -> succeed ()
+                            | true, expected ->
+                                eprintfn
+                                    "Error: testing.compatibility.mappings[]: --require-count %d but the registry declares %d"
+                                    expected
+                                    report.Mappings
+
+                                1
+                            | _ ->
+                                reportTestContractFailure (
+                                    TestContract.Misuse "--require-count expects a non-negative integer"
+                                )
 
 /// `test-contract validate --owner --check --fixture` — resolves one owner
 /// RED fixture and reports the diagnostic it asserts. The document is read
