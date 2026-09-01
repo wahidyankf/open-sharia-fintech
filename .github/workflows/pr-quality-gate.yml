@@ -235,6 +235,11 @@ jobs:
         with:
           name: rhino-cli-gate-binary
           path: apps/rhino-cli/src/dist
+          # Intra-run scratch: every downstream gate job consumes this within
+          # the same run, so it is dead the moment the run ends. 1 is the
+          # shortest window GitHub accepts; the repository default (90 days)
+          # multiplied this by the PR rate into gigabytes of Actions storage.
+          retention-days: 1
 
   enumerate:
     name: Enumerate registry CI gate groups
