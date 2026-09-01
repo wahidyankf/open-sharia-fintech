@@ -229,3 +229,10 @@ let ``every layer renders its contract name`` () =
     Assert.Equal("unit", TestContractLayout.layerName TestContractLayout.LayerUnit)
     Assert.Equal("integration", TestContractLayout.layerName TestContractLayout.LayerIntegration)
     Assert.Equal("e2e", TestContractLayout.layerName TestContractLayout.LayerE2e)
+
+[<Fact>]
+let ``an executable test outside the tests root is reported`` () =
+    let message = rejected "test-outside-tests-root"
+    Assert.StartsWith("layout-test-outside-tests-root", message)
+    Assert.Contains("item=apps/widget-app/e2e/checkout.test.ts", message)
+    Assert.Contains("expected=apps/widget-app/tests/*", message)

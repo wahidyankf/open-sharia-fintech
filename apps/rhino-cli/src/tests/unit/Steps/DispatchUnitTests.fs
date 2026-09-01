@@ -797,3 +797,211 @@ let ``route rejects an unknown output format for test-coverage validate`` () =
 
     Assert.Equal(1, code)
     Assert.Contains("unknown output format", err)
+
+// ---- test-contract policy leaves ----
+//
+// The four policy verbs share one leaf, so these cases pin the leaf's own
+// argv handling once and then prove each verb reaches its own engine. They
+// drive `route` in-process against the repository's checked-in corpora; no
+// child process is spawned.
+
+/// Runs one policy verb against the real repository root, where the four
+/// corpora live, and returns the leaf's exit code with its captured streams.
+let private runPolicyVerb (check: string) (fixture: string) : int * string * string =
+    match RhinoCli.Infrastructure.GitRoot.findRoot () with
+    | Error message -> failwithf "expected findRoot Ok, got Error %s" message
+    | Ok realRepoRoot ->
+        runCaptured (okRoot realRepoRoot) [| "test-contract"; check; "validate"; "--fixture"; fixture |]
+
+[<Fact>]
+let ``route validates a conforming layout document and exits 0`` () =
+    let code, out, _ = runPolicyVerb "layout" "e2e-only-project.json"
+    Assert.Equal(0, code)
+    Assert.Contains("native-layout-valid", out)
+
+[<Fact>]
+let ``route reports a layout contract failure as exit 1`` () =
+    let code, _, err = runPolicyVerb "layout" "executable-test-in-src.json"
+    Assert.Equal(1, code)
+    Assert.Contains("layout-test-in-forbidden-directory", err)
+
+[<Fact>]
+let ``route validates a conforming manifest document and exits 0`` () =
+    let code, out, _ = runPolicyVerb "manifest" "retained-web-app.json"
+    Assert.Equal(0, code)
+    Assert.Contains("native-manifest-valid", out)
+
+[<Fact>]
+let ``route reports a manifest contract failure as exit 1`` () =
+    let code, _, err = runPolicyVerb "manifest" "invalid-consumer-nx-discovery.json"
+    Assert.Equal(1, code)
+    Assert.Contains("manifest-invalid-consumer", err)
+
+[<Fact>]
+let ``route reaches the coverage engine and reports its diagnostic`` () =
+    let code, _, err = runPolicyVerb "coverage" "98-percent.json"
+    Assert.Equal(1, code)
+    Assert.Contains("coverage-below-floor", err)
+
+[<Fact>]
+let ``route reaches the bdd engine and reports its diagnostic`` () =
+    let code, _, err = runPolicyVerb "bdd" "missing-binding.json"
+    Assert.Equal(1, code)
+    Assert.Contains("bdd-", err)
+
+[<Fact>]
+let ``a policy verb without --fixture is CLI misuse`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "coverage"; "validate" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--fixture is required", err)
+    Assert.Contains("coverage corpus", err)
+
+[<Fact>]
+let ``a policy verb rejects an option it does not accept`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "manifest"; "validate"; "--owner"; "O-PUB-RHINO" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--owner", err)
+
+[<Fact>]
+let ``a policy verb rejects a traversal fixture path`` () =
+    let code, _, err = runPolicyVerb "layout" "../../../etc/passwd"
+    Assert.Equal(2, code)
+    Assert.Contains("traversal segment", err)
+
+[<Fact>]
+let ``test-contract --help still prints the namespace help`` () =
+    let code, out, _ =
+        runCaptured (errRoot "unused") [| "test-contract"; "layout"; "validate"; "--help" |]
+
+    Assert.Equal(0, code)
+    Assert.Equal(RhinoCli.Cli.HelpText.TestContractText, out)
+
+// ---- test-contract argv rejection ----
+//
+// Every leaf in this namespace rejects malformed argv before it reads the
+// repository, so these cases need no fixture and no repository root. They
+// pin the exit-2 misuse contract the namespace's help text documents.
+
+[<Fact>]
+let ``a policy verb surfaces a repo-root lookup failure as exit 1`` () =
+    let code, _, err =
+        runCaptured (errRoot "not a git repo") [| "test-contract"; "layout"; "validate"; "--fixture"; "any.json" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("failed to find git repository root", err)
+
+[<Fact>]
+let ``registry compare rejects an option it does not accept`` () =
+    let code, _, err =
+        runCaptured (errRoot "unused") [| "test-contract"; "registry"; "compare"; "--source"; "legacy" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--source", err)
+
+[<Fact>]
+let ``registry compare requires --legacy`` () =
+    let code, _, err =
+        runCaptured (errRoot "unused") [| "test-contract"; "registry"; "compare"; "--canonical"; "c.tsv" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--legacy is required", err)
+
+[<Fact>]
+let ``registry compare requires --canonical`` () =
+    let code, _, err =
+        runCaptured (errRoot "unused") [| "test-contract"; "registry"; "compare"; "--legacy"; "l.tsv" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--canonical is required", err)
+
+[<Fact>]
+let ``registry validate rejects a --require-state outside the lifecycle`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "registry"; "validate"; "--require-state"; "molten" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("expanded, migrating, verified, or contracted", err)
+
+[<Fact>]
+let ``registry validate-mapping requires one of --all or --project`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "registry"; "validate-mapping" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("one of --all or --project", err)
+
+[<Fact>]
+let ``registry validate-mapping rejects a --require-state outside its lifecycle`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"
+               "registry"
+               "validate-mapping"
+               "--all"
+               "--require-state"
+               "molten" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("identity, redirected, or verified", err)
+
+[<Fact>]
+let ``the owner fixture leaf requires --owner`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"; "validate"; "--check"; "layout"; "--fixture"; "f.json" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--owner is required", err)
+
+[<Fact>]
+let ``the owner fixture leaf rejects a check outside the four`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"
+               "validate"
+               "--owner"
+               "O-PUB-RHINO"
+               "--check"
+               "smoke"
+               "--fixture"
+               "f.json" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("layout, coverage, bdd, or manifest", err)
+
+[<Fact>]
+let ``the owner fixture leaf requires --fixture`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"; "validate"; "--owner"; "O-PUB-RHINO"; "--check"; "bdd" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--fixture is required", err)
+
+[<Fact>]
+let ``the owner fixture leaf loads a checked-in owner document`` () =
+    match RhinoCli.Infrastructure.GitRoot.findRoot () with
+    | Error message -> Assert.Fail(sprintf "expected findRoot Ok, got Error %s" message)
+    | Ok realRepoRoot ->
+        let code, out, _ =
+            runCaptured
+                (okRoot realRepoRoot)
+                [| "test-contract"
+                   "validate"
+                   "--owner"
+                   "O-PUB-RHINO"
+                   "--check"
+                   "coverage"
+                   "--fixture"
+                   "apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/coverage-98.json" |]
+
+        Assert.Equal(0, code)
+        Assert.Contains("fixture-loaded owner=O-PUB-RHINO check=coverage", out)

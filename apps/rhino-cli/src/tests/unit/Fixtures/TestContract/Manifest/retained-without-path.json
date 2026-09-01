@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-manifest-fixture/v1",
+  "case": "a retained disposition that names no manifest to retain",
+  "project": "widget-www",
+  "owner": "widget-www",
+  "group": "web-application",
+  "disposition": "retained",
+  "manifestPath": null,
+  "consumer": "the deployment platform reads engines and dependencies at install time",
+  "requiredFields": ["name", "engines"],
+  "verification": "npm install --workspace apps/widget-www --dry-run",
+  "scripts": [],
+  "commands": ["npx nx run widget-www:build"]
+}

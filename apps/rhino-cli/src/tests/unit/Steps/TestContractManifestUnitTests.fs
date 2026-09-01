@@ -216,3 +216,17 @@ let ``every group renders its contract name`` () =
 [<Fact>]
 let ``the fixture root is the manifest corpus`` () =
     Assert.Equal("apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest", TestContractManifest.FixtureRoot)
+
+[<Fact>]
+let ``a retained disposition naming no manifest path is reported`` () =
+    let message = rejected "retained-without-path"
+    Assert.StartsWith("manifest-retained-without-path", message)
+    Assert.Contains("item=widget-www", message)
+    Assert.Contains("manifestPath=null", message)
+
+[<Fact>]
+let ``a removed manifest that still declares scripts is reported`` () =
+    let message = rejected "removed-with-scripts"
+    Assert.StartsWith("manifest-removed-with-scripts", message)
+    Assert.Contains("item=widget-e2e", message)
+    Assert.Contains("scripts=1", message)

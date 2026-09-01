@@ -3110,8 +3110,12 @@ let private runTestContractPolicyLeaf
                 printfn "%s" rendered
                 0
 
+/// The BDD reader resolves a repository-relative path where the other three
+/// resolve a bare document name. The verb grammar is uniform, so this wrapper
+/// composes the corpus prefix; a traversal segment survives the composition and
+/// is still rejected by the reader.
 let private validateBddFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
-    TestContractBdd.loadDocument repoRoot fixture
+    TestContractBdd.loadDocument repoRoot (TestContractBdd.FixtureRoot + "/" + fixture)
     |> Result.bind TestContractBdd.validateDocument
     |> Result.map TestContractBdd.formatReport
 
