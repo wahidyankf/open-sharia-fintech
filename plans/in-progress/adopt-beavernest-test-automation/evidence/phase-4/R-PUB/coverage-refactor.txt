@@ -1,0 +1,25 @@
+REFACTOR — 99% native coverage (D-P4-PUB-COVERAGE)
+branch: test-contract-validator-foundation-coverage
+head:   3b9caedd5
+commands: rtk nx run rhino-cli:test:unit --skip-nx-cache
+          rtk nx run rhino-cli:test:quick --skip-nx-cache
+
+Change from GREEN: the exclusion predicate was stated twice — once to find which applicable slices
+were excluded and once to drop them from the measured set. Both now call one `isExcluded document
+slice` helper, so the "which slices were excluded" and "which slices are measured" views cannot
+disagree. No denominator rule, exclusion rule, or diagnostic string changed.
+
+Result summary
+  test:unit after refactor:  Passed!  - Failed:     0, Passed:  1631, Skipped:     0, Total:  1631, Duration: 1 m 44 s - RhinoCli.UnitTests.dll (net10.0)
+  test:unit exit=0
+  test:quick after refactor: Passed!  - Failed:     0, Passed:  1631, Skipped:     0, Total:  1631, Duration: 1 m 44 s - RhinoCli.UnitTests.dll (net10.0)
+  test:quick exit=0
+
+Diagnostics unchanged: the same 48 contract cases pass, and the nine fixtures still pin the same
+nine codes with the same expected/actual pairs recorded in coverage-green.txt.
+
+Formatting note: the first `test:quick` attempt exited non-zero because `rhino-cli:lint` runs
+`fantomas --check` and both new F# files needed formatting. That is a lint failure, not a test
+failure and not an interrupted run — the exit code alone (130) was misleading, and reading the task
+output named the real cause. `dotnet tool run fantomas` reformatted the two files and the rerun above
+is clean end to end.

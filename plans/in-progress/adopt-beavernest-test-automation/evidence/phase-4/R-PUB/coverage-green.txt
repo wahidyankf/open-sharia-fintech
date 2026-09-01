@@ -1,0 +1,42 @@
+GREEN — 99% native coverage (D-P4-PUB-COVERAGE)
+branch: test-contract-validator-foundation-coverage
+head:   3b9caedd5
+command: rtk nx run rhino-cli:test:unit --skip-nx-cache
+
+Change from RED: apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs replaces its
+compile-only stub with the real validator — closed-key JSON parsing, threshold resolution,
+native-target validation, exclusion and overlap analysis, and integer comparison of the measured
+slice set. TestContract.fs is untouched and remains the typed registry facade.
+
+Result summary
+Passed!  - Failed:     0, Passed:  1631, Skipped:     0, Total:  1631, Duration: 16 m 39 s - RhinoCli.UnitTests.dll (net10.0)
+exit code: 0
+
+All 48 contract cases that failed in RED now pass, and the 1,583 preexisting cases are unchanged
+(1583 + 48 = 1631).
+
+Diagnostics the nine fixtures pin (one code each, expected=99 on every finding line)
+  98-percent.json            coverage-below-floor            item=src/widget/core.fs     actual=98
+  lower-threshold.json       coverage-threshold-below-floor  item=project.json:coverage.lines actual=95
+  missing-threshold.json     coverage-threshold-missing      item=widget-app@unit        actual=0
+  conflicting-threshold.json coverage-threshold-conflict     sources=2                   actual=95
+  echo-placeholder.json      coverage-target-not-executable  item=test:unit              actual=0
+  broad-exclusion.json       coverage-exclusion-too-broad    item=src/**                 actual=0
+  omitted-slice.json         coverage-slice-omitted          item=src/widget/shell.fs    actual=0
+  overlapping-output.json    coverage-output-overlap         candidates=2                actual=0
+  e2e-no-denominator.json    passes; renders native-coverage-no-denominator with its reason
+
+Arithmetic, not rounding
+  99  of 100  passes   (99 * 100 >= 99 * 100)
+  98  of 100  fails    coverage-below-floor
+  990 of 1000 passes
+  989 of 1000 fails    and the message contains no "99%" string
+
+Routing gap, disclosed rather than hidden
+  This leaf declares the coverage policy and its Nx target. `Dispatch.fs` and `HelpText.fs` belong
+  to the already-merged D-P4-PUB-REGISTRY allocation and appear in no other Phase 4 split, so no
+  leaf in this plan can route `test-contract coverage validate` to a CLI verb. The target is
+  therefore declared but deliberately excluded from `test:quick` and from every CI target list; CI
+  continues to run the separately routed `specs:behavior:coverage`. The gap is stated here and in
+  the PR body instead of being masked with an echo stub — which is itself one of the nine
+  conditions this validator rejects.
