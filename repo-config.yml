@@ -243,6 +243,968 @@ coverage:
     #   registry models. Adding a levels: [] or levels: [unit] entry here would
     #   misleadingly claim behavior-spec coverage that doesn't exist.
 
+testing:
+  # Canonical `ose-test-contract/v1` registry. The frozen `coverage.projects`
+  # block above is the immutable comparison source until Phase 20 contracts it;
+  # every row here is derived from that block plus the frozen Phase 0 closure
+  # `registry-project-closure.tsv`. Rhino never rewrites this file.
+  schema: ose-test-contract/v1
+  coverage:
+    minimum-line: 99
+  compatibility:
+    # One migration map per Nx project, including the five projects the frozen
+    # legacy block deliberately omits. Removed together with `coverage.projects`.
+    mappings:
+      - project: ayokoding-www
+        behavior-id: ayokoding-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ayokoding/behavior/www/**"
+          levels: [unit]
+        canonical:
+          owner: ayokoding-www
+          corpus: "specs/apps/ayokoding/behavior/www/**"
+          runtimes:
+            - level: e2e
+              project: ayokoding-www-fe-e2e
+            - level: integration
+              project: ayokoding-www-be-e2e
+            - level: unit
+              project: ayokoding-www
+      - project: ayokoding-www-be-e2e
+        behavior-id: ayokoding-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ayokoding/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: ayokoding-www
+          corpus: null
+          runtimes:
+            - level: integration
+              project: ayokoding-www-be-e2e
+      - project: ayokoding-www-fe-e2e
+        behavior-id: ayokoding-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ayokoding/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: ayokoding-www
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: ayokoding-www-fe-e2e
+      - project: crane-cli
+        behavior-id: crane-cli:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/crane/behavior/cli/**"
+          levels: [unit, integration]
+        canonical:
+          owner: crane-cli
+          corpus: "specs/apps/crane/behavior/cli/**"
+          runtimes:
+            - level: integration
+              project: crane-cli
+            - level: unit
+              project: crane-cli
+      - project: fsharp-crane-core
+        behavior-id: fsharp-crane-core:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/libs/fsharp-crane-core/behavior/**"
+          levels: [unit]
+        canonical:
+          owner: fsharp-crane-core
+          corpus: "specs/libs/fsharp-crane-core/behavior/**"
+          runtimes:
+            - level: unit
+              project: fsharp-crane-core
+      - project: fsharp-env-loader
+        behavior-id: fsharp-env-loader:default
+        state: identity
+        legacy:
+          present: false
+          corpus: null
+          levels: []
+        canonical:
+          owner: fsharp-env-loader
+          corpus: null
+          runtimes:
+            - level: unit
+              project: fsharp-env-loader
+      - project: organiclever-app-web
+        behavior-id: organiclever-app-web:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          levels: [unit]
+        canonical:
+          owner: organiclever-app-web
+          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          runtimes:
+            - level: e2e
+              project: organiclever-app-web-e2e
+            - level: unit
+              project: organiclever-app-web
+      - project: organiclever-app-web-e2e
+        behavior-id: organiclever-app-web:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          levels: [e2e]
+        canonical:
+          owner: organiclever-app-web
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: organiclever-app-web-e2e
+      - project: organiclever-be
+        behavior-id: organiclever-be:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/be/**"
+          levels: [unit, integration]
+        canonical:
+          owner: organiclever-be
+          corpus: "specs/apps/organiclever/behavior/be/**"
+          runtimes:
+            - level: e2e
+              project: organiclever-be-e2e
+            - level: integration
+              project: organiclever-be
+            - level: unit
+              project: organiclever-be
+      - project: organiclever-be-e2e
+        behavior-id: organiclever-be:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/be/**"
+          levels: [e2e]
+        canonical:
+          owner: organiclever-be
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: organiclever-be-e2e
+      - project: organiclever-contracts
+        behavior-id: null
+        state: identity
+        legacy:
+          present: false
+          corpus: null
+          levels: []
+        canonical:
+          owner: null
+          corpus: null
+          runtimes: []
+      - project: organiclever-www
+        behavior-id: organiclever-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/www/**"
+          levels: [unit]
+        canonical:
+          owner: organiclever-www
+          corpus: "specs/apps/organiclever/behavior/www/**"
+          runtimes:
+            - level: e2e
+              project: organiclever-www-fe-e2e
+            - level: integration
+              project: organiclever-www-be-e2e
+            - level: unit
+              project: organiclever-www
+      - project: organiclever-www-be-e2e
+        behavior-id: organiclever-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: organiclever-www
+          corpus: null
+          runtimes:
+            - level: integration
+              project: organiclever-www-be-e2e
+      - project: organiclever-www-fe-e2e
+        behavior-id: organiclever-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/organiclever/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: organiclever-www
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: organiclever-www-fe-e2e
+      - project: ose-app-web
+        behavior-id: ose-app-web:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/app-web/**"
+          levels: [unit]
+        canonical:
+          owner: ose-app-web
+          corpus: "specs/apps/ose/behavior/app-web/**"
+          runtimes:
+            - level: e2e
+              project: ose-app-web-e2e
+            - level: unit
+              project: ose-app-web
+      - project: ose-app-web-e2e
+        behavior-id: ose-app-web:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/app-web/**"
+          levels: [e2e]
+        canonical:
+          owner: ose-app-web
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: ose-app-web-e2e
+      - project: ose-be
+        behavior-id: ose-be:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/be/**"
+          levels: [unit, integration]
+        canonical:
+          owner: ose-be
+          corpus: "specs/apps/ose/behavior/be/**"
+          runtimes:
+            - level: e2e
+              project: ose-be-e2e
+            - level: integration
+              project: ose-be
+            - level: unit
+              project: ose-be
+      - project: ose-be-e2e
+        behavior-id: ose-be:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/be/**"
+          levels: [e2e]
+        canonical:
+          owner: ose-be
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: ose-be-e2e
+      - project: ose-contracts
+        behavior-id: null
+        state: identity
+        legacy:
+          present: false
+          corpus: null
+          levels: []
+        canonical:
+          owner: null
+          corpus: null
+          runtimes: []
+      - project: ose-www
+        behavior-id: ose-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/www/**"
+          levels: [unit]
+        canonical:
+          owner: ose-www
+          corpus: "specs/apps/ose/behavior/www/**"
+          runtimes:
+            - level: e2e
+              project: ose-www-fe-e2e
+            - level: integration
+              project: ose-www-be-e2e
+            - level: unit
+              project: ose-www
+      - project: ose-www-be-e2e
+        behavior-id: ose-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: ose-www
+          corpus: null
+          runtimes:
+            - level: integration
+              project: ose-www-be-e2e
+      - project: ose-www-fe-e2e
+        behavior-id: ose-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/ose/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: ose-www
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: ose-www-fe-e2e
+      - project: rhino-cli
+        behavior-id: rhino-cli:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/rhino/behavior/rhino-cli/**"
+          levels: [unit, integration]
+        canonical:
+          owner: rhino-cli
+          corpus: "specs/apps/rhino/behavior/rhino-cli/**"
+          runtimes:
+            - level: integration
+              project: rhino-cli
+            - level: unit
+              project: rhino-cli
+      - project: ts-env-loader
+        behavior-id: ts-env-loader:default
+        state: identity
+        legacy:
+          present: false
+          corpus: null
+          levels: []
+        canonical:
+          owner: ts-env-loader
+          corpus: "specs/libs/ts-env-loader/behavior/**"
+          runtimes:
+            - level: unit
+              project: ts-env-loader
+      - project: wahidyankf-www
+        behavior-id: wahidyankf-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/wahidyankf/behavior/www/**"
+          levels: [unit]
+        canonical:
+          owner: wahidyankf-www
+          corpus: "specs/apps/wahidyankf/behavior/www/**"
+          runtimes:
+            - level: e2e
+              project: wahidyankf-www-fe-e2e
+            - level: unit
+              project: wahidyankf-www
+      - project: wahidyankf-www-fe-e2e
+        behavior-id: wahidyankf-www:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/apps/wahidyankf/behavior/www/**"
+          levels: [e2e]
+        canonical:
+          owner: wahidyankf-www
+          corpus: null
+          runtimes:
+            - level: e2e
+              project: wahidyankf-www-fe-e2e
+      - project: web-ui
+        behavior-id: web-ui:default
+        state: identity
+        legacy:
+          present: true
+          corpus: "specs/libs/web-ui/behavior/**"
+          levels: [unit]
+        canonical:
+          owner: web-ui
+          corpus: "specs/libs/web-ui/behavior/**"
+          runtimes:
+            - level: unit
+              project: web-ui
+      - project: web-ui-token
+        behavior-id: web-ui-token:default
+        state: identity
+        legacy:
+          present: false
+          corpus: null
+          levels: []
+        canonical:
+          owner: web-ui-token
+          corpus: "specs/libs/web-ui-token/behavior/**"
+          runtimes:
+            - level: unit
+              project: web-ui-token
+  projects:
+    - project: ayokoding-www
+      profile: application
+      migration-state: verified
+      behavior:
+        id: ayokoding-www:default
+        lifecycle-state: active
+        owner: ayokoding-www
+        corpus:
+          - "specs/apps/ayokoding/behavior/www/**"
+        adapters:
+          unit:
+            disposition: required
+            project: ayokoding-www
+            driver: apps/ayokoding-www/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: delegated
+            project: ayokoding-www-be-e2e
+            driver: apps/ayokoding-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: delegated
+            project: ayokoding-www-fe-e2e
+            driver: apps/ayokoding-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ayokoding-www-be-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ayokoding-www:default
+        lifecycle-state: active
+        owner: ayokoding-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: required
+            project: ayokoding-www-be-e2e
+            driver: apps/ayokoding-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: ayokoding-www-fe-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ayokoding-www:default
+        lifecycle-state: active
+        owner: ayokoding-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: ayokoding-www-fe-e2e
+            driver: apps/ayokoding-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: crane-cli
+      profile: tool
+      migration-state: verified
+      behavior:
+        id: crane-cli:default
+        lifecycle-state: active
+        owner: crane-cli
+        corpus:
+          - "specs/apps/crane/behavior/cli/**"
+        adapters:
+          unit:
+            disposition: required
+            project: crane-cli
+            driver: apps/crane-cli/tests/unit/Behavior/CraneCliBehaviorDriver.fs
+          integration:
+            disposition: required
+            project: crane-cli
+            driver: apps/crane-cli/tests/integration/Behavior/CraneCliBehaviorDriver.fs
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: fsharp-crane-core
+      profile: library
+      migration-state: verified
+      behavior:
+        id: fsharp-crane-core:default
+        lifecycle-state: active
+        owner: fsharp-crane-core
+        corpus:
+          - "specs/libs/fsharp-crane-core/behavior/**"
+        adapters:
+          unit:
+            disposition: required
+            project: fsharp-crane-core
+            driver: libs/fsharp-crane-core/tests/unit/Behavior/FsharpCraneCoreBehaviorDriver.fs
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: fsharp-env-loader
+      profile: library
+      migration-state: verified
+      behavior:
+        id: fsharp-env-loader:default
+        lifecycle-state: bootstrap
+        owner: fsharp-env-loader
+        corpus: []
+        seed:
+          target: test:behavior:seed
+          driver: libs/fsharp-env-loader/tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs
+        adapters:
+          unit:
+            disposition: required
+            project: fsharp-env-loader
+            driver: libs/fsharp-env-loader/tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: organiclever-app-web
+      profile: application
+      migration-state: verified
+      behavior:
+        id: organiclever-app-web:default
+        lifecycle-state: active
+        owner: organiclever-app-web
+        corpus:
+          - "specs/apps/organiclever/behavior/app-web/**"
+        adapters:
+          unit:
+            disposition: required
+            project: organiclever-app-web
+            driver: apps/organiclever-app-web/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: delegated
+            project: organiclever-app-web-e2e
+            driver: apps/organiclever-app-web-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: organiclever-app-web-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: organiclever-app-web:default
+        lifecycle-state: active
+        owner: organiclever-app-web
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: organiclever-app-web-e2e
+            driver: apps/organiclever-app-web-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: organiclever-be
+      profile: application
+      migration-state: verified
+      behavior:
+        id: organiclever-be:default
+        lifecycle-state: active
+        owner: organiclever-be
+        corpus:
+          - "specs/apps/organiclever/behavior/be/**"
+        adapters:
+          unit:
+            disposition: required
+            project: organiclever-be
+            driver: apps/organiclever-be/tests/unit/Behavior/OrganicleverBeBehaviorDriver.fs
+          integration:
+            disposition: required
+            project: organiclever-be
+            driver: apps/organiclever-be/tests/integration/Behavior/OrganicleverBeBehaviorDriver.fs
+          e2e:
+            disposition: delegated
+            project: organiclever-be-e2e
+            driver: apps/organiclever-be-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: organiclever-be-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: organiclever-be:default
+        lifecycle-state: active
+        owner: organiclever-be
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: organiclever-be-e2e
+            driver: apps/organiclever-be-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: organiclever-contracts
+      profile: library
+      migration-state: verified
+      behavior:
+        owner: null
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+          integration:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+          e2e:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+    - project: organiclever-www
+      profile: application
+      migration-state: verified
+      behavior:
+        id: organiclever-www:default
+        lifecycle-state: active
+        owner: organiclever-www
+        corpus:
+          - "specs/apps/organiclever/behavior/www/**"
+        adapters:
+          unit:
+            disposition: required
+            project: organiclever-www
+            driver: apps/organiclever-www/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: delegated
+            project: organiclever-www-be-e2e
+            driver: apps/organiclever-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: delegated
+            project: organiclever-www-fe-e2e
+            driver: apps/organiclever-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: organiclever-www-be-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: organiclever-www:default
+        lifecycle-state: active
+        owner: organiclever-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: required
+            project: organiclever-www-be-e2e
+            driver: apps/organiclever-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: organiclever-www-fe-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: organiclever-www:default
+        lifecycle-state: active
+        owner: organiclever-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: organiclever-www-fe-e2e
+            driver: apps/organiclever-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-app-web
+      profile: application
+      migration-state: verified
+      behavior:
+        id: ose-app-web:default
+        lifecycle-state: active
+        owner: ose-app-web
+        corpus:
+          - "specs/apps/ose/behavior/app-web/**"
+        adapters:
+          unit:
+            disposition: required
+            project: ose-app-web
+            driver: apps/ose-app-web/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: delegated
+            project: ose-app-web-e2e
+            driver: apps/ose-app-web-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-app-web-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ose-app-web:default
+        lifecycle-state: active
+        owner: ose-app-web
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: ose-app-web-e2e
+            driver: apps/ose-app-web-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-be
+      profile: application
+      migration-state: verified
+      behavior:
+        id: ose-be:default
+        lifecycle-state: active
+        owner: ose-be
+        corpus:
+          - "specs/apps/ose/behavior/be/**"
+        adapters:
+          unit:
+            disposition: required
+            project: ose-be
+            driver: apps/ose-be/tests/unit/Behavior/OseBeBehaviorDriver.fs
+          integration:
+            disposition: required
+            project: ose-be
+            driver: apps/ose-be/tests/integration/Behavior/OseBeBehaviorDriver.fs
+          e2e:
+            disposition: delegated
+            project: ose-be-e2e
+            driver: apps/ose-be-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-be-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ose-be:default
+        lifecycle-state: active
+        owner: ose-be
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: ose-be-e2e
+            driver: apps/ose-be-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-contracts
+      profile: library
+      migration-state: verified
+      behavior:
+        owner: null
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+          integration:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+          e2e:
+            disposition: inapplicable
+            reason: the project owns no behavior and runs no gherkin-driven level
+    - project: ose-www
+      profile: application
+      migration-state: verified
+      behavior:
+        id: ose-www:default
+        lifecycle-state: active
+        owner: ose-www
+        corpus:
+          - "specs/apps/ose/behavior/www/**"
+        adapters:
+          unit:
+            disposition: required
+            project: ose-www
+            driver: apps/ose-www/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: delegated
+            project: ose-www-be-e2e
+            driver: apps/ose-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: delegated
+            project: ose-www-fe-e2e
+            driver: apps/ose-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: ose-www-be-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ose-www:default
+        lifecycle-state: active
+        owner: ose-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: required
+            project: ose-www-be-e2e
+            driver: apps/ose-www-be-e2e/tests/integration/bdd/integration-driver.ts
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: ose-www-fe-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: ose-www:default
+        lifecycle-state: active
+        owner: ose-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: ose-www-fe-e2e
+            driver: apps/ose-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: rhino-cli
+      profile: tool
+      migration-state: verified
+      behavior:
+        id: rhino-cli:default
+        lifecycle-state: active
+        owner: rhino-cli
+        corpus:
+          - "specs/apps/rhino/behavior/rhino-cli/**"
+        adapters:
+          unit:
+            disposition: required
+            project: rhino-cli
+            driver: apps/rhino-cli/tests/unit/Behavior/RhinoCliBehaviorDriver.fs
+          integration:
+            disposition: required
+            project: rhino-cli
+            driver: apps/rhino-cli/tests/integration/Behavior/RhinoCliBehaviorDriver.fs
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: ts-env-loader
+      profile: library
+      migration-state: verified
+      behavior:
+        id: ts-env-loader:default
+        lifecycle-state: active
+        owner: ts-env-loader
+        corpus:
+          - "specs/libs/ts-env-loader/behavior/**"
+        adapters:
+          unit:
+            disposition: required
+            project: ts-env-loader
+            driver: libs/ts-env-loader/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: wahidyankf-www
+      profile: application
+      migration-state: verified
+      behavior:
+        id: wahidyankf-www:default
+        lifecycle-state: active
+        owner: wahidyankf-www
+        corpus:
+          - "specs/apps/wahidyankf/behavior/www/**"
+        adapters:
+          unit:
+            disposition: required
+            project: wahidyankf-www
+            driver: apps/wahidyankf-www/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: delegated
+            project: wahidyankf-www-fe-e2e
+            driver: apps/wahidyankf-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: wahidyankf-www-fe-e2e
+      profile: e2e
+      migration-state: verified
+      behavior:
+        id: wahidyankf-www:default
+        lifecycle-state: active
+        owner: wahidyankf-www
+        corpus: []
+        adapters:
+          unit:
+            disposition: inapplicable
+            reason: the owning project hosts the unit adapter
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: required
+            project: wahidyankf-www-fe-e2e
+            driver: apps/wahidyankf-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
+    - project: web-ui
+      profile: library
+      migration-state: verified
+      behavior:
+        id: web-ui:default
+        lifecycle-state: active
+        owner: web-ui
+        corpus:
+          - "specs/libs/web-ui/behavior/**"
+        adapters:
+          unit:
+            disposition: required
+            project: web-ui
+            driver: libs/web-ui/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+    - project: web-ui-token
+      profile: library
+      migration-state: verified
+      behavior:
+        id: web-ui-token:default
+        lifecycle-state: active
+        owner: web-ui-token
+        corpus:
+          - "specs/libs/web-ui-token/behavior/**"
+        adapters:
+          unit:
+            disposition: required
+            project: web-ui-token
+            driver: libs/web-ui-token/tests/unit/bdd/unit-driver.ts
+          integration:
+            disposition: inapplicable
+            reason: no isolated local-resource boundary
+          e2e:
+            disposition: inapplicable
+            reason: no user-facing surface
+
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at
 # Phase 9 — it now runs at pre-push and in CI (see the entry below). Word count

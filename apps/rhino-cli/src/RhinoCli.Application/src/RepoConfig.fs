@@ -1370,3 +1370,98 @@ let buildDotnetToolDef (repoRoot: string) (config: RepoConfig) : DotnetToolDef =
 
     { Source = "doctor.dotnet-global-json → sdk.version"
       ReadReq = fun () -> readDotnetSdkVersion path }
+
+// ---------------------------------------------------------------------------
+// Frozen legacy coverage block
+// ---------------------------------------------------------------------------
+
+/// One frozen `coverage.projects[]` row: the pre-`ose-test-contract/v1`
+/// spelling of which Gherkin corpus a project owned and which levels consumed
+/// it.
+///
+/// This block is read-only for the whole `expanded -> migrating -> verified`
+/// migration and is the immutable half every compatibility map is frozen
+/// against, so it is parsed here — beside the rest of the `repo-config.yml`
+/// reader — rather than inside the canonical
+/// [`RhinoCli.Application.TestContract`] registry parser that consumes it.
+type CoverageProject =
+    { Name: string
+      Levels: string list
+      Specs: string }
+
+/// Reads `coverage.projects` out of an already-loaded `repo-config.yml`
+/// document, returning every malformed row rather than only the first. An
+/// absent `coverage` block is an empty list, not a failure: a repository that
+/// has finished contracting no longer carries one.
+let parseCoverageProjects (data: string) : Result<CoverageProject list, string list> =
+    let stream = YamlStream()
+    use reader = new StringReader(data)
+
+    try
+        stream.Load reader
+    with _ ->
+        ()
+
+    let child (mapping: YamlMappingNode) (key: string) : YamlNode option =
+        mapping.Children
+        |> Seq.tryPick (fun pair ->
+            match pair.Key with
+            | :? YamlScalarNode as scalar when scalar.Value = key -> Some pair.Value
+            | _ -> None)
+
+    let scalar (node: YamlNode) : string option =
+        match node with
+        | :? YamlScalarNode as value when not (isNull value.Value) -> Some value.Value
+        | _ -> None
+
+    let rows =
+        if stream.Documents.Count = 0 then
+            []
+        else
+            match stream.Documents.[0].RootNode with
+            | :? YamlMappingNode as root ->
+                match
+                    child root "coverage"
+                    |> Option.bind (fun node ->
+                        match node with
+                        | :? YamlMappingNode as coverage -> child coverage "projects"
+                        | _ -> None)
+                with
+                | Some(:? YamlSequenceNode as projects) -> List.ofSeq (Seq.cast<YamlNode> projects)
+                | _ -> []
+            | _ -> []
+
+    let parsed =
+        rows
+        |> List.mapi (fun index node ->
+            match node with
+            | :? YamlMappingNode as row ->
+                match child row "name" |> Option.bind scalar, child row "specs" |> Option.bind scalar with
+                | Some name, Some specs ->
+                    Ok
+                        { Name = name
+                          Levels =
+                            match child row "levels" with
+                            | Some(:? YamlSequenceNode as levels) ->
+                                Seq.cast<YamlNode> levels |> Seq.choose scalar |> List.ofSeq
+                            | _ -> []
+                          Specs = specs }
+                | _ -> Error(sprintf "coverage.projects[%d]: requires both a name and a specs glob" index)
+            | _ -> Error(sprintf "coverage.projects[%d]: expected a mapping" index))
+
+    let findings =
+        parsed
+        |> List.choose (fun result ->
+            match result with
+            | Error message -> Some message
+            | Ok _ -> None)
+
+    match findings with
+    | [] ->
+        parsed
+        |> List.choose (fun result ->
+            match result with
+            | Ok row -> Some row
+            | Error _ -> None)
+        |> Ok
+    | findings -> Error findings
