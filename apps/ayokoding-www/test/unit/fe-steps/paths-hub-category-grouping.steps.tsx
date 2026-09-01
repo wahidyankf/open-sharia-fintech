@@ -75,7 +75,7 @@ import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/paths-hub-category-grouping.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/paths-hub-category-grouping.feature",
   ),
 );
 
@@ -100,7 +100,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("heading", { level: 2, name: /skills/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/paths-hub-category-grouping.feature:The paths hub groups paths by category, not a flat grid
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/paths-hub-category-grouping.feature:The paths hub groups paths by category, not a flat grid
     And("no path card from either category is rendered outside its category's section", () => {
       const careersSection = document.querySelector("section[aria-labelledby='careers-heading']");
       const skillsSection = document.querySelector("section[aria-labelledby='skills-heading']");

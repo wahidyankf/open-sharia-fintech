@@ -65,7 +65,13 @@ export default defineConfig({
         test: {
           name: "unit",
           include: ["test/unit/be-steps/**/*.steps.ts", "**/*.unit.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules"],
+          // `next build` copies the whole app — tests included — into
+          // `.next/standalone/apps/ayokoding-www/`, where the unprefixed
+          // `**/*.unit.test.ts` glob above matches every copy. Those copies then
+          // fail on their own relative imports, so a run that follows a build in
+          // the same workspace reports five phantom failures. Excluding the build
+          // output is what keeps `build` and `test:quick` composable.
+          exclude: ["node_modules", "**/.next/**"],
           environment: "node",
           // vitest's `projects` array replaces rather than merges the top-level `test` config
           // per project, so testTimeout must be repeated here (see the top-level comment).

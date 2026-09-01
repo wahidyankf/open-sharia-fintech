@@ -16,7 +16,7 @@ import { contentUrl } from "@/features/content/core/content-url";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature",
   ),
 );
 
@@ -69,7 +69,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
     And("a breadcrumb nav should be present", () => {
       expect(true).toBe(true);
     });
@@ -99,7 +99,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(nav).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
     And("the breadcrumb should start with a Home link", () => {
       const links = document.querySelectorAll("nav[aria-label] a");
       expect(links.length).toBeGreaterThan(0);
@@ -124,7 +124,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Header shows primary nav links on desktop
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Header shows primary nav links on desktop
     And('the header primary nav should contain a link to "/en/tools" labelled "Tools"', () => {
       expect(true).toBe(true);
     });
@@ -149,7 +149,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Mobile navigation mirrors the header links
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Mobile navigation mirrors the header links
     And('the mobile nav should contain a link to "/en/tools" labelled "Tools"', () => {
       expect(true).toBe(true);
     });
@@ -191,7 +191,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(link).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Footer shows grouped navigation with localized labels
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Footer shows grouped navigation with localized labels
     And('the footer "About" column should link to "/id/syarat-dan-ketentuan"', () => {
       const link = document.querySelector('a[href="/id/syarat-dan-ketentuan"]');
       expect(link).toBeTruthy();
@@ -228,7 +228,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(link).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in English
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in English
     And('the tools teaser should link to "/en/tools/cost-of-living-calculator"', () => {
       const link = document.querySelector('a[href="/en/tools/cost-of-living-calculator"]');
       expect(link).toBeTruthy();
@@ -262,7 +262,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(link).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in Indonesian
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in Indonesian
     And('the tools teaser should link to "/id/tools/cost-of-living-calculator"', () => {
       const link = document.querySelector('a[href="/id/tools/cost-of-living-calculator"]');
       expect(link).toBeTruthy();
@@ -286,7 +286,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
     Then("each ancestor crumb links to its bare content URL", () => {
       const learnLink = screen.getByRole("link", { name: "Learn" });
       expect(learnLink.getAttribute("href")).toBe("/en/learn");
@@ -319,7 +319,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         expect(contentUrl("id", "belajar")).toBe("/id/belajar");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
       And("no internal content link resolves through a 308 redirect", () => {
         // Verified structurally: all link emitters call contentUrl directly,
         // which produces canonical bare paths — no redirect intermediaries.
@@ -344,7 +344,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(contentUrl("en", "learn/software-engineering")).not.toContain("/c/");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
     But("top-level pages (about, terms, tools) use that same bare form — no longer namespace-distinct", () => {
       // Loose pages and content pages now share the same uniform bare join — asserted in sitemap.unit.test.ts
       expect(contentUrl("en", "about-ayokoding")).not.toContain("/c/");
@@ -362,7 +362,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
     Then("every content item link uses a bare URL", () => {
       // contentUrl drives feed URL generation — asserted in route.unit.test.ts
       expect(contentUrl("en", "rants/my-post")).toBe("/en/rants/my-post");
@@ -384,7 +384,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(contentUrl("en", "learn/legacy/software-engineering")).toBe("/en/learn/legacy/software-engineering");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
     And("the language alternates include en and x-default", () => {
       // alternates.languages populated with en + x-default — asserted in page.unit.test.ts
       expect(true).toBe(true);

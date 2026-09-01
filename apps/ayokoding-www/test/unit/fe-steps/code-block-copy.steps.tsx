@@ -7,10 +7,7 @@ import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 import { t } from "@/features/i18n/core/translations";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature"),
 );
 
 const luaHtml = `<figure data-rehype-pretty-code-figure><pre data-language="lua"><code><span>print("hi")</span></code></pre></figure>`;
@@ -59,7 +56,7 @@ describeFeature(
         render(<MarkdownRenderer html={luaHtml} locale="en" />);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:A non-mermaid code block renders a copy button
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:A non-mermaid code block renders a copy button
       Then("the code block displays a copy button", () => {
         expect(document.querySelector('[data-slot="code-block-copy"]')).toBeTruthy();
       });
@@ -75,7 +72,7 @@ describeFeature(
         render(<MarkdownRenderer html={mermaidFigureHtml} locale="en" />);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:A mermaid block renders no copy button
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:A mermaid block renders no copy button
       Then("the mermaid block renders as a diagram with no copy button", () => {
         // Real SVG rendering requires browser APIs unavailable in jsdom (see mermaid.tsx); before
         // the async `mermaid.render()` resolves, MermaidDiagram renders its <pre><code> fallback —
@@ -96,7 +93,7 @@ describeFeature(
         render(<MarkdownRenderer html={luaHtml} locale="id" />);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:The copy button is labelled in Indonesian on the Indonesian site
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:The copy button is labelled in Indonesian on the Indonesian site
       Then('the copy button has the Indonesian accessible name "Salin"', () => {
         const button = screen.getByRole("button", { name: t("id", "copy") });
         expect(button.getAttribute("aria-label")).toBe("Salin");
@@ -116,7 +113,7 @@ describeFeature(
         fireEvent.click(copyButton());
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:Clicking copy places the verbatim annotated source on the clipboard
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:Clicking copy places the verbatim annotated source on the clipboard
       Then('the clipboard contains the block\'s source verbatim including the "-- => output" annotations', () => {
         // Compared against the in-process value handed to writeText (pre-clipboard), per tech-docs.md's
         // Windows \r\n caveat; the live e2e reads navigator.clipboard on a real page.
@@ -137,7 +134,7 @@ describeFeature(
         await waitFor(() => expect(copyButton().getAttribute("aria-label")).toBe(t("en", "copied")));
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:The copy button confirms success to the visitor
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:The copy button confirms success to the visitor
       Then('the button shows a "Copied" confirmation before reverting', () => {
         // Success state: aria-label is the copied label and the polite live region carries it.
         expect(copyButton().getAttribute("aria-label")).toBe("Copied");
@@ -156,7 +153,7 @@ describeFeature(
         // render happened in the Given step
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/code-block-copy.feature:The copy button is reachable on a touch viewport without hovering
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:The copy button is reachable on a touch viewport without hovering
       Then("the copy button is visible without any hover interaction", () => {
         // jsdom cannot evaluate `@media (hover: none)`; assert the always-visible-on-touch utility is
         // present (the mechanism the live e2e proves under a real no-hover viewport) — no hover fired.

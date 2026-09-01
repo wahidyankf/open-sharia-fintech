@@ -18,7 +18,7 @@ Then("focus should move through all interactive elements in a logical order", as
   await expect(focusedElement).toBeAttached({ timeout: 3000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Keyboard navigation moves through all interactive elements
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Keyboard navigation moves through all interactive elements
 Then("no interactive element should be skipped or unreachable by keyboard", async ({ page }) => {
   // Verify interactive elements exist and are reachable — buttons, links, inputs
   const interactiveElements = page.locator("a[href], button, input, select, textarea");
@@ -52,7 +52,7 @@ Then("each button should have an accessible name via an aria-label or visible la
   }
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Buttons and interactive elements have ARIA labels
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Buttons and interactive elements have ARIA labels
 Then("each interactive element should be identifiable by assistive technologies", async ({ page }) => {
   // All links should have accessible text
   const links = page.getByRole("link");
@@ -93,7 +93,7 @@ Then("the link should become visible when it receives keyboard focus", async ({ 
   await expect(skipLink).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Skip to content link is present
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Skip to content link is present
 Then("activating the link should move focus to the main content area", async ({ page }) => {
   const skipLink = page.getByRole("link", {
     name: /skip.*(to |to main )?content/i,
@@ -115,7 +115,7 @@ Then("all body text should meet a minimum contrast ratio of 4.5:1 against its ba
   expect(bg.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
 Then(
   "large text and headings should meet a minimum contrast ratio of 3:1 against their background",
   async ({ page }) => {
@@ -145,7 +145,7 @@ Then("a visible focus indicator should be displayed on that element", async ({ p
   await expect(focused).toBeVisible({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
+// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
 Then("the focus indicator should have sufficient contrast against the surrounding background", async ({ page }) => {
   // Use a specific focusable element type to avoid body:focus which has no indicator.
   const focusedLink = page.locator("a:focus, button:focus, input:focus, [tabindex]:focus").first();

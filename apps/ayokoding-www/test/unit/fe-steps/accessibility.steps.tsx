@@ -8,10 +8,7 @@ import { TableOfContents } from "@/features/navigation/shell/toc";
 import { PrevNext } from "@/features/navigation/shell/prev-next";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -33,7 +30,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(links.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Keyboard navigation moves through all interactive elements
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Keyboard navigation moves through all interactive elements
     And("no interactive element should be skipped or unreachable by keyboard", () => {
       // Full tab order testing is at E2E level
       expect(true).toBe(true);
@@ -62,7 +59,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(nav).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Buttons and interactive elements have ARIA labels
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Buttons and interactive elements have ARIA labels
     And("each interactive element should be identifiable by assistive technologies", () => {
       const links = screen.getAllByRole("link");
       expect(links.length).toBeGreaterThan(0);
@@ -81,7 +78,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Skip to content link is present
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Skip to content link is present
     And("activating the link should move focus to the main content area", () => {
       expect(true).toBe(true);
     });
@@ -95,7 +92,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
     And("large text and headings should meet a minimum contrast ratio of 3:1 against their background", () => {
       expect(true).toBe(true);
     });
@@ -111,7 +108,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(nav).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
     And("the focus indicator should have sufficient contrast against the surrounding background", () => {
       // Focus indicator visual testing is at E2E level
       expect(true).toBe(true);

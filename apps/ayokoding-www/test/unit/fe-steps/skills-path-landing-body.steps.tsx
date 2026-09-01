@@ -39,7 +39,7 @@ const betaBody = "<p>Beta's own runway-justification paragraph, unique to beta.<
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-landing-body.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-landing-body.feature",
   ),
 );
 
@@ -68,7 +68,7 @@ describeFeature(feature, ({ Scenario }) => {
         },
       );
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-landing-body.feature:A skills path's authored runway-justification content renders on its own landing
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-landing-body.feature:A skills path's authored runway-justification content renders on its own landing
       And("the other path's justification paragraph never appears on this page", () => {
         // Still rendering alpha's page from the Then step above — beta's paragraph must be absent.
         expect(screen.queryByText(/unique to beta/)).toBeNull();

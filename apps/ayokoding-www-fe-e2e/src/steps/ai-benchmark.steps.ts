@@ -39,7 +39,7 @@ When("the AI benchmark page renders", async ({ page }) => {
 
 // ── Page shell assertions (AC-1 / AC-2) ───────────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The English page renders its localized heading
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The English page renders its localized heading
 Then("the page shows a level-one heading in English", async ({ page }) => {
   const h1 = page.locator("h1").first();
   await expect(h1).toBeVisible();
@@ -49,7 +49,7 @@ Then("the page shows a level-one heading in English", async ({ page }) => {
   expect(text.trim()).not.toBe("Tolok Ukur Model AI");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The Indonesian page renders its localized heading
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The Indonesian page renders its localized heading
 Then("the page shows a level-one heading in Indonesian", async ({ page }) => {
   const h1 = page.locator("h1").first();
   await expect(h1).toBeVisible();
@@ -70,7 +70,7 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 // DOM region instead carries `role="group"` with `aria-labelledby` (`benchmark-chart-band-{opus,
 // sonnet,haiku}`), not one shared svg — the first band's own region is enough to prove the family
 // carries a real accessible name.
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The merged chart exposes an accessible name
 Then("each rated band's chart region exposes a localized accessible name", async ({ page }) => {
   await expect(page.locator('[data-testid^="benchmark-chart-band-"][role="group"]').first()).toHaveAccessibleName(/.+/);
 });
@@ -82,32 +82,32 @@ Then("each rated band's chart region exposes a localized accessible name", async
 // (cost-of-living-calculator.steps.ts) as a bare `waitForLoadState`, so navigation happens in each
 // scenario's own Given/When step here, not there.
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
 Given("the URL carries no query parameters", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
 Then("every roster model is shown in the data table", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   // Appendix A.2 roster — see apps/ayokoding-www's core/data/models.ts's own "38 rows" comment.
   await expect(page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]')).toHaveCount(38);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 Given("a fixture model priced differently by two harnesses", async ({}) => {
   // The e2e layer exercises the REAL roster (no fixture injection over HTTP) — Grok 4.5
   // (core/data/models.ts) is genuinely priced differently by two harnesses: cursor/opencode-zen at
   // a metered $2/$6 rate, opencode-go at a flat-rate subscription instead.
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 When("the merged chart renders with that harness selected", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark?harness=opencode-go");
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 Then("that model's price bars use that harness's own rate, not its lowest available rate", async ({ page }) => {
   // opencode-go carries Grok 4.5 as a flat-rate subscription, not a per-token rate — selecting it
   // must remove Grok 4.5's metered bar and show its inline subscription text instead (DD-1).
@@ -115,19 +115,19 @@ Then("that model's price bars use that harness's own rate, not its lowest availa
   await expect(page.getByTestId("benchmark-chart-subscription-grok-4.5")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 Given("the reader has applied a harness filter and a class filter", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark?harness=cursor&class=opus");
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 When("the reader reloads the resulting URL", async ({ page }) => {
   await page.reload();
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 Then("the same filtered set of models is shown", async ({ page }) => {
   const rowIds = () =>
     page
@@ -217,7 +217,7 @@ let bandBaseContrastRatios: Record<(typeof RATED_BAND_IDS)[number], number> = {
   haiku: 0,
 };
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 Given("the page is rendered in the {string} theme", async ({ page }, theme: string) => {
   await page.goto(`/${scenarioLocale}/tools/ai-benchmark`);
   await page.waitForLoadState("networkidle");
@@ -233,7 +233,7 @@ Given("the page is rendered in the {string} theme", async ({ page }, theme: stri
   }
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 When("the computed styles of the band tokens are read from the live page", async ({ page }) => {
   // The colour-SYNTAX resolution (`oklch()`/`lab()`/nested `var()` → concrete sRGB bytes) can only
   // happen inside the browser — a `<canvas>` 2D context is the one API guaranteed to fully
@@ -296,7 +296,7 @@ When("the computed styles of the band tokens are read from the live page", async
   bandBaseContrastRatios = nextBase;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 Then("every band token meets the WCAG AA contrast ratio against its background", async ({}) => {
   for (const band of BAND_IDS) {
     expect(
@@ -306,7 +306,7 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
   }
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 //
 // The assertion the M-14 fix (Phase 9 Round 1a) actually needs: the base/bar-fill token
 // (`--chart-band-<band>`) is what a DOM bar's `bg-*` background colour resolves to
@@ -339,7 +339,7 @@ async function navigateAtViewport(page: Page, width: number, locale: string, hei
 let overflowScrollWidth = 0;
 let overflowClientWidth = 0;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The document never scrolls horizontally
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The document never scrolls horizontally
 Given(
   "the AI benchmark page is loaded at a {string} px viewport in the {string} locale",
   async ({ page }, width: string, locale: string) => {
@@ -358,7 +358,7 @@ Then("the document scroll width does not exceed the document client width", asyn
 
 // ── Sticky desktop header (AC-59, DD-27 Unit 2) ───────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
 Given("the AI benchmark page is loaded at a 1440 px viewport", async ({ page }) => {
   await navigateAtViewport(page, 1440, "en");
 });
@@ -393,7 +393,7 @@ async function readComputedTextStyle(locator: ReturnType<Page["locator"]>): Prom
 let cardLabelStyle: ComputedTextStyle | null = null;
 let cardValueStyle: ComputedTextStyle | null = null;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
 Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", async ({ page }) => {
   await navigateWithFirstCardExpanded(page);
 });
@@ -419,7 +419,7 @@ let gradedCellFlexDirection = "";
 let labelBox: { top: number; bottom: number } | null = null;
 let valueBox: { top: number; bottom: number } | null = null;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
 When("the computed flex direction of a graded figure cell is read from the live page", async ({ page }) => {
   const details = page.locator('[data-testid^="model-card-details-"]').first();
   const gradedCell = details.locator('[data-slot="figure-cell"]').first();
@@ -470,7 +470,7 @@ Given("the AI benchmark page is loaded at a {string} px viewport", async ({ page
 type TapTargetFailure = { description: string; width: number; height: number };
 let tapTargetFailures: TapTargetFailure[] = [];
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
 When("the bounding box of every link and every disclosure control is measured", async ({ page }) => {
   const targets = page.locator('[data-testid="ai-bench-page"] a, [data-testid="ai-bench-page"] summary');
   const count = await targets.count();
@@ -502,7 +502,7 @@ Then("every measured target is at least 24 CSS pixels wide and at least 24 CSS p
 
 let chartLabelFontSizePx = 0;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
 When("the computed font size of a chart model label is read from the live page", async ({ page }) => {
   const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
   chartLabelFontSizePx = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
@@ -535,7 +535,7 @@ Then("that computed font size is at least 12 CSS pixels", async ({}) => {
 let chartLabelFontSizeAt1440 = 0;
 let bodyFontSizeAt1440 = 0;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
 When(
   "the computed font sizes of a chart model label and the page body text are read from the live page",
   async ({ page }) => {
@@ -559,7 +559,7 @@ let barTrackWidthAt320 = 0;
 let chartRowWidthAt320 = 0;
 let chartRowDisplayAt320 = "";
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
 When(
   "the width of a capability bar's track is compared with the width of its containing chart region",
   async ({ page }) => {
@@ -609,7 +609,7 @@ Given(
 
 let firstChartElementOffsetTop = 0;
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
 When("the vertical offset of the first chart element is read from the live page", async ({ page }) => {
   const chart = page.locator('[data-testid="benchmark-chart"]').first();
   const box = await chart.boundingBox();
@@ -629,7 +629,7 @@ Then("that offset is less than the viewport height", async ({}) => {
 // pre-fix chart position measured 701px at 390px width), so it was non-protective; 664 is the
 // realistic breakpoint `delivery.md`'s UWT-007 retest actually measured the defect and its fix at.
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
+// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
 Given(
   "the AI benchmark page is loaded in the {string} locale at a 390 px viewport",
   async ({ page }, locale: string) => {

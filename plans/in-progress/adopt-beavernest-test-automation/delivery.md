@@ -558,6 +558,11 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 > two products the legacy `CLI-only` convention row names as its example: migrating one alone would
 > leave that row describing a shape no product uses while still claiming one does. `rhino` is a
 > parity path, so its move carries an identical `ose-private` landing; `crane` exists only here.
+>
+> Step 1 and the two CLI families landed as `ose-public#430` and `ose-public#431`, mirrored into
+> `ose-private#141`, which restored the byte-identical parity boundary. `ayokoding` follows next: it
+> is the only remaining family whose corpus move touches no Nx project root, because `ose` and
+> `organiclever` both keep their OpenAPI contract project under `containers/`.
 
 ### `D-P5-PRI` delivery lifecycle
 

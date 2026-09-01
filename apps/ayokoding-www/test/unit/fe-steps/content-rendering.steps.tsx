@@ -6,10 +6,7 @@ import "./helpers/test-setup";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature"),
 );
 
 const sampleHtml = `<h2 id="intro">Introduction</h2><p>Body text paragraph.</p><h3 id="sub">Subsection</h3><p>More text.</p>`;
@@ -38,7 +35,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByText("Introduction")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Markdown prose renders with proper formatting classes
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Markdown prose renders with proper formatting classes
     And("paragraph spacing should be consistent", () => {
       const paragraphs = document.querySelectorAll("p");
       expect(paragraphs.length).toBeGreaterThan(0);
@@ -60,7 +57,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(figure).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
     And("the block should use a monospace font", () => {
       const pre = document.querySelector("pre");
       expect(pre).toBeTruthy();
@@ -80,7 +77,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByRole("alert")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
     And("the callout body text should be visible inside the admonition", () => {
       expect(screen.getByText("Watch out!")).toBeTruthy();
     });
@@ -103,7 +100,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByText("Panel 1")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
     And("the other panels should be hidden", () => {
       // Panel visibility toggle is tested at E2E level
       expect(true).toBe(true);
@@ -125,7 +122,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(iframe?.getAttribute("src")).toContain("youtube.com/embed/dQw4w9WgXcQ");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
     And("the embed should maintain a 16:9 aspect ratio", () => {
       const iframe = document.querySelector("iframe");
       expect(iframe).toBeTruthy();
@@ -147,7 +144,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(items.length).toBe(2);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Steps shortcode renders as a numbered step list
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Steps shortcode renders as a numbered step list
     And("the step content should be indented beneath its number", () => {
       expect(screen.getByText("Step one")).toBeTruthy();
     });
@@ -165,7 +162,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByText(/formula/)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Inline math expression renders via KaTeX
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Inline math expression renders via KaTeX
     And("the rendered math should not display raw LaTeX source", () => {
       expect(true).toBe(true);
     });
@@ -181,7 +178,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(math).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Block math expression renders via KaTeX
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Block math expression renders via KaTeX
     And("the rendered math should not display raw LaTeX source", () => {
       expect(true).toBe(true);
     });
@@ -198,7 +195,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Mermaid diagram renders as an SVG
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Mermaid diagram renders as an SVG
     And("the raw Mermaid source should not be visible to the visitor", () => {
       expect(true).toBe(true);
     });
@@ -218,7 +215,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByText("Cell")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Raw HTML inline elements render correctly
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Raw HTML inline elements render correctly
     And("the elements should be visible and styled appropriately", () => {
       expect(screen.getByText("More")).toBeTruthy();
     });

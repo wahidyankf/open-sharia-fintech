@@ -162,3 +162,26 @@ it would re-assert what the unit suite already asserts while reading as project-
 This delivery removed the target and routed the four verbs; the target returns with the
 owner-migration reader, which is the first point at which it can measure anything.
 Route:
+
+## L-9: A build output made the unit runner discover five copies of its own tests
+
+Repository relevance: public
+Observation: `ayokoding-www`'s vitest "unit" project includes `**/*.unit.{test,spec}.{ts,tsx}` and
+excludes only `node_modules`. `next build` copies the entire application — tests included — into
+`.next/standalone/apps/ayokoding-www/`, so any run that follows a build in the same workspace
+discovers each `.unit.test.ts` twice. The copies fail on their own relative imports:
+
+```text
+Error: Cannot find module '../../core/manifest-integrity' imported from
+.next/standalone/apps/ayokoding-www/src/features/course-paths/manifests/careers/careers-ai-manifest.unit.test.ts
+```
+
+Five suites failed while the same five passed from `src/`. Nothing about the change under test was
+involved; `nx run-many -t build,...,test:quick` on one project is enough to reproduce it, and the
+pre-push gate hits it whenever a build has run earlier in the session.
+Durable prevention: a test-discovery glob that is not anchored to a source directory must exclude
+the build output directory explicitly, because a build tool that copies sources and a test runner
+that globs for sources disagree silently and the runner reports the build tool's view. Excluding
+`**/.next/**` in the affected project restored `build` and `test:quick` to being composable in one
+workspace.
+Route:

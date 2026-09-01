@@ -34,10 +34,7 @@ import { MobileNav } from "@/features/app-shell/shell/mobile-nav";
 import { t } from "@/features/i18n/core/translations";
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature"),
 );
 
 // @amiceli/vitest-cucumber registers each Given/When/Then/And as its own vitest test, so a
@@ -69,7 +66,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Persist the chosen width across a reload
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Persist the chosen width across a reload
     Then("the docs sidebar renders at 320 pixels", () => {
       const panel = document.querySelector('[data-slot="resizable-panel"]');
       expect(panel).toBeInstanceOf(HTMLElement);
@@ -100,7 +97,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(aside?.className).toContain("md:block");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Hide the resizable rail below the md breakpoint
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Hide the resizable rail below the md breakpoint
     And("navigation is available through the mobile drawer", () => {
       // The mobile drawer (mobile-nav.tsx) is a separate, untouched component that
       // renders SidebarTree independently of ResizableSidebar — its own drawer
@@ -135,7 +132,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(container.querySelector(".overflow-x-auto")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Scroll the sidebar horizontally when a label overflows
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Scroll the sidebar horizontally when a label overflows
     And("the label is not clipped or wrapped", () => {
       const link = screen.getByRole("link", { name: longLabel });
       expect(link.className).not.toContain("truncate");
@@ -191,7 +188,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(scrollContainer.getAttribute("data-overflowing")).toBe("true");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Overflowing nav labels signal that more content is scrollable
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Overflowing nav labels signal that more content is scrollable
     And("the item's expand-or-collapse chevron remains visible", () => {
       const chevronButton = screen.getByRole("button", { name: "Expand section" });
       expect(chevronButton.className).toContain("sticky");
@@ -243,7 +240,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         expect(wrapper.className).toContain("overflow-x-hidden");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Scroll the sidebar vertically when the nav tree is taller than the viewport
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Scroll the sidebar vertically when the nav tree is taller than the viewport
       And("the horizontal scroll behavior is unaffected", () => {
         expect(container.querySelector(".overflow-x-auto")).toBeTruthy();
       });
@@ -266,7 +263,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       fireEvent.click(wideButton);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Apply a preset width to the mobile nav drawer
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Apply a preset width to the mobile nav drawer
     Then("the drawer renders at the wider preset width", () => {
       const content = document.querySelector('[data-slot="sheet-content"]');
       expect(content).toBeInstanceOf(HTMLElement);
@@ -288,7 +285,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:The resize handle's accessible label is localized
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:The resize handle's accessible label is localized
     Then('the resize handle\'s aria-label is the "id" translation of "Resize panel"', () => {
       const handle = document.querySelector('[data-slot="resizable-panel-handle"]');
       expect(handle).toBeInstanceOf(HTMLElement);
@@ -307,7 +304,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       render(<MobileNav locale="en" open={true} onOpenChange={() => {}} />);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:An invalid persisted preset width falls back to the mobile drawer's default
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:An invalid persisted preset width falls back to the mobile drawer's default
     Then("the drawer renders at the default preset width", () => {
       const content = document.querySelector('[data-slot="sheet-content"]');
       expect(content).toBeInstanceOf(HTMLElement);
@@ -326,7 +323,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       // precondition noted; inspection happens in the Then step
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:The drawer's width-preset control shows a visible caption
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:The drawer's width-preset control shows a visible caption
     Then("a visible caption explains that the buttons control the drawer's width", () => {
       const legend = screen.getByText(t("en", "mobileNavWidthLabel"));
       expect(legend.className).not.toContain("sr-only");

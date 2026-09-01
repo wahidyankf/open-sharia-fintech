@@ -9,7 +9,7 @@ import "./helpers/test-setup";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature",
   ),
 );
 
@@ -231,7 +231,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong URL redirects to the canonical course URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong URL redirects to the canonical course URL
     Then('the current URL should contain "/en/learn/courses/just-enough-python"', () => {
       expect(true).toBe(true);
     });
@@ -251,7 +251,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         },
       );
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong deep sub-page URL redirects to its canonical course sub-page
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong deep sub-page URL redirects to its canonical course sub-page
       Then('the current URL should contain "/en/learn/courses/just-enough-python/learning/beginner"', () => {
         expect(true).toBe(true);
       });
@@ -281,7 +281,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(entryPoints.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:Every re-homed course declares its prerequisites
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:Every re-homed course declares its prerequisites
     And(
       "every named prerequisite resolves to another course already in the library or declared on the syllabus roadmap",
       () => {
@@ -343,7 +343,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         },
       );
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A prerequisite naming a syllabus-declared but not-yet-authored course still resolves
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A prerequisite naming a syllabus-declared but not-yet-authored course still resolves
       And("a prerequisite naming an unrecognized course ID still does not resolve", () => {
         expect(knownCourseIdSet().has("not-a-real-course-id-xyz")).toBe(false);
       });
@@ -359,7 +359,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(plannedCourseIds().has(id)).toBe(false);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A prerequisite naming an authored course absent from the syllabus roadmap still resolves
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A prerequisite naming an authored course absent from the syllabus roadmap still resolves
       Then(
         "a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap",
         () => {
@@ -382,7 +382,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(true).toBe(true);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:The retired fundamentally-strong browse roots permanently redirect to the course library
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:The retired fundamentally-strong browse roots permanently redirect to the course library
       And('the response Location header should equal "/en/learn/courses"', () => {
         expect(true).toBe(true);
       });
@@ -396,7 +396,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(true).toBe(true);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:The course library the retired browse roots redirect to resolves every re-homed course
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:The course library the retired browse roots redirect to resolves every re-homed course
       Then("every course catalog entry should resolve to live content, not a drained or missing location", () => {
         // Live-HTTP resolution needs a running server, verified at e2e level; the catalog's own
         // slug set is asserted directly in course-rehome.unit.test.ts's slug-set-equality check.
@@ -412,7 +412,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(true).toBe(true);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A course reached via its legacy course URL resolves to the single canonical course body
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A course reached via its legacy course URL resolves to the single canonical course body
       Then(
         'the resolved page title should equal the canonical course page title at "/en/learn/courses/just-enough-python"',
         () => {

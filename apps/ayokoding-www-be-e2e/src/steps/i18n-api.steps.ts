@@ -12,7 +12,7 @@ Then('the response "frontmatter" should indicate locale "en"', async () => {
   expect(enResult.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:English content is served when locale is "en"
+// @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:English content is served when locale is "en"
 Then('the response "html" should contain English-language content', async () => {
   const enResult = state.enResult as unknown[];
   expect(enResult.length).toBeGreaterThan(0);
@@ -23,7 +23,7 @@ Then('the response "frontmatter" should indicate locale "id"', async () => {
   expect(idResult.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:Indonesian content is served when locale is "id"
+// @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:Indonesian content is served when locale is "id"
 Then('the response "html" should contain Indonesian-language content', async () => {
   const idResult = state.idResult as unknown[];
   expect(idResult.length).toBeGreaterThan(0);

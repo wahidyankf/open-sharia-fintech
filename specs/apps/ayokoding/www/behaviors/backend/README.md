@@ -12,7 +12,7 @@ container; ayokoding renamed `be` → `api` because it has no separate backend s
 ## Structure
 
 ```
-specs/apps/ayokoding/behavior/ayokoding-be/gherkin/
+specs/apps/ayokoding/www/behaviors/backend/
 ├── content/                # tRPC content procedures
 │   └── content-api.feature
 ├── search/                 # tRPC search procedure
@@ -44,7 +44,7 @@ glossary terms; code identifiers (procedure names, schema fields) match the
 ## Relationship to the web perspective
 
 These specs are the **HTTP counterpart** to
-[behavior/ayokoding-www/gherkin/](../../ayokoding-www/gherkin/README.md). Both perspectives execute inside the
+[www/behaviors/frontend/](../frontend/README.md). Both perspectives execute inside the
 same `web` Next.js container; the split is a slug, not a container boundary.
 
 - **api**: HTTP-semantic (the client calls, response shape, status codes)
@@ -56,8 +56,8 @@ same `web` Next.js container; the split is a slug, not a container boundary.
 
 - **Ubiquitous language**: ubiquitous-language/
 - **Bounded-context map**: bounded-context-map.md
-- **Web counterpart**: [web gherkin specs](../../ayokoding-www/gherkin/README.md)
-- **Parent**: [api component specs](../../../components/api/README.md)
+- **Web counterpart**: [frontend behaviors](../frontend/README.md)
+- **Parent**: [behaviors](../README.md)
 
 - [content — ayokoding-be Gherkin Domain](./content/README.md)
 - [health — ayokoding-be Gherkin Domain](./health/README.md)

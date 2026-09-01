@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import "./helpers/test-setup";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature"),
 );
 
 // Responsive layout testing requires real viewport resizing — tested at E2E level
@@ -28,7 +28,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Desktop viewport shows sidebar, content, and table of contents
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows sidebar, content, and table of contents
     And("the table of contents should be visible", () => {
       expect(true).toBe(true);
     });
@@ -47,7 +47,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Laptop viewport shows sidebar and content but hides table of contents
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Laptop viewport shows sidebar and content but hides table of contents
     And("the table of contents should not be visible", () => {
       expect(true).toBe(true);
     });
@@ -62,7 +62,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Mobile viewport shows hamburger menu and hides sidebar
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger menu and hides sidebar
     And("the sidebar navigation should not be visible", () => {
       expect(true).toBe(true);
     });
@@ -78,7 +78,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/app-shell/responsive.feature:Mobile hamburger menu opens the sidebar drawer
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile hamburger menu opens the sidebar drawer
     And("the sidebar navigation links should be visible inside the drawer", () => {
       expect(true).toBe(true);
     });

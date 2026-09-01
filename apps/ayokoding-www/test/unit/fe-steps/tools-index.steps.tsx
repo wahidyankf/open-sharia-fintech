@@ -28,7 +28,7 @@ import ToolsIndexPage from "@/app/[locale]/tools/page";
 import AiBenchmarkPage from "@/app/[locale]/tools/ai-benchmark/page";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature"),
 );
 
 describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
@@ -50,7 +50,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(link).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature:The calculator entry shows a description distinct from its link text
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:The calculator entry shows a description distinct from its link text
     Then("the calculator entry shows a description distinct from its link text", () => {
       const desc = screen.getByTestId("tool-desc-calculator");
       expect((desc.textContent ?? "").trim()).not.toBe("");
@@ -72,7 +72,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(link).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature:The AI benchmark entry shows a description distinct from its link text
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:The AI benchmark entry shows a description distinct from its link text
     Then("the AI benchmark entry shows a description distinct from its link text", () => {
       const desc = screen.getByTestId("tool-desc-ai-benchmark");
       expect((desc.textContent ?? "").trim()).not.toBe("");
@@ -102,7 +102,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature:Exactly one main landmark renders on the Tools pages
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:Exactly one main landmark renders on the Tools pages
     Then("exactly one main landmark is present", () => {
       expect(document.querySelectorAll("main").length).toBe(0);
     });

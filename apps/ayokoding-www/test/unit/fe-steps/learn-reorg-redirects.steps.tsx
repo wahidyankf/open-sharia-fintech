@@ -6,7 +6,7 @@ import "./helpers/test-setup";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-reorg-redirects.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-reorg-redirects.feature",
   ),
 );
 
@@ -20,7 +20,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-reorg-redirects.feature:platform-web redirects to platforms/web under its legacy bucket address
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-reorg-redirects.feature:platform-web redirects to platforms/web under its legacy bucket address
     Then('the current URL should contain "/en/learn/legacy/software-engineering/platforms/web"', () => {
       expect(true).toBe(true);
     });

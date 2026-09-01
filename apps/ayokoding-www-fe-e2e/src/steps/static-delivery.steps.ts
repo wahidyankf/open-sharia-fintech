@@ -44,7 +44,7 @@ Then("the prerendered route count is at least two thousand", async ({ page }) =>
   expect(Object.keys(manifest?.routes ?? {}).length).toBeGreaterThanOrEqual(2000);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A content page is prerendered at build time
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A content page is prerendered at build time
 Then("the content catch-all route is not marked as dynamically rendered", async ({ page }) => {
   // `dynamicParams = true` intentionally serves non-enumerated learn-path URLs. A generated content URL must still appear
   // in the manifest's static routes, which is the relevant static-delivery contract for this catch-all.
@@ -65,7 +65,7 @@ When("the same URL is requested again", async ({ page }) => {
 
 // The local standalone runner has no Vercel CDN, so a cache HIT is a deployment-only assertion.
 // This local contract proves the response stays cacheable; preview/production verifies the HIT.
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page remains cacheable
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a content page remains cacheable
 Then("the response does not carry a no-store cache directive", async ({ page }) => {
   expect(stateFor(page).secondResponse?.headers()["cache-control"] ?? "").not.toMatch(/\bno-store\b/i);
 });
@@ -88,7 +88,7 @@ When("the same deployed course lesson URL is requested again", async ({ page }) 
   stateFor(page).secondResponse = response;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
 Then("the deployed response is served from the CDN cache", async ({ page }) => {
   expect(stateFor(page).secondResponse?.headers()["x-vercel-cache"]).toBe("HIT");
 });
@@ -109,7 +109,7 @@ When("navigation search and course-path data are requested through tRPC", async 
   stateFor(page).runtimeDataResponses = responses;
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
 Then("every runtime data endpoint responds successfully", async ({ page }) => {
   const responses = stateFor(page).runtimeDataResponses;
   expect(responses).toHaveLength(3);
@@ -127,7 +127,7 @@ When("the localized page renders", async ({ page }) => {
   await expect(page.getByRole("main")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the localized page locale
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:The document language reflects the localized page locale
 Then("the html element declares the {string} language code", async ({ page }, languageCode: string) => {
   await expect(page.locator("html")).toHaveAttribute("lang", languageCode);
 });

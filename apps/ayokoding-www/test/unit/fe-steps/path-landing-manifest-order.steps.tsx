@@ -36,10 +36,7 @@ const courseTitles = {
 };
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/breadcrumb.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature"),
 );
 
 describeFeature(
@@ -66,7 +63,7 @@ describeFeature(
         ]);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/breadcrumb.feature:A path landing page lists its courses in manifest order
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature:A path landing page lists its courses in manifest order
       And("every course link carries the path context query parameter", () => {
         const link = screen.getByRole("link", { name: "Just Enough Python" });
         expect(link.getAttribute("href")).toBe(

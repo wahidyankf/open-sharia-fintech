@@ -21,7 +21,7 @@ import { CategoryLanding } from "@/features/course-paths/shell/category-landing"
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-empty-state.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-empty-state.feature",
   ),
 );
 
@@ -45,7 +45,7 @@ describeFeature(feature, ({ Scenario }) => {
         expect(screen.getByRole("link")).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-empty-state.feature:A category landing with no populated manifest renders an explicit empty state
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-empty-state.feature:A category landing with no populated manifest renders an explicit empty state
       And("the page never renders a blank content area with no message", () => {
         const status = screen.getByRole("alert");
         expect(status.textContent?.trim().length).toBeGreaterThan(0);

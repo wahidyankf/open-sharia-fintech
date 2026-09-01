@@ -25,14 +25,14 @@ Then('the response should contain a "prev" navigation link', async () => {
   expect(state.pageResult).toHaveProperty("prev");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
 Then('the response should contain a "next" navigation link', async () => {
   expect(state.pageResult).toHaveProperty("next");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get non-existent page by slug returns 404
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Draft pages are excluded from content retrieval
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/i18n/i18n-api.feature:Requesting a slug prefixed with an invalid locale returns not found
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get non-existent page by slug returns 404
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Draft pages are excluded from content retrieval
+// @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:Requesting a slug prefixed with an invalid locale returns not found
 Then("the response should indicate the page was not found", async () => {
   const arr = state.errorResult as unknown[];
   expect(arr[0]).toHaveProperty("error");
@@ -43,7 +43,7 @@ Then("the response should contain 3 child pages", async () => {
   expect(children.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:List children of a section returns pages ordered by weight ascending
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:List children of a section returns pages ordered by weight ascending
 Then("the child pages should be ordered by weight ascending", async () => {
   const children = state.childrenResult as { weight: number }[];
   for (let i = 1; i < children.length; i++) {
@@ -56,7 +56,7 @@ Then("the response should contain a tree with top-level section nodes", async ()
   expect(tree.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
 Then("every node should include a slug and title", async () => {
   const tree = state.treeResult as Record<string, unknown>[];
   expect(tree[0]).toHaveProperty("slug");
@@ -64,7 +64,7 @@ Then("every node should include a slug and title", async () => {
   expect(tree[0]).toHaveProperty("children");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
+// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
 Then('the response "html" field should contain a rendered code element', async () => {
   const pageResult = state.pageResult as Record<string, unknown>;
   expect((pageResult.html as string).length).toBeGreaterThan(0);

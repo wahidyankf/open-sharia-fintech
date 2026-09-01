@@ -42,7 +42,7 @@ const courseTitles = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-two-role.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-two-role.feature",
   ),
 );
 
@@ -66,7 +66,7 @@ describeFeature(feature, ({ Scenario }) => {
         expect(nav.getAllByRole("link").length).toBe(2);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-two-role.feature:An arc landing with two paths renders both role cards without a placeholder
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-two-role.feature:An arc landing with two paths renders both role cards without a placeholder
       And("neither card is a placeholder or an empty grid cell", () => {
         const nav = screen.getByRole("navigation", { name: "immediately-effective paths" });
         expect(nav.querySelectorAll("li").length).toBe(2);

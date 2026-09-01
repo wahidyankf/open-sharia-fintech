@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature",
+    "feature": "specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature",
     "scenario": "A model reaching the opus anchor renders in the opus band",
     "step": "Given a fixture model whose composite index equals the opus anchor index",
     "adapter": "unit@ayokoding-www"
@@ -14,7 +14,7 @@
     "fields": [
       "project=ayokoding-www",
       "owner=ayokoding-www",
-      "item=specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature",
+      "item=specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature",
       "scenario=A model reaching the opus anchor renders in the opus band",
       "step=Given a fixture model whose composite index equals the opus anchor index"
     ]

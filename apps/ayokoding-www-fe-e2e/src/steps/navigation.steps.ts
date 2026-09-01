@@ -17,9 +17,9 @@ Then("the page should respond with HTTP 200", async ({ page }) => {
   expect(response).toBe("complete");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/architecture-cases-routes.feature:In FP case route is reachable
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/architecture-cases-routes.feature:In OOP case route is reachable
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/architecture-cases-routes.feature:In Procedural case route is reachable
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In FP case route is reachable
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In OOP case route is reachable
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In Procedural case route is reachable
 Then("the page should contain a heading with text {string}", async ({ page }, headingText: string) => {
   await expect(page.getByRole("heading", { name: headingText })).toBeVisible();
 });
@@ -44,7 +44,7 @@ When("the visitor clicks a collapsed parent node", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Sidebar shows section tree with collapsible nodes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Sidebar shows section tree with collapsible nodes
 Then("its child items should become visible", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
   await expect(sidebar).toBeVisible();
@@ -80,7 +80,7 @@ Then("all breadcrumb segments should be clickable links", async ({ page }) => {
   await expect(links.first()).toBeAttached();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
 Then("the breadcrumb should render on a single row without horizontally truncating link text", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const ol = breadcrumb.locator("ol");
@@ -102,7 +102,7 @@ Then("the table of contents should list all H2, H3, and H4 headings as anchor li
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Table of contents shows heading links for H2 to H4
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Table of contents shows heading links for H2 to H4
 Then("H1 headings should not appear in the table of contents", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -125,7 +125,7 @@ When("the visitor clicks the next link", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Previous and Next links navigate between siblings
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Previous and Next links navigate between siblings
 Then("they should be taken to the next sibling page", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -139,7 +139,7 @@ Then("the corresponding item in the sidebar should be visually highlighted as ac
   await expect(sidebar).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Active page is highlighted in the sidebar
+// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Active page is highlighted in the sidebar
 Then("no other sidebar item should be highlighted as active", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
   await expect(sidebar).toBeVisible();

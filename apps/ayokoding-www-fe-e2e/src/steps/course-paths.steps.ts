@@ -29,7 +29,7 @@ When("a reader opens that fixture path's landing page under \\/en\\/learn\\/path
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/breadcrumb.feature:A path landing page lists its courses in manifest order
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature:A path landing page lists its courses in manifest order
 Then("the courses appear in the fixture manifest's courseOrder", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: /backend track \(interview-ready\) syllabus/i });
   const links = nav.getByRole("link");
@@ -63,7 +63,7 @@ When("a reader opens the careers category landing at \\/en\\/learn\\/paths\\/car
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
 // The literal parentheses in the Gherkin step text ("role(s)") must be escaped (`\\(`/`\\)`) —
 // Cucumber Expressions otherwise parse unescaped `(text)` as optional-text syntax, which would
 // match "role" or "roles" but never the literal characters "role(s)" the feature file contains.
@@ -101,7 +101,7 @@ When("a reader opens the skills category landing at \\/en\\/learn\\/paths\\/skil
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-fixed-arc-statement.feature:The skills category landing states its fixed arc once, with no chooser
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-fixed-arc-statement.feature:The skills category landing states its fixed arc once, with no chooser
 Then("the page renders the ramp promise once as a statement, not a question", async ({ page }) => {
   const promise = page.getByText("Get up and running fast on the ramp", { exact: false });
   await expect(promise).toHaveCount(1);
@@ -130,7 +130,7 @@ When(
   },
 );
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-two-role.feature:An arc landing with two paths renders both role cards without a placeholder
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-two-role.feature:An arc landing with two paths renders both role cards without a placeholder
 Then("both role cards render side by side with their own course counts", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "immediately-effective paths" });
   const cards = nav.getByRole("link");
@@ -158,7 +158,7 @@ When("a reader opens that arc's landing page", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-one-role.feature:An arc landing with one path renders a full card, not a sparse stub
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-one-role.feature:An arc landing with one path renders a full card, not a sparse stub
 Then("the single role card renders with an inline first-phase syllabus preview", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "interview-ready paths" });
   await expect(nav.getByRole("link")).toHaveCount(1);
@@ -189,7 +189,7 @@ When("a reader opens either skills path's landing page", async () => {
   // compares one path's page against the other's.
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-landing-body.feature:A skills path's authored runway-justification content renders on its own landing
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-landing-body.feature:A skills path's authored runway-justification content renders on its own landing
 Then(
   "that path's landing renders its own authored runway-justification paragraph between the title and the syllabus",
   async ({ page }) => {
@@ -226,7 +226,7 @@ When("the hero section renders", async () => {
   // No-op — the navigation above already waited for the hero's Server Component render.
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/landing-hero.feature:The landing hero surfaces the four goal paths directly
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/landing-hero.feature:The landing hero surfaces the four goal paths directly
 Then("the hero shows a goal-labeled path card for each published path", async ({ page }) => {
   const hero = page.locator("section").first();
   await expect(hero.getByText("Choose your path")).toBeVisible();
@@ -258,7 +258,7 @@ When("the course page renders", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature:A course deep-linked without path context renders the canonical view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course deep-linked without path context renders the canonical view
 Then("the course body renders in full with the content-tree breadcrumb and its prerequisite list", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -303,7 +303,7 @@ Given("a reader opens a canonical course URL with no path context query paramete
   await page.goto("/en/learn/courses/just-enough-python");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature:A course opened without path context renders the generic sidebar unchanged
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course opened without path context renders the generic sidebar unchanged
 Then("the left sidebar shows the generic content tree exactly as it does elsewhere in the site", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Sidebar navigation" })).toBeVisible();
 });
@@ -318,8 +318,8 @@ Given("a reader opens a course URL with a path context that names no known path"
   await page.goto("/en/learn/courses/just-enough-python?path=careers/does-not-exist/no-such-role");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/invalid-path-fallback.feature:An invalid path context falls back to the canonical view
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/omitted-course.feature:A course omitted from a path shows no path nav for that path
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/invalid-path-fallback.feature:An invalid path context falls back to the canonical view
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/omitted-course.feature:A course omitted from a path shows no path nav for that path
 Then("the course renders the canonical standalone view", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("navigation", { name: /course list$/ })).toHaveCount(0);
@@ -351,7 +351,7 @@ Given("a reader opens a course in path context on a desktop-width viewport", asy
   await page.goto("/en/learn/courses/backend-essentials?path=careers/immediately-effective/backend-track");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature:The path rail shows the whole ordered arc beside a course at desktop width
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail shows the whole ordered arc beside a course at desktop width
 Then("the left rail lists that path's courses in manifest order with the current course marked", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Backend Track (Immediately-Effective) course list" });
   const items = nav.getByRole("listitem");
@@ -384,7 +384,7 @@ When('they activate the path readout\'s "open path course list" control', async 
   await page.getByRole("button", { name: /Open path course list/ }).click();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-order-nav.feature:The path rail collapses into the existing navigation drawer on a phone
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail collapses into the existing navigation drawer on a phone
 Then("the existing left navigation drawer opens showing that path's ordered courses", async ({ page }) => {
   const drawer = page.locator("#mobile-nav-drawer");
   await expect(drawer).toBeVisible();
@@ -415,7 +415,7 @@ When("a reader opens the paths hub at \\/en\\/learn\\/paths", async ({ page }) =
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/paths-hub-category-grouping.feature:The paths hub groups paths by category, not a flat grid
+// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/paths-hub-category-grouping.feature:The paths hub groups paths by category, not a flat grid
 Then("the hub renders a Careers section grouped by arc and a separate Skills section", async ({ page }) => {
   const careersHeading = page.getByRole("heading", { level: 2, name: "Careers" });
   const skillsHeading = page.getByRole("heading", { level: 2, name: "Skills" });

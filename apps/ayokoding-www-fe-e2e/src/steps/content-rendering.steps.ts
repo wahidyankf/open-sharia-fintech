@@ -17,7 +17,7 @@ Then("headings should be visually distinct from body text", async ({ page }) => 
   await expect(heading).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Markdown prose renders with proper formatting classes
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Markdown prose renders with proper formatting classes
 Then("paragraph spacing should be consistent", async ({ page }) => {
   const paragraph = page.locator("article p").first();
   await expect(paragraph).toBeVisible();
@@ -40,7 +40,7 @@ Then("the language label should be shown above the code block", async ({ page })
   await expect(langLabel).toBeAttached();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
 Then("the block should use a monospace font", async ({ page }) => {
   const codeEl = page.locator("figure[data-rehype-pretty-code-figure] code").first();
   await expect(codeEl).toBeVisible();
@@ -61,7 +61,7 @@ Then("the admonition should display the appropriate icon and label for its type"
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
 Then("the callout body text should be visible inside the admonition", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -84,7 +84,7 @@ Then("the corresponding panel content should become visible", async ({ page }) =
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
 Then("the other panels should be hidden", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -102,7 +102,7 @@ Then("the iframe src should point to the YouTube embed URL", async ({ page }) =>
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
 Then("the embed should maintain a 16:9 aspect ratio", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -120,7 +120,7 @@ Then("each step should display its number prominently", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Steps shortcode renders as a numbered step list
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Steps shortcode renders as a numbered step list
 Then("the step content should be indented beneath its number", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -134,8 +134,8 @@ Then("the expression should render as formatted math notation inline with surrou
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Inline math expression renders via KaTeX
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Block math expression renders via KaTeX
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Inline math expression renders via KaTeX
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Block math expression renders via KaTeX
 Then("the rendered math should not display raw LaTeX source", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -158,7 +158,7 @@ Then("the diagram should render as an inline SVG element", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Mermaid diagram renders as an SVG
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Mermaid diagram renders as an SVG
 Then("the raw Mermaid source should not be visible to the visitor", async ({ page }) => {
   await expect(page.getByRole("article")).toBeVisible();
 });
@@ -176,7 +176,7 @@ Then("the HTML elements should render in the browser as expected", async ({ page
   await expect(article).not.toBeEmpty();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/content-rendering.feature:Raw HTML inline elements render correctly
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Raw HTML inline elements render correctly
 Then("the elements should be visible and styled appropriately", async ({ page }) => {
   const article = page.getByRole("article");
   const hasContent = await article.evaluate((el) => el.children.length > 0);

@@ -35,7 +35,7 @@ const courseTitles = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-one-role.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-one-role.feature",
   ),
 );
 
@@ -55,7 +55,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByText(/Just Enough Python/)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/arc-landing-one-role.feature:An arc landing with one path renders a full card, not a sparse stub
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-one-role.feature:An arc landing with one path renders a full card, not a sparse stub
     And("the layout does not reserve or render a visibly empty second card", () => {
       // Count the top-level role-card <li> items directly (not `querySelectorAll("li")`, which
       // would also count the syllabus preview's own nested <li> items per course).

@@ -8,7 +8,7 @@ import { processAllIndexFiles } from "../../../src/features/content/shell/index-
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature",
+    "../../specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature",
   ),
 );
 
@@ -53,7 +53,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       await processAllIndexFiles(tmpDir, "generate");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Section _index.md lists direct children sorted by weight
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Section _index.md lists direct children sorted by weight
     Then("the tools _index.md should list children in weight order 100, 200, 300", async () => {
       const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
       const lines = content.split("\n").filter((l) => l.startsWith("- ["));
@@ -75,7 +75,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       await processAllIndexFiles(tmpDir, "generate");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Nested sections render with indentation
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Nested sections render with indentation
     Then('the tools _index.md should show "overview" indented under "react"', async () => {
       const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
       expect(content).toContain("- [React](/en/tools/react)");
@@ -94,7 +94,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       await processAllIndexFiles(tmpDir, "generate");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Existing frontmatter is preserved during generation
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Existing frontmatter is preserved during generation
     Then('the frontmatter should contain title "My Tools" and weight 500', async () => {
       const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
       expect(content).toContain('title: "My Tools"');
@@ -115,7 +115,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await processAllIndexFiles(tmpDir, "validate");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Validate mode detects stale _index.md
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Validate mode detects stale _index.md
     Then("it should report the _index.md as out of date", () => {
       expect(result.changed.length).toBeGreaterThan(0);
       expect(result.changed.some((f) => f.includes("tools/_index.md"))).toBe(true);
@@ -136,7 +136,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await processAllIndexFiles(tmpDir, "generate");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Generate mode is idempotent
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Generate mode is idempotent
     Then("no files should be reported as changed", () => {
       expect(result.changed.length).toBe(0);
     });
@@ -159,7 +159,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(content).toContain("date:");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Missing frontmatter fields are added
+    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Missing frontmatter fields are added
     And("the _index.md should contain draft set to false", async () => {
       const content = await fs.readFile(path.join(tmpDir, "en/section/_index.md"), "utf-8");
       expect(content).toContain("draft: false");

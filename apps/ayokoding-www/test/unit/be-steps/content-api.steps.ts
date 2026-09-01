@@ -5,7 +5,7 @@ import { testCaller } from "./helpers/test-caller";
 import { TRPCError } from "@trpc/server";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -42,7 +42,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         expect(result).toHaveProperty("prev");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
+      // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
       And('the response should contain a "next" navigation link', () => {
         expect(result).toHaveProperty("next");
       });
@@ -60,7 +60,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get non-existent page by slug returns 404
+    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get non-existent page by slug returns 404
     Then("the response should indicate the page was not found", () => {
       expect(error).toBeInstanceOf(TRPCError);
       expect(error?.code).toBe("NOT_FOUND");
@@ -82,7 +82,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Draft pages are excluded from content retrieval
+    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Draft pages are excluded from content retrieval
     Then("the response should indicate the page was not found", () => {
       expect(error).toBeInstanceOf(TRPCError);
       expect(error?.code).toBe("NOT_FOUND");
@@ -104,7 +104,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:List children of a section returns pages ordered by weight ascending
+    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:List children of a section returns pages ordered by weight ascending
     And("the child pages should be ordered by weight ascending", () => {
       for (let i = 1; i < result.length; i++) {
         expect(result[i]!.weight).toBeGreaterThanOrEqual(result[i - 1]!.weight);
@@ -123,7 +123,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
+    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
     And("every node should include a slug and title", () => {
       const firstNode = result[0]!;
       expect(firstNode).toHaveProperty("slug");
@@ -143,7 +143,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await testCaller.content.getBySlug({ locale: "en", slug: "learn/overview" });
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-be/gherkin/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
+    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
     Then('the response "html" field should contain a rendered code element', () => {
       expect(result.html).toContain("<code");
     });

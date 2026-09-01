@@ -37,7 +37,7 @@ const subjectB: PathManifest = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-fixed-arc-statement.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-fixed-arc-statement.feature",
   ),
 );
 
@@ -56,7 +56,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("navigation", { name: "Skills paths" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-fixed-arc-statement.feature:The skills category landing states its fixed arc once, with no chooser
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-fixed-arc-statement.feature:The skills category landing states its fixed arc once, with no chooser
     And("no arc-selection control is present anywhere on the page", () => {
       expect(screen.queryByRole("navigation", { name: "Careers arcs" })).toBeNull();
       expect(screen.queryByRole("combobox")).toBeNull();

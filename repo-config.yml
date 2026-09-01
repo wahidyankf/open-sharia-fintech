@@ -205,13 +205,13 @@ coverage:
     # ayokoding domain
     - name: ayokoding-www
       levels: [unit]
-      specs: "specs/apps/ayokoding/behavior/www/**"
+      specs: "specs/apps/ayokoding/www/behaviors/**"
     - name: ayokoding-www-be-e2e
       levels: [e2e]
-      specs: "specs/apps/ayokoding/behavior/www/**"
+      specs: "specs/apps/ayokoding/www/behaviors/**"
     - name: ayokoding-www-fe-e2e
       levels: [e2e]
-      specs: "specs/apps/ayokoding/behavior/www/**"
+      specs: "specs/apps/ayokoding/www/behaviors/**"
 
     # crane domain
     - name: crane-cli
@@ -252,11 +252,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ayokoding/behavior/www/**"
+          corpus: "specs/apps/ayokoding/www/behaviors/**"
           levels: [unit]
         canonical:
           owner: ayokoding-www
-          corpus: "specs/apps/ayokoding/behavior/www/**"
+          corpus: "specs/apps/ayokoding/www/behaviors/**"
           runtimes:
             - level: e2e
               project: ayokoding-www-fe-e2e
@@ -269,7 +269,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ayokoding/behavior/www/**"
+          corpus: "specs/apps/ayokoding/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ayokoding-www
@@ -282,7 +282,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ayokoding/behavior/www/**"
+          corpus: "specs/apps/ayokoding/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ayokoding-www
@@ -646,7 +646,7 @@ testing:
         lifecycle-state: active
         owner: ayokoding-www
         corpus:
-          - "specs/apps/ayokoding/behavior/www/**"
+          - "specs/apps/ayokoding/www/behaviors/**"
         adapters:
           unit:
             disposition: required

@@ -43,15 +43,16 @@ Deprecated slugs (bare `be`, `web`, `cli`, `api`) must not be used for new surfa
 
 **Every surface** (BE, web, CLI) uses domain subdirectories under `gherkin/`. Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
 
-Build-time features for `ayokoding` live under their own surface `ayokoding-build-tools/` —
-renamed from the old bare `build-tools/` slug during the `standardize-app-spec-trees` plan.
-
 ```
 specs/apps/organiclever/behavior/organiclever-be/gherkin/expenses/expense-management.feature
 specs/apps/organiclever/behavior/organiclever-be/gherkin/authentication/password-login.feature
 specs/apps/organiclever/behavior/organiclever-app-web/gherkin/authentication/google-login.feature
-specs/apps/ayokoding/behavior/ayokoding-www/gherkin/accessibility/accessibility.feature
+specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature
 ```
+
+AyoKoding's build-time features once sat in their own `ayokoding-build-tools/` surface here. They
+now live at `specs/apps/ayokoding/www/behaviors/build-tools/`, inside a
+[logical owner corpus](./logical-owner-corpus.md), because they belong to the site they build.
 
 A domain folder may contain one or many feature files.
 

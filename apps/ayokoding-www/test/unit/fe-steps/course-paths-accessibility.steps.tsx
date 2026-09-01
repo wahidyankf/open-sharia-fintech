@@ -111,10 +111,7 @@ function isKeyboardOperable(el: Element): boolean {
 }
 
 const feature = await loadFeature(
-  path.resolve(
-    process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/accessibility.feature",
-  ),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -144,7 +141,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(isKeyboardOperable(within(pageNav).getAllByRole("link")[0] as Element)).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
     And("the document language attribute matches the active locale", () => {
       expect(htmlLang("en")).toBe("en");
     });

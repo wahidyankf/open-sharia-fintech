@@ -6,7 +6,7 @@ import "./helpers/test-setup";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature",
   ),
 );
 
@@ -25,7 +25,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
     And('the response Location header should equal "/en/learn/software-engineering"', () => {
       expect(true).toBe(true);
     });
@@ -41,7 +41,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
     And('the response Location header should equal "/id/belajar/ikhtisar"', () => {
       expect(true).toBe(true);
     });
@@ -56,7 +56,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:About page keeps its top-level URL and is not redirected
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:About page keeps its top-level URL and is not redirected
     And('the current URL should not contain "/c/"', () => {
       expect(true).toBe(true);
     });
@@ -71,7 +71,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Indonesian terms page keeps its top-level URL and is not redirected
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Indonesian terms page keeps its top-level URL and is not redirected
     And('the current URL should not contain "/c/"', () => {
       expect(true).toBe(true);
     });
@@ -86,7 +86,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Tools index keeps its top-level URL and is not redirected
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Tools index keeps its top-level URL and is not redirected
     And('the current URL should not contain "/c/"', () => {
       expect(true).toBe(true);
     });

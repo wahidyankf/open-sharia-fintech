@@ -7,7 +7,7 @@ import { learnThreeBucketRedirects } from "@/redirects/learn-three-bucket";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature",
   ),
 );
 
@@ -28,7 +28,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:The learn section exposes exactly three structural buckets
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:The learn section exposes exactly three structural buckets
     And("no former subject domain remains as a direct child of the learn section", () => {
       expect(true).toBe(true);
     });
@@ -42,7 +42,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:A relocated legacy domain URL redirects to its legacy address
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A relocated legacy domain URL redirects to its legacy address
     Then('the current URL should contain "/en/learn/legacy/software-engineering/overview"', () => {
       expect(true).toBe(true);
     });
@@ -57,7 +57,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:A relocated legacy domain URL redirects to its legacy address in one hop
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A relocated legacy domain URL redirects to its legacy address in one hop
     And("the response status should not be a client or server error", () => {
       expect(true).toBe(true);
     });
@@ -76,7 +76,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(true).toBe(true);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:A stale /c-bookmarked legacy domain URL redirects to its legacy address in two hops
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A stale /c-bookmarked legacy domain URL redirects to its legacy address in two hops
       And("the response status should not be a client or server error", () => {
         expect(true).toBe(true);
       });
@@ -94,7 +94,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:A historical learn-reorg source chains through to its legacy address
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A historical learn-reorg source chains through to its legacy address
     And("the response status should not be a client or server error", () => {
       expect(true).toBe(true);
     });
@@ -106,7 +106,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(learnThreeBucketRedirects.some((r) => r.source.includes("/courses/"))).toBe(false);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:The legacy redirect does not rewrite a canonical courses URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:The legacy redirect does not rewrite a canonical courses URL
     Then('the current URL should not contain "/legacy/"', () => {
       expect(true).toBe(true);
     });
@@ -117,7 +117,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       expect(learnThreeBucketRedirects.some((r) => r.source.includes("/paths/"))).toBe(false);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:The legacy redirect does not rewrite a canonical paths URL
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:The legacy redirect does not rewrite a canonical paths URL
     Then('the current URL should not contain "/legacy/"', () => {
       expect(true).toBe(true);
     });
@@ -133,7 +133,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
         expect(learnThreeBucketRedirects.some((r) => r.source.includes("fundamentally-strong"))).toBe(false);
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:The legacy redirect does not interfere with a re-homed fundamentally-strong course URL
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:The legacy redirect does not interfere with a re-homed fundamentally-strong course URL
       Then('the current URL should contain "/en/learn/courses/just-enough-python"', () => {
         expect(true).toBe(true);
       });
@@ -155,7 +155,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       },
     );
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-three-bucket.feature:A deep legacy path keeps its sub-taxonomy verbatim
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A deep legacy path keeps its sub-taxonomy verbatim
     And("the response status should not be a client or server error", () => {
       expect(true).toBe(true);
     });

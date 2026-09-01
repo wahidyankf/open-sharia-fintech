@@ -114,7 +114,7 @@ import { SidebarHost } from "@/features/course-paths/shell/sidebar-host";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature",
+    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature",
   ),
 );
 
@@ -141,7 +141,7 @@ describeFeature(feature, ({ Scenario }) => {
       expect(prereqs.getByRole("link", { name: "Git" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature:A course deep-linked without path context renders the canonical view
+    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course deep-linked without path context renders the canonical view
     And('a "this course is part of" affordance lists every path that includes the course', () => {
       const partOf = within(screen.getByRole("navigation", { name: "This course is part of" }));
       expect(partOf.getByRole("link", { name: "Python Fundamentals" })).toBeTruthy();
@@ -170,7 +170,7 @@ describeFeature(feature, ({ Scenario }) => {
         expect(screen.getByRole("navigation", { name: "Sidebar navigation" })).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature:A course opened without path context renders the generic sidebar unchanged
+      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course opened without path context renders the generic sidebar unchanged
       And("no path rail, path readout, or path breadcrumb segment appears", () => {
         expect(screen.queryByRole("navigation", { name: /course list/i })).toBeNull();
         expect(screen.queryByText(/on path/i)).toBeNull();
