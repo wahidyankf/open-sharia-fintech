@@ -45,9 +45,6 @@ when_to_use: Use when deciding whether a target should be cached, or where a pro
     "specs:behavior:coverage": {
       "cache": true
     },
-    "specs:domain:coverage": {
-      "cache": true
-    },
     "test:specs": {
       "cache": true
     },
@@ -72,7 +69,6 @@ when_to_use: Use when deciding whether a target should be cached, or where a pro
 | `test:unit`               | Yes    | Deterministic; safe to cache against source changes                                                                                                                                                                                        |
 | `test:coverage`           | Yes    | Deterministic native coverage gate; safe to cache against source changes                                                                                                                                                                   |
 | `specs:behavior:coverage` | Yes    | Pure behavior-level Gherkin coverage analysis; deterministic against source and spec changes                                                                                                                                               |
-| `specs:domain:coverage`   | Yes    | Pure domain-area coverage analysis; deterministic against source, spec, and `repo-config.yml` allowlist changes                                                                                                                            |
 | `test:specs`              | Yes    | Pure specs validation; deterministic against source, spec, and `repo-config.yml` changes; caches the aggregate of all `specs:*` validators                                                                                                 |
 | `test:integration`        | No     | Demo-be backends use real PostgreSQL via docker-compose (non-deterministic external state). Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) may override to `cache: true` in their `project.json` |
 | `dev`                     | No     | Long-running process                                                                                                                                                                                                                       |

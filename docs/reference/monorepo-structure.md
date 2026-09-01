@@ -41,7 +41,6 @@ open-sharia-enterprise/
 │   │       ├── system-context/ # C4 L1 — system boundary diagram
 │   │       ├── containers/   # C4 L2 — runtime containers + OpenAPI contracts
 │   │       ├── components/   # C4 L3 — internal structure (be/, web/, cli/)
-│   │       ├── ddd/          # Domain-Driven Design artefacts (when adopted)
 │   │       └── behavior/     # Gherkin feature files (be/, web/, cli/)
 │   │           └── [surface]/gherkin/[domain]/ # e.g. behavior/<product>-cli/gherkin/system/
 │   └── libs/                  # Per-library specs

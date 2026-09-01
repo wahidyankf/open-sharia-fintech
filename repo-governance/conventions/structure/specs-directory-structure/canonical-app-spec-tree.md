@@ -53,13 +53,6 @@ specs/apps/<app-family>/
 │       ├── architecture.md
 │       ├── design-system.md
 │       └── routes-and-screens.md
-├── ddd/                            # App-level DDD (when adopted)
-│   ├── README.md
-│   ├── bounded-contexts.yaml
-│   ├── bounded-context-map.md
-│   └── ubiquitous-language/
-│       ├── README.md
-│       └── <bc>.md
 └── behavior/                       # Cross-cutting Gherkin (all C4 levels)
     ├── README.md
     └── <product>-<surface>/         # e.g., organiclever-be, ayokoding-www, rhino-cli

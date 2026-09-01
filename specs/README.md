@@ -35,9 +35,8 @@ An application or library index leads to the most useful level of detail:
 - `behavior/` contains the acceptance scenarios. These use Gherkin, a concise
   `Given`/`When`/`Then` format for an observable outcome.
 
-Some product areas also include `ddd/`, which records the shared vocabulary and boundaries of a
-domain, or `containers/contracts/`, which holds the API contract. Those folders appear only when
-the product needs them.
+Some product areas also include `containers/contracts/`, which holds the API contract. That
+folder appears only when the product needs it.
 
 ## How specifications relate to code and tests
 

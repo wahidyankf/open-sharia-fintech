@@ -32,23 +32,22 @@ one of the five canonical folders; a flat-root artifact exists (`be/`, `web/`, `
 `gherkin/` without a package subdirectory. **MEDIUM**: domain subdirectory not kebab-case. **LOW**:
 domain subdirectory contains only one feature file named differently than the directory.
 
-## Category 9: Adoption Gaps (BDD/DDD/Contracts) [Deterministic via rhino-cli]
+## Category 9: Adoption Gaps (BDD/Contracts) [Deterministic via rhino-cli]
 
 Outside delegated quality-gate runs, use `rhino-cli specs structure validate <app>` for structural
 adoption evidence, then apply narrative judgment per
 [App README vs Specs Convention](../../../../repo-governance/conventions/structure/app-readme-vs-specs.md)
 Standard 6:
 
-| Surface profile | BDD required   | DDD expected                     | Contracts required       |
-| --------------- | -------------- | -------------------------------- | ------------------------ |
-| Full-stack      | HIGH if absent | MEDIUM if absent                 | HIGH if REST API exposed |
-| Web-only        | HIGH if absent | MEDIUM if absent                 | NOT APPLICABLE           |
-| CLI / Multi-CLI | HIGH if absent | LOW if adopted without rationale | NOT APPLICABLE           |
+| Surface profile | BDD required   | Contracts required       |
+| --------------- | -------------- | ------------------------ |
+| Full-stack      | HIGH if absent | HIGH if REST API exposed |
+| Web-only        | HIGH if absent | NOT APPLICABLE           |
+| CLI / Multi-CLI | HIGH if absent | NOT APPLICABLE           |
 
 **HIGH**: full-stack/web-only app has no Gherkin specs at all; full-stack app exposes a REST API
-but has no `containers/contracts/openapi.yaml`. **MEDIUM**: BDD present but no DDD adoption after
-two rollout cycles; missing API contracts after one rollout cycle for a REST-exposing full-stack
-app. **LOW**: CLI app has `components/cli/ddd/` without documented rationale.
+but has no `containers/contracts/openapi.yaml`. **MEDIUM**: missing API contracts after one
+rollout cycle for a REST-exposing full-stack app.
 
 Adoption-gap findings are always `[Adoption Gap]`-tagged and route to **Requires Review** in the
 fixer (never auto-fix) — adoption decisions require explicit justification.

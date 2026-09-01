@@ -29,7 +29,6 @@ Content that describes WHAT the system does — what URLs it exposes, what user 
 | Bounded-context project layout (full `src/contexts/<bc>/...` recursion) | `specs/apps/<app-family>/components/web/architecture.md`       |
 | Layer rules (`domain` ← no imports, etc.)                               | `specs/apps/<app-family>/components/web/architecture.md`       |
 | Dormant code listing                                                    | `specs/apps/<app-family>/components/web/architecture.md`       |
-| Bounded-context map narrative + diagram                                 | `specs/apps/<app-family>/ddd/bounded-context-map.md`           |
 | Design system palette / fonts / dark-mode / token import                | `specs/apps/<app-family>/components/web/design-system.md`      |
 | Component variant catalog                                               | `specs/apps/<app-family>/components/web/design-system.md`      |
 | API endpoints table                                                     | `specs/apps/<app-family>/components/be/api.md`                 |

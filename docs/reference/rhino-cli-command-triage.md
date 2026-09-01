@@ -13,6 +13,11 @@ created: 2026-06-30
 # rhino-cli Command Triage
 
 > Source of truth: [`tech-docs.md §3`](../../plans/done/2026-07-01__standardize-rhino-cli-sdlc-parity/tech-docs.md#3-rhino-cli-command-triage-wired-vs-not-wired)
+>
+> **Retired 2026-09-01 — DDD engineering surfaces.** Row 34b (`specs domain-coverage validate`),
+> the `bc:` and `ul:` structural layers folded into row 30, and the `specs.ddd-areas` /
+> `specs.domain-areas` configuration keys no longer exist. Rows and rationale mentioning them are
+> retained as the historical record of the original triage, not as current command surface.
 
 A command is **wired** when lifecycle automation (a `.husky` hook step, a `.github/workflows` job, or
 an Nx target reachable from a hook or CI gate) invokes it. A command is **not wired** when it exists

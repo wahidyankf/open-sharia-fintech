@@ -64,13 +64,13 @@ type RepoConfigSteps() =
     // ---- Given: "Repo-specific behaviour is data-driven, not hard-coded" ----
 
     [<Given>]
-    member _.``rhino-cli's repo-specific behaviour \(env globs, domain/ddd areas\)``() =
+    member _.``rhino-cli's repo-specific behaviour \(env globs, doctor tool skips\)``() =
         useOwnedTempDir ()
-        // `widget-app` is deliberately not one of this repository's real
-        // ddd-areas — a config-declared value with no source-hard-coded
+        // `widget-tool` is deliberately not one of this repository's real
+        // skipped tools — a config-declared value with no source-hard-coded
         // counterpart is exactly what demonstrates data-driven, not
         // hard-coded, behaviour.
-        writeFile "repo-config.yml" "specs:\n  ddd-areas:\n    - widget-app\n  domain-areas: []\n"
+        writeFile "repo-config.yml" "doctor:\n  skip-tools:\n    - widget-tool\n"
 
     [<When>]
     member _.``rhino-cli runs``() =
@@ -83,11 +83,11 @@ type RepoConfigSteps() =
         match loadedConfig with
         | None -> Assert.Fail("no config was loaded by a When step")
         | Some config ->
-            Assert.Equal<string list>([ "widget-app" ], config.Specs.DddAreas)
+            Assert.Equal<string list>([ "widget-tool" ], config.Doctor.SkipTools)
 
             Assert.False(
-                config.Specs.DddAreas = [ "organiclever"; "ose" ],
-                "the ddd-areas list must come from repo-config.yml, not a source-hard-coded default"
+                List.isEmpty config.Doctor.SkipTools,
+                "the skip-tools list must come from repo-config.yml, not a source-hard-coded default"
             )
 
     // ---- Given/When/Then: codex entry + exactly-three-harnesses scenarios ----

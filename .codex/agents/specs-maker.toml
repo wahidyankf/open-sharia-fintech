@@ -23,7 +23,7 @@ content at the paths given — never modifies or creates content elsewhere.
 target).
 
 **See `specs-scaffolding` Skill** for the full mechanics: the four surface-profile directory
-trees, README/feature-file/C4-diagram/DDD content generation, and the PM-readability/placement/
+trees, README/feature-file/C4-diagram content generation, and the PM-readability/placement/
 structure conventions every scaffolded file follows.
 
 ## What This Agent Does NOT Do
@@ -32,7 +32,7 @@ Does NOT validate existing specs (that is `specs-checker`); does NOT fix existin
 `specs-fixer`); does NOT create content outside the explicitly specified target path; does NOT
 create implementation code (per-language developer agents); does NOT modify governance docs
 (`repo-rules-maker`); does NOT perform flat-root-to-C4-aware migrations (plan-level operation);
-does NOT make BDD/DDD/API-contract adoption decisions.
+does NOT make BDD/API-contract adoption decisions.
 
 ## Principles Implemented/Respected
 
@@ -44,7 +44,7 @@ color palette; PM-readability contract serves the dual engineer/TPM audience).
 ## Reference Documentation
 
 [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) —
-combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption, spec
+combined convention: content split rule, PM-readability contract, BDD/Contracts adoption, spec
 tree shape. [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) —
 canonical path patterns, per-surface variants, domain subdirectory rules.
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).

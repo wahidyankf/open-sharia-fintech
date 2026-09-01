@@ -152,8 +152,7 @@ let ``load defaults every section to empty when repo-config.yml declares none of
         | Ok config ->
             Assert.Empty(config.Harness)
             Assert.Empty(config.Gates)
-            Assert.Empty(config.Specs.DddAreas)
-            Assert.Empty(config.Specs.DomainAreas)
+            Assert.Empty(config.Doctor.SkipTools)
             Assert.Equal<string option>(None, config.Doctor.DotnetGlobalJson)
         | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
     finally

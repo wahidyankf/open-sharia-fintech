@@ -52,13 +52,6 @@ specs/apps/<app-family>/
 │       ├── architecture.md
 │       ├── design-system.md
 │       └── routes-and-screens.md
-├── ddd/                    # When DDD adopted (app root, not under components/)
-│   ├── README.md
-│   ├── bounded-contexts.yaml
-│   ├── bounded-context-map.md
-│   └── ubiquitous-language/
-│       ├── README.md
-│       └── <bc>.md
 └── behavior/
     ├── README.md
     ├── be/

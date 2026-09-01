@@ -122,14 +122,6 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
-    "specs:domain:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs domain-coverage validate --shared-steps --exclude-dir messaging specs/apps/ose/behavior/be/gherkin apps/ose-be"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature", "{projectRoot}/src/**/*.fs"]
-    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
@@ -164,8 +156,7 @@
       "options": {
         "commands": [
           "npx nx run ose-be:specs:structure-validation",
-          "npx nx run ose-be:specs:behavior:coverage",
-          "npx nx run ose-be:specs:domain:coverage"
+          "npx nx run ose-be:specs:behavior:coverage"
         ],
         "parallel": false
       },

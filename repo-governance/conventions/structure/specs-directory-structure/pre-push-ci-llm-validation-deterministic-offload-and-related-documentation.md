@@ -29,10 +29,8 @@ surface their entries declare:
 - `_reusable-www-test-local-deploy.yml` and `_reusable-app-test-local-deploy-stag.yml` — the
   `specs-gate` job in `deploy.needs:`, called by the www and app cron deploys
 
-**No specs/DDD command in `rhino-cli` is dead** — every `commands/specs_*.rs` module is reachable
-from a `SpecsCommands` variant, and every variant is invoked by an Nx target or registry gate. The
-DDD bounded-context and ubiquitous-language validators have no CLI verb; `specs structure validate`
-is their only entry point.
+**No specs command in `rhino-cli` is dead** — every specs module is reachable from a `SpecsCommands`
+variant, and every variant is invoked by an Nx target or registry gate.
 
 ## LLM Semantic Validation (specs-checker)
 
@@ -56,7 +54,7 @@ When reviewing changes to the `specs/` directory, verify:
 
 ## Related Documentation
 
-- [App README vs Specs Convention](../app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
+- [App README vs Specs Convention](../app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/Contracts adoption
 - [Specs-Application Sync Convention](../../../development/quality/specs-application-sync.md) — bidirectional sync between specs and application code
 - [BDD Spec-Test Mapping](../../../development/infra/bdd-spec-test-mapping.md) — how specs map to test implementations
 - [Three-Level Testing Standard](../../../development/quality/three-level-testing-standard.md) — unit, integration, and E2E testing levels

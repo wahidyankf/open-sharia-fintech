@@ -24,8 +24,6 @@
     <Compile Include="src/Specs.fs" />
     <Compile Include="src/Contracts.fs" />
     <Compile Include="src/RepoGovernance.fs" />
-    <Compile Include="src/Ddd.fs" />
-    <Compile Include="src/Glossary.fs" />
   </ItemGroup>
 
   <ItemGroup>

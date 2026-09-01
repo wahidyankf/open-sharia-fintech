@@ -125,17 +125,6 @@
         "{projectRoot}/src/**/*.fs"
       ]
     },
-    "specs:domain:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs domain-coverage validate --shared-steps --exclude-dir messaging specs/apps/organiclever/behavior/organiclever-be/gherkin apps/organiclever-be"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-be/gherkin/**/*.feature",
-        "{projectRoot}/src/**/*.fs"
-      ]
-    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
@@ -170,8 +159,7 @@
       "options": {
         "commands": [
           "npx nx run organiclever-be:specs:structure-validation",
-          "npx nx run organiclever-be:specs:behavior:coverage",
-          "npx nx run organiclever-be:specs:domain:coverage"
+          "npx nx run organiclever-be:specs:behavior:coverage"
         ],
         "parallel": false
       },

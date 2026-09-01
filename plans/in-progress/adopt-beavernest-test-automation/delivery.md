@@ -1812,6 +1812,17 @@ the missing field.
 - **Input:** both DDD rows and shared Rhino parity paths.
 - **Outcome:** DDD tooling/specs/tests are absent in both repos; shared Rhino stays byte-identical.
 - **Acceptance criteria:** [AC-TEST-07, AC-TEST-08, AC-REPO-01, AC-DDD-01, and AC-RULES-01](./prd.md#acceptance-criteria).
+
+> **Execution state:** `D-P3-PUB` and `D-P3-PRI` deliver together. `RhinoCli.Application/src/Ddd.fs`
+> and `Glossary.fs`, their step files, the `specs domain-coverage validate` route, the
+> `repo-config.yml` `specs:` section, and the `specs:domain:coverage` Nx targets are removed in both
+> repositories; `specs validate-adoption` now reports a surviving retired `ddd/` tree instead of a
+> missing `bounded-contexts.yaml`. `apps/rhino-cli` and `specs/apps/rhino` stay byte-identical across
+> the two repositories, verified by index-blob comparison and a regenerated
+> `apps/rhino-cli/parity-manifest.sha256`. Deletions carry the retired surface out of `docs/`,
+> `repo-governance/`, and the `.claude/` skill and agent sources; the `docs/reference` triage record
+> keeps its history behind a retirement note.
+
 - [ ] [AI] **RED — public DDD command retirement:** create
       `apps/rhino-cli/src/tests/unit/Steps/DddRetirementUnitTests.fs`, add it to the unit `.fsproj`,
       and assert the CLI/help/config parser has no DDD namespace. Run

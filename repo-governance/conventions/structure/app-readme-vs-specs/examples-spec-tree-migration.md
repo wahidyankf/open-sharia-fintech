@@ -25,7 +25,6 @@ specs/apps/organiclever/
 │   └── gherkin/
 ├── web/
 │   └── gherkin/
-├── ddd/
 ├── c4/
 └── contracts/
 ```
@@ -38,7 +37,6 @@ specs/apps/organiclever/
 ├── system-context/
 ├── containers/
 │   └── contracts/
-├── ddd/
 ├── components/
 │   ├── be/
 │   └── web/
@@ -57,8 +55,7 @@ specs/apps/organiclever/
 2. In one atomic `git mv` commit: move `be/gherkin/` → `behavior/<product>-be/gherkin/`,
    `web/gherkin/` → `behavior/<product>-web/gherkin/`,
    `cli/gherkin/` → `behavior/<product>-cli/gherkin/`, `c4/*.md` files → their new positions,
-   `contracts/` → `containers/contracts/`. `ddd/` stays at the app root (do not relocate it
-   under `components/web/`; the ubiquitous language is per bounded context, not per surface).
+   `contracts/` → `containers/contracts/`.
    Feature files must be nested under a domain subdir — e.g.,
    `behavior/<product>-cli/gherkin/<domain>/<feature>.feature`.
 3. In the same commit: update rhino-cli path constants, Nx `project.json` `inputs`, step file references, and governance cross-links.

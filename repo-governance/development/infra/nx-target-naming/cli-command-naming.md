@@ -55,7 +55,7 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 
 - `env validate`, `env init`, `env backup`, `env restore`
 - `env staged-guard validate`
-- `specs structure validate`, `specs behavior-coverage validate`, `specs domain-coverage validate`
+- `specs structure validate`, `specs behavior-coverage validate`
 - All `{domain} audit` leaf commands
 
 **Rules**:
