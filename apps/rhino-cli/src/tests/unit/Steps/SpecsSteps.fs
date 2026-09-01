@@ -167,6 +167,49 @@ type SpecsSteps() =
             )
         )
 
+    /// Builds one logical owner corpus under `specs/apps/<app>/<owner>/` and
+    /// returns its absolute root. Each `with*` flag drops exactly one required
+    /// entry, so a scenario names the single thing it is proving the validator
+    /// notices rather than assembling a tree by hand.
+    let specCreateCorpus
+        (app: string)
+        (owner: string)
+        (withReadme: bool)
+        (withBehaviors: bool)
+        (withFeature: bool)
+        (withBehaviorsReadme: bool)
+        : string =
+        let ownerDir = Path.Combine(specFixtureRoot (), "specs", "apps", app, owner)
+        Directory.CreateDirectory ownerDir |> ignore
+        File.WriteAllText(Path.Combine(ownerDir, "architecture.md"), "# Architecture\n")
+
+        if withReadme then
+            File.WriteAllText(Path.Combine(ownerDir, "README.md"), "# Index\n")
+
+        if withBehaviors then
+            let behaviorsDir = Path.Combine(ownerDir, "behaviors")
+            Directory.CreateDirectory behaviorsDir |> ignore
+
+            if withBehaviorsReadme then
+                File.WriteAllText(Path.Combine(behaviorsDir, "README.md"), "# Index\n")
+
+            if withFeature then
+                File.WriteAllText(
+                    Path.Combine(behaviorsDir, "example.feature"),
+                    String.Join(
+                        "\n",
+                        [ "Feature: Example"
+                          ""
+                          "  Scenario: Works"
+                          "    Given a thing"
+                          "    When it runs"
+                          "    Then it passes"
+                          "" ]
+                    )
+                )
+
+        ownerDir
+
     /// Records one validator run's findings, rendered output, and exit code.
     let specRecord (findings: SpecFinding list) : unit =
         specFindings <- findings
@@ -1105,6 +1148,47 @@ type SpecsSteps() =
     member _.``the developer runs "rhino-cli specs validate-tree unknownapp"``() =
         specRecord (validateSpecTree (specFixtureRoot ()) "unknownapp")
 
+    // ---- Given/When (`validate-logical-corpus.feature`) ----
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" with its README, architecture, and a behaviors feature``
+        ()
+        =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" whose README.md is absent``() =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" false true true true |> ignore
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" whose behaviors directory is absent``() =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" true false false false |> ignore
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" whose behaviors directory holds no feature file``() =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" true true false true |> ignore
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" whose behaviors directory has no README.md``() =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" true true true false |> ignore
+
+    [<Given>]
+    member _.``a logical owner corpus for "testapp" at "cli" beside a surviving "product" folder``() =
+        specApp <- "testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
+
+        Directory.CreateDirectory(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "product"))
+        |> ignore
+
+    [<When>]
+    member _.``the developer runs "rhino-cli specs validate-gherkin-domains testapp"``() =
+        specRecord (validateSpecGherkinDomains (specFixtureRoot ()) "testapp")
+
     // ---- Then (shared by every spec-tree validator scenario) ----
 
     [<Then>]
@@ -1118,6 +1202,26 @@ type SpecsSteps() =
     [<Then>]
     member _.``the output contains "0 finding"``() =
         Assert.Contains("0 finding", specOutput, StringComparison.Ordinal)
+
+    [<Then>]
+    member _.``the output contains "missing required entry: README.md"``() =
+        Assert.Contains("missing required entry: README.md", specOutput, StringComparison.Ordinal)
+
+    [<Then>]
+    member _.``the output contains "missing required entry: behaviors"``() =
+        Assert.Contains("missing required entry: behaviors", specOutput, StringComparison.Ordinal)
+
+    [<Then>]
+    member _.``the output contains "missing required entry: behaviors/README.md"``() =
+        Assert.Contains("missing required entry: behaviors/README.md", specOutput, StringComparison.Ordinal)
+
+    [<Then>]
+    member _.``the output contains "legacy folder product survives beside a logical owner corpus"``() =
+        Assert.Contains(
+            "legacy folder product survives beside a logical owner corpus",
+            specOutput,
+            StringComparison.Ordinal
+        )
 
     [<Then>]
     member _.``the output contains "no feature files"``() =
@@ -1879,6 +1983,48 @@ let ``app with folder missing README reports a finding`` () =
 [<Fact>]
 let ``app with no spec tree at all reports findings for every required folder`` () =
     FeatureRunner.run "validate-tree.feature" "app with no spec tree at all reports findings for every required folder"
+
+[<Fact>]
+let ``a product whose single owner corpus is complete passes validation`` () =
+    FeatureRunner.run
+        "validate-logical-corpus.feature"
+        "a product whose single owner corpus is complete passes validation"
+
+[<Fact>]
+let ``an owner corpus missing its README reports a finding`` () =
+    FeatureRunner.run "validate-logical-corpus.feature" "an owner corpus missing its README reports a finding"
+
+[<Fact>]
+let ``an owner corpus with no behaviors directory reports a finding`` () =
+    FeatureRunner.run "validate-logical-corpus.feature" "an owner corpus with no behaviors directory reports a finding"
+
+[<Fact>]
+let ``an owner corpus whose behaviors tree holds no feature file reports a finding`` () =
+    FeatureRunner.run
+        "validate-logical-corpus.feature"
+        "an owner corpus whose behaviors tree holds no feature file reports a finding"
+
+[<Fact>]
+let ``an owner corpus whose behaviors tree has no index reports a finding`` () =
+    FeatureRunner.run
+        "validate-logical-corpus.feature"
+        "an owner corpus whose behaviors tree has no index reports a finding"
+
+[<Fact>]
+let ``legacy five-folder scaffolding surviving beside a corpus reports a finding`` () =
+    FeatureRunner.run
+        "validate-logical-corpus.feature"
+        "legacy five-folder scaffolding surviving beside a corpus reports a finding"
+
+[<Fact>]
+let ``a product that has not begun the move is still measured against the five-folder tree`` () =
+    FeatureRunner.run
+        "validate-logical-corpus.feature"
+        "a product that has not begun the move is still measured against the five-folder tree"
+
+[<Fact>]
+let ``the flat-feature rule does not fire inside a migrated corpus`` () =
+    FeatureRunner.run "validate-logical-corpus.feature" "the flat-feature rule does not fire inside a migrated corpus"
 
 [<Fact>]
 let ``All 3 harnesses are accounted for at their tier`` () =

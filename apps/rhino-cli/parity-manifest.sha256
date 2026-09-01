@@ -13,7 +13,7 @@ f73cfdceebd40120d9a8369da10c9802d555e6275f27c9cc461e263ae4f1321b  apps/rhino-cli
 5900c2cda99258674fd3e2333aaceabc0edce6ff25ccc60a2e3325fc6fca8433  apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs
 2f1fbabaa7c30a75d209d9fabe91097ec093d511040e96d0c3ca7e23e565470e  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
 e828dd0c5db7b67bc94d3185e5324148f029c976d109e077c21d1629496020ec  apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs
-dbbabe1c0e3768ec7dbdb5f777168314592c56151f4d5d1098244e659570bf49  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
+a97eadf01097a1873195f211497c490aac008d3f91f21290c76a0a71fe8acd8a  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
 06ab3d196eb9bc65d26a4fbbe2d16c9997970f28311ff7483b6899d2ac035de3  apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
 e160eed9a7ae866207cb757a09a01fc04fe4256db87766099c0d62dd6416668a  apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs
 888f126993468a84179bd2c5068dc2d00e47d548b6e2c57e02008c59ea0f165b  apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs
@@ -122,7 +122,7 @@ daa07ee11464063aa54cde4bc829d582f10c9e1b3f5c86698b9c159298c447c0  apps/rhino-cli
 e99afc8498e7d937658f115e43394ca206c9d4a9bf53235cf303ef1031600c3b  apps/rhino-cli/src/tests/unit/Steps/RepoConfigValidateSteps.fs
 d83d59d082a0dd69115f3ed4127b91685ab1b5e85116be95efcc7ec8993ac7ae  apps/rhino-cli/src/tests/unit/Steps/RepoConfigValidateUnitTests.fs
 7d6d778b3b2baaedaead7a897158eb45cbf9c0148c69a323c599ab9557d80075  apps/rhino-cli/src/tests/unit/Steps/RepoGovernanceSteps.fs
-b78193f01d45dfe456111039d67db63ab427484d246acba1c376bf09a43ce7a4  apps/rhino-cli/src/tests/unit/Steps/SpecsSteps.fs
+0e50e89b58bd6ee9d9119d8bbb8d327e527edc940d3f4d37fdcc3169135c5147  apps/rhino-cli/src/tests/unit/Steps/SpecsSteps.fs
 9357eefd0fd767cde66c6630a425aa27fef73cb0e813db34d6866bdc04e7250c  apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs
 8b7eb59244232c0ee1d545f0afa978d6ac1564d1a37b4483d87b1ff7f5864aab  apps/rhino-cli/src/tests/unit/Steps/TestContractCoverageUnitTests.fs
 2905dc61820d2dfee29831f92425350afbbc61d180e027ab6be77a8820b4220f  apps/rhino-cli/src/tests/unit/Steps/TestContractLayoutUnitTests.fs
@@ -214,6 +214,7 @@ f1f4804383ead4d55a815d3bf2663f23be40852d4d2cb136c90da956053b1365  specs/apps/rhi
 1d3f368b37867de74e60ec9964dbf69b1de0274902b371b7919afec6db407176  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-adoption.feature
 4b7bb6a12662c140be4624fae8cd71942b22ec1e43ccf38e6c3db2f2c4e05ac2  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-counts.feature
 7461e1f5d2a6c6ee23a7ff7156df46cd3c5d33e96ee98fad8106bd1310b2141e  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-links.feature
+948a36c19a68b719666af05ee6344d7df5b8262630925240436f57498326f8c2  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-logical-corpus.feature
 4adf044e8981e0e0d99d2f7f8aef1437e65af013812f9dd5dd4b81f34e746513  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-tree.feature
 f45e16b233ce1794eca625fd2da002608df2788647d9b7a293849ee0f8429879  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/worktree-agnostic.feature
 d8bbce013eec21f3e4c0e867c89750fee4d107aeeb1f4c62f7a1ee4726128914  specs/apps/rhino/behavior/rhino-cli/gherkin/system/README.md
