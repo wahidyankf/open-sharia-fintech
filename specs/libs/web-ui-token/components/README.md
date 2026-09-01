@@ -12,7 +12,6 @@ C4 Level 3 components for `web-ui-token`.
 | `organiclever.css` | —             | OrganicLever warm OKLCH brand overlay             |
 | `ose.css`          | —             | OSE Platform brand overlay                        |
 | `ayokoding.css`    | —             | AyoKoding brand overlay                           |
-| `wahidyankf.css`   | —             | wahidyankf personal-site brand overlay            |
 
 See [../behavior/gherkin/tokens/](../behavior/gherkin/tokens/) for the behavioral spec.
 See [component-web-ui-token.md](./component-web-ui-token.md) for the C4 component diagram

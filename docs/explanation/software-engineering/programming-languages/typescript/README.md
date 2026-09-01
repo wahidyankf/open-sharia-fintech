@@ -677,7 +677,6 @@ apps/
 ├── ose-www/         # Next.js 16 content platform (TypeScript, tRPC)
 ├── ayokoding-www/            # Next.js 16 fullstack content platform (TypeScript, tRPC)
 ├── organiclever-www/         # Next.js 16 landing website
-├── wahidyankf-www/           # Next.js 16 personal portfolio
 └── rhino-cli/                # F# CLI tool (repository management)
 
 libs/

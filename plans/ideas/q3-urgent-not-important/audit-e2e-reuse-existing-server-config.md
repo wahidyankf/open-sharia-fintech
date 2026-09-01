@@ -33,7 +33,7 @@ A repo-wide grep on 2026-07-30 recorded the setting hardcoded `true` uncondition
 `apps/organiclever-www-fe-e2e/playwright.config.ts:28`,
 `apps/ose-www-be-e2e/playwright.config.ts:29`, and
 `apps/ose-www-fe-e2e/playwright.config.ts:35` — because
-[`apps/wahidyankf-www-fe-e2e/playwright.config.ts`](../../../apps/wahidyankf-www-fe-e2e/playwright.config.ts)
+`apps/wahidyankf-www-fe-e2e/playwright.config.ts`
 now carries no `webServer` block at all, so the setting is simply absent there. Exactly one config
 gates it correctly:
 [`apps/organiclever-app-web-e2e/playwright.config.ts:53`](../../../apps/organiclever-app-web-e2e/playwright.config.ts)
@@ -102,7 +102,10 @@ Explicitly out of scope:
 - **Does the config population still match the original audit?** It already does not — the
   2026-07-30 list of six is down to five, and `wahidyankf-www-fe-e2e` lost its `webServer` block
   entirely rather than gaining a gate. Whether that removal was deliberate, and whether that suite
-  now relies on an externally started server, is unknown. (open)
+  now relies on an externally started server, is unknown. (open) **Update 2026-09-01:**
+  `wahidyankf-www-fe-e2e` was removed from this repository along with `wahidyankf-www`, so this
+  question is closed by deletion rather than answered. The audit's remaining scope is the five
+  configs listed above, all of which are still here.
 - **Is an automated guard worth its maintenance cost?** A `ci-checker` rule catches future
   regressions but adds a rule to maintain; a comment convention is cheaper but unenforced. (open)
 - **Scope creep into the configs' test scenarios** — the remedy is limited to the

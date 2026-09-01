@@ -21,12 +21,12 @@ Tags are the standard mechanism for attaching structured metadata to projects in
 
 Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
 
-| Dimension | Prefix      | Allowed Values                                                             | Required                       | Purpose                                                       |
-| --------- | ----------- | -------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| Type      | `type:`     | `app`, `lib`, `e2e`                                                        | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
-| Platform  | `platform:` | `cli`, `nextjs`, `axum`, `playwright`                                      | Apps and e2e projects          | Framework or runtime environment                              |
-| Language  | `lang:`     | `ts`, `rust`, `dotnet`                                                     | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `crane`, `ose`, `organiclever`, `wahidyankf`, `tooling`, `ui` | Always                         | Business or product domain                                    |
+| Dimension | Prefix      | Allowed Values                                               | Required                       | Purpose                                                       |
+| --------- | ----------- | ------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                          | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `cli`, `nextjs`, `axum`, `playwright`                        | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `ts`, `rust`, `dotnet`                                       | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `crane`, `ose`, `organiclever`, `tooling`, `ui` | Always                         | Business or product domain                                    |
 
 ## Special Rules
 

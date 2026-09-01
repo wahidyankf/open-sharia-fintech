@@ -27,7 +27,7 @@ This convention governs THREE interrelated decisions:
 
 A fourth rule covers adoption expectations for BDD and API contracts.
 
-The convention applies to all apps and infra directories in the monorepo. Its OrganicLever application is the reference pilot. Rollout to `ayokoding`, `ose`, `wahidyankf`, and `rhino` follows the same rules.
+The convention applies to all apps and infra directories in the monorepo. Its OrganicLever application is the reference pilot. Rollout to `ayokoding`, `ose`, and `rhino` follows the same rules.
 
 ## Scope
 

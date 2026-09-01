@@ -133,11 +133,10 @@ and other validation tasks.
 
 ### Content Platforms
 
-| Project        | Dependencies | Spec Inputs |
-| -------------- | ------------ | ----------- |
-| ayokoding-www  | (none)       | (none)      |
-| ose-www        | (none)       | (none)      |
-| wahidyankf-www | (none)       | (none)      |
+| Project       | Dependencies | Spec Inputs |
+| ------------- | ------------ | ----------- |
+| ayokoding-www | (none)       | (none)      |
+| ose-www       | (none)       | (none)      |
 
 ### OrganicLever
 

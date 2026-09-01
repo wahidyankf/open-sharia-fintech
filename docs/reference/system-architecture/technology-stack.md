@@ -23,7 +23,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **React**: 19
 - **Styling**: TailwindCSS + Radix UI / shadcn-ui
 - **Deployment**: Vercel
-- **Applications**: ose-www, organiclever-www, organiclever-app-web, ayokoding-www, wahidyankf-www (with tRPC backend)
+- **Applications**: ose-www, organiclever-www, organiclever-app-web, ayokoding-www (with tRPC backend)
 
 ### Backend
 

@@ -32,7 +32,6 @@ canonical set, organized by tier:
 | --------------------------------------------- | ------------------ | ----------------------- |
 | `ose-www-test-local-deploy-prod.yml`          | `ose-www`          | `prod-ose-www`          |
 | `ayokoding-www-test-local-deploy-prod.yml`    | `ayokoding-www`    | `prod-ayokoding-www`    |
-| `wahidyankf-www-test-local-deploy-prod.yml`   | `wahidyankf-www`   | `prod-wahidyankf-www`   |
 | `organiclever-www-test-local-deploy-prod.yml` | `organiclever-www` | `prod-organiclever-www` |
 
 ## app tier — callers of `_reusable-app-test-local-deploy-stag.yml` / `_reusable-app-test-stag.yml`

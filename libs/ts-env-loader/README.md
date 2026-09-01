@@ -27,5 +27,4 @@ loadTierEnv();
 
 ## Consumers
 
-`ayokoding-www`, `organiclever-app-web`, `organiclever-www`, `ose-app-web`, `ose-www`,
-`wahidyankf-www`.
+`ayokoding-www`, `organiclever-app-web`, `organiclever-www`, `ose-app-web`, `ose-www`.

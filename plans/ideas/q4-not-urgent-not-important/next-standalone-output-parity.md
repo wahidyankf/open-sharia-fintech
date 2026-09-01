@@ -1,8 +1,12 @@
-# Bring `organiclever-www` and `wahidyankf-www` onto `output: "standalone"`
+# Bring `organiclever-www` onto `output: "standalone"`
 
 One-line summary: four of the six Next.js apps set `output: "standalone"` and two do not, so those
 two images run `next start` under a resident wrapper parent — two Node processes instead of one, plus
 a full `node_modules` in the final layer.
+
+**Update 2026-09-01:** `wahidyankf-www` was removed from this repository, so of the two apps the
+analysis below names, only `organiclever-www` remains in scope. The dated observations are kept as
+written; read every count in them as one lower.
 
 > Surfaced 2026-08-19 during the runtime-port-override delivery (PR #230), where the divergence was
 > documented in `scripts/next-with-port.mjs` rather than fixed.

@@ -36,7 +36,6 @@ Content files under the following app directories that render in the UI may keep
 - `apps/ayokoding-www/` — educational platform content
 - `apps/ose-www/` — platform marketing content
 - `apps/organiclever-www/` — OrganicLever marketing site content
-- `apps/wahidyankf-www/` — personal portfolio content
 
 The `date:` field in ose-www post frontmatter (publication date, not maintenance date) is also unaffected.
 

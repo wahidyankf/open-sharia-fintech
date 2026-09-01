@@ -51,7 +51,6 @@ cargo llvm-cov --lib --fail-under-lines 90
 | organiclever-app-web | 70%       | None       |
 | ayokoding-www        | 80%       | None       |
 | ose-www              | 80%       | None       |
-| wahidyankf-www       | 80%       | None       |
 
 ### F# Projects
 
@@ -79,7 +78,6 @@ dotnet test --collect:"XPlat Code Coverage" \
 | organiclever-app-web | >= 70%    | Frontend app with MSW integration tests |
 | ayokoding-www        | >= 80%    | Content platform with UI rendering code |
 | ose-www              | >= 80%    | Content platform with UI rendering code |
-| wahidyankf-www       | >= 80%    | Personal portfolio (Next.js)            |
 
 ## CI Integration
 

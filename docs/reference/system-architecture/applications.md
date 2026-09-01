@@ -43,17 +43,6 @@ The platform consists of the following applications across its technology stacks
 - **Location**: `apps/ayokoding-www/`
 - **Content**: Co-located at `apps/ayokoding-www/content/`
 
-#### wahidyankf-www
-
-- **Purpose**: Personal portfolio site for Wahidyan Kresna Fridayoka
-- **URL**: <https://www.wahidyankf.com>
-- **Technology**: Next.js 16 (App Router) + TypeScript
-- **Deployment**: Vercel (via `prod-wahidyankf-www` branch)
-- **Build Command**: `nx build wahidyankf-www`
-- **Dev Command**: `nx dev wahidyankf-www`
-- **Dev Port**: 3201
-- **Location**: `apps/wahidyankf-www/`
-
 #### organiclever-www
 
 - **Purpose**: Marketing website for the OrganicLever productivity platform
@@ -153,13 +142,6 @@ The platform consists of the following applications across its technology stacks
 - **Run Command**: `nx run ayokoding-www-be-e2e:test:e2e`
 - **Location**: `apps/ayokoding-www-be-e2e/`
 
-#### wahidyankf-www-fe-e2e
-
-- **Purpose**: Frontend E2E tests for wahidyankf-www UI (Playwright-BDD)
-- **Technology**: Playwright-BDD
-- **Run Command**: `nx run wahidyankf-www-fe-e2e:test:e2e`
-- **Location**: `apps/wahidyankf-www-fe-e2e/`
-
 #### organiclever-www-fe-e2e
 
 - **Purpose**: Frontend E2E tests for organiclever-www UI
@@ -199,7 +181,6 @@ graph LR
     subgraph "Marketing & Education"
         OSE[ose-www<br/>Next.js App]
         AYO[ayokoding-www<br/>Next.js App]
-        WKF[wahidyankf-www<br/>Next.js App]
     end
 
     subgraph "Shared Infrastructure"
@@ -209,12 +190,10 @@ graph LR
     RHINO -->|Repository automation| NX
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
-    NX -.->|Manages| WKF
     NX -.->|Manages| RHINO
 
     style OSE fill:#0077b6,stroke:#03045e,color:#ffffff
     style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
-    style WKF fill:#0077b6,stroke:#03045e,color:#ffffff
     style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
 ```
@@ -258,7 +237,6 @@ Marketing & Education Sites:
 
 - ose-www: Next.js 16 content platform
 - ayokoding-www: Next.js fullstack content platform
-- wahidyankf-www: Next.js 16 personal portfolio
 
 CLI Tools:
 

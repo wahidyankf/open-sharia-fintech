@@ -26,8 +26,6 @@ when_to_use: Use when copying an existing project's tag set as a template or che
 | `organiclever-app-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `organiclever-be-e2e`      | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `ose-www`                  | `["type:app", "platform:nextjs", "lang:ts", "domain:ose"]`               |
-| `wahidyankf-www`           | `["type:app", "platform:nextjs", "lang:ts", "domain:wahidyankf"]`        |
-| `wahidyankf-www-fe-e2e`    | `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`    |
 | `ts-env-loader`            | `["type:lib", "lang:ts", "domain:config"]`                               |
 
 ## Example: Complete Tag Declaration

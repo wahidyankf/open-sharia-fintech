@@ -7,7 +7,7 @@ import { LandingPage } from "./components/landing-page";
  * principles, footer) carried over from the former organiclever-app-web
  * landing context. This site is greenfield-simple: no local-first database
  * and no client-side state-machine library — just static marketing content
- * built on the wahidyankf-www `features/` shape.
+ * built on the `features/` module-root shape the sibling www apps share.
  */
 export function HomeContent() {
   return <LandingPage />;

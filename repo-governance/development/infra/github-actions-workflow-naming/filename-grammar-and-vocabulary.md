@@ -22,11 +22,11 @@ Every workflow filename follows this grammar:
 [_reusable-]{domain}-{action-chain}.yml
 ```
 
-| Token            | Description                                                                                                                                                                                                                                                                                                    |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_reusable-`     | Optional prefix. Use **only** for `workflow_call` reusables. Never use on caller workflows.                                                                                                                                                                                                                    |
-| `{domain}`       | The app or cross-cutting group the workflow serves. App/group values: `ose-www`, `ayokoding-www`, `organiclever-www`, `wahidyankf-www`, `organiclever-app`, `ose-app`, `organiclever-be`, `ose-be`. Cross-cutting values: `commons`, `markdown`, `docs`, `dependency`, or any `{cli-name}` (e.g. `crane-cli`). |
-| `{action-chain}` | One or more verbs and environment qualifiers joined by `-`, written left-to-right in execution order (see vocabulary below).                                                                                                                                                                                   |
+| Token            | Description                                                                                                                                                                                                                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_reusable-`     | Optional prefix. Use **only** for `workflow_call` reusables. Never use on caller workflows.                                                                                                                                                                                                  |
+| `{domain}`       | The app or cross-cutting group the workflow serves. App/group values: `ose-www`, `ayokoding-www`, `organiclever-www`, `organiclever-app`, `ose-app`, `organiclever-be`, `ose-be`. Cross-cutting values: `commons`, `markdown`, `docs`, `dependency`, or any `{cli-name}` (e.g. `crane-cli`). |
+| `{action-chain}` | One or more verbs and environment qualifiers joined by `-`, written left-to-right in execution order (see vocabulary below).                                                                                                                                                                 |
 
 ## Verb and Qualifier Vocabulary
 

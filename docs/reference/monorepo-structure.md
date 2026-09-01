@@ -96,8 +96,6 @@ Flat structure - all apps at the same level, no subdirectories.
 - `organiclever-app-web-e2e` - Playwright FE E2E tests for organiclever-app-web
 - `organiclever-be` - OrganicLever F#/Giraffe/ASP.NET REST API backend (port 8202)
 - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
-- `wahidyankf-www` - Personal portfolio website (Next.js 16 application, port 3201)
-- `wahidyankf-www-fe-e2e` - Playwright FE E2E tests for wahidyankf-www
 
 ### App Structure (Next.js Application — ose-www)
 
@@ -368,12 +366,12 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 All projects use a standard four-dimension tag scheme:
 
-| Dimension   | Values                                                      | Required                 | Purpose                 |
-| ----------- | ----------------------------------------------------------- | ------------------------ | ----------------------- |
-| `type:`     | `app`, `lib`, `e2e`                                         | Yes                      | Project kind            |
-| `platform:` | `cli`, `nextjs`, `spring-boot`, `playwright`                | For apps/e2e             | Framework/runtime       |
-| `lang:`     | `rust`, `ts`, `dotnet`                                      | Where source code exists | Primary language        |
-| `domain:`   | `ayokoding`, `ose`, `organiclever`, `wahidyankf`, `tooling` | Yes                      | Business/product domain |
+| Dimension   | Values                                        | Required                 | Purpose                 |
+| ----------- | --------------------------------------------- | ------------------------ | ----------------------- |
+| `type:`     | `app`, `lib`, `e2e`                           | Yes                      | Project kind            |
+| `platform:` | `cli`, `nextjs`, `spring-boot`, `playwright`  | For apps/e2e             | Framework/runtime       |
+| `lang:`     | `rust`, `ts`, `dotnet`                        | Where source code exists | Primary language        |
+| `domain:`   | `ayokoding`, `ose`, `organiclever`, `tooling` | Yes                      | Business/product domain |
 
 **Notes**:
 

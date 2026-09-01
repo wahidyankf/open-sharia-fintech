@@ -28,7 +28,6 @@ After pushing app or library code — to the PR branch under `*-to-pr` modes, or
 | `apps/ayokoding-www/`                                       | `ayokoding-www-test-local-deploy-prod.yml`    |
 | `apps/ose-www/`                                             | `ose-www-test-local-deploy-prod.yml`          |
 | `apps/organiclever-app-web/`, `apps/organiclever-be/`       | `organiclever-app-test-local-deploy-stag.yml` |
-| `apps/wahidyankf-www/`                                      | `wahidyankf-www-test-local-deploy-prod.yml`   |
 | `libs/`, shared infrastructure, or cross-cutting governance | All workflows for apps in blast radius        |
 
 When a change touches shared code (a lib, a shared type, a contract), trigger every workflow for every app that imports that code — not just the app most obviously related to the change.
