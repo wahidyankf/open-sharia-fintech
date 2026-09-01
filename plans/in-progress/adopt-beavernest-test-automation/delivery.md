@@ -293,26 +293,26 @@ archival.
 Repository IDs never change: `R-PUB` is `ose-public`; `R-PRI` is `ose-private`. Owner IDs remain
 stable even when Phase 0 finds a project renamed or removed; record `_absent on execution base_`.
 
-| Stable owner ID   | Repository | Owner and delegated projects                     |
-| ----------------- | ---------- | ------------------------------------------------ |
-| `O-PUB-CRANE`     | `R-PUB`    | `crane-cli`                                      |
-| `O-PUB-RHINO`     | `R-PUB`    | `rhino-cli`                                      |
-| `O-PUB-FS-CORE`   | `R-PUB`    | `fsharp-crane-core`                              |
-| `O-PUB-FS-ENV`    | `R-PUB`    | `fsharp-env-loader`                              |
-| `O-PUB-TS-ENV`    | `R-PUB`    | `ts-env-loader`                                  |
-| `O-PUB-WEB-TOKEN` | `R-PUB`    | `web-ui-token`                                   |
-| `O-PUB-WEB-UI`    | `R-PUB`    | `web-ui`                                         |
-| `O-PUB-AYO`       | `R-PUB`    | `ayokoding-www`, `ayokoding-www-{fe,be}-e2e`     |
-| `O-PUB-WAHID`     | `R-PUB`    | `wahidyankf-www`, `wahidyankf-www-fe-e2e`        |
-| `O-PUB-OL-WEB`    | `R-PUB`    | `organiclever-app-web`, its E2E project          |
-| `O-PUB-OL-BE`     | `R-PUB`    | `organiclever-be`, contracts, and API E2E        |
-| `O-PUB-OL-WWW`    | `R-PUB`    | `organiclever-www`, both E2E projects            |
-| `O-PUB-OSE-WEB`   | `R-PUB`    | `ose-app-web`, its E2E project                   |
-| `O-PUB-OSE-BE`    | `R-PUB`    | `ose-be`, contracts, and API E2E                 |
-| `O-PUB-OSE-WWW`   | `R-PUB`    | `ose-www`, both E2E projects                     |
-| `O-PRI-RHINO`     | `R-PRI`    | active Rhino implementation(s), one corpus owner |
-| `O-PRI-TS-TOKEN`  | `R-PRI`    | `ts-ui-tokens`                                   |
-| `O-PRI-TS-UI`     | `R-PRI`    | `ts-ui`                                          |
+| Stable owner ID   | Repository | Owner and delegated projects                                       |
+| ----------------- | ---------- | ------------------------------------------------------------------ |
+| `O-PUB-CRANE`     | `R-PUB`    | `crane-cli`                                                        |
+| `O-PUB-RHINO`     | `R-PUB`    | `rhino-cli`                                                        |
+| `O-PUB-FS-CORE`   | `R-PUB`    | `fsharp-crane-core`                                                |
+| `O-PUB-FS-ENV`    | `R-PUB`    | `fsharp-env-loader`                                                |
+| `O-PUB-TS-ENV`    | `R-PUB`    | `ts-env-loader`                                                    |
+| `O-PUB-WEB-TOKEN` | `R-PUB`    | `web-ui-token`                                                     |
+| `O-PUB-WEB-UI`    | `R-PUB`    | `web-ui`                                                           |
+| `O-PUB-AYO`       | `R-PUB`    | `ayokoding-www`, `ayokoding-www-{fe,be}-e2e`                       |
+| `O-PUB-WAHID`     | `R-PUB`    | `wahidyankf-www`, `wahidyankf-www-fe-e2e` — DESCOPED, see Phase 13 |
+| `O-PUB-OL-WEB`    | `R-PUB`    | `organiclever-app-web`, its E2E project                            |
+| `O-PUB-OL-BE`     | `R-PUB`    | `organiclever-be`, contracts, and API E2E                          |
+| `O-PUB-OL-WWW`    | `R-PUB`    | `organiclever-www`, both E2E projects                              |
+| `O-PUB-OSE-WEB`   | `R-PUB`    | `ose-app-web`, its E2E project                                     |
+| `O-PUB-OSE-BE`    | `R-PUB`    | `ose-be`, contracts, and API E2E                                   |
+| `O-PUB-OSE-WWW`   | `R-PUB`    | `ose-www`, both E2E projects                                       |
+| `O-PRI-RHINO`     | `R-PRI`    | active Rhino implementation(s), one corpus owner                   |
+| `O-PRI-TS-TOKEN`  | `R-PRI`    | `ts-ui-tokens`                                                     |
+| `O-PRI-TS-UI`     | `R-PRI`    | `ts-ui`                                                            |
 
 Each owner row records actual project names/root/project files; runner config and test files; one
 target layer per test; native coverage commands, thresholds, exclusions, and outputs; corpus/C4
@@ -389,7 +389,7 @@ removed while another DAG node can still read it.
 | `D-O-PUB-WEB-UI`                  | 11A      | `O-PUB-WEB-UI` coordination group; six finite leaves are the PRs                | `test-contract-web-ui`                   |
 | `D-O-PRI-TS-UI`                   | 11B      | `O-PRI-TS-UI` coordination group; four finite leaves are the PRs                | `test-contract-ts-ui`                    |
 | `D-O-PUB-AYO`                     | 12       | `O-PUB-AYO` coordination group; 21 finite leaves are the PRs                    | `test-contract-ayokoding-www`            |
-| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID`                                                                   | `test-contract-wahidyankf-www`           |
+| `D-O-PUB-WAHID`                   | 13       | `O-PUB-WAHID` — DESCOPED, not executed; see Phase 13                            | `test-contract-wahidyankf-www`           |
 | `D-O-PUB-OL-WEB`                  | 14       | `O-PUB-OL-WEB`                                                                  | `test-contract-organiclever-app-web`     |
 | `D-O-PUB-OL-BE`                   | 15       | `O-PUB-OL-BE`                                                                   | `test-contract-organiclever-be`          |
 | `D-O-PUB-OL-WWW`                  | 16       | `O-PUB-OL-WWW`                                                                  | `test-contract-organiclever-www`         |
@@ -2037,10 +2037,10 @@ the missing field.
 - **Outcome:** every Nx project has exactly one typed owner/profile/migration-state registry row,
   one immutable-legacy-to-canonical compatibility map, and a valid behavior lifecycle state.
 - **Acceptance criteria:** [AC-TEST-01 and AC-REPO-01](./prd.md#acceptance-criteria).
-- [ ] [AI] `D-P4-PUB-REGISTRY-PRE-01` — Immediately before `D-P4-PUB-REGISTRY`'s first edit, execute canonical `PS-01` in `R-PUB:worktrees/adopt-beavernest-test-automation` for binding `D-P4-PUB-REGISTRY` with repository `R-PUB:worktrees/adopt-beavernest-test-automation`, branch `test-contract-validator-foundation-registry`, estimate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/estimates.tsv`, allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/allocation.txt`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/`, generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/natural-seam-exception.md`. Run the exact `PS-01 prospective-inputs` command; expect a clean exact branch and every non-empty schema-valid input. Stop before RED on any failure and save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-inputs.txt`.
-- [ ] [AI] `D-P4-PUB-REGISTRY-PRE-02` — Execute canonical `PS-02` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-REGISTRY` using allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/allocation.txt`, estimates `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/estimates.tsv`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/`, and authoritative generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`. Run the exact `PS-02 prospective-manifest` command; expect one deduplicated eight-field row per allocation and same-PR path, the three reserved public plan-state paths, positive planned-new provenance, and one authoritative ownership match for every generated row. Stop and correct the manifest on any failure; save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-manifest-validation.txt`.
-- [ ] [AI] `D-P4-PUB-REGISTRY-PRE-03` — Execute canonical `PS-03` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-REGISTRY` using candidate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-current.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/natural-seam-exception.md`. Run the exact `PS-03 prospective-gate` command; expect category C measured against the 500-line recommendation, category O at most 1,000 additions, at most 20 hand-authored files, and at most 300 total files. Stop before RED on a hard-ceiling breach or an incomplete natural-seam exception; retain the gate at the exact runtime path.
-- [ ] [AI] **RED — registry:** first run
+- [x] [AI] `D-P4-PUB-REGISTRY-PRE-01` — Immediately before `D-P4-PUB-REGISTRY`'s first edit, execute canonical `PS-01` in `R-PUB:worktrees/adopt-beavernest-test-automation` for binding `D-P4-PUB-REGISTRY` with repository `R-PUB:worktrees/adopt-beavernest-test-automation`, branch `test-contract-validator-foundation-registry`, estimate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/estimates.tsv`, allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/allocation.txt`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/`, generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/natural-seam-exception.md`. Run the exact `PS-01 prospective-inputs` command; expect a clean exact branch and every non-empty schema-valid input. Stop before RED on any failure and save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-inputs.txt`.
+- [x] [AI] `D-P4-PUB-REGISTRY-PRE-02` — Execute canonical `PS-02` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-REGISTRY` using allocation `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/allocation.txt`, estimates `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/prospective/D-P4-PUB-REGISTRY/estimates.tsv`, delivery `plans/in-progress/adopt-beavernest-test-automation/delivery.md`, notes `plans/in-progress/adopt-beavernest-test-automation/implementation-notes.md`, learnings `plans/in-progress/adopt-beavernest-test-automation/learnings.md`, runtime root `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/`, and authoritative generated map `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/generated-ownership.tsv`. Run the exact `PS-02 prospective-manifest` command; expect one deduplicated eight-field row per allocation and same-PR path, the three reserved public plan-state paths, positive planned-new provenance, and one authoritative ownership match for every generated row. Stop and correct the manifest on any failure; save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-manifest-validation.txt`.
+- [x] [AI] `D-P4-PUB-REGISTRY-PRE-03` — Execute canonical `PS-03` in `R-PUB:worktrees/adopt-beavernest-test-automation` for `D-P4-PUB-REGISTRY` using candidate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-current.tsv`, gate `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/prospective-size-gate.md`, and exception `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-P4-PUB-REGISTRY/natural-seam-exception.md`. Run the exact `PS-03 prospective-gate` command; expect category C measured against the 500-line recommendation, category O at most 1,000 additions, at most 20 hand-authored files, and at most 300 total files. Stop before RED on a hard-ceiling breach or an incomplete natural-seam exception; retain the gate at the exact runtime path.
+- [x] [AI] **RED — registry:** first run
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/registry-migration; rtk mkdir -p "$root"; rtk cp repo-config.yml "$root/repo-config.before.yml"; rtk shasum -a 256 repo-config.yml > "$root/repo-config.before.sha256"'`.
       Then create `apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs` with only the typed
       public registry/fixture input and a deterministic `not implemented` result, register it in
@@ -2069,7 +2069,7 @@ verified` and `identity -> verified`, reversed mapping transitions, duplicate be
       contract case, field, project, old value, and new value, never a compile error, crash, or
       unrelated test. Fix only the harness until that RED is valid. Save output to
       `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/registry-red.txt`.
-- [ ] [AI] **GREEN — registry expand:** retain `coverage.projects` byte-for-byte, add the exact
+- [x] [AI] **GREEN — registry expand:** retain `coverage.projects` byte-for-byte, add the exact
       `testing` root with every row at `migration-state: expanded`, exactly one typed compatibility
       map per Nx project, and the single `fsharp-env-loader` bootstrap contract from the technical
       design; all other behavior owners start active. Implement the strict dual
@@ -2088,12 +2088,12 @@ verified` and `identity -> verified`, reversed mapping transitions, duplicate be
       Expect expanded validation, normalized no-loss equality, one row and map per Nx project, only
       fsharp-env-loader in valid bootstrap, and unchanged tracked bytes around every reader. Stop
       before migration on any failure.
-- [ ] [AI] **GREEN — registry migrate:** change only every canonical `migration-state: expanded` to
+- [x] [AI] **GREEN — registry migrate:** change only every canonical `migration-state: expanded` to
       `migration-state: migrating`; do not edit another key or the frozen legacy block. Run
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/registry-migration; legacy="$root/legacy.tsv"; canonical="$root/canonical-migrating.tsv"; before="$root/migrating-reader-before.sha256"; after="$root/migrating-reader-after.sha256"; rtk shasum -a 256 repo-config.yml > "$before"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate --require-state migrating --allow-bootstrap fsharp-env-loader > "$root/migrating.txt"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate-mapping --all; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry snapshot --source canonical --project-list-from "$root/legacy.tsv" --output "$canonical"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry compare --legacy "$legacy" --canonical "$canonical" > "$root/migrating-no-loss.txt"; rtk shasum -a 256 repo-config.yml > "$after"; rtk diff -u "$before" "$after"; rtk diff -u "$legacy" "$canonical"'`.
       Expect only the allowed adjacent transition, byte-equal normalized identity TSVs, and no reader
       mutation. Stop and restore the expanded edit on a mismatch or skipped-state diagnostic.
-- [ ] [AI] **GREEN — registry verify:** change only every canonical `migration-state: migrating` to
+- [x] [AI] **GREEN — registry verify:** change only every canonical `migration-state: migrating` to
       `migration-state: verified`; keep `coverage.projects`. Run
       `rtk bash -lc 'root=local-tmp/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/registry-migration; legacy="$root/legacy.tsv"; canonical="$root/canonical.tsv"; before="$root/verified-reader-before.sha256"; after="$root/verified-reader-after.sha256"; rtk shasum -a 256 repo-config.yml > "$before"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate --require-state verified --allow-bootstrap fsharp-env-loader > "$root/verified.txt"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate-mapping --all; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry snapshot --source canonical --project-list-from "$root/legacy.tsv" --output "$canonical"; rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry compare --legacy "$legacy" --canonical "$canonical" > "$root/no-loss.txt"; rtk nx run rhino-cli:test:unit > "$root/unit.txt"; rtk shasum -a 256 repo-config.yml > "$after"; rtk diff -u "$before" "$after"; nx_count="$(rtk nx show projects --json | rtk jq length)"; test "$(rtk wc -l < "$legacy" | rtk tr -d " ")" -eq "$nx_count"; test "$(rtk wc -l < "$canonical" | rtk tr -d " ")" -eq "$nx_count"; rtk diff -u "$legacy" "$canonical"'`.
       Expect every typed/migration/mapping/lifecycle case green, one verified migration row and one
@@ -2101,7 +2101,7 @@ verified` and `identity -> verified`, reversed mapping transitions, duplicate be
       no-loss equality, and no reader mutation. Save the complete output to
       `plans/in-progress/adopt-beavernest-test-automation/evidence/phase-4/R-PUB/registry-green.txt`;
       stop on an exit-2 input, mismatch, skipped state, or mutation.
-- [ ] [AI] **REFACTOR — registry:** move only duplicated path/schema/diagnostic normalization inside
+- [x] [AI] **REFACTOR — registry:** move only duplicated path/schema/diagnostic normalization inside
       `apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs`, preserve the application and
       test `.fsproj` compile order, and confirm the cases in
       `apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs` for every schema,
@@ -7712,6 +7712,30 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 - [ ] [AI] `D-O-PUB-AYO-DB-16D` — In `R-PUB:worktrees/adopt-beavernest-test-automation` run `rtk nx affected -t build,test:quick,lint`; expect every applicable task exit 0 on the new branch. Stop and classify a preexisting failure before implementation. Save output to `local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/delivery/D-O-PUB-AYO/16d-baseline.txt`.
 
 ## Phase 13: Migrate `O-PUB-WAHID`
+
+> **DESCOPED — do not execute.** On 2026-09-01 the user recorded that a separate workstream is
+> removing `wahidyankf-www` (wahidyankf.com) together with `wahidyankf-www-fe-e2e`,
+> `specs/apps/wahidyankf/**`, and everything tied to them. No action in this phase had begun, so
+> nothing is unwound. The whole of Phase 13 — `D-O-PUB-WAHID`, `RP-OWNER-O-PUB-WAHID`, and the
+> Phase 13 Gate — is dropped, and the plan's public PR total falls by this delivery's count.
+>
+> Two conditional rules survive the drop:
+>
+> 1. **Registry rows are removed with the project, never before it.** `testing.projects[]` and
+>    `testing.compatibility.mappings[]` are a bijection with `rtk nx show projects --json`, so
+>    deleting the `wahidyankf-www` and `wahidyankf-www-fe-e2e` rows while the projects still exist
+>    fails `test-contract registry validate`. Whichever change removes the projects removes the two
+>    project rows, the two mappings, and the two frozen `coverage.projects` entries in that same
+>    change. If a rebase lands the removal without touching the registry, the next delivery in this
+>    plan repairs it before any other edit and reruns
+>    `test-contract registry validate` plus `validate-mapping --all --require-count <nx-count>`.
+> 2. **Every frozen count that named these two projects moves to the new Nx total.** The Phase 0
+>    closure, the `--require-count` arguments, and the Phase 20 contraction counts follow
+>    `rtk nx show projects --json` at the time they run, not the number frozen while the projects
+>    still existed.
+>
+> If the removal has not landed by the time this plan reaches Phase 13, this phase stays blocked
+> and the user decides whether to reinstate it — it is never resumed by default.
 
 - **Input:** complete site and frontend-harness rows.
 - **Outcome:** the site has non-overlapping runtime/static proof and direct targets.

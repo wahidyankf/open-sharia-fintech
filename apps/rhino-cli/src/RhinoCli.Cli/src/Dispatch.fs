@@ -6,6 +6,7 @@
 module RhinoCli.Cli.Dispatch
 
 open System
+open System.Globalization
 open RhinoCli.Domain.Types
 open RhinoCli.Application
 
@@ -2734,6 +2735,376 @@ let private runHarnessAuditLeaf (repoRoot: string) (format: OutputFormat) (rawAr
         eprintfn "Error: harness audit found %d failure(s)" failures.Count
         1
 
+/// Collects every occurrence of a repeatable `--flag <value>` pair.
+let private collectRepeatable (names: string list) (args: string list) : string list =
+    let rec loop (args: string list) (acc: string list) : string list =
+        match args with
+        | [] -> List.rev acc
+        | a :: v :: rest when List.contains a names -> loop rest (v :: acc)
+        | _ :: rest -> loop rest acc
+
+    loop args []
+
+/// Rejects the first `--flag` token `allowed` does not declare. Fails closed
+/// so a mistyped or retired option can never be silently ignored — the
+/// `snapshot --project` case the migration contract forbids relies on this.
+let private rejectUnknownOptions (allowed: string list) (args: string list) : Result<unit, string> =
+    match
+        args
+        |> List.filter (fun a -> a.StartsWith("--", StringComparison.Ordinal))
+        |> List.filter (fun a ->
+            let name =
+                match a.IndexOf('=') with
+                | -1 -> a
+                | index -> a.Substring(0, index)
+
+            not (List.contains name allowed))
+    with
+    | [] -> Ok()
+    | first :: _ -> Error(sprintf "unknown option: %s" first)
+
+/// Maps a [`TestContract.Failure`] onto the migration contract's exit codes:
+/// `1` for a contract failure, `2` for CLI or input misuse.
+let private reportTestContractFailure (failure: TestContract.Failure) : int =
+    match failure with
+    | TestContract.ContractFailure message ->
+        eprintfn "Error: %s" message
+        1
+    | TestContract.Misuse message ->
+        eprintfn "Error: %s" message
+        2
+
+/// Writes `lines` to `path` as a trailing-newline-terminated UTF-8 file,
+/// creating the parent directory. `path` is always a caller-supplied
+/// destination (a `local-tmp/` artifact in every documented use), never a
+/// tracked registry file.
+let private writeLines (path: string) (lines: string list) : unit =
+    let parent = System.IO.Path.GetDirectoryName(path: string)
+
+    if not (String.IsNullOrEmpty parent) then
+        System.IO.Directory.CreateDirectory parent |> ignore
+
+    let body =
+        match lines with
+        | [] -> ""
+        | lines -> String.concat "\n" lines + "\n"
+
+    System.IO.File.WriteAllText(path, body)
+
+/// Reads a snapshot TSV back into rows, rejecting any line that does not
+/// carry the four contracted fields.
+let private readSnapshotRows (path: string) : Result<TestContract.SnapshotRow list, string> =
+    if not (System.IO.File.Exists path) then
+        Error(sprintf "snapshot file not found: %s" path)
+    else
+        let rows =
+            System.IO.File.ReadAllLines path
+            |> Array.toList
+            |> List.filter (fun line -> line <> "")
+            |> List.map (fun line -> line, line.Split('\t'))
+
+        match rows |> List.tryFind (fun (_, fields) -> fields.Length <> 4) with
+        | Some(line, fields) -> Error(sprintf "snapshot row carries %d fields rather than 4: \"%s\"" fields.Length line)
+        | None ->
+            rows
+            |> List.map (fun (_, fields) ->
+                let row: TestContract.SnapshotRow =
+                    { Project = fields.[0]
+                      CanonicalOwner = fields.[1]
+                      BehaviorId = fields.[2]
+                      RuntimeIdentities = fields.[3] }
+
+                row)
+            |> Ok
+
+/// Reads the first tab-separated field of every non-empty line — the
+/// `--project-list-from` contract, which consumes a legacy snapshot verbatim
+/// so the canonical projection reproduces its exact project set.
+let private readProjectList (path: string) : Result<string list, string> =
+    if not (System.IO.File.Exists path) then
+        Error(sprintf "project list file not found: %s" path)
+    else
+        System.IO.File.ReadAllLines path
+        |> Array.toList
+        |> List.filter (fun line -> line <> "")
+        |> List.map (fun line -> line.Split('\t').[0])
+        |> Ok
+
+/// `test-contract registry snapshot` — projects one side of the dual reader
+/// into a sorted TSV. `--source legacy` accepts no project list and
+/// `--source canonical` requires one; neither form accepts `--project`.
+let private runTestContractSnapshotLeaf (repoRoot: string) (args: string list) : int =
+    let allowed = [ "--source"; "--project-list-from"; "--output"; "--help" ]
+
+    match rejectUnknownOptions allowed args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+
+        let source =
+            match stringFlag [ "--source" ] args with
+            | Some "legacy" -> Ok TestContract.SourceLegacy
+            | Some "canonical" -> Ok TestContract.SourceCanonical
+            | Some other -> Error(sprintf "--source must be legacy or canonical, found \"%s\"" other)
+            | None -> Error "--source is required and must be legacy or canonical"
+
+        match source, stringFlag [ "--output" ] args with
+        | Error message, _ ->
+            eprintfn "Error: %s" message
+            2
+        | _, None ->
+            eprintfn "Error: --output is required"
+            2
+        | Ok source, Some output ->
+            let projectList =
+                match stringFlag [ "--project-list-from" ] args with
+                | None -> Ok None
+                | Some path -> readProjectList path |> Result.map Some
+
+            match projectList with
+            | Error message ->
+                eprintfn "Error: %s" message
+                2
+            | Ok projectList ->
+                match TestContract.parseRegistry repoRoot with
+                | Error failure -> reportTestContractFailure failure
+                | Ok registry ->
+                    match TestContract.snapshot registry source projectList with
+                    | Error failure -> reportTestContractFailure failure
+                    | Ok rows ->
+                        writeLines output (rows |> List.map TestContract.renderRow)
+
+                        printfn
+                            "registry-snapshot: rows=%d source=%s"
+                            (List.length rows)
+                            (match source with
+                             | TestContract.SourceLegacy -> "legacy"
+                             | TestContract.SourceCanonical -> "canonical")
+
+                        0
+
+/// `test-contract registry compare` — requires byte equality of the two
+/// identity projections, which is what proves the expand step lost nothing.
+let private runTestContractCompareLeaf (args: string list) : int =
+    match rejectUnknownOptions [ "--legacy"; "--canonical"; "--help" ] args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+
+        match stringFlag [ "--legacy" ] args, stringFlag [ "--canonical" ] args with
+        | None, _ ->
+            eprintfn "Error: --legacy is required"
+            2
+        | _, None ->
+            eprintfn "Error: --canonical is required"
+            2
+        | Some legacyPath, Some canonicalPath ->
+            match readSnapshotRows legacyPath, readSnapshotRows canonicalPath with
+            | Error message, _
+            | _, Error message ->
+                eprintfn "Error: %s" message
+                2
+            | Ok legacy, Ok canonical ->
+                match TestContract.compareSnapshots legacy canonical with
+                | Error failure -> reportTestContractFailure failure
+                | Ok rows ->
+                    printfn "registry-preservation: equal rows=%d" rows
+                    0
+
+/// `test-contract registry validate` — the canonical registry root's own
+/// contract, plus whichever migration-step assertions the caller pins.
+let private runTestContractValidateLeaf (repoRoot: string) (args: string list) : int =
+    let allowed =
+        [ "--require-state"
+          "--require-behavior-state"
+          "--allow-bootstrap"
+          "--forbid-legacy"
+          "--forbid-compatibility"
+          "--help" ]
+
+    match rejectUnknownOptions allowed args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+
+        let requireState =
+            match stringFlag [ "--require-state" ] args with
+            | None -> Ok None
+            | Some "expanded" -> Ok(Some TestContract.Expanded)
+            | Some "migrating" -> Ok(Some TestContract.Migrating)
+            | Some "verified" -> Ok(Some TestContract.Verified)
+            | Some "contracted" -> Ok(Some TestContract.Contracted)
+            | Some other ->
+                Error(
+                    sprintf "--require-state must be expanded, migrating, verified, or contracted, found \"%s\"" other
+                )
+
+        let requireBehaviorState =
+            match stringFlag [ "--require-behavior-state" ] args with
+            | None -> Ok None
+            | Some "bootstrap" -> Ok(Some TestContract.Bootstrap)
+            | Some "active" -> Ok(Some TestContract.Active)
+            | Some other -> Error(sprintf "--require-behavior-state must be bootstrap or active, found \"%s\"" other)
+
+        match requireState, requireBehaviorState with
+        | Error message, _
+        | _, Error message ->
+            eprintfn "Error: %s" message
+            2
+        | Ok requireState, Ok requireBehaviorState ->
+            let options: TestContract.ValidateOptions =
+                { RequireState = requireState
+                  RequireBehaviorState = requireBehaviorState
+                  AllowBootstrap = collectRepeatable [ "--allow-bootstrap" ] args
+                  ForbidLegacy = hasFlag [ "--forbid-legacy" ] args
+                  ForbidCompatibility = hasFlag [ "--forbid-compatibility" ] args }
+
+            match TestContract.parseRegistry repoRoot with
+            | Error failure -> reportTestContractFailure failure
+            | Ok registry ->
+                match TestContract.validate registry (TestContract.enumerateNxProjects repoRoot) options with
+                | Error failure -> reportTestContractFailure failure
+                | Ok report ->
+                    printfn
+                        "registry-valid state=%s projects=%d behavior=bootstrap:%d,active:%d legacy=%s compatibility=%s"
+                        report.State
+                        report.Projects
+                        report.BootstrapCount
+                        report.ActiveCount
+                        (if report.LegacyPresent then "present" else "absent")
+                        (if report.CompatibilityPresent then "present" else "absent")
+
+                    0
+
+/// `test-contract registry validate-mapping` — the compatibility half: the
+/// frozen legacy values, the current canonical values, and the bijection.
+let private runTestContractValidateMappingLeaf (repoRoot: string) (args: string list) : int =
+    match rejectUnknownOptions [ "--all"; "--require-state"; "--require-count"; "--project"; "--help" ] args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+
+        let requireState =
+            match stringFlag [ "--require-state" ] args with
+            | None -> Ok None
+            | Some "identity" -> Ok(Some TestContract.MappingIdentity)
+            | Some "redirected" -> Ok(Some TestContract.MappingRedirected)
+            | Some "verified" -> Ok(Some TestContract.MappingVerified)
+            | Some other ->
+                Error(sprintf "--require-state must be identity, redirected, or verified, found \"%s\"" other)
+
+        if
+            not (hasFlag [ "--all" ] args)
+            && Option.isNone (stringFlag [ "--project" ] args)
+        then
+            eprintfn "Error: one of --all or --project <PROJECT> is required"
+            2
+        else
+
+            match requireState with
+            | Error message ->
+                eprintfn "Error: %s" message
+                2
+            | Ok requireState ->
+                match TestContract.parseRegistry repoRoot with
+                | Error failure -> reportTestContractFailure failure
+                | Ok registry ->
+                    match
+                        TestContract.validateMapping registry (TestContract.enumerateNxProjects repoRoot) requireState
+                    with
+                    | Error failure -> reportTestContractFailure failure
+                    | Ok report ->
+                        let succeed () =
+                            printfn "registry-mapping-valid state=%s mappings=%d" report.State report.Mappings
+                            0
+
+                        match stringFlag [ "--require-count" ] args with
+                        | None -> succeed ()
+                        | Some raw ->
+                            match Int32.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture) with
+                            | true, expected when expected = report.Mappings -> succeed ()
+                            | true, expected ->
+                                eprintfn
+                                    "Error: testing.compatibility.mappings[]: --require-count %d but the registry declares %d"
+                                    expected
+                                    report.Mappings
+
+                                1
+                            | _ ->
+                                reportTestContractFailure (
+                                    TestContract.Misuse "--require-count expects a non-negative integer"
+                                )
+
+/// `test-contract validate --owner --check --fixture` — resolves one owner
+/// RED fixture and reports the diagnostic it asserts. The document is read
+/// into memory only; no tracked file is opened for writing.
+let private runTestContractFixtureLeaf (repoRoot: string) (args: string list) : int =
+    match rejectUnknownOptions [ "--owner"; "--check"; "--fixture"; "--help" ] args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+
+        let check =
+            match stringFlag [ "--check" ] args with
+            | Some "layout" -> Ok TestContract.CheckLayout
+            | Some "coverage" -> Ok TestContract.CheckCoverage
+            | Some "bdd" -> Ok TestContract.CheckBdd
+            | Some "manifest" -> Ok TestContract.CheckManifest
+            | Some other -> Error(sprintf "--check must be layout, coverage, bdd, or manifest, found \"%s\"" other)
+            | None -> Error "--check is required and must be layout, coverage, bdd, or manifest"
+
+        match stringFlag [ "--owner" ] args, check, stringFlag [ "--fixture" ] args with
+        | None, _, _ ->
+            eprintfn "Error: --owner is required"
+            2
+        | _, Error message, _ ->
+            eprintfn "Error: %s" message
+            2
+        | _, _, None ->
+            eprintfn "Error: --fixture is required"
+            2
+        | Some owner, Ok check, Some fixture ->
+            match TestContract.loadFixture repoRoot owner check fixture with
+            | Error failure -> reportTestContractFailure failure
+            | Ok document ->
+                printfn
+                    "fixture-loaded owner=%s check=%s code=%s"
+                    document.OwnerId
+                    (match document.Check with
+                     | TestContract.CheckLayout -> "layout"
+                     | TestContract.CheckCoverage -> "coverage"
+                     | TestContract.CheckBdd -> "bdd"
+                     | TestContract.CheckManifest -> "manifest")
+                    document.ExpectedDiagnostic.Code
+
+                0
+
+/// Routes one `test-contract` leaf, intercepting `-h`/`--help` ahead of the
+/// blanket top-level help so this namespace prints its own two snapshot
+/// invocation forms rather than the canonical command list.
+let private runTestContractLeaf (getRepoRoot: unit -> Result<string, string>) (leaf: string) (args: string list) : int =
+    if List.exists (fun a -> a = "-h" || a = "--help") args then
+        printf "%s" HelpText.TestContractText
+        0
+    elif leaf = "test-contract-registry-compare" then
+        runTestContractCompareLeaf args
+    else
+        match getRepoRoot () with
+        | Error message ->
+            eprintfn "Error: failed to find git repository root: %s" message
+            1
+        | Ok repoRoot ->
+            match leaf with
+            | "test-contract-registry-snapshot" -> runTestContractSnapshotLeaf repoRoot args
+            | "test-contract-registry-validate" -> runTestContractValidateLeaf repoRoot args
+            | "test-contract-registry-validate-mapping" -> runTestContractValidateMappingLeaf repoRoot args
+            | _ -> runTestContractFixtureLeaf repoRoot args
+
 let private routeTable: (string list * string) list =
     [ [ "convention"; "emoji"; "validate" ], "emoji"
       [ "convention"; "license"; "validate" ], "license"
@@ -2785,7 +3156,12 @@ let private routeTable: (string list * string) list =
       [ "gate"; "list" ], "gate-list"
       [ "gate"; "emit" ], "gate-emit"
       [ "gate"; "run" ], "gate-run"
-      [ "gate"; "validate" ], "gate-validate" ]
+      [ "gate"; "validate" ], "gate-validate"
+      [ "test-contract"; "registry"; "snapshot" ], "test-contract-registry-snapshot"
+      [ "test-contract"; "registry"; "compare" ], "test-contract-registry-compare"
+      [ "test-contract"; "registry"; "validate-mapping" ], "test-contract-registry-validate-mapping"
+      [ "test-contract"; "registry"; "validate" ], "test-contract-registry-validate"
+      [ "test-contract"; "validate" ], "test-contract-validate" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,
 /// paired with the arguments left after that prefix — the data-driven
@@ -2869,6 +3245,12 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
             eprintfn "Error: failed to find git repository root: %s" message
             1
         | Ok repoRoot -> runGateRunLeaf repoRoot rest
+    elif
+        (match path with
+         | Some name -> name.StartsWith("test-contract", StringComparison.Ordinal)
+         | None -> false)
+    then
+        runTestContractLeaf getRepoRoot (Option.defaultValue "" path) rest
     elif wantsHelp argv then
         printf "%s" HelpText.Text
         0
