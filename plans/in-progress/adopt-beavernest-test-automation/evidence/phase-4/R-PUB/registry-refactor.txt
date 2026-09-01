@@ -70,3 +70,50 @@ Successfully ran target test:quick for project rhino-cli and 2 tasks it depends 
 The three added tests pin the flag's whole contract: a matching count exits 0,
 a disagreeing count exits 1 naming both numbers, and a non-numeric count exits
 2 with the misuse diagnostic.
+
+--- CI FIX 2 (head 795fac6a) -----------------------------------------------
+
+With the analyzer error cleared, the .NET quality gate reached the step that
+the first failure had masked and rejected the head on native coverage:
+
+  coverlet.msbuild.targets(73,5): error : The minimum line coverage is below
+  the specified 90 [apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj]
+
+Root cause: this delivery adds ~2,300 lines of registry, validator, and CLI
+code whose error and CLI-parsing branches the 101 contract cases exercise
+through the typed API rather than through `route`, so the repository line
+total fell from its previous margin to 88.78%.
+
+Fix: 44 further tests that execute the new code where it was dark rather than
+any change to the threshold or the exclusion list.
+
+  - 19 end-to-end cases drive `route` against a populated two-project registry
+    (an owner delegating its E2E adapter and the harness reciprocating it),
+    covering every `validate` and `validate-mapping` flag, both snapshot
+    forms, all three `compare` outcomes, and the unrouted-subcommand path.
+  - 15 cases drive the owner-fixture leaf across all four checks, their
+    mutation shapes, and every misuse and malformed-document branch.
+  - 10 cases pin validator branches reachable only from the typed API:
+    non-reciprocal delegation, the three behavior-free-row violations, the
+    canonical-owner drift both validators detect, the required-lifecycle
+    mismatch, and the frozen legacy corpus/levels rewrites.
+
+Measured progression, each run with the Nx cache skipped:
+
+  88.78%  1476 tests   before the fix        FAIL
+  89.43%  1495 tests   + populated-registry CLI cases
+  89.79%  1506 tests   + owner-fixture leaf cases
+  90.05%  1516 tests   + validator branch cases   PASS
+  90.12%  1520 tests   + loadFixture document cases
+
+$ nx run rhino-cli:test:coverage --skip-nx-cache
+| Module                  | Line   | Branch | Method |
+| RhinoCli.Application    | 90.09% | 76.66% | 97.75% |
+| RhinoCli.Cli            | 90.01% | 80.04% | 96.24% |
+| RhinoCli.Infrastructure | 100%   | 81.25% | 100%   |
+| RhinoCli.Domain         | 100%   | 100%   | 100%   |
+| Total                   | 90.12% | 77.54% | 97.36% |
+Passed!  - Failed:     0, Passed:  1520, Skipped:     0, Total:  1520
+
+$ nx affected -t build,typecheck,lint,test:quick --skip-nx-cache
+Successfully ran targets build, typecheck, lint, test:quick for project rhino-cli

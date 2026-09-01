@@ -1890,3 +1890,887 @@ let ``registry validate-mapping rejects a non-numeric --require-count as misuse`
         containsOrdinal "--require-count expects a non-negative integer" text,
         sprintf "contract case 'require-count-misuse': expected the misuse diagnostic but got: %s" text
     )
+
+// ---------------------------------------------------------------------------
+// End-to-end CLI behavior against a populated registry
+// ---------------------------------------------------------------------------
+
+/// A complete two-project registry: one owner whose E2E adapter is delegated,
+/// and the dedicated harness that reciprocates it. The parser-shape cases
+/// above deliberately resolve to zero rows, so the leaves that read, project,
+/// and compare real rows need a root that actually carries them.
+let private populatedRegistryYaml =
+    String.concat
+        "\n"
+        [ "coverage:"
+          "  projects:"
+          "    - name: widget-app"
+          "      levels: [unit]"
+          "      specs: \"specs/apps/widget/behavior/app/**\""
+          "    - name: widget-app-e2e"
+          "      levels: [e2e]"
+          "      specs: \"specs/apps/widget/behavior/app/**\""
+          "testing:"
+          "  schema: ose-test-contract/v1"
+          "  coverage:"
+          "    minimum-line: 99"
+          "  compatibility:"
+          "    mappings:"
+          "      - project: widget-app"
+          "        behavior-id: widget-app:default"
+          "        state: identity"
+          "        legacy:"
+          "          present: true"
+          "          corpus: \"specs/apps/widget/behavior/app/**\""
+          "          levels: [unit]"
+          "        canonical:"
+          "          owner: widget-app"
+          "          corpus: \"specs/apps/widget/behavior/app/**\""
+          "          runtimes:"
+          "            - level: e2e"
+          "              project: widget-app-e2e"
+          "            - level: unit"
+          "              project: widget-app"
+          "      - project: widget-app-e2e"
+          "        behavior-id: widget-app:default"
+          "        state: identity"
+          "        legacy:"
+          "          present: true"
+          "          corpus: \"specs/apps/widget/behavior/app/**\""
+          "          levels: [e2e]"
+          "        canonical:"
+          "          owner: widget-app"
+          "          corpus: null"
+          "          runtimes:"
+          "            - level: e2e"
+          "              project: widget-app-e2e"
+          "  projects:"
+          "    - project: widget-app"
+          "      profile: application"
+          "      migration-state: expanded"
+          "      behavior:"
+          "        id: widget-app:default"
+          "        lifecycle-state: active"
+          "        owner: widget-app"
+          "        corpus:"
+          "          - \"specs/apps/widget/behavior/app/**\""
+          "        adapters:"
+          "          unit:"
+          "            disposition: required"
+          "            project: widget-app"
+          "            driver: apps/widget-app/tests/unit/bdd/unit-driver.ts"
+          "          integration:"
+          "            disposition: inapplicable"
+          "            reason: no isolated local-resource boundary"
+          "          e2e:"
+          "            disposition: delegated"
+          "            project: widget-app-e2e"
+          "            driver: apps/widget-app-e2e/tests/e2e/bdd/e2e-driver.ts"
+          "    - project: widget-app-e2e"
+          "      profile: e2e"
+          "      migration-state: expanded"
+          "      behavior:"
+          "        id: widget-app:default"
+          "        lifecycle-state: active"
+          "        owner: widget-app"
+          "        corpus: []"
+          "        adapters:"
+          "          unit:"
+          "            disposition: inapplicable"
+          "            reason: the owning project hosts the unit adapter"
+          "          integration:"
+          "            disposition: inapplicable"
+          "            reason: no isolated local-resource boundary"
+          "          e2e:"
+          "            disposition: required"
+          "            project: widget-app-e2e"
+          "            driver: apps/widget-app-e2e/tests/e2e/bdd/e2e-driver.ts"
+          "" ]
+
+/// Writes one `project.json` so [`enumerateNxProjects`] discovers `name`.
+let private seedNxProject (root: string) (name: string) : unit =
+    let directory = Path.Combine(root, "apps", name)
+    Directory.CreateDirectory(directory) |> ignore
+    File.WriteAllText(Path.Combine(directory, "project.json"), sprintf "{ \"name\": \"%s\" }" name)
+
+/// A temp root carrying [`populatedRegistryYaml`] and both `project.json`
+/// files its two rows must map onto.
+let private newPopulatedRoot () : string =
+    let root = newTempDir ()
+    File.WriteAllText(Path.Combine(root, "repo-config.yml"), populatedRegistryYaml)
+    seedNxProject root "widget-app"
+    seedNxProject root "widget-app-e2e"
+    root
+
+/// Runs `route` against an explicit root, capturing stdout and stderr.
+let private runAt (root: string) (argv: string[]) : int * string =
+    let originalOut = Console.Out
+    let originalErr = Console.Error
+    use outWriter = new StringWriter()
+    use errWriter = new StringWriter()
+
+    try
+        Console.SetOut(outWriter)
+        Console.SetError(errWriter)
+        let exitCode = route (fun () -> Ok root) argv
+        exitCode, outWriter.ToString() + errWriter.ToString()
+    finally
+        Console.SetOut(originalOut)
+        Console.SetError(originalErr)
+
+let private expectExit (case: string) (expected: int) (actual: int, text: string) : string =
+    Assert.True(
+        (actual = expected),
+        sprintf "contract case '%s': expected exit %d but got %d with output: %s" case expected actual text
+    )
+
+    text
+
+[<Fact>]
+let ``registry validate accepts a populated two-project registry`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate" |]
+        |> expectExit "populated-validate" 0
+
+    Assert.True(
+        containsOrdinal "registry-valid state=expanded projects=2" text,
+        sprintf "contract case 'populated-validate': expected the expanded two-project summary but got: %s" text
+    )
+
+    Assert.True(
+        containsOrdinal "behavior=bootstrap:0,active:2" text,
+        sprintf "contract case 'populated-validate': expected both owners active but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate honours a matching --require-state`` () =
+    runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate"; "--require-state"; "expanded" |]
+    |> expectExit "require-state-match" 0
+    |> ignore
+
+[<Fact>]
+let ``registry validate rejects a --require-state the rows have not reached`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate"; "--require-state"; "verified" |]
+        |> expectExit "require-state-unreached" 1
+
+    Assert.True(
+        containsOrdinal "widget-app" text,
+        sprintf "contract case 'require-state-unreached': expected the failing project named but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate rejects an unknown --require-state value as misuse`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate"; "--require-state"; "sideways" |]
+        |> expectExit "require-state-unknown" 2
+
+    Assert.True(
+        containsOrdinal "expanded, migrating, verified, or contracted" text,
+        sprintf "contract case 'require-state-unknown': expected the allowed-state diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate accepts a matching --require-behavior-state`` () =
+    runAt
+        (newPopulatedRoot ())
+        [| "test-contract"
+           "registry"
+           "validate"
+           "--require-behavior-state"
+           "active" |]
+    |> expectExit "require-behavior-active" 0
+    |> ignore
+
+[<Fact>]
+let ``registry validate rejects an unknown --require-behavior-state value as misuse`` () =
+    let text =
+        runAt
+            (newPopulatedRoot ())
+            [| "test-contract"
+               "registry"
+               "validate"
+               "--require-behavior-state"
+               "dormant" |]
+        |> expectExit "require-behavior-unknown" 2
+
+    Assert.True(
+        containsOrdinal "bootstrap or active" text,
+        sprintf "contract case 'require-behavior-unknown': expected the allowed-lifecycle diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate --forbid-legacy fails while the frozen block survives`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate"; "--forbid-legacy" |]
+        |> expectExit "forbid-legacy-cli" 1
+
+    Assert.True(
+        containsOrdinal "coverage.projects" text,
+        sprintf "contract case 'forbid-legacy-cli': expected the frozen block named but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate --forbid-compatibility fails while the mappings survive`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate"; "--forbid-compatibility" |]
+        |> expectExit "forbid-compatibility-cli" 1
+
+    Assert.True(
+        containsOrdinal "compatibility" text,
+        sprintf "contract case 'forbid-compatibility-cli': expected the mapping root named but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate accepts a repeated --allow-bootstrap option`` () =
+    runAt
+        (newPopulatedRoot ())
+        [| "test-contract"
+           "registry"
+           "validate"
+           "--allow-bootstrap"
+           "widget-app"
+           "--allow-bootstrap"
+           "widget-app-e2e" |]
+    |> expectExit "allow-bootstrap-repeatable" 0
+    |> ignore
+
+[<Fact>]
+let ``registry validate-mapping reports both mappings for a populated registry`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate-mapping"; "--all" |]
+        |> expectExit "populated-mapping" 0
+
+    Assert.True(
+        containsOrdinal "registry-mapping-valid state=identity mappings=2" text,
+        sprintf "contract case 'populated-mapping': expected the identity two-mapping summary but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate-mapping accepts a --project selector`` () =
+    runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate-mapping"; "--project"; "widget-app" |]
+    |> expectExit "mapping-project-selector" 0
+    |> ignore
+
+[<Fact>]
+let ``registry validate-mapping requires one of --all or --project`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "validate-mapping" |]
+        |> expectExit "mapping-selector-required" 2
+
+    Assert.True(
+        containsOrdinal "one of --all or --project" text,
+        sprintf "contract case 'mapping-selector-required': expected the selector diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate-mapping rejects an unknown --require-state value as misuse`` () =
+    let text =
+        runAt
+            (newPopulatedRoot ())
+            [| "test-contract"
+               "registry"
+               "validate-mapping"
+               "--all"
+               "--require-state"
+               "sideways" |]
+        |> expectExit "mapping-state-unknown" 2
+
+    Assert.True(
+        containsOrdinal "identity, redirected, or verified" text,
+        sprintf "contract case 'mapping-state-unknown': expected the allowed-state diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``registry validate-mapping rejects a mapping state the rows have not reached`` () =
+    runAt
+        (newPopulatedRoot ())
+        [| "test-contract"
+           "registry"
+           "validate-mapping"
+           "--all"
+           "--require-state"
+           "verified" |]
+    |> expectExit "mapping-state-unreached" 1
+    |> ignore
+
+/// Projects both sides of the dual reader into `root` and returns the two
+/// output paths, asserting each leaf exits 0.
+let private projectBothSnapshots (root: string) : string * string =
+    let legacy = Path.Combine(root, "legacy.tsv")
+    let canonical = Path.Combine(root, "canonical.tsv")
+
+    runAt
+        root
+        [| "test-contract"
+           "registry"
+           "snapshot"
+           "--source"
+           "legacy"
+           "--output"
+           legacy |]
+    |> expectExit "snapshot-legacy-rows" 0
+    |> ignore
+
+    runAt
+        root
+        [| "test-contract"
+           "registry"
+           "snapshot"
+           "--source"
+           "canonical"
+           "--project-list-from"
+           legacy
+           "--output"
+           canonical |]
+    |> expectExit "snapshot-canonical-rows" 0
+    |> ignore
+
+    legacy, canonical
+
+[<Fact>]
+let ``the legacy snapshot projects one sorted row per registered project`` () =
+    let root = newPopulatedRoot ()
+    let legacy, _ = projectBothSnapshots root
+    let rows = File.ReadAllLines legacy
+
+    Assert.Equal<string[]>(
+        [| "widget-app\twidget-app\twidget-app:default\te2e@widget-app-e2e,unit@widget-app"
+           "widget-app-e2e\twidget-app\twidget-app:default\te2e@widget-app-e2e" |],
+        rows
+    )
+
+[<Fact>]
+let ``compare accepts byte-equal legacy and canonical projections`` () =
+    let root = newPopulatedRoot ()
+    let legacy, canonical = projectBothSnapshots root
+
+    let text =
+        runAt
+            root
+            [| "test-contract"
+               "registry"
+               "compare"
+               "--legacy"
+               legacy
+               "--canonical"
+               canonical |]
+        |> expectExit "compare-equal" 0
+
+    Assert.True(
+        containsOrdinal "registry-preservation: equal rows=2" text,
+        sprintf "contract case 'compare-equal': expected the equal-rows summary but got: %s" text
+    )
+
+[<Fact>]
+let ``compare rejects a canonical projection whose row changed`` () =
+    let root = newPopulatedRoot ()
+    let legacy, canonical = projectBothSnapshots root
+
+    File.WriteAllText(canonical, (File.ReadAllText canonical).Replace("unit@widget-app", "unit@widget-tool"))
+
+    let text =
+        runAt
+            root
+            [| "test-contract"
+               "registry"
+               "compare"
+               "--legacy"
+               legacy
+               "--canonical"
+               canonical |]
+        |> expectExit "compare-changed" 1
+
+    Assert.True(
+        containsOrdinal "widget-app" text,
+        sprintf "contract case 'compare-changed': expected the changed row named but got: %s" text
+    )
+
+[<Fact>]
+let ``compare rejects a projection file that does not exist`` () =
+    let root = newPopulatedRoot ()
+    let legacy, canonical = projectBothSnapshots root
+    File.Delete canonical
+
+    runAt
+        root
+        [| "test-contract"
+           "registry"
+           "compare"
+           "--legacy"
+           legacy
+           "--canonical"
+           canonical |]
+    |> expectExit "compare-missing-file" 2
+    |> ignore
+
+[<Fact>]
+let ``an unrouted test-contract subcommand is CLI misuse`` () =
+    let text =
+        runAt (newPopulatedRoot ()) [| "test-contract"; "registry"; "rewrite" |]
+        |> expectExit "test-contract-unrouted" 2
+
+    Assert.True(
+        containsOrdinal "test-contract" text,
+        sprintf "contract case 'test-contract-unrouted': expected the namespace named but got: %s" text
+    )
+
+// ---------------------------------------------------------------------------
+// Owner fixture leaf, end to end
+// ---------------------------------------------------------------------------
+
+/// Builds one owner-fixture document for `check` around `mutation`, which the
+/// four cases below vary. `owner` is repeated inside the document because the
+/// loader requires the path owner, `owner-id`, and `--owner` to agree.
+let private fixtureBody (owner: string) (check: string) (code: string) (mutation: string list) : string =
+    String.concat
+        "\n"
+        ([ "{"
+           sprintf "  \"schema\": \"%s\"," FixtureSchemaVersion
+           sprintf "  \"owner-id\": \"%s\"," owner
+           sprintf "  \"check\": \"%s\"," check
+           "  \"mutation\": {" ]
+         @ mutation
+         @ [ "  },"
+             "  \"expected-diagnostic\": {"
+             sprintf "    \"code\": \"%s\"," code
+             "    \"fields\": [\"path\"]"
+             "  }"
+             "}"
+             "" ])
+
+let private layoutMutation =
+    [ "    \"kind\": \"layout-overlap\","
+      "    \"path\": \"apps/rhino-cli/src/tests/unit\","
+      "    \"layers\": [\"unit\", \"integration\"]" ]
+
+let private bddMutation =
+    [ "    \"kind\": \"bdd-remove-binding\","
+      "    \"feature\": \"specs/apps/rhino/behavior/rhino-cli/gherkin/specs/parity.feature\","
+      "    \"scenario\": \"The manifest is current\","
+      "    \"step\": \"Then the manifest is current\","
+      "    \"adapter\": \"unit\"" ]
+
+let private manifestMutation =
+    [ "    \"kind\": \"manifest-forwarder\","
+      "    \"path\": \"apps/rhino-cli/package.json\","
+      "    \"direct-consumers\": [],"
+      "    \"script-name\": \"test\","
+      "    \"script\": \"npx nx run rhino-cli:test\"" ]
+
+/// Seeds one fixture for `check` and runs the leaf against it.
+let private runFixtureLeaf (check: string) (fileName: string) (body: string) : int * string =
+    let root = newTempDir ()
+    let relative = seedFixture root "O-PUB-RHINO" fileName body
+
+    runAt
+        root
+        [| "test-contract"
+           "validate"
+           "--owner"
+           "O-PUB-RHINO"
+           "--check"
+           check
+           "--fixture"
+           relative |]
+
+[<Fact>]
+let ``the fixture leaf loads a layout-overlap document`` () =
+    let text =
+        runFixtureLeaf
+            "layout"
+            "layout-misplaced.json"
+            (fixtureBody "O-PUB-RHINO" "layout" "layout-overlap" layoutMutation)
+        |> expectExit "fixture-leaf-layout" 0
+
+    Assert.True(
+        containsOrdinal "fixture-loaded owner=O-PUB-RHINO check=layout code=layout-overlap" text,
+        sprintf "contract case 'fixture-leaf-layout': expected the loaded-fixture summary but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf loads a coverage-threshold document`` () =
+    let text =
+        runFixtureLeaf "coverage" "coverage-98.json" coverageFixtureBody
+        |> expectExit "fixture-leaf-coverage" 0
+
+    Assert.True(
+        containsOrdinal "check=coverage code=coverage-below-floor" text,
+        sprintf "contract case 'fixture-leaf-coverage': expected the coverage summary but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf loads a bdd-remove-binding document`` () =
+    let text =
+        runFixtureLeaf "bdd" "bdd-missing-step.json" (fixtureBody "O-PUB-RHINO" "bdd" "bdd-step-unbound" bddMutation)
+        |> expectExit "fixture-leaf-bdd" 0
+
+    Assert.True(
+        containsOrdinal "check=bdd code=bdd-step-unbound" text,
+        sprintf "contract case 'fixture-leaf-bdd': expected the bdd summary but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf loads a manifest-forwarder document`` () =
+    let text =
+        runFixtureLeaf
+            "manifest"
+            "manifest-proxy.json"
+            (fixtureBody "O-PUB-RHINO" "manifest" "manifest-proxy-script" manifestMutation)
+        |> expectExit "fixture-leaf-manifest" 0
+
+    Assert.True(
+        containsOrdinal "check=manifest code=manifest-proxy-script" text,
+        sprintf "contract case 'fixture-leaf-manifest': expected the manifest summary but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf rejects a mutation kind bound to another check`` () =
+    let text =
+        runFixtureLeaf
+            "layout"
+            "layout-misplaced.json"
+            (fixtureBody "O-PUB-RHINO" "layout" "layout-overlap" manifestMutation)
+        |> expectExit "fixture-leaf-wrong-kind" 2
+
+    Assert.True(
+        containsOrdinal "is not the mutation kind bound to the \"layout\" check" text,
+        sprintf "contract case 'fixture-leaf-wrong-kind': expected the bound-kind diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf rejects a mutation missing a required field`` () =
+    let text =
+        runFixtureLeaf
+            "layout"
+            "layout-misplaced.json"
+            (fixtureBody "O-PUB-RHINO" "layout" "layout-overlap" [ "    \"kind\": \"layout-overlap\"" ])
+        |> expectExit "fixture-leaf-missing-field" 2
+
+    Assert.True(
+        containsOrdinal "mutation.path" text,
+        sprintf "contract case 'fixture-leaf-missing-field': expected the missing-key diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf rejects an unknown mutation key`` () =
+    let text =
+        runFixtureLeaf "coverage" "coverage-98.json" (coverageFixtureBody.Replace("\"slice\"", "\"module\""))
+        |> expectExit "fixture-leaf-unknown-key" 2
+
+    Assert.True(
+        containsOrdinal "unknown key" text,
+        sprintf "contract case 'fixture-leaf-unknown-key': expected the unknown-key diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf requires --owner`` () =
+    let root = newTempDir ()
+
+    let text =
+        runAt root [| "test-contract"; "validate"; "--check"; "coverage"; "--fixture"; "x.json" |]
+        |> expectExit "fixture-leaf-owner-required" 2
+
+    Assert.True(
+        containsOrdinal "--owner is required" text,
+        sprintf "contract case 'fixture-leaf-owner-required': expected the owner diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf requires --fixture`` () =
+    let text =
+        runAt (newTempDir ()) [| "test-contract"; "validate"; "--owner"; "O-PUB-RHINO"; "--check"; "bdd" |]
+        |> expectExit "fixture-leaf-fixture-required" 2
+
+    Assert.True(
+        containsOrdinal "--fixture is required" text,
+        sprintf "contract case 'fixture-leaf-fixture-required': expected the fixture diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf rejects an unknown --check value`` () =
+    let text =
+        runAt
+            (newTempDir ())
+            [| "test-contract"
+               "validate"
+               "--owner"
+               "O-PUB-RHINO"
+               "--check"
+               "typing"
+               "--fixture"
+               "x.json" |]
+        |> expectExit "fixture-leaf-check-unknown" 2
+
+    Assert.True(
+        containsOrdinal "layout, coverage, bdd, or manifest" text,
+        sprintf "contract case 'fixture-leaf-check-unknown': expected the allowed-check diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``the fixture leaf rejects an unknown option`` () =
+    let text =
+        runAt
+            (newTempDir ())
+            [| "test-contract"
+               "validate"
+               "--owner"
+               "O-PUB-RHINO"
+               "--check"
+               "bdd"
+               "--strict" |]
+        |> expectExit "fixture-leaf-unknown-option" 2
+
+    Assert.True(
+        containsOrdinal "unknown option: --strict" text,
+        sprintf "contract case 'fixture-leaf-unknown-option': expected the unknown-option diagnostic but got: %s" text
+    )
+
+// ---------------------------------------------------------------------------
+// Reciprocity, behavior-free rows, and the remaining mapping identities
+// ---------------------------------------------------------------------------
+
+/// The three adapters a dedicated harness declares when it hosts none of the
+/// levels its owner delegates — the shape that breaks reciprocity.
+let private nonReciprocalAdapters: Adapters =
+    adapters
+        (inapplicableAdapter "the owning project hosts the unit adapter")
+        (inapplicableAdapter "no isolated local-resource boundary")
+        (inapplicableAdapter "no user-facing surface")
+
+/// A row whose project owns no behavior, but which still declares one of the
+/// fields only an owner may carry.
+let private unownedBehavior (lifecycle: LifecycleState option) (seed: Seed option) (corpus: string list) : Behavior =
+    { Id = None
+      LifecycleState = lifecycle
+      Owner = None
+      Corpus = corpus
+      Seed = seed
+      Adapters = unownedAdapters }
+
+let private unownedRegistry (behavior: Behavior) : Registry =
+    registryOf [ projectRow "rhino-cli" ProfileTool Expanded behavior ] [ rhinoMapping ]
+
+[<Fact>]
+let ``a delegated adapter whose target does not host that level is rejected`` () =
+    let owner =
+        projectRow
+            "rhino-cli"
+            ProfileTool
+            Expanded
+            (activeBehavior
+                "rhino-cli:default"
+                "rhino-cli"
+                [ rhinoCorpus ]
+                (adapters
+                    (requiredAdapter "rhino-cli" rhinoUnitDriver)
+                    (inapplicableAdapter "no isolated local-resource boundary")
+                    (delegatedAdapter "rhino-cli-e2e" rhinoUnitDriver)))
+
+    let harness =
+        projectRow
+            "rhino-cli-e2e"
+            ProfileE2e
+            Expanded
+            (activeBehavior "rhino-cli:default" "rhino-cli" [] nonReciprocalAdapters)
+
+    validate (registryOf [ owner; harness ] [ rhinoMapping ]) [ "rhino-cli"; "rhino-cli-e2e" ] defaultValidateOptions
+    |> expectContractFailure
+        "delegation-not-reciprocal"
+        "adapters.e2e.project"
+        "rhino-cli"
+        "required"
+        "inapplicable"
+        "rather than hosting the e2e adapter"
+
+[<Fact>]
+let ``a behavior-free row declaring a lifecycle state is rejected`` () =
+    validate (unownedRegistry (unownedBehavior (Some Active) None [])) nxProjects defaultValidateOptions
+    |> expectContractFailure
+        "unowned-lifecycle"
+        "behavior.lifecycle-state"
+        "rhino-cli"
+        "absent"
+        "active"
+        "owns no behavior but declares"
+
+[<Fact>]
+let ``a behavior-free row declaring a seed is rejected`` () =
+    validate (unownedRegistry (unownedBehavior None (Some rhinoSeed) [])) nxProjects defaultValidateOptions
+    |> expectContractFailure
+        "unowned-seed"
+        "behavior.seed"
+        "rhino-cli"
+        "absent"
+        rhinoSeed.Target
+        "owns no behavior but declares"
+
+[<Fact>]
+let ``a behavior-free row declaring a corpus is rejected`` () =
+    validate (unownedRegistry (unownedBehavior None None [ rhinoCorpus ])) nxProjects defaultValidateOptions
+    |> expectContractFailure
+        "unowned-corpus"
+        "behavior.corpus"
+        "rhino-cli"
+        "empty"
+        rhinoCorpus
+        "owns no behavior but declares a corpus"
+
+[<Fact>]
+let ``validate rejects a map whose canonical owner disagrees with the row`` () =
+    let drifted =
+        { rhinoMapping with
+            Canonical = canonicalHalf (Some "widget-app") (Some rhinoCorpus) rhinoRuntimes }
+
+    validate (withMapping drifted baseRegistry) nxProjects defaultValidateOptions
+    |> expectContractFailure
+        "validate-canonical-owner-drift"
+        "testing.compatibility.mappings[].canonical.owner"
+        "rhino-cli"
+        "rhino-cli"
+        "widget-app"
+        "canonical.owner"
+
+[<Fact>]
+let ``validate rejects an active owner when bootstrap was required`` () =
+    let options =
+        { defaultValidateOptions with
+            RequireBehaviorState = Some Bootstrap }
+
+    validate baseRegistry nxProjects options
+    |> expectContractFailure
+        "require-behavior-bootstrap"
+        "behavior.lifecycle-state"
+        "rhino-cli"
+        "active"
+        "bootstrap"
+        "was required"
+
+[<Fact>]
+let ``validate-mapping rejects a frozen legacy corpus that was rewritten`` () =
+    let rewritten =
+        { rhinoMapping with
+            Legacy = legacyHalf true (Some "specs/apps/widget/behavior/app/**") [ "unit" ] }
+
+    validateMapping (withMapping rewritten baseRegistry) nxProjects None
+    |> expectContractFailure
+        "mapping-legacy-corpus-rewritten"
+        "testing.compatibility.mappings[].legacy.corpus"
+        "rhino-cli"
+        rhinoCorpus
+        "specs/apps/widget/behavior/app/**"
+        "legacy.corpus"
+
+[<Fact>]
+let ``validate-mapping rejects frozen legacy levels that were rewritten`` () =
+    let rewritten =
+        { rhinoMapping with
+            Legacy = legacyHalf true (Some rhinoCorpus) [ "e2e" ] }
+
+    validateMapping (withMapping rewritten baseRegistry) nxProjects None
+    |> expectContractFailure
+        "mapping-legacy-levels-rewritten"
+        "testing.compatibility.mappings[].legacy.levels"
+        "rhino-cli"
+        "unit"
+        "e2e"
+        "legacy.levels"
+
+[<Fact>]
+let ``validate-mapping rejects a behavior id that disagrees with its row`` () =
+    let drifted =
+        { rhinoMapping with
+            BehaviorId = Some "rhino-cli:documents" }
+
+    validateMapping (withMapping drifted baseRegistry) nxProjects None
+    |> expectContractFailure
+        "mapping-behavior-id-drift"
+        "testing.compatibility.mappings[].behavior-id"
+        "rhino-cli"
+        "rhino-cli:default"
+        "rhino-cli:documents"
+        "behavior-id"
+
+[<Fact>]
+let ``validate-mapping rejects a canonical owner that disagrees with its row`` () =
+    let drifted =
+        { rhinoMapping with
+            Canonical = canonicalHalf (Some "widget-app") (Some rhinoCorpus) rhinoRuntimes }
+
+    validateMapping (withMapping drifted baseRegistry) nxProjects None
+    |> expectContractFailure
+        "mapping-canonical-owner-drift"
+        "testing.compatibility.mappings[].canonical.owner"
+        "rhino-cli"
+        "rhino-cli"
+        "widget-app"
+        "canonical.owner"
+
+[<Fact>]
+let ``a fixture document without a mutation object is rejected`` () =
+    let body =
+        String.concat
+            "\n"
+            [ "{"
+              sprintf "  \"schema\": \"%s\"," FixtureSchemaVersion
+              "  \"owner-id\": \"O-PUB-RHINO\","
+              "  \"check\": \"coverage\","
+              "  \"expected-diagnostic\": { \"code\": \"coverage-below-floor\", \"fields\": [] }"
+              "}"
+              "" ]
+
+    let text =
+        runFixtureLeaf "coverage" "coverage-98.json" body
+        |> expectExit "fixture-no-mutation" 2
+
+    Assert.True(
+        containsOrdinal "mutation is required" text,
+        sprintf "contract case 'fixture-no-mutation': expected the required-mutation diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``a fixture document without an expected diagnostic is rejected`` () =
+    let body =
+        String.concat
+            "\n"
+            [ "{"
+              sprintf "  \"schema\": \"%s\"," FixtureSchemaVersion
+              "  \"owner-id\": \"O-PUB-RHINO\","
+              "  \"check\": \"layout\","
+              "  \"mutation\": { \"kind\": \"layout-overlap\", \"path\": \"apps/rhino-cli\", \"layers\": [] }"
+              "}"
+              "" ]
+
+    let text =
+        runFixtureLeaf "layout" "layout-misplaced.json" body
+        |> expectExit "fixture-no-diagnostic" 2
+
+    Assert.True(
+        containsOrdinal "expected-diagnostic is required" text,
+        sprintf "contract case 'fixture-no-diagnostic': expected the required-diagnostic message but got: %s" text
+    )
+
+[<Fact>]
+let ``a fixture expected diagnostic without a code is rejected`` () =
+    let text =
+        runFixtureLeaf "coverage" "coverage-98.json" (coverageFixtureBody.Replace("\"code\"", "\"identifier\""))
+        |> expectExit "fixture-no-code" 2
+
+    Assert.True(
+        containsOrdinal "unknown key" text,
+        sprintf "contract case 'fixture-no-code': expected the unknown-key diagnostic but got: %s" text
+    )
+
+[<Fact>]
+let ``a fixture document carrying an unknown top-level key is rejected`` () =
+    let text =
+        runFixtureLeaf
+            "coverage"
+            "coverage-98.json"
+            (coverageFixtureBody.Replace("  \"check\": \"coverage\",", "  \"check\": \"coverage\",\n  \"note\": \"x\","))
+        |> expectExit "fixture-unknown-top-level" 2
+
+    Assert.True(
+        containsOrdinal "unknown key \"note\"" text,
+        sprintf "contract case 'fixture-unknown-top-level': expected the unknown-key diagnostic but got: %s" text
+    )
