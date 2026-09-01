@@ -535,6 +535,25 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 
 ### `D-P5-PUB` delivery lifecycle
 
+> **Execution state:** Phase 4 landed as `ose-public#428`, `ose-public#429`, and `ose-private#140`;
+> the two repositories carry a byte-identical 226-entry parity manifest.
+>
+> Phase 5 does not fit one delivery unit. The corpus move touches roughly 200 specification files
+> and 641 files that reference their paths, so a single PR would break both the 20-file review
+> budget and rule 1. The [Atomicity Exception](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md)
+> does not apply, because smaller build-valid seams exist: one per product family. The phase
+> therefore ships as a sequence, each unit independently green on `main`:
+>
+> 1. the validator learns the logical owner-corpus shape and keeps accepting the legacy five-folder
+>    tree, so no family is broken by the rule change alone;
+> 2. one unit per family — `rhino`, `crane`, `libs`, `ose`, `organiclever`, `ayokoding` — moving
+>    that family's corpus and every reference to it; and
+> 3. the validator drops legacy support once no family declares it.
+>
+> Detection is positive rather than negative: a product is measured against the new shape as soon as
+> one of its immediate subdirectories carries an `architecture.md`. That is what makes a per-family
+> sequence safe — an unmigrated family keeps its old rules until its own unit lands.
+
 ### `D-P5-PRI` delivery lifecycle
 
 ## Phase 6: Migrate `O-PUB-CRANE`

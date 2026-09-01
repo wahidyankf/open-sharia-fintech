@@ -28,6 +28,7 @@ The authoritative combined convention — covering what content belongs in app R
 - [Scope](./specs-directory-structure/scope.md) — what this convention covers versus delegates elsewhere
 - [Canonical App Spec Tree](./specs-directory-structure/canonical-app-spec-tree.md) — the five-folder layout, folder purposes, and per-surface variants
 - [Gherkin Feature File Placement and Lib Spec Structure](./specs-directory-structure/gherkin-feature-file-placement-and-lib-spec-structure.md) — canonical path pattern and domain-subdirectory rules
+- [Logical Owner Corpus](./specs-directory-structure/logical-owner-corpus.md) — the adopted one-corpus-per-owner shape, its three required entries, and how a product's shape is detected
 - [Full Directory Structure and README Index Files](./specs-directory-structure/full-directory-structure-and-readme-index-files.md) — The complete specs/ tree layout, which subdirectories each project surface profile actually has, and the README.md...
 - [Migration Path (Flat-Root to C4-Aware)](./specs-directory-structure/migration-path.md) — The atomic-commit procedure and path mapping for migrating an existing flat-root spec tree to the canonical...
 - [Adding New Specs](./specs-directory-structure/adding-new-specs.md) — procedures for a new feature file, new project, or new lib
