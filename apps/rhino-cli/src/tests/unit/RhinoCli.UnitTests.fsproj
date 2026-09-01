@@ -56,6 +56,9 @@
     <Compile Include="Steps/TestContractRegistryUnitTests.fs" />
     <Compile Include="Steps/TestContractBddUnitTests.fs" />
     <Compile Include="Steps/TestContractCoverageUnitTests.fs" />
+    <Compile Include="Steps/TestContractLayoutUnitTests.fs" />
+    <Compile Include="Steps/TestContractManifestUnitTests.fs" />
+    <Compile Include="Steps/TestContractOwnerFixturesUnitTests.fs" />
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
     <Compile Include="Steps/SpecsSteps.fs" />

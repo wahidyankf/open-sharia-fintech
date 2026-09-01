@@ -1,0 +1,19 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-FS-ENV",
+  "check": "layout",
+  "mutation": {
+    "kind": "layout-overlap",
+    "path": "libs/fsharp-env-loader/src/tests/unit/Steps/SharedCase.fs",
+    "layers": ["unit", "integration"]
+  },
+  "expected-diagnostic": {
+    "code": "layout-file-selected-twice",
+    "fields": [
+      "project=fsharp-env-loader",
+      "owner=fsharp-env-loader",
+      "item=libs/fsharp-env-loader/src/tests/unit/Steps/SharedCase.fs",
+      "layers=unit,integration"
+    ]
+  }
+}

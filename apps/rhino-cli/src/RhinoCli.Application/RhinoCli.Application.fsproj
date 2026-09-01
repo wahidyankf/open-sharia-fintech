@@ -23,8 +23,11 @@
     <Compile Include="src/Harness.fs" />
     <Compile Include="src/Specs.fs" />
     <Compile Include="src/TestContract.fs" />
+    <Compile Include="src/TestContractJson.fs" />
     <Compile Include="src/TestContractBdd.fs" />
     <Compile Include="src/TestContractCoverage.fs" />
+    <Compile Include="src/TestContractLayout.fs" />
+    <Compile Include="src/TestContractManifest.fs" />
     <Compile Include="src/Contracts.fs" />
     <Compile Include="src/RepoGovernance.fs" />
   </ItemGroup>

@@ -1,0 +1,16 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-RHINO",
+  "check": "manifest",
+  "mutation": {
+    "kind": "manifest-forwarder",
+    "path": "apps/rhino-cli/package.json",
+    "direct-consumers": [],
+    "script-name": "test",
+    "script": "nx test rhino-cli"
+  },
+  "expected-diagnostic": {
+    "code": "manifest-script-proxies-nx-target",
+    "fields": ["project=rhino-cli", "owner=rhino-cli", "item=apps/rhino-cli/package.json", "script=test"]
+  }
+}

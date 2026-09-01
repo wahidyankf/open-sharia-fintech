@@ -3084,6 +3084,56 @@ let private runTestContractFixtureLeaf (repoRoot: string) (args: string list) : 
 
                 0
 
+/// The four fixture-driven policy checks share one shape: resolve one document
+/// under the check's own fixture root, validate it, and print either the
+/// check's success line or its exact diagnostic. Keeping them in one function
+/// means a new check adds a route and a tuple, not another copy of this body.
+let private runTestContractPolicyLeaf
+    (repoRoot: string)
+    (check: string)
+    (validate: string -> string -> Result<string, TestContract.Failure>)
+    (args: string list)
+    : int =
+    match rejectUnknownOptions [ "--fixture"; "--help" ] args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+        match stringFlag [ "--fixture" ] args with
+        | None ->
+            eprintfn "Error: --fixture is required and names one document under the %s corpus" check
+            2
+        | Some fixture ->
+            match validate repoRoot fixture with
+            | Error failure -> reportTestContractFailure failure
+            | Ok rendered ->
+                printfn "%s" rendered
+                0
+
+/// The BDD reader resolves a repository-relative path where the other three
+/// resolve a bare document name. The verb grammar is uniform, so this wrapper
+/// composes the corpus prefix; a traversal segment survives the composition and
+/// is still rejected by the reader.
+let private validateBddFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
+    TestContractBdd.loadDocument repoRoot (TestContractBdd.FixtureRoot + "/" + fixture)
+    |> Result.bind TestContractBdd.validateDocument
+    |> Result.map TestContractBdd.formatReport
+
+let private validateCoverageFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
+    TestContractCoverage.loadDocument repoRoot fixture
+    |> Result.bind TestContractCoverage.validateDocument
+    |> Result.map TestContractCoverage.formatReport
+
+let private validateLayoutFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
+    TestContractLayout.loadDocument repoRoot fixture
+    |> Result.bind TestContractLayout.validateDocument
+    |> Result.map TestContractLayout.formatReport
+
+let private validateManifestFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
+    TestContractManifest.loadDocument repoRoot fixture
+    |> Result.bind TestContractManifest.validateDocument
+    |> Result.map TestContractManifest.formatReport
+
 /// Routes one `test-contract` leaf, intercepting `-h`/`--help` ahead of the
 /// blanket top-level help so this namespace prints its own two snapshot
 /// invocation forms rather than the canonical command list.
@@ -3103,6 +3153,12 @@ let private runTestContractLeaf (getRepoRoot: unit -> Result<string, string>) (l
             | "test-contract-registry-snapshot" -> runTestContractSnapshotLeaf repoRoot args
             | "test-contract-registry-validate" -> runTestContractValidateLeaf repoRoot args
             | "test-contract-registry-validate-mapping" -> runTestContractValidateMappingLeaf repoRoot args
+            | "test-contract-bdd-validate" -> runTestContractPolicyLeaf repoRoot "BDD" validateBddFixture args
+            | "test-contract-coverage-validate" ->
+                runTestContractPolicyLeaf repoRoot "coverage" validateCoverageFixture args
+            | "test-contract-layout-validate" -> runTestContractPolicyLeaf repoRoot "layout" validateLayoutFixture args
+            | "test-contract-manifest-validate" ->
+                runTestContractPolicyLeaf repoRoot "manifest" validateManifestFixture args
             | _ -> runTestContractFixtureLeaf repoRoot args
 
 let private routeTable: (string list * string) list =
@@ -3161,6 +3217,10 @@ let private routeTable: (string list * string) list =
       [ "test-contract"; "registry"; "compare" ], "test-contract-registry-compare"
       [ "test-contract"; "registry"; "validate-mapping" ], "test-contract-registry-validate-mapping"
       [ "test-contract"; "registry"; "validate" ], "test-contract-registry-validate"
+      [ "test-contract"; "bdd"; "validate" ], "test-contract-bdd-validate"
+      [ "test-contract"; "coverage"; "validate" ], "test-contract-coverage-validate"
+      [ "test-contract"; "layout"; "validate" ], "test-contract-layout-validate"
+      [ "test-contract"; "manifest"; "validate" ], "test-contract-manifest-validate"
       [ "test-contract"; "validate" ], "test-contract-validate" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,

@@ -141,3 +141,24 @@ Durable prevention: whenever a delivery adds a `.fs` file, build the owning proj
 code. An analyzer that silently narrows its input reports success for work it never inspected; the
 exit code cannot distinguish "clean" from "not looked at".
 Route:
+
+## L-8: A declared Nx target outran the engine it invoked, and nothing ran it
+
+Repository relevance: public
+Observation: the merged `D-P4-PUB-COVERAGE` leaf declared
+`rhino-cli:coverage:policy:validation`, running
+`test-contract coverage validate --project rhino-cli`. Two things were wrong at once and neither
+surfaced. First, the verb did not exist: the `test-contract` route table had no `coverage validate`
+entry, so the invocation fell through to the unrouted-command error. Second, and more durably, the
+coverage engine has no real-project reader — `loadDocument` resolves only names under
+`apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage`, so a `--project` argument has
+nothing to bind to. The target survived review because no gate referenced it: the .NET quality gate
+runs `typecheck lint test:quick specs:behavior:coverage` and `test:coverage`, and
+`coverage:policy:validation` appears in no `dependsOn` and no workflow. A target that nothing runs
+cannot fail, so its brokenness is invisible for exactly as long as it stays unwired.
+Durable prevention: a policy target is only worth declaring once the engine behind it can read the
+real repository. Pointing it at the fixture corpus instead would have made it green and vacuous —
+it would re-assert what the unit suite already asserts while reading as project-level enforcement.
+This delivery removed the target and routed the four verbs; the target returns with the
+owner-migration reader, which is the first point at which it can measure anything.
+Route:

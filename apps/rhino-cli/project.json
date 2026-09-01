@@ -119,19 +119,6 @@
       "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
       "cache": true
     },
-    "coverage:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract coverage validate --project rhino-cli",
-        "cwd": "{workspaceRoot}"
-      },
-      "inputs": [
-        "{workspaceRoot}/repo-config.yml",
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/src/tests/unit/Fixtures/TestContract/Coverage/**/*.json"
-      ],
-      "cache": true
-    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {

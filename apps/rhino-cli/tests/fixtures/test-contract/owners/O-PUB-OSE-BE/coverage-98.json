@@ -1,0 +1,16 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-OSE-BE",
+  "check": "coverage",
+  "mutation": {
+    "kind": "coverage-threshold",
+    "slice": "unit",
+    "threshold": 99,
+    "covered-lines": 98,
+    "total-lines": 100
+  },
+  "expected-diagnostic": {
+    "code": "coverage-below-floor",
+    "fields": ["project=ose-be", "owner=ose-be", "adapter=unit", "expected=99", "actual=98"]
+  }
+}

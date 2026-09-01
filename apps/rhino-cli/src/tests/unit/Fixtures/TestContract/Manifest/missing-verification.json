@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-manifest-fixture/v1",
+  "case": "a retained manifest whose claim no command can check",
+  "project": "widget-lib",
+  "owner": "widget-lib",
+  "group": "typescript-library",
+  "disposition": "retained",
+  "manifestPath": "libs/widget-lib/package.json",
+  "consumer": "package resolution reads exports for the published entry point",
+  "requiredFields": ["name", "exports"],
+  "verification": null,
+  "scripts": [],
+  "commands": []
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-FS-ENV",
+  "check": "manifest",
+  "mutation": {
+    "kind": "manifest-forwarder",
+    "path": "libs/fsharp-env-loader/package.json",
+    "direct-consumers": [],
+    "script-name": "test",
+    "script": "nx test fsharp-env-loader"
+  },
+  "expected-diagnostic": {
+    "code": "manifest-script-proxies-nx-target",
+    "fields": [
+      "project=fsharp-env-loader",
+      "owner=fsharp-env-loader",
+      "item=libs/fsharp-env-loader/package.json",
+      "script=test"
+    ]
+  }
+}

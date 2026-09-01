@@ -1,0 +1,19 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-CRANE",
+  "check": "layout",
+  "mutation": {
+    "kind": "layout-overlap",
+    "path": "apps/crane-cli/src/tests/unit/Steps/SharedCase.fs",
+    "layers": ["unit", "integration"]
+  },
+  "expected-diagnostic": {
+    "code": "layout-file-selected-twice",
+    "fields": [
+      "project=crane-cli",
+      "owner=crane-cli",
+      "item=apps/crane-cli/src/tests/unit/Steps/SharedCase.fs",
+      "layers=unit,integration"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-RHINO",
+  "check": "bdd",
+  "mutation": {
+    "kind": "bdd-remove-binding",
+    "feature": "specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-traceability-audit.feature",
+    "scenario": "A clean repository passes the traceability audit",
+    "step": "Given a repository where every governance document carries the required traceability sections",
+    "adapter": "unit@rhino-cli"
+  },
+  "expected-diagnostic": {
+    "code": "bdd-undefined-binding",
+    "fields": [
+      "project=rhino-cli",
+      "owner=rhino-cli",
+      "item=specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-traceability-audit.feature",
+      "scenario=A clean repository passes the traceability audit",
+      "step=Given a repository where every governance document carries the required traceability sections"
+    ]
+  }
+}

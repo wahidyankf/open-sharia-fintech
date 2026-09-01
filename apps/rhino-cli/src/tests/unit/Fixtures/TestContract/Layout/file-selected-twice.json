@@ -1,0 +1,16 @@
+{
+  "schema": "ose-test-contract-layout-fixture/v1",
+  "case": "one file satisfying two runtime targets breaks the one-layer rule",
+  "project": "widget-app",
+  "owner": "widget-app",
+  "root": "apps/widget-app",
+  "ownedLayers": ["unit"],
+  "directories": ["apps/widget-app/tests/unit"],
+  "files": [
+    {
+      "path": "apps/widget-app/tests/unit/core.test.ts",
+      "executable": true,
+      "selectedBy": ["test:unit", "test:integration"]
+    }
+  ]
+}

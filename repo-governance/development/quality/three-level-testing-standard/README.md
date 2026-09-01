@@ -16,6 +16,7 @@ when_to_use: "Read this index to find the right Three-Level Testing Standard chi
 - [Mandatory Test Levels Matrix](./mandatory-test-levels-matrix.md) — Mandatory levels per project type. Use to check required test levels for a project type.
 - [Gherkin-Everywhere Mandate](./gherkin-everywhere-mandate.md) — Every level consumes Gherkin specs. Use when a test lacks a Gherkin scenario.
 - [No Network in Integration Tests, External Dependencies Optional in E2E](./no-network-and-external-dependencies-in-tests.md) — Network/dependency rules for integration vs. E2E. Use when a test needs an external dependency.
+- [Testing Contract Enforcement](./testing-contract-enforcement.md) — The four machine-checked testing policies and the command that enforces each. Use when a test-contract check fails or when adding a project to the testing registry.
 - [Repository Pattern Requirement](./repository-pattern-requirement.md) — Persistence must go through a repository interface. Use when adding data access code.
 - [Contract-Driven Development](./contract-driven-development.md) — API contracts drive test development. Use when an API contract changes.
 - [CI Workflow Mapping](./ci-workflow-mapping.md) — Which CI job runs which test level. Use to locate a test level's CI job.

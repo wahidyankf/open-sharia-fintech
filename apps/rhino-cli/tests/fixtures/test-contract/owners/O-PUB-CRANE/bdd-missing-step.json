@@ -1,0 +1,22 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-CRANE",
+  "check": "bdd",
+  "mutation": {
+    "kind": "bdd-remove-binding",
+    "feature": "specs/apps/crane/behavior/crane-cli/gherkin/reporting/report-management.feature",
+    "scenario": "New chain creates a 6-character UUID report",
+    "step": "Given no existing chain file for scope \"pdf-to-md\"",
+    "adapter": "unit@crane-cli"
+  },
+  "expected-diagnostic": {
+    "code": "bdd-undefined-binding",
+    "fields": [
+      "project=crane-cli",
+      "owner=crane-cli",
+      "item=specs/apps/crane/behavior/crane-cli/gherkin/reporting/report-management.feature",
+      "scenario=New chain creates a 6-character UUID report",
+      "step=Given no existing chain file for scope \"pdf-to-md\""
+    ]
+  }
+}
