@@ -861,7 +861,7 @@ let ``a policy verb without --fixture is CLI misuse`` () =
 [<Fact>]
 let ``a policy verb rejects an option it does not accept`` () =
     let code, _, err =
-        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "manifest"; "validate"; "--owner"; "O-PUB-RHINO" |]
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "manifest"; "validate"; "--owner"; "O-ANY-OWNER" |]
 
     Assert.Equal(2, code)
     Assert.Contains("--owner", err)
@@ -967,7 +967,7 @@ let ``the owner fixture leaf rejects a check outside the four`` () =
             [| "test-contract"
                "validate"
                "--owner"
-               "O-PUB-RHINO"
+               "O-ANY-OWNER"
                "--check"
                "smoke"
                "--fixture"
@@ -981,27 +981,37 @@ let ``the owner fixture leaf requires --fixture`` () =
     let code, _, err =
         runCaptured
             (okRoot (newTempDir ()))
-            [| "test-contract"; "validate"; "--owner"; "O-PUB-RHINO"; "--check"; "bdd" |]
+            [| "test-contract"; "validate"; "--owner"; "O-ANY-OWNER"; "--check"; "bdd" |]
 
     Assert.Equal(2, code)
     Assert.Contains("--fixture is required", err)
 
+/// The owner corpus is repository-specific — `ose-public` files `O-PUB-*`
+/// owners and `ose-private` files `O-PRI-*` ones — while this file is
+/// byte-identical across both. So the case reads whichever owner the checkout
+/// declares first rather than naming one.
 [<Fact>]
 let ``the owner fixture leaf loads a checked-in owner document`` () =
     match RhinoCli.Infrastructure.GitRoot.findRoot () with
     | Error message -> Assert.Fail(sprintf "expected findRoot Ok, got Error %s" message)
     | Ok realRepoRoot ->
+        let owner =
+            Directory.GetDirectories(Path.Combine(realRepoRoot, RhinoCli.Application.TestContract.FixtureRoot))
+            |> Array.map Path.GetFileName
+            |> Array.sort
+            |> Array.head
+
         let code, out, _ =
             runCaptured
                 (okRoot realRepoRoot)
                 [| "test-contract"
                    "validate"
                    "--owner"
-                   "O-PUB-RHINO"
+                   owner
                    "--check"
                    "coverage"
                    "--fixture"
-                   "apps/rhino-cli/tests/fixtures/test-contract/owners/O-PUB-RHINO/coverage-98.json" |]
+                   sprintf "%s/%s/coverage-98.json" RhinoCli.Application.TestContract.FixtureRoot owner |]
 
         Assert.Equal(0, code)
-        Assert.Contains("fixture-loaded owner=O-PUB-RHINO check=coverage", out)
+        Assert.Contains(sprintf "fixture-loaded owner=%s check=coverage" owner, out)
