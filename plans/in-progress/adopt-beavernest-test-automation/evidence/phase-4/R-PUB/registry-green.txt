@@ -1,0 +1,65 @@
+# D-P4-PUB-REGISTRY — GREEN
+
+Repository: ose-public, worktree adopt-beavernest-test-automation
+Branch: test-contract-validator-foundation-registry
+Frozen pre-edit repo-config.yml digest:
+aa5c4d03745fb13de774871b96eebe26052d5b97cd5c137c19ce16332bf5fb2a  repo-config.yml
+
+## GREEN — registry expand
+
+$ rhino-bin.sh test-contract registry validate --require-state expanded --allow-bootstrap fsharp-env-loader
+registry-valid state=expanded projects=28 behavior=bootstrap:1,active:25 legacy=present compatibility=present
+$ rhino-bin.sh test-contract registry snapshot --source legacy --output legacy.tsv
+registry-snapshot: rows=28 source=legacy
+$ rhino-bin.sh test-contract registry snapshot --source canonical --project-list-from legacy.tsv --output canonical-expanded.tsv
+registry-snapshot: rows=28 source=canonical
+$ rhino-bin.sh test-contract registry compare --legacy legacy.tsv --canonical canonical-expanded.tsv
+registry-preservation: equal rows=28
+$ rhino-bin.sh test-contract registry validate-mapping --all --require-count 28
+registry-mapping-valid state=identity mappings=28
+
+Snapshot grammar proof:
+  help contains 'snapshot --source legacy --output'                       ok
+  help contains 'snapshot --source canonical --project-list-from'         ok
+  help matches no 'snapshot.*--project([ =]|$)'                           ok
+$ rhino-bin.sh test-contract registry snapshot --source legacy --project fsharp-env-loader --output invalid.tsv
+Error: unknown option: --project
+  exit code                                                              2
+  invalid.tsv was never created                                          ok
+
+Reader immutability across every expand command:
+  before: 9840e2031eab6289e28cf61746db8e7e7e2f71105dd9b5c179d4dbb72c63c2c5
+  after:  9840e2031eab6289e28cf61746db8e7e7e2f71105dd9b5c179d4dbb72c63c2c5
+  identical                                                              ok
+Row counts: nx show projects = 28, legacy.tsv = 28, canonical-expanded.tsv = 28
+legacy.tsv and canonical-expanded.tsv are byte-identical.
+
+## GREEN — registry migrate
+
+Edit: 28 occurrences of 'migration-state: expanded' -> 'migration-state: migrating'.
+The frozen coverage.projects block and every other key are untouched.
+$ rhino-bin.sh test-contract registry validate --require-state migrating --allow-bootstrap fsharp-env-loader
+registry-valid state=migrating projects=28 behavior=bootstrap:1,active:25 legacy=present compatibility=present
+$ rhino-bin.sh test-contract registry validate-mapping --all
+registry-mapping-valid state=identity mappings=28
+$ rhino-bin.sh test-contract registry compare --legacy legacy.tsv --canonical canonical-migrating.tsv
+registry-preservation: equal rows=28
+  reader digest unchanged                                                ok
+  legacy.tsv and canonical-migrating.tsv byte-identical                  ok
+
+## GREEN — registry verify
+
+Edit: 28 occurrences of 'migration-state: migrating' -> 'migration-state: verified'.
+coverage.projects retained byte-for-byte.
+$ rhino-bin.sh test-contract registry validate --require-state verified --allow-bootstrap fsharp-env-loader
+registry-valid state=verified projects=28 behavior=bootstrap:1,active:25 legacy=present compatibility=present
+$ rhino-bin.sh test-contract registry validate-mapping --all
+registry-mapping-valid state=identity mappings=28
+$ rhino-bin.sh test-contract registry compare --legacy legacy.tsv --canonical canonical.tsv
+registry-preservation: equal rows=28
+  reader digest unchanged                                                ok
+  nx project count = legacy rows = canonical rows = 28                   ok
+  legacy.tsv and canonical.tsv byte-identical                            ok
+
+$ nx run rhino-cli:test:unit
+Passed!  - Failed:     0, Passed:  1473, Skipped:     0, Total:  1473 - RhinoCli.UnitTests.dll (net10.0)

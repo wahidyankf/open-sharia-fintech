@@ -1,0 +1,42 @@
+# D-P4-PUB-REGISTRY — REFACTOR
+
+Scope: normalization only. No diagnostic string, exit code, grammar, or
+registry value changed.
+
+## Moves
+
+1. renderLevels — one sorted spelling for the four level-list diagnostics in
+   validateMapping and validateTransition.
+2. sameNormalizedPath — one normalized comparison for optional repository-relative
+   paths, replacing the inline three-case match in validateTransition.
+3. The frozen coverage.projects reader moved out of TestContract.fs into
+   RepoConfig.parseCoverageProjects, so the repo-config.yml reader owns the
+   immutable half and TestContract.fs owns only the canonical testing root.
+
+Compile order is unchanged in both .fsproj files: RepoConfig.fs still precedes
+TestContract.fs in RhinoCli.Application.fsproj, and
+Steps/TestContractRegistryUnitTests.fs keeps its position in
+RhinoCli.UnitTests.fsproj.
+
+## Re-run proof
+
+$ rhino-bin.sh test-contract registry snapshot --source legacy --output legacy-refactor.tsv
+registry-snapshot: rows=28 source=legacy
+$ rhino-bin.sh test-contract registry snapshot --source canonical --project-list-from legacy-refactor.tsv --output canonical-refactor.tsv
+registry-snapshot: rows=28 source=canonical
+$ rhino-bin.sh test-contract registry compare --legacy legacy-refactor.tsv --canonical canonical-refactor.tsv
+registry-preservation: equal rows=28
+$ rhino-bin.sh test-contract registry validate --require-state verified --allow-bootstrap fsharp-env-loader
+registry-valid state=verified projects=28 behavior=bootstrap:1,active:25 legacy=present compatibility=present
+$ rhino-bin.sh test-contract registry validate-mapping --all
+registry-mapping-valid state=identity mappings=28
+
+  legacy-refactor.tsv identical to the pre-refactor legacy.tsv            ok
+  canonical-refactor.tsv identical to the pre-refactor canonical.tsv      ok
+  repo-config.yml digest unchanged around every reader                    ok
+  digest: 38a48e6d1ea4a6557598d5faef1e6ffe2bf1b5dc0c2241146125110e0b3275d7
+
+$ nx run rhino-cli:test:unit
+Passed!  - Failed:     0, Passed:  1473, Skipped:     0, Total:  1473 - RhinoCli.UnitTests.dll (net10.0)
+$ nx run rhino-cli:test:quick
+Successfully ran target test:quick for project rhino-cli and 2 tasks it depends on
