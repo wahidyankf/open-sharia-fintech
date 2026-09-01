@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-manifest-fixture/v1",
+  "case": "a retained manifest with no named direct consumer",
+  "project": "widget-www",
+  "owner": "widget-www",
+  "group": "web-application",
+  "disposition": "retained",
+  "manifestPath": "apps/widget-www/package.json",
+  "consumer": null,
+  "requiredFields": ["name", "version"],
+  "verification": "npm install --workspace apps/widget-www",
+  "scripts": [],
+  "commands": []
+}

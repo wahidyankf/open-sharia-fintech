@@ -1,0 +1,19 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-OL-WWW",
+  "check": "layout",
+  "mutation": {
+    "kind": "layout-overlap",
+    "path": "apps/organiclever-www/src/tests/unit/shared-case.spec.ts",
+    "layers": ["unit", "integration"]
+  },
+  "expected-diagnostic": {
+    "code": "layout-file-selected-twice",
+    "fields": [
+      "project=organiclever-www",
+      "owner=organiclever-www",
+      "item=apps/organiclever-www/src/tests/unit/shared-case.spec.ts",
+      "layers=unit,integration"
+    ]
+  }
+}

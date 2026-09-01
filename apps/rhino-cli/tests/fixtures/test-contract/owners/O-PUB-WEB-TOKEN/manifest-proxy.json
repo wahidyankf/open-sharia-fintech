@@ -1,0 +1,16 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-WEB-TOKEN",
+  "check": "manifest",
+  "mutation": {
+    "kind": "manifest-forwarder",
+    "path": "libs/web-ui-token/package.json",
+    "direct-consumers": [],
+    "script-name": "test",
+    "script": "nx test web-ui-token"
+  },
+  "expected-diagnostic": {
+    "code": "manifest-script-proxies-nx-target",
+    "fields": ["project=web-ui-token", "owner=web-ui-token", "item=libs/web-ui-token/package.json", "script=test"]
+  }
+}

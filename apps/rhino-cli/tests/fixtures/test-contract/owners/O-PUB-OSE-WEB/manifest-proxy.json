@@ -1,0 +1,16 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-OSE-WEB",
+  "check": "manifest",
+  "mutation": {
+    "kind": "manifest-forwarder",
+    "path": "apps/ose-app-web/package.json",
+    "direct-consumers": [],
+    "script-name": "test",
+    "script": "nx test ose-app-web"
+  },
+  "expected-diagnostic": {
+    "code": "manifest-script-proxies-nx-target",
+    "fields": ["project=ose-app-web", "owner=ose-app-web", "item=apps/ose-app-web/package.json", "script=test"]
+  }
+}

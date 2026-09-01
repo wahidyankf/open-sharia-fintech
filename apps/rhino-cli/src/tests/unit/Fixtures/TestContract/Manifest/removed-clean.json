@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-manifest-fixture/v1",
+  "case": "a dedicated E2E project whose commands moved to project.json",
+  "project": "widget-e2e",
+  "owner": "widget-app",
+  "group": "dedicated-e2e",
+  "disposition": "removed",
+  "manifestPath": null,
+  "consumer": null,
+  "requiredFields": [],
+  "verification": null,
+  "scripts": [],
+  "commands": ["npx nx run widget-e2e:test:e2e"]
+}

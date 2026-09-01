@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-manifest-fixture/v1",
+  "case": "Nx project discovery is named in the contract as not a valid consumer",
+  "project": "widget-www",
+  "owner": "widget-www",
+  "group": "web-application",
+  "disposition": "retained",
+  "manifestPath": "apps/widget-www/package.json",
+  "consumer": "Nx project discovery",
+  "requiredFields": ["name"],
+  "verification": "npx nx show projects",
+  "scripts": [],
+  "commands": []
+}

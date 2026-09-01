@@ -1,0 +1,10 @@
+{
+  "schema": "ose-test-contract-layout-fixture/v1",
+  "case": "a declared integration layer with no executable test is an unkept claim",
+  "project": "widget-app",
+  "owner": "widget-app",
+  "root": "apps/widget-app",
+  "ownedLayers": ["unit", "integration"],
+  "directories": ["apps/widget-app/tests/unit", "apps/widget-app/tests/integration"],
+  "files": [{ "path": "apps/widget-app/tests/unit/core.test.ts", "executable": true, "selectedBy": ["test:unit"] }]
+}

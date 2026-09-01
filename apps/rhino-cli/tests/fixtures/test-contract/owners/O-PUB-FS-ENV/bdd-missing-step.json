@@ -1,0 +1,22 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-FS-ENV",
+  "check": "bdd",
+  "mutation": {
+    "kind": "bdd-remove-binding",
+    "feature": "specs/libs/fsharp-env-loader/behavior/gherkin/loader/env-tier-resolution.feature",
+    "scenario": "A tier file value loses to the process environment",
+    "step": "Given the process environment already defines the variable",
+    "adapter": "unit@fsharp-env-loader"
+  },
+  "expected-diagnostic": {
+    "code": "bdd-undefined-binding",
+    "fields": [
+      "project=fsharp-env-loader",
+      "owner=fsharp-env-loader",
+      "item=specs/libs/fsharp-env-loader/behavior/gherkin/loader/env-tier-resolution.feature",
+      "scenario=A tier file value loses to the process environment",
+      "step=Given the process environment already defines the variable"
+    ]
+  }
+}

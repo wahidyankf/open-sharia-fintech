@@ -1,0 +1,14 @@
+{
+  "schema": "ose-test-contract-layout-fixture/v1",
+  "case": "tests/support/ may hold helpers but never an executable test",
+  "project": "widget-app",
+  "owner": "widget-app",
+  "root": "apps/widget-app",
+  "ownedLayers": ["unit"],
+  "directories": ["apps/widget-app/tests/unit", "apps/widget-app/tests/support"],
+  "files": [
+    { "path": "apps/widget-app/tests/unit/core.test.ts", "executable": true, "selectedBy": ["test:unit"] },
+    { "path": "apps/widget-app/tests/support/builders.ts", "executable": false, "selectedBy": [] },
+    { "path": "apps/widget-app/tests/support/smoke.test.ts", "executable": true, "selectedBy": ["test:unit"] }
+  ]
+}

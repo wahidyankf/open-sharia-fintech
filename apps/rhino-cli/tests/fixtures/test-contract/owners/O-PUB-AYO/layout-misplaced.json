@@ -1,0 +1,19 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-AYO",
+  "check": "layout",
+  "mutation": {
+    "kind": "layout-overlap",
+    "path": "apps/ayokoding-www/src/tests/unit/shared-case.spec.ts",
+    "layers": ["unit", "integration"]
+  },
+  "expected-diagnostic": {
+    "code": "layout-file-selected-twice",
+    "fields": [
+      "project=ayokoding-www",
+      "owner=ayokoding-www",
+      "item=apps/ayokoding-www/src/tests/unit/shared-case.spec.ts",
+      "layers=unit,integration"
+    ]
+  }
+}

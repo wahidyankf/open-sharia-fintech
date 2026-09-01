@@ -1,0 +1,22 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-WEB-UI",
+  "check": "bdd",
+  "mutation": {
+    "kind": "bdd-remove-binding",
+    "feature": "specs/libs/web-ui/behavior/gherkin/app-header/app-header.feature",
+    "scenario": "Renders title",
+    "step": "Given I render an AppHeader with title \"Workouts\"",
+    "adapter": "unit@web-ui"
+  },
+  "expected-diagnostic": {
+    "code": "bdd-undefined-binding",
+    "fields": [
+      "project=web-ui",
+      "owner=web-ui",
+      "item=specs/libs/web-ui/behavior/gherkin/app-header/app-header.feature",
+      "scenario=Renders title",
+      "step=Given I render an AppHeader with title \"Workouts\""
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-OSE-WEB",
+  "check": "layout",
+  "mutation": {
+    "kind": "layout-overlap",
+    "path": "apps/ose-app-web/src/tests/unit/shared-case.spec.ts",
+    "layers": ["unit", "integration"]
+  },
+  "expected-diagnostic": {
+    "code": "layout-file-selected-twice",
+    "fields": [
+      "project=ose-app-web",
+      "owner=ose-app-web",
+      "item=apps/ose-app-web/src/tests/unit/shared-case.spec.ts",
+      "layers=unit,integration"
+    ]
+  }
+}

@@ -30,6 +30,7 @@ Every project in this monorepo tests at three levels -- unit, integration, and E
 - [Mandatory Test Levels Matrix](./three-level-testing-standard/mandatory-test-levels-matrix.md) — Mandatory levels per project type. Use to check required test levels for a project type.
 - [Gherkin-Everywhere Mandate](./three-level-testing-standard/gherkin-everywhere-mandate.md) — Every level consumes Gherkin specs. Use when a test lacks a Gherkin scenario.
 - [No Network in Integration Tests, External Dependencies Optional in E2E](./three-level-testing-standard/no-network-and-external-dependencies-in-tests.md) — Network/dependency rules for integration vs. E2E. Use when a test needs an external dependency.
+- [Testing Contract Enforcement](./three-level-testing-standard/testing-contract-enforcement.md) — The four machine-checked policies and their commands. Use when a test-contract check fails.
 - [Repository Pattern Requirement](./three-level-testing-standard/repository-pattern-requirement.md) — Persistence must go through a repository interface. Use when adding data access code.
 - [Contract-Driven Development](./three-level-testing-standard/contract-driven-development.md) — API contracts drive test development. Use when an API contract changes.
 - [CI Workflow Mapping](./three-level-testing-standard/ci-workflow-mapping.md) — Which CI job runs which test level. Use to locate a test level's CI job.

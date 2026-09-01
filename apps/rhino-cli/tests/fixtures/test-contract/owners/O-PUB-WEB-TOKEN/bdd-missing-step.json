@@ -1,0 +1,22 @@
+{
+  "schema": "ose-test-contract-owner-fixture/v1",
+  "owner-id": "O-PUB-WEB-TOKEN",
+  "check": "bdd",
+  "mutation": {
+    "kind": "bdd-remove-binding",
+    "feature": "specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature",
+    "scenario": "The package exports every structural token module",
+    "step": "Given the web-ui-token package",
+    "adapter": "unit@web-ui-token"
+  },
+  "expected-diagnostic": {
+    "code": "bdd-undefined-binding",
+    "fields": [
+      "project=web-ui-token",
+      "owner=web-ui-token",
+      "item=specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature",
+      "scenario=The package exports every structural token module",
+      "step=Given the web-ui-token package"
+    ]
+  }
+}
