@@ -2,10 +2,9 @@ namespace OseBe.Contexts.Config
 
 open System.IO
 
-/// Infrastructure layer for the config bounded context: thin wrapper around
-/// the shared `libs/fsharp-env-loader` tiered `.env.<APP_ENV>` loader (see
-/// specs/apps/ose/ddd/ubiquitous-language/config.md) so that agent-restricted
-/// tiers (.env.stag, .env.prod) never need to be opened by an AI agent. The
+/// Infrastructure layer for the config bounded context: thin wrapper around the
+/// shared `libs/fsharp-env-loader` tiered `.env.<APP_ENV>` loader so that
+/// agent-restricted tiers (.env.stag, .env.prod) never need to be opened by an AI agent. The
 /// loader rules themselves (tier resolution, process-env-wins, missing-file
 /// tolerance) live in `FsharpEnvLoader.EnvTier`.
 module Infrastructure =

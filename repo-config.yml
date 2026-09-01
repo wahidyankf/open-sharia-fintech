@@ -247,8 +247,7 @@ specs:
   # Areas that must carry a ddd/ folder (bounded-context registry). Lifts the
   # hardcoded apps_with_ddd() allowlist into explicit config.
   # An area NOT listed must NOT carry ddd/ (unlisted area with ddd/ = error).
-  ddd-areas:
-    - ose
+  ddd-areas: []
 
   # Areas eligible for specs:domain:coverage (explicit allowlist; distinct from
   # ddd-areas). A project NOT listed is skipped even if it has domain/** features.
