@@ -191,7 +191,7 @@ let private globToRegex (glob: string) : Regex =
             let close = text.IndexOf('}', index)
 
             if close < 0 then
-                builder.Append(Regex.Escape(string (current: char))) |> ignore
+                builder.Append(Regex.Escape(string<char> current)) |> ignore
                 index <- index + 1
             else
                 let options = text.Substring(index + 1, close - index - 1).Split(',')
@@ -201,7 +201,7 @@ let private globToRegex (glob: string) : Regex =
                 builder.Append("(?:").Append(rendered).Append(')') |> ignore
                 index <- close + 1
         else
-            builder.Append(Regex.Escape(string (current: char))) |> ignore
+            builder.Append(Regex.Escape(string<char> current)) |> ignore
             index <- index + 1
 
     builder.Append('$') |> ignore
