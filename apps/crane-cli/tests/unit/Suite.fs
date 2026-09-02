@@ -9,36 +9,40 @@ let private assembly = Assembly.GetExecutingAssembly()
 
 let private gherkinRoot =
     match System.Environment.GetEnvironmentVariable("GHERKIN_ROOT") with
-    | null -> Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/behavior/cli/gherkin")
+    | null -> Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/cli/behaviors")
     | root -> root
 
-/// Returns loaded Gherkin scenarios, or a single no-op placeholder when none can be loaded.
-/// Prevents xUnit from failing with "No data found" when step definitions are not yet implemented.
+/// Every scenario in the owner corpus, one xUnit row each.
+///
+/// This function raises rather than degrading. A corpus that cannot be read is
+/// indistinguishable at the exit code from a corpus that passes, so an earlier
+/// version returned a single no-op row "so [Theory] does not fail with No data
+/// found" — which is exactly what let a retired `gherkinRoot` path hide 36
+/// scenarios behind a green target. A missing directory, an unreadable feature
+/// file, and an empty corpus are all failures here.
 let private buildScenarioData () : seq<obj[]> =
+    if not (Directory.Exists gherkinRoot) then
+        failwithf "the Gherkin corpus directory does not exist: %s" gherkinRoot
+
+    let files =
+        Directory.GetFiles(gherkinRoot, "*.feature", SearchOption.AllDirectories)
+
+    if Array.isEmpty files then
+        failwithf "no .feature file was found under %s" gherkinRoot
+
+    let defs = StepDefinitions(assembly)
+
     let loaded =
-        if Directory.Exists(gherkinRoot) then
-            let files =
-                Directory.GetFiles(gherkinRoot, "*.feature", SearchOption.AllDirectories)
-
-            let defs = StepDefinitions(assembly)
-
-            files
-            |> Seq.collect (fun path ->
-                try
-                    let feature = defs.GenerateFeature(path)
-                    feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |])
-                with _ ->
-                    Seq.empty)
-            |> Seq.toList
-        else
-            []
+        files
+        |> Seq.collect (fun path ->
+            let feature = defs.GenerateFeature(path)
+            feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |]))
+        |> Seq.toList
 
     if List.isEmpty loaded then
-        // Placeholder: step definitions not yet implemented.
-        // Returns a single no-op row so [Theory] does not fail with "No data found".
-        Seq.singleton [| box "no-op" |]
-    else
-        loaded :> seq<_>
+        failwithf "the %d feature file(s) under %s expanded to no scenarios" files.Length gherkinRoot
+
+    loaded :> seq<_>
 
 type CraneCliUnitSuite() =
     static member Scenarios() : seq<obj[]> =
@@ -49,4 +53,4 @@ type CraneCliUnitSuite() =
     member _.``Crane unit scenarios``(item: obj) =
         match item with
         | :? Scenario as scenario -> scenario.Action.Invoke()
-        | _ -> () // no-op placeholder — step definitions not yet implemented
+        | other -> failwithf "expected a TickSpec Scenario row, got %O" (other.GetType())
