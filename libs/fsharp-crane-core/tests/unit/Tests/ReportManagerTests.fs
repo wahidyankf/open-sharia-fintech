@@ -94,3 +94,34 @@ let ``getOrExtendChain starts fresh chain when chain file timestamp is too old``
     finally
         if File.Exists(chainFile) then
             File.Delete(chainFile)
+
+[<Fact>]
+let ``initReport surfaces an exception instead of crashing when the report path cannot be written`` () =
+    // A scope containing path separators drives the report path into nested
+    // directories that generated-reports/ alone never creates, so
+    // File.WriteAllText throws and initReport's own `with ex ->` handler is
+    // what turns that into a Result, rather than an unhandled exception.
+    let scope = "nonexistent-subdir/deeply/nested"
+
+    match initReport scope "pdf.pdf" "md.md" with
+    | Error message -> Assert.Contains("Failed to init report", message)
+    | Ok path -> Assert.Fail(sprintf "expected a write failure, got Ok %s" path)
+
+[<Fact>]
+let ``finalizeReport surfaces an exception instead of crashing when the report cannot be rewritten`` () =
+    let path =
+        System.IO.Path.Combine(
+            System.IO.Path.GetTempPath(),
+            sprintf "crane-report-readonly-%s.md" (System.Guid.NewGuid().ToString("N").[..7])
+        )
+
+    System.IO.File.WriteAllText(path, "Status: IN_PROGRESS\n")
+    System.IO.File.SetAttributes(path, System.IO.FileAttributes.ReadOnly)
+
+    try
+        match finalizeReport path "DONE" with
+        | Error message -> Assert.Contains("Failed to finalize report", message)
+        | Ok() -> Assert.Fail("expected a write failure against a read-only report")
+    finally
+        System.IO.File.SetAttributes(path, System.IO.FileAttributes.Normal)
+        System.IO.File.Delete(path)

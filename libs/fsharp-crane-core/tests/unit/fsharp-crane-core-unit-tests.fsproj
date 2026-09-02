@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="Tests/PdfToMarkdownRoutingSteps.fs" />
     <Compile Include="Tests/PdfToMarkdownRoutingFeatureRunner.fs" />
+    <Compile Include="Tests/ConvertTests.fs" />
     <Compile Include="Tests/DomainTests.fs" />
     <Compile Include="Tests/TextCheckerTests.fs" />
     <Compile Include="Tests/HeadingCheckerTests.fs" />

@@ -12,10 +12,10 @@ import { mkdtempSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { describe, expect, it } from "vitest";
-import { loadTierEnv, resolveTier, type EnvRecord } from "./index";
+import { loadTierEnv, resolveTier, type EnvRecord } from "../../src/index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature"),
+  path.resolve(__dirname, "../../../../specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature"),
 );
 
 const tmpDirs: string[] = [];

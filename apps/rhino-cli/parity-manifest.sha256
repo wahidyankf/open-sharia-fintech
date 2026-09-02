@@ -1,7 +1,7 @@
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 ff2fa1ef1b0437450c1caefcc1fafa0ce1df3b543eb4cfe447581b4cc7a043bc  apps/rhino-cli/project.json
 22b1d0652e8937a20c83841966e4f8b1c451d671d34dd27fb5fa13f11d340a4d  apps/rhino-cli/src/.gitignore
-16b97ed9a65f9744133078018ab93cbe80af5f4aca2ab7d7702932e46dfa29e3  apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
+c141b1053959ee068093be264caca9e34e9bc505e5ea602b81c621d35bc730a4  apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
 12002d21e09962fad95d9dd8aef219b00707f67513823b918c4bf42797bdf4d9  apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs
 11fe7ec2e5e08b432e2d1cedae59e1a555e17e22a1f11494bd83b80c36964b5c  apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs
 5a59c581ef9cc94ee1ebf095aced5cc5f95a627adc575200fc37af1572098785  apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs
@@ -20,12 +20,13 @@ e160eed9a7ae866207cb757a09a01fc04fe4256db87766099c0d62dd6416668a  apps/rhino-cli
 625feeb23d8111c4ede63e62b386d8f5674424d7e5499ce1cf8091a8d4075649  apps/rhino-cli/src/RhinoCli.Application/src/TestContractJson.fs
 dbe0ab654d1acc57a4ed7245d5573dd2ec7328203a3c391b131719e46b54c00e  apps/rhino-cli/src/RhinoCli.Application/src/TestContractLayout.fs
 1492b905ad12bc69421ba3f225110dc2848f0a243347012d32d4842d45277613  apps/rhino-cli/src/RhinoCli.Application/src/TestContractManifest.fs
+6963c6ab48c48c1f843b9a7afcfb6476f5c622bfd81990d9eb2200f2ea300ba9  apps/rhino-cli/src/RhinoCli.Application/src/TestContractProject.fs
 59aa64bf160fffd6df62a013fa1eefc2e3af703670928c68dd91e62098e579c5  apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src/RhinoCli.Cli/RhinoCli.Cli.fsproj
-b7376ae62fd1d01d03ba7f58730fb612ca68390f2f0bf5b2f741cda4c48985b8  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+60fa8fa14b06717a6b204013c8c247828bc5dda4dad1b96cfdacaaea0a468e4b  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
 9c1b6441b1319aed995e83c11a4bb1415a7f0b055878d8b2bc139f49264b68a1  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
 fb5b64497123536aebbce019fec47909e00528b1859a75ffcf0acb0c9b123ac4  apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs
-bae5e00a50c31d3ad2b28d77ee6d860cf89c2497fece6c14641627ab13f54818  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
+1ac46d73d751afffee9da9e0a6653e0f3cc00b2f4ce6d5836d1c51a44b7d04ed  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
 d7ff185030ec8501b639875753a3bc9487e0f783c6efa593484b6199811ddff2  apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs
 52512b342d694832e500cc9a6d9711992211d31b5479f8e0fe2b6c1bbcc2b4d1  apps/rhino-cli/src/RhinoCli.Domain/RhinoCli.Domain.fsproj
 890ff9265bfe3a2bfc2da7cf75a0a0caabe9efcfa4c4b784565bcfa3a29037b2  apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs
@@ -78,7 +79,7 @@ a8ce0d4b4b7922b1bdc44992b99ad6f408a957b8f06683b44d858a9170239cc3  apps/rhino-cli
 de7d5d9d5d063121b71f41682d767d3c82819fa3826fea4fad81082e4d9275f0  apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/retained-without-consumer.json
 3a008842fe344509e00c411e202f2d710c26ad0e0f066a0fdf57a16e6eb4758f  apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/retained-without-path.json
 0e6df0fd840b40dda4076936ae9ea5b6d36744c36fd0d76a9e8083b5ace9a36e  apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest/script-proxies-nx-target.json
-4cf88a7e7fb90642c95227974b31418241587cc6b0743ea07609b6b437ff1484  apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
+22a45e23e3d081b2a130fc79694b8d5867c95dfa2aea6ab9e195102ad8d133b2  apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj
 5da56d23fcdaaa516d4b424c5cc27b6230ae0e2b3e2b35704144151b63ae75ba  apps/rhino-cli/src/tests/unit/Steps/ContractsSteps.fs
 01f95d8e3e8af0b6a38ae64a173c67c8cd3692fc660aad2bf1755197aeeb5491  apps/rhino-cli/src/tests/unit/Steps/ConventionSteps.fs
 a909884a9d8816e2b476cc8c00be03ac4085b849cbe83c4b18e0213ac9cad1d7  apps/rhino-cli/src/tests/unit/Steps/ConventionUnitTests.fs
@@ -128,6 +129,7 @@ d77ba5a5d5a93dfb1ee31cbd9f24c8d63a550b0305437ab66bffe1da1e433ade  apps/rhino-cli
 2905dc61820d2dfee29831f92425350afbbc61d180e027ab6be77a8820b4220f  apps/rhino-cli/src/tests/unit/Steps/TestContractLayoutUnitTests.fs
 311088a50a7d2c240d6440da79edb8418e2c2afb1438ac67e83cf5a6c5656f32  apps/rhino-cli/src/tests/unit/Steps/TestContractManifestUnitTests.fs
 f0633ea8787de85adf03783335dd8443ef8a14c1dd6ca3e5198327339b43c3f4  apps/rhino-cli/src/tests/unit/Steps/TestContractOwnerFixturesUnitTests.fs
+780a02aa1384a25fbb04f51af70e6cfbcc430230cfd45411845d84327a24b050  apps/rhino-cli/src/tests/unit/Steps/TestContractProjectUnitTests.fs
 89dcde9d19c58af1d89b067101879efbd1650c3afda17882fb22f2f795a44273  apps/rhino-cli/src/tests/unit/Steps/TestContractRegistryUnitTests.fs
 5b21229d99d2ff91d56faccfcc5eef66cdd9b1b1be1c863b679dc123994cb976  apps/rhino-cli/src/tests/unit/Steps/TestCoverageSteps.fs
 28e3e31079570f095b6bbb1aed353323815d2e559b00adfc699342224444d56a  apps/rhino-cli/src/tests/unit/Steps/TestCoverageUnitTests.fs

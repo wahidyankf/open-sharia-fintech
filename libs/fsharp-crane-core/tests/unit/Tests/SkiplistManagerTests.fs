@@ -138,3 +138,55 @@ let ``add creates parent directory when path has subdirectory`` () =
 
         if Directory.Exists(tmpBase) then
             Directory.Delete(tmpBase, true)
+
+[<Fact>]
+let ``list skips a FALSE_POSITIVE heading whose body does not have exactly three pipe-separated segments`` () =
+    withTempPath (fun () ->
+        let path = Environment.GetEnvironmentVariable("CRANE_SKIPLIST_PATH")
+
+        File.WriteAllText(
+            path,
+            "## FALSE_POSITIVE: only-two | segments\n\n**Accepted**: now\n\n---\n\n"
+            + "## FALSE_POSITIVE: real-category | test.md | real description\n\n**Accepted**: now\n**NoColonHere\n\n---\n\n"
+        )
+
+        match list "test.md" with
+        | Ok entries ->
+            Assert.Single(entries) |> ignore
+            Assert.Equal("real-category", (List.head entries).Category)
+        | Error msg -> Assert.Fail(sprintf "list failed: %s" msg))
+
+[<Fact>]
+let ``add appends without a leading blank line when the existing file does not end in a double newline`` () =
+    withTempPath (fun () ->
+        let path = Environment.GetEnvironmentVariable("CRANE_SKIPLIST_PATH")
+        File.WriteAllText(path, "# preexisting content with no trailing blank line")
+
+        match add "test.md" "text-completeness" "appended after single-newline content" with
+        | Ok added ->
+            Assert.True(added)
+            let content = File.ReadAllText(path)
+            Assert.Contains("preexisting content", content)
+            Assert.Contains("FALSE_POSITIVE", content)
+        | Error msg -> Assert.Fail(sprintf "add failed: %s" msg))
+
+[<Fact>]
+let ``add surfaces an exception instead of crashing when the parent directory cannot be created`` () =
+    // Point CRANE_SKIPLIST_PATH at a path whose "directory" is actually an
+    // existing file, so Directory.CreateDirectory throws inside appendEntry
+    // and add's own `with ex ->` handler is what turns that into a Result.
+    let blockingFile =
+        Path.Combine(Path.GetTempPath(), sprintf "crane-skiplist-blocker-%s" (Guid.NewGuid().ToString("N").[..7]))
+
+    File.WriteAllText(blockingFile, "not a directory")
+    let skiplistPath = Path.Combine(blockingFile, "subdir", "skiplist.md")
+
+    try
+        Environment.SetEnvironmentVariable("CRANE_SKIPLIST_PATH", skiplistPath)
+
+        match add "test.md" "text-completeness" "should fail" with
+        | Error message -> Assert.Contains("Failed to add entry", message)
+        | Ok added -> Assert.Fail(sprintf "expected a failure, got Ok %b" added)
+    finally
+        Environment.SetEnvironmentVariable("CRANE_SKIPLIST_PATH", null)
+        File.Delete(blockingFile)

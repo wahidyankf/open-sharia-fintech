@@ -14,10 +14,10 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import { resolvePort, type EnvRecord } from "./index";
+import { resolvePort, type EnvRecord } from "../../src/index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature"),
+  path.resolve(__dirname, "../../../../specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature"),
 );
 
 describeFeature(feature, ({ Scenario, ScenarioOutline }) => {

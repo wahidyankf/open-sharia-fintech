@@ -17,7 +17,7 @@ let private pdfSha256 (path: string) : string =
 let private cacheEntryPath (cacheDir: string) (kind: string) (sha: string) =
     Path.Combine(cacheDir, CacheSubdir, sprintf "%s-%s.json" kind (sha.Substring(0, 16)))
 
-type private CachedExtraction =
+type CachedExtraction =
     { [<System.Text.Json.Serialization.JsonPropertyName("pdfSha")>]
       PdfSha: string
       [<System.Text.Json.Serialization.JsonPropertyName("kind")>]

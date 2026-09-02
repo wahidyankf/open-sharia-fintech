@@ -37,9 +37,17 @@ module PortResolver =
 
     /// Lowest legal TCP port. Port 0 means "let the OS choose", which is never
     /// what an operator naming a port intends, so it is rejected.
+    ///
+    /// `[<Literal>]` rather than a plain `let`: a true compile-time constant
+    /// is inlined at every use site with no backing static field, so it has
+    /// no module `.cctor` line for coverage instrumentation to (mis)count —
+    /// unlike a plain `let`, whose initializer coverlet tracks as a separate,
+    /// often-uninstrumented static-constructor line.
+    [<Literal>]
     let private minPort: int = 1
 
     /// Highest legal TCP port (16-bit unsigned ceiling).
+    [<Literal>]
     let private maxPort: int = 65535
 
     /// Treats absent, empty, and whitespace-only alike as "not supplied", so a
