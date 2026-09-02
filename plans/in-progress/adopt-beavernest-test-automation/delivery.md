@@ -876,6 +876,13 @@ threshold=99`, `manifest-consumer-verified`).
 
 ### `D-O-PRI-TS-TOKEN` delivery lifecycle
 
+> **Execution state:** `ts-ui-tokens` moved from a `src`-colocated echo-stub test contract to the
+> target shape following the `web-ui-token` pattern: tests relocated to `tests/unit/`,
+> `test:coverage` raised to a 99% line floor, and `test:layout:validation`/
+> `coverage:policy:validation`/`package-manifest:policy:validation` added. Leak-review clean, CI
+> green. PR: [wahidyankf/ose-private#144](https://github.com/wahidyankf/ose-private/pull/144),
+> merge commit `b79ec552a14a244a85f5cc77d511ae09287ae6cf`.
+
 ## Phase 11A: Migrate `O-PUB-WEB-UI`
 
 - **Input:** complete public UI row and component/delegated-boundary evidence.
@@ -906,6 +913,19 @@ threshold=99`, `manifest-consumer-verified`).
 > **Pause Safety:** Phase 11A is coherent at a natural pause only after every gate above passes. Safe to stop. To resume in `R-PUB:worktrees/adopt-beavernest-test-automation`: `rtk nx run-many -t test:quick,test:coverage,test:behavior:coverage,test:layout:validation,package-manifest:policy:validation,specs:structure-validation --projects=web-ui`.
 
 ### `D-O-PUB-WEB-UI` delivery lifecycle
+
+> **Execution state:** `web-ui` moved from a `src`-colocated 70%-floor test contract to the target
+> shape: unit tests relocated to `tests/unit/`, the `e2e/` visual-regression Playwright suite
+> relocated to `tests/integration/` and wired to a real `test:integration` target (previously a
+> no-op), `test:coverage` raised to a 99% line floor, the three policy-validation targets added, and
+> `repo-config.yml` registered for both unit and integration runtimes. Also fixed a dangling
+> `wahidyankf.css` import/theme entry in `.storybook/preview.ts`, broken by an unrelated in-flight
+> `wahidyankf-www` removal elsewhere in the org. Leak-review clean (0 findings). CI green (575
+> passed, 3 skipped — a pre-existing `@visual`-tagged Gherkin scenario excluded via
+> `describeFeature`'s `excludeTags`, not a banned skip pattern; verified pre-existing on
+> `origin/main` before this migration). PR:
+> [wahidyankf/ose-public#443](https://github.com/wahidyankf/ose-public/pull/443), merge commit
+> `dabe37a9a73abf435984180c1bf6339bf901f8fc`.
 
 ## Phase 11B: Migrate `O-PRI-TS-UI`
 
