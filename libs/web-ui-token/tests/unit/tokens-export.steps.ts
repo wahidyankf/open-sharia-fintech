@@ -1,10 +1,10 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import * as webUiToken from "./index";
+import * as webUiToken from "../../src/index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature"),
+  path.resolve(__dirname, "../../../../specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

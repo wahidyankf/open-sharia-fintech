@@ -56,3 +56,10 @@ let ``checkTables returns MEDIUM finding for row count mismatch`` () =
     Assert.NotEmpty(result)
     Assert.Equal("MEDIUM", result.[0].Criticality)
     Assert.Equal("table-integrity", result.[0].Category)
+
+[<Fact>]
+let ``detectTables skips a header candidate whose next line is not a separator`` () =
+    let text = "| a | b |\nnot a separator\n| x | y |\n---\n| 1 | 2 |"
+    let result = detectTables text
+    Assert.Single(result) |> ignore
+    Assert.Equal("| x | y |", (List.head result).HeaderRow)

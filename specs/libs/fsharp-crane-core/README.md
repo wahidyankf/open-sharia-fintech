@@ -24,5 +24,5 @@ specs/libs/fsharp-crane-core/
 `libs/fsharp-crane-core/tests/unit/Tests/`; no Gherkin runner is wired up for this library yet, so
 `specs:behavior:coverage` remains an `echo` placeholder until that lands.
 
-- [Architecture — fsharp-crane-core](./architecture.md)
-- [Behaviors — fsharp-crane-core](./behaviors/README.md)
+- [Architecture](./architecture.md) — fsharp-crane-core
+- [Behaviors](./behaviors/README.md) — fsharp-crane-core

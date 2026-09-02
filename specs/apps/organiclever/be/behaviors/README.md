@@ -27,8 +27,8 @@ domains.
 - **Parent**: [components/be/ specs](../architecture.md)
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 
-- [db — organiclever-be Gherkin Domain](./db/README.md)
-- [env — organiclever-be Gherkin Domain](./env/README.md)
-- [health — organiclever-be Gherkin Domain](./health/README.md)
-- [journal — organiclever-be Gherkin Domain](./journal/README.md)
-- [messaging — organiclever-be Gherkin Domain](./messaging/README.md)
+- [db](./db/README.md) — organiclever-be Gherkin Domain
+- [env](./env/README.md) — organiclever-be Gherkin Domain
+- [health](./health/README.md) — organiclever-be Gherkin Domain
+- [journal](./journal/README.md) — organiclever-be Gherkin Domain
+- [messaging](./messaging/README.md) — organiclever-be Gherkin Domain

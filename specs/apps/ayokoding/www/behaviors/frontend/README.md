@@ -58,10 +58,10 @@ same `web` Next.js container; the split is a slug, not a container boundary.
 - **API counterpart**: [backend behaviors](../backend/README.md)
 - **Parent**: [behaviors](../README.md)
 
-- [app-shell — ayokoding-www Gherkin Domain](./app-shell/README.md)
-- [content — ayokoding-www Gherkin Domain](./content/README.md)
-- [course-paths — ayokoding-www Gherkin Domain](./course-paths/README.md)
-- [i18n — ayokoding-www Gherkin Domain](./i18n/README.md)
-- [navigation — ayokoding-www Gherkin Domain](./navigation/README.md)
-- [search — ayokoding-www Gherkin Domain](./search/README.md)
-- [Tools — AyoKoding Gherkin Specs](./tools/README.md)
+- [app-shell](./app-shell/README.md) — ayokoding-www Gherkin Domain
+- [content](./content/README.md) — ayokoding-www Gherkin Domain
+- [course-paths](./course-paths/README.md) — ayokoding-www Gherkin Domain
+- [i18n](./i18n/README.md) — ayokoding-www Gherkin Domain
+- [navigation](./navigation/README.md) — ayokoding-www Gherkin Domain
+- [search](./search/README.md) — ayokoding-www Gherkin Domain
+- [Tools](./tools/README.md) — AyoKoding Gherkin Specs

@@ -850,13 +850,13 @@ let ``route reaches the bdd engine and reports its diagnostic`` () =
     Assert.Contains("bdd-", err)
 
 [<Fact>]
-let ``a policy verb without --fixture is CLI misuse`` () =
+let ``a policy verb without --fixture or --project is CLI misuse`` () =
     let code, _, err =
         runCaptured (okRoot (newTempDir ())) [| "test-contract"; "coverage"; "validate" |]
 
     Assert.Equal(2, code)
-    Assert.Contains("--fixture is required", err)
-    Assert.Contains("coverage corpus", err)
+    Assert.Contains("one of --fixture or --project is required", err)
+    Assert.Contains("coverage validation", err)
 
 [<Fact>]
 let ``a policy verb rejects an option it does not accept`` () =

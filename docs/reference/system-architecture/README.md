@@ -77,33 +77,33 @@ For the complete directory and project conventions, see the
 OSE uses the C4 model to describe the system from broad context to implementation detail. Start at
 the level that answers your question; you do not need to read every document in order.
 
-| If you need to understand...                          | Start here                                     | What it covers                                                          |
-| ----------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
-| Which software surfaces exist and what each is for    | [Applications & Containers](./applications.md) | Application inventory, C4 Level 2 containers, and their interactions    |
-| How a particular application is structured internally | [Components & Code](./components.md)           | C4 Level 3 components and selected Level 4 code structure               |
-| How applications reach their environments             | [Deployment](./deployment.md)                  | Deployment architecture, environment branches, and Vercel configuration |
-| How changes are checked before delivery               | [CI/CD Pipeline](./ci-cd.md)                   | Local hooks, GitHub Actions, Nx orchestration, and quality gates        |
-| Which technologies are in use                         | [Technology Stack](./technology-stack.md)      | Languages, frameworks, quality tools, and architecture considerations   |
+| If you need to understand...                          | Start here                                                                                                            | What it covers                                                          |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Which software surfaces exist and what each is for    | [Applications & Containers](./applications.md) — Application inventory, C4 Level 2 containers, and their interactions | Application inventory, C4 Level 2 containers, and their interactions    |
+| How a particular application is structured internally | [Components & Code](./components.md) — C4 Level 3 components and selected Level 4 code structure                      | C4 Level 3 components and selected Level 4 code structure               |
+| How applications reach their environments             | [Deployment](./deployment.md) — Deployment architecture, environment branches, and Vercel configuration               | Deployment architecture, environment branches, and Vercel configuration |
+| How changes are checked before delivery               | [CI/CD Pipeline](./ci-cd.md) — Local hooks, GitHub Actions, Nx orchestration, and quality gates                       | Local hooks, GitHub Actions, Nx orchestration, and quality gates        |
+| Which technologies are in use                         | [Technology Stack](./technology-stack.md) — Languages, frameworks, quality tools, and architecture considerations     | Languages, frameworks, quality tools, and architecture considerations   |
 
 ## Suggested reading paths
 
 ### Product discovery
 
-1. Read [Applications & Containers](./applications.md) to identify the current product, public,
+1. Read Applications & Containers to identify the current product, public,
    and supporting software surfaces.
-2. Read [Deployment](./deployment.md) to see how those surfaces are delivered.
-3. Use [Components & Code](./components.md) when you need more detail about a particular
+2. Read Deployment to see how those surfaces are delivered.
+3. Use Components & Code when you need more detail about a particular
    implementation boundary.
 
 ### Early engineering orientation
 
 1. Read the [Monorepo Structure Reference](../monorepo-structure.md) for project and dependency
    rules.
-2. Read [Applications & Containers](./applications.md) to choose the application or library you
+2. Read Applications & Containers to choose the application or library you
    need to inspect.
-3. Read [Components & Code](./components.md) and the relevant application README before changing
+3. Read Components & Code and the relevant application README before changing
    code.
-4. Read [CI/CD Pipeline](./ci-cd.md) to understand the checks that protect the system.
+4. Read CI/CD Pipeline to understand the checks that protect the system.
 
 ## Scope of this reference
 

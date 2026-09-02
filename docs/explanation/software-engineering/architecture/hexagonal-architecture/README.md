@@ -37,10 +37,10 @@ These are **OSE Platform-specific standards**, not an introduction to Hexagonal 
 
 **MUST follow these mandatory standards for all hexagonal implementations in OSE Platform:**
 
-1. **[Port Standards](./port-standards.md)** — Port (interface) naming, ownership, package placement, and OrganicLever port catalog
-2. **[Adapter Standards](./adapter-standards.md)** — Adapter (implementation) naming, package placement, forbidden imports, and polyglot conventions
-3. **[Composition Root Standards](./composition-root-standards.md)** — DI wiring conventions for F#/Giraffe, Nx-aware startup
-4. **[Testing Standards](./testing-standards.md)** — Port contract tests, in-memory adapter swap, integration boundary rules, Nx target mapping
+1. **[Port Standards](./port-standards.md) — Port (interface) naming, ownership, package placement, and OrganicLever port catalog**
+2. **[Adapter Standards](./adapter-standards.md) — Adapter (implementation) naming, package placement, forbidden imports, and polyglot conventions**
+3. **[Composition Root Standards](./composition-root-standards.md) — DI wiring conventions for F#/Giraffe, Nx-aware startup**
+4. **[Testing Standards](./testing-standards.md) — Port contract tests, in-memory adapter swap, integration boundary rules, Nx target mapping**
 
 ## OrganicLever Bounded Context Overview
 

@@ -3090,23 +3090,36 @@ let private runTestContractPolicyLeaf
     (repoRoot: string)
     (check: string)
     (validate: string -> string -> Result<string, TestContract.Failure>)
+    (projectValidate: (string -> string -> Result<string, TestContract.Failure>) option)
     (args: string list)
     : int =
-    match rejectUnknownOptions [ "--fixture"; "--help" ] args with
+    match rejectUnknownOptions [ "--fixture"; "--project"; "--help" ] args with
     | Error message ->
         eprintfn "Error: %s" message
         2
     | Ok() ->
-        match stringFlag [ "--fixture" ] args with
-        | None ->
-            eprintfn "Error: --fixture is required and names one document under the %s corpus" check
+        match stringFlag [ "--fixture" ] args, stringFlag [ "--project" ] args, projectValidate with
+        | Some _, Some _, _ ->
+            eprintfn "Error: --fixture and --project are mutually exclusive"
             2
-        | Some fixture ->
+        | Some fixture, None, _ ->
             match validate repoRoot fixture with
             | Error failure -> reportTestContractFailure failure
             | Ok rendered ->
                 printfn "%s" rendered
                 0
+        | None, Some project, Some validateProject ->
+            match validateProject repoRoot project with
+            | Error failure -> reportTestContractFailure failure
+            | Ok rendered ->
+                printfn "%s" rendered
+                0
+        | None, Some _, None ->
+            eprintfn "Error: --project is not supported for %s validation" check
+            2
+        | None, None, _ ->
+            eprintfn "Error: one of --fixture or --project is required for %s validation" check
+            2
 
 /// The BDD reader resolves a repository-relative path where the other three
 /// resolve a bare document name. The verb grammar is uniform, so this wrapper
@@ -3151,12 +3164,28 @@ let private runTestContractLeaf (getRepoRoot: unit -> Result<string, string>) (l
             | "test-contract-registry-snapshot" -> runTestContractSnapshotLeaf repoRoot args
             | "test-contract-registry-validate" -> runTestContractValidateLeaf repoRoot args
             | "test-contract-registry-validate-mapping" -> runTestContractValidateMappingLeaf repoRoot args
-            | "test-contract-bdd-validate" -> runTestContractPolicyLeaf repoRoot "BDD" validateBddFixture args
+            | "test-contract-bdd-validate" -> runTestContractPolicyLeaf repoRoot "BDD" validateBddFixture None args
             | "test-contract-coverage-validate" ->
-                runTestContractPolicyLeaf repoRoot "coverage" validateCoverageFixture args
-            | "test-contract-layout-validate" -> runTestContractPolicyLeaf repoRoot "layout" validateLayoutFixture args
+                runTestContractPolicyLeaf
+                    repoRoot
+                    "coverage"
+                    validateCoverageFixture
+                    (Some TestContractProject.validateCoveragePolicyForProject)
+                    args
+            | "test-contract-layout-validate" ->
+                runTestContractPolicyLeaf
+                    repoRoot
+                    "layout"
+                    validateLayoutFixture
+                    (Some TestContractProject.validateLayoutForProject)
+                    args
             | "test-contract-manifest-validate" ->
-                runTestContractPolicyLeaf repoRoot "manifest" validateManifestFixture args
+                runTestContractPolicyLeaf
+                    repoRoot
+                    "manifest"
+                    validateManifestFixture
+                    (Some TestContractProject.validateManifestForProject)
+                    args
             | _ -> runTestContractFixtureLeaf repoRoot args
 
 let private routeTable: (string list * string) list =

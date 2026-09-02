@@ -325,7 +325,7 @@ testing:
           levels: []
         canonical:
           owner: fsharp-env-loader
-          corpus: null
+          corpus: "specs/libs/fsharp-env-loader/behaviors/**"
           runtimes:
             - level: unit
               project: fsharp-env-loader
@@ -713,12 +713,9 @@ testing:
       migration-state: verified
       behavior:
         id: fsharp-env-loader:default
-        lifecycle-state: bootstrap
+        lifecycle-state: active
         owner: fsharp-env-loader
-        corpus: []
-        seed:
-          target: test:behavior:seed
-          driver: libs/fsharp-env-loader/tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs
+        corpus: ["specs/libs/fsharp-env-loader/behaviors/**"]
         adapters:
           unit:
             disposition: required

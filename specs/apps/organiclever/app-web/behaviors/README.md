@@ -58,12 +58,12 @@ definitions in `apps/organiclever-app-web/test/unit/steps/`.
 - **Backend counterpart**: [be gherkin specs](../../be/behaviors/README.md)
 - **Parent**: [web component specs](../architecture.md)
 
-- [app-shell — organiclever-app-web Gherkin Domain](./app-shell/README.md)
-- [env-loader — organiclever-app-web Gherkin Domain](./env-loader/README.md)
-- [health — organiclever-app-web Gherkin Domain](./health/README.md)
-- [journal — organiclever-app-web Gherkin Domain](./journal/README.md)
-- [routine — organiclever-app-web Gherkin Domain](./routine/README.md)
-- [routing — organiclever-app-web Gherkin Domain](./routing/README.md)
-- [settings — organiclever-app-web Gherkin Domain](./settings/README.md)
-- [stats — organiclever-app-web Gherkin Domain](./stats/README.md)
-- [workout-session — organiclever-app-web Gherkin Domain](./workout-session/README.md)
+- [app-shell](./app-shell/README.md) — organiclever-app-web Gherkin Domain
+- [env-loader](./env-loader/README.md) — organiclever-app-web Gherkin Domain
+- [health](./health/README.md) — organiclever-app-web Gherkin Domain
+- [journal](./journal/README.md) — organiclever-app-web Gherkin Domain
+- [routine](./routine/README.md) — organiclever-app-web Gherkin Domain
+- [routing](./routing/README.md) — organiclever-app-web Gherkin Domain
+- [settings](./settings/README.md) — organiclever-app-web Gherkin Domain
+- [stats](./stats/README.md) — organiclever-app-web Gherkin Domain
+- [workout-session](./workout-session/README.md) — organiclever-app-web Gherkin Domain

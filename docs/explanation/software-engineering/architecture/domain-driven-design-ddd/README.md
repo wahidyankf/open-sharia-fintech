@@ -75,11 +75,11 @@ DDD in OSE Platform enforces foundational software engineering principles:
 
 **MUST follow these mandatory standards for all DDD implementations in OSE Platform:**
 
-1. **[Bounded Context Standards](./bounded-context-standards.md)** - Nx app alignment, context mapping, ubiquitous language
-2. **[Aggregate Standards](./aggregate-standards.md)** - Consistency boundaries, transaction rules, Islamic finance invariants
-3. **[Value Object Standards](./value-object-standards.md)** - Immutable primitives (Money, FiscalDate, Rate), validation rules
-4. **[Domain Event Standards](./domain-event-standards.md)** - Event naming, immutability, publishing patterns
-5. **[Entity Standards](./entity-standards.md)** - Identity management, lifecycle tracking
+1. **[Bounded Context Standards](./bounded-context-standards.md) — Nx app alignment, context mapping, ubiquitous language**
+2. **[Aggregate Standards](./aggregate-standards.md) — Consistency boundaries, transaction rules, Islamic finance invariants**
+3. **[Value Object Standards](./value-object-standards.md) — Immutable primitives (Money, FiscalDate, Rate), validation rules**
+4. **[Domain Event Standards](./domain-event-standards.md) — Event naming, immutability, publishing patterns**
+5. **[Entity Standards](./entity-standards.md) — Identity management, lifecycle tracking**
 
 ## Bounded Context Organization
 
@@ -111,7 +111,7 @@ apps/
     └── infrastructure/
 ```
 
-**See**: [Bounded Context Standards](./bounded-context-standards.md) for detailed mapping strategies
+**See**: [Bounded Context Standards](./bounded-context-standards.md) — detailed mapping strategies
 
 ## Aggregate Design for Islamic Finance
 
@@ -139,7 +139,7 @@ apps/
 - MUST validate Shariah-compliant causes
 - MUST track distribution to eligible beneficiaries
 
-**See**: [Aggregate Standards](./aggregate-standards.md)
+**See**: [Aggregate Standards](./aggregate-standards.md) — consistency boundaries, transaction rules, Islamic finance invariants
 
 ## Value Object Requirements
 
@@ -161,7 +161,7 @@ apps/
 - **TypeScript**: Use `readonly` properties
 - **Go**: Use immutable structs
 
-**See**: [Value Object Standards](./value-object-standards.md)
+**See**: [Value Object Standards](./value-object-standards.md) — immutable primitives (Money, FiscalDate, Rate), validation rules
 
 ## Domain Event Requirements
 
@@ -183,7 +183,7 @@ apps/
 - MUST be past tense (represents something that happened)
 - MUST be immutable (never modified after creation)
 
-**See**: [Domain Event Standards](./domain-event-standards.md)
+**See**: [Domain Event Standards](./domain-event-standards.md) — event naming, immutability, publishing patterns
 
 ## Integration with OSE Platform Architecture
 
@@ -215,14 +215,14 @@ apps/
 
 **Mandatory Standards (All DDD practitioners MUST follow)**:
 
-1. [Bounded Context Standards](./bounded-context-standards.md) - Nx app alignment, context mapping
-2. [Aggregate Standards](./aggregate-standards.md) - Consistency boundaries, invariants
-3. [Value Object Standards](./value-object-standards.md) - Immutable primitives
+1. [Bounded Context Standards](./bounded-context-standards.md) — Nx app alignment, context mapping
+2. [Aggregate Standards](./aggregate-standards.md) — Consistency boundaries, invariants
+3. [Value Object Standards](./value-object-standards.md) — Immutable primitives
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Event-Driven Systems**: [Domain Event Standards](./domain-event-standards.md) - Event publishing patterns
-- **Entity Management**: [Entity Standards](./entity-standards.md) - Identity and lifecycle
+- **Event-Driven Systems**: [Domain Event Standards](./domain-event-standards.md) — Event publishing patterns
+- **Entity Management**: [Entity Standards](./entity-standards.md) — Identity and lifecycle
 
 ## Validation and Compliance
 

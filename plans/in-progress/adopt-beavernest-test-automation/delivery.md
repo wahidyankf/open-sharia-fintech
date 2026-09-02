@@ -560,9 +560,12 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 > parity path, so its move carries an identical `ose-private` landing; `crane` exists only here.
 >
 > Step 1 and the two CLI families landed as `ose-public#430` and `ose-public#431`, mirrored into
-> `ose-private#141`, which restored the byte-identical parity boundary. `ayokoding` follows next: it
-> is the only remaining family whose corpus move touches no Nx project root, because `ose` and
-> `organiclever` both keep their OpenAPI contract project under `containers/`.
+> `ose-private#141`, which restored the byte-identical parity boundary. The remaining families
+> followed: `ayokoding` (`ose-public#432`), `libs` (`ose-public#433`), `organiclever`
+> (`ose-public#434`), `ose` (`ose-public#435`). Step 3 — dropping legacy five-folder-tree support
+> once no family declared it — landed as `ose-public#436`, with the documentation-surface retirement
+> as `ose-public#437`. Phase 5 is fully complete: every family carries the logical owner-corpus
+> shape and the validator no longer accepts the legacy tree.
 
 ### `D-P5-PRI` delivery lifecycle
 
@@ -582,6 +585,14 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 > **Pause Safety:** Phase 6 is coherent at a natural pause only after every gate above passes. Safe to stop. To resume in `R-PUB:worktrees/adopt-beavernest-test-automation`: `rtk nx run-many -t test:quick,test:coverage,test:behavior:coverage,test:layout:validation,package-manifest:policy:validation,specs:structure-validation --projects=crane-cli`.
 
 ### `D-O-PUB-CRANE` delivery lifecycle
+
+> **Execution state:** Landed on `phase8-10-owners` alongside 8A/8B/9/10A. The registry already
+> carried `crane-cli` as `active`/`verified` with a real corpus and driver from the separately
+> merged `ose-public#438`/`#439` (Gherkin restoration and integration-tier retirement); this closed
+> the remaining gap — `project.json` had no `test:layout:validation`/`coverage:policy:validation`/
+> `package-manifest:policy:validation` targets and was still at the pre-migration 95% coverage
+> threshold. Moved to 99% (100% actual, 135 tests) and added the three targets, all green against
+> the real project. PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 7: Migrate Shared Rhino
 
@@ -670,6 +681,17 @@ difference blocks both merges.
 
 ### `D-O-PUB-FS-CORE` delivery lifecycle
 
+> **Execution state:** Landed on `phase8-10-owners` alongside 8B/9/10A. `fsharp-crane-core`'s
+> `test:coverage` threshold moved 95% to 99% (`/p:Include=[crane]*`, 99.83% actual, 104 tests);
+> `test:layout:validation`, `coverage:policy:validation`, and `package-manifest:policy:validation`
+> targets added and green (`native-layout-valid ... executable=13`, `coverage-policy-valid ...
+threshold=99`, `manifest-not-present`). A real production bug surfaced during this work —
+> `PdfExtractionCache.fs`'s `CachedExtraction` record was `type private`, capping property
+> visibility below what `System.Text.Json`'s reflection converter needs, so every cache write
+> serialized as `{}` and every read silently fell through to the inner port; fixed by dropping
+> `private`, with two permanent call-counting regression tests replacing the diagnostic spike.
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
+
 ## Phase 8B: Migrate `O-PUB-FS-ENV`
 
 - **Input:** complete `O-PUB-FS-ENV` row, its Phase-4 `bootstrap` seed contract, compatibility map,
@@ -700,9 +722,37 @@ widen the owner allocation.
 
 > All checks below must pass before starting Phase 9.
 >
-> **Pause Safety:** Phase 8B is coherent at a natural pause only after every gate above passes. Safe to stop. To resume in `R-PUB:worktrees/adopt-beavernest-test-automation`, rerun `rtk nx run fsharp-env-loader:test:behavior:seed`, `rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate --project fsharp-env-loader --require-behavior-state active`, `rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate-mapping --project fsharp-env-loader --require-state verified`, and `rtk nx run-many -t test:quick,test:coverage,test:behavior:coverage,test:layout:validation,package-manifest:policy:validation,specs:structure-validation --projects=fsharp-env-loader`.
+> **Pause Safety:** Phase 8B is coherent at a natural pause only after every gate above passes. Safe
+> to stop. To resume in `R-PUB:worktrees/adopt-beavernest-test-automation`: `rtk
+apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate --require-behavior-state
+active`, `rtk apps/rhino-cli/scripts/rhino-bin.sh test-contract registry validate-mapping --all`,
+> and `rtk nx run-many -t
+test:quick,test:coverage,test:behavior:coverage,test:layout:validation,package-manifest:policy:validation,specs:structure-validation
+--projects=fsharp-env-loader`. (The original `test:behavior:seed`-then-activate two-step never
+> shipped a `test:behavior:seed` target — see the Execution state below — so `registry
+validate`/`validate-mapping` take no `--project` filter; both are whole-registry commands.)
 
 ### `D-O-PUB-FS-ENV` delivery lifecycle
+
+> **Execution state:** Landed on `phase8-10-owners` alongside 8A/9/10A. `fsharp-env-loader` was the
+> registry's only remaining `bootstrap` row (`corpus: []`, a `seed:` block, no `specs/libs/`
+> tree) — this phase activated it directly to `active` in one step rather than the two-step
+> seed-then-activate the plan envisioned, since a real corpus and driver could be authored in the
+> same delivery: `specs/libs/fsharp-env-loader/behaviors/{env-tier,port-resolver}/*.feature` (36
+> scenarios, port-resolver mirroring `ts-env-loader`'s canonical corpus 1:1 since `PortResolver.fs`
+> already documented itself as a byte-for-byte behavioral mirror) plus a single TickSpec driver,
+> `tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs`, executing every scenario for real rather
+> than binding no-op steps. `test:coverage` threshold moved 95% to 99% (100% actual after changing
+> `PortResolver.fs`'s `minPort`/`maxPort` from plain `let` bindings to `[<Literal>]` — a plain
+> `let`'s module `.cctor` line is coverlet-invisible even though every port-bound test forces it to
+> run, while a true compile-time constant has no `.cctor` to miscount). `registry validate
+--require-behavior-state active` now reports `bootstrap:0,active:24` — no bootstrap owner remains
+> anywhere in the registry. One real concurrency bug surfaced and was fixed during this work: the
+> env-tier scenarios mutate real process environment variables (`APP_ENV` and friends), which raced
+> under xunit's default one-collection-per-module parallelism exactly as
+> `apps/rhino-cli/src/tests/unit/Steps/GitRootUnitTests.fs` already documents; fixed with the same
+> assembly-wide `[<assembly: CollectionBehavior(DisableTestParallelization = true)>]` opt-out.
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 9: Migrate `O-PUB-TS-ENV`
 
@@ -721,6 +771,15 @@ widen the owner allocation.
 
 ### `D-O-PUB-TS-ENV` delivery lifecycle
 
+> **Execution state:** Landed on `phase8-10-owners` alongside 8A/8B/10A. `ts-env-loader`'s coverage
+> threshold moved 90% to 99% (108 tests, 100% lines); its three `*.unit.test.ts` files and
+> `tokens-export.steps.ts`'s TS sibling moved from `src/` into `tests/unit/` (import paths fixed:
+> `./index` to `../../src/index`), and `vitest.config.ts`'s `include` moved from `src/**` to
+> `tests/unit/**`. `test:layout:validation`, `coverage:policy:validation`, and
+> `package-manifest:policy:validation` targets added and green (`native-layout-valid ...
+executable=3`, `coverage-policy-valid ... threshold=99`, `manifest-consumer-verified`).
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
+
 ## Phase 10A: Migrate `O-PUB-WEB-TOKEN`
 
 - **Input:** complete public token row and delegated-boundary evidence.
@@ -737,6 +796,14 @@ widen the owner allocation.
 > **Pause Safety:** Phase 10A is coherent at a natural pause only after every gate above passes. Safe to stop. To resume in `R-PUB:worktrees/adopt-beavernest-test-automation`: `rtk nx run-many -t test:quick,test:coverage,test:behavior:coverage,test:layout:validation,package-manifest:policy:validation,specs:structure-validation --projects=web-ui-token`.
 
 ### `D-O-PUB-WEB-TOKEN` delivery lifecycle
+
+> **Execution state:** Landed on `phase8-10-owners` alongside 8A/8B/9. `web-ui-token`'s
+> `test:coverage` target was an echo placeholder (`AC-COVERAGE`-vacuous); replaced with a real `npx
+vitest run --coverage --coverage.thresholds.lines=99` (6 tests, 100% lines).
+> `test:layout:validation`, `coverage:policy:validation`, and `package-manifest:policy:validation`
+> targets added and green (`native-layout-valid ... executable=1`, `coverage-policy-valid ...
+threshold=99`, `manifest-consumer-verified`).
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 10B: Migrate `O-PRI-TS-TOKEN`
 

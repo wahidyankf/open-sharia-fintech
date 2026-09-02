@@ -4,8 +4,8 @@ title: "Apps"
 
 # Apps
 
-- [Ayokoding](./ayokoding/README.md)
-- [Crane](./crane/README.md)
-- [Organiclever](./organiclever/README.md)
-- [Ose](./ose/README.md)
-- [Rhino](./rhino/README.md)
+- [Ayokoding](./ayokoding/README.md) — Specifications for ayokoding-www, the multilingual educational site's architecture and Gherkin behaviors.
+- [Crane](./crane/README.md) — Specifications for crane-cli, the Content Retrieval And Normalization Engine's architecture and behaviors.
+- [Organiclever](./organiclever/README.md) — Specifications for OrganicLever's three logical owners: app-web, be backend, and www marketing site.
+- [Ose](./ose/README.md) — Specifications for OSE's two products, the app-web/be GRC platform and the ose-www marketing site.
+- [Rhino](./rhino/README.md) — Specifications for rhino-cli, the Repository Hygiene & INtegration Orchestrator's architecture and Gherkin behaviors.

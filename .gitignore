@@ -53,6 +53,7 @@ docs/**/*.excalidraw.md
 coverage/
 !apps/rhino-cli/internal/coverage/
 !apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage/
+coverage.json
 .nyc_output/
 jest.config.js.bak
 

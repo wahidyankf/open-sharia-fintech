@@ -68,6 +68,6 @@ generated files) triggers a cache miss and re-runs affected test targets.
 - Every schema must have a `description`
 - Changes to this contract trigger codegen for both apps via Nx dependency graph
 
-- [generated — OSE Contracts](./generated/README.md)
-- [paths — OSE Contracts](./paths/README.md)
-- [schemas — OSE Contracts](./schemas/README.md)
+- [generated](./generated/README.md) — OSE Contracts
+- [paths](./paths/README.md) — OSE Contracts
+- [schemas](./schemas/README.md) — OSE Contracts

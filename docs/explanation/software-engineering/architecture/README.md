@@ -36,16 +36,16 @@ Clear architecture documentation delivers tangible benefits:
 
 ## Quick Decision: Which Documentation Do I Need?
 
-| Your Situation                                       | Start With                                                                                                                          |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)                                                                              |
-| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)                                                                            |
-| Aligning multiple teams on integration               | [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md)                                                                |
-| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md)                                                                          |
-| Modeling domain logic with functional programming    | [Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md)                                                                  |
-| Combining strategic design with visual communication | [C4 Architecture Model](./c4-architecture-model/README.md) and [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md) |
+| Your Situation                                       | Start With                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md) — visualizing software architecture through hierarchical abstraction levels                                                                                                                                                        |
+| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md) — strategic and tactical patterns for modeling complex business domains                                                                                                                                                          |
+| Aligning multiple teams on integration               | [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md) — OSE Platform conventions for combining DDD with Hexagonal Architecture                                                                                                                                             |
+| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md) — visualizing software architecture through hierarchical abstraction levels                                                                                                                                                    |
+| Modeling domain logic with functional programming    | [Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md) — strategic and tactical patterns for modeling complex business domains                                                                                                                                                |
+| Combining strategic design with visual communication | [C4 Architecture Model](./c4-architecture-model/README.md) — visualizing software architecture through hierarchical abstraction levels, and [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md) — OSE Platform conventions for combining DDD with Hexagonal Architecture |
 
-### 🎨 [C4 Architecture Model](./c4-architecture-model/README.md)
+### 🎨 [C4 Architecture Model](./c4-architecture-model/README.md) — visualizing software architecture through hierarchical abstraction levels
 
 **Visualizing software architecture through hierarchical abstraction levels**
 
@@ -58,7 +58,7 @@ The C4 model provides a systematic way to create architecture diagrams at four l
 - Communicate technical decisions to both developers and stakeholders
 - Maintain lightweight but rigorous architecture documentation
 
-### 🏛️ [Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md)
+### 🏛️ [Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md) — strategic and tactical patterns for modeling complex business domains
 
 **Strategic and tactical patterns for modeling complex business domains**
 
@@ -73,7 +73,7 @@ DDD provides two complementary pattern sets: strategic design for understanding 
 - Long-lived systems expected to evolve over years
 - High cost of defects or regulatory compliance requirements
 
-### ⬡ [Hexagonal Architecture](./hexagonal-architecture/README.md)
+### ⬡ [Hexagonal Architecture](./hexagonal-architecture/README.md) — OSE Platform port, adapter, composition root, and testing conventions
 
 **OSE Platform port, adapter, composition root, and testing conventions**
 
@@ -86,7 +86,7 @@ Hexagonal Architecture (Ports and Adapters) isolates the domain core from all in
 - Wiring adapters in an F# composition root
 - Writing port contract tests or setting up an in-memory adapter for `test:unit`
 
-### 🔄 [Finite State Machine (FSM)](./finite-state-machine-fsm/README.md)
+### 🔄 [Finite State Machine (FSM)](./finite-state-machine-fsm/README.md) — standards for entity lifecycle management using finite state machines
 
 **Standards for entity lifecycle management using finite state machines**
 
@@ -99,7 +99,7 @@ Finite State Machines provide a formal model for managing entity lifecycle trans
 - Domain logic that depends on current state
 - Need for auditable state history
 
-### 🧩 [DDD + Hexagonal In Practice](./ddd-hexagonal-in-practice/README.md)
+### 🧩 [DDD + Hexagonal In Practice](./ddd-hexagonal-in-practice/README.md) — OSE Platform conventions for combining DDD with Hexagonal Architecture
 
 **OSE Platform conventions for combining DDD with Hexagonal Architecture**
 
@@ -145,7 +145,7 @@ See DDD and C4 Integration for examples and guidance.
 
 ### For Developers
 
-1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./c4-architecture-model/README.md#ose-platform-c4-standards-authoritative)
+1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./c4-architecture-model/README.md#ose-platform-c4-standards-authoritative) — jump straight to the OSE Platform C4 standards section
 
 ## Related Documentation
 

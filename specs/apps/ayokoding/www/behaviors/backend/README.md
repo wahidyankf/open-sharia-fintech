@@ -59,8 +59,8 @@ same `web` Next.js container; the split is a slug, not a container boundary.
 - **Web counterpart**: [frontend behaviors](../frontend/README.md)
 - **Parent**: [behaviors](../README.md)
 
-- [content — ayokoding-be Gherkin Domain](./content/README.md)
-- [health — ayokoding-be Gherkin Domain](./health/README.md)
-- [i18n — ayokoding-be Gherkin Domain](./i18n/README.md)
-- [navigation — ayokoding-be Gherkin Domain](./navigation/README.md)
-- [search — ayokoding-be Gherkin Domain](./search/README.md)
+- [content](./content/README.md) — ayokoding-be Gherkin Domain
+- [health](./health/README.md) — ayokoding-be Gherkin Domain
+- [i18n](./i18n/README.md) — ayokoding-be Gherkin Domain
+- [navigation](./navigation/README.md) — ayokoding-be Gherkin Domain
+- [search](./search/README.md) — ayokoding-be Gherkin Domain

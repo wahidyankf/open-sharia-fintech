@@ -71,7 +71,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 1. Red-Green-Refactor Cycle
 
-**[Red-Green-Refactor Cycle Standards](./tdd-cycle-standards.md)**
+**[Red-Green-Refactor Cycle Standards](./tdd-cycle-standards.md) — OSE Platform standards for the three-phase TDD rhythm**
 
 - REQUIRED: Follow Red-Green-Refactor rhythm
 - REQUIRED: See red before green
@@ -79,7 +79,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 2. Test Structure and Organization
 
-**[Testing Standards](./testing-standards.md)**
+**[Testing Standards](./testing-standards.md) — OSE Platform standards for test structure, FIRST principles, and test organization**
 
 - REQUIRED: FIRST principles (Fast, Independent, Repeatable, Self-validating, Timely)
 - REQUIRED: AAA pattern (Arrange-Act-Assert)
@@ -87,14 +87,14 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 3. Test Doubles
 
-**[Test Doubles Standards](./test-doubles-standards.md)**
+**[Test Doubles Standards](./test-doubles-standards.md) — OSE Platform standards for mocks, stubs, spies, and fakes**
 
 - REQUIRED: Use in-memory implementations over mocks when possible
 - REQUIRED: Verify interactions only when testing behavior, not implementation
 
 ### 4. Three-Tier Testing Model
 
-**[Three-Tier Testing Model](./three-tier-testing.md)**
+**[Three-Tier Testing Model](./three-tier-testing.md) — Authoritative OSE Platform definition of unit, integration, and E2E test tiers**
 
 - REQUIRED: Unit and integration tests MUST mock all external I/O
 - REQUIRED: E2E tests MUST NOT mock anything
@@ -102,7 +102,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 5. Integration Testing
 
-**[Integration Testing Standards](./integration-testing-standards.md)**
+**[Integration Testing Standards](./integration-testing-standards.md) — OSE Platform standards for integration testing with mocked external I/O and in-memory repositories**
 
 - REQUIRED: Use in-memory repository implementations (NOT Testcontainers)
 - REQUIRED: Use MSW (TypeScript) or `wiremock-rs` / `mockito` (Rust) for outbound HTTP
@@ -111,7 +111,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 6. TDD with Domain-Driven Design
 
-**[TDD with DDD Standards](./tdd-with-ddd-standards.md)**
+**[TDD with DDD Standards](./tdd-with-ddd-standards.md) — OSE Platform standards for testing aggregates, value objects, entities, and domain events**
 
 - REQUIRED: Test aggregate invariants
 - REQUIRED: Test value object immutability and equality

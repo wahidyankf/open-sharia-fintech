@@ -25,5 +25,5 @@ nx run web-ui:test:unit
 Every scenario is consumed at the unit level by the matching `*.steps.tsx` file co-located with
 its component under `libs/web-ui/src/`.
 
-- [Architecture — web-ui](./architecture.md)
-- [Behaviors — web-ui](./behaviors/README.md)
+- [Architecture — web-ui](./architecture.md) — The current, as-built shared React component library
+- [Behaviors — web-ui](./behaviors/README.md) — Gherkin feature files, one folder per component

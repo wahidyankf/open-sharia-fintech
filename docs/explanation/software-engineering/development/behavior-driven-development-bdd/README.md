@@ -75,7 +75,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 1. Gherkin Syntax
 
-**[Gherkin Standards](./gherkin-standards.md)**
+**[Gherkin Standards](./gherkin-standards.md) — Feature file structure and Given-When-Then syntax requirements**
 
 - REQUIRED: Feature files in `features/` directory
 - REQUIRED: Given-When-Then structure
@@ -83,7 +83,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 2. Scenario Structure
 
-**[Scenario Standards](./scenario-standards.md)**
+**[Scenario Standards](./scenario-standards.md) — Scenario independence, naming, and organization requirements**
 
 - REQUIRED: Scenario independence
 - REQUIRED: Descriptive scenario names
@@ -91,7 +91,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 3. Three Amigos Collaboration
 
-**[Three Amigos Standards](./three-amigos-standards.md)**
+**[Three Amigos Standards](./three-amigos-standards.md) — Business-Development-QA collaboration session requirements**
 
 - REQUIRED: Weekly Three Amigos sessions
 - REQUIRED: Business + Development + QA participation
@@ -99,7 +99,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 4. Living Documentation
 
-**[Living Documentation Standards](./living-documentation-standards.md)**
+**[Living Documentation Standards](./living-documentation-standards.md) — Executable specifications and documentation dashboard requirements**
 
 - REQUIRED: Scenarios execute in CI/CD
 - REQUIRED: Update scenarios when requirements change
@@ -107,7 +107,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 5. BDD with Domain-Driven Design
 
-**[BDD with DDD Standards](./bdd-with-ddd-standards.md)**
+**[BDD with DDD Standards](./bdd-with-ddd-standards.md) — Integrating BDD scenarios with DDD bounded contexts and ubiquitous language**
 
 - REQUIRED: One feature file per bounded context capability
 - REQUIRED: Use ubiquitous language in scenarios

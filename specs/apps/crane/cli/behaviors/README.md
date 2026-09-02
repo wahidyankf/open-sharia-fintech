@@ -34,8 +34,8 @@ domain. Step definitions live in `apps/crane-cli/tests/unit/steps/`.
 | skiplist-management | 5         |
 | **Total**           | **41**    |
 
-- [crane — cli/behaviors/content](./content/README.md)
-- [crane — cli/behaviors/media](./media/README.md)
-- [crane — cli/behaviors/pdf](./pdf/README.md)
-- [crane — cli/behaviors/reporting](./reporting/README.md)
-- [crane — cli/behaviors/system](./system/README.md)
+- [crane — cli/behaviors/content](./content/README.md) — Gherkin scenarios for crane-cli text content validation checks
+- [crane — cli/behaviors/media](./media/README.md) — Gherkin scenarios for crane-cli media and visual element checks
+- [crane — cli/behaviors/pdf](./pdf/README.md) — Gherkin scenarios for crane-cli PDF extraction commands
+- [crane — cli/behaviors/reporting](./reporting/README.md) — Gherkin scenarios for crane-cli report and skiplist management
+- [crane — cli/behaviors/system](./system/README.md) — Gherkin scenarios for crane-cli system-level commands

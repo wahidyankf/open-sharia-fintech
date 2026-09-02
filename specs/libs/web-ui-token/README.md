@@ -23,5 +23,5 @@ specs/libs/web-ui-token/
 corpus is written ahead of that work so the structure validator sees the same shape here as
 everywhere else.
 
-- [Architecture — web-ui-token](./architecture.md)
-- [Behaviors — web-ui-token](./behaviors/README.md)
+- [Architecture](./architecture.md) — web-ui-token
+- [Behaviors](./behaviors/README.md) — web-ui-token

@@ -66,5 +66,5 @@ When exploring or preparing a change:
 
 For the detailed rules, see the [BDD standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md), [Gherkin standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/gherkin-standards.md), [scenario standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md), and [spec-to-test mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md).
 
-- [Apps](./apps/README.md)
-- [Libs](./libs/README.md)
+- [Apps](./apps/README.md) — Product-family specification indexes for AyoKoding, Crane, OrganicLever, OSE, and Rhino.
+- [Libs](./libs/README.md) — Specification indexes for the shared libraries: Crane core, env loaders, and web UI.

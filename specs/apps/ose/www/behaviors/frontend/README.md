@@ -37,6 +37,6 @@ names.
 
 - **Parent**: [`../../README.md`](../../README.md)
 - **api perspective counterpart**: [`../../api/gherkin/`](../backend/README.md)
-- [app-shell — platform-web Gherkin Domain](./app-shell/README.md)
-- [config — platform-web Gherkin Domain](./config/README.md)
-- [landing — platform-web Gherkin Domain](./landing/README.md)
+- [app-shell](./app-shell/README.md) — platform-web Gherkin Domain
+- [config](./config/README.md) — platform-web Gherkin Domain
+- [landing](./landing/README.md) — platform-web Gherkin Domain

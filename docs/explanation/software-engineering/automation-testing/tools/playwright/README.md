@@ -63,12 +63,12 @@ You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../app
 
 All Playwright tests MUST follow the patterns and practices documented here:
 
-1. **[Idioms](idioms.md)** - Playwright-specific patterns
-2. **[Best Practices](best-practices.md)** - Framework standards
-3. **[Anti-Patterns](anti-patterns.md)** - Common mistakes
-4. **[Configuration](configuration.md)** - playwright.config.ts setup
-5. **[Page Objects](page-objects.md)** - Page Object Model patterns
-6. **[BDD Integration](bdd.md)** — playwright-bdd setup and Gherkin step definitions
+1. **[Idioms](idioms.md) — Playwright-specific patterns**
+2. **[Best Practices](best-practices.md) — Framework standards**
+3. **[Anti-Patterns](anti-patterns.md) — Common mistakes**
+4. **[Configuration](configuration.md) — playwright.config.ts setup**
+5. **[Page Objects](page-objects.md) — Page Object Model patterns**
+6. **[BDD Integration](bdd.md) — playwright-bdd setup and Gherkin step definitions**
 
 **For Agents**: Reference this documentation when writing Playwright tests.
 
@@ -77,10 +77,10 @@ All Playwright tests MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Test Organization**: See [Test Organization](test-organization.md)
-- **Selectors**: See [Selectors](selectors.md)
-- **Assertions**: See [Assertions](assertions.md)
-- **Debugging**: See [Debugging](debugging.md)
+- **Test Organization**: See [Test Organization](test-organization.md) — structure, naming, grouping, fixtures
+- **Selectors**: See [Selectors](selectors.md) — locator strategies, accessibility-first selectors, selector resilience
+- **Assertions**: See [Assertions](assertions.md) — web-first assertions, auto-waiting, assertion patterns
+- **Debugging**: See [Debugging](debugging.md) — trace viewer, inspector, debug mode, screenshot on failure
 
 ## Software Engineering Principles
 
@@ -141,7 +141,7 @@ Playwright usage in this platform follows the software engineering principles fr
 
 ## Documentation Structure
 
-### [Playwright BDD Integration](bdd.md)
+### [Playwright BDD Integration](bdd.md) — Using playwright-bdd to drive Playwright tests from Gherkin feature files
 
 Using playwright-bdd to drive Playwright tests from Gherkin feature files.
 
@@ -156,7 +156,7 @@ Using playwright-bdd to drive Playwright tests from Gherkin feature files.
 - Module-level response-store for API test state
 - Nx project.json integration (bddgen && playwright test)
 
-### [Playwright Idioms](idioms.md)
+### [Playwright Idioms](idioms.md) — Framework-specific patterns for writing idiomatic Playwright tests
 
 Framework-specific patterns for writing idiomatic Playwright tests.
 
@@ -171,7 +171,7 @@ Framework-specific patterns for writing idiomatic Playwright tests.
 - Test retries and timeouts
 - Parallel execution with workers
 
-### [Playwright Best Practices](best-practices.md)
+### [Playwright Best Practices](best-practices.md) — Proven approaches for building reliable E2E test suites
 
 Proven approaches for building reliable E2E test suites.
 
@@ -186,7 +186,7 @@ Proven approaches for building reliable E2E test suites.
 - Visual regression testing
 - CI/CD integration and parallelization
 
-### [Playwright Anti-Patterns](anti-patterns.md)
+### [Playwright Anti-Patterns](anti-patterns.md) — Common mistakes and problematic patterns to avoid
 
 Common mistakes and problematic patterns to avoid.
 
@@ -462,7 +462,7 @@ npx playwright test --debug
 
 ### 1. Start with Idioms
 
-Read [Playwright Idioms](idioms.md) to understand framework patterns:
+Read Playwright Idioms to understand framework patterns:
 
 - Auto-waiting and actionability
 - Test fixtures and contexts
@@ -472,7 +472,7 @@ Read [Playwright Idioms](idioms.md) to understand framework patterns:
 
 ### 2. Apply Best Practices
 
-Read [Playwright Best Practices](best-practices.md) for production standards:
+Read Playwright Best Practices for production standards:
 
 - Test organization and naming
 - Page object patterns
@@ -482,7 +482,7 @@ Read [Playwright Best Practices](best-practices.md) for production standards:
 
 ### 3. Avoid Anti-Patterns
 
-Read [Playwright Anti-Patterns](anti-patterns.md) to prevent common mistakes:
+Read Playwright Anti-Patterns to prevent common mistakes:
 
 - Manual waits and sleeps
 - Overly specific selectors
@@ -512,21 +512,21 @@ Read complementary documentation:
 
 ### Core Playwright Documentation
 
-- **[Playwright Idioms](idioms.md)** - Framework patterns
-- **[Playwright Best Practices](best-practices.md)** - Production standards
-- **[Playwright Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Playwright Idioms](idioms.md) — Framework patterns**
+- **[Playwright Best Practices](best-practices.md) — Production standards**
+- **[Playwright Anti-Patterns](anti-patterns.md) — Common mistakes**
 
 ### Testing Documentation
 
-- **[Configuration](configuration.md)** - Configuration management
-- **[Page Objects](page-objects.md)** - Page Object Model
-- **[Test Organization](test-organization.md)** - Test structure
-- **[Selectors](selectors.md)** - Locator strategies
+- **[Configuration](configuration.md) — Configuration management**
+- **[Page Objects](page-objects.md) — Page Object Model**
+- **[Test Organization](test-organization.md) — Test structure**
+- **[Selectors](selectors.md) — Locator strategies**
 
 ### Debugging Documentation
 
-- **[Assertions](assertions.md)** - Assertion patterns
-- **[Debugging](debugging.md)** - Debugging strategies
+- **[Assertions](assertions.md) — Assertion patterns**
+- **[Debugging](debugging.md) — Debugging strategies**
 
 ### Platform Documentation
 

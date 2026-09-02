@@ -51,7 +51,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=95 /p:ThresholdType=line"
+        "command": "dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line"
       },
       "cache": true,
       "inputs": [
@@ -60,6 +60,62 @@
         "{projectRoot}/fsharp-env-loader.fsproj"
       ]
     },
+    "specs:structure-validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs counts validate specs/libs/fsharp-env-loader"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/**/*"]
+    },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-env-loader/behaviors libs/fsharp-env-loader"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature",
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs"
+      ]
+    },
+    "test:specs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run fsharp-env-loader:specs:structure-validation",
+          "npx nx run fsharp-env-loader:specs:behavior:coverage"
+        ],
+        "parallel": false
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/**/*", "{projectRoot}/src/**/*.fs", "specs"]
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project fsharp-env-loader"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project fsharp-env-loader"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project fsharp-env-loader"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
@@ -67,13 +123,17 @@
           "npx nx run fsharp-env-loader:typecheck",
           "npx nx run fsharp-env-loader:lint",
           "npx nx run fsharp-env-loader:test:unit",
-          "npx nx run fsharp-env-loader:test:coverage"
+          "npx nx run fsharp-env-loader:test:coverage",
+          "npx nx run fsharp-env-loader:test:specs",
+          "npx nx run fsharp-env-loader:test:layout:validation",
+          "npx nx run fsharp-env-loader:coverage:policy:validation",
+          "npx nx run fsharp-env-loader:package-manifest:policy:validation"
         ],
         "parallel": false
       },
       "dependsOn": ["typecheck", "lint"],
       "cache": true,
-      "inputs": ["default"]
+      "inputs": ["default", "specs"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -103,6 +163,9 @@
       },
       "cache": true
     }
+  },
+  "namedInputs": {
+    "specs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature"]
   },
   "tags": ["type:lib", "domain:config", "lang:fsharp"],
   "implicitDependencies": []
