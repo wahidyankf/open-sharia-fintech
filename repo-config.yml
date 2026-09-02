@@ -592,6 +592,8 @@ testing:
           owner: web-ui
           corpus: "specs/libs/web-ui/behaviors/**"
           runtimes:
+            - level: integration
+              project: web-ui
             - level: unit
               project: web-ui
       - project: web-ui-token
@@ -1097,8 +1099,9 @@ testing:
             project: web-ui
             driver: libs/web-ui/tests/unit/bdd/unit-driver.ts
           integration:
-            disposition: inapplicable
-            reason: no isolated local-resource boundary
+            disposition: required
+            project: web-ui
+            driver: libs/web-ui/tests/integration/bdd/integration-driver.ts
           e2e:
             disposition: inapplicable
             reason: no user-facing surface
