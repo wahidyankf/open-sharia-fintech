@@ -35,7 +35,7 @@ open-sharia-enterprise/
 │   │   └── [service]/        # docker-compose.yml for local dev environment
 │   └── k8s/                  # Kubernetes deployments
 ├── specs/                     # Gherkin acceptance specs, C4 diagrams, and OpenAPI contracts
-│   ├── apps/                  # Per-app specs (C4-aware five-folder layout)
+│   ├── apps/                  # Per-app specs (one logical owner corpus per surface)
 │   │   └── [domain]/         # e.g. organiclever/, rhino/
 │   │       ├── product/      # PM-first content (overview, roadmap)
 │   │       ├── system-context/ # C4 L1 — system boundary diagram

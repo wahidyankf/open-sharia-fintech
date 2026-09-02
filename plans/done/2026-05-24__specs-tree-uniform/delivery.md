@@ -95,7 +95,7 @@ and [Plans Organization Convention §Worktree Specification](../../../repo-gover
 
 - [x] Edit `specs/README.md`: replace the "Standard Folder Pattern" section (currently lines
       46–73) with content matching the five-folder layout from
-      [specs-directory-structure.md §Five-Folder Layout](../../../repo-governance/conventions/structure/specs-directory-structure/canonical-app-spec-tree.md#five-folder-layout).
+      [specs-directory-structure.md §Five-Folder Layout](../../../repo-governance/conventions/structure/specs-directory-structure/canonical-app-spec-tree.md#layout).
       Show the canonical tree (product/, system-context/, containers/, components/, behavior/)
       with `containers/contracts/` and `behavior/<surface>/gherkin/<domain>/<feature>.feature`
       paths. Acceptance: section no longer mentions `be/fe/fs/cli/gherkin/` as a top-level

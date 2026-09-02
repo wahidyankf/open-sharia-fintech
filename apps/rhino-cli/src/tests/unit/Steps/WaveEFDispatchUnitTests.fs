@@ -71,14 +71,16 @@ let private newSpecsAreaFixture () : string =
 
     writeFile root "repo-config.yml" "gates: []\nharness: []\n"
 
-    for folder in [ "product"; "system-context"; "containers"; "components"; "behavior" ] do
-        let path = sprintf "specs/apps/%s/%s" app folder
-        writeFile root (path + "/README.md") "# Fixture\n"
-        writeFile root (path + "/fixture.md") "# Fixture\n"
+    // One logical owner corpus: an index, the as-built architecture, and a
+    // non-empty behaviors/ tree with its own index.
+    let owner = sprintf "specs/apps/%s/cli" app
+    writeFile root (owner + "/README.md") "# Fixture\n"
+    writeFile root (owner + "/architecture.md") "# Fixture Architecture\n"
+    writeFile root (owner + "/behaviors/README.md") "# Fixture\n"
 
     writeFile
         root
-        (sprintf "specs/apps/%s/behavior/surface/gherkin/domain/fixture.feature" app)
+        (owner + "/behaviors/domain/fixture.feature")
         "Feature: Fixture\n\n  Scenario: Works\n    Given a fixture\n    When it runs\n    Then it passes\n"
 
     writeFile root "apps/fixture-app/src/contexts/journal/domain/Fixture.fs" "module Fixture\n"

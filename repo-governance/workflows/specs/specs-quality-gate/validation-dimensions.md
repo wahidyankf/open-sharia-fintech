@@ -17,7 +17,7 @@ The checker validates nine categories across all spec areas:
 | 5   | C4 Diagram Consistency           | Accessible colors, actor consistency, file references                                 | LLM                       |
 | 6   | Cross-Reference Integrity        | References are semantically appropriate; lifecycle gates own path/fragment resolution | LLM + delegated gate      |
 | 7   | Spec-to-Implementation Alignment | Spec READMEs reference implementations that exist                                     | LLM                       |
-| 8   | Spec Tree Shape                  | C4-aware five-folder tree compliance per surface profile                              | Delegated lifecycle gate  |
+| 8   | Spec Tree Shape                  | Logical-owner-corpus compliance per surface profile                                   | Delegated lifecycle gate  |
 | 9   | Adoption Gaps                    | BDD/Contracts adoption check per surface profile (full-stack, web-only, CLI)          | LLM with rhino-cli assist |
 
 ## Deterministic Offload

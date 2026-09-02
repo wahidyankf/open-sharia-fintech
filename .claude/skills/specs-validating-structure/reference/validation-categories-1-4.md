@@ -4,11 +4,9 @@
 
 When `governance-readme-index` is delegated, do not check or infer README existence/index
 membership. For READMEs that exist, retain semantic assessment of useful overview and contents.
-Without delegation, the lifecycle command owns existence for the five top-level folders
-(`product/`, `system-context/`, `containers/`, `components/`, `behavior/`), per-surface subfolders
-(`components/be|web|cli/`, `behavior/<product>-<surface>/gherkin/`), all domain subdirectories
-under `behavior/<product>-<surface>/gherkin/<domain>/` (required for every surface), and
-`containers/contracts/` when present.
+Without delegation, the lifecycle command owns existence for each owner corpus's three required
+entries (`README.md`, `architecture.md`, `behaviors/`), the `behaviors/README.md` index, all
+domain subdirectories under `behaviors/<domain>/`, and `contracts/` when present.
 Check semantic quality recursively. **HIGH**: README exists but is empty or lacks required
 overview/contents information.
 

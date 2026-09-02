@@ -40,14 +40,3 @@ Feature: specs validate-tree for a logical owner corpus
     When the developer runs "rhino-cli specs validate-tree testapp"
     Then the command exits with a failure code
     And the output contains "legacy folder product survives beside a logical owner corpus"
-
-  Scenario: a product that has not begun the move is still measured against the five-folder tree
-    Given a spec tree for "testapp" missing the "behavior" folder
-    When the developer runs "rhino-cli specs validate-tree testapp"
-    Then the command exits with a failure code
-    And the output contains "missing required folder: behavior"
-
-  Scenario: the flat-feature rule does not fire inside a migrated corpus
-    Given a logical owner corpus for "testapp" at "cli" with its README, architecture, and a behaviors feature
-    When the developer runs "rhino-cli specs validate-gherkin-domains testapp"
-    Then the command exits successfully

@@ -575,7 +575,7 @@ at execution start. Both greps are part of delivery.md Step 0.
 
 ## Path-Reference Sweep Discipline
 
-Per [Specs Directory Structure Convention §Migration Path](../../../repo-governance/conventions/structure/specs-directory-structure/migration-path.md#migration-path-flat-root-to-c4-aware):
+Per [Specs Directory Structure Convention §Migration Path](../../../repo-governance/conventions/structure/specs-directory-structure/migration-path.md#migration-path-five-folder-to-logical-owner-corpus):
 
 > The atomic commit is mandatory — splitting the move and the path updates causes test failures
 > between commits.

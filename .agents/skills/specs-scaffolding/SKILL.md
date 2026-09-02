@@ -10,7 +10,7 @@ when_to_use: When implementing or maintaining specs-maker, or any agent that sca
 
 `specs-maker` creates new spec areas, missing READMEs, and Gherkin feature structure at
 explicitly specified paths under `specs/` — never deciding what should exist, only building what
-the caller names, following the C4-aware five-folder shape.
+the caller names, following the logical owner corpus shape.
 
 ## Reference Modules
 
