@@ -1,7 +1,7 @@
 /**
  * Step definitions for the OSE Application Web smoke feature.
  *
- * Covers: specs/apps/ose/behavior/app-web/gherkin/smoke/smoke.feature
+ * Covers: specs/apps/ose/app-web/behaviors/smoke/smoke.feature
  */
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
@@ -17,7 +17,7 @@ When("I navigate to {string}", async ({ page }, path: string) => {
   await page.goto(`${process.env["WEB_BASE_URL"] ?? "http://localhost:3300"}${path}`);
 });
 
-// @covers specs/apps/ose/behavior/app-web/gherkin/smoke/smoke.feature:Home page loads
+// @covers specs/apps/ose/app-web/behaviors/smoke/smoke.feature:Home page loads
 Then("I see the heading {string}", async ({ page }, heading: string) => {
   const h1 = page.getByRole("heading", { level: 1 });
   await expect(h1).toHaveText(heading);

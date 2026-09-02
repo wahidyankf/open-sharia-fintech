@@ -1,7 +1,7 @@
 /**
  * Step definitions for the OSE Application BE health endpoint feature.
  *
- * Covers: specs/apps/ose/behavior/be/gherkin/health/health.feature
+ * Covers: specs/apps/ose/be/behaviors/health/health.feature
  */
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
@@ -26,7 +26,7 @@ Then("the response status is {int}", async ({}, expectedStatus: number) => {
   expect(getResponse().status()).toBe(expectedStatus);
 });
 
-// @covers specs/apps/ose/behavior/be/gherkin/health/health.feature:Health endpoint returns 200
+// @covers specs/apps/ose/be/behaviors/health/health.feature:Health endpoint returns 200
 Then(
   "the response body has a {string} field equal to {string}",
   // oxlint-disable-next-line no-empty-pattern

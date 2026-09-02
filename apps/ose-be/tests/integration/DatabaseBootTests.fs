@@ -38,7 +38,7 @@ let private appliedMigrationCount (connStr: string) : int =
     use cmd = new NpgsqlCommand("SELECT COUNT(*) FROM schemaversions", conn)
     cmd.ExecuteScalar() :?> int64 |> int
 
-// @covers specs/apps/ose/behavior/be/gherkin/db/migrations.feature:Backend applies pending migrations on startup
+// @covers specs/apps/ose/be/behaviors/db/migrations.feature:Backend applies pending migrations on startup
 [<Fact>]
 let ``backend applies pending migrations on startup`` () =
     let connStr = connectionString ()

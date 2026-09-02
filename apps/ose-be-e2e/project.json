@@ -24,7 +24,7 @@
         "command": "npx bddgen && npx tsc --noEmit",
         "cwd": "apps/ose-be-e2e"
       },
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature"]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -78,20 +78,20 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir db --exclude-dir config specs/apps/ose/behavior/be/gherkin apps/ose-be-e2e"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir db --exclude-dir config specs/apps/ose/be/behaviors apps/ose-be-e2e"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature", "{projectRoot}/steps/**/*.ts"]
+      "inputs": ["{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature", "{projectRoot}/steps/**/*.ts"]
     },
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ose-be-e2e --features \"../../specs/apps/ose/behavior/be/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
+        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ose-be-e2e --features \"../../specs/apps/ose/be/behaviors/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
         "cwd": "apps/ose-be-e2e"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature",
         "{projectRoot}/steps/**/*.ts",
         "{projectRoot}/playwright.config.ts",
         "{projectRoot}/e2e-coverage-baseline.json"
@@ -141,7 +141,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature"]
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:ose"],
   "implicitDependencies": ["ose-be"]

@@ -1,0 +1,114 @@
+{
+  "name": "ose-contracts",
+  "root": "specs/apps/ose/be/contracts",
+  "targets": {
+    "lint": {
+      "command": "mkdir -p specs/apps/ose/be/contracts/generated && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.json && npx @stoplight/spectral-cli lint specs/apps/ose/be/contracts/generated/openapi-bundled.yaml --ruleset specs/apps/ose/be/contracts/.spectral.yaml",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.yaml", "!{projectRoot}/generated/**", "!{projectRoot}/examples/**"]
+    },
+    "bundle": {
+      "command": "mkdir -p specs/apps/ose/be/contracts/generated && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.json",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.yaml", "!{projectRoot}/generated/**", "!{projectRoot}/examples/**"],
+      "outputs": ["{projectRoot}/generated/openapi-bundled.yaml", "{projectRoot}/generated/openapi-bundled.json"]
+    },
+    "docs": {
+      "command": "mkdir -p specs/apps/ose/be/contracts/generated/docs && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml --remove-unused-components -o specs/apps/ose/be/contracts/generated/openapi-docs.yaml && npx @redocly/cli build-docs specs/apps/ose/be/contracts/generated/openapi-docs.yaml -o specs/apps/ose/be/contracts/generated/docs/index.html",
+      "dependsOn": ["bundle"],
+      "cache": true,
+      "inputs": ["{projectRoot}/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/generated/docs/"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
+      },
+      "cache": true
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
+      },
+      "cache": true
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
+      },
+      "cache": true
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
+      },
+      "cache": true
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run ose-contracts:typecheck",
+          "npx nx run ose-contracts:lint",
+          "npx nx run ose-contracts:test:unit",
+          "npx nx run ose-contracts:test:coverage",
+          "npx nx run ose-contracts:test:specs"
+        ],
+        "parallel": false
+      },
+      "cache": true
+    },
+    "deps:audit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'deps:audit: no package dependencies to audit'"
+      },
+      "cache": false
+    },
+    "compat:min-version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'compat:min-version: no standard min-version floor'"
+      },
+      "cache": true
+    },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'specs:behavior:coverage: no Gherkin behavior specs for this OpenAPI contract project (echo placeholder)'"
+      }
+    },
+    "specs:structure-validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
+    },
+    "test:specs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run ose-contracts:specs:structure-validation",
+          "npx nx run ose-contracts:specs:behavior:coverage"
+        ],
+        "parallel": false
+      },
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "specs": ["{workspaceRoot}/specs/apps/ose/be/contracts/**"]
+  }
+}

@@ -159,25 +159,25 @@ coverage:
     # ose domain
     - name: ose-be
       levels: [unit, integration]
-      specs: "specs/apps/ose/behavior/be/**"
+      specs: "specs/apps/ose/be/behaviors/**"
     - name: ose-be-e2e
       levels: [e2e]
-      specs: "specs/apps/ose/behavior/be/**"
+      specs: "specs/apps/ose/be/behaviors/**"
     - name: ose-app-web
       levels: [unit]
-      specs: "specs/apps/ose/behavior/app-web/**"
+      specs: "specs/apps/ose/app-web/behaviors/**"
     - name: ose-app-web-e2e
       levels: [e2e]
-      specs: "specs/apps/ose/behavior/app-web/**"
+      specs: "specs/apps/ose/app-web/behaviors/**"
     - name: ose-www
       levels: [unit]
-      specs: "specs/apps/ose/behavior/www/**"
+      specs: "specs/apps/ose/www/behaviors/**"
     - name: ose-www-be-e2e
       levels: [e2e]
-      specs: "specs/apps/ose/behavior/www/**"
+      specs: "specs/apps/ose/www/behaviors/**"
     - name: ose-www-fe-e2e
       levels: [e2e]
-      specs: "specs/apps/ose/behavior/www/**"
+      specs: "specs/apps/ose/www/behaviors/**"
 
     # organiclever domain
     - name: organiclever-be
@@ -448,11 +448,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/app-web/**"
+          corpus: "specs/apps/ose/app-web/behaviors/**"
           levels: [unit]
         canonical:
           owner: ose-app-web
-          corpus: "specs/apps/ose/behavior/app-web/**"
+          corpus: "specs/apps/ose/app-web/behaviors/**"
           runtimes:
             - level: e2e
               project: ose-app-web-e2e
@@ -463,7 +463,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/app-web/**"
+          corpus: "specs/apps/ose/app-web/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ose-app-web
@@ -476,11 +476,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/be/**"
+          corpus: "specs/apps/ose/be/behaviors/**"
           levels: [unit, integration]
         canonical:
           owner: ose-be
-          corpus: "specs/apps/ose/behavior/be/**"
+          corpus: "specs/apps/ose/be/behaviors/**"
           runtimes:
             - level: e2e
               project: ose-be-e2e
@@ -493,7 +493,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/be/**"
+          corpus: "specs/apps/ose/be/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ose-be
@@ -517,11 +517,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/www/**"
+          corpus: "specs/apps/ose/www/behaviors/**"
           levels: [unit]
         canonical:
           owner: ose-www
-          corpus: "specs/apps/ose/behavior/www/**"
+          corpus: "specs/apps/ose/www/behaviors/**"
           runtimes:
             - level: e2e
               project: ose-www-fe-e2e
@@ -534,7 +534,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/www/**"
+          corpus: "specs/apps/ose/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ose-www
@@ -547,7 +547,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/ose/behavior/www/**"
+          corpus: "specs/apps/ose/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: ose-www
@@ -926,7 +926,7 @@ testing:
         lifecycle-state: active
         owner: ose-app-web
         corpus:
-          - "specs/apps/ose/behavior/app-web/**"
+          - "specs/apps/ose/app-web/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -966,7 +966,7 @@ testing:
         lifecycle-state: active
         owner: ose-be
         corpus:
-          - "specs/apps/ose/behavior/be/**"
+          - "specs/apps/ose/be/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -1023,7 +1023,7 @@ testing:
         lifecycle-state: active
         owner: ose-www
         corpus:
-          - "specs/apps/ose/behavior/www/**"
+          - "specs/apps/ose/www/behaviors/**"
         adapters:
           unit:
             disposition: required

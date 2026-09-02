@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx @hey-api/openapi-ts -i specs/apps/ose/containers/contracts/generated/openapi-bundled.yaml -o apps/ose-app-web/src/generated-contracts -s && git diff --exit-code -- apps/ose-app-web/src/generated-contracts/"
+        "command": "npx @hey-api/openapi-ts -i specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -o apps/ose-app-web/src/generated-contracts -s && git diff --exit-code -- apps/ose-app-web/src/generated-contracts/"
       },
       "dependsOn": ["ose-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose/containers/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/src/generated-contracts"]
     },
     "dev": {
@@ -120,14 +120,14 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/smoke apps/ose-app-web-e2e",
-          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/behavior/app-web/gherkin/env-loader apps/ose-app-web/test/unit"
+          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/app-web/behaviors/smoke apps/ose-app-web-e2e",
+          "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/ose/app-web/behaviors/env-loader apps/ose-app-web/test/unit"
         ],
         "parallel": false
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/ose/behavior/app-web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ose/app-web/behaviors/**/*.feature",
         "{workspaceRoot}/apps/ose-app-web-e2e/**/*.ts",
         "{projectRoot}/test/unit/**/*.{ts,tsx}"
       ]
@@ -175,7 +175,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/ose/behavior/app-web/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/ose/app-web/behaviors/**/*.feature"]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ose"],
   "implicitDependencies": ["ose-contracts", "web-ui", "web-ui-token"]

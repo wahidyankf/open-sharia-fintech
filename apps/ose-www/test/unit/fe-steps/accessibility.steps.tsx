@@ -55,7 +55,7 @@ vi.mock("@/features/search/shell/use-search", () => ({
 import { Header } from "@/features/app-shell/shell/header";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -74,7 +74,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       render(<Header />);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Home page passes axe-core accessibility scan
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Home page passes axe-core accessibility scan
     Then("the page should have no accessibility violations", () => {
       // Full axe-core scan runs in E2E (Playwright). Unit-level: verify ARIA landmark presence.
       const header = document.querySelector("header");
@@ -94,7 +94,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       );
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Headings follow a proper hierarchy
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Headings follow a proper hierarchy
     Then("headings should follow a proper hierarchy starting with a single h1", () => {
       const h1s = document.querySelectorAll("h1");
       expect(h1s.length).toBe(1);
@@ -115,7 +115,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(buttons.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:All interactive elements are keyboard accessible
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:All interactive elements are keyboard accessible
     And("no interactive element should be skipped or unreachable by keyboard", () => {
       // Main navigation elements should be keyboard-reachable (not intentionally skipped)
       const mainButtons = document.querySelectorAll("nav a, nav button");
@@ -140,7 +140,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(text).toBeInTheDocument();
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
     And("large text and headings should meet a minimum contrast ratio of 3:1 against their background", () => {
       const heading = screen.getByText("Heading text");
       expect(heading).toBeInTheDocument();
@@ -162,7 +162,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
     And("the focus indicator should have sufficient contrast against the surrounding background", () => {
       // Contrast ratio validation requires computed styles — E2E responsibility.
       expect(true).toBe(true);

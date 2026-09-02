@@ -409,7 +409,7 @@ let ``a delegated adapter carries both a project and a driver`` () =
             (activeBehavior
                 "ose-app-web:default"
                 "ose-app-web"
-                [ "specs/apps/ose/behavior/app-web/**" ]
+                [ "specs/apps/ose/app-web/behaviors/**" ]
                 (adapters
                     (requiredAdapter "ose-app-web" "apps/ose-app-web/src/testing/bdd/unit-driver.ts")
                     (inapplicableAdapter "no isolated local-resource boundary")
@@ -436,10 +436,10 @@ let ``a delegated adapter carries both a project and a driver`` () =
                   "ose-app-web"
                   (Some "ose-app-web:default")
                   MappingIdentity
-                  (legacyHalf true (Some "specs/apps/ose/behavior/app-web/**") [ "unit" ])
+                  (legacyHalf true (Some "specs/apps/ose/app-web/behaviors/**") [ "unit" ])
                   (canonicalHalf
                       (Some "ose-app-web")
-                      (Some "specs/apps/ose/behavior/app-web/**")
+                      (Some "specs/apps/ose/app-web/behaviors/**")
                       [ { Level = "e2e"
                           Project = "ose-app-web-e2e" }
                         { Level = "unit"
@@ -616,7 +616,7 @@ let ``two projects delegating their integration adapter to each other are reject
             (activeBehavior
                 "ose-be:default"
                 "ose-be"
-                [ "specs/apps/ose/behavior/be/**" ]
+                [ "specs/apps/ose/be/behaviors/**" ]
                 (adapters
                     (requiredAdapter "ose-be" "apps/ose-be/src/tests/unit/Steps/BeSteps.fs")
                     (delegatedAdapter "ose-app-web" "apps/ose-app-web/src/testing/bdd/unit-driver.ts")
@@ -630,7 +630,7 @@ let ``two projects delegating their integration adapter to each other are reject
             (activeBehavior
                 "ose-app-web:default"
                 "ose-app-web"
-                [ "specs/apps/ose/behavior/app-web/**" ]
+                [ "specs/apps/ose/app-web/behaviors/**" ]
                 (adapters
                     (requiredAdapter "ose-app-web" "apps/ose-app-web/src/testing/bdd/unit-driver.ts")
                     (delegatedAdapter "ose-be" "apps/ose-be/src/tests/unit/Steps/BeSteps.fs")
@@ -643,14 +643,14 @@ let ``two projects delegating their integration adapter to each other are reject
                   "ose-be"
                   (Some "ose-be:default")
                   MappingIdentity
-                  (legacyHalf true (Some "specs/apps/ose/behavior/be/**") [ "unit" ])
-                  (canonicalHalf (Some "ose-be") (Some "specs/apps/ose/behavior/be/**") [])
+                  (legacyHalf true (Some "specs/apps/ose/be/behaviors/**") [ "unit" ])
+                  (canonicalHalf (Some "ose-be") (Some "specs/apps/ose/be/behaviors/**") [])
               mapping
                   "ose-app-web"
                   (Some "ose-app-web:default")
                   MappingIdentity
-                  (legacyHalf true (Some "specs/apps/ose/behavior/app-web/**") [ "unit" ])
-                  (canonicalHalf (Some "ose-app-web") (Some "specs/apps/ose/behavior/app-web/**") []) ]
+                  (legacyHalf true (Some "specs/apps/ose/app-web/behaviors/**") [ "unit" ])
+                  (canonicalHalf (Some "ose-app-web") (Some "specs/apps/ose/app-web/behaviors/**") []) ]
 
     validate registry [ "ose-be"; "ose-app-web" ] defaultValidateOptions
     |> expectContractFailure
@@ -914,7 +914,7 @@ let ``two projects declaring the same behavior id are rejected as duplicates`` (
             (activeBehavior
                 "rhino-cli:default"
                 "ose-be"
-                [ "specs/apps/ose/behavior/be/**" ]
+                [ "specs/apps/ose/be/behaviors/**" ]
                 (standardAdapters "ose-be" "apps/ose-be/src/tests/unit/Steps/BeSteps.fs"))
 
     let registry =
@@ -925,8 +925,8 @@ let ``two projects declaring the same behavior id are rejected as duplicates`` (
                   "ose-be"
                   (Some "rhino-cli:default")
                   MappingIdentity
-                  (legacyHalf true (Some "specs/apps/ose/behavior/be/**") [ "unit" ])
-                  (canonicalHalf (Some "ose-be") (Some "specs/apps/ose/behavior/be/**") []) ]
+                  (legacyHalf true (Some "specs/apps/ose/be/behaviors/**") [ "unit" ])
+                  (canonicalHalf (Some "ose-be") (Some "specs/apps/ose/be/behaviors/**") []) ]
 
     validate registry [ "rhino-cli"; "ose-be" ] defaultValidateOptions
     |> expectContractFailure

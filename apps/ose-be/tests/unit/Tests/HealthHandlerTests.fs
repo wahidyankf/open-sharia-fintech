@@ -17,7 +17,7 @@ let ``health route returns 200`` () =
     let resp = client.GetAsync("/api/v1/health").Result
     Assert.Equal(HttpStatusCode.OK, resp.StatusCode)
 
-// @covers specs/apps/ose/behavior/be/gherkin/health/health.feature:Health endpoint returns 200
+// @covers specs/apps/ose/be/behaviors/health/health.feature:Health endpoint returns 200
 [<Fact>]
 let ``health route returns JSON status healthy`` () =
     let client = buildClient webApp

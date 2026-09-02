@@ -36,7 +36,7 @@ Then("the response contains rendered HTML content", async () => {
   expect(page.html).toBeTruthy();
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Retrieve a page by slug
+// @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Retrieve a page by slug
 Then("the response contains extracted headings", async () => {
   const page = state.pageResult as Record<string, unknown>;
   expect(Array.isArray(page.headings)).toBe(true);
@@ -49,7 +49,7 @@ Then("the updates are returned sorted by date descending", async () => {
   }
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:List all update posts sorted by date
+// @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:List all update posts sorted by date
 Then("each update contains title, date, summary, and tags", async () => {
   const updates = state.updatesResult as Record<string, unknown>[];
   const first = updates[0]!;
@@ -59,7 +59,7 @@ Then("each update contains title, date, summary, and tags", async () => {
   expect(first).toHaveProperty("tags");
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Draft pages are excluded from listings
+// @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Draft pages are excluded from listings
 Then("the draft page is not included in the results", async () => {
   const updates = state.updatesResult as { draft?: boolean }[];
   for (const update of updates) {
@@ -67,7 +67,7 @@ Then("the draft page is not included in the results", async () => {
   }
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Non-existent slug returns null
+// @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Non-existent slug returns null
 Then("the response is null", async () => {
   expect(state.pageResult).toBeNull();
 });

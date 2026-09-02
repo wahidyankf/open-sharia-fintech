@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-web/gherkin/content/code-block-copy.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature"),
 );
 
 const luaFigureHtml = `<figure data-rehype-pretty-code-figure><pre data-language="lua"><code><span>print("hi")</span></code></pre></figure>`;
@@ -27,7 +27,7 @@ describeFeature(feature, ({ Scenario }) => {
       render(<MarkdownRenderer html={luaFigureHtml} />);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/content/code-block-copy.feature:The renderer wraps a non-mermaid code figure in a CodeBlock
+    // @covers specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature:The renderer wraps a non-mermaid code figure in a CodeBlock
     Then("the figure is wrapped in a CodeBlock exposing a copy button", () => {
       expect(document.querySelector('[data-slot="code-block"]')).toBeTruthy();
       expect(document.querySelector('[data-slot="code-block-copy"]')).toBeTruthy();
@@ -44,7 +44,7 @@ describeFeature(feature, ({ Scenario }) => {
       render(<MarkdownRenderer html={mermaidFigureHtml} />);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/content/code-block-copy.feature:The renderer leaves a mermaid figure as a diagram
+    // @covers specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature:The renderer leaves a mermaid figure as a diagram
     Then("the figure renders as a mermaid diagram with no copy button", () => {
       // Real SVG rendering needs browser APIs jsdom lacks (see mermaid.tsx); before the async
       // `mermaid.render()` resolves, MermaidDiagram renders its <pre><code> fallback — asserting that

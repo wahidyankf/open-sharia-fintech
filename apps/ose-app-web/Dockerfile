@@ -25,8 +25,8 @@ COPY apps/ose-app-web/src/ ./src/
 COPY apps/ose-app-web/package.json apps/ose-app-web/tsconfig.json apps/ose-app-web/next.config.ts apps/ose-app-web/postcss.config.mjs ./
 
 # Generate contract types (when spec exists)
-# COPY specs/apps/ose-app/containers/contracts/generated/ ./specs/apps/ose-app/containers/contracts/generated/
-# RUN npx @hey-api/openapi-ts -i specs/apps/ose-app/containers/contracts/generated/openapi-bundled.yaml -o src/generated-contracts -s
+# COPY specs/apps/ose/be/contracts/generated/ ./specs/apps/ose/be/contracts/generated/
+# RUN npx @hey-api/openapi-ts -i specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -o src/generated-contracts -s
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ARG OSE_BE_URL=http://ose-be:8302

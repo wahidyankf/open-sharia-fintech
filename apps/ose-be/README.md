@@ -57,7 +57,7 @@ operations are not exposed as public API operations yet.
 | AI orchestration   | `GET /api/v1/ai-orchestration/status` reports the context's current readiness.  |
 | Messaging          | `GET /api/v1/system/status/messaging` reports the JetStream startup outcome.    |
 
-The [OpenAPI contract](../../specs/apps/ose/containers/contracts/openapi.yaml) is the source of
+The [OpenAPI contract](../../specs/apps/ose/be/contracts/openapi.yaml) is the source of
 truth for API operations. At present, it formally defines the health endpoint; the status routes
 are useful development surfaces while the product contract expands.
 
@@ -116,5 +116,5 @@ Run these from the repository root.
 | `npm exec nx -- run ose-be-e2e:test:e2e`     | Run the separate Playwright backend end-to-end suite with local containers. |
 
 For the backend's expected behavior, see the
-[Gherkin scenarios](../../specs/apps/ose/behavior/be/gherkin/README.md). For the broader product
-direction, see the [OSE application overview](../../specs/apps/ose/product/overview.md).
+[Gherkin scenarios](../../specs/apps/ose/be/behaviors/README.md). For the broader product
+direction, see the [OSE application overview](../../specs/apps/ose/overview.md).

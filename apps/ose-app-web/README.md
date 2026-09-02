@@ -56,7 +56,7 @@ Run these from the repository root.
 - [`@open-sharia-enterprise/web-ui`](../../libs/web-ui/) provides the shared UI components and
   design tokens used by the app.
 - [`ose-be`](../ose-be/) is the OSE Application backend.
-- The [OpenAPI contract](../../specs/apps/ose/containers/contracts/) is the source of truth for
+- The [OpenAPI contract](../../specs/apps/ose/be/contracts/) is the source of truth for
   the API shared by the frontend and backend. The `codegen` target keeps generated TypeScript
   types in sync with that contract.
 - [Product, architecture, and behaviour specifications](../../specs/apps/ose/) explain the
@@ -64,7 +64,7 @@ Run these from the repository root.
 
 ## Next places to look
 
-- [Frontend acceptance scenarios](../../specs/apps/ose/behavior/app-web/gherkin/) describe the
+- [Frontend acceptance scenarios](../../specs/apps/ose/app-web/behaviors/) describe the
   observable browser behaviour.
 - [Browser end-to-end tests](../ose-app-web-e2e/) exercise those scenarios with Playwright.
 - [Development environment setup](../../docs/how-to/setup-development-environment.md) covers the

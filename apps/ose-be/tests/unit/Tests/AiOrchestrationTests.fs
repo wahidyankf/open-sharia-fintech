@@ -4,7 +4,7 @@ open Xunit
 open OseBe.Contexts.AiOrchestration.Application
 open OseBe.Contexts.AiOrchestration.Domain
 
-// @covers specs/apps/ose/behavior/be/gherkin/ai-orchestration/ai-orchestration.feature:AI orchestration context is declared
+// @covers specs/apps/ose/be/behaviors/ai-orchestration/ai-orchestration.feature:AI orchestration context is declared
 [<Fact>]
 let ``ai-orchestration reports ready to wrap LLM calls via OpenRouter`` () =
     let readiness = initializeContext ()

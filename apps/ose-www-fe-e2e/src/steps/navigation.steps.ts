@@ -15,7 +15,7 @@ Then("the header contains a link to {string} at {string}", async ({ page }, text
   expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/navigation.feature:Header contains navigation links
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/navigation.feature:Header contains navigation links
 Then("the header contains an external link to {string}", async ({ page }, text: string) => {
   const link = page.getByRole("link", { name: new RegExp(text, "i") });
   await expect(link.first()).toBeVisible();
@@ -47,7 +47,7 @@ Then("all breadcrumb segments should be clickable links", async ({ page }) => {
   await expect(links.first()).toBeAttached();
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/navigation.feature:Breadcrumb shows ancestor hierarchy without current page
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/navigation.feature:Breadcrumb shows ancestor hierarchy without current page
 Then("breadcrumb text should wrap naturally without horizontal truncation", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const ol = breadcrumb.locator("ol");
@@ -74,7 +74,7 @@ Then("a {string} link is displayed with the previous update title", async ({ pag
   await expect(prevLink.first()).toBeVisible();
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/navigation.feature:Previous and next navigation between updates
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/navigation.feature:Previous and next navigation between updates
 Then("a {string} link is displayed with the next update title", async ({ page }, _label: string) => {
   const nextLink = page.getByRole("link", { name: /next|→/i });
   await expect(nextLink.first()).toBeVisible();

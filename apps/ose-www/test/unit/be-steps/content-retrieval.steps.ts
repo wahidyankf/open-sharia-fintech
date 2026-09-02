@@ -8,7 +8,7 @@ import { appRouter } from "@/features/app-shell/shell/root-router";
 import { testContentService, testContentServiceWithDraft } from "./helpers/test-service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature"),
 );
 
 const createCaller = createCallerFactory(appRouter);
@@ -41,7 +41,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result?.html).toBeTruthy();
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Retrieve a page by slug
+    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Retrieve a page by slug
     And("the response contains extracted headings", () => {
       expect(result?.headings).toBeDefined();
       expect(Array.isArray(result?.headings)).toBe(true);
@@ -69,7 +69,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:List all update posts sorted by date
+    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:List all update posts sorted by date
     And("each update contains title, date, summary, and tags", () => {
       for (const update of results) {
         expect(update.title).toBeTruthy();
@@ -96,7 +96,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       results = await caller.content.listUpdates();
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Draft pages are excluded from listings
+    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Draft pages are excluded from listings
     Then("the draft page is not included in the results", () => {
       const hasDraft = results.some((r) => r.draft === true);
       expect(hasDraft).toBe(false);
@@ -115,7 +115,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await caller.content.getBySlug({ slug: "nonexistent" });
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/content/content-retrieval.feature:Non-existent slug returns null
+    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Non-existent slug returns null
     Then("the response is null", () => {
       expect(result).toBeNull();
     });

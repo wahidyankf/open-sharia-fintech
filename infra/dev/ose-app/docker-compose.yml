@@ -28,7 +28,7 @@ services:
       OSE_APP_BE_PORT: "8302"
     volumes:
       - ../../../apps/ose-app-be:/workspace:rw
-      - ../../../specs/apps/ose-app/behavior/be/gherkin:/specs/apps/ose-app/behavior/be/gherkin:ro
+      - ../../../specs/apps/ose/be/behaviors:/specs/apps/ose/be/behaviors:ro
     depends_on:
       postgres:
         condition: service_healthy

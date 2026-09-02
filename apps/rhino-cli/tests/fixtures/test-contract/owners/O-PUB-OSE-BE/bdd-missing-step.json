@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature",
+    "feature": "specs/apps/ose/be/behaviors/config/env-tier-loading.feature",
     "scenario": "ose-be process env wins over a tier file value",
     "step": "Given a tier file at the app's composition root sets a variable to a file value",
     "adapter": "unit@ose-be"
@@ -14,7 +14,7 @@
     "fields": [
       "project=ose-be",
       "owner=ose-be",
-      "item=specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature",
+      "item=specs/apps/ose/be/behaviors/config/env-tier-loading.feature",
       "scenario=ose-be process env wins over a tier file value",
       "step=Given a tier file at the app's composition root sets a variable to a file value"
     ]

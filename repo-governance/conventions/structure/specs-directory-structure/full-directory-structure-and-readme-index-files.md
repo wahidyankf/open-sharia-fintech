@@ -39,9 +39,9 @@ specs/
 
 Not every project has all directories. Presence of subdirectories depends on the project's surface profile:
 
-- **`containers/contracts/`**: Present for apps with OpenAPI contract specs (e.g., `ose`)
-- **`components/be/`**: Present for apps with a backend container (e.g., `ose`)
-- **`behavior/<product>-be/gherkin/`**: Present for apps with backend Gherkin specs (e.g., `behavior/ose-be/gherkin/`)
+- **`containers/contracts/`**: Present for apps with OpenAPI contract specs
+- **`components/be/`**: Present for apps with a backend container
+- **`behavior/<product>-be/gherkin/`**: Present for apps with backend Gherkin specs
 - **`behavior/<product>-cli/gherkin/`**: Present for a CLI app still on this tree
 
 ## README Index Files

@@ -7,8 +7,8 @@ import { defineBddConfig } from "playwright-bdd";
 process.env.APP_ENV ??= "test";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/ose/behavior/app-web/gherkin",
-  features: "../../specs/apps/ose/behavior/app-web/gherkin/**/*.feature",
+  featuresRoot: "../../specs/apps/ose/app-web/behaviors",
+  features: "../../specs/apps/ose/app-web/behaviors/**/*.feature",
   steps: ["./steps/**/*.steps.ts"],
   // env-loader.feature's scenarios are the only `@unit`-tagged ones anywhere in this app's
   // Gherkin surface (verified: no other feature co-tags `@unit` with `@e2e`), so excluding them

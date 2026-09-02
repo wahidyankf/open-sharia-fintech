@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/ose/behavior/platform-web/gherkin/landing/landing-page.feature",
+    "feature": "specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature",
     "scenario": "Hero section displays platform information",
     "step": "Given the landing page is rendered",
     "adapter": "unit@ose-www"
@@ -14,7 +14,7 @@
     "fields": [
       "project=ose-www",
       "owner=ose-www",
-      "item=specs/apps/ose/behavior/platform-web/gherkin/landing/landing-page.feature",
+      "item=specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature",
       "scenario=Hero section displays platform information",
       "step=Given the landing page is rendered"
     ]

@@ -67,7 +67,7 @@ vi.mock("@/features/search/shell/use-search", () => ({
 import { Header } from "@/features/app-shell/shell/header";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-web/gherkin/app-shell/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -95,7 +95,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(menuButton).toBeInTheDocument();
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/responsive.feature:Mobile viewport shows hamburger navigation
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger navigation
     And("the desktop navigation links are hidden", () => {
       // The desktop nav has class "hidden ... sm:flex" — hidden by default, only shows on sm+
       const nav = screen.getByRole("navigation", { name: /Main navigation/i });
@@ -120,7 +120,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(nav.className).toContain("sm:flex");
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/responsive.feature:Desktop viewport shows full navigation
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows full navigation
     And("the hamburger menu button is hidden", () => {
       const menuButton = screen.getByRole("button", { name: /Open navigation menu/i });
       // The hamburger button has "sm:hidden" meaning it's hidden on desktop

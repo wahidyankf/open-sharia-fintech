@@ -7,7 +7,7 @@ Given("the site loads without a stored theme preference", async ({ page }) => {
   await page.goto("/");
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/theme.feature:Default theme is light mode
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Default theme is light mode
 Then("the theme is set to light mode", async ({ page }) => {
   const html = page.locator("html");
   const className = await html.getAttribute("class");
@@ -29,7 +29,7 @@ When("the user clicks the theme toggle and selects dark mode", async ({ page }) 
   }
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/theme.feature:Theme toggle switches between modes
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Theme toggle switches between modes
 Then("the site switches to dark mode", async ({ page }) => {
   const html = page.locator("html");
   await expect(html).toHaveClass(/dark/);

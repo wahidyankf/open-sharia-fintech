@@ -8,7 +8,7 @@ When("a visitor opens the home page", async ({ page }) => {
   await page.goto("/");
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Home page passes axe-core accessibility scan
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Home page passes axe-core accessibility scan
 Then("the page should have no accessibility violations", async ({ page }) => {
   const results = await new AxeBuilder({ page }).analyze();
   const critical = results.violations.filter((v) => v.impact === "critical");
@@ -21,7 +21,7 @@ Then("the page should have no accessibility violations", async ({ page }) => {
   expect(critical).toEqual([]);
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Headings follow a proper hierarchy
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Headings follow a proper hierarchy
 Then("headings should follow a proper hierarchy starting with a single h1", async ({ page }) => {
   const h1Count = await page.locator("h1").count();
   expect(h1Count).toBe(1);
@@ -72,7 +72,7 @@ Then("focus should move through all interactive elements in logical order", asyn
   expect(interactiveTags.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:All interactive elements are keyboard accessible
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:All interactive elements are keyboard accessible
 Then("no interactive element should be skipped or unreachable by keyboard", async ({ page }) => {
   // Collect all visible interactive elements
   const allInteractive = await page
@@ -124,7 +124,7 @@ Then(
   },
 );
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
 Then(
   "large text and headings should meet a minimum contrast ratio of {int}:{int} against their background",
   async ({ page }, _ratio: number, _denominator: number) => {
@@ -162,7 +162,7 @@ Then("a visible focus indicator should be displayed on that element", async ({ p
   expect(hasFocusedElement).toBe(true);
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
+// @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
 Then("the focus indicator should have sufficient contrast against the surrounding background", async ({ page }) => {
   // Verify focused element has a visible focus ring via computed styles
   const hasFocusContrast = await page.evaluate(() => {
