@@ -29,11 +29,11 @@ app type realises each level.
 All testable projects must consume Gherkin specifications at every applicable test level. E2E
 runner projects ARE the Gherkin consumers at the E2E level.
 
-| App Type                    | Unit consumes Gherkin                                       | Integration consumes Gherkin | E2E consumes Gherkin                 |
-| --------------------------- | ----------------------------------------------------------- | ---------------------------- | ------------------------------------ |
-| BE API (`organiclever-be`)  | Yes — `specs/apps/organiclever/be/behaviors/`               | Yes — same specs             | Yes — same specs                     |
-| FE (`organiclever-app-web`) | Yes — `specs/apps/organiclever/app-web/behaviors/`          | Yes — same specs             | Yes — via `organiclever-app-web-e2e` |
-| CLI (`*-cli`)               | Yes — `specs/apps/{domain}/behavior/<product>-cli/gherkin/` | Yes — same specs             | Not applicable                       |
-| Content platform            | Yes — project-local specs                                   | Yes — same specs             | Yes — via `*-be-e2e` / `*-fe-e2e`    |
-| Library                     | Yes — library-specific specs                                | Yes — same specs             | Not applicable                       |
-| E2E runner                  | Not applicable                                              | Not applicable               | Yes — consumes shared specs          |
+| App Type                    | Unit consumes Gherkin                              | Integration consumes Gherkin | E2E consumes Gherkin                 |
+| --------------------------- | -------------------------------------------------- | ---------------------------- | ------------------------------------ |
+| BE API (`organiclever-be`)  | Yes — `specs/apps/organiclever/be/behaviors/`      | Yes — same specs             | Yes — same specs                     |
+| FE (`organiclever-app-web`) | Yes — `specs/apps/organiclever/app-web/behaviors/` | Yes — same specs             | Yes — via `organiclever-app-web-e2e` |
+| CLI (`*-cli`)               | Yes — `specs/apps/{domain}/cli/behaviors/`         | Yes — same specs             | Not applicable                       |
+| Content platform            | Yes — project-local specs                          | Yes — same specs             | Yes — via `*-be-e2e` / `*-fe-e2e`    |
+| Library                     | Yes — library-specific specs                       | Yes — same specs             | Not applicable                       |
+| E2E runner                  | Not applicable                                     | Not applicable               | Yes — consumes shared specs          |

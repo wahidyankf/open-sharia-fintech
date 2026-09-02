@@ -18,9 +18,9 @@ when_to_use: "Use when deciding which spec artifact a code change must also upda
 
 ## C4 Diagrams
 
-C4 diagrams under `specs/apps/*/system-context/`, `specs/apps/*/containers/`, and `specs/apps/*/components/` document architecture at the context, container, and component levels. They must reflect the actual system at all times.
+Each owner's `specs/apps/<product>/<owner>/architecture.md` documents that surface at the context, container, and component levels — the three C4 zoom levels are sections of one document, not three folders. It must reflect the actual system at all times.
 
-**Update C4 diagrams when:**
+**Update an owner's `architecture.md` when:**
 
 - Adding or removing an application (`apps/`) or library (`libs/`)
 - Changing the runtime technology of an existing app (e.g., Astro → Next.js, Go/Gin → Go/Fiber)

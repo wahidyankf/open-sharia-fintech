@@ -300,7 +300,7 @@ satisfy these additional requirements:
 
 **Mandatory Nx targets** (all 7 required):
 
-- [ ] `codegen` — generates types + encoders/decoders from the OpenAPI spec at `specs/apps/[domain]/containers/contracts/`
+- [ ] `codegen` — generates types + encoders/decoders from the OpenAPI spec at `specs/apps/[domain]/[owner]/contracts/`
 - [ ] `typecheck` — verifies types compile; must include `dependsOn: ["codegen"]`
 - [ ] `lint` — static analysis / format check
 - [ ] `build` — production build; must include `dependsOn: ["codegen"]`
@@ -342,7 +342,7 @@ array — do not inline the raw glob directly into a target's `inputs`:
 ```json
 {
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/[domain]/behavior/<product>-be/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/[domain]/be/behaviors/**/*.feature"]
   },
   "targets": {
     "test:quick": {
@@ -352,7 +352,7 @@ array — do not inline the raw glob directly into a target's `inputs`:
 }
 ```
 
-- `namedInputs.specs` — the `{workspaceRoot}/specs/apps/[domain]/behavior/<product>-be/gherkin/**/*.feature` glob for backends
+- `namedInputs.specs` — the `{workspaceRoot}/specs/apps/[domain]/be/behaviors/**/*.feature` glob for backends
 - `test:unit`/`test:quick` `inputs` — `"specs"` (the named-input reference) plus `{projectRoot}/generated-contracts/**/*` and language-specific source file globs (see `repo-governance/development/infra/nx-targets.md` for per-language patterns)
 
 **See**: [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for canonical target names, caching rules, and per-language input patterns.

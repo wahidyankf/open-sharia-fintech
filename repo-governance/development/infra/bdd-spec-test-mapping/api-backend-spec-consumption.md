@@ -14,14 +14,14 @@ when_to_use: Use when wiring a demo-be backend's unit, integration, or E2E tests
 
 # API Backend: Three-Level Spec Consumption
 
-API backends consume shared Gherkin scenarios from their own `specs/apps/<backend-name>/behavior/<product>-be/gherkin/`
+API backends consume shared Gherkin scenarios from their own `specs/apps/<product>/be/behaviors/`
 directory at three test levels. The feature files are the shared contract — only the step
 implementations change per level.
 
 ## Shared Specs
 
 ```
-specs/apps/<backend-name>/behavior/<product>-be/gherkin/
+specs/apps/<product>/be/behaviors/
 ├── auth/
 │   ├── login.feature
 │   ├── register.feature

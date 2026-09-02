@@ -36,14 +36,14 @@ open-sharia-enterprise/
 │   └── k8s/                  # Kubernetes deployments
 ├── specs/                     # Gherkin acceptance specs, C4 diagrams, and OpenAPI contracts
 │   ├── apps/                  # Per-app specs (one logical owner corpus per surface)
-│   │   └── [domain]/         # e.g. organiclever/, rhino/
-│   │       ├── product/      # PM-first content (overview, roadmap)
-│   │       ├── system-context/ # C4 L1 — system boundary diagram
-│   │       ├── containers/   # C4 L2 — runtime containers + OpenAPI contracts
-│   │       ├── components/   # C4 L3 — internal structure (be/, web/, cli/)
-│   │       └── behavior/     # Gherkin feature files (be/, web/, cli/)
-│   │           └── [surface]/gherkin/[domain]/ # e.g. behavior/<product>-cli/gherkin/system/
-│   └── libs/                  # Per-library specs
+│   │   └── [product]/        # e.g. organiclever/, rhino/
+│   │       ├── overview.md   # optional PM-first framing shared by the owners
+│   │       └── [owner]/      # one per deployed surface (be/, www/, app-web/, cli/)
+│   │           ├── architecture.md # C4 context → containers → components, one document
+│   │           ├── contracts/      # OpenAPI, in the owner that serves it
+│   │           └── behaviors/      # Gherkin feature files
+│   │               └── [domain]/   # e.g. rhino/cli/behaviors/system/
+│   └── libs/                  # Per-library specs (the same three entries at the library root)
 ├── .husky/                    # Git hooks
 ├── .nx/                       # Nx cache (gitignored)
 ├── node_modules/              # Dependencies (gitignored)

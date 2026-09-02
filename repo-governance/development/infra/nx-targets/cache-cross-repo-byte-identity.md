@@ -23,7 +23,7 @@ when_to_use: Use when changing anything under apps/rhino-cli and verifying cross
    byte-identical across `ose-public`/`ose-private` with zero carve-outs (carrying the
    union command superset).
 2. Every Nx-registered project in every repo (per `nx show projects` — this includes the
-   `*-contracts` projects rooted under `specs/apps/*/containers/contracts/`, which a directory-only
+   `*-contracts` projects rooted under `specs/apps/*/*/contracts/`, which a directory-only
    `apps`/`libs` scan cannot see) MUST declare `namedInputs.specs`.
 3. rhino-cli's own behaviour MUST be cucumber-covered in both repos.
 4. Both `repo-config.yml` files MUST carry an identical key set (the schema-parity gate,

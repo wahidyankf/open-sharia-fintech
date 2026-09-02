@@ -28,14 +28,15 @@ Each row links to the specification index first, then to the implementation it d
 
 An application or library index leads to the most useful level of detail:
 
-- `product/` explains the problem, users, and scope.
-- `system-context/`, `containers/`, and `components/` progressively describe the system boundary,
-  running parts, and their internals.
-- `behavior/` contains the acceptance scenarios. These use Gherkin, a concise
+- A product index lists its owners — one per deployed surface — and any `overview.md` that frames
+  the product above them.
+- Inside an owner, `architecture.md` describes the system boundary, its running parts, and their
+  internals as one document read top to bottom.
+- `behaviors/` contains the acceptance scenarios. These use Gherkin, a concise
   `Given`/`When`/`Then` format for an observable outcome.
 
-Some product areas also include `containers/contracts/`, which holds the API contract. That
-folder appears only when the product needs it.
+Some owners also include `contracts/`, which holds the API contract. That folder appears only in
+the owner that serves it.
 
 ## How specifications relate to code and tests
 
@@ -55,8 +56,8 @@ When exploring or preparing a change:
 1. Read the relevant specification index and the closest existing behavior scenario before
    interpreting the requirement. Use the linked app or library README for local commands and
    implementation-specific setup.
-2. Put a new or changed observable outcome in the existing `behavior/` surface for that product.
-   Keep the scenario focused on the outcome, not framework details.
+2. Put a new or changed observable outcome in the `behaviors/` tree of the owner that deploys the
+   surface. Keep the scenario focused on the outcome, not framework details.
 3. Update the matching code and its tests. If an HTTP API changes, review its contract; if a system
    boundary changes, review the associated architecture material as well.
 4. Run the focused checks documented by that project. Update this root index only when the

@@ -20,14 +20,15 @@ created: 2026-04-02
 
 ## What This Convention Covers
 
-- The logical owner corpus for app spec areas
-- **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within the `behavior/` tree
+- The logical owner corpus for app spec areas and library spec areas
+- **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within an owner's
+  `behaviors/` tree
 - **Domain subdirectory rules** for grouping related feature files
-- **C4 diagram placement** within `system-context/`, `containers/`, and `components/`
-- **OpenAPI contract placement** within `containers/contracts/`
+- **C4 placement** as sections of an owner's `architecture.md` rather than as folders
+- **OpenAPI contract placement** within the owner that serves the contract
 - **README.md index files** at each navigational level
-- **Per-surface variants** (full-stack, web-only, CLI-only, multi-CLI)
-- **Migration path** from flat-root layouts to the C4-aware tree
+- **Per-surface variants** (full-stack, web-only, CLI-only, library)
+- **Migration path** from the retired five-folder tree to the logical owner corpus
 
 ## What This Convention Does NOT Cover
 

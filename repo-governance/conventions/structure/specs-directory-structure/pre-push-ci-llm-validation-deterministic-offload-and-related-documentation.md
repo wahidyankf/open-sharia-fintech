@@ -50,7 +50,7 @@ When reviewing changes to the `specs/` directory, verify:
 - [ ] Lib specs use package subdirectories under `gherkin/`
 - [ ] `README.md` index files exist at every directory level
 - [ ] New projects include only the folders their surface profile needs
-- [ ] Folder listing in README follows canonical order: `product/`, `system-context/`, `containers/`, `components/`, `behavior/`
+- [ ] Entry listing in a corpus README follows canonical order: `architecture.md`, `contracts/`, `behaviors/`
 
 ## Related Documentation
 
