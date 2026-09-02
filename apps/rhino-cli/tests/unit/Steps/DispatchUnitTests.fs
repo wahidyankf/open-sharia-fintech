@@ -1870,8 +1870,22 @@ let ``route previews a would-install step and reports a missing-tool error on do
         let code, out, err =
             runCaptured (okRoot root) [| "doctor"; "--tools"; "git"; "--fix"; "--dry-run"; "-o"; "json" |]
 
+        // The remediation command is host-platform-dependent (`installGit`'s
+        // darwin vs. linux branch); this test exercises the real CLI, not a
+        // pinned platform string, so it must assert whichever branch the
+        // runner actually is.
+        let expectedInstallLine =
+            if
+                System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(
+                    System.Runtime.InteropServices.OSPlatform.OSX
+                )
+            then
+                "Would install: git via xcode-select --install"
+            else
+                "Would install: git via sudo apt-get install -y git"
+
         Assert.Equal(1, code)
-        Assert.Contains("Would install: git via xcode-select --install", out)
+        Assert.Contains(expectedInstallLine, out)
         Assert.Contains("Fix summary: 0 fixed, 0 failed, 0 already OK", out)
         Assert.Contains("Error: 1 tool(s) not found in PATH", err)
     finally
