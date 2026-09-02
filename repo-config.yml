@@ -216,7 +216,7 @@ coverage:
     # crane domain
     - name: crane-cli
       levels: [unit, integration]
-      specs: "specs/apps/crane/behavior/cli/**"
+      specs: "specs/apps/crane/cli/behaviors/**"
 
     # libs
     - name: web-ui
@@ -295,11 +295,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/crane/behavior/cli/**"
+          corpus: "specs/apps/crane/cli/behaviors/**"
           levels: [unit, integration]
         canonical:
           owner: crane-cli
-          corpus: "specs/apps/crane/behavior/cli/**"
+          corpus: "specs/apps/crane/cli/behaviors/**"
           runtimes:
             - level: integration
               project: crane-cli
@@ -583,34 +583,6 @@ testing:
           runtimes:
             - level: unit
               project: ts-env-loader
-      - project: wahidyankf-www
-        behavior-id: wahidyankf-www:default
-        state: identity
-        legacy:
-          present: true
-          corpus: "specs/apps/wahidyankf/behavior/www/**"
-          levels: [unit]
-        canonical:
-          owner: wahidyankf-www
-          corpus: "specs/apps/wahidyankf/behavior/www/**"
-          runtimes:
-            - level: e2e
-              project: wahidyankf-www-fe-e2e
-            - level: unit
-              project: wahidyankf-www
-      - project: wahidyankf-www-fe-e2e
-        behavior-id: wahidyankf-www:default
-        state: identity
-        legacy:
-          present: true
-          corpus: "specs/apps/wahidyankf/behavior/www/**"
-          levels: [e2e]
-        canonical:
-          owner: wahidyankf-www
-          corpus: null
-          runtimes:
-            - level: e2e
-              project: wahidyankf-www-fe-e2e
       - project: web-ui
         behavior-id: web-ui:default
         state: identity
@@ -706,7 +678,7 @@ testing:
         lifecycle-state: active
         owner: crane-cli
         corpus:
-          - "specs/apps/crane/behavior/cli/**"
+          - "specs/apps/crane/cli/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -1116,46 +1088,6 @@ testing:
           e2e:
             disposition: inapplicable
             reason: no user-facing surface
-    - project: wahidyankf-www
-      profile: application
-      migration-state: verified
-      behavior:
-        id: wahidyankf-www:default
-        lifecycle-state: active
-        owner: wahidyankf-www
-        corpus:
-          - "specs/apps/wahidyankf/behavior/www/**"
-        adapters:
-          unit:
-            disposition: required
-            project: wahidyankf-www
-            driver: apps/wahidyankf-www/tests/unit/bdd/unit-driver.ts
-          integration:
-            disposition: inapplicable
-            reason: no isolated local-resource boundary
-          e2e:
-            disposition: delegated
-            project: wahidyankf-www-fe-e2e
-            driver: apps/wahidyankf-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
-    - project: wahidyankf-www-fe-e2e
-      profile: e2e
-      migration-state: verified
-      behavior:
-        id: wahidyankf-www:default
-        lifecycle-state: active
-        owner: wahidyankf-www
-        corpus: []
-        adapters:
-          unit:
-            disposition: inapplicable
-            reason: the owning project hosts the unit adapter
-          integration:
-            disposition: inapplicable
-            reason: no isolated local-resource boundary
-          e2e:
-            disposition: required
-            project: wahidyankf-www-fe-e2e
-            driver: apps/wahidyankf-www-fe-e2e/tests/e2e/bdd/e2e-driver.ts
     - project: web-ui
       profile: library
       migration-state: verified
