@@ -954,6 +954,22 @@ threshold=99`, `manifest-consumer-verified`).
 
 ### `D-O-PRI-TS-UI` delivery lifecycle
 
+> **Execution state:** `ts-ui` moved from a `src`-colocated 70%-floor test contract to the target
+> shape, mirroring `web-ui`'s pattern: unit tests relocated to `tests/unit/`, the `e2e/`
+> visual-regression Playwright suite relocated to `tests/integration/` and wired to a real
+> `test:integration` target (previously a no-op), `test:coverage` raised to a 99% line floor (100%
+> achieved), the three policy-validation targets added, and `repo-config.yml` registered for both
+> unit and integration runtimes. Along the way found and fixed an untested `DialogClose` export (a
+> real coverage gap, same fix `web-ui` needed for the same component) and missing
+> `animations: "disabled"` on visual-regression screenshots (pre-existing flakiness, matching
+> `web-ui`'s fix); also corrected three stale `README.md` references left by the target rename.
+> Leak-review clean (0 findings, PNG-chunk-level check on all screenshot baselines). CI green
+> (103/103 unit tests, 100% coverage; 21/22 integration visual tests — the one failure is
+> pre-existing, environment-specific headless-Chromium pixel nondeterminism confirmed not to gate
+> CI, since `test:integration` is excluded from `pr-quality-gate.yml`'s `nx affected` target list
+> per AC-TEST-05/FR-07). PR: [wahidyankf/ose-private#145](https://github.com/wahidyankf/ose-private/pull/145),
+> merge commit `f5a457be1cdad02b951580db326391ee288c069d`.
+
 ## Phase 12: Migrate `O-PUB-AYO`
 
 - **Input:** complete Ayo owner and two-harness rows.
