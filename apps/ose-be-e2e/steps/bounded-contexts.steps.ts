@@ -2,10 +2,10 @@
  * Step definitions for OSE Application bounded-context stub features.
  *
  * Covers:
- *   specs/apps/ose/behavior/be/gherkin/ai-orchestration/ai-orchestration.feature
- *   specs/apps/ose/behavior/be/gherkin/gap-analysis/gap-analysis.feature
- *   specs/apps/ose/behavior/be/gherkin/internal-policy/internal-policy.feature
- *   specs/apps/ose/behavior/be/gherkin/regulatory-source/regulatory-source.feature
+ *   specs/apps/ose/be/behaviors/ai-orchestration/ai-orchestration.feature
+ *   specs/apps/ose/be/behaviors/gap-analysis/gap-analysis.feature
+ *   specs/apps/ose/be/behaviors/internal-policy/internal-policy.feature
+ *   specs/apps/ose/be/behaviors/regulatory-source/regulatory-source.feature
  *
  * These are declaration stubs — detailed scenarios are added in each bounded-context
  * feature plan. Steps are pending no-ops until the bounded context is implemented.

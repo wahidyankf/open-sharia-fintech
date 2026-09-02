@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/containers/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-be/generated-contracts --model-package OseBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-be/generated-contracts --model-package OseBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
       },
       "dependsOn": ["ose-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose/containers/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/generated-contracts"]
     },
     "build": {
@@ -117,10 +117,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir messaging specs/apps/ose/behavior/be/gherkin apps/ose-be"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir messaging specs/apps/ose/be/behaviors apps/ose-be"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature", "{projectRoot}/src/**/*.fs"]
+      "inputs": ["{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -154,10 +154,7 @@
     "test:specs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "npx nx run ose-be:specs:structure-validation",
-          "npx nx run ose-be:specs:behavior:coverage"
-        ],
+        "commands": ["npx nx run ose-be:specs:structure-validation", "npx nx run ose-be:specs:behavior:coverage"],
         "parallel": false
       },
       "cache": true,
@@ -165,7 +162,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/ose/behavior/be/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature"]
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:ose"],
   "implicitDependencies": ["ose-contracts"]

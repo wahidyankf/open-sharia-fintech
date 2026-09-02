@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/ose/behavior/app-web/gherkin/smoke/smoke.feature",
+    "feature": "specs/apps/ose/app-web/behaviors/smoke/smoke.feature",
     "scenario": "Home page loads",
     "step": "Given the ose-app-web dev server is running",
     "adapter": "unit@ose-app-web"
@@ -14,7 +14,7 @@
     "fields": [
       "project=ose-app-web",
       "owner=ose-app-web",
-      "item=specs/apps/ose/behavior/app-web/gherkin/smoke/smoke.feature",
+      "item=specs/apps/ose/app-web/behaviors/smoke/smoke.feature",
       "scenario=Home page loads",
       "step=Given the ose-app-web dev server is running"
     ]

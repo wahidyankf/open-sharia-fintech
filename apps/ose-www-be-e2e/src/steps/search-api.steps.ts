@@ -25,7 +25,7 @@ Then("the results contain pages matching {string}", async ({}, _term: string) =>
   expect(results.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/search/search.feature:Search returns matching results
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search returns matching results
 Then("each result contains a title, slug, and excerpt", async () => {
   const results = state.searchResults as Record<string, unknown>[];
   const first = results[0]!;
@@ -34,13 +34,13 @@ Then("each result contains a title, slug, and excerpt", async () => {
   expect(first).toHaveProperty("excerpt");
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/search/search.feature:Search with no matches returns empty results
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search with no matches returns empty results
 Then("the results are empty", async () => {
   const results = state.searchResults as unknown[];
   expect(results.length).toBe(0);
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/search/search.feature:Search results respect the limit parameter
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search results respect the limit parameter
 Then("at most {int} results are returned", async ({}, limit: number) => {
   const results = state.searchResults as unknown[];
   expect(results.length).toBeLessThanOrEqual(limit);

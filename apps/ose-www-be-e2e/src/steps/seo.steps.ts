@@ -21,7 +21,7 @@ Then("the sitemap contains a URL for the about page", async () => {
   expect(body).toContain("/about");
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/seo/seo.feature:Sitemap contains all public pages
+// @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Sitemap contains all public pages
 Then("the sitemap contains URLs for all update pages", async () => {
   const body = state.sitemapBody as string;
   expect(body).toContain("/updates/");
@@ -38,7 +38,7 @@ Then("it allows all user agents", async () => {
   expect(body.toLowerCase()).toContain("user-agent");
 });
 
-// @covers specs/apps/ose/behavior/platform-be/gherkin/seo/seo.feature:Robots.txt allows all crawlers
+// @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Robots.txt allows all crawlers
 Then("it references the sitemap URL", async () => {
   const body = state.robotsBody as string;
   expect(body.toLowerCase()).toContain("sitemap");

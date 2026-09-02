@@ -34,4 +34,4 @@ npm exec nx -- run ose-app-web-e2e:test:specs
 ```
 
 The product behavior source of truth is
-[the OSE app-web Gherkin suite](../../specs/apps/ose/behavior/app-web/gherkin/README.md).
+[the OSE app-web Gherkin suite](../../specs/apps/ose/app-web/behaviors/README.md).

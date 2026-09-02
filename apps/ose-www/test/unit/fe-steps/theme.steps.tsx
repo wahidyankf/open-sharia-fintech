@@ -91,7 +91,7 @@ vi.mock("@/features/app-shell/shell/ui/dropdown-menu", () => ({
 }));
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-web/gherkin/app-shell/theme.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -110,7 +110,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       render(<ThemeToggleWithTracker />);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/theme.feature:Default theme is light mode
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Default theme is light mode
     Then("the theme is set to light mode", () => {
       // The toggle button is rendered and initial theme is light
       const selectedTheme = screen.getByTestId("selected-theme");
@@ -129,7 +129,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       fireEvent.click(darkMenuItem);
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/app-shell/theme.feature:Theme toggle switches between modes
+    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Theme toggle switches between modes
     Then("the site switches to dark mode", () => {
       const selectedTheme = screen.getByTestId("selected-theme");
       expect(selectedTheme).toHaveTextContent("dark");

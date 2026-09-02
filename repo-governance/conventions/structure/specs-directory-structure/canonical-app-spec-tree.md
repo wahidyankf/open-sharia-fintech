@@ -55,7 +55,7 @@ specs/apps/<app-family>/
 │       └── routes-and-screens.md
 └── behavior/                       # Cross-cutting Gherkin (all C4 levels)
     ├── README.md
-    └── <product>-<surface>/         # e.g., ose-be, ose-app-web
+    └── <product>-<surface>/         # e.g., <product>-be, <product>-app-web
         └── gherkin/
             ├── README.md
             └── <domain>/            # Domain subdir — required for all surfaces
@@ -74,9 +74,9 @@ specs/apps/<app-family>/
 
 ## Per-Surface Variants
 
-| Surface profile                | Folders populated                                                                                                                                  | Folders absent or empty                         |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Full-stack (e.g., `ose`)       | All five; `components/be/` + `components/web/` + `containers/contracts/`; `behavior/<product>-be/gherkin/` + `behavior/<product>-app-web/gherkin/` | None                                            |
-| Web-only (no current example)  | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/<app>-www/gherkin/`                                                     | `containers/contracts/`, `components/be/`       |
-| CLI-only (no current example)  | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/<product>-cli/gherkin/`                                                 | `components/{be,web}/`, `containers/contracts/` |
-| Multi-CLI (no current example) | Same as CLI-only, plus web layers if applicable                                                                                                    | Nothing additional omitted                      |
+| Surface profile                 | Folders populated                                                                                                                                  | Folders absent or empty                         |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Full-stack (no current example) | All five; `components/be/` + `components/web/` + `containers/contracts/`; `behavior/<product>-be/gherkin/` + `behavior/<product>-app-web/gherkin/` | None                                            |
+| Web-only (no current example)   | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/<app>-www/gherkin/`                                                     | `containers/contracts/`, `components/be/`       |
+| CLI-only (no current example)   | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/<product>-cli/gherkin/`                                                 | `components/{be,web}/`, `containers/contracts/` |
+| Multi-CLI (no current example)  | Same as CLI-only, plus web layers if applicable                                                                                                    | Nothing additional omitted                      |

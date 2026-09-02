@@ -6,7 +6,7 @@ import { InMemoryContentRepository } from "@/features/content/core/repository-me
 import { ContentService } from "@/features/content/shell/service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-be/gherkin/rss-feed/rss-feed.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature"),
 );
 
 const SITE_URL = "https://oseplatform.com";
@@ -85,7 +85,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(feedXml).toContain(`<link>${SITE_URL}/updates/</link>`);
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/rss-feed/rss-feed.feature:RSS feed contains valid structure
+    // @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed contains valid structure
     And("the feed contains item elements for each update", () => {
       expect(feedXml).toContain("<item>");
       expect(feedXml).toContain("</item>");
@@ -136,7 +136,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(feedXml).toContain(`<link>${SITE_URL}/updates/2026-02-08-phase-0-end/</link>`);
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/rss-feed/rss-feed.feature:RSS feed entries contain required fields
+    // @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed entries contain required fields
     And("the feed entry has a description", () => {
       expect(feedXml).toContain("<description>");
     });

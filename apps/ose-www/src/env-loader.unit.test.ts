@@ -1,7 +1,7 @@
 /**
  * Step definitions for the APP_ENV tier env-file loader feature.
  *
- * Covers: specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature
+ * Covers: specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature
  *
  * Each scenario drives `loadTierEnv()` with an isolated `appDir` (a throwaway temp directory
  * holding fixture `.env.*` files) and an isolated `env` object (a plain record, not the real
@@ -21,7 +21,7 @@ import { expect } from "vitest";
 import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature"),
+  path.resolve(__dirname, "../../../specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature"),
 );
 
 type EnvRecord = Record<string, string | undefined>;
@@ -63,7 +63,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       loadTierEnv({ appDir, env });
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature:ose-www builds against the staging tier
+    // @covers specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature:ose-www builds against the staging tier
     Then('every variable consumed by the build resolves to its ".env.stag" value', () => {
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above
       expect(env["SHARED_VAR"]).toBe("stag-value");
@@ -91,7 +91,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature:ose-www process env wins over the local tier file
+    // @covers specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature:ose-www process env wins over the local tier file
     And('the ".env.local" value is not applied over it', () => {
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above
       expect(env["SOME_VAR"]).toBe("process-value");
@@ -123,7 +123,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(thrown).toBeUndefined();
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature:ose-www tolerates a missing tier file
+    // @covers specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature:ose-www tolerates a missing tier file
     And("startup proceeds using whatever the process environment already supplies", () => {
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above
       expect(env["EXISTING_VAR"]).toBe("already-set");
@@ -149,7 +149,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ose/behavior/platform-web/gherkin/config/env-tier-loading.feature:ose-www fails loudly on a stray auto-loaded env file
+    // @covers specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature:ose-www fails loudly on a stray auto-loaded env file
     Then('the loader throws, naming "<file>" and the correct ".env.<tier>" replacement', () => {
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above
       expect(thrown).toBeInstanceOf(Error);

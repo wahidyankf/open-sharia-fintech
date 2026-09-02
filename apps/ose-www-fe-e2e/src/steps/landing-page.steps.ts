@@ -26,7 +26,7 @@ Then("the hero section contains a {string} link to {string}", async ({ page }, l
   expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/landing/landing-page.feature:Hero section displays platform information
+// @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Hero section displays platform information
 Then("the hero section contains a {string} link", async ({ page }, linkText: string) => {
   const link = page.getByRole("link", { name: new RegExp(linkText, "i") });
   await expect(link.first()).toBeVisible();
@@ -37,7 +37,7 @@ Then("a GitHub icon link is visible", async ({ page }) => {
   await expect(githubLinks.first()).toBeVisible();
 });
 
-// @covers specs/apps/ose/behavior/platform-web/gherkin/landing/landing-page.feature:Social icons are displayed
+// @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Social icons are displayed
 Then("an RSS feed icon link is visible", async ({ page }) => {
   const rssLinks = page.getByRole("link", { name: /rss|feed/i });
   await expect(rssLinks.first()).toBeVisible();

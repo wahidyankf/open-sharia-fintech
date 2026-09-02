@@ -30,9 +30,9 @@ specs/apps/<app-family>/behavior/<product>-<surface>/gherkin/{domain}/{feature}.
 
 Where:
 
-- **`<app-family>`** = project name (e.g., `ose`)
+- **`<app-family>`** = project name
 - **`<product>-<surface>`** = flat slug combining product name and perspective (e.g.,
-  `ose-be`, `ose-app-web`)
+  `<product>-be`, `<product>-app-web`)
 - **`{domain}`** = business domain grouping folder (all surfaces, including CLI)
 - **`{feature}`** = feature file name in kebab-case
 

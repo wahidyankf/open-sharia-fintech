@@ -32,4 +32,4 @@ npm exec nx -- run ose-be-e2e:test:specs
 ```
 
 The behavior source of truth is
-[the OSE backend Gherkin suite](../../specs/apps/ose/behavior/be/gherkin/README.md).
+[the OSE backend Gherkin suite](../../specs/apps/ose/be/behaviors/README.md).

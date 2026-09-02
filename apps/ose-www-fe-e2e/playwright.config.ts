@@ -11,7 +11,7 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/ose/behavior/platform-web/gherkin/**/*.feature"),
+  features: path.join(workspaceRoot, "specs/apps/ose/www/behaviors/frontend/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
   // Only generate e2e tests for scenarios that declare e2e intent (`@e2e`). Every existing
   // platform-web scenario is `@unit @e2e`, so this is a no-op for them; it scopes OUT pure-`@unit`

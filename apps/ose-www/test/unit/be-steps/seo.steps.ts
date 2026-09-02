@@ -6,7 +6,7 @@ import { InMemoryContentRepository } from "@/features/content/core/repository-me
 import { ContentService } from "@/features/content/shell/service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-be/gherkin/seo/seo.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/seo/seo.feature"),
 );
 
 const SITE_URL = "https://oseplatform.com";
@@ -116,7 +116,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(sitemap.some((entry) => entry.url === `${SITE_URL}/about/`)).toBe(true);
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/seo/seo.feature:Sitemap contains all public pages
+    // @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Sitemap contains all public pages
     And("the sitemap contains URLs for all update pages", () => {
       expect(sitemap.some((entry) => entry.url.includes("updates/2026-02-08-phase-0-end"))).toBe(true);
     });
@@ -133,7 +133,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(robots.rules).toContainEqual(expect.objectContaining({ userAgent: "*", allow: "/" }));
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/seo/seo.feature:Robots.txt allows all crawlers
+    // @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Robots.txt allows all crawlers
     And("it references the sitemap URL", () => {
       expect(robots.sitemap).toBe(`${SITE_URL}/sitemap.xml`);
     });

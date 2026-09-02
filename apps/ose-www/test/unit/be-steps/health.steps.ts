@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/platform-be/gherkin/health/health.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/health/health.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -21,7 +21,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await testCaller.health.check();
     });
 
-    // @covers specs/apps/ose/behavior/platform-be/gherkin/health/health.feature:Health endpoint returns ok status
+    // @covers specs/apps/ose/www/behaviors/backend/health/health.feature:Health endpoint returns ok status
     Then('the response contains status "ok"', () => {
       expect(result.status).toBe("ok");
     });

@@ -38,6 +38,6 @@ specs/
 | BE App            | Spec Path                                           |
 | ----------------- | --------------------------------------------------- |
 | `organiclever-be` | `specs/apps/organiclever/be/contracts/openapi.yaml` |
-| `ose-be`          | `specs/apps/ose/containers/contracts/openapi.yaml`  |
+| `ose-be`          | `specs/apps/ose/be/contracts/openapi.yaml`          |
 
 The spec file is the only artefact that humans edit. Generated files are never edited by hand.

@@ -26,9 +26,9 @@ specs
 !specs/apps/organiclever/be/behaviors
 !specs/apps/organiclever/app-web/behaviors
 !specs/apps/organiclever/be/contracts/generated
-!specs/apps/ose-app/behavior/be/gherkin
-!specs/apps/ose-app/behavior/web/gherkin
-!specs/apps/ose-app/containers/contracts/generated
+!specs/apps/ose/be/behaviors
+!specs/apps/ose/app-web/behaviors
+!specs/apps/ose/be/contracts/generated
 infra
 .claude
 .opencode

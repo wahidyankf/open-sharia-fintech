@@ -1,5 +1,5 @@
 /**
- * Step definitions for specs/apps/ose/behavior/app-web/gherkin/env-loader/env-loader.feature.
+ * Step definitions for specs/apps/ose/app-web/behaviors/env-loader/env-loader.feature.
  *
  * Each scenario drives `loadTierEnv()` with an isolated `appDir` (a throwaway temp directory
  * holding fixture `.env.*` files) and an isolated `env` object (a plain record, not the real
@@ -14,7 +14,7 @@ import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
 import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/behavior/app-web/gherkin/env-loader/env-loader.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/app-web/behaviors/env-loader/env-loader.feature"),
 );
 
 const tmpDirs: string[] = [];
