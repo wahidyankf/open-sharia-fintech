@@ -662,6 +662,18 @@ difference blocks both merges.
 
 ### `D-O-PUB-RHINO` delivery lifecycle
 
+> **Execution state:** Landed on `phase7-shared-rhino`. Relocated `apps/rhino-cli/src/tests` to
+> `apps/rhino-cli/tests` (unit + integration), wired the three new Nx targets
+> (`test:layout:validation`, `coverage:policy:validation`, `package-manifest:policy:validation`),
+> and raised per-assembly line coverage to 99% across all four modules (`RhinoCli.Application`,
+> `RhinoCli.Cli`, `RhinoCli.Infrastructure`, `RhinoCli.Domain`). Closing the coverage gap surfaced
+> and fixed several real production bugs: an unhandled crash in the three-level runtime cross-check
+> on a malformed `--unit-report` file, two unhandled-exception paths in `Harness.fs` (unwritable
+> `.codex/agents`, unreadable `.claude/skills`), and a `Dispatch.fs` flag parser silently swallowing
+> `--max-label-len`/`--max-width`/`--max-depth`/`--max-subgraph-nodes` values as bogus positional
+> paths. `parity-manifest.sha256` regenerated and verified byte-identical against the companion
+> `ose-private` PR. PR: [wahidyankf/ose-public#442](https://github.com/wahidyankf/ose-public/pull/442).
+
 ### `D-O-PRI-RHINO` delivery lifecycle
 
 ## Phase 8A: Migrate `O-PUB-FS-CORE`
