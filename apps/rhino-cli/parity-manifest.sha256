@@ -13,7 +13,7 @@ c9bcab647bfa6b7f7f07db8da416708ab87728a71e5dd24bb3d9d85b871367e0  apps/rhino-cli
 84a842f1d53732f843913b678b92420f229cc74bc9a35c2944b0c5f9fd35ac53  apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs
 6967fea6ffe4d3d5fc7aa58678c1634b2d63702af6d093b73de1062fc2cd2b42  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
 73a77b775dcd19627f91165b1a19f694101ff874c86345b3b5d61a7ac25585eb  apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs
-d3129fc9e9de328c0786e7b75113ea1afbd9204bf096fced20dd7c928077ff45  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
+71ba59e817b71ed59b356cd04a8989f2d2099f4a169baa1e72f0f7722a5844db  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
 06ab3d196eb9bc65d26a4fbbe2d16c9997970f28311ff7483b6899d2ac035de3  apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
 e160eed9a7ae866207cb757a09a01fc04fe4256db87766099c0d62dd6416668a  apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs
 888f126993468a84179bd2c5068dc2d00e47d548b6e2c57e02008c59ea0f165b  apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs
@@ -22,7 +22,7 @@ dbe0ab654d1acc57a4ed7245d5573dd2ec7328203a3c391b131719e46b54c00e  apps/rhino-cli
 1492b905ad12bc69421ba3f225110dc2848f0a243347012d32d4842d45277613  apps/rhino-cli/src/RhinoCli.Application/src/TestContractManifest.fs
 59aa64bf160fffd6df62a013fa1eefc2e3af703670928c68dd91e62098e579c5  apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src/RhinoCli.Cli/RhinoCli.Cli.fsproj
-28fe955757e52efa19436e53bdf25d4f402882a08915ec26002e2a93737d6d43  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+b7376ae62fd1d01d03ba7f58730fb612ca68390f2f0bf5b2f741cda4c48985b8  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
 9c1b6441b1319aed995e83c11a4bb1415a7f0b055878d8b2bc139f49264b68a1  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
 fb5b64497123536aebbce019fec47909e00528b1859a75ffcf0acb0c9b123ac4  apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs
 bae5e00a50c31d3ad2b28d77ee6d860cf89c2497fece6c14641627ab13f54818  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
@@ -122,7 +122,7 @@ daa07ee11464063aa54cde4bc829d582f10c9e1b3f5c86698b9c159298c447c0  apps/rhino-cli
 04c1871d56ddc9b674438450813d295be08e9e6cefc2a9379c67c7f4e54ad2de  apps/rhino-cli/src/tests/unit/Steps/RepoConfigValidateSteps.fs
 d83d59d082a0dd69115f3ed4127b91685ab1b5e85116be95efcc7ec8993ac7ae  apps/rhino-cli/src/tests/unit/Steps/RepoConfigValidateUnitTests.fs
 fcd29832d104bed7c0672f4c925bd9a4008c1e3290ebea80dc76abc886e731b4  apps/rhino-cli/src/tests/unit/Steps/RepoGovernanceSteps.fs
-09b9aa9ec3caa56c1ab76fa1e5f60818bbbf9f2c0ccb3600f44347cf54378384  apps/rhino-cli/src/tests/unit/Steps/SpecsSteps.fs
+d77ba5a5d5a93dfb1ee31cbd9f24c8d63a550b0305437ab66bffe1da1e433ade  apps/rhino-cli/src/tests/unit/Steps/SpecsSteps.fs
 9357eefd0fd767cde66c6630a425aa27fef73cb0e813db34d6866bdc04e7250c  apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs
 8b7eb59244232c0ee1d545f0afa978d6ac1564d1a37b4483d87b1ff7f5864aab  apps/rhino-cli/src/tests/unit/Steps/TestContractCoverageUnitTests.fs
 2905dc61820d2dfee29831f92425350afbbc61d180e027ab6be77a8820b4220f  apps/rhino-cli/src/tests/unit/Steps/TestContractLayoutUnitTests.fs
@@ -136,7 +136,7 @@ f6ffc8353519a85166543c825a1558361f107bdc19383a9dcf3d28870d4c0154  apps/rhino-cli
 3a2a32b2c95722988c1cc6488f1f9c588b79eedfc5c7382dd4191e5e15ee5479  apps/rhino-cli/src/tests/unit/Steps/WaveDMermaidWarningUnitTests.fs
 102b81c9fdb265a1d681896dcb3b04cb9fb603aae4821bb250a4e28cbde38e52  apps/rhino-cli/src/tests/unit/Steps/WaveDParityRegressionUnitTests.fs
 2746e79c69ca753cba4d5800f286acd7e64a53bbc263da01fb8a18ac9a12d0ed  apps/rhino-cli/src/tests/unit/Steps/WaveEFApplicationUnitTests.fs
-4f6f472cf86e73248a6c867b8bb38ad2ac4526dc7a4d2a8594a3e1bce89120c9  apps/rhino-cli/src/tests/unit/Steps/WaveEFDispatchUnitTests.fs
+50503c41e496016ca9a79618d25e7f070cec90a1e77f658d4585e19f28dd09a3  apps/rhino-cli/src/tests/unit/Steps/WaveEFDispatchUnitTests.fs
 251246dd01ec3245ef29238e279095a107aa401b56211446accc9d6cc87cc859  apps/rhino-cli/src/tests/unit/Steps/WaveEFE2eCoverageUnitTests.fs
 9ee57d1e183149f11ffed9cbe9b7eb56d7a626c5ab58902b883a54bc54f96354  apps/rhino-cli/src/tests/unit/Steps/WaveEFFormattersUnitTests.fs
 67d9065a63071df2ffaadf09583338a58b184791f5a93f4ec6992dd8d4209e5d  apps/rhino-cli/src/tests/unit/Steps/WaveEFGateUnitTests.fs
@@ -211,11 +211,11 @@ c2a50b3eed5b6bcca94febc88e5d3f81ffbc2359bf28558714110d6e3286102c  specs/apps/rhi
 f1f4804383ead4d55a815d3bf2663f23be40852d4d2cb136c90da956053b1365  specs/apps/rhino/cli/behaviors/specs/harness-bindings.feature
 3824922ee10a335ae77539c5f463f5bb604edb751634123dd97fdcd75cbe9e14  specs/apps/rhino/cli/behaviors/specs/harness-registry-driven.feature
 3f99403bb03e236d1df08af2ec6a998a25498acfb9d038ed133c0c2939e2ae12  specs/apps/rhino/cli/behaviors/specs/specs-audit.feature
-1d3f368b37867de74e60ec9964dbf69b1de0274902b371b7919afec6db407176  specs/apps/rhino/cli/behaviors/specs/validate-adoption.feature
-7dc3e25d8430c46152e74d66af2aa1baa76d1e34b87e0130c848d7ddd2074319  specs/apps/rhino/cli/behaviors/specs/validate-counts.feature
+f66ac4de1110dea9b3ce7df997fe0d9551ae3a21301b9ec1e1be5b71f940110d  specs/apps/rhino/cli/behaviors/specs/validate-adoption.feature
+f233a266906a3faab70b6e328d0eec14750f7949a7a44a16379074285a285d19  specs/apps/rhino/cli/behaviors/specs/validate-counts.feature
 7461e1f5d2a6c6ee23a7ff7156df46cd3c5d33e96ee98fad8106bd1310b2141e  specs/apps/rhino/cli/behaviors/specs/validate-links.feature
-948a36c19a68b719666af05ee6344d7df5b8262630925240436f57498326f8c2  specs/apps/rhino/cli/behaviors/specs/validate-logical-corpus.feature
-4adf044e8981e0e0d99d2f7f8aef1437e65af013812f9dd5dd4b81f34e746513  specs/apps/rhino/cli/behaviors/specs/validate-tree.feature
+8e16536392bec0a32c0b20334e72c2fe6412c92a7e1d046167a769ec29c9c01b  specs/apps/rhino/cli/behaviors/specs/validate-logical-corpus.feature
+709a67697d619cd368ef4355e79adf00698dc56c13d9167e53d227f9107a9122  specs/apps/rhino/cli/behaviors/specs/validate-tree.feature
 f45e16b233ce1794eca625fd2da002608df2788647d9b7a293849ee0f8429879  specs/apps/rhino/cli/behaviors/specs/worktree-agnostic.feature
 9bbc0048ffd02794748fa27383c8ee549781440949536a9e9e0c0a86f3d0df02  specs/apps/rhino/cli/behaviors/system/README.md
 0fac573c4c6cdbda6771fc4b72bfcb177d442b53843c48414182360f2f8c01ce  specs/apps/rhino/cli/behaviors/system/cargo-target-share.feature

@@ -1,7 +1,7 @@
 ---
 title: "Canonical App Spec Tree"
-description: The five-folder layout every app spec area uses, what each folder answers, and how the populated folder set varies by surface profile
-when_to_use: Read this when scaffolding a new app's specs/apps/<app-family>/ tree or checking which folders a given surface profile should populate.
+description: The logical owner corpus every app spec area uses, what each entry answers, and how the populated set varies by surface profile
+when_to_use: Read this when scaffolding a new app's specs/apps/<app-family>/ tree or checking which entries a given surface profile should populate.
 category: explanation
 subcategory: conventions
 tags:
@@ -18,65 +18,53 @@ created: 2026-04-02
 
 # Canonical App Spec Tree
 
-## Five-Folder Layout
+## Layout
 
-Every app spec area under `specs/apps/<app-family>/` uses the following five-folder layout. Apps create only the folders they need — do not pre-create empty folders.
+A product directory holds one [logical owner corpus](./logical-owner-corpus.md) per surface it
+deploys. The product root carries only its index and whatever product-level document the owners
+share.
 
 ```
-specs/apps/<app-family>/
+specs/apps/<product>/
 ├── README.md
-├── product/                        # PM-first content (not a C4 level)
+├── overview.md                     # optional: PM-first product framing
+├── <owner>/                        # one per deployed surface
 │   ├── README.md
-│   └── overview.md
-├── system-context/                 # C4 L1
-│   ├── README.md
-│   └── context.md
-├── containers/                     # C4 L2
-│   ├── README.md
-│   ├── container.md
-│   ├── contracts/                  # OpenAPI specs (full-stack only)
+│   ├── architecture.md             # the current as-built system
+│   ├── contracts/                  # optional: OpenAPI, in the owner that serves it
 │   │   ├── README.md
 │   │   ├── openapi.yaml
 │   │   ├── paths/
 │   │   ├── schemas/
 │   │   └── generated/
-│   └── deployment.md
-├── components/                     # C4 L3
-│   ├── README.md
-│   ├── be/                         # Full-stack only
-│   │   ├── README.md
-│   │   ├── component-be.md
-│   │   └── api.md
-│   └── web/                        # Web and full-stack
+│   └── behaviors/
 │       ├── README.md
-│       ├── component-web.md
-│       ├── architecture.md
-│       ├── design-system.md
-│       └── routes-and-screens.md
-└── behavior/                       # Cross-cutting Gherkin (all C4 levels)
-    ├── README.md
-    └── <product>-<surface>/         # e.g., <product>-be, <product>-app-web
-        └── gherkin/
-            ├── README.md
-            └── <domain>/            # Domain subdir — required for all surfaces
-                └── <feature>.feature
+│       └── <domain>/               # domain subdir, required for every surface
+│           └── <feature>.feature
 ```
 
-## Folder Purposes
+An owner's `behaviors/` may nest one level further when a single deployed surface carries two
+perspectives — `behaviors/frontend/` and `behaviors/backend/` for a site whose API runs inside the
+same process. Two perspectives on one deployable are one owner, not two.
 
-| Folder            | Reader question it answers                            | Why top-level                                                    |
-| ----------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
-| `product/`        | "What does this product do for the user?"             | PM-first content — not architecture, not behavior                |
-| `system-context/` | "What is the system boundary? Who interacts with it?" | C4 L1                                                            |
-| `containers/`     | "What runtime processes exist?"                       | C4 L2 — hosts API contracts and deployment topology              |
-| `components/`     | "What is inside each container?"                      | C4 L3 — bounded contexts are components                          |
-| `behavior/`       | "Does the system do what the specs say?"              | Gherkin cuts across all C4 levels — orthogonal to zoom hierarchy |
+## Entry Purposes
+
+| Entry             | Reader question it answers                              |
+| ----------------- | ------------------------------------------------------- |
+| `README.md`       | "What is here, and where do I go next?"                 |
+| `architecture.md` | "What is the system as built, and what constrains it?"  |
+| `behaviors/`      | "Does the system do what the specs say?"                |
+| `contracts/`      | "What exactly does this surface promise over the wire?" |
+
+`architecture.md` carries the C4 zoom levels as sections rather than folders: context, containers,
+and components read top to bottom in one document, because a reader following a change needs all
+three and a writer keeping one current has to keep all three current.
 
 ## Per-Surface Variants
 
-| Surface profile                 | Folders populated                                                                                                                                  | Folders absent or empty                         |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Full-stack (no current example) | All five; `components/be/` + `components/web/` + `containers/contracts/`; `behavior/<product>-be/gherkin/` + `behavior/<product>-app-web/gherkin/` | None                                            |
-| Web-only (no current example)   | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/<app>-www/gherkin/`                                                     | `containers/contracts/`, `components/be/`       |
-| CLI-only (no current example)   | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/<product>-cli/gherkin/`                                                 | `components/{be,web}/`, `containers/contracts/` |
-| Multi-CLI (no current example)  | Same as CLI-only, plus web layers if applicable                                                                                                    | Nothing additional omitted                      |
+| Surface profile | Owners                                           | `contracts/`                  |
+| --------------- | ------------------------------------------------ | ----------------------------- |
+| Full-stack      | one per client, one per service                  | in the service that serves it |
+| Web-only        | one per deployed site                            | absent                        |
+| CLI-only        | one per binary                                   | absent                        |
+| Library         | none — the three entries sit at the library root | absent                        |

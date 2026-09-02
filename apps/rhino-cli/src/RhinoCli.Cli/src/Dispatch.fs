@@ -1796,9 +1796,7 @@ let private specsStructureValidateRun (repoRoot: string) (rawArgs: string list) 
         for f in adoption do
             sb.Append(sprintf "adoption: %s: HIGH: %s\n" f.File f.Evidence) |> ignore
 
-        let tree =
-            Specs.validateSpecTree repoRoot app
-            @ Specs.validateSpecGherkinDomains repoRoot app
+        let tree = Specs.validateSpecTree repoRoot app
 
         for f in tree do
             sb.Append(sprintf "tree: %s: HIGH: %s\n" f.File f.Evidence) |> ignore

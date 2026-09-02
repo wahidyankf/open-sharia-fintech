@@ -128,13 +128,14 @@ type SpecsSteps() =
             specRoot <- Some dir
             dir
 
-    /// Creates every required spec subfolder for `app`, each with a
-    /// `README.md`; `withSpecFile` additionally drops one non-README spec
-    /// file into each so `validateSpecCounts` sees a non-empty folder.
+    /// Creates the five retired spec subfolders for `app`, each with a
+    /// `README.md`; `withSpecFile` additionally drops one non-README spec file
+    /// into each. Only negative scenarios use this — it builds the shape the
+    /// validators no longer accept.
     let specCreateTree (app: string) (withSpecFile: bool) : string =
         let baseDir = Path.Combine(specFixtureRoot (), "specs", "apps", app)
 
-        for folder in requiredSpecFolders do
+        for folder in retiredSpecFolders do
             let dir = Path.Combine(baseDir, folder)
             Directory.CreateDirectory dir |> ignore
             File.WriteAllText(Path.Combine(dir, "README.md"), "# Index\n")
@@ -143,29 +144,6 @@ type SpecsSteps() =
                 File.WriteAllText(Path.Combine(dir, "spec.md"), "# Spec\n")
 
         baseDir
-
-    /// Drops one `.feature` file under `behavior/<surface>/gherkin/<domain>/`
-    /// so the adoption validator finds it and the gherkin-domain validator
-    /// stays quiet.
-    let specAddFeatureFile (app: string) : unit =
-        let dir =
-            Path.Combine(specFixtureRoot (), "specs", "apps", app, "behavior", "surface", "gherkin", "domain")
-
-        Directory.CreateDirectory dir |> ignore
-
-        File.WriteAllText(
-            Path.Combine(dir, "example.feature"),
-            String.Join(
-                "\n",
-                [ "Feature: Example"
-                  ""
-                  "  Scenario: Works"
-                  "    Given a thing"
-                  "    When it runs"
-                  "    Then it passes"
-                  "" ]
-            )
-        )
 
     /// Builds one logical owner corpus under `specs/apps/<app>/<owner>/` and
     /// returns its absolute root. Each `with*` flag drops exactly one required
@@ -993,8 +971,7 @@ type SpecsSteps() =
     [<Given>]
     member _.``a repository with no spec-tree violations``() =
         specApp <- "testapp"
-        specCreateTree "testapp" true |> ignore
-        specAddFeatureFile "testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
 
     [<When>]
     member _.``the developer runs rhino-cli specs audit``() =
@@ -1008,7 +985,6 @@ type SpecsSteps() =
                 | "structure-validate" ->
                     validateSpecAdoption root specApp
                     @ validateSpecTree root specApp
-                    @ validateSpecGherkinDomains root specApp
                     @ validateSpecCounts root (sprintf "specs/apps/%s" specApp)
                 | "validate-links" -> validateSpecLinks root (sprintf "specs/apps/%s" specApp)
                 | "gherkin-cardinality" ->
@@ -1036,23 +1012,19 @@ type SpecsSteps() =
     // ---- Given (`validate-adoption.feature`) ----
 
     [<Given>]
-    member _.``an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and no ddd tree at specs/apps/testapp/ddd``
-        ()
-        =
+    member _.``an app "testapp" with an owner corpus and no ddd tree at specs/apps/testapp/ddd``() =
         specApp <- "testapp"
-        specCreateTree "testapp" true |> ignore
-        specAddFeatureFile "testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
 
     [<Given>]
-    member _.``an app "testapp" that has no feature files under specs/apps/testapp/behavior/``() =
+    member _.``an app "testapp" holding only the retired five folders``() =
         specApp <- "testapp"
         specCreateTree "testapp" true |> ignore
 
     [<Given>]
-    member _.``an app "testapp" that has feature files and a retired ddd tree at specs/apps/testapp/ddd``() =
+    member _.``an app "testapp" with an owner corpus and a retired ddd tree at specs/apps/testapp/ddd``() =
         specApp <- "testapp"
-        specCreateTree "testapp" true |> ignore
-        specAddFeatureFile "testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
 
         Directory.CreateDirectory(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "ddd"))
         |> ignore
@@ -1071,28 +1043,6 @@ type SpecsSteps() =
         specRecord (validateSpecAdoption (specFixtureRoot ()) "unknownapp")
 
     // ---- Given (`validate-counts.feature`) ----
-
-    [<Given>]
-    member _.``a spec folder at "specs/apps/testapp" with at least one non-README .md file in each required subfolder``
-        ()
-        =
-        specApp <- "testapp"
-        specFolder <- "specs/apps/testapp"
-        specCreateTree "testapp" true |> ignore
-
-    [<Given>]
-    member _.``a spec folder at "specs/apps/testapp" where the "product" subfolder contains only README.md``() =
-        specApp <- "testapp"
-        specFolder <- "specs/apps/testapp"
-        specCreateTree "testapp" true |> ignore
-        File.Delete(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "product", "spec.md"))
-
-    [<Given>]
-    member _.``a spec folder at "specs/apps/testapp" where the "behavior" subfolder does not exist``() =
-        specApp <- "testapp"
-        specFolder <- "specs/apps/testapp"
-        specCreateTree "testapp" true |> ignore
-        Directory.Delete(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "behavior"), true)
 
     [<Given>]
     member _.``no directory exists at "specs/apps/nosuchapp"``() =
@@ -1158,21 +1108,16 @@ type SpecsSteps() =
     // ---- Given (`validate-tree.feature`) ----
 
     [<Given>]
-    member _.``a spec tree for "testapp" with all five required folders and their README.md files``() =
+    member _.``a spec tree for "testapp" whose one owner corpus is complete``() =
         specApp <- "testapp"
-        specCreateTree "testapp" false |> ignore
+        specFolder <- "specs/apps/testapp"
+        specCreateCorpus "testapp" "cli" true true true true |> ignore
 
     [<Given>]
-    member _.``a spec tree for "testapp" missing the "behavior" folder``() =
+    member _.``a spec tree for "testapp" holding only the retired five folders``() =
         specApp <- "testapp"
-        specCreateTree "testapp" false |> ignore
-        Directory.Delete(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "behavior"), true)
-
-    [<Given>]
-    member _.``a spec tree for "testapp" where the "product" folder exists but has no README.md``() =
-        specApp <- "testapp"
-        specCreateTree "testapp" false |> ignore
-        File.Delete(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "product", "README.md"))
+        specFolder <- "specs/apps/testapp"
+        specCreateTree "testapp" true |> ignore
 
     [<Given>]
     member _.``no spec tree exists for "unknownapp"``() =
@@ -1228,10 +1173,6 @@ type SpecsSteps() =
         Directory.CreateDirectory(Path.Combine(specFixtureRoot (), "specs", "apps", "testapp", "product"))
         |> ignore
 
-    [<When>]
-    member _.``the developer runs "rhino-cli specs validate-gherkin-domains testapp"``() =
-        specRecord (validateSpecGherkinDomains (specFixtureRoot ()) "testapp")
-
     // ---- Then (shared by every spec-tree validator scenario) ----
 
     [<Then>]
@@ -1271,24 +1212,20 @@ type SpecsSteps() =
         Assert.Contains("no feature files", specOutput, StringComparison.Ordinal)
 
     [<Then>]
+    member _.``the output contains "no logical owner corpus"``() =
+        Assert.Contains("no logical owner corpus", specOutput, StringComparison.Ordinal)
+
+    [<Then>]
+    member _.``the output contains "is neither a logical owner corpus nor a product holding one"``() =
+        Assert.Contains(
+            "is neither a logical owner corpus nor a product holding one",
+            specOutput,
+            StringComparison.Ordinal
+        )
+
+    [<Then>]
     member _.``the output contains "retired ddd/ tree"``() =
         Assert.Contains("retired ddd/ tree", specOutput, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output contains "empty subfolder"``() =
-        Assert.Contains("empty subfolder", specOutput, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output contains "missing required folder: behavior"``() =
-        Assert.Contains("missing required folder: behavior", specOutput, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output contains "missing required folder: product"``() =
-        Assert.Contains("missing required folder: product", specOutput, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output contains "missing README.md"``() =
-        Assert.Contains("missing README.md", specOutput, StringComparison.Ordinal)
 
     [<Then>]
     member _.``the output contains "does not exist"``() =
@@ -1961,38 +1898,42 @@ let ``Every specs validator passes on a repository with no spec violations`` () 
     FeatureRunner.run "specs-audit.feature" "Every specs validator passes on a repository with no spec violations"
 
 [<Fact>]
-let ``app with BDD feature files and no retired ddd tree passes validation`` () =
-    FeatureRunner.run "validate-adoption.feature" "app with BDD feature files and no retired ddd tree passes validation"
+let ``app with an owner corpus and no retired ddd tree passes validation`` () =
+    FeatureRunner.run "validate-adoption.feature" "app with an owner corpus and no retired ddd tree passes validation"
 
 [<Fact>]
-let ``app missing behavior feature files reports a finding`` () =
-    FeatureRunner.run "validate-adoption.feature" "app missing behavior feature files reports a finding"
+let ``app with no owner corpus reports a finding`` () =
+    FeatureRunner.run "validate-adoption.feature" "app with no owner corpus reports a finding"
 
 [<Fact>]
 let ``app with a surviving retired ddd tree reports a finding`` () =
     FeatureRunner.run "validate-adoption.feature" "app with a surviving retired ddd tree reports a finding"
 
 [<Fact>]
-let ``unknown app with no spec tree at all reports a behavior adoption finding`` () =
+let ``unknown app with no spec tree at all reports an adoption finding`` () =
+    FeatureRunner.run "validate-adoption.feature" "unknown app with no spec tree at all reports an adoption finding"
+
+[<Fact>]
+let ``product directory whose owners are corpora passes validation`` () =
+    FeatureRunner.run "validate-counts.feature" "product directory whose owners are corpora passes validation"
+
+[<Fact>]
+let ``folder that is neither a corpus nor a product holding one reports a finding`` () =
     FeatureRunner.run
-        "validate-adoption.feature"
-        "unknown app with no spec tree at all reports a behavior adoption finding"
-
-[<Fact>]
-let ``folder with spec files in all subfolders passes validation`` () =
-    FeatureRunner.run "validate-counts.feature" "folder with spec files in all subfolders passes validation"
-
-[<Fact>]
-let ``empty subfolder reports a finding`` () =
-    FeatureRunner.run "validate-counts.feature" "empty subfolder reports a finding"
-
-[<Fact>]
-let ``missing subfolder reports a finding`` () =
-    FeatureRunner.run "validate-counts.feature" "missing subfolder reports a finding"
+        "validate-counts.feature"
+        "folder that is neither a corpus nor a product holding one reports a finding"
 
 [<Fact(DisplayName = "folder path that does not exist reports an error (validate-counts)")>]
 let ``folder path that does not exist reports an error - counts`` () =
     FeatureRunner.run "validate-counts.feature" "folder path that does not exist reports an error"
+
+[<Fact>]
+let ``a library corpus at the folder root is measured by the corpus rules`` () =
+    FeatureRunner.run "validate-counts.feature" "a library corpus at the folder root is measured by the corpus rules"
+
+[<Fact>]
+let ``a library corpus missing its behaviors index reports a finding`` () =
+    FeatureRunner.run "validate-counts.feature" "a library corpus missing its behaviors index reports a finding"
 
 [<Fact>]
 let ``folder with all valid internal links passes validation`` () =
@@ -2011,20 +1952,16 @@ let ``folder path that does not exist reports an error - links`` () =
     FeatureRunner.run "validate-links.feature" "folder path that does not exist reports an error"
 
 [<Fact>]
-let ``app with complete spec tree passes validation`` () =
-    FeatureRunner.run "validate-tree.feature" "app with complete spec tree passes validation"
+let ``product whose owner corpus is complete passes validation`` () =
+    FeatureRunner.run "validate-tree.feature" "product whose owner corpus is complete passes validation"
 
 [<Fact>]
-let ``app missing a required folder reports a finding`` () =
-    FeatureRunner.run "validate-tree.feature" "app missing a required folder reports a finding"
-
-[<Fact(DisplayName = "app with folder missing README.md reports a finding")>]
-let ``app with folder missing README reports a finding`` () =
-    FeatureRunner.run "validate-tree.feature" "app with folder missing README.md reports a finding"
+let ``product with no owner corpus at all reports a finding`` () =
+    FeatureRunner.run "validate-tree.feature" "product with no owner corpus at all reports a finding"
 
 [<Fact>]
-let ``app with no spec tree at all reports findings for every required folder`` () =
-    FeatureRunner.run "validate-tree.feature" "app with no spec tree at all reports findings for every required folder"
+let ``product directory holding only retired folders reports a finding`` () =
+    FeatureRunner.run "validate-tree.feature" "product directory holding only retired folders reports a finding"
 
 [<Fact>]
 let ``a product whose single owner corpus is complete passes validation`` () =
@@ -2057,16 +1994,6 @@ let ``legacy five-folder scaffolding surviving beside a corpus reports a finding
     FeatureRunner.run
         "validate-logical-corpus.feature"
         "legacy five-folder scaffolding surviving beside a corpus reports a finding"
-
-[<Fact>]
-let ``a product that has not begun the move is still measured against the five-folder tree`` () =
-    FeatureRunner.run
-        "validate-logical-corpus.feature"
-        "a product that has not begun the move is still measured against the five-folder tree"
-
-[<Fact>]
-let ``the flat-feature rule does not fire inside a migrated corpus`` () =
-    FeatureRunner.run "validate-logical-corpus.feature" "the flat-feature rule does not fire inside a migrated corpus"
 
 [<Fact>]
 let ``All 3 harnesses are accounted for at their tier`` () =

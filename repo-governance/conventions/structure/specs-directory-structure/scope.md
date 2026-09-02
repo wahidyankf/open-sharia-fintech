@@ -20,7 +20,7 @@ created: 2026-04-02
 
 ## What This Convention Covers
 
-- The C4-aware five-folder tree for app spec areas
+- The logical owner corpus for app spec areas
 - **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within the `behavior/` tree
 - **Domain subdirectory rules** for grouping related feature files
 - **C4 diagram placement** within `system-context/`, `containers/`, and `components/`

@@ -1,6 +1,6 @@
 ---
 title: "Specs Directory Structure: Principles, Conventions, and Purpose"
-description: The core principles and sibling conventions this directory-structure convention implements, and why the canonical C4-aware layout exists
+description: The core principles and sibling conventions this directory-structure convention implements, and why the canonical corpus layout exists
 when_to_use: Read this when you need the rationale behind the specs/ directory layout or which sibling conventions it implements.
 category: explanation
 subcategory: conventions
@@ -32,7 +32,7 @@ This convention implements the following core principles:
 
 This convention implements/respects the following conventions:
 
-- **[App README vs Specs Convention](../app-readme-vs-specs.md)**: This directory structure is the canonical layout produced by applying the Content Split Rule from that convention. The five-folder tree IS the spec tree shape described there.
+- **[App README vs Specs Convention](../app-readme-vs-specs.md)**: This directory structure is the canonical layout produced by applying the Content Split Rule from that convention. The logical owner corpus IS the spec tree shape described there.
 
 - **[Specs-Application Sync Convention](../../../development/quality/specs-application-sync.md)**: The directory structure enables bidirectional sync between specs and application code. The path pattern mirrors the app/lib structure in the workspace.
 
@@ -42,4 +42,4 @@ This convention implements/respects the following conventions:
 
 ## Purpose
 
-This convention establishes the canonical directory layout for the `specs/` directory. It defines how Gherkin feature files, C4 architecture diagrams, DDD artifacts, and OpenAPI contracts are organized across apps and libs, ensuring consistency, discoverability, and correct tool integration. The layout uses a C4-aware five-folder tree at the app level that maps directly to the C4 model zoom levels, with a `product/` folder for PM-first content and a `behavior/` folder for Gherkin that cuts across all C4 levels.
+This convention establishes the canonical directory layout for the `specs/` directory. It defines how Gherkin feature files, C4 architecture diagrams, DDD artifacts, and OpenAPI contracts are organized across apps and libs, ensuring consistency, discoverability, and correct tool integration. The layout gives each deployed surface one corpus — an index, an as-built `architecture.md` carrying the C4 zoom levels as sections, and a recursive `behaviors/` tree of Gherkin.

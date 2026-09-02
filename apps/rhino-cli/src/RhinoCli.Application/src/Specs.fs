@@ -724,8 +724,10 @@ type SpecFinding =
         Expected: string
     }
 
-/// The ordered list of subfolder names every spec tree must contain.
-let requiredSpecFolders: string list =
+/// The five folder names the retired C4 tree used. No product is measured
+/// against them any more; they survive only so a directory left behind beside a
+/// logical owner corpus is reported rather than ignored.
+let retiredSpecFolders: string list =
     [ "product"; "system-context"; "containers"; "components"; "behavior" ]
 
 /// Ordinal path sort matching Rust's `PathBuf` ordering.
@@ -861,7 +863,7 @@ let validateProductCorpus (repoRoot: string) (app: string) : SpecFinding list =
         |> List.collect (fun dir -> validateOwnerCorpus repoRoot (sprintf "%s/%s" productRel (Path.GetFileName dir)))
 
     let leftovers =
-        requiredSpecFolders
+        retiredSpecFolders
         |> List.filter (fun name -> Directory.Exists(Path.Combine(productDir, name)))
         |> List.map (fun name ->
             { Category = "tree-shape"
@@ -888,30 +890,21 @@ let hasOwnerCorpus (repoRoot: string) (app: string) : bool =
     |> List.isEmpty
     |> not
 
-/// The two behavior-adoption findings [`validateSpecAdoption`] reports: a
-/// missing `behavior/` directory, or one holding no `.feature` file at all.
-let private behaviorAdoptionFindings (repoRoot: string) (app: string) : SpecFinding list =
-    let behaviorDir = Path.Combine(repoRoot, "specs/apps", app, "behavior")
+/// The finding reported when `app` carries no logical owner corpus at all.
+/// Adoption is positive: a product proves the shape by having one, so its
+/// absence is the whole of the adoption failure.
+let private notAdoptedFinding (app: string) : SpecFinding =
+    { Category = "adoption"
+      Criticality = "HIGH"
+      File = sprintf "specs/apps/%s" app
+      Evidence = sprintf "no logical owner corpus found under specs/apps/%s/" app
+      Expected =
+        sprintf "create specs/apps/%s/<owner>/ with README.md, %s, and a non-empty behaviors/" app ArchitectureFileName }
 
-    if not (Directory.Exists behaviorDir) then
-        [ { Category = "adoption"
-            Criticality = "HIGH"
-            File = sprintf "specs/apps/%s/behavior" app
-            Evidence = sprintf "no feature files found under specs/apps/%s/behavior/ (directory does not exist)" app
-            Expected = sprintf "create specs/apps/%s/behavior/ with at least one .feature file" app } ]
-    elif List.isEmpty (walkFeatureFiles behaviorDir) then
-        [ { Category = "adoption"
-            Criticality = "HIGH"
-            File = sprintf "specs/apps/%s/behavior" app
-            Evidence = sprintf "no feature files found under specs/apps/%s/behavior/" app
-            Expected = sprintf "add at least one .feature file under specs/apps/%s/behavior/" app } ]
-    else
-        []
-
-/// Checks that `app` has adopted the spec conventions: a `behavior/` folder
-/// holding at least one `.feature` file, and no retired `ddd/` tree. DDD is no
-/// longer an engineering-facing specification surface, so any surviving
-/// `specs/apps/<app>/ddd/` directory is a finding rather than a requirement.
+/// Checks that `app` has adopted the logical owner-corpus shape and carries no
+/// retired `ddd/` tree. DDD is no longer an engineering-facing specification
+/// surface, so any surviving `specs/apps/<app>/ddd/` directory is a finding
+/// rather than a requirement.
 let validateSpecAdoption (repoRoot: string) (app: string) : SpecFinding list =
     let dddDir = Path.Combine(repoRoot, "specs/apps", app, "ddd")
 
@@ -926,14 +919,12 @@ let validateSpecAdoption (repoRoot: string) (app: string) : SpecFinding list =
             []
 
     if hasOwnerCorpus repoRoot app then
-        // The corpus rules already require a non-empty `behaviors/` per owner;
-        // the retired `ddd/` tree is the only legacy check that still applies.
         dddFindings
     else
-        behaviorAdoptionFindings repoRoot app @ dddFindings
+        notAdoptedFinding app :: dddFindings
 
-/// Checks that `folder` exists and that each required subfolder is present
-/// and holds at least one non-`README.md` spec file.
+/// Checks that `folder` is a logical owner corpus, or a product directory whose
+/// owners are, and reports what the corpus rules find missing.
 let validateSpecCounts (repoRoot: string) (folder: string) : SpecFinding list =
     let abs =
         if Path.IsPathRooted folder then
@@ -946,10 +937,10 @@ let validateSpecCounts (repoRoot: string) (folder: string) : SpecFinding list =
             Criticality = "HIGH"
             File = folder
             Evidence = sprintf "spec folder does not exist: %s" folder
-            Expected = "create the spec folder with required subfolders" } ]
+            Expected = "create the spec folder as a logical owner corpus" } ]
     elif isOwnerCorpusRoot abs then
         // A library carries its corpus at the folder root, so the corpus rules
-        // are the whole check — there is no five-folder scaffolding to count.
+        // are the whole check.
         let ownerRel =
             if Path.IsPathRooted folder then
                 Path.GetRelativePath(repoRoot, abs).Replace('\\', '/')
@@ -958,62 +949,27 @@ let validateSpecCounts (repoRoot: string) (folder: string) : SpecFinding list =
 
         validateOwnerCorpus repoRoot ownerRel
     elif not (List.isEmpty (ownerCorpusDirectories abs)) then
-        // A migrated product has no five-folder scaffolding to count; its
-        // per-corpus contents are proved by the tree-shape rules instead.
+        // A product directory holds no corpus content of its own; each owner
+        // beneath it is measured by the tree-shape rules instead.
         []
     else
-        requiredSpecFolders
-        |> List.collect (fun sub ->
-            let subPath = Path.Combine(abs, sub)
-            let rel = sprintf "%s/%s" folder sub
+        [ { Category = "count"
+            Criticality = "HIGH"
+            File = folder
+            Evidence = sprintf "%s is neither a logical owner corpus nor a product holding one" folder
+            Expected =
+              sprintf
+                  "give %s a %s and a non-empty behaviors/, or place its owners beneath it"
+                  folder
+                  ArchitectureFileName } ]
 
-            if not (Directory.Exists subPath) then
-                [ { Category = "count"
-                    Criticality = "HIGH"
-                    File = rel
-                    Evidence = sprintf "missing required folder: %s" sub
-                    Expected = sprintf "create %s/README.md plus at least one spec .md file" rel } ]
-            elif countNonReadmeMdFiles subPath = 0 then
-                [ { Category = "count"
-                    Criticality = "MEDIUM"
-                    File = rel
-                    Evidence = sprintf "empty subfolder: %s contains no spec files (only README.md or nothing)" sub
-                    Expected = sprintf "add at least one non-README .md spec file to %s/" rel } ]
-            else
-                [])
-
-/// The legacy five-folder tree check, kept whole for a product that has not
-/// begun the move to the logical owner-corpus shape.
-let private validateLegacySpecTree (repoRoot: string) (app: string) : SpecFinding list =
-    let baseDir = Path.Combine(repoRoot, "specs/apps", app)
-
-    requiredSpecFolders
-    |> List.collect (fun folder ->
-        let folderPath = Path.Combine(baseDir, folder)
-
-        if not (Directory.Exists folderPath) then
-            [ { Category = "tree-shape"
-                Criticality = "HIGH"
-                File = sprintf "specs/apps/%s" app
-                Evidence = sprintf "missing required folder: %s" folder
-                Expected = sprintf "create specs/apps/%s/%s/ with README.md" app folder } ]
-        elif not (File.Exists(Path.Combine(folderPath, "README.md"))) then
-            [ { Category = "tree-shape"
-                Criticality = "HIGH"
-                File = sprintf "specs/apps/%s/%s" app folder
-                Evidence = sprintf "missing README.md in required folder: %s" folder
-                Expected = sprintf "create specs/apps/%s/%s/README.md" app folder } ]
-        else
-            [])
-
-/// Checks the spec tree for `app` against whichever shape it declares: the
-/// logical owner-corpus shape once any corpus exists, otherwise the legacy
-/// five-folder tree.
+/// Checks the spec tree for `app` against the logical owner-corpus shape, which
+/// is now the only shape there is.
 let validateSpecTree (repoRoot: string) (app: string) : SpecFinding list =
     if hasOwnerCorpus repoRoot app then
         validateProductCorpus repoRoot app
     else
-        validateLegacySpecTree repoRoot app
+        [ notAdoptedFinding app ]
 
 // ---------------------------------------------------------------------------
 // Gherkin step-keyword cardinality audit
@@ -1312,54 +1268,6 @@ let runSpecsAudit (skip: string list) (runMember: string -> Result<unit, string>
         { Passed = false
           Summary = sprintf "SPECS AUDIT FAILED: %d validator(s) reported failures" (List.length failures)
           Failures = failures }
-
-/// Returns `path` relative to `basePath` by stripping the prefix, or `path`
-/// unchanged when it does not start with `basePath`.
-let private pathdiffStartsWith (path: string) (basePath: string) : string =
-    if path.StartsWith(basePath, StringComparison.Ordinal) then
-        path.Substring(basePath.Length).TrimStart('/', '\\')
-    else
-        path
-
-/// Checks that every `.feature` file under `behavior/<surface>/gherkin/`
-/// lives inside a domain subdirectory rather than directly at the `gherkin/`
-/// root.
-let validateSpecGherkinDomains (repoRoot: string) (app: string) : SpecFinding list =
-    let behavior = Path.Combine(repoRoot, "specs/apps", app, "behavior")
-
-    // The logical corpus places features under `behaviors/` with optional
-    // domain grouping, so the legacy `gherkin/<domain>/` requirement is not a
-    // rule there and would report every deliberately flat feature file.
-    if hasOwnerCorpus repoRoot app then
-        []
-    elif not (Directory.Exists behavior) then
-        []
-    else
-        Directory.GetDirectories behavior
-        |> List.ofArray
-        |> sortPaths
-        |> List.collect (fun surfacePath ->
-            let gherkin = Path.Combine(surfacePath, "gherkin")
-
-            if not (Directory.Exists gherkin) then
-                []
-            else
-                Directory.GetFiles gherkin
-                |> List.ofArray
-                |> sortPaths
-                |> List.filter (fun p ->
-                    Path.GetFileName(p).ToLowerInvariant().EndsWith(".feature", StringComparison.Ordinal))
-                |> List.map (fun p ->
-                    let rel = pathdiffStartsWith p repoRoot
-
-                    { Category = "tree-shape"
-                      Criticality = "HIGH"
-                      File = rel
-                      Evidence =
-                        sprintf
-                            "flat feature file at %s; expected behavior/<surface>/gherkin/<domain>/<feature>.feature"
-                            rel
-                      Expected = sprintf "move %s into a domain subdirectory under the gherkin/ folder" rel }))
 
 /// Validates every relative markdown link reachable from `folder`, reported
 /// as `"links"` findings. A `folder` that does not exist is itself a

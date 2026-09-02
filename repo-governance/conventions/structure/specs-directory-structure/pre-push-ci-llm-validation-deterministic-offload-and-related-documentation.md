@@ -44,7 +44,7 @@ The reasoning split between deterministic and LLM checks follows the principle t
 
 When reviewing changes to the `specs/` directory, verify:
 
-- [ ] App spec tree uses the five-folder layout at the top level
+- [ ] Every deployed surface has a logical owner corpus at the product root
 - [ ] No flat-root artifacts remain (`be/`, `web/`, `cli/`, `c4/`, `contracts/` at root)
 - [ ] BE, web, and CLI specs use domain subdirectories (never flat under `gherkin/`)
 - [ ] Lib specs use package subdirectories under `gherkin/`

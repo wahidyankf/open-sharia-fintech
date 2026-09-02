@@ -26,12 +26,13 @@ The complete `specs/` directory follows this layout:
 specs/
 ├── README.md
 ├── apps/
-│   └── <app-family>/         # C4-aware five-folder tree (per app above)
+│   └── <app-family>/         # one logical owner corpus per surface (per app above)
 └── libs/
     └── <lib-name>/
         ├── README.md
-        └── gherkin/
-            └── <package>/
+        ├── architecture.md
+        └── behaviors/
+            └── <domain>/
                 └── <feature>.feature
 ```
 

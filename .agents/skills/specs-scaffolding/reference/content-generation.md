@@ -11,9 +11,9 @@ areas; surface profile (web/be/cli determines Background step and vocabulary).
 Create new `.feature` files following conventions: `Feature:` header with user story block (As a
 / I want / So that); `Background:` with standard context step (surface-appropriate); `Scenario:`
 blocks with Given/When/Then steps; UI-semantic steps for web specs, HTTP-semantic for BE specs,
-shell-semantic for CLI specs; BE/web/CLI placed in a domain subdirectory under
-`behavior/<product>-<surface>/gherkin/<domain>/` (e.g., `ayokoding-build-tools` for ayokoding
-build-time features).
+shell-semantic for CLI specs; BE/web/CLI placed in a domain subdirectory under the owning
+corpus's `behaviors/<domain>/` (e.g. `specs/apps/ayokoding/www/behaviors/build-tools/` for
+ayokoding build-time features).
 
 ## Create C4 Diagrams
 

@@ -1,7 +1,7 @@
 ---
 title: "Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes"
-description: The canonical five-folder C4-aware spec tree layout and why each top-level folder is not nested under another.
-when_to_use: Use when creating a new app's spec tree or checking whether an existing tree matches the canonical five-folder shape.
+description: The canonical logical-owner-corpus spec tree layout and why each entry sits where it does.
+when_to_use: Use when creating a new app's spec tree or checking whether an existing tree matches the canonical corpus shape.
 category: explanation
 subcategory: conventions
 status: "Pilot — initial issue"
@@ -17,63 +17,44 @@ created: 2026-05-09
 
 # Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes
 
-New apps create a spec tree at `specs/apps/<app-family>/` following the canonical five-folder layout. Existing apps with flat-root trees (`be/`, `web/`, `cli/`, `c4/`, `contracts/` at the root) migrate to this layout per Standard 4.5.
+New apps create a spec tree at `specs/apps/<app-family>/` holding one
+[logical owner corpus](../specs-directory-structure/logical-owner-corpus.md) per deployed surface.
+A tree still in the retired five-folder shape migrates per Standard 4.5.
 
 ## Canonical layout
 
 ```
-specs/apps/<app-family>/
+specs/apps/<product>/
 ├── README.md
-├── product/
-│   ├── README.md
-│   └── overview.md
-├── system-context/
-│   ├── README.md
-│   └── context.md
-├── containers/
-│   ├── README.md
-│   ├── container.md
-│   ├── contracts/          # OpenAPI specs (full-stack only)
-│   │   ├── README.md
-│   │   ├── openapi.yaml
-│   │   ├── paths/
-│   │   ├── schemas/
-│   │   └── generated/
-│   └── deployment.md
-├── components/
-│   ├── README.md
-│   ├── be/                 # Full-stack only
-│   │   ├── README.md
-│   │   ├── component-be.md
-│   │   └── api.md
-│   └── web/                # Web and full-stack
-│       ├── README.md
-│       ├── component-web.md
-│       ├── architecture.md
-│       ├── design-system.md
-│       └── routes-and-screens.md
-└── behavior/
+├── overview.md             # optional: PM-first product framing
+└── <owner>/                # one per deployed surface
     ├── README.md
-    ├── be/
-    │   └── gherkin/        # Full-stack only
-    │       ├── README.md
-    │       └── <domain>/
-    ├── web/
-    │   └── gherkin/
-    │       ├── README.md
-    │       └── <domain>/
-    └── cli/
-        └── gherkin/        # CLI-only and multi-CLI
-            ├── README.md
-            └── <domain>/   # Domain subdir — same rule as be/web
+    ├── architecture.md     # the current as-built system
+    ├── contracts/          # optional: OpenAPI, in the owner that serves it
+    │   ├── README.md
+    │   ├── openapi.yaml
+    │   ├── paths/
+    │   ├── schemas/
+    │   └── generated/
+    └── behaviors/
+        ├── README.md
+        └── <domain>/
+            └── <feature>.feature
 ```
 
-## Folder purposes
+## Why each entry sits where it does
 
-| Folder            | Reader question it answers                                         | Why top-level (not nested)                                                                                                           |
-| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `product/`        | "What does this product do for the user? What is in this version?" | PM-first content. Not architecture (so not under `system-context/`). Not behavior (so not under `behavior/`). Deserves its own home. |
-| `system-context/` | "What is the system boundary? Who/what interacts with it?"         | C4 L1 — the canonical system context level.                                                                                          |
-| `containers/`     | "What runtime processes exist? What are their boundaries?"         | C4 L2 — naturally hosts API contracts and deployment topology.                                                                       |
-| `components/`     | "What is inside each container?"                                   | C4 L3. Internal component breakdown per surface (be/, web/). DDD lives at app root (not nested here) to stay surface-agnostic.       |
-| `behavior/`       | "Does the system actually do what the specs say?"                  | Gherkin tests behavior at every C4 level — orthogonal to zoom hierarchy. Forcing it under one C4 level would misrepresent its scope. |
+**`architecture.md` is one document, not four folders.** Context, containers, and components are
+zoom levels on the same system. A reader following a change needs all three, and a writer keeping
+one current has to keep all three current; splitting them across `system-context/`, `containers/`,
+and `components/` made four places to forget rather than four places to look.
+
+**`behaviors/` is recursive and sits inside the owner.** Scenarios belong to the thing that must
+satisfy them. A cross-cutting `behavior/` tree at the product root made every surface's scenarios
+a sibling of every other's, which is exactly the relationship they do not have.
+
+**`contracts/` sits inside the owner that serves it.** A contract in a shared folder has no owner;
+a contract inside the backend has one.
+
+**The product root carries only what the owners share.** An `overview.md` describing the product
+belongs there. Anything describing one surface belongs to that surface.

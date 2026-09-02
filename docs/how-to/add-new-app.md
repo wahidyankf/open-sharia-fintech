@@ -314,23 +314,21 @@ satisfy these additional requirements:
 `docker compose -f docker-compose.integration.yml up --abort-on-container-exit --exit-code-from test-runner --build`
 and must set `"cache": false` in `project.json`.
 
-**Specs folder**: Create a `specs/apps/[domain]/` folder at the repository root following the
-C4-aware five-folder layout. Gherkin feature files must be placed here, not inside the app:
+**Specs folder**: Create a `specs/apps/[domain]/` folder at the repository root holding one
+logical owner corpus per deployed surface. Gherkin feature files must be placed here, not inside
+the app:
 
 ```
-specs/apps/[domain]/
-├── README.md               # Describes the app, surface profile, and BDD framework
-├── product/                # PM-first content (overview, roadmap)
-├── system-context/         # C4 L1 — system boundary diagram
-├── containers/             # C4 L2 — runtime containers
-│   └── contracts/          # OpenAPI contract spec (full-stack only)
-├── components/             # C4 L3 — internal structure
-│   ├── be/                 # Full-stack only
-│   └── web/                # Web and full-stack
-└── behavior/               # Gherkin feature files — domain subdirs required
-    ├── be/gherkin/[domain]/ # Backend acceptance specs
-    ├── web/gherkin/[domain]/ # Frontend acceptance specs
-    └── cli/gherkin/[domain]/ # CLI acceptance specs
+specs/apps/[product]/
+├── README.md               # Indexes the corpora and any product-level document
+├── overview.md             # Optional — PM-first product framing
+└── [owner]/                # One per deployed surface (be, app-web, www, cli, ...)
+    ├── README.md
+    ├── architecture.md     # As-built: context, containers, components, constraints
+    ├── contracts/          # Optional — OpenAPI, in the owner that serves it
+    └── behaviors/          # Gherkin feature files — domain subdirs required
+        ├── README.md
+        └── [domain]/
 ```
 
 See [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) for per-surface variants and full rules.

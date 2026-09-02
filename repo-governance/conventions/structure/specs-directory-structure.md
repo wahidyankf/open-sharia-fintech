@@ -1,6 +1,6 @@
 ---
 title: "Specs Directory Structure Convention"
-description: Canonical C4-aware five-folder directory structure for specs/ — Gherkin feature files, C4 architecture diagrams, DDD artifacts, and OpenAPI contracts
+description: Canonical logical-owner-corpus directory structure for specs/ — Gherkin feature files, as-built architecture documents, and OpenAPI contracts
 when_to_use: Read this when placing a Gherkin feature file, C4 diagram, DDD artifact, or OpenAPI contract, or when scaffolding specs/ for a new app or library.
 category: explanation
 subcategory: conventions
@@ -18,15 +18,15 @@ created: 2026-04-02
 
 # Specs Directory Structure Convention
 
-The `specs/` directory contains all behavioral specifications (Gherkin feature files), architectural diagrams (C4), domain design artifacts (DDD), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical C4-aware five-folder directory structure that all projects must follow.
+The `specs/` directory contains all behavioral specifications (Gherkin feature files), architectural diagrams (C4), domain design artifacts (DDD), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical logical-owner-corpus directory structure that all projects must follow.
 
-The authoritative combined convention — covering what content belongs in app READMEs vs `specs/`, the five-folder tree shape, PM-readability requirements, and BDD/DDD/Contracts adoption expectations — is [App README vs Specs Convention](../structure/app-readme-vs-specs.md). This document describes the canonical path patterns and domain subdirectory rules within the `behavior/` tree in detail, and defines how the overall spec tree is organized.
+The authoritative combined convention — covering what content belongs in app READMEs vs `specs/`, the corpus tree shape, PM-readability requirements, and BDD/DDD/Contracts adoption expectations — is [App README vs Specs Convention](../structure/app-readme-vs-specs.md). This document describes the canonical path patterns and domain subdirectory rules within the `behavior/` tree in detail, and defines how the overall spec tree is organized.
 
 ## In This Convention
 
-- [Principles, Conventions, and Purpose](./specs-directory-structure/principles-conventions-and-purpose.md) — The core principles and sibling conventions this directory-structure convention implements, and why the canonical C4-aware layout...
+- [Principles, Conventions, and Purpose](./specs-directory-structure/principles-conventions-and-purpose.md) — The core principles and sibling conventions this directory-structure convention implements, and why the canonical corpus layout...
 - [Scope](./specs-directory-structure/scope.md) — what this convention covers versus delegates elsewhere
-- [Canonical App Spec Tree](./specs-directory-structure/canonical-app-spec-tree.md) — the five-folder layout, folder purposes, and per-surface variants
+- [Canonical App Spec Tree](./specs-directory-structure/canonical-app-spec-tree.md) — the corpus layout, entry purposes, and per-surface variants
 - [Gherkin Feature File Placement and Lib Spec Structure](./specs-directory-structure/gherkin-feature-file-placement-and-lib-spec-structure.md) — canonical path pattern and domain-subdirectory rules
 - [Logical Owner Corpus](./specs-directory-structure/logical-owner-corpus.md) — the adopted one-corpus-per-owner shape, its three required entries, and how a product's shape is detected
 - [Full Directory Structure and README Index Files](./specs-directory-structure/full-directory-structure-and-readme-index-files.md) — The complete specs/ tree layout, which subdirectories each project surface profile actually has, and the README.md...

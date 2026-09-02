@@ -1,7 +1,7 @@
 ---
-title: "Migration Path (Flat-Root to C4-Aware)"
-description: The atomic-commit procedure and path mapping for migrating an existing flat-root spec tree to the canonical C4-aware five-folder layout
-when_to_use: Read this when migrating an app's specs/apps/<app-family>/ tree from a legacy flat-root layout to the C4-aware structure.
+title: "Migration Path (Five-Folder to Logical Owner Corpus)"
+description: The atomic-commit procedure and path mapping for migrating a five-folder C4 spec tree to the logical owner corpus
+when_to_use: Read this when migrating an app's specs/apps/<app-family>/ tree from the retired five-folder layout to the logical owner corpus.
 category: explanation
 subcategory: conventions
 tags:
@@ -16,44 +16,38 @@ tags:
 created: 2026-04-02
 ---
 
-# Migration Path (Flat-Root to C4-Aware)
+# Migration Path (Five-Folder to Logical Owner Corpus)
 
-For existing spec trees with a flat-root layout (`be/`, `web/`, `cli/`, `c4/`, `contracts/` at the `specs/apps/<app-family>/` root):
+Every product and library in this repository completed this migration during the
+`adopt-beavernest-test-automation` plan. The procedure is kept because a product added from
+outside — or restored from an archive — arrives in the retired shape.
 
-1. Create the five top-level folders with placeholder `README.md` files.
-2. In ONE atomic commit: `git mv` all old subfolders to their new positions. Update ALL path references in the same commit — rhino-cli path constants, Nx `project.json` `inputs`, step definition files, governance cross-links.
-3. Update `specs/apps/<app-family>/README.md` to reflect the new tree.
-4. Verify with `rhino-cli specs validate-tree <app>` and `npm run lint:md`.
+1. Decide the owners first. One owner per **deployed** surface, not per behavior folder: two
+   perspectives on one process are one owner whose `behaviors/` nests them.
+2. In ONE atomic commit: `git mv` each `behavior/<product>-<surface>/gherkin/` to its owner's
+   `behaviors/`, move any `containers/contracts/` into the owner that serves it, write each
+   owner's `README.md` and `architecture.md`, and `git rm -r` the five retired folders. Update
+   every path reference in the same commit — Nx `project.json` `inputs`, `repo-config.yml` corpus
+   globs, step-file `@covers` references, MSBuild feature-file globs, container bind mounts, and
+   governance cross-links.
+3. Keep what the retired folders really held. A folder carrying a stub that restates the README is
+   deleted; a folder carrying 500 words of specification moves into the owner beside
+   `architecture.md`.
+4. Verify with `rhino-cli specs validate-tree <product>`,
+   `rhino-cli specs counts validate specs/apps/<product>`, and `rhino-cli md links validate`.
 
-**Flat-root to C4-aware path mapping:**
+**Path mapping:**
 
-| Old path                               | New path                                           |
-| -------------------------------------- | -------------------------------------------------- |
-| `specs/apps/<app>/be/gherkin/`         | `specs/apps/<app>/behavior/<product>-be/gherkin/`  |
-| `specs/apps/<app>/web/gherkin/`        | `specs/apps/<app>/behavior/<product>-web/gherkin/` |
-| `specs/apps/<app>/cli/gherkin/`        | `specs/apps/<app>/behavior/<product>-cli/gherkin/` |
-| `specs/apps/<app>/c4/context.md`       | `specs/apps/<app>/system-context/context.md`       |
-| `specs/apps/<app>/c4/container.md`     | `specs/apps/<app>/containers/container.md`         |
-| `specs/apps/<app>/c4/component-be.md`  | `specs/apps/<app>/components/be/component-be.md`   |
-| `specs/apps/<app>/c4/component-web.md` | `specs/apps/<app>/components/web/component-web.md` |
-| `specs/apps/<app>/contracts/`          | `specs/apps/<app>/containers/contracts/`           |
+| Old path                                         | New path                                              |
+| ------------------------------------------------ | ----------------------------------------------------- |
+| `specs/apps/<p>/behavior/<p>-<surface>/gherkin/` | `specs/apps/<p>/<owner>/behaviors/`                   |
+| `specs/apps/<p>/containers/contracts/`           | `specs/apps/<p>/<serving-owner>/contracts/`           |
+| `specs/apps/<p>/system-context/context.md`       | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/containers/container.md`         | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/components/<c>/component-<c>.md` | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/product/overview.md`             | `specs/apps/<p>/overview.md`                          |
+| `specs/libs/<l>/behavior/gherkin/`               | `specs/libs/<l>/behaviors/`                           |
 
-The atomic commit is mandatory — splitting the move and the path updates causes test failures between commits.
-
-**CLI-flat exception retired (2026-05-23)**: every CLI surface then in the workspace
-regrouped under `behavior/<product>-cli/gherkin/<domain>/` during the `specs-tree-uniform`
-pass. `rhino-cli specs validate-tree` now enforces domain subdirs for every surface.
-
-**CLI domain-subdir moves (2026-05-23)**. As part of the `specs-tree-uniform` plan, the CLI
-apps then in the workspace completed migration to the universal domain-subdir layout, then renamed
-to `<product>-<surface>` during the `standardize-app-spec-trees` plan (2026-06-11):
-
-- `crane` — regrouped into domain subdirs (`pdf/`, `content/`, `media/`, `reporting/`,
-  `system/`); bare `cli/` renamed to `crane-cli/`.
-- `rhino` — regrouped into domain subdirs (`agents/`, `system/`, `env/`, `git/`,
-  `docs/`, `spec-coverage/`, `repo-governance/`, `workflows/`); bare `cli/` renamed to
-  `rhino-cli/`.
-
-The bare `build-tools` surface was renamed to `ayokoding-build-tools` during the
-`standardize-app-spec-trees` plan to follow `<product>-<surface>` naming; it remains an active
-surface.
+The atomic commit is mandatory. A product cannot be half in one shape and half in the other —
+`rhino-cli specs validate-tree` reports a retired folder surviving beside a corpus as a HIGH
+finding, precisely so a partial move cannot sit unnoticed.
