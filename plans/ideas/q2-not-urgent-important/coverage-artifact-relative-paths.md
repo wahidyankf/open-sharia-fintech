@@ -10,6 +10,14 @@ entries already neutralize both known instances, leaving only a standing guard a
 > empty `learnings.md`. The problem statement, the gitignore-versus-relative-paths decision, and the
 > out-of-scope list survive here; the phase table, Gherkin, persona, and user story were cut.
 > Relocated from beaver-nest/plans/ideas/coverage-artifact-relative-paths.md on 2026-08-06 by plan-ideas-grooming.
+>
+> Resolved 2026-09-02, via `ose-public#440`: the promotion signal fired — `libs/fsharp-crane-core`
+> and `libs/fsharp-env-loader` landed tracked `tests/unit/coverage.json` carrying a local
+> `/Users/wkf/.../adopt-beavernest-test-automation/...` prefix, caught by that PR's `pr-leak-review`
+> (machine-specific-absolute-path). Applied the proposed direction as-is: added a root-level
+> `coverage.json` rule to `.gitignore` (next to `coverage/`/`coverage.xml`) and `git rm --cached` the
+> two tracked files. No relative-path emission work needed; the ignore-it remedy the repo had already
+> converged on was sufficient.
 
 ## Problem / context
 
