@@ -39,10 +39,10 @@ the spec change.
 
 Contract-first development covers these BE↔client pairs:
 
-| Backend           | Client                 | Spec                                                        |
-| ----------------- | ---------------------- | ----------------------------------------------------------- |
-| `organiclever-be` | `organiclever-app-web` | `specs/apps/organiclever/containers/contracts/openapi.yaml` |
-| `ose-be`          | `ose-www`              | `specs/apps/ose/containers/contracts/openapi.yaml`          |
+| Backend           | Client                 | Spec                                                |
+| ----------------- | ---------------------- | --------------------------------------------------- |
+| `organiclever-be` | `organiclever-app-web` | `specs/apps/organiclever/be/contracts/openapi.yaml` |
+| `ose-be`          | `ose-www`              | `specs/apps/ose/containers/contracts/openapi.yaml`  |
 
 Apps outside this table (CLI tools, content-only web apps such as `ayokoding-www` and `ose-www`) do not participate
 in contract-first codegen.

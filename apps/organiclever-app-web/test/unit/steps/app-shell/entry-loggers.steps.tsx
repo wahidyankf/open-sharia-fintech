@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Entry Loggers feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature
  *
  * Tests component logic directly using:
  * - appMachine via XState createActor (overlay state management)
@@ -60,7 +60,7 @@ function makeActor() {
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature",
   ),
 );
 
@@ -84,7 +84,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_ADD_ENTRY" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open Add Entry sheet
     Then("the Add Entry sheet is open with all entry kinds", () => {
       expect(actor.getSnapshot().matches("addEntry")).toBe(true);
     });
@@ -101,7 +101,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_ADD_ENTRY" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Close Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Close Add Entry sheet
     Then("the Add Entry sheet is closed", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });
@@ -117,7 +117,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_LOGGER", kind: "reading" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open reading logger from Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open reading logger from Add Entry sheet
     Then("the reading logger is open", () => {
       expect(actor.getSnapshot().matches("loggerOpen")).toBe(true);
       expect(actor.getSnapshot().context.loggerKind).toBe("reading");
@@ -141,7 +141,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_LOGGER" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a reading entry
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a reading entry
     Then("the entry is saved and the logger closes", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });
@@ -158,7 +158,7 @@ describeFeature(feature, ({ Scenario }) => {
       formTitle = "";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Reading logger save is disabled without title
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Reading logger save is disabled without title
     Then("the save button is disabled", () => {
       expect(readingSaveDisabled(formTitle)).toBe(true);
     });
@@ -174,7 +174,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_LOGGER", kind: "learning" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open learning logger from Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open learning logger from Add Entry sheet
     Then("the learning logger is open", () => {
       expect(actor.getSnapshot().matches("loggerOpen")).toBe(true);
       expect(actor.getSnapshot().context.loggerKind).toBe("learning");
@@ -197,7 +197,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_LOGGER" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a learning entry
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a learning entry
     Then("the entry is saved and the logger closes", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });
@@ -213,7 +213,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_LOGGER", kind: "meal" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open meal logger from Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open meal logger from Add Entry sheet
     Then("the meal logger is open", () => {
       expect(actor.getSnapshot().matches("loggerOpen")).toBe(true);
       expect(actor.getSnapshot().context.loggerKind).toBe("meal");
@@ -236,7 +236,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_LOGGER" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a meal entry
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a meal entry
     Then("the entry is saved and the logger closes", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });
@@ -252,7 +252,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_LOGGER", kind: "focus" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open focus logger from Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open focus logger from Add Entry sheet
     Then("the focus logger is open", () => {
       expect(actor.getSnapshot().matches("loggerOpen")).toBe(true);
       expect(actor.getSnapshot().context.loggerKind).toBe("focus");
@@ -276,7 +276,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_LOGGER" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a focus entry
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a focus entry
     Then("the entry is saved and the logger closes", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });
@@ -295,7 +295,7 @@ describeFeature(feature, ({ Scenario }) => {
       formDurationMins = "";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Focus logger save requires task or duration
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Focus logger save requires task or duration
     Then("the save button is disabled", () => {
       expect(focusSaveDisabled(formTask, formDurationMins)).toBe(true);
     });
@@ -311,7 +311,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "OPEN_CUSTOM_LOGGER", name: "custom" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open custom entry logger
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open custom entry logger
     Then("the custom entry logger is open", () => {
       expect(actor.getSnapshot().matches("customLoggerOpen")).toBe(true);
     });
@@ -333,7 +333,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "CLOSE_CUSTOM_LOGGER" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a custom entry
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a custom entry
     Then("the custom entry is saved and the logger closes", () => {
       expect(actor.getSnapshot().matches("none")).toBe(true);
     });

@@ -182,25 +182,25 @@ coverage:
     # organiclever domain
     - name: organiclever-be
       levels: [unit, integration]
-      specs: "specs/apps/organiclever/behavior/be/**"
+      specs: "specs/apps/organiclever/be/behaviors/**"
     - name: organiclever-be-e2e
       levels: [e2e]
-      specs: "specs/apps/organiclever/behavior/be/**"
+      specs: "specs/apps/organiclever/be/behaviors/**"
     - name: organiclever-app-web
       levels: [unit]
-      specs: "specs/apps/organiclever/behavior/app-web/**"
+      specs: "specs/apps/organiclever/app-web/behaviors/**"
     - name: organiclever-app-web-e2e
       levels: [e2e]
-      specs: "specs/apps/organiclever/behavior/app-web/**"
+      specs: "specs/apps/organiclever/app-web/behaviors/**"
     - name: organiclever-www
       levels: [unit]
-      specs: "specs/apps/organiclever/behavior/www/**"
+      specs: "specs/apps/organiclever/www/behaviors/**"
     - name: organiclever-www-be-e2e
       levels: [e2e]
-      specs: "specs/apps/organiclever/behavior/www/**"
+      specs: "specs/apps/organiclever/www/behaviors/**"
     - name: organiclever-www-fe-e2e
       levels: [e2e]
-      specs: "specs/apps/organiclever/behavior/www/**"
+      specs: "specs/apps/organiclever/www/behaviors/**"
 
     # ayokoding domain
     - name: ayokoding-www
@@ -336,11 +336,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          corpus: "specs/apps/organiclever/app-web/behaviors/**"
           levels: [unit]
         canonical:
           owner: organiclever-app-web
-          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          corpus: "specs/apps/organiclever/app-web/behaviors/**"
           runtimes:
             - level: e2e
               project: organiclever-app-web-e2e
@@ -351,7 +351,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          corpus: "specs/apps/organiclever/app-web/behaviors/**"
           levels: [e2e]
         canonical:
           owner: organiclever-app-web
@@ -364,11 +364,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/be/**"
+          corpus: "specs/apps/organiclever/be/behaviors/**"
           levels: [unit, integration]
         canonical:
           owner: organiclever-be
-          corpus: "specs/apps/organiclever/behavior/be/**"
+          corpus: "specs/apps/organiclever/be/behaviors/**"
           runtimes:
             - level: e2e
               project: organiclever-be-e2e
@@ -381,7 +381,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/be/**"
+          corpus: "specs/apps/organiclever/be/behaviors/**"
           levels: [e2e]
         canonical:
           owner: organiclever-be
@@ -405,11 +405,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/www/**"
+          corpus: "specs/apps/organiclever/www/behaviors/**"
           levels: [unit]
         canonical:
           owner: organiclever-www
-          corpus: "specs/apps/organiclever/behavior/www/**"
+          corpus: "specs/apps/organiclever/www/behaviors/**"
           runtimes:
             - level: e2e
               project: organiclever-www-fe-e2e
@@ -422,7 +422,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/www/**"
+          corpus: "specs/apps/organiclever/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: organiclever-www
@@ -435,7 +435,7 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/www/**"
+          corpus: "specs/apps/organiclever/www/behaviors/**"
           levels: [e2e]
         canonical:
           owner: organiclever-www
@@ -769,7 +769,7 @@ testing:
         lifecycle-state: active
         owner: organiclever-app-web
         corpus:
-          - "specs/apps/organiclever/behavior/app-web/**"
+          - "specs/apps/organiclever/app-web/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -809,7 +809,7 @@ testing:
         lifecycle-state: active
         owner: organiclever-be
         corpus:
-          - "specs/apps/organiclever/behavior/be/**"
+          - "specs/apps/organiclever/be/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -866,7 +866,7 @@ testing:
         lifecycle-state: active
         owner: organiclever-www
         corpus:
-          - "specs/apps/organiclever/behavior/www/**"
+          - "specs/apps/organiclever/www/behaviors/**"
         adapters:
           unit:
             disposition: required

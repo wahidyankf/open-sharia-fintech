@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Routine Management feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature
  *
  * Tests pure routine editing logic directly (no PGlite, no browser APIs):
  * - New routine state initialisation and save guard (name must be non-empty)
@@ -68,7 +68,7 @@ function addExerciseToGroup(groups: ExerciseGroup[], gIdx: number, exercise: Exe
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature",
   ),
 );
 
@@ -96,7 +96,7 @@ describeFeature(feature, ({ Scenario }) => {
       }
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Create a new routine
+    // @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Create a new routine
     Then("the routine is saved", () => {
       expect(routineName.trim()).not.toBe("");
       expect(saved).toBe(true);
@@ -116,7 +116,7 @@ describeFeature(feature, ({ Scenario }) => {
       groups = addExerciseToGroup(groups, 0, ex);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Add an exercise to a routine
+    // @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Add an exercise to a routine
     Then("the exercise appears in the group", () => {
       expect(groups[0]?.exercises).toHaveLength(1);
       expect(groups[0]?.exercises[0]?.name).toBe("Pull-up");
@@ -151,7 +151,7 @@ describeFeature(feature, ({ Scenario }) => {
       mockRouterPush("/app/home");
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Delete a routine
+    // @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Delete a routine
     Then("the routine is deleted", () => {
       expect(deleteConfirmed).toBe(true);
       expect(mockDeleteFn).toHaveBeenCalledTimes(1);

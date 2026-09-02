@@ -35,8 +35,8 @@ plan, not a stub.
 
 **Folders validated**:
 
-- `specs/apps/organiclever/components/be`
-- `specs/apps/organiclever/components/web`
+- `specs/apps/organiclever/be`
+- `specs/apps/organiclever/app-web`
 
 **Timestamp**: YYYY-MM-DD--HH-MM UTC+7
 **UUID Chain**: {uuid}
@@ -52,7 +52,7 @@ plan, not a stub.
 
 ## Findings by Folder
 
-### specs/apps/organiclever/components/be
+### specs/apps/organiclever/be
 
 #### [CRITICAL] {Category} — {Brief description}
 
@@ -66,7 +66,7 @@ plan, not a stub.
 
 #### [HIGH] Cross-Folder Consistency — {Brief description}
 
-**Folders**: `specs/apps/organiclever/components/be`, `specs/apps/organiclever/components/web`
+**Folders**: `specs/apps/organiclever/be`, `specs/apps/organiclever/app-web`
 **Evidence**: What contradicts or does not blend
 **Expected**: What consistency looks like
 **Confidence**: HIGH | MEDIUM

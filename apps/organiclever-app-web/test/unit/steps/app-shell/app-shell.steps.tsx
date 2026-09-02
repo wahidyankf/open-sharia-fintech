@@ -1,7 +1,7 @@
 /**
  * Step definitions for the App Shell Navigation feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature
  *
  * Post-route-refactor: tab navigation is URL-driven, not state-machine-driven.
  * Unit-level assertions therefore check that the on-disk Next.js page exists
@@ -17,10 +17,7 @@ import { appMachine } from "@/contexts/app-shell/presentation/app-machine";
 import type { Actor } from "xstate";
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature",
-  ),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature"),
 );
 
 const APP_ROOT = path.resolve(__dirname, "../../../../src/app/app");
@@ -51,7 +48,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       expect(existsSync(pageFileFor("home"))).toBe(true);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:Default tab is Home on first load
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Default tab is Home on first load
     And("the app shell is visible", () => {
       // Layout renders chrome on every main-tab path; presence of the on-disk
       // page is the unit-level proxy for visibility.
@@ -68,7 +65,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       activeTab = "history";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:Navigate to History tab
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to History tab
     Then("the History tab is active", () => {
       expect(activeTab).toBe("history");
       expect(existsSync(pageFileFor("history"))).toBe(true);
@@ -84,7 +81,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       activeTab = "progress";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:Navigate to Progress tab
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to Progress tab
     Then("the Progress tab is active", () => {
       expect(activeTab).toBe("progress");
       expect(existsSync(pageFileFor("progress"))).toBe(true);
@@ -100,7 +97,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       activeTab = "settings";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:Navigate to Settings tab
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to Settings tab
     Then("the Settings tab is active", () => {
       expect(activeTab).toBe("settings");
       expect(existsSync(pageFileFor("settings"))).toBe(true);
@@ -124,7 +121,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       overlayActor.send({ type: "CLOSE_ADD_ENTRY" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:Open and close Add Entry sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Open and close Add Entry sheet
     And("the Add Entry sheet is closed", () => {
       expect(overlayActor.getSnapshot().value).toBe("none");
     });
@@ -147,7 +144,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       expect(urlAfterRefresh).toBe(refreshPath);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/navigation.feature:URL persists across page refresh on each tab
+    // @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:URL persists across page refresh on each tab
     And(`the "<screen>" screen is visible`, () => {
       const segment = refreshPath.replace(/^\/app\//, "");
       const segments = segment.split("/");

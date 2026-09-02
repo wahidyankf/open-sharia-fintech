@@ -1,7 +1,7 @@
 /**
  * Unit-level step definitions for the URL-routed shell.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature
  *
  * Where the e2e suite drives a real browser, the unit suite simulates URL
  * transitions and asserts on-disk page presence. Browser semantics (history
@@ -25,10 +25,7 @@ function pageFileForPath(routePath: string): string {
 }
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature",
-  ),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature"),
 );
 
 describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
@@ -57,7 +54,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(currentURL).toBe("/app/home");
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Visiting /app redirects to /app/home
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app redirects to /app/home
     And("the Home screen is visible", () => {
       expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
     });
@@ -78,7 +75,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Visiting /app/home renders the Home screen
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app/home renders the Home screen
     And("the Home tab is marked active in the navigation", () => {
       expect(currentURL).toBe("/app/home");
     });
@@ -103,7 +100,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(existsSync(pageFileForPath(tabPath)), `expected page for ${screen} at ${tabPath}`).toBe(true);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Each tab is reachable by URL
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Each tab is reachable by URL
     And('the "<tab>" tab is marked active', () => {
       expect(currentURL).toBe(tabPath);
       expect(tab.toLowerCase()).toBe(tabPath.replace("/app/", ""));
@@ -127,7 +124,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(currentURL).toBe(tabPath);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Refreshing a tab URL keeps the user on that tab
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Refreshing a tab URL keeps the user on that tab
     And('the "<screen>" screen is visible', () => {
       expect(existsSync(pageFileForPath(tabPath)), `expected page for ${screen} at ${tabPath}`).toBe(true);
     });
@@ -148,7 +145,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(currentURL).toBe("/app/home");
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Back from Progress returns to Home
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Back from Progress returns to Home
     And("the Home screen is visible", () => {
       expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
     });
@@ -169,7 +166,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       configRedirect = destMatch?.[1] ?? "";
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Old /app URL permanent-redirects to /app/home
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Old /app URL permanent-redirects to /app/home
     Then('the response is a 308 redirect to "/app/home"', () => {
       expect(configRedirect).toBe("/app/home");
     });
@@ -182,7 +179,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       absent = !existsSync(pageFileForPath("/app/does-not-exist"));
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/app-routes.feature:Unknown segment under /app returns 404
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Unknown segment under /app returns 404
     Then("the response status is 404", () => {
       expect(absent).toBe(true);
     });

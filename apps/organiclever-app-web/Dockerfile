@@ -28,9 +28,9 @@ COPY apps/organiclever-app-web/package.json apps/organiclever-app-web/tsconfig.j
 RUN node scripts/gen-migrations.mjs
 
 # Generate contract types
-COPY specs/apps/organiclever/containers/contracts/generated/ ./specs/apps/organiclever/containers/contracts/generated/
+COPY specs/apps/organiclever/be/contracts/generated/ ./specs/apps/organiclever/be/contracts/generated/
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx @hey-api/openapi-ts -i specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -o src/generated-contracts -s
+RUN npx @hey-api/openapi-ts -i specs/apps/organiclever/be/contracts/generated/openapi-bundled.yaml -o src/generated-contracts -s
 
 ARG ORGANICLEVER_BE_URL=http://organiclever-be:8202
 ENV ORGANICLEVER_BE_URL=${ORGANICLEVER_BE_URL}

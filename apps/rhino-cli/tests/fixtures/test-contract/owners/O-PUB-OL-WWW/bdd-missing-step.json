@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature",
+    "feature": "specs/apps/organiclever/www/behaviors/frontend/home/home.feature",
     "scenario": "Hero heading visible",
     "step": "Then I see text \"Your life,\"",
     "adapter": "unit@organiclever-www"
@@ -14,7 +14,7 @@
     "fields": [
       "project=organiclever-www",
       "owner=organiclever-www",
-      "item=specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature",
+      "item=specs/apps/organiclever/www/behaviors/frontend/home/home.feature",
       "scenario=Hero heading visible",
       "step=Then I see text \"Your life,\""
     ]

@@ -23,7 +23,7 @@ averages instead of city-specific figures.
 
 They fix the filtering logic AND add:
 
-1. A Gherkin scenario in `specs/apps/organiclever/behavior/.../calculator.feature`:
+1. A Gherkin scenario in `specs/apps/organiclever/app-web/behaviors/.../calculator.feature`:
 
    ```gherkin
    Scenario: Savings tab respects the selected city filter

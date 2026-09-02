@@ -44,7 +44,7 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-www/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/www/behaviors/frontend/**/*.feature"],
       "options": {
         "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit-fe",
         "cwd": "{projectRoot}"
@@ -83,10 +83,10 @@
       "cache": true
     },
     "specs:behavior:coverage": {
-      "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/organiclever/behavior/organiclever-www/gherkin apps/organiclever-www",
+      "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/organiclever/www/behaviors/frontend apps/organiclever-www",
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-www/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/www/behaviors/frontend/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     },
@@ -133,7 +133,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-www/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/organiclever/www/behaviors/frontend/**/*.feature"]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["web-ui", "web-ui-token"]

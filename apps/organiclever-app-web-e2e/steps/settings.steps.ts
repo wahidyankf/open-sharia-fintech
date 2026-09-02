@@ -2,9 +2,9 @@
  * Step definitions for Settings features.
  *
  * Covers:
- * - specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature
- * - specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature
- * - specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/language.feature
+ * - specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature
+ * - specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature
+ * - specs/apps/organiclever/app-web/behaviors/settings/language.feature
  *
  * Selector notes:
  * - Settings screen has data-testid="settings-screen" on the root div.
@@ -37,7 +37,7 @@ Given("the settings screen is loaded", async ({ page }) => {
   await expect(page.locator("[data-testid='settings-screen']")).toBeVisible({ timeout: 10000 });
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Settings screen loads user profile
+// @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Settings screen loads user profile
 Then("the user name input is visible", async ({ page }) => {
   // Settings screen has data-testid="settings-name-input" and label "Your name"
   await expect(
@@ -55,7 +55,7 @@ When("the user selects 30s rest", async ({ page }) => {
   await chip.click();
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Change rest setting
+// @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Change rest setting
 Then("the 30s rest chip is active", async ({ page }) => {
   // The clicked chip saves immediately (no separate Save) and shows saved toast.
   // Assert the chip is still visible (screen hasn't navigated away).
@@ -78,7 +78,7 @@ When("the user saves settings", async ({ page }) => {
   await chip.click();
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Saved toast appears after save
+// @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Saved toast appears after save
 Then("the saved toast appears", async ({ page }) => {
   // Saved toast has data-testid="saved-toast" — appears immediately after rest chip click
   await expect(page.locator("[data-testid='saved-toast']")).toBeVisible({ timeout: 5000 });
@@ -104,7 +104,7 @@ When("the user toggles dark mode", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature:Toggle dark mode on
+// @covers specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature:Toggle dark mode on
 Then("dark mode is enabled", async ({ page }) => {
   // Dark mode sets data-theme="dark" on <html>. Settings screen is still visible.
   // This step is also used as a Given — ensure the settings screen is loaded.
@@ -119,7 +119,7 @@ Then("dark mode is enabled", async ({ page }) => {
   await expect(page.locator("[data-testid='settings-screen']")).toBeVisible({ timeout: 10000 });
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature:Toggle dark mode off
+// @covers specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature:Toggle dark mode off
 Then("dark mode is disabled", async ({ page }) => {
   await expect(page.locator("[data-testid='settings-screen']")).toBeVisible({ timeout: 10000 });
 });
@@ -150,7 +150,7 @@ When("the user selects Indonesian language", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded").catch(() => {});
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/language.feature:Switch to Bahasa Indonesia
+// @covers specs/apps/organiclever/app-web/behaviors/settings/language.feature:Switch to Bahasa Indonesia
 Then("the language is set to Indonesian", async ({ page }) => {
   // After selecting Indonesian the page reloads. The lang-btn-id button will have
   // data-active="true". Assert settings screen or the Bahasa button is visible.
@@ -180,7 +180,7 @@ When("the user selects English language", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded").catch(() => {});
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/language.feature:Switch back to English
+// @covers specs/apps/organiclever/app-web/behaviors/settings/language.feature:Switch back to English
 Then("the language is set to English", async ({ page }) => {
   await expect(page.locator("[data-testid='lang-btn-en']").or(page.getByText("English")).first()).toBeVisible({
     timeout: 15000,

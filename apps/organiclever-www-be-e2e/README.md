@@ -23,4 +23,4 @@ npm exec nx -- run organiclever-www-be-e2e:test:quick
 
 The default target is `http://localhost:3200`; set `BASE_URL` only when checking another running
 site. The placeholder behavior is documented in
-[the OrganicLever public-site API slot](../../specs/apps/organiclever/behavior/organiclever-www-be/gherkin/README.md).
+[the OrganicLever public-site API slot](../../specs/apps/organiclever/www/behaviors/backend/README.md).

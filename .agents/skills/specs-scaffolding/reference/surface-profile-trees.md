@@ -22,7 +22,7 @@ target: specs/apps/rhino
 surface-profile: cli-only
 
 # Create a missing README in an existing directory
-target: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health
+target: specs/apps/organiclever/app-web/behaviors/health
 
 ```
 
@@ -134,5 +134,5 @@ target: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health
 ## Multi-CLI Profile
 
 Same as CLI-only, with additional `components/web/` and
-`behavior/organiclever-app-web/gherkin/` if the app also has a web surface. Use
+`app-web/behaviors/` if the app also has a web surface. Use
 `surface-profile: full-stack` if the app has both web and backend surfaces.

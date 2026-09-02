@@ -1,6 +1,6 @@
 # OrganicLever public website
 
-The pre-alpha marketing site for [OrganicLever](../../specs/apps/organiclever/product/overview.md), a local-first life journal for recording and reviewing everyday activity. It serves the public landing experience at the domain root; the product client is a separate application, [`organiclever-app-web`](../organiclever-app-web/README.md).
+The pre-alpha marketing site for [OrganicLever](../../specs/apps/organiclever/overview.md), a local-first life journal for recording and reviewing everyday activity. It serves the public landing experience at the domain root; the product client is a separate application, [`organiclever-app-web`](../organiclever-app-web/README.md).
 
 This project is intentionally simple: it renders static Next.js marketing content, has no dedicated backend API, and does not persist application data. That makes it a good place for an early engineer to work on the public story, visual system, and accessible landing-page behavior without coupling to product runtime concerns.
 
@@ -22,7 +22,7 @@ No project-specific environment variables are required. The checked-in [`.env.ex
 - [`src/features/home/`](./src/features/home/) — landing-page composition: hero, feature cards, weekly-rhythm preview, and principles.
 - [`src/features/app-shell/`](./src/features/app-shell/) — shared landing navigation and footer.
 - [`test/unit/steps/`](./test/unit/steps/) — Vitest Cucumber step definitions for the marketing and accessibility scenarios.
-- [`specs/apps/organiclever/behavior/organiclever-www/gherkin/`](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md) — executable acceptance criteria shared by unit and E2E tests.
+- [`specs/apps/organiclever/www/behaviors/frontend/`](../../specs/apps/organiclever/www/behaviors/frontend/README.md) — executable acceptance criteria shared by unit and E2E tests.
 
 ## Engineering shape
 
@@ -47,6 +47,7 @@ Browser E2E tests belong to the paired [`organiclever-www-fe-e2e`](../organiclev
 
 ## Related context
 
-- [OrganicLever product overview](../../specs/apps/organiclever/product/overview.md) — the product direction and current capabilities.
-- [Marketing behavior specs](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md) — the landing page’s acceptance criteria.
+- [OrganicLever product overview](../../specs/apps/organiclever/overview.md) — the product direction and current capabilities.
+- [Marketing site architecture](../../specs/apps/organiclever/www/architecture.md) — the as-built site and the tRPC surface behind it.
+- [Marketing behavior specs](../../specs/apps/organiclever/www/behaviors/frontend/README.md) — the landing page’s acceptance criteria.
 - [System architecture application reference](../../docs/reference/system-architecture/applications.md) — monorepo-level application context.

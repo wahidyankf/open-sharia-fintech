@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Progress Screen feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature
  *
  * Selector notes:
  * - Progress screen is a machine state tab (navigation: "main", tab: "progress").
@@ -28,7 +28,7 @@ Given("the progress screen is loaded", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Progress screen shows workout module by default
+// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Progress screen shows workout module by default
 Then("the workout module is active", async ({ page }) => {
   // Progress screen shows "Analytics" heading; workout module is default (aria-pressed="true")
   await expect(page.getByText("Analytics").or(page.getByText("Patterns & progress over time")).first()).toBeVisible({
@@ -45,7 +45,7 @@ When("the user selects the Reading module", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Switch to reading module
+// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Switch to reading module
 Then("the reading module content is shown", async ({ page }) => {
   // When Reading module is selected the ActivityBars renders "Last 7 days" or empty state
   // with "{n} total" and the Reading button has aria-pressed="true"
@@ -70,7 +70,7 @@ When("the user taps an exercise card", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Exercise progress card expands
+// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Exercise progress card expands
 Then("the SVG chart is visible", async ({ page }) => {
   // ExerciseProgressCard expands to show an SVG chart when clicked.
   // If no exercise data, the "Analytics" heading is still visible.

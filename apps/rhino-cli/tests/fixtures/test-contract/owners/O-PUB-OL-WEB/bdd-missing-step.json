@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature",
+    "feature": "specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature",
     "scenario": "Empty state on first visit",
     "step": "Given PGlite database \"ol_journal_v1\" (IndexedDB) is empty",
     "adapter": "unit@organiclever-app-web"
@@ -14,7 +14,7 @@
     "fields": [
       "project=organiclever-app-web",
       "owner=organiclever-app-web",
-      "item=specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature",
+      "item=specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature",
       "scenario=Empty state on first visit",
       "step=Given PGlite database \"ol_journal_v1\" (IndexedDB) is empty"
     ]

@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -o apps/organiclever-app-web/src/generated-contracts -s && git diff --exit-code -- apps/organiclever-app-web/src/generated-contracts/"
+        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/be/contracts/generated/openapi-bundled.yaml -o apps/organiclever-app-web/src/generated-contracts -s && git diff --exit-code -- apps/organiclever-app-web/src/generated-contracts/"
       },
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/src/generated-contracts"]
     },
     "dev": {
@@ -64,7 +64,7 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"
       ],
       "options": {
         "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit",
@@ -100,10 +100,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "default",
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"
-      ],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"],
       "options": {
         "command": "node scripts/gen-migrations.mjs && npx vitest run --project integration",
         "cwd": "{projectRoot}"
@@ -126,10 +123,10 @@
       "outputs": ["{projectRoot}/storybook-static"]
     },
     "specs:behavior:coverage": {
-      "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/organiclever/behavior/organiclever-app-web/gherkin apps/organiclever-app-web",
+      "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/organiclever/app-web/behaviors apps/organiclever-app-web",
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     },
@@ -176,7 +173,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["organiclever-contracts", "web-ui"]

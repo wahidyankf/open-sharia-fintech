@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Disabled Routes feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/disabled-routes.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature
  *
  * Verifies that previously-removed routes have no corresponding page/route
  * files on disk. Next.js serves 404 for any path with no matching file,
@@ -15,7 +15,7 @@ import { expect } from "vitest";
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/disabled-routes.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature",
   ),
 );
 
@@ -56,7 +56,7 @@ describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
       // Assertion happens in Then to keep Given/When/Then structure clean.
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/disabled-routes.feature:Disabled routes return 404
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Disabled routes return 404
     Then("the response status is 404", () => {
       const candidates = routeFilePaths(method, routePath);
       const anyExists = candidates.some((p) => existsSync(p));
@@ -81,7 +81,7 @@ describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
       // Static analysis only — confirmed below in Then.
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing/disabled-routes.feature:Old /app URL permanent-redirects to /app/home
+    // @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Old /app URL permanent-redirects to /app/home
     Then(`the response is a 308 redirect to "/app/home"`, () => {
       expect(configSource).toMatch(/source:\s*"\/app"/);
       expect(configSource).toMatch(/destination:\s*"\/app\/home"/);

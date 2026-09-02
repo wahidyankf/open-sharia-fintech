@@ -11,7 +11,7 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/organiclever/behavior/organiclever-www/gherkin/**/*.feature"),
+  features: path.join(workspaceRoot, "specs/apps/organiclever/www/behaviors/frontend/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
   // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in
   // the globbed features lacks a matching step def. env-loader.feature's scenarios are @unit-only

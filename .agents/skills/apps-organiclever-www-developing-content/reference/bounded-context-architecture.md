@@ -23,7 +23,7 @@ src/contexts/<bc>/
 ## Adding a Feature (Feature-context Workflow)
 
 1. Identify the feature context that owns the feature.
-2. Write or update the Gherkin spec in `specs/apps/organiclever/behavior/organiclever-www/gherkin/<bc>/`.
+2. Write or update the Gherkin spec in `specs/apps/organiclever/www/behaviors/frontend/<bc>/`.
 3. Implement: Red (failing step) → Green (minimal code) → Refactor.
 4. Keep all new code inside the correct context layer. If it touches IO, it goes in `infrastructure/`. If it is a use-case, it goes in `application/`. Never break the layer rules.
 5. Run `nx run organiclever-www:lint` to confirm 0 boundary errors before committing.

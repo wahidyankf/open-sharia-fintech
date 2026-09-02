@@ -2,35 +2,35 @@
   "project": "organiclever-be-e2e",
   "allowedUnbound": [
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/health/health-check.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/health/health-check.feature",
       "scenario": "Health endpoint reports the service as UP"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/health/health-check.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/health/health-check.feature",
       "scenario": "Anonymous health check does not expose component details"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "Create a journal entry"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "Reject a journal entry with a blank name"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "List journal entries"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "Fetch a missing journal entry"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "Update a journal entry"
     },
     {
-      "feature": "../../specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "feature": "../../specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario": "Delete a journal entry"
     }
   ]

@@ -30,9 +30,9 @@ specs/apps/<app-family>/behavior/<product>-<surface>/gherkin/{domain}/{feature}.
 
 Where:
 
-- **`<app-family>`** = project name (e.g., `organiclever`, `ayokoding`, `rhino`)
+- **`<app-family>`** = project name (e.g., `ose`)
 - **`<product>-<surface>`** = flat slug combining product name and perspective (e.g.,
-  `organiclever-be`, `ayokoding-www`, `rhino-cli`, `ayokoding-build-tools`)
+  `ose-be`, `ose-app-web`)
 - **`{domain}`** = business domain grouping folder (all surfaces, including CLI)
 - **`{feature}`** = feature file name in kebab-case
 
@@ -41,13 +41,13 @@ Deprecated slugs (bare `be`, `web`, `cli`, `api`) must not be used for new surfa
 
 ### Domain Subdirectory Rules
 
-**Every surface** (BE, web, CLI) uses domain subdirectories under `gherkin/`. Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
+**Every surface** (BE, web, CLI) uses domain subdirectories — under `gherkin/` in the legacy tree, under `behaviors/` in a [logical owner corpus](./logical-owner-corpus.md). Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
 
 ```
-specs/apps/organiclever/behavior/organiclever-be/gherkin/expenses/expense-management.feature
-specs/apps/organiclever/behavior/organiclever-be/gherkin/authentication/password-login.feature
-specs/apps/organiclever/behavior/organiclever-app-web/gherkin/authentication/google-login.feature
-specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature
+specs/apps/organiclever/be/behaviors/journal/journal-entries.feature
+specs/apps/organiclever/be/behaviors/health/health.feature
+specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature
+specs/apps/organiclever/www/behaviors/frontend/home/home.feature
 ```
 
 AyoKoding's build-time features once sat in their own `ayokoding-build-tools/` surface here. They

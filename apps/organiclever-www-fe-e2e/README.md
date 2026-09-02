@@ -26,4 +26,4 @@ npm exec nx -- run organiclever-www-fe-e2e:test:specs
 
 The default target is `http://localhost:3200`. Set `BASE_URL` only to check another running
 environment. The scenarios live in
-[the OrganicLever public-site Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md).
+[the OrganicLever public-site Gherkin specs](../../specs/apps/organiclever/www/behaviors/frontend/README.md).

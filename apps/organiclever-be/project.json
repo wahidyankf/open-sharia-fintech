@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/organiclever-be/generated-contracts --model-package OrganicleverBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/be/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/organiclever-be/generated-contracts --model-package OrganicleverBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
       },
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/generated-contracts"]
     },
     "build": {
@@ -117,13 +117,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir messaging specs/apps/organiclever/behavior/organiclever-be/gherkin apps/organiclever-be"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir messaging specs/apps/organiclever/be/behaviors apps/organiclever-be"
       },
       "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-be/gherkin/**/*.feature",
-        "{projectRoot}/src/**/*.fs"
-      ]
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -168,7 +165,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-be/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/organiclever/be/behaviors/**/*.feature"]
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"],
   "implicitDependencies": ["organiclever-contracts"]

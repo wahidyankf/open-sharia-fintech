@@ -169,13 +169,13 @@ and other validation tasks.
 All Gherkin specs and API contracts live under `specs/` and are consumed via
 `{workspaceRoot}` inputs.
 
-| Spec Directory                                  | Consumed By                                    | Targets                                 |
-| ----------------------------------------------- | ---------------------------------------------- | --------------------------------------- |
-| `specs/apps/organiclever/containers/contracts/` | organiclever-app-web, organiclever-be          | codegen                                 |
-| `specs/apps/organiclever/`                      | organiclever-app-web, organiclever-app-web-e2e | test:integration, typecheck, test:quick |
-| `specs/apps/rhino/`                             | rhino-cli                                      | test:integration                        |
-| `specs/apps/ayokoding/`                         | ayokoding-www                                  | test:integration                        |
-| `specs/apps/ose/`                               | ose-www                                        | test:integration                        |
+| Spec Directory                          | Consumed By                                    | Targets                                 |
+| --------------------------------------- | ---------------------------------------------- | --------------------------------------- |
+| `specs/apps/organiclever/be/contracts/` | organiclever-app-web, organiclever-be          | codegen                                 |
+| `specs/apps/organiclever/`              | organiclever-app-web, organiclever-app-web-e2e | test:integration, typecheck, test:quick |
+| `specs/apps/rhino/`                     | rhino-cli                                      | test:integration                        |
+| `specs/apps/ayokoding/`                 | ayokoding-www                                  | test:integration                        |
+| `specs/apps/ose/`                       | ose-www                                        | test:integration                        |
 
 ## Related Documentation
 

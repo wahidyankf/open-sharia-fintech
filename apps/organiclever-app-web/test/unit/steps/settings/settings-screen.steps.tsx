@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Settings Screen feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature
  *
  * Tests settings logic directly without browser APIs:
  * - useSettings state shape and loading lifecycle
@@ -42,7 +42,7 @@ function selectRest(settings: AppSettings, value: RestSeconds): AppSettings {
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature",
   ),
 );
 
@@ -58,7 +58,7 @@ describeFeature(feature, ({ Scenario }) => {
       savedToast = false;
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Settings screen loads user profile
+    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Settings screen loads user profile
     Then("the user name input is visible", () => {
       expect(nameInputVisible).toBe(true);
       expect(settings.name).toBe("Tester");
@@ -81,7 +81,7 @@ describeFeature(feature, ({ Scenario }) => {
       }, 1500);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Change rest setting
+    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Change rest setting
     Then("the 30s rest chip is active", () => {
       expect(settings.restSeconds).toBe(30);
       vi.useRealTimers();
@@ -98,7 +98,7 @@ describeFeature(feature, ({ Scenario }) => {
       savedToast = true;
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/settings-screen.feature:Saved toast appears after save
+    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Saved toast appears after save
     Then("the saved toast appears", () => {
       expect(savedToast).toBe(true);
     });

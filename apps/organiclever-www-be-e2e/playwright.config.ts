@@ -11,7 +11,7 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/organiclever/behavior/organiclever-www-be/gherkin/**/*.feature"),
+  features: path.join(workspaceRoot, "specs/apps/organiclever/www/behaviors/backend/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
 });
 

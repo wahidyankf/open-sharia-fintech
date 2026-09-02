@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Workout Session feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature
  *
  * Selector notes:
  * - The app is an SPA at /app. Workout screen is a machine state (navigation: "workout"),
@@ -70,7 +70,7 @@ When("the user starts the workout", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Start a blank workout
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Start a blank workout
 Then("the workout is in active exercising state", async ({ page }) => {
   // WorkoutScreen renders an "End" button in the AppHeader trailing slot while active
   await expect(page.getByRole("button", { name: "End" }).or(page.getByText("Quick workout")).first()).toBeVisible({
@@ -95,7 +95,7 @@ When("the user logs a set", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Log a set triggers rest timer
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Log a set triggers rest timer
 Then("the rest timer is visible", async ({ page }) => {
   // RestTimer renders "Resting…" or "Rest over" text when in active.resting state.
   // If rest is 0 or "Off", the machine skips resting — assert screen is still active.
@@ -124,8 +124,8 @@ When("the user skips rest", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Skip rest returns to exercising
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Keep going continues exercising
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Skip rest returns to exercising
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Keep going continues exercising
 Then("the workout returns to exercising state", async ({ page }) => {
   // After skipping rest (or if no rest), "End" button remains visible
   await expect(page.getByRole("button", { name: "End" }).or(page.getByText("Quick workout")).first()).toBeVisible({
@@ -145,7 +145,7 @@ When("the user ends the workout", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:End workout shows confirmation sheet
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:End workout shows confirmation sheet
 Then("the confirmation sheet is shown", async ({ page }) => {
   // Used as Then (assertion) and Given (precondition for discard/keep-going).
   // If not already in confirmation state, open the workout screen and end it.
@@ -176,7 +176,7 @@ When("the user discards the workout", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Discard workout returns to idle
+// @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Discard workout returns to idle
 Then("the workout is in idle state", async ({ page }) => {
   await expect(page.getByRole("button", { name: /keep going/i })).not.toBeVisible({ timeout: 10000 });
 });

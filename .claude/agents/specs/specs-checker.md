@@ -31,7 +31,7 @@ progressive audit reports to `generated-reports/`.
 
 ## Input: Explicit Folder List
 
-Receives an explicit list of spec folders (e.g. `folders: [specs/apps/organiclever/components/web]`
+Receives an explicit list of spec folders (e.g. `folders: [specs/apps/organiclever/app-web]`
 or `folders: [specs/apps/organiclever]` for the full tree) and validates **only** those folders and
 their subfolders — nothing else. Each folder validates independently for Categories 1-3 and 5-9;
 Category 4 (cross-folder consistency) runs only when 2+ folders are listed. Folders not in the list

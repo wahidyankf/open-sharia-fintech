@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+    "feature": "specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
     "scenario": "Create a journal entry",
     "step": "When a client posts a valid journal entry",
     "adapter": "unit@organiclever-be"
@@ -14,7 +14,7 @@
     "fields": [
       "project=organiclever-be",
       "owner=organiclever-be",
-      "item=specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature",
+      "item=specs/apps/organiclever/be/behaviors/journal/journal-crud.feature",
       "scenario=Create a journal entry",
       "step=When a client posts a valid journal entry"
     ]

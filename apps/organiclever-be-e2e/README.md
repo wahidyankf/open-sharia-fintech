@@ -33,4 +33,4 @@ npm exec nx -- run organiclever-be-e2e:test:specs
 ```
 
 The expected behavior is described in
-[the OrganicLever backend Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md).
+[the OrganicLever backend Gherkin specs](../../specs/apps/organiclever/be/behaviors/README.md).

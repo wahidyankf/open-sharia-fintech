@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Workout Session feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature
  *
  * Tests workoutSessionMachine directly (no browser APIs, no PGlite).
  */
@@ -73,7 +73,7 @@ function makeActor(routine: Routine | null, settings = mockSettings) {
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature",
   ),
 );
 
@@ -91,7 +91,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "START" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Start a blank workout
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Start a blank workout
     Then("the workout is in active exercising state", () => {
       expect(actor.getSnapshot().matches("active.exercising")).toBe(true);
       actor.stop();
@@ -114,7 +114,7 @@ describeFeature(feature, ({ Scenario }) => {
       });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Log a set triggers rest timer
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Log a set triggers rest timer
     Then("the rest timer is visible", () => {
       expect(actor.getSnapshot().matches("active.resting")).toBe(true);
       expect(actor.getSnapshot().context.restSecsLeft).toBeGreaterThan(0);
@@ -139,7 +139,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "SKIP_REST" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Skip rest returns to exercising
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Skip rest returns to exercising
     Then("the workout returns to exercising state", () => {
       expect(actor.getSnapshot().matches("active.exercising")).toBe(true);
       actor.stop();
@@ -157,7 +157,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "END_WORKOUT" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:End workout shows confirmation sheet
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:End workout shows confirmation sheet
     Then("the confirmation sheet is shown", () => {
       expect(actor.getSnapshot().matches("active.confirming")).toBe(true);
       actor.stop();
@@ -177,7 +177,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "DISCARD" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Discard workout returns to idle
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Discard workout returns to idle
     Then("the workout is in idle state", () => {
       expect(actor.getSnapshot().value).toBe("idle");
       actor.stop();
@@ -197,7 +197,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "KEEP_GOING" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/workout-session/workout-session.feature:Keep going continues exercising
+    // @covers specs/apps/organiclever/app-web/behaviors/workout-session/workout-session.feature:Keep going continues exercising
     Then("the workout returns to exercising state", () => {
       expect(actor.getSnapshot().matches("active.exercising")).toBe(true);
       actor.stop();

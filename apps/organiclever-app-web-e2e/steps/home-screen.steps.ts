@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Home Screen feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/home-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature
  *
  * Selector notes:
  * - Home screen always renders "Good morning" as the greeting and "Last 7 days" in the week card.
@@ -21,7 +21,7 @@ Given("the home screen is loaded with entries", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/home-screen.feature:Home screen shows entry list
+// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Home screen shows entry list
 Then("the entry list is visible", async ({ page }) => {
   // Home screen always shows "Recent entries" label or the workout module section
   await expect(page.getByText("Recent entries").or(page.getByText("Last 7 days")).first()).toBeVisible({
@@ -42,7 +42,7 @@ When("the user selects the Workout filter", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/home-screen.feature:Filter entries by kind
+// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Filter entries by kind
 Then("only workout entries are shown", async ({ page }) => {
   // When the Workout filter is active the WorkoutModuleView is visible,
   // showing "Workout" section. The entry list section is hidden for workout-only filter.
@@ -91,7 +91,7 @@ When("the user closes the sheet", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/home-screen.feature:Open entry detail sheet
+// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Open entry detail sheet
 Then("the entry detail sheet is closed", async ({ page }) => {
   // After close (or if never opened), the home screen should be visible
   await expect(page.getByText("Good morning").or(page.getByText("Last 7 days")).first()).toBeVisible({

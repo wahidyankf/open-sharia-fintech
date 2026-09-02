@@ -20,7 +20,7 @@ let private jsonContent (body: string) : StringContent =
 let private validEntryJson =
     "{\"name\":\"reading\",\"payload\":{\"title\":\"Clean Code\"},\"startedAt\":\"2026-06-14T10:00:00Z\",\"finishedAt\":\"2026-06-14T10:30:00Z\",\"labels\":[\"books\"]}"
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:Create a journal entry
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Create a journal entry
 [<Fact>]
 let ``POST journal entries returns 201 with the created entry`` () =
     let client = journalClient ()
@@ -33,7 +33,7 @@ let ``POST journal entries returns 201 with the created entry`` () =
     Assert.Contains("reading", body)
     Assert.Contains("\"id\"", body)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:Reject a journal entry with a blank name
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Reject a journal entry with a blank name
 [<Fact>]
 let ``POST journal entries with a blank name returns 400`` () =
     let client = journalClient ()
@@ -44,7 +44,7 @@ let ``POST journal entries with a blank name returns 400`` () =
     let resp = client.PostAsync("/api/v1/journal/entries", jsonContent bad).Result
     Assert.Equal(HttpStatusCode.BadRequest, resp.StatusCode)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:List journal entries
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:List journal entries
 [<Fact>]
 let ``GET journal entries lists created entries`` () =
     let client = journalClient ()
@@ -57,7 +57,7 @@ let ``GET journal entries lists created entries`` () =
     let body = resp.Content.ReadAsStringAsync().Result
     Assert.Contains("reading", body)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:Fetch a missing journal entry
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Fetch a missing journal entry
 [<Fact>]
 let ``GET a missing journal entry returns 404`` () =
     let client = journalClient ()
@@ -76,7 +76,7 @@ let ``GET a created journal entry by id returns 200`` () =
     let resp = client.GetAsync(sprintf "/api/v1/journal/entries/%s" id).Result
     Assert.Equal(HttpStatusCode.OK, resp.StatusCode)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:Update a journal entry
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Update a journal entry
 [<Fact>]
 let ``PUT a created journal entry updates it and returns 200`` () =
     let client = journalClient ()
@@ -104,7 +104,7 @@ let ``PUT a missing journal entry returns 404`` () =
 
     Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/journal/journal-crud.feature:Delete a journal entry
+// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Delete a journal entry
 [<Fact>]
 let ``DELETE a created journal entry returns 204 and removes it`` () =
     let client = journalClient ()
