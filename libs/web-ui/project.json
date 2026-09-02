@@ -27,12 +27,12 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx vitest run --coverage --coverage.thresholds.lines=70",
+        "command": "npx vitest run --coverage --coverage.thresholds.lines=99",
         "cwd": "libs/web-ui"
       },
       "cache": true,
       "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/**/*"]
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
@@ -43,7 +43,10 @@
           "npx nx run web-ui:lint",
           "npx nx run web-ui:test:unit",
           "npx nx run web-ui:test:coverage",
-          "npx nx run web-ui:test:specs"
+          "npx nx run web-ui:test:specs",
+          "npx nx run web-ui:test:layout:validation",
+          "npx nx run web-ui:coverage:policy:validation",
+          "npx nx run web-ui:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -65,19 +68,14 @@
       },
       "outputs": ["{projectRoot}/storybook-static"]
     },
-    "test:visual": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx playwright test --config e2e/playwright.config.ts",
-        "cwd": "libs/web-ui"
-      }
-    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
+        "command": "npx playwright test --config tests/integration/playwright.config.ts",
+        "cwd": "libs/web-ui"
       },
-      "cache": true
+      "cache": true,
+      "outputs": ["{projectRoot}/tests/integration/test-results"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -124,6 +122,30 @@
         "command": "echo 'compat:min-version: no standard min-version floor for TypeScript'"
       },
       "cache": true
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project web-ui"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project web-ui"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project web-ui"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {
