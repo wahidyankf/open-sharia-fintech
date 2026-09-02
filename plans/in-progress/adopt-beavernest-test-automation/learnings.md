@@ -185,3 +185,39 @@ that globs for sources disagree silently and the runner reports the build tool's
 `**/.next/**` in the affected project restored `build` and `test:quick` to being composable in one
 workspace.
 Route:
+
+## L-10: A no-data placeholder turned an unreadable corpus into a passing suite
+
+Repository relevance: public
+Observation: `apps/crane-cli/tests/unit/Suite.fs` resolved its Gherkin corpus from `GHERKIN_ROOT`
+and fell back to `specs/apps/crane/behavior/cli/gherkin`, the path Phase 5 retired. `GHERKIN_ROOT`
+is set nowhere, so the fallback ran, `Directory.Exists` returned false, and `buildScenarioData`
+answered with a single no-op row — added deliberately "so `[Theory]` does not fail with No data
+found". `nx run crane-cli:test:unit` reported 99 passing tests; with the path corrected it reports 135. Thirty-six scenarios had been dark, and all thirty-six passed the moment they were loaded, so
+the twelve step-definition files were never wrong. `specs:behavior:coverage` also passed throughout,
+because it scans step sources statically and never asks whether the runtime found the corpus.
+Durable prevention: a suite that loads no scenarios must fail, not degrade. Treat a missing corpus
+directory, an unreadable feature file, and an empty expansion as three distinct errors that each
+name the offending path, and never wrap per-file parsing in a `with _ -> Seq.empty` that turns a
+binding defect into an empty set. Verify such a guard by pointing it at a path that does not exist
+and asserting a non-zero exit — the same path had been exiting 0.
+Route:
+
+## L-11: The Phase 4 enforcement foundation is built but almost entirely unwired
+
+Repository relevance: public
+Observation: grepping every `gates:` entry in `repo-config.yml`, every `apps/*/project.json` and
+`libs/*/project.json` target, and every `.github/workflows/*.yml` for the six `test-contract`
+validators returns zero call sites for all six. Only `parity manifest validate` (1) and
+`specs structure validate` (19) are wired. Four of the six — `bdd`, `coverage`, `layout`,
+`manifest` — require `--fixture <NAME>.json` and read only the fixture corpus, so their being
+ungated is the known L-8 gap rather than a defect. But `test-contract registry validate` and
+`registry validate-mapping` both read the real `repo-config.yml` and run against the repository
+today, and neither is invoked by anything. `registry validate` had been exiting 1 on `main` with
+seven findings, five of them naming `wahidyankf-www` and `wahidyankf-www-fe-e2e`, projects deleted
+in #423 — the orphans survived precisely because no gate asked.
+Durable prevention: a validator that reads real repository state is finished only when something
+runs it. Register the gate in the same delivery unit that builds the validator, and prove the wiring
+by making the repository violate the rule and watching the gate fail — an unwired validator and a
+passing one are indistinguishable from the exit code of any gate run.
+Route:
