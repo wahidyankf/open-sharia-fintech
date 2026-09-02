@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Alert, AlertTitle, AlertDescription } from "./alert";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/alert/alert.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/alert/alert.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

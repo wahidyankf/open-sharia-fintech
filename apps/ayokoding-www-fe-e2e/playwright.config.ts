@@ -14,12 +14,12 @@ const testDir = defineBddConfig({
   features: [
     path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/frontend/**/*.feature"),
     // The resizable-panel primitive's own Gherkin lives under libs/web-ui (see
-    // specs/libs/web-ui/behavior/README.md). Its drag/clamp/keyboard scenarios are bound a
+    // specs/libs/web-ui/behaviors/README.md). Its drag/clamp/keyboard scenarios are bound a
     // second time here — real browser, real docs page — alongside their existing web-ui
     // unit-level binding (resizable-panel.steps.tsx), matching this plan's "Gherkin (binds)"
     // dual-test-level convention rather than duplicating the scenario text under this app's
     // own gherkin/ tree.
-    path.join(workspaceRoot, "specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature"),
+    path.join(workspaceRoot, "specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"),
   ],
   steps: "./src/steps/**/*.steps.ts",
   // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in

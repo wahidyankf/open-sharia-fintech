@@ -53,10 +53,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate specs/libs/web-ui-token/behavior/gherkin libs/web-ui-token"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate specs/libs/web-ui-token/behaviors libs/web-ui-token"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/web-ui-token/behavior/gherkin/**/*.feature", "{projectRoot}/src/**/*"]
+      "inputs": ["{workspaceRoot}/specs/libs/web-ui-token/behaviors/**/*.feature", "{projectRoot}/src/**/*"]
     },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
@@ -109,7 +109,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/web-ui-token/behavior/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/web-ui-token/behaviors/**/*.feature"]
   },
   "tags": ["type:lib", "lang:ts", "domain:ui"]
 }

@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature",
+    "feature": "specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature",
     "scenario": "The CLI flag outranks every other source",
     "step": "Given the app declares the prefixed variable \"OSE_WWW_PORT\" with fallback 3100",
     "adapter": "unit@ts-env-loader"
@@ -14,7 +14,7 @@
     "fields": [
       "project=ts-env-loader",
       "owner=ts-env-loader",
-      "item=specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature",
+      "item=specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature",
       "scenario=The CLI flag outranks every other source",
       "step=Given the app declares the prefixed variable \"OSE_WWW_PORT\" with fallback 3100"
     ]

@@ -221,10 +221,10 @@ coverage:
     # libs
     - name: web-ui
       levels: [unit]
-      specs: "specs/libs/web-ui/behavior/**"
+      specs: "specs/libs/web-ui/behaviors/**"
     - name: fsharp-crane-core
       levels: [unit]
-      specs: "specs/libs/fsharp-crane-core/behavior/**"
+      specs: "specs/libs/fsharp-crane-core/behaviors/**"
 
     # Deliberately excluded, not omitted-by-oversight (Phase 2 closeout, 2026-07-02):
     #   web-ui-token, organiclever-contracts, ose-contracts — every test-level target
@@ -310,11 +310,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/libs/fsharp-crane-core/behavior/**"
+          corpus: "specs/libs/fsharp-crane-core/behaviors/**"
           levels: [unit]
         canonical:
           owner: fsharp-crane-core
-          corpus: "specs/libs/fsharp-crane-core/behavior/**"
+          corpus: "specs/libs/fsharp-crane-core/behaviors/**"
           runtimes:
             - level: unit
               project: fsharp-crane-core
@@ -579,7 +579,7 @@ testing:
           levels: []
         canonical:
           owner: ts-env-loader
-          corpus: "specs/libs/ts-env-loader/behavior/**"
+          corpus: "specs/libs/ts-env-loader/behaviors/**"
           runtimes:
             - level: unit
               project: ts-env-loader
@@ -616,11 +616,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/libs/web-ui/behavior/**"
+          corpus: "specs/libs/web-ui/behaviors/**"
           levels: [unit]
         canonical:
           owner: web-ui
-          corpus: "specs/libs/web-ui/behavior/**"
+          corpus: "specs/libs/web-ui/behaviors/**"
           runtimes:
             - level: unit
               project: web-ui
@@ -633,7 +633,7 @@ testing:
           levels: []
         canonical:
           owner: web-ui-token
-          corpus: "specs/libs/web-ui-token/behavior/**"
+          corpus: "specs/libs/web-ui-token/behaviors/**"
           runtimes:
             - level: unit
               project: web-ui-token
@@ -727,7 +727,7 @@ testing:
         lifecycle-state: active
         owner: fsharp-crane-core
         corpus:
-          - "specs/libs/fsharp-crane-core/behavior/**"
+          - "specs/libs/fsharp-crane-core/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -1104,7 +1104,7 @@ testing:
         lifecycle-state: active
         owner: ts-env-loader
         corpus:
-          - "specs/libs/ts-env-loader/behavior/**"
+          - "specs/libs/ts-env-loader/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -1164,7 +1164,7 @@ testing:
         lifecycle-state: active
         owner: web-ui
         corpus:
-          - "specs/libs/web-ui/behavior/**"
+          - "specs/libs/web-ui/behaviors/**"
         adapters:
           unit:
             disposition: required
@@ -1184,7 +1184,7 @@ testing:
         lifecycle-state: active
         owner: web-ui-token
         corpus:
-          - "specs/libs/web-ui-token/behavior/**"
+          - "specs/libs/web-ui-token/behaviors/**"
         adapters:
           unit:
             disposition: required

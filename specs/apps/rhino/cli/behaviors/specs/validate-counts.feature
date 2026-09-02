@@ -28,3 +28,15 @@ Feature: specs validate-counts
     When the developer runs "rhino-cli specs validate-counts specs/apps/nosuchapp"
     Then the command exits with a failure code
     And the output contains "does not exist"
+
+  Scenario: a library corpus at the folder root is measured by the corpus rules
+    Given a library corpus at "specs/libs/testlib" carrying architecture.md and a non-empty behaviors/
+    When the developer runs "rhino-cli specs validate-counts specs/libs/testlib"
+    Then the command exits successfully
+    And the output contains "0 finding"
+
+  Scenario: a library corpus missing its behaviors index reports a finding
+    Given a library corpus at "specs/libs/testlib" whose behaviors/ folder has no README.md
+    When the developer runs "rhino-cli specs validate-counts specs/libs/testlib"
+    Then the command exits with a failure code
+    And the output contains "missing required entry: behaviors/README.md"

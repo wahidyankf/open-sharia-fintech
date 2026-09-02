@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/libs/fsharp-crane-core/behavior/gherkin/convert/pdf-to-markdown-routing.feature",
+    "feature": "specs/libs/fsharp-crane-core/behaviors/convert/pdf-to-markdown-routing.feature",
     "scenario": "A text-based PDF is routed to page extraction",
     "step": "Given a PDF whose sampled text has more than 10 words",
     "adapter": "unit@fsharp-crane-core"
@@ -14,7 +14,7 @@
     "fields": [
       "project=fsharp-crane-core",
       "owner=fsharp-crane-core",
-      "item=specs/libs/fsharp-crane-core/behavior/gherkin/convert/pdf-to-markdown-routing.feature",
+      "item=specs/libs/fsharp-crane-core/behaviors/convert/pdf-to-markdown-routing.feature",
       "scenario=A text-based PDF is routed to page extraction",
       "step=Given a PDF whose sampled text has more than 10 words"
     ]

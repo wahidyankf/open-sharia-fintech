@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import * as webUiToken from "./index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature"),
+  path.resolve(__dirname, "../../../specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -13,7 +13,7 @@ describeFeature(feature, ({ Scenario }) => {
 
     When('I import from "@open-sharia-enterprise/web-ui-token"', () => {});
 
-    // @covers specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature:The package exports every structural token module
+    // @covers specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature:The package exports every structural token module
     Then('"colorTokens" should be exported', () => {
       expect(webUiToken.colorTokens).toBeDefined();
     });

@@ -10,7 +10,7 @@ import codeBlockStories, {
 } from "./code-block.stories";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/code-block/code-block.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/code-block/code-block.feature"),
 );
 
 /** Installs a mock `navigator.clipboard.writeText` (jsdom lacks it). Returns the spy. */

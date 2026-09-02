@@ -12,7 +12,7 @@ const tabs: TabItem[] = [
 ];
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/tab-bar/tab-bar.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/tab-bar/tab-bar.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

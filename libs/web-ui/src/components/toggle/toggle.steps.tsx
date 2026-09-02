@@ -6,7 +6,7 @@ import { vi, expect } from "vitest";
 import { Toggle } from "./toggle";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/toggle/toggle.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/toggle/toggle.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/card/card.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/card/card.feature"),
 );
 
 function renderCard() {

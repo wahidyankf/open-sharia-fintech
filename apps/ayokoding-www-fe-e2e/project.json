@@ -114,13 +114,13 @@
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ayokoding-www-fe-e2e --features \"../../specs/apps/ayokoding/www/behaviors/frontend/**/*.feature\" --features \"../../specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
+        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project ayokoding-www-fe-e2e --features \"../../specs/apps/ayokoding/www/behaviors/frontend/**/*.feature\" --features \"../../specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
         "cwd": "apps/ayokoding-www-fe-e2e"
       },
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature",
-        "{workspaceRoot}/specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature",
+        "{workspaceRoot}/specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature",
         "{projectRoot}/src/steps/**/*.steps.ts",
         "{projectRoot}/playwright.config.ts",
         "{projectRoot}/e2e-coverage-baseline.json"

@@ -62,14 +62,14 @@ let ``I call convertPdfToMarkdown`` (state: ConvertState) =
     { state with
         Result = Some(convertPdfToMarkdown pdfPort ocrPort "fake.pdf") }
 
-// @covers specs/libs/fsharp-crane-core/behavior/gherkin/convert/pdf-to-markdown-routing.feature:A text-based PDF is routed to page extraction
+// @covers specs/libs/fsharp-crane-core/behaviors/convert/pdf-to-markdown-routing.feature:A text-based PDF is routed to page extraction
 [<Then>]
 let ``the pages should be extracted via the PDF port's ExtractPages`` (state: ConvertState) =
     Assert.True(state.PdfPort.Value.ExtractPagesCalled)
     Assert.False(state.OcrPort.ExtractTextCalled)
     state
 
-// @covers specs/libs/fsharp-crane-core/behavior/gherkin/convert/pdf-to-markdown-routing.feature:An image-based PDF is routed to OCR
+// @covers specs/libs/fsharp-crane-core/behaviors/convert/pdf-to-markdown-routing.feature:An image-based PDF is routed to OCR
 [<Then>]
 let ``the text should be extracted via the OCR port's ExtractText`` (state: ConvertState) =
     Assert.True(state.OcrPort.ExtractTextCalled)

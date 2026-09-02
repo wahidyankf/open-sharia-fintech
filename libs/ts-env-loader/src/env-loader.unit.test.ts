@@ -1,7 +1,7 @@
 /**
  * Step definitions for ts-env-loader's own APP_ENV tier loader feature.
  *
- * Covers: specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature
+ * Covers: specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature
  *
  * Each scenario drives `loadTierEnv()` with an isolated `appDir` (a throwaway temp directory
  * holding fixture `.env.*` files) and an isolated `env` object (a plain record, not the real
@@ -15,7 +15,7 @@ import { describe, expect, it } from "vitest";
 import { loadTierEnv, resolveTier, type EnvRecord } from "./index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature"),
+  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature"),
 );
 
 const tmpDirs: string[] = [];
@@ -55,7 +55,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       loadTierEnv({ appDir, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature:Loads the selected tier's file
+    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Loads the selected tier's file
     Then('every variable defined in ".env.stag" is applied', () => {
       expect(env["SHARED_VAR"]).toBe("stag-value");
       expect(env["STAG_ONLY_VAR"]).toBe("stag-only");
@@ -80,7 +80,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature:Process env always wins over the tier file
+    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Process env always wins over the tier file
     And('the ".env.local" value is not applied over it', () => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
@@ -109,7 +109,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(thrown).toBeUndefined();
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature:Tolerates a missing tier file
+    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Tolerates a missing tier file
     And("the process environment is left otherwise untouched", () => {
       expect(env["EXISTING_VAR"]).toBe("already-set");
     });
@@ -134,7 +134,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature:Fails loudly on a stray auto-loaded env file
+    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Fails loudly on a stray auto-loaded env file
     Then('the loader throws, naming "<file>" and the correct ".env.<tier>" replacement', () => {
       expect(thrown).toBeInstanceOf(Error);
       expect((thrown as Error).message).toContain(file);
@@ -160,7 +160,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature:Tolerates a stray file at the local tier
+    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Tolerates a stray file at the local tier
     Then("the loader does not throw", () => {
       expect(thrown).toBeUndefined();
     });

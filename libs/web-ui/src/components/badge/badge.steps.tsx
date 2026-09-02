@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { Badge } from "./badge";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/badge/badge.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/badge/badge.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

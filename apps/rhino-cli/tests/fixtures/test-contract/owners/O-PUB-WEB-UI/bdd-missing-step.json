@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/libs/web-ui/behavior/gherkin/app-header/app-header.feature",
+    "feature": "specs/libs/web-ui/behaviors/app-header/app-header.feature",
     "scenario": "Renders title",
     "step": "Given I render an AppHeader with title \"Workouts\"",
     "adapter": "unit@web-ui"
@@ -14,7 +14,7 @@
     "fields": [
       "project=web-ui",
       "owner=web-ui",
-      "item=specs/libs/web-ui/behavior/gherkin/app-header/app-header.feature",
+      "item=specs/libs/web-ui/behaviors/app-header/app-header.feature",
       "scenario=Renders title",
       "step=Given I render an AppHeader with title \"Workouts\""
     ]
