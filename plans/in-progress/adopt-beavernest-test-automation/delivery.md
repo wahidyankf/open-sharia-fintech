@@ -679,6 +679,7 @@ threshold=99`, `manifest-not-present`). A real production bug surfaced during th
 > visibility below what `System.Text.Json`'s reflection converter needs, so every cache write
 > serialized as `{}` and every read silently fell through to the inner port; fixed by dropping
 > `private`, with two permanent call-counting regression tests replacing the diagnostic spike.
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 8B: Migrate `O-PUB-FS-ENV`
 
@@ -740,6 +741,7 @@ validate`/`validate-mapping` take no `--project` filter; both are whole-registry
 > under xunit's default one-collection-per-module parallelism exactly as
 > `apps/rhino-cli/src/tests/unit/Steps/GitRootUnitTests.fs` already documents; fixed with the same
 > assembly-wide `[<assembly: CollectionBehavior(DisableTestParallelization = true)>]` opt-out.
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 9: Migrate `O-PUB-TS-ENV`
 
@@ -765,6 +767,7 @@ validate`/`validate-mapping` take no `--project` filter; both are whole-registry
 > `tests/unit/**`. `test:layout:validation`, `coverage:policy:validation`, and
 > `package-manifest:policy:validation` targets added and green (`native-layout-valid ...
 executable=3`, `coverage-policy-valid ... threshold=99`, `manifest-consumer-verified`).
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 10A: Migrate `O-PUB-WEB-TOKEN`
 
@@ -789,6 +792,7 @@ vitest run --coverage --coverage.thresholds.lines=99` (6 tests, 100% lines).
 > `test:layout:validation`, `coverage:policy:validation`, and `package-manifest:policy:validation`
 > targets added and green (`native-layout-valid ... executable=1`, `coverage-policy-valid ...
 threshold=99`, `manifest-consumer-verified`).
+> PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
 ## Phase 10B: Migrate `O-PRI-TS-TOKEN`
 
