@@ -34,15 +34,15 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 
 ## Quick Decision: Which Language for My Task?
 
-| Task                                     | Recommended Language | Start With                                      |
-| ---------------------------------------- | -------------------- | ----------------------------------------------- |
-| REST API backend                         | F#/Giraffe           | See the F# guidance and the relevant app README |
-| Frontend web application                 | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
-| CLI tool for repository automation       | F#                   | See rhino-cli (F#)                              |
-| Infrastructure tooling                   | F#                   | See existing CLI tools                          |
-| Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
-| Complex domain logic with DDD            | F#                   | See language-specific README files              |
-| Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files          |
+| Task                                     | Recommended Language | Start With                                                                                                             |
+| ---------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| REST API backend                         | F#/Giraffe           | See the F# guidance and the relevant app README                                                                        |
+| Frontend web application                 | TypeScript           | [TypeScript Standards](./typescript/README.md) — TypeScript development for frontend applications and Node.js services |
+| CLI tool for repository automation       | F#                   | See rhino-cli (F#)                                                                                                     |
+| Infrastructure tooling                   | F#                   | See existing CLI tools                                                                                                 |
+| Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md) — TypeScript development for frontend applications and Node.js services |
+| Complex domain logic with DDD            | F#                   | See language-specific README files                                                                                     |
+| Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files                                                                                 |
 
 **Platform Guidance**:
 
@@ -136,7 +136,7 @@ Each language directory contains a README.md (language overview and version info
 - Maintainability issues
 - Anti-idiomatic code patterns
 
-### 💠 [C#](./c-sharp/README.md)
+### 💠 [C#](./c-sharp/README.md) — C# development with ASP.NET Core, Entity Framework Core, and functional patterns
 
 **C# development with ASP.NET Core, Entity Framework Core, and functional patterns**
 
@@ -150,7 +150,7 @@ C# is a versatile, type-safe language on the .NET ecosystem. These standards gui
 - Domain modeling with records and sealed class hierarchies
 - .NET interop with F# components
 
-### 🔷 [F#](./f-sharp/README.md)
+### 🔷 [F#](./f-sharp/README.md) — F# development with functional-first programming, railway-oriented error handling, and Giraffe
 
 **F# development with functional-first programming, railway-oriented error handling, and Giraffe**
 
@@ -164,7 +164,7 @@ F# is a functional-first .NET language where immutability is the default and dis
 - Pure computation engines with units of measure
 - Content pipeline tooling (PDF-to-Markdown conversion, crane-cli)
 
-### 🦀 [Rust](./rust/README.md)
+### 🦀 [Rust](./rust/README.md) — Rust development with ownership-based memory safety, zero-cost abstractions, and Axum
 
 **Rust development with ownership-based memory safety, zero-cost abstractions, and Axum**
 
@@ -177,7 +177,7 @@ Rust guarantees memory safety and fearless concurrency without a garbage collect
 - System-level services with no GC pauses
 - Infrastructure tooling with single binary distribution
 
-### 💙 [TypeScript](./typescript/README.md)
+### 💙 [TypeScript](./typescript/README.md) — TypeScript development for frontend applications and Node.js services
 
 **TypeScript development for frontend applications and Node.js services**
 
@@ -234,7 +234,7 @@ Languages in this documentation are chosen based on:
 ### For Backend Developers
 
 1. **F# backends** - See [organiclever-be](../../../../apps/organiclever-be/README.md) and [ose-be](../../../../apps/ose-be/README.md) for active examples
-2. **Apply Rust standards** - [Rust Standards](./rust/README.md)
+2. **Apply Rust standards** - [Rust Standards](./rust/README.md) — Rust development with ownership-based memory safety, zero-cost abstractions, and Axum
 3. **Hexagonal DDD** - [DDD + Hexagonal In Practice](../architecture/ddd-hexagonal-in-practice/README.md)
 4. **For F#/C# standards** - See language-specific README files
 

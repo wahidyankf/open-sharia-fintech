@@ -33,12 +33,12 @@ This directory is **OSE Platform-specific conventions** — not educational tuto
 
 DDD and Hexagonal Architecture are complementary but address different concerns. DDD provides the _what_ — how to carve business domains into bounded contexts, aggregates, and events. Hexagonal Architecture provides the _where_ — how to structure code so that domain logic never depends on infrastructure. This directory defines how OSE Platform combines them.
 
-| DDD Concern                | Hexagonal Concern         | Integration Standard                                                            |
-| -------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
-| Bounded context boundary   | Hexagon boundary          | [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md)     |
-| Aggregate and repository   | Domain core + output port | [Aggregate Port Boundary Standards](./aggregate-port-boundary-standards.md)     |
-| Context map relationships  | Cross-hexagon wiring      | [Cross-Context Integration Standards](./cross-context-integration-standards.md) |
-| Ubiquitous language naming | Package and module naming | [Module Organization Standards](./module-organization-standards.md)             |
+| DDD Concern                | Hexagonal Concern         | Integration Standard                                                                                                                     |
+| -------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Bounded context boundary   | Hexagon boundary          | [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md) — one-context-one-hexagon rule and context map translation   |
+| Aggregate and repository   | Domain core + output port | [Aggregate Port Boundary Standards](./aggregate-port-boundary-standards.md) — aggregate operations mapped to input and output ports      |
+| Context map relationships  | Cross-hexagon wiring      | [Cross-Context Integration Standards](./cross-context-integration-standards.md) — domain events, ACLs, Open Host Services, saga patterns |
+| Ubiquitous language naming | Package and module naming | [Module Organization Standards](./module-organization-standards.md) — package naming and module hierarchy conventions                    |
 
 ## OrganicLever Domain
 
@@ -58,19 +58,19 @@ The F#/Giraffe backend (`organiclever-be`) hosts the composition root and HTTP a
 
 ## Convention Standards
 
-### 1. [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md)
+### 1. [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md) — how DDD bounded contexts map onto hexagonal port/adapter structure
 
 How DDD bounded contexts map onto hexagonal port/adapter structure. Covers the one-context-one-hexagon rule, context map pattern translation into port design, and the OrganicLever context boundary catalog.
 
-### 2. [Aggregate Port Boundary Standards](./aggregate-port-boundary-standards.md)
+### 2. [Aggregate Port Boundary Standards](./aggregate-port-boundary-standards.md) — how DDD aggregates align with hexagonal port/adapter boundaries
 
 How DDD aggregates align with hexagonal port/adapter boundaries. Defines which aggregate operations become input ports, which persistence needs become output ports, and how aggregate invariants are protected across the port boundary.
 
-### 3. [Cross-Context Integration Standards](./cross-context-integration-standards.md)
+### 3. [Cross-Context Integration Standards](./cross-context-integration-standards.md) — how bounded contexts communicate using domain events, ACLs, and saga patterns
 
 How bounded contexts communicate using domain events, Anti-Corruption Layers, Open Host Services, and saga patterns. Defines event envelope conventions, ACL adapter placement, and OrganicLever cross-context wiring.
 
-### 4. [Module Organization Standards](./module-organization-standards.md)
+### 4. [Module Organization Standards](./module-organization-standards.md) — Java/Spring Boot package structure and F# module hierarchy for combined DDD+Hexagonal projects
 
 Java/Spring Boot package structure and F# module hierarchy for combined DDD+Hexagonal projects. Covers package naming, layer ordering, ubiquitous language encoding in package names, and the OrganicLever module catalog.
 

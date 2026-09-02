@@ -37,11 +37,11 @@ This documentation covers React 19+ with TypeScript 5+, focusing on functional c
 
 All React applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](idioms.md)** - React-specific patterns
-2. **[Best Practices](best-practices.md)** - Framework standards
-3. **[Anti-Patterns](anti-patterns.md)** - Common mistakes
-4. **[Component Architecture](component-architecture.md)** - Component design
-5. **[State Management](state-management.md)** - State patterns
+1. **[Idioms](idioms.md) — React-specific patterns**
+2. **[Best Practices](best-practices.md) — Framework standards**
+3. **[Anti-Patterns](anti-patterns.md) — Common mistakes**
+4. **[Component Architecture](component-architecture.md) — Component design**
+5. **[State Management](state-management.md) — State patterns**
 
 **For Agents**: Reference this documentation when building React applications.
 
@@ -50,10 +50,10 @@ All React applications MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Component Patterns**: See [Component Architecture](component-architecture.md)
-- **State Management**: See [State Management](state-management.md)
-- **Testing**: See [Testing](testing.md)
-- **Performance**: See [Performance](performance.md)
+- **Component Patterns**: See [Component Architecture](component-architecture.md) — Component design patterns and architectural approaches for scalable React applications
+- **State Management**: See [State Management](state-management.md) — State management patterns and strategies for React applications
+- **Testing**: See [Testing](testing.md) — Testing strategies for React applications with React Testing Library and Jest
+- **Performance**: See [Performance](performance.md) — Performance optimization strategies for React applications
 
 ## Software Engineering Principles
 
@@ -65,7 +65,7 @@ React usage in this platform follows the software engineering principles from [r
 4. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - React encourages pure rendering logic, effects isolation in useEffect, functional components
 5. **[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - React enables through Volta pinning, package-lock.json, deterministic builds, snapshot testing
 
-**See Also**: [Functional Programming](functional-programming.md) for FP patterns with React.
+**See Also**: [Functional Programming](functional-programming.md) — for FP patterns with React.
 
 ## Quick Reference
 
@@ -169,7 +169,7 @@ The platform adopted React 19 as part of the Next.js 16 upgrade in 2026-02.
 
 ## Documentation Structure
 
-### [React Idioms](idioms.md)
+### [React Idioms](idioms.md) — React-specific patterns and idiomatic framework usage
 
 Framework-specific patterns for writing idiomatic React applications.
 
@@ -186,7 +186,7 @@ Framework-specific patterns for writing idiomatic React applications.
 - Event handling in React
 - Controlled vs uncontrolled components
 
-### [React Best Practices](best-practices.md)
+### [React Best Practices](best-practices.md) — Production-ready React development standards for building maintainable, performant applications
 
 Proven approaches for building production-ready React applications.
 
@@ -203,7 +203,7 @@ Proven approaches for building production-ready React applications.
 - Code splitting and lazy loading
 - Security best practices
 
-### [React Anti-Patterns](anti-patterns.md)
+### [React Anti-Patterns](anti-patterns.md) — Common mistakes and problematic patterns to avoid in React development
 
 Common mistakes and problematic patterns to avoid.
 
@@ -296,7 +296,7 @@ flowchart LR
 
 Deep-dive documentation on critical React areas:
 
-#### [React Component Architecture](component-architecture.md)
+#### [React Component Architecture](component-architecture.md) — Component design patterns and architectural approaches for scalable React applications
 
 Guide to component design patterns.
 
@@ -313,7 +313,7 @@ Guide to component design patterns.
 - Atomic design methodology
 - Component testing strategies
 
-#### [React State Management](state-management.md)
+#### [React State Management](state-management.md) — State management patterns and strategies for React applications
 
 Guide to state management patterns.
 
@@ -330,7 +330,7 @@ Guide to state management patterns.
 - Optimistic updates
 - State testing strategies
 
-#### [React Hooks](hooks.md)
+#### [React Hooks](hooks.md) — Guide to React hooks including built-in and custom hooks
 
 Guide to React hooks.
 
@@ -349,7 +349,7 @@ Guide to React hooks.
 - Hooks rules and best practices
 - Hooks testing strategies
 
-#### [React TypeScript Integration](typescript.md)
+#### [React TypeScript Integration](typescript.md) — TypeScript patterns and best practices for React applications
 
 Guide to TypeScript with React.
 
@@ -368,7 +368,7 @@ Guide to TypeScript with React.
 - Discriminated unions in props
 - TypeScript best practices
 
-#### [React Testing](testing.md)
+#### [React Testing](testing.md) — Testing strategies for React applications with React Testing Library and Jest
 
 Guide to testing React applications.
 
@@ -387,7 +387,7 @@ Guide to testing React applications.
 - E2E testing with Playwright/Cypress
 - TDD workflow with React
 
-#### [React Performance](performance.md)
+#### [React Performance](performance.md) — Performance optimization strategies for React applications
 
 Guide to React performance optimization.
 
@@ -406,7 +406,7 @@ Guide to React performance optimization.
 - Avoiding unnecessary re-renders
 - Optimization strategies and trade-offs
 
-#### [React Routing](routing.md)
+#### [React Routing](routing.md) — Client-side routing patterns with React Router
 
 Guide to routing with React Router.
 
@@ -424,7 +424,7 @@ Guide to routing with React Router.
 - TypeScript with React Router
 - Testing routes
 
-#### [React Forms](forms.md)
+#### [React Forms](forms.md) — Form handling patterns and validation strategies in React
 
 Guide to form handling in React.
 
@@ -443,7 +443,7 @@ Guide to form handling in React.
 - Accessibility in forms
 - Testing forms
 
-#### [React Data Fetching](data-fetching.md)
+#### [React Data Fetching](data-fetching.md) — Data fetching patterns and strategies for React applications
 
 Guide to data fetching patterns.
 
@@ -462,7 +462,7 @@ Guide to data fetching patterns.
 - WebSocket integration
 - TypeScript with data fetching
 
-#### [React Styling](styling.md)
+#### [React Styling](styling.md) — Styling approaches and patterns for React applications
 
 Guide to styling React applications.
 
@@ -481,7 +481,7 @@ Guide to styling React applications.
 - Styling best practices
 - Performance considerations
 
-#### [React Accessibility](accessibility.md)
+#### [React Accessibility](accessibility.md) — Accessibility standards and patterns for inclusive React applications
 
 Guide to accessibility in React.
 
@@ -500,7 +500,7 @@ Guide to accessibility in React.
 - Accessibility in component libraries
 - Accessibility best practices
 
-#### [React Security](security.md)
+#### [React Security](security.md) — Security best practices and patterns for React applications
 
 Guide to security in React applications.
 
@@ -519,7 +519,7 @@ Guide to security in React applications.
 - OWASP Top 10 for frontend
 - Security testing
 
-#### [React Build & Deployment](build-deployment.md)
+#### [React Build & Deployment](build-deployment.md) — Build configuration and deployment strategies for React applications
 
 Guide to building and deploying React applications.
 
@@ -537,7 +537,7 @@ Guide to building and deploying React applications.
 - Monitoring and error tracking (Sentry)
 - Performance monitoring
 
-#### [React Version Migration](version-migration.md)
+#### [React Version Migration](version-migration.md) — Upgrading React versions and migration strategies
 
 Guide to upgrading React versions.
 
@@ -554,7 +554,7 @@ Guide to upgrading React versions.
 - Testing during migration
 - Third-party library compatibility
 
-#### [React Domain-Driven Design](domain-driven-design.md)
+#### [React Domain-Driven Design](domain-driven-design.md) — Implementing DDD patterns in React applications
 
 Guide to DDD patterns in React.
 
@@ -571,7 +571,7 @@ Guide to DDD patterns in React.
 - Hexagonal architecture for React apps
 - Financial examples: Zakat, Murabaha, Waqf UIs
 
-#### [React Functional Programming](functional-programming.md)
+#### [React Functional Programming](functional-programming.md) — Functional programming patterns and principles in React
 
 Guide to FP patterns in React.
 
@@ -1173,7 +1173,7 @@ describe('App Integration', () => {
 
 ### 1. Start with Idioms
 
-Read [React Idioms](idioms.md) to understand framework patterns:
+Read [React Idioms](idioms.md) — React-specific patterns and idiomatic framework usage — to understand framework patterns:
 
 - Functional components
 - Hooks basics (useState, useEffect, useContext)
@@ -1183,7 +1183,7 @@ Read [React Idioms](idioms.md) to understand framework patterns:
 
 ### 2. Apply Best Practices
 
-Read [React Best Practices](best-practices.md) for production standards:
+Read [React Best Practices](best-practices.md) — maintainable, performant application patterns — for production standards:
 
 - Project structure
 - Component design
@@ -1194,7 +1194,7 @@ Read [React Best Practices](best-practices.md) for production standards:
 
 ### 3. Avoid Anti-Patterns
 
-Read [React Anti-Patterns](anti-patterns.md) to prevent common mistakes:
+Read [React Anti-Patterns](anti-patterns.md) — patterns to avoid in React development — to prevent common mistakes:
 
 - Prop drilling
 - Unnecessary re-renders
@@ -1206,19 +1206,19 @@ Read [React Anti-Patterns](anti-patterns.md) to prevent common mistakes:
 
 Read specialized documentation:
 
-- [Component Architecture](component-architecture.md)
-- [State Management](state-management.md)
-- [Hooks](hooks.md)
-- [TypeScript](typescript.md)
-- [Performance](performance.md)
+- [Component Architecture](component-architecture.md) — Component design patterns and architectural approaches for scalable React applications
+- [State Management](state-management.md) — State management patterns and strategies for React applications
+- [Hooks](hooks.md) — Guide to React hooks including built-in and custom hooks
+- [TypeScript](typescript.md) — TypeScript patterns and best practices for React applications
+- [Performance](performance.md) — Performance optimization strategies for React applications
 
 ### 5. Integrate with DDD
 
 Read complementary documentation:
 
-- [Domain-Driven Design](domain-driven-design.md)
+- [Domain-Driven Design](domain-driven-design.md) — Implementing DDD patterns in React applications
 - [TypeScript DDD Patterns](../../../programming-languages/typescript/domain-driven-design.md)
-- [Functional Programming](functional-programming.md)
+- [Functional Programming](functional-programming.md) — Functional programming patterns and principles in React
 
 ## Code Examples from Platform
 
@@ -1738,29 +1738,29 @@ CMD ["npm", "run", "dev"]
 
 ### Core React Documentation
 
-- **[React Idioms](idioms.md)** - Framework patterns
-- **[React Best Practices](best-practices.md)** - Production standards
-- **[React Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[React Idioms](idioms.md) — Framework patterns**
+- **[React Best Practices](best-practices.md) — Production standards**
+- **[React Anti-Patterns](anti-patterns.md) — Common mistakes**
 
 ### Application Layer Documentation
 
-- **[Component Architecture](component-architecture.md)** - Component design
-- **[State Management](state-management.md)** - State patterns
-- **[Hooks](hooks.md)** - React hooks
-- **[TypeScript](typescript.md)** - TypeScript integration
+- **[Component Architecture](component-architecture.md) — Component design**
+- **[State Management](state-management.md) — State patterns**
+- **[Hooks](hooks.md) — React hooks**
+- **[TypeScript](typescript.md) — TypeScript integration**
 
 ### Advanced Topics
 
-- **[Performance](performance.md)** - Optimization
-- **[Testing](testing.md)** - Testing strategies
-- **[Accessibility](accessibility.md)** - WCAG compliance
-- **[Security](security.md)** - Security best practices
+- **[Performance](performance.md) — Optimization**
+- **[Testing](testing.md) — Testing strategies**
+- **[Accessibility](accessibility.md) — WCAG compliance**
+- **[Security](security.md) — Security best practices**
 
 ### Integration Documentation
 
-- **[Domain-Driven Design](domain-driven-design.md)** - DDD with React
-- **[Functional Programming](functional-programming.md)** - FP patterns
-- **[Version Migration](version-migration.md)** - Upgrading versions
+- **[Domain-Driven Design](domain-driven-design.md) — DDD with React**
+- **[Functional Programming](functional-programming.md) — FP patterns**
+- **[Version Migration](version-migration.md) — Upgrading versions**
 
 ### Platform Documentation
 

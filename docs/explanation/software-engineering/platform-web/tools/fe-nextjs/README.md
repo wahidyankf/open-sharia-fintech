@@ -37,11 +37,11 @@ This documentation covers Next.js 16+ with the App Router, TypeScript 5+, and Re
 
 All Next.js applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](idioms.md)** - Next.js-specific patterns
-2. **[Best Practices](best-practices.md)** - Framework standards
-3. **[Anti-Patterns](anti-patterns.md)** - Common mistakes
-4. **[App Router](app-router.md)** - App Router architecture
-5. **[Server Components](server-components.md)** - Server Components patterns
+1. **[Idioms](idioms.md) — Next.js-specific patterns**
+2. **[Best Practices](best-practices.md) — Framework standards**
+3. **[Anti-Patterns](anti-patterns.md) — Common mistakes**
+4. **[App Router](app-router.md) — App Router architecture**
+5. **[Server Components](server-components.md) — Server Components patterns**
 
 **For Agents**: Reference this documentation when building Next.js applications.
 
@@ -50,10 +50,10 @@ All Next.js applications MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Routing**: See [Routing](routing.md)
-- **Data Fetching**: See [Data Fetching](data-fetching.md)
-- **Testing**: See [Testing](testing.md)
-- **Performance**: See [Performance](performance.md)
+- **Routing**: See [Routing](routing.md) — Dynamic routes, route groups, parallel and intercepting routes
+- **Data Fetching**: See [Data Fetching](data-fetching.md) — Server-side fetching, caching, revalidation, and Server Actions
+- **Testing**: See [Testing](testing.md) — Component, Server Action, and E2E testing with Playwright
+- **Performance**: See [Performance](performance.md) — Image/font optimization, code splitting, and Web Vitals monitoring
 
 ## Software Engineering Principles
 
@@ -65,7 +65,7 @@ Next.js usage in this platform follows the software engineering principles from 
 4. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Server Components are pure, Server Actions handle side effects, functional core patterns
 5. **[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Next.js enables through Volta pinning, package-lock.json, consistent builds, predictable caching
 
-**See Also**: [Functional Programming](functional-programming.md) for FP patterns with Next.js.
+**See Also**: [Functional Programming](functional-programming.md) — for FP patterns with Next.js.
 
 ## Quick Reference
 
@@ -173,7 +173,7 @@ features in a single upgrade step. Next.js 15 features are therefore fully avail
 
 ## Documentation Structure
 
-### [Next.js Idioms](idioms.md)
+### [Next.js Idioms](idioms.md) — Framework-specific patterns for writing idiomatic Next.js applications
 
 Framework-specific patterns for writing idiomatic Next.js applications.
 
@@ -190,7 +190,7 @@ Framework-specific patterns for writing idiomatic Next.js applications.
 - Streaming with Suspense
 - Edge and Node.js runtimes
 
-### [Next.js Best Practices](best-practices.md)
+### [Next.js Best Practices](best-practices.md) — Proven approaches for building production-ready Next.js applications
 
 Proven approaches for building production-ready Next.js applications.
 
@@ -209,7 +209,7 @@ Proven approaches for building production-ready Next.js applications.
 - Security considerations (CSRF, XSS)
 - Deployment strategies
 
-### [Next.js Anti-Patterns](anti-patterns.md)
+### [Next.js Anti-Patterns](anti-patterns.md) — Common mistakes and problematic patterns to avoid
 
 Common mistakes and problematic patterns to avoid.
 
@@ -295,7 +295,7 @@ flowchart LR
 
 Deep-dive documentation on critical Next.js areas:
 
-#### [Next.js App Router](app-router.md)
+#### [Next.js App Router](app-router.md) — Guide to the App Router architecture
 
 Guide to the App Router architecture.
 
@@ -316,7 +316,7 @@ Guide to the App Router architecture.
 - Template vs Layout differences
 - Route segment configuration
 
-#### [Next.js Routing](routing.md)
+#### [Next.js Routing](routing.md) — Guide to routing patterns and navigation
 
 Guide to routing patterns and navigation.
 
@@ -335,7 +335,7 @@ Guide to routing patterns and navigation.
 - Route segment config (dynamic, revalidate)
 - TypeScript types for params and searchParams
 
-#### [Next.js Server Components](server-components.md)
+#### [Next.js Server Components](server-components.md) — Guide to React Server Components in Next.js
 
 Guide to React Server Components in Next.js.
 
@@ -354,7 +354,7 @@ Guide to React Server Components in Next.js.
 - Third-party library integration
 - Server Actions integration
 
-#### [Next.js Data Fetching](data-fetching.md)
+#### [Next.js Data Fetching](data-fetching.md) — Guide to data fetching strategies
 
 Guide to data fetching strategies.
 
@@ -373,7 +373,7 @@ Guide to data fetching strategies.
 - Data fetching in Server Components vs Route Handlers
 - Database access patterns (direct queries, ORMs)
 
-#### [Next.js Rendering](rendering.md)
+#### [Next.js Rendering](rendering.md) — Guide to rendering strategies
 
 Guide to rendering strategies.
 
@@ -391,7 +391,7 @@ Guide to rendering strategies.
 - Force dynamic with unstable_noStore
 - Runtime configuration (edge, nodejs)
 
-#### [Next.js API Routes](api-routes.md)
+#### [Next.js API Routes](api-routes.md) — Guide to API routes and route handlers
 
 Guide to API routes and route handlers.
 
@@ -411,7 +411,7 @@ Guide to API routes and route handlers.
 - File uploads
 - API versioning strategies
 
-#### [Next.js Middleware](middleware.md)
+#### [Next.js Middleware](middleware.md) — Guide to Edge middleware
 
 Guide to Edge middleware.
 
@@ -430,7 +430,7 @@ Guide to Edge middleware.
 - Middleware performance considerations
 - Chaining middleware logic
 
-#### [Next.js Performance](performance.md)
+#### [Next.js Performance](performance.md) — Guide to performance optimization
 
 Guide to performance optimization.
 
@@ -450,7 +450,7 @@ Guide to performance optimization.
 - Performance profiling
 - Edge vs Node.js runtime decisions
 
-#### [Next.js Testing](testing.md)
+#### [Next.js Testing](testing.md) — Guide to testing Next.js applications
 
 Guide to testing Next.js applications.
 
@@ -469,7 +469,7 @@ Guide to testing Next.js applications.
 - Testing metadata generation
 - Testing with different rendering strategies
 
-#### [Next.js Deployment](deployment.md)
+#### [Next.js Deployment](deployment.md) — Guide to deployment strategies
 
 Guide to deployment strategies.
 
@@ -488,7 +488,7 @@ Guide to deployment strategies.
 - Error tracking (Sentry integration)
 - CI/CD integration
 
-#### [Next.js Configuration](configuration.md)
+#### [Next.js Configuration](configuration.md) — Guide to Next.js configuration
 
 Guide to Next.js configuration.
 
@@ -507,7 +507,7 @@ Guide to Next.js configuration.
 - Runtime configuration
 - Output configuration (standalone, export)
 
-#### [Next.js Styling](styling.md)
+#### [Next.js Styling](styling.md) — Guide to styling approaches
 
 Guide to styling approaches.
 
@@ -526,7 +526,7 @@ Guide to styling approaches.
 - Animation and transitions
 - Styling Server vs Client Components
 
-#### [Next.js TypeScript](typescript.md)
+#### [Next.js TypeScript](typescript.md) — Guide to TypeScript integration
 
 Guide to TypeScript integration.
 
@@ -545,7 +545,7 @@ Guide to TypeScript integration.
 - Typing external libraries
 - Common TypeScript patterns in Next.js
 
-#### [Next.js Security](security.md)
+#### [Next.js Security](security.md) — Guide to security best practices
 
 Guide to security best practices.
 
@@ -564,7 +564,7 @@ Guide to security best practices.
 - Input validation and sanitization
 - OWASP Top 10 for Next.js applications
 
-#### [Next.js Accessibility](accessibility.md)
+#### [Next.js Accessibility](accessibility.md) — Guide to accessibility
 
 Guide to accessibility.
 
@@ -583,7 +583,7 @@ Guide to accessibility.
 - WCAG AA compliance checklist
 - Testing accessibility (axe, Lighthouse)
 
-#### [Next.js Domain-Driven Design](domain-driven-design.md)
+#### [Next.js Domain-Driven Design](domain-driven-design.md) — Guide to DDD patterns with Next.js
 
 Guide to DDD patterns with Next.js.
 
@@ -601,7 +601,7 @@ Guide to DDD patterns with Next.js.
 - CQRS patterns with Next.js
 - Financial examples: Zakat, Murabaha, Waqf features
 
-#### [Next.js Functional Programming](functional-programming.md)
+#### [Next.js Functional Programming](functional-programming.md) — Guide to FP patterns
 
 Guide to FP patterns.
 
@@ -618,7 +618,7 @@ Guide to FP patterns.
 - Functional testing strategies
 - FP libraries integration (fp-ts, Effect)
 
-#### [Next.js Version Migration](version-migration.md)
+#### [Next.js Version Migration](version-migration.md) — Guide to upgrading Next.js versions
 
 Guide to upgrading Next.js versions.
 
@@ -1205,7 +1205,7 @@ test.describe("Zakat Calculator", () => {
 
 ### 1. Start with Idioms
 
-Read [Next.js Idioms](idioms.md) to understand framework patterns:
+Read [Next.js Idioms](idioms.md) — to understand framework patterns:
 
 - App Router conventions
 - Server Components vs Client Components
@@ -1215,7 +1215,7 @@ Read [Next.js Idioms](idioms.md) to understand framework patterns:
 
 ### 2. Apply Best Practices
 
-Read [Next.js Best Practices](best-practices.md) for production standards:
+Read [Next.js Best Practices](best-practices.md) — for production standards:
 
 - Project structure
 - Rendering strategies
@@ -1225,7 +1225,7 @@ Read [Next.js Best Practices](best-practices.md) for production standards:
 
 ### 3. Avoid Anti-Patterns
 
-Read [Next.js Anti-Patterns](anti-patterns.md) to prevent mistakes:
+Read [Next.js Anti-Patterns](anti-patterns.md) — to prevent mistakes:
 
 - Unnecessary Client Components
 - Improper data fetching
@@ -1236,17 +1236,17 @@ Read [Next.js Anti-Patterns](anti-patterns.md) to prevent mistakes:
 
 Read architecture documentation:
 
-- [App Router](app-router.md)
-- [Server Components](server-components.md)
-- [Data Fetching](data-fetching.md)
-- [Rendering](rendering.md)
+- [App Router](app-router.md) — File-system routing, layouts, loading/error states, and route organization
+- [Server Components](server-components.md) — Server vs Client Component decisions, composition, and data fetching patterns
+- [Data Fetching](data-fetching.md) — Server-side fetching, caching, revalidation, and Server Actions
+- [Rendering](rendering.md) — SSR, SSG, ISR, streaming, and Partial Prerendering strategies
 
 ### 5. Integrate with DDD
 
 Read complementary documentation:
 
-- [Domain-Driven Design](domain-driven-design.md)
-- [Functional Programming](functional-programming.md)
+- [Domain-Driven Design](domain-driven-design.md) — Bounded contexts, aggregates, entities, and CQRS patterns with Next.js
+- [Functional Programming](functional-programming.md) — Immutability, pure functions, composition, and FP patterns for Server Components
 - [TypeScript DDD Patterns](../../../programming-languages/typescript/domain-driven-design.md)
 
 ## Code Examples from Platform
@@ -1575,29 +1575,29 @@ CMD ["node", "server.js"]
 
 ### Core Next.js Documentation
 
-- **[Next.js Idioms](idioms.md)** - Framework patterns
-- **[Next.js Best Practices](best-practices.md)** - Production standards
-- **[Next.js Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Next.js Idioms](idioms.md) — Framework patterns**
+- **[Next.js Best Practices](best-practices.md) — Production standards**
+- **[Next.js Anti-Patterns](anti-patterns.md) — Common mistakes**
 
 ### Architecture Documentation
 
-- **[App Router](app-router.md)** - Routing architecture
-- **[Server Components](server-components.md)** - RSC patterns
-- **[Data Fetching](data-fetching.md)** - Data strategies
-- **[Rendering](rendering.md)** - Rendering modes
+- **[App Router](app-router.md) — Routing architecture**
+- **[Server Components](server-components.md) — RSC patterns**
+- **[Data Fetching](data-fetching.md) — Data strategies**
+- **[Rendering](rendering.md) — Rendering modes**
 
 ### Advanced Topics
 
-- **[Performance](performance.md)** - Optimization
-- **[Testing](testing.md)** - Testing strategies
-- **[Security](security.md)** - Security practices
-- **[Deployment](deployment.md)** - Deployment patterns
+- **[Performance](performance.md) — Optimization**
+- **[Testing](testing.md) — Testing strategies**
+- **[Security](security.md) — Security practices**
+- **[Deployment](deployment.md) — Deployment patterns**
 
 ### Integration Documentation
 
-- **[Domain-Driven Design](domain-driven-design.md)** - DDD with Next.js
-- **[Functional Programming](functional-programming.md)** - FP patterns
-- **[Version Migration](version-migration.md)** - Upgrading
+- **[Domain-Driven Design](domain-driven-design.md) — DDD with Next.js**
+- **[Functional Programming](functional-programming.md) — FP patterns**
+- **[Version Migration](version-migration.md) — Upgrading**
 
 ### Platform Documentation
 

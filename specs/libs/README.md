@@ -4,8 +4,8 @@ title: "Libs"
 
 # Libs
 
-- [Fsharp Crane Core](./fsharp-crane-core/README.md)
-- [Fsharp Env Loader](./fsharp-env-loader/README.md)
-- [Ts Env Loader](./ts-env-loader/README.md)
-- [Web Ui Token](./web-ui-token/README.md)
-- [Web Ui](./web-ui/README.md)
+- [Fsharp Crane Core](./fsharp-crane-core/README.md) — Behavioral corpus for the shared F# domain core for PDF-to-Markdown conversion and verification
+- [Fsharp Env Loader](./fsharp-env-loader/README.md) — Behavioral corpus for the shared tiered `.env` loader and runtime port resolver for F# backends
+- [Ts Env Loader](./ts-env-loader/README.md) — Behavioral corpus for the shared tiered `.env` loader for TypeScript apps
+- [Web Ui Token](./web-ui-token/README.md) — Behavioral corpus for the shared design-token package
+- [Web Ui](./web-ui/README.md) — Behavioral corpus for the shared React component library

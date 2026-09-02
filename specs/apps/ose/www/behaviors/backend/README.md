@@ -40,8 +40,8 @@ path (`/feed.xml`, `/sitemap.xml`).
 
 - **Parent**: [`../../README.md`](../../README.md)
 - **web perspective counterpart**: [`../../web/gherkin/`](../frontend/README.md)
-- [content — platform-be Gherkin Domain](./content/README.md)
-- [health — platform-be Gherkin Domain](./health/README.md)
-- [rss-feed — platform-be Gherkin Domain](./rss-feed/README.md)
-- [search — platform-be Gherkin Domain](./search/README.md)
-- [seo — platform-be Gherkin Domain](./seo/README.md)
+- [content](./content/README.md) — platform-be Gherkin Domain
+- [health](./health/README.md) — platform-be Gherkin Domain
+- [rss-feed](./rss-feed/README.md) — platform-be Gherkin Domain
+- [search](./search/README.md) — platform-be Gherkin Domain
+- [seo](./seo/README.md) — platform-be Gherkin Domain

@@ -28,5 +28,5 @@ specs/libs/fsharp-env-loader/
 driven by
 `libs/fsharp-env-loader/tests/unit/Behavior/FsharpEnvLoaderBehaviorDriver.fs` via TickSpec.
 
-- [Architecture — fsharp-env-loader](./architecture.md)
-- [Behaviors — fsharp-env-loader](./behaviors/README.md)
+- [Architecture](./architecture.md) — fsharp-env-loader
+- [Behaviors](./behaviors/README.md) — fsharp-env-loader

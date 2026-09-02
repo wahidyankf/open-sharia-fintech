@@ -4,9 +4,9 @@ Gherkin feature files for AyoKoding build-time tooling.
 
 ## Feature Files
 
-- **[index-generation/](./index-generation/README.md)** — Content index generation scenarios
-- **[benchmark-reference-generation/](./benchmark-reference-generation/README.md)** — Benchmark reference table generation scenarios
-- **[env-loader/](./env-loader/README.md)** — `APP_ENV` tier env-file loader scenarios
+- **[index-generation/](./index-generation/README.md) — Content index generation scenarios**
+- **[benchmark-reference-generation/](./benchmark-reference-generation/README.md) — Benchmark reference table generation scenarios**
+- **[env-loader/](./env-loader/README.md) — `APP_ENV` tier env-file loader scenarios**
 
 ## Related
 

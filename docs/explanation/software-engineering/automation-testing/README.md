@@ -23,12 +23,12 @@ This section explains the testing tools and patterns used in this repository. It
 
 ## Start with the question
 
-| If you need to understand…                                      | Start here                                                              |
-| --------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| How browser journeys are automated                              | [Playwright](./tools/playwright/README.md)                              |
-| Which automation tool pages exist                               | [Testing tools](./tools/README.md)                                      |
-| How automated checks fit alongside unit and integration testing | [Software Development Practices](../development/README.md)              |
-| The repository's required quality gates                         | [Code quality](../../../../repo-governance/development/quality/code.md) |
+| If you need to understand…                                      | Start here                                                                                            |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| How browser journeys are automated                              | [Playwright](./tools/playwright/README.md)                                                            |
+| Which automation tool pages exist                               | [Testing tools](./tools/README.md) — Find the automation tool guidance used by open-sharia-enterprise |
+| How automated checks fit alongside unit and integration testing | [Software Development Practices](../development/README.md)                                            |
+| The repository's required quality gates                         | [Code quality](../../../../repo-governance/development/quality/code.md)                               |
 
 ## What automated browser checks are for
 

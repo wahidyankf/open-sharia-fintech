@@ -49,18 +49,18 @@ graph TD
 
 **Decision Matrix**:
 
-| Your Situation                          | Recommended Approach   | Start With                                                            |
-| --------------------------------------- | ---------------------- | --------------------------------------------------------------------- |
-| Complex business rules + domain experts | BDD + TDD              | [BDD Three Amigos](./behavior-driven-development-bdd/README.md)       |
-| Technical library or framework          | TDD Only               | [TDD Red-Green-Refactor](./test-driven-development-tdd/README.md)     |
-| API with business logic                 | BDD + TDD              | [Outside-In TDD](./test-driven-development-tdd/README.md)             |
-| Pure functions and algorithms           | TDD Only               | [TDD and FP](./test-driven-development-tdd/README.md)                 |
-| Legacy code without tests               | TDD (Characterization) | [TDD Characterization Tests](./test-driven-development-tdd/README.md) |
-| New feature with acceptance criteria    | BDD + TDD              | [BDD Gherkin Scenarios](./behavior-driven-development-bdd/README.md)  |
+| Your Situation                          | Recommended Approach   | Start With                                                                                                                                                |
+| --------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Complex business rules + domain experts | BDD + TDD              | [BDD Three Amigos](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios and Three Amigos collaboration         |
+| Technical library or framework          | TDD Only               | [TDD Red-Green-Refactor](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing     |
+| API with business logic                 | BDD + TDD              | [Outside-In TDD](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing             |
+| Pure functions and algorithms           | TDD Only               | [TDD and FP](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing                 |
+| Legacy code without tests               | TDD (Characterization) | [TDD Characterization Tests](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing |
+| New feature with acceptance criteria    | BDD + TDD              | [BDD Gherkin Scenarios](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios and Three Amigos collaboration    |
 
 ## Documentation Structure
 
-### 🧪 [Test-Driven Development (TDD)](./test-driven-development-tdd/README.md)
+### 🧪 [Test-Driven Development (TDD)](./test-driven-development-tdd/README.md) — Red-Green-Refactor cycle, testing frameworks, and domain-driven testing
 
 **Red-Green-Refactor cycle for building reliable software**
 
@@ -83,7 +83,7 @@ Test-Driven Development is a software development approach where tests are writt
 - Document expected behavior through executable examples
 - Practice disciplined, incremental development
 
-### 🎭 [Behavior-Driven Development (BDD)](./behavior-driven-development-bdd/README.md)
+### 🎭 [Behavior-Driven Development (BDD)](./behavior-driven-development-bdd/README.md) — Gherkin scenarios, Three Amigos collaboration, and acceptance testing
 
 **Specification by example using Gherkin scenarios**
 
@@ -166,7 +166,7 @@ graph TD
 
 **Legend**: 🟢 Teal = Passing tests (GREEN) | 🟠 Orange = Failing tests (RED) | 🟤 Brown = Refactoring
 
-See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md) for integration patterns and OSE Platform examples.
+See [TDD Standards](test-driven-development-tdd/README.md) — [BDD Standards](behavior-driven-development-bdd/README.md) for integration patterns and OSE Platform examples.
 
 ## Applying Standards by Role
 
@@ -192,7 +192,7 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 **Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
-1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md)
+1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) — [BDD Standards](behavior-driven-development-bdd/README.md)
 2. **Architecture Integration** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md)
 3. **Testing Strategy** - Use decision matrices above to guide team approach
 4. **Living Documentation** - Implement [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md)

@@ -27,5 +27,5 @@ by `libs/ts-env-loader/src/env-loader.unit.test.ts`, and every scenario in
 [behaviors/port-resolver/port-resolver.feature](./behaviors/port-resolver/port-resolver.feature)
 by `libs/ts-env-loader/src/port-resolver.unit.test.ts` — both via `@amiceli/vitest-cucumber`.
 
-- [Architecture — ts-env-loader](./architecture.md)
-- [Behaviors — ts-env-loader](./behaviors/README.md)
+- [Architecture](./architecture.md) — ts-env-loader
+- [Behaviors](./behaviors/README.md) — ts-env-loader

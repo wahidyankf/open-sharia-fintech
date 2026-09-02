@@ -78,9 +78,9 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 **MUST follow these mandatory standards for all FSM implementations in OSE Platform:**
 
-1. **[State Machine Standards](./state-machine-standards.md)** - When to use FSM, state design, Procure-to-Pay state machines
-2. **[Framework Standards](./framework-standards.md)** - Spring State Machine (Java), XState (TypeScript), framework selection
-3. **[Integration Standards](./integration-standards.md)** - DDD aggregate integration, domain event publishing
+1. **[State Machine Standards](./state-machine-standards.md) — When to use FSM, state design, Procure-to-Pay state machines**
+2. **[Framework Standards](./framework-standards.md) — Spring State Machine (Java), XState (TypeScript), framework selection**
+3. **[Integration Standards](./integration-standards.md) — DDD aggregate integration, domain event publishing**
 
 ## When to Use FSM
 
@@ -106,7 +106,7 @@ FSM in OSE Platform enforces foundational software engineering principles:
 - Pure data validation (use value objects)
 - UI state management only (use component state)
 
-**See**: [State Machine Standards](./state-machine-standards.md)
+**See**: [State Machine Standards](./state-machine-standards.md) — When to use FSM, state design, and Procure-to-Pay state machines
 
 ## OSE Platform State Machines
 
@@ -166,7 +166,7 @@ FSM in OSE Platform enforces foundational software engineering principles:
 - Cannot issue purchase orders to `SUSPENDED` or `INACTIVE` suppliers
 - `SUSPENDED` MUST record reason
 
-**See**: [State Machine Standards](./state-machine-standards.md#ose-platform-state-machines)
+**See**: [State Machine Standards](./state-machine-standards.md#ose-platform-state-machines) — Purchase Order, Invoice, and Supplier state machine definitions
 
 ## Framework Selection
 
@@ -263,7 +263,7 @@ public sealed class PurchaseOrderStateMachineConfig
 }
 ```
 
-**See**: [Framework Standards](./framework-standards.md#spring-state-machine-java)
+**See**: [Framework Standards](./framework-standards.md#spring-state-machine-java) — Spring State Machine configuration for Java
 
 ### XState (TypeScript/JavaScript)
 
@@ -302,7 +302,7 @@ const purchaseOrderMachine = createMachine({
 });
 ```
 
-**See**: [Framework Standards](./framework-standards.md#xstate-typescript)
+**See**: [Framework Standards](./framework-standards.md#xstate-typescript) — XState configuration for TypeScript
 
 ## Integration with DDD Aggregates
 
@@ -387,7 +387,7 @@ public sealed class PurchaseOrder
 }
 ```
 
-**See**: [Integration Standards](./integration-standards.md)
+**See**: [Integration Standards](./integration-standards.md) — DDD aggregate integration and domain event publishing
 
 ## Documentation Structure
 
@@ -395,9 +395,9 @@ public sealed class PurchaseOrder
 
 **Mandatory Standards (All developers MUST follow)**:
 
-1. [State Machine Standards](./state-machine-standards.md) - When to use FSM, state design
-2. [Framework Standards](./framework-standards.md) - Spring SSM, XState configuration
-3. [Integration Standards](./integration-standards.md) - DDD aggregate integration
+1. [State Machine Standards](./state-machine-standards.md) — When to use FSM, state design
+2. [Framework Standards](./framework-standards.md) — Spring SSM, XState configuration
+3. [Integration Standards](./integration-standards.md) — DDD aggregate integration
 
 ## Validation and Compliance
 

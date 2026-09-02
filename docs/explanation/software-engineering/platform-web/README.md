@@ -41,7 +41,7 @@ Understanding framework-specific patterns and best practices helps developers:
 
 ### Technology Stacks
 
-- **[Tools Index](tools/README.md)** - All web development frameworks and tools organized by technology stack
+- **[Tools Index](tools/README.md) — All web development frameworks and tools organized by technology stack**
 
 Each stack directory contains documentation for frameworks and libraries specific to that ecosystem:
 

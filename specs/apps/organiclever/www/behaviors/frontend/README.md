@@ -37,6 +37,6 @@ specs/apps/organiclever/www/behaviors/frontend/
 - **App-client counterpart**: [organiclever-app-web behavior specs](../../../app-web/behaviors/README.md)
 - **Parent**: [behavior specs](../../README.md)
 
-- [accessibility — organiclever-www Gherkin Domain](./accessibility/README.md)
-- [env-loader — organiclever-www Gherkin Domain](./env-loader/README.md)
-- [home — organiclever-www Gherkin Domain](./home/README.md)
+- [accessibility — organiclever-www Gherkin Domain](./accessibility/README.md) — WCAG accessibility compliance scenarios for the marketing site
+- [env-loader — organiclever-www Gherkin Domain](./env-loader/README.md) — Scenarios for the Next.js APP_ENV tier env-file loader
+- [home — organiclever-www Gherkin Domain](./home/README.md) — Marketing landing page scenarios (hero, features, principles)

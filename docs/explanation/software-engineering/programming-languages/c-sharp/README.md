@@ -151,18 +151,18 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 
 **MUST follow these mandatory standards for all C# code in OSE Platform:**
 
-1. **[Coding Standards](coding-standards.md)** - Naming conventions, namespace organization, C# 12 idioms, anti-patterns
-2. **[Testing Standards](testing-standards.md)** - xUnit, FluentAssertions, Moq, TestContainers.Net, WebApplicationFactory
-3. **[Code Quality Standards](code-quality-standards.md)** - Roslyn analyzers, dotnet format, .editorconfig, nullable reference types
-4. **[Build Configuration](build-configuration.md)** - .csproj SDK-style, Directory.Build.props, NuGet Central Package Management
-5. **[Error Handling Standards](error-handling-standards.md)** - Exception hierarchy, ProblemDetails, Result pattern, global middleware
-6. **[Concurrency Standards](concurrency-standards.md)** - async/await, CancellationToken, Channel<T>, Parallel.ForEachAsync
-7. **[Performance Standards](performance-standards.md)** - Span<T>, ArrayPool<T>, BenchmarkDotNet, dotnet-trace profiling
-8. **[Security Standards](security-standards.md)** - Data Protection API, JWT, FluentValidation, CORS, secrets management
-9. **[API Standards](api-standards.md)** - Controller-based vs Minimal API, versioning, OpenAPI, CQRS with MediatR
-10. **[DDD Standards](ddd-standards.md)** - Value Objects with records, Aggregate roots, Domain Events, Clean Architecture
-11. **[Framework Integration](framework-integration.md)** - ASP.NET Core DI, EF Core configuration, SignalR, middleware pipeline
-12. **[Type Safety Standards](type-safety-standards.md)** - Nullable reference types, generics, discriminated unions, pattern matching
+1. **[Coding Standards](coding-standards.md) — Naming conventions, namespace organization, C# 12 idioms, anti-patterns**
+2. **[Testing Standards](testing-standards.md) — xUnit, FluentAssertions, Moq, TestContainers.Net, WebApplicationFactory**
+3. **[Code Quality Standards](code-quality-standards.md) — Roslyn analyzers, dotnet format, .editorconfig, nullable reference types**
+4. **[Build Configuration](build-configuration.md) — .csproj SDK-style, Directory.Build.props, NuGet Central Package Management**
+5. **[Error Handling Standards](error-handling-standards.md) — Exception hierarchy, ProblemDetails, Result pattern, global middleware**
+6. **[Concurrency Standards](concurrency-standards.md) — async/await, CancellationToken, Channel<T>, Parallel.ForEachAsync**
+7. **[Performance Standards](performance-standards.md) — Span<T>, ArrayPool<T>, BenchmarkDotNet, dotnet-trace profiling**
+8. **[Security Standards](security-standards.md) — Data Protection API, JWT, FluentValidation, CORS, secrets management**
+9. **[API Standards](api-standards.md) — Controller-based vs Minimal API, versioning, OpenAPI, CQRS with MediatR**
+10. **[DDD Standards](ddd-standards.md) — Value Objects with records, Aggregate roots, Domain Events, Clean Architecture**
+11. **[Framework Integration](framework-integration.md) — ASP.NET Core DI, EF Core configuration, SignalR, middleware pipeline**
+12. **[Type Safety Standards](type-safety-standards.md) — Nullable reference types, generics, discriminated unions, pattern matching**
 
 ## Documentation Structure
 
@@ -170,21 +170,21 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 
 **Mandatory Standards (All C# Developers MUST follow)**:
 
-1. [Coding Standards](coding-standards.md) - Naming, namespace structure, C# 12 idioms compliance
-2. [Testing Standards](testing-standards.md) - xUnit, FluentAssertions, coverage requirements
-3. [Code Quality Standards](code-quality-standards.md) - Roslyn analyzers, dotnet format, nullable reference types
+1. [Coding Standards](coding-standards.md) — Naming, namespace structure, C# 12 idioms compliance
+2. [Testing Standards](testing-standards.md) — xUnit, FluentAssertions, coverage requirements
+3. [Code Quality Standards](code-quality-standards.md) — Roslyn analyzers, dotnet format, nullable reference types
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](security-standards.md) - JWT, CORS, secrets for user-facing services
-- **Concurrency**: [Concurrency Standards](concurrency-standards.md) - async/await, CancellationToken for asynchronous code
-- **Domain Modeling**: [DDD Standards](ddd-standards.md) - records, aggregates, value objects for business domains
-- **APIs**: [API Standards](api-standards.md) - REST conventions, versioning for HTTP endpoints
-- **Performance**: [Performance Standards](performance-standards.md) - Span<T>, profiling for optimization
-- **Error Handling**: [Error Handling Standards](error-handling-standards.md) - ProblemDetails, Result pattern for resilience
-- **Build**: [Build Configuration](build-configuration.md) - .csproj, NuGet Central Package Management
-- **Framework**: [Framework Integration](framework-integration.md) - ASP.NET Core DI, EF Core for web services
-- **Type Safety**: [Type Safety Standards](type-safety-standards.md) - Nullable reference types, generics, pattern matching
+- **Security**: [Security Standards](security-standards.md) — JWT, CORS, secrets for user-facing services
+- **Concurrency**: [Concurrency Standards](concurrency-standards.md) — async/await, CancellationToken for asynchronous code
+- **Domain Modeling**: [DDD Standards](ddd-standards.md) — records, aggregates, value objects for business domains
+- **APIs**: [API Standards](api-standards.md) — REST conventions, versioning for HTTP endpoints
+- **Performance**: [Performance Standards](performance-standards.md) — Span<T>, profiling for optimization
+- **Error Handling**: [Error Handling Standards](error-handling-standards.md) — ProblemDetails, Result pattern for resilience
+- **Build**: [Build Configuration](build-configuration.md) — .csproj, NuGet Central Package Management
+- **Framework**: [Framework Integration](framework-integration.md) — ASP.NET Core DI, EF Core for web services
+- **Type Safety**: [Type Safety Standards](type-safety-standards.md) — Nullable reference types, generics, pattern matching
 
 ### Documentation Organization
 

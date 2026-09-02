@@ -17,11 +17,11 @@ Backend (HTTP-semantic) Gherkin scenarios for `ose-be`. Consumed by xUnit + Tick
 | [messaging/jetstream-demo.feature](./messaging/jetstream-demo.feature) | messaging         |
 | [config/env-tier-loading.feature](./config/env-tier-loading.feature)   | config            |
 
-- [ai-orchestration — ose-be Gherkin Domain](./ai-orchestration/README.md)
-- [config — ose-be Gherkin Domain](./config/README.md)
-- [db — ose-be Gherkin Domain](./db/README.md)
-- [gap-analysis — ose-be Gherkin Domain](./gap-analysis/README.md)
-- [health — ose-be Gherkin Domain](./health/README.md)
-- [internal-policy — ose-be Gherkin Domain](./internal-policy/README.md)
-- [messaging — ose-be Gherkin Domain](./messaging/README.md)
-- [regulatory-source — ose-be Gherkin Domain](./regulatory-source/README.md)
+- [ai-orchestration](./ai-orchestration/README.md) — ose-be Gherkin Domain
+- [config](./config/README.md) — ose-be Gherkin Domain
+- [db](./db/README.md) — ose-be Gherkin Domain
+- [gap-analysis](./gap-analysis/README.md) — ose-be Gherkin Domain
+- [health](./health/README.md) — ose-be Gherkin Domain
+- [internal-policy](./internal-policy/README.md) — ose-be Gherkin Domain
+- [messaging](./messaging/README.md) — ose-be Gherkin Domain
+- [regulatory-source](./regulatory-source/README.md) — ose-be Gherkin Domain

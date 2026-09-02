@@ -69,6 +69,6 @@ generated files) triggers a cache miss and re-runs affected test targets.
 - Every schema must have a `description`
 - Changes to this contract trigger codegen for both apps via Nx dependency graph
 
-- [generated — Organiclever Contracts](./generated/README.md)
-- [paths — Organiclever Contracts](./paths/README.md)
-- [schemas — Organiclever Contracts](./schemas/README.md)
+- [generated](./generated/README.md) — Organiclever Contracts
+- [paths](./paths/README.md) — Organiclever Contracts
+- [schemas](./schemas/README.md) — Organiclever Contracts

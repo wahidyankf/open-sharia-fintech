@@ -188,19 +188,19 @@ cli/behaviors/
 See [Specs Directory Structure Convention](../../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.
 
-- [Contracts Domain](./contracts/README.md)
-- [rhino — cli/behaviors/convention](./convention/README.md)
-- [rhino — cli/behaviors/env](./env/README.md)
-- [Env-Contract Domain](./env-contract/README.md)
-- [Gate Gherkin Specs](./gate/README.md)
-- [rhino — cli/behaviors/git](./git/README.md)
-- [rhino — cli/behaviors/governance](./governance/README.md)
-- [rhino — cli/behaviors/harness](./harness/README.md)
-- [rhino — cli/behaviors/md](./md/README.md)
-- [Repo-Config Domain](./repo-config/README.md)
-- [Repo-Config-Validate Domain](./repo-config-validate/README.md)
-- [rhino — cli/behaviors/repo-governance](./repo-governance/README.md)
-- [rhino — cli/behaviors/spec-coverage](./spec-coverage/README.md)
-- [Specs Domain](./specs/README.md)
-- [rhino — cli/behaviors/system](./system/README.md)
-- [Test Coverage Domain](./test-coverage/README.md)
+- [Contracts Domain](./contracts/README.md) — Gherkin specs for rhino-cli contract scaffolding commands (contracts dart-scaffold).
+- [rhino](./convention/README.md) — cli/behaviors/convention
+- [rhino](./env/README.md) — cli/behaviors/env
+- [Env-Contract Domain](./env-contract/README.md) — Gherkin specs for env validate's IaC (terraform/ansible) dispatch surface.
+- [Gate Gherkin Specs](./gate/README.md) — Gherkin specs for the registry-driven gate command family (declaration, emission, execution, validation).
+- [rhino](./git/README.md) — cli/behaviors/git
+- [rhino](./governance/README.md) — cli/behaviors/governance
+- [rhino](./harness/README.md) — cli/behaviors/harness
+- [rhino](./md/README.md) — cli/behaviors/md
+- [Repo-Config Domain](./repo-config/README.md) — Gherkin specs proving per-repo behavior is read from repo-config.yml rather than hard-coded.
+- [Repo-Config-Validate Domain](./repo-config-validate/README.md) — Gherkin specs for the repo-config validate schema-parity gate.
+- [rhino](./repo-governance/README.md) — cli/behaviors/repo-governance
+- [rhino](./spec-coverage/README.md) — cli/behaviors/spec-coverage
+- [Specs Domain](./specs/README.md) — Gherkin specs for the specs subcommand family (coverage, structure, and audit validators).
+- [rhino](./system/README.md) — cli/behaviors/system
+- [Test Coverage Domain](./test-coverage/README.md) — Gherkin specs for rhino-cli test-coverage commands (diff, merge, validate).
