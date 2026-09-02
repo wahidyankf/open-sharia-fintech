@@ -22,10 +22,10 @@ A developer adds a `GET /api/products/:id` endpoint to `organiclever-be`.
 
 They:
 
-1. Update `specs/apps/organiclever/containers/contracts/` (OpenAPI spec) with the new endpoint definition
+1. Update `specs/apps/organiclever/be/contracts/` (OpenAPI spec) with the new endpoint definition
 2. Run `nx run organiclever-contracts:codegen` and related codegen targets
-3. Add a Gherkin scenario to `specs/apps/organiclever/behavior/organiclever-be/gherkin/products/get-product.feature`
-4. Update the C4 component diagram in `specs/apps/organiclever/system-context/` if the endpoint belongs to a new component
+3. Add a Gherkin scenario to `specs/apps/organiclever/be/behaviors/products/get-product.feature`
+4. Update `specs/apps/organiclever/be/architecture.md` if the endpoint belongs to a new component
 5. Implement the endpoint in `apps/organiclever-be/`
 
 All changes are in a single commit or PR.

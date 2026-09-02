@@ -17,7 +17,7 @@ coverage:
   projects:
     - name: organiclever-app-web
       levels: [unit]
-      specs: "specs/apps/organiclever/behavior/app-web/**"
+      specs: "specs/apps/organiclever/app-web/behaviors/**"
 ```
 
 `name` is an Nx project name, `levels` is a list containing only `unit`, `integration`, or `e2e`,
@@ -37,11 +37,11 @@ testing:
         state: identity
         legacy:
           present: true
-          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          corpus: "specs/apps/organiclever/app-web/behaviors/**"
           levels: [unit]
         canonical:
           owner: organiclever-app-web
-          corpus: "specs/apps/organiclever/behavior/app-web/**"
+          corpus: "specs/apps/organiclever/app-web/behaviors/**"
           runtimes:
             - level: unit
               project: organiclever-app-web
@@ -54,7 +54,7 @@ testing:
         lifecycle-state: active
         owner: organiclever-app-web
         corpus:
-          - "specs/apps/organiclever/behavior/app-web/**"
+          - "specs/apps/organiclever/app-web/behaviors/**"
         adapters:
           unit:
             disposition: required

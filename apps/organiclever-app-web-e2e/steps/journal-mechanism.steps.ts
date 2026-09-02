@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Journal Mechanism feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature
  *
  * PGlite is exposed as `globalThis.__ol_db` in dev/test mode. This lets step
  * definitions assert database state directly via SQL without going through the
@@ -342,7 +342,7 @@ Then("I see empty-state copy {string}", async ({ page }, copyText: string) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Empty state on first visit
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Empty state on first visit
 Then("I see a focusable button labelled {string}", async ({ page }, label: string) => {
   // "Add entry" was the old button label. The new FAB is "Log entry".
   const mappedLabel = label === "Add entry" ? "Log entry" : label;
@@ -488,7 +488,7 @@ Then("the form sheet closes", async ({ page }) => {
   await expect(page.getByText("Log reading")).not.toBeVisible({ timeout: 2000 });
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Submitting invalid JSON payload is rejected
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Submitting invalid JSON payload is rejected
 Then("the form sheet remains open", async ({ page }) => {
   // Old concept: entry-form-sheet stayed open on validation error.
   // New concept: when a batch has invalid entries (empty name), we don't flush —
@@ -498,7 +498,7 @@ Then("the form sheet remains open", async ({ page }) => {
   });
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Removing a draft from the sheet before saving
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Removing a draft from the sheet before saving
 Then("the sheet shows one draft", async ({ page }) => {
   // Old concept: one draft item in the multi-draft form.
   // New concept: AddEntrySheet is open (or home screen is visible).
@@ -546,7 +546,7 @@ When("I click the {string} preset chip on draft {int}", async ({ page }, chipLab
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Preset name chips fill the name input of the focused draft
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Preset name chips fill the name input of the focused draft
 Then(
   "the {string} input of draft {int} has the value {string}",
   async ({ page }, _fieldType: string, _draftNum: number, expectedValue: string) => {
@@ -724,7 +724,7 @@ Then("the newest entry {string} appears first in the list", async ({ page }, nam
   expect(newestName).toBe(name);
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Batch timestamp + sort across batches
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Batch timestamp + sort across batches
 Then("the three earlier entries appear after, in their original within-batch order", async ({ page }) => {
   // Entries at index 1, 2, 3 (oldest-to-newer after the newest) must exist.
   const count = await dbEntryCount(page);
@@ -758,7 +758,7 @@ Then(
   },
 );
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Persisting entries across reload
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Persisting entries across reload
 Then("the order is preserved \\(newest first)", async ({ page }) => {
   // After reload the DB still has entries. Verify count > 0.
   const count = await dbEntryCount(page);
@@ -829,7 +829,7 @@ Then("the {string} entry's {string} is unchanged", async ({ page }, name: string
   expect(createdAt).toBeTruthy();
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Editing an entry refreshes updatedAt without reordering
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Editing an entry refreshes updatedAt without reordering
 Then(
   "the {string} entry's {string} is later than its {string}",
   async ({ page }, name: string, laterField: string, earlierField: string) => {
@@ -908,7 +908,7 @@ Then(
   },
 );
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Storage unavailable surfaces a typed error banner
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Storage unavailable surfaces a typed error banner
 Then('no {string} button is rendered while `state.status !== "ready"`', async ({ page }, _label: string) => {
   // Assert the page loaded at minimum.
   await expect(page.locator("body")).toBeVisible({ timeout: 5000 });
@@ -942,7 +942,7 @@ When("I click the {string} disclosure on that entry", async ({ page }, _disclosu
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Expanding payload preview shows the full JSON
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Expanding payload preview shows the full JSON
 Then("the row expands to show the full pretty-printed JSON payload", async ({ page }) => {
   // In the new AppRoot the EntryDetailSheet opens as a bottom sheet overlay.
   // Verify the sheet opened (Close button is visible in EntryDetailSheet).
@@ -1146,7 +1146,7 @@ Then(
   },
 );
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Bumping (bring to top) mutates createdAt and reorders
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Bumping (bring to top) mutates createdAt and reorders
 Then(
   "PGlite database {string} \\(IndexedDB) reflects the new {string} for the {string} entry",
   async ({ page }, _dbName: string, _field: string, name: string) => {
@@ -1170,8 +1170,8 @@ Then(
 // Database state assertions
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Adding a single entry
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Deleting an entry requires confirmation
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Adding a single entry
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Deleting an entry requires confirmation
 Then(
   "PGlite database {string} \\(IndexedDB) contains exactly one entry with name {string}",
   async ({ page }, _dbName: string, name: string) => {
@@ -1191,7 +1191,7 @@ Then(
   },
 );
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Adding a batch of three drafts
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Adding a batch of three drafts
 Then(
   "PGlite database {string} \\(IndexedDB) contains exactly three entries \\(no nested arrays)",
   async ({ page }, _dbName: string) => {
@@ -1209,8 +1209,8 @@ Then(
   },
 );
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Cancelling the form discards every draft
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Mixed-validity batch is rejected as a whole
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Cancelling the form discards every draft
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Mixed-validity batch is rejected as a whole
 Then("PGlite database {string} \\(IndexedDB) remains empty", async ({ page }, _dbName: string) => {
   const count = await page.evaluate(async () => {
     const res = await (
@@ -1241,7 +1241,7 @@ When("I hard-reload the page", async ({ page }) => {
   await waitForOlDb(page);
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/journal/journal-mechanism.feature:Bump persists across reload
+// @covers specs/apps/organiclever/app-web/behaviors/journal/journal-mechanism.feature:Bump persists across reload
 Then("the {string} entry still appears first", async ({ page }, name: string) => {
   // Verify via DB: newest entry (highest created_at) has this name.
   const newestName = await page.evaluate(async () => {

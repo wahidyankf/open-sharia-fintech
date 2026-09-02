@@ -17,20 +17,20 @@ encodes ordered execution phases left-to-right (e.g., `test-local-deploy-stag`).
 [GitHub Actions Workflow Naming Convention](../github-actions-workflow-naming.md) for the complete
 grammar, allowed tokens, and the rule that the workflow `name:` field must mirror the filename.
 
-| Entity                    | Pattern                                                                                      | Example                                                     |
-| ------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Backend app               | `{domain}-be` or `{domain}-be-{lang}-{framework}`                                            | `organiclever-be`                                           |
-| Frontend app              | `{domain}-app-web`                                                                           | `organiclever-app-web`                                      |
-| www site app              | `{domain}-www`                                                                               | `organiclever-www`                                          |
-| Infra dev directory       | `infra/dev/{app-name}/`                                                                      | `infra/dev/organiclever-be/`                                |
-| Specs directory           | See [Specs Directory Structure](../../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/behavior/organiclever-be/gherkin/` |
-| Reusable workflow         | `_reusable-{purpose}.yml`                                                                    | `_reusable-app-test-local-deploy-stag.yml`                  |
-| www deploy workflow       | `{domain}-www-test-local-deploy-prod.yml`                                                    | `organiclever-www-test-local-deploy-prod.yml`               |
-| App staging workflow      | `{domain}-app-test-local-deploy-stag.yml`                                                    | `organiclever-app-test-local-deploy-stag.yml`               |
-| App staging-gate workflow | `{domain}-app-test-stag.yml`                                                                 | `organiclever-app-test-stag.yml`                            |
-| BE build+deploy workflow  | `{domain}-be-build-deploy-stag.yml`                                                          | `organiclever-be-build-deploy-stag.yml`                     |
-| Cross-cutting workflow    | `{group}-{action-chain}.yml`                                                                 | `pr-quality-gate.yml`, `validate-env.yml`                   |
-| Composite action          | `.github/actions/{name}/action.yml`                                                          | `.github/actions/setup-rust/action.yml`                     |
+| Entity                    | Pattern                                                                                      | Example                                       |
+| ------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Backend app               | `{domain}-be` or `{domain}-be-{lang}-{framework}`                                            | `organiclever-be`                             |
+| Frontend app              | `{domain}-app-web`                                                                           | `organiclever-app-web`                        |
+| www site app              | `{domain}-www`                                                                               | `organiclever-www`                            |
+| Infra dev directory       | `infra/dev/{app-name}/`                                                                      | `infra/dev/organiclever-be/`                  |
+| Specs directory           | See [Specs Directory Structure](../../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/behaviors/`       |
+| Reusable workflow         | `_reusable-{purpose}.yml`                                                                    | `_reusable-app-test-local-deploy-stag.yml`    |
+| www deploy workflow       | `{domain}-www-test-local-deploy-prod.yml`                                                    | `organiclever-www-test-local-deploy-prod.yml` |
+| App staging workflow      | `{domain}-app-test-local-deploy-stag.yml`                                                    | `organiclever-app-test-local-deploy-stag.yml` |
+| App staging-gate workflow | `{domain}-app-test-stag.yml`                                                                 | `organiclever-app-test-stag.yml`              |
+| BE build+deploy workflow  | `{domain}-be-build-deploy-stag.yml`                                                          | `organiclever-be-build-deploy-stag.yml`       |
+| Cross-cutting workflow    | `{group}-{action-chain}.yml`                                                                 | `pr-quality-gate.yml`, `validate-env.yml`     |
+| Composite action          | `.github/actions/{name}/action.yml`                                                          | `.github/actions/setup-rust/action.yml`       |
 
 ## Adding a New App to CI
 

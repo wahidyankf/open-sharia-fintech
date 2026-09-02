@@ -94,15 +94,15 @@ infrastructure composition.
 
 ## Engineering references
 
-- [Frontend architecture](../../specs/apps/organiclever/components/app-web/architecture.md)
+- [Frontend architecture](../../specs/apps/organiclever/app-web/architecture.md)
   — bounded contexts and their boundaries.
-- [Routes and screens](../../specs/apps/organiclever/components/app-web/routes-and-screens.md)
+- [Routes and screens](../../specs/apps/organiclever/app-web/routes-and-screens.md)
   — intended UI surface and navigation.
-- [Design system](../../specs/apps/organiclever/components/app-web/design-system.md)
+- [Design system](../../specs/apps/organiclever/app-web/design-system.md)
   — visual and interaction guidance.
-- [OrganicLever specifications](../../specs/apps/organiclever/README.md) — product,
-  architecture, and behavior specifications.
-- [Frontend Gherkin specifications](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md)
+- [OrganicLever specifications](../../specs/apps/organiclever/README.md) — one corpus per
+  deployed surface.
+- [Frontend Gherkin specifications](../../specs/apps/organiclever/app-web/behaviors/README.md)
   — executable behavior source of truth.
 - [Browser E2E suite](../organiclever-app-web-e2e/README.md) — Playwright coverage
   for this client.

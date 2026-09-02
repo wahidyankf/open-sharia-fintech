@@ -7,7 +7,7 @@ services:
       - "8202:8202"
     volumes:
       - ../../../apps/organiclever-be:/workspace:rw
-      - ../../../specs/apps/organiclever/behavior/be/gherkin:/specs/apps/organiclever/behavior/be/gherkin:ro
+      - ../../../specs/apps/organiclever/be/behaviors:/specs/apps/organiclever/be/behaviors:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8202/api/v1/health"]
       interval: 30s

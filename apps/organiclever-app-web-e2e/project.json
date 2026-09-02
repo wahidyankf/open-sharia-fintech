@@ -17,10 +17,7 @@
         "command": "tsc --noEmit",
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "default",
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"
-      ]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -56,10 +53,7 @@
         ],
         "parallel": false
       },
-      "inputs": [
-        "default",
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"
-      ]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -121,12 +115,12 @@
     "specs:e2e:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project organiclever-app-web-e2e --features \"../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
+        "command": "npx bddgen && dotnet run --project ../../apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs e2e-coverage validate --project organiclever-app-web-e2e --features \"../../specs/apps/organiclever/app-web/behaviors/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
         "cwd": "apps/organiclever-app-web-e2e"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
         "{projectRoot}/steps/**/*.steps.ts",
         "{projectRoot}/playwright.config.ts",
         "{projectRoot}/e2e-coverage-baseline.json"
@@ -148,6 +142,6 @@
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["organiclever-app-web", "organiclever-be"],
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"]
   }
 }

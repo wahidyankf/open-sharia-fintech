@@ -1,7 +1,7 @@
 /**
  * Step definitions for the BE Status Page feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature
  *
  * Tests BeStatusPage directly as an async server component rendered in jsdom.
  * Mocks fetch via vi.stubGlobal and env vars via vi.stubEnv.
@@ -24,7 +24,7 @@ import BeStatusPage, { metadata } from "@/app/system/status/be/page";
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature",
   ),
 );
 
@@ -50,7 +50,7 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(document.body).toBeTruthy();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows Not Configured when env unset
+    // @covers specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature:BE status page shows Not Configured when env unset
     And('the body contains "Not configured"', () => {
       expect(screen.getByText(/Not configured/i)).toBeInTheDocument();
     });
@@ -61,7 +61,7 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       // Metadata is emitted server-side by Next.js for this route.
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:Backend health-check page is excluded from search indexes
+    // @covers specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature:Backend health-check page is excluded from search indexes
     Then("the response declares the page non-indexable", () => {
       expect(metadata.robots).toMatchObject({ index: false });
     });
@@ -95,7 +95,7 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText(/UP\s*—/)).toBeInTheDocument();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows UP when backend healthy
+    // @covers specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature:BE status page shows UP when backend healthy
     And("the body contains the backend URL", () => {
       expect(screen.getByText(/http:\/\/be\.example\.test/)).toBeInTheDocument();
     });
@@ -127,7 +127,7 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText(/fetch failed/i)).toBeInTheDocument();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows DOWN when backend unreachable
+    // @covers specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature:BE status page shows DOWN when backend unreachable
     And("no uncaught exception reaches the Next.js error boundary", () => {
       // Component rendered without throwing — no error boundary triggered
       expect(screen.getByRole("main")).toBeInTheDocument();
@@ -159,7 +159,7 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText(/DOWN/)).toBeInTheDocument();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows DOWN when backend times out
+    // @covers specs/apps/organiclever/app-web/behaviors/health/system-status-be.feature:BE status page shows DOWN when backend times out
     And('the body contains "timeout"', () => {
       expect(screen.getByText(/timeout/i)).toBeInTheDocument();
     });

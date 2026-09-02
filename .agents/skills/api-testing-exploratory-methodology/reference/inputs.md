@@ -15,7 +15,7 @@ The orchestrator (or user) provides:
 4. **Optional refinements**:
    - **Scope hints** — specific endpoints/operations/resources to focus on or avoid.
    - **Contract pointer** — the authoritative contract to test against: an OpenAPI 3.x spec
-     (e.g. `specs/apps/organiclever/containers/contracts/openapi.yaml`), a GraphQL SDL file, or a live
+     (e.g. `specs/apps/organiclever/be/contracts/openapi.yaml`), a GraphQL SDL file, or a live
      introspection/`/openapi.json` URL. Even when none is named, the agent discovers it — see
      _Contract & Specs as Ground Truth_.
    - **Auth context** — how to obtain a **non-privileged, synthetic** test credential (a test bearer

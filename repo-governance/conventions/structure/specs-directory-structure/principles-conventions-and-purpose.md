@@ -22,7 +22,7 @@ created: 2026-04-02
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/behavior/organiclever-be/gherkin/expenses/expense-management.feature` immediately reveals the project, C4 level, layer, domain, and feature without any external metadata.
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/be/behaviors/expenses/expense-management.feature` immediately reveals the project, C4 level, layer, domain, and feature without any external metadata.
 
 - **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Every surface (BE, web, CLI) uses domain subdirectories under `gherkin/`. Single-feature domains are permitted for CLI surfaces with a small command surface area — the domain name still communicates the command group without requiring multiple files.
 

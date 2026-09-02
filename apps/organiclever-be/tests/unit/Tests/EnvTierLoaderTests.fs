@@ -19,7 +19,7 @@ let private makeTempDir () : string =
 // test focuses on the thin wrapper: `loadEnvTier` must resolve this app's own
 // composition-root search dirs (`apps/organiclever-be` then `.`) correctly.
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be loads exactly one tier file
+// @covers specs/apps/organiclever/be/behaviors/env/env-tier-loader.feature:organiclever-be loads exactly one tier file
 [<Fact>]
 let ``loadEnvTier defaults to the local tier when APP_ENV is unset, and resolves this app's own composition root`` () =
     let tempDir = makeTempDir ()
@@ -44,7 +44,7 @@ let ``loadEnvTier defaults to the local tier when APP_ENV is unset, and resolves
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(tempDir, true)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be process env wins over a tier file value
+// @covers specs/apps/organiclever/be/behaviors/env/env-tier-loader.feature:organiclever-be process env wins over a tier file value
 [<Fact>]
 let ``loadEnvTier never overrides a variable already set in the process environment`` () =
     let tempDir = makeTempDir ()
@@ -70,7 +70,7 @@ let ``loadEnvTier never overrides a variable already set in the process environm
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(tempDir, true)
 
-// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be tolerates a missing tier file
+// @covers specs/apps/organiclever/be/behaviors/env/env-tier-loader.feature:organiclever-be tolerates a missing tier file
 [<Fact>]
 let ``loadEnvTier does not throw when no tier file is present at either search dir`` () =
     let tempDir = makeTempDir ()

@@ -18,16 +18,13 @@ when_to_use: "Use when structuring specs/ for a new app and want an existing pat
 
 ## organiclever specs
 
-`specs/apps/organiclever/` serves both the backend (`organiclever-be`) and frontend (`organiclever-app-web`) from a shared set of specs:
+`specs/apps/organiclever/` carries one [logical owner corpus](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md) per surface OrganicLever deploys:
 
-- `specs/apps/organiclever/system-context/` — C4 L1 context diagram for OrganicLever
-- `specs/apps/organiclever/containers/` — C4 L2 container diagram and deployment topology
-- `specs/apps/organiclever/components/` — C4 L3 component diagrams (be/, web/)
-- `specs/apps/organiclever/behavior/organiclever-be/gherkin/` — Shared Gherkin scenarios consumed by the backend at unit, integration, and E2E levels
-- `specs/apps/organiclever/behavior/organiclever-app-web/gherkin/` — Shared Gherkin scenarios consumed by the frontend
-- `specs/apps/organiclever/containers/contracts/` — OpenAPI 3.1 contract spec that both backend and frontend implement
+- `specs/apps/organiclever/be/` — the F# backend: `architecture.md`, `behaviors/`, and `contracts/`, the OpenAPI 3.1 spec the backend serves and the app frontend consumes
+- `specs/apps/organiclever/app-web/` — the authenticated application frontend
+- `specs/apps/organiclever/www/` — the marketing site, whose `behaviors/` splits into `frontend/` and `backend/` because one deployed site owns both
 
-When a new endpoint is added to the OpenAPI spec in `organiclever-contracts`, both the corresponding Gherkin scenarios and the C4 component diagram must be updated to reflect the new behavior and component.
+The contract sits inside `be/` rather than in a shared folder because the backend is what serves it. When a new endpoint is added to the OpenAPI spec in `organiclever-contracts`, the backend corpus gains both the scenarios and the `architecture.md` component in the same delivery unit.
 
 ## ayokoding-www specs
 

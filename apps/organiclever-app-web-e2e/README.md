@@ -33,4 +33,4 @@ npm exec nx -- run organiclever-app-web-e2e:test:specs
 ```
 
 The behavior source of truth is in
-[the OrganicLever app-web Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md).
+[the OrganicLever app-web Gherkin specs](../../specs/apps/organiclever/app-web/behaviors/README.md).

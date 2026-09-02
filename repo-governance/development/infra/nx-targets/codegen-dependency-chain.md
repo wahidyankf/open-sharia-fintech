@@ -16,7 +16,7 @@ when_to_use: Use when wiring dependsOn for a project that generates types from a
 # Codegen Dependency Chain
 
 Apps with OpenAPI contract specs share a `codegen` target that generates types and
-encoders/decoders from the spec (e.g., `specs/apps/organiclever/containers/contracts/`) into
+encoders/decoders from the spec (e.g., `specs/apps/organiclever/be/contracts/`) into
 `generated-contracts/`.
 
 The dependency chain is:

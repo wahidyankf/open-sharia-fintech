@@ -6,7 +6,7 @@
  * {app}-be-e2e + {app}-fe-e2e reusable workflow pair. The be-e2e slot is
  * tolerated-absent in CI (called with `|| true`) and holds no real scenarios.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-www-be/gherkin/placeholder/placeholder.feature
+ * Covers: specs/apps/organiclever/www/behaviors/backend/placeholder/placeholder.feature
  */
 import { createBdd } from "playwright-bdd";
 

@@ -6,10 +6,7 @@ import { expect } from "vitest";
 import { HomeContent } from "@/features/home";
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature",
-  ),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/www/behaviors/frontend/home/home.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -32,14 +29,14 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(screen.getByText(/tracked\./i)).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Hero heading visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Hero heading visible
     And('I see text "Analyzed."', () => {
       expect(screen.getByText(/Analyzed\./)).toBeDefined();
     });
   });
 
   Scenario("Primary call-to-action button present", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Primary call-to-action button present
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Primary call-to-action button present
     Then('I see a button "Open the app"', () => {
       cleanup();
       render(<HomeContent />);
@@ -48,7 +45,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
   });
 
   Scenario("Footer link present", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Footer link present
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Footer link present
     Then('I see text "Open app →"', () => {
       cleanup();
       render(<HomeContent />);
@@ -57,7 +54,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
   });
 
   Scenario("Pre-Alpha badge visible in nav", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Pre-Alpha badge visible in nav
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Pre-Alpha badge visible in nav
     Then('I see text "Pre-Alpha"', () => {
       cleanup();
       render(<HomeContent />);
@@ -66,7 +63,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
   });
 
   Scenario("Alpha warning banner visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Alpha warning banner visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Alpha warning banner visible
     Then('I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"', () => {
       cleanup();
       render(<HomeContent />);
@@ -93,14 +90,14 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(screen.getByText("Meals")).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:All five event type cards visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:All five event type cards visible
     And('I see text "Focus"', () => {
       expect(screen.getAllByText("Focus").length).toBeGreaterThan(0);
     });
   });
 
   Scenario("Custom event card visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Custom event card visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Custom event card visible
     Then('I see text "Plus your own."', () => {
       cleanup();
       render(<HomeContent />);
@@ -109,7 +106,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
   });
 
   Scenario("Weekly rhythm demo visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:Weekly rhythm demo visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Weekly rhythm demo visible
     Then('I see text "Last 7 days"', () => {
       cleanup();
       render(<HomeContent />);
@@ -140,7 +137,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(screen.getByText("Open")).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/home/home.feature:All six principles visible
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:All six principles visible
     And('I see text "Multilingual"', () => {
       expect(screen.getByText("Multilingual")).toBeDefined();
     });

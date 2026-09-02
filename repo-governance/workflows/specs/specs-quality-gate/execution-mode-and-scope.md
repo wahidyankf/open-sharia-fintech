@@ -8,7 +8,7 @@ when_to_use: "Use when deciding whether to run this workflow via agent delegatio
 
 **Key Design Principle**: This workflow only validates folders you explicitly list. It does not
 discover or scan the entire specs/ tree. Subfolders are included automatically — listing
-`specs/apps/organiclever` includes `specs/apps/organiclever/behavior/organiclever-be/gherkin/`, etc.
+`specs/apps/organiclever` includes `specs/apps/organiclever/be/behaviors/`, etc.
 When multiple folders are listed, cross-folder consistency is checked between them (contradictions,
 coverage gaps, terminology drift).
 

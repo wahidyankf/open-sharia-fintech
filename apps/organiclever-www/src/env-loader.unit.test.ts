@@ -1,7 +1,7 @@
 /**
  * Step definitions for the APP_ENV tier env-file loader feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature
+ * Covers: specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature
  *
  * Each scenario drives `loadTierEnv()` with an isolated `appDir` (a throwaway temp directory
  * holding fixture `.env.*` files) and an isolated `env` object (a plain record, not the real
@@ -15,10 +15,7 @@ import { expect } from "vitest";
 import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature",
-  ),
+  path.resolve(__dirname, "../../../specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature"),
 );
 
 type EnvRecord = Record<string, string | undefined>;
@@ -60,7 +57,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       loadTierEnv({ appDir, env });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature:organiclever-www builds against the staging tier
+    // @covers specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature:organiclever-www builds against the staging tier
     Then('every variable consumed by the build resolves to its ".env.stag" value', () => {
       expect(env["SHARED_VAR"]).toBe("stag-value");
       expect(env["STAG_ONLY_VAR"]).toBe("stag-only");
@@ -85,7 +82,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature:organiclever-www process env wins over the local tier file
+    // @covers specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature:organiclever-www process env wins over the local tier file
     And('the ".env.local" value is not applied over it', () => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
@@ -114,7 +111,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(thrown).toBeUndefined();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature:organiclever-www tolerates a missing tier file
+    // @covers specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature:organiclever-www tolerates a missing tier file
     And("startup proceeds using whatever the process environment already supplies", () => {
       expect(env["EXISTING_VAR"]).toBe("already-set");
     });
@@ -141,7 +138,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
         }
       });
 
-      // @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/env-loader/env-loader.feature:organiclever-www fails loudly on a stray auto-loaded env file
+      // @covers specs/apps/organiclever/www/behaviors/frontend/env-loader/env-loader.feature:organiclever-www fails loudly on a stray auto-loaded env file
       Then('the loader throws, naming "<file>" and the correct ".env.<tier>" replacement', () => {
         expect(thrown).toBeInstanceOf(Error);
         expect((thrown as Error).message).toContain(file);

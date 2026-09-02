@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Entry Loggers feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature
  *
  * Note: "the app shell is visible" is already registered in app-shell.steps.ts.
  * Note: "the Add Entry sheet is open", "the user closes the Add Entry sheet",
@@ -66,7 +66,7 @@ When("the user taps the FAB", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open Add Entry sheet
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open Add Entry sheet
 Then("the Add Entry sheet is open with all entry kinds", async ({ page }) => {
   // AddEntrySheet renders "Log an entry" heading when open
   await expect(page.getByText("Log an entry")).toBeVisible({ timeout: 10000 });
@@ -80,7 +80,7 @@ When("the user selects the Reading entry kind", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open reading logger from Add Entry sheet
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open reading logger from Add Entry sheet
 Then("the reading logger is open", async ({ page }) => {
   // Used as Given too — navigate to app and open reading logger if not already open
   if (
@@ -105,10 +105,10 @@ When("the user saves the entry", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a reading entry
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a learning entry
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a meal entry
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a focus entry
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a reading entry
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a learning entry
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a meal entry
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a focus entry
 Then("the entry is saved and the logger closes", async ({ page }) => {
   // After saving, LoggerShell unmounts (returns null when !isOpen)
   await expect(page.getByText("Log reading")).not.toBeVisible({ timeout: 5000 });
@@ -121,8 +121,8 @@ When("the user has not entered a title", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Reading logger save is disabled without title
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Focus logger save requires task or duration
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Reading logger save is disabled without title
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Focus logger save requires task or duration
 Then("the save button is disabled", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Save" })).toBeDisabled({ timeout: 5000 });
 });
@@ -134,7 +134,7 @@ When("the user selects the Learning entry kind", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open learning logger from Add Entry sheet
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open learning logger from Add Entry sheet
 Then("the learning logger is open", async ({ page }) => {
   if (
     !(await page
@@ -166,7 +166,7 @@ When("the user selects the Meal entry kind", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open meal logger from Add Entry sheet
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open meal logger from Add Entry sheet
 Then("the meal logger is open", async ({ page }) => {
   if (
     !(await page
@@ -193,7 +193,7 @@ When("the user selects the Focus entry kind", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open focus logger from Add Entry sheet
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open focus logger from Add Entry sheet
 Then("the focus logger is open", async ({ page }) => {
   if (
     !(await page
@@ -236,7 +236,7 @@ When("the user selects the custom entry kind", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Open custom entry logger
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Open custom entry logger
 Then("the custom entry logger is open", async ({ page }) => {
   // CustomEntryLogger shows "New custom entry" (isNew=true) or "Log: custom" (isNew=false).
   // Check if already open first (used as Then after When step).
@@ -301,7 +301,7 @@ When("the user saves the custom entry", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/app-shell/entry-loggers.feature:Log a custom entry
+// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Log a custom entry
 Then("the custom entry is saved and the logger closes", async ({ page }) => {
   // After save or cancel, the custom logger unmounts.
   await expect(page.getByText("New custom entry").or(page.getByText("Log: custom")).first()).not.toBeVisible({

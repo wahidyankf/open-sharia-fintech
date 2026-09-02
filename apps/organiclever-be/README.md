@@ -60,8 +60,8 @@ development placeholders; do not put real credentials in tracked files.
 | `GET`, `PUT`, `DELETE` | `/api/v1/journal/entries/{id}`    | Read, update, or delete one journal entry. |
 | `GET`                  | `/api/v1/system/status/messaging` | Result of the startup JetStream demo.      |
 
-The [OpenAPI contract](../../specs/apps/organiclever/containers/contracts/openapi.yaml) and
-[behavior specifications](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md)
+The [OpenAPI contract](../../specs/apps/organiclever/be/contracts/openapi.yaml) and
+[behavior specifications](../../specs/apps/organiclever/be/behaviors/README.md)
 are the durable references for intended API behavior.
 
 ## Everyday commands
@@ -100,7 +100,8 @@ unit-test targets.
 
 ## Related references
 
-- [Backend component overview](../../specs/apps/organiclever/components/be/README.md)
-- [API reference](../../specs/apps/organiclever/components/be/api.md)
-- [Backend behavior specifications](../../specs/apps/organiclever/behavior/organiclever-be/README.md)
+- [Backend architecture](../../specs/apps/organiclever/be/architecture.md)
+- [API reference](../../specs/apps/organiclever/be/api.md)
+- [OpenAPI contract](../../specs/apps/organiclever/be/contracts/README.md)
+- [Backend behavior specifications](../../specs/apps/organiclever/be/behaviors/README.md)
 - [Backend E2E suite](../organiclever-be-e2e/README.md)

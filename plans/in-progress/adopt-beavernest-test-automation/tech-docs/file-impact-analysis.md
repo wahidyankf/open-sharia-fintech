@@ -75,7 +75,7 @@ Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.c
 ├── [E] specs/apps/organiclever/containers/container.md — remove its inbound DDD-enforcement link
 │       when that DDD tree is retired
 ├── [E] specs/apps/organiclever/{README.md,behavior/README.md,components/README.md,
-│       components/app-web/{README.md,architecture.md},behavior/organiclever-app-web/gherkin/README.md}
+│       components/app-web/{README.md,architecture.md},app-web/behaviors/README.md}
 │       — remove live consumers of the retired DDD registry
 ├── [E] .claude/skills/apps-organiclever-www-developing-content/{SKILL.md,README.md,
 │       reference/{README.md,bounded-context-architecture.md,common-patterns.md,domain-driven-design.md}}

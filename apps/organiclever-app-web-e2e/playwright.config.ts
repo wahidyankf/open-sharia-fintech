@@ -7,8 +7,8 @@ import { defineBddConfig } from "playwright-bdd";
 process.env.APP_ENV ??= "test";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin",
-  features: "../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/**/*.feature",
+  featuresRoot: "../../specs/apps/organiclever/app-web/behaviors",
+  features: "../../specs/apps/organiclever/app-web/behaviors/**/*.feature",
   steps: ["./steps/**/*.steps.ts"],
   // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in
   // the globbed features lacks a matching step def. env-loader.feature's scenarios are @unit-only

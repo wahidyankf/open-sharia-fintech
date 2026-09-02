@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Dark Mode feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature
  *
  * Tests dark mode toggle via appMachine (XState) directly.
  * The machine is the source of truth for darkMode state; SettingsScreen
@@ -30,10 +30,7 @@ function makeActor(initialDarkMode: boolean) {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature",
-  ),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -49,7 +46,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "TOGGLE_DARK_MODE" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature:Toggle dark mode on
+    // @covers specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature:Toggle dark mode on
     Then("dark mode is enabled", () => {
       expect(actor.getSnapshot().context.darkMode).toBe(true);
       actor.stop();
@@ -66,7 +63,7 @@ describeFeature(feature, ({ Scenario }) => {
       actor.send({ type: "TOGGLE_DARK_MODE" });
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/settings/dark-mode.feature:Toggle dark mode off
+    // @covers specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature:Toggle dark mode off
     Then("dark mode is disabled", () => {
       expect(actor.getSnapshot().context.darkMode).toBe(false);
       actor.stop();

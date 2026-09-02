@@ -18,7 +18,7 @@ when_to_use: "Use when unsure which companion artifact a feature change must als
 
 ## 1. Specs (Gherkin Feature Files)
 
-**Location**: `specs/apps/*/behavior/organiclever-be/gherkin/`, `specs/apps/*/behavior/organiclever-app-web/gherkin/`, `specs/apps/*/behavior/<product>-cli/gherkin/`, `specs/libs/*/`
+**Location**: `specs/apps/<product>/<owner>/behaviors/` and `specs/libs/<library>/behaviors/` for a corpus that has adopted the [logical owner shape](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md); `specs/apps/*/behavior/<product>-<surface>/gherkin/` for one that has not
 
 **Update when:**
 

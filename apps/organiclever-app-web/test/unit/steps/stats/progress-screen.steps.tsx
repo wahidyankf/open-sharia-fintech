@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Progress Screen feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature
  *
  * Tests component logic directly without browser APIs:
  * - Default module selection (workout)
@@ -62,10 +62,7 @@ function makeExerciseProgress(): ExerciseProgress {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(
-    __dirname,
-    "../../../../../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature",
-  ),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -78,7 +75,7 @@ describeFeature(feature, ({ Scenario }) => {
       activeModule = initialModule();
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Progress screen shows workout module by default
+    // @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Progress screen shows workout module by default
     Then("the workout module is active", () => {
       expect(activeModule).toBe("workout");
     });
@@ -99,7 +96,7 @@ describeFeature(feature, ({ Scenario }) => {
       moduleContent = getModuleContent(activeModule);
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Switch to reading module
+    // @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Switch to reading module
     Then("the reading module content is shown", () => {
       expect(activeModule).toBe("reading");
       expect(moduleContent).toBe("reading-content");
@@ -122,7 +119,7 @@ describeFeature(feature, ({ Scenario }) => {
       cardExpanded = !cardExpanded;
     });
 
-    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/stats/progress-screen.feature:Exercise progress card expands
+    // @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Exercise progress card expands
     Then("the SVG chart is visible", () => {
       expect(cardExpanded).toBe(true);
       // When expanded the SVG chart is rendered with the exercise points

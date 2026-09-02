@@ -14,7 +14,7 @@ repo for stale references, fixing genuine leftover bugs (broken links, stale CI 
 backlog plan). One category it deliberately did **not** touch: `.claude/agents/{specs-checker,
 specs-maker,specs-fixer,swe-golang-dev}.md` and their synced mirrors (~183 hits at the time of
 writing, across `.claude/` and the mirrors then in existence) use `organiclever`/`ose`/`wahidyankf` as illustrative example
-target paths in their instructions (e.g. `folders: [specs/apps/organiclever/components/web]`). No
+target paths in their instructions (e.g. `folders: [specs/apps/organiclever/app-web]`). No
 links are broken — these are prose examples, not references to files that must exist — but since
 those apps no longer exist in _this_ repo, a reader could reasonably think such a path is real here.
 

@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Accessibility Compliance feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/layout/accessibility.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/layout/accessibility.feature
  *
  * Uses axe-core via @axe-core/playwright to validate WCAG AA compliance and
  * supplements automated scanning with targeted assertions for heading hierarchy,
@@ -34,7 +34,7 @@ Then("each page should have exactly one h1 element", async ({ page }) => {
   expect(h1Count).toBe(1);
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/accessibility/accessibility.feature:Pages have proper heading hierarchy
+// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Pages have proper heading hierarchy
 Then(/^heading levels should not skip \(no h1 followed by h3\)$/, async ({ page }) => {
   // Collect all heading levels in document order and verify no level is skipped.
   const headingLevels = await page.evaluate(() => {
@@ -63,7 +63,7 @@ Then("I should be able to tab to all interactive elements", async ({ page }) => 
   expect(isDocumentAccessible, "Document should remain accessible after tabbing").toBe(true);
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/accessibility/accessibility.feature:Keyboard navigation works throughout the app
+// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Keyboard navigation works throughout the app
 Then("focus indicators should be visible", async ({ page }) => {
   const hasFocused = await page
     .locator(":focus")
@@ -88,7 +88,7 @@ Then(/^all text should meet WCAG AA contrast ratio \(4\.5:1 for normal text\)$/,
   expect(results.violations).toHaveLength(0);
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/accessibility/accessibility.feature:Color contrast meets WCAG AA requirements
+// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Color contrast meets WCAG AA requirements
 Then("all interactive elements should have sufficient contrast", async ({ page }) => {
   const results = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
   expect(results.violations).toHaveLength(0);
@@ -103,7 +103,7 @@ Then("images should have alt attributes", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-www/gherkin/accessibility/accessibility.feature:ARIA attributes are properly used
+// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:ARIA attributes are properly used
 Then("navigation landmarks should be properly labeled", async ({ page }) => {
   // Every <nav> element must have an accessible label to distinguish multiple
   // navigation regions from one another (WCAG 2.4.1 bypass blocks).

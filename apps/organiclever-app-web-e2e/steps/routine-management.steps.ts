@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Routine Management feature.
  *
- * Covers: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature
+ * Covers: specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature
  *
  * Selector notes:
  * - The EditRoutineScreen is a machine state (navigation: "editRoutine"), not a URL.
@@ -46,7 +46,7 @@ When("the user saves the routine", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Create a new routine
+// @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Create a new routine
 Then("the routine is saved", async ({ page }) => {
   // After saving, the machine sends BACK_TO_MAIN and HomeScreen is shown.
   // "Good morning" heading confirms we're back on the home screen.
@@ -68,7 +68,7 @@ When("the user adds an exercise", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Add an exercise to a routine
+// @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Add an exercise to a routine
 Then("the exercise appears in the group", async ({ page }) => {
   // After adding, an exercise row appears. Assert the app is still loaded.
   await expect(
@@ -96,7 +96,7 @@ When("the user confirms deleting the routine", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routine/routine-management.feature:Delete a routine
+// @covers specs/apps/organiclever/app-web/behaviors/routine/routine-management.feature:Delete a routine
 Then("the routine is deleted", async ({ page }) => {
   // After deletion, machine goes BACK_TO_MAIN → HomeScreen
   await expect(page.getByText("Good morning").or(page.locator("[data-testid='settings-screen']")).first()).toBeVisible({

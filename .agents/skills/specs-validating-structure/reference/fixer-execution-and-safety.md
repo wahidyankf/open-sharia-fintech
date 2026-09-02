@@ -43,7 +43,7 @@
 
 **Finding**: [CRITICAL] {original finding}
 **Action**: Updated scenario count in README from 76 to 78
-**File**: `specs/apps/organiclever/behavior/organiclever-be/README.md`
+**File**: `specs/apps/organiclever/be/behaviors/README.md`
 **Verified**: Yes — count now matches actual feature files
 ```
 

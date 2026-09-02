@@ -1,0 +1,69 @@
+# OrganicLever Frontend Gherkin Specs
+
+Gherkin feature files for the OrganicLever frontend application, organized by feature
+context. Each folder groups a related product capability.
+
+## Structure
+
+```
+specs/apps/organiclever/app-web/behaviors/
+├── app-shell/             # Navigation, cross-cutting loggers
+│   ├── entry-loggers.feature
+│   └── navigation.feature
+├── env-loader/            # APP_ENV tier env-file loader (build-time tooling)
+│   └── env-loader.feature
+├── health/                # Backend health diagnostic page
+│   └── system-status-be.feature
+├── journal/               # Journal events — today's entries, filtering
+│   ├── home-screen.feature
+│   └── journal-mechanism.feature
+├── routine/               # Workout routine management
+│   └── routine-management.feature
+├── routing/               # App routing and 404 guards
+│   ├── app-routes.feature
+│   └── disabled-routes.feature
+├── settings/              # User preferences (dark mode, language)
+│   ├── dark-mode.feature
+│   ├── language.feature
+│   └── settings-screen.feature
+├── stats/                 # History and progress projections over journal events
+│   ├── history-screen.feature
+│   └── progress-screen.feature
+└── workout-session/       # Active workout session FSM
+    └── workout-session.feature
+```
+
+## Conventions
+
+- **File naming**: `[domain-capability].feature` (kebab-case)
+- **Step language**: UI-semantic only — clicks, types, sees, navigates (no HTTP verbs or
+  status codes)
+- **User story block**: Every `Feature:` block opens with `As a … / I want … / So that …`
+- **Term discipline**: Step text uses product language, not implementation identifiers or route
+  segments
+
+## Relationship to organiclever-be
+
+These specs are the **frontend counterpart** to
+[be/gherkin/](../../be/behaviors/README.md). The two trees cover different domains:
+
+- **be**: HTTP-semantic (GET, POST, status codes, response bodies)
+- **fe**: UI-semantic (clicks, types, sees, navigates, form submissions)
+
+`apps/organiclever-app-web` consumes these specs via `@amiceli/vitest-cucumber` step
+definitions in `apps/organiclever-app-web/test/unit/steps/`.
+
+## Related
+
+- **Backend counterpart**: [be gherkin specs](../../be/behaviors/README.md)
+- **Parent**: [web component specs](../architecture.md)
+
+- [app-shell — organiclever-app-web Gherkin Domain](./app-shell/README.md)
+- [env-loader — organiclever-app-web Gherkin Domain](./env-loader/README.md)
+- [health — organiclever-app-web Gherkin Domain](./health/README.md)
+- [journal — organiclever-app-web Gherkin Domain](./journal/README.md)
+- [routine — organiclever-app-web Gherkin Domain](./routine/README.md)
+- [routing — organiclever-app-web Gherkin Domain](./routing/README.md)
+- [settings — organiclever-app-web Gherkin Domain](./settings/README.md)
+- [stats — organiclever-app-web Gherkin Domain](./stats/README.md)
+- [workout-session — organiclever-app-web Gherkin Domain](./workout-session/README.md)
