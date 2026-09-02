@@ -20,28 +20,29 @@ created: 2026-04-02
 
 ## Gherkin Feature File Placement
 
-Gherkin feature files live inside the `behavior/` tree at `specs/apps/<app-family>/behavior/<product>-<surface>/gherkin/`.
+Gherkin feature files live inside the `behaviors/` tree of a
+[logical owner corpus](./logical-owner-corpus.md).
 
 ### Canonical Path Pattern
 
 ```
-specs/apps/<app-family>/behavior/<product>-<surface>/gherkin/{domain}/{feature}.feature
+specs/apps/<product>/<owner>/behaviors/{domain}/{feature}.feature
 ```
 
 Where:
 
-- **`<app-family>`** = project name
-- **`<product>-<surface>`** = flat slug combining product name and perspective (e.g.,
-  `<product>-be`, `<product>-app-web`)
+- **`<product>`** = the product family name
+- **`<owner>`** = one deployed surface of that product, named for the surface it deploys (`be`,
+  `www`, `app-web`, `cli`)
 - **`{domain}`** = business domain grouping folder (all surfaces, including CLI)
 - **`{feature}`** = feature file name in kebab-case
 
-Deprecated slugs (bare `be`, `web`, `cli`, `api`) must not be used for new surfaces; use the
-`<product>-<surface>` compound form instead.
+The owner segment is already inside `specs/apps/<product>/`, so it carries the bare surface name:
+`rhino/cli/`, not `rhino/rhino-cli/`. A backend is always `be`, never `api`.
 
 ### Domain Subdirectory Rules
 
-**Every surface** (BE, web, CLI) uses domain subdirectories — under `gherkin/` in the legacy tree, under `behaviors/` in a [logical owner corpus](./logical-owner-corpus.md). Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
+**Every surface** (BE, web, CLI) uses domain subdirectories under its owner's `behaviors/`. Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
 
 ```
 specs/apps/organiclever/be/behaviors/journal/journal-entries.feature
@@ -50,9 +51,9 @@ specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature
 specs/apps/organiclever/www/behaviors/frontend/home/home.feature
 ```
 
-AyoKoding's build-time features once sat in their own `ayokoding-build-tools/` surface here. They
-now live at `specs/apps/ayokoding/www/behaviors/build-tools/`, inside a
-[logical owner corpus](./logical-owner-corpus.md), because they belong to the site they build.
+AyoKoding's build-time features once sat in their own `ayokoding-build-tools/` surface. They now
+live at `specs/apps/ayokoding/www/behaviors/build-tools/`, inside the site's own corpus, because
+they belong to the site they build.
 
 A domain folder may contain one or many feature files.
 
@@ -65,7 +66,7 @@ specs/apps/rhino/cli/behaviors/spec-coverage/spec-coverage-validate.feature
 specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature
 ```
 
-`rhino-cli specs validate-tree` enforces this rule: a `.feature` file placed directly under `behavior/<product>-<surface>/gherkin/` (with no domain subdirectory) is a HIGH finding. The four examples above sit in [logical owner corpora](./logical-owner-corpus.md), which keep the same domain subdirectory under `behaviors/`.
+A `behaviors/` tree is recursive, so `rhino-cli specs validate-tree` accepts a feature file at its root; the domain subdirectory is what keeps a growing surface navigable, not what the validator counts.
 
 ## Lib Spec Structure
 

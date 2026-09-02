@@ -34,7 +34,7 @@ The exact directory structure varies by language convention (e.g., Rust uses `#[
 
 ## CLI App Implementation Pattern
 
-The Rust CLI apps (`rhino-cli`) consume the same Gherkin specs from `specs/apps/<product>/behavior/<product>-cli/gherkin/`. What the tests use as their I/O substrate differs; which Nx target actually executes them does not — for `rhino-cli` today, both rows below run in `test:unit` (see `apps/rhino-cli/project.json`'s `--test <name>` enumeration), not in a separate `test:integration` gate:
+The Rust CLI apps (`rhino-cli`) consume the same Gherkin specs from `specs/apps/<product>/<owner>/behaviors/`. What the tests use as their I/O substrate differs; which Nx target actually executes them does not — for `rhino-cli` today, both rows below run in `test:unit` (see `apps/rhino-cli/project.json`'s `--test <name>` enumeration), not in a separate `test:integration` gate:
 
 | Level            | Test File Location               | Implementation                                                       | What's Real                   |
 | ---------------- | -------------------------------- | -------------------------------------------------------------------- | ----------------------------- |

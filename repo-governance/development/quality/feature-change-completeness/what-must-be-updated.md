@@ -18,7 +18,7 @@ when_to_use: "Use when unsure which companion artifact a feature change must als
 
 ## 1. Specs (Gherkin Feature Files)
 
-**Location**: `specs/apps/<product>/<owner>/behaviors/` and `specs/libs/<library>/behaviors/` for a corpus that has adopted the [logical owner shape](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md); `specs/apps/*/behavior/<product>-<surface>/gherkin/` for one that has not
+**Location**: `specs/apps/<product>/<owner>/behaviors/` and `specs/libs/<library>/behaviors/` — the [logical owner corpus](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md) is the only shape
 
 **Update when:**
 
@@ -31,7 +31,7 @@ when_to_use: "Use when unsure which companion artifact a feature change must als
 
 ## 2. Contracts (OpenAPI Specs)
 
-**Location**: `specs/apps/*/containers/contracts/`
+**Location**: `specs/apps/<product>/<owner>/contracts/`, inside the owner that serves the contract
 
 **Update when:**
 

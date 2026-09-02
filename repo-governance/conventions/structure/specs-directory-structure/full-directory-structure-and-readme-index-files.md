@@ -26,7 +26,16 @@ The complete `specs/` directory follows this layout:
 specs/
 ├── README.md
 ├── apps/
-│   └── <app-family>/         # one logical owner corpus per surface (per app above)
+│   └── <product>/
+│       ├── README.md
+│       ├── overview.md       # optional: framing shared by several owners
+│       └── <owner>/          # one logical owner corpus per deployed surface
+│           ├── README.md
+│           ├── architecture.md
+│           ├── contracts/    # optional: in the owner that serves the contract
+│           └── behaviors/
+│               └── <domain>/
+│                   └── <feature>.feature
 └── libs/
     └── <lib-name>/
         ├── README.md
@@ -36,17 +45,19 @@ specs/
                 └── <feature>.feature
 ```
 
-### Which Projects Have Which Directories
+### Which Entries Each Project Populates
 
-Not every project has all directories. Presence of subdirectories depends on the project's surface profile:
+`README.md`, `architecture.md`, and a non-empty `behaviors/` are required of every corpus. What
+varies is how many corpora a product holds and whether the optional entries appear:
 
-- **`containers/contracts/`**: Present for apps with OpenAPI contract specs
-- **`components/be/`**: Present for apps with a backend container
-- **`behavior/<product>-be/gherkin/`**: Present for apps with backend Gherkin specs
-- **`behavior/<product>-cli/gherkin/`**: Present for a CLI app still on this tree
+- **`<owner>/contracts/`**: Present for a surface that publishes an OpenAPI contract, inside the
+  owner that serves it
+- **`<product>/overview.md`**: Present when several owners share product-level framing
+- **A second owner**: Present for every additional surface the product deploys — a backend beside a
+  web client, a build tool beside a site
 
 ## README Index Files
 
 Every directory within a spec area must contain a `README.md` index file. README files serve as entry points when browsing on GitHub, providing context about what specifications exist at each level. This follows the same pattern used throughout the repository — see [File Naming Convention](../file-naming.md).
 
-The order of folders in any README listing follows the canonical order: `product/`, `system-context/`, `containers/`, `components/`, `behavior/`.
+The order of entries in any corpus README listing follows the canonical order: `architecture.md`, `contracts/`, `behaviors/`.

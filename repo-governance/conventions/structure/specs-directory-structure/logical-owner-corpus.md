@@ -1,7 +1,7 @@
 ---
 title: "Logical Owner Corpus"
 description: "The adopted specs shape — one corpus per logical owner, carrying an index, a canonical as-built architecture.md, and a recursive behaviors/ tree"
-when_to_use: "Read this when creating or validating a specs corpus for a logical owner, or when deciding which shape a product directory is measured against."
+when_to_use: "Read this when creating or validating a specs corpus for a logical owner, or when checking whether a spec area has adopted the shape."
 category: explanation
 subcategory: conventions
 tags:
@@ -34,19 +34,19 @@ Libraries use the same three entries directly under `specs/libs/<library>/`.
 
 `architecture.md` describes only the current as-built system and is updated in the same delivery
 unit as the change that alters it. `behaviors/` is recursive: a feature file may sit at its root or
-inside a domain directory, so the flat-feature rule that governs the legacy tree does not apply.
+inside a domain directory.
 
-## Which Shape a Product Is Measured Against
+## The Only Shape
+
+This is the one shape a spec area is measured against. The retired five-folder C4 tree
+(`product/`, `system-context/`, `containers/`, `components/`, `behavior/`) is no longer a valid
+layout in this repository, and no product is measured against it.
 
 Adoption is detected positively. A product directory has adopted this shape as soon as one of its
-immediate subdirectories carries an `architecture.md`. From that moment `rhino-cli specs structure
-validate` measures the whole product against this convention, and any surviving `product/`,
-`system-context/`, `containers/`, `components/`, or `behavior/` folder beside a corpus is a
-finding rather than a tolerated leftover.
-
-A product that has not begun the move is still measured against the
-[Canonical App Spec Tree](./canonical-app-spec-tree.md). The two shapes never both bind a single
-product, so a migration is complete per product rather than per file.
+immediate subdirectories carries an `architecture.md`; a library adopts it by carrying
+`architecture.md` at its own root. A product holding no corpus at all is a HIGH `adoption`
+finding, and any surviving retired folder beside a corpus is reported rather than tolerated — the
+two together make the migration atomic per product.
 
 ## Why Owner Rather Than Product
 
@@ -65,7 +65,7 @@ dedicated E2E project link to its owner's corpus instead of growing a parallel t
 
 ## Related
 
-- [Canonical App Spec Tree](./canonical-app-spec-tree.md) — the legacy five-folder layout this
-  shape replaces.
+- [Canonical App Spec Tree](./canonical-app-spec-tree.md) — how many corpora a product holds, and
+  what each entry answers.
 - [Gherkin Feature File Placement and Lib Spec Structure](./gherkin-feature-file-placement-and-lib-spec-structure.md) —
-  placement rules for the legacy tree.
+  where a feature file goes inside `behaviors/`.
