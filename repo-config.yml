@@ -215,7 +215,7 @@ coverage:
 
     # crane domain
     - name: crane-cli
-      levels: [unit, integration]
+      levels: [unit]
       specs: "specs/apps/crane/cli/behaviors/**"
 
     # libs
@@ -296,13 +296,11 @@ testing:
         legacy:
           present: true
           corpus: "specs/apps/crane/cli/behaviors/**"
-          levels: [unit, integration]
+          levels: [unit]
         canonical:
           owner: crane-cli
           corpus: "specs/apps/crane/cli/behaviors/**"
           runtimes:
-            - level: integration
-              project: crane-cli
             - level: unit
               project: crane-cli
       - project: fsharp-crane-core
@@ -685,9 +683,8 @@ testing:
             project: crane-cli
             driver: apps/crane-cli/tests/unit/Behavior/CraneCliBehaviorDriver.fs
           integration:
-            disposition: required
-            project: crane-cli
-            driver: apps/crane-cli/tests/integration/Behavior/CraneCliBehaviorDriver.fs
+            disposition: inapplicable
+            reason: every scenario in the owner corpus is tagged @unit; no scenario declares an integration-level obligation
           e2e:
             disposition: inapplicable
             reason: no user-facing surface
