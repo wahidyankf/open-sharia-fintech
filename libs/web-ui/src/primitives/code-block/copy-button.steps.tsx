@@ -8,7 +8,7 @@ import { expect, vi } from "vitest";
 import { CopyButton } from "./copy-button";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/code-block/copy-button.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/code-block/copy-button.feature"),
 );
 
 /** Installs a mock `navigator.clipboard.writeText` (jsdom lacks it). Returns the spy. */

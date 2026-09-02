@@ -56,10 +56,10 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/ts-env-loader/behavior/gherkin libs/ts-env-loader"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/ts-env-loader/behaviors libs/ts-env-loader"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/behavior/gherkin/**/*.feature", "{projectRoot}/src/**/*"]
+      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature", "{projectRoot}/src/**/*"]
     },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
@@ -112,7 +112,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/ts-env-loader/behavior/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature"]
   },
   "tags": ["type:lib", "lang:ts", "domain:config"]
 }

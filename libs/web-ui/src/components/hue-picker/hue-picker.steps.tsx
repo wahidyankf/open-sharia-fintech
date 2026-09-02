@@ -6,7 +6,7 @@ import { vi, expect } from "vitest";
 import { HuePicker } from "./hue-picker";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/hue-picker/hue-picker.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/hue-picker/hue-picker.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

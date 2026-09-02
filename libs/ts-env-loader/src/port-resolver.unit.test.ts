@@ -1,7 +1,7 @@
 /**
  * Step definitions for ts-env-loader's runtime port resolution feature.
  *
- * Covers: specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature
+ * Covers: specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature
  *
  * Every scenario drives `resolvePort()` with an isolated `env` record (a plain object, never the
  * real `process.env`) so the suite cannot be perturbed by, or perturb, this process's environment.
@@ -17,7 +17,7 @@ import { expect } from "vitest";
 import { resolvePort, type EnvRecord } from "./index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature"),
+  path.resolve(__dirname, "../../../specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature"),
 );
 
 describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
@@ -40,7 +40,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       resolved = resolvePort({ flag: "5000", envVar, fallback, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:The CLI flag outranks every other source
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The CLI flag outranks every other source
     Then("the resolved port is 5000", () => {
       expect(resolved).toBe(5000);
     });
@@ -65,7 +65,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       resolved = resolvePort({ envVar, fallback, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:The prefixed variable outranks the fallback
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The prefixed variable outranks the fallback
     Then("the resolved port is 4000", () => {
       expect(resolved).toBe(4000);
     });
@@ -90,7 +90,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       resolved = resolvePort({ envVar, fallback, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:The fallback applies when nothing else supplies a port
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The fallback applies when nothing else supplies a port
     Then("the resolved port is 3100", () => {
       expect(resolved).toBe(3100);
     });
@@ -119,7 +119,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       resolved = resolvePort({ envVar, fallback, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:A bare PORT variable never moves the listener
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A bare PORT variable never moves the listener
     // A bare PORT is Next.js's own knob; this repo deliberately does NOT honour it as a port
     // source, so that one exported PORT cannot silently retarget every app at once.
     Then("the resolved port is 3100", () => {
@@ -150,7 +150,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       resolved = resolvePort({ flag: flagValue, envVar, fallback, env });
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:A blank value at a tier falls through to the next tier
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A blank value at a tier falls through to the next tier
     Then("the resolved port is <expected>", () => {
       expect(resolved).toBe(expected);
     });
@@ -184,7 +184,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
         }
       });
 
-      // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:A present but malformed port fails loudly instead of falling through
+      // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A present but malformed port fails loudly instead of falling through
       Then('resolution throws, naming "--port" and the valid range', () => {
         expect(thrown).toBeInstanceOf(Error);
         expect((thrown as Error).message).toContain("--port");
@@ -217,7 +217,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       }
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:An out-of-range compiled-in fallback is caught at startup
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:An out-of-range compiled-in fallback is caught at startup
     Then('resolution throws, naming "OSE_WWW_PORT" and the valid range', () => {
       expect(thrown).toBeInstanceOf(Error);
       expect((thrown as Error).message).toContain("OSE_WWW_PORT");
@@ -249,7 +249,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       }
     });
 
-    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:A malformed prefixed variable names that variable in the error
+    // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A malformed prefixed variable names that variable in the error
     Then('resolution throws, naming "OSE_WWW_PORT" and the valid range', () => {
       expect(thrown).toBeInstanceOf(Error);
       expect((thrown as Error).message).toContain("OSE_WWW_PORT");

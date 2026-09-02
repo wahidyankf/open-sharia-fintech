@@ -873,6 +873,13 @@ let validateProductCorpus (repoRoot: string) (app: string) : SpecFinding list =
 
     ownerFindings @ leftovers
 
+/// True when `dir` is itself a logical owner corpus root. A library owns
+/// exactly one surface, so it adopts the shape at its own root with no product
+/// directory to nest an owner under; the same positive signal — an
+/// `architecture.md` — decides it.
+let isOwnerCorpusRoot (dir: string) : bool =
+    File.Exists(Path.Combine(dir, ArchitectureFileName))
+
 /// True when `app` has begun the move to the logical owner-corpus shape, which
 /// is the one place that decides which rule set the three product-level
 /// validators apply.
@@ -940,6 +947,16 @@ let validateSpecCounts (repoRoot: string) (folder: string) : SpecFinding list =
             File = folder
             Evidence = sprintf "spec folder does not exist: %s" folder
             Expected = "create the spec folder with required subfolders" } ]
+    elif isOwnerCorpusRoot abs then
+        // A library carries its corpus at the folder root, so the corpus rules
+        // are the whole check — there is no five-folder scaffolding to count.
+        let ownerRel =
+            if Path.IsPathRooted folder then
+                Path.GetRelativePath(repoRoot, abs).Replace('\\', '/')
+            else
+                folder.TrimEnd('/')
+
+        validateOwnerCorpus repoRoot ownerRel
     elif not (List.isEmpty (ownerCorpusDirectories abs)) then
         // A migrated product has no five-folder scaffolding to count; its
         // per-corpus contents are proved by the tree-shape rules instead.

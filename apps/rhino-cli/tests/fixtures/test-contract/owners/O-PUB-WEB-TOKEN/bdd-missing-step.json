@@ -4,7 +4,7 @@
   "check": "bdd",
   "mutation": {
     "kind": "bdd-remove-binding",
-    "feature": "specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature",
+    "feature": "specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature",
     "scenario": "The package exports every structural token module",
     "step": "Given the web-ui-token package",
     "adapter": "unit@web-ui-token"
@@ -14,7 +14,7 @@
     "fields": [
       "project=web-ui-token",
       "owner=web-ui-token",
-      "item=specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature",
+      "item=specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature",
       "scenario=The package exports every structural token module",
       "step=Given the web-ui-token package"
     ]

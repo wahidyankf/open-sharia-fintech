@@ -79,11 +79,11 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-crane-core/behavior/gherkin libs/fsharp-crane-core"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-crane-core/behaviors libs/fsharp-crane-core"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-crane-core/behavior/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature",
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/**/*.fs"
       ]
@@ -138,7 +138,7 @@
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/behavior/gherkin/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature"]
   },
   "tags": ["type:lib", "domain:crane", "lang:fsharp"],
   "implicitDependencies": []

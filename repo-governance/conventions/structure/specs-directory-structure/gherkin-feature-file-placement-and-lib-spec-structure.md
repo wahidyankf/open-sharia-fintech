@@ -69,20 +69,22 @@ specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature
 
 ## Lib Spec Structure
 
-Library specs use a simpler layout with no five-folder tree — libs do not have C4 levels or behavioral architecture in the same sense as deployed apps.
+A library owns exactly one surface, so it has no product directory to separate. The three
+[logical owner corpus](./logical-owner-corpus.md) entries therefore sit directly under the library
+root:
 
 ```
 specs/libs/<lib-name>/
 ├── README.md
-└── behavior/
-    └── gherkin/
-        └── <package>/       # Package or module subdirectories
-            └── <feature>.feature
+├── architecture.md          # the current, as-built library
+└── behaviors/
+    └── <domain>/            # domain, package, or component subdirectories
+        └── <feature>.feature
 ```
 
 **Examples:**
 
 ```
-specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature
-specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature
+specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature
+specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature
 ```

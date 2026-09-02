@@ -6,7 +6,7 @@ import { vi, expect } from "vitest";
 import { Sheet } from "./sheet";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/sheet/sheet.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/sheet/sheet.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

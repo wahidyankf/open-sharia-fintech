@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { ResizablePanel } from "./resizable-panel";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"),
 );
 
 function getHandle(container: HTMLElement): HTMLElement {

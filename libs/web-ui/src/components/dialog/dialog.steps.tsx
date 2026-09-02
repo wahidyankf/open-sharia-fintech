@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "./dialog";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/dialog/dialog.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/dialog/dialog.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

@@ -210,6 +210,35 @@ type SpecsSteps() =
 
         ownerDir
 
+    /// Builds one library corpus under `specs/libs/<lib>/` — the same three
+    /// entries as an owner corpus, sitting at the library root because a
+    /// library has no product directory to nest an owner under.
+    let specCreateLibCorpus (lib: string) (withBehaviorsReadme: bool) : string =
+        let libDir = Path.Combine(specFixtureRoot (), "specs", "libs", lib)
+        let behaviorsDir = Path.Combine(libDir, "behaviors")
+        Directory.CreateDirectory behaviorsDir |> ignore
+        File.WriteAllText(Path.Combine(libDir, "architecture.md"), "# Architecture\n")
+        File.WriteAllText(Path.Combine(libDir, "README.md"), "# Index\n")
+
+        if withBehaviorsReadme then
+            File.WriteAllText(Path.Combine(behaviorsDir, "README.md"), "# Index\n")
+
+        File.WriteAllText(
+            Path.Combine(behaviorsDir, "example.feature"),
+            String.Join(
+                "\n",
+                [ "Feature: Example"
+                  ""
+                  "  Scenario: Works"
+                  "    Given a thing"
+                  "    When it runs"
+                  "    Then it passes"
+                  "" ]
+            )
+        )
+
+        libDir
+
     /// Records one validator run's findings, rendered output, and exit code.
     let specRecord (findings: SpecFinding list) : unit =
         specFindings <- findings
@@ -636,7 +665,7 @@ type SpecsSteps() =
     [<Given>]
     member _.``a new unbound scenario "Resize the sidebar by keyboard" in "resizable-panel.feature"``() =
         let gap =
-            { Feature = "specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature"
+            { Feature = "specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"
               Scenario = "Resize the sidebar by keyboard" }
 
         e2eReport <-
@@ -1082,6 +1111,20 @@ type SpecsSteps() =
     [<When>]
     member _.``the developer runs "rhino-cli specs validate-counts specs/apps/nosuchapp"``() =
         specRecord (validateSpecCounts (specFixtureRoot ()) "specs/apps/nosuchapp")
+
+    [<Given>]
+    member _.``a library corpus at "specs/libs/testlib" carrying architecture.md and a non-empty behaviors/``() =
+        specFolder <- "specs/libs/testlib"
+        specCreateLibCorpus "testlib" true |> ignore
+
+    [<Given>]
+    member _.``a library corpus at "specs/libs/testlib" whose behaviors/ folder has no README.md``() =
+        specFolder <- "specs/libs/testlib"
+        specCreateLibCorpus "testlib" false |> ignore
+
+    [<When>]
+    member _.``the developer runs "rhino-cli specs validate-counts specs/libs/testlib"``() =
+        specRecord (validateSpecCounts (specFixtureRoot ()) "specs/libs/testlib")
 
     // ---- Given (`validate-links.feature`) ----
 

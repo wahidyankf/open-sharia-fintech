@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { Icon } from "./icon";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/icon/icon.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/icon/icon.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

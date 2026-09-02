@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Input } from "./input";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behavior/gherkin/input/input.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/behaviors/input/input.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
