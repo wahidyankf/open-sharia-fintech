@@ -560,9 +560,12 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 > parity path, so its move carries an identical `ose-private` landing; `crane` exists only here.
 >
 > Step 1 and the two CLI families landed as `ose-public#430` and `ose-public#431`, mirrored into
-> `ose-private#141`, which restored the byte-identical parity boundary. `ayokoding` follows next: it
-> is the only remaining family whose corpus move touches no Nx project root, because `ose` and
-> `organiclever` both keep their OpenAPI contract project under `containers/`.
+> `ose-private#141`, which restored the byte-identical parity boundary. The remaining families
+> followed: `ayokoding` (`ose-public#432`), `libs` (`ose-public#433`), `organiclever`
+> (`ose-public#434`), `ose` (`ose-public#435`). Step 3 — dropping legacy five-folder-tree support
+> once no family declared it — landed as `ose-public#436`, with the documentation-surface retirement
+> as `ose-public#437`. Phase 5 is fully complete: every family carries the logical owner-corpus
+> shape and the validator no longer accepts the legacy tree.
 
 ### `D-P5-PRI` delivery lifecycle
 
