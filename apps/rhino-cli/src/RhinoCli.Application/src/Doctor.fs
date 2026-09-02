@@ -158,6 +158,11 @@ let repoName (commonDir: string) : string =
     if String.IsNullOrEmpty(parent) then
         ""
     else
+        // Coverage note: `Path.GetFileName` only ever returns `null` when
+        // its argument itself is `null`; `parent` is guaranteed non-null
+        // (and non-empty) by the `String.IsNullOrEmpty` check two lines
+        // above, in the same synchronous call, so this branch is
+        // unreachable via .NET's own `Path.GetFileName` contract.
         match Path.GetFileName(parent) with
         | null -> ""
         | name -> name
@@ -168,6 +173,11 @@ let repoName (commonDir: string) : string =
 /// [Repo-grounded — `target_share.rs::shared_target_path`].
 let sharedTargetPath (cacheRoot: string) (repoNameValue: string) (crateDir: string) : string =
     let leaf =
+        // Coverage note: `String.TrimEnd` never returns `null` (it throws
+        // `NullReferenceException` before returning at all when `crateDir`
+        // itself is `null`, never producing a `null` result), so
+        // `Path.GetFileName` here — which only returns `null` for a `null`
+        // argument — can never take the `null` arm below.
         match Path.GetFileName(crateDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) with
         | null -> ""
         | name -> name
@@ -939,6 +949,10 @@ let parseHadolintVersion (out: string) : string =
     parseLineWord out "Haskell Dockerfile Linter" 3 ""
 
 let parseActionlintVersion (out: string) : string =
+    // Coverage note: `String.Split` never returns an empty array for any
+    // input — even `""` splits to `[| "" |]` — so this `[||]` arm is
+    // unreachable via .NET's own `String.Split` contract, regardless of
+    // what `out` contains.
     match out.Split('\n') with
     | [||] -> ""
     | lines -> lines.[0].Trim()
@@ -1162,6 +1176,18 @@ let rustToolchainLintComponentChecks (repoRoot: string) : ToolCheck list =
 // --- Playwright browser detection [Repo-grounded — `checker.rs`'s
 // "Playwright browser detection" section] ---
 
+/// Pure decision behind [`checkPlaywrightBrowsersAt`]'s platform-specific
+/// cache directory choice, split out of the `bool`-driven `if` so both
+/// branches are directly testable: a single-OS test process (this
+/// development machine is always macOS) can only ever make the real
+/// `RuntimeInformation.IsOSPlatform` check take one side, leaving the other
+/// permanently unreachable through the ambient wrapper alone.
+let playwrightCacheDirFor (isMacOS: bool) (home: string) : string =
+    if isMacOS then
+        Path.Combine(home, "Library", "Caches", "ms-playwright")
+    else
+        Path.Combine(home, ".cache", "ms-playwright")
+
 /// Returns `true` when at least one Chromium Playwright browser bundle is
 /// found under `home`'s platform-specific Playwright cache directory.
 let checkPlaywrightBrowsersAt (home: string option) : bool =
@@ -1169,10 +1195,7 @@ let checkPlaywrightBrowsersAt (home: string option) : bool =
     | None -> false
     | Some h ->
         let cacheDir =
-            if RuntimeInformation.IsOSPlatform(OSPlatform.OSX) then
-                Path.Combine(h, "Library", "Caches", "ms-playwright")
-            else
-                Path.Combine(h, ".cache", "ms-playwright")
+            playwrightCacheDirFor (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) h
 
         try
             Directory.Exists(cacheDir)
@@ -1786,13 +1809,21 @@ let needsRemediation (check: ToolCheck) : bool =
 let hasRemediationWork (result: DoctorResult) : bool =
     result.Checks |> List.exists needsRemediation
 
+/// Pure decision table behind [`currentPlatform`], split out so every
+/// branch is directly testable: a single-OS test process (this development
+/// machine is always macOS) can only ever make the real
+/// `RuntimeInformation.IsOSPlatform` checks take one of the three paths,
+/// leaving the other two permanently unreachable through the real,
+/// ambient-reading wrapper alone.
+let platformFromFlags (isOSX: bool) (isLinux: bool) : string =
+    if isOSX then "darwin"
+    elif isLinux then "linux"
+    else "other"
+
 let private currentPlatform () : string =
-    if RuntimeInformation.IsOSPlatform(OSPlatform.OSX) then
-        "darwin"
-    elif RuntimeInformation.IsOSPlatform(OSPlatform.Linux) then
-        "linux"
-    else
-        "other"
+    platformFromFlags
+        (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 
 /// Summary of a completed fix run [Repo-grounded — `fixer.rs::FixResult`].
 type FixResult =

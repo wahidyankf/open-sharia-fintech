@@ -1295,6 +1295,12 @@ let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
         | Format.Go -> computeGoResult opts.CoverageFile opts.Threshold
         | Format.Cobertura -> computeCoberturaResult opts.CoverageFile opts.Threshold
         | Format.Jacoco -> Error "jacoco coverage files are not supported by this command"
+        // Coverage note: unreachable. `format` above is always the result of
+        // `detectFormat opts.CoverageFile`, and every branch of `detectFormat`
+        // returns `Format.Lcov`, `Format.Jacoco`, `Format.Cobertura`, or
+        // `Format.Go` — never `Format.Diff`. `Format.Diff` is constructed
+        // only inside `computeDiffCoverage`, the unrelated `diff` command's
+        // own result builder, whose output never flows into this match.
         | Format.Diff -> Error "diff format is not a valid input format for validate"
 
     computed

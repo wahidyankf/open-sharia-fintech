@@ -149,6 +149,10 @@ let private runEmojiLeaf (repoRoot: string) (format: OutputFormat) (args: string
     let paths = resolveEmojiPaths repoRoot args
     let result = Convention.runEmojiValidate paths
 
+    // Genuinely unreachable from this leaf: `Emoji.audit`'s only `Success =
+    // false` trigger is an empty paths list, and `resolveEmojiPaths` always
+    // defaults to `["."]` when neither a positional nor `-p`/`--path` is
+    // given, so `paths` here is never empty.
     if not result.Success && List.isEmpty result.Findings then
         eprintfn "Error: emoji audit failed: %s" result.Output
         1
@@ -324,6 +328,11 @@ let private resolveRestoreDir (dirArg: string) : Result<string, string> =
     else
         Env.expandTilde dirArg
         |> Result.map (fun expanded ->
+            // Genuinely unreachable: `Directory.Exists` is documented to
+            // never throw (it returns `false` for any invalid/inaccessible
+            // path rather than raising), so this `with` never runs; kept as
+            // defensive belt-and-suspenders around a filesystem call rather
+            // than removed.
             try
                 if IO.Directory.Exists expanded then
                     IO.Path.GetFullPath expanded
@@ -665,6 +674,14 @@ let private runDoctorLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: st
                 if fr.Failed > 0 then
                     eprintfn "Error: %d tool(s) failed to install" fr.Failed
                     Some 1
+                // Not exercised by this hermetic unit-test suite: this arm
+                // needs `--fix` to genuinely install a real missing tool
+                // (`Runner = None` is the real, non-test-double runner)
+                // outside `--dry-run`, so it depends on real network/package
+                // access and mutates the host — unsafe and slow to
+                // reproduce deterministically in-process. Left uncovered by
+                // design rather than dead code; a real end-to-end
+                // installation is out of scope for this test tier.
                 elif not parsed.DryRun && fr.Fixed > 0 then
                     Some 0
                 else
@@ -944,8 +961,23 @@ let private runMdLinksValidateLeaf (repoRoot: string) (format: OutputFormat) (ra
     printResultAndExitCode output err
 
 /// `md mermaid validate` [Repo-grounded — `md_validate_mermaid.rs::run`].
+///
+/// `collectPositionals` only skips a flag's value when the flag name is
+/// listed as a value-taking flag; the four `--max-*` threshold flags below
+/// each take a numeric value and must be listed here too, or their value
+/// (e.g. the `5` in `--max-label-len 5`) is swallowed as a bogus positional
+/// scan path — silently restricting the walk to a nonexistent subtree and
+/// reporting a false "0 violations" instead of validating anything.
 let private runMdMermaidValidateLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
-    let positional = collectPositionals [ "--exclude" ] rawArgs
+    let positional =
+        collectPositionals
+            [ "--exclude"
+              "--max-label-len"
+              "--max-width"
+              "--max-depth"
+              "--max-subgraph-nodes" ]
+            rawArgs
+
     let exclude = collectRepeatableFlag [ "--exclude" ] rawArgs
     let stagedOnly = hasFlag [ "--staged-only" ] rawArgs
     let changedOnly = hasFlag [ "--changed-only" ] rawArgs
@@ -1035,6 +1067,12 @@ let private runMdNamingValidateLeaf (repoRoot: string) (format: OutputFormat) (r
     let absPaths = resolveAbsPaths repoRoot [ "docs/"; "repo-governance/" ] positional
     let exempt = collectRepeatableFlag [ "--exempt" ] rawArgs
 
+    // Genuinely unreachable: `Md.validateDocsNamingExempt`'s only `Error`
+    // trigger is an empty paths list, and `resolveAbsPaths` always defaults
+    // to `["docs/"; "repo-governance/"]` when no positional path is given —
+    // `absPaths` here is never empty. Same reasoning applies to
+    // `runMdFrontmatterValidateLeaf`'s and
+    // `runMdFrontmatterDatesValidateLeaf`'s identical `Error` arms below.
     match Md.validateDocsNamingExempt absPaths exempt with
     | Error message ->
         eprintfn "Error: docs validate-naming failed: %s" message
@@ -1115,6 +1153,8 @@ let private runMdFrontmatterDatesValidateLeaf (repoRoot: string) (format: Output
         registeredExcludes
         @ (flagExclude |> List.filter (fun e -> not (List.contains e registeredExcludes)))
 
+    // Genuinely unreachable — see `runMdNamingValidateLeaf`'s comment above:
+    // `defaultPaths` here is likewise always non-empty, so `absPaths` is too.
     match Md.validateFrontmatterDatesDetailed absPaths excludes with
     | Error message ->
         eprintfn "Error: frontmatter-audit failed: %s" message
@@ -1943,6 +1983,11 @@ type private LevelDir =
       Report: string option }
 
 let private capitalizeFirst (s: string) : string =
+    // The empty-string branch is genuinely unreachable: this function's one
+    // call site (`printfn "=== %s level ==="` below) always passes
+    // `level.Name`, and `resolveLevelDirs`'s three `level` constructions
+    // below hardcode the literal names `"unit"`/`"integration"`/`"e2e"` —
+    // never `""`.
     if s = "" then
         s
     else
@@ -2019,6 +2064,12 @@ let private printMarkerViolations (violations: Specs.BehaviorCoverageViolation l
             match v with
             | Specs.UntaggedScenario(featurePath, title) ->
                 printfn "  - %s\n    → Scenario: \"%s\" has no @unit/@integration/@e2e level tag" featurePath title
+            // Genuinely unreachable from this dispatcher: `Specs.TestLevel`
+            // has exactly three cases (`Unit`/`Integration`/`E2e`), and
+            // `runThreeLevel`'s `envelope` (below) hardcodes `Levels = set [
+            // Unit; Integration; E2e ]` — every possible tag is always a
+            // member, so `Specs.validate` can never construct this case for
+            // a caller in this file.
             | Specs.LevelOutsideEnvelope(featurePath, title, requiredLevel) ->
                 printfn
                     "  - %s\n    → Scenario: \"%s\" requires level [%s], which is outside the project envelope"
@@ -2100,9 +2151,17 @@ let private runThreeLevel
     // violations it never opted into.
     let coversEnabled = levels |> List.exists (fun l -> l.Report.IsSome)
 
-    let markerViolations, runtimeViolations =
+    // `Result`-wrapped rather than a bare tuple: a malformed/unreadable
+    // `--<level>-report` file must surface as a clean `Error: ...` exit
+    // (matching every other failure path in this file), not the unhandled
+    // exception `Specs.parseRunReport`'s `Error` case previously reached via
+    // `failwith` — a real crash-on-bad-input defect found while closing this
+    // file's coverage gap. The `List.fold` short-circuit mirrors
+    // `validateSelectedTools`'s identical Result-accumulation idiom above.
+    let markerAndRuntimeResult
+        : Result<Specs.BehaviorCoverageViolation list * Specs.RuntimeCoverageViolation list, string> =
         if not coversEnabled then
-            [], []
+            Ok([], [])
         else
             let scenarios =
                 specsDirs
@@ -2124,44 +2183,55 @@ let private runThreeLevel
             let envelope: Specs.ProjectEnvelope =
                 { Levels = set [ Specs.Unit; Specs.Integration; Specs.E2e ] }
 
-            let runtime =
+            let runtimeResult: Result<Specs.RuntimeCoverageViolation list, string> =
                 levels
-                |> List.collect (fun level ->
-                    match level.Report with
-                    | None -> []
-                    | Some reportPath ->
-                        let levelMarkers = Specs.extractCoversMarkers level.Dir level.TestLevel repoRoot
+                |> List.fold
+                    (fun acc level ->
+                        match acc with
+                        | Error e -> Error e
+                        | Ok accViolations ->
+                            match level.Report with
+                            | None -> Ok accViolations
+                            | Some reportPath ->
+                                let levelMarkers = Specs.extractCoversMarkers level.Dir level.TestLevel repoRoot
 
-                        if List.isEmpty levelMarkers then
-                            []
-                        else
-                            match Specs.parseRunReport (IO.File.ReadAllText reportPath) with
-                            | Error message -> failwith message
-                            | Ok report -> Specs.checkRuntime levelMarkers report)
+                                if List.isEmpty levelMarkers then
+                                    Ok accViolations
+                                else
+                                    match Specs.parseRunReport (IO.File.ReadAllText reportPath) with
+                                    | Error message -> Error message
+                                    | Ok report -> Ok(accViolations @ Specs.checkRuntime levelMarkers report))
+                    (Ok [])
 
-            Specs.validate scenarios markers envelope, runtime
+            runtimeResult
+            |> Result.map (fun runtime -> Specs.validate scenarios markers envelope, runtime)
 
-    if format = Text then
-        printMarkerViolations markerViolations
-        printRuntimeViolations runtimeViolations
-
-    if
-        failingLevels.Count = 0
-        && List.isEmpty markerViolations
-        && List.isEmpty runtimeViolations
-    then
-        0
-    else
-        let parts =
-            [ if failingLevels.Count > 0 then
-                  sprintf "level(s) %s" (String.concat ", " failingLevels)
-              if not (List.isEmpty markerViolations) then
-                  sprintf "%d @covers marker violation(s)" (List.length markerViolations)
-              if not (List.isEmpty runtimeViolations) then
-                  sprintf "%d runtime cross-check violation(s)" (List.length runtimeViolations) ]
-
-        eprintfn "Error: spec coverage gaps found: %s" (String.concat "; " parts)
+    match markerAndRuntimeResult with
+    | Error message ->
+        eprintfn "Error: %s" message
         1
+    | Ok(markerViolations, runtimeViolations) ->
+        if format = Text then
+            printMarkerViolations markerViolations
+            printRuntimeViolations runtimeViolations
+
+        if
+            failingLevels.Count = 0
+            && List.isEmpty markerViolations
+            && List.isEmpty runtimeViolations
+        then
+            0
+        else
+            let parts =
+                [ if failingLevels.Count > 0 then
+                      sprintf "level(s) %s" (String.concat ", " failingLevels)
+                  if not (List.isEmpty markerViolations) then
+                      sprintf "%d @covers marker violation(s)" (List.length markerViolations)
+                  if not (List.isEmpty runtimeViolations) then
+                      sprintf "%d runtime cross-check violation(s)" (List.length runtimeViolations) ]
+
+            eprintfn "Error: spec coverage gaps found: %s" (String.concat "; " parts)
+            1
 
 /// Reproduces clap's own missing-required-argument diagnostic for the
 /// coverage leaves, whose two-positional arity is enforced by
@@ -3402,6 +3472,24 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "harness-catalog-generate" -> runHarnessCatalogGenerateLeaf repoRoot format rest
                     | "harness-catalog-validate" -> runHarnessCatalogValidateLeaf repoRoot format rest
                     | "harness-audit" -> runHarnessAuditLeaf repoRoot format rest
-                    | "specs-behavior-coverage-validate" -> runSpecsBehaviorCoverageLeaf repoRoot format rest
+                    // "specs-behavior-coverage-validate" has no arm here: the
+                    // `elif path = Some "specs-behavior-coverage-validate"`
+                    // branch above always intercepts that path first (it
+                    // needs its own two-stage getRepoRoot/parseOutputFormat
+                    // sequencing), so a match arm for it here could never
+                    // run. Coverlet flagged the dead arm as a line this test
+                    // suite could never reach; deleting it is the fix.
                     | "specs-audit" -> runSpecsAuditLeaf repoRoot format rest
+                    // Genuinely unreachable, not deletable: every leaf name
+                    // `routeTable` can ever produce is either handled by an
+                    // explicit arm above or intercepted earlier by one of
+                    // this function's `elif path = Some "..."`/`StartsWith
+                    // "test-contract"` branches (verified by diffing
+                    // `routeTable`'s leaf-name column against every arm and
+                    // `elif` guard in this file — none are left over). F#'s
+                    // string-pattern matching still requires an exhaustive
+                    // wildcard, so this arm cannot be removed the way the
+                    // dead `specs-behavior-coverage-validate` arm above was;
+                    // it stands as a safety net against a future
+                    // `routeTable` entry left unwired here.
                     | _ -> 2

@@ -338,6 +338,16 @@ module private License =
     let splitMarkdownRow (line: string) : string list =
         let trimmed = line.Trim()
 
+        // Coverage note: `splitMarkdownRow` lives in the `private License`
+        // module, so both of its call sites are the only ways to reach it.
+        // `isMarkdownTableSeparator` below only calls it after its own
+        // `line.StartsWith("|", ...)` guard passed, and
+        // `parseLicensingNotice`'s `loop` only calls it after the same
+        // guard on an already-`Trim()`-ed `line`. Trimming a string whose
+        // first character is already non-whitespace (`|`) is a no-op, so
+        // `trimmed` always still starts with `|` here — the `else` arm is
+        // unreachable via either public-facing entry point
+        // (`License.audit`).
         let trimmed =
             if trimmed.StartsWith("|", StringComparison.Ordinal) then
                 trimmed.Substring(1)

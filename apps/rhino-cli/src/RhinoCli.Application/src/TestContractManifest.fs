@@ -57,7 +57,7 @@ type ManifestReport =
 let SchemaVersion = "ose-test-contract-manifest-fixture/v1"
 
 [<Literal>]
-let FixtureRoot = "apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Manifest"
+let FixtureRoot = "apps/rhino-cli/tests/unit/Fixtures/TestContract/Manifest"
 
 let groupName (group: ManifestGroup) : string =
     match group with

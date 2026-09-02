@@ -391,6 +391,13 @@ let private scalarText (node: YamlNode) : string option =
     match node with
     | :? YamlScalarNode as scalar ->
         match scalar.Value with
+        // Coverage note: verified empirically (read-only `dotnet fsi` against
+        // the built YamlDotNet.dll) that `YamlScalarNode.Value` is never CLR
+        // null for any construct this parser's YAML source can actually
+        // produce — explicit `!!null` tags, `null`/`~`/empty-plain scalars,
+        // quoted-empty scalars, and bare `key:` all yield `Value = ""`, never
+        // `null`. `RepoConfig.fs`'s own `not (isNull value.Value)` guard on
+        // the same type reflects the identical defensive convention.
         | null -> None
         | value when
             scalar.Style = YamlDotNet.Core.ScalarStyle.Plain
@@ -1685,6 +1692,12 @@ let private projectNameOf (projectJsonPath: string) : string option =
     let inferred =
         let directory = Path.GetDirectoryName(projectJsonPath: string)
 
+        // Coverage note: projectNameOf's sole caller, enumerateNxProjects,
+        // only ever supplies paths built by findProjectJsonFiles as
+        // `Path.Combine(dir, "project.json")` for a `dir` that
+        // `Directory.Exists` just confirmed real — `Path.GetDirectoryName`
+        // on such a path always returns that same non-empty `dir` back, so
+        // this null/empty guard can never actually fire.
         if String.IsNullOrEmpty directory then
             None
         else

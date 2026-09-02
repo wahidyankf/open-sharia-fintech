@@ -397,6 +397,15 @@ let private auditDevelopment (root: string) : TraceabilityFinding list =
 let private auditWorkflows (root: string) : TraceabilityFinding list =
     listGovernanceMarkdown root
     |> List.choose (fun path ->
+        // Coverage note: every `path` this `List.choose` sees comes from
+        // `listGovernanceMarkdown root` -> `walkAllFiles root`, which builds
+        // every returned path by recursively concatenating `root` with
+        // `Directory.GetFiles`/`Directory.GetDirectories` entry names — a
+        // path built this way always begins with the literal `root` string
+        // it was combined from. `auditWorkflows` is also only ever called
+        // (at `auditTraceability` below) with the same `root` value used to
+        // build `path`, so the `else` arm here is unreachable via the
+        // public `auditTraceability` entry point.
         let rel =
             if path.StartsWith(root, StringComparison.Ordinal) then
                 path.Substring(root.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/')

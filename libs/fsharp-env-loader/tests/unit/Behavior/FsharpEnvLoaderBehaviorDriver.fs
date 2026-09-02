@@ -7,7 +7,7 @@
 /// `fsharp-env-loader` in `repo-config.yml`.
 ///
 /// One instance-mutable-field step class (the pattern established by
-/// `apps/rhino-cli/src/tests/unit/Steps/EnvSteps.fs`), consumed by a
+/// `apps/rhino-cli/tests/unit/Steps/EnvSteps.fs`), consumed by a
 /// `[<Theory>][<MemberData>]` runner per feature file (the pattern
 /// established by `libs/fsharp-crane-core/tests/unit/Tests/
 /// PdfToMarkdownRoutingFeatureRunner.fs`) so `Scenario Outline` `Examples`
@@ -32,7 +32,7 @@ open FsharpEnvLoader
 /// file's tests (including `EnvTierTests.fs`'s own `withAppEnv` facts) under
 /// xunit's default one-collection-per-module parallelism. Matches the same
 /// assembly-wide opt-out already established by
-/// `apps/rhino-cli/src/tests/unit/Steps/GitRootUnitTests.fs` and
+/// `apps/rhino-cli/tests/unit/Steps/GitRootUnitTests.fs` and
 /// `apps/organiclever-be/tests/integration/TestCollections.fs`.
 [<assembly: CollectionBehavior(DisableTestParallelization = true)>]
 do ()

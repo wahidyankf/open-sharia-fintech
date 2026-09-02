@@ -231,6 +231,16 @@ let private unescapeJsString (raw: string) : string =
             out.Append(c) |> ignore
             i <- i + 1
         elif i + 1 >= raw.Length then
+            // Coverage note: unreachable via this function's sole caller,
+            // capturedTitle. Every `raw` it supplies is either "" (the
+            // else-"" fallback, never entering this loop) or a `QuotedJsString`
+            // capture group whose body is defined by
+            // `(?:\\.|[^'\\])*` — every backslash in that alternation is
+            // paired with a "consume the following character" `\\.` match,
+            // so a captured body can never end in a lone, unpaired
+            // backslash. Preserved as defensive code matching the analogous
+            // Rust source's own general-purpose unescaper.
+            //
             // Trailing backslash with nothing after it — preserve as-is.
             out.Append('\\') |> ignore
             i <- i + 1
@@ -277,10 +287,20 @@ let private unescapeJsString (raw: string) : string =
 /// whichever of the three alternative capture groups participated.
 let private capturedTitle (m: Match) : string =
     let raw =
-        if m.Groups.[1].Success then m.Groups.[1].Value
-        elif m.Groups.[2].Success then m.Groups.[2].Value
-        elif m.Groups.[3].Success then m.Groups.[3].Value
-        else ""
+        if m.Groups.[1].Success then
+            m.Groups.[1].Value
+        elif m.Groups.[2].Success then
+            m.Groups.[2].Value
+        elif m.Groups.[3].Success then
+            m.Groups.[3].Value
+        else
+            // Coverage note: unreachable. capturedTitle is only ever called
+            // with an `m` drawn from a successful `.Matches(...)` result over
+            // `QuotedJsString`'s single-quote/double-quote/backtick
+            // alternation — a successful match always assigns exactly one of
+            // the three groups (never zero, never more than one), so this
+            // fallback can never actually fire.
+            ""
 
     unescapeJsString raw
 
@@ -1524,6 +1544,15 @@ let addStepToMatcher (sm: StepMatcher) (text: string) (originFile: string) : uni
         elif hasCucumberExpressions text then
             match tryRegex (sprintf "^%s$" (cucumberExprToRegex text)) with
             | Some re -> sm.AddPattern(re, text, originFile)
+            // Coverage note: unreachable. cucumberExprToRegex only ever
+            // emits Regex.Escape'd literal fragments (always regex-safe by
+            // construction) interleaved with cucumberParamToRegex's five
+            // hardcoded, independently-valid regex atoms — the concatenation
+            // is therefore always syntactically valid .NET regex, so
+            // wrapping it `^...$` and compiling it here can never throw.
+            // Preserved to mirror the raw-regex branch above (which DOES
+            // need this same defensive shape, since `^`-prefixed step text
+            // is arbitrary, uncontrolled regex source).
             | None -> ()
         else
             sm.AddExact(unescapeCucumberExpr text, originFile)
