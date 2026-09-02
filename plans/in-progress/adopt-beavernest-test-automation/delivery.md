@@ -569,6 +569,17 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 
 ### `D-P5-PRI` delivery lifecycle
 
+> **Execution state:** Landed as `ose-private#141` (Rhino corpus, mirroring `D-P5-PUB` step 1/CLI
+> families) and `ose-private#142` (the remaining `libs` family — `ts-ui`, `ts-ui-tokens`). All three
+> private owners (`specs/apps/rhino/cli`, `specs/libs/ts-ui`, `specs/libs/ts-ui-tokens`) now carry
+> the logical owner-corpus shape (one README, an as-built `architecture.md`, recursive `behaviors/`)
+> and each independently passes `specs counts validate` with 0 findings. `ose-private` never carries
+> the `crane`/`ayokoding`/`organiclever`/`ose` families `D-P5-PUB` migrated, since those projects
+> exist only in `ose-public`; the private mirror's scope is exactly the private project inventory.
+> No separate validator change was needed here: `rhino-cli` is the shared, parity-mirrored binary,
+> so `D-P5-PUB` step 3 (dropping legacy five-folder-tree support) already governs both repositories
+> the moment it landed in `ose-public`.
+
 ## Phase 6: Migrate `O-PUB-CRANE`
 
 - **Input:** complete `O-PUB-CRANE` Phase 0 row and merged foundations.
@@ -696,7 +707,15 @@ difference blocks both merges.
 > re-committed the same leaking blob. The real fix staged the deletion and committed with no
 > `--only` pathspec at all, confirmed via `git ls-tree` and the GitHub trees API showing the path
 > genuinely absent. `coverage.json` is now gitignored to prevent recurrence. A third
-> `pr-leak-review` pass came back fully clean (0 findings) on the corrected head.
+> `pr-leak-review` pass came back fully clean (0 findings) on the corrected head. CI then failed a
+> second, different test — `pruneOrphans tolerates a crate whose target symlink has a malformed
+(empty-string) raw target` — a genuine kernel-level OS difference rather than a flaky test:
+> macOS/BSD's `symlink(2)` accepts an empty-string target at the syscall level, but Linux's rejects
+> it outright (`ENOENT`), so the on-disk artifact the test needs cannot be constructed there at all;
+> branched the malformed-target assertions on `RuntimeInformation.IsOSPlatform(OSX)`, keeping the OS
+> refusal and ordinary orphan-pruning assertions on every platform. A fourth `pr-leak-review` pass
+> came back fully clean (0 findings) on the corrected head. Merged: `ose-public#442` (`666211904`)
+> and `ose-private#143` (`16ef644507`).
 > PR: [wahidyankf/ose-private#143](https://github.com/wahidyankf/ose-private/pull/143).
 
 ## Phase 8A: Migrate `O-PUB-FS-CORE`
