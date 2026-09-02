@@ -90,7 +90,7 @@ let SchemaVersion = "ose-test-contract-bdd-fixture/v1"
 
 /// The only directory a BDD fixture is resolved from.
 [<Literal>]
-let FixtureRoot = "apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Bdd"
+let FixtureRoot = "apps/rhino-cli/tests/unit/Fixtures/TestContract/Bdd"
 
 let adapterName (adapter: Adapter) : string =
     match adapter with

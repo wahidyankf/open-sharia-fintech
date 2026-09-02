@@ -1943,6 +1943,12 @@ let private convertCodexAgentInner
 /// Converts a single Claude agent file to Codex format and writes it to
 /// `outputPath` unless `dryRun`
 /// [Repo-grounded — `codex.rs::convert_codex_agent`].
+///
+/// The write is guarded by its own `try`/`with`, matching [`convertAgent`]'s
+/// OpenCode counterpart: without it, a write failure (e.g. an unwritable
+/// `.codex/agents/`) raised an unhandled exception straight through
+/// [`convertAllCodexAgents`] instead of the per-file `Failed`/`FailedFiles`
+/// accounting every other conversion failure gets.
 let convertCodexAgent
     (inputPath: string)
     (outputPath: string)
@@ -1957,14 +1963,19 @@ let convertCodexAgent
         | d -> d
 
     convertCodexAgentInner inputPath agentName claudeDir mirrorDir
-    |> Result.map (fun (agent, output, warnings) ->
-        if not dryRun then
-            Directory.CreateDirectory mirrorDir |> ignore
-            File.WriteAllText(outputPath, output)
+    |> Result.bind (fun (agent, output, warnings) ->
+        try
+            if not dryRun then
+                Directory.CreateDirectory mirrorDir |> ignore
+                File.WriteAllText(outputPath, output)
 
-        { Name = agent.Name
-          Description = agent.Description },
-        warnings)
+            Ok(
+                { Name = agent.Name
+                  Description = agent.Description },
+                warnings
+            )
+        with ex ->
+            Error(sprintf "failed to write %s: %s" outputPath ex.Message))
 
 /// Converts every `.claude/agents/` agent into `.codex/agents/<name>.toml`
 /// [Repo-grounded — `codex.rs::convert_all_codex_agents`].
@@ -2055,31 +2066,43 @@ let rewriteGeneratedRegion (existing: string) (region: string) : string =
 /// Emits every Codex binding: the standalone agent files and the generated
 /// region of `.codex/config.toml`
 /// [Repo-grounded — `codex.rs::emit_codex_bindings`].
+///
+/// The `.codex/config.toml` read/write is guarded by its own `try`/`with`,
+/// matching [`convertAgent`]'s and [`convertCodexAgent`]'s write paths:
+/// without it, an unwritable `.codex/` (e.g. blocked by a same-named file, or
+/// a read-only config file) raised an unhandled exception straight through
+/// this function instead of a graceful `Error`, even though every per-agent
+/// write failure right above it already degrades gracefully.
 let emitCodexBindings (repoRoot: string) (dryRun: bool) : Result<CodexEmitResult, string> =
     convertAllCodexAgents repoRoot dryRun
-    |> Result.map (fun emitted ->
+    |> Result.bind (fun emitted ->
         if not dryRun then
-            let configPath = Path.Combine(repoRoot, codexConfigFile)
+            try
+                let configPath = Path.Combine(repoRoot, codexConfigFile)
 
-            let existing =
-                if File.Exists configPath then
-                    File.ReadAllText configPath
-                else
-                    ""
+                let existing =
+                    if File.Exists configPath then
+                        File.ReadAllText configPath
+                    else
+                        ""
 
-            let updated = rewriteGeneratedRegion existing (renderGeneratedRegion emitted.Agents)
+                let updated = rewriteGeneratedRegion existing (renderGeneratedRegion emitted.Agents)
 
-            if updated <> existing then
-                let configDir =
-                    match Path.GetDirectoryName configPath with
-                    | null
-                    | "" -> "."
-                    | d -> d
+                if updated <> existing then
+                    let configDir =
+                        match Path.GetDirectoryName configPath with
+                        | null
+                        | "" -> "."
+                        | d -> d
 
-                Directory.CreateDirectory configDir |> ignore
-                File.WriteAllText(configPath, updated)
+                    Directory.CreateDirectory configDir |> ignore
+                    File.WriteAllText(configPath, updated)
 
-        emitted)
+                Ok emitted
+            with ex ->
+                Error(sprintf "failed to write %s: %s" codexConfigFile ex.Message)
+        else
+            Ok emitted)
 
 // ---------------------------------------------------------------------------
 // Sync (agents leg)
@@ -2353,44 +2376,53 @@ let private validateNoStaleAgentDir (repoRoot: string) : ValidationCheck =
 /// Rejects `.opencode/skill(s)/<name>/SKILL.md` copies of a `.claude/skills`
 /// entry: OpenCode reads the source natively
 /// [Repo-grounded — `sync_validator.rs::validate_no_synced_skills`].
+///
+/// Wrapped in its own `try`/`with`, matching every other check in this
+/// module: without it, an unreadable `.claude/skills` (or `.opencode/skill(s)`)
+/// raised an unhandled exception straight through `validateSync` instead of
+/// reporting one failed check.
 let private validateNoSyncedSkills (repoRoot: string) : ValidationCheck =
+    let checkName = "No Synced Skill Mirror"
     let claudeDir = Path.Combine(repoRoot, ".claude", "skills")
 
-    let claudeNames =
-        if Directory.Exists claudeDir then
-            Directory.GetDirectories claudeDir
-            |> Array.filter (fun d -> File.Exists(Path.Combine(d, "SKILL.md")))
-            |> Array.map Path.GetFileName
-            |> Set.ofArray
-        else
-            Set.empty
-
-    let offenders =
-        [ Path.Combine(repoRoot, ".opencode", "skill")
-          Path.Combine(repoRoot, ".opencode", "skills") ]
-        |> List.collect (fun dir ->
-            if Directory.Exists dir then
-                Directory.GetDirectories dir
-                |> Array.filter (fun d ->
-                    claudeNames.Contains(Path.GetFileName d)
-                    && File.Exists(Path.Combine(d, "SKILL.md")))
-                |> Array.toList
+    try
+        let claudeNames =
+            if Directory.Exists claudeDir then
+                Directory.GetDirectories claudeDir
+                |> Array.filter (fun d -> File.Exists(Path.Combine(d, "SKILL.md")))
+                |> Array.map Path.GetFileName
+                |> Set.ofArray
             else
-                [])
+                Set.empty
 
-    if List.isEmpty offenders then
-        ValidationCheck.passed
-            "No Synced Skill Mirror"
-            "No rhino-cli-managed skill copies under .opencode/skill or .opencode/skills"
-    else
-        ValidationCheck.failed
-            "No Synced Skill Mirror"
-            "No skill copy mirroring .claude/skills/<name>"
-            (sprintf
-                "Found %d mirrored skill dir(s): %s"
-                (List.length offenders)
-                (sprintf "[%s]" (String.Join(" ", offenders))))
-            "OpenCode reads .claude/skills/ natively; remove the mirror copies"
+        let offenders =
+            [ Path.Combine(repoRoot, ".opencode", "skill")
+              Path.Combine(repoRoot, ".opencode", "skills") ]
+            |> List.collect (fun dir ->
+                if Directory.Exists dir then
+                    Directory.GetDirectories dir
+                    |> Array.filter (fun d ->
+                        claudeNames.Contains(Path.GetFileName d)
+                        && File.Exists(Path.Combine(d, "SKILL.md")))
+                    |> Array.toList
+                else
+                    [])
+
+        if List.isEmpty offenders then
+            ValidationCheck.passed
+                checkName
+                "No rhino-cli-managed skill copies under .opencode/skill or .opencode/skills"
+        else
+            ValidationCheck.failed
+                checkName
+                "No skill copy mirroring .claude/skills/<name>"
+                (sprintf
+                    "Found %d mirrored skill dir(s): %s"
+                    (List.length offenders)
+                    (sprintf "[%s]" (String.Join(" ", offenders))))
+                "OpenCode reads .claude/skills/ natively; remove the mirror copies"
+    with ex ->
+        ValidationCheck.failedMsg checkName (sprintf "failed to scan for synced skill mirrors: %s" ex.Message)
 
 /// Compares every registry-declared skills mirror against its canonical source
 /// tree, reusing the emitter's own diff

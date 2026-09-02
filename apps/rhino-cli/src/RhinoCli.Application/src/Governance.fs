@@ -158,6 +158,11 @@ let private splitLinkSuffix (target: string) : string * string =
 let private normalizeLinkTarget (raw: string) : string option =
     let raw = raw.Trim()
 
+    // Coverage note: both callers (extractReadmeLinks, existingEntryLines)
+    // only ever pass a capture group of `readmeLinkRegex`, whose pattern
+    // requires a literal ".md" substring inside the parens — so `raw.Trim()`
+    // can never actually equal "" here. Kept as defensive belt-and-braces
+    // for any future caller that supplies an unvalidated string directly.
     if raw = "" then
         None
     else
@@ -256,6 +261,13 @@ type private SiblingTargets =
 /// `README.md` adjacent to an index file at `dir`
 /// [Repo-grounded — `readme_index.rs::list_sibling_targets`].
 let private listSiblingTargets (dir: string) : SiblingTargets =
+    // Coverage note: every call site (auditIndexFile/generateIndexFile via
+    // `targetDir`, auditOneDir/generateOneDir via `dir`) passes a directory
+    // that `listAllDirs`/`walkDirsRecursive` already confirmed exists moments
+    // earlier in the same synchronous call — there is no TOCTOU gap in a
+    // single-threaded CLI invocation. This guard only fires under an actual
+    // filesystem race with a concurrent deleter, which a deterministic unit
+    // test cannot construct without exploiting undefined pathological input.
     if not (Directory.Exists dir) then
         SiblingTargets.Empty
     else
@@ -294,6 +306,10 @@ let private listSiblingTargets (dir: string) : SiblingTargets =
 /// governed content, not build junk [Repo-grounded —
 /// `readme_index.rs::list_all_dirs`/`walk_dirs_recursive`].
 let rec private walkDirsRecursive (dir: string) : string list =
+    // Coverage note: the initial call (from listAllDirs) is guarded by its
+    // own Directory.Exists check, and every recursive call passes a `d`
+    // freshly returned by `Directory.GetDirectories dir` moments earlier —
+    // same TOCTOU-free reasoning as listSiblingTargets above.
     if not (Directory.Exists dir) then
         []
     else
@@ -443,6 +459,12 @@ let private auditOneDir (dir: string) (root: string) : ReadmeIndexFinding list =
         if String.Equals(dir, root, StringComparison.Ordinal) then
             []
         else
+            // Coverage note: `dir <> root` was just established above, and
+            // `dir` is always a genuine child directory yielded by
+            // `Directory.GetDirectories`, so it always carries a non-empty
+            // basename and a non-null parent. This guard only protects
+            // against `dir` being the filesystem root itself, which cannot
+            // happen for a proper descendant of `root`.
             let parent = Path.GetDirectoryName(dir: string)
             let name = Path.GetFileName dir
 
@@ -530,6 +552,11 @@ let private nonEmptyFrontmatterString (dict: IDictionary<obj, obj>) (key: string
 /// tolerating a target with no frontmatter at all
 /// [Repo-grounded — `readme_index.rs::read_target_meta`].
 let private readTargetMeta (path: string) : TargetMeta =
+    // Coverage note: readTargetMeta's sole caller (entryFor) always supplies
+    // a `path` drawn from `targets.SortedNames` — a name `listSiblingTargets`
+    // already confirmed exists (either a literal sibling `.md` file, or a
+    // subdirectory whose `README.md` was confirmed present) moments earlier
+    // in the same synchronous call.
     if not (File.Exists path) then
         TargetMeta.Empty
     else
@@ -565,6 +592,11 @@ let private titleCaseFromStem (stem: string) : string =
 /// Derives a human-readable fallback title from a sibling-target `name`
 /// [Repo-grounded — `readme_index.rs::fallback_entry_title`].
 let private fallbackEntryTitle (name: string) : string =
+    // Coverage note: fallbackEntryTitle's sole caller (entryFor) always
+    // supplies a `name` drawn from `targets.SortedNames`, whose members are
+    // either a bare "*.md" sibling file (always ends ".md") or a
+    // "<dir>/README.md" subdirectory target (always ends "/README.md") — the
+    // trailing `else name` branch below is therefore unreachable.
     let baseName =
         if name.EndsWith("/README.md", StringComparison.Ordinal) then
             name.Substring(0, name.Length - "/README.md".Length)
@@ -575,6 +607,11 @@ let private fallbackEntryTitle (name: string) : string =
 
     let slashIdx = baseName.LastIndexOf('/')
 
+    // Coverage note: both branches above strip only a single trailing
+    // segment, and `SubDirs`/`Files` names are always single path segments
+    // (Path.GetFileName has no "/"), so `baseName` never carries a further
+    // "/" here — the `slashIdx >= 0` branch is unreachable via the current
+    // call graph.
     let baseName =
         if slashIdx >= 0 then
             baseName.Substring(slashIdx + 1)
@@ -587,9 +624,24 @@ let private fallbackEntryTitle (name: string) : string =
 /// frontmatter field and H1 heading [Repo-grounded —
 /// `readme_index.rs::fallback_index_title`].
 let private fallbackIndexTitle (indexPath: string) : string =
+    // Coverage note: fallbackIndexTitle's sole caller is generateIndexFile's
+    // "index file does not yet exist" branch, which is reached only for
+    // `Path.Combine(dir, "README.md")` (`stem` is always "README") — the
+    // split-index shape ("<dir>.md") is only ever passed to generateIndexFile
+    // when that file already exists (generateOneDir checks `File.Exists
+    // splitIndex` first), so it always takes the *other* branch of
+    // generateIndexFile instead. The `else titleCaseFromStem stem` branch
+    // below is therefore unreachable via the current call graph.
     let stem = Path.GetFileNameWithoutExtension indexPath
 
     if String.Equals(stem, "README", StringComparison.OrdinalIgnoreCase) then
+        // Coverage note: `dir` here is always a genuine subdirectory (the
+        // scan root is exempted from new-file creation by generateOneDir's
+        // own `elif dir = root` branch), so `Path.GetFileName(dir)` — which
+        // is exactly what `parentName` computes — is always a real,
+        // non-empty subdirectory name. The "Index" fallback below only fires
+        // if `indexPath` itself were rooted at the filesystem root, which
+        // cannot happen for a proper descendant.
         let parentName = Path.GetFileName(Path.GetDirectoryName(indexPath: string))
 
         if String.IsNullOrEmpty parentName then
@@ -676,6 +728,13 @@ let private generateIndexFile (indexPath: string) (targetDir: string) (linkPrefi
         let entries = targets.SortedNames |> List.map entryFor
         let title = fallbackIndexTitle indexPath
 
+        // Coverage note: this "new index file" branch is only reached from
+        // generateOneDir when `targets` (recomputed identically just above,
+        // from the same `targetDir`, in the same synchronous call) is
+        // already known non-empty — generateOneDir's own `Set.isEmpty
+        // targets.Files && Set.isEmpty targets.SubDirs` guard short-circuits
+        // to `splitWritten` before ever calling generateIndexFile in the
+        // empty case. `entries` can therefore never be empty here.
         let body =
             if List.isEmpty entries then
                 sprintf "# %s\n" title
@@ -694,6 +753,10 @@ let private generateOneDir (dir: string) (root: string) : string list =
         if String.Equals(dir, root, StringComparison.Ordinal) then
             []
         else
+            // Coverage note: same reasoning as auditOneDir's identical guard
+            // above — `dir` here is always a real child directory with a
+            // non-empty basename and parent, since `dir <> root` was just
+            // established.
             let parent = Path.GetDirectoryName(dir: string)
             let name = Path.GetFileName dir
 
@@ -741,6 +804,16 @@ let private comparePathsLikeRust (a: string) (b: string) : int =
     let cb = split b
     let len = min ca.Length cb.Length
 
+    // Coverage note: reaching `i >= len` requires one written path's
+    // component list to be an exact prefix of the other's. Every written
+    // path ends in "README.md" or "<name>.md" (a real file), so a shorter
+    // path's final component can only tie a longer path's same-index
+    // component if a directory on disk were literally named identically to
+    // that "*.md" file — which would collide with the file itself at the
+    // same parent and cannot coexist on the filesystem. The `c <> 0` return
+    // just below is therefore the only way this comparator resolves in
+    // practice; the tie-break on lengths is unreachable via generateReadmeIndex's
+    // real call graph.
     let rec loop i =
         if i >= len then
             compare ca.Length cb.Length
@@ -957,6 +1030,11 @@ let private surfaceMessage
     (fail: uint64)
     (severity: WordBudgetSeverity)
     : string =
+    // Coverage note: surfaceMessage's sole caller (checkInstructionSizes)
+    // never invokes it for a `Within` finding — it short-circuits to `None`
+    // for `severity = Within` before building any message. The branch below
+    // is retained for completeness/exhaustiveness of the match, not because
+    // any caller reaches it.
     match severity with
     | WordBudgetSeverity.Within -> sprintf "%s is %d words (within %d-word target)" path size target
     | WordBudgetSeverity.Warn when size <= warn -> sprintf "%s is %d words (over %d-word target)" path size target
@@ -967,6 +1045,9 @@ let private surfaceMessage
 /// Builds a human-readable message for the resolved-tree finding
 /// [Repo-grounded — `word_budget.rs::resolved_tree_message`].
 let private resolvedTreeMessage (size: uint64) (rt: ResolvedTree) (severity: WordBudgetSeverity) : string =
+    // Coverage note: same as surfaceMessage above — checkResolvedTree, the
+    // sole caller, returns `None` for `severity = Within` before ever
+    // calling this function, so the branch below is unreachable in practice.
     match severity with
     | WordBudgetSeverity.Within -> sprintf "resolved tree (%s) is %d words (ok)" rt.Root size
     | WordBudgetSeverity.Warn when size <= rt.Warn ->

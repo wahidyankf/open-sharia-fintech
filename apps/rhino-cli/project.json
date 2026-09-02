@@ -62,10 +62,14 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/rhino/cli/behaviors apps/rhino-cli/src"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/rhino/cli/behaviors apps/rhino-cli"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
+      "inputs": [
+        "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs"
+      ]
     },
     "test:behavior:coverage:unit": {
       "executor": "nx:run-commands",
@@ -119,18 +123,18 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/src/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/integration/RhinoCli.IntegrationTests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/tests/integration/RhinoCli.IntegrationTests.fsproj"
       },
       "cache": false
     },
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line \"/p:ExcludeByFile=**/RhinoCli.Program/src/Program.fs\""
       },
       "cache": false,
-      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/tests/unit/**/*.fs"],
-      "outputs": ["{projectRoot}/src/tests/unit/coverage.json"]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/tests/unit/**/*.fs"],
+      "outputs": ["{projectRoot}/tests/unit/coverage.json"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
@@ -139,7 +143,11 @@
           "npx nx run rhino-cli:typecheck",
           "npx nx run rhino-cli:lint",
           "npx nx run rhino-cli:test:unit",
-          "npx nx run rhino-cli:test:specs"
+          "npx nx run rhino-cli:test:coverage",
+          "npx nx run rhino-cli:test:specs",
+          "npx nx run rhino-cli:test:layout:validation",
+          "npx nx run rhino-cli:coverage:policy:validation",
+          "npx nx run rhino-cli:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -150,12 +158,12 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/src/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=\\s*\"' apps/rhino-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR dotnet test apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/src/tests/unit/**/*.fs",
+        "{projectRoot}/tests/unit/**/*.fs",
         "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature"
       ]
     },
@@ -233,6 +241,30 @@
         "command": "echo 'no-op: target not applicable for this project'"
       },
       "cache": true
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project rhino-cli"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project rhino-cli"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project rhino-cli"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {

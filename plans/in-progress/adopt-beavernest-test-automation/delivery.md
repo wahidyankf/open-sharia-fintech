@@ -662,7 +662,42 @@ difference blocks both merges.
 
 ### `D-O-PUB-RHINO` delivery lifecycle
 
+> **Execution state:** Landed on `phase7-shared-rhino`. Relocated `apps/rhino-cli/src/tests` to
+> `apps/rhino-cli/tests` (unit + integration), wired the three new Nx targets
+> (`test:layout:validation`, `coverage:policy:validation`, `package-manifest:policy:validation`),
+> and raised per-assembly line coverage to 99% across all four modules (`RhinoCli.Application`,
+> `RhinoCli.Cli`, `RhinoCli.Infrastructure`, `RhinoCli.Domain`). Closing the coverage gap surfaced
+> and fixed several real production bugs: an unhandled crash in the three-level runtime cross-check
+> on a malformed `--unit-report` file, two unhandled-exception paths in `Harness.fs` (unwritable
+> `.codex/agents`, unreadable `.claude/skills`), and a `Dispatch.fs` flag parser silently swallowing
+> `--max-label-len`/`--max-width`/`--max-depth`/`--max-subgraph-nodes` values as bogus positional
+> paths. `parity-manifest.sha256` regenerated and verified byte-identical against the companion
+> `ose-private` PR. CI (ubuntu-latest) caught one macOS-only test — a `doctor --fix` assertion
+> hardcoded the darwin `xcode-select --install` remediation string, never exercising the linux
+> `sudo apt-get install -y git` branch it also covers; fixed by branching the expectation on
+> `RuntimeInformation.IsOSPlatform`, matching the file's existing Playwright-cache-dir pattern.
+> Two clean current-head `ose-pr-leak-review:v1` passes (0 findings each) precede the final merge.
+> PR: [wahidyankf/ose-public#442](https://github.com/wahidyankf/ose-public/pull/442).
+
 ### `D-O-PRI-RHINO` delivery lifecycle
+
+> **Execution state:** Landed on `phase7-rhino-parity`, mirroring `D-O-PUB-RHINO`'s relocation and
+> Nx-target wiring (`test:layout:validation`, `coverage:policy:validation`,
+> `package-manifest:policy:validation`); `parity-manifest.sha256` regenerated and confirmed
+> byte-identical against the companion `ose-public` PR via a full cross-repo `diff -rq`. The
+> mandatory `pr-leak-review` pass on the initial head found a real finding —
+> `apps/rhino-cli/tests/unit/coverage.json`, newly tracked by the relocation, embeds the committing
+> machine's absolute worktree path as coverlet's JSON dictionary keys (`machine_specific_absolute_path:
+1`), matching a defect class already fixed for `fsharp-crane-core`/`fsharp-env-loader` on the
+> `ose-public` side. The actual untrack took three attempts: the first two used
+> `git commit --only -- ... coverage.json`, and `--only` re-includes a named path's current
+> working-tree content when building its temporary commit index regardless of a preceding
+> `git rm --cached` (which only clears the index entry, never the disk file) — so both silently
+> re-committed the same leaking blob. The real fix staged the deletion and committed with no
+> `--only` pathspec at all, confirmed via `git ls-tree` and the GitHub trees API showing the path
+> genuinely absent. `coverage.json` is now gitignored to prevent recurrence. A third
+> `pr-leak-review` pass came back fully clean (0 findings) on the corrected head.
+> PR: [wahidyankf/ose-private#143](https://github.com/wahidyankf/ose-private/pull/143).
 
 ## Phase 8A: Migrate `O-PUB-FS-CORE`
 

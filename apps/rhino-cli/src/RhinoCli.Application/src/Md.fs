@@ -349,6 +349,11 @@ let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
                 asRawMap parsed
                 |> Option.defaultValue (Dictionary<obj, obj>() :> IDictionary<obj, obj>)
 
+            // Coverage note: scanFrontmatterFile's sole caller (walkFrontmatterPath,
+            // just below) already matches on `classifyDocArea path` itself and
+            // short-circuits to `[]` for `UnknownArea` BEFORE ever calling this
+            // function — so `area` here is always `SoftwareArea` or
+            // `GovernanceArea`. This arm exists only to keep the match exhaustive.
             match area with
             | SoftwareArea -> validateSoftwareSchema path fm
             | GovernanceArea -> validateGovernanceSchema path fm
@@ -841,6 +846,10 @@ let validateDocsHeadingHierarchyForPaths (repoRoot: string) (paths: string list)
     if List.isEmpty allowlisted then
         []
     else
+        // Coverage note: `validateDocsHeadingHierarchy`'s only Error case is
+        // an empty `paths` list — impossible here, since `allowlisted` was
+        // just proven non-empty by the `if` above. This `Error` arm is
+        // unreachable via this caller.
         match validateDocsHeadingHierarchy allowlisted with
         | Ok findings -> findings
         | Error _ -> []
@@ -1066,6 +1075,12 @@ let private splitUrlFragment (url: string) : string * string option =
 /// `sourceFile`. An empty `link` (pure anchor) returns `sourceFile`
 /// unchanged [Repo-grounded — `links.rs::resolve_link`/`clean_path`].
 let private resolveLink (sourceFile: string) (link: string) : string =
+    // Coverage note: both call sites (validateFileLinks, validateFileLinksDetailed)
+    // already branch on `pathPart = ""` themselves — handling a pure-anchor
+    // link entirely inline via `slugsFromContent` — and only call resolveLink
+    // in the `else` arm, where `pathPart` (passed here as `link`) is
+    // guaranteed non-empty. This `link = ""` branch is therefore unreachable
+    // via either caller.
     if link = "" then
         sourceFile
     else
@@ -1991,6 +2006,11 @@ let effectiveMermaidLabelLen (label: string) : int =
 let private mermaidRankAssign (nodes: MermaidNode list) (edges: MermaidEdge list) : Dictionary<string, int64> =
     let rank = Dictionary<string, int64>()
 
+    // Coverage note: both public callers (mermaidMaxWidth, mermaidDepth,
+    // just below) already check `List.isEmpty nodes` themselves and
+    // short-circuit before ever calling this function — so `nodes` is always
+    // non-empty here. Kept for defensiveness in case a future caller skips
+    // that check.
     if List.isEmpty nodes then
         rank
     else
@@ -2022,6 +2042,14 @@ let private mermaidRankAssign (nodes: MermaidNode list) (edges: MermaidEdge list
                     let cur, idx = stack.[stack.Count - 1]
                     stack.RemoveAt(stack.Count - 1)
 
+                    // Coverage note: `adj` is pre-populated with an entry for
+                    // every node in `nodes` (the `for n in nodes do adj.[n.Id]
+                    // <- ResizeArray<string>()` loop above), and `cur` here is
+                    // always either `start.Id` (a real node) or a `next`
+                    // value that was itself checked against `nodeSet` before
+                    // being added to any adjacency list — so `cur` is always
+                    // a key of `adj`. The `else` fallback below is
+                    // unreachable.
                     let neighbors =
                         if adj.ContainsKey cur then
                             adj.[cur]
@@ -2066,6 +2094,9 @@ let private mermaidRankAssign (nodes: MermaidNode list) (edges: MermaidEdge list
             visited.Add cur |> ignore
             let curRank = if rank.ContainsKey cur then rank.[cur] else 0L
 
+            // Coverage note: same reasoning as the DFS pass above — `cur`
+            // here is always a key already dequeued from `queue`, which only
+            // ever holds node ids from `nodes`, all present as `adj` keys.
             let neighbors =
                 if adj.ContainsKey cur then
                     adj.[cur]
@@ -2084,6 +2115,16 @@ let private mermaidRankAssign (nodes: MermaidNode list) (edges: MermaidEdge list
                     if inDegree.[next] = 0 then
                         queue.Enqueue next
 
+        // Coverage note: after Pass 1 strips every back edge via DFS, the
+        // remaining graph (`adj` minus `backEdges`) is a true DAG spanning
+        // all of `nodes` — Kahn's algorithm on a genuine DAG always
+        // terminates having visited and ranked every node (a DAG always has
+        // at least one in-degree-0 node, and removing it inductively leaves
+        // a smaller DAG). No input this module can construct from a parsed
+        // mermaid diagram (including cycles, self-loops, and duplicate
+        // edges — all checked by hand) leaves a node both unvisited and
+        // unranked, so this fallback is unreachable in practice; kept as a
+        // safety net against a future change to the ranking algorithm.
         for n in nodes do
             if not (visited.Contains n.Id) && not (rank.ContainsKey n.Id) then
                 rank.[n.Id] <- 0L
@@ -2117,6 +2158,9 @@ let mermaidDepth (nodes: MermaidNode list) (edges: MermaidEdge list) : int =
 let private parseMermaidStateArrow (line: string) : (string * string * string) option =
     let idx = line.IndexOf("-->", StringComparison.Ordinal)
 
+    // Coverage note: parseMermaidStateArrow's sole caller (parseMermaidState,
+    // just below) only invokes it inside an `elif line.Contains("-->")`
+    // branch, so `idx` is always >= 0 here. Unreachable via that caller.
     if idx < 0 then
         None
     else
@@ -2615,6 +2659,13 @@ let formatMermaidText (result: MermaidValidationResult) (verbose: bool) (quiet: 
                 elif not (List.isEmpty ws) then
                     sb.Append(sprintf "[WARN] %s\n" fp) |> ignore
                 else
+                    // Coverage note: fileSet is the union of fileViolations's and
+                    // fileWarnings's map keys, so any fp drawn from fileSet was a
+                    // key in at least one of those two maps. Looking that same fp
+                    // back up via Map.tryFind on those same two maps therefore
+                    // guarantees at least one of vs/ws is non-empty — the "both
+                    // empty" precondition needed to reach this [OK] branch is
+                    // structurally impossible.
                     sb.Append(sprintf "[OK] %s\n" fp) |> ignore
 
                 for v in vs do
@@ -2879,16 +2930,16 @@ let private lastUpdatedFooterRegex =
 let private inlineDateAnnotationRegex =
     Regex(@"^\s*-\s+\*\*(Created|Last Updated)\*\*:\s*\d{4}-\d{2}-\d{2}", RegexOptions.Compiled)
 
-/// Splits `content` into its YAML frontmatter block and body. An unclosed
-/// opening `---` fence is treated as if there is no frontmatter at all — the
-/// entire `content` becomes the body. Unlike `extractFrontmatter` above, this
-/// never discards the body half, since the body-annotation scan below needs
-/// it too [Repo-grounded — `frontmatter_audit.rs::split_frontmatter`].
-/// As `splitFrontmatterAndBody`, but also returns the 1-based line number of
-/// the closing `---` delimiter (`0` when `content` has no frontmatter block)
-/// — what `frontmatter_audit.rs::check_body_annotations`'s
-/// `frontmatter_end_line` parameter needs to convert body-relative line
-/// offsets into file-absolute ones.
+/// Splits `content` into its YAML frontmatter block and body, plus the
+/// 1-based line number of the closing `---` delimiter (`0` when `content`
+/// has no frontmatter block) — what
+/// `frontmatter_audit.rs::check_body_annotations`'s `frontmatter_end_line`
+/// parameter needs to convert body-relative line offsets into file-absolute
+/// ones. An unclosed opening `---` fence is treated as if there is no
+/// frontmatter at all — the entire `content` becomes the body. Unlike
+/// `extractFrontmatter` above, this never discards the body half, since the
+/// body-annotation scan below needs it too
+/// [Repo-grounded — `frontmatter_audit.rs::split_frontmatter`].
 let private splitFrontmatterAndBodyWithEndLine (content: string) : string * string * int =
     let lines = content.Split('\n')
 
@@ -2910,10 +2961,6 @@ let private splitFrontmatterAndBodyWithEndLine (content: string) : string * stri
                         String.Join("\n", lines.[bodyStart..])
 
                 frontmatter, body, i + 1
-
-let private splitFrontmatterAndBody (content: string) : string * string =
-    let frontmatter, body, _ = splitFrontmatterAndBodyWithEndLine content
-    frontmatter, body
 
 /// One finding from the frontmatter-dates audit, carrying the `line` field
 /// the CLI's JSON/Markdown rendering needs beyond generic `Finding`
@@ -2996,14 +3043,6 @@ let private checkBodyAnnotationsDetailed
                       "forbidden **Last Updated** footer marker in body; remove per no-date-metadata convention" } ]
             else
                 [])
-
-let private checkFrontmatterUpdatedField (path: string) (frontmatter: string) : Finding list =
-    checkFrontmatterUpdatedFieldDetailed path frontmatter
-    |> List.map (fun f -> mkFail f.File f.Message)
-
-let private checkBodyAnnotations (path: string) (body: string) : Finding list =
-    checkBodyAnnotationsDetailed path body 0
-    |> List.map (fun f -> mkFail f.File f.Message)
 
 /// Reads `path` and scans its content for both frontmatter and body
 /// date-metadata violations, returning the richer per-finding shape (line
@@ -3143,6 +3182,14 @@ type MdAuditResult =
 /// hook shim's integration tests need the identical predicate.
 let private findingsOutcome (name: string) (result: Result<Finding list, string>) : Result<unit, string> =
     match result with
+    // Coverage note: every call site of findingsOutcome in this file passes
+    // either a hardcoded `Ok findings` (validate-links) or the result of
+    // calling validateDocsNaming/validateDocsFrontmatter/
+    // validateDocsHeadingHierarchy with a single-element `[ repoRoot ]` list —
+    // and each of those three functions' sole Error case is an empty input
+    // path list, which `[ repoRoot ]` can never be. This Error arm is
+    // therefore unreachable from within runAuditMember; it exists for
+    // findingsOutcome's own generality as a private helper.
     | Error e -> Error(sprintf "%s: %s" name e)
     | Ok findings when RhinoCli.Domain.Finding.hasBlocking findings ->
         Error(sprintf "%s: %d finding(s) reported" name findings.Length)
@@ -3180,6 +3227,12 @@ let private runAuditMember (repoRoot: string) (name: string) : Result<unit, stri
             Ok()
         else
             Error(sprintf "%s: %d violation(s) reported" name result.Violations.Length)
+    // Coverage note: runAuditMember is `private` (unlike Convention.fs's
+    // `internal` twin, which a test can drive directly with a bogus name),
+    // so its sole reachable caller is runAudit, which only ever supplies
+    // names drawn from the hardcoded `auditMembers` list five lines above —
+    // itself an exact match for this function's five explicit cases. This
+    // fallback can never actually fire.
     | _ -> Error(sprintf "unknown md validator: %s" name)
 
 /// Runs every already-ported `md` validator against `repoRoot` in sequence

@@ -460,6 +460,15 @@ let private candidateScope (scope: ScopeKind) : CandidateScope =
 /// Returns `None` for a pattern the crate itself would reject, matching
 /// Rust's `Pattern::new(..).is_ok_and(..)`, which treats an invalid pattern
 /// as one that matches nothing.
+///
+/// The `Some _ -> None` arm below is unreachable through any CLI path:
+/// `gate run` always calls `gateSemanticFindings` (via
+/// `validateRegistrySemantics`, below) before evaluating any gate, and that
+/// check already rejects a malformed glob with a registry-semantic-finding
+/// error using this same `globPatternError` — so `globRegex` only ever runs
+/// on globs already proven valid. Left uncovered by design; see
+/// `WaveEFGateUnitTests.fs`'s "route rejects an unclosed glob character
+/// class as a registry semantic finding".
 let private globRegex (pattern: string) : Regex option =
     match globPatternError pattern with
     | Some _ -> None
@@ -741,6 +750,15 @@ let private runInherited
 
 /// Runs a Rhino CLI gate through the current executable with derived files
 /// appended [Repo-grounded — `gate/run.rs::run_rhino_cli_leaf`].
+///
+/// The non-empty-command success path below (`argumentsWithDerivedFiles`'s
+/// `Ok` branch, plus this function's own two lines) re-invokes the CURRENT
+/// process's own executable — under `dotnet test` that is the shared test
+/// host itself. Deliberately left uncovered by the unit suite: spawning a
+/// second copy of the test host from inside a running test is unsafe
+/// (unpredictable behavior, possible recursive test execution). Only the
+/// empty-command short-circuit is exercised, in `WaveEFGateUnitTests.fs`'s
+/// "route rejects a rhino-cli-kind gate whose command is blank".
 let private runRhinoCliLeaf
     (command: string)
     (fixedArgs: string list)

@@ -74,7 +74,7 @@ let SchemaVersion = "ose-test-contract-coverage-fixture/v1"
 
 /// The only directory a coverage fixture is resolved from.
 [<Literal>]
-let FixtureRoot = "apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Coverage"
+let FixtureRoot = "apps/rhino-cli/tests/unit/Fixtures/TestContract/Coverage"
 
 /// The native floor every measured adapter must meet, as a whole percent.
 [<Literal>]

@@ -52,7 +52,7 @@ type LayoutReport =
 let SchemaVersion = "ose-test-contract-layout-fixture/v1"
 
 [<Literal>]
-let FixtureRoot = "apps/rhino-cli/src/tests/unit/Fixtures/TestContract/Layout"
+let FixtureRoot = "apps/rhino-cli/tests/unit/Fixtures/TestContract/Layout"
 
 let layerName (layer: Layer) : string =
     match layer with

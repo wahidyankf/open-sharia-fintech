@@ -99,6 +99,13 @@ let private declaredName (projectJsonPath: string) : string option =
     let inferred =
         let directory = Path.GetDirectoryName(projectJsonPath: string)
 
+        // Coverage note: `declaredName`'s only caller, `locate` below, only
+        // ever calls it with a `path` `projectJsonFiles` returned —
+        // `Path.Combine(dir, "project.json")` for a `dir` that
+        // `projectJsonFiles` already confirmed exists via `Directory.Exists`
+        // moments earlier in the same synchronous scan. `Path.GetDirectoryName`
+        // on such a path always yields that same non-empty `dir` back, so
+        // this `None` arm is unreachable via the public `locate` entry point.
         if String.IsNullOrEmpty directory then
             None
         else
@@ -452,6 +459,15 @@ let materialize
     | Some projectRoot ->
         let projectJson = absoluteOf repoRoot (projectRoot + "/project.json")
 
+        // Coverage note: `locate` (called two lines above to produce
+        // `projectRoot`) only matches a project via `declaredName`, which
+        // already parses this exact `project.json` with
+        // `JsonDocument.Parse` and returns `None` — never `Some project` —
+        // on a `JsonException`. Reaching `Some projectRoot` here therefore
+        // already proves this file parsed as valid JSON once; re-parsing it
+        // synchronously, with no intervening mutation possible in a single
+        // test run, cannot then throw. The `with`/`Error failure` arms
+        // below are unreachable via the public `materialize` entry point.
         let parsed =
             try
                 Ok(JsonDocument.Parse(File.ReadAllText projectJson))
@@ -628,6 +644,12 @@ let validateCoveragePolicyForProject (repoRoot: string) (project: string) : Resu
     | Some projectRoot ->
         let projectJson = absoluteOf repoRoot (projectRoot + "/project.json")
 
+        // Coverage note: same reasoning as `materialize` above — `locate`
+        // already proved this exact `project.json` parses as valid JSON via
+        // `declaredName`'s own `JsonDocument.Parse`, so this re-parse cannot
+        // throw in a single synchronous call. The `with :? JsonException`
+        // arm at the bottom of this function is unreachable via the public
+        // `validateCoveragePolicyForProject` entry point.
         try
             use document = JsonDocument.Parse(File.ReadAllText projectJson)
 

@@ -1275,6 +1275,13 @@ let formatGoDuration (d: TimeSpan) : string =
             let trimmed =
                 trimTrailingZeros (frac.ToString(CultureInfo.InvariantCulture).PadLeft(width, '0'))
 
+            // Coverage note: unreachable. This branch only runs when
+            // `frac <> 0L` (the `frac = 0L` case is handled above), so
+            // `frac`'s undecorated decimal representation always ends in a
+            // nonzero digit. `PadLeft` only prepends zero characters on the
+            // left, so it cannot introduce new trailing zeros; `TrimEnd('0')`
+            // therefore strips at most back down to that trailing nonzero
+            // digit and can never reduce `trimmed` to the empty string.
             if trimmed = "" then
                 whole.ToString(CultureInfo.InvariantCulture)
             else
