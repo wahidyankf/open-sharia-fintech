@@ -586,6 +586,14 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 
 ### `D-O-PUB-CRANE` delivery lifecycle
 
+> **Execution state:** Landed on `phase8-10-owners` alongside 8A/8B/9/10A. The registry already
+> carried `crane-cli` as `active`/`verified` with a real corpus and driver from the separately
+> merged `ose-public#438`/`#439` (Gherkin restoration and integration-tier retirement); this closed
+> the remaining gap — `project.json` had no `test:layout:validation`/`coverage:policy:validation`/
+> `package-manifest:policy:validation` targets and was still at the pre-migration 95% coverage
+> threshold. Moved to 99% (100% actual, 135 tests) and added the three targets, all green against
+> the real project. PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
+
 ## Phase 7: Migrate Shared Rhino
 
 - **Input:** complete public/private Rhino rows and the parity command.
