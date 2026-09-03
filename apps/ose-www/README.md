@@ -69,8 +69,9 @@ npm exec nx -- run ose-www:test:unit
 npm exec nx -- run ose-www-fe-e2e:test:e2e
 ```
 
-The focused quality gate enforces 86% line coverage. `ose-www:test:integration` currently reports
-that integration testing is not applicable; it is not a substitute for the companion E2E suite.
+The focused quality gate enforces 99% line coverage. `ose-www:test:integration` currently reports
+that integration testing is not applicable; that tier is delegated to the companion backend E2E
+suite (`ose-www-be-e2e`), not a gap.
 
 ## Project layout
 
@@ -80,7 +81,7 @@ apps/ose-www/
 ├── public/        # Static site assets
 ├── src/app/       # Thin Next.js routes
 ├── src/features/  # Product features, organized into core/ and shell/
-├── test/          # Unit and integration test definitions
+├── tests/unit/    # Unit test definitions
 └── project.json   # Nx targets for development, build, and verification
 ```
 

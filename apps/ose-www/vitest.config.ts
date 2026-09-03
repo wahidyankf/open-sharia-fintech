@@ -36,19 +36,34 @@ export default defineConfig({
         "**/*.{test,spec}.{ts,tsx}",
       ],
       thresholds: {
-        lines: 80,
+        // Only line coverage is a repository-enforced floor (AC-COVERAGE-01);
+        // the `test:coverage` Nx target's `--coverage.thresholds.lines=99`
+        // flag is the source of truth and overrides this value at
+        // invocation time. Functions/branches/statements keep their
+        // pre-migration bar — raising them isn't part of this contract.
+        lines: 99,
         functions: 80,
         branches: 80,
         statements: 80,
       },
       reporter: ["text", "json-summary", "lcov"],
     },
+    // There is no separate "integration" tier here: the canonical registry
+    // (repo-config.yml testing.projects[ose-www].behavior.adapters.integration
+    // and testing.compatibility.mappings[ose-www].canonical.runtimes) declares
+    // that disposition `delegated` to ose-www-be-e2e — the former "integration"
+    // vitest project (test/integration/be-steps/**) duplicated content-retrieval
+    // and search scenarios already proven at the unit tier (mocked services,
+    // tests/unit/be-steps/) and at the e2e tier (real server over HTTP, via
+    // ose-www-be-e2e's Playwright steps) and was never invoked by any Nx
+    // target (`test:integration` is a no-op on both ose-www and
+    // ose-www-be-e2e); deleted rather than relocated.
     projects: [
       {
         plugins: sharedPlugins,
         test: {
           name: "unit",
-          include: ["test/unit/be-steps/**/*.steps.ts", "**/*.unit.{test,spec}.{ts,tsx}"],
+          include: ["tests/unit/be-steps/**/*.steps.ts", "**/*.unit.{test,spec}.{ts,tsx}"],
           exclude: ["node_modules"],
           environment: "node",
         },
@@ -57,20 +72,11 @@ export default defineConfig({
         plugins: sharedPlugins,
         test: {
           name: "unit-fe",
-          include: ["test/unit/fe-steps/**/*.steps.{ts,tsx}"],
+          include: ["tests/unit/fe-steps/**/*.steps.{ts,tsx}"],
           exclude: ["node_modules"],
           environment: "jsdom",
           globals: true,
           setupFiles: ["./src/test/setup.ts"],
-        },
-      },
-      {
-        plugins: sharedPlugins,
-        test: {
-          name: "integration",
-          include: ["test/integration/be-steps/**/*.steps.ts", "**/*.integration.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules"],
-          environment: "node",
         },
       },
     ],

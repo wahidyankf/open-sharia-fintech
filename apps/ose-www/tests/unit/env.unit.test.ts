@@ -6,7 +6,7 @@ describe("env", () => {
   });
 
   it("exports OSE_WEB_SHOW_DRAFTS validated by createEnv", async () => {
-    const { env } = await import("./env");
+    const { env } = await import("../../src/env");
     expect(env).toBeDefined();
     expect(Object.prototype.hasOwnProperty.call(env, "OSE_WEB_SHOW_DRAFTS")).toBe(true);
   });

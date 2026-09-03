@@ -21,7 +21,7 @@ import { expect } from "vitest";
 import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature"),
+  path.resolve(__dirname, "../../../../specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature"),
 );
 
 type EnvRecord = Record<string, string | undefined>;
