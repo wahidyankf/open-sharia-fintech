@@ -1198,6 +1198,71 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OL-BE` delivery lifecycle
 
+> Migrated `organiclever-be` (F#) to the target test-contract shape: coverage floor 80→99, plus
+> the 3 new `test:layout:validation`/`coverage:policy:validation`/`package-manifest:policy:validation`
+> targets. Unlike the four prior TS migrations (11A/11B/12/14), no file relocation was needed —
+> `tests/unit/` and `tests/integration/` were already at the target layout.
+>
+> Three bugs found and fixed:
+>
+> 1. **Broken coverage-collection mechanism.** `test:coverage` used
+>    `--collect:"XPlat Code Coverage"` with no `coverlet.collector` package reference, so it
+>    silently no-op'd (exit 0 regardless of the flag). Added `coverlet.collector`/`coverlet.msbuild`
+>    references and switched to `/p:CollectCoverage=true`.
+> 2. **Dead code masking a real coverage gap.** `Handlers/HealthHandler.fs` carried an unused
+>    `webApp` composition duplicating the real one in `WebApp.fs` — the "tested" health handler
+>    wasn't the one actually running. `WebApp.fs`'s `/health` route now delegates to
+>    `healthHandler` directly; the dead duplicate was removed.
+> 3. **A 4th rhino-cli `TestContractProject.fs` bug** — same class as Phase 12's 3.
+>    `organiclever-be`'s `test:integration` target runs a wrapper script
+>    (`scripts/run-integration.sh`, docker-compose + `dotnet test`) rather than a direct
+>    `dotnet test` command; the layout scanner's static analysis couldn't see into the script, so
+>    it falsely reported every integration-test file as `layout-file-unselected` even though the
+>    suite genuinely passes. The implementation agent flagged this as a decision point — fixing
+>    shared rhino-cli logic carries its own coverage obligations and, per this repo's
+>    `apps/rhino-cli` byte-identical parity with `ose-private`, a cross-repo propagation duty.
+>    Decided to fix the scanner properly rather than defer or route around it: `ose-be`
+>    (not yet migrated, Phase 18) uses the identical wrapper-script pattern and would hit the same
+>    failure, so fixing it once here avoids rediscovering it later. Extended `selectionOfCommand`
+>    to read into a referenced `.sh` script and apply the same `dotnet test` compile-list scan to
+>    its content, with TDD coverage — a positive case (the wrapper-script shape is correctly
+>    selected) and a non-vacuousness negative case (a script that never calls `dotnet test` still
+>    correctly reports its files as genuinely unselected). rhino-cli's full unit suite was
+>    independently re-run fresh (`--skip-nx-cache` on the direct target, not just the outer
+>    `test:quick`, per the lesson from earlier phases that the flag doesn't propagate to inner
+>    `nx run` subprocess calls): 2436/2436 passing (2434→2436), no regressions. The `ose-private`
+>    side of this propagation duty was tracked separately by the coordinator rather than done in
+>    this PR — `ose-private`'s rhino-cli has a structurally different internal layout (separate
+>    `TestContractLayout.fs`/`TestContractCoverage.fs`/etc. rather than one `TestContractProject.fs`),
+>    so the fix needs semantic adaptation there, not a file copy.
+>
+> Independently re-verified before merge, all fresh (not cached): `test:unit` 45/45 passing;
+> `test:coverage` 99.46% line coverage (185/186 lines measured, above the 99% floor); the real
+> `test:integration` script (not a no-op, unlike the four prior TS migrations) run fresh against
+> live Postgres and NATS docker containers: 5/5 passing; all 3 new policy-validation targets
+> (`native-layout-valid`, `coverage-policy-valid threshold=99`, `manifest-not-present` — the last
+> is F#'s expected non-applicable state, matching the pre-existing `crane-cli` pattern) green;
+> `repo-config.yml` diff confirmed empty (both unit and integration adapters were already
+> correctly registered). `project.json`'s diff matched the implementation agent's claims exactly
+> line-for-line. One product-behavior gap was found and deliberately left unfixed as out of
+> scope: `specs/apps/organiclever/be/behaviors/messaging/nats-config.feature`'s `@unit` scenario
+> expects NATS URL misconfiguration to fail fast at startup, but `NatsClient.natsUrl()` silently
+> defaults instead — this predates the migration (confirmed via `git log`, the feature file is
+> unchanged by this PR) and is a product-behavior decision outside a test-contract migration's
+> scope.
+>
+> The PR branch required a rebase (one docs-only upstream commit, `D-O-PUB-OL-WEB`'s own evidence
+> PR, had merged while this phase was in flight) before merge; the rebase was a clean replay with
+> zero conflicts and zero content changes, confirmed by a byte-for-byte diff comparison between
+> the pre- and post-rebase PR diffs. A fresh leak-review was posted against the new head per the
+> current-head requirement rather than reusing the pre-rebase review, and independently confirmed
+> the rebase changed nothing but the commit SHA before re-running its own three-category scan.
+>
+> Leak-review clean (pre-rebase review 5097560236; post-rebase review 5097654687, both `pass`).
+> CI green (15/15) on the merged head. PR
+> [wahidyankf/ose-public#451](https://github.com/wahidyankf/ose-public/pull/451), merge commit
+> `1537ecf1a4afee9b084ed0dfc93e54c3b18b17bf`.
+
 ## Phase 16: Migrate `O-PUB-OL-WWW`
 
 - **Input:** complete marketing owner and both harness rows.
