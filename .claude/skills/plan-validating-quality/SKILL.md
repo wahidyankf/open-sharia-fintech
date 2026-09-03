@@ -63,6 +63,11 @@ and gates as the stop condition. A plan introducing a lasting mechanism must nam
 and explain why existing mechanisms are insufficient; scope outside that boundary or mandatory
 safeguards omitted in the name of minimalism is a finding.
 
+**Delivery boundaries are contextual**: LOC and file counts never create, erase, or force them.
+Validate one natural cohesive seam per unit, every artifact needed for internal consistency, and an
+immediately production-deployable resulting `main` state. Incomplete behavior requires a temporary
+production-disabled flag, tests for both paths, and rollout/rollback/removal.
+
 ## Quality-Gate Lifecycle Handoff
 
 When the plan quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact

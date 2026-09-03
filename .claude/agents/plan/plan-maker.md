@@ -67,9 +67,10 @@ validating completed work (`plan-execution-checker`).
 5. **Write Technical Documentation** — architecture, decisions and alternatives, dependencies,
    schema/migration contracts when applicable, testing strategy, the
    File-Impact Analysis tree, and (conditionally) the Vercel MCP probe.
-6. **Create Delivery Checklist** — apply the skill's bootcamp-executable outcome/action and separate
-   RED/GREEN/REFACTOR shape, including phase gates, natural seams, rules/C4 reconciliation, recovery,
-   and canonical Gherkin references. Its Automatic Rule-Impact Coverage is mandatory per affected
+6. **Create Delivery Checklist** — write bootcamp-executable outcomes/actions with separate
+   RED/GREEN/REFACTOR, phase gates, natural cohesive and production-deployable seams, flag lifecycle,
+   rules/C4 reconciliation, recovery, and Gherkin
+   references. Numeric counts never set a delivery boundary. Automatic Rule-Impact Coverage is mandatory per affected
    repository; generic invocations or reusable checkbox templates cannot replace concrete actions.
 7. **Add Delivery Mode** — declare one of four modes per the skill's precedence algorithm and
    per-repository restrictions.

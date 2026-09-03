@@ -28,6 +28,11 @@ Read the created plan files and verify structural completeness before the qualit
    and that PR-creation, CI/leak-review, any explicitly requested semantic-review, and merge steps appear **only** in boundary phases — a PR per
    phase is a defect
    ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
+   Verify each unit names a natural cohesive seam, keeps every artifact needed for build,
+   verification, operation, rollback, and internal consistency together, and leaves an immediately
+   production-deployable `main` state. Incomplete behavior requires a temporary
+   production-disabled flag, both path tests, and rollout/rollback/removal. Reject LOC- or
+   file-count-derived boundaries.
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
 9. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
 10. Verify the chosen technical form has a `## File-Impact Analysis` whose primary view is one root-relative,

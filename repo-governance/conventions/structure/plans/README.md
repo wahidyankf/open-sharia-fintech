@@ -39,11 +39,12 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md) — Deciding if a phase opens a PR.
 - [Rules 5-7 and \*-to-pr Scope](./prs-open-at-delivery-boundaries-rules-continued.md) — Deciding whether work may share a PR or await another merge.
 - [Boundary Test](./prs-open-at-delivery-boundaries-boundary-test.md) — Testing a delivery boundary.
-- [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) — Splitting an oversized sweep by surface, with a file backstop.
-- [Addition Limits, File-Budget Exception, and Plan-Document Exemption](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — C=500; O/machine limits; file-budget and plan-document exceptions.
-- [Single-Source Other/Document Natural-Seam Exception](./prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — Narrow O=1,100 exception for one canonical source.
-- [The Atomicity Exception (PR-Size Rule 5)](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — A convention and its binding must merge together past the size bound.
+- [Natural Seams and Deployable State](./prs-open-at-delivery-boundaries-natural-seams.md) — Splitting delivery by cohesive purpose while preserving atomic consistency, immediate production deployability, and prompt trunk integration.
 - [What Every PR Body Must Carry](./prs-open-at-delivery-boundaries-pr-body.md) — Writing or reviewing a PR description.
+- [PR-Size Redirect](./prs-open-at-delivery-boundaries-pr-size.md) — Legacy redirect. Follow old links.
+- [Addition-Limit Redirect](./prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Legacy redirect. Follow old links.
+- [Document-Exception Redirect](./prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — Legacy redirect. Follow old links.
+- [Atomicity-Rule Redirect](./prs-open-at-delivery-boundaries-pr-size-atomicity.md) — Legacy redirect. Follow old links.
 - [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) — Writing a Delivery Boundaries table, or checking whether a grandfathered plan must retrofit gates.
 - [Worktree Specification](./worktree-specification.md) — Writing a plan's Worktree section or resolving worktree entry/cleanup.
 - [Executor Lifecycle and Example](./worktree-specification-continued.md) — Auditing worktree entry, sync, and cleanup.

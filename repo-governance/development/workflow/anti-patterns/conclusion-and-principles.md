@@ -12,19 +12,19 @@ when_to_use: Use when checking which principles and conventions the anti-pattern
 
 ## Summary of Anti-Patterns
 
-| Anti-Pattern                | Problem                      | Solution                        |
-| --------------------------- | ---------------------------- | ------------------------------- |
-| **Long-Lived Branches**     | Merge conflicts, delays      | Work on main with feature flags |
-| **Large Commits**           | Hard to review, unclear      | Small, frequent commits         |
-| **Vague Messages**          | Unclear history              | Conventional Commits            |
-| **No Feature Flags**        | Branch complexity            | Hide incomplete with flags      |
-| **Premature Optimization**  | Wasted effort                | Work → right → fast             |
-| **Unpinned Dependencies**   | Inconsistent builds          | Lock versions, commit lock file |
-| **Ignoring Broken CI**      | Blocks team                  | Fix or revert immediately       |
-| **Mixed Concerns**          | Confusing commits            | Split independent purposes      |
-| **Hardcoded Config**        | Security issues, inflexible  | Environment variables           |
-| **Skipping Local Tests**    | Slow feedback                | Test before pushing             |
-| **Pushing Without Pulling** | Push failures, merge commits | Pull with rebase before pushing |
+| Anti-Pattern                | Problem                      | Solution                                                        |
+| --------------------------- | ---------------------------- | --------------------------------------------------------------- |
+| **Long-Lived Branches**     | Merge conflicts, delays      | Work on main with feature flags                                 |
+| **Large Commits**           | Hard to review, unclear      | Small, frequent commits                                         |
+| **Vague Messages**          | Unclear history              | Conventional Commits                                            |
+| **No Feature Flags**        | Branch complexity            | Integrate complete-and-inert work behind tested temporary flags |
+| **Premature Optimization**  | Wasted effort                | Work → right → fast                                             |
+| **Unpinned Dependencies**   | Inconsistent builds          | Lock versions, commit lock file                                 |
+| **Ignoring Broken CI**      | Blocks team                  | Fix or revert immediately                                       |
+| **Mixed Concerns**          | Confusing commits            | Split independent purposes                                      |
+| **Hardcoded Config**        | Security issues, inflexible  | Environment variables                                           |
+| **Skipping Local Tests**    | Slow feedback                | Test before pushing                                             |
+| **Pushing Without Pulling** | Push failures, merge commits | Pull with rebase before pushing                                 |
 
 ## Conclusion
 

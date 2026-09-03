@@ -47,8 +47,8 @@ rather than tribal knowledge.
 - [Judgment call] Co-locating each logical corpus's `architecture.md` and `behaviors/` lets a new
   engineer trace boundary → behavior → test adapters without reconstructing a product-wide tree.
 - [Judgment call] DDD enforcement no longer creates false confidence while its model is under review.
-- [Judgment call] Natural delivery units let reviewers land or revert project-family migrations
-  independently instead of reviewing one oversized monorepo PR.
+- [Judgment call] Natural delivery units let reviewers land or revert cohesive project-family
+  migrations independently instead of coupling unrelated purposes in one PR.
 - [Judgment call] Physical layer roots make accidental unit/integration/E2E overlap visible to a
   new-to-stack engineer and mechanically detectable by Nx inputs and test-runner includes.
 - [Judgment call] Removing unnecessary project manifests gives each command one owner in
@@ -76,8 +76,10 @@ rather than tribal knowledge.
    entry, recursive behaviors directory, and bidirectional implementation links.
 10. [Judgment call] As explicitly directed by the user, DDD engineering test/docs/gate surfaces are absent, while production
     domain code and AyoKoding educational content remain unchanged.
-11. [Judgment call] Each delivery PR stays within repository size/addition limits or is split at the
-    project-family seam before review.
+11. [Judgment call] Each delivery PR follows one natural cohesive seam, keeps its build, verification,
+    operation, rollback, and consistency artifacts together, and leaves the exact resulting `main`
+    state immediately safe to deploy. Incomplete behavior is internally complete and inert behind a
+    temporary production-disabled flag with both paths tested and rollout, rollback, and removal recorded.
 12. [Judgment call] Both repositories pass their own registry, 99% numeric, exact 100% BDD,
     layout/manifest, specs/C4, CI, and rules-propagation reconciliation gates; shared Rhino content
     remains byte-identical where the parity contract applies.
@@ -94,7 +96,7 @@ rather than tribal knowledge.
 | Risk                                                    | Consequence                                      | Mitigation                                                                                                                                          |
 | ------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Structural compliance is mistaken for runtime proof     | Green static gate hides broken behavior          | Keep static `test:behavior:coverage:*` distinct from runtime `test:*` targets and require both in full gates                                        |
-| One monorepo-wide migration becomes an oversized PR     | Review quality and reversibility decline         | Deliver by natural project-family seams with the Delivery Boundaries table in `delivery.md`                                                         |
+| Unrelated migrations are coupled in one PR              | Review quality and reversibility decline         | Deliver by natural, independently deployable project-family seams defined in `delivery.md`                                                          |
 | Inapplicable layers become silent gaps                  | Behavior lacks required boundary proof           | Require an explicit whole-layer profile disposition with boundary evidence; never accept an unclassified echo or per-item waiver                    |
 | DDD removal deletes product behavior                    | Unintended application regression                | Scope deletion to tests, specs, validators, docs, configuration, and target wiring; preserve production code and education                          |
 | Recursive discovery captures the wrong corpus           | Duplicate ownership or slow gates                | Define exact owner roots and fail on duplicate/unowned feature files before adapter execution                                                       |

@@ -10,6 +10,7 @@ when_to_use: Use when deciding when a PR should merge, whether a phase needs a f
 
 Each delivery unit's PR is **opened and merged** as that unit's **delivery boundary** is reached. It
 is neither opened early at every intermediate phase, nor held open for a **batch merge** at plan end.
+Once its merge prerequisites pass, integrate it promptly so its branch stays short-lived.
 
 Both failure modes cost something different. Opening a PR per phase spends PR CI and integration overhead on
 scaffolding the next phase rewrites, and the review cannot judge intent that only lands two phases
@@ -27,22 +28,28 @@ own step states that gate explicitly.
 
 ## Feature Flags: Default, Escape, Removal
 
-Partial work reaches `main` **merged but dark** behind a feature flag rather than waiting on a
-long-lived branch. Flagging is the **default**.
+Incomplete behavior reaches `main` only as a **complete-and-inert** increment behind a temporary
+feature flag disabled in production by default rather than waiting on a long-lived branch. Every
+exact resulting `main` state must be safe to deploy to production immediately. The enabled and
+disabled paths must both pass; flagging never excuses a broken or internally incomplete increment.
+Flagging is the **default**.
 
 - **Escape**: a phase lands **unflagged** only when it ships no **user-reachable** behaviour change
   — pure docs, governance, refactor, or test-only work — and the delivery step names which
   exemption applies. An unflagged phase with no named exemption is a defect.
 - **Removal**: every flag introduced carries a named **flag removal step** in the plan's final
   phase. A flag with no removal step is an unbounded commitment, not a rollout mechanism.
+- **Lifecycle**: the introducing delivery unit records enabled/disabled tests, rollout, rollback,
+  and removal. Missing lifecycle evidence makes the unit unready to merge.
 
 ## How the `worktree-to-pr` Default Binds at Each Plan Path
 
 The default binds differently depending on what is being done:
 
 - **Creating or updating a plan** binds it as a **design obligation**. The authoring edit itself may
-  push direct to `main`, but the plan's phases MUST be authored so they group into **independently
-  PR-able delivery units**, with each unit's boundary named in the `### Delivery Boundaries` table.
+  push direct to `main`, but the plan's phases MUST be authored around natural cohesive seams so
+  they group into **independently production-deployable delivery units**, with each unit's boundary
+  named in the `### Delivery Boundaries` table. LOC and file counts never define the grouping.
   A plan that genuinely cannot be decomposed that way records **why** in its chosen technical form — the
   constraint is documented, not silently absorbed.
 - **Executing a plan** binds it as the actual delivery route: worktree → PR, per the

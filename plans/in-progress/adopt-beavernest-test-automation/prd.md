@@ -21,7 +21,7 @@ without inventing a project-specific workflow.
 
 ### Reviewer
 
-Needs a deterministic requirement-to-adapter coverage report and PR-sized delivery evidence.
+Needs a deterministic requirement-to-adapter coverage report and natural-seam delivery evidence.
 
 ### Tooling maintainer
 
@@ -134,7 +134,9 @@ Feature: OSE project test automation contract
   Scenario: AC-TEST-08 Delivery remains reviewable and reversible
     Given the project-family migration and DDD-retirement work
     When delivery boundaries are selected
-    Then each PR is an independently reviewable verifiable revertible natural seam within size rules
+    Then each PR is one independently reviewable verifiable revertible natural seam
+    And its exact resulting main state is immediately safe to deploy to production
+    And incomplete behavior is internally complete and inert behind a temporary production-disabled flag with both paths tested and rollout rollback and removal recorded
 
   Scenario: AC-TEST-09 Final reconciliation proves the complete outcome
     Given all delivery packets and surface gates report completion

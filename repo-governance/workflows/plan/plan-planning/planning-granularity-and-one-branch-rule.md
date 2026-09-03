@@ -22,7 +22,10 @@ Never provision a second worktree for a repo the plan already has one open in �
 inside the existing one instead.
 
 A **delivery unit** is the contiguous run of phases ending at a **delivery boundary** — the phase
-after which the accumulated work is independently shippable. The unit, not the individual phase, is
+after which the accumulated work follows one natural cohesive seam and is independently safe to
+deploy to production. Keep every artifact required to build, verify, operate, roll back, and remain
+internally consistent together. LOC and file counts never create, erase, or force the boundary.
+The unit, not the individual phase, is
 what maps to a PR: a plan opens a PR at its natural delivery points, which may be once at the very
 end or several times through the plan. Phases inside a unit that are not its boundary still pass
 their own `### Phase N Gate`, but open no PR and merge nothing. The boundary test, the required
@@ -33,6 +36,11 @@ Genuinely dependent phases stay a single delivery unit. The DAG governs, not the
 phases that merely appear in sequence are not thereby dependent, and splitting **independent** work
 into separate delivery units is the default. Sequence is not dependency — and neither is it a
 licence to fold independent nodes together to reduce PR count.
+
+Each unit's exact resulting `main` state must be immediately production-deployable. Complete
+user-reachable behavior may be active; incomplete behavior must be complete-and-inert behind a
+temporary production-disabled feature flag, with both paths tested and rollout, rollback, and
+removal recorded.
 
 **Phase 0 is not one of these nodes — the earliest PR is Phase 1 (HARD RULE)**. Phase 0 is
 Environment Setup and Baseline: it installs dependencies, converges the toolchain, records the

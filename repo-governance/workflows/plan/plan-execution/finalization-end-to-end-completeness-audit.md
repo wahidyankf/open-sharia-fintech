@@ -20,8 +20,9 @@ Build a reconciliation table that accounts for:
 
 - the approved scope, goals, and non-goals;
 - every canonical PRD acceptance criterion by stable ID or exact scenario title;
-- every delivery unit and its independently reviewable, verifiable, revertible natural seam,
-  including the Delivery Boundaries table and PR-size/atomicity evidence;
+- every delivery unit and its independently useful, reviewable, verifiable, operable, and revertible
+  natural seam, including the Delivery Boundaries table, atomic-consistency proof, resulting
+  production-deployable `main` state, and applicable flag tests and rollout/rollback/removal record;
 - the as-built implementation, repository documentation, rules-propagation manifest, and exact C4
   updates where applicable;
 - automated tests, CI gates, and required manual UI/API/full-stack verification evidence;

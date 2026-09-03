@@ -17,7 +17,8 @@ Following these best practices ensures:
 1. Integrate continuously via short-lived branches
 2. Compose the fewest build-valid, reviewable, and revertible commits
 3. Use Conventional Commits
-4. Use feature flags instead of long-lived branches
+4. Integrate complete-and-inert behavior behind temporary production-disabled flags, with both
+   paths tested and rollout, rollback, and removal recorded
 5. Implement in three stages (work → right → fast)
 6. Pin dependencies for reproducibility
 7. Keep CI green at all times

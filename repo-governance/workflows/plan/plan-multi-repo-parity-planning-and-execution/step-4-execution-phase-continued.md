@@ -38,8 +38,11 @@ reach the other parity repo.
 
 **Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
 **one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged at its
-**delivery boundary** rather than at every phase or batched at composite end, with partial work
-merged-but-dark behind a **feature flag**. The **worktree** is a coarser, per-repository unit: each
+**delivery boundary** rather than at every phase or batched at composite end. Each unit follows one
+natural cohesive seam rather than a LOC or file-count boundary and leaves `main` immediately safe
+to deploy to production. Incomplete behavior is complete-and-inert behind a temporary
+production-disabled **feature flag**, with both paths tested and rollout, rollback, and removal
+recorded. The **worktree** is a coarser, per-repository unit: each
 repo's plan is capped at one worktree, reused across every delivery unit it lands in that repo — see
 [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 See [plan-planning §Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md#planning-granularity-and-the-one-branch-one-pr-rule).

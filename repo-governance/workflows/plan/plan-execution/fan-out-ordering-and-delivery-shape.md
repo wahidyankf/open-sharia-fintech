@@ -25,6 +25,11 @@ A **delivery unit** is the contiguous run of phases ending at a boundary; the pl
 Boundaries` table names which phase in each unit opens the PR, and intermediate phases pass their own
 gate while opening nothing
 ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)).
+Each unit follows one natural cohesive seam, keeps all artifacts required for internal consistency,
+and leaves `main` immediately safe to deploy to production. LOC and file counts never create,
+erase, or force the boundary. Incomplete behavior requires a temporary production-disabled flag,
+tests for both paths, and rollout/rollback/removal evidence. Integrate a ready unit promptly rather
+than holding it to batch.
 Cleanup is the terminal DAG node, so a repo's shared worktree is removed only once **every** delivery
 unit's PR that used it has landed and no in-flight node still needs it — not when the first one does.
 **Phase 0 is not a delivery node** — it is setup and baseline only, so it opens no PR under any

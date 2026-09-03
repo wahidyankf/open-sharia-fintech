@@ -1,6 +1,6 @@
 ---
 title: "PRs Open at Delivery Boundaries — Boundary Test and Rationale"
-description: Gives the four-part boundary test (coherent, green standalone, defensible on main, reviewable whole) and the rationale for grouping phases into delivery units.
+description: Gives the boundary test for a cohesive, green, production-deployable, reviewable increment and explains why phases group into delivery units.
 category: explanation
 subcategory: conventions
 tags:
@@ -21,8 +21,10 @@ Continues [PRs Open at Delivery Boundaries — Rules 5-7 and \*-to-pr Scope](./p
 - **(a) Coherent** — the accumulated increment is a complete unit of meaning (a capability, a
   migration step, a governance rule), not half a refactor.
 - **(b) Green standalone** — every quality gate passes on the increment alone.
-- **(c) Defensible on `main`** — if the plan stopped forever right here, `main` is in a state the
-  team would accept: working, or complete-and-inert behind a feature flag.
+- **(c) Production-deployable on `main`** — the exact resulting state is safe to deploy to
+  production immediately. Complete user-reachable behavior may be active. Incomplete behavior is
+  complete-and-inert behind a temporary feature flag disabled in production by default, with both
+  paths tested and rollout, rollback, and flag removal recorded.
 - **(d) Reviewable whole** — a reviewer can judge it without reading phases that do not exist yet.
 
 A phase that fails any of these is an **intermediate phase**, not a boundary. Typical intermediate
@@ -32,10 +34,12 @@ a fixture the next phase asserts on.
 **Why this is a hard rule**: a PR per phase spends a full discipline-specialist fan-out, a synthesis
 pass, a fixer pass, and up to five CI-gated cycles reviewing scaffolding that the very next phase
 rewrites — and the review cannot judge the work's intent, because the intent only becomes visible two
-phases later. Grouping to the natural boundary makes each review see one complete thought.
+phases later. Grouping to the natural boundary makes each review see one complete thought with
+every artifact required to build, verify, operate, roll back, and remain internally consistent.
 
 The counterweight is rule 6 in [PRs Open at Delivery Boundaries — Rules 5-7](./prs-open-at-delivery-boundaries-rules-continued.md): the same instinct, over-applied, produces one end-of-plan mega-PR
 that no reviewer can hold in their head and that diverges from `main` for the plan's whole lifetime.
-Delivery boundaries are the calibration point between those two failure modes.
+Delivery boundaries are the calibration point between those two failure modes. Numeric LOC and
+file counts never create, erase, or force the boundary.
 
 See [Delivery Boundaries Declaration and Applicability](./delivery-boundaries-and-applicability.md) for the required declaration format and enforcement.

@@ -35,7 +35,7 @@ git merge feature/user-dashboard
 # and lands within a day or two -- the default `worktree-to-pr` mode.
 git worktree add worktrees/dashboard-widget -b dashboard-widget
 
-# Commit incremental changes; the feature flag keeps the half-built UI dark
+# Commit an internally complete increment; the production-disabled flag controls exposure
 git commit -m "feat(dashboard): add user widget (flag OFF)"
 git push origin dashboard-widget
 gh pr create --draft --base main
@@ -46,12 +46,13 @@ gh pr create --draft --base main
 ```
 
 Under a declared direct-push mode the same shape applies without the branch and PR — commit and
-`git push origin main` daily. Either way the fix is the same: **integrate frequently and hide
-incomplete work behind a flag**, so no branch needs to stay open.
+`git push origin main` daily. Either way the fix is the same: **integrate internally complete,
+production-deployable increments frequently**. Incomplete behavior stays inert behind a temporary
+production-disabled flag; both paths pass and rollout, rollback, and removal are recorded.
 
 **Rationale:**
 
 - Frequent integration prevents conflicts — the branch's _lifespan_ is the problem, not its existence
 - Each branch is single-purpose and disposable, so it never diverges far from `main`
-- Feature flags control visibility, removing the reason to hold work back
+- Feature flags control visibility of complete, tested increments, removing the reason to hold work back
 - Faster feedback

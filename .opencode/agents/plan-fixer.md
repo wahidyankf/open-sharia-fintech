@@ -77,13 +77,13 @@ bootcamp-graduate readability, evidence-backed alternatives/prior art, schema/mi
 cohesive Input/Outcome/Proof sections, granular actions, separate detailed RED/GREEN/REFACTOR, and
 canonical acceptance references.
 Do not add copied Gherkin or detail-free/keystroke checkboxes. Preserve phase gates,
-executor ownership, natural seams/PR-size rules, worktree/delivery mode, manual/operational proof,
-and Knowledge Capture. Never migrate archived plans or the Rhino plan. Never split only to force
-code below the strong 500-line target. Above it require a natural seam, measured size, rejected
-viable splits, and review proof. Retain default-hard other/document and machine bounds; allow the
-bounded single-source other/document exception only with its exact source, target, `O` measurement,
-semantic constraint, and plan/PR record; a default 20-file-budget exceedance requires the canonical
-binding-specific plan/PR record.
+executor ownership, natural seams and atomic consistency, worktree/delivery mode,
+manual/operational proof, and Knowledge Capture. Never migrate archived plans or the Rhino plan.
+Remove any LOC or file-count boundary test. Repair delivery units around natural cohesive seams,
+keeping every artifact required to build, verify, operate, roll back, and remain internally
+consistent together. Require each exact resulting `main` state to be immediately safe to deploy to
+production; incomplete behavior uses a temporary production-disabled flag with both paths tested
+and rollout, rollback, and removal recorded.
 Replace any prospectively hardcoded archival date with an execution-time `<completion-date>` step:
 run `rtk date +%F` only after completion proof, then reuse that output for the move and indexes.
 When a finding exposes missing rule-impact handling, independently confirm the affected repository

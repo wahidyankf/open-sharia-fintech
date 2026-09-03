@@ -34,15 +34,15 @@ the canonical four-mode vocabulary and the three-tier precedence that resolves w
 
 TBD addresses common problems with long-lived feature branches:
 
-| Problem with Feature Branches           | TBD Solution                                      |
-| --------------------------------------- | ------------------------------------------------- |
-| FAIL: Merge conflicts after weeks       | PASS: Daily integration prevents large conflicts  |
-| FAIL: Stale branches diverge from trunk | PASS: Always working on current codebase          |
-| FAIL: Integration testing delayed       | PASS: Continuous integration catches issues early |
-| FAIL: Code review bottlenecks           | PASS: Small, frequent reviews are faster          |
-| FAIL: "Integration hell" before release | PASS: Code is always in releasable state          |
-| FAIL: Hard to coordinate teams          | PASS: Everyone sees changes immediately           |
-| FAIL: Feature branches hide WIP         | PASS: Feature flags make incompleteness explicit  |
-| FAIL: Delayed feedback from CI          | PASS: Immediate CI feedback on every commit       |
+| Problem with Feature Branches           | TBD Solution                                                                                               |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| FAIL: Merge conflicts after weeks       | PASS: Daily integration prevents large conflicts                                                           |
+| FAIL: Stale branches diverge from trunk | PASS: Always working on current codebase                                                                   |
+| FAIL: Integration testing delayed       | PASS: Continuous integration catches issues early                                                          |
+| FAIL: Code review bottlenecks           | PASS: Small, frequent reviews are faster                                                                   |
+| FAIL: "Integration hell" before release | PASS: Code is always in releasable state                                                                   |
+| FAIL: Hard to coordinate teams          | PASS: Everyone sees changes immediately                                                                    |
+| FAIL: Feature branches hide WIP         | PASS: Tested complete-and-inert increments use temporary production-disabled flags with explicit lifecycle |
+| FAIL: Delayed feedback from CI          | PASS: Immediate CI feedback on every commit                                                                |
 
 **Reference**: [TrunkBasedDevelopment.com](https://trunkbaseddevelopment.com/)

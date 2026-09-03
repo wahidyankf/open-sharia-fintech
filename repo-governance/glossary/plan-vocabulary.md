@@ -17,20 +17,23 @@ created: 2026-08-16
 These six terms nest, and conflating any two of them produces either a PR per phase or a single PR
 for a whole quarter.
 
-| Term                  | What it is                                                          |
-| --------------------- | ------------------------------------------------------------------- |
-| **Plan**              | One piece of intended work, held in `plans/` as a document set      |
-| **Phase**             | One step of a plan's delivery checklist                             |
-| **Delivery unit**     | A contiguous run of phases that is independently shippable          |
-| **Delivery boundary** | The point where a delivery unit ends and its PR opens               |
-| **Delivery mode**     | Where work happens and how it reaches the integration target        |
-| **Worktree**          | A work location — an isolated checkout, not an integration decision |
+| Term                  | What it is                                                                 |
+| --------------------- | -------------------------------------------------------------------------- |
+| **Plan**              | One piece of intended work, held in `plans/` as a document set             |
+| **Phase**             | One step of a plan's delivery checklist                                    |
+| **Delivery unit**     | A contiguous run of phases forming one natural, production-deployable seam |
+| **Delivery boundary** | The point where a delivery unit ends and its PR opens                      |
+| **Delivery mode**     | Where work happens and how it reaches the integration target               |
+| **Worktree**          | A work location — an isolated checkout, not an integration decision        |
 
 ## How They Nest
 
-A plan holds many phases. A delivery unit groups contiguous phases up to the point where the work
-stands on its own; that point is the delivery boundary. **One delivery unit maps to exactly one
-branch and one PR** — not one per phase, and not one per plan.
+A plan holds many phases. A delivery unit groups contiguous phases into one natural cohesive seam,
+including every artifact needed for internal consistency, until its exact resulting `main` state is
+immediately safe to deploy to production; that point is the delivery boundary. **One delivery unit
+maps to exactly one branch and one PR** — not one per phase, and not one per plan. Incomplete
+behavior must be complete-and-inert behind a temporary production-disabled flag, with both paths
+tested and its rollout, rollback, and removal recorded.
 
 Phase 0 is always environment setup and baseline. It opens no PR, pushes no branch, and runs no
 review cycle, because there is nothing yet to review.
@@ -52,5 +55,7 @@ branches. The branch and the PR stay one-per-delivery-unit.
   the four modes and how the active one is resolved.
 - [Planning Granularity](../workflows/plan/plan-planning/planning-granularity-and-one-branch-rule.md) —
   the one-branch rule and the worktree cap.
+- [Natural Seams and Deployable State](../conventions/structure/plans/prs-open-at-delivery-boundaries-natural-seams.md) —
+  the canonical delivery-unit boundary and production-safety test.
 - [Plans Organization Convention](../conventions/structure/plans.md) — folder lifecycle and
   document set.

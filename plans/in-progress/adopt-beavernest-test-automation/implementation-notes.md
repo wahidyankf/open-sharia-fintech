@@ -16,9 +16,12 @@ EVIDENCE  binding  task-id  command-or-manual-proof  exit-or-terminal-state  raw
 Rows are replaced only by the same `binding + task-id`; a later binding never rewrites an earlier
 binding's row. Do not place secrets, raw private content, or copied command output here. Phase 22
 adds only sanitized public/private lifecycle hashes and counts. `delivery.md` and this file are
-mandatory changed plan-state paths in every public delivery. `learnings.md` is reserved in every
-prospective allocation and is included in the actual Git union only when that delivery records a
-new as-you-go learning.
+mandatory changed plan-state paths in every public delivery. Include `learnings.md` only when that
+delivery records a new as-you-go learning.
+
+Rows that mention retired PR-size gates, limits, or exceptions are immutable as-built evidence only;
+they do not govern remaining delivery boundaries. Remaining work follows natural cohesive seams and
+must leave the exact resulting `main` state immediately production-deployable.
 
 ```text
 EVIDENCE  P0-R-PUB  ROOT-R-PUB-DISCOVER  validated public origin and registered execution worktree  passed  local-tmp/adopt-beavernest-test-automation/evidence/runtime/public/phase-0/R-PUB/execution-roots-check.txt  efbe1fa2011a7d11975b652fd33b2e1897496203

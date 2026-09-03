@@ -44,7 +44,8 @@ PASS (only where the per-repository restriction above does not block it — not 
 - Change is small and well-tested
 - You're confident tests will pass
 - Change won't break others' work
-- Feature flags hide incomplete functionality
+- Incomplete behavior is internally complete and inert behind a temporary production-disabled
+  feature flag, with both paths tested and rollout, rollback, and removal recorded
 - You can commit and push multiple times per day
 
 **Example workflow**:

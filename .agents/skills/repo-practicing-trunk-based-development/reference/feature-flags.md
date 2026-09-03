@@ -4,7 +4,8 @@
 
 **Feature flags** (feature toggles) are runtime switches that enable/disable features without code changes.
 
-**Purpose**: Hide incomplete work on `main` until ready for users.
+**Purpose**: Keep incomplete behavior complete-and-inert on `main` until ready for users while every
+merged state remains safe to deploy to production immediately.
 
 ## Basic Pattern
 
@@ -29,9 +30,10 @@ function renderCheckout() {
 
 **1. Development Phase** (flag = false):
 
-- Commit new code to `main` with flag disabled
-- Code deployed but not executed
-- Safe to push incomplete work
+- Commit an internally complete increment to `main` with the flag disabled in production by default
+- Test both enabled and disabled paths
+- Record rollout, rollback, and flag removal
+- Deploy safely without exposing the incomplete behavior
 
 **2. Testing Phase** (flag = true for testers):
 
@@ -58,6 +60,8 @@ function renderCheckout() {
 - Use flags for multi-day features
 - Keep flags simple (boolean toggles)
 - Document flag purpose and timeline
+- Disable the flag in production by default while behavior is incomplete
+- Record rollout, rollback, and removal
 - Remove flags after feature stable (don't accumulate)
 - Test both paths (flag on and off)
 
@@ -68,3 +72,4 @@ function renderCheckout() {
 - Keep flags indefinitely (technical debt)
 - Forget to test flag-disabled path
 - Use flags as permanent configuration
+- Use a flag to excuse broken or internally incomplete code

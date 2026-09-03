@@ -25,13 +25,13 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
      **one branch → one PR → one delivery unit** mapping (see
      [Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md)). Open the
      PR only at the unit's declared delivery boundary. Its body is the reader's entry point and
-     applies [Bounding PR Size](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md):
-     target 500 or fewer handwritten code/program-type additions as a strong recommendation, while
-     independently enforcing at most 1,000 handwritten other/document-type additions, except the
-     canonical bounded single-source other/document exception at most 1,100, and at most 20
-     hand-authored files. A code diff above 500 remains valid only with its measured size, natural
-     cohesive seam, rejected split alternatives, and review proof recorded. Claim the plan-document
-     LOC exemption only for a qualifying initial establishment or backlog/in-progress pure move. At an
+     applies [Natural Seams and Deployable State](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-natural-seams.md):
+     name the cohesive purpose; keep every artifact required to build, verify, operate, roll back,
+     and remain internally consistent together; and exclude unrelated purposes. LOC and file counts
+     never create, erase, or force the boundary. Confirm the exact resulting `main` state is safe to
+     deploy to production immediately. Incomplete behavior requires a temporary
+     production-disabled flag, enabled and disabled path tests, and recorded rollout, rollback, and
+     removal. At an
      intermediate phase, push for durability but open no PR, run no PR review, merge nothing, and
      skip Step 2c. Dependent phases share a delivery unit; independent nodes never do. Monitor CI
      on the PR, not `main`.

@@ -1,6 +1,6 @@
 ---
 title: "What Every PR Body Must Carry"
-description: The four things every PR description states — why the change is needed, what is and is not in scope, where a reader starts, and what the reader may skip.
+description: What every PR description states about outcome, scope, natural seam, production deployability, reading order, verification, and rollback.
 category: explanation
 subcategory: conventions
 tags:
@@ -30,13 +30,14 @@ academic paper. `.github/pull_request_template.md` prompts for each in compact f
 4. **Which paths to skip** — generated mirrors and mechanical churn, named explicitly.
 5. **What was verified and what could go wrong.** Name the checks run, the remaining risk, and the
    safe rollback or containment step.
-6. **How the size remains reviewable.** State measured `C`, `O`, hand-authored-file, and total-file
-   counts. When `C` exceeds the strong 500-line recommendation or the default 20 hand-authored-file
-   budget is exceeded, name the natural cohesive seam, exact finite allocation, viable split points
-   considered and rejected, and the review/proof approach. For a file-budget exception, also state the
-   build-validity constraint, recovery, and matching plan record. For the bounded single-source
-   other/document exception, state its source line count, exact source and canonical target, `O`
-   measurement, semantic constraint, and matching plan record. State any hard-bound exemption separately.
+6. **Why this is one natural delivery seam.** Name the cohesive purpose, explain why the included
+   artifacts must land together, and confirm that unrelated purposes are excluded. Do not use LOC
+   or file counts to justify, force, or erase the boundary.
+7. **Why the resulting `main` state is production-deployable.** State whether user-reachable
+   behavior is complete and active or incomplete and complete-and-inert behind a temporary feature
+   flag disabled in production by default. For a flag, name enabled/disabled-path tests and the
+   rollout, rollback, and removal record. State the supporting build, test, lint, operational, and
+   rollback proof.
 
 **Why this binds prose PRs too.** [Code as
 Liability](../../../development/practice/code-as-liability/the-obligation.md) makes a PR adding

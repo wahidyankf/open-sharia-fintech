@@ -2,6 +2,13 @@
 
 Markers: `[E]` edit, `[N]` new, `[D]` delete, `[G]` generated from canonical `.claude/` sources.
 
+**Temporal status:** the root trees and finite allocation blocks below preserve the paths and
+transitions recorded when Phase 0 allocated the work; their markers do not assert the current
+filesystem state after a delivery lands. The `D-O-PUB-RHINO` and `D-O-PRI-RHINO` deliveries moved
+the live Rhino test root to `apps/rhino-cli/tests/**`. Every remaining command and future allocation
+must use that live root. Any `apps/rhino-cli/src/tests/**` occurrence below is historical input to a
+completed relocation/allocation and must not be reused as a current path.
+
 ## `ose-public` Root
 
 ```text
@@ -151,19 +158,16 @@ runtime:
   `libs/fsharp-env-loader/tests/unit/Tests/PortResolverTests.fs`,
   `libs/fsharp-env-loader/tests/unit/Tests/EnvTierTests.fs`,
   `libs/fsharp-env-loader/project.json`, and `repo-config.yml`.
-  The twelve new fixtures/specs/driver have positive planned-new estimates. The remaining five paths
-  use their Phase-0 current line counts. Every prospective candidate also reserves the mandatory
-  `delivery.md` and `implementation-notes.md` rows plus `learnings.md`; the learning row remains in the
-  prospective 20-file budget even when no learning is ultimately recorded. No other tracked path below
-  `libs/fsharp-env-loader/` changes:
+  These paths form the cohesive implementation and consistency set. The delivery also updates
+  `delivery.md` and `implementation-notes.md`, plus `learnings.md` only when a learning is recorded.
+  No other tracked path below `libs/fsharp-env-loader/` changes:
   the Phase 8B terminal gate compares the committed, staged, unstaged, and untracked union below that
   root against the exact five library paths above. `package-lock.json`, the library README, source
   files, license, F# project, lint configuration, coverage output, runner configuration, and every
   other existing unit-test path must have zero diff. The complete delivery union must equal the 17
-  implementation/configuration allocation rows plus `delivery.md`, `implementation-notes.md`, and
-  `learnings.md` only when it actually changed. A missing or additional row stops the delivery; the
-  prospective reservation is exactly 20 paths, so no file-count exception or runtime split is
-  available.
+  implementation/configuration allocation rows plus those plan-state updates. A missing or additional
+  row stops delivery until the plan is amended and the natural seam, internal consistency, and exact
+  resulting `main` deployability are revalidated; the file count does not determine the boundary.
 
 ## `ose-private` Root
 
@@ -481,12 +485,12 @@ apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs
 apps/rhino-cli/src/tests/unit/Steps/TestContractCoverageUnitTests.fs
 ```
 
-It is the named private Phase 4 file-budget exception, in addition to the public complete-owner
-packet exceptions for `D-P4-PUB-FIXTURES-B` and `D-P4-PUB-FIXTURES-C`: the private delivery is the complete,
-byte-identical shared-foundation parity proof after the four public leaves, not a second policy
-design. Its finite exception must reject the partial-parity alternative because no individual
-partial port proves the required whole shared contract or leaves a valid final private test-project
-compile closure.
+This inventory is one natural cohesive private Phase 4 seam, alongside the public complete-owner
+seams `D-P4-PUB-FIXTURES-B` and `D-P4-PUB-FIXTURES-C`. It keeps the byte-identical shared-foundation
+parity proof and private test-project compile closure atomic after the four public leaves; it does
+not repeat policy design. A partial port cannot prove the whole shared contract or leave the exact
+resulting private `main` state immediately production-deployable. The path inventory is consistency
+evidence, never a count-derived boundary.
 
 `D-P4-PRI-FIXTURES` owns only these twelve repository paths; its compact manifest is ignored
 evidence and is never a delivery path:

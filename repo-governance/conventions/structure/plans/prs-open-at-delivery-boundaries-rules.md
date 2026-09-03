@@ -37,4 +37,4 @@ every delivery unit landed there, never provisioned fresh per unit — per
    [Phase 0 Opens No PR](./phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule) above, which
    remains the sole authority on Phase 0 itself.
 
-See [PRs Open at Delivery Boundaries — Rules 5-7 and Boundary Test](./prs-open-at-delivery-boundaries-rules-continued.md) for the remaining three rules, the `*-to-pr` scoping note, and the four-part boundary test, and [Bounding PR Size](./prs-open-at-delivery-boundaries-pr-size.md) for how large a PR may be when it opens.
+See [PRs Open at Delivery Boundaries — Rules 5-7 and Boundary Test](./prs-open-at-delivery-boundaries-rules-continued.md) for the remaining rules and `*-to-pr` scoping note, and [Natural Seams and Deployable State](./prs-open-at-delivery-boundaries-natural-seams.md) for where to split a delivery unit and what its resulting `main` state must guarantee.

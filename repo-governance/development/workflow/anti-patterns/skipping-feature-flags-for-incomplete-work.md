@@ -1,16 +1,17 @@
 ---
 title: "Anti-Pattern: Skipping Feature Flags for Incomplete Work"
-description: Hiding incomplete features in long-lived branches instead of using feature flags.
+description: Keeping work on long-lived branches instead of integrating complete-and-inert increments behind temporary production-disabled flags.
 category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
-when_to_use: Use when incomplete work would otherwise be held back in a branch instead of merged behind a flag.
+when_to_use: Use when incomplete behavior would otherwise stay on a branch instead of integrating as a complete-and-inert, both-path-tested increment behind a temporary production-disabled flag.
 ---
 
 # Anti-Pattern: Skipping Feature Flags for Incomplete Work
 
-**Problem**: Hiding incomplete features in long-lived branches instead of using flags.
+**Problem**: Keeping incomplete behavior in long-lived branches instead of integrating an internally
+complete-and-inert increment behind a temporary production-disabled flag.
 
 **Bad Example:**
 
@@ -24,16 +25,16 @@ git checkout -b feature/new-payment-flow
 **Solution:**
 
 ```javascript
-// Hide incomplete work with flags
+// Both paths are complete and tested; production exposure defaults off during rollout
 const FEATURES = {
   NEW_PAYMENT_FLOW: process.env.ENABLE_NEW_PAYMENT === "true",
 };
 
 // Commit to main immediately, flag OFF in production
 if (FEATURES.NEW_PAYMENT_FLOW) {
-  return renderNewPayment(); // Incomplete
+  return renderNewPayment(); // Complete enabled path
 } else {
-  return renderOldPayment(); // Production
+  return renderOldPayment(); // Complete disabled path
 }
 ```
 
@@ -43,3 +44,4 @@ if (FEATURES.NEW_PAYMENT_FLOW) {
 - No merge conflicts
 - Can test in staging
 - Toggle without deployment
+- Rollout, rollback, and flag removal remain explicit

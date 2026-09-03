@@ -22,15 +22,21 @@ when_to_use: Use when writing a plan's Delivery Boundaries table or checking whe
 ```markdown
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit          | Worktree        | Branch       | PR opens         |
-| -------- | ---------------------- | --------------- | ------------ | ---------------- |
-| 0        | — (setup and baseline) | —               | —            | no               |
-| 1-3      | Schema and loader      | `worktrees/foo` | `foo-schema` | yes — at Phase 3 |
-| 4-5      | Navigation UI          | `worktrees/foo` | `foo-nav`    | yes — at Phase 5 |
+| Phase(s) | Delivery unit          | Worktree        | Branch       | PR opens         | Deployable state / feature flag evidence                                         |
+| -------- | ---------------------- | --------------- | ------------ | ---------------- | -------------------------------------------------------------------------------- |
+| 0        | — (setup and baseline) | —               | —            | no               | No resulting state change; flag not applicable                                   |
+| 1-3      | Schema and loader      | `worktrees/foo` | `foo-schema` | yes — at Phase 3 | Compatible schema and loader complete; both paths pass; flag not applicable      |
+| 4-5      | Navigation UI          | `worktrees/foo` | `foo-nav`    | yes — at Phase 5 | Production-disabled `nav-v2`; both paths pass; rollout/rollback/removal recorded |
 ```
 
 Every change-producing phase must appear in exactly one row. A phase absent from the table is a
 defect: its work has no declared route to `main`.
+
+Each row must name one natural cohesive seam and state how its exact resulting `main` state is safe
+to deploy to production immediately. Keep all build, verification, operational, rollback, and
+internal-consistency artifacts with the unit. Incomplete behavior requires a temporary
+production-disabled feature flag, enabled and disabled path tests, and rollout/rollback/removal.
+LOC and file counts never create, erase, or force a row.
 
 **Enforcement**: `plan-maker` emits the `### Delivery Boundaries` table and places PR/push/CI/merge
 steps only in boundary phases. An explicitly user-requested semantic-review step is also a PR step
@@ -41,6 +47,8 @@ change-producing phase that is not a boundary. It flags as **MEDIUM** a missing
 boundary while its `## Parallelization Model` declares independent parallel nodes. `plan-fixer` adds
 the table and relocates misplaced PR steps to the boundary phase. `plan-execution-checker` flags a PR
 actually opened for a non-boundary phase, and a delivery unit whose PR never merged.
+They also reject a count-derived boundary, a unit missing required consistency artifacts, or a
+resulting `main` state that is not immediately production-deployable.
 
 ## Applicability (Execution Markers + Phase Gates)
 

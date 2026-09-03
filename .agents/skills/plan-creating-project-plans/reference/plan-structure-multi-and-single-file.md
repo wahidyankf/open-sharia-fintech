@@ -28,9 +28,14 @@ plans/in-progress/complex-feature/
 - **`delivery.md`** — DO: phased outcome sections with Input/Outcome/Proof and granular
   `[AI]`/`[HUMAN]` action checkboxes. Code outcomes use separate detailed RED/GREEN/REFACTOR
   checkboxes. Opens with the executor legend; each phase ends with a
-  `### Phase N Gate` followed by Pause Safety. Preserve natural delivery seams and PR-size rules.
+  `### Phase N Gate` followed by Pause Safety. Preserve natural cohesive delivery seams, keep all
+  artifacts needed for internal consistency together, and make every resulting `main` state safe
+  to deploy to production immediately. Incomplete behavior uses a temporary production-disabled
+  flag with enabled/disabled tests and recorded rollout, rollback, and removal.
 
-**Benefits**: narrow PR diff per concern (business PRs touch brd.md only; product PRs touch prd.md only), sharper agent validation (plan-checker asserts placement per file), industry-norm alignment (BRD + PRD are recognized doc types).
+**Benefits**: clear reader ownership, sharper agent validation (plan-checker asserts placement per
+file), and industry-norm alignment (BRD + PRD are recognized doc types). Technical document
+separation does not itself create PR boundaries; natural delivery seams do.
 
 Use exactly one technical shape: the `tech-docs.md` shown above, or `tech-docs/README.md` with mapped
 companions. Reader jobs, cohesion, navigation, and ownership decide the shape; line counts do not.

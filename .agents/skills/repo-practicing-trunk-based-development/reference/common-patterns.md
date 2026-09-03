@@ -7,26 +7,26 @@
 **✅ Correct approach (TBD with feature flags)**:
 
 ```
-Day 1:
-- Add feature flag (disabled)
-- Commit basic infrastructure
-- Push to <plan-branch>; open a draft PR; land it once green
+Unit 1 — natural infrastructure seam:
+- Add a temporary flag, disabled in production
+- Complete and test the internally useful infrastructure increment
+- Push to <plan-branch>; open a draft PR; land it once production-deployable and green
 
-Day 2:
-- Implement core logic (behind flag)
-- Commit
-- Push to <plan-branch>; land it once green
+Unit 2 — natural behavior seam:
+- Implement a complete-and-inert behavior increment behind the flag
+- Test enabled and disabled paths and record rollout, rollback, and removal
+- Push to <plan-branch>; land it once production-deployable and green
 
-Day 3:
-- Complete feature (behind flag)
+Unit 3 — release seam:
 - Test internally with flag enabled
 - Enable flag for all users
 - Push to <plan-branch>; land it once green
 ```
 
-Each day's work lands on its own short-lived branch and PR — the flag, not an open branch, is what
-hides the half-built feature. Under a declared direct-push mode, substitute `git push origin main`
-for the branch-and-PR step; the daily-integration shape is identical either way.
+Each natural cohesive unit lands on its own short-lived branch and PR — the temporary flag, not an
+open branch, controls exposure. LOC, file counts, and elapsed days do not define the units. Under a
+declared direct-push mode, substitute `git push origin main` for the branch-and-PR step; the
+natural-seam integration shape is identical either way.
 
 **❌ Wrong approach (long-lived branch)**:
 

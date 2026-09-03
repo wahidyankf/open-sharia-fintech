@@ -35,6 +35,12 @@ Continues [PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)](./prs-o
    counterpart as a named sibling obligation until the repositories converge. A shared parity
    identity makes deliveries traceable; it does not create a synchronized-merge gate.
 
+Every unit above is bounded by a natural cohesive seam, not a line or file count. Keep everything
+required to build, verify, operate, roll back, and remain internally consistent with that unit, and
+split independent purposes. Merge only when the exact resulting `main` state is immediately safe to
+deploy to production, using a temporary production-disabled feature flag for incomplete behavior.
+See [Natural Seams and Deployable State](./prs-open-at-delivery-boundaries-natural-seams.md).
+
 **Enforcement disposition for rule 4 — unenforced by decision.** Cross-repository readiness and a
 merge opportunity require authenticated operational evidence that a repository-local deterministic
 check cannot observe. The merge record plus explicit sibling obligation make the decision auditable.

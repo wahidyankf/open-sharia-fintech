@@ -58,16 +58,12 @@
   actions; do not flag a high useful checkbox count.
 - Split outcome sections at independent proof boundaries. Reject only mechanical keystroke
   micro-checkboxes with no distinct observation.
-- Checklist counts never override independently reviewable, verifiable, revertible delivery seams,
-  Delivery Boundaries, PR-size/addition rules, atomicity, or the phase/boundary distinction. Treat
-  500 handwritten code additions as a strong recommendation, not a hard ceiling: above 500 require
-  measured size, a natural cohesive seam, rejected split alternatives, and review proof. Enforce
-  the independent default other/document and machine ceilings as hard bounds, admitting only the
-  canonical bounded single-source other/document exception with its exact source, target, `O`
-  measurement, semantic constraint, and plan/PR record. A plan exceeding the default 20
-  hand-authored-file budget is valid only with the canonical binding-specific file-budget
-  natural-seam exception: exact finite allocation; measured C/O/hand-authored/total counts;
-  build-validity constraint; viable rejected splits; review proof; recovery; and matching plan/PR
-  disclosure. Missing any field is **HIGH**.
+- Checklist, LOC, and file counts never create, erase, or force Delivery Boundaries. Require each
+  unit to follow a natural cohesive seam, exclude unrelated purposes, and keep every artifact
+  needed to build, verify, operate, roll back, and remain internally consistent together. Require
+  its exact resulting `main` state to be safe to deploy to production immediately. Incomplete
+  behavior must be complete-and-inert behind a temporary production-disabled feature flag with
+  enabled and disabled path tests and recorded rollout, rollback, and removal. Missing any of this
+  delivery evidence is **HIGH**.
 - Phase transitions have explicit verification steps (e.g. "Verify `nx run app:typecheck` passes").
 - Input/Outcome/Proof prose is not a task; every action checkbox is an independent harness task.

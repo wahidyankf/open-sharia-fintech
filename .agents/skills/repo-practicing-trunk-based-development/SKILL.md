@@ -16,6 +16,12 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 - Navigating environment branches (deployment only)
 - Creating plans with git workflow specs; implementing AI agent default behaviors
 
+PRs follow natural cohesive seams, never numeric LOC or file-count boundaries. Keep every artifact
+needed for internal consistency together, merge only an immediately production-deployable resulting
+`main` state, and integrate each ready unit promptly. Incomplete behavior must be
+complete-and-inert behind a temporary production-disabled flag, with both paths tested and rollout,
+rollback, and removal recorded.
+
 ## Core Concepts
 
 See [Core Concepts](./reference/core-concepts.md) for what TBD requires (convergence on `main`, short-lived branches, feature flags) and why.

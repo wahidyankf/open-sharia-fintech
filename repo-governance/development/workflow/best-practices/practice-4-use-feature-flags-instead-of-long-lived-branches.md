@@ -1,16 +1,18 @@
 ---
 title: "Practice 4: Use Feature Flags Instead of Long-Lived Branches"
-description: Hide incomplete work with feature flags, not branches.
+description: Keep incomplete behavior complete-and-inert behind temporary production-disabled feature flags, not branches.
 category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
-when_to_use: Use when incomplete work needs to merge to main without being visible in production yet.
+when_to_use: Use when incomplete behavior must merge as a complete-and-inert, both-path-tested increment without production exposure, with rollout, rollback, and removal recorded.
 ---
 
 # Practice 4: Use Feature Flags Instead of Long-Lived Branches
 
-**Principle**: Hide incomplete work with feature flags, not branches.
+**Principle**: Integrate incomplete behavior only as an internally complete-and-inert increment
+behind a temporary feature flag disabled in production by default. Both paths must pass, and the
+rollout, rollback, and removal must be recorded.
 
 **Good Example:**
 
@@ -22,9 +24,9 @@ const FEATURES = {
 
 // In code
 if (FEATURES.NEW_DASHBOARD) {
-  return renderNewDashboard(); // Incomplete, hidden in production
+  return renderNewDashboard(); // Complete and tested; exposure remains disabled during rollout
 } else {
-  return renderOldDashboard(); // Production-ready
+  return renderOldDashboard(); // Tested disabled path remains production-ready
 }
 ```
 
@@ -43,3 +45,4 @@ git checkout -b feature/new-dashboard
 - No merge conflicts
 - Can toggle features without deployment
 - Gradual rollouts
+- Enabled and disabled behavior stays tested, with an explicit rollback and flag-removal path

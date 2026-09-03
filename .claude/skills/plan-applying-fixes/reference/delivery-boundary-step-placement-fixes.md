@@ -30,8 +30,10 @@ delivery unit, at the unit's boundary.
   merging into that phase's existing integration block. The intermediate phase keeps its own gate and
   Pause Safety note; it simply integrates nothing.
 - If the intermediate phase genuinely satisfies the four-part boundary test (coherent / green
-  standalone / defensible on `main` / reviewable whole), promote it to a boundary and add its table
-  row instead — MEDIUM confidence, grill the author first.
+  standalone / immediately production-deployable on `main` / reviewable whole), promote it to a
+  boundary and add its table row instead — MEDIUM confidence, grill the author first. Never infer
+  that from LOC or file counts; verify the natural seam, required consistency artifacts, and
+  applicable production-disabled flag tests and lifecycle.
 - If `### Delivery Boundaries` is missing, add it with one row per delivery unit, derived from where
   existing integration steps already sit — never invent boundaries the checklist doesn't support.
 - If a change-producing phase appears in no row, add it to the unit it belongs to (or its own unit if

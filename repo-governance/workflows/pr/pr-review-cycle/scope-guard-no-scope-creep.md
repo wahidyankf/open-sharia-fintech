@@ -11,8 +11,8 @@ when_to_use: "Use when judging whether a finding, or the fix it asks for, belong
 
 A review cycle exists to make **this** change correct, never bigger. Left unbound, each cycle
 finds adjacent improvements, the fixer applies them, and the next cycle reviews a larger diff. The
-PR stops converging, and
-[Bounding PR Size](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size.md)
+PR stops converging, and the
+[natural delivery seam](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-natural-seams.md)
 is breached by the mechanism meant to protect quality.
 
 ## The Anchor

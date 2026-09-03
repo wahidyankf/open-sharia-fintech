@@ -102,28 +102,57 @@ Not yet provisioned; this is a backlog-stage plan.
 Mandatory default in `ose-public` (branch-protected `main`); used identically in `ose-private` for
 consistency.
 
+## Parallelization Model
+
+Resolve the single disposition first, then deliver one repository at a time so both repositories
+apply the same decision without concurrent drift. The private unit follows the verified public unit.
+
+### Delivery Boundaries
+
+| Boundary                   | Phase and natural cohesive seam                                                                                              | Exact resulting `main` state and flag disposition                                                                                                                                                                                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public script disposition  | Phase 1's `ose-public` deletion or complete generic repurpose, including references and verification required by that choice | `ose-public/main` contains no dead resolver path and passes its gates, so it is immediately production-deployable. A feature flag is not applicable: this is a complete developer-tool disposition with no incomplete user-reachable behavior; rollback is a PR revert. Integrate promptly after proof. |
+| Private script disposition | Phase 2's identical `ose-private` disposition and repository-local verification                                              | `ose-private/main` independently contains the same complete, working disposition and is immediately production-deployable. The same no-flag rationale and PR-revert rollback apply. Integrate promptly rather than batching it with unrelated work.                                                     |
+
+Each boundary keeps the chosen script change or deletion, affected references, tests, verification,
+and rollback evidence together. LOC and file counts never create or alter these boundaries.
+
 ## Delivery Checklist
 
 Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human judgment or approval.
 
-### Phase 1: Decide and execute
+### Phase 1: Decide and deliver `ose-public`
 
 - [ ] [HUMAN] Decide delete vs. repurpose (default: delete, given no identified future consumer).
 - [ ] [AI] Execute the decision in `ose-public` (delete the file, or repurpose per Technical
       Approach) on a fresh worktree.
-- [ ] [AI] Repeat identically in `ose-private`.
-- [ ] [AI] `grep -rn 'shadow-diff.sh'` outside `plans/done/**` in both repos returns either nothing
+- [ ] [AI] `grep -rn 'shadow-diff.sh'` outside `plans/done/**` in `ose-public` returns either nothing
       or only references to the repurposed, working tool.
 - [ ] [AI] If repurposed: prove it works by diffing two identical binaries (0 differences reported)
       and two intentionally different binaries (differences reported, non-zero exit).
 
 ### Phase 1 Gate
 
-- [ ] [AI] Full `nx affected -t test:quick` clean in both repos.
+- [ ] [AI] Full `nx affected -t test:quick` clean in `ose-public`.
 - [ ] [AI] `rhino-cli:specs:behavior:coverage` unaffected (this script is not itself a spec subject).
 
-> **Pause Safety**: no partial state — the script either exists in its old form or is fully
-> deleted/repurposed. Safe to stop and resume at any point.
+> **Pause Safety**: `ose-public/main` contains a complete, verified, production-deployable script
+> disposition. Safe to stop before beginning the dependent private mirror.
+
+### Phase 2: Deliver `ose-private`
+
+- [ ] [AI] Apply the verified public decision identically in `ose-private` on its fresh worktree.
+- [ ] [AI] `grep -rn 'shadow-diff.sh'` outside `plans/done/**` in `ose-private` returns either nothing
+      or only references to the repurposed, working tool.
+- [ ] [AI] If repurposed: repeat the identical- and different-binary proof in `ose-private`.
+
+### Phase 2 Gate
+
+- [ ] [AI] Full `nx affected -t test:quick` clean in `ose-private`.
+- [ ] [AI] `rhino-cli:specs:behavior:coverage` unaffected (this script is not itself a spec subject).
+
+> **Pause Safety**: both repositories contain the same complete disposition, each independently
+> verified and production-deployable. Safe to stop and proceed to plan finalization.
 
 ## Quality Gates
 

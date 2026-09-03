@@ -67,11 +67,12 @@ Standards for organizing planning documents in `plans/` — temporary, distinct 
 - [PRs Open — Rules 1-4](./plans/prs-open-at-delivery-boundaries-rules.md) — boundary rules.
 - [PRs Open — Rules 5-7](./plans/prs-open-at-delivery-boundaries-rules-continued.md) — remaining rules.
 - [PRs Open — Boundary Test](./plans/prs-open-at-delivery-boundaries-boundary-test.md) — qualification.
-- [PRs Open — PR Size](./plans/prs-open-at-delivery-boundaries-pr-size.md) — surface bounds.
-- [PRs Open — Addition Targets and Limits](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — strong C target, hard O/machine bounds, conditional file-budget exception, and plan-doc exemption.
-- [PRs Open — Single-Source Other/Document Exception](./plans/prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — narrow O=1,100 exception for one canonical source.
-- [PRs Open — Atomicity](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — rule 5.
+- [PRs Open — Natural Seams and Deployable State](./plans/prs-open-at-delivery-boundaries-natural-seams.md) — cohesive boundaries, atomic consistency, immediate production deployability, and prompt trunk integration.
 - [PRs Open — PR Body](./plans/prs-open-at-delivery-boundaries-pr-body.md) — why, entry, skip.
+- [PR-Size Redirect](./plans/prs-open-at-delivery-boundaries-pr-size.md) — Legacy redirect. Follow old links.
+- [Addition-Limit Redirect](./plans/prs-open-at-delivery-boundaries-pr-size-addition-limits.md) — Legacy redirect. Follow old links.
+- [Document-Exception Redirect](./plans/prs-open-at-delivery-boundaries-pr-size-single-source-other-document-exception.md) — Legacy redirect. Follow old links.
+- [Atomicity-Rule Redirect](./plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md) — Legacy redirect. Follow old links.
 - [Delivery Boundaries](./plans/delivery-boundaries-and-applicability.md) — table.
 - [Worktree Specification](./plans/worktree-specification.md) — declaring worktree.
 - [Worktree Specification — Lifecycle](./plans/worktree-specification-continued.md) — cleanup.

@@ -13,6 +13,10 @@ when_to_use: Use when resolving which delivery mode (worktree-to-pr, main-to-ori
 - `worktree-to-pr` and `worktree-to-origin-main` — work happens in a dedicated **worktree**; follow the worktree provisioning and entry steps below.
 - `main-to-origin-main` and `main-to-pr` — work happens directly in the **primary checkout**; skip worktree provisioning entirely per the "Work-branch provisioning vs. entry" note immediately below, and apply the freshness gate (step 5) directly to the primary checkout.
 
-The resolved delivery mode also determines the push target at each phase gate (Steps 2b/2c) and the finalization/archival path (Step 8) — each of those steps documents its mode-specific behavior. Under a `*-to-pr` mode the push target is the delivery unit's branch, but the PR itself opens only at the unit's **delivery boundary** ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)).
+The resolved delivery mode also determines the push target at each phase gate (Steps 2b/2c) and the
+finalization/archival path (Step 8) — each of those steps documents its mode-specific behavior.
+Under a `*-to-pr` mode the push target is the delivery unit's branch, but the PR itself opens only
+at the unit's natural, production-deployable **delivery boundary**
+([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)).
 
 **Work-branch provisioning vs. entry**: when the work branch is a dedicated worktree (the default-when-unspecified case), follow the provisioning and entry steps below. When the user specifies the `main` checkout or another existing branch, skip provisioning (orchestrator-action steps 1–4): confirm you are on that branch, then apply the freshness gate (step 5) directly to it.

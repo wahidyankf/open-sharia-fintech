@@ -104,6 +104,21 @@ Not yet provisioned; this is a backlog-stage plan.
 Mandatory default in `ose-public`; repeated identically in `ose-private` since the script and its
 resolution logic are inside the byte-identity boundary.
 
+## Parallelization Model
+
+The repository streams are sequential: prove the public test design first, then copy that proven
+coverage into the private parity surface. Each repository integrates independently.
+
+### Delivery Boundaries
+
+| Boundary                  | Phase and natural cohesive seam                                                                                 | Exact resulting `main` state and flag disposition                                                                                                                                                                                                                                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public resolver coverage  | Phase 1's Gherkin, executable bindings, negative proof, behavior-coverage registration, and public verification | The exact resulting `ose-public/main` state preserves shipped resolver behavior while adding passing regression coverage, so it is immediately production-deployable. A feature flag is not applicable because this is test-only work with no production behavior change; rollback is a PR revert. Integrate promptly after the Phase 1 gate. |
+| Private resolver coverage | Phase 2's byte-identical coverage copy, parity-manifest disposition, and private verification                   | The exact resulting `ose-private/main` state preserves behavior and parity while adding the same passing regression coverage, so it is immediately production-deployable. The same test-only no-flag rationale and PR-revert rollback apply. Integrate promptly after the Phase 2 gate.                                                       |
+
+Each boundary keeps its specification, executable proof, parity metadata when applicable, and
+verification together. LOC and file counts never define these repository-local seams.
+
 ## Delivery Checklist
 
 Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human judgment or approval.

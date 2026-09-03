@@ -44,8 +44,11 @@ a `## Parallelization Model` declaring independent parallel nodes (**MEDIUM** â€
 DAG).
 
 Remediation: move integration steps to the delivery unit's boundary phase, or promote a genuinely
-boundary-qualifying intermediate phase and add its table row. Never delete the work's route to
-`main`.
+boundary-qualifying intermediate phase and add its table row. A qualifying boundary follows one
+natural cohesive seam, keeps all required build/verification/operation/rollback/consistency
+artifacts together, and leaves `main` immediately safe to deploy to production. Incomplete behavior
+requires a temporary production-disabled flag, both path tests, and rollout/rollback/removal. Never
+derive a boundary from LOC or file counts, and never delete the work's route to `main`.
 
 ## 5. Consistency Validation
 

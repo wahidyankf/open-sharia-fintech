@@ -12,7 +12,11 @@ Before implementing anything, ensure the development environment is ready.
 
 **Phase 0 opens no PR (HARD RULE)**: it ends at its own gate — a recorded clean baseline — and hands straight to Phase 1. No branch push, no `gh pr create`, no PR CI or semantic review, no merge, under **any** delivery mode. The earliest phase that may open a PR is **Phase 1**; Phase 0's evidence artifacts ride that first PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-**Nor does every later phase open one**: a PR opens at a **delivery boundary** — the phase after which the accumulated work is independently shippable — as named in the plan's `### Delivery Boundaries` table. That may be once at the very end or several times through the plan. See [§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+**Nor does every later phase open one**: a PR opens at a **delivery boundary** — the phase after
+which the accumulated work follows one natural cohesive seam and is independently safe to deploy
+to production — as named in the plan's `### Delivery Boundaries` table. LOC and file counts never
+define the boundary. That may be once at the very end or several times through the plan. See
+[§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 **Orchestrator action**:
 

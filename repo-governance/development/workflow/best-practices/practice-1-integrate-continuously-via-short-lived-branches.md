@@ -50,5 +50,6 @@ git checkout -b feature/big-redesign
 
 - Frequent integration is what TBD protects — the branch's _lifespan_ is the risk, not its existence
 - The PR is where review and the hardened merge preconditions attach
-- Feature flags hide incomplete work so a branch never needs to stay open to hide it
+- Temporary production-disabled flags let internally complete, tested increments integrate without
+  keeping a branch open; their rollout, rollback, and removal remain explicit
 - Long-lived branches produce exactly the merge conflicts TBD exists to prevent

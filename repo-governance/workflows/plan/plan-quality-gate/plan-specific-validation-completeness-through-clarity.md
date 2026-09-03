@@ -53,7 +53,10 @@ The plan-checker validates:
   commands, expected observations, failure handling, and evidence destinations. Code outcomes have
   separate detailed RED/GREEN/REFACTOR checkboxes. Exact paths and commands
   remain required where they materially remove ambiguity. Canonical Gherkin remains in PRD/spec
-  files and is referenced, not copied. Packet counts never relax natural delivery seams, delivery
-  boundary tables, PR-size limits, or atomicity.
+  files and is referenced, not copied. Packet, LOC, and file counts never create, erase, or force a
+  delivery boundary. Validate natural cohesive seams, atomic consistency, every artifact required
+  to build/verify/operate/roll back the unit, and an immediately production-deployable resulting
+  `main` state. Incomplete behavior requires a temporary production-disabled flag, tests for both
+  paths, and recorded rollout, rollback, and removal.
 
 **Continued in** [Plan-Specific Validation — Operational Readiness and Knowledge Capture](./plan-specific-validation-operational-readiness.md) for the remaining checks (implementation readiness through knowledge capture).

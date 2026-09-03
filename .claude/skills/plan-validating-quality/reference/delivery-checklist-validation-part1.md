@@ -42,7 +42,8 @@ prerequisites, paths, commands, observations, recovery, or proof, flag the relev
   `reference/20-rule19-delivery-mode-validation-part1.md` rule 19 item 7. See
   [Plans Organization Convention §Phase 0 Opens No PR](../../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 - **PRs open at delivery boundaries, not every phase (HARD RULE)**: a PR opens at each
-  **delivery boundary** — the phase after which accumulated work is independently shippable — not
+  **delivery boundary** — the phase after which accumulated work is one natural cohesive,
+  production-deployable increment — not
   once per phase; the contiguous phases ending at a boundary form a **delivery unit** mapping to one
   branch, one PR (the worktree stays a coarser per-repository unit, capped at one per repo per plan
   — see
@@ -53,6 +54,8 @@ prerequisites, paths, commands, observations, recovery, or proof, flag the relev
   against a `## Parallelization Model` declaring independent parallel nodes. Full detail below and
   `reference/21-rule19-delivery-mode-validation-part2.md` rule 19 item 8. See
   [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+  Reject numeric boundaries; require atomic artifacts and the canonical incomplete-feature flag
+  lifecycle.
 - **Cross-repository resource schedule (HARD RULE)**: when a plan spans repositories, its
   `## Parallelization Model` records either repository-serial worktree provisioning, toolchain
   setup, builds, and validation, or a concrete overlap need with confirmed machine, disk, runner,
