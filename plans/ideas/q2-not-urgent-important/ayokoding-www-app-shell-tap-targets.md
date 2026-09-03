@@ -28,7 +28,7 @@ breakpoints (320 / 390 / 768 / 1280 / 1440 px):
 Both are 17-20 px tall against a 24 px floor. Because this is shared chrome rendered on every page,
 the failure is site-wide rather than confined to one route. It survived the originating plan's gates
 only because that plan's AC-58 e2e assertion is correctly scoped to `[data-testid="ai-bench-page"]`
-(`apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`) and therefore never measures the shell.
+(`apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`) and therefore never measures the shell.
 
 ## Why now
 

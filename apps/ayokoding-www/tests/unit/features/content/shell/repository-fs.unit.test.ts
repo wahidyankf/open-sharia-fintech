@@ -1,0 +1,39 @@
+import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve, join } from "node:path";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { FileSystemContentRepository } from "../../../../../src/features/content/shell/repository-fs";
+
+describe("repository-fs env reads", () => {
+  const src = readFileSync(resolve(__dirname, "../../../../../src/features/content/shell/repository-fs.ts"), "utf-8");
+
+  it("reads AYOKODING_WEB_CONTENT_DIR via env object not process.env", () => {
+    expect(src).toMatch(/env\.AYOKODING_WEB_CONTENT_DIR/);
+  });
+
+  it("reads AYOKODING_WEB_SHOW_DRAFTS via env object not process.env", () => {
+    expect(src).toMatch(/env\.AYOKODING_WEB_SHOW_DRAFTS/);
+  });
+});
+
+describe("FileSystemContentRepository#readAllContent — missing content directory", () => {
+  // Regression test for the site-wide blast-radius gap flagged in PR #95 cycle-3 review: a
+  // misconfigured/absent `AYOKODING_WEB_CONTENT_DIR` used to throw out of `globMarkdownFiles`'s
+  // top-level `readdir`, uncaught by `loadRoutePathData` (called from the root `[locale]/layout.tsx`,
+  // above the only `error.tsx` in the tree) — 500ing the entire site rather than degrading to an
+  // empty content index. Fails before the fix (unhandled ENOENT rejection), passes after (resolves
+  // to `[]`), mirroring `manifest-repository.test.ts`'s equivalent "does not exist yet" coverage for
+  // `globManifestFiles`.
+  it("returns an empty array instead of throwing when contentDir does not exist", async () => {
+    const parent = await mkdtemp(join(tmpdir(), "repository-fs-test-"));
+    const missingDir = join(parent, "does-not-exist");
+
+    try {
+      const repo = new FileSystemContentRepository(missingDir);
+      await expect(repo.readAllContent()).resolves.toEqual([]);
+    } finally {
+      await rm(parent, { recursive: true, force: true });
+    }
+  });
+});

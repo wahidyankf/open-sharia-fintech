@@ -8,56 +8,56 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "echo 'No codegen needed \u2014 ayokoding-www has no OpenAPI contract'",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "generate-indexes": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/scripts/generate-indexes.ts",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "validate-indexes": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/scripts/generate-indexes.ts --validate",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "generate-benchmark-reference": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/scripts/generate-benchmark-reference.ts",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "validate-benchmark-reference": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/scripts/generate-benchmark-reference.ts --validate",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "generate-search-data": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/features/search/shell/generate-search-data.ts",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx src/scripts/generate-indexes.ts && node ../../scripts/next-with-port.mjs dev --env AYOKODING_WWW_PORT --default 3101",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "next build",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       },
       "outputs": ["{projectRoot}/.next"],
       "dependsOn": ["generate-indexes", "generate-search-data"]
@@ -66,21 +66,21 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "node ../../scripts/next-with-port.mjs start --env AYOKODING_WWW_PORT --default 3101",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "tsc --noEmit",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx oxlint --jsx-a11y-plugin .",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "test:unit": {
@@ -89,14 +89,14 @@
       "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"],
       "options": {
         "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit --project unit-fe --testTimeout=60000",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       }
     },
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx vitest run --project unit --project unit-fe --coverage --coverage.thresholds.lines=82 --testTimeout=60000",
-        "cwd": "{projectRoot}"
+        "command": "npx vitest run --project unit --project unit-fe --coverage --coverage.thresholds.lines=99 --testTimeout=60000",
+        "cwd": "apps/ayokoding-www"
       },
       "cache": true,
       "outputs": ["{projectRoot}/coverage"],
@@ -111,7 +111,10 @@
           "npx nx run ayokoding-www:lint",
           "npx nx run ayokoding-www:test:unit",
           "npx nx run ayokoding-www:test:coverage",
-          "npx nx run ayokoding-www:test:specs"
+          "npx nx run ayokoding-www:test:specs",
+          "npx nx run ayokoding-www:test:layout:validation",
+          "npx nx run ayokoding-www:coverage:policy:validation",
+          "npx nx run ayokoding-www:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -121,7 +124,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "echo 'no-op: integration tier not used for this content app'",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/ayokoding-www"
       },
       "cache": true
     },
@@ -178,6 +181,30 @@
       },
       "cache": true,
       "inputs": ["default", "specs"]
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project ayokoding-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project ayokoding-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project ayokoding-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {

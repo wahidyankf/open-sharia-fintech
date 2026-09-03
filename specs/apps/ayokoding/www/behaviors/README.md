@@ -1,7 +1,7 @@
 # AyoKoding Web — Behaviors
 
 The recursive Gherkin corpus for `ayokoding-www`. A scenario here is the contract; the step
-definitions in `apps/ayokoding-www/test/` and the two E2E projects implement it.
+definitions in `apps/ayokoding-www/tests/` and the two E2E projects implement it.
 
 ## Contents
 

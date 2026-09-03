@@ -26,7 +26,16 @@ open System.Text.RegularExpressions
 open RhinoCli.Application.TestContractJson
 
 /// Directory names a project scan never descends into: build output, package
-/// caches, coverage and report artifacts.
+/// caches, coverage and report artifacts, generated fixtures, and authored
+/// educational content. `content` holds sample/course material (e.g.
+/// `ayokoding-www`'s Python and TypeScript teaching snippets) that
+/// legitimately uses executable-test-shaped filenames — `test_*.py`,
+/// `*.test.ts` — without being a real project test. `.features-gen` is
+/// playwright-bdd's own gitignored output directory: it emits one
+/// `*.feature.spec.js` file per scenario, a real executable-suffix match,
+/// purely as a local/CI build artifact that never belongs under `tests/`.
+/// Location never decides classification for a genuine authored test, but
+/// neither directory is ever a real test's home in this repository.
 let private excludedScanDirNames: Set<string> =
     Set.ofList
         [ "node_modules"
@@ -41,7 +50,9 @@ let private excludedScanDirNames: Set<string> =
           "coverage"
           "TestResults"
           "playwright-report"
-          "test-results" ]
+          "test-results"
+          "content"
+          ".features-gen" ]
 
 /// The three workspace roots that host an Nx `project.json`, matching the
 /// bijection `test-contract registry validate` already compares against.
@@ -244,23 +255,88 @@ let private tokenize (command: string) : string list =
     |> Array.filter (fun token -> token.Length > 0)
     |> Array.toList
 
-/// The string literals inside the first `include: [ ... ]` array of a runner
-/// configuration.
+/// Strips `//`-to-end-of-line comments from TypeScript source text, tracking
+/// single/double/backtick-quoted strings so a comment marker or quote
+/// character inside prose never corrupts a real string literal. This
+/// repository's own config comments are prose-heavy enough that a bare
+/// apostrophe ("project's") or a backtick-quoted mention of a pattern
+/// (`` `tests/unit/app/**` ``) each look, to a naive quote-delimited scan of
+/// the raw file, like the start or end of a glob string — silently
+/// misresolving or dropping the real glob that follows. Stripping comments
+/// first removes the prose entirely, so only real code is ever scanned.
+let private stripLineComments (text: string) : string =
+    let builder = StringBuilder(text.Length)
+    let mutable quoteChar: char option = None
+    let mutable index = 0
+
+    while index < text.Length do
+        let current = text.[index]
+
+        match quoteChar with
+        | Some quote ->
+            builder.Append(current) |> ignore
+
+            if current = '\\' && index + 1 < text.Length then
+                builder.Append(text.[index + 1]) |> ignore
+                index <- index + 2
+            else
+                if current = quote then
+                    quoteChar <- None
+
+                index <- index + 1
+        | None ->
+            if current = '"' || current = '\'' || current = '`' then
+                quoteChar <- Some current
+                builder.Append(current) |> ignore
+                index <- index + 1
+            elif current = '/' && index + 1 < text.Length && text.[index + 1] = '/' then
+                while index < text.Length && text.[index] <> '\n' do
+                    index <- index + 1
+            else
+                builder.Append(current) |> ignore
+                index <- index + 1
+
+    builder.ToString()
+
+/// The string literals inside every `include: [ ... ]` array of a runner
+/// configuration, unioned. A vitest multi-project config
+/// (`test.projects[]`) repeats `include` once per named project, and
+/// `test.coverage.include` is itself a same-named key that can appear
+/// anywhere in the file — reading only the first occurrence silently
+/// resolves the wrong array (or only one of several) the moment more than
+/// one `include:` key exists, which is the ordinary shape once a project
+/// splits into named vitest projects.
 let private includeGlobs (configText: string) : string list =
-    let arrayMatch =
-        Regex.Match(configText, @"include\s*:\s*\[(?<body>[^\]]*)\]", RegexOptions.Singleline)
+    let text = stripLineComments configText
 
-    if not arrayMatch.Success then
-        []
-    else
+    Regex.Matches(text, @"include\s*:\s*\[(?<body>[^\]]*)\]", RegexOptions.Singleline)
+    |> Seq.collect (fun arrayMatch ->
         Regex.Matches(arrayMatch.Groups.["body"].Value, "[\"'`](?<value>[^\"'`]+)[\"'`]")
-        |> Seq.map (fun m -> m.Groups.["value"].Value)
-        |> Seq.toList
+        |> Seq.map (fun m -> m.Groups.["value"].Value))
+    |> Seq.toList
 
-/// The `testDir` a Playwright configuration declares.
+/// The `testDir` a Playwright configuration declares as a string literal.
+/// Every `playwright-bdd` project in this repository instead assigns
+/// `testDir` from `defineBddConfig({ ... })`'s return value — a bare
+/// variable reference, never a literal this can read — so this only ever
+/// resolves a plain (non-BDD) Playwright config.
 let private playwrightTestDir (configText: string) : string option =
     let found =
         Regex.Match(configText, "testDir\\s*:\\s*[\"'`](?<value>[^\"'`]+)[\"'`]")
+
+    if found.Success then
+        Some(found.Groups.["value"].Value)
+    else
+        None
+
+/// The `steps` glob a `defineBddConfig({ ... })` call declares. This is
+/// `playwright-bdd`'s real, authored test surface — the `.steps.ts` files a
+/// project owns — as opposed to `testDir`, which names its *generated*
+/// output directory (already excluded from scanning via `.features-gen`)
+/// and is never a literal in this repository's configs to begin with.
+let private playwrightBddStepsGlob (configText: string) : string option =
+    let found =
+        Regex.Match(stripLineComments configText, "steps\\s*:\\s*[\"'`](?<value>[^\"'`]+)[\"'`]")
 
     if found.Success then
         Some(found.Groups.["value"].Value)
@@ -340,12 +416,26 @@ let private selectionOfCommand (repoRoot: string) (projectRoot: string) (cwd: st
             let configDirectory =
                 forwardSlashes (Path.GetDirectoryName(config.Replace('/', Path.DirectorySeparatorChar)))
 
-            match playwrightTestDir (readTextOrEmpty (absoluteOf repoRoot config)) with
-            | None -> []
-            | Some testDir ->
-                let root = joinRelative configDirectory testDir
+            let configText = readTextOrEmpty (absoluteOf repoRoot config)
 
-                filesUnder (absoluteOf repoRoot root) |> List.map (relativeTo repoRoot)
+            let fromTestDir =
+                match playwrightTestDir configText with
+                | None -> []
+                | Some testDir ->
+                    let root = joinRelative configDirectory testDir
+                    filesUnder (absoluteOf repoRoot root) |> List.map (relativeTo repoRoot)
+
+            let fromStepsGlob =
+                match playwrightBddStepsGlob configText with
+                | None -> []
+                | Some glob ->
+                    let pattern = globToRegex (joinRelative configDirectory glob)
+
+                    filesUnder (absoluteOf repoRoot projectRoot)
+                    |> List.map (relativeTo repoRoot)
+                    |> List.filter (fun path -> pattern.IsMatch path)
+
+            fromTestDir @ fromStepsGlob |> List.distinct
     elif command.Contains "dotnet test" then
         tokens
         |> List.filter (fun token ->

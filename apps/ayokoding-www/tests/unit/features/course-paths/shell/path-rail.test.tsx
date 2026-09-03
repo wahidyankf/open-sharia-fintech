@@ -1,0 +1,127 @@
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { PathManifest } from "../../../../../src/features/course-paths/core/schemas";
+
+vi.mock("next/link", () => ({
+  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
+}));
+
+// eslint-disable-next-line import/first
+import { PathRail } from "../../../../../src/features/course-paths/shell/path-rail";
+
+afterEach(cleanup);
+
+const manifest: PathManifest = {
+  pathId: "skills/python-fundamentals",
+  arc: "python-fundamentals",
+  title: "Python Fundamentals",
+  description: "Learn Python from the ground up.",
+  courseOrder: ["version-control-and-git", "just-enough-python", "data-structures-and-algorithms-essentials"],
+};
+
+const courseTitles = {
+  "version-control-and-git": "Git",
+  "just-enough-python": "Just Enough Python",
+  "data-structures-and-algorithms-essentials": "Data Structures & Algorithms",
+};
+
+describe("PathRail (Cycle 2.8 — Screen 3 Option B)", () => {
+  it("is a <nav> whose accessible name is '{Path} course list'", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByRole("navigation", { name: "Python Fundamentals course list" })).toBeTruthy();
+  });
+
+  it("renders a semantic <ol> listing every course in manifest order", () => {
+    const { container } = render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const ol = container.querySelector("ol");
+    expect(ol).not.toBeNull();
+    const items = ol!.querySelectorAll("li");
+    expect(items.length).toBe(3);
+    expect(items[0]?.textContent).toContain("Git");
+    expect(items[1]?.textContent).toContain("Just Enough Python");
+    expect(items[2]?.textContent).toContain("Data Structures");
+  });
+
+  it("marks the current course with aria-current='page' AND a non-colour signal (▸ marker + font-semibold)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const current = screen.getByRole("link", { name: /Just Enough Python/i });
+    expect(current.getAttribute("aria-current")).toBe("page");
+    expect(current.textContent).toContain("▸");
+    expect(current.className).toContain("font-semibold");
+  });
+
+  it("every row link carries the path context, and the row's aria-label holds the untruncated title", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const link = screen.getByRole("link", { name: /Data Structures & Algorithms/i });
+    expect(link.getAttribute("href")).toBe(
+      "/en/learn/courses/data-structures-and-algorithms-essentials?path=skills/python-fundamentals",
+    );
+    expect(link.getAttribute("aria-label")).toBe("Data Structures & Algorithms");
+  });
+
+  it("shows a 'course k of N' readout above the list — prd.md's Screen 3 responsive spec requires it at md+ widths (phase-5 EWT finding)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByText("Course 2 of 3")).toBeTruthy();
+  });
+
+  it("the footer offers 'view full path' and 'browse all courses' escape links", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const viewFullPath = screen.getByRole("link", { name: /view full path/i });
+    expect(viewFullPath.getAttribute("href")).toBe(
+      "/en/learn/paths/skills/python-fundamentals?path=skills/python-fundamentals",
+    );
+
+    const browseAll = screen.getByRole("link", { name: /browse all courses/i });
+    expect(browseAll.getAttribute("href")).toBe("/en/browse");
+  });
+
+  it("gives both footer escape links an always-visible underline affordance, not only a :hover cue (UWT-003 fix)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByRole("link", { name: /view full path/i }).className).toContain("underline");
+    expect(screen.getByRole("link", { name: /browse all courses/i }).className).toContain("underline");
+  });
+
+  it("gives the current row a background highlight, matching prd.md's own documented spec for this row (DWT-005 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const current = screen.getByRole("link", { name: /Just Enough Python/i });
+    expect(current.className).toContain("bg-accent");
+  });
+
+  it("localizes 'course k of N' and the footer escape links on the id locale (DWT-003 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(
+      <PathRail locale="id" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByText("Kursus 2 dari 3")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /lihat jalur lengkap/i })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /jelajahi semua kursus/i })).toBeTruthy();
+  });
+});

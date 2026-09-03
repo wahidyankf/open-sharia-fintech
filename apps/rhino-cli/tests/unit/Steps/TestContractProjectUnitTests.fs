@@ -214,6 +214,78 @@ let ``a vitest include rooted at src leaves the test in a forbidden directory`` 
     Assert.Contains("layout-test-in-forbidden-directory", message)
     Assert.Contains("libs/gadget/src/core.unit.test.ts", message)
 
+[<Fact>]
+let ``a multi-project vitest config unions every project's include globs, not just the first`` () =
+    let root = newTempRepo ()
+    write root "libs/gadget/project.json" vitestProjectJson
+
+    // `coverage.include` is a top-level `include:` key that appears, textually, before either
+    // named project's own `test.include` — the exact shape `ayokoding-www`'s real config has.
+    // A reader that stops at the first `include:` match in the file would resolve only
+    // `coverage.include`'s glob (`src/**/*.{ts,tsx}`) and never see either project's real
+    // selection globs.
+    write
+        root
+        "libs/gadget/vitest.config.ts"
+        """import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    coverage: {
+      include: ["src/**/*.ts"],
+    },
+    projects: [
+      { test: { name: "unit", include: ["tests/unit/**/*.unit.test.ts"] } },
+      { test: { name: "unit-fe", include: ["tests/unit/**/*.test.tsx"] } },
+    ],
+  },
+});
+"""
+
+    write root "libs/gadget/tests/unit/core.unit.test.ts" "export {};\n"
+    write root "libs/gadget/tests/unit/widget.test.tsx" "export {};\n"
+
+    let document = materialized root "gadget" [ TestContractLayout.LayerUnit ]
+
+    Assert.Equal<string list>([ "test:unit" ], selectorsFor document "libs/gadget/tests/unit/core.unit.test.ts")
+    Assert.Equal<string list>([ "test:unit" ], selectorsFor document "libs/gadget/tests/unit/widget.test.tsx")
+
+[<Fact>]
+let ``a prose comment inside an include array never contaminates the real glob list`` () =
+    let root = newTempRepo ()
+    write root "libs/gadget/project.json" vitestProjectJson
+
+    // An odd number of quote-like characters (`"`, `'`, `` ` ``) inside the array before a real
+    // glob entry shifts every open/close pairing after it by one — exactly what a lone
+    // apostrophe in ordinary prose ("it's") does. A naive quote-delimited scan (no comment
+    // stripping) then pairs this entry's own opening quote with the apostrophe instead of its
+    // real closing quote, and its real closing quote is left dangling with no partner — the glob
+    // is silently dropped rather than merely garbled. This is the exact shape that made
+    // `ayokoding-www`'s real `vitest.config.ts` misresolve its last, real glob entry.
+    write
+        root
+        "libs/gadget/vitest.config.ts"
+        """import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    include: [
+      "tests/unit/keep.test.ts",
+      // it's a note
+      "tests/unit/lose.test.ts",
+    ],
+  },
+});
+"""
+
+    write root "libs/gadget/tests/unit/keep.test.ts" "export {};\n"
+    write root "libs/gadget/tests/unit/lose.test.ts" "export {};\n"
+
+    let document = materialized root "gadget" [ TestContractLayout.LayerUnit ]
+
+    Assert.Equal<string list>([ "test:unit" ], selectorsFor document "libs/gadget/tests/unit/keep.test.ts")
+    Assert.Equal<string list>([ "test:unit" ], selectorsFor document "libs/gadget/tests/unit/lose.test.ts")
+
 // ---------------------------------------------------------------------------
 // The reader's own findings
 // ---------------------------------------------------------------------------
@@ -260,6 +332,34 @@ let ``a build output directory is never scanned`` () =
     let document = materialized root "widget" [ TestContractLayout.LayerUnit ]
 
     Assert.DoesNotContain(document.Files, fun file -> file.Path = "libs/widget/tests/unit/bin/Debug/GhostTests.fs")
+
+[<Fact>]
+let ``a content directory sample file is never scanned as an executable test`` () =
+    let root = newTempRepo ()
+    seedDotnetProject root
+
+    write root "libs/widget/content/en/learn/courses/example/code/test_sample.py" "def test_x(): pass\n"
+
+    let document = materialized root "widget" [ TestContractLayout.LayerUnit ]
+
+    Assert.DoesNotContain(
+        document.Files,
+        fun file -> file.Path = "libs/widget/content/en/learn/courses/example/code/test_sample.py"
+    )
+
+[<Fact>]
+let ``a playwright-bdd .features-gen output directory is never scanned as an executable test`` () =
+    let root = newTempRepo ()
+    seedDotnetProject root
+
+    write root "libs/widget/.features-gen/specs/apps/widget/behaviors/example.feature.spec.js" "// generated\n"
+
+    let document = materialized root "widget" [ TestContractLayout.LayerUnit ]
+
+    Assert.DoesNotContain(
+        document.Files,
+        fun file -> file.Path = "libs/widget/.features-gen/specs/apps/widget/behaviors/example.feature.spec.js"
+    )
 
 [<Fact>]
 let ``a project no scanned root declares is a misuse, not a contract failure`` () =
@@ -614,6 +714,34 @@ let ``a playwright config missing testDir selects nothing`` () =
 
     let document = materialized root "portal" [ TestContractLayout.LayerE2e ]
     Assert.Equal<string list>([], selectorsFor document "apps/portal/tests/e2e/smoke.spec.ts")
+
+[<Fact>]
+let ``a playwright-bdd config with a computed testDir still selects files its literal steps glob matches`` () =
+    let root = newTempRepo ()
+    write root "apps/portal/project.json" playwrightProjectJson
+
+    // `playwright-bdd`'s `defineBddConfig({ ... })` returns a generated output directory that
+    // every real project in this repository assigns to `testDir` as a bare variable reference —
+    // never a string literal `playwrightTestDir` can read. The `steps:` option it also takes is a
+    // literal glob, and is the real, authored surface a BDD e2e project owns; the generated
+    // `testDir` output is machine-written and already excluded via `.features-gen`.
+    write
+        root
+        "apps/portal/playwright.config.ts"
+        """import { defineConfig } from "@playwright/test";
+import { defineBddConfig } from "playwright-bdd";
+
+const testDir = defineBddConfig({
+  steps: "./tests/e2e/steps/**/*.steps.ts",
+});
+
+export default defineConfig({ testDir });
+"""
+
+    write root "apps/portal/tests/e2e/steps/checkout.steps.ts" "export {};\n"
+
+    let document = materialized root "portal" [ TestContractLayout.LayerE2e ]
+    Assert.Equal<string list>([ "test:e2e" ], selectorsFor document "apps/portal/tests/e2e/steps/checkout.steps.ts")
 
 [<Fact>]
 let ``a playwright command whose config file cannot be resolved selects nothing`` () =
