@@ -1399,6 +1399,55 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OSE-BE` delivery lifecycle
 
+> Migrated `ose-be` (F#, no file relocation needed — already at target `tests/unit`/`tests/integration`
+> layout, closely mirroring Phase 15's `organiclever-be`) to the target test contract: coverage
+> floor 80%→99% (100% line/method achieved, 86.36% branch); the three policy-validation targets
+> added. `test:layout:validation` confirmed the Phase 15 wrapper-script scanner fix (which reads
+> into `.sh` scripts referencing `${ROOT}/`-prefixed `.fsproj` paths) already handles `ose-be`'s
+> identical `scripts/run-integration.sh` shape correctly — no further rhino-cli change was needed,
+> confirming the tracked assumption from Phase 15's evidence.
+>
+> Found and fixed the same broken coverage-collection mechanism as Phase 15 (missing
+> `coverlet.collector`/`coverlet.msbuild` references made `--collect:"XPlat Code Coverage"` a
+> silent no-op); closed real coverage gaps with 30 new genuine tests across 4 previously-untested
+> bounded-context status HTTP endpoints, the messaging status surface, `WebApp.fs`'s `NOT_FOUND`
+> fallback, `AppDbContext`, `Database.requireDatabaseUrl`, `NatsClient.natsUrl`, and
+> `OpenRouterClient.loadConfig`/`isConfigured`. Split `NatsConnect.fs`/`OpenRouterConnect.fs` out
+> of `NatsClient.fs`/`OpenRouterClient.fs` (mirroring Phase 15's dead-code-isolation pattern) so
+> the live-broker-only `connectAsync` functions can be `ExcludeFromCodeCoverage`-annotated and
+> file-excluded without also swallowing their adjacent, genuinely-testable pure functions.
+>
+> Two additional bugs found and fixed: (1) a coverlet/F# quirk where a trivial `let` constant
+> compiles to an uninstrumentable `StartupCode` static initializer — converted
+> `HealthInfrastructure.fs`'s `hasInfrastructureDependencies` from a value binding to a niladic
+> function, a real instrumentable call site (this exact defect is also present in
+> `organiclever-be`'s equivalent file, tolerated there only because its larger 186-line denominator
+> dilutes it below the 1% floor — `ose-be`'s 90-line denominator could not absorb it); (2) a
+> genuine xunit v3 cross-class test-parallelism race (`OpenRouterClientTests`/`AiOrchestrationTests`/
+> `GapAnalysisTests` mutating/reading the same env vars concurrently) — fixed with
+> `tests/unit/TestCollections.fs` (`DisableTestParallelization = true`), mirroring the identical
+> precedent in `organiclever-be`'s integration tests and rhino-cli's own unit tests.
+>
+> Independently re-verified all fresh (not cached): `test:unit` 40/40 passing; `test:coverage`
+> 100% line, 100% method, 86.36% branch (exactly matching claims); the real (non-no-op)
+> `test:integration` run against a live Postgres docker container 5/5 passing; all 3
+> policy-validation targets green (`test:layout:validation` confirmed both `unit,integration`
+> layers, 17 executable files); `repo-config.yml` and `ose-be-e2e/project.json` diffs both
+> confirmed genuinely empty; `project.json`, `HealthInfrastructure.fs`, the `NatsConnect.fs`
+> extraction, and `TestCollections.fs` diffs all matched claims line-for-line.
+>
+> The PR branch needed an unexpected rebase before merge: GitHub's `mergeable_state` reported
+> `"behind"` even though the PR's reported base SHA appeared current, and a direct
+> `git merge-base --is-ancestor` check confirmed the branch genuinely needed replaying onto the
+> real current tip. A clean single-commit rebase with zero conflicts, confirmed byte-for-byte
+> content-identical via diff-of-diffs comparison; a fresh leak-review was posted against the new
+> head per the current-head requirement.
+>
+> Two leak-reviews, both `pass`: original head `9b5316b80` (review `5098338974`), post-rebase head
+> `2e6654b67` (review `5098438077`). CI green (16/16) on the merged head. PR
+> [wahidyankf/ose-public#457](https://github.com/wahidyankf/ose-public/pull/457), merge commit
+> `84fb5744b691ab684b0498cb5cdda3b068a3852e`.
+
 ## Phase 19: Migrate `O-PUB-OSE-WWW`
 
 - **Input:** complete marketing owner and both harness rows.
