@@ -31,8 +31,8 @@ function renderCard() {
 }
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders card with header, title, description, content, and footer", ({ Given, Then, And }) => {
-    Given(
+  Scenario("Renders card with header, title, description, content, and footer", ({ When, Then, And }) => {
+    When(
       'the Card is rendered with title "Card Title", description "Card description text", content "Card content here", and footer "Card footer here"',
       () => {
         // precondition noted
@@ -64,8 +64,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given(
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When(
       'the Card is rendered with title "Card Title", description "Card description text", content "Card content here", and footer "Card footer here"',
       () => {
         // precondition noted

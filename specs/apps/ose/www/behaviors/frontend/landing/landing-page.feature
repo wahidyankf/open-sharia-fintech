@@ -8,7 +8,7 @@ Feature: Landing Page
 
   @unit @e2e
   Scenario: Hero section displays platform information
-    Given the landing page is rendered
+    When the landing page is rendered
     Then the hero section displays the title "Open Sharia Enterprise Platform"
     And the hero section displays a description of the platform mission
     And the hero section contains a "Learn More" link to "/about/"
@@ -16,6 +16,6 @@ Feature: Landing Page
 
   @unit @e2e
   Scenario: Social icons are displayed
-    Given the landing page is rendered
+    When the landing page is rendered
     Then a GitHub icon link is visible
     And an RSS feed icon link is visible

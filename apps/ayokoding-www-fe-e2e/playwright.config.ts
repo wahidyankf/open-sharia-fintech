@@ -13,6 +13,13 @@ const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
   features: [
     path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/frontend/**/*.feature"),
+    // The five backend/tRPC-API features (content, health, i18n, navigation, search) are tagged
+    // `@unit @e2e` — real e2e-level coverage is required, not just unit — but they live outside
+    // this project's frontend/**/*.feature glob above. Adding the backend tree here mirrors
+    // ayokoding-www-be-e2e's own integration-level coverage of the identical corpus: real HTTP
+    // requests via Playwright's `request` fixture against the same live server the frontend e2e
+    // tests already exercise (backend-*.steps.ts), not a browser DOM check.
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/backend/**/*.feature"),
     // The resizable-panel primitive's own Gherkin lives under libs/web-ui (see
     // specs/libs/web-ui/behaviors/README.md). Its drag/clamp/keyboard scenarios are bound a
     // second time here — real browser, real docs page — alongside their existing web-ui

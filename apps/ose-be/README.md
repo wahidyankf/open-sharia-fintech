@@ -67,9 +67,9 @@ The service reads configuration from process environment variables.
 
 - `DATABASE_URL` is required. It must be a PostgreSQL connection string accepted by Npgsql.
 - `ASPNETCORE_URLS` controls the listening address. The local command above binds to port `8302`.
-- `OSE_BE_NATS_URL` is optional and defaults to a local NATS server. NATS is attempted at startup;
-  if it is unavailable, the HTTP service still starts and the messaging-status endpoint records the
-  outcome.
+- `OSE_BE_NATS_URL` is required; startup aborts with a clear error if it is unset. Once configured,
+  connecting to NATS itself is attempted best-effort at startup — if the broker is unavailable, the
+  HTTP service still starts and the messaging-status endpoint records the outcome.
 - OpenRouter settings are optional. They enable the in-progress AI integration and must be supplied
   through your local environment, never committed to the repository.
 

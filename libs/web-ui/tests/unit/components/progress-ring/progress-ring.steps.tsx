@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Full progress ring", ({ Given, Then }) => {
-    Given("I render a ProgressRing with progress 1", () => {
+  Scenario("Full progress ring", ({ When, Then }) => {
+    When("I render a ProgressRing with progress 1", () => {
       // precondition noted
     });
 
@@ -22,8 +22,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Half progress ring", ({ Given, Then }) => {
-    Given("I render a ProgressRing with progress 0.5", () => {
+  Scenario("Half progress ring", ({ When, Then }) => {
+    When("I render a ProgressRing with progress 0.5", () => {
       // precondition noted
     });
 
@@ -34,8 +34,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Empty progress ring", ({ Given, Then }) => {
-    Given("I render a ProgressRing with progress 0", () => {
+  Scenario("Empty progress ring", ({ When, Then }) => {
+    When("I render a ProgressRing with progress 0", () => {
       // precondition noted
     });
 
@@ -46,8 +46,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has correct aria attributes", ({ Given, Then, And }) => {
-    Given("I render a ProgressRing with progress 0.75", () => {
+  Scenario("Has correct aria attributes", ({ When, Then, And }) => {
+    When("I render a ProgressRing with progress 0.75", () => {
       // precondition noted
     });
 

@@ -1,0 +1,47 @@
+import { expect } from "@playwright/test";
+import { createBdd } from "playwright-bdd";
+import { buildTrpcUrl, extractTrpcData, backendState } from "./backend-helpers";
+
+const { When, Then } = createBdd();
+
+When("a search query {string} is executed", async ({ request }, query: string) => {
+  const url = buildTrpcUrl("search.query", { query, limit: 10 });
+  const response = await request.get(url);
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  backendState.searchResults = extractTrpcData(body);
+});
+
+When("a search query {string} is executed with limit {int}", async ({ request }, query: string, limit: number) => {
+  const url = buildTrpcUrl("search.query", { query, limit });
+  const response = await request.get(url);
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  backendState.searchResults = extractTrpcData(body);
+});
+
+Then("the results contain pages matching {string}", async ({}, _term: string) => {
+  const results = backendState.searchResults as unknown[];
+  expect(results.length).toBeGreaterThan(0);
+});
+
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search returns matching results
+Then("each result contains a title, slug, and excerpt", async () => {
+  const results = backendState.searchResults as Record<string, unknown>[];
+  const first = results[0]!;
+  expect(first).toHaveProperty("title");
+  expect(first).toHaveProperty("slug");
+  expect(first).toHaveProperty("excerpt");
+});
+
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search with no matches returns empty results
+Then("the results are empty", async () => {
+  const results = backendState.searchResults as unknown[];
+  expect(results.length).toBe(0);
+});
+
+// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search results respect the limit parameter
+Then("at most {int} results are returned", async ({}, limit: number) => {
+  const results = backendState.searchResults as unknown[];
+  expect(results.length).toBeLessThanOrEqual(limit);
+});

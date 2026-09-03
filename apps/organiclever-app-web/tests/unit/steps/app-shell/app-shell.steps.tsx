@@ -36,8 +36,8 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
   let activeTab: "home" | "history" | "progress" | "settings" = "home";
   let overlayActor: Actor<typeof appMachine>;
 
-  Scenario("Default tab is Home on first load", ({ Given, Then, And }) => {
-    Given("the app is freshly loaded", () => {
+  Scenario("Default tab is Home on first load", ({ When, Then, And }) => {
+    When("the app is freshly loaded", () => {
       // The /app entry page issues permanentRedirect("/app/home"), so the
       // first-load tab is Home by definition.
       activeTab = "home";

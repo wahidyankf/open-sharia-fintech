@@ -6,14 +6,17 @@ Feature: Tiered .env file loading
 
   Scenario: APP_ENV unset defaults to the "local" tier
     Given APP_ENV is unset
+    When the env tier resolves
     Then the resolved tier is "local"
 
   Scenario: APP_ENV set to the empty string defaults to the "local" tier
     Given APP_ENV is set to ""
+    When the env tier resolves
     Then the resolved tier is "local"
 
   Scenario: APP_ENV set to a tier name resolves to that tier
     Given APP_ENV is set to "stag"
+    When the env tier resolves
     Then the resolved tier is "stag"
 
   Scenario Outline: Only the file matching APP_ENV is read

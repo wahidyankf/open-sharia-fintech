@@ -33,13 +33,13 @@ Feature: Course re-home redirects and prerequisites
 
   @unit
   Scenario: A prerequisite naming a syllabus-declared but not-yet-authored course still resolves
-    Given a course is declared on the syllabus roadmap but not yet authored into the course library
+    When a course is declared on the syllabus roadmap but not yet authored into the course library
     Then a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap
     And a prerequisite naming an unrecognized course ID still does not resolve
 
   @unit
   Scenario: A prerequisite naming an authored course absent from the syllabus roadmap still resolves
-    Given a course is authored into the course library but not declared on the syllabus roadmap
+    When a course is authored into the course library but not declared on the syllabus roadmap
     Then a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap
 
   # Q-E=C override (RESOLVED 2026-07-23): the three fundamentally-strong browse roots are

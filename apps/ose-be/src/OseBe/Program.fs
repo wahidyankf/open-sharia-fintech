@@ -45,11 +45,13 @@ let main args =
     // 3. Schema migration on boot (db context — DbUp embedded scripts).
     runMigrations connStr
 
-    // 4. Messaging: best-effort NATS connect + JetStream durable demo (non-fatal).
+    // 4. Messaging: fail-fast on missing OSE_BE_NATS_URL (a configuration error);
+    //    once configured, the connect attempt itself + JetStream durable demo
+    //    stay best-effort (non-fatal) if the broker is unreachable.
     let status = newShared ()
 
     let natsConnection =
-        connectAsync (natsUrl ()) |> Async.AwaitTask |> Async.RunSynchronously
+        connectAsync (requireNatsUrl ()) |> Async.AwaitTask |> Async.RunSynchronously
 
     match natsConnection with
     | Some conn ->

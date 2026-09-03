@@ -11,8 +11,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders default alert with title and description", ({ Given, Then, And }) => {
-    Given('the Alert is rendered with title "Warning" and description "Something happened"', () => {
+  Scenario("Renders default alert with title and description", ({ When, Then, And }) => {
+    When('the Alert is rendered with title "Warning" and description "Something happened"', () => {
       // precondition noted
     });
 
@@ -50,8 +50,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders destructive variant", ({ Given, Then }) => {
-    Given('the Alert is rendered with variant "destructive" and content "Error"', () => {
+  Scenario("Renders destructive variant", ({ When, Then }) => {
+    When('the Alert is rendered with variant "destructive" and content "Error"', () => {
       // precondition noted
     });
 
@@ -62,8 +62,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given('the Alert is rendered with title "Warning" and description "Something happened"', () => {
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When('the Alert is rendered with title "Warning" and description "Something happened"', () => {
       // precondition noted
     });
 
@@ -80,8 +80,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant success", ({ Given, Then }) => {
-    Given('I render an Alert with variant "success"', () => {
+  Scenario("Renders variant success", ({ When, Then }) => {
+    When('I render an Alert with variant "success"', () => {
       // precondition noted
     });
 
@@ -92,8 +92,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant warning", ({ Given, Then }) => {
-    Given('I render an Alert with variant "warning"', () => {
+  Scenario("Renders variant warning", ({ When, Then }) => {
+    When('I render an Alert with variant "warning"', () => {
       // precondition noted
     });
 
@@ -104,8 +104,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant info", ({ Given, Then }) => {
-    Given('I render an Alert with variant "info"', () => {
+  Scenario("Renders variant info", ({ When, Then }) => {
+    When('I render an Alert with variant "info"', () => {
       // precondition noted
     });
 

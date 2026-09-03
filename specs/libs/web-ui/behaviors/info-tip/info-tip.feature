@@ -1,7 +1,7 @@
 Feature: InfoTip component
 
   Scenario: Trigger button renders
-    Given I render an InfoTip with title "Volume" and text "Adjust the volume"
+    When I render an InfoTip with title "Volume" and text "Adjust the volume"
     Then the trigger button with aria-label "Volume" should be visible
 
   Scenario: Click trigger opens Sheet

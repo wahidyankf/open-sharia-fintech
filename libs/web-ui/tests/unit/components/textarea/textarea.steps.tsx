@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders with placeholder", ({ Given, Then, And }) => {
-    Given('I render a Textarea with placeholder "Write here…"', () => {});
+  Scenario("Renders with placeholder", ({ When, Then, And }) => {
+    When('I render a Textarea with placeholder "Write here…"', () => {});
 
     Then("I see the textarea element", () => {
       cleanup();
@@ -38,8 +38,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Disabled state", ({ Given, Then }) => {
-    Given("I render a Textarea with disabled prop", () => {});
+  Scenario("Disabled state", ({ When, Then }) => {
+    When("I render a Textarea with disabled prop", () => {});
 
     Then("the textarea is not interactive", () => {
       cleanup();

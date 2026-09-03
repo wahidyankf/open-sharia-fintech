@@ -8,7 +8,7 @@ Feature: Navigation
 
   @unit @e2e
   Scenario: Header contains navigation links
-    Given the header component is rendered
+    When the header component is rendered
     Then the header contains a link to "Updates" at "/updates/"
     And the header contains a link to "About" at "/about/"
     And the header contains an external link to "Documentation"
@@ -16,7 +16,7 @@ Feature: Navigation
 
   @unit @e2e
   Scenario: Breadcrumb shows ancestor hierarchy without current page
-    Given the about page is rendered with breadcrumbs
+    When the about page is rendered with breadcrumbs
     Then the breadcrumb shows "Home" linking to "/"
     And the current page should not appear in the breadcrumb
     And all breadcrumb segments should be clickable links
@@ -24,6 +24,6 @@ Feature: Navigation
 
   @unit @e2e
   Scenario: Previous and next navigation between updates
-    Given an update detail page is rendered with adjacent updates
+    When an update detail page is rendered with adjacent updates
     Then a "Previous" link is displayed with the previous update title
     And a "Next" link is displayed with the next update title

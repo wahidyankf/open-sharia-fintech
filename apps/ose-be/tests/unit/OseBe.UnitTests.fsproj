@@ -18,6 +18,7 @@
     <Compile Include="Steps/HealthSteps.fs" />
     <Compile Include="Steps/ContextReadinessSteps.fs" />
     <Compile Include="Steps/EnvTierSteps.fs" />
+    <Compile Include="Steps/NatsConfigSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
     <Compile Include="Tests/EnvTierTests.fs" />
     <Compile Include="Tests/AiOrchestrationTests.fs" />

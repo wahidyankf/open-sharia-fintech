@@ -51,8 +51,8 @@ describeFeature(feature, ({ Scenario }) => {
   let nameInputVisible: boolean;
   let savedToast: boolean;
 
-  Scenario("Settings screen loads user profile", ({ Given, Then }) => {
-    Given("the settings screen is loaded", () => {
+  Scenario("Settings screen loads user profile", ({ When, Then }) => {
+    When("the settings screen is loaded", () => {
       settings = makeSettings({ name: "Tester" });
       nameInputVisible = true;
       savedToast = false;

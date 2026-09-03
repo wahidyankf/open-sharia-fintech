@@ -20,7 +20,7 @@ Feature: Internationalisation and Language Switching
 
   @unit @e2e
   Scenario: UI labels change to the selected language
-    Given a visitor is on the Indonesian version of a page
+    When a visitor is on the Indonesian version of a page
     Then navigation labels and UI text should be displayed in Indonesian
     And the page title and headings should reflect the Indonesian locale content
 

@@ -33,6 +33,55 @@ function liveRegionOf(page: Page) {
   return annotatedCodeBlock(page).locator("output");
 }
 
+// --- Real e2e-level coverage for the three baseline rendering scenarios -------------------------
+// (unit-level equivalents in apps/ayokoding-www/tests/unit/fe-steps/code-block-copy.steps.tsx
+// render MarkdownRenderer directly in jsdom with fixed HTML; these bindings drive a real page in a
+// real browser instead.)
+
+const GOBUSTER_MERMAID_PAGE = "/en/learn/legacy/information-security/tools/gobuster/quick-start";
+const ID_FIXTURE_CODE_BLOCK_PAGE = "/id/belajar/e2e-fixture-blok-kode";
+
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:A non-mermaid code block renders a copy button
+Given("a visitor opens an English content page containing a fenced Lua code block", async ({ page }) => {
+  await page.goto(ANNOTATED_LUA_PAGE);
+});
+
+Then("the code block displays a copy button", async ({ page }) => {
+  await expect(copyButtonOf(page)).toBeVisible();
+});
+
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:A mermaid block renders no copy button
+Given("a visitor opens a content page containing a mermaid fenced block", async ({ page }) => {
+  await page.goto(GOBUSTER_MERMAID_PAGE);
+});
+
+Then("the mermaid block renders as a diagram with no copy button", async ({ page }) => {
+  // MermaidDiagram (mermaid.tsx) never wraps its output in the CodeBlock primitive at all — it
+  // renders a bare <div> containing the async-rendered <svg> once mermaid.render() resolves, so
+  // "renders as a diagram" is proven by waiting for the real SVG rather than the pre/code fallback
+  // MermaidDiagram shows before that promise settles.
+  const diagramContainer = page.locator("#main-content div:has(> svg)").first();
+  await expect(diagramContainer.locator("svg")).toBeVisible({ timeout: 15000 });
+  await expect(diagramContainer.locator('[data-slot="code-block-copy"]')).toHaveCount(0);
+});
+
+// @covers specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature:The copy button is labelled in Indonesian on the Indonesian site
+Given("a visitor opens an Indonesian content page containing a fenced code block", async ({ page }) => {
+  await page.goto(ID_FIXTURE_CODE_BLOCK_PAGE);
+  await page.waitForLoadState("networkidle");
+});
+
+// Note: "When the accessibility tree is inspected" is already bound (as a no-op bridging step) by
+// resizable-sidebar.steps.ts — this scenario's own inspection (waiting for the page, then reading
+// the button's accessible name) happens in the Given/Then steps above and below instead of
+// re-registering the same step text a second time, which playwright-bdd's step registry treats as
+// an unresolvable ambiguous match.
+
+Then('the copy button has the Indonesian accessible name "Salin"', async ({ page }) => {
+  const button = page.getByRole("button", { name: "Salin" });
+  await expect(button).toBeVisible();
+});
+
 // --- Cycle 2.5: verbatim annotated clipboard ----------------------------------------------------
 
 Given(

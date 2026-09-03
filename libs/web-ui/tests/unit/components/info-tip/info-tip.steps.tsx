@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Trigger button renders", ({ Given, Then }) => {
-    Given('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
+  Scenario("Trigger button renders", ({ When, Then }) => {
+    When('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
       // precondition noted
     });
 

@@ -91,8 +91,8 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
   // `benchmark-content.tsx`) and passes against the corrected `<div>` wrapper. The e2e binding
   // (`apps/ayokoding-www-fe-e2e/tests/e2e/steps/tools-index.steps.ts`) is the one asserting the REAL
   // assembled page's total count is exactly 1.
-  ScenarioOutline("Exactly one main landmark renders on the Tools pages", ({ Given, Then }, variables) => {
-    Given('I navigate to "<path>"', async () => {
+  ScenarioOutline("Exactly one main landmark renders on the Tools pages", ({ When, Then }, variables) => {
+    When('I navigate to "<path>"', async () => {
       const examplePath = String(variables.path);
       if (examplePath === "/en/tools/ai-benchmark") {
         render(React.createElement(AiBenchmarkPage));

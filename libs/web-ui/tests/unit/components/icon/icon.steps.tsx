@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Known icon renders SVG", ({ Given, Then }) => {
-    Given('I render an Icon with name "check"', () => {
+  Scenario("Known icon renders SVG", ({ When, Then }) => {
+    When('I render an Icon with name "check"', () => {
       // precondition noted
     });
 
@@ -22,8 +22,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Unknown name renders fallback circle", ({ Given, Then }) => {
-    Given('I render an Icon with name "nonexistent-icon"', () => {
+  Scenario("Unknown name renders fallback circle", ({ When, Then }) => {
+    When('I render an Icon with name "nonexistent-icon"', () => {
       // precondition noted
     });
 
@@ -34,8 +34,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Decorative icon has aria-hidden", ({ Given, Then }) => {
-    Given('I render an Icon with name "home" without aria-label', () => {
+  Scenario("Decorative icon has aria-hidden", ({ When, Then }) => {
+    When('I render an Icon with name "home" without aria-label', () => {
       // precondition noted
     });
 
@@ -47,8 +47,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Icon with aria-label has accessible name", ({ Given, Then }) => {
-    Given('I render an Icon with name "home" and aria-label "Home"', () => {
+  Scenario("Icon with aria-label has accessible name", ({ When, Then }) => {
+    When('I render an Icon with name "home" and aria-label "Home"', () => {
       // precondition noted
     });
 

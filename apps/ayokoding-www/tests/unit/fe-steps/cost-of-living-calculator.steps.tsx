@@ -23,6 +23,10 @@ const { navState } = vi.hoisted(() => {
     // Records the navigation options ({ scroll: false }) of the most recent push/replace, so
     // scenarios can assert filter changes do not scroll the page to the top.
     lastNavOpts: undefined as { scroll?: boolean } | undefined,
+    // The route's [locale] segment useLocale()/useParams() resolve — mutable so locale-outline
+    // scenarios (H1, breadcrumb) can render under the real "en"/"id" locale under test instead
+    // of a hardcoded default.
+    locale: "en",
   };
   return { navState };
 });
@@ -49,8 +53,8 @@ vi.mock("next/navigation", () => ({
     back: vi.fn(),
     prefetch: vi.fn(),
   }),
-  usePathname: () => "/en/tools/cost-of-living-calculator",
-  useParams: () => ({ locale: "en" }),
+  usePathname: () => `/${navState.locale}/tools/cost-of-living-calculator`,
+  useParams: () => ({ locale: navState.locale }),
   // Read from context — context updates force re-renders in all consumers.
   useSearchParams: () => React.useContext(NavParamsContext),
   notFound: vi.fn(),
@@ -110,6 +114,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     navState.params = new URLSearchParams();
     navState.setParams = () => {};
     navState.lastNavOpts = undefined;
+    navState.locale = "en";
   });
 
   // ─── Cost of Living tab scenarios ───────────────────────────────────────────
@@ -1118,7 +1123,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     });
   });
 
-  Scenario("My-salary baseline accepts the gross in local currency or USD", async ({ Given, And, Then }) => {
+  Scenario("My-salary baseline accepts the gross in local currency or USD", async ({ Given, And, When, Then }) => {
     const user = userEvent.setup();
 
     Given('I am on the "Minimum role" tab', async () => {
@@ -1128,7 +1133,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     And('I set the baseline source to "my salary"', async () => {
       await user.click(screen.getByRole("radio", { name: /my salary/i }));
     });
-    And('I pick the salary city "Singapore"', async () => {
+    When('I pick the salary city "Singapore"', async () => {
       await user.selectOptions(screen.getByRole("combobox", { name: /my salary city/i }), "singapore");
     });
     Then("I can enter my gross monthly salary in either Singapore's local currency or USD", () => {
@@ -2120,9 +2125,9 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
 
   // ─── SG-D-003: Page heading matches tool identity ─────────────────────────────
 
-  ScenarioOutline("H1 matches the tool's official name in each locale", ({ Given, When, Then, And }) => {
+  ScenarioOutline("H1 matches the tool's official name in each locale", ({ Given, When, Then, And }, variables) => {
     Given('the user opens "/<locale>/tools/cost-of-living-calculator"', () => {
-      // Locale-specific rendering verified at e2e level; unit stub
+      navState.locale = String(variables.locale);
       renderPage(<CostOfLivingCalculatorPage />);
     });
 
@@ -2131,8 +2136,8 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     });
 
     Then('the H1 reads "<expected_h1>"', () => {
-      // Stub: H1 text verified in Phase 4
-      expect(true).toBe(true);
+      const heading = screen.getByRole("heading", { level: 1 });
+      expect(heading.textContent).toBe(variables.expected_h1);
     });
 
     // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:H1 matches the tool's official name in each locale
@@ -2607,9 +2612,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       let currentCrumb: HTMLElement | null = null;
 
       Given('the user opens "/<locale>/tools/cost-of-living-calculator"', () => {
-        // Locale-specific full rendering is verified at e2e level; the unit page
-        // renders under the default mocked locale, so we assert the crumb text via
-        // the locale-keyed translation directly against the shared primitive output.
+        navState.locale = String(variables.locale);
         renderPage(<CostOfLivingCalculatorPage />);
       });
 
@@ -2619,11 +2622,9 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       });
 
       Then('the current-page crumb text reads "<expected_title>"', () => {
-        const locale = variables.locale as "en" | "id";
-        const expected = t(locale, "calcTitle");
-        expect(expected).toBe(variables.expected_title);
         currentCrumb = document.querySelector('[aria-current="page"]');
         expect(currentCrumb).toBeTruthy();
+        expect(currentCrumb!.textContent).toBe(variables.expected_title);
       });
 
       // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:The final breadcrumb crumb matches the page title in each locale

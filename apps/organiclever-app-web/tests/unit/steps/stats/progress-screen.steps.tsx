@@ -70,8 +70,8 @@ describeFeature(feature, ({ Scenario }) => {
 
   let activeModule: ModuleId = "workout";
 
-  Scenario("Progress screen shows workout module by default", ({ Given, Then }) => {
-    Given("the progress screen is loaded", () => {
+  Scenario("Progress screen shows workout module by default", ({ When, Then }) => {
+    When("the progress screen is loaded", () => {
       activeModule = initialModule();
     });
 

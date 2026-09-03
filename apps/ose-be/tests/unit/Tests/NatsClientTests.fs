@@ -15,13 +15,21 @@ let private withNatsUrl (value: string option) (body: unit -> unit) =
         Environment.SetEnvironmentVariable("OSE_BE_NATS_URL", previous)
 
 [<Fact>]
-let ``natsUrl defaults to the local NATS URL when unset`` () =
-    withNatsUrl None (fun () -> Assert.Equal("nats://localhost:4222", natsUrl ()))
+let ``requireNatsUrl fails fast when OSE_BE_NATS_URL is unset`` () =
+    withNatsUrl None (fun () ->
+        let ex = Assert.Throws<Exception>(fun () -> requireNatsUrl () |> ignore)
+        Assert.Contains("OSE_BE_NATS_URL", ex.Message))
 
 [<Fact>]
-let ``natsUrl returns the configured URL when set`` () =
+let ``requireNatsUrl fails fast when OSE_BE_NATS_URL is blank`` () =
+    withNatsUrl (Some "") (fun () ->
+        let ex = Assert.Throws<Exception>(fun () -> requireNatsUrl () |> ignore)
+        Assert.Contains("OSE_BE_NATS_URL", ex.Message))
+
+[<Fact>]
+let ``requireNatsUrl returns the configured URL when set`` () =
     withNatsUrl (Some "nats://example.internal:4222") (fun () ->
-        Assert.Equal("nats://example.internal:4222", natsUrl ()))
+        Assert.Equal("nats://example.internal:4222", requireNatsUrl ()))
 
 // connectAsync's success path requires a live NATS broker and is excluded from
 // unit coverage (see NatsConnect.fs); this test proves the documented

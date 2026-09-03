@@ -142,16 +142,23 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       fallback = 3100;
     });
 
-    And('the environment sets "OSE_WWW_PORT" to "<envValue>"', () => {
+    // The literal "<envValue>"/"<flagValue>"/"<expected>" placeholders are replaced by Cucumber
+    // Expressions (`{string}`, `{any}`) rather than kept verbatim: @amiceli/vitest-cucumber matches
+    // a step definition against the outline's own un-substituted step text (so these patterns still
+    // match the raw "<placeholder>" tokens), while the rhino-cli BDD adapter-coverage validator
+    // matches step definitions against each example row's *substituted* step text (so a literal
+    // "<placeholder>" binding would never match a real substituted value, and "<expected>" isn't
+    // quoted so `{string}` cannot match it either — `{any}`'s `.+` matches any non-empty text).
+    And('the environment sets "OSE_WWW_PORT" to {string}', () => {
       env = { OSE_WWW_PORT: envValue };
     });
 
-    When('the port resolves with a "--port" flag of "<flagValue>"', () => {
+    When('the port resolves with a "--port" flag of {string}', () => {
       resolved = resolvePort({ flag: flagValue, envVar, fallback, env });
     });
 
     // @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A blank value at a tier falls through to the next tier
-    Then("the resolved port is <expected>", () => {
+    Then("the resolved port is {any}", () => {
       expect(resolved).toBe(expected);
     });
   });
@@ -175,7 +182,9 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
         env = {};
       });
 
-      When('the port resolves with a "--port" flag of "<flagValue>"', () => {
+      // The literal "<flagValue>" placeholder is replaced by the Cucumber Expression `{string}` —
+      // see the sibling ScenarioOutline above for why.
+      When('the port resolves with a "--port" flag of {string}', () => {
         thrown = undefined;
         try {
           resolvePort({ flag: flagValue, envVar, fallback, env });

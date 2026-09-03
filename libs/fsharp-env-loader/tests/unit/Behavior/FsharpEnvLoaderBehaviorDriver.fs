@@ -43,6 +43,7 @@ type FsharpEnvLoaderBehaviorSteps() =
     let mutable ownedDirs: string list = []
     let touchedEnvKeys = HashSet<string>()
     let originalAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
+    let mutable resolvedTier: string option = None
 
     let newTempDir () : string =
         let dir =
@@ -172,6 +173,10 @@ type FsharpEnvLoaderBehaviorSteps() =
         Environment.SetEnvironmentVariable("APP_ENV", value)
 
     [<When>]
+    member _.``the env tier resolves``() =
+        resolvedTier <- Some(EnvTier.resolveTier ())
+
+    [<When>]
     member _.``the env tier loads from the search directory``() =
         EnvTier.loadEnvTierFrom [ ensureDir "primary" ]
 
@@ -181,7 +186,10 @@ type FsharpEnvLoaderBehaviorSteps() =
 
     [<Then>]
     member _.``the resolved tier is "([^"]*)"``(expected: string) =
-        Assert.Equal(expected, EnvTier.resolveTier ())
+        match resolvedTier with
+        | Some actual -> Assert.Equal(expected, actual)
+        | None ->
+            Assert.Fail("no tier has been resolved — the scenario is missing its \"When the env tier resolves\" step")
 
     [<Then>]
     member _.``"([^"]+)" is "([^"]*)"``(key: string, expected: string) =
@@ -254,6 +262,7 @@ type FsharpEnvLoaderBehaviorSteps() =
         // back to a path this cleanup just deleted from disk.
         ownedDirs <- []
         namedDirs.Clear()
+        resolvedTier <- None
         declaredVar <- ""
         declaredFallback <- 0
         envMap <- Map.empty

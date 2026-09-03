@@ -60,8 +60,8 @@ describeFeature(feature, ({ Scenario }) => {
   let entries: JournalEntry[] = [];
   let cardExpanded = false;
 
-  Scenario("History shows entries in reverse order", ({ Given, Then }) => {
-    Given("the history screen has entries", () => {
+  Scenario("History shows entries in reverse order", ({ When, Then }) => {
+    When("the history screen has entries", () => {
       entries = [
         makeEntry("workout", "2026-05-01T10:00:00.000Z", "id-newer"),
         makeEntry("reading", "2026-04-30T08:00:00.000Z", "id-older"),
@@ -77,8 +77,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Empty history shows empty state", ({ Given, Then }) => {
-    Given("the history screen has no entries", () => {
+  Scenario("Empty history shows empty state", ({ When, Then }) => {
+    When("the history screen has no entries", () => {
       entries = [];
     });
 

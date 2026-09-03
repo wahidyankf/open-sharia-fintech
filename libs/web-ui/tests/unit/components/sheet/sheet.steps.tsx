@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Title renders", ({ Given, Then }) => {
-    Given('I render a Sheet with title "Settings"', () => {
+  Scenario("Title renders", ({ When, Then }) => {
+    When('I render a Sheet with title "Settings"', () => {
       // precondition noted
     });
 
@@ -40,8 +40,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has accessible title", ({ Given, Then }) => {
-    Given('I render a Sheet with title "My Sheet"', () => {
+  Scenario("Has accessible title", ({ When, Then }) => {
+    When('I render a Sheet with title "My Sheet"', () => {
       // precondition noted
     });
 

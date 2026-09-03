@@ -18,8 +18,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders brand name", ({ Given, Then }) => {
-    Given('I render a SideNav with brand "OrganicLever" and tabs', () => {
+  Scenario("Renders brand name", ({ When, Then }) => {
+    When('I render a SideNav with brand "OrganicLever" and tabs', () => {
       // precondition noted
     });
 
@@ -30,8 +30,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders tabs", ({ Given, Then }) => {
-    Given('I render a SideNav with brand "OrganicLever" and tabs', () => {
+  Scenario("Renders tabs", ({ When, Then }) => {
+    When('I render a SideNav with brand "OrganicLever" and tabs', () => {
       // precondition noted
     });
 
@@ -60,8 +60,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Active tab has active background", ({ Given, Then }) => {
-    Given('I render a SideNav with brand "OrganicLever" current "home" and tabs', () => {
+  Scenario("Active tab has active background", ({ When, Then }) => {
+    When('I render a SideNav with brand "OrganicLever" current "home" and tabs', () => {
       // precondition noted
     });
 

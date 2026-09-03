@@ -1,17 +1,4 @@
 {
   "project": "ayokoding-www-fe-e2e",
-  "allowedUnbound": [
-    {
-      "feature": "../../specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature",
-      "scenario": "A non-mermaid code block renders a copy button"
-    },
-    {
-      "feature": "../../specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature",
-      "scenario": "A mermaid block renders no copy button"
-    },
-    {
-      "feature": "../../specs/apps/ayokoding/www/behaviors/frontend/content/code-block-copy.feature",
-      "scenario": "The copy button is labelled in Indonesian on the Indonesian site"
-    }
-  ]
+  "allowedUnbound": []
 }

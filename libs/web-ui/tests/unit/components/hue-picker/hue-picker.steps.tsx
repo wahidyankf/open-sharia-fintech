@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders 6 swatches", ({ Given, Then }) => {
-    Given('I render a HuePicker with value "teal"', () => {
+  Scenario("Renders 6 swatches", ({ When, Then }) => {
+    When('I render a HuePicker with value "teal"', () => {
       // precondition noted
     });
 
@@ -40,8 +40,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("aria-pressed reflects selection", ({ Given, Then, And }) => {
-    Given('I render a HuePicker with value "teal"', () => {
+  Scenario("aria-pressed reflects selection", ({ When, Then, And }) => {
+    When('I render a HuePicker with value "teal"', () => {
       // precondition noted
     });
 

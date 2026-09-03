@@ -12,7 +12,7 @@ open NATS.Client.Core
 /// @e2e-tagged specs/apps/organiclever/be/behaviors/messaging/nats-connect.feature,
 /// owned by organiclever-be-e2e. The graceful-failure path is unit-tested
 /// directly in Tests/NatsClientTests.fs. Kept in its own file (rather than
-/// alongside the pure, fully unit-tested `natsUrl` in NatsClient.fs) so the
+/// alongside the pure, fully unit-tested `requireNatsUrl` in NatsClient.fs) so the
 /// project-level coverage `/p:ExcludeByFile` can exclude exactly this
 /// live-broker-only surface.
 [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS broker to connect — see module doc comment above")>]
