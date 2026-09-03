@@ -1056,6 +1056,45 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-AYO` delivery lifecycle
 
+> **Execution state:** `ayokoding-www` moved from its legacy test contract to the target shape in a
+> single PR covering all 21 leaves: unit tests relocated to `tests/unit/`, the pre-existing
+> `ayokoding-www-be-e2e`/`ayokoding-www-fe-e2e` projects wired to real `test:integration`
+> delegation (`repo-config.yml`'s `integration.disposition: delegated`), `test:coverage` raised to a
+> 99% line floor (99.1% achieved), the three policy-validation targets added, and all 14
+> `"cwd": "{projectRoot}"` occurrences in `project.json` replaced with the literal
+> `apps/ayokoding-www` path (Nx macro interpolation isn't resolved by rhino-cli's static reader,
+> matching `web-ui`/`web-ui-token`'s existing convention). `repo-config.yml` needed no edit — its
+> registry rows already anticipated the `tests/` shape. Along the way found and fixed three real
+> bugs in the shared `apps/rhino-cli/src/RhinoCli.Application/src/TestContractProject.fs` reader
+> (independently verified, 5 new unit tests added, `parity-manifest.sha256` regenerated — the
+> `ose-private` mirror of this fix is owed as a follow-up): (1) its directory-scan exclusion list
+> didn't cover `content` (authored course-sample files with test-shaped names) or `.features-gen`
+> (playwright-bdd's generated output); (2) `includeGlobs` read only the first `include:[...]` array
+> via a single regex match, breaking on this project's multi-`include:` vitest config — fixed via a
+> quote-aware comment stripper plus unioning every match; (3) no reader existed for
+> playwright-bdd's `steps:` glob, so a BDD e2e project's real step-file surface could never resolve
+> — added a dedicated reader wired alongside the existing `testDir`-based path. Independently
+> verified: `ayokoding-www:test:coverage` reproduced exactly (165 test files, 3507 passed / 6
+> skipped, 99.1% lines); a forced-fresh `rhino-cli:test:unit` run reproduced exactly (2434/2434
+> passed, 0 skipped); `ayokoding-www-be-e2e:test:e2e` reproduced exactly (18/18 passed); two
+> `\b(it|test|describe)\.(skip|only|todo)\(` grep hits in `ayokoding-www-fe-e2e` step files were
+> investigated and confirmed to be Playwright's sanctioned `test.skip(condition, reason)`
+> conditional-guard idiom (a browser-capability gate and an env-var deployment gate), not a banned
+> bare-skip pattern — both pre-existing, merely relocated. `ayokoding-www-fe-e2e:test:e2e`'s claimed
+> 764 passed / 349 skipped could not be reproduced verbatim under a 3-browser/6-worker local run
+> (the shared local production server crashed under that load — a laptop resource-contention
+> artifact, confirmed via uniform `ECONNREFUSED`/`ERR_CONNECTION_REFUSED` failures and the server
+> being gone from its port afterward); a CI-shape rerun (`CI=true`, chromium-only, single worker —
+> matching this target's actual non-gating invocation, since `test:e2e` runs only from the
+> deploy-gated reusable workflows and is absent from `pr-quality-gate.yml`) reproduced 255 passed /
+> 115 skipped / 1 failed on chromium alone, scaling almost exactly to the claimed 3-browser total;
+> the one consistent failure (`static-delivery.feature.spec.js`'s prerendered-at-build-time check)
+> is attributable to a known-stale local `.next` build predating this session's checkout, not a
+> code regression. Leak-review clean (0 findings; no binary/PNG files were touched in this PR, so no
+> PNG-chunk inspection was needed). CI green (16/16 checks). PR:
+> [wahidyankf/ose-public#446](https://github.com/wahidyankf/ose-public/pull/446), merge commit
+> `ba8fb72b88380aaf882f39330ebe426c17f97fe7`.
+
 ## Phase 13: Migrate `O-PUB-WAHID`
 
 > **DESCOPED — do not execute.** On 2026-09-01 the user recorded that a separate workstream is
