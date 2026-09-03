@@ -1,6 +1,6 @@
 ---
 title: "Git Push Default Convention"
-description: Default git push behavior — every plan uses worktree-to-pr; direct push to origin main is unavailable or restricted per-repo.
+description: Default git push behavior — every plan uses worktree-to-pr; public direct-main and worktree-to-origin-main are unavailable, while private main-to-origin-main is limited to named IaC or CI-IaC exceptions.
 category: explanation
 subcategory: development
 tags:
@@ -17,12 +17,12 @@ when_to_use: Use before pushing anything, or when a plan needs to override the w
 
 The repo-wide default integration target for every push is a **PR branch opened against `main`**
 (the `worktree-to-pr` delivery mode). Direct push to `origin main` has **no executable path at all
-in `ose-public`** — `main` is branch-protected against direct pushes for every
-actor, including admins. In `ose-private`, the direct-push modes remain available only for an
-explicitly selected infrastructure-as-code plan; `main-to-origin-main` further requires an
-`.md`-only change set or explicit user go-ahead (Standard 2). This applies to general work and
-every plan-lifecycle context. The canonical four-mode vocabulary and three-tier precedence live in
-the
+in `ose-public`** — `main` is branch-protected against direct pushes for every actor, including
+admins. In `ose-private`, `worktree-to-origin-main` is also unavailable; only explicitly selected
+`main-to-origin-main` remains, and only for named stateful IaC work needing real secrets/local state
+or named CI-IaC work whose PR self-validation is circular. Markdown-only content and standing
+go-ahead do not create another exception (Standard 2). This applies to general work and every
+plan-lifecycle context. The canonical four-mode vocabulary and three-tier precedence live in the
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode);
 this convention governs the push mechanics for each mode.
 

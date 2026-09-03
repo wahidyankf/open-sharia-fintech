@@ -46,9 +46,12 @@ disabled paths must both pass; flagging never excuses a broken or internally inc
 The default binds differently depending on what is being done:
 
 - **Creating or updating a plan** binds it as a **design obligation**. Resolve the repository's
-  permitted delivery mode before delivering the authoring edit: `ose-public` and non-IaC
-  `ose-private` plan edits use `worktree-to-pr`; only `ose-private` infrastructure-as-code plans may
-  use the documented `main-to-origin-main` exception. The plan's phases MUST be authored around
+  permitted delivery mode before delivering the authoring edit: `ose-public` uses `worktree-to-pr`
+  exclusively; `ose-private` also uses it except for explicitly declared `main-to-origin-main` in
+  exactly two categories — stateful IaC needing the primary checkout's real secrets/local state, or
+  CI-IaC changing its own pipeline, runner, or toolchain provisioning where PR self-validation is
+  circular. `worktree-to-origin-main` remains unavailable in both repositories. The plan's phases
+  MUST be authored around
   natural cohesive seams so they group into **independently production-deployable delivery units**,
   with each unit's boundary named in the `### Delivery Boundaries` table. LOC and file counts never
   define the grouping.

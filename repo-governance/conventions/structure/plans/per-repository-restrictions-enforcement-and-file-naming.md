@@ -23,14 +23,15 @@ and the `.md`-only condition of the content restriction above are **retired** he
 disallowed by this rule regardless of file content.
 
 **Why this is a hard rule**: a direct push bypasses the branch-protected PR route and its exact-head
-`Quality gate`. Narrowing that bypass across both repositories to the one case with a genuine
-technical reason (secrets and state that cannot leave the primary checkout) closes the gap between
-"convenient" and "actually necessary" that the old `.md`-only carve-out left open everywhere.
+`Quality gate`. The only private bypass uses the primary checkout for one of two narrow technical
+reasons: infrastructure secrets/state that cannot leave it, or CI-IaC self-validation circularity.
+This closes the gap between "convenient" and "actually necessary" that the old `.md`-only carve-out
+left open everywhere.
 
 **Enforcement**: `plan-checker` flags any `ose-public` `## Delivery Mode` other than
 `worktree-to-pr` as **HIGH**, including `main-to-pr`; no invocation branch may bypass the declared
-designated worktree. In `ose-private`, repository-specific alternatives remain subject to that
-repo's separate hard restrictions.
+designated worktree. In `ose-private`, `worktree-to-origin-main` is also invalid; a private
+`main-to-origin-main` selection is valid only for the binding stateful IaC or CI-IaC categories.
 
 ## Important Note on File Naming
 

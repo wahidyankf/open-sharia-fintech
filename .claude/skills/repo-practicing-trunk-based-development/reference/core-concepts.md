@@ -15,7 +15,9 @@ In this repo the default shape is `worktree-to-pr`: a short-lived plan branch in
 worktree, pushed to a draft PR, merged once the hardened preconditions hold. Committing straight to
 `main` is the `worktree-to-origin-main` / `main-to-origin-main` modes — neither has an executable
 path in `ose-public` (`main` is branch-protected, including for admins); only an
-`ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception. See
+`ose-private` plan retains `main-to-origin-main`, explicitly declared and limited to exactly two
+categories: stateful IaC needing the primary checkout's real secrets/local state, or CI-IaC
+changing its own pipeline, runner, or toolchain provisioning where PR self-validation is circular. See
 [When a Direct-Push Mode Is Appropriate](./delivery-modes-direct-push.md#when-a-direct-push-mode-is-appropriate) for the
 full detail.
 

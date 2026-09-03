@@ -32,11 +32,14 @@ when_to_use: Use when explaining why there is no develop/release/hotfix branch, 
 > **Per-repository restriction (independent of the shape described here)**: in `ose-public`,
 > `main` is branch-protected against direct pushes — including for admins — so
 > **neither direct-push mode has an executable path there at all**. In
-> `ose-private`, both remain available only for infrastructure-as-code plans. See
+> `ose-private`, `worktree-to-origin-main` is also unavailable. Only explicitly declared
+> `main-to-origin-main` remains, and only for stateful IaC needing the primary checkout's real
+> secrets/local state or CI-IaC changing its own pipeline, runner, or toolchain provisioning where
+> PR self-validation is circular. See
 > [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > for the full rule. The PASS example immediately below is therefore **not executable in this repo
 > (`ose-public`)** — it is retained as illustrative TBD vocabulary and remains genuinely runnable only
-> for `ose-private` infrastructure-as-code plans.
+> as `ose-private` `main-to-origin-main` for one of those two named categories.
 
 PASS (only where the per-repository restriction above does not block it — not currently `ose-public`):
 **You should commit directly to `main` when**:

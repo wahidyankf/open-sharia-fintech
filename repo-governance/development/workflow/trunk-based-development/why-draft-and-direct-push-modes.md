@@ -37,10 +37,12 @@ branch, no PR, no review gate:
 -- a `pull_request` ruleset rule is active with `bypass_actors: []` and
 `current_user_can_bypass: "never"`. **Neither direct-push mode has an executable path there,
 regardless of topology or worktree usage.** In
-`ose-private`, both remain available only for infrastructure-as-code plans (Terraform, Ansible, and
-equivalent state-changing infra work needing the primary checkout's real secrets and local state), and
-only when the change is small, well-understood, and does not warrant a review pass. See the
-[Git Push Default Convention](../git-push-default.md) for the full push mechanics of these two modes,
+`ose-private`, `worktree-to-origin-main` is also unavailable. Only explicitly declared
+`main-to-origin-main` remains, and only for stateful IaC needing the primary checkout's real
+secrets/local state or CI-IaC changing the repository's own pipeline, runner, or toolchain
+provisioning where PR self-validation is circular. In either eligible category, the change must also
+be small, well-understood, and safe to integrate immediately. See the
+[Git Push Default Convention](../git-push-default.md) for the full push mechanics of the surviving mode,
 including the linear-history and rebase requirements, and
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule.
