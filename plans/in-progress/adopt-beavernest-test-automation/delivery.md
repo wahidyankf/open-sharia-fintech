@@ -1465,6 +1465,68 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OSE-WWW` delivery lifecycle
 
+> Migrated `ose-www` (Next.js marketing) to the target test contract: coverage floor 86%→99% on
+> both `vitest.config.ts`'s `thresholds.lines` and `test:coverage`'s CLI flag; the three
+> policy-validation targets added; `inputs` updated `test/unit`→`tests/unit` on both targets, with
+> the dead `test/integration` input entry removed from `test:unit`.
+>
+> Found and fixed a new rhino-cli defect class: `project.json`'s `test:unit` target had its
+> `command` key placed as a bare sibling of `options` instead of nested inside it — a shape Nx
+> itself tolerates and executes correctly, but rhino-cli's static `project.json` reader only reads
+> `options.command`/`options.commands`, so the target was silently invisible to layout/coverage
+> validation. Fixed in `project.json` itself (added the `"executor": "nx:run-commands"` field and
+> nested `command` under `options`), not in rhino-cli.
+>
+> `vitest.config.ts`: updated `include` globs `test/`→`tests/` for the `unit` and `unit-fe`
+> projects; deleted the entire dead `integration` project block (5 lines). This is a new variant of
+> the dead-integration-tier pattern seen in Phases 14/16/17 — there the vitest project's include
+> globs matched zero files; here the files genuinely existed and the globs would have matched them,
+> but no Nx target ever invoked `--project integration` (`test:integration` was already a hardcoded
+> no-op echo). Confirmed genuine dead/duplicate code, not coverage-gaming, by checking the 4 deleted
+> `test/integration/be-steps/*.ts` files (`content-retrieval.steps.ts`, `search.steps.ts`, and 2
+> helpers) for `@covers` tags (zero) and comparing their Scenario names against the surviving
+> `tests/unit/be-steps/content-retrieval.steps.ts` (exact match), then cross-checking that
+> `ose-www-be-e2e/src/steps/content-api.steps.ts` (4 `@covers` tags) and `search-api.steps.ts` (3
+> `@covers` tags) already provide the real e2e-tier coverage this tier was duplicating.
+>
+> `README.md`: coverage text `86%`→`99%`, clarifying language that the integration tier is
+> delegated to the companion backend E2E suite (`ose-www-be-e2e`) rather than a coverage gap, and
+> the project-layout tree comment updated `test/`→`tests/unit/`. 5 co-located `src/*.unit.test.ts`
+> files relocated to `tests/unit/...` (confirming rhino-cli's `forbiddenRoots` layout rule also
+> catches co-located test files, not just a top-level `test/` directory); all 5 files' relative
+> `__dirname`-based import/resolve paths manually re-derived and confirmed correct for the new
+> nesting depth.
+>
+> This orchestrator initially began forming a wrong assumption that migrating `ose-www` would
+> require converting `repo-config.yml` from its legacy `legacy:`/`canonical:` shape to the newer
+> `behavior:`/`adapters:` shape; corrected before dispatch by finding `web-ui`'s real Phase 11A
+> precedent (PR #443), which left the legacy shape completely untouched and still passed
+> `AC-RULES-01` — the dispatch prompt passed this corrected understanding forward explicitly rather
+> than repeating the error. `repo-config.yml`'s diff was confirmed genuinely empty.
+>
+> Independently re-verified all fresh (not cached): `test:unit` 14 files/107 tests passing;
+> `test:coverage` 20 files/175 tests passing, exactly matching claims (97.31% statements, 83.56%
+> branches, 100% functions, 100% lines); all 3 policy-validation targets green
+> (`test:layout:validation` reported `executable=18`, matching the claim); `project.json`,
+> `vitest.config.ts`, and `README.md` diffs matched claims line-for-line; `repo-config.yml` diff
+> confirmed genuinely empty.
+>
+> The PR branch needed an unexpected rebase before merge: `mergeStateStatus` reported `BEHIND`, and
+> a direct `git merge-base --is-ancestor origin/main HEAD` check confirmed a real rebase was needed
+> — `main` had absorbed Phase 18's `ose-be` PR #457 and its evidence PR #458 since this branch was
+> created. A clean single-commit rebase with zero conflicts; content-identity confirmed via
+> diff-of-diffs (the only files differing between old and new head were Phase 18's `apps/ose-be/*`
+> files and plan-doc files absorbed from `main` — zero `apps/ose-www/*` files changed). A fresh
+> leak-review was posted against the new head per the current-head requirement, with explicit
+> attention to `ose-www`'s env-var-related test files (`env-config-import`, `env-loader`,
+> `env.unit.test.ts`), confirmed to use only isolated `mkdtempSync` fixtures and never touch real
+> `process.env`/`.env.*` state.
+>
+> One leak-review, pass (post-rebase head `0e18c0bc8`, review `5098658628`). CI green (14/14
+> applicable, 2 skipped). PR
+> [wahidyankf/ose-public#459](https://github.com/wahidyankf/ose-public/pull/459), merge commit
+> `bb6671e7b2fa4497403e2bab2c8fda4f846bc974`.
+
 ## Phase 20A: Close the Private Rollout
 
 - **Input:** every private owner PR and rules manifest.
