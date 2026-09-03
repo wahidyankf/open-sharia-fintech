@@ -17,6 +17,10 @@ let ``outcomeToString renders the delivered-and-acked outcome`` () =
     Assert.Equal("delivered_and_acked", outcomeToString DeliveredAndAcked)
 
 [<Fact>]
+let ``outcomeToString renders a failed outcome with its reason`` () =
+    Assert.Equal("failed: NATS unavailable at startup", outcomeToString (Failed "NATS unavailable at startup"))
+
+[<Fact>]
 let ``messaging status endpoint reports pending before the demo runs`` () =
     let status = newShared ()
     let client = buildClient (routes status)

@@ -22,6 +22,7 @@
     <Compile Include="Infrastructure/AppDbContext.fs" />
     <Compile Include="Infrastructure/Database.fs" />
     <Compile Include="Infrastructure/NatsClient.fs" />
+    <Compile Include="Infrastructure/NatsConnect.fs" />
     <!-- env context (tiered .env.<APP_ENV> loader) -->
     <Compile Include="Contexts/Env/Infrastructure/EnvTier.fs" />
     <!-- db context (DbUp migration routine) -->

@@ -391,6 +391,35 @@ let private compileList (repoRoot: string) (projectFile: string) : string list =
     |> Seq.map (fun m -> joinRelative directory (forwardSlashes m.Groups.["value"].Value))
     |> Seq.toList
 
+/// The `.fsproj`/`.csproj` tokens one `dotnet test` command line names,
+/// resolved against `cwd`. Shared by the direct `dotnet test` command shape
+/// and the wrapper-script shape below, which apply this to different text
+/// (the command itself, versus a script the command invokes).
+let private dotnetProjectTokens (repoRoot: string) (cwd: string) (tokens: string list) : string list =
+    tokens
+    |> List.filter (fun token ->
+        token.EndsWith(".fsproj", StringComparison.Ordinal)
+        || token.EndsWith(".csproj", StringComparison.Ordinal))
+    |> List.map (fun token ->
+        if File.Exists(absoluteOf repoRoot token) then
+            token
+        else
+            joinRelative cwd token)
+
+/// Strips this repository's own `${ROOT}/` (or `$ROOT/`) prefix convention —
+/// every `scripts/run-integration.sh` wrapper computes `ROOT` as the absolute
+/// repository root via `$(dirname "${BASH_SOURCE[0]}")/../../..` and then
+/// addresses every path from it, so a `.fsproj` token carrying that prefix is
+/// already repository-root-relative once the prefix itself is removed.
+let private stripRepoRootPrefix (token: string) : string =
+    [ "${ROOT}/"; "$ROOT/" ]
+    |> List.tryPick (fun prefix ->
+        if token.StartsWith(prefix, StringComparison.Ordinal) then
+            Some(token.Substring(prefix.Length))
+        else
+            None)
+    |> Option.defaultValue token
+
 /// Every repository-relative file one command selects.
 let private selectionOfCommand (repoRoot: string) (projectRoot: string) (cwd: string) (command: string) : string list =
     let tokens = tokenize command
@@ -437,16 +466,40 @@ let private selectionOfCommand (repoRoot: string) (projectRoot: string) (cwd: st
 
             fromTestDir @ fromStepsGlob |> List.distinct
     elif command.Contains "dotnet test" then
+        dotnetProjectTokens repoRoot cwd tokens |> List.collect (compileList repoRoot)
+    elif
         tokens
-        |> List.filter (fun token ->
-            token.EndsWith(".fsproj", StringComparison.Ordinal)
-            || token.EndsWith(".csproj", StringComparison.Ordinal))
-        |> List.map (fun token ->
-            if File.Exists(absoluteOf repoRoot token) then
-                token
+        |> List.exists (fun token -> token.EndsWith(".sh", StringComparison.Ordinal))
+    then
+        // A docker-compose-orchestrated integration suite (bring up
+        // dependencies, export env, run, tear down even on failure) commonly
+        // lives behind a wrapper script rather than a direct `dotnet test`
+        // command — `apps/organiclever-be/scripts/run-integration.sh` and
+        // `apps/ose-be/scripts/run-integration.sh` both do this. The command
+        // string itself then names no `.fsproj`, so without reading into the
+        // script every file the suite it runs owns is reported unselected.
+        // Read the script the same way a `.fsproj`/`.csproj` compile list is
+        // read, and apply the identical `dotnet test` token scan to its
+        // content — the same rule, just against different text.
+        match
+            tokens
+            |> List.tryFind (fun token -> token.EndsWith(".sh", StringComparison.Ordinal))
+        with
+        | None -> []
+        | Some scriptToken ->
+            let scriptPath =
+                if File.Exists(absoluteOf repoRoot scriptToken) then
+                    scriptToken
+                else
+                    joinRelative cwd scriptToken
+
+            let scriptText = readTextOrEmpty (absoluteOf repoRoot scriptPath)
+
+            if scriptText.Contains "dotnet test" then
+                dotnetProjectTokens repoRoot cwd (tokenize scriptText |> List.map stripRepoRootPrefix)
+                |> List.collect (compileList repoRoot)
             else
-                joinRelative cwd token)
-        |> List.collect (compileList repoRoot)
+                []
     else
         []
 

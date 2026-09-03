@@ -23,6 +23,10 @@
     <Compile Include="Tests/JournalApiTests.fs" />
     <Compile Include="Tests/MessagingTests.fs" />
     <Compile Include="Tests/EnvTierLoaderTests.fs" />
+    <Compile Include="Tests/DatabaseTests.fs" />
+    <Compile Include="Tests/AppDbContextTests.fs" />
+    <Compile Include="Tests/NatsClientTests.fs" />
+    <Compile Include="Tests/WebAppTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +41,14 @@
     <!-- Keep the test host's explicit FSharp.Core floor compatible with the
          shared loader project reference. -->
     <PackageReference Update="FSharp.Core" Version="10.1.400" />
+    <PackageReference Include="coverlet.collector" Version="8.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

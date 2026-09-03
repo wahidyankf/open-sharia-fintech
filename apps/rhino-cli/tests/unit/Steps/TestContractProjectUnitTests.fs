@@ -162,6 +162,90 @@ let ``the dotnet-shaped project satisfies the layout rule`` () =
     | Error(TestContract.Misuse message) -> failwith ("the shape must pass, found misuse: " + message)
 
 // ---------------------------------------------------------------------------
+// Runner discovery: .NET wrapper scripts
+//
+// A docker-compose-orchestrated integration suite commonly lives behind a
+// wrapper script (bring dependencies up, export env, run `dotnet test`, tear
+// down even on failure via a trap) rather than a direct `dotnet test`
+// command in project.json — `apps/organiclever-be/scripts/run-integration.sh`
+// and `apps/ose-be/scripts/run-integration.sh` both do this. Without reading
+// into the script, its command string names no `.fsproj`, so every file the
+// suite it runs owns is wrongly reported unselected.
+// ---------------------------------------------------------------------------
+
+let private wrapperScriptProjectJson =
+    """{
+  "name": "widget-wrapped",
+  "targets": {
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": { "command": "libs/widget-wrapped/scripts/run-integration.sh" }
+    }
+  }
+}
+"""
+
+/// Mirrors the real repository's own `scripts/run-integration.sh` convention:
+/// a `ROOT` variable computed from the script's own location, then every path
+/// addressed from it with a `${ROOT}/` prefix.
+let private wrapperScriptBody (fsprojRelativePath: string) : string =
+    "#!/usr/bin/env bash\n"
+    + "set -euo pipefail\n"
+    + "ROOT=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")/../../..\" && pwd)\"\n"
+    + "docker compose -f \"${ROOT}/libs/widget-wrapped/docker-compose.integration.yml\" up -d --wait\n"
+    + "dotnet test \"${ROOT}/"
+    + fsprojRelativePath
+    + "\" --logger \"console;verbosity=normal\"\n"
+
+[<Fact>]
+let ``a wrapper-script test:integration command selects the files its inner dotnet test compile list names`` () =
+    let root = newTempRepo ()
+    write root "libs/widget-wrapped/project.json" wrapperScriptProjectJson
+
+    write
+        root
+        "libs/widget-wrapped/scripts/run-integration.sh"
+        (wrapperScriptBody "libs/widget-wrapped/tests/integration/widget-wrapped-integration-tests.fsproj")
+
+    write
+        root
+        "libs/widget-wrapped/tests/integration/widget-wrapped-integration-tests.fsproj"
+        """<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <Compile Include="IntegrationCoreTests.fs" />
+  </ItemGroup>
+</Project>
+"""
+
+    write root "libs/widget-wrapped/tests/integration/IntegrationCoreTests.fs" "module IntegrationCoreTests\n"
+
+    let document =
+        materialized root "widget-wrapped" [ TestContractLayout.LayerIntegration ]
+
+    Assert.Equal<string list>(
+        [ "test:integration" ],
+        selectorsFor document "libs/widget-wrapped/tests/integration/IntegrationCoreTests.fs"
+    )
+
+[<Fact>]
+let ``a wrapper script that never calls dotnet test still leaves its files genuinely unselected`` () =
+    let root = newTempRepo ()
+    write root "libs/widget-wrapped/project.json" wrapperScriptProjectJson
+
+    write
+        root
+        "libs/widget-wrapped/scripts/run-integration.sh"
+        "#!/usr/bin/env bash\nset -euo pipefail\necho 'nothing to run yet'\n"
+
+    write root "libs/widget-wrapped/tests/integration/StrayIntegrationTests.fs" "module StrayIntegrationTests\n"
+
+    let message =
+        rejection (materialized root "widget-wrapped" [ TestContractLayout.LayerIntegration ])
+
+    Assert.Contains("layout-file-unselected", message)
+    Assert.Contains("libs/widget-wrapped/tests/integration/StrayIntegrationTests.fs", message)
+
+// ---------------------------------------------------------------------------
 // Runner discovery: vitest
 // ---------------------------------------------------------------------------
 

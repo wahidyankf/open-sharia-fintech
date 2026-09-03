@@ -7,6 +7,10 @@ open OrganicleverBe.Contexts.Health.Api
 open OrganicleverBe.Tests.Unit.Steps.BddState
 
 [<Fact>]
+let ``the health context declares it has no infrastructure dependencies`` () =
+    Assert.False(OrganicleverBe.Contexts.Health.Infrastructure.hasInfrastructureDependencies)
+
+[<Fact>]
 let ``getHealth reports healthy`` () =
     let status = getHealth ()
     Assert.Equal("ok", status.Status)

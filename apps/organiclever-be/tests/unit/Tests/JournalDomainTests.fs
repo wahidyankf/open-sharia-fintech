@@ -34,6 +34,14 @@ let ``validateName rejects an uppercase name`` () =
     | Error _ -> ()
 
 [<Fact>]
+let ``validateName rejects a name longer than 64 characters`` () =
+    let tooLong = String.replicate 65 "a"
+
+    match validateName tooLong with
+    | Ok _ -> Assert.Fail("expected Error for a name over the 64-character limit")
+    | Error msg -> Assert.Contains("64", msg)
+
+[<Fact>]
 let ``validateNewEntry rejects a blank name`` () =
     let input: NewEntryInput =
         { Name = ""

@@ -2,6 +2,7 @@ module OrganicleverBe.WebApp
 
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
+open OrganicleverBe.Handlers.HealthHandler
 open OrganicleverBe.Infrastructure.AppDbContext
 open OrganicleverBe.Contexts.Journal.Infrastructure
 open OrganicleverBe.Contexts.Messaging.Application
@@ -21,7 +22,7 @@ let private journalRoutes: HttpHandler =
 /// existing liveness probe.
 let buildWebApp (status: SharedMessagingStatus) : HttpHandler =
     choose
-        [ GET >=> route "/health" >=> json {| status = "ok" |}
+        [ GET >=> route "/health" >=> healthHandler
           OrganicleverBe.Contexts.Health.Api.routes
           journalRoutes
           OrganicleverBe.Contexts.Messaging.Api.routes status

@@ -1,6 +1,7 @@
 namespace OrganicleverBe.Contexts.Journal
 
 open System
+open System.Diagnostics.CodeAnalysis
 open System.Linq
 open System.Threading.Tasks
 open Microsoft.EntityFrameworkCore
@@ -56,6 +57,7 @@ module Infrastructure =
           UpdatedAt = r.UpdatedAt }
 
     /// Builds the EF-backed journal repository over an AppDbContext.
+    [<ExcludeFromCodeCoverage(Justification = "Integration-tested against real PostgreSQL — see tests/integration/JournalRepositoryTests.fs")>]
     let efRepository (db: AppDbContext) : JournalRepository =
         { Create =
             fun row ->
