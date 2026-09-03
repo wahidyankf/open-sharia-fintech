@@ -1,6 +1,6 @@
 ---
 title: "When Plans Override the Default Mode"
-description: The three reasons a plan may declare a non-default Delivery Mode, and a worked ose-private infrastructure-as-code example.
+description: Reasons a plan may declare a non-default Delivery Mode and the two named ose-private categories where direct-main delivery is permitted.
 category: explanation
 subcategory: development
 tags:
@@ -17,20 +17,20 @@ when_to_use: Use when deciding whether a plan's change justifies overriding the 
 
 Specify a non-default `## Delivery Mode` field in a plan if:
 
-- **Trivial, well-understood change**: A single-line fix or mechanical rename that does not warrant a
-  review pass -- use `worktree-to-origin-main` or `main-to-origin-main`.
-  **Also subject to the branch-protection axis, independent of the trivial-change rationale**:
-  neither direct-push mode has an executable path in `ose-public`; both direct-push
-  modes remain available only for `ose-private` infrastructure-as-code plans. See
+- **Trivial, well-understood change**: size and simplicity are supporting safety conditions, not an
+  eligibility category. Neither direct-push mode has an executable path in `ose-public`, and
+  `worktree-to-origin-main` is unavailable in `ose-private` too. Only explicitly declared
+  `main-to-origin-main` survives there, for stateful IaC needing real secrets/local state or CI-IaC
+  changing its own pipeline, runner, or toolchain provisioning where PR self-validation is circular.
+  See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 - **External integration**: Working with a third party that requires a specific branch/PR shape.
 - **Compliance**: A regulatory requirement adds a review process beyond the standard PR CI gate.
 
-**Example plan overriding the default** -- recast here as an `ose-private` infrastructure-as-code
-plan, the case this repo's convention treats as the only one where a direct-push mode is genuinely
-sanctioned today (see the branch-protection callout above; a `worktree-to-origin-main`/
-`main-to-origin-main` example targeting `ose-public` would fail this
-repo's own `plan-checker` gate on sight, because neither mode has an executable path there):
+**Example plan overriding the default** -- an `ose-private` stateful IaC plan, one of the two named
+categories where `main-to-origin-main` is sanctioned today (a direct-push example targeting
+`ose-public`, or a `worktree-to-origin-main` example in either repository, would fail this repo's
+own `plan-checker` gate on sight):
 
 ```markdown
 ## Delivery Mode

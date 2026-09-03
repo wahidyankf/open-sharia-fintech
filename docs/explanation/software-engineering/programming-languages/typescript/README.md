@@ -169,6 +169,13 @@ timeline
 
 **See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-www — TypeScript 5.x version feature guides.
 
+### Version References
+
+- [TypeScript 5.0](release-5-0.md) — platform baseline
+- [TypeScript 5.4](release-5-4.md) — inference-control milestone
+- [TypeScript 5.6](release-5-6.md) — strictness milestone
+- [TypeScript 5.9](release-5-9.md) — documented strategy target
+
 ## Documentation Structure
 
 ### Foundation

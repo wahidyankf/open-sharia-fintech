@@ -50,6 +50,11 @@ trust checked boxes alone. Any missing or unsupported row reopens execution at t
 granular outcome-section checklist. Apply this contract prospectively; do not report migration findings against archived
 plans or the existing Rhino plan.
 
+Verify that delivery followed natural cohesive seams rather than LOC or file counts and that every
+merged state was immediately safe to deploy to production. For incomplete behavior, require the
+temporary production-disabled flag, enabled and disabled path tests, and recorded rollout,
+rollback, and removal.
+
 ## Related
 
 `plan-validating-quality` (the authoring-time sibling methodology — Anti-Hallucination and

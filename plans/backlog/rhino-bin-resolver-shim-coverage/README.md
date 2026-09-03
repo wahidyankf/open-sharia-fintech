@@ -104,6 +104,21 @@ Not yet provisioned; this is a backlog-stage plan.
 Mandatory default in `ose-public`; repeated identically in `ose-private` since the script and its
 resolution logic are inside the byte-identity boundary.
 
+## Parallelization Model
+
+The repository streams are sequential: prove the public test design first, then copy that proven
+coverage into the private parity surface. Each repository integrates independently.
+
+### Delivery Boundaries
+
+| Phase(s) | Natural cohesive seam                                                                                              | Worktree                                                  | Branch                             | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                                                                     |
+| -------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Public resolver coverage: Gherkin, executable bindings, negative proof, coverage registration, and verification    | `ose-public/worktrees/rhino-bin-resolver-shim-coverage/`  | `rhino-bin-resolver-shim-coverage` | PR at Phase 1        | The exact resulting `ose-public/main` state preserves shipped resolver behavior while adding passing regression coverage, so it is immediately production-deployable. A feature flag is not applicable because this is test-only work with no production behavior change; rollback is a PR revert. Integrate promptly after the Phase 1 gate. |
+| 2        | Private resolver coverage: byte-identical coverage, parity-manifest disposition, and repository-local verification | `ose-private/worktrees/rhino-bin-resolver-shim-coverage/` | `rhino-bin-resolver-shim-coverage` | PR at Phase 2        | The exact resulting `ose-private/main` state preserves behavior and parity while adding the same passing regression coverage, so it is immediately production-deployable. The same test-only no-flag rationale and PR-revert rollback apply. Integrate promptly after the Phase 2 gate.                                                       |
+
+Each boundary keeps its specification, executable proof, parity metadata when applicable, and
+verification together. LOC and file counts never define these repository-local seams.
+
 ## Delivery Checklist
 
 Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human judgment or approval.

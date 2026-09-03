@@ -1,15 +1,17 @@
 ---
-title: "Delivery-Unit Merge Timing, Feature Flags, and worktree-to-pr Binding"
-description: States when a delivery unit's PR merges, the feature-flag default and removal rule, and how the worktree-to-pr default binds at plan-authoring vs. plan-execution time.
-when_to_use: Use when deciding when a PR should merge, whether a phase needs a feature flag, or how the worktree-to-pr default applies while authoring vs. executing a plan.
+title: "Delivery-Unit Integration Timing, Temporary Flags, and worktree-to-pr Binding"
+description: States when a delivery unit integrates, when incomplete behavior requires a temporary flag, and how the worktree-to-pr default binds.
+when_to_use: Use when deciding when a unit should integrate, whether incomplete behavior needs a flag, or how the worktree-to-pr default applies.
 ---
 
-# Delivery-Unit Merge Timing, Feature Flags, and worktree-to-pr Binding
+# Delivery-Unit Integration Timing, Temporary Flags, and worktree-to-pr Binding
 
 ## Merge at Delivery Boundaries — Not Every Phase, and Not One Batch
 
-Each delivery unit's PR is **opened and merged** as that unit's **delivery boundary** is reached. It
-is neither opened early at every intermediate phase, nor held open for a **batch merge** at plan end.
+Integrate each delivery unit as its **delivery boundary** is reached. Under `*-to-pr`, open and
+merge the unit's PR after its prerequisites pass. Under a permitted direct mode, land it at its
+direct-push checkpoint. Never integrate at every intermediate phase or hold ready units for a
+plan-end batch.
 
 Both failure modes cost something different. Opening a PR per phase spends PR CI and integration overhead on
 scaffolding the next phase rewrites, and the review cannot judge intent that only lands two phases
@@ -25,24 +27,34 @@ The **merge actor** follows the inverted default in
 `[AI]` merges once the hardened preconditions hold, and `[HUMAN]` applies **only** where a plan's
 own step states that gate explicitly.
 
-## Feature Flags: Default, Escape, Removal
+## Temporary Flags for Incomplete Behavior
 
-Partial work reaches `main` **merged but dark** behind a feature flag rather than waiting on a
-long-lived branch. Flagging is the **default**.
+Incomplete behavior reaches `main` only as a **complete-and-inert** increment behind a temporary
+feature flag disabled in production by default rather than waiting on a long-lived branch. Every
+exact resulting `main` state must be safe to deploy to production immediately. The enabled and
+disabled paths must both pass; flagging never excuses a broken or internally incomplete increment.
 
-- **Escape**: a phase lands **unflagged** only when it ships no **user-reachable** behaviour change
-  — pure docs, governance, refactor, or test-only work — and the delivery step names which
-  exemption applies. An unflagged phase with no named exemption is a defect.
-- **Removal**: every flag introduced carries a named **flag removal step** in the plan's final
+- **Complete behavior**: complete user-reachable behavior may be active without a flag. Record why
+  the resulting state is safe; no exemption vocabulary applies.
+- **Removal**: every temporary flag introduced carries a named **flag removal step** in the plan's final
   phase. A flag with no removal step is an unbounded commitment, not a rollout mechanism.
+- **Lifecycle**: the introducing delivery unit records enabled/disabled tests, rollout, rollback,
+  and removal. Missing lifecycle evidence makes the unit unready to merge.
 
 ## How the `worktree-to-pr` Default Binds at Each Plan Path
 
 The default binds differently depending on what is being done:
 
-- **Creating or updating a plan** binds it as a **design obligation**. The authoring edit itself may
-  push direct to `main`, but the plan's phases MUST be authored so they group into **independently
-  PR-able delivery units**, with each unit's boundary named in the `### Delivery Boundaries` table.
+- **Creating or updating a plan** binds it as a **design obligation**. Resolve the repository's
+  permitted delivery mode before delivering the authoring edit: `ose-public` uses `worktree-to-pr`
+  exclusively; `ose-private` also uses it except for explicitly declared `main-to-origin-main` in
+  exactly two categories — stateful IaC needing the primary checkout's real secrets/local state, or
+  CI-IaC changing its own pipeline, runner, or toolchain provisioning where PR self-validation is
+  circular. `worktree-to-origin-main` remains unavailable in both repositories. The plan's phases
+  MUST be authored around
+  natural cohesive seams so they group into **independently production-deployable delivery units**,
+  with each unit's boundary named in the `### Delivery Boundaries` table. LOC and file counts never
+  define the grouping.
   A plan that genuinely cannot be decomposed that way records **why** in its chosen technical form — the
   constraint is documented, not silently absorbed.
 - **Executing a plan** binds it as the actual delivery route: worktree → PR, per the

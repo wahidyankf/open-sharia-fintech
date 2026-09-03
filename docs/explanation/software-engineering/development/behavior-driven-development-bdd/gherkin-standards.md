@@ -10,6 +10,8 @@ tags:
 principles:
   - explicit-over-implicit
   - documentation-first
+  - automation-over-manual
+  - reproducibility
 created: 2026-02-09
 ---
 

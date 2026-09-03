@@ -1,6 +1,6 @@
 ---
 title: "Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted"
-description: Per-repository availability of the two direct-push modes, the explicit selection signals required, and the further content restriction on main-to-origin-main.
+description: Per-repository availability of direct-push modes and the explicit selection signals required for the sole private main-to-origin-main IaC or CI-IaC exceptions.
 category: explanation
 subcategory: development
 tags:
@@ -20,21 +20,22 @@ either signal below is even relevant, check repository availability first: in `o
 `main` is branch-protected against direct pushes (including for admins) — **neither
 direct-push mode has an executable path there, full stop**.
 
-In `ose-private`, both direct-push modes remain available only for infrastructure-as-code plans
-(Terraform, Ansible, and equivalent state-changing infra work needing the primary checkout's real
-secrets and local state). Every other plan, in both repositories, uses `worktree-to-pr`. See
+In `ose-private`, `worktree-to-origin-main` is also unavailable. Only `main-to-origin-main` remains
+available, and only for either stateful IaC work needing the primary checkout's real secrets/local
+state or CI-IaC work changing the repository's own pipeline, runner, or toolchain provisioning where
+PR self-validation is circular. Every other plan, in both repositories, uses `worktree-to-pr`. See
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule — this is the current binding constraint, and it applies before the
 selection-signal and content-restriction tests below.
 
-Within a repository where a direct-push mode remains available, either mode applies only when
-explicitly selected — via an invocation argument or a plan's `## Delivery Mode` field. Absent that
-explicit selection, the agent uses the `worktree-to-pr` default.
+Where `main-to-origin-main` remains available, it applies only when explicitly selected — via an
+invocation argument or a plan's `## Delivery Mode` field — and when one of those two private
+categories applies. Explicit selection never makes `worktree-to-origin-main` available. Absent a
+valid selection and category, the agent uses the `worktree-to-pr` default.
 
 ```bash
-# worktree-to-origin-main — explicit selection only
-git worktree add worktrees/<plan-id> -b <plan-id>
-cd worktrees/<plan-id>
+# main-to-origin-main — ose-private named IaC or CI-IaC exception only
+# Run from the non-bare primary checkout; the plan records ## Worktree as N/A.
 git add <files>
 git commit -m "fix(scope): description"
 git push origin main
@@ -42,8 +43,8 @@ git push origin main
 
 Signals that constitute an explicit direct-push selection:
 
-- An invocation argument naming `worktree-to-origin-main` or `main-to-origin-main`.
-- A `## Delivery Mode` field in the plan declaring one of those two modes.
+- An invocation argument naming `main-to-origin-main` for eligible `ose-private` IaC or CI-IaC work.
+- A `## Delivery Mode` field declaring `main-to-origin-main` with the eligible category and rationale.
 
 No other signal constitutes an implicit selection of a direct-push mode. The agent must not infer a
 direct-push intent from:
@@ -52,15 +53,8 @@ direct-push intent from:
 - A desire to "save time" or "skip review".
 - Past sessions in which direct push was used.
 
-**`main-to-origin-main` carries a further content restriction that `worktree-to-origin-main` does
-not.** An explicit selection signal above is necessary but not sufficient for `main-to-origin-main` —
-working directly in the primary checkout skips both PR review and worktree isolation, so it is valid
-only when **one** of two conditions also holds:
-
-1. the change set is **`.md` files only** (no source, config, spec, or generated-mirror files), or
-2. the user has given **explicit, standing go-ahead** for that specific change.
-
-Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
-[Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
-for the canonical statement of this restriction and its relationship to the
-[Plan-Docs-Only Carve-Out](../../../workflows/plan/plan-planning/plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-ose-public).
+An explicit signal is necessary but not sufficient: the private change must be either named IaC
+(real secrets/local state) or named CI-IaC (pipeline, runner, or toolchain provisioning whose PR
+self-validation is circular). Markdown-only content and standing go-ahead do not create another
+exception. Valid main-based plans use the primary checkout and record `## Worktree` as
+`Not applicable (N/A)`; all others use `worktree-to-pr`.

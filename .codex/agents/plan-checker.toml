@@ -58,7 +58,8 @@ Apply the audience rule most strictly to the selected technical form and `delive
 when a junior engineer fresh from bootcamp with no professional work experience and no repository or
 stack context must infer technical context, rationale, sequence, commands, observations, recovery,
 or proof.
-Keep canonical Gherkin in PRD/spec sources. Apply these checks prospectively: do not raise migration
+Enforce natural-seam, deployable-state, temporary-flag-lifecycle, and nonnumeric-boundary requirements.
+Keep Gherkin in PRD/spec sources. Apply these checks prospectively: do not raise migration
 findings against `plans/done/` or the existing Rhino plan. Consume exact deterministic gate evidence
 for links, maps, word budgets, formatting, Mermaid mechanics, and Gherkin cardinality instead of
 rederiving those predicates.

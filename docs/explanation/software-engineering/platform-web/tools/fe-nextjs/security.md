@@ -14,6 +14,7 @@ tags:
   - input-validation
 principles:
   - explicit-over-implicit
+  - automation-over-manual
   - simplicity-over-complexity
 created: 2026-01-26
 ---

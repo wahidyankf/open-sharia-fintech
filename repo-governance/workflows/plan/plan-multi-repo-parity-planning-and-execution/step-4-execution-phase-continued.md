@@ -36,13 +36,15 @@ Regenerating the local manifest **does not discharge the propagation obligation*
 error text says so. It unblocks this repo's push and nothing more; the identical change still has to
 reach the other parity repo.
 
-**Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
-**one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged at its
-**delivery boundary** rather than at every phase or batched at composite end, with partial work
-merged-but-dark behind a **feature flag**. The **worktree** is a coarser, per-repository unit: each
-repo's plan is capped at one worktree, reused across every delivery unit it lands in that repo — see
+**Per-repo delivery shape**: each repo's phases group into natural cohesive **delivery units**.
+Under `*-to-pr`, one branch → one PR → one unit, opened and merged at its boundary. Under a
+permitted direct mode, one unit reaches one direct integration checkpoint. Never integrate at every
+phase or batch ready units at composite end. Each unit leaves `main` immediately safe to deploy;
+incomplete behavior is complete-and-inert behind a temporary production-disabled **feature flag**,
+with both paths tested and rollout, rollback, and removal recorded. Worktree modes reuse at most one
+worktree per repo; main modes use the primary checkout and provision none — see
 [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
-See [plan-planning §Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md#planning-granularity-and-the-one-branch-one-pr-rule).
+See [plan-planning §Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md#planning-granularity-and-mode-specific-delivery-mapping).
 
 **Shared-machine safety**: the parity repos share one machine's disk and git object store, and any of
 them may be a bare repo driven through worktrees — verify each repo's topology, never assume it. The

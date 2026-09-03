@@ -56,13 +56,13 @@ For current-contract plans, verify each outcome section's Input, Outcome, Proof,
 acceptance reference, granular action checkboxes, and separate detailed RED/GREEN/REFACTOR proof
 against the delivered state. Rule propagation and exact as-built C4 reconciliation must occur in
 their changing phase; recovery ends executed or `Not triggered` with evidence.
-Outcome cohesion does not relax natural delivery seams, PR-size rules, or atomicity. Above the
-strong 500-line code target, require evidence of the natural seam, rejected splits, and review
-proof; never fail on size alone, retain default-hard other/document and machine bounds, allow the
-bounded single-source other/document exception only with its exact source, target, `O` measurement,
-semantic constraint, and plan/PR record, and permit a default 20-file-budget exceedance only with its
-canonical binding-specific plan/PR disclosure. Do not report migration findings
-against archived plans or the existing Rhino plan.
+Outcome cohesion does not relax natural delivery seams or atomic consistency. Verify that no LOC or
+file count created, erased, or forced a PR boundary. Each delivery unit must contain every artifact
+needed to build, verify, operate, roll back, and remain internally consistent, and its exact
+resulting `main` state must be immediately safe to deploy to production. For incomplete behavior,
+require a temporary production-disabled feature flag, enabled and disabled path tests, and recorded
+rollout, rollback, and removal. Do not report migration findings against archived plans or the
+existing Rhino plan.
 Before archival, verify the completion date was resolved only after all pre-archival gates,
 including the preliminary audit, passed and the same repository-local value appears in the
 done-folder name, index entry, and completion evidence. After delivery, require the workflow-owned

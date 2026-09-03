@@ -40,8 +40,9 @@ rules win for that plan's internal work; this document governs only cross-plan s
   orchestration continues, report milestones normally. CI keeps its separate 2-minute status-read
   cadence. See
   [Task List Discipline §Standard 6](../../../development/practice/task-list-discipline.md).
-- **Delivery is 1-PR↔1-branch↔1-delivery-unit**: each independent node gets its own branch and PR,
-  opened and merged as that unit's **delivery boundary** completes — not at every phase, and not
-  batched at the end. For worktree modes, one worktree per repository per plan is reused across
-  every node landing there, per
+- **Delivery is one natural unit per mode-specific integration**: under `*-to-pr`, each independent
+  node gets one branch and one PR, opened and merged as its boundary completes. Under a permitted
+  direct mode, it gets one direct integration checkpoint. Do not integrate at every phase or batch
+  ready units at plan end. Worktree modes reuse at most one worktree per repository per plan; main
+  modes use the primary checkout and provision none, per
   [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).

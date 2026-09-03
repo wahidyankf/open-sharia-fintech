@@ -1,6 +1,8 @@
 # Delivery Mode (Mandatory — Applies to ALL Plans)
 
-Every plan resolves to exactly one **delivery mode** before execution begins, declared alongside the `## Worktree` / `## Worktree Specification` section (see [worktree-specification.md](worktree-specification.md)). Delivery mode is a sibling concern to the worktree declaration: the worktree fixes the **work location**; delivery mode additionally fixes the **integration target** and **merge authority**.
+Every plan resolves to exactly one **delivery mode** before execution begins, declared alongside
+its `## Worktree` work-location section. That section names a worktree for worktree modes or the
+primary checkout for main modes; delivery mode also fixes the integration target and merge authority.
 
 **The four modes** (full table and precedence algorithm: [Plans Organization Convention §Delivery Mode](../../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)):
 
@@ -21,7 +23,11 @@ for the full per-repo table and enforcement detail.
 else too, absent a reason to pick another mode in the one repo (`ose-private`) where an alternative
 is actually available.
 
-**Declare it explicitly**: `## Delivery Mode: worktree-to-pr` (or one of the other three modes, subject to the restriction above), placed immediately alongside the `## Worktree` declaration. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`) per the three-tier precedence algorithm (invocation argument → plan field → default).
+**Declare it explicitly**: `## Delivery Mode: worktree-to-pr`, placed immediately alongside the
+`## Worktree` declaration. In `ose-public`, an invocation argument naming any other mode is invalid;
+an invocation-selected branch is valid only inside the declared designated worktree and cannot
+bypass it. The broader four-mode vocabulary exists for cross-repository documentation, not as an
+availability grant here. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`).
 
 **Every PR uses exact-head/base CI**: for `worktree-to-pr` and `main-to-pr`, the delivery checklist
 requires the `Quality gate` from `.github/workflows/pr-quality-gate.yml` for the PR's exact current

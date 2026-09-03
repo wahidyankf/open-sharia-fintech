@@ -76,8 +76,12 @@ shape, bootcamp-graduate readability, evidence-backed alternatives/prior art, sc
 contracts when applicable, and cohesive outcome sections with Input/Outcome/Proof plus granular
 action checkboxes and separate detailed RED/GREEN/REFACTOR cycles. Reference
 canonical Gherkin; never add copied scenarios or detail-free/keystroke checkboxes. Preserve
-phase gates, ownership, natural delivery seams, PR-size rules, delivery mode, manual/operational
-verification, and Knowledge Capture. Do not migrate archived plans or the existing Rhino plan.
+phase gates, ownership, natural cohesive delivery seams, production-deployable `main` states,
+delivery mode, manual/operational verification, and Knowledge Capture. Remove LOC or file-count
+boundary tests. Keep every artifact needed to build, verify, operate, roll back, and remain
+internally consistent in its delivery unit; incomplete behavior requires a temporary
+production-disabled flag with both paths tested and rollout, rollback, and removal recorded. Do not
+migrate archived plans or the existing Rhino plan.
 
 ## Related
 

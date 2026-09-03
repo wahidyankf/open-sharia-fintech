@@ -59,11 +59,14 @@ those are the cases where a branch risks outliving its plan.
 A plan branch is expected. What is **not** justified is letting one run long — these reasons do not
 excuse a branch that outlives its plan:
 
-- **"Feature in progress"** → Use feature flags and merge the incomplete-but-hidden work
+- **"Feature in progress"** → Merge only an internally complete increment behind a temporary
+  production-disabled feature flag, with both paths tested and its lifecycle recorded
 - **"Might break things"** → Use automated tests and the PR quality gates
-- **"Working on it for a week"** → Break the plan into phases; each phase gets its own branch and PR
+- **"Working on it for a week"** → Cut the remaining work into the fewest short-lived natural-seam
+  units; each merged `main` state must be immediately production-deployable
 - **"Multiple people on feature"** → Split into independent DAG nodes, one branch each
 - **"Want to keep it separate"** → Preference is not justification
 
 **Key principle**: branches are short-lived and single-purpose. Integration frequency is what TBD
-protects — the PR is a review buffer, never a parking space.
+protects — the PR is a review buffer, never a parking space. Split PRs at natural cohesive seams,
+not LOC or file counts, and integrate each production-deployable unit promptly.

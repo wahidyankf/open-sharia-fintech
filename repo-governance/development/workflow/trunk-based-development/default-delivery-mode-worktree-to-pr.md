@@ -40,7 +40,7 @@ changes, and work executed inside a git worktree -- the default is the same rega
 **Inside a plan, this sequence starts at Phase 1, never Phase 0.** A plan's Phase 0 is Environment
 Setup and Baseline -- dependency install, toolchain convergence, a recorded baseline, preexisting-failure
 resolution. It produces no reviewable change, so it pushes no branch and opens no PR under **any** of
-the four delivery modes; its evidence artifacts ride the Phase 1 PR instead. See
+the four delivery modes; under this default mode, its evidence artifacts ride the Phase 1 PR. See
 [Plans Organization Convention §Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ```bash

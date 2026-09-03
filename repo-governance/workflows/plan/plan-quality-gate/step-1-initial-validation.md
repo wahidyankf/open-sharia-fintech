@@ -32,8 +32,10 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 - Requirements (BRD + PRD content placement, Gherkin)
 - Technical documentation (architecture, design decisions, diagrams, and the annotated file-impact
   tree; `### More Detail` is optional supporting context, never a replacement for the tree)
-- Delivery checklist (outcome-section cohesion; granular action detail; Input/Outcome/Proof; AC references; separate TDD actions;
-  natural delivery seams and PR-size rules; no copied full Gherkin)
+- Delivery checklist (outcome-section cohesion; granular action detail; Input/Outcome/Proof; AC
+  references; separate TDD actions; natural cohesive delivery seams; production-deployable
+  resulting `main` states; applicable flag tests and rollout/rollback/removal; no LOC/file-count
+  boundary tests; no copied full Gherkin)
 - Operational readiness (Step 5b — quality gates, CI verification, env setup)
 - Manual behavioral assertions (Step 5c — Playwright MCP / curl)
 - Worktree specification (Step 5d — declared `## Worktree` section + path format)

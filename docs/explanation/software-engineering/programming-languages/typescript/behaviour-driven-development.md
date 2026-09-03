@@ -37,7 +37,7 @@ Behaviour-Driven Development (BDD) uses natural language to describe system beha
 ### BDD Workflow
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Discover<br/>Collaborate on Features"]:::blue
     B["Write Gherkin<br/>Feature Scenarios"]:::purple
@@ -64,12 +64,12 @@ graph TD
 ### Cucumber Execution
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Feature Files<br/>donation.feature"]:::blue
     B["Cucumber Runner<br/>Parse Gherkin"]:::orange
     C["Step Definitions<br/>TypeScript Functions"]:::purple
-    D["Context State<br/>Test Data"]:::gray
+    D["Context State<br/>Test Data"]:::brown
     E["Execute Actions<br/>Service Calls"]:::teal
     F{"Assertions<br/>Pass?"}:::orange
     G["Scenario Success"]:::teal
@@ -87,13 +87,13 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Playwright E2E Flow
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Test Scenario<br/>User Flow"]:::blue
     B["Launch Browser<br/>Chromium/Firefox"]:::purple
@@ -121,7 +121,7 @@ graph TD
 ### Financial BDD Testing
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Donation Feature<br/>Business Rules"]:::blue
     B["Gherkin Scenarios<br/>Zakat Validation"]:::purple
@@ -129,7 +129,7 @@ graph TD
     D["DonationService<br/>Business Logic"]:::orange
     E["Type Safety<br/>Money Type"]:::teal
     F["Currency Validation<br/>USD/SAR/EUR"]:::orange
-    G["Audit Trail<br/>Compliance Log"]:::gray
+    G["Audit Trail<br/>Compliance Log"]:::brown
 
     A --> B
     B --> C
@@ -142,7 +142,7 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Gherkin Syntax

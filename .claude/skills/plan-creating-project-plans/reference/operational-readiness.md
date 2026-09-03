@@ -40,15 +40,17 @@ Every plan must start with environment setup steps:
 ```markdown
 ### Environment Setup
 
-- [ ] Enter the worktree this plan was authored in — provision only if absent: `claude --worktree <plan-identifier>` (`worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md))
-- [ ] At the worktree root, install dependencies and hooks, then converge tooling:
+- [ ] Enter the resolved work location: for a worktree mode, provision/enter
+      `worktrees/<plan-identifier>/`; for a main mode, use the synced primary checkout
+- [ ] At that repository root, install dependencies and hooks, then converge tooling:
       `rtk npm install && rtk npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../../repo-governance/development/workflow/worktree-setup.md))
 - [ ] [Add project-specific setup: env vars, DB, Docker, etc.]
 - [ ] Verify dev server starts: `nx dev [project-name]`
 - [ ] Verify existing tests pass before making changes
 ```
 
-> **Note**: Worktrees are created at `worktrees/<name>/` in the repo root (not `.claude/worktrees/<name>/`). This is enforced by the `WorktreeCreate` hook.
+> **Note**: When the mode provisions one, the worktree path is `worktrees/<name>/` in the repo root.
+> Main modes provision no worktree.
 
 ## Fix-All-Issues Instruction
 

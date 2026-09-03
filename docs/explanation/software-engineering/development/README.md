@@ -10,6 +10,9 @@ tags:
   - testing
   - software-quality
   - index
+principles:
+  - automation-over-manual
+  - reproducibility
 created: 2026-01-20
 ---
 

@@ -76,7 +76,8 @@ Do not create checkboxes for keystrokes, every line edit, or repeated invocation
 observation. Do not copy canonical Gherkin into delivery. Granularity exposes meaningful execution
 and evidence; it does not reward checkbox count.
 
-Outcome cohesion does not define a delivery unit or relax PR-size governance. Split delivery at the
-existing independently reviewable, verifiable, revertible natural seams and apply the Delivery
-Boundaries table, addition limits, and atomicity rule. Never create one PR per phase mechanically;
-never use fewer checkboxes to justify an oversized PR.
+Outcome cohesion does not define a delivery unit. Split delivery only at independently useful,
+reviewable, verifiable, operable, and revertible natural seams. Keep every artifact required for
+internal consistency in the same unit, and require its exact resulting `main` state to be safe to
+deploy to production immediately. Never create one PR per phase mechanically, and never use
+checkbox, LOC, or file counts to create, erase, or force a boundary.

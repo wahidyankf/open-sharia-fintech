@@ -10,6 +10,7 @@ tags:
   - standards
 principles:
   - explicit-over-implicit
+  - simplicity-over-complexity
   - immutability
   - automation-over-manual
 created: 2026-01-21

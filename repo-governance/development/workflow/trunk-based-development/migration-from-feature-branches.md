@@ -21,7 +21,7 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 
 | Feature Branch Mindset              | TBD Mindset                                             |
 | ----------------------------------- | ------------------------------------------------------- |
-| "I'll merge when feature is done"   | "I'll commit daily, hide with feature flag until done"  |
+| "I'll merge when feature is done"   | "I'll integrate complete-and-inert flagged increments"  |
 | "My branch is my workspace"         | "`main` is everyone's workspace"                        |
 | "Integration happens at merge time" | "Integration happens continuously"                      |
 | "Branches isolate risk"             | "Feature flags and tests manage risk"                   |
@@ -30,7 +30,8 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 ## Transition Steps
 
 1. **Start small**: Pick a simple task and take it through one short-lived branch and PR end to end
-2. **Use feature flags**: Hide incomplete work, so no branch stays open to hide it
+2. **Use feature flags**: Integrate internally complete increments behind a temporary
+   production-disabled flag; test both paths and record rollout, rollback, and removal
 3. **Integrate frequently**: Land work multiple times per day; measure branch _lifespan_, not count
 4. **Keep CI green**: Fix failures immediately
 5. **Review old habits**: Notice when a branch starts outliving its plan
@@ -41,12 +42,12 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 
 - PASS: Tests and CI catch most issues before push
 - PASS: Rapid revert if something slips through
-- PASS: Feature flags hide incomplete features
+- PASS: Temporary flags keep incomplete behavior complete-and-inert while both paths remain tested
 
 **"What if I need to work on multiple things?"**
 
 - PASS: Finish one thing before starting another
-- PASS: Use feature flags to work incrementally
+- PASS: Use temporary production-disabled flags for complete-and-inert, both-path-tested increments
 - PASS: Commit small pieces, don't wait for "done"
 
 **"What about code review?"**
@@ -58,5 +59,5 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 **"What if I'm not confident in my code?"**
 
 - PASS: Write tests first (TDD)
-- PASS: Use feature flags to isolate risk
+- PASS: Use temporary flags to control exposure, with tested rollback and a recorded removal step
 - PASS: Commit small changes, easier to verify

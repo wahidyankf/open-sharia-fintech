@@ -28,4 +28,9 @@ how each mode changes Step 0 (worktree entry), the push target at each phase gat
 boundary**, not at every phase — see
 [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
+Draw each boundary at a natural cohesive seam, never from a numeric LOC or file count. Merge only
+when the exact resulting `main` state is safe to deploy to production immediately, and integrate the
+ready unit promptly. See
+[Natural Seams and Deployable State](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-natural-seams.md).
+
 Note: this does **not** affect environment branches (`prod-ayokoding-www`, `prod-ose-www`, `stag-organiclever-app-web`, `stag-organiclever-be`). Those follow their own documented deployment workflows. The OrganicLever app staging branches (`stag-organiclever-app-web`, `stag-organiclever-be`) are CI-automated by `organiclever-app-test-local-deploy-stag.yml`. Production promotion for the OrganicLever app is **deferred** to a separate plan — no production-CD workflow exists yet.

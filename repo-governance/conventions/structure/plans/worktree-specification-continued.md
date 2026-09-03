@@ -16,9 +16,13 @@ when_to_use: Use when implementing or auditing worktree entry, sync, and cleanup
 
 Continues [Worktree Specification](./worktree-specification.md).
 
-**Executor lifecycle** (enforced by the plan-execution workflow):
+**Worktree-mode executor lifecycle** (enforced by the plan-execution workflow; main modes skip
+provisioning and use the synced primary checkout):
 
-1. **Enter or provision**: execution always happens inside the declared worktree. The executor navigates to it if it exists, or provisions it from the latest `origin/main` (`git fetch origin && git worktree add -b <plan-identifier> worktrees/<plan-identifier> origin/main`) if it does not. When the plan produces more than one delivery unit in this repo, the SAME worktree is reused for every one of them (see [Worktree Cap](./worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below) — never provision a second worktree for a repo the plan already has one open in.
+1. **Enter or provision**: for a worktree mode, execution happens inside the declared worktree. Enter
+   it if present, or provision it from fresh `origin/main`. Reuse that same worktree for every unit;
+   never provision a second one for the repo and plan. A main mode instead stays in the primary
+   checkout and provisions none.
 2. **Freshness sync**: before any implementation, the worktree is synced with the latest `origin/main` (ff-merge, or rebase when the worktree carries local commits). Dirty state or rebase conflicts stop execution for an explicit user decision. Starting a new delivery unit inside an already-provisioned worktree runs this same sync before branching off it.
 3. **Immediate cleanup**: when every delivery unit this plan places in a repo is confirmed delivered,
    resolve its declared repository-relative route against the selected repository root, reconcile
@@ -34,7 +38,8 @@ Continues [Worktree Specification](./worktree-specification.md).
    fails, retain it with evidence and escalate. Never remove on `partial`/`fail`. For a multi-unit
    plan, the shared worktree is removed once, after every delivery unit that used it has landed.
 
-**This requirement applies to all newly created formal plans regardless of size** — pure-docs plans included.
+**Every new formal plan declares the mode-resolved work location regardless of size** — pure-docs
+plans included.
 
 For the narrow authoring-worktree exception, replace the provisioning sentence with the pending
 status, active authoring worktree, user constraint, and Step 0 blocking obligation. Do not include

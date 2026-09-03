@@ -11,6 +11,7 @@ principles:
   - automation-over-manual
   - explicit-over-implicit
   - simplicity-over-complexity
+  - reproducibility
 created: 2026-02-09
 ---
 

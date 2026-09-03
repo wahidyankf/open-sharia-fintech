@@ -55,10 +55,12 @@ delivery-mode: worktree-to-pr # worktree-to-origin-main | main-to-origin-main | 
 **If omitted**: agents resolve by three-tier precedence — invocation argument > plan field >
 default `worktree-to-pr`. Never silently coerce an invalid non-empty value; ask instead.
 
-**If a direct-push mode is selected**: it is only genuinely selectable for an `ose-private`
-infrastructure-as-code plan (see [When a Direct-Push Mode Is
-Appropriate](./delivery-modes-direct-push.md#when-a-direct-push-mode-is-appropriate)) — state why, since it trades away the
-review buffer:
+**If a direct-push mode is selected**: `worktree-to-origin-main` remains unavailable.
+`main-to-origin-main` is selectable only for an `ose-private` plan in exactly two categories:
+stateful IaC needing the primary checkout's real secrets/local state, or CI-IaC changing the
+repository's own pipeline, runner, or toolchain provisioning where PR self-validation is circular.
+State the eligible category and why direct delivery is necessary (see
+[When a Direct-Push Mode Is Appropriate](./delivery-modes-direct-push.md#when-a-direct-push-mode-is-appropriate)):
 
 ```yaml
 delivery-mode: main-to-origin-main

@@ -18,12 +18,14 @@ The calling context will:
 
 0. **Promote from `plans/backlog/` first, if needed**: if `plan-path` resolves inside
    `plans/backlog/`, resolve the delivery mode and repository restrictions, then land the pure move
-   through the mode-appropriate route before step 1. `worktree-to-pr` uses its dedicated worktree
-   PR; `main-to-pr` syncs the primary checkout and opens or resumes the PR there. Only a permitted,
-   explicitly selected direct-push mode pushes the move to `origin main`. Follow the canonical
+   through the mandatory `worktree-to-pr` route before step 1, using and retaining its designated
+   worktree and merging the promotion PR. No other delivery mode is valid in `ose-public`. Follow the canonical
    [Starting Work procedure](../../../conventions/structure/plans/starting-and-completing-work.md#starting-work);
    never execute directly from `plans/backlog/`.
-1. **Enter the work branch** (Step 0): the work branch is whatever the user specifies at invocation (a dedicated worktree, the `main` checkout, or any existing branch); if unspecified, the plan docs win (the `## Worktree` section, defaulting to a worktree provisioned from `origin/main`) — refuse to start only when neither the user nor the plan specifies one. Then, by default, pull the latest `origin/main` into the work branch first — before any implementation — to minimize merge collisions
+1. **Enter the designated worktree** (Step 0): require the plan's `## Worktree` declaration, then
+   enter or first-provision that one worktree. An invocation may select a delivery-unit branch only
+   inside this declared location; it cannot choose the primary checkout or another worktree. Sync
+   the selected work branch with the latest `origin/main` before implementation
 2. Read the delivery checklist from the plan's `delivery.md` to understand all items. This step is
    mandatory even when the workflow is first invoked after implementation started or is reinvoked
    mid-run; never trust a prior conversational task list over disk.

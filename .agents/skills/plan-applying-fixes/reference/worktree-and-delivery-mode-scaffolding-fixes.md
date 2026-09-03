@@ -2,24 +2,24 @@
 
 ## Worktree Specification Fixes (Step 5d Findings)
 
-**Confidence**: **HIGH** — section completely missing, path format wrong, or provisioning command
-missing — mechanical fix: derive `<plan-identifier>` from the plan-folder name (strip the
-`YYYY-MM-DD__` prefix) and insert the canonical template. **FALSE_POSITIVE** — a `## Worktree`
+**Confidence**: **HIGH** — section completely missing or inconsistent with the resolved mode. For a
+worktree mode, derive `<plan-identifier>` and insert the path/provisioning template. For a main mode,
+insert the primary-checkout `not applicable` template. **FALSE_POSITIVE** — a `## Worktree`
 section already exists under non-standard heading text (e.g. `## Git Worktree`) — rename rather than
 duplicate.
 
 **How to fix missing `## Worktree` section**: for a current formal plan, insert it into
 `delivery.md` before the first phase heading. For an existing pre-contract single-file plan,
 retain or restore it in `README.md` before `## Delivery Checklist`; this compatibility repair
-never authorizes a new single-file plan. Insert the verbatim `## Worktree` template (path declaration, optional
-`claude --worktree <plan-identifier>` pre-provisioning block, Step-0-gate note) from the Worktree
+never authorizes a new single-file plan. Insert the mode-appropriate verbatim `## Worktree`
+template from the Worktree
 Specification section of `.claude/skills/plan-creating-project-plans/SKILL.md` — that section is the
 single source of truth for the exact wording; do not paraphrase it.
 
 Deriving `<plan-identifier>`: strip the date prefix. Example: folder `2026-05-15__auth-rewrite/` →
 identifier `auth-rewrite`.
 
-**How to fix wrong path format**: `.claude/worktrees/<name>/` → rewrite as `worktrees/<name>/`; path
+**How to fix wrong worktree-mode path format**: `.claude/worktrees/<name>/` → rewrite as `worktrees/<name>/`; path
 missing the `worktrees/` prefix → prepend it; identifier mismatches the plan-folder → rewrite to
 match.
 
@@ -28,7 +28,7 @@ UNC path in a Provisioned Worktree Identity with the canonical repository-relati
 `worktrees/<plan-identifier>/`. Preserve the initial branch, creator, and UTC timestamp; move any
 resolved host path to ignored runtime evidence and never retain it in `delivery.md`.
 
-**How to fix missing provisioning command**: insert the canonical fenced bash block immediately
+**How to fix missing worktree-mode provisioning command**: insert the canonical fenced bash block immediately
 under the path declaration: ` ```bash\nclaude --worktree <plan-identifier>\n``` `.
 
 ## Delivery Mode Fixes (Step 5m Findings)

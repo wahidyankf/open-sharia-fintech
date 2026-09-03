@@ -18,10 +18,11 @@ with no professional work experience and no repository or stack context.**
   "configure Z".
 
 Canonical Gherkin remains in `prd.md`/`specs/**`; reference IDs/titles instead of copying full
-scenarios. Checklist count never overrides natural delivery seams, Delivery Boundaries, or
-atomicity. Do not split solely to force handwritten code below the strong 500-line recommendation.
-When a natural, cohesive seam exceeds it, record measured size, rejected viable split alternatives,
-and review/proof strategy; independent hard PR-size bounds still apply.
+scenarios. Checklist, LOC, and file counts never create, erase, or force delivery boundaries. Split
+only at natural cohesive seams, keep every artifact required for an internally consistent unit
+together, and require each resulting `main` state to be safe to deploy to production immediately.
+For incomplete behavior, record a temporary production-disabled flag, tests for both paths, and
+rollout, rollback, and removal.
 
 **`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**
 

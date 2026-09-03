@@ -35,13 +35,18 @@ when_to_use: Use before pushing, to run the pre-push checklist, or when planning
 - [ ] All tests pass locally (`npm test`)
 - [ ] Linting passes (`npm run lint`)
 - [ ] Build succeeds (`npm run build`)
-- [ ] Feature flags hide incomplete work
+- [ ] The resulting `main` state is safe to deploy to production immediately
+- [ ] Incomplete behavior is complete-and-inert behind a temporary production-disabled feature flag
+- [ ] Both flag paths pass and rollout, rollback, and removal are recorded
 - [ ] Commit message follows [Conventional Commits](../commit-messages.md)
 
 ## Small, Thematic Changes
 
 TBD favors the fewest build-valid, independently reviewable and revertible commits that express one
-coherent purpose each. “Small” does not mean separating required completion artifacts.
+coherent purpose each. “Small” does not mean separating required completion artifacts, and numeric
+LOC or file counts never create, erase, or force a PR boundary. Split delivery at natural cohesive
+seams and keep everything required to build, verify, operate, roll back, and remain internally
+consistent together.
 
 PASS: **Good incremental changes**:
 
@@ -54,7 +59,7 @@ FAIL: **Bad large changes**:
 - Implement 5 features together in one PR
 - Refactor + an independent feature in the same commit
 
-**Benefits of small changes**:
+**Benefits of cohesive changes**:
 
 - **Faster reviews**: Reviewing 50 lines vs 5000 lines
 - **Easier to revert**: If something breaks, revert is surgical
@@ -64,10 +69,12 @@ FAIL: **Bad large changes**:
 
 **How to break down work**:
 
-1. **Identify smallest deliverable**: What's the tiniest useful piece?
-2. **Complete that piece**: include required tests, docs, specs, references, and generated artifacts
+1. **Identify a natural seam**: What independently useful purpose can safely deploy on its own?
+2. **Complete that piece**: include required tests, docs, specs, references, generated artifacts,
+   operations, and rollback support
 3. **Repeat**: Build on top of previous work
-4. **Use feature flags**: Hide incomplete full features
+4. **Use feature flags**: Keep incomplete behavior internally complete and inert behind a temporary
+   production-disabled flag; test both paths and record rollout, rollback, and removal
 
 **Example - "Add user login" broken down**:
 
@@ -82,4 +89,5 @@ Commit 7: feat(auth): enable login feature flag in production
 Commit 8: refactor(auth): remove old login code and feature flag
 ```
 
-Each commit includes the tests and documentation required for its purpose and does not break `main`.
+Each commit includes the tests and documentation required for its purpose and leaves `main` safe to
+deploy to production. Each PR groups commits at one natural seam and integrates promptly once ready.

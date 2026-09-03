@@ -11,7 +11,7 @@ title: "Reference"
 - [05 Mermaid Diagrams](./mermaid-diagrams.md) — why plans must include extensive Mermaid diagrams, one per distinct architectural concern
 - [06 Ui Design Funnel](./ui-design-funnel.md) — the mandatory UI-mockup design funnel for plans that add or change user-facing screens
 - [07 Ui Design Funnel Grilling And Learning Plans](./ui-design-funnel-grilling-and-learning-plans.md) — design-funnel grilling questions and requirements for learning-bearing plans
-- [08 Worktree Specification](./worktree-specification.md) — the mandatory worktree declaration every plan must make before its delivery checklist
+- [08 Work Location Specification](./worktree-specification.md) — the mandatory mode-resolved work-location declaration every plan makes before its checklist
 - [09 Delivery Mode](./delivery-mode.md) — the mandatory delivery-mode declaration fixing a plan's integration target and merge authority
 - [10 Execution Grade Clarity](./execution-grade-clarity.md) — why plans must be written for execution-grade agents, not authoring-grade hand-waving
 - [11 Executor Tagging](./executor-tagging.md) — the [AI] versus [HUMAN] tagging rule for every delivery checklist item

@@ -19,9 +19,9 @@ or completion reference; a merge step, `gh pr ready` step, or post-push CI-verif
 so the earliest PR-opening phase is Phase 1, and only if Phase 1 is a declared boundary. Also flag
 **HIGH** a Per-Phase Integration Protocol block not scoped to Phase 1 onward.
 
-Remediation: delete the offending step; if Phase 0 wrote evidence artifacts, note they ride the
-Phase 1 PR; if Phase 0 genuinely produces reviewable changes, flag it as mis-scoped and move the work
-to Phase 1.
+Remediation: delete the offending step; if Phase 0 wrote evidence artifacts, note they land through
+the first change-producing unit's mode-specific integration; if Phase 0 genuinely produces
+reviewable changes, flag it as mis-scoped and move the work to Phase 1.
 
 **Detection command** (from the plan folder; Phase 0 slice only):
 

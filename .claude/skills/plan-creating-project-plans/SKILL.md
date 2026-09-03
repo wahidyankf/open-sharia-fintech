@@ -58,6 +58,9 @@ verification design. `delivery.md` turns that design into ordered granular actio
 inputs, paths/discovery, commands, expected observations, failure handling, and evidence needed for
 independent execution.
 
+Delivery units follow the canonical natural-seam, immediately deployable-state, and temporary-flag
+lifecycle rules; numeric counts never set their boundaries.
+
 ## Reference Modules
 
 - [mandatory-grilling.md](reference/mandatory-grilling.md) — evidence-first pre-write and post-write grilling

@@ -61,7 +61,7 @@ pushed to the confirmed target.
 
 - [Stage Resolution](./plan-planning/stage-resolution.md) — how target-stage resolves `<plan-dir>`.
 - [Execution Mode](./plan-planning/execution-mode.md) — direct orchestration, worktree default.
-- [Planning Granularity and One-Branch-One-PR](./plan-planning/planning-granularity-and-one-branch-rule.md) — the hard rule.
+- [Planning Granularity and Mode-Specific Delivery](./plan-planning/planning-granularity-and-one-branch-rule.md) — one natural unit per resolved integration mechanism.
 - [Merge Timing, Feature Flags, worktree-to-pr Binding](./plan-planning/delivery-merge-timing-flags-and-worktree-to-pr-binding.md) — when PRs merge.
 - [Surface-Conditional Tester Gates](./plan-planning/surface-conditional-tester-gates.md) — routing table, three UI gates.
 - [Vercel MCP Availability](./plan-planning/vercel-mcp-availability.md) — probe and boundary.

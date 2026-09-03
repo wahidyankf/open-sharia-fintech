@@ -40,5 +40,5 @@ TBD enables automated deployment:
 
 - PASS: **Deployment from `main`**: Every commit can deploy to staging
 - PASS: **Feature flags**: Control production rollouts without branches
-- PASS: **Rapid fixes**: Hotfixes commit to `main` and deploy immediately
+- PASS: **Rapid fixes**: Hotfixes use the resolved delivery mode and integrate promptly once its gates pass
 - PASS: **Rollback**: Revert commit or toggle flag off

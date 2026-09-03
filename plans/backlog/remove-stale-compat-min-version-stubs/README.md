@@ -94,6 +94,20 @@ Not yet provisioned; this is a backlog-stage plan.
 
 Mandatory default in `ose-public` (branch-protected `main`).
 
+## Parallelization Model
+
+Phase 1 is read-only classification and feeds the single change-producing Phase 2 node; no parallel
+delivery unit exists.
+
+### Delivery Boundaries
+
+| Phase(s) | Natural cohesive seam                                                                                                                 | Worktree                                           | Branch                                  | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                                                                                                                                                     |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2        | Remove every confirmed no-op `compat:min-version` target while preserving real checks, project configuration, and validation evidence | `worktrees/remove-stale-compat-min-version-stubs/` | `remove-stale-compat-min-version-stubs` | PR at Phase 2        | The exact resulting `main` state contains only genuine minimum-version checks, retains all applicable mandatory targets, and passes configuration and affected-project gates, so it is immediately production-deployable. A feature flag is not applicable because this subtractive build-metadata cleanup creates no incomplete user-reachable behavior; rollback is a PR revert. Integrate promptly after the Phase 2 gate. |
+
+The classification, removals, validation, and rollback evidence stay together because splitting them
+would leave misleading partial target discovery. LOC and file counts never define this boundary.
+
 ## Delivery Checklist
 
 Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human judgment or approval.

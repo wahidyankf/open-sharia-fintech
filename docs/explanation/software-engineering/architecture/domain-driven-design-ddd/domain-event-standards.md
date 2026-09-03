@@ -10,6 +10,7 @@ tags:
 principles:
   - immutability
   - explicit-over-implicit
+  - simplicity-over-complexity
 created: 2026-02-09
 ---
 

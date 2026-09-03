@@ -8,6 +8,8 @@ tags:
   - spring-state-machine
   - xstate
 principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
   - automation-over-manual
 created: 2026-02-09
 ---

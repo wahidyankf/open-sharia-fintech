@@ -9,9 +9,9 @@ reflexively deleting:
 PR`, `Open PR`, `Submit PR`, or equivalent) is present with no explicit PR requirement documented →
   remove the line (HIGH confidence) and verify the checklist remains sequential.
 - If the PR step is actually wanted, correct the declared mode instead: rewrite `## Delivery Mode:`
-  to `worktree-to-pr`/`main-to-pr` and scaffold exact-head/base PR-CI steps (see
+  to a repository-valid `*-to-pr` mode and scaffold exact-head/base PR-CI steps (see
   `12-worktree-and-delivery-mode-scaffolding-fixes.md`) rather than stripping the step and leaving the plan
-  mode-inconsistent.
+  mode-inconsistent. In `ose-public`, the only repository-valid choice is `worktree-to-pr`.
 - A `*-to-pr` plan's PR step is never itself a finding — only its absence or a mismatched mode is.
 - **Never apply "remove the line" to a merge step, under any Delivery Mode.** "PR creation step"
   means the step that opens the PR — never the step that merges it; a merge step is out of scope for
@@ -25,13 +25,13 @@ PR`, `Open PR`, `Submit PR`, or equivalent) is present with no explicit PR requi
 
 Per
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
-when `plan-checker` item 9's HIGH finding flags a resolved direct-push mode in `ose-public`
-(no executable path there), this is a **different finding class** from PR Step/Delivery
+when `plan-checker` item 9's HIGH finding flags any non-`worktree-to-pr` mode in `ose-public`, this
+is a **different finding class** from PR Step/Delivery
 Mode Reconciliation above and takes a different fix:
 
-- Always rewrite the resolved mode to `worktree-to-pr` (or `main-to-pr` if the plan's work location
-  genuinely requires the primary checkout). Never merely delete the offending step — the mode itself
-  is illegal for the repo, not the step.
+- Always rewrite the resolved mode to `worktree-to-pr` and reconcile the plan to its one designated
+  worktree. Never select `main-to-pr`, and never merely delete the offending step — the mode or work
+  location itself is illegal for the repo.
 - After rewriting, scaffold the missing exact-head/base PR-CI steps so the plan is executable
   under the corrected mode.
 - **One narrow exception**: a genuine infrastructure-as-code or CI-IaC plan targeting
@@ -39,5 +39,5 @@ Mode Reconciliation above and takes a different fix:
   exception. `worktree-to-origin-main` is unavailable in both OSE repositories.
 - Never silently coerce an author's explicit mode choice without recording why in the fix report.
 
-Verify by re-running `plan-checker`'s item 9 detection and confirming the resolved mode no longer
-resolves to a direct-push mode in a restricted repo.
+Verify by re-running `plan-checker`'s item 9 detection and confirming `ose-public` resolves only to
+`worktree-to-pr`, while any private alternative satisfies that repository's restriction.

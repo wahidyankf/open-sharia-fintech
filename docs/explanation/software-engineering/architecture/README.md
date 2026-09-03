@@ -9,6 +9,9 @@ tags:
   - domain-driven-design
   - software-design
   - index
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
 created: 2026-01-20
 ---
 

@@ -14,6 +14,7 @@ related:
   - ./anti-patterns.md
 principles:
   - explicit-over-implicit
+  - automation-over-manual
 ---
 
 # React Security

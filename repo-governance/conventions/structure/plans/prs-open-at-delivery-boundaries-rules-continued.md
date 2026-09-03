@@ -1,6 +1,6 @@
 ---
-title: "PRs Open at Delivery Boundaries — Rules 5-7 and *-to-pr Scope"
-description: Gives the remaining three PR-boundary rules (independent nodes deliver separately, no deferred batching, an opened PR is never held) and states which delivery modes this rule binds.
+title: "PRs Open at Delivery Boundaries — Rules 5-7, Parity Delivery, and Mode Scope"
+description: Gives the remaining PR-boundary rules plus the mode-neutral independent parity-delivery rule and its scope.
 category: explanation
 subcategory: conventions
 tags:
@@ -9,10 +9,10 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when deciding whether independent work may share a PR, or whether an already-open PR may wait for a later merge.
+when_to_use: Use when deciding whether independent work may share a PR or whether a ready parity PR/direct delivery may wait for a sibling.
 ---
 
-# PRs Open at Delivery Boundaries — Rules 5-7 and \*-to-pr Scope
+# PRs Open at Delivery Boundaries — Rules 5-7, Parity Delivery, and Mode Scope
 
 Continues [PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)](./prs-open-at-delivery-boundaries-rules.md).
 
@@ -29,19 +29,27 @@ Continues [PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)](./prs-o
    does this bar a **GitHub merge queue**, which serialises already-approved merges for CI
    correctness and holds nothing back: the prohibition is on a plan deferring its own merges, not on
    the platform ordering them.
-4. **Parity PRs merge on each repository's own opportunity.** Once one repository's parity PR meets
-   that repository's hardened merge prerequisites and a merge opportunity exists, merge it; never
-   hold a ready PR solely to synchronize its merge with a sibling repository. Record any unfinished
-   counterpart as a named sibling obligation until the repositories converge. A shared parity
-   identity makes deliveries traceable; it does not create a synchronized-merge gate.
+4. **Parity delivery uses each repository's own opportunity in every mode.** Once one repository
+   meets its mode-specific hardened prerequisites and a delivery opportunity exists, merge its PR
+   or complete its permitted direct-main delivery. Never hold a ready repository solely to
+   synchronize it with a sibling. Record any unfinished counterpart as a named sibling obligation
+   until the repositories converge. A shared parity identity makes deliveries traceable; it does
+   not create a synchronized-delivery gate.
+
+Every unit above is bounded by a natural cohesive seam, not a line or file count. Keep everything
+required to build, verify, operate, roll back, and remain internally consistent with that unit, and
+split independent purposes. Merge only when the exact resulting `main` state is immediately safe to
+deploy to production, using a temporary production-disabled feature flag for incomplete behavior.
+See [Natural Seams and Deployable State](./prs-open-at-delivery-boundaries-natural-seams.md).
 
 **Enforcement disposition for rule 4 — unenforced by decision.** Cross-repository readiness and a
 merge opportunity require authenticated operational evidence that a repository-local deterministic
 check cannot observe. The merge record plus explicit sibling obligation make the decision auditable.
 
-This rule governs **PRs**, so it binds the `*-to-pr` delivery modes only. Under
-`worktree-to-origin-main` or `main-to-origin-main` a plan opens no PR at all, and a **per-phase
-commit-and-push checkpoint cadence there is correct and unaffected** — commits are not PRs, and
-nothing in this section asks a direct-push plan to batch them.
+Rules 1-3 govern **PRs**, so they bind the `*-to-pr` delivery modes only. Rule 4 is mode-neutral and
+also binds a permitted `worktree-to-origin-main` or `main-to-origin-main` delivery. Direct-push
+plans may retain per-phase local commits and quality gates, but push to `origin/main` only at the
+unit's reviewed direct checkpoint; rule 4 forbids holding an otherwise ready repository for sibling
+synchronization.
 
 See [PRs Open at Delivery Boundaries — Boundary Test and Rationale](./prs-open-at-delivery-boundaries-boundary-test.md) for the four-part boundary test that determines whether a given phase is a delivery boundary.

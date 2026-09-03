@@ -118,13 +118,12 @@ Cleanup independently rediscovers the primary checkout and does not load maps fr
 ## How This Plan Ships
 
 This plan originally carried a 4,817-item `DB`/`RP`/`OM` checklist ledger — a 53-step lifecycle
-repeated across 91 bindings, plus prospective size gates, per-leaf allocation freezing, natural-seam
+repeated across 91 bindings, plus retired size paperwork, per-leaf allocation freezing, natural-seam
 essays, shared-plumbing SHA tables, and roughly forty evidence files per delivery unit.
 
-On 2026-09-01 the user replaced all of it with the process below, on the explicit basis that only
-the end result matters. Nothing removed was enforced by anything outside this document: the
-`O <= 1,000` and 300-file ceilings, the `PS-01`–`PS-03` prospective gates, and the exception records
-were this plan's own paperwork, not repository policy and not CI.
+On 2026-09-01 the user replaced all of it with the process below. The retired numeric ceilings,
+prospective size gates, and exception records were this plan's own non-normative paperwork, not
+repository policy or CI. They no longer govern any remaining delivery boundary.
 
 What still binds is CI, and none of it is negotiable:
 
@@ -155,12 +154,16 @@ on the basis that the ledger's cost had outgrown its value.
 
 ### Per-PR process
 
-1. Implement.
+1. Implement one natural cohesive delivery unit. Keep every build, verification, operation,
+   rollback, and consistency artifact together. Its exact resulting `main` state must be immediately
+   safe to deploy; incomplete behavior must be internally complete and inert behind a temporary
+   production-disabled flag, with both paths tested and rollout, rollback, and removal recorded.
 2. `rtk nx affected -t build,typecheck,lint,test:quick,test:integration,test:e2e` — every applicable
    task exits 0.
 3. `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` — exit 0. Read the final
    PASS/FAIL summary line, not per-check text.
-4. Push the delivery branch; open one PR to `main` with a short body stating scope and recovery.
+4. Push the delivery branch promptly; open one PR to `main` with a short body stating the natural
+   seam, production-deployable resulting state, feature-flag lifecycle when applicable, and recovery.
 5. One authenticated `pr-leak-review` against the exact head/base. A changed head — including one
    caused by a rebase — invalidates the record and requires exactly one replacement pass.
 6. CI green on that same head.
@@ -170,31 +173,34 @@ If a rebase is needed because `origin/main` moved, rerun steps 2, 3, 5, and 6 ag
 
 ## Execution Table
 
-Fifty-six public and twenty-one private leaves remain, batched into ten PRs. The two repositories
-run as independent streams with their own worktrees, branches, and CI.
+Fifty-six public and twenty-one private leaves remain. The tables group execution order only; they
+do not define PR boundaries. Each named `D-*` leaf is a candidate natural-seam unit, and independent
+ready units integrate promptly through their own short-lived branch and PR. Join adjacent leaves
+only when they form one cohesive outcome, keep all consistency artifacts together, and leave the
+exact resulting `main` state immediately production-deployable. Counts never decide the boundary.
 
 ### Public stream — the critical path
 
-| PR      | Scope                                | Leaves                                                                                                                       |
-| ------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `PUB-1` | Phase 4 remainder                    | `D-P4-PUB-LAYOUT-MANIFEST`, `D-P4-PUB-FIXTURES-A/B/C`, `D-P4-PUB-GOVERNANCE` (5)                                             |
-| `PUB-2` | Phases 5, 6, 8A, 8B, 9, 10A          | `D-P5-PUB`, `D-O-PUB-CRANE`, `D-O-PUB-FS-CORE`, `D-O-PUB-FS-ENV`, `D-O-PUB-TS-ENV`, `D-O-PUB-WEB-TOKEN` (6)                  |
-| `PUB-3` | Phase 7 shared Rhino                 | the ten `D-O-PUB-RHINO-*` leaves (10)                                                                                        |
-| `PUB-4` | Phase 11A web-ui                     | the six `D-O-PUB-WEB-UI-*` leaves (6)                                                                                        |
-| `PUB-5` | Phase 12 AyoKoding                   | the twenty-one `D-O-PUB-AYO-*` leaves (21)                                                                                   |
-| `PUB-6` | Phases 14–19 and the public closeout | `D-O-PUB-OL-WEB`, `D-O-PUB-OL-BE`, `D-O-PUB-OL-WWW`, `D-O-PUB-OSE-WEB`, `D-O-PUB-OSE-BE`, `D-O-PUB-OSE-WWW`, `D-P20-PUB` (7) |
+| Order group | Scope                                | Candidate delivery units                                                                                                     |
+| ----------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `PUB-1`     | Phase 4 remainder                    | `D-P4-PUB-LAYOUT-MANIFEST`, `D-P4-PUB-FIXTURES-A/B/C`, `D-P4-PUB-GOVERNANCE` (5)                                             |
+| `PUB-2`     | Phases 5, 6, 8A, 8B, 9, 10A          | `D-P5-PUB`, `D-O-PUB-CRANE`, `D-O-PUB-FS-CORE`, `D-O-PUB-FS-ENV`, `D-O-PUB-TS-ENV`, `D-O-PUB-WEB-TOKEN` (6)                  |
+| `PUB-3`     | Phase 7 shared Rhino                 | the ten `D-O-PUB-RHINO-*` leaves (10)                                                                                        |
+| `PUB-4`     | Phase 11A web-ui                     | the six `D-O-PUB-WEB-UI-*` leaves (6)                                                                                        |
+| `PUB-5`     | Phase 12 AyoKoding                   | the twenty-one `D-O-PUB-AYO-*` leaves (21)                                                                                   |
+| `PUB-6`     | Phases 14–19 and the public closeout | `D-O-PUB-OL-WEB`, `D-O-PUB-OL-BE`, `D-O-PUB-OL-WWW`, `D-O-PUB-OSE-WEB`, `D-O-PUB-OSE-BE`, `D-O-PUB-OSE-WWW`, `D-P20-PUB` (7) |
 
-`PUB-5` carries twenty-one leaves and is the one unit at real risk of choking review or CI. Split it
-first if anything strains; leave the others whole.
+Do not batch independent units merely because they share an order-group row. If execution evidence
+shows a listed leaf is not cohesive or deployable, revise the seam before opening its branch.
 
 ### Private stream
 
-| PR      | Scope                                    | Leaves                                                                                               | Depends on       |
-| ------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------- |
-| `PRI-1` | Phase 4 parity                           | `D-P4-PRI-REGISTRY-PARITY`, `D-P4-PRI-POLICY-PARITY`, `D-P4-PRI-FIXTURES`, `D-P4-PRI-GOVERNANCE` (4) | `PUB-1`          |
-| `PRI-2` | Phase 5 and Phase 10B                    | `D-P5-PRI`, `D-O-PRI-TS-TOKEN` (2)                                                                   | `PRI-1`          |
-| `PRI-3` | Phase 7 Rhino parity                     | the ten `D-O-PRI-RHINO-*` leaves (10)                                                                | `PUB-3`, `PRI-1` |
-| `PRI-4` | Phase 11B ts-ui and the private closeout | the four `D-O-PRI-TS-UI-*` leaves, `D-P20-PRI` (5)                                                   | `PRI-1`          |
+| Order group | Scope                                    | Candidate delivery units                                                                             | Depends on       |
+| ----------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------- |
+| `PRI-1`     | Phase 4 parity                           | `D-P4-PRI-REGISTRY-PARITY`, `D-P4-PRI-POLICY-PARITY`, `D-P4-PRI-FIXTURES`, `D-P4-PRI-GOVERNANCE` (4) | `PUB-1`          |
+| `PRI-2`     | Phase 5 and Phase 10B                    | `D-P5-PRI`, `D-O-PRI-TS-TOKEN` (2)                                                                   | `PRI-1`          |
+| `PRI-3`     | Phase 7 Rhino parity                     | the ten `D-O-PRI-RHINO-*` leaves (10)                                                                | `PUB-3`, `PRI-1` |
+| `PRI-4`     | Phase 11B ts-ui and the private closeout | the four `D-O-PRI-TS-UI-*` leaves, `D-P20-PRI` (5)                                                   | `PRI-1`          |
 
 ### What actually runs in parallel
 
@@ -331,11 +337,11 @@ Corpus: <exact corpus paths/globs from corpus-files.txt, or explicit absent resu
 C4: <exact README/architecture/Mermaid paths, or explicit absent result>
 Manifest: <exact package.json plus named direct consumer, or delete with no-consumer proof>
 Recovery: rtk git restore --source=origin/main -- <exact root and corpus paths>
-Size: rtk git diff --numstat origin/main...HEAD -- <exact root and corpus paths>
+Diff: rtk git diff --numstat origin/main...HEAD -- <exact root and corpus paths>
 ```
 
 Validate the row immediately with
-`rtk bash -lc 'f="<owner-file>"; for label in Project Root Targets Coverage Corpus C4 Manifest Recovery Size; do test "$(rtk rg -c "^${label}: .+" "$f")" -eq 1 || { printf "invalid %s in %s\n" "$label" "$f" >&2; exit 1; }; done; ! rtk rg -n "(:[[:space:]]*$|pending|inspect later|unknown)" "$f"'`.
+`rtk bash -lc 'f="<owner-file>"; for label in Project Root Targets Coverage Corpus C4 Manifest Recovery Diff; do test "$(rtk rg -c "^${label}: .+" "$f")" -eq 1 || { printf "invalid %s in %s\n" "$label" "$f" >&2; exit 1; }; done; ! rtk rg -n "(:[[:space:]]*$|pending|inspect later|unknown)" "$f"'`.
 If coverage, manifest ownership, or C4 classification is not yet provable from the captured files,
 stop that owner row and complete its bounded discovery; do not let the later aggregate ledger hide
 the missing field.
@@ -538,11 +544,10 @@ the RED/GREEN/REFACTOR learning signal before its own PR lifecycle.
 > **Execution state:** Phase 4 landed as `ose-public#428`, `ose-public#429`, and `ose-private#140`;
 > the two repositories carry a byte-identical 226-entry parity manifest.
 >
-> Phase 5 does not fit one delivery unit. The corpus move touches roughly 200 specification files
-> and 641 files that reference their paths, so a single PR would break both the 20-file review
-> budget and rule 1. The [Atomicity Exception](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-pr-size-atomicity.md)
-> does not apply, because smaller build-valid seams exist: one per product family. The phase
-> therefore ships as a sequence, each unit independently green on `main`:
+> Phase 5 contains distinct product-family purposes rather than one natural cohesive seam. Each
+> family has its own build-valid consistency artifacts and recovery path, so coupling them would
+> reduce independent review, rollback, and prompt integration. The phase therefore ships as a
+> sequence of short-lived delivery units, each leaving `main` immediately production-deployable:
 >
 > 1. the validator learns the logical owner-corpus shape and keeps accepting the legacy five-folder
 >    tree, so no family is broken by the rule change alone;
@@ -804,7 +809,7 @@ validate`/`validate-mapping` take no `--project` filter; both are whole-registry
 > anywhere in the registry. One real concurrency bug surfaced and was fixed during this work: the
 > env-tier scenarios mutate real process environment variables (`APP_ENV` and friends), which raced
 > under xunit's default one-collection-per-module parallelism exactly as
-> `apps/rhino-cli/src/tests/unit/Steps/GitRootUnitTests.fs` already documents; fixed with the same
+> `apps/rhino-cli/tests/unit/Steps/GitRootUnitTests.fs` already documents; fixed with the same
 > assembly-wide `[<assembly: CollectionBehavior(DisableTestParallelization = true)>]` opt-out.
 > PR: [wahidyankf/ose-public#440](https://github.com/wahidyankf/ose-public/pull/440).
 
@@ -979,7 +984,11 @@ threshold=99`, `manifest-consumer-verified`).
 
 ### Ayo unit split prospective lifecycle
 
-The following eight natural seams replace the retired oversized unit binding. Each has an exact frozen allocation, its own guarded PR lifecycle, and no cross-leaf source overlap.
+The following eight entries were Phase 0 candidate seams for independently buildable course-path
+purposes. Execution later showed that their source, configuration, and verification closure formed
+one cohesive 21-leaf delivery, so the as-built `D-O-PUB-AYO` lifecycle below supersedes the
+prospective one-PR-per-entry shape. The entries remain as internal allocation labels, not future PR
+instructions.
 
 ### Leaf deliveries
 
@@ -1003,7 +1012,9 @@ The following eight natural seams replace the retired oversized unit binding. Ea
 
 ### Ayo integration split prospective lifecycle
 
-The following three project-bound seams replace the retired oversized integration binding.
+The following three project-bound entries were candidate integration seams. They joined the same
+cohesive, production-deployable 21-leaf delivery recorded below and no longer prescribe separate PR
+lifecycles.
 
 #### Ayo integration split leaf deliveries
 
@@ -1025,7 +1036,9 @@ The following three project-bound seams replace the retired oversized integratio
 
 #### Ayo corpus navigation/tools split prospective lifecycle
 
-The following three exact corpus seams replace the retired mixed navigation/tools binding.
+The following three entries were Phase 0 candidate corpus seams replacing the retired mixed
+navigation/tools binding. They joined the same cohesive 21-leaf delivery recorded below and remain
+allocation labels, not separate PR instructions.
 
 #### Ayo corpus navigation/tools split leaf deliveries
 
@@ -1043,10 +1056,10 @@ The following three exact corpus seams replace the retired mixed navigation/tool
 
 #### Ayo navigation/tools resolution and additional leaves
 
-The earlier `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS` checklist is retained as the exhaustive
-delivery-lifecycle template for the renamed `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION` binding. Its
-preflight, branch, runtime, PR-body, exact-head, and merge evidence use the canonical navigation
-binding name and the navigation-only finite allocation. It must not admit any `tools/**` path.
+The earlier `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION-TOOLS` checklist is retained as historical execution
+detail for the renamed `D-O-PUB-AYO-CORPUS-WEB-NAVIGATION` allocation. Its evidence uses the
+canonical navigation binding name and the navigation-only finite allocation; it does not create a
+separate lifecycle from the as-built cohesive delivery below and must not admit any `tools/**` path.
 
 ### Phase 12 Gate
 
@@ -1550,10 +1563,10 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 - **Input:** every public owner PR, private terminal proof, registries, and manifests.
 - **Outcome:** public closure is green on the final branch used for Knowledge Capture and archival.
 - **Acceptance criteria:** [AC-TEST-01 through AC-TEST-12, AC-REPO-01, AC-RULES-01, AC-DDD-01, AC-SPECS-01, AC-C4-01, AC-C4-02, and AC-COVERAGE-01 through AC-COVERAGE-03](./prd.md#acceptance-criteria).
-- **Exact final-PR allocation:** 19 hand-authored paths: the 13 plan-document destinations listed by
+- **Natural-seam final-PR contents:** the plan-document destinations listed by
   `rtk proxy find plans/in-progress/adopt-beavernest-test-automation -type f -print`, including
   `delivery.md`, `implementation-notes.md`, and reserved `learnings.md`; the two index edits
-  `plans/in-progress/README.md` and `plans/done/README.md`; and exactly four closure paths: `repo-config.yml`,
+  `plans/in-progress/README.md` and `plans/done/README.md`; and the closure paths: `repo-config.yml`,
   `apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs`,
   `apps/rhino-cli/tests/unit/TestContractClosureUnitTests.fs`, and
   `apps/rhino-cli/tests/unit/Fixtures/TestContract/Closure/closure.json`. The finite registry,
@@ -1563,7 +1576,8 @@ binding name and the navigation-only finite allocation. It must not admit any `t
   never copied or re-added. `RP-P20-PUB`
   therefore verifies the already-delivered canonical rule surfaces unchanged; if it discovers a
   required governance edit, stop and amend an earlier natural rule-delivery unit before this branch.
-  Do not add an optional runtime split or a twentieth hand-authored path.
+  Do not add an unrelated runtime purpose; if discovery changes the cohesive contents, amend the plan
+  and revalidate internal consistency and exact resulting-`main` deployability before proceeding.
 
 - **Proof:** CI green on the merged head, plus the PR's leak-review record. See the per-PR process above.
 

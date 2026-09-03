@@ -20,7 +20,9 @@ when_to_use: Use when explaining why there is no develop/release/hotfix branch, 
 - **The trunk is `main`**: All development happens on `main` branch
 - **No `develop` branch**: We don't use GitFlow or similar multi-branch strategies
 - **No release branches**: Releases are tagged commits on `main`
-- **No hotfix branches**: Hotfixes commit directly to `main` (or very short-lived branches)
+- **No long-lived hotfix branches**: Hotfixes use the repository's resolved delivery mode.
+  `ose-public` always uses a short-lived `worktree-to-pr` branch; `ose-private` does too unless an
+  explicitly declared `main-to-origin-main` change qualifies as stateful IaC or circular CI-IaC.
 
 ## Working on `main` Directly
 
@@ -32,39 +34,42 @@ when_to_use: Use when explaining why there is no develop/release/hotfix branch, 
 > **Per-repository restriction (independent of the shape described here)**: in `ose-public`,
 > `main` is branch-protected against direct pushes — including for admins — so
 > **neither direct-push mode has an executable path there at all**. In
-> `ose-private`, both remain available only for infrastructure-as-code plans. See
+> `ose-private`, `worktree-to-origin-main` is also unavailable. Only explicitly declared
+> `main-to-origin-main` remains, and only for stateful IaC needing the primary checkout's real
+> secrets/local state or CI-IaC changing its own pipeline, runner, or toolchain provisioning where
+> PR self-validation is circular. See
 > [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > for the full rule. The PASS example immediately below is therefore **not executable in this repo
 > (`ose-public`)** — it is retained as illustrative TBD vocabulary and remains genuinely runnable only
-> for `ose-private` infrastructure-as-code plans.
+> as `ose-private` `main-to-origin-main` for one of those two named categories.
 
-PASS (only where the per-repository restriction above does not block it — not currently `ose-public`):
-**You should commit directly to `main` when**:
+PASS (only for explicitly declared, eligible `ose-private` `main-to-origin-main` work — never in
+`ose-public`): **You may commit directly to `main` only when**:
 
-- Change is small and well-tested
-- You're confident tests will pass
-- Change won't break others' work
-- Feature flags hide incomplete functionality
-- You can commit and push multiple times per day
+- The work is stateful IaC needing the primary checkout's real secrets/local state, or CI-IaC whose
+  pipeline, runner, or toolchain provisioning makes PR self-validation circular.
+- The plan explicitly declares `main-to-origin-main` and records `## Worktree` as
+  `Not applicable (N/A)`.
+- The change is small, understood, locally gated, and safe to integrate immediately.
 
 **Example workflow**:
 
 ```bash
-# Work on main branch
-git checkout main
-git pull origin main
+# ose-private stateful-IaC plan explicitly declares main-to-origin-main and Worktree: N/A
+git switch main
+git pull --rebase origin main
 
-# Make small change
-# ... edit files ...
+# Update one Terraform resource using primary-checkout credentials and local state
+# ... edit infra/prod/terraform/main.tf ...
 
-# Test locally
-npm test
+# Run the plan's complete local IaC quality gate without printing secrets
+# ... validate, plan, and inspect the intended state change ...
 
-# Commit directly to main
-git add .
-git commit -m "feat(auth): add email validation helper"
+# Commit and push the eligible private change directly to main
+git add infra/prod/terraform/main.tf
+git commit -m "fix(infra): correct Terraform resource state"
 git push origin main
 
 # CI runs automatically
-# Change is now visible to entire team
+# Change is now visible to the private repository team
 ```

@@ -16,7 +16,9 @@ when_to_use: Use when a Phase 0 step writes an evidence artifact, or when checki
 
 Continues [Phase 0 Opens No PR — the Earliest PR Is Phase 1](./phase-0-opens-no-pr.md).
 
-**Baseline artifacts ride Phase 1's PR.** When Phase 0 writes evidence files — an `evidence/phase-0-snapshot.txt` baseline record, a slug register, a recorded path constant — those files land in the **first** PR the plan opens, which is the Phase 1 PR. A baseline artifact never justifies a PR of its own.
+**Baseline artifacts land with the first change-producing delivery unit.** Under `*-to-pr`, that is
+the first PR the plan opens, no earlier than Phase 1. Under a permitted direct mode, they land at the
+first direct checkpoint. A baseline artifact never justifies its own integration.
 
 **Why this is a hard rule**: a PR whose diff is empty, or holds only a baseline text file, still
 consumes PR CI and creates branch, merge, and cleanup obligations for no shippable increment. It
@@ -27,6 +29,7 @@ conflation the [Delivery Mode](./delivery-mode-the-four-modes.md#delivery-mode) 
 
 **Enforcement**: `plan-maker` never emits a PR-creation, optional semantic-review, PR-CI, or merge
 step inside Phase 0. `plan-checker` flags any such step as **HIGH** regardless of delivery mode.
-`plan-fixer` removes the offending step and folds any Phase 0 evidence artifact into the Phase 1
-PR. `plan-execution-checker` flags a PR actually opened for Phase 0 as **HIGH**.
+`plan-fixer` removes the offending step and folds any Phase 0 evidence artifact into the first
+change-producing unit's mode-specific integration. `plan-execution-checker` flags a PR actually
+opened for Phase 0 as **HIGH**.
 `repo-setup-manager` carries no push or PR step.

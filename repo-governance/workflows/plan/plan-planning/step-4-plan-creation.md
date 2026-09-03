@@ -45,9 +45,10 @@ Delegate via the Agent tool. Provide a self-contained handoff with:
     copyable commands, expected
     observations, failure handling, and evidence destinations. Code outcomes use separate detailed
     RED, GREEN, and REFACTOR checkboxes. Keep canonical Gherkin in PRD/spec files and reference it;
-    preserve TDD evidence, phase gates, natural delivery seams, PR-size limits, worktree and delivery
-    mode, manual verification, operational readiness, governance/C4 reconciliation, and conditional
-    recovery dispositions. Useful checklist length is not a defect.
+    preserve TDD evidence, phase gates, natural cohesive and production-deployable seams, atomic
+    consistency, incomplete-feature flag lifecycle, worktree/delivery mode, manual
+    verification, operational readiness, governance/C4 reconciliation, and recovery. Numeric counts
+    never define delivery boundaries.
 12. **Automatic rule-impact instruction**: apply the complete
     [Automatic Rule-Impact Handoff](./step-4-automatic-rule-impact.md) for every affected
     repository. A workflow link or generic propagation checkbox does not satisfy it.

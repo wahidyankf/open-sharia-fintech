@@ -13,6 +13,7 @@ related:
   - ./best-practices.md
 principles:
   - automation-over-manual
+  - reproducibility
 ---
 
 # React Testing

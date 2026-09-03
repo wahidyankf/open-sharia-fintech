@@ -22,11 +22,12 @@ When creating project plans in `plans/` folder:
 - PASS: **Declare the mode explicitly** using a `## Delivery Mode` field only when overriding the
   default (see the [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
   for the field syntax and the three-tier precedence).
-- **If a direct-push mode is chosen** (`worktree-to-origin-main`, `main-to-origin-main`): document why
-  in the plan (e.g., "single-line config fix, no review warranted") -- and confirm the mode is
-  actually permitted under the per-repository branch-protection restriction: neither direct-push mode
-  has an executable path in `ose-public`; both direct-push modes remain available
-  only for `ose-private` infrastructure-as-code plans. See
+- **If `main-to-origin-main` is chosen**: document why in the plan and confirm the mode is actually
+  permitted under the per-repository restriction. Neither direct-push mode has an executable path in
+  `ose-public`; `worktree-to-origin-main` is also unavailable in `ose-private`. Only explicitly
+  declared `main-to-origin-main` remains there, for stateful IaC needing the primary checkout's real
+  secrets/local state or CI-IaC changing its own pipeline, runner, or toolchain provisioning where
+  PR self-validation is circular. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **Example plan delivery.md (default mode, no field needed)**:
@@ -35,11 +36,12 @@ When creating project plans in `plans/` folder:
 ## Overview
 
 All implementation happens on a `worktree-to-pr` plan branch (the repo-wide default -- no
-`## Delivery Mode` field needed) using feature flags to hide incomplete work.
+`## Delivery Mode` field needed). Incomplete behavior reaches `main` only as an internally complete,
+tested, inert increment behind a temporary production-disabled feature flag.
 
 **Feature flags**:
 
-- `ENABLE_NEW_PAYMENT_FLOW` - Hides new payment integration until ready
+- `ENABLE_NEW_PAYMENT_FLOW` - Defaults off in production; both paths pass; removal follows rollout
 
 **Phases**:
 
