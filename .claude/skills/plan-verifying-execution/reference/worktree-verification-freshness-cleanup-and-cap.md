@@ -41,7 +41,9 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
      invocations happened for this repo over the plan's whole run.
    - **More than one distinct `git worktree add` invocation for this repo within one plan: HIGH**
      finding — every delivery unit landed in this repo should have reused the one provisioned
-     worktree (branch-switching between units), not provisioned a fresh one per unit.
+     worktree (branch-switching between units), not provisioned a fresh one per unit. A subagent
+     dispatch's auto-provisioned worktree counts identically toward this count, whether or not it
+     appears in a command the acting agent typed directly.
    - **Worktree mode: no worktree-provisioning evidence recoverable** (no execution-log/implementation-notes lines
      recording `git worktree add`, AND the worktree is already gone from disk per this repo's
      [Immediate Cleanup rule](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup.md),

@@ -48,3 +48,10 @@ used it has landed — never when the first one does. Main modes have no worktre
 Boundaries` table names more than one worktree path for the same repository as **HIGH**.
 `plan-execution-checker` flags an execution history showing more than one `git worktree add` for the
 same repo within one plan as **HIGH**.
+
+The cap holds as a live fact, not only a planning-text one. The acting agent runs `git worktree
+list` for a repo immediately before provisioning a worktree there, and again immediately after each
+delivery unit that used it lands, removing any worktree beyond the plan's single capped one before
+proceeding — including one a subagent dispatch auto-provisioned, which counts toward this cap even
+though it appears in no command the acting agent typed directly. See
+[Harness Capability Gating](../../../development/agents/agent-workflow-orchestration/operating-budgets-harness-capability-gating.md).
