@@ -2,7 +2,7 @@
 
 Frontend (UI-semantic) Gherkin scenarios for `ose-app-web`. The `smoke` domain is consumed by
 Playwright-BDD (`apps/ose-app-web-e2e`); the `env-loader` domain is consumed by
-`@amiceli/vitest-cucumber` unit tests (`apps/ose-app-web/test/unit`).
+`@amiceli/vitest-cucumber` unit tests (`apps/ose-app-web/tests/unit`).
 
 ## Feature files
 

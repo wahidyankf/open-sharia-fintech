@@ -2,10 +2,8 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-const sharedPlugins = [react(), tsconfigPaths()];
-
 export default defineConfig({
-  plugins: sharedPlugins,
+  plugins: [react(), tsconfigPaths()],
   test: {
     passWithNoTests: true,
     coverage: {
@@ -23,38 +21,27 @@ export default defineConfig({
         "**/*.stories.{ts,tsx}",
       ],
       thresholds: {
-        lines: 70,
+        // Only line coverage is a repository-enforced floor (AC-COVERAGE-01);
+        // the `test:coverage` Nx target's `--coverage.thresholds.lines=99`
+        // flag is the source of truth and overrides this value at
+        // invocation time. Functions/branches/statements keep their
+        // pre-migration bar — raising them isn't part of this contract.
+        lines: 99,
         functions: 70,
         branches: 70,
         statements: 70,
       },
       reporter: ["text", "json-summary", "lcov"],
     },
-    projects: [
-      {
-        plugins: sharedPlugins,
-        test: {
-          name: "unit",
-          include: ["test/unit/**/*.steps.{ts,tsx}", "**/*.unit.{test,spec}.{ts,tsx}", "src/**/*.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules", "**/*.int.{test,spec}.{ts,tsx}"],
-          environment: "jsdom",
-          setupFiles: ["./src/test/setup.ts"],
-          testTimeout: 30000,
-          hookTimeout: 30000,
-        },
-      },
-      {
-        plugins: sharedPlugins,
-        test: {
-          name: "integration",
-          include: ["test/integration/**/*.{test,spec}.{ts,tsx}", "src/**/*.int.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules"],
-          environment: "jsdom",
-          setupFiles: ["./src/test/setup.ts"],
-          testTimeout: 30000,
-          hookTimeout: 30000,
-        },
-      },
-    ],
+    // There is no separate "integration" tier here: the canonical registry
+    // (repo-config.yml testing.projects[ose-app-web].behavior.adapters.
+    // integration) declares that disposition `inapplicable` — no isolated
+    // local-resource boundary — so the former "integration" vitest project
+    // matched zero files and `test:integration` is (correctly) a no-op.
+    include: ["tests/unit/**/*.test.{ts,tsx}", "tests/unit/**/*.steps.{ts,tsx}"],
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    testTimeout: 30000,
+    hookTimeout: 30000,
   },
 });

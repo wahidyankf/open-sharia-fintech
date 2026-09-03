@@ -24,14 +24,14 @@ function collectSourceFiles(dir: string): string[] {
 
 describe("ose-app-web web-ui adoption", () => {
   it("imports at least one primitive from @open-sharia-enterprise/web-ui", () => {
-    const srcRoot = path.resolve(__dirname, "..");
+    const srcRoot = path.resolve(__dirname, "../../../src");
     const files = collectSourceFiles(srcRoot);
     const consumers = files.filter((file) => readFileSync(file, "utf8").includes(`from "${WEB_UI_PACKAGE}"`));
     expect(consumers.length).toBeGreaterThan(0);
   });
 
   it("uses the canonical package name (never a ts-ui alias)", () => {
-    const srcRoot = path.resolve(__dirname, "..");
+    const srcRoot = path.resolve(__dirname, "../../../src");
     const files = collectSourceFiles(srcRoot);
     const tsUiUsages = files.filter((file) => readFileSync(file, "utf8").includes("@open-sharia-enterprise/ts-ui"));
     expect(tsUiUsages).toHaveLength(0);

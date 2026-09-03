@@ -24,7 +24,7 @@ export default [
       "storybook-static/**",
       "**/*.unit.test.*",
       "**/*.int.test.*",
-      "test/**",
+      "tests/**",
     ],
   },
   {
