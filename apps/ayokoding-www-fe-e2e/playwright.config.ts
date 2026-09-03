@@ -21,7 +21,7 @@ const testDir = defineBddConfig({
     // own gherkin/ tree.
     path.join(workspaceRoot, "specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"),
   ],
-  steps: "./src/steps/**/*.steps.ts",
+  steps: "./tests/e2e/steps/**/*.steps.ts",
   // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in
   // the globbed features lacks a matching step def. This app's Gherkin surface (many features,
   // most scenarios tagged plain @unit or @unit @e2e) has grown well past this project's own

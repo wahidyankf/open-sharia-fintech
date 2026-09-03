@@ -2,7 +2,7 @@
   "name": "ayokoding-www-be-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/ayokoding-www-be-e2e/src",
+  "sourceRoot": "apps/ayokoding-www-be-e2e/tests",
   "targets": {
     "install": {
       "executor": "nx:run-commands",
@@ -48,7 +48,8 @@
           "npx nx run ayokoding-www-be-e2e:lint",
           "npx nx run ayokoding-www-be-e2e:test:unit",
           "npx nx run ayokoding-www-be-e2e:test:coverage",
-          "npx nx run ayokoding-www-be-e2e:test:specs"
+          "npx nx run ayokoding-www-be-e2e:test:specs",
+          "npx nx run ayokoding-www-be-e2e:test:layout:validation"
         ],
         "parallel": false
       }
@@ -120,7 +121,7 @@
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
-        "{projectRoot}/src/steps/**/*.steps.ts",
+        "{projectRoot}/tests/integration/steps/**/*.steps.ts",
         "{projectRoot}/playwright.config.ts",
         "{projectRoot}/e2e-coverage-baseline.json"
       ]
@@ -136,6 +137,14 @@
         "parallel": false
       },
       "cache": true
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project ayokoding-www-be-e2e"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"],

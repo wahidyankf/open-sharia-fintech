@@ -64,7 +64,7 @@ export default defineConfig({
         plugins: sharedPlugins,
         test: {
           name: "unit",
-          include: ["test/unit/be-steps/**/*.steps.ts", "**/*.unit.{test,spec}.{ts,tsx}"],
+          include: ["tests/unit/be-steps/**/*.steps.ts", "tests/unit/**/*.unit.{test,spec}.{ts,tsx}"],
           // `next build` copies the whole app — tests included — into
           // `.next/standalone/apps/ayokoding-www/`, where the unprefixed
           // `**/*.unit.test.ts` glob above matches every copy. Those copies then
@@ -83,9 +83,9 @@ export default defineConfig({
         test: {
           name: "unit-fe",
           include: [
-            "test/unit/fe-steps/**/*.steps.{ts,tsx}",
-            "src/features/**/*.test.{ts,tsx}",
-            // `src/app/**` also holds jsdom/@testing-library React component tests (e.g.
+            "tests/unit/fe-steps/**/*.steps.{ts,tsx}",
+            "tests/unit/features/**/*.test.{ts,tsx}",
+            // `tests/unit/app/**` also holds jsdom/@testing-library React component tests (e.g.
             // `benchmark-content.test.tsx`) — without this, neither this project's nor the
             // "unit" (node) project's glob discovers them at all, so the test silently never
             // runs (exits 0 with zero files matched) instead of failing (pr-review-synthesis-maker
@@ -93,7 +93,7 @@ export default defineConfig({
             // is NOT a fix — that routes it to the "unit" project below, which runs
             // `environment: "node"` with no `setupFiles`, and `@testing-library/react`'s
             // `render()`/`screen` hard-fail under Node.
-            "src/app/**/*.test.{ts,tsx}",
+            "tests/unit/app/**/*.test.{ts,tsx}",
           ],
           // `*.test.{ts,tsx}` is a suffix match, so `*` also swallows a `.unit.test.ts` file's
           // `.unit` segment (e.g. `service.unit.test.ts` matches this glob too) — excluded here so
@@ -102,7 +102,7 @@ export default defineConfig({
           // `service.unit.test.ts` and `index-generator.unit.test.ts`, the first files placed under
           // `src/features/**` using this naming convention; every pre-existing `.unit.test.ts` file
           // lives outside `src/features/**`, which is why this double-match was never triggered
-          // before). The same exclusion covers `src/app/**` for the identical reason.
+          // before). The same exclusion covers `tests/unit/app/**` for the identical reason.
           exclude: ["node_modules", "**/*.unit.test.{ts,tsx}"],
           environment: "jsdom",
           setupFiles: ["./src/test/setup.ts"],
