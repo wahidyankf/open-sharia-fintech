@@ -1,5 +1,6 @@
 namespace OrganicleverBe.Contexts.Messaging
 
+open System.Diagnostics.CodeAnalysis
 open System.Text
 open System.Threading.Tasks
 open NATS.Client.Core
@@ -26,6 +27,7 @@ module Infrastructure =
     /// Runs the JetStream durable demo against a connected NATS client: create or
     /// get the stream and durable consumer, publish one demo message, then fetch
     /// and acknowledge it. Returns the outcome.
+    [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS JetStream broker; e2e-tested per the @e2e-tagged specs/apps/organiclever/be/behaviors/messaging/jetstream-demo.feature, owned by organiclever-be-e2e")>]
     let runDemo (conn: NatsConnection) : Task<JetStreamDemoOutcome> =
         task {
             try

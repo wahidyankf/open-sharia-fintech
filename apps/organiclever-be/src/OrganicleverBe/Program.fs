@@ -9,6 +9,7 @@ open Giraffe
 open OrganicleverBe.Infrastructure.AppDbContext
 open OrganicleverBe.Infrastructure.Database
 open OrganicleverBe.Infrastructure.NatsClient
+open OrganicleverBe.Infrastructure.NatsConnect
 open OrganicleverBe.Contexts.Db.Infrastructure
 open OrganicleverBe.Contexts.Env.Infrastructure
 open OrganicleverBe.Contexts.Messaging.Application

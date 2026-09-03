@@ -86,7 +86,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test apps/organiclever-be/tests/unit/OrganicleverBe.UnitTests.fsproj --collect:\"XPlat Code Coverage\" /p:Threshold=80 /p:ThresholdType=line"
+        "command": "dotnet test apps/organiclever-be/tests/unit/OrganicleverBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=99 \"/p:Include=[OrganicleverBe]*\" /p:ThresholdType=line \"/p:ExcludeByFile=**/OrganicleverBe/Program.fs%2C**/Contexts/Db/Infrastructure/DbMigrations.fs%2C**/Contexts/Journal/Infrastructure/JournalInfrastructure.fs%2C**/Contexts/Messaging/Infrastructure/JetStreamDemo.fs%2C**/Infrastructure/NatsConnect.fs\""
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/tests/unit/**/*.fs"]
@@ -99,7 +99,10 @@
           "npx nx run organiclever-be:lint",
           "npx nx run organiclever-be:test:unit",
           "npx nx run organiclever-be:test:coverage",
-          "npx nx run organiclever-be:test:specs"
+          "npx nx run organiclever-be:test:specs",
+          "npx nx run organiclever-be:test:layout:validation",
+          "npx nx run organiclever-be:coverage:policy:validation",
+          "npx nx run organiclever-be:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -162,6 +165,30 @@
       },
       "cache": true,
       "inputs": ["default", "specs"]
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project organiclever-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project organiclever-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project organiclever-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {

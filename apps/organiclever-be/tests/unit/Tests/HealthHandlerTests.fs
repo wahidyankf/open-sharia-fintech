@@ -2,7 +2,7 @@ module OrganicleverBe.Tests.Unit.Tests.HealthHandlerTests
 
 open System.Net
 open Xunit
-open OrganicleverBe.Handlers.HealthHandler
+open OrganicleverBe.WebApp
 open OrganicleverBe.Tests.Unit.Steps.BddState
 
 [<Fact>]

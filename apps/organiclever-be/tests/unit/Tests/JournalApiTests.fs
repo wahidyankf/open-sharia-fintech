@@ -1,9 +1,12 @@
 module OrganicleverBe.Tests.Unit.Tests.JournalApiTests
 
+open System
 open System.Net
 open System.Net.Http
 open System.Text
+open System.Threading.Tasks
 open Xunit
+open OrganicleverBe.Contexts.Journal.Infrastructure
 open OrganicleverBe.Contexts.Journal.Application
 open OrganicleverBe.Contexts.Journal.Api
 open OrganicleverBe.Tests.Unit.Steps.BddState
@@ -13,6 +16,28 @@ open OrganicleverBe.Tests.Unit.Steps.BddState
 let private journalClient () : HttpClient =
     let repo = inMemoryRepository ()
     buildClient (routes repo)
+
+/// A fixed row whose stored `Payload` is not valid JSON, letting a test drive
+/// the wire-serialisation fallback in `entryToWire` without needing a real
+/// storage layer to produce a corrupt row.
+let private rowWithInvalidPayload: JournalEntryRow =
+    { Id = "bad-payload-1"
+      Name = "reading"
+      Payload = "not valid json{"
+      StartedAt = DateTime.UtcNow
+      FinishedAt = DateTime.UtcNow
+      Labels = [||]
+      CreatedAt = DateTime.UtcNow
+      UpdatedAt = DateTime.UtcNow }
+
+/// A repository stub that always serves `rowWithInvalidPayload`, regardless of
+/// which id is requested.
+let private repoWithInvalidPayload () : JournalRepository =
+    { Create = fun _ -> Task.FromResult rowWithInvalidPayload
+      FindById = fun _ -> Task.FromResult(Some rowWithInvalidPayload)
+      List = fun () -> Task.FromResult [ rowWithInvalidPayload ]
+      Update = fun _ -> Task.FromResult(Some rowWithInvalidPayload)
+      Delete = fun _ -> Task.FromResult true }
 
 let private jsonContent (body: string) : StringContent =
     new StringContent(body, Encoding.UTF8, "application/json")
@@ -123,3 +148,78 @@ let ``DELETE a missing journal entry returns 404`` () =
     let client = journalClient ()
     let resp = client.DeleteAsync("/api/v1/journal/entries/does-not-exist").Result
     Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode)
+
+[<Fact>]
+let ``POST journal entries with only a name defaults every optional field`` () =
+    let client = journalClient ()
+    let minimal = "{\"name\":\"reading\"}"
+
+    let resp = client.PostAsync("/api/v1/journal/entries", jsonContent minimal).Result
+
+    Assert.Equal(HttpStatusCode.Created, resp.StatusCode)
+    let body = resp.Content.ReadAsStringAsync().Result
+    Assert.Contains("reading", body)
+
+[<Fact>]
+let ``POST journal entries with malformed JSON returns 400`` () =
+    let client = journalClient ()
+
+    let resp =
+        client.PostAsync("/api/v1/journal/entries", jsonContent "{not valid json").Result
+
+    Assert.Equal(HttpStatusCode.BadRequest, resp.StatusCode)
+
+[<Fact>]
+let ``PUT a journal entry with malformed JSON returns 400`` () =
+    let client = journalClient ()
+
+    let created =
+        client.PostAsync("/api/v1/journal/entries", jsonContent validEntryJson).Result
+
+    let id = extractId (created.Content.ReadAsStringAsync().Result)
+
+    let resp =
+        client.PutAsync(sprintf "/api/v1/journal/entries/%s" id, jsonContent "{not valid json").Result
+
+    Assert.Equal(HttpStatusCode.BadRequest, resp.StatusCode)
+
+[<Fact>]
+let ``PUT a journal entry without a name field updates only the supplied fields`` () =
+    let client = journalClient ()
+
+    let created =
+        client.PostAsync("/api/v1/journal/entries", jsonContent validEntryJson).Result
+
+    let id = extractId (created.Content.ReadAsStringAsync().Result)
+    let update = "{\"payload\":{\"title\":\"Refactoring\"}}"
+
+    let resp =
+        client.PutAsync(sprintf "/api/v1/journal/entries/%s" id, jsonContent update).Result
+
+    Assert.Equal(HttpStatusCode.OK, resp.StatusCode)
+    let body = resp.Content.ReadAsStringAsync().Result
+    Assert.Contains("reading", body)
+    Assert.Contains("Refactoring", body)
+
+[<Fact>]
+let ``PUT a journal entry with an invalid name format returns 400`` () =
+    let client = journalClient ()
+
+    let created =
+        client.PostAsync("/api/v1/journal/entries", jsonContent validEntryJson).Result
+
+    let id = extractId (created.Content.ReadAsStringAsync().Result)
+    let update = "{\"name\":\"Invalid Name\"}"
+
+    let resp =
+        client.PutAsync(sprintf "/api/v1/journal/entries/%s" id, jsonContent update).Result
+
+    Assert.Equal(HttpStatusCode.BadRequest, resp.StatusCode)
+
+[<Fact>]
+let ``GET a journal entry whose stored payload is not valid JSON still serialises`` () =
+    let client = buildClient (routes (repoWithInvalidPayload ()))
+    let resp = client.GetAsync("/api/v1/journal/entries/bad-payload-1").Result
+    Assert.Equal(HttpStatusCode.OK, resp.StatusCode)
+    let body = resp.Content.ReadAsStringAsync().Result
+    Assert.Contains("bad-payload-1", body)
