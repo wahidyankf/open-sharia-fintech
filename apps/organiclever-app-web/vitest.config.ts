@@ -75,45 +75,38 @@ export default defineConfig({
         "**/*.stories.{ts,tsx}",
       ],
       thresholds: {
-        lines: 75,
+        // Only line coverage is a repository-enforced floor (AC-COVERAGE-01);
+        // the `test:coverage` Nx target's `--coverage.thresholds.lines=99`
+        // flag is the source of truth and overrides this value at
+        // invocation time. Functions/branches/statements keep their
+        // pre-migration bar — raising them isn't part of this contract.
+        lines: 99,
         functions: 75,
         branches: 75,
         statements: 75,
       },
       reporter: ["text", "json-summary", "lcov"],
     },
-    projects: [
-      {
-        plugins: sharedPlugins,
-        test: {
-          name: "unit",
-          include: ["test/unit/**/*.steps.{ts,tsx}", "**/*.unit.{test,spec}.{ts,tsx}", "src/**/*.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules", "**/*.int.{test,spec}.{ts,tsx}"],
-          environment: "jsdom",
-          setupFiles: ["./src/test/setup.ts"],
-          // PGlite-backed `@effect/vitest` `layer()` suites and React-hook
-          // tests using `renderHook` + `waitFor` spin up an in-memory
-          // database in beforeEach via a scoped Layer. Under v8 coverage
-          // instrumentation the cold-start path can exceed the default
-          // timeouts, surfacing as flaky "Hook timed out in 10000ms" or
-          // `waitFor` assertion failures across journal/settings/routine/
-          // stats store and hook tests. Raise both budgets uniformly.
-          testTimeout: 30000,
-          hookTimeout: 30000,
-        },
-      },
-      {
-        plugins: sharedPlugins,
-        test: {
-          name: "integration",
-          include: ["test/integration/**/*.{test,spec}.{ts,tsx}", "src/**/*.int.{test,spec}.{ts,tsx}"],
-          exclude: ["node_modules"],
-          environment: "jsdom",
-          setupFiles: ["./src/test/setup.ts"],
-          testTimeout: 30000,
-          hookTimeout: 30000,
-        },
-      },
-    ],
+    include: ["tests/unit/**/*.test.{ts,tsx}", "tests/unit/**/*.steps.{ts,tsx}"],
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    // PGlite-backed `@effect/vitest` `layer()` suites and React-hook
+    // tests using `renderHook` + `waitFor` spin up an in-memory
+    // database in beforeEach via a scoped Layer. Under v8 coverage
+    // instrumentation the cold-start path can exceed the default
+    // timeouts, surfacing as flaky "Hook timed out in 10000ms" or
+    // `waitFor` assertion failures across journal/settings/routine/
+    // stats store and hook tests. Raise both budgets uniformly.
+    //
+    // There is no separate "integration" tier here: the canonical registry
+    // (repo-config.yml testing.projects[organiclever-app-web].behavior.
+    // adapters.integration) declares that disposition `inapplicable` —
+    // PGlite is an in-process embedded engine, not an isolated local
+    // resource — so PGlite-backed suites (including the former
+    // journal-store.int.test.ts, folded into journal-store-batch.unit.test.ts)
+    // run as unit tests, same as this project's other PGlite-backed suites
+    // always have.
+    testTimeout: 30000,
+    hookTimeout: 30000,
   },
 });
