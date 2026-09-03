@@ -1346,6 +1346,42 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OSE-WEB` delivery lifecycle
 
+> Migrated `ose-app-web` to the target test-contract shape, mirroring the established pattern:
+> `test:unit`/`test:coverage` `cwd` fixed from the `{projectRoot}` Nx macro to the literal
+> `apps/ose-app-web` path; coverage floor 88→99; `test:quick` gained the 3 new
+> `test:layout:validation`/`coverage:policy:validation`/`package-manifest:policy:validation`
+> targets; `test:integration` converted from a dead vitest `--project integration` invocation
+> (whose include globs matched zero files) to the documented no-op form, matching Phase 14's exact
+> precedent; `specs:behavior:coverage`'s `--shared-steps` arg and the coverage-input glob both
+> updated from `test/unit`→`tests/unit` for the relocated tests; `eslint.config.mjs`'s stale
+> `"test/**"` ignore entry corrected to `"tests/**"` — a gap left unfixed by both Phase 14
+> (`organiclever-app-web`) and Phase 16 (`organiclever-www`), currently harmless there since
+> neither's lint config scope reaches the test tree, deferred to Phase 22's end-to-end audit rather
+> than reopening those merged PRs for a cosmetic fix.
+>
+> This orchestrator explicitly passed forward the Phase 16 `{projectRoot}` cwd lesson (which it had
+> gotten wrong in that phase's own dispatch prompt) into this phase's dispatch prompt, citing its
+> own prior error; the implementation agent applied it correctly from the start.
+>
+> Independently re-verified before merge, all fresh (not cached): `test:unit` 8 files/51 tests
+> passing; `test:coverage` 100% lines/statements/functions, 95.83% branches (a pre-existing
+> `fmt.ts:54` branch gap outside `AC-COVERAGE-01`'s line-only floor); all 3 new policy-validation
+> targets green; `project.json`, `vitest.config.ts`, `eslint.config.mjs`, and the specs README diff
+> all matched the implementation agent's claims line-for-line; the 3 new/relocated test files
+> (`metadata.unit.test.ts`, `env-loader.unit.test.ts`, `env.unit.test.ts`) read in full and
+> confirmed as legitimate, non-gaming tests exercising real module exports; `repo-config.yml` diff
+> confirmed empty.
+>
+> The PR branch needed a rebase onto one intervening upstream commit (Phase 16's PR #453) before
+> merge, a clean content-identical replay; a fresh leak-review was posted against the new head per
+> the current-head requirement, independently verifying the rebase's content-identity via
+> byte-for-byte diff comparison before re-running its own scan.
+>
+> Two leak-reviews, both `pass`: original head `c645c4379` (review `5098057293`), post-rebase head
+> `3771450c4` (review `5098087465`). CI green (15/15) on the merged head. PR
+> [wahidyankf/ose-public#454](https://github.com/wahidyankf/ose-public/pull/454), merge commit
+> `5981f39e86c62c6702ed953c96ca3172252e554e`.
+
 ## Phase 18: Migrate `O-PUB-OSE-BE`
 
 - **Input:** complete backend/contracts/API-harness rows and schema boundaries.
