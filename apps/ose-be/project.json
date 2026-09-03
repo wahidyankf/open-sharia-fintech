@@ -125,6 +125,55 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
     },
+    "test:behavior:coverage:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ose-be --adapter unit"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature",
+        "{workspaceRoot}/repo-config.yml",
+        "default"
+      ]
+    },
+    "test:behavior:coverage:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ose-be --adapter integration"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature",
+        "{workspaceRoot}/repo-config.yml",
+        "default"
+      ]
+    },
+    "test:behavior:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ose-be --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/ose/be/behaviors/**/*.feature",
+        "{workspaceRoot}/repo-config.yml",
+        "default"
+      ]
+    },
+    "test:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run ose-be:test:behavior:coverage:unit",
+          "npx nx run ose-be:test:behavior:coverage:integration",
+          "npx nx run ose-be:test:behavior:coverage:e2e"
+        ],
+        "parallel": false
+      },
+      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
+      "cache": true
+    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
