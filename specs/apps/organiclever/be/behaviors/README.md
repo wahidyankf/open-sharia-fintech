@@ -5,15 +5,15 @@ domains.
 
 ## Feature Files
 
-| Domain    | File                               | Scenarios |
-| --------- | ---------------------------------- | --------- |
-| health    | `health/health-check.feature`      | 2         |
-| journal   | `journal/journal-crud.feature`     | 6         |
-| db        | `db/migrations.feature`            | 1         |
-| messaging | `messaging/nats-connect.feature`   | 1         |
-| messaging | `messaging/nats-config.feature`    | 1         |
-| messaging | `messaging/jetstream-demo.feature` | 1         |
-| env       | `env/env-tier-loader.feature`      | 1         |
+| Domain    | File                                    | Scenarios |
+| --------- | --------------------------------------- | --------- |
+| health    | `health/health-check.feature`           | 2         |
+| journal   | `journal/journal-crud.feature`          | 6         |
+| db        | `db/migrations.feature`                 | 1         |
+| messaging | `messaging/nats-config.feature`         | 1         |
+| messaging | `messaging/live/nats-connect.feature`   | 1         |
+| messaging | `messaging/live/jetstream-demo.feature` | 1         |
+| env       | `env/env-tier-loader.feature`           | 1         |
 
 ## Conventions
 

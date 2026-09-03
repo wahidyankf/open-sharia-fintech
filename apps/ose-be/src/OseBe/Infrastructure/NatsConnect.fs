@@ -9,7 +9,7 @@ open NATS.Client.Core
 /// non-fatal so the HTTP host still serves /health.
 ///
 /// The success path requires a live NATS broker; e2e-tested per the
-/// @e2e-tagged specs/apps/ose/be/behaviors/messaging/nats-connect.feature,
+/// @e2e-tagged specs/apps/ose/be/behaviors/messaging/live/nats-connect.feature,
 /// owned by ose-be-e2e. The graceful-failure path is unit-tested directly in
 /// Tests/NatsClientTests.fs. Kept in its own file (rather than alongside the
 /// pure, fully unit-tested `requireNatsUrl` in NatsClient.fs) so the

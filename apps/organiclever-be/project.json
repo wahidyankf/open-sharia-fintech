@@ -120,7 +120,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir messaging specs/apps/organiclever/be/behaviors apps/organiclever-be"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-dir live specs/apps/organiclever/be/behaviors apps/organiclever-be"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
