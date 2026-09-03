@@ -1,6 +1,7 @@
 module OseBe.Infrastructure.Repositories.EfRepositories
 
 open System
+open System.Diagnostics.CodeAnalysis
 open System.Linq
 open System.Threading.Tasks
 open Microsoft.EntityFrameworkCore
@@ -8,6 +9,7 @@ open OseBe.Infrastructure.AppDbContext
 open OseBe.Infrastructure.Repositories.RepositoryTypes
 
 /// Builds the EF-backed regulatory-document repository over an AppDbContext.
+[<ExcludeFromCodeCoverage(Justification = "Integration-tested against real PostgreSQL — see tests/integration/DatabaseBootTests.fs")>]
 let regulatoryDocumentRepository (db: AppDbContext) : RegulatoryDocumentRepository =
     { Create =
         fun entity ->
@@ -30,6 +32,7 @@ let regulatoryDocumentRepository (db: AppDbContext) : RegulatoryDocumentReposito
             } }
 
 /// Builds the EF-backed internal-policy-document repository over an AppDbContext.
+[<ExcludeFromCodeCoverage(Justification = "Integration-tested against real PostgreSQL — see tests/integration/DatabaseBootTests.fs")>]
 let internalPolicyDocumentRepository (db: AppDbContext) : InternalPolicyDocumentRepository =
     { Create =
         fun entity ->

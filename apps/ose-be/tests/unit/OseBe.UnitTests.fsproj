@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TestCollections.fs" />
     <Compile Include="Steps/BddState.fs" />
     <Compile Include="Steps/HealthSteps.fs" />
     <Compile Include="Steps/ContextReadinessSteps.fs" />
@@ -23,6 +24,12 @@
     <Compile Include="Tests/GapAnalysisTests.fs" />
     <Compile Include="Tests/InternalPolicyTests.fs" />
     <Compile Include="Tests/RegulatorySourceTests.fs" />
+    <Compile Include="Tests/DatabaseTests.fs" />
+    <Compile Include="Tests/AppDbContextTests.fs" />
+    <Compile Include="Tests/NatsClientTests.fs" />
+    <Compile Include="Tests/OpenRouterClientTests.fs" />
+    <Compile Include="Tests/MessagingTests.fs" />
+    <Compile Include="Tests/WebAppTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +44,14 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.0" />
     <PackageReference Include="TickSpec" Version="2.0.5" />
+    <PackageReference Include="coverlet.collector" Version="8.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

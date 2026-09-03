@@ -10,6 +10,7 @@ open OseBe.Infrastructure.AppDbContext
 open OseBe.Infrastructure.Database
 open OseBe.Contexts.Config.Infrastructure
 open OseBe.Infrastructure.NatsClient
+open OseBe.Infrastructure.NatsConnect
 open OseBe.Contexts.Db.Infrastructure
 open OseBe.Contexts.Messaging.Application
 open OseBe.Contexts.Messaging.Infrastructure

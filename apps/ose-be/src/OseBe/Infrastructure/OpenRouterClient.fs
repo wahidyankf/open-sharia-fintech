@@ -1,11 +1,6 @@
 module OseBe.Infrastructure.OpenRouterClient
 
 open System
-open System.Net.Http
-open System.Net.Http.Headers
-open System.Text
-open System.Text.Json
-open System.Threading.Tasks
 
 /// OpenRouter LLM client configuration, sourced from the OSE_BE_OPENROUTER_*
 /// environment variables. The API key is a secret: it is read from the
@@ -40,36 +35,3 @@ let loadConfig () : OpenRouterConfig =
 /// Whether the client is configured with an API key and can issue live calls.
 let isConfigured (config: OpenRouterConfig) : bool =
     not (String.IsNullOrWhiteSpace config.ApiKey)
-
-/// Requests a chat completion from OpenRouter for the given prompt.
-///
-/// Returns Ok with the model's text response, or Error with a diagnostic
-/// message. When no API key is configured the call short-circuits with an Error
-/// rather than issuing an unauthenticated request (no live calls in tests).
-let complete (config: OpenRouterConfig) (prompt: string) : Task<Result<string, string>> =
-    task {
-        if not (isConfigured config) then
-            return Error "OpenRouter API key is not configured"
-        else
-            try
-                use client = new HttpClient()
-                client.BaseAddress <- Uri(config.BaseUrl.TrimEnd('/') + "/")
-                client.DefaultRequestHeaders.Authorization <- AuthenticationHeaderValue("Bearer", config.ApiKey)
-
-                let payload =
-                    JsonSerializer.Serialize(
-                        {| model = config.Model
-                           messages = [| {| role = "user"; content = prompt |} |] |}
-                    )
-
-                use content = new StringContent(payload, Encoding.UTF8, "application/json")
-                use! response = client.PostAsync("chat/completions", content)
-                let! body = response.Content.ReadAsStringAsync()
-
-                if response.IsSuccessStatusCode then
-                    return Ok body
-                else
-                    return Error(sprintf "OpenRouter returned %d: %s" (int response.StatusCode) body)
-            with ex ->
-                return Error(sprintf "OpenRouter request failed: %s" ex.Message)
-    }
