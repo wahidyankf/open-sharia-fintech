@@ -10,6 +10,7 @@ tags:
   - context-mapping
 principles:
   - explicit-over-implicit
+  - simplicity-over-complexity
 created: 2026-02-09
 ---
 

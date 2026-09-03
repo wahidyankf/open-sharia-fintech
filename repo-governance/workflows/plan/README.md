@@ -57,10 +57,10 @@ Every workflow in this directory fans out under the **N+1 model** — `1 main th
 agents = N+1 total`, default **N=3**, with the main thread kept vacant as orchestrator. Ordering is
 **DAG-first**: a plan's `## Parallelization Model` declares which nodes are independent, independent
 nodes fan out up to N, and dependent nodes serialize — sequence is not dependency. Delivery is
-**1-PR↔1-branch↔1-delivery-unit**: each independent node gets its own branch and PR, opened and
-merged at that unit's **delivery boundary** rather than at every phase or batched at plan end, with
-cleanup as the DAG's terminal node. The **worktree** is a coarser unit — capped at one per repository
-per plan and reused across every node landing in that repo, per
+one natural unit per mode-specific integration. Under `*-to-pr`, each independent node gets one
+branch and one PR at its boundary; under a permitted direct mode, it gets one direct checkpoint.
+Worktree modes reuse at most one worktree per repository per plan; main modes use none. Cleanup is
+the DAG's terminal node. See
 [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 ## Related Documentation

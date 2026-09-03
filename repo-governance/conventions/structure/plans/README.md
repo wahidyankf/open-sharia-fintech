@@ -33,7 +33,7 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Placement, Legend, and Execution Semantics](./executor-tagging-placement-legend-and-execution-semantics.md) — Adding the executor-tag legend to a delivery.md file or handling a [HUMAN] stop during execution.
 - [Phases as Natural Pauses With Clear Gates](./phases-as-natural-pauses.md) — Writing a delivery.md phase's closing gate and Pause Safety note.
 - [Delivery Checklists Express a DAG](./delivery-checklists-express-a-dag.md) — Requires a Parallelization Model naming concurrent vs. serial delivery nodes.
-- [Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) — Mapping a plan's DAG nodes onto delivery units, branches, and PRs.
+- [Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) — Mapping DAG nodes onto natural units and mode-specific integration opportunities.
 - [the Earliest PR Is Phase 1](./phase-0-opens-no-pr.md) — Scoping a plan's Phase 0 to confirm it contains no PR-creation or merge step.
 - [Baseline Artifacts and Enforcement](./phase-0-opens-no-pr-rationale-and-enforcement.md) — A Phase 0 step writes evidence.
 - [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md) — Deciding if a phase opens a PR.

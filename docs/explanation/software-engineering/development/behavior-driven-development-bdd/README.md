@@ -12,6 +12,7 @@ principles:
   - documentation-first
   - explicit-over-implicit
   - automation-over-manual
+  - reproducibility
 created: 2026-02-09
 ---
 

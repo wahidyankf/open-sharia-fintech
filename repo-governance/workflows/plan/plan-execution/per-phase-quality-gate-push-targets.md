@@ -13,8 +13,14 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
 3. Commit thematically (Iron Rule 7) — within the explicitly authorized change set, use the fewest
    build-valid, independently reviewable/revertible commits and keep each purpose's required
    completion artifacts together
-4. Push to the resolved delivery mode's target (Iron Rule 5), only after ALL local quality gates pass. The push target depends on the delivery mode resolved in Step 0:
-   - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): push directly to `origin main`.
+4. After ALL local quality gates pass, push according to the resolved delivery mode (Iron Rule 5).
+   A direct-mode integration push or a `*-to-pr` boundary delivery push that precedes PR opening
+   occurs only when the completed phase is the delivery unit's declared boundary. At an
+   intermediate phase, a direct mode pushes nothing; a `*-to-pr` mode may push the unit branch
+   solely for non-integrating durability and opens no PR. The push target depends on the delivery
+   mode resolved in Step 0:
+   - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): at the unit boundary,
+     perform its single reviewed checkpoint by pushing directly to `origin main`.
    - **`worktree-to-pr`**: push the delivery unit's branch from the plan's one provisioned
      worktree. When moving to another independent unit, branch from fresh `origin/main` in that
      same worktree; do not provision another (see
@@ -32,6 +38,6 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
      deploy to production immediately. Incomplete behavior requires a temporary
      production-disabled flag, enabled and disabled path tests, and recorded rollout, rollback, and
      removal. At an
-     intermediate phase, push for durability but open no PR, run no PR review, merge nothing, and
-     skip Step 2c. Dependent phases share a delivery unit; independent nodes never do. Monitor CI
-     on the PR, not `main`.
+     intermediate phase, push the unit branch for durability but open no PR, run no PR review,
+     merge nothing, and skip Step 2c. Dependent phases share a delivery unit; independent nodes
+     never do. Monitor CI on the PR, not `main`.

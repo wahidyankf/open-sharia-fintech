@@ -69,9 +69,10 @@ OSE Platform F# applications MUST use the following stack:
 
 **F# Version Strategy**:
 
-- **Minimum**: F# 6 (MUST use minimum) — computation expressions for `task {}`, anonymous record updates
-- **Recommended**: F# 8 / .NET 8 LTS (SHOULD use for production) — current LTS, improved type inference, `_.Property` shorthand
-- **Latest**: F# 9 / .NET 9 (RECOMMENDED for new projects) — nullable reference type integration, lock expression, improved `use!` in CEs
+- **Legacy**: F# 6 / .NET 6 (retired; migration context only)
+- **Supported**: F# 8 / .NET 8 LTS (existing projects only; upgrade before support ends)
+- **Maintenance**: F# 9 / .NET 9 STS (existing projects only)
+- **Current**: F# 10 / .NET 10 LTS (MUST use for new projects)
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for F#-specific release documentation location
 
@@ -106,37 +107,52 @@ F# development in OSE Platform enforces foundational software engineering princi
 
 ## F# Version Strategy
 
-OSE Platform follows a three-tier F# versioning strategy aligned with .NET LTS releases:
+OSE Platform follows a current-LTS strategy with documented compatibility lines:
 
-**F# 6 / .NET 6 (Minimum - REQUIRED)**:
+**F# 6 / .NET 6 (Retired Legacy Baseline)**:
 
-- All projects MUST support F# 6 as minimum baseline
+- Unsupported; no new or maintained projects should target F# 6 / .NET 6
 - `task {}` computation expression (native Task interop without Async wrapping)
 - Anonymous record type updates (`{ record with Field = newValue }`)
 - `_` (underscore) discard pattern in `use` bindings
 - Struct discriminated unions for performance-critical value types
 
-**F# 8 / .NET 8 LTS (Recommended - SHOULD use)**:
+**F# 8 / .NET 8 LTS (Supported Existing Projects)**:
 
-- Projects SHOULD target F# 8 / .NET 8 for production workloads (.NET 8 LTS supported until November 2026)
+- Existing projects may retain F# 8 / .NET 8 while .NET 8 remains supported through 2026-11-10
 - `_.Property` shorthand for lambda expressions (`fun x -> x.Name` becomes `_.Name`)
 - Improved type inference for generic functions
 - Enhanced pattern matching exhaustiveness checking
 - `[<TailCall>]` attribute for enforced tail recursion (compiler error if not tail-recursive)
 - Nested record field update syntax
 
-**F# 9 / .NET 9 (Latest - RECOMMENDED for new projects)**:
+**F# 9 / .NET 9 (Supported Maintenance Line)**:
 
-- New projects SHOULD use F# 9 / .NET 9 for the latest stable features
+- Existing projects may retain F# 9 / .NET 9 during its STS maintenance window
 - Nullable reference type integration (F# types interoperate cleanly with C# NRT APIs)
 - `lock` expression as first-class expression (cleaner than `lock obj (fun () -> ...)`)
 - Improved `use!` semantics in computation expressions
 - Dictionary expression literals
 - Partial active patterns returning `voption` for zero-allocation matching
 
+**F# 10 / .NET 10 LTS (Current - REQUIRED for new projects)**:
+
+- All new OSE Platform F# projects MUST target F# 10 / .NET 10
+- Scoped warning control with `#warnon`
+- Access modifiers on individual auto-property accessors
+- Tail-call support and typed bindings in computation expressions
+- Clearer sequence-expression and attribute-target diagnostics
+
 **Unlike Go**: .NET follows an annual release cycle with LTS releases every two years. F# version numbers track .NET SDK versions. The platform strategy is: target the current LTS for stability, adopt latest features on new projects.
 
 **See**: [F# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/f-sharp/) for detailed feature documentation
+
+### Version References
+
+- [F# 6 / .NET 6](release-6.md) — retired legacy baseline
+- [F# 8 / .NET 8](release-8.md) — supported LTS line
+- [F# 9 / .NET 9](release-9.md) — supported STS line
+- [F# 10 / .NET 10](release-10.md) — current LTS target
 
 ## OSE Platform Coding Standards (Authoritative)
 
@@ -334,6 +350,7 @@ graph LR
 
 **Status**: Authoritative Standard (Mandatory Compliance)
 
-**F# Version**: F# 6 (minimum), F# 8 / .NET 8 LTS (recommended), F# 9 / .NET 9 (latest)
+**F# Version**: F# 6 / .NET 6 (retired), F# 8 / .NET 8 LTS and F# 9 / .NET 9 STS
+(supported maintenance), F# 10 / .NET 10 LTS (current and required for new projects)
 **Framework Stack**: Giraffe, Saturn, Expecto, FsCheck, Fantomas, dotnet CLI
 **Maintainers**: Platform Architecture Team

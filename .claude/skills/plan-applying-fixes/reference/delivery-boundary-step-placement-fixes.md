@@ -10,8 +10,8 @@ does NOT apply here:
   asserting a PR was opened/reviewed/merged. Deleting a Phase 0 merge line is the ONE sanctioned
   exception to the "never delete a merge step" guard, because the merge it asserts must not happen at
   all — it is not a human gate being weakened, it is a phase that has nothing to merge.
-- If Phase 0 wrote evidence artifacts, add a sentence to Phase 1 stating the evidence lands in the
-  Phase 1 PR — don't leave them orphaned.
+- If Phase 0 wrote evidence artifacts, add a sentence stating they land through the first
+  change-producing unit's mode-specific integration — don't leave them orphaned.
 - If Phase 0 genuinely produces reviewable changes, do NOT restore the PR step — surface it as a
   mis-scoped Phase 0 (MEDIUM, grill first); the correct resolution is moving that work into Phase 1.
 - If a Per-Phase Integration Protocol block is unscoped, add "Phase 1 onward" to its heading/lead
@@ -20,11 +20,11 @@ does NOT apply here:
 
 Verify by re-running the checker's Phase 0 detection command and reading `0`.
 
-## PR Steps Outside a Delivery Boundary
+## Integration Steps Outside a Delivery Boundary
 
-When a PR-creation/semantic-review/`gh pr ready`/merge/post-push-CI step is flagged in a
-phase not declared a delivery boundary, the work is **relocated**, not deleted — a PR opens once per
-delivery unit, at the unit's boundary.
+When an integration step is flagged in a phase not declared a delivery boundary, the work is
+**relocated**, not deleted. Under `*-to-pr`, the unit's PR opens at its boundary; under a permitted
+direct mode, the unit lands at its direct checkpoint.
 
 - **HIGH confidence → move the integration steps down to the delivery unit's boundary phase**,
   merging into that phase's existing integration block. The intermediate phase keeps its own gate and
@@ -36,9 +36,9 @@ delivery unit, at the unit's boundary.
   applicable production-disabled flag tests and lifecycle.
 - If `### Delivery Boundaries` is missing, add it with one row per delivery unit, derived from where
   existing integration steps already sit — never invent boundaries the checklist doesn't support.
-- If a change-producing phase appears in no row, add it to the unit it belongs to (or its own unit if
-  genuinely DAG-independent — the worktree stays the plan's single per-repo instance, reused across
-  every delivery unit landed there).
+- If a change-producing phase appears in no row, add it to the unit it belongs to, or its own unit if
+  genuinely DAG-independent. Worktree modes reuse the plan's one per-repo instance; main modes use
+  the primary checkout and provision none.
 - If the last change-producing phase is not a boundary, make it one.
 - Never fold two independent DAG nodes into one delivery unit to silence a finding.
 

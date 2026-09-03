@@ -1,17 +1,19 @@
 # Rule 10: Worktree Specification Validation (Step 5d — MANDATORY)
 
-After Step 5c, verify the plan declares a worktree path. Applies to ALL plans regardless of size —
-pure-docs and otherwise small formal plans included. Apply prospectively.
+After Step 5c, verify the plan declares its mode-resolved work location. All plans need a
+`## Worktree` section: worktree modes declare a path; main modes declare the primary-checkout
+`not applicable` form. Apply prospectively regardless of size.
 
-**What to validate**:
+**What to validate** (items 2–5 apply only to worktree modes; for a main mode, verify those
+worktree artifacts are absent):
 
 1. **`## Worktree` section exists** — multi-file plans: top-level section in `delivery.md` before any
    phase heading in `delivery.md`. Missing: **HIGH**
    (plan-execution Step 0 hard gate refuses to start).
-2. **Path format** — `worktrees/<plan-identifier>/` where the identifier matches the plan-folder
+2. **Worktree-mode path format** — `worktrees/<plan-identifier>/` where the identifier matches the plan-folder
    identifier (folder name minus the `YYYY-MM-DD__` prefix). Wrong format or identifier mismatch:
    **HIGH**.
-3. **Provisioning command present** — the `claude --worktree <plan-identifier>` command shown verbatim
+3. **Worktree-mode provisioning command present** — the `claude --worktree <plan-identifier>` command shown verbatim
    as the provisioning path the plan was authored inside (plan-execution Step 0 auto-provisions from
    latest `origin/main` only as a backstop, but the command must still be documented). Missing or
    wrong: **MEDIUM**.
@@ -28,7 +30,7 @@ pure-docs and otherwise small formal plans included. Apply prospectively.
    than one distinct path for this repo: **HIGH** — the cap permits at most one worktree per
    repository per plan, reused across every delivery unit; a second distinct path is a defect even
    if each is individually well-formatted.
-6. **Identity record and initialized inventory** — normally, `## Worktree` contains a Provisioned Worktree
+6. **Mode-specific record** — for a worktree mode, `## Worktree` contains a Provisioned Worktree
    Identity with the declared repository-relative `worktrees/<plan-identifier>/` route, initial branch,
    creator, and UTC creation time, plus a Delivery Branch Inventory whose initial branch entry is
    `provisioned`/`active` and proves the creation command and timestamp. A real absolute, home,
@@ -42,7 +44,8 @@ pure-docs and otherwise small formal plans included. Apply prospectively.
    authoring worktree, cites the user's explicit stay-in-worktree constraint, and explains its
    dependency on unlanded work there. It must omit rather than fake identity/inventory and must make
    Step 0 provisioning a blocking first outcome. Missing evidence or any implementation while
-   pending: **HIGH**.
+   pending: **HIGH**. For a main mode, require `Worktree: not applicable` plus the mode and primary
+   checkout rationale; any worktree identity or provisioning command is **HIGH**.
 
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree

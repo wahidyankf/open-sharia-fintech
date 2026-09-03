@@ -9,6 +9,11 @@ tags:
   - testing
   - standards
   - organiclever
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+  - automation-over-manual
+  - reproducibility
 created: 2026-05-17
 ---
 

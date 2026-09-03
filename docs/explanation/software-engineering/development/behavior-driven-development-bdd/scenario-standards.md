@@ -9,6 +9,7 @@ tags:
   - testing
 principles:
   - explicit-over-implicit
+  - automation-over-manual
   - reproducibility
 created: 2026-02-09
 ---

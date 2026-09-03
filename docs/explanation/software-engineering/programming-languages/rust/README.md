@@ -133,6 +133,11 @@ OSE Platform **requires Rust 2024 edition** for all crates:
 
 **Unlike Java's LTS model**: Rust editions are backward compatible — Rust 2015 code compiles with Rust 2024 toolchains. Editions change language idioms, not remove features. Migrate editions using `cargo fix --edition`.
 
+### Edition References
+
+- [Rust 2021 Edition](release-2021.md) — superseded platform edition
+- [Rust 2024 Edition](release-2024.md) — current required platform edition
+
 ## OSE Platform Coding Standards (Authoritative)
 
 **MUST follow these mandatory standards for all Rust code in OSE Platform:**

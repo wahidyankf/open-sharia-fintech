@@ -50,4 +50,4 @@ work schedule or a concrete exception with machine, disk, runner, and risk contr
 Only live overlap and capacity facts remain **unenforced by decision** because a repository-local
 check cannot authenticate them.
 
-See [Delivery Checklists Express a DAG — Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) for how DAG nodes map to delivery units, PRs, and the worktree cap.
+See [Delivery Checklists Express a DAG — Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) for how DAG nodes map to natural units and mode-specific integration.

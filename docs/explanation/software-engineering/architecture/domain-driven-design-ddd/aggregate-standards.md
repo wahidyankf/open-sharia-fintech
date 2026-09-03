@@ -9,6 +9,7 @@ tags:
   - islamic-finance
 principles:
   - explicit-over-implicit
+  - simplicity-over-complexity
   - immutability
 created: 2026-02-09
 ---

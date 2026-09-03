@@ -17,4 +17,8 @@ resolves to `plans/in-progress/`. A direct caller, including
 perform that same procedure for each backlog plan first. See
 [Execute Plan from Backlog](./example-usage-and-iteration-example.md#execute-plan-from-backlog) for the full worked example.
 
-Plan execution happens on the plan's **work branch**, synced to the latest `origin/main`. The work branch is chosen by precedence: (1) a branch the **user explicitly specifies at invocation** — a dedicated worktree, the `main` checkout, or any other existing branch — wins; (2) if the user specifies nothing, the **plan docs win** — the plan's `## Worktree` section (or declared work branch) governs, and absent any override that defaults to a dedicated worktree provisioned from `origin/main`. Whichever branch is selected, the executor's **default first action is to pull the latest `origin/main` into that work branch** before any implementation, to minimize merge collisions later at push time. Executing a plan from a **stale** work branch — one not synced to the latest `origin/main` — is forbidden.
+Plan execution happens in the plan's declared designated worktree, synced to the latest
+`origin/main`. The resolved `worktree-to-pr` mode and `## Worktree` section determine that work
+location. An invocation-selected delivery-unit branch is valid only inside it; the primary checkout
+or another existing branch cannot override the mode or location. The executor's first action is to
+sync that work branch with the latest `origin/main`. Executing from a stale work branch is forbidden.

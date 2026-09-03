@@ -27,10 +27,10 @@ disallowed by this rule regardless of file content.
 technical reason (secrets and state that cannot leave the primary checkout) closes the gap between
 "convenient" and "actually necessary" that the old `.md`-only carve-out left open everywhere.
 
-**Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
-`main-to-origin-main` in `ose-public` as **HIGH** — those modes have no executable
-path there. It flags the same fields in `ose-private` as **HIGH** unless the plan
-is genuinely an infrastructure-as-code plan.
+**Enforcement**: `plan-checker` flags any `ose-public` `## Delivery Mode` other than
+`worktree-to-pr` as **HIGH**, including `main-to-pr`; no invocation branch may bypass the declared
+designated worktree. In `ose-private`, repository-specific alternatives remain subject to that
+repo's separate hard restrictions.
 
 ## Important Note on File Naming
 

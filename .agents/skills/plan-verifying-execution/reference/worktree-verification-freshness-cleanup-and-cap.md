@@ -1,5 +1,9 @@
 # Worktree Usage Verification (Step 5e continued): Freshness, Cleanup, and the Worktree Cap
 
+Run the worktree-specific checks below only for worktree modes. For a main mode, verify the primary
+checkout was synced from fresh `origin/main`, no plan worktree was provisioned, and skip worktree
+cleanup/evidence requirements.
+
 1. **Freshness sync was performed (Step 0 freshness gate)**
    - Look for execution-log or delivery-notes evidence that the worktree was synced with
      `origin/main` before implementation began (e.g., the `Worktree gate: passed (… up to date with
@@ -38,7 +42,7 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
    - **More than one distinct `git worktree add` invocation for this repo within one plan: HIGH**
      finding — every delivery unit landed in this repo should have reused the one provisioned
      worktree (branch-switching between units), not provisioned a fresh one per unit.
-   - **No worktree-provisioning evidence recoverable** (no execution-log/implementation-notes lines
+   - **Worktree mode: no worktree-provisioning evidence recoverable** (no execution-log/implementation-notes lines
      recording `git worktree add`, AND the worktree is already gone from disk per this repo's
      [Immediate Cleanup rule](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup.md),
      so `git worktree list --porcelain` and `git reflog` have nothing left to inspect either):
@@ -47,7 +51,7 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 
 ### Finding Severity
 
-- Plan ran without a `## Worktree` section: **CRITICAL** (Step 0 gate breach)
+- Plan ran without a mode-resolved `## Worktree` section: **CRITICAL** (Step 0 gate breach)
 - Wrong worktree-path format in plan: **HIGH**
 - Eligible worktree retained after successful delivery without a failed-check or removal-error
   escalation: **HIGH**
@@ -55,8 +59,8 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
 - Diagnostic evidence or a shared cache removed during plan cleanup: **HIGH**
 - Worktree force-removed, removed without identity-proven ownership, or removed despite a failed
   pre-removal check: **HIGH**
-- No worktree evidence in git history: **MEDIUM**
+- Worktree mode: no worktree evidence in git history: **MEDIUM**
 - No `origin/main` freshness-sync evidence: **MEDIUM**
 - More than one `git worktree add` invocation for this repository within one plan: **HIGH**
-- No worktree-provisioning evidence recoverable (log lines absent and worktree already cleaned up per
+- Worktree mode: no worktree-provisioning evidence recoverable (log lines absent and worktree already cleaned up per
   the Immediate Cleanup rule): **MEDIUM**

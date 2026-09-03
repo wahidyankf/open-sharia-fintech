@@ -71,10 +71,10 @@ OSE Platform C# applications MUST use the following stack:
 
 **.NET Version Strategy**:
 
-- **Baseline**: .NET 6 LTS (minimum supported, maintenance mode)
-- **Recommended**: .NET 8 LTS (MUST use for new projects) - performance, native AOT, C# 12
-- **Current**: .NET 9 (short-term support) - C# 13, Task.WhenEach, LINQ improvements
-- **Upcoming**: .NET 10 LTS (C# 14, planned 2025) - collection extensions, params improvements
+- **Legacy**: .NET 6 LTS (retired; migration context only)
+- **Supported**: .NET 8 LTS (existing projects only; upgrade before support ends)
+- **STS**: .NET 9 (supported short-term line) - C# 13, Task.WhenEach, LINQ improvements
+- **Current**: .NET 10 LTS (MUST use for new projects) - C# 14 and runtime improvements
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for C#-specific release documentation location
 
@@ -111,15 +111,15 @@ C# development in OSE Platform enforces foundational software engineering princi
 
 OSE Platform follows a three-tier .NET versioning strategy aligned with Microsoft's LTS cadence:
 
-**.NET 6 LTS (Baseline - Minimum Supported)**:
+**.NET 6 LTS (Retired Legacy Baseline)**:
 
-- Maintenance mode; no new projects should target .NET 6
+- Unsupported; no new or maintained projects should target .NET 6
 - Minimal APIs introduced, C# 10 (record structs, global using, file-scoped namespaces)
 - Required for legacy service compatibility only
 
-**.NET 8 LTS (Recommended - REQUIRED for new projects)**:
+**.NET 8 LTS (Supported Existing Projects)**:
 
-- All new OSE Platform C# projects MUST target .NET 8 LTS
+- Existing OSE Platform C# projects may retain .NET 8 while it remains supported
 - C# 12: primary constructors, collection expressions, `ref readonly` parameters, alias any type
 - Native AOT compilation for CLI tools and serverless functions
 - `FrozenDictionary<TKey,TValue>` for immutable high-performance lookups
@@ -128,7 +128,7 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 - `IExceptionHandler` for structured global exception handling in ASP.NET Core
 - Data Protection API improvements, OpenAPI (Swagger) built-in improvements
 
-**.NET 9 (Current - Short-Term Support)**:
+**.NET 9 (Supported - Short-Term Support)**:
 
 - C# 13: `params` collections, `allows ref struct` generic constraint, `\e` escape sequence
 - `Task.WhenEach` for processing tasks as they complete
@@ -137,15 +137,22 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 - `HybridCache` in ASP.NET Core (L1+L2 cache abstraction)
 - JSON serialization improvements (nullable annotations, indented option)
 
-**.NET 10 LTS (Upcoming - C# 14)**:
+**.NET 10 LTS (Current - C# 14)**:
 
-- Planned LTS release; new projects started after GA SHOULD use .NET 10
-- C# 14: collection extensions, `params` improvements (planned)
+- Current LTS release; new projects MUST use .NET 10
+- C# 14: extension members and user-defined compound assignment operators
 - .NET MAUI improvements, Blazor enhancements
 
 **Unlike Go's 6-month cadence**: .NET follows an annual release cycle with every other release being LTS (Long-Term Support, 3 years). OSE Platform targets LTS releases for production services; STS releases for experimental features and tooling.
 
 **See**: C# release highlights documentation (when available) for detailed feature documentation
+
+### Version References
+
+- [.NET 6 / C# 10](release-6.md) — retired legacy baseline
+- [.NET 8 / C# 12](release-8.md) — supported LTS line
+- [.NET 9 / C# 13](release-9.md) — supported STS line
+- [.NET 10 / C# 14](release-10.md) — current LTS target
 
 ## OSE Platform Coding Standards (Authoritative)
 
@@ -346,7 +353,9 @@ graph LR
 
 **Status**: Authoritative Standard (Mandatory Compliance)
 
-**.NET Version**: .NET 6 (minimum), .NET 8 LTS (recommended), .NET 9 (current STS)
-**C# Version**: C# 10 (minimum), C# 12 (recommended with .NET 8), C# 13 (.NET 9)
-**Framework Stack**: ASP.NET Core 8, EF Core 8, xUnit, FluentAssertions, Moq, TestContainers.Net
+**.NET Version**: .NET 6 (retired), .NET 8 LTS and .NET 9 STS (supported maintenance),
+.NET 10 LTS (current and required for new projects)
+**C# Version**: C# 10 (legacy with .NET 6), C# 12 (.NET 8), C# 13 (.NET 9), C# 14
+(.NET 10 current)
+**Framework Stack**: ASP.NET Core 10, EF Core 10, xUnit, FluentAssertions, Moq, TestContainers.Net
 **Maintainers**: Platform Architecture Team

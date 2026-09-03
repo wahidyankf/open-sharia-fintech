@@ -21,6 +21,7 @@ related:
   - ./type-safety.md
 principles:
   - explicit-over-implicit
+  - automation-over-manual
 ---
 
 # Security

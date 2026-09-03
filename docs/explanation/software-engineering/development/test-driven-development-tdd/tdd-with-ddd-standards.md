@@ -9,6 +9,8 @@ tags:
   - domain-testing
 principles:
   - explicit-over-implicit
+  - automation-over-manual
+  - reproducibility
   - pure-functions
 created: 2026-02-09
 ---

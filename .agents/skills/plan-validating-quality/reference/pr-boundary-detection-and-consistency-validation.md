@@ -1,6 +1,8 @@
 # PR Boundary Detection and Consistency Validation (Scope 5)
 
-**Detection commands** (from the plan folder; compare the two number sets):
+For `*-to-pr` modes, run these **detection commands** from the plan folder and compare the two
+number sets. For direct modes, inspect the declared direct-checkpoint steps instead of requiring PR
+commands.
 
 ```bash
 # (1) phases the plan DECLARES as delivery boundaries

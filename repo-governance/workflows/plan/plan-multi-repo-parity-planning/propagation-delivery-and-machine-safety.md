@@ -33,7 +33,7 @@ Each unit follows one natural cohesive seam, never a LOC or file-count boundary,
 as a complete-and-inert increment behind a temporary production-disabled **feature flag**, with
 both paths tested and rollout, rollback, and removal recorded. A phase lands unflagged only when it
 ships no user-reachable behaviour change and the step names that exemption. See
-[plan-planning §Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md#planning-granularity-and-the-one-branch-one-pr-rule) for the full rule,
+[plan-planning §Planning Granularity](../plan-planning/planning-granularity-and-one-branch-rule.md#planning-granularity-and-mode-specific-delivery-mapping) for the full rule,
 including delivery-boundary PR granularity and the named flag-removal step.
 
 ## Shared-Machine Safety

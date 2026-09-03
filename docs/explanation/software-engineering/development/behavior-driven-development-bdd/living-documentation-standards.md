@@ -10,6 +10,7 @@ tags:
 principles:
   - automation-over-manual
   - documentation-first
+  - reproducibility
 created: 2026-02-09
 ---
 

@@ -41,13 +41,12 @@ prerequisites, paths, commands, observations, recovery, or proof, flag the relev
   Per-Phase Integration Protocol block, **HIGH**. Full detail below (PR Step Authorization Check) and
   `reference/20-rule19-delivery-mode-validation-part1.md` rule 19 item 7. See
   [Plans Organization Convention §Phase 0 Opens No PR](../../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
-- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a PR opens at each
-  **delivery boundary** — the phase after which accumulated work is one natural cohesive,
-  production-deployable increment — not
-  once per phase; the contiguous phases ending at a boundary form a **delivery unit** mapping to one
-  branch, one PR (the worktree stays a coarser per-repository unit, capped at one per repo per plan
-  — see
-  [Worktree Cap](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)).
+- **Integration occurs at delivery boundaries, not every phase (HARD RULE)**: each
+  **delivery boundary** ends one natural cohesive, production-deployable increment. Under a
+  `*-to-pr` mode, the contiguous phases ending there map to one branch and one PR; under a permitted
+  direct mode, they map to one direct-push checkpoint. Worktree modes reuse at most one worktree per
+  repo per plan, while main modes use the primary checkout and provision none. See
+  [Worktree Cap](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
   Flag **HIGH** an integration step in a non-boundary phase, a change-producing phase absent from
   `### Delivery Boundaries`, or a non-boundary final change-producing phase; flag **MEDIUM** a
   missing `### Delivery Boundaries` table on a non-trivial plan, or a single end-of-plan boundary

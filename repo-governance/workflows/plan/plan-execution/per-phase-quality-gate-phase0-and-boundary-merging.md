@@ -1,13 +1,21 @@
 ---
 title: "Per-Phase Quality Gate — Phase 0 Exemption and Delivery-Boundary Merging"
 description: Defines Phase 0's exemption from pushing or opening a PR, and the delivery-boundary merge-not-batch rule.
-when_to_use: Use when confirming Phase 0 pushes nothing, or deciding whether a delivery unit's PR should open now or wait.
+when_to_use: Use when confirming Phase 0 pushes nothing or deciding whether a delivery unit should integrate now or wait.
 ---
 
 # Per-Phase Quality Gate — Phase 0 Exemption and Delivery-Boundary Merging
 
 **Continues** [Per-Phase Quality Gate — Push Targets](./per-phase-quality-gate-push-targets.md).
 
-**Phase 0 is exempt from this entire step — it pushes nothing and opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline. It installs dependencies, converges the toolchain, records the baseline, and resolves preexisting failures; it produces no reviewable change, so it is not a delivery DAG node and has no push target under **any** delivery mode. Do not push a Phase 0 branch, run `gh pr create`, PR CI, optional semantic review, or merge for it. Any evidence file Phase 0 wrote stays on the plan branch and lands in the **first** PR the plan opens. See [Plans Organization Convention §Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+**Phase 0 is exempt from this entire step — it pushes nothing and opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline. It installs dependencies, converges the toolchain, records the baseline, and resolves preexisting failures; it produces no reviewable change, so it is not a delivery DAG node and has no push target under **any** delivery mode. Do not push a Phase 0 branch, run `gh pr create`, PR CI, optional semantic review, or merge for it. Any evidence file Phase 0 wrote stays with the plan and lands through the **first** change-producing unit's mode-specific integration. See [Plans Organization Convention §Phase 0 Opens No PR](../../../conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-**Delivery-boundary merging (not per-phase, not batch)**: each delivery unit's PR is **opened and merged** as that unit's **delivery boundary** completes, once the hardened merge preconditions hold. Do **not** open a PR at every intermediate phase — that spends PR CI and integration overhead on scaffolding the next phase rewrites. Do **not** hold delivery-unit PRs open for a batch merge at plan end either — that re-serialises work the DAG declared independent and grows the divergence each PR must reconcile. Grouping **dependent** phases into one delivery unit is not batching; holding **independent, already-open** PRs is. The **merge actor** is `[AI]` by default; `[HUMAN]` applies only where the plan's own step declares that gate. Split units only at natural cohesive seams and never from LOC or file counts. Merge only when the exact resulting `main` state is immediately safe to deploy to production. Incomplete behavior reaches `main` complete-and-inert behind a temporary production-disabled feature flag, with both paths tested and rollout, rollback, and removal recorded.
+**Delivery-boundary integration (not per-phase, not batch)**: integrate each delivery unit as its
+boundary completes. Under `*-to-pr`, open and merge the unit's PR once hardened preconditions hold;
+under a permitted direct mode, land the unit at its direct-push checkpoint. Do not integrate at
+every intermediate phase or hold independent ready units for a plan-end batch. Grouping dependent
+phases into one unit is not batching. The merge actor is `[AI]` by default; `[HUMAN]` applies only
+where the plan declares that gate. Split only at natural cohesive seams, never LOC or file counts,
+and integrate only an exact resulting `main` state safe to deploy immediately. Incomplete behavior
+reaches `main` complete-and-inert behind a temporary production-disabled feature flag, with both
+paths tested and rollout, rollback, and removal recorded.

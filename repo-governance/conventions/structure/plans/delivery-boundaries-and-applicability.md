@@ -1,6 +1,6 @@
 ---
 title: "Delivery Boundaries Declaration and Applicability"
-description: Shows the required Delivery Boundaries table format mapping phases to delivery units, and states which plans the executor-tagging and phase-gate hard rules apply to.
+description: Shows the required Delivery Boundaries table format mapping phases to mode-specific delivery opportunities, and states applicability.
 category: explanation
 subcategory: conventions
 tags:
@@ -22,31 +22,34 @@ when_to_use: Use when writing a plan's Delivery Boundaries table or checking whe
 ```markdown
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit          | Worktree        | Branch       | PR opens         | Deployable state / feature flag evidence                                         |
-| -------- | ---------------------- | --------------- | ------------ | ---------------- | -------------------------------------------------------------------------------- |
-| 0        | — (setup and baseline) | —               | —            | no               | No resulting state change; flag not applicable                                   |
-| 1-3      | Schema and loader      | `worktrees/foo` | `foo-schema` | yes — at Phase 3 | Compatible schema and loader complete; both paths pass; flag not applicable      |
-| 4-5      | Navigation UI          | `worktrees/foo` | `foo-nav`    | yes — at Phase 5 | Production-disabled `nav-v2`; both paths pass; rollout/rollback/removal recorded |
+| Phase(s) | Natural cohesive seam  | Worktree        | Branch       | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                        |
+| -------- | ---------------------- | --------------- | ------------ | -------------------- | -------------------------------------------------------------------------------- |
+| 0        | — (setup and baseline) | —               | —            | none                 | No resulting state change; flag not applicable                                   |
+| 1-3      | Schema and loader      | `worktrees/foo` | `foo-schema` | PR at Phase 3        | Compatible schema and loader complete; both paths pass; flag not applicable      |
+| 4-5      | Navigation UI          | `worktrees/foo` | `foo-nav`    | PR at Phase 5        | Production-disabled `nav-v2`; both paths pass; rollout/rollback/removal recorded |
 ```
 
 Every change-producing phase must appear in exactly one row. A phase absent from the table is a
 defect: its work has no declared route to `main`.
 
-Each row must name one natural cohesive seam and state how its exact resulting `main` state is safe
-to deploy to production immediately. Keep all build, verification, operational, rollback, and
-internal-consistency artifacts with the unit. Incomplete behavior requires a temporary
-production-disabled feature flag, enabled and disabled path tests, and rollout/rollback/removal.
+Each row must name one natural cohesive seam, state how its exact resulting `main` state is safe to
+deploy to production immediately, and identify its rollback evidence. Keep all build, verification,
+operational, rollback, and internal-consistency artifacts with the unit. Incomplete behavior
+requires a temporary production-disabled feature flag, enabled and disabled path tests, and
+rollout/rollback/removal.
 LOC and file counts never create, erase, or force a row.
 
-**Enforcement**: `plan-maker` emits the `### Delivery Boundaries` table and places PR/push/CI/merge
-steps only in boundary phases. An explicitly user-requested semantic-review step is also a PR step
-and belongs at a boundary. `plan-checker` flags as **HIGH** any such step inside a non-boundary
+**Enforcement**: `plan-maker` emits the table and places mode-specific integration steps only in
+boundary phases. Under `*-to-pr`, these are PR/push/CI/merge steps; under a direct mode, they are
+direct checkpoints. An explicitly requested semantic review is a PR step and belongs at a boundary.
+`plan-checker` flags as **HIGH** any such step inside a non-boundary
 phase; a change-producing phase absent from the table; or a final
 change-producing phase that is not a boundary. It flags as **MEDIUM** a missing
 `### Delivery Boundaries` table on a non-trivial plan, and a plan declaring a single end-of-plan
 boundary while its `## Parallelization Model` declares independent parallel nodes. `plan-fixer` adds
-the table and relocates misplaced PR steps to the boundary phase. `plan-execution-checker` flags a PR
-actually opened for a non-boundary phase, and a delivery unit whose PR never merged.
+the table and relocates misplaced integration steps to the boundary phase. `plan-execution-checker`
+flags a PR opened for a non-boundary phase under `*-to-pr`, a unit whose PR never merged, or a
+direct-mode unit whose checkpoint never reached `origin/main`.
 They also reject a count-derived boundary, a unit missing required consistency artifacts, or a
 resulting `main` state that is not immediately production-deployable.
 

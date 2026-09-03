@@ -9,6 +9,9 @@ tags:
   - adapters
   - standards
   - organiclever
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
 created: 2026-05-17
 ---
 

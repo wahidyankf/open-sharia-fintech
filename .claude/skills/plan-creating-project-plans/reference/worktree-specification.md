@@ -1,7 +1,8 @@
-# Worktree Specification (Mandatory — Applies to ALL Plans)
+# Work Location Specification (Mandatory — Applies to ALL Plans)
 
-Provision the worktree **before** defining the plan and author every plan document inside it by
-default. Every plan MUST declare that worktree path before the delivery checklist begins. The only
+Resolve the delivery mode and declare its work location before the checklist begins. For a worktree
+mode, provision the worktree **before** defining the plan and author there by default. For a main
+mode, declare `Worktree: not applicable — <mode> uses the primary checkout` and provision none. The only
 authoring exception is when this plan artifact is itself a deliverable inside another existing
 worktree that the user explicitly required the session to keep using, and it depends on unlanded
 work there. In that case, declare the matching execution worktree with `Provisioning status:
@@ -10,9 +11,9 @@ Convenience alone is not an exception, and no implementation may begin while sta
 
 This is enforced by `plan-checker` and the
 [plan-execution workflow Step 0 hard gate](../../../../repo-governance/workflows/plan/plan-execution.md).
-The executor enters or provisions the declared matching worktree, syncs with `origin/main`, and—per
+For a worktree mode, the executor enters or provisions the declared matching worktree, syncs with `origin/main`, and—per
 the [Worktree Cap HARD RULE](../../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)—reuses
-at most one worktree per repository across every delivery unit.
+at most one worktree per repository across every delivery unit. A main mode syncs the primary checkout instead.
 
 **Where to declare**:
 
@@ -21,12 +22,12 @@ at most one worktree per repository across every delivery unit.
   before `## Delivery Checklist`. Compatibility handling never authorizes a new single-file formal
   plan.
 
-**Path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (strip the `YYYY-MM-DD__` date prefix). Examples:
+**Worktree-mode path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (strip the `YYYY-MM-DD__` date prefix). Examples:
 
 - Folder `2026-05-15__auth-rewrite/` → worktree path `worktrees/auth-rewrite/`
 - Folder `2026-03-01__add-user-search/` → worktree path `worktrees/add-user-search/`
 
-**Required template** (insert verbatim, replacing `<plan-identifier>`):
+**Required worktree-mode template** (insert verbatim, replacing `<plan-identifier>`):
 
 ````markdown
 ## Worktree
@@ -71,5 +72,13 @@ applicable` only when a repository's mode has no such identity. See
 
 See [Worktree Path Convention](../../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 ````
+
+For a main mode, use this compact alternative and omit worktree identity and branch inventory:
+
+```markdown
+## Worktree
+
+Worktree: not applicable — `<main-mode>` uses the primary checkout.
+```
 
 **This applies to all newly created formal plans regardless of size** — pure-docs plans included.

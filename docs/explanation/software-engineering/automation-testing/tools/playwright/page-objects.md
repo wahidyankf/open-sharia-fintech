@@ -13,6 +13,8 @@ tags:
   - playwright-1.40
 principles:
   - explicit-over-implicit
+  - automation-over-manual
+  - reproducibility
   - immutability
   - pure-functions
 created: 2026-02-08

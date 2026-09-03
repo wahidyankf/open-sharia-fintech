@@ -1,6 +1,6 @@
 ---
-title: "Worktree Specification"
-description: Defines where a plan declares its worktree path and the executor lifecycle for entering, syncing, and cleanup.
+title: "Work Location and Worktree Specification"
+description: Defines how every plan declares its mode-resolved work location and the worktree lifecycle where applicable.
 category: explanation
 subcategory: conventions
 tags:
@@ -9,12 +9,13 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when writing a plan's Worktree section or resolving worktree entry/cleanup.
+when_to_use: Use when writing a plan's Worktree section or resolving mode-specific entry and cleanup.
 ---
 
 # Worktree Specification
 
-Every plan declares its worktree path before the executor reads the delivery checklist.
+Every plan declares its resolved work location before the executor reads the delivery checklist.
+Worktree modes name a worktree path; main modes state `not applicable` and use the primary checkout.
 
 **Where to declare**:
 
@@ -23,13 +24,14 @@ Every plan declares its worktree path before the executor reads the delivery che
   placed before `## Delivery Checklist`. This compatibility path never authorizes creation of a new
   single-file formal plan.
 
-**Worktree path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` is the slug portion of the folder name (strip the `YYYY-MM-DD__` prefix when present).
+**Worktree path format for worktree modes**: `worktrees/<plan-identifier>/` where
+`<plan-identifier>` is the slug portion of the folder name (strip the date prefix when present).
 
 - `backlog/auth-rewrite/` → worktree path `worktrees/auth-rewrite/` (no prefix to strip)
 - `in-progress/auth-rewrite/` → worktree path `worktrees/auth-rewrite/` (no prefix to strip)
 - `done/2026-03-01__add-user-search/` → worktree path `worktrees/add-user-search/` (strip the completion-date prefix)
 
-**Provisioning command** (run from repo root, before the plan is written):
+**Worktree-mode provisioning command** (run from repo root, before the plan is written):
 
 ```bash
 claude --worktree <plan-identifier>
@@ -37,8 +39,9 @@ claude --worktree <plan-identifier>
 
 ## Worktree Identity Record
 
-Record this immutable, repository-neutral block in the plan's `## Worktree` section when that
-section is authored. It is the cleanup authority; the file-touch ledger records files only.
+For a worktree mode, record this immutable, repository-neutral block in the plan's `## Worktree`
+section. It is the cleanup authority; the file-touch ledger records files only. Main modes instead
+record `Worktree: not applicable — <mode> uses the primary checkout` and omit this identity.
 
 ```markdown
 ### Provisioned Worktree Identity
@@ -77,8 +80,9 @@ records verified `origin/main`. At cleanup, run `git -C <resolved-runtime-path> 
 only after deriving that path from the declared route and verifying it with `git worktree list
 --porcelain`. This inventory, not the file ledger, controls branch cleanup.
 
-**Provision the worktree BEFORE defining the plan, and author inside it by default.** Later moves
-split its history and defeat the pre-execution check.
+**For a worktree mode, provision the worktree before defining the plan and author inside it by
+default.** Main modes remain in the primary checkout. Later moves split history and defeat the
+pre-execution check.
 
 ### Authoring-Worktree Exception
 
@@ -94,8 +98,8 @@ Provisioned Worktree Identity and branch inventory. The
 must provision the declared matching worktree, initialize the immutable identity/inventory, and
 sync it before any delivery packet begins. The exception ends at execution.
 
-**At most one worktree per repository per plan, reused across its PRs.** For sequential PRs, land
-one slice, fast-forward the same worktree from `origin/main`, then open the next. See
+**At most one worktree per repository per plan, reused when the mode provisions one.** Land one
+unit, refresh the resolved work location from `origin/main`, then begin the next. See
 [PRs Open at Delivery Boundaries](./prs-open-at-delivery-boundaries-rules.md).
 
 See [Worktree Specification — Executor Lifecycle and Example](./worktree-specification-continued.md) for how the executor enters, syncs, and cleans up the worktree, plus a worked `## Worktree` block.

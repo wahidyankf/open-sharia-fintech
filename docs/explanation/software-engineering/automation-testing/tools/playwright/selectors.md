@@ -14,6 +14,7 @@ tags:
 principles:
   - automation-over-manual
   - explicit-over-implicit
+  - reproducibility
   - accessibility-first
 created: 2026-02-08
 ---

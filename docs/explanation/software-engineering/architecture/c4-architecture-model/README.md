@@ -11,6 +11,7 @@ tags:
   - standards
 principles:
   - explicit-over-implicit
+  - simplicity-over-complexity
   - reproducibility
   - automation-over-manual
 created: 2026-01-18

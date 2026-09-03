@@ -15,7 +15,11 @@ when_to_use: Use when a plan's worktree does not yet exist and must be provision
    - **Existing pre-contract single-file plans only**: in `README.md` (top-level `## Worktree`
      before `## Delivery Checklist`). This compatibility branch never authorizes a new single-file
      formal plan.
-2. **If the section is missing AND the user specified no work branch at invocation**: terminate immediately with status `fail`. Emit a single user-visible line: `Worktree specification missing — add a "## Worktree" section to <delivery.md|README.md> per repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification before re-invoking plan execution.` (If the user specified a work branch — a worktree, `main`, or any existing branch — that selection wins per the precedence above and a missing `## Worktree` section is not a failure; skip provisioning and apply the freshness gate to that branch.)
+2. **If the section is missing**: terminate immediately with status `fail`. An invocation branch
+   cannot replace or bypass the mandatory declaration. Emit: `Worktree specification missing — add
+a "## Worktree" section to <delivery.md|README.md> per
+repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification
+before re-invoking plan execution.`
 3. **Parse the declared worktree path** (format: `worktrees/<plan-identifier>/`).
    If the plan records the documented authoring-worktree exception with `Provisioning status:
 pending`, treat provisioning and identity initialization below as a blocking gate. No delivery

@@ -16,4 +16,10 @@ Mark such steps `[HUMAN]` in the delivery checklist (per [Plans Organization Con
 
 **Output**: Execution running inside the designated worktree, up to date with the latest `origin/main` (provisioned if needed).
 
-**Why this is a hard gate**: A missing `## Worktree` section is a hard-fail **only when the user has not specified a work branch at invocation** — in that case there is no declared path to provision, so the plan is incomplete and must be fixed by the author before execution can proceed. A CWD mismatch, by contrast, is recoverable: the executor knows the target path and navigates to or provisions the worktree automatically. Running outside a worktree without a declared path would pollute the main checkout with in-flight work, break the parallel-safety guarantee, and risk dirty-gitlink hazards in any subrepo context. The freshness sync is equally mandatory: implementing against a stale base invites merge conflicts at push time and validates the plan against code that no longer matches `origin/main`.
+**Why this is a hard gate**: A missing `## Worktree` section always fails; an invocation branch
+cannot replace the declaration or bypass the mandatory `worktree-to-pr` location. A CWD mismatch is
+recoverable because the executor can navigate to or first-provision the declared path. Running
+implementation outside it would pollute the primary checkout, break parallel safety, and risk
+dirty-gitlink hazards. Operator-only secret/state steps may run from the primary checkout as stated
+above, but they do not move repository-visible plan work there. Freshness sync is equally mandatory:
+implementing against a stale base validates against code that no longer matches `origin/main`.

@@ -17,6 +17,7 @@ related:
 principles:
   - automation-over-manual
   - explicit-over-implicit
+  - reproducibility
 ---
 
 # TypeScript Test-Driven Development
@@ -38,10 +39,10 @@ Test-Driven Development (TDD) follows Red-Green-Refactor cycle: write failing te
 ### TDD Red-Green-Refactor
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Red Phase<br/>Write Failing Test"]:::orange
-    B["Test Fails<br/>Expected Error"]:::gray
+    B["Test Fails<br/>Expected Error"]:::brown
     C["Green Phase<br/>Minimal Implementation"]:::teal
     D["Test Passes<br/>Feature Works"]:::teal
     E["Refactor Phase<br/>Clean Code"]:::purple
@@ -63,13 +64,13 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Test Pyramid
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["E2E Tests<br/>Playwright, Full Flows<br/>Slow, Few"]:::orange
     B["Integration Tests<br/>Mocked I/O — MSW + in-memory<br/>Medium Speed"]:::purple
@@ -86,14 +87,14 @@ graph TB
 ### Jest Execution Flow
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["jest Command<br/>Test Discovery"]:::blue
     B["Collect Tests<br/>*.test.ts files"]:::purple
-    C["Setup beforeEach<br/>Test Fixtures"]:::gray
+    C["Setup beforeEach<br/>Test Fixtures"]:::brown
     D["Run Test Cases<br/>Execute Assertions"]:::orange
     E{"Assertions<br/>Pass?"}:::orange
-    F["Teardown afterEach<br/>Cleanup"]:::gray
+    F["Teardown afterEach<br/>Cleanup"]:::brown
     G["Report Success"]:::teal
     H["Report Failure"]:::orange
     I["Coverage Report<br/>--coverage flag"]:::purple
@@ -112,13 +113,13 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Financial Domain Testing
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Zakat Calculator<br/>Business Logic"]:::blue
     B["Unit Test<br/>calculate#40;#41; method"]:::teal
