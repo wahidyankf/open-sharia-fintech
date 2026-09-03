@@ -1558,6 +1558,40 @@ separate lifecycle from the as-built cohesive delivery below and must not admit 
 
 ### `D-P20-PRI` delivery lifecycle
 
+> Rolled out `test:behavior:coverage:{unit,integration,e2e}` to the two remaining migrated
+> projects (`ts-ui`, `ts-ui-tokens`) that never got the target once `test-contract bdd validate
+--project/--adapter` (PR #147, ported to public as PR #462) made it real. Fixed `rhino-cli`'s own
+> `test:behavior:coverage:*` targets to call `rhino-bin.sh` instead of raw `dotnet run`, avoiding a
+> build race under concurrent `nx run-many` fan-out — the same fix landed on the public side.
+>
+> The rollout's first real run against `ts-ui` found a genuine gap the static validator had never
+> caught: every one of its 31 scenarios had a `Given`/`Then` pair but no `When` step, so
+> `scenarioIsStructural` (which requires both) rejected every scenario despite full step-text
+> binding elsewhere. Renamed each trigger/action `Given` to `When` across all 6 components' feature
+> files and drivers — zero new driver code, since binding matches on step text. Re-ran `ts-ui`'s
+> real unit suite (not just the static validator) after the rename to confirm no regression.
+>
+> `apps/rhino-cli/src/RhinoCli.Application/src/TestContractProject.fs` is a byte-identical
+> parity-boundary file with ose-public. The companion public-side closure (`D-P20-PUB` below) found
+> and fixed two latent bugs there — Scenario Outline steps only matching substituted per-example
+> text, never the raw `<placeholder>` template text `@amiceli/vitest-cucumber` binds against; and a
+> delegated adapter's corpus resolving from the originally-requested project's row instead of the
+> actual driver-hosting project's row. Ported both fixes here, adapted to this file's current
+> structure (it does not yet carry the public side's separate, pre-existing level-filtering/
+> adapter-scoping additions — this change stayed scoped to the two bug fixes, not a full
+> convergence). Rebuilt, ran the full 2544-test unit suite (0 failed), regenerated the parity
+> manifest.
+>
+> Independently re-verified: `test-contract bdd validate --project <P> --adapter <A>` for
+> `rhino-cli`/`ts-ui`/`ts-ui-tokens` all report `behavior-coverage-valid` or correctly
+> `not-applicable`; `nx affected -t test:quick --base=origin/main --head=HEAD` green across all 3
+> affected projects; parity manifest current.
+>
+> One leak-review, pass (head `a731c4e0cf182eb48ab9fcef45a2acdeca84e571`, review `5103795039`,
+> zero findings in all 3 leak categories). CI green. PR
+> [wahidyankf/ose-private#149](https://github.com/wahidyankf/ose-private/pull/149), merge commit
+> `818e8140e7da29d0505cddd210c884f027cc533a`.
+
 ## Phase 20B: Close the Public Rollout
 
 - **Input:** every public owner PR, private terminal proof, registries, and manifests.
@@ -1630,6 +1664,49 @@ or multiple paths match; never substitute today's date after archival. Every `${
 below means that validated value, so the lifecycle remains resumable across a local-date change.
 
 ### `D-P20-PUB` delivery lifecycle
+
+> Rolled out `test:behavior:coverage:{unit,integration,e2e}` to every remaining migrated project in
+> this repo (26 files: the 4-target block added to each, plus `rhino-cli`'s own 3 targets switched
+> from raw `dotnet run` to `rhino-bin.sh` — a concurrent `nx run-many` fan-out was racing on the
+> shared build output). The rollout's first real-scale run surfaced two latent `rhino-cli` bugs in
+> `TestContractProject.fs`: Scenario Outline steps only matched substituted per-example text, never
+> the raw `<placeholder>` template text `@amiceli/vitest-cucumber`'s `ScenarioOutline` API binds
+> against (fixed with the same OR-fallback pattern `Specs.stepCovered` already uses); and a
+> delegated adapter's corpus resolved from the originally-requested project's row instead of the
+> actual driver-hosting project's row, latent since every delegate row had left `corpus:` empty
+> until `ayokoding-www-fe-e2e` was given its own broader corpus for a second, in-situ binding of
+> `libs/web-ui`'s `resizable-panel.feature`.
+>
+> Closed every real gap the fixed validator then found (120 files): missing `When` keywords
+> (binding matches on step text, but `describeFeature`'s structural parser is keyword-strict), two
+> silent-default-to-fail-fast production fixes in `NatsClient.fs` (`organiclever-be`/`ose-be`), and
+> new real drivers for previously-uncovered scenarios.
+>
+> The pre-push `test:quick` gate then caught a real regression from that gap closure: the
+> pre-existing blanket `--exclude-dir messaging` (added when nothing in that directory had a real
+> unit driver) hid the new `nats-config.feature` driver's own feature file from the corpus scan,
+> so its steps read as orphans. Root-caused and fixed by splitting the directory rather than
+> patching around it — `messaging/live/` for the two scenarios that genuinely need a live
+> NATS/JetStream broker (still excluded), `nats-config.feature` (now genuinely unit-covered) stays
+> scanned directly under `messaging/`. Applied identically to both `organiclever-be` and `ose-be`,
+> including README/index and doc-comment path updates. A `git commit --only` mistake during the
+> restructure left the old pre-move paths staged-as-deleted-but-uncommitted; fixed with a small
+> follow-up commit.
+>
+> `TestContractProject.fs` is a byte-identical parity-boundary file with ose-private; ported both
+> bug fixes there as the companion `D-P20-PRI` closure (above).
+>
+> Independently re-verified: `test-contract bdd validate --project/--adapter` for every rolled-out
+> project reports `behavior-coverage-valid` or correctly `not-applicable`/`delegated`; `nx affected
+-t test:quick --base=origin/main --head=HEAD` green across 26 projects/42 tasks (confirmed twice —
+> once triggering the messaging regression, once clean after the fix); `dotnet test` on rhino-cli's
+> own unit suite: 2460 passed, 0 failed; `governance readme-index validate` passed; parity manifest
+> current.
+>
+> One leak-review, pass (head `63f53dff083c2bbad15f02e01efc5f13d3b144f5`, review `5103799489`, zero
+> findings in all 3 leak categories). CI green. PR
+> [wahidyankf/ose-public#463](https://github.com/wahidyankf/ose-public/pull/463), merge commit
+> `159c6128eef8ace581d990968325bd37d4e3fc9d`.
 
 ### Terminal Worktree Cleanup
 
