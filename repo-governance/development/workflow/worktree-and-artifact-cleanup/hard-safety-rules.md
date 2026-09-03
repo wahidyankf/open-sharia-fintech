@@ -17,6 +17,10 @@ when_to_use: Use when deciding whether a specific cleanup action is in-scope for
 
 These bound every action the gate takes.
 
+- **Every merged PR triggers it, not only plan deliveries.** Whatever produced the branch — a plan
+  phase, a rules propagation, a hotfix, a one-off — cleanup runs in the session that merged it,
+  before that session ends. Deferring is what accumulates the branch backlog this convention exists
+  to prevent, and "it was not a plan" is not an exemption.
 - **Self-created only.** Delete only what this plan created. Anything else requires positive evidence
   it is idle — not merely the absence of evidence that it is busy.
 - **Verify not in use before deleting.** Check, then delete. When in doubt, leave it. An artifact left

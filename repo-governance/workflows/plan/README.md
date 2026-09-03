@@ -69,7 +69,7 @@ the DAG's terminal node. See
 - [Plans Organization Convention](../../conventions/structure/plans.md) - Plan structure standards
 - [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md) - The N+1 model, DAG-first ordering, and background-slot preference these workflows inherit
 - [No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md) - Forbidden operations on the shared machine and the non-destructive equivalent for each
-- [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md) - The plan-end cleanup gate across worktrees, branches, and build output
+- [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md) - The post-merge cleanup gate across worktrees, branches, and build output
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 - [Grilling-With-Options Convention](../../development/workflow/grilling-with-options.md) - Every

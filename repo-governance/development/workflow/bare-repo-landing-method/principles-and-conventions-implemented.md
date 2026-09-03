@@ -38,7 +38,7 @@ This procedure implements/respects the following conventions:
   uses a non-destructive equivalent — `git worktree remove` without `--force`, `git merge --ff-only`
   in place of a reset, `git fetch origin main:main` in place of a forced ref overwrite.
 - **[Worktree and Artifact Cleanup Convention](../worktree-and-artifact-cleanup.md)**: the method's
-  worktree-removal step feeds directly into that convention's mandatory plan-end cleanup gate; this
+  worktree-removal step feeds directly into that convention's mandatory post-merge cleanup gate; this
   document does not restate the five pre-removal checks there, it precedes them.
 - **[Worktree Toolchain Initialization](../worktree-setup.md)**: the worktree this method creates needs
   the same two-step `npm install` / `npm run doctor -- --fix` initialization as any other worktree in

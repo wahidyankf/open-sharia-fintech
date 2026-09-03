@@ -1,6 +1,6 @@
 ---
 title: "Worktree and Artifact Cleanup Convention"
-description: Mandatory plan-end gate requiring safe removal of plan-created worktrees, eligible branches, and plan-local regenerable build output while preserving diagnostics and shared state.
+description: Mandatory post-merge gate requiring safe removal of self-created worktrees, eligible branches, and plan-local regenerable build output while preserving diagnostics and shared state.
 category: explanation
 subcategory: development
 tags:

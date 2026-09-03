@@ -32,7 +32,8 @@ SHA; and its live `origin/<branch>` must equal that SHA, unless GitHub proves au
 push needs its recorded commit on `origin/main` and no open PR. Include every plan-created/current
 branch, not only the initial branch.
 
-**Local deletion uses `git branch -d`** — never `git branch -D`. For a squash-merged PR branch, make
+**Local deletion uses `git branch -d`** — `git branch -D` only under the proof gate below. For a
+squash-merged PR branch, make
 the merged PR the delivery proof, then fetch without pruning and verify the local and
 `origin/<branch>` tips are identical. Set that matching remote ref as the branch upstream if needed,
 then use the ordinary non-force delete:
@@ -50,9 +51,25 @@ Equal tips prove no local commit followed review; `git branch -d` retains Git's 
 `git log origin/main..<branch>` proves nothing after a squash merge.
 
 For a GitHub-auto-deleted branch, preserve the required GitHub proof and local-head equality; do not
-recreate or delete a remote ref. Attempt only `git branch -d <branch>`. If it declines because squash
-merge leaves no upstream, retain and escalate that branch-cleanup exception; worktree removal remains
-valid. Never substitute `-D`, a fabricated tracking ref, or a direct ref delete.
+recreate or delete a remote ref. Attempt `git branch -d <branch>` first. A squash merge leaves the
+branch's own commits off `main`, so `-d`'s ancestry test asks a question no squash-merged branch can
+answer.
+
+**Proof-gated terminal deletion.** When `-d` declines for that reason and _all four_ hold — the PR
+reports `MERGED`; its `headRefOid` equals the local tip; its merge commit is contained in
+`origin/main`; and `HEAD_REF_DELETED_EVENT` with enabled `delete_branch_on_merge` explains the absent
+remote ref — then `git branch -D <branch>` is the authorized terminal step:
+
+```bash
+gh pr view <n> --json state,headRefOid,mergeCommit   # MERGED, headRefOid == local tip
+git merge-base --is-ancestor <mergeCommit> origin/main
+git branch -D <branch>
+```
+
+This gate is strictly stronger than `-d`'s check, not a relaxation of it: `-d` proves reachability,
+the gate proves the reviewed head itself merged. Any one proof missing means no deletion — retain and
+escalate; worktree removal remains valid regardless. `-D` is authorized by this gate alone, never to
+cover absent evidence, and never alongside a fabricated tracking ref or a direct ref delete.
 
 **Use `git push origin --delete <branch>`** only for a plan-pushed, still-live branch after its PR is
 `MERGED`. Verified GitHub auto-deletion needs no second command. **Never delete `main` or an

@@ -45,7 +45,7 @@ when_to_use: Use when you need to know why the sweeper exists, which conventions
   removes (regenerable build output) and the agent-owned temporary directories it does not.
 
 - **[Worktree and Artifact Cleanup Convention](../../workflow/worktree-and-artifact-cleanup.md)**: The
-  plan-end gate governing what **agents** delete. This convention governs what the **environment**
+  post-merge gate governing what **agents** delete. This convention governs what the **environment**
   deletes. See
   [Reconciliation](./reconciliation-and-related-documentation.md#reconciliation-with-neighbouring-rules) —
   the two do not conflict.
