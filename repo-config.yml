@@ -658,7 +658,15 @@ testing:
         id: ayokoding-www:default
         lifecycle-state: active
         owner: ayokoding-www
-        corpus: []
+        # Explicit (not inherited from owner): this project's e2e driver also binds
+        # libs/web-ui's resizable-panel Gherkin a second time, in situ against the real
+        # ayokoding docs sidebar (see apps/ayokoding-www-fe-e2e/playwright.config.ts's own
+        # comment). Setting this replaces rather than merges with the owner's corpus, so both
+        # globs are listed explicitly here — dropping the first would silently exclude this
+        # project's own frontend/backend behaviors corpus entirely.
+        corpus:
+          - "specs/apps/ayokoding/www/behaviors/**"
+          - "specs/libs/web-ui/behaviors/resizable-panel/**"
         adapters:
           unit:
             disposition: inapplicable
