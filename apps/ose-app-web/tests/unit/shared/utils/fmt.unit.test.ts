@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fmtTime, fmtKg, fmtSpec } from "./fmt";
+import { fmtTime, fmtKg, fmtSpec } from "../../../../src/shared/utils/fmt";
 
 describe("fmtTime", () => {
   it("formats 0 seconds as '0s'", () => {

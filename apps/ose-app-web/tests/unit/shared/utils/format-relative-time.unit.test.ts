@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatRelativeTime } from "./format-relative-time";
+import { formatRelativeTime } from "../../../../src/shared/utils/format-relative-time";
 
 const now = new Date("2024-01-15T12:00:00.000Z");
 
