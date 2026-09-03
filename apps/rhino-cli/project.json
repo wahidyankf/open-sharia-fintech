@@ -74,37 +74,40 @@
     "test:behavior:coverage:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract behavior-coverage validate --project rhino-cli --adapter unit"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract bdd validate --project rhino-cli --adapter unit"
       },
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
-        "{projectRoot}/src/**/*.fs"
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs"
       ]
     },
     "test:behavior:coverage:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract behavior-coverage validate --project rhino-cli --adapter integration"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract bdd validate --project rhino-cli --adapter integration"
       },
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
-        "{projectRoot}/src/**/*.fs"
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs"
       ]
     },
     "test:behavior:coverage:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract behavior-coverage validate --project rhino-cli --adapter e2e"
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- test-contract bdd validate --project rhino-cli --adapter e2e"
       },
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/rhino/cli/behaviors/**/*.feature",
         "{workspaceRoot}/repo-config.yml",
-        "{projectRoot}/src/**/*.fs"
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs"
       ]
     },
     "test:behavior:coverage": {

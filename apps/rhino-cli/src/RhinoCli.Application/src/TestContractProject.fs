@@ -849,3 +849,276 @@ let validateLayoutForProject (repoRoot: string) (project: string) : Result<strin
     materializeLayout repoRoot project
     |> Result.bind TestContractLayout.validateDocument
     |> Result.map TestContractLayout.formatReport
+
+// ---------------------------------------------------------------------------
+// BDD coverage: does test:behavior:coverage:<adapter> prove the real project?
+// ---------------------------------------------------------------------------
+
+let private adapterEntryOf
+    (adapters: TestContract.Adapters)
+    (adapter: TestContractBdd.Adapter)
+    : TestContract.AdapterEntry =
+    match adapter with
+    | TestContractBdd.AdapterUnit -> adapters.Unit
+    | TestContractBdd.AdapterIntegration -> adapters.Integration
+    | TestContractBdd.AdapterE2e -> adapters.E2e
+
+let private bddDisposition (disposition: TestContract.Disposition) : TestContractBdd.BddDisposition =
+    match disposition with
+    | TestContract.Required -> TestContractBdd.BddRequired
+    | TestContract.Delegated -> TestContractBdd.BddDelegated
+    | TestContract.Inapplicable -> TestContractBdd.BddInapplicable
+
+/// A non-owner row may leave `behavior.corpus` empty and inherit the
+/// glob(s) its `behavior.owner` resolves — the same inheritance
+/// `behaviorFindings` already permits in `TestContract.fs`.
+let private resolveCorpus (testing: TestContract.TestingRegistry) (row: TestContract.ProjectRow) : string list =
+    if not (List.isEmpty row.Behavior.Corpus) then
+        row.Behavior.Corpus
+    else
+        match row.Behavior.Owner with
+        | Some owner when owner <> row.Project ->
+            testing.Projects
+            |> List.tryFind (fun candidate -> candidate.Project = owner)
+            |> Option.map (fun ownerRow -> ownerRow.Behavior.Corpus)
+            |> Option.defaultValue []
+        | _ -> []
+
+/// Strips every trailing wildcard path segment from a corpus glob, leaving
+/// the base directory `Specs.coverageWalkFeatureFiles` can walk. A glob with
+/// no wildcard segment names a directory outright and is returned unchanged.
+let private corpusBaseDir (glob: string) : string =
+    let isWildcard (segment: string) : bool =
+        segment.Contains '*' || segment.Contains '?' || segment.Contains '{'
+
+    let kept =
+        (forwardSlashes glob).Split('/')
+        |> Array.rev
+        |> Array.skipWhile isWildcard
+        |> Array.rev
+
+    String.concat "/" kept
+
+/// Drops the synthetic `(Background)` scenario `Specs.parseFeatureContent`
+/// prepends, folding its steps onto every real scenario's own steps instead.
+/// A Background has no `When`/`Then` of its own, so leaving it as a
+/// freestanding scenario would always fail the keyword-structure check below,
+/// and its steps still need a binding exactly once per real scenario they
+/// run ahead of.
+let private foldBackground (scenarios: Specs.ParsedScenario list) : Specs.ParsedScenario list =
+    match scenarios with
+    | background :: rest when background.Title = "(Background)" ->
+        rest
+        |> List.map (fun scenario ->
+            { scenario with
+                Steps = background.Steps @ scenario.Steps })
+    | _ -> scenarios
+
+/// One step rendered `<Keyword> <text>`, the exact shape
+/// `TestContractBdd.BddScenario.Steps` and its fixture corpus already use as
+/// a step's display identity.
+let private stepLine (step: Specs.ParsedStep) : string = sprintf "%s %s" step.Keyword step.Text
+
+/// The example count a scenario declares: 1 for a plain scenario, the
+/// expanded `Examples:` row count for a scenario outline.
+let private examplesOf (scenario: Specs.ParsedScenario) : int =
+    match scenario.Steps with
+    | [] -> 1
+    | steps ->
+        let widest = steps |> List.map (fun step -> List.length step.Variants) |> List.max
+        max 1 widest
+
+/// The real, substituted step text a given 1-based example actually
+/// exercises: a scenario outline's `example`th expansion, or the plain step
+/// text when the scenario declares no variants of its own (an ordinary
+/// scenario, or an index a malformed outline never expanded).
+let private expandedTextOf (step: Specs.ParsedStep) (example: int) : string =
+    if List.isEmpty step.Variants || example < 1 || example > List.length step.Variants then
+        step.Text
+    else
+        step.Variants.[example - 1]
+
+/// The real candidate count a step's *expanded* text resolves against the
+/// driver's step matcher — 0 for `bdd-undefined-binding`, 1 for a bound step.
+/// This is capped at a boolean rather than counting every matching entry:
+/// TickSpec is invoked per scenario against one explicit step-definition
+/// class (`StepDefinitions([| typeof<XSteps> |])`, never a process-wide
+/// registry), so this repository's own convention is many classes
+/// independently, legitimately defining the identical generic step text
+/// (`` `Then the command exits successfully` `` alone is real in 16 files) —
+/// counting every entry globally would report each as `bdd-ambiguous-binding`
+/// though none of them can ever collide at runtime. `StepMatcher.Matches`
+/// already answers the question this reader needs: is the text bound
+/// *somewhere* in the driver's own project tree.
+let private candidateCount (matcher: Specs.StepMatcher) (text: string) : int = if matcher.Matches text then 1 else 0
+
+/// The sentinel prefix a synthesized orphan-binding key carries. No real
+/// corpus key can ever start with it — a feature path is always
+/// repository-relative under the corpus root, never this literal token — so
+/// `TestContractBdd`'s own unused-binding pass reports every orphan step
+/// implementation as `bdd-unused-binding` with no change to that module.
+[<Literal>]
+let private OrphanKeyPrefix = "unbound-driver-entry"
+
+let private orphanBindingKey (orphan: Specs.OrphanStepImpl) : string =
+    sprintf "%s|%s|%s|%s" OrphanKeyPrefix orphan.File orphan.MatcherKind orphan.MatcherText
+
+/// Builds the `BddFeature` list and the synthesized `bindings` a real
+/// project's corpus and driver resolve to. Each real step instance
+/// contributes its own binding key exactly as many times as it has real
+/// candidates, so `TestContractBdd.validateDocument` reproduces every one of
+/// the Static Adapter Contract's findings — undefined, ambiguous, unused,
+/// uncovered example/scenario/feature, and the exact-integer counts — with no
+/// change to that module's own rule engine.
+let private materializeCorpus
+    (repoRoot: string)
+    (corpusGlobs: string list)
+    (matcher: Specs.StepMatcher)
+    : TestContractBdd.BddFeature list * string list =
+    let featureScenarios =
+        corpusGlobs
+        |> List.collect (fun glob -> Specs.coverageWalkFeatureFiles (absoluteOf repoRoot (corpusBaseDir glob)) [])
+        |> List.map (relativeTo repoRoot)
+        |> List.distinct
+        |> List.sort
+        |> List.map (fun relativePath ->
+            let scenarios =
+                Specs.parseFeatureFile (absoluteOf repoRoot relativePath)
+                |> foldBackground
+                |> List.filter (fun scenario -> not scenario.IsWip)
+
+            relativePath, scenarios)
+
+    let features =
+        featureScenarios
+        |> List.choose (fun (relativePath, scenarios) ->
+            if List.isEmpty scenarios then
+                None
+            else
+                Some
+                    { TestContractBdd.Path = relativePath
+                      TestContractBdd.Scenarios =
+                        scenarios
+                        |> List.map (fun scenario ->
+                            { TestContractBdd.Name = scenario.Title
+                              TestContractBdd.Examples = examplesOf scenario
+                              TestContractBdd.Steps = scenario.Steps |> List.map stepLine }) })
+
+    let bindings =
+        [ for relativePath, scenarios in featureScenarios do
+              for scenario in scenarios do
+                  for example in 1 .. examplesOf scenario do
+                      for step in scenario.Steps do
+                          let candidates = candidateCount matcher (expandedTextOf step example)
+                          let key = sprintf "%s|%s|%d|%s" relativePath scenario.Title example (stepLine step)
+
+                          for _ in 1..candidates do
+                              yield key ]
+
+    let allGherkinTexts =
+        [ for _, scenarios in featureScenarios do
+              for scenario in scenarios do
+                  for step in scenario.Steps do
+                      yield step.Text
+                      yield! step.Variants ]
+
+    let orphanBindings =
+        Specs.checkOrphanStepImpls matcher allGherkinTexts repoRoot
+        |> List.map orphanBindingKey
+
+    features, bindings @ orphanBindings
+
+/// Materializes one adapter's BDD document from the canonical registry and
+/// the real repository. `Inapplicable` builds no denominator — the
+/// registry's own governed reason is the evidence, mirroring how the fixture
+/// reader treats it. `Required` measures the named project's own tree;
+/// `Delegated` measures the reciprocal project's tree that
+/// `adapterFindings`'s own registry-validation rule already requires to
+/// `Required`-host this same adapter level.
+let private materializeBdd
+    (repoRoot: string)
+    (project: string)
+    (adapter: TestContractBdd.Adapter)
+    : Result<TestContractBdd.BddDocument, TestContract.Failure> =
+    match TestContract.parseRegistry repoRoot with
+    | Error failure -> Error failure
+    | Ok registry ->
+        match registry.Testing with
+        | None -> misuse "testing: is absent; the canonical registry must exist before a project is measured"
+        | Some testing ->
+            match testing.Projects |> List.tryFind (fun row -> row.Project = project) with
+            | None -> misuse (sprintf "testing.projects[] declares no row for \"%s\"" project)
+            | Some row ->
+                let entry = adapterEntryOf row.Behavior.Adapters adapter
+                let disposition = bddDisposition entry.Disposition
+                let owner = defaultArg row.Behavior.Owner project
+
+                let baseDocument =
+                    { TestContractBdd.Schema = TestContractBdd.SchemaVersion
+                      TestContractBdd.Case = sprintf "materialized from %s" project
+                      TestContractBdd.Project = project
+                      TestContractBdd.Owner = owner
+                      TestContractBdd.Adapter = adapter
+                      TestContractBdd.Disposition = disposition
+                      TestContractBdd.Driver = entry.Driver
+                      TestContractBdd.Reason = entry.Reason
+                      TestContractBdd.Corpus = TestContractBdd.ExplicitCorpus([], []) }
+
+                match disposition with
+                | TestContractBdd.BddInapplicable -> Ok { baseDocument with Driver = None }
+                | TestContractBdd.BddRequired
+                | TestContractBdd.BddDelegated ->
+                    match entry.Driver with
+                    | None ->
+                        Error(
+                            TestContract.ContractFailure(
+                                sprintf
+                                    "bdd-driver-undeclared project=%s owner=%s adapter=%s"
+                                    project
+                                    owner
+                                    (TestContractBdd.adapterName adapter)
+                            )
+                        )
+                    | Some _ ->
+                        let hostProject = defaultArg entry.Project project
+
+                        match locate repoRoot hostProject with
+                        | None ->
+                            misuse (
+                                sprintf
+                                    "no project.json under apps/, libs/, or specs/ declares the project \"%s\""
+                                    hostProject
+                            )
+                        | Some hostRoot ->
+                            let corpusGlobs = resolveCorpus testing row
+
+                            if List.isEmpty corpusGlobs then
+                                Error(
+                                    TestContract.ContractFailure(
+                                        sprintf
+                                            "bdd-corpus-empty project=%s owner=%s adapter=%s"
+                                            project
+                                            owner
+                                            (TestContractBdd.adapterName adapter)
+                                    )
+                                )
+                            else
+                                let matcher = Specs.extractAllStepTexts (absoluteOf repoRoot hostRoot) []
+                                let features, bindings = materializeCorpus repoRoot corpusGlobs matcher
+
+                                Ok
+                                    { baseDocument with
+                                        Corpus = TestContractBdd.ExplicitCorpus(features, bindings) }
+
+/// `test-contract bdd validate --project=<project> --adapter=<adapter>` end
+/// to end: materialize against the canonical registry and the real corpus
+/// and driver it names, run the same rule engine a fixture document runs
+/// through, then render the report the fixture path renders.
+let validateBehaviorCoverageForProject
+    (repoRoot: string)
+    (project: string)
+    (adapter: TestContractBdd.Adapter)
+    : Result<string, TestContract.Failure> =
+    materializeBdd repoRoot project adapter
+    |> Result.bind TestContractBdd.validateDocument
+    |> Result.map TestContractBdd.formatReport

@@ -1137,3 +1137,560 @@ let ``a coverage command declaring no threshold fails as threshold-undeclared`` 
     | Error(TestContract.ContractFailure message) -> Assert.Contains("coverage-threshold-undeclared", message)
     | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
     | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+// ---------------------------------------------------------------------------
+// BDD coverage against a real project: materializeBdd / validateBehaviorCoverageForProject
+// ---------------------------------------------------------------------------
+
+/// One `testing.projects[]` row's YAML, indented to nest under `projects:`.
+/// `unitLines`/`integrationLines`/`e2eLines` supply each adapter's own body
+/// lines verbatim (already `disposition:`-first), matching how
+/// `layoutRegistryYaml` above hand-writes its own single row.
+let private bddProjectRowYaml
+    (project: string)
+    (owner: string)
+    (corpus: string list)
+    (unitLines: string list)
+    (integrationLines: string list)
+    (e2eLines: string list)
+    : string =
+    let corpusRendered = corpus |> List.map (sprintf "\"%s\"") |> String.concat ", "
+
+    String.concat
+        "\n"
+        ([ sprintf "    - project: %s" project
+           "      profile: library"
+           "      migration-state: verified"
+           "      behavior:"
+           sprintf "        id: %s:default" project
+           "        lifecycle-state: active"
+           sprintf "        owner: %s" owner
+           sprintf "        corpus: [%s]" corpusRendered
+           "        adapters:"
+           "          unit:" ]
+         @ (unitLines |> List.map (fun line -> "            " + line))
+         @ [ "          integration:" ]
+         @ (integrationLines |> List.map (fun line -> "            " + line))
+         @ [ "          e2e:" ]
+         @ (e2eLines |> List.map (fun line -> "            " + line)))
+
+let private inapplicableLines (reason: string) : string list =
+    [ "disposition: inapplicable"; sprintf "reason: %s" reason ]
+
+let private requiredLines (project: string) (driver: string) : string list =
+    [ "disposition: required"
+      sprintf "project: %s" project
+      sprintf "driver: %s" driver ]
+
+let private requiredNoDriverLines (project: string) : string list =
+    [ "disposition: required"; sprintf "project: %s" project ]
+
+let private delegatedLines (project: string) (driver: string) : string list =
+    [ "disposition: delegated"
+      sprintf "project: %s" project
+      sprintf "driver: %s" driver ]
+
+let private bddRegistryYaml (rows: string list) : string =
+    String.concat
+        "\n"
+        ([ "coverage:"
+           "  projects: []"
+           "testing:"
+           "  schema: ose-test-contract/v1"
+           "  coverage:"
+           "    minimum-line: 99"
+           "  compatibility:"
+           "    mappings: []"
+           "  projects:" ]
+         @ rows
+         @ [ "" ])
+
+/// Renders a step-definition attribute (Given, When, Then, ...) at run time
+/// rather than as a literal in this file's own source text. This temp-repo
+/// fixture content is only ever meant to be scanned as a TickSpec-shaped
+/// driver once it is written to disk under a throwaway repo root — but
+/// `Specs.fs`'s own step scanner reads raw `.fs` text line by line with no
+/// notion of string-literal context, so writing the bracketed attribute text
+/// as a literal right here would itself be misread by
+/// `specs behavior-coverage validate` (and every other caller of that
+/// scanner) as a genuine, uncovered step implementation living in this file.
+/// Building the bracket text from a keyword argument keeps this source line
+/// free of the literal substring the scanner matches on, while still writing
+/// the exact same bytes into the fixture files below.
+let private stepAttribute (keyword: string) : string = sprintf "[<%s>]" keyword
+
+let private simpleFeature (title: string) (scenarioTitle: string) : string =
+    String.concat
+        "\n"
+        [ sprintf "Feature: %s" title
+          sprintf "  Scenario: %s" scenarioTitle
+          "    Given a cart with one item"
+          "    When I check out"
+          "    Then I see a receipt"
+          "" ]
+
+let private simpleStepsFs (moduleName: string) : string =
+    String.concat
+        "\n"
+        [ sprintf "module %s" moduleName
+          ""
+          (stepAttribute "Given")
+          "let ``a cart with one item`` () = ()"
+          ""
+          (stepAttribute "When")
+          "let ``I check out`` () = ()"
+          ""
+          (stepAttribute "Then")
+          "let ``I see a receipt`` () = ()"
+          "" ]
+
+let private widgetUnitRow (driver: string) : string =
+    bddProjectRowYaml
+        "widget"
+        "widget"
+        [ "specs/widget/behaviors/**" ]
+        (requiredLines "widget" driver)
+        (inapplicableLines "no isolated local-resource boundary")
+        (inapplicableLines "no user-facing surface")
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject passes a required adapter whose driver tree binds the whole corpus`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+    write root "libs/widget/tests/unit/steps/WidgetSteps.fs" (simpleStepsFs "Widget.Tests.Unit.Steps.WidgetSteps")
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        Assert.Contains("behavior-coverage-valid", rendered)
+        Assert.Contains("files=1/1", rendered)
+        Assert.Contains("scenarios=1/1", rendered)
+        Assert.Contains("steps=3/3", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject reports an undefined binding for a step no driver file implements`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+
+    write
+        root
+        "specs/widget/behaviors/refund.feature"
+        (String.concat
+            "\n"
+            [ "Feature: Refund"
+              "  Scenario: Refund issued"
+              "    Given a completed order"
+              "    When I request a refund"
+              "    Then the refund is issued"
+              "" ])
+
+    write root "libs/widget/tests/unit/steps/WidgetSteps.fs" (simpleStepsFs "Widget.Tests.Unit.Steps.WidgetSteps")
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) ->
+        Assert.Contains("bdd-undefined-binding", message)
+        Assert.Contains("specs/widget/behaviors/refund.feature|Refund issued|1|Given a completed order", message)
+        Assert.Contains("bdd-uncovered-feature", message)
+        Assert.Contains("files=1/2", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+let private outlineFeature =
+    String.concat
+        "\n"
+        [ "Feature: Checkout"
+          "  Scenario Outline: Checkout with <item> items"
+          "    Given a cart with <item> items"
+          "    When I check out"
+          "    Then I see a receipt"
+          ""
+          "    Examples:"
+          "      | item |"
+          "      | one  |"
+          "      | two  |"
+          "" ]
+
+let private outlineStepsFs =
+    String.concat
+        "\n"
+        [ "module Widget.Tests.Unit.Steps.OutlineSteps"
+          ""
+          (stepAttribute "Given")
+          "let ``a cart with one items`` () = ()"
+          ""
+          (stepAttribute "When")
+          "let ``I check out`` () = ()"
+          ""
+          (stepAttribute "Then")
+          "let ``I see a receipt`` () = ()"
+          "" ]
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject reports one scenario-outline example the driver never binds`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" outlineFeature
+    write root "libs/widget/tests/unit/steps/OutlineSteps.fs" outlineStepsFs
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) ->
+        Assert.Contains("bdd-uncovered-example", message)
+        Assert.Contains("bdd-undefined-binding", message)
+        Assert.Contains("examples=1/2", message)
+        Assert.DoesNotContain("100%", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+let private stepsFsWithOrphan =
+    String.concat
+        "\n"
+        [ "module Widget.Tests.Unit.Steps.WidgetSteps"
+          ""
+          (stepAttribute "Given")
+          "let ``a cart with one item`` () = ()"
+          ""
+          (stepAttribute "When")
+          "let ``I check out`` () = ()"
+          ""
+          (stepAttribute "Then")
+          "let ``I see a receipt`` () = ()"
+          ""
+          (stepAttribute "Given")
+          "let ``a step nothing in the corpus ever asks for`` () = ()"
+          "" ]
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject reports an orphan step implementation as an unused binding`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+    write root "libs/widget/tests/unit/steps/WidgetSteps.fs" stepsFsWithOrphan
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) ->
+        Assert.Contains("bdd-unused-binding", message)
+        Assert.Contains("unbound-driver-entry|", message)
+        Assert.Contains("a step nothing in the corpus ever asks for", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject passes an inapplicable adapter without requiring a corpus`` () =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  [ "specs/widget/behaviors/**" ]
+                  (inapplicableLines "no user-facing surface")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        Assert.Contains("behavior-coverage-not-applicable", rendered)
+        Assert.Contains("reason=no user-facing surface", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject resolves a delegated adapter's driver through the reciprocal project`` () =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  [ "specs/widget/behaviors/**" ]
+                  (delegatedLines "widget-e2e-host" "libs/widget-e2e-host/tests/e2e/steps/driver.fs")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    write root "libs/widget-e2e-host/project.json" """{ "name": "widget-e2e-host", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+
+    write
+        root
+        "libs/widget-e2e-host/tests/e2e/steps/HostSteps.fs"
+        (simpleStepsFs "WidgetE2eHost.Tests.E2e.Steps.HostSteps")
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        Assert.Contains("behavior-coverage-valid", rendered)
+        Assert.Contains("project=widget", rendered)
+        Assert.Contains("disposition=delegated", rendered)
+        Assert.Contains("files=1/1", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
+
+let private manyScenariosFeature (count: int) : string =
+    let scenarios =
+        [ for i in 1..count do
+              yield sprintf "  Scenario: Case %d" i
+              yield sprintf "    Given case %d starts" i
+              yield "    When I check out"
+              yield "    Then I see a receipt" ]
+
+    String.concat "\n" ([ "Feature: Bulk" ] @ scenarios @ [ "" ])
+
+let private manyStepsFs (count: int) : string =
+    let givens =
+        [ for i in 1..count do
+              yield (stepAttribute "Given")
+              yield sprintf "let ``case %d starts`` () = ()" i
+              yield "" ]
+
+    String.concat
+        "\n"
+        ([ "module Widget.Tests.Unit.Steps.BulkSteps"; "" ]
+         @ givens
+         @ [ (stepAttribute "When")
+             "let ``I check out`` () = ()"
+             ""
+             (stepAttribute "Then")
+             "let ``I see a receipt`` () = ()"
+             "" ])
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject fails a large corpus missing exactly one step, never rounding to a pass`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/bulk.feature" (manyScenariosFeature 50)
+    // 49 of the 50 "case N starts" steps are implemented; case 50 is not.
+    write root "libs/widget/tests/unit/steps/BulkSteps.fs" (manyStepsFs 49)
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) ->
+        Assert.Contains("steps=149/150", message)
+        Assert.DoesNotContain("100%", message)
+        Assert.Contains("bdd-undefined-binding", message)
+        Assert.Contains("case 50 starts", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject surfaces a registry parse failure unchanged`` () =
+    let root = newTempRepo ()
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.Misuse message) -> Assert.Contains("repo-config.yml", message)
+    | Error(TestContract.ContractFailure message) -> failwith ("expected misuse, found contract failure: " + message)
+    | Ok rendered -> failwith ("a missing registry must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject is a misuse when the registry has no testing root`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" legacyOnlyRegistryYaml
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.Misuse message) -> Assert.Contains("testing: is absent", message)
+    | Error(TestContract.ContractFailure message) -> failwith ("expected misuse, found contract failure: " + message)
+    | Ok rendered -> failwith ("an absent testing root must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject is a misuse when the registry declares no row for the project`` () =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  [ "specs/widget/behaviors/**" ]
+                  (inapplicableLines "no user-facing surface")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    match TestContractProject.validateBehaviorCoverageForProject root "absent-project" TestContractBdd.AdapterUnit with
+    | Error(TestContract.Misuse message) -> Assert.Contains("absent-project", message)
+    | Error(TestContract.ContractFailure message) -> failwith ("expected misuse, found contract failure: " + message)
+    | Ok rendered -> failwith ("an unknown row must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject fails as a contract violation when a required adapter omits its driver`` () =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  [ "specs/widget/behaviors/**" ]
+                  (requiredNoDriverLines "widget")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) -> Assert.Contains("bdd-driver-undeclared", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject is a misuse when the adapter's host project has no project.json`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    // Deliberately no libs/widget/project.json.
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.Misuse message) ->
+        Assert.Contains("no project.json under apps/, libs/, or specs/ declares the project", message)
+    | Error(TestContract.ContractFailure message) -> failwith ("expected misuse, found contract failure: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject fails as a contract violation when the row resolves no corpus`` () =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  []
+                  (requiredLines "widget" "libs/widget/tests/unit/steps/driver.fs")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Error(TestContract.ContractFailure message) -> Assert.Contains("bdd-corpus-empty", message)
+    | Error(TestContract.Misuse message) -> failwith ("expected a contract failure, found misuse: " + message)
+    | Ok rendered -> failwith ("must fail, found: " + rendered)
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject inherits the corpus from behavior.owner when a delegate row leaves it empty``
+    ()
+    =
+    let root = newTempRepo ()
+
+    write
+        root
+        "repo-config.yml"
+        (bddRegistryYaml
+            [ bddProjectRowYaml
+                  "widget"
+                  "widget"
+                  [ "specs/widget/behaviors" ]
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface")
+              bddProjectRowYaml
+                  "widget-part"
+                  "widget"
+                  []
+                  (requiredLines "widget-part" "libs/widget-part/tests/unit/steps/driver.fs")
+                  (inapplicableLines "no isolated local-resource boundary")
+                  (inapplicableLines "no user-facing surface") ])
+
+    write root "libs/widget-part/project.json" """{ "name": "widget-part", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+
+    write root "libs/widget-part/tests/unit/steps/PartSteps.fs" (simpleStepsFs "WidgetPart.Tests.Unit.Steps.PartSteps")
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget-part" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        Assert.Contains("behavior-coverage-valid", rendered)
+        Assert.Contains("project=widget-part", rendered)
+        Assert.Contains("files=1/1", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
+
+let private featureWithBackground =
+    String.concat
+        "\n"
+        [ "Feature: Checkout"
+          "  Background:"
+          "    Given the store is open"
+          ""
+          "  Scenario: Checkout succeeds"
+          "    Given a cart with one item"
+          "    When I check out"
+          "    Then I see a receipt"
+          "" ]
+
+let private stepsFsWithBackground =
+    String.concat
+        "\n"
+        [ "module Widget.Tests.Unit.Steps.BackgroundSteps"
+          ""
+          (stepAttribute "Given")
+          "let ``the store is open`` () = ()"
+          ""
+          (stepAttribute "Given")
+          "let ``a cart with one item`` () = ()"
+          ""
+          (stepAttribute "When")
+          "let ``I check out`` () = ()"
+          ""
+          (stepAttribute "Then")
+          "let ``I see a receipt`` () = ()"
+          "" ]
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject folds a Background's steps into the one real scenario, not a second scenario``
+    ()
+    =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" featureWithBackground
+    write root "libs/widget/tests/unit/steps/BackgroundSteps.fs" stepsFsWithBackground
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        Assert.Contains("scenarios=1/1", rendered)
+        Assert.Contains("steps=4/4", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
+
+let private wipOnlyFeature =
+    String.concat
+        "\n"
+        [ "Feature: Draft"
+          "  @wip"
+          "  Scenario: Not ready yet"
+          "    Given a step nobody implements"
+          "    When something incomplete happens"
+          "    Then nothing is asserted"
+          "" ]
+
+[<Fact>]
+let ``validateBehaviorCoverageForProject drops a feature file whose only scenario is work-in-progress tagged`` () =
+    let root = newTempRepo ()
+    write root "repo-config.yml" (bddRegistryYaml [ widgetUnitRow "libs/widget/tests/unit/steps/driver.fs" ])
+    write root "libs/widget/project.json" """{ "name": "widget", "targets": {} }"""
+    write root "specs/widget/behaviors/checkout.feature" (simpleFeature "Checkout" "Checkout succeeds")
+    write root "specs/widget/behaviors/draft.feature" wipOnlyFeature
+    write root "libs/widget/tests/unit/steps/WidgetSteps.fs" (simpleStepsFs "Widget.Tests.Unit.Steps.WidgetSteps")
+
+    match TestContractProject.validateBehaviorCoverageForProject root "widget" TestContractBdd.AdapterUnit with
+    | Ok rendered ->
+        // The corpus walk sees both files on disk, but `draft.feature`
+        // carries no real (non-@wip) scenario, so it is dropped before the
+        // denominator is built rather than counted as a gap: 1/1, not 1/2.
+        Assert.Contains("files=1/1", rendered)
+        Assert.Contains("scenarios=1/1", rendered)
+    | Error(TestContract.ContractFailure message) -> failwith ("must pass, found: " + message)
+    | Error(TestContract.Misuse message) -> failwith ("must pass, found misuse: " + message)
