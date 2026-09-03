@@ -1,0 +1,119 @@
+# D-P4-PUB-REGISTRY — REFACTOR
+
+Scope: normalization only. No diagnostic string, exit code, grammar, or
+registry value changed.
+
+## Moves
+
+1. renderLevels — one sorted spelling for the four level-list diagnostics in
+   validateMapping and validateTransition.
+2. sameNormalizedPath — one normalized comparison for optional repository-relative
+   paths, replacing the inline three-case match in validateTransition.
+3. The frozen coverage.projects reader moved out of TestContract.fs into
+   RepoConfig.parseCoverageProjects, so the repo-config.yml reader owns the
+   immutable half and TestContract.fs owns only the canonical testing root.
+
+Compile order is unchanged in both .fsproj files: RepoConfig.fs still precedes
+TestContract.fs in RhinoCli.Application.fsproj, and
+Steps/TestContractRegistryUnitTests.fs keeps its position in
+RhinoCli.UnitTests.fsproj.
+
+## Re-run proof
+
+$ rhino-bin.sh test-contract registry snapshot --source legacy --output legacy-refactor.tsv
+registry-snapshot: rows=28 source=legacy
+$ rhino-bin.sh test-contract registry snapshot --source canonical --project-list-from legacy-refactor.tsv --output canonical-refactor.tsv
+registry-snapshot: rows=28 source=canonical
+$ rhino-bin.sh test-contract registry compare --legacy legacy-refactor.tsv --canonical canonical-refactor.tsv
+registry-preservation: equal rows=28
+$ rhino-bin.sh test-contract registry validate --require-state verified --allow-bootstrap fsharp-env-loader
+registry-valid state=verified projects=28 behavior=bootstrap:1,active:25 legacy=present compatibility=present
+$ rhino-bin.sh test-contract registry validate-mapping --all
+registry-mapping-valid state=identity mappings=28
+
+  legacy-refactor.tsv identical to the pre-refactor legacy.tsv            ok
+  canonical-refactor.tsv identical to the pre-refactor canonical.tsv      ok
+  repo-config.yml digest unchanged around every reader                    ok
+  digest: 38a48e6d1ea4a6557598d5faef1e6ffe2bf1b5dc0c2241146125110e0b3275d7
+
+$ nx run rhino-cli:test:unit
+Passed!  - Failed:     0, Passed:  1473, Skipped:     0, Total:  1473 - RhinoCli.UnitTests.dll (net10.0)
+$ nx run rhino-cli:test:quick
+Successfully ran target test:quick for project rhino-cli and 2 tasks it depends on
+
+--- CI FIX (head 006b17ab) -------------------------------------------------
+
+The .NET quality gate rejected the first pushed head with exactly one
+diagnostic:
+
+  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs(3021,47):
+  Error GRA-TYPE-ANNOTATE-001 : Please annotate your type when using the
+  `string` function.
+
+Root cause: `validate-mapping --require-count` compared the requested count to
+`string report.Mappings`. The fix parses the flag into an `int` and compares
+numerically, so the `string` call disappears and a non-numeric argument is now
+CLI misuse (exit 2) instead of a silent count mismatch.
+
+The local analyzer does not reproduce the diagnostic. Re-running the exact
+lint command with the pre-fix expression restored still reported
+"No messages found from the analyzer(s)" at g-research.fsharp.analyzers 0.22.0,
+so CI is the only authority for this rule class here.
+
+$ nx run rhino-cli:lint --skip-nx-cache
+Successfully ran target lint for project rhino-cli and 1 task it depends on
+
+$ nx run rhino-cli:test:quick --skip-nx-cache
+Passed!  - Failed:     0, Passed:  1476, Skipped:     0, Total:  1476 - RhinoCli.UnitTests.dll (net10.0)
+Successfully ran target test:quick for project rhino-cli and 2 tasks it depends on
+
+The three added tests pin the flag's whole contract: a matching count exits 0,
+a disagreeing count exits 1 naming both numbers, and a non-numeric count exits
+2 with the misuse diagnostic.
+
+--- CI FIX 2 (head 795fac6a) -----------------------------------------------
+
+With the analyzer error cleared, the .NET quality gate reached the step that
+the first failure had masked and rejected the head on native coverage:
+
+  coverlet.msbuild.targets(73,5): error : The minimum line coverage is below
+  the specified 90 [apps/rhino-cli/src/tests/unit/RhinoCli.UnitTests.fsproj]
+
+Root cause: this delivery adds ~2,300 lines of registry, validator, and CLI
+code whose error and CLI-parsing branches the 101 contract cases exercise
+through the typed API rather than through `route`, so the repository line
+total fell from its previous margin to 88.78%.
+
+Fix: 44 further tests that execute the new code where it was dark rather than
+any change to the threshold or the exclusion list.
+
+  - 19 end-to-end cases drive `route` against a populated two-project registry
+    (an owner delegating its E2E adapter and the harness reciprocating it),
+    covering every `validate` and `validate-mapping` flag, both snapshot
+    forms, all three `compare` outcomes, and the unrouted-subcommand path.
+  - 15 cases drive the owner-fixture leaf across all four checks, their
+    mutation shapes, and every misuse and malformed-document branch.
+  - 10 cases pin validator branches reachable only from the typed API:
+    non-reciprocal delegation, the three behavior-free-row violations, the
+    canonical-owner drift both validators detect, the required-lifecycle
+    mismatch, and the frozen legacy corpus/levels rewrites.
+
+Measured progression, each run with the Nx cache skipped:
+
+  88.78%  1476 tests   before the fix        FAIL
+  89.43%  1495 tests   + populated-registry CLI cases
+  89.79%  1506 tests   + owner-fixture leaf cases
+  90.05%  1516 tests   + validator branch cases   PASS
+  90.12%  1520 tests   + loadFixture document cases
+
+$ nx run rhino-cli:test:coverage --skip-nx-cache
+| Module                  | Line   | Branch | Method |
+| RhinoCli.Application    | 90.09% | 76.66% | 97.75% |
+| RhinoCli.Cli            | 90.01% | 80.04% | 96.24% |
+| RhinoCli.Infrastructure | 100%   | 81.25% | 100%   |
+| RhinoCli.Domain         | 100%   | 100%   | 100%   |
+| Total                   | 90.12% | 77.54% | 97.36% |
+Passed!  - Failed:     0, Passed:  1520, Skipped:     0, Total:  1520
+
+$ nx affected -t build,typecheck,lint,test:quick --skip-nx-cache
+Successfully ran targets build, typecheck, lint, test:quick for project rhino-cli

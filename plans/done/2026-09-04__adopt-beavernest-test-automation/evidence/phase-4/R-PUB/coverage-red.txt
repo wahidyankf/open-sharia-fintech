@@ -1,0 +1,65 @@
+RED — 99% native coverage (D-P4-PUB-COVERAGE)
+branch: test-contract-validator-foundation-coverage
+head:   3b9caedd5
+command: rtk nx run rhino-cli:test:unit --skip-nx-cache
+
+State under test: apps/rhino-cli/src/RhinoCli.Application/src/TestContractCoverage.fs is a
+compile-only stub whose parseDocument/loadDocument/validateDocument return
+ContractFailure "native-coverage validator is not implemented". The nine fixtures and
+every contract case exist; nothing resolves a threshold or measures a slice yet.
+
+Result summary
+Failed!  - Failed:    48, Passed:  1583, Skipped:     0, Total:  1631, Duration: 16 m 32 s - RhinoCli.UnitTests.dll (net10.0)
+
+Failing contract cases (48, every one in TestContractCoverageUnitTests)
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.98 of 100 fails the floor
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.989 of 1000 fails rather than rounding up to 99
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.990 of 1000 meets the floor exactly
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a 98 of 100 slice fails below the floor with its measured value
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a blank owner is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a blank project is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a blank target command is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a blank threshold source is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a covered count above its total is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a declared threshold below the floor names its source and value
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a duplicate slice path is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a fully covered slice set is valid
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a measured adapter declaring no threshold is reported as missing
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a measured profile carrying a reason is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a measured profile with no slice at all is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a missing fixture file is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a negative covered count is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a negative threshold value is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a no-denominator profile declaring slices is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a no-denominator profile without a reason is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a threshold above 100 is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a traversal fixture path is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a traversal slice path is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.a wrong schema string is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an absolute fixture path is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an absolute slice path is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an applicable slice left unmeasured is reported by path
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an echo placeholder target is not executable coverage
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an exclusion that empties the denominator is too broad
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an inapplicable slice is excluded from the denominator without a finding
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an unknown adapter is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an unknown key is rejected
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.an unknown profile is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.every negative fixture ends with the native summary line
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.every negative fixture names project owner adapter item expected and actual
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.every negative fixture parses and declares its own case
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.every negative fixture reports exactly one diagnostic code
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.exactly 99 of 100 meets the floor
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.malformed JSON is misuse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the denominator sums every measured applicable slice
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the governed E2E-only fixture has no denominator and passes
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the governed E2E-only fixture renders the no-denominator line
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the success line names project owner adapter profile threshold and the pair
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the success line never renders a percent sign
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the three adapter levels parse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.the two profiles parse
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.two disagreeing thresholds are reported as a conflict with their count
+RhinoCli.Tests.Unit.Steps.TestContractCoverageUnitTests.two slices sharing an output are reported as overlapping with their count
+
+Failing cases outside the new suite (must be none)
+  none

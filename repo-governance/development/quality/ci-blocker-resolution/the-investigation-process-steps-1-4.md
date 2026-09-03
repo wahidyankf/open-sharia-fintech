@@ -48,11 +48,12 @@ npx nx run <project>:specs:behavior:coverage
 
 Common root causes of preexisting CI failures:
 
-| Symptom                                    | Common Root Cause                                             |
-| ------------------------------------------ | ------------------------------------------------------------- |
-| Type errors in a project you did not touch | A shared library changed its types without updating consumers |
-| Lint errors in generated code              | The codegen target needs to run before lint                   |
-| Test failures with stale snapshots         | Snapshots need updating after a dependency upgrade            |
-| Import resolution failures                 | A dependency was added to one project but not another         |
-| Coverage threshold failure                 | A recent commit removed tests without replacing them          |
-| Spec-coverage failure                      | A command was added without a corresponding Gherkin scenario  |
+| Symptom                                      | Common Root Cause                                                                                                                                                                                                                                          |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type errors in a project you did not touch   | A shared library changed its types without updating consumers                                                                                                                                                                                              |
+| Lint errors in generated code                | The codegen target needs to run before lint                                                                                                                                                                                                                |
+| Test failures with stale snapshots           | Snapshots need updating after a dependency upgrade                                                                                                                                                                                                         |
+| Import resolution failures                   | A dependency was added to one project but not another                                                                                                                                                                                                      |
+| Coverage threshold failure                   | A recent commit removed tests without replacing them                                                                                                                                                                                                       |
+| Spec-coverage failure                        | A command was added without a corresponding Gherkin scenario                                                                                                                                                                                               |
+| F# analyzer/lint passes locally, fails in CI | Local `obj/` predates a newly added `.fs` file (or a cached/skipped `typecheck`), so the design-time compile list silently excludes it -- `dotnet build` before trusting a local `lint` pass; CI is the sole authority for G-Research analyzer diagnostics |

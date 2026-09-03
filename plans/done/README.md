@@ -9,6 +9,20 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-09-04: adopt-beavernest-test-automation](./2026-09-04__adopt-beavernest-test-automation/README.md) —
+  Adopted BeaverNest-derived test-contract discipline across `ose-public` and `ose-private`: an
+  enforced unit/integration/E2E ownership registry, native 99% line-coverage and exact 100%
+  Gherkin/BDD coverage gates, a logical `specs/` and C4 structure, direct `project.json` commands
+  in place of proxy manifests, and full retirement of the Rhino/OSE DDD engineering-spec tooling
+  the prior contract depended on. Twenty-two phases, single-sourced in `ose-public` and delivered
+  to both repos from matching worktrees. The terminal end-to-end completeness audit
+  (`AC-TEST-09`) found one genuine cross-repo parity gap — `TestContractProject.fs` had drifted
+  184 lines stale in `ose-private` — and it was fully reconciled rather than deferred
+  (`ose-private#150`), overriding this plan's own earlier "port the fix only, don't reconcile
+  drift" precedent because the terminal audit is precisely the sanctioned place for full
+  reconciliation and the diff carried no `ose-private`-unique logic at risk. Delivery Mode:
+  `worktree-to-pr`, one worktree and one PR per repository per delivery unit. Started 2026-08-31.
+
 - [2026-08-30: rewrite-rhino-cli-to-fsharp](./2026-08-30__rewrite-rhino-cli-to-fsharp/README.md) —
   Replaced the Rust `rhino-cli` with a behavior-equivalent F# implementation across all 13
   namespaces and 525 Gherkin scenarios, namespace by namespace behind a dispatch shim, then retired

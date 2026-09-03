@@ -1,0 +1,76 @@
+RED — exact BDD (D-P4-PUB-BDD)
+branch: test-contract-validator-foundation-bdd
+head:   c4f31959a
+command: rtk nx run rhino-cli:test:unit --skip-nx-cache
+
+State under test: apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs is a
+compile-only stub whose parseDocument/loadDocument/validateDocument return
+ContractFailure "behavior-coverage validator is not implemented". The nine negative
+fixtures and every contract case exist; nothing enumerates or resolves them yet.
+
+Result summary
+Failed!  - Failed:    54, Passed:  1524, Skipped:     0, Total:  1578, Duration: 1 m 46 s - RhinoCli.UnitTests.dll (net10.0)
+
+Failing contract cases (all 54 are new, and every one belongs to TestContractBddUnitTests)
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.malformed JSON is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a delegated adapter without a driver is misuse [3 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.every negative fixture names the widget-app owner and the unit adapter [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an inapplicable adapter without a reason is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a traversal feature path is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.every negative fixture ends with the five-category summary line [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a fully bound scenario outline counts every expanded example [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a fully bound delegated adapter is valid [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.the three adapter levels parse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a blank owner is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a fully bound single-feature corpus is exactly equal in all five categories [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.the success line names the project owner adapter disposition and five pairs [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a zero example count is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a traversal fixture path is misuse [1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an absolute fixture path is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a blank project is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.every negative fixture parses and declares its own case [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a repeated binding is reported as ambiguous with its candidate count [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an inapplicable adapter carrying a driver is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.the success line never renders a percentage [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a 999 of 1000 corpus fails on integers rather than a rounded percentage [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a blank binding is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a duplicate feature path is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a document declaring neither corpus nor synthetic is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a missing fixture file is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a binding matching no enumerated step is reported as unused [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.every negative fixture names owner adapter item covered and total [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a document declaring both corpus and synthetic is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a synthetic corpus with every scenario bound is valid [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a duplicate scenario name inside one feature is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a fixture outside the BDD fixture root is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a required adapter carrying a reason is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unbound outline example is reported with its exact example counts [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unbound scenario is reported with its exact scenario counts [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a synthetic corpus with no scenarios is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unknown disposition is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a resolved fixture parses through loadDocument [1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a binding without four fields is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an inapplicable adapter builds no denominator [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a synthetic corpus with more bound than declared scenarios is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an empty corpus is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unbound feature is reported with its exact file counts [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a document with another schema is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unknown adapter level is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unknown top-level key is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a feature without scenarios is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an unbound step is reported as an undefined binding with zero candidates [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a scenario without an explicit When is reported [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an absolute feature path is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an inapplicable adapter renders the governed not-applicable line [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a scenario without steps is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a missing case field is misuse [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a fully bound two-feature corpus counts both files [< 1 ms]
+RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a required adapter without a driver is reported as an uncovered owner-adapter pair [< 1 ms]
+
+Representative diagnostics
+[xUnit.net 00:01:36.98]     RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a required adapter without a driver is reported as an uncovered owner-adapter pair [FAIL]
+     at RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.validated(String text) in <repo-root>/apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs:line 105
+   at RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.an inapplicable adapter renders the governed not-applicable line() in <repo-root>/apps/rhino-cli/src/tests/unit/Steps/TestContractBddUnitTests.fs:line 570
+--
+  Failed RhinoCli.Tests.Unit.Steps.TestContractBddUnitTests.a required adapter without a driver is reported as an uncovered owner-adapter pair [< 1 ms]
+  Error Message:

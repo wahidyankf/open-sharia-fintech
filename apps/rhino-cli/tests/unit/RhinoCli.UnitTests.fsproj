@@ -61,6 +61,7 @@
     <Compile Include="Steps/TestContractManifestUnitTests.fs" />
     <Compile Include="Steps/TestContractOwnerFixturesUnitTests.fs" />
     <Compile Include="Steps/TestContractProjectUnitTests.fs" />
+    <Compile Include="Steps/TestContractClosureUnitTests.fs" />
     <Compile Include="Steps/HarnessSteps.fs" />
     <Compile Include="Steps/HarnessUnitTests.fs" />
     <Compile Include="Steps/SpecsSteps.fs" />
