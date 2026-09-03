@@ -3215,6 +3215,56 @@ let private validateManifestFixture (repoRoot: string) (fixture: string) : Resul
     |> Result.bind TestContractManifest.validateDocument
     |> Result.map TestContractManifest.formatReport
 
+/// `test-contract bdd validate --project --adapter` against the real
+/// repository, shared by every `--adapter` value below.
+let private runBddProject (repoRoot: string) (project: string) (adapter: TestContractBdd.Adapter) : int =
+    match TestContractProject.validateBehaviorCoverageForProject repoRoot project adapter with
+    | Error failure -> reportTestContractFailure failure
+    | Ok rendered ->
+        printfn "%s" rendered
+        0
+
+/// `test-contract bdd validate` — the one policy leaf with a fourth
+/// dimension (`--adapter`) beyond the `--fixture`/`--project` dichotomy the
+/// other three checks use, so it composes its own leaf rather than
+/// stretching `runTestContractPolicyLeaf`'s shape to fit a parameter the
+/// other three never take.
+let private runTestContractBddLeaf (repoRoot: string) (args: string list) : int =
+    match rejectUnknownOptions [ "--fixture"; "--project"; "--adapter"; "--help" ] args with
+    | Error message ->
+        eprintfn "Error: %s" message
+        2
+    | Ok() ->
+        match stringFlag [ "--fixture" ] args, stringFlag [ "--project" ] args with
+        | Some _, Some _ ->
+            eprintfn "Error: --fixture and --project are mutually exclusive"
+            2
+        | Some fixture, None ->
+            match stringFlag [ "--adapter" ] args with
+            | Some _ ->
+                eprintfn "Error: --adapter is not supported for --fixture validation"
+                2
+            | None ->
+                match validateBddFixture repoRoot fixture with
+                | Error failure -> reportTestContractFailure failure
+                | Ok rendered ->
+                    printfn "%s" rendered
+                    0
+        | None, Some project ->
+            match stringFlag [ "--adapter" ] args with
+            | None ->
+                eprintfn "Error: --adapter is required for --project BDD validation"
+                2
+            | Some "unit" -> runBddProject repoRoot project TestContractBdd.AdapterUnit
+            | Some "integration" -> runBddProject repoRoot project TestContractBdd.AdapterIntegration
+            | Some "e2e" -> runBddProject repoRoot project TestContractBdd.AdapterE2e
+            | Some other ->
+                eprintfn "Error: --adapter must be unit, integration, or e2e, found \"%s\"" other
+                2
+        | None, None ->
+            eprintfn "Error: one of --fixture or --project is required for BDD validation"
+            2
+
 /// Routes one `test-contract` leaf, intercepting `-h`/`--help` ahead of the
 /// blanket top-level help so this namespace prints its own two snapshot
 /// invocation forms rather than the canonical command list.
@@ -3234,7 +3284,7 @@ let private runTestContractLeaf (getRepoRoot: unit -> Result<string, string>) (l
             | "test-contract-registry-snapshot" -> runTestContractSnapshotLeaf repoRoot args
             | "test-contract-registry-validate" -> runTestContractValidateLeaf repoRoot args
             | "test-contract-registry-validate-mapping" -> runTestContractValidateMappingLeaf repoRoot args
-            | "test-contract-bdd-validate" -> runTestContractPolicyLeaf repoRoot "BDD" validateBddFixture None args
+            | "test-contract-bdd-validate" -> runTestContractBddLeaf repoRoot args
             | "test-contract-coverage-validate" ->
                 runTestContractPolicyLeaf
                     repoRoot

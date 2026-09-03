@@ -1,5 +1,5 @@
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
-b9e336fd41d5d08780ed71b44f334671b7190697eacc08186bc3c53e9be301d6  apps/rhino-cli/project.json
+f666ff333935393a50623accea6ee78ef6180b63f03d044f10a2e7cff7a9778e  apps/rhino-cli/project.json
 22b1d0652e8937a20c83841966e4f8b1c451d671d34dd27fb5fa13f11d340a4d  apps/rhino-cli/src/.gitignore
 c141b1053959ee068093be264caca9e34e9bc505e5ea602b81c621d35bc730a4  apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
 12002d21e09962fad95d9dd8aef219b00707f67513823b918c4bf42797bdf4d9  apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs
@@ -20,13 +20,13 @@ bd65007f689a1c5ed30e1d6154b7f6b8b813994efe6b7b92d2d81c0f11de65a4  apps/rhino-cli
 625feeb23d8111c4ede63e62b386d8f5674424d7e5499ce1cf8091a8d4075649  apps/rhino-cli/src/RhinoCli.Application/src/TestContractJson.fs
 aea907ab80dca82acd86e5af31c8e4d10f304d7b20a09ae7bf276119a98455f5  apps/rhino-cli/src/RhinoCli.Application/src/TestContractLayout.fs
 954a4ae657a38fe903e6694aef748fe65d153c5b74e3a7fbfe2c9bcf867a87ba  apps/rhino-cli/src/RhinoCli.Application/src/TestContractManifest.fs
-e614fb87e3b58b5b7a00b25055cbf868c2bcde5bced2bd20f0665634c7d953c9  apps/rhino-cli/src/RhinoCli.Application/src/TestContractProject.fs
+ce6ba96a352e64ea40627586106b497ed57bd8ac55afe4c2b79e991ec54d14b0  apps/rhino-cli/src/RhinoCli.Application/src/TestContractProject.fs
 16bfb1fb1c2610c25f0cdc765dd65572bf5d4dfa40aa2c8249b25fd12cefa6d8  apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src/RhinoCli.Cli/RhinoCli.Cli.fsproj
-abc917372177ea12ec695222c0889b1d502c70f00407a5c613306f2ed8c28676  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+c7a2fedae172ab6d5b29682b4ba641e73d07a6a3950f4e999c0a6bf186510858  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
 0f8cfd3dfcba6084b0a019d2c3fa58f12f453cb9fd7f4c76985e1c839cd23d66  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
 6b02e63a5b4563a1ccd1cb56bcc40c61375ff3a4305aa686d4967eeb64a62fbc  apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs
-aee01a678e7e7be0a751b6715bf3be62b0f1bd28fd54e88724ec16a7cf77c398  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
+3fa334643831198a2e47fd6d6fb6a5cbcad0f4a3f27391934c71beb7a08d020e  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
 d7ff185030ec8501b639875753a3bc9487e0f783c6efa593484b6199811ddff2  apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs
 52512b342d694832e500cc9a6d9711992211d31b5479f8e0fe2b6c1bbcc2b4d1  apps/rhino-cli/src/RhinoCli.Domain/RhinoCli.Domain.fsproj
 890ff9265bfe3a2bfc2da7cf75a0a0caabe9efcfa4c4b784565bcfa3a29037b2  apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs

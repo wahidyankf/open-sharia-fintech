@@ -1808,13 +1808,148 @@ let ``route rejects --fixture and --project together on test-contract coverage v
     Assert.Equal(2, code)
     Assert.Contains("mutually exclusive", err)
 
+// `bdd validate` shares this same `--fixture`/`--project` dichotomy but adds
+// a fourth dimension on the `--project` side: which of the project's three
+// adapters (`--adapter unit|integration|e2e`) is being measured, since a
+// project can bind a different corpus-driver pairing per adapter.
+
 [<Fact>]
-let ``route rejects --project on test-contract bdd validate, the one check with no per-project reader`` () =
+let ``route requires --adapter alongside --project on test-contract bdd validate`` () =
     let code, _, err =
         runCaptured (okRoot (newTempDir ())) [| "test-contract"; "bdd"; "validate"; "--project"; "y" |]
 
     Assert.Equal(2, code)
-    Assert.Contains("not supported for BDD validation", err)
+    Assert.Contains("--adapter is required for --project BDD validation", err)
+
+[<Fact>]
+let ``route rejects --adapter alongside --fixture on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"
+               "bdd"
+               "validate"
+               "--fixture"
+               "f.json"
+               "--adapter"
+               "unit" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--adapter is not supported for --fixture validation", err)
+
+[<Fact>]
+let ``route rejects an unrecognized --adapter value on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"; "bdd"; "validate"; "--project"; "y"; "--adapter"; "bogus" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--adapter must be unit, integration, or e2e", err)
+
+[<Fact>]
+let ``route requires --fixture or --project on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "bdd"; "validate" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("one of --fixture or --project is required for BDD validation", err)
+
+[<Fact>]
+let ``route rejects --fixture and --project together on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"
+               "bdd"
+               "validate"
+               "--fixture"
+               "f.json"
+               "--project"
+               "p" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--fixture and --project are mutually exclusive", err)
+
+[<Fact>]
+let ``route rejects an option it does not accept on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured (okRoot (newTempDir ())) [| "test-contract"; "bdd"; "validate"; "--owner"; "O-ANY-OWNER" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("--owner", err)
+
+[<Fact>]
+let ``route validates a conforming bdd document via --fixture and exits 0`` () =
+    let code, out, _ = runPolicyVerb "bdd" "valid.json"
+    Assert.Equal(0, code)
+    Assert.Contains("behavior-coverage-valid", out)
+
+[<Fact>]
+let ``route surfaces a repository-reader failure for --project on test-contract bdd validate`` () =
+    let code, _, err =
+        runCaptured
+            (okRoot (newTempDir ()))
+            [| "test-contract"
+               "bdd"
+               "validate"
+               "--project"
+               "absent-project"
+               "--adapter"
+               "unit" |]
+
+    Assert.Equal(2, code)
+    Assert.Contains("repo-config.yml", err)
+
+[<Fact>]
+let ``route resolves --project and --adapter against rhino-cli's own real corpus and driver on test-contract bdd validate``
+    ()
+    =
+    match RhinoCli.Infrastructure.GitRoot.findRoot () with
+    | Error message -> Assert.Fail(sprintf "expected findRoot Ok, got Error %s" message)
+    | Ok realRepoRoot ->
+        let unitCode, unitOut, _ =
+            runCaptured
+                (okRoot realRepoRoot)
+                [| "test-contract"
+                   "bdd"
+                   "validate"
+                   "--project"
+                   "rhino-cli"
+                   "--adapter"
+                   "unit" |]
+
+        Assert.Equal(0, unitCode)
+        Assert.Contains("behavior-coverage-valid project=rhino-cli owner=rhino-cli adapter=unit", unitOut)
+
+        let integrationCode, integrationOut, _ =
+            runCaptured
+                (okRoot realRepoRoot)
+                [| "test-contract"
+                   "bdd"
+                   "validate"
+                   "--project"
+                   "rhino-cli"
+                   "--adapter"
+                   "integration" |]
+
+        Assert.Equal(0, integrationCode)
+
+        Assert.Contains("behavior-coverage-valid project=rhino-cli owner=rhino-cli adapter=integration", integrationOut)
+
+        let e2eCode, e2eOut, _ =
+            runCaptured
+                (okRoot realRepoRoot)
+                [| "test-contract"
+                   "bdd"
+                   "validate"
+                   "--project"
+                   "rhino-cli"
+                   "--adapter"
+                   "e2e" |]
+
+        Assert.Equal(0, e2eCode)
+        Assert.Contains("behavior-coverage-not-applicable project=rhino-cli owner=rhino-cli adapter=e2e", e2eOut)
 
 [<Fact>]
 let ``route surfaces a Misuse failure for an unknown project on test-contract coverage validate --project`` () =
