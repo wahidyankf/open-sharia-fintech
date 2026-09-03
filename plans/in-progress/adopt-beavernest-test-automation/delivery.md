@@ -1280,6 +1280,55 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OL-WWW` delivery lifecycle
 
+> Migrated `organiclever-www` (Next.js marketing site) to the target test-contract shape:
+> `test:unit`/`test:coverage` `cwd` fixed from the `{projectRoot}` Nx macro (rhino-cli's static
+> `project.json` reader does not perform Nx macro substitution — a lesson from Phase 14 that this
+> orchestrator initially got wrong in this phase's own dispatch prompt before the implementation
+> agent caught and corrected it) to the literal `apps/organiclever-www` path; coverage floor
+> 80→99; `inputs` narrowed from `src/**/*` + `tests/**/*` to `src/**/*` + `tests/unit/**/*`; the 3
+> new `test:layout:validation`/`coverage:policy:validation`/`package-manifest:policy:validation`
+> targets added.
+>
+> `vitest.config.ts` dropped a dead two-project array (`unit-fe` + `integration`, where the
+> `integration` project's include globs matched zero files — the third instance of this pattern
+> this session, after `organiclever-app-web` in Phase 14) and flattened to a single top-level
+> config; added `src/app/**/page.tsx` to the coverage exclude, confirmed via direct grep to match
+> `organiclever-app-web`'s pre-existing identical exclusion from Phase 14 rather than being an
+> ad-hoc carve-out.
+>
+> CI caught one real gap the implementation agent's automated `test/`→`tests/` relocation missed:
+> `README.md`'s `test/unit/steps/` link reference, which broke the `md-links` gate. Fixed directly
+> in the PR branch (not re-dispatched — a proportionate response to a one-line, low-complexity
+> fix, matching Phase 11B precedent) after reproducing the failure locally with CI's exact
+> `gate run --surface=ci --group=markdown` invocation and env vars.
+>
+> Independently re-verified before merge, all fresh (not cached): `test:unit` 6 files / 68 tests
+> passing; `test:coverage` 100% lines/statements/functions/branches (several barrel/`index.ts`
+> re-export files legitimately show 0% — zero coverable statements, not a coverage-gaming signal);
+> `project.json` and `vitest.config.ts` diffs matched the implementation agent's claims
+> line-for-line; the 3 new/relocated test files (`landing-page.unit.test.tsx`,
+> `app/metadata.unit.test.ts`, and the relocated `env-loader.unit.test.ts` with its corrected
+> `../../../../` relative-path depth) read in full and confirmed as legitimate, non-gaming tests;
+> `repo-config.yml` diff confirmed empty.
+>
+> The PR branch required two rebases (once for `D-O-PUB-OL-BE`'s evidence PR #452, once for the
+> README fix's own upstream-drift race) before merge; both were clean replays with zero conflicts.
+> Per the current-head requirement, a fresh leak-review was posted after each rebase rather than
+> reusing a prior one; the final review independently verified content-identity between the
+> pre- and post-rebase diffs via byte-for-byte comparison before re-running its own scan.
+>
+> Also fixed mid-flight: the combined leak-review+CI readiness Monitor used through Phase 15 only
+> checked for zero pending checks, not zero failures — it declared this PR's first CI run "READY"
+> while 2 checks had genuinely FAILED (`Quality gate` aggregator, `markdown`). Corrected the
+> Monitor script to separately track failed-check count and require it to be zero before declaring
+> readiness; the corrected pattern was reused for the rest of this PR's cycles and for Phase 17.
+>
+> Three leak-reviews total, all `pass`: original head `825dda325` (review `5097888303`),
+> post-README-fix head `ac8468397` (review `5097956014`), post-second-rebase head `a89f1580b`
+> (review `5098033717`). CI green (16/16) on the merged head. PR
+> [wahidyankf/ose-public#453](https://github.com/wahidyankf/ose-public/pull/453), merge commit
+> `d9bce5a23a100f8089323e24367402829fba70b6`.
+
 ## Phase 17: Migrate `O-PUB-OSE-WEB`
 
 - **Input:** complete app-web/harness rows and post-DDD specs map.
