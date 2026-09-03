@@ -1153,6 +1153,34 @@ binding name and the navigation-only finite allocation. It must not admit any `t
 
 ### `D-O-PUB-OL-WEB` delivery lifecycle
 
+> **Execution state:** `organiclever-app-web` moved from a `src`-colocated 74%-floor test contract
+> to the target shape, mirroring `web-ui`/`ts-ui`/`ayokoding-www`: all unit tests relocated to
+> `tests/unit/`, `test:coverage` raised to a 99% line floor (99.5% lines achieved), the three
+> policy-validation targets added, and the pre-existing `{projectRoot}` Nx-macro `cwd` (unresolvable
+> by rhino-cli's static reader) replaced with the literal `apps/organiclever-app-web` path.
+> `test:integration` reduced to a documented no-op — `repo-config.yml`'s registry already marks this
+> project's integration disposition `inapplicable`, matching the `ayokoding-www` precedent; no
+> registry edit was needed. Closing the coverage gap added ~40 new test cases across 13 relocated
+> files plus 5 new test files, and found/fixed two small pre-existing bugs: a stale
+> `test/unit/steps/landing` path reference (survives as a real regression guard, corrected to
+> `tests/unit/steps/landing`) and two `readFileSync(resolve(__dirname, ...))` calls the automated
+> import-rewrite missed, both now at the correct relative depth. One line
+> (`routine-store.ts`'s defensive `if (!group)` guard after an index obtained from the same array's
+> own `findIndex`) was deliberately left uncovered as genuinely unreachable without breaking the
+> `ExerciseGroup[]` type contract, rather than adding a fake test to force the number up.
+> Independently reproduced the exact numbers via a forced-fresh `test:quick` run (63/63 test files,
+> 660/660 tests, coverage/layout/manifest policy checks all green) and confirmed `repo-config.yml`
+> needed zero changes. During this phase's cleanup a peer agent briefly mutated the shared
+> `adopt-beavernest-test-automation` worktree by mistake (a sandboxed `git mv` that slipped through
+> via a python subprocess call); it was caught immediately, the stray changes were stashed (not
+> lost), and a follow-on ref-pointer mistake in the primary `ose-public` checkout (caused while
+> reconciling that worktree) was independently verified as file-content-safe and corrected with the
+> user's approval — no work was lost in either incident, and this project's own migration was
+> unaffected since it was redone cleanly in an isolated worktree. Leak-review clean (0 findings, no
+> binary files touched). CI green (14/14 checks). PR:
+> [wahidyankf/ose-public#449](https://github.com/wahidyankf/ose-public/pull/449), merge commit
+> `0544d77f3e94ae93e203f846e5658ade1e355299`.
+
 ## Phase 15: Migrate `O-PUB-OL-BE`
 
 - **Input:** complete backend/contracts/API-harness rows and schema boundaries.
