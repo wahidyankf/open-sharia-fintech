@@ -46,19 +46,19 @@
       "cache": true,
       "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/www/behaviors/frontend/**/*.feature"],
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit-fe",
-        "cwd": "{projectRoot}"
+        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run",
+        "cwd": "apps/organiclever-www"
       }
     },
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx vitest run --project unit-fe --coverage --coverage.thresholds.lines=80",
-        "cwd": "{projectRoot}"
+        "command": "npx vitest run --coverage --coverage.thresholds.lines=99",
+        "cwd": "apps/organiclever-www"
       },
       "cache": true,
       "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/**/*"]
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
@@ -69,7 +69,10 @@
           "npx nx run organiclever-www:lint",
           "npx nx run organiclever-www:test:unit",
           "npx nx run organiclever-www:test:coverage",
-          "npx nx run organiclever-www:test:specs"
+          "npx nx run organiclever-www:test:specs",
+          "npx nx run organiclever-www:test:layout:validation",
+          "npx nx run organiclever-www:coverage:policy:validation",
+          "npx nx run organiclever-www:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -130,6 +133,30 @@
       },
       "cache": true,
       "inputs": ["default", "specs"]
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project organiclever-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project organiclever-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project organiclever-www"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {

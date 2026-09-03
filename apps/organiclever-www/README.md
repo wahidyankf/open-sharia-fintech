@@ -21,7 +21,7 @@ No project-specific environment variables are required. The checked-in [`.env.ex
 - [`src/app/`](./src/app/) — Next.js App Router entry point, metadata, and global styles.
 - [`src/features/home/`](./src/features/home/) — landing-page composition: hero, feature cards, weekly-rhythm preview, and principles.
 - [`src/features/app-shell/`](./src/features/app-shell/) — shared landing navigation and footer.
-- [`test/unit/steps/`](./test/unit/steps/) — Vitest Cucumber step definitions for the marketing and accessibility scenarios.
+- [`tests/unit/steps/`](./tests/unit/steps/) — Vitest Cucumber step definitions for the marketing and accessibility scenarios.
 - [`specs/apps/organiclever/www/behaviors/frontend/`](../../specs/apps/organiclever/www/behaviors/frontend/README.md) — executable acceptance criteria shared by unit and E2E tests.
 
 ## Engineering shape
