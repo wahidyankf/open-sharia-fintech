@@ -2,6 +2,7 @@ namespace OseBe.Contexts.GapAnalysis
 
 open System.Threading.Tasks
 open OseBe.Infrastructure.OpenRouterClient
+open OseBe.Infrastructure.OpenRouterConnect
 
 /// Infrastructure adapters for the gap-analysis bounded context.
 ///

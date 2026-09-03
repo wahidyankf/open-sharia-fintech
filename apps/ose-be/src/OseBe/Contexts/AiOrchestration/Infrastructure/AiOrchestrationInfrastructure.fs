@@ -2,6 +2,7 @@ namespace OseBe.Contexts.AiOrchestration
 
 open System.Threading.Tasks
 open OseBe.Infrastructure.OpenRouterClient
+open OseBe.Infrastructure.OpenRouterConnect
 
 /// Infrastructure adapters for the ai-orchestration bounded context.
 ///

@@ -86,7 +86,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test apps/ose-be/tests/unit/OseBe.UnitTests.fsproj --collect:\"XPlat Code Coverage\" /p:Threshold=80 /p:ThresholdType=line"
+        "command": "dotnet test apps/ose-be/tests/unit/OseBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=99 \"/p:Include=[OseBe]*\" /p:ThresholdType=line \"/p:ExcludeByFile=**/OseBe/Program.fs%2C**/Contexts/Db/Infrastructure/DbMigrations.fs%2C**/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs%2C**/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs%2C**/Infrastructure/Repositories/EfRepositories.fs%2C**/Contexts/Messaging/Infrastructure/JetStreamDemo.fs%2C**/Infrastructure/NatsConnect.fs%2C**/Infrastructure/OpenRouterConnect.fs\""
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/tests/unit/**/*.fs"]
@@ -99,7 +99,10 @@
           "npx nx run ose-be:lint",
           "npx nx run ose-be:test:unit",
           "npx nx run ose-be:test:coverage",
-          "npx nx run ose-be:test:specs"
+          "npx nx run ose-be:test:specs",
+          "npx nx run ose-be:test:layout:validation",
+          "npx nx run ose-be:coverage:policy:validation",
+          "npx nx run ose-be:package-manifest:policy:validation"
         ],
         "parallel": false
       },
@@ -159,6 +162,30 @@
       },
       "cache": true,
       "inputs": ["default", "specs"]
+    },
+    "test:layout:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project ose-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "coverage:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project ose-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
+    },
+    "package-manifest:policy:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project ose-be"
+      },
+      "cache": true,
+      "inputs": ["default", "{projectRoot}/project.json"]
     }
   },
   "namedInputs": {

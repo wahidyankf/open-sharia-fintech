@@ -26,3 +26,7 @@ let ``health route returns JSON status healthy`` () =
     Assert.Contains("\"status\"", body)
     Assert.Contains("healthy", body)
     Assert.Equal("application/json", resp.Content.Headers.ContentType.MediaType)
+
+[<Fact>]
+let ``the health context declares it has no infrastructure dependencies`` () =
+    Assert.False(OseBe.Contexts.Health.Infrastructure.hasInfrastructureDependencies ())
