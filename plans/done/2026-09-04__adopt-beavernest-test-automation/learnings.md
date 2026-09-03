@@ -33,7 +33,7 @@ diagnostic blames the registry rather than the reader.
 Durable prevention: any repository tool that enumerates Nx projects from `project.json` must fall
 back to the containing directory name, and should be checked against `nx show projects --json`
 rather than against a hand-listed project set.
-Route:
+Route: Discard -- already resolved: `TestContract.fs:projectNameOf` and `TestContractProject.fs:declaredName` already fall back to the containing-directory name when `project.json` omits `name`, with fixture-backed unit coverage. No residual gap to route.
 
 ## L-2: The local F# analyzer run does not reproduce every CI analyzer diagnostic
 
@@ -46,7 +46,7 @@ the file being analyzed, so a green local lint is not evidence that the analyzer
 Durable prevention: treat CI as the only authority for the G-Research analyzer rules, and avoid the
 constructs those rules police in the first place — never apply `string` to an unannotated
 expression in `apps/rhino-cli` F# sources; parse and compare typed values instead.
-Route:
+Route: Routed inline, merged with L-7 (same root cause) -- added a "F# analyzer/lint passes locally, fails in CI" row to `repo-governance/development/quality/ci-blocker-resolution/the-investigation-process-steps-1-4.md`'s Step 4 table.
 
 ## L-3: Captured tool transcripts leak the absolute worktree path
 
@@ -61,7 +61,7 @@ Durable prevention: normalize the repository-root prefix to a portable placehold
 any build, test, or coverage transcript into a tracked evidence file, and scan a candidate evidence
 file for an absolute home-directory path before staging it rather than relying on the leak review
 to find it.
-Route:
+Route: Routed inline -- appended a paragraph to `repo-governance/development/quality/no-machine-specific-commits/verifying-a-commit-before-pushing.md` naming captured build/test transcripts as a common miss, since the existing doc covered hand-typed paths but not tool-generated ones.
 
 ## L-4: The frozen Phase 4 shared-plumbing allowlist is narrower than its own splits
 
@@ -79,7 +79,7 @@ not name.
 Durable prevention: derive a shared-path allowlist from the leaf splits rather than restating it,
 so a hand-written list can never disagree with the splits it is checked against; where a plan does
 restate one, make the check the single source and the prose the derived text.
-Route:
+Route: Discard -- plan-specific, already resolved via `evidence/phase-4/R-PUB/{bdd,coverage}-shared-plumbing.tsv`; no other plan uses this frozen-allowlist mechanism, so a durable rule would catch nothing for a future plan.
 
 ## L-5: The evidence-ledger gate demands a separator the Markdown lint forbids
 
@@ -97,7 +97,7 @@ Durable prevention: move the evidence ledger out of Markdown into a real `.tsv` 
 `markdownlint` never sees and the gate can parse by field, or restate the gate to match the
 separator the lint permits. A gate whose passing condition is forbidden by another gate on the same
 file is unsatisfiable, not merely inconvenient.
-Route:
+Route: Discard -- plan-specific, already resolved (ledger stayed two-space-separated with a separator-agnostic check); `implementation-notes.md`'s `EVIDENCE` ledger is bespoke to this one oversized plan, not a standard plan-folder convention, so no future plan would hit the same conflict.
 
 ## L-6: A case-insensitive ignore rule silently untracked a frozen allocation directory
 
@@ -116,7 +116,7 @@ actually visible to Git — `git check-ignore -v <path>` must exit non-zero, or 
 in `git status --untracked-files=all` — before treating a passing test run as evidence. A build
 system that reads a file by glob and a version-control system that ignores it disagree silently, and
 the test suite reports the build system's view.
-Route:
+Route: Discard -- already fully resolved: `.gitignore` carries the exact `!apps/rhino-cli/tests/unit/Fixtures/TestContract/Coverage/` negation, and all 9 fixtures are confirmed git-tracked (`git check-ignore` returns nothing on them).
 
 ## L-7: A stale `obj/` evaluation made the local F# analyzer skip the file the delivery added
 
@@ -140,7 +140,7 @@ Durable prevention: whenever a delivery adds a `.fs` file, build the owning proj
 `lint`, and assert the analyzer's own file list contains the added path rather than reading its exit
 code. An analyzer that silently narrows its input reports success for work it never inspected; the
 exit code cannot distinguish "clean" from "not looked at".
-Route:
+Route: Routed inline -- see L-2; same table-row addition covers both, since L-7 is the diagnosed root cause of L-2's symptom.
 
 ## L-8: A declared Nx target outran the engine it invoked, and nothing ran it
 
@@ -161,7 +161,7 @@ real repository. Pointing it at the fixture corpus instead would have made it gr
 it would re-assert what the unit suite already asserts while reading as project-level enforcement.
 This delivery removed the target and routed the four verbs; the target returns with the
 owner-migration reader, which is the first point at which it can measure anything.
-Route:
+Route: Discard -- already fully resolved: every migrated project's `project.json` now wires real `--project`-scoped `bdd`/`layout`/`coverage`/`manifest` validate targets (this plan's own Phase 20A/20B and the earlier `--project` reader work closed the exact vacuous-target gap described).
 
 ## L-9: A build output made the unit runner discover five copies of its own tests
 
@@ -184,7 +184,7 @@ the build output directory explicitly, because a build tool that copies sources 
 that globs for sources disagree silently and the runner reports the build tool's view. Excluding
 `**/.next/**` in the affected project restored `build` and `test:quick` to being composable in one
 workspace.
-Route:
+Route: Reported without plan authorization -- the same `.next`-build-output test-discovery collision is confirmed still live in `apps/ose-www/vitest.config.ts` (unanchored unit glob, no `**/.next/**` exclude, real `next build` target), unlike the two sibling apps already fixed. Reported to the user in-conversation on 2026-09-03 as a follow-up one-line vitest-config fix; not required to complete this plan's own scope, so not landed inline per the code-routing downstream rule.
 
 ## L-10: A no-data placeholder turned an unreadable corpus into a passing suite
 
@@ -201,7 +201,7 @@ directory, an unreadable feature file, and an empty expansion as three distinct 
 name the offending path, and never wrap per-file parsing in a `with _ -> Seq.empty` that turns a
 binding defect into an empty set. Verify such a guard by pointing it at a path that does not exist
 and asserting a non-zero exit — the same path had been exiting 0.
-Route:
+Route: Discard -- already fully resolved: `apps/crane-cli/tests/unit/Suite.fs` now raises on a missing corpus directory, zero feature files, or zero expanded scenarios, each naming the offending path; no placeholder no-op row remains.
 
 ## L-11: The Phase 4 enforcement foundation is built but almost entirely unwired
 
@@ -220,4 +220,4 @@ Durable prevention: a validator that reads real repository state is finished onl
 runs it. Register the gate in the same delivery unit that builds the validator, and prove the wiring
 by making the repository violate the rule and watching the gate fail — an unwired validator and a
 passing one are indistinguishable from the exit code of any gate run.
-Route:
+Route: Reported without plan authorization -- `test-contract registry validate`/`registry validate-mapping` are confirmed still unwired into any `repo-config.yml` gate, project target, or workflow, though currently clean (`state=verified projects=26`). Reported to the user in-conversation on 2026-09-03 as a follow-up gate-wiring change (with a Regression Test Mandate proof of a deliberate registry-drift failure); not required to complete this plan's own scope, so not landed inline.

@@ -1617,6 +1617,33 @@ separate lifecycle from the as-built cohesive delivery below and must not admit 
 
 ### `RP-P20-PUB`
 
+> Built the closure paths: `apps/rhino-cli/tests/unit/Fixtures/TestContract/Closure/closure.json`
+> and `apps/rhino-cli/tests/unit/Steps/TestContractClosureUnitTests.fs`, a permanent regression
+> guard for the eight finite test-contract concerns (registry, lifecycle, corpus,
+> target-composition, layout, manifest, coverage, BDD). The four registry-family concerns are
+> sub-checks inside one `TestContract.validate` call; each closure fact builds a minimal `Registry`
+> record with exactly one deliberate violation and asserts the real validator rejects it with the
+> literal diagnostic text read from `TestContract.fs` (not guessed). The four document-shaped
+> concerns (layout, manifest, coverage, BDD) each reuse an existing real negative-case fixture
+> verbatim (`executable-test-in-src.json`, `retained-without-consumer.json`, `98-percent.json`,
+> `missing-step.json`) rather than inventing new invalid documents.
+>
+> `TestContract.fs` and `repo-config.yml` needed zero change — every type and function the closure
+> tests call was already public, and no `test-contract` verb has (or needed) a `repo-config.yml`
+> gate entry; wiring happens per-project through Nx targets, already covered by Phase 20A/20B's
+> rollout. This confirms RP-P20-PUB's own text: it verifies the already-delivered canonical rule
+> surfaces unchanged, it does not add a new one.
+>
+> Verified non-vacuously: 2 of the 8 facts were manually flipped to their corresponding valid value
+> and confirmed to fail before being reverted to the real invalid case. Independently rebuilt clean
+> (`rm -rf obj bin` across all 4 `rhino-cli` projects, then `dotnet build`) and re-ran the full unit
+> suite twice — once filtered to just the 8 new facts (8/8 passed) and once the whole suite (2468
+> passed, 0 failed; the prior public baseline was 2460, so exactly +8, no other test silently
+> skipped or duplicated). Confirmed `TestContract.fs`/`repo-config.yml` untouched via `git status`.
+> The new files were built in an isolated worktree (per this session's evaluation-agent
+> convention) and copied into the plan's single execution worktree; the isolated worktree was
+> removed immediately after to preserve the one-worktree-per-plan rule.
+
 ### Phase 20B Gate
 
 > All checks below must pass before starting Phase 21.
@@ -1642,6 +1669,36 @@ separate lifecycle from the as-built cohesive delivery below and must not admit 
 - **Outcome:** no scope gap remains and the plan archives inside the final public delivery PR.
 - **Acceptance criteria:** [AC-TEST-08, AC-TEST-09, AC-REPO-01, and AC-RULES-01](./prd.md#acceptance-criteria).
 - **Proof:** CI green on the merged head, plus the PR's leak-review record. See the per-PR process above.
+
+### `AC-TEST-09` End-to-End Completeness Audit
+
+> Ran the final reconciliation `AC-TEST-09` itself requires: mapped all 21 acceptance criteria
+> (`AC-TEST-01`–`12`, `AC-REPO-01`, `AC-RULES-01`, `AC-DDD-01`, `AC-SPECS-01`, `AC-C4-01`/`02`,
+> `AC-COVERAGE-01`–`03`) to current, live evidence rather than trusting each phase's historical
+> merge record. 20 of 21 verified live and clean on the first pass — real validator runs across all
+> 26 public Nx projects (`registry validate`, `bdd`/`layout`/`coverage`/`manifest validate` per
+> project/adapter), all 9+4 negative fixtures, `governance readme-index validate`,
+> `npm run validate:sync`, and `harness bindings validate`, all clean.
+>
+> One real gap: `AC-REPO-01` ("every shared Rhino surface remains identical") did not hold —
+> `TestContractProject.fs` had drifted 184 lines between `ose-public` and `ose-private`, a
+> byte-for-byte comparison the local per-repo `parity manifest validate` gate cannot see (it only
+> checks a repo's own files against its own manifest, never the sibling repo). Per this plan's own
+> Root Cause Orientation and the standing rule against deferring a discovered gap, reopened
+> execution at this gap rather than archiving over it: ported `ose-public`'s current file into
+> `ose-private` (byte-identical copy — no private-only logic existed to preserve), verified the
+> full 2544-test unit suite unchanged, re-ran every real (non-fixture) validator against
+> `ose-private`'s 3 real projects, regenerated both parity manifests, and confirmed `diff` between
+> the two repos' copies is empty. One leak-review pass (head
+> `3e9a44cf9bc91cbbd36bdb98153f487253f6903a`, review `5106796012`, zero findings). CI green after
+> one transient infra retry (a GitHub API timeout in the Volta setup step, unrelated to the change —
+> every real check had already passed). PR
+> [wahidyankf/ose-private#150](https://github.com/wahidyankf/ose-private/pull/150), merge commit
+> `3bde885641ca25d09ad3a2c3f15821109e3c671a`.
+>
+> Re-verified `AC-REPO-01` clean after the fix: `diff -rq` between the two repos' `TestContractProject.fs`
+> now empty, both parity manifests current. All 21 acceptance criteria now hold with current
+> evidence — the reconciliation this section records is itself the `AC-TEST-09` proof.
 
 ### Phase 22 Gate
 
