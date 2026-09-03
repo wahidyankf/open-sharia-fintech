@@ -53,7 +53,7 @@ These colors meet WCAG AA contrast standards and are distinguishable for all typ
 
 **REQUIRED**: Use these exact Mermaid class definitions in all diagrams.
 
-```mermaid
+```text
 classDef blue fill:#0173B2,stroke:#000,color:#FFF
 classDef orange fill:#DE8F05,stroke:#000,color:#000
 classDef teal fill:#029E73,stroke:#000,color:#FFF
@@ -138,8 +138,11 @@ graph TD
 **Example**:
 
 ```mermaid
-ZMS["Zakat Management System<br/>[System]"]:::blue
-API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
+graph TD
+    ZMS["Zakat Management System<br/>[System]"]:::blue
+    API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000,color:#FFF
 ```
 
 ### Relationship Labels
@@ -150,7 +153,7 @@ API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
 
 **Examples**:
 
-```mermaid
+```text
 Web -->|"Makes API calls<br/>[HTTPS/REST]"| API
 API -->|"Reads/writes<br/>[TCP/SQL]"| DB
 API -->|"Publishes events<br/>[AMQP]"| MQ
@@ -174,12 +177,15 @@ API -->|"Publishes events<br/>[AMQP]"| MQ
 **Good**:
 
 ```mermaid
-API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
+graph TD
+    API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000,color:#FFF
 ```
 
 **Bad** (no line breaks):
 
-```mermaid
+```text
 API["Zakat API [Container: Spring Boot] Business logic"]:::blue
 ```
 
@@ -256,7 +262,7 @@ API["Zakat API [Container: Spring Boot] Business logic"]:::blue
 ### System Context Diagram
 
 ```mermaid
-graph LR
+graph TD
     ZMS["Zakat Management System"]:::blue
     Donor["Donor<br/>(Person)"]:::orange
     Beneficiary["Beneficiary<br/>(Person)"]:::orange
@@ -264,12 +270,12 @@ graph LR
     PayGW["Payment Gateway<br/>(External System)"]:::teal
     CompRep["Compliance Reporting<br/>(External System)"]:::teal
 
-    Donor --> ZMS
-    ZMS --> Donor
-    Admin --> ZMS
-    ZMS --> PayGW
-    ZMS --> CompRep
-    ZMS --> Beneficiary
+    Donor -->|"Submits Zakat<br/>calculation<br/>[HTTPS/JSON]"| ZMS
+    ZMS -->|"Displays Zakat<br/>obligations<br/>[HTTPS/JSON]"| Donor
+    Admin -->|"Manages<br/>distributions<br/>[HTTPS/JSON]"| ZMS
+    ZMS -->|"Processes<br/>payments<br/>[HTTPS/JSON]"| PayGW
+    ZMS -->|"Reports<br/>distributions<br/>[HTTPS/JSON]"| CompRep
+    ZMS -->|"Disburses funds<br/>[HTTPS/JSON]"| Beneficiary
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef orange fill:#DE8F05,stroke:#000,color:#000
@@ -279,17 +285,17 @@ graph LR
 ### Container Diagram
 
 ```mermaid
-graph LR
+graph TD
     Web["Zakat Web UI<br/>[Container: Next.js]<br/>User interface"]:::blue
     API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
     DB["Zakat Database<br/>[Container: PostgreSQL]<br/>Assessment storage"]:::teal
     MQ["Message Broker<br/>[Container: RabbitMQ]<br/>Event distribution"]:::teal
     Cache["Session Cache<br/>[Container: Redis]<br/>User sessions"]:::teal
 
-    Web --> API
-    Web --> Cache
-    API --> DB
-    API --> MQ
+    Web -->|"Makes API calls<br/>[HTTPS/REST]"| API
+    Web -->|"Reads sessions<br/>[TCP/Redis]"| Cache
+    API -->|"Reads/writes<br/>[TCP/SQL]"| DB
+    API -->|"Publishes events<br/>[AMQP]"| MQ
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef teal fill:#029E73,stroke:#000,color:#FFF

@@ -1,6 +1,6 @@
 ---
 title: "Examples — Default and Direct-Push Selection"
-description: PASS and FAIL examples of the default worktree-to-pr flow versus an unauthorized direct push, and PASS for a properly declared direct-push mode.
+description: PASS and FAIL examples of the default worktree-to-pr flow versus an unauthorized direct push, and PASS for an eligible private main-to-origin-main selection.
 category: explanation
 subcategory: development
 tags:
@@ -46,20 +46,21 @@ Done. Convention is now on main.
 No `## Delivery Mode` field and no invocation argument selected a direct-push mode. The default is
 `worktree-to-pr`; pushing straight to `origin main` here is wrong.
 
-## PASS: Correct behavior when a direct-push mode is explicitly selected
+## PASS: Correct behavior for an eligible private `main-to-origin-main` selection
 
-Plan's `## Delivery Mode` field: `worktree-to-origin-main` — "single-line config fix, no review
-warranted."
+The `ose-private` plan's `## Delivery Mode` field is `main-to-origin-main`, and its `## Worktree`
+field is `Not applicable (N/A)`. It changes one stateful Terraform resource and requires the primary
+checkout's real credentials and local state; the change is small, understood, locally gated, and
+safe to integrate immediately.
 
 ```
-Plan executor: Delivering per the plan's declared worktree-to-origin-main mode.
+Plan executor: Delivering eligible private stateful IaC from the primary checkout.
 
-  git worktree add worktrees/fix-config-typo -b fix-config-typo
-  cd worktrees/fix-config-typo
-  git add config/settings.json
-  git commit -m "fix(config): correct typo in feature flag name"
+  git switch main
+  git pull --rebase origin main
+  git add infra/prod/terraform/main.tf
+  git commit -m "fix(infra): correct Terraform resource state"
   git push origin main
-  git worktree remove worktrees/fix-config-typo
 
-Pushed directly to origin main per the plan's declared delivery mode.
+Pushed directly to origin main under the plan's eligible private main-to-origin-main exception.
 ```
