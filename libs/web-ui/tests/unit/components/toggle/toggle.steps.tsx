@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders in off state", ({ Given, Then }) => {
-    Given("I render a Toggle with value false", () => {
+  Scenario("Renders in off state", ({ When, Then }) => {
+    When("I render a Toggle with value false", () => {
       // precondition noted
     });
 
@@ -22,8 +22,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders in on state", ({ Given, Then }) => {
-    Given("I render a Toggle with value true", () => {
+  Scenario("Renders in on state", ({ When, Then }) => {
+    When("I render a Toggle with value true", () => {
       // precondition noted
     });
 
@@ -70,8 +70,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders with label", ({ Given, Then }) => {
-    Given('I render a Toggle with value false and label "Enable notifications"', () => {
+  Scenario("Renders with label", ({ When, Then }) => {
+    When('I render a Toggle with value false and label "Enable notifications"', () => {
       // precondition noted
     });
 

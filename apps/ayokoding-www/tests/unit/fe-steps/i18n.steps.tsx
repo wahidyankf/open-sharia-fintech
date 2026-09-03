@@ -37,8 +37,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
-  Scenario("UI labels change to the selected language", ({ Given, Then, And }) => {
-    Given("a visitor is on the Indonesian version of a page", () => {});
+  Scenario("UI labels change to the selected language", ({ When, Then, And }) => {
+    When("a visitor is on the Indonesian version of a page", () => {});
 
     Then("navigation labels and UI text should be displayed in Indonesian", () => {
       const idSearch = t("id", "search");

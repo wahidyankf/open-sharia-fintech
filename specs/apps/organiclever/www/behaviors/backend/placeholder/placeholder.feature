@@ -5,5 +5,8 @@ Feature: organiclever-www has no backend API
   This slot exists to satisfy the standardized www reusable workflow pair
   (be-e2e + fe-e2e), where be-e2e is tolerated-absent in CI.
 
+  @integration @e2e
   Scenario: no backend API scenarios exist for organiclever-www
     Given no backend API exists for organiclever-www
+    When organiclever-www is checked for a backend API surface
+    Then no backend API surface is found

@@ -6,7 +6,7 @@ Feature: App Shell Navigation
 
   @unit @e2e
   Scenario: Default tab is Home on first load
-    Given the app is freshly loaded
+    When the app is freshly loaded
     Then the Home tab is active
     And the app shell is visible
 

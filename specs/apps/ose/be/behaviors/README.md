@@ -4,18 +4,18 @@ Backend (HTTP-semantic) Gherkin scenarios for `ose-be`. Consumed by xUnit + Tick
 
 ## Feature files
 
-| Feature file                                                           | Domain            |
-| ---------------------------------------------------------------------- | ----------------- |
-| [health/health.feature](./health/health.feature)                       | health            |
-| [regulatory-source/](./regulatory-source/)                             | regulatory-source |
-| [internal-policy/](./internal-policy/)                                 | internal-policy   |
-| [gap-analysis/](./gap-analysis/)                                       | gap-analysis      |
-| [ai-orchestration/](./ai-orchestration/)                               | ai-orchestration  |
-| [db/migrations.feature](./db/migrations.feature)                       | db                |
-| [messaging/nats-connect.feature](./messaging/nats-connect.feature)     | messaging         |
-| [messaging/nats-config.feature](./messaging/nats-config.feature)       | messaging         |
-| [messaging/jetstream-demo.feature](./messaging/jetstream-demo.feature) | messaging         |
-| [config/env-tier-loading.feature](./config/env-tier-loading.feature)   | config            |
+| Feature file                                                                     | Domain            |
+| -------------------------------------------------------------------------------- | ----------------- |
+| [health/health.feature](./health/health.feature)                                 | health            |
+| [regulatory-source/](./regulatory-source/)                                       | regulatory-source |
+| [internal-policy/](./internal-policy/)                                           | internal-policy   |
+| [gap-analysis/](./gap-analysis/)                                                 | gap-analysis      |
+| [ai-orchestration/](./ai-orchestration/)                                         | ai-orchestration  |
+| [db/migrations.feature](./db/migrations.feature)                                 | db                |
+| [messaging/nats-config.feature](./messaging/nats-config.feature)                 | messaging         |
+| [messaging/live/nats-connect.feature](./messaging/live/nats-connect.feature)     | messaging         |
+| [messaging/live/jetstream-demo.feature](./messaging/live/jetstream-demo.feature) | messaging         |
+| [config/env-tier-loading.feature](./config/env-tier-loading.feature)             | config            |
 
 - [ai-orchestration](./ai-orchestration/README.md) — ose-be Gherkin Domain
 - [config](./config/README.md) — ose-be Gherkin Domain

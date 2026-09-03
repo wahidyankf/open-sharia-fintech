@@ -135,7 +135,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     let appDir = "";
     let thrown: unknown;
 
-    Given('a stray "<file>" sits beside the app\'s tier file', () => {
+    Given("a stray {string} sits beside the app's tier file", () => {
       appDir = makeTmpAppDir();
       writeEnvFile(appDir, ".env.stag", "VAR=value\n");
       writeEnvFile(appDir, file, "VAR=other\n");
@@ -150,7 +150,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     });
 
     // @covers specs/apps/ose/www/behaviors/frontend/config/env-tier-loading.feature:ose-www fails loudly on a stray auto-loaded env file
-    Then('the loader throws, naming "<file>" and the correct ".env.<tier>" replacement', () => {
+    Then('the loader throws, naming {string} and the correct ".env.<tier>" replacement', () => {
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above
       expect(thrown).toBeInstanceOf(Error);
       // oxlint-disable-next-line vitest/no-standalone-expect -- see module doc comment above

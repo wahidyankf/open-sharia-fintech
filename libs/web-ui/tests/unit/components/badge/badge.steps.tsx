@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders default variant", ({ Given, Then, And }) => {
-    Given('I render a Badge with text "workout"', () => {});
+  Scenario("Renders default variant", ({ When, Then, And }) => {
+    When('I render a Badge with text "workout"', () => {});
 
     Then('I see text "workout"', () => {
       cleanup();
@@ -26,8 +26,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders outline variant with hue", ({ Given, Then, And }) => {
-    Given('I render a Badge variant "outline" hue "honey"', () => {});
+  Scenario("Renders outline variant with hue", ({ When, Then, And }) => {
+    When('I render a Badge variant "outline" hue "honey"', () => {});
 
     Then("the badge has honey wash background", () => {
       cleanup();
@@ -51,8 +51,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders secondary variant", ({ Given, Then }) => {
-    Given('I render a Badge variant "secondary"', () => {});
+  Scenario("Renders secondary variant", ({ When, Then }) => {
+    When('I render a Badge variant "secondary"', () => {});
 
     Then("the badge has background color from --color-secondary", () => {
       cleanup();
@@ -61,8 +61,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders destructive variant", ({ Given, Then }) => {
-    Given('I render a Badge variant "destructive"', () => {});
+  Scenario("Renders destructive variant", ({ When, Then }) => {
+    When('I render a Badge variant "destructive"', () => {});
 
     Then("the badge uses destructive colors", () => {
       cleanup();
@@ -71,8 +71,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders md size", ({ Given, Then, And }) => {
-    Given('I render a Badge with size "md"', () => {});
+  Scenario("Renders md size", ({ When, Then, And }) => {
+    When('I render a Badge with size "md"', () => {});
 
     Then('the badge has class containing "text-[13px]"', () => {
       cleanup();

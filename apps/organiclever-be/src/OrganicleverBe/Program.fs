@@ -44,11 +44,13 @@ let main args =
     // 2. Schema migration on boot (db context — DbUp embedded scripts).
     runMigrations connStr
 
-    // 3. Messaging: best-effort NATS connect + JetStream durable demo (non-fatal).
+    // 3. Messaging: config is required (fail-fast on missing ORGANICLEVER_BE_NATS_URL);
+    //    the connection itself is best-effort + non-fatal, including the JetStream
+    //    durable demo (see NatsConnect.fs).
     let status = newShared ()
 
     let natsConnection =
-        connectAsync (natsUrl ()) |> Async.AwaitTask |> Async.RunSynchronously
+        connectAsync (requireNatsUrl ()) |> Async.AwaitTask |> Async.RunSynchronously
 
     match natsConnection with
     | Some conn ->

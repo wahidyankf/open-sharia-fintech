@@ -18,8 +18,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders dialog with trigger button", ({ Given, Then, And }) => {
-    Given('the Dialog is rendered with a trigger labeled "Open"', () => {
+  Scenario("Renders dialog with trigger button", ({ When, Then, And }) => {
+    When('the Dialog is rendered with a trigger labeled "Open"', () => {
       // precondition noted
     });
 
@@ -44,8 +44,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given('the Dialog is rendered open with title "Test Dialog"', () => {
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When('the Dialog is rendered open with title "Test Dialog"', () => {
       // precondition noted
     });
 

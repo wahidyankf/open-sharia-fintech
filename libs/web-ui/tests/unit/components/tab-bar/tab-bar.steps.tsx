@@ -16,8 +16,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders tabs", ({ Given, Then }) => {
-    Given('I render a TabBar with tabs "Home,History,Settings" and current "Home"', () => {
+  Scenario("Renders tabs", ({ When, Then }) => {
+    When('I render a TabBar with tabs "Home,History,Settings" and current "Home"', () => {
       // precondition noted
     });
 
@@ -47,8 +47,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Active tab has aria-selected true", ({ Given, Then }) => {
-    Given('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
+  Scenario("Active tab has aria-selected true", ({ When, Then }) => {
+    When('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
       // precondition noted
     });
 
@@ -60,8 +60,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Inactive tab has aria-selected false", ({ Given, Then }) => {
-    Given('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
+  Scenario("Inactive tab has aria-selected false", ({ When, Then }) => {
+    When('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
       // precondition noted
     });
 

@@ -6,7 +6,7 @@ Feature: Home Screen
 
   @unit @e2e
   Scenario: Home screen shows entry list
-    Given the home screen is loaded with entries
+    When the home screen is loaded with entries
     Then the entry list is visible
 
   @unit @e2e

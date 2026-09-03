@@ -120,7 +120,13 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     let appDir = "";
     let thrown: unknown;
 
-    Given('a stray "<file>" sits beside the tier file', () => {
+    // The literal "<file>" placeholder in the Gherkin outline is replaced by the Cucumber
+    // Expression `{string}` rather than kept verbatim: @amiceli/vitest-cucumber matches this step
+    // definition against the outline's own un-substituted step text (so `{string}`'s `"[^"]*"`
+    // pattern still matches the raw "<file>" token), while the rhino-cli BDD adapter-coverage
+    // validator matches step definitions against each example row's *substituted* step text (so a
+    // literal "<file>" binding would never match a real file name). `{string}` satisfies both.
+    Given("a stray {string} sits beside the tier file", () => {
       appDir = makeTmpAppDir();
       writeEnvFile(appDir, ".env.stag", "VAR=value\n");
       writeEnvFile(appDir, file, "VAR=other\n");
@@ -135,7 +141,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     });
 
     // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Fails loudly on a stray auto-loaded env file
-    Then('the loader throws, naming "<file>" and the correct ".env.<tier>" replacement', () => {
+    Then('the loader throws, naming {string} and the correct ".env.<tier>" replacement', () => {
       expect(thrown).toBeInstanceOf(Error);
       expect((thrown as Error).message).toContain(file);
       expect((thrown as Error).message).toContain(".env.stag");

@@ -6,12 +6,12 @@ Feature: History Screen
 
   @unit @e2e
   Scenario: History shows entries in reverse order
-    Given the history screen has entries
+    When the history screen has entries
     Then entries are shown newest first
 
   @unit @e2e
   Scenario: Empty history shows empty state
-    Given the history screen has no entries
+    When the history screen has no entries
     Then the empty state message is shown
 
   @unit @e2e

@@ -20,8 +20,8 @@ function renderLabelWithInput() {
 }
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders with text content", ({ Given, Then, And }) => {
-    Given('the Label is rendered with text "Email"', () => {
+  Scenario("Renders with text content", ({ When, Then, And }) => {
+    When('the Label is rendered with text "Email"', () => {
       // precondition noted
     });
 
@@ -38,8 +38,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Associates with form control via htmlFor", ({ Given, Then }) => {
-    Given('the Label is rendered with text "Email" associated to input "email-input"', () => {
+  Scenario("Associates with form control via htmlFor", ({ When, Then }) => {
+    When('the Label is rendered with text "Email" associated to input "email-input"', () => {
       // precondition noted
     });
 
@@ -51,8 +51,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given('the Label is rendered with text "Email" associated to input "email-input"', () => {
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When('the Label is rendered with text "Email" associated to input "email-input"', () => {
       // precondition noted
     });
 

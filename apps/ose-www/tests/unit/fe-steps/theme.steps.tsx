@@ -105,8 +105,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Default theme is light mode", ({ Given, Then }) => {
-    Given("the site loads without a stored theme preference", () => {
+  Scenario("Default theme is light mode", ({ When, Then }) => {
+    When("the site loads without a stored theme preference", () => {
       render(<ThemeToggleWithTracker />);
     });
 

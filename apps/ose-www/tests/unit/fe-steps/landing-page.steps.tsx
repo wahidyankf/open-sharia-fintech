@@ -64,8 +64,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Hero section displays platform information", ({ Given, Then, And }) => {
-    Given("the landing page is rendered", () => {
+  Scenario("Hero section displays platform information", ({ When, Then, And }) => {
+    When("the landing page is rendered", () => {
       render(<Hero />);
     });
 
@@ -91,8 +91,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Social icons are displayed", ({ Given, Then, And }) => {
-    Given("the landing page is rendered", () => {
+  Scenario("Social icons are displayed", ({ When, Then, And }) => {
+    When("the landing page is rendered", () => {
       render(<SocialIcons />);
     });
 

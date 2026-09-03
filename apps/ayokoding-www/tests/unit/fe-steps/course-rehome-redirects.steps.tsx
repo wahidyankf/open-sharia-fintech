@@ -328,8 +328,8 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
 
   Scenario(
     "A prerequisite naming a syllabus-declared but not-yet-authored course still resolves",
-    ({ Given, Then, And }) => {
-      Given("a course is declared on the syllabus roadmap but not yet authored into the course library", () => {
+    ({ When, Then, And }) => {
+      When("a course is declared on the syllabus roadmap but not yet authored into the course library", () => {
         const id = pickNotYetAuthoredSyllabusId();
         expect(SYLLABUS_COURSE_IDS).toContain(id);
         expect(courseSlugs()).not.toContain(id);
@@ -352,8 +352,8 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
 
   Scenario(
     "A prerequisite naming an authored course absent from the syllabus roadmap still resolves",
-    ({ Given, Then }) => {
-      Given("a course is authored into the course library but not declared on the syllabus roadmap", () => {
+    ({ When, Then }) => {
+      When("a course is authored into the course library but not declared on the syllabus roadmap", () => {
         const id = pickAuthoredNonSyllabusId();
         expect(courseSlugs()).toContain(id);
         expect(plannedCourseIds().has(id)).toBe(false);

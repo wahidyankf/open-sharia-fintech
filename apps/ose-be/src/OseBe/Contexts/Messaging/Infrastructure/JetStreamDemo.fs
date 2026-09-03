@@ -27,7 +27,7 @@ module Infrastructure =
     /// Runs the JetStream durable demo against a connected NATS client: create or
     /// get the stream and durable consumer, publish one demo message, then fetch
     /// and acknowledge it. Returns the outcome.
-    [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS JetStream broker; e2e-tested per the @e2e-tagged specs/apps/ose/be/behaviors/messaging/jetstream-demo.feature, owned by ose-be-e2e")>]
+    [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS JetStream broker; e2e-tested per the @e2e-tagged specs/apps/ose/be/behaviors/messaging/live/jetstream-demo.feature, owned by ose-be-e2e")>]
     let runDemo (conn: NatsConnection) : Task<JetStreamDemoOutcome> =
         task {
             try

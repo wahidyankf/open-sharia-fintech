@@ -9,19 +9,18 @@ const feature = await loadFeature(
   path.resolve(__dirname, "../../../../../../specs/apps/organiclever/www/behaviors/frontend/home/home.feature"),
 );
 
-describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
+describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
   AfterEachScenario(() => {
     cleanup();
   });
 
-  Background(({ Given }) => {
-    Given("I navigate to the marketing home page", () => {});
-  });
-
-  Scenario("Hero heading visible", ({ Then, And }) => {
-    Then('I see text "Your life,"', () => {
+  Scenario("Hero heading visible", ({ When, Then, And }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    Then('I see text "Your life,"', () => {
       expect(screen.getByText(/Your life,/i)).toBeDefined();
     });
 
@@ -35,46 +34,61 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Primary call-to-action button present", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Primary call-to-action button present
-    Then('I see a button "Open the app"', () => {
+  Scenario("Primary call-to-action button present", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Primary call-to-action button present
+    Then('I see a button "Open the app"', () => {
       expect(screen.getByRole("button", { name: /Open the app/i })).toBeDefined();
     });
   });
 
-  Scenario("Footer link present", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Footer link present
-    Then('I see text "Open app →"', () => {
+  Scenario("Footer link present", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Footer link present
+    Then('I see text "Open app →"', () => {
       expect(screen.getByText(/Open app →/)).toBeDefined();
     });
   });
 
-  Scenario("Pre-Alpha badge visible in nav", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Pre-Alpha badge visible in nav
-    Then('I see text "Pre-Alpha"', () => {
+  Scenario("Pre-Alpha badge visible in nav", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Pre-Alpha badge visible in nav
+    Then('I see text "Pre-Alpha"', () => {
       expect(screen.getAllByText(/Pre-Alpha/i).length).toBeGreaterThan(0);
     });
   });
 
-  Scenario("Alpha warning banner visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Alpha warning banner visible
-    Then('I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"', () => {
+  Scenario("Alpha warning banner visible", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Alpha warning banner visible
+    Then('I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"', () => {
       expect(screen.getByText(/Pre-Alpha — expect bugs, rough edges, and breaking changes/i)).toBeDefined();
     });
   });
 
-  Scenario("All five event type cards visible", ({ Then, And }) => {
-    Then('I see text "Workouts"', () => {
+  Scenario("All five event type cards visible", ({ When, Then, And }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    Then('I see text "Workouts"', () => {
       expect(screen.getByText("Workouts")).toBeDefined();
     });
 
@@ -96,28 +110,37 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Custom event card visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Custom event card visible
-    Then('I see text "Plus your own."', () => {
+  Scenario("Custom event card visible", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Custom event card visible
+    Then('I see text "Plus your own."', () => {
       expect(screen.getByText(/Plus your own\./i)).toBeDefined();
     });
   });
 
-  Scenario("Weekly rhythm demo visible", ({ Then }) => {
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Weekly rhythm demo visible
-    Then('I see text "Last 7 days"', () => {
+  Scenario("Weekly rhythm demo visible", ({ When, Then }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Weekly rhythm demo visible
+    Then('I see text "Last 7 days"', () => {
       expect(screen.getByText("Last 7 days")).toBeDefined();
     });
   });
 
-  Scenario("All six principles visible", ({ Then, And }) => {
-    Then('I see text "Local-first"', () => {
+  Scenario("All six principles visible", ({ When, Then, And }) => {
+    When("I navigate to the marketing home page", () => {
       cleanup();
       render(<HomeContent />);
+    });
+
+    Then('I see text "Local-first"', () => {
       expect(screen.getByText("Local-first")).toBeDefined();
     });
 

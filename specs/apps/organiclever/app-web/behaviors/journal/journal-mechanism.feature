@@ -9,7 +9,7 @@ Feature: Generic journal entry mechanism on /app
 
   @e2e
   Scenario: Empty state on first visit
-    Given PGlite database "ol_journal_v1" (IndexedDB) is empty
+    When PGlite database "ol_journal_v1" (IndexedDB) is empty
     Then I see a heading "Journal"
     And I see empty-state copy "No entries yet — press + to add one"
     And I see a focusable button labelled "Add entry"
@@ -35,7 +35,7 @@ Feature: Generic journal entry mechanism on /app
     And I press the "+ Add another" button
     And I type "reading" into the "Name" input of draft 2
     And I type "{\"title\": \"Sapiens\"}" into the "Payload" textarea of draft 2
-    And I press the "+ Add another" button
+    And I press the "+ Add another" button on draft 3
     And I type "meditation" into the "Name" input of draft 3
     And I type "{\"durationMins\": 20}" into the "Payload" textarea of draft 3
     And I press the "Save" button

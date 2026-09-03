@@ -11,8 +11,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders with default variant and size", ({ Given, Then, And }) => {
-    Given('the Button is rendered with label "Click me"', () => {
+  Scenario("Renders with default variant and size", ({ When, Then, And }) => {
+    When('the Button is rendered with label "Click me"', () => {
       // precondition noted; render happens in assertion steps
     });
 
@@ -35,8 +35,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant default", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "default" and label "default"', () => {
+  Scenario("Renders variant default", ({ When, Then }) => {
+    When('the Button is rendered with variant "default" and label "default"', () => {
       // precondition noted
     });
 
@@ -47,8 +47,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant destructive", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "destructive" and label "destructive"', () => {
+  Scenario("Renders variant destructive", ({ When, Then }) => {
+    When('the Button is rendered with variant "destructive" and label "destructive"', () => {
       // precondition noted
     });
 
@@ -59,8 +59,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant outline", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "outline" and label "outline"', () => {
+  Scenario("Renders variant outline", ({ When, Then }) => {
+    When('the Button is rendered with variant "outline" and label "outline"', () => {
       // precondition noted
     });
 
@@ -71,8 +71,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant secondary", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "secondary" and label "secondary"', () => {
+  Scenario("Renders variant secondary", ({ When, Then }) => {
+    When('the Button is rendered with variant "secondary" and label "secondary"', () => {
       // precondition noted
     });
 
@@ -83,8 +83,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant ghost", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "ghost" and label "ghost"', () => {
+  Scenario("Renders variant ghost", ({ When, Then }) => {
+    When('the Button is rendered with variant "ghost" and label "ghost"', () => {
       // precondition noted
     });
 
@@ -95,8 +95,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant link", ({ Given, Then }) => {
-    Given('the Button is rendered with variant "link" and label "link"', () => {
+  Scenario("Renders variant link", ({ When, Then }) => {
+    When('the Button is rendered with variant "link" and label "link"', () => {
       // precondition noted
     });
 
@@ -107,8 +107,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size default", ({ Given, Then }) => {
-    Given('the Button is rendered with size "default" and aria-label "button-default"', () => {
+  Scenario("Renders size default", ({ When, Then }) => {
+    When('the Button is rendered with size "default" and aria-label "button-default"', () => {
       // precondition noted
     });
 
@@ -123,8 +123,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size xs", ({ Given, Then }) => {
-    Given('the Button is rendered with size "xs" and aria-label "button-xs"', () => {
+  Scenario("Renders size xs", ({ When, Then }) => {
+    When('the Button is rendered with size "xs" and aria-label "button-xs"', () => {
       // precondition noted
     });
 
@@ -139,8 +139,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size sm", ({ Given, Then }) => {
-    Given('the Button is rendered with size "sm" and aria-label "button-sm"', () => {
+  Scenario("Renders size sm", ({ When, Then }) => {
+    When('the Button is rendered with size "sm" and aria-label "button-sm"', () => {
       // precondition noted
     });
 
@@ -155,8 +155,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size lg", ({ Given, Then }) => {
-    Given('the Button is rendered with size "lg" and aria-label "button-lg"', () => {
+  Scenario("Renders size lg", ({ When, Then }) => {
+    When('the Button is rendered with size "lg" and aria-label "button-lg"', () => {
       // precondition noted
     });
 
@@ -171,8 +171,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size icon", ({ Given, Then }) => {
-    Given('the Button is rendered with size "icon" and aria-label "button-icon"', () => {
+  Scenario("Renders size icon", ({ When, Then }) => {
+    When('the Button is rendered with size "icon" and aria-label "button-icon"', () => {
       // precondition noted
     });
 
@@ -187,8 +187,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size icon-xs", ({ Given, Then }) => {
-    Given('the Button is rendered with size "icon-xs" and aria-label "button-icon-xs"', () => {
+  Scenario("Renders size icon-xs", ({ When, Then }) => {
+    When('the Button is rendered with size "icon-xs" and aria-label "button-icon-xs"', () => {
       // precondition noted
     });
 
@@ -203,8 +203,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size icon-sm", ({ Given, Then }) => {
-    Given('the Button is rendered with size "icon-sm" and aria-label "button-icon-sm"', () => {
+  Scenario("Renders size icon-sm", ({ When, Then }) => {
+    When('the Button is rendered with size "icon-sm" and aria-label "button-icon-sm"', () => {
       // precondition noted
     });
 
@@ -219,8 +219,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size icon-lg", ({ Given, Then }) => {
-    Given('the Button is rendered with size "icon-lg" and aria-label "button-icon-lg"', () => {
+  Scenario("Renders size icon-lg", ({ When, Then }) => {
+    When('the Button is rendered with size "icon-lg" and aria-label "button-icon-lg"', () => {
       // precondition noted
     });
 
@@ -235,8 +235,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Supports disabled state", ({ Given, Then }) => {
-    Given('the Button is rendered as disabled with label "Disabled"', () => {
+  Scenario("Supports disabled state", ({ When, Then }) => {
+    When('the Button is rendered as disabled with label "Disabled"', () => {
       // precondition noted
     });
 
@@ -247,8 +247,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders as child element when asChild is true", ({ Given, Then, And }) => {
-    Given('the Button is rendered with asChild wrapping an anchor to "/test" with label "Link Button"', () => {
+  Scenario("Renders as child element when asChild is true", ({ When, Then, And }) => {
+    When('the Button is rendered with asChild wrapping an anchor to "/test" with label "Link Button"', () => {
       // precondition noted
     });
 
@@ -273,8 +273,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given('the Button is rendered with label "Accessible Button"', () => {
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When('the Button is rendered with label "Accessible Button"', () => {
       // precondition noted
     });
 
@@ -286,10 +286,10 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant teal", ({ Given, Then }) => {
+  Scenario("Renders variant teal", ({ When, Then }) => {
     let variantValue: string;
 
-    Given('I render a Button with variant "teal"', () => {
+    When('I render a Button with variant "teal"', () => {
       variantValue = "teal";
     });
 
@@ -300,10 +300,10 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders variant sage", ({ Given, Then }) => {
+  Scenario("Renders variant sage", ({ When, Then }) => {
     let variantValue: string;
 
-    Given('I render a Button with variant "sage"', () => {
+    When('I render a Button with variant "sage"', () => {
       variantValue = "sage";
     });
 
@@ -314,10 +314,10 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders size xl", ({ Given, Then }) => {
+  Scenario("Renders size xl", ({ When, Then }) => {
     let sizeValue: string;
 
-    Given('I render a Button with size "xl"', () => {
+    When('I render a Button with size "xl"', () => {
       sizeValue = "xl";
     });
 

@@ -677,11 +677,6 @@ When("the household has no school-age children", async ({ page }) => {
   }
 });
 
-Then("no school-type toggle is shown", async ({ page }) => {
-  const schoolTypeToggle = page.getByLabel("School type");
-  await expect(schoolTypeToggle).toBeHidden();
-});
-
 // ── School type: private raises expenses ──────────────────────────────────────
 
 When("I switch the school type from {string} to {string}", async ({ page }, _from: string, to: string) => {
@@ -746,49 +741,6 @@ When("I enter a monthly savings target of {string} USD", async ({ page }, amount
   await page.waitForLoadState("networkidle");
 });
 
-Then(
-  "I see the software-engineering role ladder with qualifying roles grouped above a divider and non-qualifying roles dimmed below it",
-  async ({ page }) => {
-    const caption = page.locator("[data-testid='se-roles-caption']");
-    await expect(caption).toBeVisible();
-    const divider = page.locator("[data-testid='qualifying-divider']");
-    await expect(divider).toBeVisible();
-    const dimmed = page.locator("[data-testid='non-qualifying-row']");
-    expect(await dimmed.count()).toBeGreaterThan(0);
-  },
-);
-
-Then(
-  "the lowest role whose best city reaches at least 2000 USD essential savings is marked as the minimum",
-  async ({ page }) => {
-    const marker = page.locator("[data-testid='minimum-marker']");
-    await expect(marker).toBeVisible();
-  },
-);
-
-Then(
-  "roles whose best city cannot reach 2000 USD essential savings are shown below the divider and de-emphasised",
-  async ({ page }) => {
-    const dimmed = page.locator("[data-testid='non-qualifying-row']");
-    expect(await dimmed.count()).toBeGreaterThan(0);
-  },
-);
-
-Then(
-  "the lowest role whose best city reaches at least {int} USD essential savings is marked as the minimum",
-  async ({ page }, _amount: number) => {
-    const marker = page.locator("[data-testid='minimum-marker']");
-    await expect(marker).toBeVisible();
-  },
-);
-
-Then(
-  "roles whose best city cannot reach {int} USD essential savings are shown below the divider and de-emphasised",
-  async ({ page }, _amount: number) => {
-    const dimmed = page.locator("[data-testid='non-qualifying-row']");
-    expect(await dimmed.count()).toBeGreaterThan(0);
-  },
-);
 // ── Roles labelled as software-engineering ────────────────────────────────────
 
 // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/cost-of-living-calculator.feature:Roles are labelled as software-engineering roles
@@ -821,43 +773,6 @@ Then("the row's essential savings is computed from the median salary", async ({ 
   const headers = page.locator("table thead th");
   const texts = (await headers.allTextContents()).map((t) => t.trim().toLowerCase());
   expect(texts.some((t) => t.includes("essential savings"))).toBe(true);
-});
-
-// ── Best city + country in qualifying row ─────────────────────────────────────
-
-When("I read a qualifying role row", async ({ page }) => {
-  await page.locator("table tbody tr").first().waitFor({ state: "visible" });
-});
-
-Then("the row shows the best city and its country", async ({ page }) => {
-  const bestCityCells = page.locator("[data-testid='best-city-cell']");
-  expect(await bestCityCells.count()).toBeGreaterThan(0);
-  const text = await bestCityCells.first().textContent();
-  expect(text).toMatch(/, /);
-});
-
-// ── Geographic filter scopes role candidates ──────────────────────────────────
-
-Then("each role's best city is chosen only from Indonesian cities", async ({ page }) => {
-  const bestCityCells = page.locator("[data-testid='best-city-cell']");
-  // Auto-retry until the scope re-render settles: every visible best-city cell
-  // (sampled across the first five) must name an Indonesian city. Polling avoids
-  // the race where the table still shows the pre-filter candidates.
-  await expect
-    .poll(
-      async () => {
-        const count = await bestCityCells.count();
-        if (count === 0) return false;
-        const sample = Math.min(count, 5);
-        for (let i = 0; i < sample; i++) {
-          const text = await bestCityCells.nth(i).textContent();
-          if (!text?.includes("Indonesia")) return false;
-        }
-        return true;
-      },
-      { timeout: 10000 },
-    )
-    .toBe(true);
 });
 
 // ── Non-salary comp does not affect ranking ───────────────────────────────────
@@ -926,10 +841,6 @@ When("I enter my gross salary and its city", async ({ page }) => {
   const citySelect = page.getByLabel("My salary city");
   await citySelect.selectOption({ index: 1 });
   await page.waitForLoadState("networkidle");
-});
-
-Then("the baseline savings bar equals my computed essential savings", async ({ page }) => {
-  await page.locator("table tbody tr").first().waitFor({ state: "visible" });
 });
 
 Then("the ladder marks the lowest role that meets or beats it", async ({ page }) => {
@@ -1071,10 +982,6 @@ Then("the role candidates' savings and the marked minimum role update accordingl
 });
 
 // ── Low-confidence cells (narrowed to minimum-role tab) ──────────────────────
-
-Then("any cell backed by a lower-confidence estimate shows a confidence flag", async ({ page }) => {
-  await page.locator("table").first().waitFor({ state: "visible" });
-});
 
 When("the table renders", async ({ page }) => {
   await page.locator("table tbody tr").first().waitFor({ state: "visible" });
@@ -1221,11 +1128,6 @@ Then("the minimum marker appears on the lowest-ranked role in the ladder", async
   await expect(page.getByTestId("minimum-marker").first()).toBeVisible();
 });
 
-Then("all roles appear above the divider because every role clears a zero target", async ({ page }) => {
-  // Every role qualifies at a zero target — no dimmed non-qualifying rows exist.
-  await expect(page.getByTestId("non-qualifying-row")).toHaveCount(0);
-});
-
 // ── SG-007: Expense preview updates in real time ──────────────────────────────
 
 Given("the default household is 1 adult with no children in city center", async ({ page }) => {
@@ -1358,11 +1260,6 @@ When("the user selects Country {string} without selecting a city", async ({ page
   await page.waitForLoadState("networkidle");
 });
 
-Then("the URL updates to include {string} and {string}", async ({ page }, part1: string, part2: string) => {
-  expect(page.url()).toContain(part1);
-  expect(page.url()).toContain(part2);
-});
-
 Then("opening that URL in a new tab shows only Indonesian cities in the table", async ({ page }) => {
   void page; // stub — multi-tab behavior
 });
@@ -1379,15 +1276,6 @@ When("I set the household to 1 school-age child", async ({ page }) => {
   await page.getByLabel("School-age children").selectOption("1");
   await page.waitForLoadState("networkidle");
 });
-
-Then(
-  "the school type toggle is shown with {string} and {string} options",
-  async ({ page }, _opt1: string, _opt2: string) => {
-    void _opt1;
-    void _opt2;
-    void page; // stub — verified by unit test
-  },
-);
 
 Then("the default selection is {string}", async ({ page }, _selection: string) => {
   void _selection;
@@ -1666,10 +1554,6 @@ When("the ladder table renders", async ({ page }) => {
     .first()
     .waitFor({ state: "visible", timeout: 10000 })
     .catch(() => {});
-});
-
-Then("the Best city column shows Indonesian city and country names where translations exist", async ({ page }) => {
-  void page; // stub — i18n locale names verified by unit tests
 });
 
 // ── prd.md: Design-system controls, locale redirect, mobile nav ───────────────

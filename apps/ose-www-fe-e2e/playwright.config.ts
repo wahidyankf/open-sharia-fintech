@@ -11,12 +11,18 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/ose/www/behaviors/frontend/**/*.feature"),
+  // The full shared corpus, frontend and backend alike: `ose-www-fe-e2e` is the canonical `e2e`
+  // runtime for owner `ose-www` (see repo-config.yml), so it measures every `@e2e`-tagged scenario
+  // under specs/apps/ose/www/behaviors/**, not just the browser-driven frontend ones. The backend
+  // scenarios hit the same live server (this file's `webServer`) over HTTP via Playwright's
+  // `request` fixture rather than driving a browser page — still real, black-box e2e coverage.
+  features: path.join(workspaceRoot, "specs/apps/ose/www/behaviors/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
   // Only generate e2e tests for scenarios that declare e2e intent (`@e2e`). Every existing
   // platform-web scenario is `@unit @e2e`, so this is a no-op for them; it scopes OUT pure-`@unit`
   // scenarios — e.g. the content code-block renderer scenarios, which are verified at the unit tier
-  // (jsdom) and have no live page surface (ose-www ships no non-mermaid fenced content) — keeping the
+  // (jsdom) and have no live page surface (ose-www ships no non-mermaid fenced content), and the
+  // env-tier-loading scenarios, which are `@unit`-only process/filesystem behavior — keeping the
   // default `fail-on-gen` strictness for everything that genuinely runs at e2e.
   tags: "@e2e",
 });

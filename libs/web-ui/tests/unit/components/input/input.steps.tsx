@@ -11,8 +11,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders with default props", ({ Given, Then, And }) => {
-    Given('the Input is rendered with aria-label "test input"', () => {
+  Scenario("Renders with default props", ({ When, Then, And }) => {
+    When('the Input is rendered with aria-label "test input"', () => {
       // precondition noted
     });
 
@@ -29,8 +29,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Supports disabled state", ({ Given, Then }) => {
-    Given('the Input is rendered as disabled with aria-label "disabled input"', () => {
+  Scenario("Supports disabled state", ({ When, Then }) => {
+    When('the Input is rendered as disabled with aria-label "disabled input"', () => {
       // precondition noted
     });
 
@@ -41,8 +41,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has correct height class", ({ Given, Then }) => {
-    Given("I render an Input", () => {
+  Scenario("Has correct height class", ({ When, Then }) => {
+    When("I render an Input", () => {
       // precondition noted
     });
 
@@ -53,8 +53,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Has no accessibility violations", ({ Given, Then }) => {
-    Given('the Input is rendered with a label "Email" associated via htmlFor', () => {
+  Scenario("Has no accessibility violations", ({ When, Then }) => {
+    When('the Input is rendered with a label "Email" associated via htmlFor', () => {
       // precondition noted
     });
 

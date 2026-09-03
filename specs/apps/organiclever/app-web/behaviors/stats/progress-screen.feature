@@ -5,7 +5,7 @@ Feature: Progress Screen
 
   @unit @e2e
   Scenario: Progress screen shows workout module by default
-    Given the progress screen is loaded
+    When the progress screen is loaded
     Then the workout module is active
 
   @unit @e2e

@@ -274,7 +274,7 @@ Feature: Salary savings calculator
   Scenario: My-salary baseline accepts the gross in local currency or USD
     Given I am on the "Minimum role" tab
     And I set the baseline source to "my salary"
-    And I pick the salary city "Singapore"
+    When I pick the salary city "Singapore"
     Then I can enter my gross monthly salary in either Singapore's local currency or USD
     And the local-currency option follows the selected salary city
     And choosing the local currency converts the entered amount to USD using the fx snapshot before ranking

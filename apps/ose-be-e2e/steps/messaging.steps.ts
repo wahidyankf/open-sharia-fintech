@@ -35,7 +35,7 @@ Then("the NATS connection is established", async ({ request }) => {
   expect(resp.ok()).toBeTruthy();
 });
 
-// @covers specs/apps/ose/be/behaviors/messaging/nats-connect.feature:ose-be connects to its NATS server at startup
+// @covers specs/apps/ose/be/behaviors/messaging/live/nats-connect.feature:ose-be connects to its NATS server at startup
 Then("the backend reports healthy after connecting", async ({ request }) => {
   const resp = await request.get("/api/v1/health");
   expect(resp.ok()).toBeTruthy();
@@ -52,7 +52,7 @@ Then("the message is acknowledged", async ({ request }) => {
   expect(body["jetstream_demo"]).not.toBe("pending");
 });
 
-// @covers specs/apps/ose/be/behaviors/messaging/jetstream-demo.feature:ose-be publishes and durably consumes its demo subject with ack
+// @covers specs/apps/ose/be/behaviors/messaging/live/jetstream-demo.feature:ose-be publishes and durably consumes its demo subject with ack
 Then("the messaging status surface reports the demo delivered and acked", async ({ request }) => {
   const resp = await request.get("/api/v1/system/status/messaging");
   const body = (await resp.json()) as Record<string, string>;
@@ -61,18 +61,18 @@ Then("the messaging status surface reports the demo delivered and acked", async 
 
 // ── @unit step stubs ───────────────────────────────────────────────────────
 // These steps appear in @unit Gherkin scenarios whose assertions are executed
-// by Rust unit tests (cargo test), not by this Playwright e2e runner.
+// by F# xUnit unit tests (dotnet test), not by this Playwright e2e runner.
 // The stubs satisfy the spec-coverage tool; the scenarios themselves are
 // excluded from the e2e run via the `tags: "not @unit"` filter in playwright.config.ts.
 
 Given("OSE_BE_NATS_URL is unset", async () => {
-  // @unit only — covered by Rust unit tests; no-op in e2e runner
+  // @unit only — covered by F# xUnit unit tests; no-op in e2e runner
 });
 
 When("ose-be reads its messaging configuration", async () => {
-  // @unit only — covered by Rust unit tests; no-op in e2e runner
+  // @unit only — covered by F# xUnit unit tests; no-op in e2e runner
 });
 
 Then("startup aborts with a clear missing-variable error", async () => {
-  // @unit only — covered by Rust unit tests; no-op in e2e runner
+  // @unit only — covered by F# xUnit unit tests; no-op in e2e runner
 });

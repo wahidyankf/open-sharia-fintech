@@ -8,7 +8,7 @@ Feature: Theme
 
   @unit @e2e
   Scenario: Default theme is light mode
-    Given the site loads without a stored theme preference
+    When the site loads without a stored theme preference
     Then the theme is set to light mode
 
   @unit @e2e

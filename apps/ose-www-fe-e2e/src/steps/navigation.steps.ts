@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
-const { Given, Then } = createBdd();
+const { When, Then } = createBdd();
 
-Given("the header component is rendered", async ({ page }) => {
+When("the header component is rendered", async ({ page }) => {
   await page.goto("/");
 });
 
@@ -21,7 +21,7 @@ Then("the header contains an external link to {string}", async ({ page }, text: 
   await expect(link.first()).toBeVisible();
 });
 
-Given("the about page is rendered with breadcrumbs", async ({ page }) => {
+When("the about page is rendered with breadcrumbs", async ({ page }) => {
   await page.goto("/about/");
 });
 
@@ -54,7 +54,7 @@ Then("breadcrumb text should wrap naturally without horizontal truncation", asyn
   await expect(ol).toHaveCSS("flex-wrap", "wrap");
 });
 
-Given("an update detail page is rendered with adjacent updates", async ({ page }) => {
+When("an update detail page is rendered with adjacent updates", async ({ page }) => {
   // Navigate to a known update that has both prev and next
   await page.goto("/updates/");
   // Click on the first update link that is likely in the middle

@@ -55,8 +55,8 @@ describeFeature(feature, ({ Scenario }) => {
   let activeFilter: string | null = null;
   let selectedEntry: JournalEntry | null = null;
 
-  Scenario("Home screen shows entry list", ({ Given, Then }) => {
-    Given("the home screen is loaded with entries", () => {
+  Scenario("Home screen shows entry list", ({ When, Then }) => {
+    When("the home screen is loaded with entries", () => {
       entries = [makeEntry("workout"), makeEntry("reading")];
       activeFilter = null;
     });

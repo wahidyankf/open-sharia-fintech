@@ -10,8 +10,8 @@ const feature = await loadFeature(
 );
 
 describeFeature(feature, ({ Scenario }) => {
-  Scenario("Renders label and value", ({ Given, Then, And }) => {
-    Given('I render a StatCard with label "Steps" value "12500" unit "steps" hue "teal" icon "trend"', () => {
+  Scenario("Renders label and value", ({ When, Then, And }) => {
+    When('I render a StatCard with label "Steps" value "12500" unit "steps" hue "teal" icon "trend"', () => {
       // precondition noted
     });
 
@@ -34,8 +34,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Renders InfoTip when info is provided", ({ Given, Then }) => {
-    Given(
+  Scenario("Renders InfoTip when info is provided", ({ When, Then }) => {
+    When(
       'I render a StatCard with label "Steps" value "12500" unit "steps" hue "teal" icon "trend" and info "Daily step count"',
       () => {
         // precondition noted
@@ -49,8 +49,8 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
-  Scenario("Does not render InfoTip when info is absent", ({ Given, Then }) => {
-    Given(
+  Scenario("Does not render InfoTip when info is absent", ({ When, Then }) => {
+    When(
       'I render a StatCard with label "Steps" value "12500" unit "steps" hue "teal" icon "trend" without info',
       () => {
         // precondition noted

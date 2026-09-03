@@ -3,7 +3,7 @@ import { createBdd } from "playwright-bdd";
 
 const { Given, When, Then } = createBdd();
 
-Given("the site loads without a stored theme preference", async ({ page }) => {
+When("the site loads without a stored theme preference", async ({ page }) => {
   await page.goto("/");
 });
 

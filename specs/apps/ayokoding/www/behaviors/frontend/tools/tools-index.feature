@@ -23,7 +23,7 @@ Feature: Tools index
   # assembled page (WITH layout.tsx) has exactly ONE.
   @e2e
   Scenario Outline: Exactly one main landmark renders on the Tools pages
-    Given I navigate to "<path>"
+    When I navigate to "<path>"
     Then exactly one main landmark is present
 
     Examples:

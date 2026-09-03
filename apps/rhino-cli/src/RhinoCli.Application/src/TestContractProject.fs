@@ -950,7 +950,19 @@ let private expandedTextOf (step: Specs.ParsedStep) (example: int) : string =
 /// though none of them can ever collide at runtime. `StepMatcher.Matches`
 /// already answers the question this reader needs: is the text bound
 /// *somewhere* in the driver's own project tree.
-let private candidateCount (matcher: Specs.StepMatcher) (text: string) : int = if matcher.Matches text then 1 else 0
+///
+/// Tried against `expandedText` (the example's substituted value) first, then
+/// `rawText` (the step's own un-substituted `<placeholder>` template text) —
+/// the same OR-fallback `Specs.stepCovered` already applies elsewhere. A
+/// Scenario Outline driver can bind either form: TickSpec-style drivers bind
+/// per substituted value, while `@amiceli/vitest-cucumber`'s `ScenarioOutline`
+/// API binds only the raw template text and never sees any one example's
+/// substitution.
+let private candidateCount (matcher: Specs.StepMatcher) (expandedText: string) (rawText: string) : int =
+    if matcher.Matches expandedText || matcher.Matches rawText then
+        1
+    else
+        0
 
 /// The sentinel prefix a synthesized orphan-binding key carries. No real
 /// corpus key can ever start with it — a feature path is always
@@ -963,6 +975,29 @@ let private OrphanKeyPrefix = "unbound-driver-entry"
 let private orphanBindingKey (orphan: Specs.OrphanStepImpl) : string =
     sprintf "%s|%s|%s|%s" OrphanKeyPrefix orphan.File orphan.MatcherKind orphan.MatcherText
 
+/// The `Specs.TestLevel` a BDD adapter measures against a scenario's own
+/// `@unit`/`@integration`/`@e2e` tags.
+let private testLevelOfAdapter (adapter: TestContractBdd.Adapter) : Specs.TestLevel =
+    match adapter with
+    | TestContractBdd.AdapterUnit -> Specs.Unit
+    | TestContractBdd.AdapterIntegration -> Specs.Integration
+    | TestContractBdd.AdapterE2e -> Specs.E2e
+
+/// Whether a scenario's own level tags (looked up by title from
+/// `Specs.extractScenarioSpecs`) obligate the given adapter to bind it. A
+/// scenario absent from the lookup, or carrying no level tags at all, is
+/// measured by every adapter — the conservative default matching today's
+/// untagged-corpus behavior, never silently narrowing what counts.
+let private scenarioAppliesToLevel
+    (levelTagsByTitle: Map<string, Set<Specs.TestLevel>>)
+    (level: Specs.TestLevel)
+    (scenario: Specs.ParsedScenario)
+    : bool =
+    match Map.tryFind scenario.Title levelTagsByTitle with
+    | None -> true
+    | Some tags when Set.isEmpty tags -> true
+    | Some tags -> Set.contains level tags
+
 /// Builds the `BddFeature` list and the synthesized `bindings` a real
 /// project's corpus and driver resolve to. Each real step instance
 /// contributes its own binding key exactly as many times as it has real
@@ -974,8 +1009,9 @@ let private materializeCorpus
     (repoRoot: string)
     (corpusGlobs: string list)
     (matcher: Specs.StepMatcher)
+    (level: Specs.TestLevel)
     : TestContractBdd.BddFeature list * string list =
-    let featureScenarios =
+    let featureScenariosAll =
         corpusGlobs
         |> List.collect (fun glob -> Specs.coverageWalkFeatureFiles (absoluteOf repoRoot (corpusBaseDir glob)) [])
         |> List.map (relativeTo repoRoot)
@@ -988,6 +1024,20 @@ let private materializeCorpus
                 |> List.filter (fun scenario -> not scenario.IsWip)
 
             relativePath, scenarios)
+
+    // The level-filtered view drives what this adapter is required to cover
+    // (`features`/`bindings`); orphan-binding detection stays against the
+    // unfiltered `featureScenariosAll` below, since a driver binding a step
+    // text that a sibling adapter's scenarios also use is not orphaned.
+    let featureScenarios =
+        featureScenariosAll
+        |> List.map (fun (relativePath, scenarios) ->
+            let levelTagsByTitle =
+                Specs.extractScenarioSpecs (absoluteOf repoRoot relativePath) relativePath
+                |> List.map (fun spec -> spec.Title, spec.LevelTags)
+                |> Map.ofList
+
+            relativePath, scenarios |> List.filter (scenarioAppliesToLevel levelTagsByTitle level))
 
     let features =
         featureScenarios
@@ -1009,14 +1059,14 @@ let private materializeCorpus
               for scenario in scenarios do
                   for example in 1 .. examplesOf scenario do
                       for step in scenario.Steps do
-                          let candidates = candidateCount matcher (expandedTextOf step example)
+                          let candidates = candidateCount matcher (expandedTextOf step example) step.Text
                           let key = sprintf "%s|%s|%d|%s" relativePath scenario.Title example (stepLine step)
 
                           for _ in 1..candidates do
                               yield key ]
 
     let allGherkinTexts =
-        [ for _, scenarios in featureScenarios do
+        [ for _, scenarios in featureScenariosAll do
               for scenario in scenarios do
                   for step in scenario.Steps do
                       yield step.Text
@@ -1090,7 +1140,23 @@ let private materializeBdd
                                     hostProject
                             )
                         | Some hostRoot ->
-                            let corpusGlobs = resolveCorpus testing row
+                            // Resolved against `hostProject`'s own row, not the originally
+                            // requested `row` — for a delegated adapter these differ, and the
+                            // delegate's own row is free to declare a broader corpus than its
+                            // owner (e.g. a second, in-situ binding of another project's Gherkin).
+                            // `resolveCorpus`'s owner-inherit branch already makes this a no-op
+                            // for every project whose delegate row leaves `corpus` empty (the
+                            // repo-wide default), so this only changes behavior where a delegate
+                            // row's own corpus genuinely diverges from its owner's.
+                            let corpusRow =
+                                if hostProject = row.Project then
+                                    row
+                                else
+                                    testing.Projects
+                                    |> List.tryFind (fun candidate -> candidate.Project = hostProject)
+                                    |> Option.defaultValue row
+
+                            let corpusGlobs = resolveCorpus testing corpusRow
 
                             if List.isEmpty corpusGlobs then
                                 Error(
@@ -1104,7 +1170,9 @@ let private materializeBdd
                                 )
                             else
                                 let matcher = Specs.extractAllStepTexts (absoluteOf repoRoot hostRoot) []
-                                let features, bindings = materializeCorpus repoRoot corpusGlobs matcher
+
+                                let features, bindings =
+                                    materializeCorpus repoRoot corpusGlobs matcher (testLevelOfAdapter adapter)
 
                                 Ok
                                     { baseDocument with

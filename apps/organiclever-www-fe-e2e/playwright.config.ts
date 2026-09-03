@@ -11,7 +11,16 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/organiclever/www/behaviors/frontend/**/*.feature"),
+  features: [
+    path.join(workspaceRoot, "specs/apps/organiclever/www/behaviors/frontend/**/*.feature"),
+    // The single backend feature is an `@integration @e2e`-tagged placeholder asserting
+    // organiclever-www has no backend API surface at all — real coverage for it, not just a
+    // static-validator satisfy, needs this glob to include it so bddgen actually generates and
+    // runs its browser-based 404 check (see placeholder.steps.ts). Listed separately from the
+    // frontend glob above rather than widened to `**/*.feature`, since this corpus has exactly one
+    // backend feature and the split keeps the frontend/backend directory boundary legible.
+    path.join(workspaceRoot, "specs/apps/organiclever/www/behaviors/backend/placeholder/*.feature"),
+  ],
   steps: "./src/steps/**/*.steps.ts",
   // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in
   // the globbed features lacks a matching step def. env-loader.feature's scenarios are @unit-only

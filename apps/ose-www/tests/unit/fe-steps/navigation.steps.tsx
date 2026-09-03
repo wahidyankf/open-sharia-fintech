@@ -77,8 +77,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Header contains navigation links", ({ Given, Then, And }) => {
-    Given("the header component is rendered", () => {
+  Scenario("Header contains navigation links", ({ When, Then, And }) => {
+    When("the header component is rendered", () => {
       render(<Header />);
     });
 
@@ -108,8 +108,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Breadcrumb shows ancestor hierarchy without current page", ({ Given, Then, And }) => {
-    Given("the about page is rendered with breadcrumbs", () => {
+  Scenario("Breadcrumb shows ancestor hierarchy without current page", ({ When, Then, And }) => {
+    When("the about page is rendered with breadcrumbs", () => {
       render(<Breadcrumb segments={[{ label: "About", href: "/about/" }]} />);
     });
 
@@ -145,8 +145,8 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Previous and next navigation between updates", ({ Given, Then, And }) => {
-    Given("an update detail page is rendered with adjacent updates", () => {
+  Scenario("Previous and next navigation between updates", ({ When, Then, And }) => {
+    When("an update detail page is rendered with adjacent updates", () => {
       render(
         <PrevNext
           prev={{ title: "Previous Update Title", slug: "updates/previous-update" }}

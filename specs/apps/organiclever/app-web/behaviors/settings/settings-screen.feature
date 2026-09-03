@@ -6,7 +6,7 @@ Feature: Settings Screen
 
   @unit @e2e
   Scenario: Settings screen loads user profile
-    Given the settings screen is loaded
+    When the settings screen is loaded
     Then the user name input is visible
 
   @unit @e2e

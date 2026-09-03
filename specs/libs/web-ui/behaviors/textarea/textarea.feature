@@ -1,7 +1,7 @@
 Feature: Textarea component
 
   Scenario: Renders with placeholder
-    Given I render a Textarea with placeholder "Write here…"
+    When I render a Textarea with placeholder "Write here…"
     Then I see the textarea element
     And the placeholder text is "Write here…"
 
@@ -11,7 +11,7 @@ Feature: Textarea component
     Then the textarea value is "hello"
 
   Scenario: Disabled state
-    Given I render a Textarea with disabled prop
+    When I render a Textarea with disabled prop
     Then the textarea is not interactive
 
   Scenario: Focus ring visible on keyboard focus
