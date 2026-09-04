@@ -310,19 +310,30 @@ non-firing conditions.
 - [x] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
 - [x] [AI] Ask the user to authorize this change set; do not stage or commit until they do
 
-  > **RP-8.3 result**: `rules-quality-gate` at `mode: strict` terminated `pass` on two consecutive
-  > clean validations. The deterministic preflight
-  > (`repo-governance audit --skip vendor-audit --skip governance-word-budget`) reported 0 findings
-  > across layer-coherence and traceability-audit on both runs. Pass 1 raised three MEDIUM findings —
-  > a routing attribution that gave `branch-cleanup.md` proof gates that belong to
-  > `mandatory-pre-removal-checks.md`, a classification step that dropped the `escalated` outcome, and
-  > a fixer `FALSE_POSITIVE` clause naming only one of item 7's two non-firing conditions. All three
-  > were fixed in Phase 1 before delivery, none deferred. Passes 2 and 3 each reported 0 findings at
-  > or above MEDIUM, with mirror byte-identity re-confirmed independently by `cmp -s`.
-  >
-  > **Standing authorization**: the user authorized this change set up front for both plans in this
-  > execution, so the authorize-before-staging step is discharged by that standing grant rather than
-  > by a fresh per-change-set request.
+  > **Both-directions verification caught a defect in the check itself.** Running item 7 against
+  > `ose-private`'s live plans at Phase 3 surfaced a plan
+  > (`sync-ci-iac-carveout-widening-to-siblings`) that carries all three cleanup steps but files them
+  > under `## Phase 3: ose-private Archival` rather than a `### Plan Archival` heading. Item 7 as
+  > first written named that heading literally, so it would have produced a finding on a
+  > substantively compliant plan — a false positive, and exactly the one-directional defect
+  > [tech-docs.md §D-3](./tech-docs.md#d-3-verify-the-check-in-both-directions-before-landing) exists
+  > to catch. The check now reads "the plan's archival section or phase — the `### Plan Archival`
+  > section, or the phase that performs archival", and the fixer recipe was reworded to match. Fixed
+  > in both repositories before either landed.
+
+> **RP-8.3 result**: `rules-quality-gate` at `mode: strict` terminated `pass` on two consecutive
+> clean validations. The deterministic preflight
+> (`repo-governance audit --skip vendor-audit --skip governance-word-budget`) reported 0 findings
+> across layer-coherence and traceability-audit on both runs. Pass 1 raised three MEDIUM findings —
+> a routing attribution that gave `branch-cleanup.md` proof gates that belong to
+> `mandatory-pre-removal-checks.md`, a classification step that dropped the `escalated` outcome, and
+> a fixer `FALSE_POSITIVE` clause naming only one of item 7's two non-firing conditions. All three
+> were fixed in Phase 1 before delivery, none deferred. Passes 2 and 3 each reported 0 findings at
+> or above MEDIUM, with mirror byte-identity re-confirmed independently by `cmp -s`.
+>
+> **Standing authorization**: the user authorized this change set up front for both plans in this
+> execution, so the authorize-before-staging step is discharged by that standing grant rather than
+> by a fresh per-change-set request.
 
 - [ ] [AI] Commit per [Commit Guidelines](#commit-guidelines). Suggested:
       `docs(plans): scaffold worktree and branch cleanup into plan archival`

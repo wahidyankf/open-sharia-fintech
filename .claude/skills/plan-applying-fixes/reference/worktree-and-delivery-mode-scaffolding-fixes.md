@@ -35,7 +35,7 @@ under the path declaration: ` ```bash\nclaude --worktree <plan-identifier>\n``` 
 Archival template in
 [plan-archival.md](../../plan-creating-project-plans/reference/plan-archival.md) — inventory
 classification, worktree removal, branch cleanup — immediately before the completion-date step of
-the plan's `### Plan Archival` section. **HIGH**: the wording is fixed and the placement is
+the plan's archival section or phase. **HIGH**: the wording is fixed and the placement is
 mechanical. **FALSE_POSITIVE** — the plan declares a main mode, which provisions no worktree, or it is a
 pre-contract single-file plan with no `delivery.md` for the check to read. Never
 weaken a merge step's `[HUMAN]` gate while editing this section.
