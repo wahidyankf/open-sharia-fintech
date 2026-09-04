@@ -48,6 +48,7 @@ those remain out of scope. The resolved host path is runtime evidence, never com
 - [Hard Safety Rules](./worktree-and-artifact-cleanup/hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
 - [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The six checks before any `git worktree remove`.
 - [Branch Cleanup](./worktree-and-artifact-cleanup/branch-cleanup.md) — Deleting merged local and remote branches safely.
+- [Patch-Equivalent Branch Cleanup](./worktree-and-artifact-cleanup/patch-equivalent-branch-cleanup.md) — Deleting a branch that carries no change `main` lacks.
 - [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local regenerable output while preserving diagnostics and shared caches.
 
 **Enforcement.** `plan-execution-checker` verifies that successful delivery evidence covers all
