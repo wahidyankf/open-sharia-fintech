@@ -53,12 +53,12 @@ Fixers combine criticality (importance) × confidence (certainty) → priority:
 
 ```bash
 # Auto-detect latest audit report for agent family
-ls -t generated-reports/{agent-family}-*-audit.md | head -1
+ls -t local-tmp/{agent-family}/{agent-family}-*-audit.md | head -1
 ```
 
 **Implementation Steps**:
 
-1. **Auto-detect latest**: Find most recent audit report in `generated-reports/`
+1. **Auto-detect latest**: Find most recent audit report in `local-tmp/<agent-family>/`
 2. **Allow manual override**: Accept explicit report path from user
 3. **Verify report exists**: Check file exists before proceeding
 4. **Parse report format**: Extract UUID chain and timestamp for fix report

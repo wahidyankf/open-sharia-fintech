@@ -5,7 +5,7 @@
 **Step 0 — Initialize Report**: see `repo-generating-validation-reports` skill for UUID chain
 generation, progressive writing, UTC+7 timestamp format. Report filename:
 `harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. Write the execution chain UUID to
-`generated-reports/.execution-chain-harness-compat` before spawning any `web-researcher` tasks.
+`local-tmp/.execution-chain-harness-compat` before spawning any `web-researcher` tasks.
 
 **Step 1 — Run Phase 0**: for a standalone invocation, run the full invariant inventory. For a
 quality-gate invocation, consume `delegated-gate-ids` and lifecycle evidence first, omit each

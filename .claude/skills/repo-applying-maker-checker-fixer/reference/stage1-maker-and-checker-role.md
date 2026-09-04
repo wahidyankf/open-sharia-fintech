@@ -48,7 +48,7 @@ Maker:
 
 - Validation-driven (analyzes existing content)
 - Non-destructive (does NOT modify files being checked)
-- Comprehensive reporting (generates detailed audit in `generated-reports/`)
+- Comprehensive reporting (generates detailed audit in `local-tmp/<agent-family>/`)
 - Evidence-based (re-validation in fixer prevents false positives)
 
 **Tool Pattern**: `Read`, `Glob`, `Grep`, `Write`, `Bash` (read-only + report generation)

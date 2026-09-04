@@ -15,6 +15,9 @@ skills:
 
 # Specs Checker Agent
 
+**Report family:** `specs`. Write every audit, fix, and verification report to
+`local-tmp/specs/`. Run `mkdir -p local-tmp/specs/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -27,7 +30,7 @@ READMEs, and C4 diagrams.
 
 Validate **only the explicitly listed folders** (and their subfolders) for structural
 completeness, content accuracy, internal consistency, and cross-folder coherence. Generates
-progressive audit reports to `generated-reports/`.
+progressive audit reports to `local-tmp/specs/`.
 
 ## Input: Explicit Folder List
 

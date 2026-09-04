@@ -6,14 +6,14 @@ Without explicit mechanisms to track accepted decisions, checker-fixer workflows
 
 **Problem**: Checker re-flags the same accepted FALSE_POSITIVE findings every iteration — no memory of previous decisions.
 
-**Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `generated-reports/.known-false-positives.md`. Checker reads this file at the start of every run and skips matching entries.
+**Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `local-tmp/.known-false-positives.md`. Checker reads this file at the start of every run and skips matching entries.
 
 **Checker behavior**: Match findings using stable key `[category] | [file] | [brief-description]`. If matched, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`, do NOT count in findings total.
 
 **Fixer behavior**: After every fix run, append each FALSE_POSITIVE to `.known-false-positives.md`:
 
 ```bash
-cat >> generated-reports/.known-false-positives.md << 'EOF'
+cat >> local-tmp/.known-false-positives.md << 'EOF'
 ## FALSE_POSITIVE: [category] | [file] | [brief-description]
 
 **Accepted**: [YYYY-MM-DD--HH-MM]

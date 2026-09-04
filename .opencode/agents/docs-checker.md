@@ -23,6 +23,9 @@ skills:
 
 # Documentation Checker Agent
 
+**Report family:** `docs`. Write every audit, fix, and verification report to
+`local-tmp/docs/`. Run `mkdir -p local-tmp/docs/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept delegated IDs/evidence per `docs-applying-content-quality`; absent an exact match, preserve

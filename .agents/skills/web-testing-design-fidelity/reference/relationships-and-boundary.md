@@ -39,10 +39,10 @@ directions:
   source scan never reached.
 - **`swe-ui-checker`** = **static** source token/a11y/pattern compliance. It reads component **source**
   (`tools: Read, Glob, Grep, Write, Bash` — no browser) and writes audit reports to
-  `generated-reports/`. It never renders the page.
+  `local-tmp/swe-ui/`. It never renders the page.
 
 This agent is the **runtime** counterpart of that **static** checker. It does **not** audit component
-source the way `swe-ui-checker` does, and it never writes `generated-reports/` audits — it writes to
+source the way `swe-ui-checker` does, and it never writes `local-tmp/swe-ui/` audits — it writes to
 the resolved output-mode destination. When a finding would be better caught in source (e.g. a hard-coded hex in a component
 file), it still reports the **runtime** symptom and may note the likely source locus as a hypothesis,
 leaving the source audit to `swe-ui-checker`.

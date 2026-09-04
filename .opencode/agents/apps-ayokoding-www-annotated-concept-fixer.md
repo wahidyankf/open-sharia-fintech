@@ -21,6 +21,9 @@ skills:
 
 # Annotated-Concept Tutorial Fixer for ayokoding-web
 
+**Report family:** `ayokoding-web-annotated-concept`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-annotated-concept/`. Run `mkdir -p local-tmp/ayokoding-web-annotated-concept/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept the optional lifecycle handoff per `docs-applying-content-quality`; return scope-intersected
@@ -71,7 +74,7 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - **Capture Changed Files**: After applying all fixes, capture changed files list for scoped
   re-validation
 - **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to
-  `generated-reports/.known-false-positives.md`
+  `local-tmp/.known-false-positives.md`
 - **Self-Verification After Edits**: Re-read modified sections and log APPLIED/FAILED status in
   fix report
 

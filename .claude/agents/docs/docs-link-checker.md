@@ -15,6 +15,9 @@ skills:
 
 # Documentation Links Checker Agent
 
+**Report family:** `docs-link`. Write every audit, fix, and verification report to
+`local-tmp/docs-link/`. Run `mkdir -p local-tmp/docs-link/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -36,7 +39,7 @@ its domain is URL reachability (status codes, redirects), not content research, 
 
 This agent MUST use `docs/metadata/external-links-status.yaml` as its ONLY cache file, MUST update
 its `lastFullScan` timestamp on every run (even if zero links changed), and MUST generate an audit
-report in `generated-reports/` every run — regardless of how it is invoked (direct, spawned by
+report in `local-tmp/docs-link/` every run — regardless of how it is invoked (direct, spawned by
 another agent, or automated). See
 [docs-validating-links/reference/cache-and-workflow.md](../../skills/docs-validating-links/reference/cache-and-workflow.md)
 for the complete cache contract (fields, per-link 6-month expiry, pruning, two-output pattern),

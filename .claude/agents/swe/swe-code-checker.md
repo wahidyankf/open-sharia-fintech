@@ -1,6 +1,6 @@
 ---
 name: swe-code-checker
-description: Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to generated-reports/ with progressive streaming.
+description: Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to local-tmp/swe-code/ with progressive streaming.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -13,6 +13,9 @@ skills:
 ---
 
 # Code Checker Agent
+
+**Report family:** `swe-code`. Write every audit, fix, and verification report to
+`local-tmp/swe-code/`. Run `mkdir -p local-tmp/swe-code/` before the first write.
 
 ## Agent Metadata
 
@@ -49,7 +52,7 @@ all apply as written.
 
 ## Report Generation
 
-Write progressively to `generated-reports/swe-code__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+Write progressively to `local-tmp/swe-code/swe-code__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 (see `repo-generating-validation-reports` Skill). Each finding: Project, File, Criticality,
 Confidence, Issue, Evidence, Standard (with link), Recommendation. Finalize with a per-step summary
 table (Nx Infrastructure / Go / TypeScript / Rust / Cross-Project findings by criticality) and a

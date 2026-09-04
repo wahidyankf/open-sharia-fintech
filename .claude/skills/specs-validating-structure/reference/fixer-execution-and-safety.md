@@ -54,7 +54,7 @@ from the audit report. Never delete feature files — only rename or modify cont
 `.feature` scenario content — only structural fixes (file names, READMEs). Preserve git history —
 use `git mv` for renames. Skip uncertain fixes — MEDIUM confidence logs and skips unless mode is
 strict/ocd. FALSE_POSITIVE carry-forward maintained in
-`generated-reports/.known-false-positives.md`. Adoption gaps and tree-shape migrations are never
+`local-tmp/.known-false-positives.md`. Adoption gaps and tree-shape migrations are never
 auto-fixed regardless of mode.
 
 ## Capture Changed Files for Scoped Re-validation

@@ -16,6 +16,9 @@ skills:
 
 # By Example Tutorial Fixer for ayokoding-web
 
+**Report family:** `ayokoding-web-by-example`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-by-example/`. Run `mkdir -p local-tmp/ayokoding-web-by-example/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept the optional lifecycle handoff per `docs-applying-content-quality`; return scope-intersected
@@ -64,7 +67,7 @@ for the canonical algorithm.
 ## Convergence Safeguards
 
 Per `repo-applying-maker-checker-fixer`: capture the changed-files list after applying all fixes for
-scoped re-validation, append each FALSE_POSITIVE to `generated-reports/.known-false-positives.md`,
+scoped re-validation, append each FALSE_POSITIVE to `local-tmp/.known-false-positives.md`,
 and re-read modified sections to log APPLIED/FAILED status in the fix report.
 
 ## Reference Documentation

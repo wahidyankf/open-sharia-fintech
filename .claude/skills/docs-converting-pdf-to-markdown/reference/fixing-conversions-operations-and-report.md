@@ -52,7 +52,7 @@ iteration to only changed areas.
 
 **Date**: YYYY-MM-DD HH:MM (UTC+7)
 **Fixer**: pdf-to-md-fixer
-**Source Audit**: generated-reports/pdf-to-md**{uuid}**audit.md
+**Source Audit**: local-tmp/pdf-to-md/pdf-to-md**{uuid}**audit.md
 **UUID Chain**: {uuid-chain}
 
 ## Summary
@@ -83,7 +83,7 @@ iteration to only changed areas.
 
 **Finding**: Checker reported paragraph absent
 **Re-validation**: Paragraph present at line 892, whitespace-normalized match
-**Action**: Added to `generated-reports/.known-false-positives.md` via `crane skiplist --add`
+**Action**: Added to `local-tmp/.known-false-positives.md` via `crane skiplist --add`
 
 ## Changed Sections (for Scoped Re-validation)
 

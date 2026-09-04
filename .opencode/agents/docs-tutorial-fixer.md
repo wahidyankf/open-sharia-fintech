@@ -21,6 +21,9 @@ skills:
 
 # Tutorial Quality Fixer Agent
 
+**Report family:** `docs-tutorial`. Write every audit, fix, and verification report to
+`local-tmp/docs-tutorial/`. Run `mkdir -p local-tmp/docs-tutorial/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Do not re-validate or fix an exact

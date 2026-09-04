@@ -16,6 +16,9 @@ skills:
 
 # In-the-Field Tutorial Checker for ayokoding-web
 
+**Report family:** `ayokoding-web-in-the-field`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-in-the-field/`. Run `mkdir -p local-tmp/ayokoding-web-in-the-field/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Suppress only an exact

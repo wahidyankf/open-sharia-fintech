@@ -17,6 +17,7 @@ build/
 **/generated/
 **/generated-contracts/
 generated-reports/
+local-tmp/
 graph.html
 **/.features-gen/
 

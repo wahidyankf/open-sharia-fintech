@@ -2,7 +2,7 @@
 
 ## Fix Report Format
 
-Write progressively to `generated-reports/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`.
+Write progressively to `local-tmp/harness-compat/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`.
 The UUID chain extends the checker's chain (append a new segment).
 
 ```markdown
@@ -26,10 +26,10 @@ The UUID chain extends the checker's chain (append a new segment).
 ## FALSE_POSITIVE Carry-Forward
 
 Add an `## Accepted FALSE_POSITIVE Findings` section and append each skipped FALSE_POSITIVE to
-`generated-reports/.known-false-positives.md`:
+`local-tmp/.known-false-positives.md`:
 
 ```bash
-cat >> generated-reports/.known-false-positives.md << 'EOF'
+cat >> local-tmp/.known-false-positives.md << 'EOF'
 ## FALSE_POSITIVE: [dimension] | [harness or invariant] | [brief-description]
 
 **Accepted**: [YYYY-MM-DD--HH-MM]

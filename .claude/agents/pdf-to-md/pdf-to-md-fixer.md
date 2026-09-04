@@ -14,6 +14,9 @@ skills:
 
 # PDF-to-Markdown Fixer Agent
 
+**Report family:** `pdf-to-md`. Write every audit, fix, and verification report to
+`local-tmp/pdf-to-md/`. Run `mkdir -p local-tmp/pdf-to-md/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)
@@ -62,7 +65,7 @@ re-validation, and the fix report format.
 - **Bash**: crane pdf --extract for re-extraction; crane text --search for re-validation; crane ocr --quality for OCR assessment
 - **Read**: Read audit report, current MD file, extracted text from /tmp/
 - **Edit**: Apply targeted fixes to MD file (targeted, not full rewrite)
-- **Write**: Write fix report to `generated-reports/`
+- **Write**: Write fix report to `local-tmp/pdf-to-md/`
 - **Glob**: Find files if paths inferred from audit
 - **Grep**: Re-validate findings before applying
 

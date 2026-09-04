@@ -55,5 +55,5 @@ maker both discovers and posts findings directly against the live PR via the Git
 and this agent both re-validates (through triage) and applies the resolution directly — the
 checker's validation role and the fixer's remediation role are collapsed into this single agent's
 triage step. Findings live as GitHub review threads on the PR itself, not as
-`generated-reports/` audit files, which is why this agent's tool set omits the report-generation
+`local-tmp/<agent-family>/` audit files, which is why this agent's tool set omits the report-generation
 tooling used by the standard three-stage fixers.
