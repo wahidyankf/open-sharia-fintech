@@ -16,7 +16,7 @@ let mutable private currentScope: string = "pdf-to-md"
 [<Given>]
 let ``no existing chain file for scope "([^"]*)"`` (scope: string) =
     currentScope <- scope
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
     if File.Exists(chainFile) then
         File.Delete(chainFile)
@@ -28,8 +28,9 @@ let ``a chain file for "([^"]*)" created (\d+) seconds ago with UUID "([^"]*)"``
     (uuid: string)
     =
     currentScope <- scope
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
     let ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - int64 seconds
+    Directory.CreateDirectory("local-tmp") |> ignore
     File.WriteAllText(chainFile, sprintf "%d %s" ts uuid)
 
 // ---- BDD When steps ----
@@ -89,7 +90,7 @@ let ``the report filename contains only the new 6-hex UUID .no "([^"]*)".`` (uui
     if File.Exists(lastReportPath) then
         File.Delete(lastReportPath)
 
-    let chainFile = sprintf ".execution-chain-%s" currentScope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" currentScope
 
     if File.Exists(chainFile) then
         File.Delete(chainFile)

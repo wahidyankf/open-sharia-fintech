@@ -7,7 +7,7 @@ Feature: Audit report initialization
   Scenario: New chain creates a 6-character UUID report
     Given no existing chain file for scope "pdf-to-md"
     When I run "crane report init" with scope "pdf-to-md"
-    Then a report file is created in "generated-reports/"
+    Then a report file is created in "local-tmp/pdf-to-md/"
     And the filename matches the pattern "pdf-to-md__{6-hex}__{YYYY-MM-DD--HH-MM}__audit.md"
     And the JSON output contains the report path
 
