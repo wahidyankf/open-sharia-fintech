@@ -12,7 +12,7 @@ b915496d3ffd590f0d9c53357f7b67673beb1544ddf8b3e6db627391865f34a3  apps/rhino-cli
 bb3b9213394085b3de9869892a6a0566074a3991c3a65af62f811ada78b7d3a2  apps/rhino-cli/src/RhinoCli.Application/src/Md.fs
 84a842f1d53732f843913b678b92420f229cc74bc9a35c2944b0c5f9fd35ac53  apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs
 6967fea6ffe4d3d5fc7aa58678c1634b2d63702af6d093b73de1062fc2cd2b42  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
-3b241ebc61a86ad78adc78441953e5429d21ce57f21c6a4200d12cfff19b9040  apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs
+f60d52d3986ae2c980212d513dc2f75c7969df32daf8280b70e3ea88f465701c  apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs
 578a2e0e39badfbdcdf1c3abbf39cd73d13c5e439a8d56f0726397ab1b62fd2f  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
 bd65007f689a1c5ed30e1d6154b7f6b8b813994efe6b7b92d2d81c0f11de65a4  apps/rhino-cli/src/RhinoCli.Application/src/TestContract.fs
 841f0114881d11350d79ffd97065d11473bdf4c9e968867ffdb4bc447a52ad64  apps/rhino-cli/src/RhinoCli.Application/src/TestContractBdd.fs
@@ -92,7 +92,7 @@ b8ef29846f9b919f63cb0e1dcf57b07fe3f39e0575c2d25e09fa1fa70b302edd  specs/apps/rhi
 6e16c2c7953f6c4a4c3a63fbfd693d01af5425d2ab2af66e06c3c42c75124287  specs/apps/rhino/cli/behaviors/repo-config/README.md
 1f6ee13979f8e21fe00f01cb45781cea6db9a752d5d0c86c9b44bc97340c585f  specs/apps/rhino/cli/behaviors/repo-config/data-driven.feature
 41ec86ef8a6b8bc159eab13090c75cf37f2655e1ac2c74c9e80e6d35bc277911  specs/apps/rhino/cli/behaviors/repo-governance/README.md
-59d7af092efd26e6afa15c2519a2063f4085be66f3b4960a4130b0fea2a23504  specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-audit.feature
+c4ee41cae3b2d4f918d669a3040ec03cd163051231d07cd8925dd3ce5bf24caf  specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-audit.feature
 6f1f1529df19246ee75e526a7e6ea3ef5aa9580df6237e22b989b62432024995  specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-layer-coherence.feature
 c68f3384431771e33b5a114156e5f02f9dece6db2287b648d684d83cb03ba27a  specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-traceability-audit.feature
 9d3319010979ca1251f05f9ea54387ff755de22c7184b0530baf2a2ef19734a5  specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-vendor-audit.feature

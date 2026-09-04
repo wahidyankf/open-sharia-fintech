@@ -741,7 +741,7 @@ type AuditOptions =
         /// Override for the `ran_at` timestamp; `None` uses the current UTC time.
         Now: string option
         /// Known-false-positives Markdown file; `None` defaults to
-        /// `generated-reports/.known-false-positives.md` under the repo root.
+        /// `local-tmp/.known-false-positives.md` under the repo root.
         KnownFalsePositivesPath: string option
         /// Findings whose `File` matches any of these globs are dropped.
         ExcludeGlobs: string list
@@ -887,7 +887,7 @@ let private knownFalsePositiveRe =
 let private loadKnownFalsePositives (opts: AuditOptions) : Set<string> =
     let path =
         opts.KnownFalsePositivesPath
-        |> Option.defaultValue (Path.Combine(opts.RepoRoot, "generated-reports", ".known-false-positives.md"))
+        |> Option.defaultValue (Path.Combine(opts.RepoRoot, "local-tmp", ".known-false-positives.md"))
 
     if not (File.Exists path) then
         Set.empty
