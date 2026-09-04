@@ -106,7 +106,7 @@ landing a check that immediately reddens unrelated work is not shipping.
 
 ```text
 .
-├── plans/backlog/scaffold-plan-archival-cleanup/
+├── plans/in-progress/scaffold-plan-archival-cleanup/
 │   ├── README.md [N] — context and navigation
 │   ├── brd.md [N] — goal, metrics, risks
 │   ├── prd.md [N] — acceptance criteria

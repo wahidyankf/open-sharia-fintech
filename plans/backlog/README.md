@@ -22,9 +22,6 @@ step-by-step execution record.
 - [`rhino-bin-resolver-shim-coverage`](./rhino-bin-resolver-shim-coverage/README.md) — the simplified
   `rhino-bin.sh` resolver shim's three tiers (override, dist binary, `dotnet run` fallback) have zero
   scenario-level test coverage since the Rust-era `gate-binary-resolution.feature` was retired.
-- [`scaffold-plan-archival-cleanup`](./scaffold-plan-archival-cleanup/README.md) — the plan-archival
-  authoring template never mentions removing the worktree or deleting the branch, and no
-  `plan-checker` rule notices, so authored plans silently omit a step the governance layer requires.
 
 These three were filed directly from `rewrite-rhino-cli-to-fsharp`'s Phase 12 knowledge-capture
 triage under that plan's own code-routing rule (a learning whose natural home is `apps/`, `libs/`,
