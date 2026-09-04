@@ -65,13 +65,13 @@ prompt: "Validate apps/ayokoding-www/content/en/learn/software-engineering/progr
 
 **Outputs**:
 
-- Audit report: `generated-reports/ayokoding-in-the-field__{uuid-chain}__{timestamp}__audit.md`
+- Audit report: `local-tmp/ayokoding-web-in-the-field/ayokoding-in-the-field__{uuid-chain}__{timestamp}__audit.md`
 - Executive summary with overall status
 - Detailed findings with confidence levels
 - Specific line numbers for issues
 - Actionable recommendations
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "java").
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `local-tmp/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "java").
 
 **Depends on**: Step 1 completion
 

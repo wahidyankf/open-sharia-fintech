@@ -30,7 +30,7 @@ outputs:
     description: Number of execute-check cycles performed
   - name: final-report
     type: file
-    pattern: generated-reports/plan-execution__*__validation.md
+    pattern: local-tmp/plan-execution/plan-execution__*__validation.md
     description: Final validation report from plan-execution-checker
 ---
 

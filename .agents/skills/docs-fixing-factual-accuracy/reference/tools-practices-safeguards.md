@@ -6,7 +6,7 @@
 - **Edit**: Apply fixes to documentation files
 - **Glob**: Find files referenced in audit report
 - **Grep**: Extract specific content for validation
-- **Write**: Generate fix report in generated-reports/
+- **Write**: Generate fix report in `local-tmp/docs/`
 - **Bash**: Get timestamps, UUID chains, file operations
 
 ## Best Practices
@@ -26,6 +26,6 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - **Capture Changed Files**: After applying all fixes, capture changed files list for scoped
   re-validation
 - **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to
-  `generated-reports/.known-false-positives.md`
+  `local-tmp/.known-false-positives.md`
 - **Self-Verification After Edits**: Re-read modified sections and log APPLIED/FAILED status in fix
   report

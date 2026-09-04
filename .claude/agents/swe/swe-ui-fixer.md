@@ -14,6 +14,9 @@ skills:
 
 # UI Component Fixer Agent
 
+**Report family:** `swe-ui`. Write every audit, fix, and verification report to
+`local-tmp/swe-ui/`. Run `mkdir -p local-tmp/swe-ui/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

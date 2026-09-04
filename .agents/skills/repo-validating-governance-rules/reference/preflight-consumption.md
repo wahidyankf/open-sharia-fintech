@@ -1,7 +1,7 @@
 # Step 0.5: Consume Deterministic Preflight
 
 **Inputs**: `preflight-report` plus, for `rules-quality-gate`, exact `delegated-gate-ids` and the
-lifecycle evidence ledger. The report path points to `generated-reports/repo-governance-audit__*.json`,
+lifecycle evidence ledger. The report path points to `local-tmp/repo-governance-audit/repo-governance-audit__*.json`,
 produced by the orchestrating workflow (`repo-governance/workflows/rules/rules-quality-gate.md`)
 running `./apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o json`.
 
@@ -30,7 +30,7 @@ running `./apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o jso
 5. Embed retained findings under `## Deterministic Domain Findings`; they count at their declared
    criticality. Record delegated IDs/evidence in a separate lifecycle ledger, never as findings.
 6. Re-validation optimization: compute `sha256(preflight-json-bytes)`. If identical to the prior
-   iteration's hash (stored at `generated-reports/.preflight-hash-<uuid-chain>`), reuse the prior
+   iteration's hash (stored at `local-tmp/.preflight-hash-<uuid-chain>`), reuse the prior
    deterministic-findings section unchanged and only re-evaluate AI-only categories; store the new
    hash for next time.
 

@@ -40,7 +40,7 @@ outputs:
     description: Number of check-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/repo-rules__*__*__audit.md
+    pattern: local-tmp/repo-rules/repo-rules__*__*__audit.md
     description: Final audit report (three top-level sections with UUID chain)
   - name: execution-scope
     type: string

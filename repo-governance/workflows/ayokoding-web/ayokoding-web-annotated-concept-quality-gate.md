@@ -50,11 +50,11 @@ outputs:
     description: Number of check-fix cycles executed
   - name: checker-report
     type: file
-    pattern: generated-reports/ayokoding-web-annotated-concept__*__*__audit.md
+    pattern: local-tmp/ayokoding-web-annotated-concept/ayokoding-web-annotated-concept__*__*__audit.md
     description: Final validation report from apps-ayokoding-www-annotated-concept-checker (4-part format with UUID chain)
   - name: fixer-report
     type: file
-    pattern: generated-reports/ayokoding-web-annotated-concept__*__*__fix.md
+    pattern: local-tmp/ayokoding-web-annotated-concept/ayokoding-web-annotated-concept__*__*__fix.md
     description: Final fixes report from apps-ayokoding-www-annotated-concept-fixer (4-part format with UUID chain)
   - name: execution-scope
     type: string

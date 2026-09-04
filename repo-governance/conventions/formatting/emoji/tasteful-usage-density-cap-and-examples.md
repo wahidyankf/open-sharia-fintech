@@ -25,7 +25,7 @@ Enforce these soft limits; exceeding them is a governance finding:
 - **Zero emojis in YAML frontmatter and file names.**
 
 **Known exceptions to the source-code ban** (documented per accepted false positives in
-`generated-reports/.known-false-positives.md`):
+`local-tmp/.known-false-positives.md`):
 
 - CLI tools using emoji for terminal output formatting (e.g., `apps/rhino-cli/src/`,
   `apps/rhino-cli/internal/`, `apps/rhino-cli/cmd/` — status indicators ✓ ✗ ✅ ❌)

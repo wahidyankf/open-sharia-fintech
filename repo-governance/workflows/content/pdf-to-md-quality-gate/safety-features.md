@@ -13,8 +13,8 @@ when_to_use: "Use when verifying the workflow's safety guarantees or diagnosing 
 
 **Convergence Safeguards**:
 
-- Checker loads `generated-reports/.known-false-positives.md` at each iteration start
-- Fixer persists new FALSE_POSITIVEs to that same file in `generated-reports/`
+- Checker loads `local-tmp/.known-false-positives.md` at each iteration start
+- Fixer persists new FALSE_POSITIVEs to that same file in `local-tmp/pdf-to-md/`
 - Step 5 (Re-validate) uses changed-sections-only scan when called after Step 4 (Apply Fixes)
 
 **False Positive Protection**:

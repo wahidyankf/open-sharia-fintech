@@ -21,7 +21,7 @@ All fixer agents follow the same workflow:
 
 ### 1. Report Discovery
 
-- Auto-detect latest audit report in `generated-reports/`
+- Auto-detect latest audit report in `local-tmp/<agent-family>/`
 - Allow manual override if user specifies specific report
 - Verify report exists and is readable
 
@@ -63,7 +63,7 @@ def process_finding(finding):
 
 ### 5. Fix Report Generation
 
-Create comprehensive report in `generated-reports/`:
+Create comprehensive report in `local-tmp/<agent-family>/`:
 
 - Validation summary (HIGH/MEDIUM/FALSE_POSITIVE counts)
 - Fixes applied section (what changed)

@@ -43,7 +43,7 @@ lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 **Notes**:
 
 - All checkers run in parallel for efficiency
-- Each generates independent audit report in `generated-reports/`
+- Each generates independent audit report in `local-tmp/<agent-family>/`
 - Reports use progressive writing to survive context compaction
 
 ## 2. Aggregate Findings (Sequential)

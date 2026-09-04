@@ -22,6 +22,9 @@ skills:
 
 # Documentation Fixer Agent
 
+**Report family:** `docs`. Write every audit, fix, and verification report to
+`local-tmp/docs/`. Run `mkdir -p local-tmp/docs/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Do not re-validate or fix an exact

@@ -27,7 +27,7 @@ report, so the cache stays stable across doc edits and reports never show stale 
 ## Two Required Outputs
 
 Every run produces both: the cache file above (permanent, operational) AND an audit report at
-`generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` (temporary, findings +
+`local-tmp/docs-link/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` (temporary, findings +
 fix recommendations — no automated fixer exists for this agent, so the report drives manual
 remediation).
 

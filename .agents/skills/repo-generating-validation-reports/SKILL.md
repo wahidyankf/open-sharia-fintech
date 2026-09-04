@@ -9,7 +9,7 @@ Generate validation and audit reports following repository standards for naming,
 
 ## When This Skill Loads
 
-This Skill auto-loads for checker and fixer agents that need to generate validation reports in `generated-reports/`.
+This Skill auto-loads for checker and fixer agents that need to generate validation reports in `local-tmp/<agent-family>/`.
 
 ## Core Knowledge
 

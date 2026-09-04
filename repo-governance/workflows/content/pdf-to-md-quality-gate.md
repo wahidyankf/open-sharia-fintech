@@ -53,7 +53,7 @@ outputs:
     description: Number of check-fix cycles executed
   - name: pdf-to-md-report
     type: file
-    pattern: generated-reports/pdf-to-md__*__audit.md
+    pattern: local-tmp/pdf-to-md/pdf-to-md__*__audit.md
     description: Final fidelity validation audit report
   - name: execution-scope
     type: string

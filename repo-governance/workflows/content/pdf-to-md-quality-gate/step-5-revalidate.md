@@ -37,7 +37,7 @@ deterministically a no-op.
 
 **Notes**:
 
-- Loads `generated-reports/.known-false-positives.md` skip list before validating
+- Loads `local-tmp/.known-false-positives.md` skip list before validating
 - Scoped re-validation (changed sections only) on iterations where fixes were applied
 - Full re-validation when confirming a zero-findings pass with no preceding fix step
 - Carry-forward audit (no re-scan) when `changed_sections` is empty after a zero-applied fixer iteration

@@ -21,6 +21,9 @@ skills:
 
 # README Fixer Agent
 
+**Report family:** `readme`. Write every audit, fix, and verification report to
+`local-tmp/readme/`. Run `mkdir -p local-tmp/readme/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating README quality findings requires

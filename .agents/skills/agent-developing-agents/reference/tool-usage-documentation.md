@@ -43,7 +43,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 - **Read**: Read documentation files to validate
 - **Glob**: Find markdown files in directories
 - **Grep**: Extract code blocks, commands, version numbers
-- **Write**: Generate audit reports to generated-reports/
+- **Write**: Generate audit reports to `local-tmp/<agent-family>/`
 - **Bash**: Generate UUIDs, timestamps for reports
 - **WebFetch**: Access official documentation URLs
 - **WebSearch**: Find versions, verify tools, fallback for 403s
@@ -57,7 +57,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 - **Read**: Read audit reports and files to fix
 - **Edit**: Apply fixes to governed source or vendored paths; never generated mirrors
 - **Bash**: Run shell commands, bulk sed substitutions across many files, timestamp/UUID generation
-- **Write**: Generate fix reports to generated-reports/
+- **Write**: Generate fix reports to `local-tmp/<agent-family>/`
 ```
 
 **Maker Agents** (Read, Write, Glob, Grep, Bash):

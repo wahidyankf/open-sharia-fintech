@@ -49,7 +49,7 @@ outputs:
     description: Number of check-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/plan__*__audit.md
+    pattern: local-tmp/plan/plan__*__audit.md
     description: Final audit report
 ---
 

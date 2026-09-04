@@ -61,7 +61,7 @@ Persist every skipped FALSE_POSITIVE with a stable key so re-runs don't re-flag 
 [category] | [file] | [brief-description]
 ```
 
-Append to `generated-reports/.known-false-positives.md` under a dated `## Accepted FALSE_POSITIVE
+Append to `local-tmp/.known-false-positives.md` under a dated `## Accepted FALSE_POSITIVE
 Findings` entry.
 
 ## Mode Parameter Handling

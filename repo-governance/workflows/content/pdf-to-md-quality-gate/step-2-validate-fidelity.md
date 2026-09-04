@@ -45,4 +45,4 @@ lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 **Notes**:
 
 - Processes PDF in 50-page chunks for large documents
-- Loads `generated-reports/.known-false-positives.md` skip list before validating
+- Loads `local-tmp/.known-false-positives.md` skip list before validating

@@ -18,6 +18,9 @@ skills:
 
 # PDF-to-Markdown Checker Agent
 
+**Report family:** `pdf-to-md`. Write every audit, fix, and verification report to
+`local-tmp/pdf-to-md/`. Run `mkdir -p local-tmp/pdf-to-md/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)

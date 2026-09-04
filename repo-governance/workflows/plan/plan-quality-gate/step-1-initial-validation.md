@@ -20,7 +20,7 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 **Agent**: `plan-checker`
 
 - **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
+- **Output**: `{audit-report-1}` - Initial audit report in `local-tmp/plan/`
 
 **Validation scope** (per `plan-checker` Steps 0-7 + 5b/5c/5d/5e/5f/5g/5h/5i/5j/5k/5n):
 

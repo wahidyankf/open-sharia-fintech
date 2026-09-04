@@ -10,7 +10,7 @@ when_to_use: Use when reviewing an Annotated-concept audit report and deciding t
 
 **User actions**:
 
-**1. Read audit report** from generated-reports/
+**1. Read audit report** from local-tmp/ayokoding-web-annotated-concept/
 
 **2. Count findings based on mode level** (default: `{input.mode}` or `normal`):
 

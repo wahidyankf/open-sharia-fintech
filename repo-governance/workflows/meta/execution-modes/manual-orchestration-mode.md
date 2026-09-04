@@ -39,9 +39,9 @@ User: "Run plan quality gate workflow for plans/backlog/my-plan/ in manual mode"
 AI: [Executes workflow steps directly]
 1. Reads plan files (Read tool)
 2. Validates content (checker logic)
-3. Writes audit report (Write tool to generated-reports/)
+3. Writes audit report (Write tool to local-tmp/plan/)
 4. Applies fixes (Edit tool on plan files)
-5. Writes fix report (Write tool to generated-reports/)
+5. Writes fix report (Write tool to local-tmp/plan/)
 6. Re-validates (checker logic again)
 7. Iterates until zero findings
 ```

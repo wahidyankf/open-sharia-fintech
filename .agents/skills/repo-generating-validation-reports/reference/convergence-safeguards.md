@@ -8,7 +8,7 @@ cycle never converges. Every checker agent applies all five safeguards below.
 
 **Before beginning validation, load the skip list**:
 
-- **File**: `generated-reports/.known-false-positives.md`
+- **File**: `local-tmp/.known-false-positives.md`
 - If the file exists, read its contents and reference it during ALL validation steps
 - Before reporting any finding, check whether it matches an entry using the stable key:
   `[category] | [file] | [brief-description]`

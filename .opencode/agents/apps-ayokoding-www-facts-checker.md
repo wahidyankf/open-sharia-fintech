@@ -22,6 +22,9 @@ skills:
 
 # Facts Checker for ayokoding-web
 
+**Report family:** `ayokoding-web-facts`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-facts/`. Run `mkdir -p local-tmp/ayokoding-web-facts/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Suppress only an exact

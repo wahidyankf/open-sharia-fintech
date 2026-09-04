@@ -36,7 +36,7 @@ This practice implements/respects the following conventions:
 
 - **[Fixer Confidence Levels Convention](../../quality/fixer-confidence-levels.md)**: Fixer agents assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) for each finding. Only HIGH confidence fixes applied automatically. Criticality and confidence work orthogonally to determine priority.
 
-- **[Temporary Files Convention](../../infra/temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
+- **[Temporary Files Convention](../../infra/temporary-files.md)**: All checker agents MUST write validation/audit reports to the `local-tmp/<agent-family>/` directory using pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
 
 - **[Timestamp Format Convention](../../../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 

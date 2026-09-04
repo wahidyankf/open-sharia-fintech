@@ -25,7 +25,7 @@ when_to_use: Use when finishing an agent definition and checking its tool-usage 
 
 - **Read/Glob/Grep**: Scan documentation files for validation
 - **WebFetch/WebSearch**: Verify external references and links
-- **Write**: Generate audit reports in generated-reports/
+- **Write**: Generate audit reports in local-tmp/<agent-family>/
 - **Bash**: Execute git commands for file operations
 ```
 
@@ -68,7 +68,7 @@ when_to_use: Use when finishing an agent definition and checking its tool-usage 
 context: |
   This agent validates tutorial documentation following Diátaxis framework.
   Tutorials are learning-oriented, hands-on, and beginner-friendly.
-  Reports written to generated-reports/ with UUID chains.
+  Reports written to local-tmp/<agent-family>/ with UUID chains.
 ---
 ```
 
@@ -113,7 +113,7 @@ my_agent.md
 ```yaml
 ---
 dependencies:
-  - generated-reports/ directory must exist
+  - local-tmp/<agent-family>/ directory must exist (agent creates it with mkdir -p)
   - WebSearch tool requires US region
   - Expects Diátaxis framework structure
 ---

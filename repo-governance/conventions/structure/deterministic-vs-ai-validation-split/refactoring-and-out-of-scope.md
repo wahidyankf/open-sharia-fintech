@@ -30,6 +30,6 @@ When all three hold, propose a new deterministic subcommand in a plan; the AI ca
 This convention does NOT define:
 
 - **Severity-to-action mapping** — that lives in the [Maker-Checker-Fixer pattern](../../../development/pattern/maker-checker-fixer.md).
-- **Skip-list management** — that lives in `generated-reports/.known-false-positives.md` and is governed by the maker-checker-fixer workflow.
+- **Skip-list management** — that lives in `local-tmp/.known-false-positives.md` and is governed by the maker-checker-fixer workflow.
 - **Which AI model handles which sub-portion** — model selection is a binding concern, not a governance concern; see the [Model Selection guide](../../../development/agents/model-selection.md).
 - **CLI implementation language or framework** — those are binding-implementation details; this convention specifies the contract (envelope shape, exit codes), not the implementation.

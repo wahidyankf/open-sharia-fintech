@@ -58,7 +58,7 @@ Validation complete! Found 15 issues:
 
 ```bash
 # Write findings to report file
-REPORT="generated-reports/docs__${UUID}__${TIMESTAMP}__audit.md"
+REPORT="local-tmp/docs/docs__${UUID}__${TIMESTAMP}__audit.md"
 echo "# Validation Report" > "$REPORT"
 echo "## Issues Found" >> "$REPORT"
 echo "1. Missing alt text in image" >> "$REPORT"

@@ -11,7 +11,7 @@ checks, including PDF-corresponding heading depth/order and figure representatio
 
 **Step 0 — Initialize report**: `crane report --init "$PDF_FILE" --md "$MD_FILE" --scope pdf-to-md`
 creates a UUID-chained, UTC+7-timestamped report at
-`generated-reports/pdf-to-md__{uuid-chain}__{timestamp}__audit.md`.
+`local-tmp/pdf-to-md/pdf-to-md__{uuid-chain}__{timestamp}__audit.md`.
 
 **Step 1 — Pre-flight**: verify both files exist and the MD file is non-empty; get page count via
 `crane pdf --info "$PDF_FILE"`.

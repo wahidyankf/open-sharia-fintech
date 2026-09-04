@@ -20,6 +20,9 @@ skills:
 
 # Specs Fixer Agent
 
+**Report family:** `specs`. Write every audit, fix, and verification report to
+`local-tmp/specs/`. Run `mkdir -p local-tmp/specs/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow). **Model**: `sonnet` — confident re-validation and safe file

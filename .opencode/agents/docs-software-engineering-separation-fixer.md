@@ -20,6 +20,9 @@ skills:
 
 # Software Engineering Documentation Separation Fixer Agent
 
+**Report family:** `docs-swe-sep`. Write every audit, fix, and verification report to
+`local-tmp/docs-swe-sep/`. Run `mkdir -p local-tmp/docs-swe-sep/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

@@ -20,10 +20,10 @@ The following files were modified. The next checker run uses this list to enable
 
 ## Persist FALSE_POSITIVE Findings
 
-After every fix run, append each FALSE_POSITIVE to `generated-reports/.known-false-positives.md`:
+After every fix run, append each FALSE_POSITIVE to `local-tmp/.known-false-positives.md`:
 
 ```bash
-cat >> generated-reports/.known-false-positives.md << 'EOF'
+cat >> local-tmp/.known-false-positives.md << 'EOF'
 ## FALSE_POSITIVE: [category] | [file] | [brief-description]
 
 **Accepted**: [YYYY-MM-DD--HH-MM]

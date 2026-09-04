@@ -68,7 +68,7 @@ Checker:
 3. Checks content structure (heading hierarchy, links)
 4. Validates content conventions (links, structure)
 5. Checks content quality (alt text, accessible colors)
-6. Generates audit report: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
+6. Generates audit report: local-tmp/ayokoding-web/ayokoding-web**2025-12-14--20-45**audit.md
 7. Reports findings summary in conversation
 8. Does NOT modify the tutorial file
 ```

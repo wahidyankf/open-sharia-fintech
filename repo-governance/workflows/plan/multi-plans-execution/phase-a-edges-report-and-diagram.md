@@ -40,7 +40,7 @@ An ambiguous footprint touches the whole declared impact set: uncertain nodes co
    plan graph is a planning error, not something to schedule around.
 
 **A7. Emit the DAG / parallelizability report** to
-`generated-reports/multi-plans-execution__<uuid>__<timestamp>__dag.md`: the node list per plan, the
+`local-tmp/multi-plans-execution/multi-plans-execution__<uuid>__<timestamp>__dag.md`: the node list per plan, the
 intra- and inter-plan edges, each node's resource-set, and — explicitly — which nodes are marked
 **PARALLELIZABLE** vs **SEQUENTIAL** and why. If `mode: plan-only`, STOP here and hand the report to
 the caller for review.

@@ -19,13 +19,13 @@ when_to_use: Use when generating a report filename's UUID chain.
 **Full Filename Examples**:
 
 ```
-generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
-generated-reports/ayokoding-web-general__d4e5f6__2025-12-14--15-30__audit.md
-generated-reports/ayokoding-web-by-example__a1b2c3_d4e5f6__2025-12-14--15-45__audit.md
-generated-reports/ose-web-content__g7h8i9__2025-12-14--16-00__audit.md
-generated-reports/docs__a1b2c3_d4e5f6_g7h8i9__2025-12-15--10-00__audit.md
-generated-reports/plan__b2c3d4__2025-12-15--11-30__validation.md
-generated-reports/plan-execution__c3d4e5__2025-12-15--14-00__validation.md
+local-tmp/repo-rules/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
+local-tmp/ayokoding-web-general/ayokoding-web-general__d4e5f6__2025-12-14--15-30__audit.md
+local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__a1b2c3_d4e5f6__2025-12-14--15-45__audit.md
+local-tmp/ose-web-content/ose-web-content__g7h8i9__2025-12-14--16-00__audit.md
+local-tmp/docs/docs__a1b2c3_d4e5f6_g7h8i9__2025-12-15--10-00__audit.md
+local-tmp/plan/plan__b2c3d4__2025-12-15--11-30__validation.md
+local-tmp/plan-execution/plan-execution__c3d4e5__2025-12-15--14-00__validation.md
 ```
 
 **Why UUID Chain?**
@@ -53,7 +53,7 @@ MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 To enable accurate parent-child hierarchy tracking across concurrent workflow runs, agents use **scope-based tracking files**.
 
-**Tracking File Pattern**: `generated-reports/.execution-chain-{scope}`
+**Tracking File Pattern**: `local-tmp/.execution-chain-{scope}` — at the root, because the chain spans agent families
 
 **Scope Definitions**:
 

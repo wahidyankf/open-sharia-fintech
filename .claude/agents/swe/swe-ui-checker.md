@@ -14,6 +14,9 @@ skills:
 
 # UI Component Checker Agent
 
+**Report family:** `swe-ui`. Write every audit, fix, and verification report to
+`local-tmp/swe-ui/`. Run `mkdir -p local-tmp/swe-ui/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -23,7 +26,7 @@ reports.
 
 ## Core Responsibility
 
-Validate seven UI dimensions and emit `generated-reports/swe-ui__{uuid}__{timestamp}__audit.md`.
+Validate seven UI dimensions and emit `local-tmp/swe-ui/swe-ui__{uuid}__{timestamp}__audit.md`.
 
 ## Lifecycle-Owned Predicates
 

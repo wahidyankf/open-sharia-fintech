@@ -30,7 +30,7 @@ Each finding must carry a **verified** source (fetched, dated) or be cited name-
 URL exists — never a fabricated link, inheriting the repo's anti-fabrication rule.
 
 Write the survey progressively to
-`generated-reports/plan-idea-promotion-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
+`local-tmp/plan-idea-promotion-planning/plan-idea-promotion-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
 (the `prior-art-report` output) per the [Temporary Files convention](../../../development/infra/temporary-files.md).
 
 **Agent**: `web-researcher` (one invocation per angle).

@@ -21,6 +21,9 @@ skills:
 
 # Tutorial Quality Validator Agent
 
+**Report family:** `docs-tutorial`. Write every audit, fix, and verification report to
+`local-tmp/docs-tutorial/`. Run `mkdir -p local-tmp/docs-tutorial/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence` from a quality gate. Suppress only an
@@ -66,7 +69,7 @@ all apply as written.
 
 ## Report Generation
 
-Write findings progressively to `generated-reports/docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+Write findings progressively to `local-tmp/docs-tutorial/docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 — see `repo-generating-validation-reports` Skill for UUID chain generation, UTC+7 timestamps, and
 progressive-writing mechanics. Never buffer findings in memory.
 

@@ -15,6 +15,9 @@ skills:
 
 # Content Fixer for ose-web
 
+**Report family:** `ose-web-content`. Write every audit, fix, and verification report to
+`local-tmp/ose-web-content/`. Run `mkdir -p local-tmp/ose-web-content/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)
@@ -58,7 +61,7 @@ Skills: `apps-ose-www-developing-content`, `repo-assessing-criticality-confidenc
 See `repo-applying-maker-checker-fixer` Skill for:
 
 - **Capture Changed Files**: After applying all fixes, capture changed files list for scoped re-validation
-- **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to `generated-reports/.known-false-positives.md`
+- **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to `local-tmp/.known-false-positives.md`
 - **Self-Verification After Edits**: Re-read modified sections and log APPLIED/FAILED status in fix report
 
 ## Reference Documentation

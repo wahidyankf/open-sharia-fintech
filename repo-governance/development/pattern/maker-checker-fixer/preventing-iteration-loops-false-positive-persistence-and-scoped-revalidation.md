@@ -22,7 +22,7 @@ Without explicit mechanisms to track accepted decisions, checker-fixer workflows
 
 **Problem**: Checker re-flags the same accepted FALSE_POSITIVE findings on every iteration because it has no memory of previous decisions.
 
-**Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `generated-reports/.known-false-positives.md`. Checker reads this file at the start of every run and skips any matching entries.
+**Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `local-tmp/.known-false-positives.md`. Checker reads this file at the start of every run and skips any matching entries.
 
 **Key format**: `[category] | [file] | [brief-description]` — stable across runs.
 

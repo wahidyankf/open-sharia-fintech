@@ -10,7 +10,7 @@ when_to_use: Use when reviewing a by-example audit report and deciding the next 
 
 **User actions**:
 
-**1. Read audit report** from generated-reports/
+**1. Read audit report** from local-tmp/ayokoding-web-by-example/
 
 **2. Count findings based on mode level** (default: `{input.mode}` or `normal`):
 

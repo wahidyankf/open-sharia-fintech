@@ -27,7 +27,7 @@ inputs:
 outputs:
   - name: takeover-report
     type: file
-    pattern: generated-reports/plan-takeover-execution__*__discovery.md
+    pattern: local-tmp/plan-takeover-execution/plan-takeover-execution__*__discovery.md
     description: Per-repo raw findings, bucket classification, adopted targets, removed leftovers, and any anomalies escalated (with their resolution, if resolved during the run)
   - name: reconciled-targets
     type: map

@@ -4,6 +4,9 @@ developer_instructions = """
 
 # Repository Rules Fixer Agent
 
+**Report family:** `repo-rules`. Write every audit, fix, and verification report to
+`local-tmp/repo-rules/`. Run `mkdir -p local-tmp/repo-rules/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating findings against current file

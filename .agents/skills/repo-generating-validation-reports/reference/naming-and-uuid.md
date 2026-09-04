@@ -18,9 +18,9 @@ All reports follow the 4-part pattern:
 **Examples**:
 
 ```
-generated-reports/docs__a1b2c3__2026-01-03--14-30__audit.md
-generated-reports/plan__d4e5f6__2026-01-03--15-00__validation.md
-generated-reports/ayokoding-facts__a1b2c3_d4e5f6__2026-01-03--16-45__audit.md
+local-tmp/docs/docs__a1b2c3__2026-01-03--14-30__audit.md
+local-tmp/plan/plan__d4e5f6__2026-01-03--15-00__validation.md
+local-tmp/ayokoding-web-facts/ayokoding-web-facts__a1b2c3_d4e5f6__2026-01-03--16-45__audit.md
 ```
 
 ## UUID Generation
@@ -42,7 +42,7 @@ MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 **Scope-based execution tracking** enables parent-child hierarchy:
 
-**Tracking File Pattern**: `generated-reports/.execution-chain-{scope}`
+**Tracking File Pattern**: `local-tmp/.execution-chain-{scope}`
 
 **Startup Logic**:
 
@@ -54,7 +54,7 @@ MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 SCOPE="${EXECUTION_SCOPE:-docs}"
 
 # 3. Read parent chain from scope tracking file
-CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+CHAIN_FILE="local-tmp/.execution-chain-${SCOPE}"
 if [ -f "$CHAIN_FILE" ]; then
   read PARENT_TIME PARENT_CHAIN < "$CHAIN_FILE"
   CURRENT_TIME=$(date +%s)

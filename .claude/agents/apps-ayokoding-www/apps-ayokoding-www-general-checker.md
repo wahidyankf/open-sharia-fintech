@@ -15,6 +15,9 @@ skills:
 
 # General Content Checker for ayokoding-web
 
+**Report family:** `ayokoding-web-general`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-general/`. Run `mkdir -p local-tmp/ayokoding-web-general/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Suppress only an exact
@@ -49,7 +52,7 @@ Skill: `repo-generating-validation-reports`
 
 See `repo-applying-maker-checker-fixer` Skill for:
 
-- **Known False Positive Skip List**: Load and check `generated-reports/.known-false-positives.md` before every validation step
+- **Known False Positive Skip List**: Load and check `local-tmp/.known-false-positives.md` before every validation step
 - **Scoped Re-validation**: When UUID chain is multi-part, validate only changed files from fix report
 - **Escalation**: After 2+ disagreements on same finding, mark as `[ESCALATED — manual review required]`
 - **Convergence Target**: Stabilize in 3-5 iterations; warn if not converged after 7

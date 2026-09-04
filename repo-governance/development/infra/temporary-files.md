@@ -14,12 +14,12 @@ when_to_use: Use when an AI agent needs to create a temporary uncommitted file o
 
 # Temporary Files Convention
 
-The rule is simple — `generated-reports/` for reports, `local-tmp/` for everything else — with the details linked below.
+The rule is simple — `generated-reports/` for artifacts a human asked for and will read, `local-tmp/<agent-family>/` for everything an agent produces for itself or another agent — with the details linked below.
 
 ## Rules and Report Generation
 
 - [Overview and the Rule](./temporary-files/overview-and-the-rule.md) — Why the convention exists and the mandatory directory rule itself. Use before creating any temporary file, to confirm the mandatory directory rule.
-- [Mandatory Report Generation for Checker Agents](./temporary-files/mandatory-report-generation.md) — The requirement that \*-checker agents write reports to generated-reports/ with required tools. Use when building or reviewing a \*-checker agent.
+- [Mandatory Report Generation for Checker Agents](./temporary-files/mandatory-report-generation.md) — The requirement that \*-checker agents write reports to their per-family local-tmp/ directory with required tools. Use when building or reviewing a \*-checker agent.
 
 ## UUID Chain Generation
 
@@ -29,13 +29,13 @@ The rule is simple — `generated-reports/` for reports, `local-tmp/` for everyt
 
 ## Directory Purposes and Report Naming
 
-- [Directory Purposes — generated-reports/ and Progressive Writing Requirement](./temporary-files/generated-reports-and-progressive-writing.md) — What generated-reports/ is for, and why checker agents must write progressively. Use when deciding what belongs in generated-reports/.
+- [Directory Purposes — generated-reports/ and Progressive Writing Requirement](./temporary-files/generated-reports-and-progressive-writing.md) — What generated-reports/ is for under the intent test, and why checker agents must write progressively. Use when deciding whether an artifact belongs in generated-reports/ or local-tmp/.
 - [Progressive Writing Requirement — Requirements and Implementation Pattern](./temporary-files/progressive-writing-requirements-and-implementation.md) — The five progressive-writing requirements and the checker-agent list subject to the rule. Use when writing a checker agent's progressive-writing instructions.
 - [Report File Naming Standard](./temporary-files/report-file-naming-standard.md) — The 4-part `{agent-family}__{uuid-chain}__{timestamp}__{suffix}.md` pattern, its separators, and why UUIDs/timestamps must be real. Use when constructing a checker or fixer report filename.
 - [Report File Naming Standard — Repository Audit and Link Validation Reports](./temporary-files/report-file-naming-early-report-types.md) — Filename pattern and retention for repo-rules-checker and docs-link-checker reports. Use when naming a repo-rules-checker or docs-link-checker report.
 - [Report File Naming Standard — Fixer Reports (Universal Pattern)](./temporary-files/fixer-reports-universal-pattern.md) — The shared fixer-report naming, audit-fix pairing, and content structure fixers follow. Use when a fixer agent generates its fix report.
 - [Report File Naming Standard — Content, Documentation, and Plan Validation Reports](./temporary-files/report-file-naming-content-and-plan-reports.md) — Filename patterns for the content, docs, plan, and plan-execution families. Use when naming a content, docs, or plan report.
-- [`local-tmp/`](./temporary-files/local-tmp-directory.md) — What local-tmp/ is for and the predicates for reclaiming anything inside it. Use when deciding if a file belongs in local-tmp/.
+- [`local-tmp/`](./temporary-files/local-tmp-directory.md) — What local-tmp/ is for, its per-family layout, and the predicates for reclaiming anything inside it. Use when deciding if a file belongs in local-tmp/.
 
 ## Usage and Reference
 

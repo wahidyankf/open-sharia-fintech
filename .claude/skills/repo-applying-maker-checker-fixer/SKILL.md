@@ -50,7 +50,7 @@ The pattern integrates with:
 
 - **[Criticality Levels Convention](../../../repo-governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
 - **[Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
-- **[Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
+- **[Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `local-tmp/<agent-family>/`
 - **[Repository Validation Methodology](../../../repo-governance/development/quality/repository-validation.md)** - Standard validation patterns
 - **[AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
 

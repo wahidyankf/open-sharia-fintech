@@ -45,7 +45,7 @@ This convention builds upon and references:
 
 **Relationship**: Checker reports using criticality system are temporary files.
 
-- All checker agents write to `generated-reports/`
+- All checker agents write to `local-tmp/<agent-family>/`
 - Filename pattern: `{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 - Progressive writing requirement ensures reports survive context compaction
 

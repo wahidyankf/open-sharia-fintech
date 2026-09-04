@@ -28,7 +28,7 @@ validation-output.txt
 
 ```bash
 # Organized in designated directories
-generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md
+local-tmp/docs/docs__a1b2c3__2025-12-14--20-45__audit.md
 local-tmp/scratch-notes.txt
 local-tmp/analysis.json
 ```
@@ -50,7 +50,7 @@ local-tmp/analysis.json
 # Placeholder values (DO NOT DO THIS)
 UUID="abc123"
 TIMESTAMP="2025-12-14--00-00"
-REPORT="generated-reports/docs__${UUID}__${TIMESTAMP}__audit.md"
+REPORT="local-tmp/docs/docs__${UUID}__${TIMESTAMP}__audit.md"
 ```
 
 **Solution:**
@@ -59,7 +59,7 @@ REPORT="generated-reports/docs__${UUID}__${TIMESTAMP}__audit.md"
 # Generate real values
 UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 TIMESTAMP=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
-REPORT="generated-reports/docs__${UUID}__${TIMESTAMP}__audit.md"
+REPORT="local-tmp/docs/docs__${UUID}__${TIMESTAMP}__audit.md"
 ```
 
 **Rationale:**

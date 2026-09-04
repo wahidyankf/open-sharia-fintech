@@ -23,6 +23,9 @@ skills:
 
 # Link Checker for ayokoding-web
 
+**Report family:** `ayokoding-web-link`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-link/`. Run `mkdir -p local-tmp/ayokoding-web-link/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)

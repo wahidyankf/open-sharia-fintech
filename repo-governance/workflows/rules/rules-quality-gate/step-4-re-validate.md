@@ -12,10 +12,10 @@ is unchanged, reuse the retained findings section and re-evaluate AI-only domain
 **Preflight re-run**:
 
 ```bash
-rtk mkdir -p generated-reports
+rtk mkdir -p local-tmp/repo-governance-audit
 rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o json \
   --skip vendor-audit --skip governance-word-budget \
-  > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json'
+  > local-tmp/repo-governance-audit/repo-governance-audit__{uuid}__{timestamp}.json'
 ```
 
 The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path is
