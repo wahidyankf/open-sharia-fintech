@@ -31,8 +31,6 @@ Enforce these soft limits; exceeding them is a governance finding:
   `apps/rhino-cli/internal/`, `apps/rhino-cli/cmd/` — status indicators ✓ ✗ ✅ ❌)
 - Web UI component code where emoji is part of rendered UI content (e.g., React TSX components
   in `apps/*/src/` for ayokoding-www, organiclever-www, ose-www, and `libs/web-ui/src/`)
-- Third-party agent skill scripts outside repo-governance scope (e.g.,
-  `.agents/skills/caveman-compress/`)
 
 These exceptions apply when emoji appears in user-visible output layers (terminal UI, rendered
 HTML), not in business logic or configuration.

@@ -191,14 +191,14 @@ let private vendoredFromRegistry (root: string) : string list =
 /// `VENDORED_DIRS` in the Rust suite — the real repository's vendored set is
 /// read from its registry via [`vendoredFromRegistry`], never from this list.
 let private vendoredFixtureDirs: string list =
-    [ "cavecrew"
-      "caveman"
-      "caveman-commit"
-      "caveman-compress"
-      "caveman-help"
-      "caveman-review"
-      "caveman-stats"
-      "compress" ]
+    [ "vendor-alpha"
+      "vendor-bravo"
+      "vendor-charlie"
+      "vendor-delta"
+      "vendor-echo"
+      "vendor-foxtrot"
+      "vendor-golf"
+      "vendor-hotel" ]
 
 /// Instance step-definition container — see `ConventionSteps.fs`'s module doc
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
