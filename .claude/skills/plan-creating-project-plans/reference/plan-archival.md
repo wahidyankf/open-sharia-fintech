@@ -22,6 +22,16 @@ Every delivery plan MUST end with a plan archival section:
 - [ ] Register the workflow-owned terminal audit task and its required post-delivery proof fields;
       do not mark that gate complete before merge or direct-push confirmation. Its result belongs in
       the plan-execution final report, not a speculative pre-merge checkbox.
+- [ ] Classify every `Delivery Branch Inventory` entry as delivered, unused, or
+      retained/escalated; a retained entry names who owns it and why it outlives the plan, and an
+      entry whose state is ambiguous or whose proof is missing is escalated, never deleted
+- [ ] Remove each worktree this plan provisioned, non-force, from the repository root:
+      `rtk git worktree remove worktrees/<plan-identifier>`, after the checks in
+      `repo-governance/development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md`
+      — worktree modes only; a main mode provisioned none and skips this step and the next
+- [ ] Complete branch cleanup for every branch this plan created, in every repository it delivered
+      to, per `repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md`,
+      then run `rtk git worktree prune`. Follow that convention's proof gates; never relax them here
 - [ ] After every pre-archival gate, including the preliminary audit, passes, run `rtk date +%F`; record the output as
       `<completion-date>`. Do not hardcode or predict this value while authoring the plan.
 - [ ] Move the plan via
@@ -36,5 +46,12 @@ Every delivery plan MUST end with a plan archival section:
 After the archival delivery is pushed or merged, plan execution must run the registered terminal
 audit against the delivered head before assigning `pass` or cleaning the worktree. A failed
 terminal audit reopens execution and is never papered over with a post-merge checkbox edit.
+
+The three cleanup steps are scaffolding, not the procedure. Worktree removal routes to
+[Mandatory Pre-Removal Checks](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md)
+and branch deletion to
+[Branch Cleanup](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md);
+those two own the proof gates, and a plan never restates or weakens either. A plan
+declaring a main mode provisions no worktree and omits the two removal steps.
 
 See [knowledge-capture-scaffold-and-entries.md](knowledge-capture-scaffold-and-entries.md) and [knowledge-capture-phase-template.md](knowledge-capture-phase-template.md) for the mandatory phase that precedes archival, and [common-mistakes.md](common-mistakes.md) for authoring pitfalls to avoid before reaching this section.

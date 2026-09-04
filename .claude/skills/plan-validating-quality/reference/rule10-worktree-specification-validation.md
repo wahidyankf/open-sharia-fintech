@@ -47,8 +47,17 @@ worktree artifacts are absent):
    pending: **HIGH**. For a main mode, require `Worktree: not applicable` plus the mode and primary
    checkout rationale; any worktree identity or provisioning command is **HIGH**.
 
+7. **Archival cleanup steps** — for a worktree mode, `### Plan Archival` contains a step
+   classifying every `Delivery Branch Inventory` entry, a worktree-removal step, and a
+   branch-cleanup step routing to
+   [Branch Cleanup](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md).
+   Missing any of the three: **MEDIUM** — the obligation already binds at plan-execution
+   finalization, so the defect is that the plan does not show it, not that it is unbound. Does not
+   fire for a main mode, which provisions no worktree, nor on a plan folder with no `delivery.md`.
+
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree
 path for this repository: **HIGH**. Machine-specific worktree identity path: **HIGH**.
 Missing/incomplete identity or inventory outside the documented authoring exception: **HIGH**.
 Machine-specific local path anywhere in committed `delivery.md`: **HIGH**.
+Missing a worktree-mode archival cleanup step: **MEDIUM**.
