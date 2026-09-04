@@ -29,7 +29,7 @@ Feature: Governance Audit Orchestrator
     Then every run produces byte-identical JSON output
 
   Scenario: Skip list honored: false-positive entries do not count toward total_findings
-    Given a repository where a finding key matches a known-false-positives entry
+    Given a repository where a finding key matches a known-false-positives entry in local-tmp
     When the developer runs repo-governance audit
     Then the matching finding appears under skipped_false_positives
     And the matching finding does not count toward total_findings

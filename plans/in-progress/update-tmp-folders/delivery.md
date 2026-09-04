@@ -41,10 +41,11 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 
 ### Delivery Branch Inventory
 
-| Branch                        | Mode          | Lifecycle state | Proof                                                                                                                                        |
-| ----------------------------- | ------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worktree/update-tmp-folders` | `provisioned` | `unused`        | `git worktree add` at `2026-09-04T06:38:11Z`; removed and branch deleted before any delivery, to honor the one-worktree-at-a-time constraint |
-| `worktree/update-tmp-folders` | `provisioned` | `active`        | `git worktree add` at `2026-09-04T10:20:32Z` from `origin/main` `e61a4877a`; upstream unset immediately                                      |
+| Branch                        | Mode             | Lifecycle state    | Proof                                                                                                                                                                                                                                                                  |
+| ----------------------------- | ---------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worktree/update-tmp-folders` | `provisioned`    | `unused`           | `git worktree add` at `2026-09-04T06:38:11Z`; removed and branch deleted before any delivery, to honor the one-worktree-at-a-time constraint                                                                                                                           |
+| `worktree/update-tmp-folders` | `provisioned`    | `active`           | `git worktree add` at `2026-09-04T10:20:32Z` from `origin/main` `e61a4877a`; upstream unset immediately                                                                                                                                                                |
+| `worktree/update-tmp-folders` | `worktree-to-pr` | `delivered` (DU-1) | PR [#473](https://github.com/wahidyankf/ose-public/pull/473), squash-merged `2026-09-04T11:14:07Z`; reviewed head `ae04b3dfb6ee99cbf2a8ecdc08fecafb70f18288`, base `e61a4877a2c87490cea1a16f9a739ac9127f4a85`, merge commit `24a6d93a600e5ff6813571f7c0572e03d0a43f21` |
 
 The plan must not record an absolute, home, tool-prefix, drive, UNC, or other host-specific path.
 Resolve its declared route only at runtime against the selected repository root; retain any resolved
@@ -577,45 +578,45 @@ itself or for another agent` already covers the case, and the neighbouring scrat
 **Outcome**: The intent-based rule and its consumers are on `main`.
 **Proof**: PR merged with green exact-head/base CI.
 
-- [ ] [AI] **RP-8.3 Composed quality gate** — run
+- [x] [AI] **RP-8.3 Composed quality gate** — run
       [rules-quality-gate](../../../repo-governance/workflows/rules/rules-quality-gate.md) at
       `mode: strict`. This is where repository-wide duplication, contradiction, and traceability
       findings surface that Phase 1's subject-scoped sweep deliberately did not look for. Fix
       findings attributable to this run's edits and re-verify; report findings that predate the run
       rather than absorbing them. Route failures per the workflow's own table — budget exceeded
       returns to RP-5, contradiction to RP-3, duplication to RP-6, invalid gate declaration to RP-7
-- [ ] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
-- [ ] [AI] Commit under the plan's standing authorization per
+- [x] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
+- [x] [AI] Commit under the plan's standing authorization per
       [Commit Guidelines](#commit-guidelines) — suggested split:
       one commit for `repo-governance/` + `AGENTS.md` + glossary + docs, one for `.claude/` +
       regenerated mirrors + `.prettierignore`. Suggested type/scope:
       `docs(governance): re-found the temporary-directory split on artifact intent`
-- [ ] [AI] Push and open a draft PR against `main`:
+- [x] [AI] Push and open a draft PR against `main`:
       `rtk gh pr create --draft --base main --title "docs(governance): re-found the temporary-directory split on artifact intent"`.
       The PR body states the new-code cost/benefit (this unit adds no code) and links this plan
-- [ ] [AI] **RP-9 PR content** — the PR body states, for each of the four normalized statements: the
+- [x] [AI] **RP-9 PR content** — the PR body states, for each of the four normalized statements: the
       statement itself, its destination, its enforcement disposition, and any supersession or
       eviction it caused. Name the two supersessions explicitly — a reviewer who cannot see what was
       displaced cannot review the displacement. If RP-5 evicted an `AGENTS.md` entry, say so in its
       own sentence; that is the change most likely to surprise a reader
-- [ ] [AI] **RP-9 Sibling obligation** — record `sibling-obligation: ose-private` in the PR body and
+- [x] [AI] **RP-9 Sibling obligation** — record `sibling-obligation: ose-private` in the PR body and
       as a durable note, together with the parity objective slug `update-tmp-folders`, the shared
       worktree basename `update-tmp-folders`, and the branch `worktree/update-tmp-folders` fixed at
       RP-1. This plan discharges that obligation in Phase 5 rather than deferring it; the record
       exists so a reader of the merged PR alone can still see what was owed
-- [ ] [AI] Assert before delivery that the current worktree basename and branch match the recorded
+- [x] [AI] Assert before delivery that the current worktree basename and branch match the recorded
       identity: `rtk git rev-parse --abbrev-ref HEAD` prints `worktree/update-tmp-folders`
-- [ ] [AI] Keep the PR body free of bare `#NNN` issue references — a `#`-prefixed number in a body
+- [x] [AI] Keep the PR body free of bare `#NNN` issue references — a `#`-prefixed number in a body
       parses as a footer and trips the message gate
-- [ ] [AI] Run every check in [Post-Push Verification](#post-push-verification)
-- [ ] [AI] Confirm the `Quality gate` workflow from `.github/workflows/pr-quality-gate.yml` is green
+- [x] [AI] Run every check in [Post-Push Verification](#post-push-verification)
+- [x] [AI] Confirm the `Quality gate` workflow from `.github/workflows/pr-quality-gate.yml` is green
       for the PR's exact current head and base
-- [ ] [AI] Confirm one authenticated clean current-head `pr-leak-review` result
-- [ ] [AI] Mark the PR ready for review, then merge it — `[AI]` merges once the hardened
+- [x] [AI] Confirm one authenticated clean current-head `pr-leak-review` result
+- [x] [AI] Mark the PR ready for review, then merge it — `[AI]` merges once the hardened
       preconditions above hold
-- [ ] [AI] Record the merged PR number and its 40-character reviewed-head SHA in the
+- [x] [AI] Record the merged PR number and its 40-character reviewed-head SHA in the
       [Delivery Branch Inventory](#delivery-branch-inventory)
-- [ ] [AI] Fast-forward local `main` in the primary checkout after the merge:
+- [x] [AI] Fast-forward local `main` in the primary checkout after the merge:
       `rtk git -C <primary-checkout-root> fetch origin && rtk git -C <primary-checkout-root> merge --ff-only origin/main`
       — a side-worktree push advances `origin/main` but not local `main`, and the divergence is
       otherwise silent. Never `reset --hard`
@@ -624,14 +625,53 @@ itself or for another agent` already covers the case, and the neighbouring scrat
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `rtk gh pr view <pr-number> --json state` reports `MERGED`
-- [ ] [AI] All PR check runs are green — verified via `rtk gh pr checks <pr-number>`
-- [ ] [AI] Local `main` in the primary checkout is at the same SHA as `origin/main`
-- [ ] [AI] The Delivery Branch Inventory records the PR number and reviewed-head SHA
+- [x] [AI] `rtk gh pr view <pr-number> --json state` reports `MERGED`
+- [x] [AI] All PR check runs are green — verified via `rtk gh pr checks <pr-number>`
+- [x] [AI] Local `main` in the primary checkout is at the same SHA as `origin/main`
+- [x] [AI] The Delivery Branch Inventory records the PR number and reviewed-head SHA
 
 > **Pause Safety**: `main` carries a coherent rule with all its consumers aligned; every prior
 > artifact still resolves. Safe to stop. To resume: `rtk gh pr list --head worktree/update-tmp-folders`
 > to confirm nothing is open.
+>
+> **Phase 3 Result**: PR [#473](https://github.com/wahidyankf/ose-public/pull/473) merged
+> `2026-09-04T11:14:07Z`. Reviewed head `ae04b3dfb6ee99cbf2a8ecdc08fecafb70f18288`, base
+> `e61a4877a2c87490cea1a16f9a739ac9127f4a85` (equal to `origin/main` at review time — no drift),
+> merge commit `24a6d93a600e5ff6813571f7c0572e03d0a43f21`. 312 files, +1057 / -488. Two commits:
+> `34a34a67d` (governance rule, `AGENTS.md`, glossary, docs) and `ae04b3dfb` (agents, skills,
+> mirrors, `.prettierignore`, this plan). All 15 check runs green at that exact head/base — the
+> `Quality gate` workflow's `governance`, `harness`, `specs`, `markdown`, `formatting-verify`, and
+> `shell-docker-actions` groups plus `Build rhino-cli`, `Detect affected languages`,
+> `Specs structure validation`, and `Validate env-contract surfaces`. The three language quality
+> gates report `skipping` because this unit touches no code.
+>
+> `pr-review-security-maker` returned **CLEAN** in leak-only mode at head `ae04b3dfb`, read-only,
+> nothing posted. It examined every candidate rather than pattern-matching: the
+> `/home/user/repos/project/` string is a pre-existing generic placeholder inside a documented
+> anti-pattern whose only change was the trailing directory name; `wahidyankf@gmail.com` is the
+> commit author identity already public on every commit in this repository; `test@test.com` is the
+> stray-override anti-pattern this plan names on purpose; the `a1b2c3`/`d4e5f6` strings are
+> synthetic UUID-chain illustrations.
+>
+> **RP-8.3 composed quality gate**, run under the user's five-iteration cap: pass 1 found zero
+> findings attributable to this run. Rather than spend further iterations, propagation completeness
+> was proven directly, which is what the cap directs: the AC-6 sweep leaves zero `WRITE-TARGET`
+> occurrences (33 survivors, all `RULE` or `INFRA`, enumerated in `verdicts-bindings.md`); a
+> mechanical cross-check confirms **every** `local-tmp/<x>/` path inside each of the 43 agents
+> equals that agent's declared family, with zero mismatches; and a contradiction scan across the
+> four rule shards (`overview-and-the-rule.md`, `generated-reports-and-progressive-writing.md`,
+> `mandatory-report-generation.md`, `status-exceptions-and-related.md`) finds them mutually
+> consistent, each stating the intent test in compatible words. The governance audit
+> (`layer-coherence`, `traceability-audit`, `governance-word-budget`) reports 0 findings.
+>
+> **One deviation.** `git merge --ff-only origin/main` cannot succeed in the worktree after a squash
+> merge — the branch's two commits and `main`'s one squashed commit share no ancestry. Verified
+> `git diff HEAD origin/main` is **empty**, so the branch content is fully represented on `main`,
+> then re-pointed the branch with `git checkout -B worktree/update-tmp-folders origin/main`. The
+> working tree was clean beforehand and clean after; no `reset --hard` was used, and no untracked or
+> ignored file was touched. The primary checkout's `main` fast-forwarded normally and now equals
+> `origin/main` at `24a6d93a6`. `origin/worktree/update-tmp-folders` still holds the pre-squash
+> commits and will be realigned with `--force-with-lease` when DU-2 pushes.
 
 ## Phase 4: Relocate the Suppression Ledger (`ose-public` DU-2)
 
