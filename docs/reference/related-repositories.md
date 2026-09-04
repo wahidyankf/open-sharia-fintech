@@ -78,6 +78,14 @@ gate in either repo; each repo's manifest stays internally consistent even while
 from each other. Verify parity across the pair by diffing the boundary directly, not by trusting
 a green `parity manifest validate` in either repo.
 
+### What is deliberately not identical
+
+The byte-identity boundary covers `apps/rhino-cli` and the shared Gherkin tree, and nothing else.
+`package.json` script names in particular have diverged: the harness-bindings validator is
+`harness:bindings-validation` in `ose-public` and `validate:harness-bindings` in `ose-private`,
+running the same underlying command. Resolve every command a cross-repo plan invokes against each
+repository's own `package.json` rather than assuming the name carries over.
+
 ## Sync cadence
 
 Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;

@@ -29,6 +29,14 @@ repository or stack context, chat, or tribal knowledge.
 - Separate RED, GREEN, and REFACTOR checkboxes for every code behavior slice, each with its exact
   test/source path, symbol, copyable command, and expected failure/pass state.
 
+## Counted Claims Carry the Command That Produced Them
+
+A plan that says "only one line names this path", "just three call sites", or any other bounded
+count MUST record the command that produced the number and the number itself. A count is a factual
+premise, and plans use counts to justify delivery-unit boundaries — so a wrong one does not merely
+mislead a reader, it mis-cuts the delivery. Write `grep -rn '<pattern>' <paths> | wc -l` and its
+output beside the claim; an executor can then re-run it and see the premise still holds.
+
 ## Controlled Runbook-Reference Exception
 
 Use a same-document, uniquely named runbook packet only for a finite cross-repository lifecycle

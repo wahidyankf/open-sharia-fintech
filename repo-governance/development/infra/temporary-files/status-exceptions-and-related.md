@@ -30,6 +30,21 @@ Files in these directories will not be committed to the repository.
 
 **Note**: The `.execution-chain-{scope}` files are hidden files at the root of `local-tmp/` used for parent-child execution tracking. They sit at the root rather than under a family directory because the chain spans families. They are automatically gitignored via the `local-tmp/*` pattern.
 
+## Sweeping a Legacy `generated-reports/` Directory
+
+A checkout predating the intent-based split still holds agent artifacts here. Before sweeping,
+relocate `.known-false-positives.md` to `local-tmp/` — the suppression ledger is live state the
+audit code reads by default, and losing it silently re-raises every accepted finding.
+
+`.execution-chain-*` files are **swept, not relocated**. Chains are written to `local-tmp/` now, so
+one here sits where nothing reads it, and keeping it would let a future report claim parentage from
+an unrelated finished run. The next workflow that spawns children writes a fresh chain.
+
+List the directory before deleting it, never just count it — a count cannot tell you whether live
+state was in there. Check for tracked files too: `.gitignore` never untracks what was already
+committed, so `git ls-tree -r --name-only origin/main -- generated-reports/` may name files even
+here. Remove those through a PR, not an unstaged deletion.
+
 ## Exception Handling
 
 The rule includes "unless specified otherwise by other repo-governance/conventions":
