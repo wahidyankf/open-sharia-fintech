@@ -16,10 +16,10 @@
 /// definitions, which load the real file for the same reason. The vendored
 /// skill-directory set is derived from the real `.agents/skills`/
 /// `.claude/skills` trees at test-run time rather than hard-coded, because
-/// that plugin payload differs across sibling repositories (ose-public
-/// carries a caveman/cavecrew payload; ose-private carries none) — a
-/// hard-coded expectation here would make this file non-portable across
-/// them, breaking this port's byte-identical-source goal.
+/// any vendored plugin payload is repository-local — a sibling repository
+/// may carry one while another carries none — and a hard-coded expectation
+/// here would make this file non-portable across them, breaking this port's
+/// byte-identical-source goal.
 ///
 /// Scenarios 4 and 5 build a synthetic, self-contained fixture (mirroring
 /// the Rust suite's `synthetic_config_with_vendored_probe`) for the same

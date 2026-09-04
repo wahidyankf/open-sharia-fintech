@@ -77,9 +77,3 @@ Nx tooling guidelines, generator usage, and `nx_docs` policy are documented in
 [AGENTS.md](./AGENTS.md) and apply identically here.
 
 <!-- nx configuration end-->
-
-### caveman — Token Compression
-
-Compresses agent output ~75% via terse caveman-speak; stacks with RTK for compounded savings.
-Installed 2026-05-03. `/caveman` toggles; `/caveman lite|full|ultra` sets mode; `/caveman-stats`
-shows savings; `/caveman-commit` generates a terse commit message.

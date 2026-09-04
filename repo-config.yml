@@ -85,19 +85,6 @@ harness:
     config: .codex/config.toml
     skills-dir: .agents/skills
     skills-mirrors: .claude/skills
-    # Third-party plugin payload committed to the repository. None has a
-    # .claude/skills/ counterpart, so the mirror emitter would have nothing to
-    # regenerate them from — it must leave every one byte-identical (DD-7).
-    # Origin below is each skill's own declared trigger, not an inference.
-    vendored:
-      - .agents/skills/cavecrew # cavecrew plugin — investigator/builder/reviewer subagent presets
-      - .agents/skills/caveman # caveman plugin — /caveman mode toggle
-      - .agents/skills/caveman-commit # caveman plugin — /caveman-commit
-      - .agents/skills/caveman-compress # caveman plugin — /caveman:compress, the full payload
-      - .agents/skills/caveman-help # caveman plugin — /caveman-help
-      - .agents/skills/caveman-review # caveman plugin — /caveman-review
-      - .agents/skills/caveman-stats # caveman plugin — /caveman-stats, /caveman-mode-tracker
-      - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
       - RTK.md
@@ -116,14 +103,6 @@ harness:
       - { path: .codex/ci-monitor-subagent.toml, class: vendored, reason: Nx tooling file config.toml points at }
       - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
       - { path: RTK.md, class: source, reason: upstream Codex RTK instruction surface }
-      - { path: .agents/skills/cavecrew, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman-commit, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman-compress, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman-help, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman-review, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/caveman-stats, class: vendored, reason: third-party plugin skill; no in-repo source }
-      - { path: .agents/skills/compress, class: vendored, reason: third-party plugin skill; no in-repo source }
 
 harness-catalog:
   # Where the generated catalog region lands, and the date its upstream claims
@@ -2097,20 +2076,6 @@ gates:
         - specs/
         - .fvm/
         - .fvm-cache/
-        # Vendored third-party skills mirrored into .agents/skills/, which
-        # Phase 11 of plans/in-progress/update-harness-support brought under the
-        # .agents/**/*.md surface. This repository neither authors nor
-        # regenerates them, so an over-budget vendored SKILL.md cannot be
-        # shortened at any source we own. Excluded as a whole set for
-        # uniformity. Their exclusion follows ownership, not current size.
-        - .agents/skills/cavecrew/
-        - .agents/skills/caveman/
-        - .agents/skills/caveman-commit/
-        - .agents/skills/caveman-compress/
-        - .agents/skills/caveman-help/
-        - .agents/skills/caveman-review/
-        - .agents/skills/caveman-stats/
-        - .agents/skills/compress/
     surfaces:
       pre-push: &word-budget-triggers
         scope: path-gated
