@@ -71,6 +71,8 @@ the gate proves the reviewed head itself merged. Any one proof missing means no 
 escalate; worktree removal remains valid regardless. `-D` is authorized by this gate alone, never to
 cover absent evidence, and never alongside a fabricated tracking ref or a direct ref delete.
 
+A branch with no usable proof here may still qualify under [Patch-Equivalent Branch Cleanup](./patch-equivalent-branch-cleanup.md).
+
 **Use `git push origin --delete <branch>`** only for a plan-pushed, still-live branch after its PR is
 `MERGED`. Verified GitHub auto-deletion needs no second command. **Never delete `main` or an
 environment branch.** Environment branches are repo-specific: `ose-public` has `prod-*`/`stag-*`;
