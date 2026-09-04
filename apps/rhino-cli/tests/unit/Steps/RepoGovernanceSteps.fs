@@ -410,7 +410,7 @@ type RepoGovernanceSteps() =
             )
 
     [<Given>]
-    member _.``a repository where a finding key matches a known-false-positives entry``() =
+    member _.``a repository where a finding key matches a known-false-positives entry in local-tmp``() =
         auditSuppressedKey <- "vendor-audit|suppressed.md|00000005"
 
         auditRunner <-
@@ -419,7 +419,7 @@ type RepoGovernanceSteps() =
                     [ "vendor-audit", [ auditFindingWithKey auditSuppressedKey "suppressed.md" "known false positive" ] ]
             )
 
-        let dir = Path.Combine(root (), "generated-reports")
+        let dir = Path.Combine(root (), "local-tmp")
         Directory.CreateDirectory dir |> ignore
 
         File.WriteAllText(
