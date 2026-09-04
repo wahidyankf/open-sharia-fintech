@@ -41,11 +41,15 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 
 ### Delivery Branch Inventory
 
-| Branch                        | Mode             | Lifecycle state    | Proof                                                                                                                                                                                                                                                                  |
-| ----------------------------- | ---------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worktree/update-tmp-folders` | `provisioned`    | `unused`           | `git worktree add` at `2026-09-04T06:38:11Z`; removed and branch deleted before any delivery, to honor the one-worktree-at-a-time constraint                                                                                                                           |
-| `worktree/update-tmp-folders` | `provisioned`    | `active`           | `git worktree add` at `2026-09-04T10:20:32Z` from `origin/main` `e61a4877a`; upstream unset immediately                                                                                                                                                                |
-| `worktree/update-tmp-folders` | `worktree-to-pr` | `delivered` (DU-1) | PR [#473](https://github.com/wahidyankf/ose-public/pull/473), squash-merged `2026-09-04T11:14:07Z`; reviewed head `ae04b3dfb6ee99cbf2a8ecdc08fecafb70f18288`, base `e61a4877a2c87490cea1a16f9a739ac9127f4a85`, merge commit `24a6d93a600e5ff6813571f7c0572e03d0a43f21` |
+| Branch                                        | Mode             | Lifecycle state    | Proof                                                                                                                                                                                                                                                                   |
+| --------------------------------------------- | ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worktree/update-tmp-folders`                 | `provisioned`    | `unused`           | `git worktree add` at `2026-09-04T06:38:11Z`; removed and branch deleted before any delivery, to honor the one-worktree-at-a-time constraint                                                                                                                            |
+| `worktree/update-tmp-folders`                 | `provisioned`    | `active`           | `git worktree add` at `2026-09-04T10:20:32Z` from `origin/main` `e61a4877a`; upstream unset immediately                                                                                                                                                                 |
+| `worktree/update-tmp-folders`                 | `worktree-to-pr` | `delivered` (DU-1) | PR [#473](https://github.com/wahidyankf/ose-public/pull/473), squash-merged `2026-09-04T11:14:07Z`; reviewed head `ae04b3dfb6ee99cbf2a8ecdc08fecafb70f18288`, base `e61a4877a2c87490cea1a16f9a739ac9127f4a85`, merge commit `24a6d93a600e5ff6813571f7c0572e03d0a43f21`  |
+| `worktree/update-tmp-folders`                 | `worktree-to-pr` | `delivered` (DU-2) | PR [#474](https://github.com/wahidyankf/ose-public/pull/474), squash-merged `2026-09-04T12:06:06Z`; reviewed head `1453a47ae5d85911827ea5074ed60bbcf18cca9f`, base `24a6d93a600e5ff6813571f7c0572e03d0a43f21`, merge commit `02e4dece1c73ae7e146e1f453153b19ee73c2d86`  |
+| `worktree/update-tmp-folders` (`ose-private`) | `provisioned`    | `active`           | `git worktree add` at `2026-09-04T12:07:33Z` from `origin/main` `4b466aab5`; upstream unset immediately, set on first push                                                                                                                                              |
+| `worktree/update-tmp-folders` (`ose-private`) | `worktree-to-pr` | `delivered` (DU-3) | PR [#155](https://github.com/wahidyankf/ose-private/pull/155), squash-merged `2026-09-04T13:04:06Z`; reviewed head `ccafc626665b3bda3133ff697e8954fce2ee5958`, base `4b466aab598dbb396b48ed4fe60d8b8131282139`, merge commit `64095ce18e92630e577808812427d3a61b9a030f` |
+| `worktree/update-tmp-folders` (`ose-private`) | `worktree-to-pr` | `delivered` (DU-5) | PR [#156](https://github.com/wahidyankf/ose-private/pull/156), head `0685886bd40dc9567772d20b86e82d46c8682344`, base `64095ce18e92630e577808812427d3a61b9a030f`; leak review `pass` at that head                                                                        |
 
 The plan must not record an absolute, home, tool-prefix, drive, UNC, or other host-specific path.
 Resolve its declared route only at runtime against the selected repository root; retain any resolved
@@ -61,10 +65,10 @@ branches block cleanup.
 - Objective slug: `update-tmp-folders`
 - Common worktree basename: `update-tmp-folders`
 
-| Repository    | Worktree route                  | Branch                        | Provisioning status              |
-| ------------- | ------------------------------- | ----------------------------- | -------------------------------- |
-| `ose-public`  | `worktrees/update-tmp-folders/` | `worktree/update-tmp-folders` | provisioned                      |
-| `ose-private` | `worktrees/update-tmp-folders/` | `worktree/update-tmp-folders` | pending — provisioned in Phase 5 |
+| Repository    | Worktree route                  | Branch                        | Provisioning status                                                                                              |
+| ------------- | ------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `ose-public`  | `worktrees/update-tmp-folders/` | `worktree/update-tmp-folders` | provisioned                                                                                                      |
+| `ose-private` | `worktrees/update-tmp-folders/` | `worktree/update-tmp-folders` | provisioned `2026-09-04T12:07:33Z` from `origin/main` `4b466aab5`; upstream unset immediately, set on first push |
 
 `ose-private` was a normal (non-bare) checkout on `main` with no worktrees at authoring time.
 Re-verify its topology at Phase 5 rather than assuming it — this repository pair has flipped
@@ -115,28 +119,28 @@ flowchart TD
 Run from the repository root of the worktree being delivered. Applies before every push in
 Phases 3, 4, and 5.
 
-- [ ] [AI] Run affected typecheck: `rtk nx affected -t typecheck` — exits 0
-- [ ] [AI] Run affected linting: `rtk nx affected -t lint` — exits 0
-- [ ] [AI] Run affected quick tests: `rtk nx affected -t test:quick` — exits 0
-- [ ] [AI] Run affected spec coverage: `rtk nx affected -t specs:coverage` — exits 0
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
-- [ ] [AI] Verify all checks pass before pushing
+- [x] [AI] Run affected typecheck: `rtk nx affected -t typecheck` — exits 0
+- [x] [AI] Run affected linting: `rtk nx affected -t lint` — exits 0
+- [x] [AI] Run affected quick tests: `rtk nx affected -t test:quick` — exits 0
+- [x] [AI] Run affected spec coverage: `rtk nx affected -t specs:coverage` — exits 0
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
+- [x] [AI] Verify all checks pass before pushing
 
 > A `test:quick` failure that disappears on a warm-cache re-run without `--skip-nx-cache` is a known
 > flake under parallel hook load, not a regression. Re-run once before investigating.
 
 ### Post-Push Verification
 
-- [ ] [AI] Push to the PR branch for the delivery unit in progress, redirecting output:
+- [x] [AI] Push to the PR branch for the delivery unit in progress, redirecting output:
       `rtk git push origin HEAD > local-tmp/push-output.txt 2>&1` — a Husky `EAGAIN` stdout panic
       (`os error 35`) on large output is not a gate failure; check the gate's own final PASS/FAIL
       summary line. Never use `--no-verify`
-- [ ] [AI] Monitor the PR's check runs with `rtk gh pr checks <pr-number>` — poll every 2 minutes,
+- [x] [AI] Monitor the PR's check runs with `rtk gh pr checks <pr-number>` — poll every 2 minutes,
       never `gh run watch`
-- [ ] [AI] Verify all CI checks pass
-- [ ] [AI] If any CI check fails, investigate at the root cause and push a follow-up commit; never
+- [x] [AI] Verify all CI checks pass
+- [x] [AI] If any CI check fails, investigate at the root cause and push a follow-up commit; never
       bypass a gate
-- [ ] [AI] Do NOT proceed to the next phase until CI is green
+- [x] [AI] Do NOT proceed to the next phase until CI is green
 
 ### Commit Guidelines
 
@@ -146,20 +150,20 @@ Phases 3, 4, and 5.
 > this plan names and nothing beyond it; work discovered mid-execution that falls outside the
 > File-Impact Analysis still requires a fresh ask. This grant does not carry to any other plan.
 
-- [ ] [AI] Confirm each commit's paths fall inside
+- [x] [AI] Confirm each commit's paths fall inside
       [tech-docs.md §File-Impact Analysis](./tech-docs.md#file-impact-analysis); anything outside it
       is surfaced to the user before staging
-- [ ] [AI] Use the fewest build-valid, independently reviewable and revertible
+- [x] [AI] Use the fewest build-valid, independently reviewable and revertible
       commits, one coherent purpose each; no extra boundary prompt unless the user prescribed one
-- [ ] [AI] Follow Conventional Commits format: `<type>(<scope>): <description>`
-- [ ] [AI] Stage explicit paths — never `git add -A` in either repository; sibling trees carry
+- [x] [AI] Follow Conventional Commits format: `<type>(<scope>): <description>`
+- [x] [AI] Stage explicit paths — never `git add -A` in either repository; sibling trees carry
       unrelated uncommitted work
-- [ ] [AI] Commit with `rtk git commit --only -m "<message>" -- <paths>`; the pre-commit hook
+- [x] [AI] Commit with `rtk git commit --only -m "<message>" -- <paths>`; the pre-commit hook
       otherwise sweeps unstaged files in. New files still need an explicit `git add` first, and
       `-m` must precede the `--` separator
-- [ ] [AI] Keep required tests, docs, specs, references, and generated mirrors with the change they
+- [x] [AI] Keep required tests, docs, specs, references, and generated mirrors with the change they
       complete; split independent concerns
-- [ ] [AI] Do not extend a commit beyond the user-authorized change set
+- [x] [AI] Do not extend a commit beyond the user-authorized change set
 
 ## Phase 0: Environment Setup and Baseline
 
@@ -670,8 +674,12 @@ itself or for another agent` already covers the case, and the neighbouring scrat
 > then re-pointed the branch with `git checkout -B worktree/update-tmp-folders origin/main`. The
 > working tree was clean beforehand and clean after; no `reset --hard` was used, and no untracked or
 > ignored file was touched. The primary checkout's `main` fast-forwarded normally and now equals
-> `origin/main` at `24a6d93a6`. `origin/worktree/update-tmp-folders` still holds the pre-squash
-> commits and will be realigned with `--force-with-lease` when DU-2 pushes.
+> `origin/main` at `24a6d93a6`. `origin/worktree/update-tmp-folders` was **auto-deleted by GitHub
+> at merge** — `ose-public` sets `delete_branch_on_merge: true`, which overrides
+> `gh pr merge --delete-branch=false` — so DU-2 pushed the branch back cleanly with no force at all.
+> The stale local remote-tracking ref had to be pruned first (`git fetch origin --prune`); until then
+> every `--force-with-lease` form was rejected with `stale info`, which reads like a lease conflict
+> but was really a ref that no longer existed on the remote.
 
 ## Phase 4: Relocate the Suppression Ledger (`ose-public` DU-2)
 
@@ -680,19 +688,19 @@ itself or for another agent` already covers the case, and the neighbouring scrat
 `rhino-cli` reads it there by default.
 **Proof**: AC-4; `rtk nx run rhino-cli:test:quick` exits 0 with a new assertion on the path.
 
-- [ ] [AI] Sync the worktree: `rtk git fetch origin && rtk git merge --ff-only origin/main` — exits 0
-- [ ] [AI] Locate the tests covering `loadKnownFalsePositives`:
+- [x] [AI] Sync the worktree: `rtk git fetch origin && rtk git merge --ff-only origin/main` — exits 0
+- [x] [AI] Locate the tests covering `loadKnownFalsePositives`:
       `rtk grep -rn "known-false-positives\|KnownFalsePositivesPath" apps/rhino-cli/tests/`
       — record the exact test file path in `local-tmp/update-tmp-folders/ledger-tests.txt`. If the
       search returns nothing, the RED step below creates the first such test in the test file that
       already covers `RepoGovernance` audit options, discovered from the same search widened to
       `rtk grep -rln "RepoGovernance" apps/rhino-cli/tests/`
-- [ ] [AI] **RED** — add a failing unit test asserting that with `KnownFalsePositivesPath = None`,
+- [x] [AI] **RED** — add a failing unit test asserting that with `KnownFalsePositivesPath = None`,
       the loader resolves `<repoRoot>/local-tmp/.known-false-positives.md`. Run
       `rtk nx run rhino-cli:test:quick` — the new test FAILS with the old `generated-reports` path
       in the failure message. Before trusting a pass, run `rtk dotnet build` on the test project
       first: a stale `obj/` compile list makes the analyzer silently skip a newly added `.fs`
-- [ ] [AI] **GREEN** — edit
+- [x] [AI] **GREEN** — edit
       `apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`, function
       `loadKnownFalsePositives`: change the `Option.defaultValue` argument from
       `Path.Combine(opts.RepoRoot, "generated-reports", ".known-false-positives.md")` to
@@ -700,50 +708,98 @@ itself or for another agent` already covers the case, and the neighbouring scrat
       doc-comment on `KnownFalsePositivesPath` in the `AuditOptions` record (around line 743) that
       states the old default. Run `rtk nx run rhino-cli:test:quick` — the new test PASSES and no
       existing test regresses
-- [ ] [AI] **REFACTOR** — confirm no other occurrence of the literal `"generated-reports"` remains
+- [x] [AI] **REFACTOR** — confirm no other occurrence of the literal `"generated-reports"` remains
       in `apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`:
       `rtk grep -c "generated-reports" apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`
       — prints 0. Leave the skip-list occurrences in `Md.fs` and `Convention.fs` alone; both
       directories still exist and both should still be skipped
-- [ ] [AI] Move the ledger file in the primary checkout and in this worktree:
+- [x] [AI] Move the ledger file in the primary checkout and in this worktree:
       `mv generated-reports/.known-false-positives.md local-tmp/.known-false-positives.md`, then
       verify with `wc -c local-tmp/.known-false-positives.md` that the byte count matches the
       pre-move value recorded to `local-tmp/update-tmp-folders/ledger-bytes.txt` beforehand
-- [ ] [AI] Update the deferred Phase 2 line in
+- [x] [AI] Update the deferred Phase 2 line in
       `.claude/skills/repo-applying-maker-checker-fixer/reference/preventing-iteration-loops.md` and
       every other file recorded as deferred in `verdicts-bindings.md`, pointing them at
       `local-tmp/.known-false-positives.md`
-- [ ] [AI] Regenerate mirrors and revalidate: `rtk npm run generate:bindings && rtk npm run validate:sync`
+- [x] [AI] Regenerate mirrors and revalidate: `rtk npm run generate:bindings && rtk npm run validate:sync`
       — both exit 0
-- [ ] [AI] Regenerate the parity manifest so `RepoGovernance.fs`'s new hash is recorded — discover
+- [x] [AI] Regenerate the parity manifest so `RepoGovernance.fs`'s new hash is recorded — discover
       the exact command from `repo-config.yml`'s `parity-manifest` gate entry — its `command:` value
       is the validate form, and the generate form is its sibling — then record the command actually
       used in `local-tmp/update-tmp-folders/manifest-command.txt`
-- [ ] [AI] Verify the manifest: `rtk npx rhino parity manifest validate` — exits 0
-- [ ] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
-- [ ] [AI] Commit under the plan's standing authorization per
+- [x] [AI] Verify the manifest: `rtk npx rhino parity manifest validate` — exits 0
+- [x] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
+- [x] [AI] Commit under the plan's standing authorization per
       [Commit Guidelines](#commit-guidelines). Suggested:
       `fix(rhino-cli): read the false-positive ledger from local-tmp`
-- [ ] [AI] Open, verify, and merge the DU-2 PR following the same steps as Phase 3, then
+- [x] [AI] Open, verify, and merge the DU-2 PR following the same steps as Phase 3, then
       fast-forward local `main`
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `rtk nx run rhino-cli:test:quick` exits 0
-- [ ] [AI] `rtk npx rhino parity manifest validate` exits 0
-- [ ] [AI] `local-tmp/.known-false-positives.md` exists and its byte count matches
+- [x] [AI] `rtk nx run rhino-cli:test:quick` exits 0
+- [x] [AI] `rtk npx rhino parity manifest validate` exits 0
+- [x] [AI] `local-tmp/.known-false-positives.md` exists and its byte count matches
       `local-tmp/update-tmp-folders/ledger-bytes.txt`
-- [ ] [AI] `rtk grep -c "generated-reports" apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`
+- [x] [AI] `rtk grep -c "generated-reports" apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`
       prints 0
-- [ ] [AI] The DU-2 PR is merged with green CI, and its number and reviewed-head SHA are recorded in
+- [x] [AI] The DU-2 PR is merged with green CI, and its number and reviewed-head SHA are recorded in
       the Delivery Branch Inventory
 
 > **Pause Safety**: `ose-public` is fully converted. `ose-private` still carries the old rule and the
 > old `RepoGovernance.fs` hash, so the nightly parity audit at 02:00 UTC will report drift until
 > Phase 5 lands. Safe to stop only if Phase 5 will complete before that run; otherwise continue.
 > To resume: `rtk npx rhino parity manifest validate` from the worktree root.
+>
+> **Phase 4 Result**: PR [#474](https://github.com/wahidyankf/ose-public/pull/474) merged
+> `2026-09-04T12:06:06Z`. Reviewed head `1453a47ae5d85911827ea5074ed60bbcf18cca9f`, base
+> `24a6d93a600e5ff6813571f7c0572e03d0a43f21` (equal to `origin/main` at review time), merge commit
+> `02e4dece1c73ae7e146e1f453153b19ee73c2d86`. All 16 check runs green; `pr-review-security-maker`
+> returned CLEAN in leak-only mode at that exact head, read-only, nothing posted.
+>
+> **TDD.** RED: `1 failed / 2467 passed`, the single failure being
+> `Skip list honored: false-positive entries do not count toward total_findings`. GREEN after the
+> one-line `Option.defaultValue` change: `0 failed / 2468 passed`. REFACTOR:
+> `grep -c "generated-reports" RepoGovernance.fs` prints 0; the skip-list occurrences in `Md.fs` and
+> `Convention.fs` are untouched, because `generated-reports/` still exists for human-requested
+> artifacts and should still be skipped.
+>
+> The ledger moved in the primary checkout at **1665 bytes in and 1665 bytes out**, matching
+> `ledger-bytes.txt` recorded before the move. `parity manifest generate` (resolved form recorded in
+> `manifest-command.txt`) updated the two boundary hashes — `RepoGovernance.fs` and
+> `repo-governance-audit.feature`, both byte-identical across the two repos — and
+> `parity manifest validate` exits 0. The generator refuses to run against an unstaged boundary
+> file, so the source, spec, and step files were staged first; that ordering is not obvious from the
+> plan and is worth carrying forward.
+>
+> **Phase 4 Result — three deviations, recorded rather than glossed:**
+>
+> 1. **The RED test retargets the existing scenario instead of adding a new one.** The plan asks for
+>    a new failing test. The existing BDD scenario already asserts end-to-end that a key in the
+>    ledger lands in `skipped_false_positives` and does not count toward `total_findings`; pointing
+>    its `Given` at `local-tmp/` makes it a regression test for the path itself. A second
+>    near-identical scenario would have added no coverage and one more thing to keep in sync. The
+>    scenario title was renamed to name the location, so the `.feature` still says what it tests.
+> 2. **A gate assumption was probed, not assumed.** Report filenames use double underscores, which
+>    `md naming validate` rejects — they were exempt only because `generated-reports` sits in
+>    `namingSkipDirs` (`Md.fs:124`) and `local-tmp` does not. Rather than trust that the move was
+>    safe, a real `docs__a1b2c3__2026-09-04--12-00__audit.md` was written into `local-tmp/docs/` and
+>    the gate run: it passes, because the naming walker never descends into `local-tmp/` at all. No
+>    skip-list change is needed, and the plan's "leave `Md.fs` alone" instruction holds for the right
+>    reason. The probe file was removed afterward.
+> 3. **`git merge --ff-only origin/main` again could not sync the worktree**, for the same
+>    squash-merge reason as Phase 3, and was resolved the same way: verify `git diff HEAD origin/main`
+>    is empty, then `git checkout -B` onto `origin/main`. The uncommitted `delivery.md` edit in the
+>    working tree survived intact, which was checked rather than assumed.
+>
+> One earlier record in this file was **corrected**, not quietly amended: the Phase 3 note claimed
+> `origin/worktree/update-tmp-folders` still held pre-squash commits and would need
+> `--force-with-lease`. It did not. `ose-public` sets `delete_branch_on_merge: true`, which overrides
+> `gh pr merge --delete-branch=false`, so GitHub deleted the branch at merge and DU-2 simply pushed
+> it back. The repeated `stale info` rejections were a stale local remote-tracking ref, not a lease
+> conflict.
 
 ## Phase 5: Rules Propagation — `ose-private` (DU-3)
 
@@ -757,138 +813,173 @@ This is a **second, independent** `rules-propagation` run — one run touches on
 steps are executed against `ose-private`'s own surfaces and produce their own artifacts; nothing
 here is satisfied by Phase 1 having been done. Run at `mode: strict`.
 
-- [ ] [AI] Re-verify `ose-private`'s topology before touching it — do not assume the layout recorded
+- [x] [AI] Re-verify `ose-private`'s topology before touching it — do not assume the layout recorded
       in Phase 0 still holds: `rtk git -C <ose-private-root> worktree list` and
       `rtk git -C <ose-private-root> rev-parse --is-bare-repository`. If it reports bare, use
       `-c core.bare=false --work-tree=` for git operations
-- [ ] [AI] Provision the sibling worktree: `rtk git -C <ose-private-root> worktree add worktrees/update-tmp-folders -b worktree/update-tmp-folders origin/main`
+- [x] [AI] Provision the sibling worktree: `rtk git -C <ose-private-root> worktree add worktrees/update-tmp-folders -b worktree/update-tmp-folders origin/main`
       — this is a git-mechanical `[AI]` step. Update the
       [Cross-Repository Parity Identity](#cross-repository-parity-identity) table's provisioning
       status to `provisioned` with the creation timestamp
-- [ ] [AI] At that worktree root, run `rtk npm install && rtk npm run doctor -- --fix` — both exit 0
+- [x] [AI] At that worktree root, run `rtk npm install && rtk npm run doctor -- --fix` — both exit 0
 
 ### RP-0 to RP-2 (`ose-private`): Intake, Working Tree, Classification
 
-- [ ] [AI] **RP-0 Intake** — restate the same four falsifiable statements against `ose-private`'s
+- [x] [AI] **RP-0 Intake** — restate the same four falsifiable statements against `ose-private`'s
       own wording, recording them to `local-tmp/rules-propagation/statements-private.md` inside the
       `ose-private` worktree. Record each statement's violating observation. Do not copy
       `statements-public.md` across repositories — restate
-- [ ] [AI] **RP-1 Working tree** — confirm the run writes in `ose-private`'s
+- [x] [AI] **RP-1 Working tree** — confirm the run writes in `ose-private`'s
       `worktrees/update-tmp-folders/` on branch `worktree/update-tmp-folders`, matching the identity
       fixed at Phase 1's RP-1. Assert it: `rtk git rev-parse --abbrev-ref HEAD` prints
       `worktree/update-tmp-folders`. If that identity is unavailable, prove an existing identity
       belongs to this same delivery, or select one common alternative across BOTH repositories
       before mutating anything
-- [ ] [AI] **RP-2 Classification** — assign subject and governance layer for each statement against
+- [x] [AI] **RP-2 Classification** — assign subject and governance layer for each statement against
       `ose-private`'s layer structure and confirm vendor neutrality. Record to
       `local-tmp/rules-propagation/classification-private.md`
-- [ ] [AI] Build the `ose-private` inventory:
+- [x] [AI] Build the `ose-private` inventory:
       `rtk grep -rn "generated-reports" --include="*.md" repo-governance/ AGENTS.md CLAUDE.md docs/ .claude/ > local-tmp/update-tmp-folders/inventory-private.txt`
-- [ ] [AI] Classify every occurrence into the same four verdicts, recording to
+- [x] [AI] Classify every occurrence into the same four verdicts, recording to
       `local-tmp/update-tmp-folders/verdicts-private.md`
 
 ### RP-3 to RP-5 (`ose-private`): Conflict Scan, Placement, Eviction
 
-- [ ] [AI] **RP-3 Conflict scan** — run the semantic-no-op, contradiction, and supersession scan
+- [x] [AI] **RP-3 Conflict scan** — run the semantic-no-op, contradiction, and supersession scan
       against `ose-private`'s own rule corpus. Its shard set differs, so its supersessions differ:
       expect `the-rule.md`, `directory-purposes.md`, and
       `mandatory-report-generation-for-checker-agents.md` rather than `ose-public`'s filenames.
       Record each explicitly. Halt and surface on any higher-layer conflict
-- [ ] [AI] **RP-4 Placement** — record each statement's canonical home in `ose-private` to
+- [x] [AI] **RP-4 Placement** — record each statement's canonical home in `ose-private` to
       `local-tmp/rules-propagation/placement-private.md`. Existing shards only; if a statement finds
       no existing home and a new shard is genuinely required, it needs **two** index links — its
       folder `README.md` and the parent flattened convention — or the readme-index gate fails the
       push as an orphan
-- [ ] [AI] **RP-5 Eviction** — record `wc -w` for `ose-private`'s `AGENTS.md` before editing; the
+- [x] [AI] **RP-5 Eviction** — record `wc -w` for `ose-private`'s `AGENTS.md` before editing; the
       instruction-surface edit must be net-neutral or negative. Never raise a threshold to make
       room. Meaning is preserved verbatim enough to stay unambiguous even where placement changes
-- [ ] [AI] Restate the rule into `ose-private`'s own 18 shards under
+- [x] [AI] Restate the rule into `ose-private`'s own 18 shards under
       `repo-governance/development/infra/temporary-files/` — its shard filenames differ from
       `ose-public`'s (`the-rule.md`, `directory-purposes.md`, `local-tmp.md`,
       `mandatory-report-generation-for-checker-agents.md`, and others). NEVER copy a Markdown file
       between the two repositories; propagate the semantic delta into each repository's own shard
-- [ ] [AI] Apply the recorded verdicts across `ose-private`'s `.claude/agents/`, `.claude/skills/`,
+- [x] [AI] Apply the recorded verdicts across `ose-private`'s `.claude/agents/`, `.claude/skills/`,
       `AGENTS.md`, glossary, and `docs/`
-- [ ] [AI] Add `local-tmp/` to `ose-private`'s `.prettierignore` if absent, and confirm its
+- [x] [AI] Add `local-tmp/` to `ose-private`'s `.prettierignore` if absent, and confirm its
       `.markdownlintignore` already carries it
-- [ ] [AI] Apply the byte-identical `RepoGovernance.fs` change: verify the two files match exactly
+- [x] [AI] Apply the byte-identical `RepoGovernance.fs` change: verify the two files match exactly
       after editing with
       `rtk proxy diff <ose-public-root>/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs <ose-private-worktree-root>/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs`
       — no output. Apply the same test change, then move the ledger file:
       `mv generated-reports/.known-false-positives.md local-tmp/.known-false-positives.md` if it
       exists there
-- [ ] [AI] Retarget any `outputs:` block under `ose-private`'s `repo-governance/workflows/` naming
+- [x] [AI] Retarget any `outputs:` block under `ose-private`'s `repo-governance/workflows/` naming
       `generated-reports/`, matching the Phase 1 change. Discover with
       `rtk grep -rn "generated-reports" repo-governance/workflows/` from the `ose-private` worktree
 
 ### RP-6 to RP-7 (`ose-private`): Write, Tidy, Enforcement Disposition
 
-- [ ] [AI] **RP-6 Write and tidy** — confirm no two `ose-private` shards state the destination rule
+- [x] [AI] **RP-6 Write and tidy** — confirm no two `ose-private` shards state the destination rule
       in conflicting words, and reindex every folder `README.md` whose child annotations changed
-- [ ] [AI] **RP-7 Enforcement disposition** — record one of `covered` / `gated` /
+- [x] [AI] **RP-7 Enforcement disposition** — record one of `covered` / `gated` /
       `unenforced-by-decision` per statement in
       `local-tmp/rules-propagation/dispositions-private.md`, none silent. Expected:
       `unenforced by decision` for all four, with the reason written onto the rule itself in the
       shard. `ose-private` carries a GPG check `ose-public` does not — confirm no disposition
       mistakenly cites it as coverage for a rule it does not check
-- [ ] [AI] Regenerate `ose-private`'s mirrors and manifest:
+- [x] [AI] Regenerate `ose-private`'s mirrors and manifest:
       `rtk npm run generate:bindings && rtk npm run validate:sync`, then the manifest command
       recorded in `local-tmp/update-tmp-folders/manifest-command.txt`
-- [ ] [AI] Verify the manifest matches `ose-public`'s canonical copy — the same comparison the
+- [x] [AI] Verify the manifest matches `ose-public`'s canonical copy — the same comparison the
       nightly audit performs:
       `rtk proxy diff <ose-public-root>/apps/rhino-cli/parity-manifest.sha256 <ose-private-worktree-root>/apps/rhino-cli/parity-manifest.sha256`
       — no output
 
 ### RP-8 to RP-9 (`ose-private`): Verification, Delivery, Terminal Obligation
 
-- [ ] [AI] **RP-8.1 Regenerate** — every derived surface `ose-private`'s edits affect is regenerated
+- [x] [AI] **RP-8.1 Regenerate** — every derived surface `ose-private`'s edits affect is regenerated
       and lands in the same commit as its source
-- [ ] [AI] **RP-8.2 Deterministic gates** — run `md links validate`, `md heading-hierarchy validate`,
+- [x] [AI] **RP-8.2 Deterministic gates** — run `md links validate`, `md heading-hierarchy validate`,
       `md frontmatter validate`, `md naming validate`, `convention emoji validate`, and
       `repo-config validate` via `apps/rhino-cli/scripts/rhino-bin.sh` from the `ose-private`
       worktree, redirecting output to a file and asserting each exit code. Establish
       `ose-private`'s own preexisting-failure baseline; `ose-public`'s baseline proves nothing here
-- [ ] [AI] **RP-8.3 Composed quality gate** — run `rules-quality-gate` at `mode: strict` against
+- [x] [AI] **RP-8.3 Composed quality gate** — run `rules-quality-gate` at `mode: strict` against
       `ose-private`. Fix findings attributable to this run; report the rest. Route failures per the
       workflow table (budget → RP-5, contradiction → RP-3, duplication → RP-6, gate declaration →
       RP-7), all scoped to `ose-private`
-- [ ] [AI] **RP-8.4 Reconcile the ledger** — the `ose-private` file-touch ledger and
+- [x] [AI] **RP-8.4 Reconcile the ledger** — the `ose-private` file-touch ledger and
       `rtk git status --short` name the same set of paths. Never `git add -A`; this tree carries
       unrelated uncommitted work
-- [ ] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
+- [x] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
       from the `ose-private` worktree root
-- [ ] [AI] Commit, push, open, verify, and merge the DU-3 PR under the plan's standing
+- [x] [AI] Commit, push, open, verify, and merge the DU-3 PR under the plan's standing
       authorization, following the same steps as Phase 3
-- [ ] [AI] **RP-9 PR content** — `ose-private`'s PR body states, per statement: the statement, its
+- [x] [AI] **RP-9 PR content** — `ose-private`'s PR body states, per statement: the statement, its
       destination, its enforcement disposition, and any supersession or eviction. Name
       `ose-private`'s own supersessions, which differ from `ose-public`'s by shard filename
-- [ ] [AI] **RP-9 Terminal sibling obligation** — record `sibling-obligation: none — discharged`
+- [x] [AI] **RP-9 Terminal sibling obligation** — record `sibling-obligation: none — discharged`
       in this PR body, naming `ose-public`'s merged PR as the counterpart. With both repositories
       landed, the parity objective `update-tmp-folders` is closed; state that explicitly rather than
       leaving silence, which is indistinguishable from an obligation that was overlooked
-- [ ] [AI] Fast-forward `ose-private`'s local `main` after the merge
+- [x] [AI] Fast-forward `ose-private`'s local `main` after the merge
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] The DU-3 PR is merged with green CI
-- [ ] [AI] `rtk proxy diff` between the two repositories' `parity-manifest.sha256` files produces no
+- [x] [AI] The DU-3 PR is merged with green CI
+- [x] [AI] `rtk proxy diff` between the two repositories' `parity-manifest.sha256` files produces no
       output
-- [ ] [AI] `rtk proxy diff` between the two repositories' `RepoGovernance.fs` files produces no
+- [x] [AI] `rtk proxy diff` between the two repositories' `RepoGovernance.fs` files produces no
       output
-- [ ] [AI] `ose-private`'s temporary-files shards state the same two-question test and the same
+- [x] [AI] `ose-private`'s temporary-files shards state the same two-question test and the same
       `local-tmp/<agent-family>/` layout as `ose-public`'s
-- [ ] [AI] `ose-private` local `main` is at the same SHA as its `origin/main`
-- [ ] [AI] `local-tmp/rules-propagation/dispositions-private.md` records a disposition for all four
+- [x] [AI] `ose-private` local `main` is at the same SHA as its `origin/main`
+- [x] [AI] `local-tmp/rules-propagation/dispositions-private.md` records a disposition for all four
       statements — none silent — each with its reason where unenforced
-- [ ] [AI] Both runs reached `final-status: landed`; neither is `partial` or `halted`
-- [ ] [AI] The terminal sibling obligation is recorded as discharged in `ose-private`'s PR body,
+- [x] [AI] Both runs reached `final-status: landed`; neither is `partial` or `halted`
+- [x] [AI] The terminal sibling obligation is recorded as discharged in `ose-private`'s PR body,
       naming `ose-public`'s counterpart PR
 
 > **Pause Safety**: both repositories state the same rule and carry the same code. The nightly
 > parity audit will pass. Only untracked historical artifacts remain. Safe to stop. To resume:
 > compare the two manifests as above.
+
+> **Phase 5 execution record.**
+>
+> **The plan's GPG premise is false.** RP-7 instructs confirming that no disposition cites "a GPG
+> check `ose-public` does not [carry]". No such asymmetry exists. The only GPG usage in either
+> repository is in `apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs` (3 occurrences), which
+> verifies the downloaded `dotnet-install.sh` signature. `Doctor.fs` is inside the byte-identity
+> boundary, so both repositories carry it identically; no workflow in either repository references
+> GPG, and `ose-private` has no workflow file `ose-public` lacks. The substantive requirement holds
+> anyway — no disposition mentions GPG — and this is recorded rather than silently ticked, because
+> ticking it would imply a difference was found and cleared.
+>
+> **Script names are not symmetric across the repositories.** `ose-public` spells the bindings
+> validator `harness:bindings-validation`; `ose-private` spells the same command
+> `validate:harness-bindings`. Separately, this plan names the Markdown linter `md:lint` in four
+> places; the real script in both repositories is `lint:md`, and `md:lint` exists in neither. Both
+> facts are now recorded durably in `docs/reference/related-repositories.md`.
+>
+> **The take-over-execution family collision resolves differently in each repository, deliberately.**
+> `ose-public` resolved it to `plan-takeover-execution` and `ose-private` to
+> `plan-take-over-execution`, each following the same declaration-wins rule against its own
+> declarations. Forcing a match would rename ~50 files for cosmetic symmetry. Recorded in
+> `local-tmp/update-tmp-folders/family-assignments-private.md` and in PR #155's body.
+>
+> **`ose-private` has 18 temporary-files shards, matching the plan's figure**, but the shard names
+> differ from `ose-public`'s as the plan predicted; nothing was copied between repositories.
+>
+> **Word-budget warnings on `plan-execution-checker.md` and `plan-fixer.md` are pre-existing.** Both
+> were already over the 650-word target before this change (663 and 653); the family declaration
+> added 20 words to each. `ose-public`'s counterparts sit higher still (705 and 698), so the two
+> repositories remain in the same state. The gate exits 0 — these are warnings, not failures.
+>
+> **`md links validate` reports 337 pre-existing failures in `ose-private`.** Proven, not asserted:
+> zero of the 97 affected files appear among this delivery unit's 224, the diff removes no heading,
+> and it deletes and renames nothing.
 
 ## Phase 6: Clear the Historical Backlog
 
@@ -898,117 +989,250 @@ here is satisfied by Phase 1 having been done. Run at `mode: strict`.
 
 Every path here is untracked and gitignored. Nothing in this phase is committed or pushed.
 
-- [ ] [AI] Enumerate every checkout to clean, in both repositories:
+- [x] [AI] Enumerate every checkout to clean, in both repositories:
       `rtk git -C <repo-root> worktree list --porcelain` for each of `ose-public` and `ose-private`,
       writing the resolved list to `local-tmp/update-tmp-folders/cleanup-targets.txt`. Note that
       `generated-reports/` is per-checkout — the primary checkout, this plan's worktree, and any
       other live worktree each have their own
-- [ ] [AI] For each target, move — do not delete — the directory contents into a dated quarantine:
+- [x] [AI] For each target, move — do not delete — the directory contents into a dated quarantine:
       `mkdir -p local-tmp/.reclaim-quarantine-<YYYY-MM-DD> && mv generated-reports/* generated-reports/.[!.]* local-tmp/.reclaim-quarantine-<YYYY-MM-DD>/ 2>/dev/null`.
       Resolve `<YYYY-MM-DD>` at runtime with `rtk date +%F`; do not hardcode it. Process one target
       per command — a `for` loop over an unquoted variable does not word-split in this shell and
       will silently run once on the whole blob
-- [ ] [AI] Confirm `local-tmp/.known-false-positives.md` was NOT swept into any quarantine — it was
+- [x] [AI] Confirm `local-tmp/.known-false-positives.md` was NOT swept into any quarantine — it was
       moved out of `generated-reports/` in Phase 4 and must still exist at its new path:
       `wc -c local-tmp/.known-false-positives.md` matches `ledger-bytes.txt`
-- [ ] [AI] Record the moved-file count per target to
+- [x] [AI] Record the moved-file count per target to
       `local-tmp/update-tmp-folders/cleanup-manifest.txt`
-- [ ] [AI] Prove nothing load-bearing moved, in each repository:
+- [x] [AI] Prove nothing load-bearing moved, in each repository:
       `rtk npm run doctor -- --fix`, `rtk nx run rhino-cli:test:quick`, and
       `rtk nx affected -t build` — all three exit 0
-- [ ] [AI] Only after all three proofs pass, delete each quarantine:
+- [x] [AI] Only after all three proofs pass, delete each quarantine:
       `rm -rf local-tmp/.reclaim-quarantine-<YYYY-MM-DD>` per target
 - [ ] [AI] Confirm the result: `/bin/ls -1a generated-reports | grep -c .` prints 2 (`.` and `..`
       only) in every target. Use `/bin/ls`, not the shell's `eza` alias — its hyperlink escapes
       corrupt piped output
+
+> **Phase 6 execution record — the plan's sweep guard is incomplete.** Phase 6 names exactly one
+> file to protect, `.known-false-positives.md`. Listing `ose-private`'s directory showed three
+> `.execution-chain-*` files in there as well — cross-family state that this plan's own new rule
+> places at the `local-tmp/` root. `ose-public` was swept before that listing was taken, with only
+> an entry count recorded (492), so its chain files were almost certainly deleted and that cannot
+> now be proven either way.
+>
+> The outcome is nonetheless the correct one, and `ose-private` was swept the same way deliberately:
+> every rule and skill surface in both repositories now points chains at `local-tmp/`, so a chain
+> file under `generated-reports/` sits at a path nothing reads. Relocating a stale one would let a
+> future report claim parentage from an unrelated finished run; absence is right, because the next
+> workflow that spawns children writes a fresh chain. Only the ledger is live state, and it was
+> protected in both repositories.
+>
+> Recorded as L-10 and fixed durably in
+> `repo-governance/development/infra/temporary-files/status-exceptions-and-related.md`, which now
+> states which files a legacy sweep relocates, which it sweeps, and that a directory is listed
+> rather than counted before deletion.
+>
+> **The phase's "everything here is untracked" premise is also false for `ose-public`.** Three
+> `generated-reports/plan__*__2026-08-13__audit.md` files are tracked on `main` despite
+> `.gitignore:90` ignoring the directory — `.gitignore` never untracks what was already committed.
+> The sweep therefore produced three unstaged deletions of tracked files in both `ose-public`
+> checkouts. The **primary checkout was restored to clean** (`git checkout -- generated-reports/`),
+> because a checkout sitting on `main` must not be left carrying uncommitted deletions; the three
+> files are removed properly through this plan's own PR instead. They are stale `plan`-family audit
+> reports, exactly the artifact class this plan relocates, so removing them is the outcome the
+> convention already asked for. `ose-private` has no tracked file under `generated-reports/`, so its
+> sweep is unaffected. Recorded as L-11; the same rule shard now says to check
+> `git ls-tree -r --name-only origin/main -- generated-reports/` before sweeping.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
 - [ ] [AI] Every target in `cleanup-targets.txt` reports an empty `generated-reports/`
-- [ ] [AI] `local-tmp/.known-false-positives.md` still exists in both repositories with its recorded
+- [x] [AI] `local-tmp/.known-false-positives.md` still exists in both repositories with its recorded
       byte count
-- [ ] [AI] `rtk npm run doctor -- --fix`, `rtk nx run rhino-cli:test:quick`, and
+- [x] [AI] `rtk npm run doctor -- --fix`, `rtk nx run rhino-cli:test:quick`, and
       `rtk nx affected -t build` all exit 0 in both repositories
-- [ ] [AI] No `local-tmp/.reclaim-quarantine-*` directory remains
+- [x] [AI] No `local-tmp/.reclaim-quarantine-*` directory remains
 
 > **Pause Safety**: both repositories are converted and clean; the only remaining work is
 > documentation of learnings. Safe to stop. To resume: re-run the three proof commands.
 
 ## Phase 7: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
       `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only; public-governance content may route to `ose-public`; never
       cross-route private content into a public repo.
-- [ ] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended —
+- [x] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended —
       route to whichever surface owns that kind of knowledge (`repo-governance/`, `docs/`,
       `.claude/agents/`, `.claude/skills/`, a post-mortem, or any other durable home), landing a
       small non-code edit inline. Create or update a `plans/ideas/<slug>.md` two-pager only when the
       user has literally authorized that plan artifact; otherwise report the follow-up and record
       `Reported without plan authorization` with handoff evidence.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST after the user literally authorizes an idea artifact. Fold the learning into
       an authorized overlapping brief instead of creating a new file; only create a new authorized
       `plans/ideas/<slug>.md` when the scan confirms no existing brief overlaps.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
       inline in this plan's commits/PR. File a separate `plans/ideas/` two-pager only with literal
       plan-artifact authorization; never create a `plans/backlog/` folder directly because the
       promotion ripeness gate owns that transition. Otherwise use the reported terminal state. The
       sole carve-out is a bug/lint/test failure that blocks THIS plan's own scope — that is fixed
       inline as ordinary Root Cause Orientation work, not routed as a deferred learning.
-- [ ] [AI] Record the terminal state of every entry (routed inline / explicitly authorized two-pager
+- [x] [AI] Record the terminal state of every entry (routed inline / explicitly authorized two-pager
       at `<path>` / reported without plan authorization with handoff evidence / discarded with
       reason) directly in `learnings.md`.
-- [ ] [AI] Report the three follow-ups recorded in
+- [x] [AI] Report the three follow-ups recorded in
       [tech-docs.md §Follow-Ups Recorded, Not Delivered](./tech-docs.md#follow-ups-recorded-not-delivered)
       — the `generated-reports/` retention policy, a classification validator, and `Harness.fs`'s
       unreachable check — as `Reported without plan authorization` unless the user literally
       authorizes idea artifacts for them.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
-      `No generalizable learnings — <one-line reason>` instead of individual entries.
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+      `No generalizable learnings — <one-line reason>` instead of individual entries. **Condition did
+      not fire** — execution surfaced nine entries (L-1 to L-9), so individual entries were recorded
+      and the escape was correctly not used.
+
+> **Phase 7 routing record.** Seven of nine entries were routed inline in `ose-public`:
+> L-1 to `conventions/structure/plans/execution-grade-clarity.md`, L-2 to
+> `docs/reference/related-repositories.md`, L-3 and L-4 to
+> `development/workflow/pr-merge-protocol/the-worktree-to-pr-terminal-step.md`, L-5 to
+> `workflows/plan/plan-multi-repo-parity-planning-and-execution/step-4-execution-phase-continued.md`,
+> L-6 to `development/infra/temporary-files/report-file-naming-standard.md`, and L-7 to
+> `development/infra/temporary-files/local-tmp-directory.md`. L-8 (zsh word-splitting) and L-9
+> (verify background feedback against the repository) were discarded with reasons — the first has no
+> durable home that would fire at the point of failure, the second is already the Root Cause
+> Orientation principle.
+>
+> **No learning was code-homed**, so the code-routing rule's prohibition never applied and no
+> `plans/ideas/` two-pager was created. The three `tech-docs.md` follow-ups are recorded as
+> `Reported without plan authorization` with handoff evidence, since the user has not literally
+> authorized a plan artifact for them.
+>
+> An eighth entry, L-10, was raised during Phase 6 execution and routed to
+> `development/infra/temporary-files/status-exceptions-and-related.md`.
+>
+> **These eight edits are themselves rule changes, so they carry their own sibling obligation.**
+> All eight counterpart shards exist in `ose-private` with word-budget headroom; the semantic delta
+> is restated there in that repository's own wording as DU-5, never copied.
 
 ### Phase 7 Gate
 
 > All checks below must pass before starting Plan Archival.
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / authorized and
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / authorized and
       filed / reported without plan authorization / discarded) or the explicit "none" escape is
       present — no entry left open.
-- [ ] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
+- [x] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
       corresponding explicitly authorized `plans/ideas/` two-pager or a report with handoff evidence.
 
 > **Pause Safety**: all learnings are routed, authorized and filed, reported without plan
 > authorization, or explicitly discarded; nothing is left dangling in `learnings.md`. Safe to
 > stop. To resume: re-check `learnings.md` for any entry without a terminal-state marker.
 
+### Phase 8 — DU-6: the second hardcoded temporary directory (`ose-public` only)
+
+> **Why this phase exists.** It was not authored; the preliminary archival audit opened it. AC-6
+> asks that no live instruction route an agent's own output into `generated-reports/`. The Phase 2
+> sweep classified textual occurrences and rewrote the instruction layer, but `crane-cli`'s
+> `ReportManager.fs` hardcodes its destination in F#, where the string never appears as an
+> instruction a reviewer would read. Two rule sentences this plan itself authored — the skill
+> reference's `local-tmp/pdf-to-md/…__audit.md` and the layout rule's
+> `local-tmp/.execution-chain-{scope}` — were therefore false on the day they landed. The plan's
+> scope called `rhino-cli`'s ledger "the one code path that hardcodes a temporary directory"; that
+> inventory was taken from prose and missed this one. Recorded as L-12.
+
+- [x] [AI] Change both byte-identical copies of `ReportManager.fs`
+      (`apps/crane-cli/src/Core/Logic/`, `libs/fsharp-crane-core/src/Core/Logic/`): reports to
+      `local-tmp/pdf-to-md/`, chain files to `local-tmp/.execution-chain-<scope>`, and
+      `Directory.CreateDirectory "local-tmp"` before the chain write so the path never has to
+      pre-exist. Filename pattern and chain-window semantics unchanged — the plan's scope puts both
+      out of bounds, and only the parent directory moves
+- [x] [AI] Update both `ReportManagerTests.fs` copies and `apps/crane-cli/tests/unit/Steps/ReportSteps.fs`
+      to the new paths, and create `local-tmp/` in the three tests that pre-write a chain file
+      rather than letting the production path create it
+- [x] [AI] Update `specs/apps/crane/cli/behaviors/reporting/report-management.feature` — the
+      `Then a report file is created in "local-tmp/pdf-to-md/"` step
+- [x] [AI] Remove the now-unreachable root `.execution-chain-*` entry from `.gitignore`; the new
+      location is already covered by `local-tmp/*`, and `crane` was its only writer
+- [x] [AI] Change no instruction file — the skill reference and `pdf-to-md-fixer.md` already
+      described the new location, so no `.claude/` source moved and no mirror regeneration is due
+
+> **Execution record.** `dotnet test apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj` →
+> 135 passed, 0 failed. `dotnet test libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj`
+> → 104 passed, 0 failed. `nx run crane-cli:test:specs` → "12 specs, 37 scenarios, 141 steps — all
+> covered"; `nx run fsharp-crane-core:test:specs` → "1 specs, 2 scenarios, 6 steps — all covered".
+> Both `test:coverage` targets pass at the 99% line threshold. `fantomas --check` clean across all
+> four changed F# trees. No `.execution-chain-*` file and no `local-tmp/pdf-to-md/` directory
+> survives the run — the tests clean up after themselves and run with the test binary's own working
+> directory. `ose-private` carries no `crane-cli` (`git ls-files | grep -c crane` → 0), so this
+> phase has no sibling obligation.
+
 ### Plan Archival
 
-- [ ] Perform the **preliminary** plan-execution end-to-end delivery completeness audit: trace approved scope and
+- [x] Perform the **preliminary** plan-execution end-to-end delivery completeness audit: trace approved scope and
       every canonical PRD acceptance criterion through delivery units, as-built artifacts,
       automated/manual proof, applicable migration/rollout/rollback evidence, conditional recovery
       dispositions, and Knowledge Capture. Reopen execution at the earliest affected packet for
       every missing or unsupported non-delivery row; only final-delivery proof may remain explicitly
       pending. Checked boxes alone are not proof.
+
+  > **Preliminary audit record (2026-09-04).** Every acceptance criterion was re-traced against the
+  > as-built repositories rather than against its checkbox.
+  > **AC-1/AC-5**: the intent-based two-question test is stated in
+  > `overview-and-the-rule.md` (`ose-public`) and `the-rule.md` (`ose-private`), and seven
+  > `ose-private` shards carry the `local-tmp/<agent-family>/` layout.
+  > **AC-4**: `grep -rn 'local-tmp", ".known-false-positives.md"'` returns
+  > `RepoGovernance.fs:890` in both repositories, identically.
+  > **AC-8**: `local-tmp/` appears in all four ignore files (`.prettierignore` and
+  > `.markdownlintignore`, both repositories).
+  > **AC-11**: 43 of 44 `ose-public` and 23 of 24 `ose-private` checker/fixer agents declare a report
+  > family; the single omission in each is `pr-review-fixer.md`, which posts GitHub comments and
+  > writes no report — by design, and the same file in both repositories.
+  > **AC-6 found one survivor.** Classifying every remaining occurrence left three: a
+  > `HarnessUnitTests.fs` test name for the unreachable `validateGeneratedReportsTools` guard, the
+  > supersession sentence in the mandatory-report-generation shard, and
+  > `report-management.feature`'s `Then a report file is created in "generated-reports/"`. The third
+  > was real: `crane report --init`, invoked by `pdf-to-md-fixer` step 2 and by the
+  > `docs-converting-pdf-to-markdown` skill's Step 0, wrote the agent's own report to
+  > `generated-reports/`. Execution reopened at a new Phase 8 (DU-6) rather than ticking the row.
+  > After DU-6, `git grep -niE '(write|save|output|create|place|store|emit)[^.]{0,60}generated-reports/'`
+  > outside `plans/done/` and the ignore files returns only the two classified rule-text occurrences,
+  > in each repository.
+  > **AC-7 and AC-9/AC-10** were verified in their own phases and are unchanged: the quarantine was
+  > proven then deleted, all four normalized statements carry `unenforced by decision` with recorded
+  > reasons in both repositories, and both runs reported `final-status: landed`.
+  > **One plan defect stands, not silently ticked**: RP-7 asked to confirm no disposition cites a GPG
+  > check `ose-public` does not carry. No such asymmetry exists — the only GPG usage in either
+  > repository is three occurrences in `Doctor.fs` verifying the `dotnet-install.sh` signature, and
+  > `Doctor.fs` sits inside the byte-identity boundary, so both repositories carry it identically.
+
 - [ ] Verify ALL delivery checklist items are ticked
 - [ ] Verify ALL quality gates pass (local + CI)
-- [ ] Verify ALL manual assertions pass with committed evidence in `evidence/` — this plan has no
+- [x] Verify ALL manual assertions pass with committed evidence in `evidence/` — this plan has no
       UI or API surface, so its manual assertions are the Phase 6 filesystem verifications, whose
       evidence is the recorded command output in `local-tmp/update-tmp-folders/`; no `evidence/`
       subfolder is created
-- [ ] Verify ALL supported locales were exercised in UI verification — not applicable; this plan
+- [x] Verify ALL supported locales were exercised in UI verification — not applicable; this plan
       ships no user-facing surface
-- [ ] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — not applicable; no web
+- [x] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — not applicable; no web
       surface was tested
-- [ ] Verify every rule-16 AET defect finding is fixed (ticked) — not applicable; no API surface was
+- [x] Verify every rule-16 AET defect finding is fixed (ticked) — not applicable; no API surface was
       tested
-- [ ] Register the workflow-owned terminal audit task and its required post-delivery proof fields;
+- [x] Register the workflow-owned terminal audit task and its required post-delivery proof fields;
       do not mark that gate complete before merge or direct-push confirmation. Its result belongs in
       the plan-execution final report, not a speculative pre-merge checkbox.
+
+  > **Executed order.** This checklist lists worktree removal and branch cleanup above the archival
+  > `git mv`, which cannot run in that order: the plan folder being moved lives inside the worktree
+  > being removed, and the move has to reach `origin/main` through a PR from that same branch. The
+  > proven order, established by `scaffold-plan-archival-cleanup` and followed here, is archive inside
+  > the delivery PR, merge it, and only then remove worktrees and delete branches. The rows below are
+  > therefore ticked after the merge, not before it.
+
 - [ ] [AI] Classify every [Delivery Branch Inventory](#delivery-branch-inventory) entry in both
       repositories as `delivered`, `unused`, or `retained/escalated`; a retained entry names who owns
       it and why it outlives the plan, and an entry whose state is ambiguous or whose proof is missing
@@ -1044,11 +1268,11 @@ Every path here is untracked and gitignored. Nothing in this phase is committed 
       during cleanup — another process may be writing on this shared machine
 - [ ] [AI] Verify the terminal state: `rtk git branch -a` in each repository lists no
       `worktree/update-tmp-folders` ref, local or remote
-- [ ] After every pre-archival gate, including the preliminary audit, passes, run `rtk date +%F`; record the output as
+- [x] After every pre-archival gate, including the preliminary audit, passes, run `rtk date +%F`; record the output as
       `<completion-date>`. Do not hardcode or predict this value while authoring the plan.
-- [ ] Move the plan via
+- [x] Move the plan via
       `rtk git mv plans/in-progress/update-tmp-folders/ plans/done/<completion-date>__update-tmp-folders/`
-- [ ] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] Update `plans/done/README.md` — add the plan entry using the same resolved completion date
-- [ ] Update any other READMEs that reference this plan
-- [ ] Commit: `chore(plans): move update-tmp-folders to done`
+- [x] Update `plans/in-progress/README.md` — remove the plan entry
+- [x] Update `plans/done/README.md` — add the plan entry using the same resolved completion date
+- [x] Update any other READMEs that reference this plan
+- [x] Commit: `chore(plans): move update-tmp-folders to done`
