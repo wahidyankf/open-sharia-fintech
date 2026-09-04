@@ -17,7 +17,7 @@ change.
 
 Worktree path: `worktrees/scaffold-plan-archival-cleanup/` — to be provisioned at execution start
 per [Worktree Specification](../../../.claude/skills/plan-creating-project-plans/reference/worktree-specification.md).
-Not yet provisioned; this is a backlog-stage plan.
+Provisioned at execution start; this plan now executes from `plans/in-progress/`.
 
 Provision from the repository root when work starts:
 
@@ -29,8 +29,8 @@ claude --worktree scaffold-plan-archival-cleanup
 
 - Declared repository-relative route: `worktrees/scaffold-plan-archival-cleanup/`
 - Initial branch: `worktree/scaffold-plan-archival-cleanup`
-- Created by: `<executor identity or session — recorded at Phase 0>`
-- Created at: `<ISO-8601 UTC timestamp — recorded at Phase 0>`
+- Created by: Claude Code plan-execution session, `[AI]`
+- Created at: `2026-09-04T07:42:00Z`
 
 The plan must not record an absolute, home, tool-prefix, drive, UNC, or other host-specific path.
 Resolve its declared route only at runtime against the selected repository root; retain any resolved
@@ -38,9 +38,9 @@ path only in ignored runtime evidence after reconciliation with `git worktree li
 
 ### Delivery Branch Inventory
 
-| Branch                                    | Mode      | Lifecycle state | Proof                                    |
-| ----------------------------------------- | --------- | --------------- | ---------------------------------------- |
-| `worktree/scaffold-plan-archival-cleanup` | `pending` | `not created`   | `<git worktree add timestamp — Phase 0>` |
+| Branch                                    | Mode             | Lifecycle state | Proof                                                                       |
+| ----------------------------------------- | ---------------- | --------------- | --------------------------------------------------------------------------- |
+| `worktree/scaffold-plan-archival-cleanup` | `worktree-to-pr` | `active`        | `git worktree add` at `2026-09-04T07:42:00Z` from `origin/main` `a9e6e6af6` |
 
 Append every plan-created delivery branch before use. A `*-to-pr` entry records its merged PR and
 40-character reviewed-head SHA. Before removal, classify every entry as delivered, unused, or
@@ -51,10 +51,10 @@ retained/escalated; active or unrecorded branches block cleanup.
 - Objective slug: `scaffold-plan-archival-cleanup`
 - Common worktree basename: `scaffold-plan-archival-cleanup`
 
-| Repository    | Worktree route                              | Branch                                    | Provisioning status |
-| ------------- | ------------------------------------------- | ----------------------------------------- | ------------------- |
-| `ose-public`  | `worktrees/scaffold-plan-archival-cleanup/` | `worktree/scaffold-plan-archival-cleanup` | pending — Phase 0   |
-| `ose-private` | `worktrees/scaffold-plan-archival-cleanup/` | `worktree/scaffold-plan-archival-cleanup` | pending — Phase 3   |
+| Repository    | Worktree route                              | Branch                                    | Provisioning status                |
+| ------------- | ------------------------------------------- | ----------------------------------------- | ---------------------------------- |
+| `ose-public`  | `worktrees/scaffold-plan-archival-cleanup/` | `worktree/scaffold-plan-archival-cleanup` | provisioned `2026-09-04T07:42:00Z` |
+| `ose-private` | `worktrees/scaffold-plan-archival-cleanup/` | `worktree/scaffold-plan-archival-cleanup` | pending — Phase 3                  |
 
 Re-verify `ose-private`'s bare-versus-normal topology at Phase 3 rather than assuming it; this
 repository pair has flipped layouts before.
@@ -128,7 +128,7 @@ repository pair has flipped layouts before.
 - [ ] [AI] Sync: `rtk git fetch origin && rtk git merge --ff-only origin/main` — exits 0
 - [ ] [AI] At the worktree root: `rtk npm install && rtk npm run doctor -- --fix` — both exit 0.
       A fresh worktree has no `node_modules`, so this is required, not a formality
-- [ ] [AI] Create `plans/backlog/scaffold-plan-archival-cleanup/learnings.md` if absent, with the
+- [ ] [AI] Create `plans/in-progress/scaffold-plan-archival-cleanup/learnings.md` if absent, with the
       mandatory `# Learnings: scaffold-plan-archival-cleanup` H1 — markdownlint MD041 fails a
       comments-only scaffold
 - [ ] [AI] Record the baseline: `rtk nx affected -t build,test:quick,lint` — exits 0. Fix any
@@ -436,8 +436,8 @@ having happened. `mode: strict`.
 - [ ] After every pre-archival gate passes, run `rtk date +%F`; record the output as
       `<completion-date>`. Do not hardcode or predict this value while authoring the plan
 - [ ] Move the plan via
-      `rtk git mv plans/backlog/scaffold-plan-archival-cleanup/ plans/done/<completion-date>__scaffold-plan-archival-cleanup/`
-- [ ] Update `plans/backlog/README.md` — remove the plan entry
+      `rtk git mv plans/in-progress/scaffold-plan-archival-cleanup/ plans/done/<completion-date>__scaffold-plan-archival-cleanup/`
+- [ ] Update `plans/in-progress/README.md` — remove the plan entry
 - [ ] Update `plans/done/README.md` — add the plan entry using the same resolved completion date
 - [ ] Update any other READMEs that reference this plan
 - [ ] Commit: `chore(plans): move scaffold-plan-archival-cleanup to done`

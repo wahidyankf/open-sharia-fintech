@@ -11,6 +11,10 @@ execution checklist.
 
 ## Active Plans
 
+- [scaffold-plan-archival-cleanup](./scaffold-plan-archival-cleanup/README.md) — the
+  plan-archival authoring template never mentions removing the worktree or deleting the branch,
+  and no `plan-checker` rule notices, so authored plans silently omit a step the governance layer
+  requires.
 - [update-tmp-folders](./update-tmp-folders/README.md) — Re-found the `local-tmp/` and
   `generated-reports/` split on artifact intent instead of artifact type, and propagate it across
   `ose-public` and `ose-private`.
