@@ -13,5 +13,5 @@ when_to_use: Use when clarifying how this workflow relates to the pre-push bindi
 - **Lifecycle guards are separate**: registered binding/vendor/ownership/catalog/duplication
   predicates report `verified` or `pending` through their evidence ledger.
 - **Idempotent**: Safe to run multiple times without breaking working state.
-- **Observable**: Generates audit reports for every iteration in `generated-reports/`.
+- **Observable**: Generates audit reports for every iteration in `local-tmp/harness-compat/`.
 - **Bounded**: `max-iterations` prevents runaway execution.

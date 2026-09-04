@@ -1,12 +1,12 @@
 ---
 title: "Skip-list Curation Rules"
-description: How generated-reports/.known-false-positives.md is maintained — who owns it, when to add an entry vs. fix at source, the per-entry schema, and triage priority.
+description: How local-tmp/.known-false-positives.md is maintained — who owns it, when to add an entry vs. fix at source, the per-entry schema, and triage priority.
 when_to_use: Use when deciding whether a preflight finding should be fixed at source or added to the skip-list.
 ---
 
 # Skip-list Curation Rules
 
-The skip-list at `generated-reports/.known-false-positives.md` filters out known intentional findings from the preflight deterministic categories.
+The skip-list at `local-tmp/.known-false-positives.md` filters out known intentional findings from the preflight deterministic categories.
 
 **Who maintains it**: The repository maintainer who runs the quality gate.
 
@@ -32,4 +32,4 @@ key that survives renaming, and re-verify entries after any sweep.
 
 ## Deterministic findings → skip-list pipeline
 
-On each iteration, every preflight finding NOT already in `generated-reports/.known-false-positives.md` lands in the audit's `## Deterministic Findings (rhino-cli preflight)` section. The maintainer reviews each entry between workflow runs and either (a) fixes the underlying issue (one-time, removes the finding for future runs) OR (b) appends an explicit skip-list entry with rationale + date + approver. Findings never auto-migrate to the skip-list — every entry requires explicit operator approval.
+On each iteration, every preflight finding NOT already in `local-tmp/.known-false-positives.md` lands in the audit's `## Deterministic Findings (rhino-cli preflight)` section. The maintainer reviews each entry between workflow runs and either (a) fixes the underlying issue (one-time, removes the finding for future runs) OR (b) appends an explicit skip-list entry with rationale + date + approver. Findings never auto-migrate to the skip-list — every entry requires explicit operator approval.

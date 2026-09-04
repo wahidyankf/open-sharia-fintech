@@ -38,7 +38,7 @@ Invoke specialized agents via the Agent tool with `subagent_type` when the workf
 User: "Run plan quality gate workflow for plans/backlog/my-plan/"
 AI: [Invokes plan-checker via Agent tool]
 1. Agent tool invokes plan-checker subagent
-   → plan-checker reads plan files, validates, writes audit report to generated-reports/
+   → plan-checker reads plan files, validates, writes audit report to local-tmp/plan/
    → audit report persists on filesystem
 2. Agent tool invokes plan-fixer subagent with audit report path
    → plan-fixer reads audit, applies fixes to plan files, writes fix report
@@ -59,12 +59,12 @@ Agent tool invocation:
 
 Agent tool invocation:
   subagent_type: plan-fixer
-  prompt: "Apply fixes from generated-reports/plan__abc123__2026-03-24--10-00__audit.md"
+  prompt: "Apply fixes from local-tmp/plan/plan__abc123__2026-03-24--10-00__audit.md"
 ```
 
 ## Expected Behavior
 
-- Real audit reports created in `generated-reports/`
+- Real audit reports created in `local-tmp/plan/`
 - Real fixes applied to target files
 - Real fix reports documenting changes
 - Changes visible in `git status`

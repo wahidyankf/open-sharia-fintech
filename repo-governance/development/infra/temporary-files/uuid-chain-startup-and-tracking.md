@@ -25,7 +25,7 @@ MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 SCOPE="${EXECUTION_SCOPE:-${AGENT_FAMILY}}"
 
 # 3. Read parent chain from scope-specific tracking file
-CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+CHAIN_FILE="local-tmp/.execution-chain-${SCOPE}"
 if [ -f "$CHAIN_FILE" ]; then
   read PARENT_TIME PARENT_CHAIN < "$CHAIN_FILE"
   CURRENT_TIME=$(date +%s)
@@ -47,7 +47,8 @@ fi
 TIMESTAMP=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
 
 # 5. Create report filename
-REPORT_FILE="generated-reports/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
+mkdir -p "local-tmp/${AGENT_FAMILY}"
+REPORT_FILE="local-tmp/${AGENT_FAMILY}/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
 
 # 6. Write tracking file ONLY if about to spawn children
 # Most checker/fixer agents skip this step (they don't spawn children)

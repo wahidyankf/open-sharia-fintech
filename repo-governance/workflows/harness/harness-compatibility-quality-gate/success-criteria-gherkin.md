@@ -33,7 +33,7 @@ Scenario: Checker delegates web research and produces a cited drift audit
   When repo-harness-compatibility-checker completes Phase 1
   Then it delegates multi-page upstream research to web-researcher for each harness
   And it diffs the fetched data against docs/reference/platform-bindings.md and committed binding files
-  And it writes a drift audit to generated-reports/ citing the web sources for each finding
+  And it writes a drift audit to local-tmp/harness-compat/ citing the web sources for each finding
   And each finding identifies the affected harness, the stale field, and the upstream source URL
 
 Scenario: Fixer updates catalog entries for unambiguous in-scope drift

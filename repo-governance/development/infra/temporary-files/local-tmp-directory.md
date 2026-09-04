@@ -1,6 +1,6 @@
 ---
 title: "`local-tmp/`"
-description: What local-tmp/ is for and the predicates for reclaiming anything inside it.
+description: What local-tmp/ is for, its per-family layout, and the predicates for reclaiming anything inside it.
 category: explanation
 subcategory: development
 tags: [temporary-files, ai-agents, file-organization, best-practices]
@@ -10,17 +10,38 @@ when_to_use: Use when deciding if a file belongs in local-tmp/.
 
 # `local-tmp/`
 
-**Use for**: Miscellaneous temporary files and scratch work
+**Use for**: everything an agent produces for itself or for another agent — anything that fails the
+two-question test in [The Rule](./overview-and-the-rule.md).
 
 **Examples**:
 
-- Draft files before finalizing
-- Temporary data processing files
-- Scratch notes and calculations
-- Intermediate build artifacts
-- Any temporary files that don't fit the "report" category
+- Checker audit reports, fixer reports, and execution verification reports — the reader is the next
+  agent, not a human
+- Draft files before finalizing, and scratch notes or calculations
+- Temporary data processing files and intermediate build artifacts
 
-**Naming pattern**: No strict pattern required (use descriptive names)
+## Layout: `local-tmp/<agent-family>/`
+
+Agent artifacts go under a per-family directory: `local-tmp/<agent-family>/`.
+
+**The family token is declared, never derived.** Each agent states its own `<agent-family>` in its
+Markdown body. The token is never inferred from a report filename, from a folder name, or from the
+agent's own name. Where a historical report-filename prefix disagrees with an agent's declared
+family, **the declaration wins** — the filenames record what an older convention spelled, not what
+the family is.
+
+**Agents create their own directory.** The tracked `.gitkeep` guarantees only that `local-tmp/`
+itself exists. It does not create family subdirectories, so an agent runs
+`mkdir -p local-tmp/<agent-family>/` before its first write rather than assuming the path is there.
+
+**Cross-family state stays at the root.** State that belongs to no single family is not filed under
+one, because the other families would not find it. Two instances:
+`local-tmp/.known-false-positives.md`, the shared suppression ledger, and
+`local-tmp/.execution-chain-{scope}`, whose parent-child chain spans families by construction.
+
+**Naming pattern**: report files keep the existing 4-part pattern and their UUID chains; see
+[Report File Naming Standard](./report-file-naming-standard.md). Only the parent directory changed.
+Other scratch files need no strict pattern — use descriptive names.
 
 **The directory always exists.** A tracked `local-tmp/.gitkeep` guarantees it in every clone and
 worktree, so a tool that writes here never has to create it first and never fails on a missing path.
@@ -31,8 +52,10 @@ directory.
 **Example files**:
 
 ```
+local-tmp/.known-false-positives.md
+local-tmp/repo-rules/repo-rules__a1b2c3__2026-09-04--16-27__audit.md
+local-tmp/docs/docs__d4e5f6__2026-09-04--16-31__fix.md
 local-tmp/draft-convention.md
-local-tmp/temp-analysis.json
 local-tmp/scratch-notes.txt
 ```
 

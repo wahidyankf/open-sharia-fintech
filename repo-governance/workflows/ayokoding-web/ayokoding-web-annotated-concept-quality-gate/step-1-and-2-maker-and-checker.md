@@ -75,14 +75,14 @@ prompt: "Validate apps/ayokoding-www/content/en/learn/fundamentally-strong/softw
 **Outputs**:
 
 - Audit report:
-  `generated-reports/ayokoding-web-annotated-concept__{uuid-chain}__{timestamp}__audit.md`
+  `local-tmp/ayokoding-web-annotated-concept/ayokoding-web-annotated-concept__{uuid-chain}__{timestamp}__audit.md`
 - Executive summary with overall status and detected mode
 - Detailed findings with confidence levels
 - Specific line numbers for issues
 - Actionable recommendations
 
 **UUID Chain Tracking**: Checker generates 6-char UUID and writes to
-`generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g.,
+`local-tmp/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g.,
 "computer-science-foundations"). See
 [Temporary Files Convention](../../../development/infra/temporary-files.md#uuid-chain-generation) for
 details.

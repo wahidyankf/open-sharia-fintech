@@ -19,7 +19,7 @@ Run software engineering documentation separation check to identify violations.
 
 - **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `docs-swe-sep__{uuid-chain}__{timestamp}__audit.md`)
+- **Output**: `{audit-report-1}` - Initial audit report in `local-tmp/docs-swe-sep/` (4-part format: `docs-swe-sep__{uuid-chain}__{timestamp}__audit.md`)
 
 **Success criteria**: Checker completes and generates audit report.
 

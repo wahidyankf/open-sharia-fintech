@@ -29,7 +29,7 @@ Start: What is the agent's primary capability?
     ├─ Validates/checks and generates reports
     │   └─> color: green (Checker)
     │       - Has `Write`, `Bash` (no Edit)
-    │       - Write needed for audit reports in generated-reports/
+    │       - Write needed for audit reports in local-tmp/<agent-family>/
     │       - Bash needed for UTC+7 timestamps
     │       - Examples: repo-rules-checker, plan-checker, docs-checker
     │       - EXCEPTION: Link checkers also have Edit tool for cache management (see "Link Checker Agents Note" below)
@@ -51,7 +51,7 @@ Start: What is the agent's primary capability?
   - If mainly creates new content → `blue` (Maker)
   - If mainly executes plans/tasks → `purple` (Implementor)
 - **Link-checkers with Write, Edit, Bash**: Use `green` (Checker)
-  - Write tool needed for audit reports in generated-reports/
+  - Write tool needed for audit reports in `local-tmp/<agent-family>/`
   - Edit tool needed for cache file management (external-links-status.yaml updates)
   - Bash tool needed for UTC+7 timestamps
   - Examples: docs-link-checker, apps-ayokoding-www-link-checker

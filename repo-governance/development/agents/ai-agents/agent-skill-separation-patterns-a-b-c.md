@@ -59,7 +59,7 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Report Generation
 
-**File Naming Pattern**: `generated-reports/{agent}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`
+**File Naming Pattern**: `local-tmp/{agent}/{agent}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`
 
 **UUID Chain Generation**: 6-char hex UUIDs for parallel execution support.
 
@@ -77,9 +77,9 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../infra/temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `local-tmp/<agent-family>/` per [Temporary Files Convention](../../infra/temporary-files.md).
 
-**Report pattern**: `generated-reports/{agent}__{uuid-chain}__{timestamp}__{type}.md`
+**Report pattern**: `local-tmp/{agent}/{agent}__{uuid-chain}__{timestamp}__{type}.md`
 
 **UUID chain generation**: 6-char hex UUIDs for parallel execution. See convention for generation logic.
 

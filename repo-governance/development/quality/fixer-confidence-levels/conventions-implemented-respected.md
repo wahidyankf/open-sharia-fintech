@@ -23,6 +23,6 @@ This practice implements/respects the following conventions:
 
 - **[Repository Validation Methodology Convention](.././repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
 
-- **[Temporary Files Convention](../../infra/temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
+- **[Temporary Files Convention](../../infra/temporary-files.md)**: Fix reports are written to the `local-tmp/<agent-family>/` directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
 
 - **[Timestamp Format Convention](../../../conventions/formatting/timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).

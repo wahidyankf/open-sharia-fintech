@@ -14,10 +14,10 @@ Run repository-wide consistency check to identify all issues.
 preflight-report: {step0_5.outputs.preflight-report},
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (three top-level
+- **Output**: `{audit-report-1}` - Initial audit report in `local-tmp/repo-rules/` (three top-level
   sections: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../../development/infra/temporary-files/uuid-chain-generation.md#uuid-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `local-tmp/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../../development/infra/temporary-files/uuid-chain-generation.md#uuid-generation) for details.
 
 **No lifecycle fallback**: missing/stale delegated evidence sets `lifecycle-status: pending`.
 The checker does not run or imitate vendor, word-budget, or any other exact delegated predicate.

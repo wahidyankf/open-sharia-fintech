@@ -39,11 +39,11 @@ outputs:
     description: Terminal status per plan — done | handed-off | quarantined | partial
   - name: dag-report
     type: file
-    pattern: generated-reports/multi-plans-execution__*__dag.md
+    pattern: local-tmp/multi-plans-execution/multi-plans-execution__*__dag.md
     description: The computed dependency DAG, resource-overlap analysis, and which nodes were parallelized
   - name: final-report
     type: file
-    pattern: generated-reports/multi-plans-execution__*__summary.md
+    pattern: local-tmp/multi-plans-execution/multi-plans-execution__*__summary.md
     description: Roll-up of every plan's outcome, quarantines, preexisting fixes, and the consolidated cross-plan learnings with their routing decisions
 ---
 

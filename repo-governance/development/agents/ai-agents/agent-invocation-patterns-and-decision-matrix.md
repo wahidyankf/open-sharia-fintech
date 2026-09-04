@@ -57,7 +57,7 @@ Task(agent-name, "analyze codebase structure")
 
 **Example Use Cases**:
 
-- Checker agents (Write audit reports to generated-reports/)
+- Checker agents (Write audit reports to `local-tmp/<agent-family>/`)
 - Fixer agents (Edit files to apply fixes, Write fix reports)
 - Maker agents (Write/Edit content files)
 - Workflows requiring iteration (check → fix → check loops)

@@ -1,6 +1,6 @@
 ---
 title: "Phase 3: Clearance Table & Decisions"
-description: Assembles the Security & Functional Clearance Status table and writes the clearance report progressively to generated-reports/.
+description: Assembles the Security & Functional Clearance Status table and writes the clearance report progressively to local-tmp/dependency-bump-planning/.
 when_to_use: Use when turning per-package classifications into the final clearance table and report.
 ---
 
@@ -17,7 +17,7 @@ Record the cutoff computation from Phase 0. Mark any KEV Fast-Track escalations 
 (e.g., `Path B → Path C (KEV Fast-Track)`) so the human checkpoint can review them first.
 
 Write all of this progressively to
-`generated-reports/dependency-bump-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
+`local-tmp/dependency-bump-planning/dependency-bump-planning__<uuid>__<YYYY-MM-DD--HH-MM>__report.md`
 (the `clearance-report` output) per the [Temporary Files convention](../../../development/infra/temporary-files.md).
 
 **Output**: `clearance-report` written. Bump table + clearance statuses finalized.

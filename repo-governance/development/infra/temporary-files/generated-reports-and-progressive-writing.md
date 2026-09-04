@@ -1,25 +1,28 @@
 ---
 title: "Directory Purposes — generated-reports/ and Progressive Writing Requirement"
-description: What generated-reports/ is for, and why checker agents must write progressively.
+description: What generated-reports/ is for under the intent test, and why checker agents must write progressively.
 category: explanation
 subcategory: development
 tags: [temporary-files, ai-agents, file-organization, best-practices]
 created: 2025-12-01
-when_to_use: Use when deciding what belongs in generated-reports/.
+when_to_use: Use when deciding whether an artifact belongs in generated-reports/ or local-tmp/.
 ---
 
 # Directory Purposes — generated-reports/ and Progressive Writing Requirement
 
 ## `generated-reports/`
 
-**Use for**: Structured reports and analysis outputs
+**Use for**: artifacts a human asked for by name and will read themselves.
 
 **Examples**:
 
-- Validation reports (docs-checker, plan-checker, etc.)
-- Audit reports (repo-rules-checker)
-- Execution verification reports (plan-execution-checker)
-- Todo lists and progress tracking
+- A report the user asked for in their own words — "write me a summary of X"
+- A deliverable the user will open and read, rather than one an agent consumes
+
+An artifact fails both tests if a human did not name it, or if it is a step toward the answer rather
+than the answer. Checker audit reports, fixer reports, execution verification reports, and todo or
+progress tracking are all agent-to-agent working state and belong in `local-tmp/<agent-family>/`,
+not here — see [`local-tmp/`](./local-tmp-directory.md).
 
 ## Progressive Writing Requirement for Checker Agents
 

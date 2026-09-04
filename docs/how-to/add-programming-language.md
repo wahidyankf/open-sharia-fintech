@@ -640,7 +640,7 @@ Before starting, ensure you have:
    Check: content quality principles, structure compliance"
    ```
 
-2. **Review audit report** in `generated-reports/`
+2. **Review audit report** in `local-tmp/<agent-family>/`
 
 3. **Fix any issues** found
 
@@ -663,7 +663,7 @@ Before starting, ensure you have:
    Validate: Code examples, command syntax, version numbers, external references, technical claims"
    ```
 
-2. **Review audit report** in `generated-reports/`
+2. **Review audit report** in `local-tmp/<agent-family>/`
 
 3. **Fix any factual errors** (update code, fix commands, correct versions)
 

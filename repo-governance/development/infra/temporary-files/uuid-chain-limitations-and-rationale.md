@@ -45,7 +45,7 @@ fi
 
 **Traceability**: Timestamps enable chronological tracking of validation runs
 
-**Integration**: Fixer agents expect audit reports in `generated-reports/` following this naming pattern
+**Integration**: Fixer agents expect audit reports in `local-tmp/<agent-family>/` following this naming pattern
 
 **Documentation**: Audit trail for all validation activities
 

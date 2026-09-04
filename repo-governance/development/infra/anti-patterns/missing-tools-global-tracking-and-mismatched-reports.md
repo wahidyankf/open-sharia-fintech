@@ -49,7 +49,7 @@ tools: [Read, Glob, Grep, Write, Bash]
 
 ```bash
 # Global tracking file (causes race conditions)
-CHAIN_FILE="generated-reports/.execution-chain"
+CHAIN_FILE="local-tmp/.execution-chain"
 # All workflows share same file!
 ```
 
@@ -58,7 +58,7 @@ CHAIN_FILE="generated-reports/.execution-chain"
 ```bash
 # Scope-based tracking files
 SCOPE="${EXECUTION_SCOPE:-docs}"
-CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+CHAIN_FILE="local-tmp/.execution-chain-${SCOPE}"
 ```
 
 **Rationale:**
@@ -76,10 +76,10 @@ CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
 
 ```bash
 # Audit report
-AUDIT="generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md"
+AUDIT="local-tmp/docs/docs__a1b2c3__2025-12-14--20-45__audit.md"
 
 # Fix report with NEW UUID and timestamp (DO NOT DO THIS)
-FIX="generated-reports/docs__d4e5f6__2025-12-14--21-00__fix.md"
+FIX="local-tmp/docs/docs__d4e5f6__2025-12-14--21-00__fix.md"
 ```
 
 **Solution:**
@@ -91,7 +91,7 @@ UUID=$(echo "$BASENAME" | awk -F'__' '{print $2}')
 TIMESTAMP=$(echo "$BASENAME" | awk -F'__' '{print $3}')
 
 # Fix report uses SAME UUID and timestamp
-FIX="generated-reports/docs__${UUID}__${TIMESTAMP}__fix.md"
+FIX="local-tmp/docs/docs__${UUID}__${TIMESTAMP}__fix.md"
 ```
 
 **Rationale:**

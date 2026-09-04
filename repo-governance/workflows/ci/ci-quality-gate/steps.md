@@ -20,7 +20,7 @@ Run `ci-checker` to validate non-delegated CI standards.
 **Agent**: `ci-checker`
 
 - **Args**: `scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: Audit report in `generated-reports/`
+- **Output**: Audit report in `local-tmp/ci/`
 
 **Success criteria**: Checker completes and generates audit report.
 

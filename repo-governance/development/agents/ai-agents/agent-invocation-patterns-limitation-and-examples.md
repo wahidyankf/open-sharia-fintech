@@ -33,7 +33,7 @@ when_to_use: Use when an agent needs conversation continuity and you must judge 
 
 **Impact**:
 
-- FAIL: Audit reports written by checker agents don't appear in generated-reports/
+- FAIL: Audit reports written by checker agents don't appear in `local-tmp/<agent-family>/`
 - FAIL: Fixes applied by fixer agents don't modify actual files
 - FAIL: Changes aren't visible in `git status`
 - FAIL: Workflows requiring file persistence cannot use Task tool

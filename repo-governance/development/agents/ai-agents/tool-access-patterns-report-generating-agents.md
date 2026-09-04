@@ -1,6 +1,6 @@
 ---
 title: "Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements"
-description: "States the mandatory Write and Bash tool requirement for any agent that writes to generated-reports/, and lists which checker agents it applies to."
+description: "States the mandatory Write and Bash tool requirement for any agent that writes to its per-family local-tmp/ directory, and lists which checker agents it applies to."
 category: explanation
 subcategory: development
 tags:
@@ -14,11 +14,11 @@ when_to_use: Use when creating or auditing a checker agent's frontmatter tools l
 
 # Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements
 
-**CRITICAL RULE**: Any agent that writes to `generated-reports/` directory MUST have **both Write and Bash** tools in their frontmatter.
+**CRITICAL RULE**: Any agent that writes to its `local-tmp/<agent-family>/` directory MUST have **both Write and Bash** tools in their frontmatter.
 
 **Tool Requirements Explained**:
 
-- **Write tool**: Required for creating report files in `generated-reports/`
+- **Write tool**: Required for creating report files in `local-tmp/<agent-family>/`
 - **Bash tool**: Required for generating UTC+7 timestamps for report filenames using `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 
 **Why both are mandatory**:
@@ -34,7 +34,7 @@ when_to_use: Use when creating or auditing a checker agent's frontmatter tools l
 
 **MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:
 
-ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
+ALL checker agents MUST write their validation/audit reports to their own `local-tmp/<agent-family>/` directory, creating it with `mkdir -p` before the first write. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
 1. repo-rules-checker
 2. repo-workflow-checker

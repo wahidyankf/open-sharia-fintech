@@ -12,13 +12,14 @@ when_to_use: Use when setting up temporary file locations, naming a new report f
 
 ## Practice 1: Use Designated Temporary Directories
 
-**Principle**: All temporary files go in `generated-reports/` or `local-tmp/`, never repository root.
+**Principle**: All temporary files go in `generated-reports/` (human-requested artifacts) or
+`local-tmp/<agent-family>/` (agent working state), never repository root.
 
 **Good Example:**
 
 ```bash
 # Validation report
-generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md
+local-tmp/docs/docs__a1b2c3__2025-12-14--20-45__audit.md
 
 # Scratch work
 local-tmp/draft-analysis.txt
@@ -52,14 +53,14 @@ UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 TIMESTAMP=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
 
 # Create report
-REPORT="generated-reports/docs__${UUID}__${TIMESTAMP}__audit.md"
+REPORT="local-tmp/docs/docs__${UUID}__${TIMESTAMP}__audit.md"
 ```
 
 **Bad Example:**
 
 ```bash
 # Placeholder values (DO NOT DO THIS)
-REPORT="generated-reports/docs__abc123__2025-12-14--00-00__audit.md"
+REPORT="local-tmp/docs/docs__abc123__2025-12-14--00-00__audit.md"
 ```
 
 **Rationale:**

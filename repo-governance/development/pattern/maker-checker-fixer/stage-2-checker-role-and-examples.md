@@ -22,7 +22,7 @@ when_to_use: "Use to identify which checker agent to use."
 
 - **Validation-driven** - Analyzes existing content for compliance
 - **Non-destructive** - Does NOT modify files being checked
-- **Comprehensive reporting** - Generates detailed audit reports in `generated-reports/`
+- **Comprehensive reporting** - Generates detailed audit reports in `local-tmp/<agent-family>/`
 - **Evidence-based** - Re-validates findings to prevent false positives (in fixer stage)
 
 **Tool Pattern**: `Read`, `Glob`, `Grep`, `Write`, `Bash` (read-only + report generation)

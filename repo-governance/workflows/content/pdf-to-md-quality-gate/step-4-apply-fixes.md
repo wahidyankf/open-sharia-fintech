@@ -34,7 +34,7 @@ lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - Fixer re-validates each finding before applying (prevents false positives)
 - HIGH_CONFIDENCE fixes applied automatically
 - MEDIUM_CONFIDENCE fixes skipped (flagged for manual review)
-- FALSE_POSITIVE findings persisted to `generated-reports/.known-false-positives.md`
+- FALSE_POSITIVE findings persisted to `local-tmp/.known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
 - A skipped fixer carries Step 0 lifecycle evidence forward unchanged
 

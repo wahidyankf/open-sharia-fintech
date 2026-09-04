@@ -37,7 +37,7 @@ when_to_use: Use for Layer 5's scope and workflow requirements.
 ```
 Maker-Checker-Fixer Workflow:
 1. Maker creates content → draft
-2. Checker validates → audit report in generated-reports/
+2. Checker validates → audit report in local-tmp/<agent-family>/
 3. User reviews → approve/reject
 4. Fixer applies fixes → corrected content
 5. Terminate: all findings resolved
