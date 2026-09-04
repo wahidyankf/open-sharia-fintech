@@ -38,3 +38,18 @@ is:
 complete -- it does **not** by itself mean the plan is merged. The merge is a separate, subsequent
 action gated on the five preconditions in [The Rule](./the-rule.md#the-rule) above and performed by `[AI]`.
 "Done" is not "merged" -- the merge sits outside the done-boundary entirely.
+
+## After the merge: two failures that mean something other than what they say
+
+**`git merge --ff-only origin/main` in the worktree fails.** A squash merge produces a commit with
+no ancestry shared with the branch it squashed, so a fast-forward is not refused — it is undefined.
+Prove the branch carries nothing the merge dropped (`git diff HEAD origin/main` is empty), then
+`git checkout -B <branch> origin/main`. Uncommitted edits survive `checkout -B`; check that they did
+rather than assuming it, and never reach for `reset --hard`.
+
+**`--force-with-lease` reports stale info.** After a merge this is usually not a lease conflict.
+`ose-public` sets `delete_branch_on_merge: true`, which overrides `gh pr merge --delete-branch=false`,
+so GitHub deletes the remote branch at merge and there is no ref left for the lease to compare
+against — `git ls-remote` returns empty. `git fetch origin --prune` followed by a plain `git push -u`
+is the whole fix; no force of any kind is needed. `ose-private` sets `delete_branch_on_merge: false`,
+so its branches survive the merge and must be deleted explicitly during cleanup.

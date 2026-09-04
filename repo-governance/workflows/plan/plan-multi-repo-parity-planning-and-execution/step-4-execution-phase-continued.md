@@ -30,7 +30,9 @@ cross-repo work.** Editing a byte-identity-governed file (`apps/rhino-cli/src/`,
 recorded checksum the moment the file changes. The gate is a same-repo self-consistency check, not a
 cross-repo diff — it is not a signal that propagation is overdue, and it fires identically whether
 the other repo is already in sync or untouched. Clear it with
-`rhino-cli parity manifest generate`, committed as its own follow-up commit, then push.
+`rhino-cli parity manifest generate`, committed as its own follow-up commit, then push. The
+generator refuses to run against unstaged boundary files, so the order is fixed: `git add` the
+boundary files you edited, generate, then stage the regenerated manifest.
 
 Regenerating the local manifest **does not discharge the propagation obligation** — the gate's own
 error text says so. It unblocks this repo's push and nothing more; the identical change still has to

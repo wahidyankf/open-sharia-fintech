@@ -11,9 +11,7 @@ execution checklist.
 
 ## Active Plans
 
-- [update-tmp-folders](./update-tmp-folders/README.md) — Re-found the `local-tmp/` and
-  `generated-reports/` split on artifact intent instead of artifact type, and propagate it across
-  `ose-public` and `ose-private`.
+_No plans are in progress._
 
 ## Instructions
 

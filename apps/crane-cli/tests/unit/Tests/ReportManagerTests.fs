@@ -38,12 +38,12 @@ let ``utc7Timestamp returns a timestamp string`` () =
 
 // @covers specs/apps/crane/cli/behaviors/reporting/report-management.feature:New chain creates a 6-character UUID report
 [<Fact>]
-let ``initReport creates a report file in generated-reports`` () =
+let ``initReport creates a report file in the local-tmp pdf-to-md family directory`` () =
     let scope = sprintf "test-scope-%s" (System.Guid.NewGuid().ToString("N").[..5])
 
     match initReport scope "test.pdf" "test.md" with
     | Ok path ->
-        Assert.True(path.StartsWith("generated-reports/"))
+        Assert.True(path.StartsWith("local-tmp/pdf-to-md/"))
         Assert.True(File.Exists(path))
         // Filename matches "{scope}__{6-hex}__{YYYY-MM-DD--HH-MM}__audit.md"
         let fileName = Path.GetFileName(path)
@@ -54,7 +54,7 @@ let ``initReport creates a report file in generated-reports`` () =
         Assert.Matches(pattern, fileName)
         // cleanup
         File.Delete(path)
-        let chainFile = sprintf ".execution-chain-%s" scope
+        let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
         if File.Exists(chainFile) then
             File.Delete(chainFile)
@@ -79,7 +79,7 @@ let ``finalizeReport updates status in existing report`` () =
             File.Delete(path)
         | Error msg -> Assert.Fail(sprintf "finalizeReport failed: %s" msg)
 
-        let chainFile = sprintf ".execution-chain-%s" scope
+        let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
         if File.Exists(chainFile) then
             File.Delete(chainFile)
@@ -88,7 +88,7 @@ let ``finalizeReport updates status in existing report`` () =
 [<Fact>]
 let ``getOrExtendChain returns same chain within window`` () =
     let scope = sprintf "chain-test-%s" (System.Guid.NewGuid().ToString("N").[..5])
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
     try
         let chain1 = getOrExtendChain scope
@@ -104,9 +104,10 @@ let ``getOrExtendChain returns same chain within window`` () =
 [<Fact>]
 let ``getOrExtendChain extends existing fresh chain with known id`` () =
     let scope = sprintf "chain-fresh-%s" (System.Guid.NewGuid().ToString("N").[..5])
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
     try
+        Directory.CreateDirectory("local-tmp") |> ignore
         // Chain file created 5 seconds ago with a known UUID, well inside the 30s window.
         let fiveSecondsAgo = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - 5L
         File.WriteAllText(chainFile, sprintf "%d abc123" fiveSecondsAgo)
@@ -120,9 +121,10 @@ let ``getOrExtendChain extends existing fresh chain with known id`` () =
 [<Fact>]
 let ``getOrExtendChain starts fresh chain when chain file has invalid format`` () =
     let scope = sprintf "chain-invalid-%s" (System.Guid.NewGuid().ToString("N").[..5])
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
     try
+        Directory.CreateDirectory("local-tmp") |> ignore
         // Write a chain file with invalid format (no space separator)
         File.WriteAllText(chainFile, "invalidformat")
         let chain = getOrExtendChain scope
@@ -136,9 +138,10 @@ let ``getOrExtendChain starts fresh chain when chain file has invalid format`` (
 [<Fact>]
 let ``getOrExtendChain starts fresh chain when chain file timestamp is too old`` () =
     let scope = sprintf "chain-expired-%s" (System.Guid.NewGuid().ToString("N").[..5])
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
 
     try
+        Directory.CreateDirectory("local-tmp") |> ignore
         // Write a chain file with expired timestamp (0 = epoch)
         File.WriteAllText(chainFile, "0 oldchain123")
         let chain = getOrExtendChain scope

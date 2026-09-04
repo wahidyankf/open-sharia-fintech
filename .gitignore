@@ -186,9 +186,6 @@ specs/apps/a-demo/contracts/generated/
 .opencode/opencode.local.json
 .claude/*.lock
 
-# crane-cli integration test execution-chain state files (created in working dir during test runs)
-.execution-chain-*
-
 # Downloaded CI tooling binaries (downloaded on-demand during local testing)
 actionlint
 

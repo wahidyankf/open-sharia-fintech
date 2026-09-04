@@ -6,8 +6,17 @@ open System.IO
 let private chainWindowSeconds = 30L
 let private utc7Offset = TimeSpan.FromHours(7.0)
 
+/// Agent working state lives under `local-tmp/`. The chain file sits at that root rather than in
+/// a family directory because a parent-child chain spans families by construction.
+let private chainFilePath (scope: string) : string =
+    sprintf "local-tmp/.execution-chain-%s" scope
+
+/// Reports produced here are read by the paired fixer agent, not by a maintainer who asked for
+/// them, so they belong to the `pdf-to-md` family directory rather than to `generated-reports/`.
+let private reportDir = "local-tmp/pdf-to-md"
+
 let getOrExtendChain (scope: string) : string =
-    let chainFile = sprintf ".execution-chain-%s" scope
+    let chainFile = chainFilePath scope
     let newId = Guid.NewGuid().ToString("N").Substring(0, 6)
 
     let existingChain =
@@ -25,6 +34,7 @@ let getOrExtendChain (scope: string) : string =
             None
 
     let chain = existingChain |> Option.defaultValue newId
+    Directory.CreateDirectory("local-tmp") |> ignore
     File.WriteAllText(chainFile, sprintf "%d %s" (DateTimeOffset.UtcNow.ToUnixTimeSeconds()) chain)
     chain
 
@@ -35,8 +45,8 @@ let initReport (scope: string) (pdf: string) (md: string) : Result<string, strin
     try
         let chain = getOrExtendChain scope
         let ts = utc7Timestamp ()
-        let reportPath = sprintf "generated-reports/%s__%s__%s__audit.md" scope chain ts
-        Directory.CreateDirectory("generated-reports") |> ignore
+        let reportPath = sprintf "%s/%s__%s__%s__audit.md" reportDir scope chain ts
+        Directory.CreateDirectory(reportDir) |> ignore
 
         let header =
             sprintf "# Audit Report\n\nScope: %s\nPDF: %s\nMD: %s\nStatus: IN_PROGRESS\n" scope pdf md

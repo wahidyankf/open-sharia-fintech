@@ -1,6 +1,6 @@
 # Update Temporary Folders
 
-**Status**: In Progress
+**Status**: Completed (2026-09-04)
 
 Re-found the split between `local-tmp/` and `generated-reports/` on **who the artifact is for**
 instead of **what shape the artifact has**, then bring every rule, agent, skill, harness mirror, and

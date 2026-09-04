@@ -88,4 +88,14 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 **Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../../../conventions/formatting/timestamp.md) for complete details.
 
+## Why `md naming validate` does not reject these filenames
+
+Double underscores would normally fail the repository naming gate. `generated-reports` appears in
+`Md.fs`'s `namingSkipDirs`; `local-tmp` does not, which looks like a live risk for every report
+written under the new layout. It is not: the walker never descends into `local-tmp/` at all, so no
+file there is ever offered to the naming check. Verified by writing a real double-underscore report
+under `local-tmp/` and running the gate, which passed. Do not "fix" the `namingSkipDirs` asymmetry —
+adding `local-tmp` there would change nothing, and removing `generated-reports` would break reports
+that still legitimately live there.
+
 Continued in [Report File Naming Standard — Repository Audit and Link Validation Reports](./report-file-naming-early-report-types.md).

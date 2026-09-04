@@ -9,6 +9,27 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-09-04: update-tmp-folders](./2026-09-04__update-tmp-folders/README.md) — Re-founded the
+  `local-tmp/` vs `generated-reports/` split on **who the artifact is for** rather than **what shape
+  it has**, then propagated that definition across every rule, agent, skill, harness mirror, and the
+  one code path that hardcoded a temporary directory, in both `ose-public` and `ose-private`. The
+  old type-based wording sent every machine-authored audit into the folder a maintainer reads as
+  their outbox: 471 entries in `ose-public` and 96 in `ose-private` at authoring time, against 7 and
+  22 in the scratch folder. Agent working state now lands in `local-tmp/<agent-family>/`, so 23
+  `ose-private` checker/fixer agents and their `ose-public` counterparts each gained an explicit
+  report family, and `rhino-cli` now reads its false-positive ledger from
+  `local-tmp/.known-false-positives.md`. Four PRs merged — `ose-public#473`, `#474`,
+  `ose-private#155`, `#156`. Three findings are worth carrying forward. A count is not an inventory:
+  `ose-public`'s legacy folder was swept with only a total recorded, so whether it held the
+  `.execution-chain-*` files later found in `ose-private` can no longer be established — sweeping
+  was still right, because a stale chain carried forward would give a future report false
+  parentage. The plan's own premise that every legacy artifact was untracked was false: three
+  `generated-reports/plan__*__audit.md` files were tracked on `main` despite being gitignored, and
+  had to be deleted deliberately. And the plan's `rules-propagation` step asked for a GPG asymmetry
+  between the repositories that does not exist — recorded as a plan defect rather than silently
+  ticked. Seven phases. Delivery Mode: `worktree-to-pr`, one worktree per repository. Started
+  2026-09-04.
+
 - [2026-09-04: scaffold-plan-archival-cleanup](./2026-09-04__scaffold-plan-archival-cleanup/README.md) —
   Made the plan-authoring template emit the three archival cleanup steps the governance layer
   already required — classify the `Delivery Branch Inventory`, remove the worktree, complete branch
