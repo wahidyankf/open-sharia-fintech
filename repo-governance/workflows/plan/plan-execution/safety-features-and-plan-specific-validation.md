@@ -17,7 +17,7 @@ when_to_use: Use when explaining what safety guarantees plan execution provides,
 - Delivery checklist items ticked individually throughout execution
 - Task status updated in real time via TaskCreate/TaskUpdate
 - Each iteration builds on previous work
-- Validation history preserved in generated-reports/
+- Validation history preserved in local-tmp/plan-execution/
 
 **Error Recovery**:
 

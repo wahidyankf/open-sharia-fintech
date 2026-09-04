@@ -18,7 +18,7 @@ User: "Run ayokoding-web annotated-concept quality gate workflow for computer-sc
 
 1. **Create content** (if needed): User writes worked examples or uses maker agent
 2. **Validate**: Invoke `apps-ayokoding-www-annotated-concept-checker` via Agent tool
-3. **Review**: User reads audit report from generated-reports/
+3. **Review**: User reads audit report from local-tmp/ayokoding-web-annotated-concept/
 4. **Fix**: Invoke `apps-ayokoding-www-annotated-concept-fixer` via Agent tool
 5. **Re-validate**: Invoke checker via Agent tool again
 6. **Iterate**: Repeat validation-fixing until clean or max-iterations

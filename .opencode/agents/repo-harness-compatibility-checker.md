@@ -1,5 +1,5 @@
 ---
-description: Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to generated-reports/.
+description: Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to local-tmp/harness-compat/.
 model: zai-coding-plan/glm-5.2
 permission:
   agent: allow
@@ -24,12 +24,15 @@ skills:
 
 # Repository Harness Compatibility Checker Agent
 
+**Report family:** `harness-compat`. Write every audit, fix, and verification report to
+`local-tmp/harness-compat/`. Run `mkdir -p local-tmp/harness-compat/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green). **Model**: `sonnet` — Phase 0 interprets deterministic tool output;
   Phase 1 requires advanced reasoning to compare fetched harness documentation against committed
   catalog rows, with sophisticated confidence assessment when web sources conflict.
-- **Output**: `generated-reports/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+- **Output**: `local-tmp/harness-compat/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 - **Termination**: Reports findings — does not auto-fix; pairs with
   `repo-harness-compatibility-fixer`
 

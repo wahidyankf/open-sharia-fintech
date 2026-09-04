@@ -21,7 +21,7 @@ when_to_use: Use when tracking concurrent workflow executions, writing Given-Whe
 SCOPE="${EXECUTION_SCOPE:-docs}"
 
 # Read parent chain from scope-specific file
-CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+CHAIN_FILE="local-tmp/.execution-chain-${SCOPE}"
 if [ -f "$CHAIN_FILE" ]; then
   read PARENT_TIME PARENT_CHAIN < "$CHAIN_FILE"
   TIME_DIFF=$(($(date +%s) - PARENT_TIME))
@@ -40,7 +40,7 @@ fi
 
 ```bash
 # Global tracking file (causes race conditions)
-CHAIN_FILE="generated-reports/.execution-chain"
+CHAIN_FILE="local-tmp/.execution-chain"
 # All workflows share same file - parent tracking breaks!
 ```
 

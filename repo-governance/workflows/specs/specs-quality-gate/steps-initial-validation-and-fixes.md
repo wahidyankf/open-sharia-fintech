@@ -22,11 +22,11 @@ Run specs-wide consistency check to identify all issues.
 - **Args**: `folders: {input.folders}, EXECUTION_SCOPE: specs,
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
-- **Output**: `{audit-report-1}` — Initial audit report in `generated-reports/`
+- **Output**: `{audit-report-1}` — Initial audit report in `local-tmp/specs/`
   (4-part format: `specs__{uuid-chain}__{timestamp}__audit.md`)
 
 **UUID Chain Tracking**: Checker generates 6-char UUID and writes to
-`generated-reports/.execution-chain-specs` before validation.
+`local-tmp/.execution-chain-specs` before validation.
 See [Temporary Files Convention](../../../development/infra/temporary-files/uuid-chain-generation.md#uuid-generation).
 
 **Success criteria**: Checker completes and generates audit report.

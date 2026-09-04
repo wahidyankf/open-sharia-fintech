@@ -45,7 +45,7 @@ outputs:
     description: Number of check-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/docs-swe-sep__*__audit.md
+    pattern: local-tmp/docs-swe-sep/docs-swe-sep__*__audit.md
     description: Final audit report
 ---
 

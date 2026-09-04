@@ -127,7 +127,7 @@ description: >
 ```yaml
 ---
 context: |
-  Always write reports to /home/user/repos/project/generated-reports/
+  Always write reports to /home/user/repos/project/local-tmp/<agent-family>/
   Check files in /home/user/repos/project/docs/
 ---
 ```
@@ -137,7 +137,7 @@ context: |
 ```yaml
 ---
 context: |
-  Write reports to generated-reports/ (relative to repo root)
+  Write reports to local-tmp/<agent-family>/ (relative to repo root)
   Check files in docs/ directory
   Use Glob to find files dynamically
 ---

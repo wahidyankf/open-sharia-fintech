@@ -36,7 +36,7 @@ Each agent has a **single, clear responsibility**:
 
 ## 3. Audit Trail
 
-Every validation and fix is **documented in generated-reports/**:
+Every validation and fix is **documented in `local-tmp/<agent-family>/`**:
 
 - Audit reports show what was checked and what was found
 - Fix reports show what was changed and why

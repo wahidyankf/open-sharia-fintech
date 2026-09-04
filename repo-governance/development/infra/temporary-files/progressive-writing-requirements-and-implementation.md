@@ -53,7 +53,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: generated-reports/{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md
+Report file: local-tmp/{agent-family}/{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md
 
 This progressive approach ensures findings persist even if context is compacted during long audits.
 ```

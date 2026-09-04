@@ -18,6 +18,9 @@ skills:
 
 # CI Fixer Agent
 
+**Report family:** `ci`. Write every audit, fix, and verification report to
+`local-tmp/ci/`. Run `mkdir -p local-tmp/ci/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)
@@ -40,7 +43,7 @@ Without this handoff, suppress nothing. See the
 
 ## Workflow
 
-1. Read the latest ci-checker audit report from `generated-reports/`
+1. Read the latest ci-checker audit report from `local-tmp/ci/`
 2. For each finding (ordered by criticality: CRITICAL > HIGH > MEDIUM > LOW):
    a. Re-validate the finding by reading the referenced file
    b. If confirmed, apply the fix

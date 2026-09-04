@@ -15,7 +15,7 @@ Each agent is a separate professional lens; they complement each other and never
   writes it to the resolved destination. It complements the E2E suite; it does not replace it. A
   confirmed finding here typically becomes a new E2E/Gherkin scenario.
 - **Distinct from `swe-code-checker`** — that validates handler/source artifacts against coding
-  standards and writes an audit report to `generated-reports/`. This agent validates a **running API**
+  standards and writes an audit report to `local-tmp/swe-code/`. This agent validates a **running API**
   and writes findings to the selected output-mode destination. It does not audit code.
 - **Feeds `plan-maker` only in explicitly authorized plan mode** — that mode creates a findings plan
   with the mature core and TDD-shaped `delivery.md`, including the specs/Gherkin coverage steps

@@ -86,13 +86,13 @@ User: "Apply fixes from latest ayokoding-web audit"
 
 Fixer:
 
-1. Auto-detects latest: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
+1. Auto-detects latest: local-tmp/ayokoding-web/ayokoding-web**2025-12-14--20-45**audit.md
 2. Parses findings (25 issues)
 3. Re-validates each finding:
    - 18 findings → HIGH confidence (apply)
    - 4 findings → MEDIUM confidence (skip, manual review)
    - 3 findings → FALSE_POSITIVE (skip, report for checker improvement)
 4. Applies 18 fixes
-5. Generates fix report: generated-reports/ayokoding-web**2025-12-14--20-45**fix.md
+5. Generates fix report: local-tmp/ayokoding-web/ayokoding-web**2025-12-14--20-45**fix.md
 6. Summary: 18 fixed, 4 manual review, 3 false positives
 ```

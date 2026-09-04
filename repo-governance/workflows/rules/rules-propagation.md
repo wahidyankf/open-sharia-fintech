@@ -35,7 +35,7 @@ inputs:
 outputs:
   - name: placement-manifest
     type: file
-    pattern: generated-reports/rules-propagation__*__manifest.md
+    pattern: local-tmp/rules-propagation/rules-propagation__*__manifest.md
     description: "Subject inventory with per-surface verdict, canonical home or replacement, keep rationale; plus placement, layer, enforcement, supersessions"
   - name: final-status
     type: enum

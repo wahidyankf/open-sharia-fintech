@@ -16,7 +16,7 @@ when_to_use: Use when constructing a checker or fixer report filename.
 
 **Exempt from ordinal prefixes.** Report filenames never carry a leading `NN-` ordinal, and
 [Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md) does not
-apply to them: they are generated artifacts in `generated-reports/`, ordered by their timestamp
+apply to them: they are generated artifacts under `local-tmp/<agent-family>/`, ordered by their timestamp
 component rather than by a parent index.
 
 **Components** (4 parts):
@@ -32,7 +32,7 @@ component rather than by a parent index.
 - Underscore (`_`) separates UUIDs within the uuid-chain
 - Double dash (`--`) separates date from time within timestamp
 - Single dash (`-`) separates components within date (YYYY-MM-DD) and time (HH-MM)
-- NO "report" keyword in filename (redundant - location in `generated-reports/` makes purpose clear)
+- NO "report" keyword in filename (redundant - the `{type}` suffix already states it)
 
 **Why this pattern**:
 
@@ -46,14 +46,14 @@ component rather than by a parent index.
 **Example files**:
 
 ```
-generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
-generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__fix.md
-generated-reports/ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md
-generated-reports/ayokoding-web__a1b2c3_d4e5f6__2025-12-14--15-30__audit.md
-generated-reports/ose-web-content__g7h8i9__2025-12-14--15-30__audit.md
-generated-reports/docs__b2c3d4__2025-12-15--10-00__validation.md
-generated-reports/plan__c3d4e5__2025-12-15--11-30__validation.md
-generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
+local-tmp/repo-rules/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
+local-tmp/repo-rules/repo-rules__a1b2c3__2025-12-14--20-45__fix.md
+local-tmp/ayokoding-web/ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md
+local-tmp/ayokoding-web/ayokoding-web__a1b2c3_d4e5f6__2025-12-14--15-30__audit.md
+local-tmp/ose-web-content/ose-web-content__g7h8i9__2025-12-14--15-30__audit.md
+local-tmp/docs/docs__b2c3d4__2025-12-15--10-00__validation.md
+local-tmp/plan/plan__c3d4e5__2025-12-15--11-30__validation.md
+local-tmp/plan-execution/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
 ```
 
 **Pattern Rules**:

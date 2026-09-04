@@ -15,6 +15,9 @@ skills:
 
 # Content Checker for ose-web
 
+**Report family:** `ose-web-content`. Write every audit, fix, and verification report to
+`local-tmp/ose-web-content/`. Run `mkdir -p local-tmp/ose-web-content/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -56,7 +59,7 @@ Skill: `repo-generating-validation-reports`
 
 See `repo-applying-maker-checker-fixer` Skill for:
 
-- **Known False Positive Skip List**: Load and check `generated-reports/.known-false-positives.md` before every validation step
+- **Known False Positive Skip List**: Load and check `local-tmp/.known-false-positives.md` before every validation step
 - **Scoped Re-validation**: When UUID chain is multi-part, validate only changed files from fix report
 - **Escalation**: After 2+ disagreements on same finding, mark as `[ESCALATED — manual review required]`
 - **Convergence Target**: Stabilize in 3-5 iterations; warn if not converged after 7

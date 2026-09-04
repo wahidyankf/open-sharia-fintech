@@ -45,15 +45,15 @@ outputs:
     description: Number of check-fix cycles executed
   - name: docs-report
     type: file
-    pattern: generated-reports/docs__*__audit.md
+    pattern: local-tmp/docs/docs__*__audit.md
     description: Final factual accuracy validation report
   - name: tutorial-report
     type: file
-    pattern: generated-reports/docs-tutorial__*__audit.md
+    pattern: local-tmp/docs-tutorial/docs-tutorial__*__audit.md
     description: Final pedagogical quality validation report
   - name: links-report
     type: file
-    pattern: generated-reports/docs-link__*__audit.md
+    pattern: local-tmp/docs-link/docs-link__*__audit.md
     description: Final link validity validation report
   - name: execution-scope
     type: string

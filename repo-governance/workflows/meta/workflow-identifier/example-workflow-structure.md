@@ -71,7 +71,7 @@ delegated agent types, it falls back to executing workflow logic directly.
 **Agent**: `{input.content-type}-checker`
 
 - Validate content in scope
-- Generate audit report in generated-reports/
+- Generate audit report in local-tmp/<agent-family>/
 
 ### 2. Apply Fixes (Sequential)
 

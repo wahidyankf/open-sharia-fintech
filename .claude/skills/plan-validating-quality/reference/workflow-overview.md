@@ -12,7 +12,7 @@ Use `repo-generating-validation-reports` Skill for report initialization.
 
 ### Step 0b: Load Known False Positive Skip List
 
-Before validation, load `generated-reports/.known-false-positives.md` if it exists; reference during
+Before validation, load `local-tmp/.known-false-positives.md` if it exists; reference during
 ALL steps. Before reporting any finding, check the stable key
 `[category] | [file] | [brief-description]`; if matched, log
 `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` informationally — do not count or include in the
@@ -22,7 +22,7 @@ findings report:
 ### [INFO] Previously Accepted FALSE_POSITIVE — Skipped
 
 **Key**: [category] | [file] | [brief-description]
-**Skipped**: Finding matches entry in generated-reports/.known-false-positives.md
+**Skipped**: Finding matches entry in local-tmp/.known-false-positives.md
 **Originally Accepted**: [date from skip list]
 ```
 

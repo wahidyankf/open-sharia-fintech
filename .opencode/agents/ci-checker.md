@@ -17,6 +17,9 @@ skills:
 
 # CI Checker Agent
 
+**Report family:** `ci`. Write every audit, fix, and verification report to
+`local-tmp/ci/`. Run `mkdir -p local-tmp/ci/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -54,7 +57,7 @@ For each project in `apps/` and `libs/`:
 
 ## Output
 
-Progressive audit report in `generated-reports/` following the standard pattern.
+Progressive audit report in `local-tmp/ci/` following the standard pattern.
 
 ## Criticality Levels
 

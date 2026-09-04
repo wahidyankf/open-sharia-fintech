@@ -58,11 +58,11 @@ readable audit report.
 Always provide: a fix summary (what was fixed/skipped/flagged); a false-positive report
 (detailed analysis of checker errors); a manual-review list (subjective items needing human
 judgment); recommendations to improve `readme-checker`; and a fix report file in
-`generated-reports/` as the complete audit trail.
+`local-tmp/readme/` as the complete audit trail.
 
 ## Convergence Safeguards
 
 See `repo-applying-maker-checker-fixer` Skill for: **Capture Changed Files** (after applying all
 fixes, capture the changed-files list for scoped re-validation); **Persist FALSE_POSITIVE
-Findings** (append each to `generated-reports/.known-false-positives.md`); **Self-Verification
+Findings** (append each to `local-tmp/.known-false-positives.md`); **Self-Verification
 After Edits** (re-read modified sections and log APPLIED/FAILED status in the fix report).

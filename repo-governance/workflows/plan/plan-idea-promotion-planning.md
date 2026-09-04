@@ -35,13 +35,13 @@ inputs:
 outputs:
   - name: prior-art-report
     type: file
-    pattern: generated-reports/plan-idea-promotion-planning__*__report.md
+    pattern: local-tmp/plan-idea-promotion-planning/plan-idea-promotion-planning__*__report.md
     description: >
       The deep prior-art survey (precedents, standards, existing solutions) produced in Phase 2 and
       folded into the plan's brd.md / prd.md. Written whenever the brief passes the ripeness gate.
   - name: readiness-report
     type: file
-    pattern: generated-reports/plan-idea-promotion-planning__*__readiness.md
+    pattern: local-tmp/plan-idea-promotion-planning/plan-idea-promotion-planning__*__readiness.md
     description: >
       Section-by-section completeness verdict. Written whenever the brief FAILS the ripeness gate,
       naming exactly which sections are stubs so the author can enrich the brief and retry.

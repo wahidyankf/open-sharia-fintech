@@ -1,5 +1,5 @@
 ---
-description: Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-to-agent duplication, agent-Skill duplication, Skill-to-Skill consolidation opportunities, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to generated-reports/ with progressive streaming.
+description: Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-to-agent duplication, agent-Skill duplication, Skill-to-Skill consolidation opportunities, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to local-tmp/repo-rules/ with progressive streaming.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -20,6 +20,9 @@ skills:
 ---
 
 # Repository Governance Checker Agent
+
+**Report family:** `repo-rules`. Write every audit, fix, and verification report to
+`local-tmp/repo-rules/`. Run `mkdir -p local-tmp/repo-rules/` before the first write.
 
 ## Agent Metadata
 

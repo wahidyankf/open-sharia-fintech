@@ -11,7 +11,7 @@ Validate the implementation against plan requirements.
 **Agent**: `plan-execution-checker`
 
 - **Args**: `plan: {input.plan-path}`
-- **Output**: `{audit-report-1}` — Initial validation report in `generated-reports/`
+- **Output**: `{audit-report-1}` — Initial validation report in `local-tmp/plan-execution/`
 - **Depends on**: Step 2 completion
 
 **Success criteria**: Checker completes and generates validation report.

@@ -49,7 +49,7 @@ Checker Agent (apps-ayokoding-www-general-checker):
 3. Checks content structure (heading hierarchy, link format)
 4. Validates Next.js content conventions (link format, frontmatter)
 5. Checks content quality (alt text, accessible colors, etc.)
-6. Generates audit report: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
+6. Generates audit report: local-tmp/ayokoding-web/ayokoding-web**2025-12-14--20-45**audit.md
 7. Reports findings in conversation (summary only)
 8. Does NOT modify the tutorial file
 ```

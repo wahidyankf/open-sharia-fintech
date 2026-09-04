@@ -81,10 +81,10 @@ prompt: "Validate {input.scope}; delegated-gate-ids: {step0.outputs.delegated-ga
 
 **Outputs**:
 
-- Audit report: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
+- Audit report: `local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
 - Overall status and actionable findings with confidence and line numbers
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../../../development/infra/temporary-files.md#uuid-chain-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `local-tmp/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../../../development/infra/temporary-files.md#uuid-chain-generation) for details.
 
 **Depends on**: Step 1 completion
 

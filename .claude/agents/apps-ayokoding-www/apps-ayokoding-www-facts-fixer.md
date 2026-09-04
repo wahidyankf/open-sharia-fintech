@@ -16,6 +16,9 @@ skills:
 
 # Facts Fixer for ayokoding-web
 
+**Report family:** `ayokoding-web-facts`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-facts/`. Run `mkdir -p local-tmp/ayokoding-web-facts/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Skip only exact delegated
@@ -83,7 +86,7 @@ The `repo-assessing-criticality-confidence` Skill provides definitions.
 See `repo-applying-maker-checker-fixer` Skill for:
 
 - **Capture Changed Files**: After applying all fixes, capture changed files list for scoped re-validation
-- **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to `generated-reports/.known-false-positives.md`
+- **Persist FALSE_POSITIVE Findings**: Append each FALSE_POSITIVE to `local-tmp/.known-false-positives.md`
 - **Self-Verification After Edits**: Re-read modified sections and log APPLIED/FAILED status in fix report
 
 ## Reference Documentation

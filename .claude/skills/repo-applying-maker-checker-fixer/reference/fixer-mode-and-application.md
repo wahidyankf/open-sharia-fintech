@@ -71,7 +71,7 @@ For each HIGH_CONFIDENCE finding:
 
 ## Fixer Workflow Step 5: Fix Report Generation
 
-Generate fix report in `generated-reports/` using same UUID chain as audit:
+Generate fix report in `local-tmp/<agent-family>/` using same UUID chain as audit:
 
 **File Naming Pattern**:
 

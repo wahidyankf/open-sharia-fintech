@@ -17,6 +17,9 @@ skills:
 
 # Annotated-Concept Tutorial Checker for ayokoding-web
 
+**Report family:** `ayokoding-web-annotated-concept`. Write every audit, fix, and verification report to
+`local-tmp/ayokoding-web-annotated-concept/`. Run `mkdir -p local-tmp/ayokoding-web-annotated-concept/` before the first write.
+
 ## Lifecycle Handoff
 
 Accept optional `delegated-gate-ids` and `lifecycle-evidence`. Suppress only an exact

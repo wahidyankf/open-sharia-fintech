@@ -33,9 +33,11 @@ The exception worth memorising is the language style guides under
 
 ## Temporary Directories
 
-`generated-reports/` and `local-tmp/` hold build artifacts and scratch output. Both may be swept
-at any time without warning. Anything there is regenerable by definition; never write something you
-would need to protect.
+`generated-reports/` holds artifacts a human asked for and will read. `local-tmp/<agent-family>/`
+holds everything an agent produces for itself or for another agent — checker and fixer reports
+included. The split is by who asked, not by artifact type. Both may be swept at any time without
+warning. Anything there is regenerable by definition; never write something you would need to
+protect.
 
 ## Choosing a Tree
 

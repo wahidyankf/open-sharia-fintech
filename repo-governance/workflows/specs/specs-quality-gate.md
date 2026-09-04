@@ -44,7 +44,7 @@ outputs:
     description: "Number of check-fix cycles executed"
   - name: final-report
     type: file
-    pattern: "generated-reports/specs__*__*__audit.md"
+    pattern: "local-tmp/specs/specs__*__*__audit.md"
     description: "Final audit report (4-part format with UUID chain)"
   - name: execution-scope
     type: string

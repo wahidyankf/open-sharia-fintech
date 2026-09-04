@@ -28,7 +28,7 @@ when_to_use: Use when actually executing a workflow in Manual Orchestration mode
 2. Apply validation rules
 3. Categorize findings by criticality
 4. Generate UUID chain for report
-5. Write audit report to generated-reports/
+5. Write audit report to local-tmp/plan/
    Pattern: {agent-family}**{uuid}**{timestamp}\_\_audit.md
 6. Report findings summary to user
 ```
@@ -56,7 +56,7 @@ If findings > 0 AND (no max-iterations OR iterations < max-iterations):
    - Issue never existed → FALSE_POSITIVE
 3. Apply HIGH confidence fixes using Edit tool
 4. Skip MEDIUM confidence (manual review needed)
-5. Write fix report to generated-reports/
+5. Write fix report to local-tmp/plan/
    Pattern: {agent-family}**{uuid}**{timestamp}\_\_fix.md
 6. Report fixes applied to user
 ```

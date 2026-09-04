@@ -5,7 +5,7 @@ description: "Language-specific development agents plus UI and code-quality chec
 
 # SWE Language Dev
 
-- [Swe Code Checker](./swe-code-checker.md) — Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to generated-reports/ with progressive streaming.
+- [Swe Code Checker](./swe-code-checker.md) — Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to local-tmp/swe-code/ with progressive streaming.
 - [Swe Csharp Dev](./swe-csharp-dev.md) — Develops C# applications following nullable reference type principles, async/await patterns, and platform coding standards. Use when implementing C# code for OSE Platform.
 - [Swe E2e Dev](./swe-e2e-dev.md) — Develops end-to-end tests using Playwright following OSE Platform testing patterns and standards. Use when implementing E2E tests for OSE Platform applications.
 - [Swe Fsharp Dev](./swe-fsharp-dev.md) — Develops F# applications following functional programming principles, railway-oriented error handling, and platform coding standards. Use when implementing F# code for OSE Platform.

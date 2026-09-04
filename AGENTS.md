@@ -102,15 +102,15 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 
 ## AI Agents
 
-[Agent catalog](./.claude/agents/README.md) is authoritative; filenames follow the ordinary
-kebab-case rule. Agent skills authored at `.claude/skills/<name>/SKILL.md` have non-vendored mirrors
-under `.agents/skills/`.
+[Agent catalog](./.claude/agents/README.md) is authoritative. Agent skills authored at
+`.claude/skills/<name>/SKILL.md` have non-vendored mirrors under `.agents/skills/`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 
 ## Plans & Temporary Files
 
-Regenerate swept `generated-reports/` and `local-tmp/` artifacts; never protect.
+`generated-reports/` holds human-requested artifacts; `local-tmp/<agent-family>/` holds agent
+working state. Regenerate swept artifacts; never protect.
 
 **See**: [plans.md](./repo-governance/conventions/structure/plans.md)
 

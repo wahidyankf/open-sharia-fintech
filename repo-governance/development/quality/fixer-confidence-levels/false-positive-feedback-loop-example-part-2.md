@@ -63,7 +63,7 @@ when_to_use: "Use for the second half of a worked feedback-loop example."
 - [Indonesian Content Policy](../../conventions/writing/indonesian-content-policy.md) - ayokoding-www bilingual content policy (English-first for technical tutorials)
 
 **Infrastructure:**
-- [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`generated-reports/`)
+- [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`local-tmp/<agent-family>/`)
 
 ##  Maintenance
 

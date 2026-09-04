@@ -40,7 +40,7 @@ is not lost when each plan's folder is archived in isolation.
 
 **D6. Finalization.** When all plans have reached a terminal state AND cross-plan learnings
 solidification (D5) is complete, emit the summary report to
-`generated-reports/multi-plans-execution__<uuid>__<timestamp>__summary.md`: per-plan terminal status
+`local-tmp/multi-plans-execution/multi-plans-execution__<uuid>__<timestamp>__summary.md`: per-plan terminal status
 (done / handed-off / quarantined / partial), the parallelism actually achieved, quarantines with
 reasons, all preexisting fixes made, and the **consolidated cross-plan learnings** with their routing
 decisions (D5.4). Report `partial` if any plan was quarantined or hit `max-iterations`; `pass` only

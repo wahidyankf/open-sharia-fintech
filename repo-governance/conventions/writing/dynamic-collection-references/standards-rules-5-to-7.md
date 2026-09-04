@@ -21,7 +21,8 @@ Continues from [Standards (Rules 1-4)](./standards-rules-1-to-4.md).
 Counts are acceptable in the following contexts:
 
 - **Index documents themselves** (e.g., the README in `.claude/agents/` may state the count as a footer note, but this single location becomes the authoritative source)
-- **Generated audit reports** in `generated-reports/` (these are point-in-time snapshots)
+- **Generated audit reports** in `local-tmp/<agent-family>/` and human-requested reports in
+  `generated-reports/` (these are point-in-time snapshots)
 - **Commit messages** describing a specific change ("add 3 new agents for organiclever")
 - **Technical specifications** where the count is a constraint, not a description (e.g., "each agent has exactly 1 name field")
 - **Diátaxis category counts** and other truly static sets (4 categories, 2 delivery modes, etc.)

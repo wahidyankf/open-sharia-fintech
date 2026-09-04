@@ -21,6 +21,9 @@ skills:
 
 # Workflow Fixer Agent
 
+**Report family:** `repo-workflow`. Write every audit, fix, and verification report to
+`local-tmp/repo-workflow/`. Run `mkdir -p local-tmp/repo-workflow/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

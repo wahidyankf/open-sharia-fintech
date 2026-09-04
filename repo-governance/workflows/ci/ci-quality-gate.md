@@ -36,7 +36,7 @@ outputs:
     description: Number of check-fix cycles performed
   - name: final-report
     type: file
-    pattern: generated-reports/ci__*__audit.md
+    pattern: local-tmp/ci/ci__*__audit.md
     description: Final audit report from ci-checker
 ---
 

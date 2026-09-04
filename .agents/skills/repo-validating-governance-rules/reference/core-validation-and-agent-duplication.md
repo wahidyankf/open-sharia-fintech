@@ -29,7 +29,7 @@ date fields must not exist at all, not merely be correct).
 ## Convergence Mechanics (applies to every step below)
 
 **Known False Positive Skip List**: before validation, load
-`generated-reports/.known-false-positives.md` if it exists; before reporting any finding, check it
+`local-tmp/.known-false-positives.md` if it exists; before reporting any finding, check it
 against the stable key `[category] | [file] | [brief-description]` — if matched, log as
 `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` (informational, not counted).
 

@@ -17,14 +17,17 @@ skills:
 
 # Repository Harness Compatibility Fixer Agent
 
+**Report family:** `harness-compat`. Write every audit, fix, and verification report to
+`local-tmp/harness-compat/`. Run `mkdir -p local-tmp/harness-compat/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating drift findings requires semantic
   comparison (not just string matching) against current file state, sophisticated confidence
   assessment across both phases, and pattern recognition across multiple harness binding formats.
 - **Input**: audit report from `repo-harness-compatibility-checker` at
-  `generated-reports/harness-compat__*__audit.md`
-- **Output**: `generated-reports/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
+  `local-tmp/harness-compat/harness-compat__*__audit.md`
+- **Output**: `local-tmp/harness-compat/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
 Read a validated harness compatibility audit report and apply fixes: Phase 0 auto-fixes
 Invariant 3 (binding sync) only, flags Invariants 1/2/4/5 for human resolution; Phase 1 updates

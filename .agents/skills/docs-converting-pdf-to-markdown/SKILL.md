@@ -42,7 +42,7 @@ files and return `updated-lifecycle-evidence`. Omitted delegation preserves stan
 - **Read**: source Markdown and temporary extracted text files
 - **Glob**: locate the MD file when path not specified
 - **Grep**: search MD for text segments, count figures, find Mermaid blocks
-- **Write**: progressive audit/fix reports to `generated-reports/`
+- **Write**: progressive audit/fix reports to `local-tmp/pdf-to-md/`
 
 ## Reference Documentation
 

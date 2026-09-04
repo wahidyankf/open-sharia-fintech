@@ -10,7 +10,7 @@ goal: >
   plan, never the dependency edits.
 termination: >
   A grill-validated plan exists at plans/backlog/<identifier>/, passes plan-quality-gate at
-  strict mode, and a dependency clearance report is written to generated-reports/. No manifest
+  strict mode, and a dependency clearance report is written to local-tmp/dependency-bump-planning/. No manifest
   or lockfile is modified by this workflow.
 inputs:
   - name: scope-filter
@@ -44,7 +44,7 @@ inputs:
 outputs:
   - name: clearance-report
     type: file
-    pattern: generated-reports/dependency-bump-planning__*__report.md
+    pattern: local-tmp/dependency-bump-planning/dependency-bump-planning__*__report.md
     description: Inventory + Security & Functional Clearance Status table + cutoff computation. Always written.
   - name: plan-path
     type: string

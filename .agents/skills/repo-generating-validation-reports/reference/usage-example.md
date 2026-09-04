@@ -8,7 +8,7 @@
 # Generate UUID and determine chain
 MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 SCOPE="${EXECUTION_SCOPE:-docs}"
-CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+CHAIN_FILE="local-tmp/.execution-chain-${SCOPE}"
 
 if [ -f "$CHAIN_FILE" ]; then
   read PARENT_TIME PARENT_CHAIN < "$CHAIN_FILE"
@@ -30,7 +30,7 @@ echo "$(date +%s) $UUID_CHAIN" > "$CHAIN_FILE"
 TIMESTAMP=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
 
 # Create report filename
-REPORT_FILE="generated-reports/docs__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
+REPORT_FILE="local-tmp/docs/docs__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
 
 # Initialize report (progressive writing starts here)
 cat > "$REPORT_FILE" << 'REPORT_HEADER'

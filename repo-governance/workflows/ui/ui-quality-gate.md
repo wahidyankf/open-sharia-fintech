@@ -33,7 +33,7 @@ outputs:
     description: Lifecycle evidence state, separate from final-status
   - name: final-report
     type: file
-    pattern: generated-reports/swe-ui__*__audit.md
+    pattern: local-tmp/swe-ui/swe-ui__*__audit.md
     description: Final audit report
 ---
 

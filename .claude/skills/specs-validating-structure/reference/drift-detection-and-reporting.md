@@ -19,7 +19,7 @@ plan, not a stub.
 
 ## Execution Pattern
 
-1. **Initialize**: generate UUID, create the report file in `generated-reports/`.
+1. **Initialize**: generate UUID, create the report file in `local-tmp/specs/`.
 2. **Run non-delegated deterministic checks**: use the current commands above. Never rerun or
    re-derive an exact delegated predicate.
 3. **Validate per folder**: for each listed folder, run LLM Categories 1-7 on it and its

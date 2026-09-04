@@ -85,7 +85,7 @@ When categorizing a finding, use this decision tree:
 
 ```bash
 # Create report file immediately
-REPORT_FILE="generated-reports/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
+REPORT_FILE="local-tmp/${AGENT_FAMILY}/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
 
 # Write header
 cat > "$REPORT_FILE" <<'EOF'

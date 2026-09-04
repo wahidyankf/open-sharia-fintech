@@ -18,17 +18,17 @@ when_to_use: Use when generating a fix report that follows an audit, scheduling 
 
 ```bash
 # Audit report
-AUDIT="generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md"
+AUDIT="local-tmp/docs/docs__a1b2c3__2025-12-14--20-45__audit.md"
 
 # Fix report (same UUID and timestamp)
-FIX="generated-reports/docs__a1b2c3__2025-12-14--20-45__fix.md"
+FIX="local-tmp/docs/docs__a1b2c3__2025-12-14--20-45__fix.md"
 ```
 
 **Bad Example:**
 
 ```bash
 # Fix report with new timestamp (DO NOT DO THIS)
-FIX="generated-reports/docs__d4e5f6__2025-12-14--21-00__fix.md"
+FIX="local-tmp/docs/docs__d4e5f6__2025-12-14--21-00__fix.md"
 # Can't match to source audit!
 ```
 

@@ -22,7 +22,7 @@ dark mode, responsive design, anti-patterns), omitting exact delegated predicate
 
 **Args**: `quality-gate-phase: discovery, scope: {input.scope}, delegated-gate-ids: {step0.outputs.delegated-gate-ids}, lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 
-**Output**: Audit report in `generated-reports/swe-ui__{uuid}__{timestamp}__audit.md`
+**Output**: Audit report in `local-tmp/swe-ui/swe-ui__{uuid}__{timestamp}__audit.md`
 
 Technical checker or report-generation errors go directly to Step 5 with `final-status: fail`.
 

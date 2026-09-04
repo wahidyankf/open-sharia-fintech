@@ -45,15 +45,15 @@ outputs:
     description: Number of check-fix cycles executed
   - name: content-report
     type: file
-    pattern: generated-reports/ayokoding-web-general__*__audit.md
+    pattern: local-tmp/ayokoding-web-general/ayokoding-web-general__*__audit.md
     description: Final content validation report
   - name: facts-report
     type: file
-    pattern: generated-reports/ayokoding-web-facts__*__audit.md
+    pattern: local-tmp/ayokoding-web-facts/ayokoding-web-facts__*__audit.md
     description: Final facts validation report
   - name: links-report
     type: file
-    pattern: generated-reports/ayokoding-web-link__*__audit.md
+    pattern: local-tmp/ayokoding-web-link/ayokoding-web-link__*__audit.md
     description: Final links validation report
 ---
 

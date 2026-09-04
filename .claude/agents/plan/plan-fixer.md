@@ -21,6 +21,9 @@ skills:
 
 # Plan Fixer Agent
 
+**Report family:** `plan`. Write every audit, fix, and verification report to
+`local-tmp/plan/`. Run `mkdir -p local-tmp/plan/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)

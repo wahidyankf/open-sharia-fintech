@@ -54,7 +54,7 @@ Run `{agent-family}-fixer` on this audit report:
 
 ## Audit Completion
 
-**Report File**: `generated-reports/{agent-family}__{uuid-chain}__{timestamp}__audit.md`
+**Report File**: `local-tmp/{agent-family}/{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 **Next Steps**:
 1. Review findings by priority (CRITICAL → HIGH → MEDIUM → LOW)
 2. Run fixer agent if auto-fixes desired

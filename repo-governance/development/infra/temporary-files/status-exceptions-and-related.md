@@ -24,11 +24,11 @@ Under the "Generated reports" section (line 73):
 
 Under the "Execution tracking files" section:
 
-- `generated-reports/.execution-chain-*`
+- `local-tmp/.execution-chain-*` — covered by the `local-tmp/*` pattern above; listed for clarity
 
 Files in these directories will not be committed to the repository.
 
-**Note**: The `.execution-chain-{scope}` files are hidden files within `generated-reports/` used for parent-child execution tracking. They are automatically gitignored via the `generated-reports/` pattern.
+**Note**: The `.execution-chain-{scope}` files are hidden files at the root of `local-tmp/` used for parent-child execution tracking. They sit at the root rather than under a family directory because the chain spans families. They are automatically gitignored via the `local-tmp/*` pattern.
 
 ## Exception Handling
 
@@ -67,7 +67,7 @@ This convention provides:
 ## Important Notes
 
 - Always use one of these directories for temporary files (never the repository root)
-- Choose `generated-reports/` for structured reports, `local-tmp/` for everything else
+- Choose `generated-reports/` only for an artifact a human asked for by name and will read; everything else goes to `local-tmp/<agent-family>/`
 - Include dates in report filenames for traceability
 - Remember these files are gitignored and won't be committed
 - Clean up old files periodically to prevent accumulation

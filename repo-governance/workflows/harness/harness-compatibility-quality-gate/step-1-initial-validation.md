@@ -16,7 +16,7 @@ Lifecycle-owned predicates are delegated under the shared
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},
 lifecycle-evidence: {step0.outputs.lifecycle-evidence}`
 - **Output**: `{audit-report-1}` — Initial audit report in
-  `generated-reports/harness-compat__{uuid-chain}__{timestamp}__audit.md`
+  `local-tmp/harness-compat/harness-compat__{uuid-chain}__{timestamp}__audit.md`
 
 **What the checker does**:
 
@@ -40,7 +40,7 @@ For each harness listed in the platform-binding catalog:
 4. Records any drift as a finding (CRITICAL / HIGH / MEDIUM / LOW)
 
 **UUID Chain Tracking**: Checker generates a 6-char UUID and writes to
-`generated-reports/.execution-chain-harness-compat` before spawning `web-researcher`
+`local-tmp/.execution-chain-harness-compat` before spawning `web-researcher`
 tasks. See the Temporary Files Convention for details.
 
 **Success criteria**: Checker completes, generates the domain audit, and returns the lifecycle

@@ -22,6 +22,9 @@ skills:
 
 # Plan Execution Checker Agent
 
+**Report family:** `plan-execution`. Write every audit, fix, and verification report to
+`local-tmp/plan-execution/`. Run `mkdir -p local-tmp/plan-execution/` before the first write.
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -44,7 +47,7 @@ UTC+7 timestamp format, and progressive report writing patterns.
 
 ## Temporary Report Files
 
-Writes validation findings to `generated-reports/` using the pattern
+Writes validation findings to `local-tmp/plan-execution/` using the pattern
 `plan-execution__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`.
 
 ## Core Responsibility

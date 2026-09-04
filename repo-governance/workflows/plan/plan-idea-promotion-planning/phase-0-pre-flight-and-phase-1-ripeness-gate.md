@@ -42,7 +42,7 @@ questions, but it may not be a stub, a placeholder, or a `TODO`:
    a fabricated metric).
 
 **If any section is a stub** → the brief is **not ripe**. Write a `readiness-report` to
-`generated-reports/` naming exactly which sections fail and why, tell the user the brief needs
+`local-tmp/plan-idea-promotion-planning/` naming exactly which sections fail and why, tell the user the brief needs
 enriching first (the legitimate **"not promoted yet"** state, distinct from "rejected"), set
 `final-status=not-ripe`, and **terminate without creating any plan**. Do not silently promote a thin
 brief.

@@ -15,7 +15,7 @@ when_to_use: Use when running or interpreting the fixer step of the Primer quali
 ```bash
 # Invoke via Task tool with audit report and mode parameter
 subagent_type: apps-ayokoding-www-primer-fixer
-prompt: "Apply fixes from generated-reports/ayokoding-web-primer__a1b2c3__2026-07-13--14-30__audit.md with mode={input.mode}; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
+prompt: "Apply fixes from local-tmp/ayokoding-web-primer/ayokoding-web-primer__a1b2c3__2026-07-13--14-30__audit.md with mode={input.mode}; delegated-gate-ids: {step0.outputs.delegated-gate-ids}; lifecycle-evidence: {step0.outputs.lifecycle-evidence}"
 ```
 
 **Fix application strategy**:
@@ -48,7 +48,7 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-primer__a1b2c3__2026-0
 **Outputs**:
 
 - Modified tutorial files with fixes applied
-- Fix report: `generated-reports/ayokoding-web-primer__{uuid-chain}__{timestamp}__fix.md` (uses
+- Fix report: `local-tmp/ayokoding-web-primer/ayokoding-web-primer__{uuid-chain}__{timestamp}__fix.md` (uses
   same UUID chain as source audit)
 - List of deferred issues requiring user decision
 - Updated lifecycle evidence after scope-intersection invalidation; carry Step 0 evidence forward
