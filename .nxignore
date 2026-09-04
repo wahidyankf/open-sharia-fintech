@@ -3,7 +3,14 @@ docs/
 plans/
 *.md
 
-# Claude Code worktrees (git worktrees contain duplicate project.json files)
+# Worktrees. A git worktree is a full second copy of the tree, so every
+# project.json inside it duplicates one Nx already knows about (26 of them while
+# one plan worktree is checked out). Nx currently collapses those by project
+# name, so this is not fixing an observed miscount — it removes the ambiguity of
+# which copy a project's configuration resolves from. `worktrees/` is the
+# canonical plan-worktree route in the worktree-specification convention;
+# `.claude/worktrees/` is the harness-created route.
+worktrees/
 .claude/worktrees/
 
 # Git files
@@ -22,6 +29,13 @@ temp/
 # CI artifacts
 coverage/
 .nyc_output/
+
+# Build output that copies a project.json into itself. Storybook writes the
+# owning project's project.json into its static bundle, so an un-ignored
+# storybook-static/ registers a phantom Nx project named after the directory —
+# gitignored on disk, but still discovered here, because Nx project discovery
+# does not read .gitignore.
+storybook-static/
 
 # Archived applications (legacy code, not part of active build graph)
 archived/

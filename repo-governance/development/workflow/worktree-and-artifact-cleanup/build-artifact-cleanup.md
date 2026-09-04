@@ -10,7 +10,7 @@ tags:
   - cleanup
   - parallelism
 created: 2026-07-20
-when_to_use: Use when deciding what build output to purge, and what to leave alone, during plan-end cleanup.
+when_to_use: Use when deciding what build output to purge, and what to leave alone, during post-merge cleanup.
 ---
 
 # Build-Artifact Cleanup

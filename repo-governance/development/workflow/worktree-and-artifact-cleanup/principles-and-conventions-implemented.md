@@ -26,7 +26,7 @@ when_to_use: Use when tracing why the worktree and artifact cleanup gate exists 
   Shared caches other sessions depend on are out of scope by rule, not by judgement call.
 
 - **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Cleanup is
-  a fixed plan-end gate with a short, ordered checklist rather than a heuristic sweep, so its blast
+  a fixed post-merge gate with a short, ordered checklist rather than a heuristic sweep, so its blast
   radius stays legible.
 
 ## Conventions Implemented/Respected
