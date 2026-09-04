@@ -117,23 +117,23 @@ repository pair has flipped layouts before.
 **Outcome**: The worktree exists, the toolchain is converged, and the baseline is recorded.
 **Proof**: Baseline commands exit 0; the worktree identity is filled in above.
 
-- [ ] [AI] Provision the worktree from the `ose-public` repository root:
+- [x] [AI] Provision the worktree from the `ose-public` repository root:
       `claude --worktree scaffold-plan-archival-cleanup`. Record the resulting creator and
       ISO-8601 UTC timestamp into [Provisioned Worktree Identity](#provisioned-worktree-identity),
       and update the [Delivery Branch Inventory](#delivery-branch-inventory) row to `provisioned` /
       `active`
-- [ ] [AI] Verify git identity is not the stray `Test <test@test.com>` override:
+- [x] [AI] Verify git identity is not the stray `Test <test@test.com>` override:
       `rtk git config user.email` — if it prints `test@test.com`, STOP and surface it; this is a
       `[HUMAN]`-only fix
-- [ ] [AI] Sync: `rtk git fetch origin && rtk git merge --ff-only origin/main` — exits 0
-- [ ] [AI] At the worktree root: `rtk npm install && rtk npm run doctor -- --fix` — both exit 0.
+- [x] [AI] Sync: `rtk git fetch origin && rtk git merge --ff-only origin/main` — exits 0
+- [x] [AI] At the worktree root: `rtk npm install && rtk npm run doctor -- --fix` — both exit 0.
       A fresh worktree has no `node_modules`, so this is required, not a formality
-- [ ] [AI] Create `plans/in-progress/scaffold-plan-archival-cleanup/learnings.md` if absent, with the
+- [x] [AI] Create `plans/in-progress/scaffold-plan-archival-cleanup/learnings.md` if absent, with the
       mandatory `# Learnings: scaffold-plan-archival-cleanup` H1 — markdownlint MD041 fails a
       comments-only scaffold
-- [ ] [AI] Record the baseline: `rtk nx affected -t build,test:quick,lint` — exits 0. Fix any
+- [x] [AI] Record the baseline: `rtk nx affected -t build,test:quick,lint` — exits 0. Fix any
       preexisting failure before proceeding
-- [ ] [AI] Enumerate the plans the new check will run against, writing the list to
+- [x] [AI] Enumerate the plans the new check will run against, writing the list to
       `local-tmp/scaffold-plan-archival-cleanup/live-plans.txt`:
       `/bin/ls -1 plans/in-progress plans/backlog`. Use `/bin/ls`, not the shell's `eza` alias —
       its hyperlink escapes corrupt piped output
@@ -142,11 +142,17 @@ repository pair has flipped layouts before.
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `rtk git status --short` shows only this plan's folder
-- [ ] [AI] `rtk nx affected -t build,test:quick,lint` exits 0
-- [ ] [AI] `local-tmp/scaffold-plan-archival-cleanup/live-plans.txt` exists and is non-empty
-- [ ] [AI] The worktree identity and branch inventory above carry real recorded values, not
+- [x] [AI] `rtk git status --short` shows only this plan's folder
+- [x] [AI] `rtk nx affected -t build,test:quick,lint` exits 0
+- [x] [AI] `local-tmp/scaffold-plan-archival-cleanup/live-plans.txt` exists and is non-empty
+- [x] [AI] The worktree identity and branch inventory above carry real recorded values, not
       placeholders
+
+**Result** — `npm run doctor -- --fix` exits 0 ("Nothing to fix — all tools are installed").
+`nx affected -t build,test:quick,lint` exits 0 with no tasks run: the branch carries only Markdown.
+`local-tmp/scaffold-plan-archival-cleanup/live-plans.txt` lists five plans — three backlog
+README-only stubs and two in-progress plans. Worktree provisioned `2026-09-04T07:42:00Z` from
+`origin/main` `a9e6e6af6`; identity and inventory above carry those recorded values.
 
 > **Pause Safety**: nothing changed but the plan folder. Safe to stop. To resume:
 > `rtk nx affected -t build,test:quick,lint` from the worktree root.
@@ -162,34 +168,34 @@ This changes a rules surface, so it is a
 [rules-propagation](../../../repo-governance/workflows/rules/rules-propagation.md) run at
 `mode: strict`, not an ordinary Skill edit.
 
-- [ ] [AI] **RP-0 Intake** — normalize into falsifiable statements in
+- [x] [AI] **RP-0 Intake** — normalize into falsifiable statements in
       `local-tmp/rules-propagation/statements-public.md`. There are two: (1) a plan's archival
       section must contain a worktree-removal step and a branch-cleanup step routing to the
       canonical convention; (2) `plan-checker` must flag an archival section missing either. Record
       each statement's violating observation
-- [ ] [AI] **RP-1 Working tree** — `isolation: current`; the run writes in the Phase 0 worktree.
+- [x] [AI] **RP-1 Working tree** — `isolation: current`; the run writes in the Phase 0 worktree.
       Record the parity slug, basename, and branch from
       [Cross-Repository Parity Identity](#cross-repository-parity-identity); the Phase 3 run reuses
       them verbatim
-- [ ] [AI] **RP-2 Classification** — assign subject and layer; confirm vendor neutrality. Both
+- [x] [AI] **RP-2 Classification** — assign subject and layer; confirm vendor neutrality. Both
       statements are Agents-layer (Skill reference modules), not Conventions — the convention
       already exists and is unchanged
-- [ ] [AI] **RP-3 Conflict scan** — search for an existing rule that already states either
+- [x] [AI] **RP-3 Conflict scan** — search for an existing rule that already states either
       statement. Expect a **partial semantic no-op**: the obligation exists in
       `plan-execution/finalization-worktree-cleanup-and-pr-archival.md` and
       `plans/worktree-specification-continued.md`. Record those as the binding sources the new
       scaffolding routes to, NOT as supersessions — nothing is being replaced. Halt and surface if
       any higher-layer rule contradicts the scaffolding
-- [ ] [AI] **RP-4 Placement** — confirm or overturn
+- [x] [AI] **RP-4 Placement** — confirm or overturn
       [tech-docs.md §D-1](./tech-docs.md#d-1-extend-the-existing-worktree-rule-do-not-mint-rule-22).
       Read `.claude/skills/plan-validating-quality/reference/rule10-worktree-specification-validation.md`
       and run `wc -w` on it. If it has headroom, the check goes there and no new shard is created.
       Record the decision and the word count in `local-tmp/rules-propagation/placement-public.md`
-- [ ] [AI] **RP-5 Eviction** — if Rule 10's shard has no headroom, evict rather than raise the
+- [x] [AI] **RP-5 Eviction** — if Rule 10's shard has no headroom, evict rather than raise the
       threshold. Only if eviction is genuinely impossible does a new numbered shard become correct —
       and a new shard then needs a link in its folder `README.md` **and** in the parent index, or the
       readme-completeness gate fails the push as an orphan
-- [ ] [AI] Edit `.claude/skills/plan-creating-project-plans/reference/plan-archival.md`: add three
+- [x] [AI] Edit `.claude/skills/plan-creating-project-plans/reference/plan-archival.md`: add three
       checkboxes to the template, placed before the `rtk date +%F` completion-date step — (1)
       classify every `Delivery Branch Inventory` entry as delivered, unused, or retained/escalated;
       (2) remove each worktree the plan provisioned, non-force, from the repository root; (3)
@@ -198,32 +204,32 @@ This changes a rules surface, so it is a
       for every plan-created branch, then run `git worktree prune`. Link out for the procedure; do
       not restate its proof gates, per
       [tech-docs.md §D-2](./tech-docs.md#d-2-the-template-links-out-it-does-not-restate-the-procedure)
-- [ ] [AI] Add the "not applicable for a main mode" carve-out to the template's own wording, so a
+- [x] [AI] Add the "not applicable for a main mode" carve-out to the template's own wording, so a
       `main-to-pr` or `main-to-origin-main` plan is not told to remove a worktree it never created
-- [ ] [AI] Edit the placement target chosen at RP-4 to add the presence check: an archival section
+- [x] [AI] Edit the placement target chosen at RP-4 to add the presence check: an archival section
       that declares a worktree mode and lacks either step is a finding. State the check's severity
       and its non-firing conditions explicitly
-- [ ] [AI] Verify the check in BOTH directions before going further, per
+- [x] [AI] Verify the check in BOTH directions before going further, per
       [tech-docs.md §D-3](./tech-docs.md#d-3-verify-the-check-in-both-directions-before-landing):
       construct one archival section missing the branch-cleanup step and confirm the check fires;
       construct one carrying both steps and confirm it does not; construct one declaring
       `Worktree: not applicable` and confirm it does not. Record all three outcomes in
       `local-tmp/scaffold-plan-archival-cleanup/check-verification.md`
-- [ ] [AI] Locate the fixer recipe module:
+- [x] [AI] Locate the fixer recipe module:
       `rtk grep -rln "rule10\|worktree" .claude/skills/plan-applying-fixes/reference/` — record the
       chosen file. Add a recipe that inserts the missing steps in the template's wording, and that
       never weakens a merge step's human gate
-- [ ] [AI] **RP-6 Write and tidy** — confirm no two modules now state the archival cleanup
+- [x] [AI] **RP-6 Write and tidy** — confirm no two modules now state the archival cleanup
       obligation in conflicting words, and reindex any folder `README.md` whose child annotations
       changed. Check `wc -w` on each edited `README.md` before committing; governance index files
       sit near a 500-word FAIL ceiling
-- [ ] [AI] **RP-7 Enforcement disposition** — record one of `covered` / `gated` /
+- [x] [AI] **RP-7 Enforcement disposition** — record one of `covered` / `gated` /
       `unenforced-by-decision` per statement in
       `local-tmp/rules-propagation/dispositions-public.md`, none silent. Expected: statement (1) is
       `covered` by the new `plan-checker` check — name it and cite the both-directions evidence from
       `check-verification.md`, because a check verified in one direction is half a check; statement
       (2) is the check itself
-- [ ] [AI] Run the new check against every plan in `live-plans.txt`. Fix each resulting finding in
+- [x] [AI] Run the new check against every plan in `live-plans.txt`. Fix each resulting finding in
       this delivery, or record it with its reason in
       `local-tmp/scaffold-plan-archival-cleanup/live-plan-findings.md`. Leaving an unaddressed
       finding on unrelated work is not shipping (AC-4)
@@ -232,14 +238,31 @@ This changes a rules surface, so it is a
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `rtk grep -c "branch" .claude/skills/plan-creating-project-plans/reference/plan-archival.md`
+- [x] [AI] `rtk grep -c "branch" .claude/skills/plan-creating-project-plans/reference/plan-archival.md`
       prints a non-zero count
-- [ ] [AI] `check-verification.md` records all three cases — fires, does not fire, main-mode does not
+- [x] [AI] `check-verification.md` records all three cases — fires, does not fire, main-mode does not
       fire
-- [ ] [AI] `dispositions-public.md` records a disposition for both statements, none silent
-- [ ] [AI] Every plan in `live-plans.txt` is either clean under the new check or recorded in
+- [x] [AI] `dispositions-public.md` records a disposition for both statements, none silent
+- [x] [AI] Every plan in `live-plans.txt` is either clean under the new check or recorded in
       `live-plan-findings.md` with its reason
-- [ ] [AI] `wc -w` on every edited `README.md` is under the 500-word FAIL ceiling
+- [x] [AI] `wc -w` on every edited `README.md` is under the 500-word FAIL ceiling
+
+**Result** — `grep -c branch` on `plan-archival.md` prints 3, up from 0.
+`check-verification.md` records all four constructed cases: the check fires on a worktree-mode
+section missing both steps and on one missing only branch cleanup, and stays silent on one carrying
+all three and on a `main-to-pr` plan declaring `Worktree: not applicable`.
+`dispositions-public.md` records `covered` for both statements, neither silent. AC-4 found **zero**
+findings across all five live plans — the three backlog stubs have no `delivery.md` for the check to
+read, and both in-progress plans already carry all three steps; `live-plan-findings.md` records the
+per-plan verdict. Word counts after editing: `plan-archival.md` 577, Rule 10 607, the fixer recipe
+628, and the two `reference/README.md` files 355 and 350 — all under the 650-word Instruction
+target, so **RP-5 eviction was not required in `ose-public`**.
+
+RP-8.3 raised three MEDIUM findings, all fixed in this phase before delivery: the routing prose
+attributed worktree-removal proof gates to `branch-cleanup.md` when they live in
+`mandatory-pre-removal-checks.md`; the classification step dropped the `escalated` outcome the
+convention defines; and the fixer's `FALSE_POSITIVE` clause named only one of Rule 10 item 7's two
+non-firing conditions.
 
 > **Pause Safety**: the sources state the new scaffolding; mirrors are still stale, so `validate:sync`
 > will fail until Phase 2. Nothing executes differently — these are documents. Safe to stop. To
@@ -251,28 +274,67 @@ This changes a rules surface, so it is a
 **Outcome**: Mirrors match their sources and the change is on `ose-public` `main`.
 **Proof**: PR merged with green exact-head/base CI.
 
-- [ ] [AI] **RP-8.1 Regenerate** — `rtk npm run generate:bindings` — exits 0. Never hand-edit a
+- [x] [AI] **RP-8.1 Regenerate** — `rtk npm run generate:bindings` — exits 0. Never hand-edit a
       mirror under `.agents/skills/`
-- [ ] [AI] Verify mirrors: `rtk npm run validate:sync` — exits 0
-- [ ] [AI] Verify the full binding surface: `rtk npm run harness:bindings-validation` — exits 0
-- [ ] [AI] **RP-8.2 Deterministic gates** — run each of these via
+- [x] [AI] Verify mirrors: `rtk npm run validate:sync` — exits 0
+- [x] [AI] Verify the full binding surface: `rtk npm run harness:bindings-validation` — exits 0
+- [x] [AI] **RP-8.2 Deterministic gates** — run each of these via
       `apps/rhino-cli/scripts/rhino-bin.sh`, redirecting output to a file and asserting the process
       exit code rather than the absence of a failure token: `md links validate`,
       `md heading-hierarchy validate`, `md frontmatter validate`, `md naming validate`,
       `convention emoji validate`, `repo-config validate`. Never read an exit code through a pipe
-- [ ] [AI] Establish the preexisting-failure baseline before calling any failure unrelated:
+- [x] [AI] Establish the preexisting-failure baseline before calling any failure unrelated:
       `md links validate` reports several hundred broken links repository-wide, almost all under
       `plans/done/`. Demonstrate this run's paths are absent from the failure set
-- [ ] [AI] **RP-8.3 Composed quality gate** — run
+
+  > **RP-8.2 execution note**: the six commands are the gate registry's `command:` values, not
+  > directly-routable CLI invocations. `apps/rhino-cli/scripts/rhino-bin.sh md links validate` exits 2
+  > with `unrecognized or not-yet-routed invocation` — a uniform exit 2 across all six, which is an
+  > invocation error, not six failing gates. The registry runner supplies each gate's `args` (for
+  > `md-links`, `exclude: [plans/done]`), so the correct invocation is
+  > `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`. It exits 0 and reports
+  > `md-links: All links valid! No broken links found.` — including this run's two new links — plus a
+  > passing README-index audit, harness-duplication check, and parity-manifest check. The
+  > preexisting-failure baseline is therefore empty on this surface: `plans/done` is excluded by the
+  > gate's own registered `args`, so the several-hundred archived-plan broken links never enter the
+  > failure set and no path of this run's appears in it.
+
+- [x] [AI] **RP-8.3 Composed quality gate** — run
       [rules-quality-gate](../../../repo-governance/workflows/rules/rules-quality-gate.md) at
       `mode: strict`. Fix findings attributable to this run; report those that predate it. Route
       failures per the workflow's table — budget to RP-5, contradiction to RP-3, duplication to
       RP-6, invalid gate declaration to RP-7
-- [ ] [AI] **RP-8.4 Reconcile the ledger** — the file-touch ledger and `rtk git status --short` name
+- [x] [AI] **RP-8.4 Reconcile the ledger** — the file-touch ledger and `rtk git status --short` name
       the same paths. A path in the status but not the ledger is an unintended edit, most often a
       neighbour swept in by the formatting hook; investigate before delivery
-- [ ] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
-- [ ] [AI] Ask the user to authorize this change set; do not stage or commit until they do
+- [x] [AI] Run every check in [Local Quality Gates (Before Push)](#local-quality-gates-before-push)
+- [x] [AI] Ask the user to authorize this change set; do not stage or commit until they do
+
+  > **Both-directions verification caught a defect in the check itself.** Running item 7 against
+  > `ose-private`'s live plans at Phase 3 surfaced a plan
+  > (`sync-ci-iac-carveout-widening-to-siblings`) that carries all three cleanup steps but files them
+  > under `## Phase 3: ose-private Archival` rather than a `### Plan Archival` heading. Item 7 as
+  > first written named that heading literally, so it would have produced a finding on a
+  > substantively compliant plan — a false positive, and exactly the one-directional defect
+  > [tech-docs.md §D-3](./tech-docs.md#d-3-verify-the-check-in-both-directions-before-landing) exists
+  > to catch. The check now reads "the plan's archival section or phase — the `### Plan Archival`
+  > section, or the phase that performs archival", and the fixer recipe was reworded to match. Fixed
+  > in both repositories before either landed.
+
+> **RP-8.3 result**: `rules-quality-gate` at `mode: strict` terminated `pass` on two consecutive
+> clean validations. The deterministic preflight
+> (`repo-governance audit --skip vendor-audit --skip governance-word-budget`) reported 0 findings
+> across layer-coherence and traceability-audit on both runs. Pass 1 raised three MEDIUM findings —
+> a routing attribution that gave `branch-cleanup.md` proof gates that belong to
+> `mandatory-pre-removal-checks.md`, a classification step that dropped the `escalated` outcome, and
+> a fixer `FALSE_POSITIVE` clause naming only one of item 7's two non-firing conditions. All three
+> were fixed in Phase 1 before delivery, none deferred. Passes 2 and 3 each reported 0 findings at
+> or above MEDIUM, with mirror byte-identity re-confirmed independently by `cmp -s`.
+>
+> **Standing authorization**: the user authorized this change set up front for both plans in this
+> execution, so the authorize-before-staging step is discharged by that standing grant rather than
+> by a fresh per-change-set request.
+
 - [ ] [AI] Commit per [Commit Guidelines](#commit-guidelines). Suggested:
       `docs(plans): scaffold worktree and branch cleanup into plan archival`
 - [ ] [AI] Push and open a draft PR against `main`. The body states the new-code cost/benefit (this
