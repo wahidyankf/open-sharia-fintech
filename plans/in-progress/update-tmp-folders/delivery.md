@@ -849,8 +849,10 @@ Every path here is untracked and gitignored. Nothing in this phase is committed 
       do not mark that gate complete before merge or direct-push confirmation. Its result belongs in
       the plan-execution final report, not a speculative pre-merge checkbox.
 - [ ] [AI] Classify every [Delivery Branch Inventory](#delivery-branch-inventory) entry in both
-      repositories as `delivered`, `unused`, or `retained/escalated`. An active or unrecorded branch
-      blocks cleanup — this inventory, not the file ledger, controls branch cleanup
+      repositories as `delivered`, `unused`, or `retained/escalated`; a retained entry names who owns
+      it and why it outlives the plan, and an entry whose state is ambiguous or whose proof is missing
+      is escalated, never deleted. An active or unrecorded branch blocks cleanup — this inventory, not
+      the file ledger, controls branch cleanup
 - [ ] [AI] Remove both worktrees now that the plan is done using them — git-mechanical steps:
       `rtk git -C <ose-public-root> worktree remove worktrees/update-tmp-folders` and the same for
       `ose-private`. Non-force command only. Do not run this from inside the worktree being removed;

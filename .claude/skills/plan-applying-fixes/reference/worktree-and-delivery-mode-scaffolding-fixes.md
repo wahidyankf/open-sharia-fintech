@@ -31,13 +31,17 @@ resolved host path to ignored runtime evidence and never retain it in `delivery.
 **How to fix missing worktree-mode provisioning command**: insert the canonical fenced bash block immediately
 under the path declaration: ` ```bash\nclaude --worktree <plan-identifier>\n``` `.
 
-**How to fix missing archival cleanup steps**: insert the three checkboxes verbatim from the Plan
+**How to fix missing or misordered archival cleanup steps**: insert the three checkboxes verbatim
+from the Plan
 Archival template in
 [plan-archival.md](../../plan-creating-project-plans/reference/plan-archival.md) — inventory
-classification, worktree removal, branch cleanup — immediately before the completion-date step of
-the plan's archival section or phase. **HIGH**: the wording is fixed and the placement is
-mechanical. **FALSE_POSITIVE** — the plan declares a main mode, which provisions no worktree, or it is a
-pre-contract single-file plan with no `delivery.md` for the check to read. Never
+classification, worktree removal, branch cleanup, in that order — immediately before the
+completion-date step of the plan's archival section or phase. Where the plan already removes a
+worktree, move classification above that step rather than appending. For a `main-to-pr` plan
+insert only the branch-cleanup checkbox; the other two are worktree-mode-only and adding them
+contradicts the plan's declared mode. **HIGH**: the wording is fixed and the placement is
+mechanical. **FALSE_POSITIVE** — the plan declares `main-to-origin-main`, which creates no
+branch and provisions no worktree, or it is a pre-contract single-file plan with no `delivery.md` for the check to read. Never
 weaken a merge step's `[HUMAN]` gate while editing this section.
 
 ## Delivery Mode Fixes (Step 5m Findings)

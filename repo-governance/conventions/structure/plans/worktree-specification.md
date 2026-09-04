@@ -15,7 +15,8 @@ when_to_use: Use when writing a plan's Worktree section or resolving mode-specif
 # Worktree Specification
 
 Every plan declares its resolved work location before the executor reads the delivery checklist.
-Worktree modes name a worktree path; main modes state `not applicable` and use the primary checkout.
+Worktree modes name a worktree path; main modes state `not applicable`, omit the worktree identity
+and branch inventory, and use the primary checkout.
 
 **Where to declare**:
 

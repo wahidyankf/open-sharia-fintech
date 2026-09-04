@@ -9,6 +9,19 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-09-04: scaffold-plan-archival-cleanup](./2026-09-04__scaffold-plan-archival-cleanup/README.md) —
+  Made the plan-authoring template emit the three archival cleanup steps the governance layer
+  already required — classify the `Delivery Branch Inventory`, remove the worktree, complete branch
+  cleanup — in that order, and taught `plan-checker` to flag a worktree-mode plan that omits or
+  misorders them, with a matching `plan-fixer` repair recipe. The obligation was never missing; only
+  its scaffolding and detection were, so authored plans silently skipped it. Landed in both
+  `ose-public` and `ose-private` from a single-sourced plan folder. Five validation iterations
+  hardened the rule itself: a one-directional heading match, a classification step that dropped the
+  `escalated` outcome, an exemption that wrongly excused `main-to-pr` from branch cleanup, and a
+  live plan that removed its worktree before classifying the inventory were each found and fixed
+  before landing. Four phases. Delivery Mode: `worktree-to-pr`, one worktree per repository.
+  Started 2026-09-04.
+
 - [2026-09-04: adopt-beavernest-test-automation](./2026-09-04__adopt-beavernest-test-automation/README.md) —
   Adopted BeaverNest-derived test-contract discipline across `ose-public` and `ose-private`: an
   enforced unit/integration/E2E ownership registry, native 99% line-coverage and exact 100%
