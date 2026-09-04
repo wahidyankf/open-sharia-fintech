@@ -51,10 +51,13 @@ worktree artifacts are absent):
    `### Plan Archival` section, or the phase that performs archival — contains a step
    classifying every `Delivery Branch Inventory` entry, a worktree-removal step, and a
    branch-cleanup step routing to
-   [Branch Cleanup](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md).
-   Missing any: **MEDIUM** — the obligation already binds at plan-execution
-   finalization, so the defect is that the plan does not show it, not that it is unbound. Never
-   fires for a main mode, which provisions none, or a plan folder with no `delivery.md`.
+   [Branch Cleanup](../../../../repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md),
+   in that order; removal deletes the worktree classification reads. Missing any, or removal
+   before classification: **MEDIUM**; for `main-to-pr`, only branch cleanup is required. The
+   obligation already binds at plan-execution finalization, so the defect is that the plan does
+   not show it, not that it is unbound. Never
+   fires for `main-to-origin-main`, which creates no branch and provisions no worktree, or a
+   plan folder with no `delivery.md`.
 
 **Finding severity**: missing section: **HIGH**. Wrong format/identifier mismatch: **HIGH**. Missing
 provisioning command: **MEDIUM**. Missing cross-reference: **LOW**. More than one distinct worktree
