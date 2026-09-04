@@ -106,7 +106,7 @@ landing a check that immediately reddens unrelated work is not shipping.
 
 ```text
 .
-├── plans/in-progress/scaffold-plan-archival-cleanup/
+├── plans/done/2026-09-04__scaffold-plan-archival-cleanup/
 │   ├── README.md [N] — context and navigation
 │   ├── brd.md [N] — goal, metrics, risks
 │   ├── prd.md [N] — acceptance criteria
@@ -114,7 +114,7 @@ landing a check that immediately reddens unrelated work is not shipping.
 │   ├── delivery.md [N] — executable checklist
 │   └── learnings.md [N] — Knowledge Capture log
 ├── .claude/skills/plan-creating-project-plans/reference/plan-archival.md [E] — add the three cleanup steps
-├── .claude/skills/plan-validating-quality/reference/rule10-worktree-specification-validation.md [E] — add the presence check
+├── .claude/skills/plan-validating-quality/reference/rule10-worktree-specification-validation.md [E] — add the presence and ordering check
 ├── .claude/skills/plan-applying-fixes/reference/*.md [E] — add the repair recipe; exact module discovered by grep
 ├── .claude/skills/plan-validating-quality/reference/README.md [E] — only if D-1's placement changes a shard's annotation
 ├── .agents/skills/plan-creating-project-plans/reference/plan-archival.md [G] — regenerated mirror

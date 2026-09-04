@@ -1,6 +1,6 @@
 # Scaffold Plan-Archival Cleanup Steps
 
-**Status**: In Progress
+**Status**: Done
 
 Make the plan-authoring template emit the worktree-removal and branch-cleanup steps that the
 governance layer already requires, and make `plan-checker` notice when they are missing.
