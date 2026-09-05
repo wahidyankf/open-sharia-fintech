@@ -152,9 +152,111 @@ let ``load defaults every section to empty when repo-config.yml declares none of
         | Ok config ->
             Assert.Empty(config.Harness)
             Assert.Empty(config.Gates)
+            Assert.Empty(config.GateSurfaceGuards)
             Assert.Empty(config.Doctor.SkipTools)
             Assert.Equal<string option>(None, config.Doctor.DotnetGlobalJson)
         | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+    finally
+        Directory.Delete(root, true)
+
+// ---- load: optional gate surface execution guards ----
+
+[<Fact>]
+let ``load parses a tool-neutral gate surface execution guard`` () =
+    let root = newTempDir ()
+
+    try
+        writeFile
+            root
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  "    command: ./hippo"
+                  "    args:"
+                  "      - run"
+                  "      - --class=ephemeral"
+                  "      - --"
+                  "    active-env: HIPPO_SESSION"
+                  "" ])
+
+        match load root with
+        | Ok config ->
+            match Map.tryFind PrePush config.GateSurfaceGuards with
+            | Some guard ->
+                Assert.Equal("./hippo", guard.Command)
+                Assert.Equal<string list>([ "run"; "--class=ephemeral"; "--" ], guard.Args)
+                Assert.Equal("HIPPO_SESSION", guard.ActiveEnv)
+            | None -> Assert.Fail("expected a pre-push surface guard")
+        | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+    finally
+        Directory.Delete(root, true)
+
+[<Fact>]
+let ``load rejects an execution guard for an unknown gate surface`` () =
+    let root = newTempDir ()
+
+    try
+        writeFile
+            root
+            "repo-config.yml"
+            "gate-surface-guards:\n  release: { command: ./guard, active-env: GUARD_ACTIVE }\n"
+
+        match load root with
+        | Error message -> Assert.Contains("unknown gate surface", message)
+        | Ok _ -> Assert.Fail("expected the unknown guard surface to be rejected")
+    finally
+        Directory.Delete(root, true)
+
+[<Theory>]
+[<InlineData("", "GUARD_ACTIVE", "command")>]
+[<InlineData("./guard", "", "active-env")>]
+[<InlineData("./guard", "BAD=NAME", "active-env")>]
+[<InlineData("./guard", "BAD NAME", "active-env")>]
+[<InlineData("./guard", "BAD-NAME", "active-env")>]
+[<InlineData("./guard", "1BAD_NAME", "active-env")>]
+let ``load rejects a malformed gate surface execution guard`` command activeEnv expectedField =
+    let root = newTempDir ()
+
+    try
+        writeFile
+            root
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  sprintf "    command: '%s'" command
+                  sprintf "    active-env: '%s'" activeEnv
+                  "" ])
+
+        match load root with
+        | Error message -> Assert.Contains(expectedField, message)
+        | Ok _ -> Assert.Fail("expected the malformed guard to be rejected")
+    finally
+        Directory.Delete(root, true)
+
+[<Fact>]
+let ``load rejects a null gate surface execution guard argument`` () =
+    let root = newTempDir ()
+
+    try
+        writeFile
+            root
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  "    command: ./guard"
+                  "    args: [run, null, --]"
+                  "    active-env: HIPPO_SESSION"
+                  "" ])
+
+        match load root with
+        | Error message -> Assert.Contains("args[1]", message)
+        | Ok _ -> Assert.Fail("expected a null guard argument to be rejected")
     finally
         Directory.Delete(root, true)
 

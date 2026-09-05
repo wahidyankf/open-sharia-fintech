@@ -1,6 +1,34 @@
 @gate @unit
 Feature: Gate execution
 
+  Scenario: A configured surface guard re-executes the complete gate run exactly once
+    Given pre-push has a configured execution guard and a recording gate
+    When the guarded gate runs with an only selector
+    Then the guard receives the complete gate run arguments
+    And the guard runs exactly once
+    And the selected gate still runs
+
+  Scenario: An active surface guard marker prevents recursive re-execution
+    Given pre-push has a configured execution guard and a recording gate
+    When the gate runs with the configured guard marker active
+    Then the guard is bypassed
+    And the selected gate still runs
+
+  Scenario: A surface guard child exit code is preserved
+    Given pre-push has a configured execution guard that exits with code 23
+    When the guarded pre-push surface runs
+    Then gate run exits with code 23
+
+  Scenario: A configured surface guard fails closed when it cannot start
+    Given pre-push has a missing configured execution guard and a recording gate
+    When the guarded pre-push surface runs
+    Then gate run fails without running the selected gate
+
+  Scenario: An unconfigured surface executes gates directly
+    Given pre-push has no execution guard and has a recording gate
+    When the guarded pre-push surface runs
+    Then the selected gate runs without a guard invocation
+
   Scenario: Rhino CLI kind receives derived files
     Given a rhino-cli gate matches staged files "a.md" and "b.md"
     When "rhino-cli gate run --surface=pre-commit --only=md-naming" runs

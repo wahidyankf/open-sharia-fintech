@@ -114,6 +114,15 @@ type GateSurface =
     | PrePush
     | Ci
 
+/// Optional tool-neutral process wrapper for a complete gate surface run.
+/// The configured command receives `Args`, followed by the current Rhino CLI
+/// executable and its exact `gate run` argument vector. `ActiveEnv` is set by
+/// the wrapper for its child and prevents recursive re-entry.
+type GateSurfaceGuard =
+    { Command: string
+      Args: string list
+      ActiveEnv: string }
+
 /// The scope that determines a gate's inputs on a surface
 /// [Repo-grounded — `repo_config/mod.rs::ScopeKind`].
 type ScopeKind =
@@ -201,6 +210,7 @@ type HarnessCatalog = { Document: string; Verified: string }
 type RepoConfig =
     { Harness: HarnessEntry list
       Gates: GateEntry list
+      GateSurfaceGuards: Map<GateSurface, GateSurfaceGuard>
       Doctor: DoctorConfig
       HarnessCatalog: HarnessCatalog option }
 
@@ -210,6 +220,7 @@ type RepoConfig =
 let empty: RepoConfig =
     { Harness = []
       Gates = []
+      GateSurfaceGuards = Map.empty
       Doctor =
         { DotnetGlobalJson = None
           SkipTools = [] }
@@ -286,6 +297,12 @@ type GateEntryDto =
       CiGroup: string | null }
 
 [<CLIMutable>]
+type GateSurfaceGuardDto =
+    { Command: string | null
+      Args: ResizeArray<string>
+      ActiveEnv: string | null }
+
+[<CLIMutable>]
 type DoctorConfigDto =
     { DotnetGlobalJson: string | null
       SkipTools: ResizeArray<string> }
@@ -297,6 +314,7 @@ type HarnessCatalogDto = { Document: string; Verified: string }
 type RepoConfigDto =
     { Harness: ResizeArray<HarnessEntryDto>
       Gates: ResizeArray<GateEntryDto>
+      GateSurfaceGuards: Dictionary<string, GateSurfaceGuardDto>
       Doctor: DoctorConfigDto
       HarnessCatalog: HarnessCatalogDto }
 
@@ -422,6 +440,59 @@ let private scopeKindNames =
 
 let private lookupVariant (table: (string * 'a) list) (raw: string) : 'a option =
     table |> List.tryFind (fst >> (=) raw) |> Option.map snd
+
+let private isPortableEnvironmentVariableName (value: string) : bool =
+    let isInitial character =
+        Char.IsAsciiLetter character || character = '_'
+
+    let isRemaining character =
+        Char.IsAsciiLetterOrDigit character || character = '_'
+
+    not (String.IsNullOrEmpty value)
+    && isInitial value.[0]
+    && (value |> Seq.skip 1 |> Seq.forall isRemaining)
+
+let private toGateSurfaceGuard
+    (surfaceName: string)
+    (dto: GateSurfaceGuardDto)
+    : Result<GateSurface * GateSurfaceGuard, string> =
+    match lookupVariant gateSurfaceNames surfaceName with
+    | None -> Error(sprintf "gate-surface-guards.%s: unknown gate surface" surfaceName)
+    | Some surface ->
+        let command = Option.ofObj dto.Command |> Option.defaultValue ""
+        let activeEnv = Option.ofObj dto.ActiveEnv |> Option.defaultValue ""
+        let args = toOptionList dto.Args
+
+        if String.IsNullOrWhiteSpace command then
+            Error(sprintf "gate-surface-guards.%s.command: must not be blank" surfaceName)
+        elif command <> command.Trim() then
+            Error(sprintf "gate-surface-guards.%s.command: must not carry leading or trailing whitespace" surfaceName)
+        elif String.IsNullOrWhiteSpace activeEnv then
+            Error(sprintf "gate-surface-guards.%s.active-env: must not be blank" surfaceName)
+        elif not (isPortableEnvironmentVariableName activeEnv) then
+            Error(sprintf "gate-surface-guards.%s.active-env: must be a valid environment variable name" surfaceName)
+        else
+            match args |> List.tryFindIndex isNull with
+            | Some index -> Error(sprintf "gate-surface-guards.%s.args[%d]: must be a string" surfaceName index)
+            | None ->
+                Ok(
+                    surface,
+                    { Command = command
+                      Args = args
+                      ActiveEnv = activeEnv }
+                )
+
+let private toGateSurfaceGuards
+    (dtos: Dictionary<string, GateSurfaceGuardDto>)
+    : Result<Map<GateSurface, GateSurfaceGuard>, string> =
+    match dtos with
+    | null -> Ok Map.empty
+    | entries ->
+        entries
+        |> Seq.map (fun kv -> toGateSurfaceGuard kv.Key kv.Value)
+        |> List.ofSeq
+        |> sequenceResults
+        |> Result.map Map.ofList
 
 let private toSurfaceScope (dto: SurfaceScopeDto) : SurfaceScope =
     { Scope = lookupVariant scopeKindNames dto.Scope |> Option.defaultValue Other
@@ -750,17 +821,20 @@ let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
                 toOptionList dto.Harness
                 |> List.mapi toHarnessEntry
                 |> sequenceResults
-                |> Result.map (fun harness ->
-                    { Harness = harness
-                      Gates = toOptionList dto.Gates |> List.map toGateEntry
-                      Doctor = toDoctorConfig dto.Doctor
-                      HarnessCatalog =
-                        match box dto.HarnessCatalog with
-                        | null -> None
-                        | _ ->
-                            Some
-                                { Document = dto.HarnessCatalog.Document
-                                  Verified = dto.HarnessCatalog.Verified } })
+                |> Result.bind (fun harness ->
+                    toGateSurfaceGuards dto.GateSurfaceGuards
+                    |> Result.map (fun gateSurfaceGuards ->
+                        { Harness = harness
+                          Gates = toOptionList dto.Gates |> List.map toGateEntry
+                          GateSurfaceGuards = gateSurfaceGuards
+                          Doctor = toDoctorConfig dto.Doctor
+                          HarnessCatalog =
+                            match box dto.HarnessCatalog with
+                            | null -> None
+                            | _ ->
+                                Some
+                                    { Document = dto.HarnessCatalog.Document
+                                      Verified = dto.HarnessCatalog.Verified } }))
         with ex ->
             Error ex.Message
 
