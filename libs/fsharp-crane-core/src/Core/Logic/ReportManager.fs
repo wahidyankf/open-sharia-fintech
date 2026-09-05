@@ -51,7 +51,7 @@ let getOrExtendChainWith (dependencies: Dependencies) (scope: string) : string =
 
     let chain = existingChain |> Option.defaultValue newId
     dependencies.EnsureDirectory "local-tmp"
-    dependencies.WriteAllText chainFile $"{now} {chain}"
+    dependencies.WriteAllText chainFile $"%d{now} %s{chain}"
     chain
 
 let getOrExtendChain (scope: string) : string =
@@ -67,16 +67,16 @@ let initReportWith (dependencies: Dependencies) (scope: string) (pdf: string) (m
     try
         let chain = getOrExtendChainWith dependencies scope
         let ts = utc7TimestampAt (dependencies.UtcNow())
-        let reportPath = $"{reportDir}/{scope}__{chain}__{ts}__audit.md"
+        let reportPath = $"%s{reportDir}/%s{scope}__%s{chain}__%s{ts}__audit.md"
         dependencies.EnsureDirectory reportDir
 
         let header =
-            $"# Audit Report\n\nScope: {scope}\nPDF: {pdf}\nMD: {md}\nStatus: IN_PROGRESS\n"
+            $"# Audit Report\n\nScope: %s{scope}\nPDF: %s{pdf}\nMD: %s{md}\nStatus: IN_PROGRESS\n"
 
         dependencies.WriteAllText reportPath header
         Ok reportPath
     with ex ->
-        Error $"Failed to init report: {ex.Message}"
+        Error $"Failed to init report: %s{ex.Message}"
 
 let initReport (scope: string) (pdf: string) (md: string) : Result<string, string> =
     initReportWith systemDependencies scope pdf md
@@ -84,14 +84,14 @@ let initReport (scope: string) (pdf: string) (md: string) : Result<string, strin
 let finalizeReportWith (dependencies: Dependencies) (reportPath: string) (status: string) : Result<unit, string> =
     try
         if not (dependencies.FileExists reportPath) then
-            Error $"Report not found: {reportPath}"
+            Error $"Report not found: %s{reportPath}"
         else
             let content = dependencies.ReadAllText reportPath
-            let updated = content.Replace("Status: IN_PROGRESS", $"Status: {status}")
+            let updated = content.Replace("Status: IN_PROGRESS", $"Status: %s{status}")
             dependencies.WriteAllText reportPath updated
             Ok()
     with ex ->
-        Error $"Failed to finalize report: {ex.Message}"
+        Error $"Failed to finalize report: %s{ex.Message}"
 
 let finalizeReport (reportPath: string) (status: string) : Result<unit, string> =
     finalizeReportWith systemDependencies reportPath status

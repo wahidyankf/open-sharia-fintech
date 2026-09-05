@@ -117,7 +117,7 @@ let private parseEntriesWith (dependencies: Dependencies) (path: string) : SkipL
 
                     walk (entry :: acc) nextRest
                 | None ->
-                    dependencies.Warn $"Warning: skipping malformed FALSE_POSITIVE heading: {line}"
+                    dependencies.Warn $"Warning: skipping malformed FALSE_POSITIVE heading: %s{line}"
                     walk acc nextRest
             | _ :: rest -> walk acc rest
 
@@ -204,7 +204,7 @@ let addWith
             appendEntryWith dependencies path entry
             Ok true
     with ex ->
-        Error $"Failed to add entry: {ex.Message}"
+        Error $"Failed to add entry: %s{ex.Message}"
 
 let add (mdBasename: string) (category: string) (description: string) : Result<bool, string> =
     addWith systemDependencies mdBasename category description
