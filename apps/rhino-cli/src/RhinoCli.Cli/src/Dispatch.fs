@@ -1520,24 +1520,31 @@ let private runGateRunLeaf (repoRoot: string) (args: string list) : int =
 
         2
     | Some surface ->
-        let only = longOptionValue "only" args
-        let group = longOptionValue "group" args
-
-        let commitMessageFile =
-            args
-            |> List.tryFindIndex (fun a -> a = "--")
-            |> Option.bind (fun index -> args |> List.skip (index + 1) |> List.tryHead)
-
-        let result =
-            match commitMessageFile with
-            | Some file -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group (Some file) (printf "%s")
-            | None -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group None (printf "%s")
-
-        match result with
-        | Ok() -> 0
+        match Gate.runSurfaceGuardAtRoot repoRoot surface args with
         | Error message ->
             eprintfn "Error: %s" message
             1
+        | Ok(Gate.SurfaceGuardExited exitCode) -> exitCode
+        | Ok Gate.ContinueWithoutSurfaceGuard ->
+            let only = longOptionValue "only" args
+            let group = longOptionValue "group" args
+
+            let commitMessageFile =
+                args
+                |> List.tryFindIndex (fun a -> a = "--")
+                |> Option.bind (fun index -> args |> List.skip (index + 1) |> List.tryHead)
+
+            let result =
+                match commitMessageFile with
+                | Some file ->
+                    Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group (Some file) (printf "%s")
+                | None -> Gate.runAtRootWithOnlyAndMessageFile repoRoot surface only group None (printf "%s")
+
+            match result with
+            | Ok() -> 0
+            | Error message ->
+                eprintfn "Error: %s" message
+                1
 
 /// `gate emit` [Repo-grounded — `commands/gate/emit.rs::run`]. `--surface`
 /// is required — see `runGateListLeaf`'s doc comment for why the check comes

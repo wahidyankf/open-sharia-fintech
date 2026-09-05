@@ -1,6 +1,6 @@
 /// Plain xunit tests for `RhinoCli.Cli.Dispatch.route`'s `gate run`/`gate
 /// list` leaves, driven **in-process** against a disposable Git fixture.
-/// `GateExecutionSteps.fs`'s 30 scenarios spawn the real, prebuilt CLI as a
+/// `GateExecutionSteps.fs`'s 35 scenarios spawn the real, prebuilt CLI as a
 /// subprocess (`gate run`'s `rhino-cli`-kind leaf spawns the current
 /// executable, so an in-process call would resolve to the test host) — that
 /// makes them invisible to coverlet's line-coverage instrumentation, which is
@@ -182,9 +182,63 @@ let private withPathPrepended (dir: string) (f: unit -> 'a) : 'a =
     finally
         Environment.SetEnvironmentVariable("PATH", original)
 
+let private withEnvironmentVariable (name: string) (value: string) (f: unit -> 'a) : 'a =
+    let original = Environment.GetEnvironmentVariable name
+
+    try
+        Environment.SetEnvironmentVariable(name, value)
+        f ()
+    finally
+        Environment.SetEnvironmentVariable(name, original)
+
 /// An always-runs `external`-kind gate declared on `pre-push`.
 let private alwaysRunsConfig =
     config (gate "always-runs" "check" "sh -c 'exit 0'" "external" "      pre-push: { scope: other }\n")
+
+let private guardedConfig (command: string) (args: string list) =
+    String.concat
+        "\n"
+        ([ "gate-surface-guards:"; "  pre-push:"; sprintf "    command: %s" command ]
+         @ (if List.isEmpty args then
+                []
+            else
+                "    args:" :: (args |> List.map (sprintf "      - '%s'")))
+         @ [ "    active-env: RHINO_TEST_GUARD_ACTIVE"; "gates: []"; "" ])
+
+[<Fact>]
+let ``route preserves the configured surface guard process exit code`` () =
+    let fx = GitFixture()
+    fx.Init()
+    fx.Write("repo-config.yml", guardedConfig "sh" [ "-c"; "exit 23" ])
+
+    let code, _, _ =
+        runCaptured (okRoot fx.Root) [| "gate"; "run"; "--surface=pre-push" |]
+
+    Assert.Equal(23, code)
+
+[<Fact>]
+let ``route fails closed when the configured surface guard cannot start`` () =
+    let fx = GitFixture()
+    fx.Init()
+    fx.Write("repo-config.yml", guardedConfig "./missing-guard" [])
+
+    let code, _, err =
+        runCaptured (okRoot fx.Root) [| "gate"; "run"; "--surface=pre-push" |]
+
+    Assert.Equal(1, code)
+    Assert.Contains("gate surface guard", err)
+
+[<Fact>]
+let ``route bypasses the configured surface guard when its marker is active`` () =
+    let fx = GitFixture()
+    fx.Init()
+    fx.Write("repo-config.yml", guardedConfig "./missing-guard" [])
+
+    let code, _, _ =
+        withEnvironmentVariable "RHINO_TEST_GUARD_ACTIVE" "active" (fun () ->
+            runCaptured (okRoot fx.Root) [| "gate"; "run"; "--surface=pre-push" |])
+
+    Assert.Equal(0, code)
 
 [<Fact>]
 let ``route runs an unconditional gate on pre-push`` () =

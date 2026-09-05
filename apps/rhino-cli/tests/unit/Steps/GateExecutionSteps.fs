@@ -1,4 +1,4 @@
-/// TickSpec step definitions binding `gate-execution.feature`'s 30 scenarios
+/// TickSpec step definitions binding `gate-execution.feature`'s 35 scenarios
 /// [Repo-grounded —
 /// `specs/apps/rhino/cli/behaviors/gate/gate-execution.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
@@ -126,6 +126,7 @@ type GateExecutionSteps() =
         dir
 
     let mutable succeeded: bool option = None
+    let mutable lastExitCode: int option = None
     let mutable output: string = ""
     let mutable pathOverride: string option = None
     let mutable ciChangedBase: string option = None
@@ -201,6 +202,7 @@ type GateExecutionSteps() =
         @ extra
 
     let recordRun (result: RunResult) =
+        lastExitCode <- Some result.ExitCode
         succeeded <- Some(result.ExitCode = 0)
         output <- result.Stdout + result.Stderr
 
@@ -218,6 +220,15 @@ type GateExecutionSteps() =
             [ "gate"; "run"; sprintf "--surface=%s" surface; sprintf "--group=%s" group ]
 
         recordRun (run prebuiltFsharpCli.Value args root (fixtureEnv []))
+
+    let runGateWithEnvironment (surface: string) (only: string option) (extra: (string * string) list) =
+        let args =
+            [ "gate"; "run"; sprintf "--surface=%s" surface ]
+            @ (only
+               |> Option.map (fun id -> [ sprintf "--only=%s" id ])
+               |> Option.defaultValue [])
+
+        recordRun (run prebuiltFsharpCli.Value args root (fixtureEnv extra))
 
     let appendRun (surface: string) (only: string) =
         runGate surface (Some only)
@@ -370,6 +381,122 @@ type GateExecutionSteps() =
 
                 (trimmed.StartsWith "name:" || trimmed.StartsWith "- name:")
                 && l.Contains stepNameFragment))
+
+    let recordingGateConfig (guard: string) : string =
+        guard
+        + config (gate "recording" "check" "sh record-leaf.sh" "external" "      pre-push: { scope: other }\n")
+
+    let prepareRecordingGate (guard: string) =
+        initGit ()
+        write "record-leaf.sh" "#!/bin/sh\nprintf 'leaf-ran\\n' > leaf.txt\n"
+        write "repo-config.yml" (recordingGateConfig guard)
+
+    // --- Optional whole-surface execution guard ---------------------------
+
+    [<Given>]
+    member _.``pre-push has a configured execution guard and a recording gate``() =
+        prepareRecordingGate (
+            String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  "    command: sh"
+                  "    args: [guard.sh]"
+                  "    active-env: RHINO_TEST_GUARD_ACTIVE"
+                  "" ]
+        )
+
+        write
+            "guard.sh"
+            "#!/bin/sh\nprintf '%s\\n' \"$@\" > guard-arguments.txt\ncount=0\nif [ -f guard-count.txt ]; then count=$(cat guard-count.txt); fi\ncount=$((count + 1))\nprintf '%s\\n' \"$count\" > guard-count.txt\nexport RHINO_TEST_GUARD_ACTIVE=1\nexec \"$@\"\n"
+
+    [<When>]
+    member _.``the guarded gate runs with an only selector``() = runGate "pre-push" (Some "recording")
+
+    [<Then>]
+    member _.``the guard receives the complete gate run arguments``() =
+        Assert.True(isSuccess (), sprintf "guarded gate failed: %s" output)
+
+        let arguments =
+            File.ReadAllLines(Path.Combine(root, "guard-arguments.txt")) |> Array.toList
+
+        Assert.True(arguments.Head.EndsWith("rhino-cli-fsharp", StringComparison.Ordinal))
+        Assert.Equal<string list>([ "gate"; "run"; "--surface=pre-push"; "--only=recording" ], arguments.Tail)
+
+    [<Then>]
+    member _.``the guard runs exactly once``() =
+        Assert.Equal("1\n", File.ReadAllText(Path.Combine(root, "guard-count.txt")))
+
+    [<Then>]
+    member _.``the selected gate still runs``() =
+        Assert.Equal("leaf-ran\n", File.ReadAllText(Path.Combine(root, "leaf.txt")))
+
+    [<When>]
+    member _.``the gate runs with the configured guard marker active``() =
+        runGateWithEnvironment "pre-push" (Some "recording") [ "RHINO_TEST_GUARD_ACTIVE", "already-active" ]
+
+    [<Then>]
+    member _.``the guard is bypassed``() =
+        Assert.True(isSuccess (), sprintf "active-marker gate failed: %s" output)
+        Assert.False(File.Exists(Path.Combine(root, "guard-arguments.txt")))
+        Assert.False(File.Exists(Path.Combine(root, "guard-count.txt")))
+
+    [<Given>]
+    member _.``pre-push has a configured execution guard that exits with code 23``() =
+        initGit ()
+        write "exit-23.sh" "#!/bin/sh\nexit 23\n"
+
+        write
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  "    command: sh"
+                  "    args: [exit-23.sh]"
+                  "    active-env: RHINO_TEST_GUARD_ACTIVE"
+                  "gates: []"
+                  "" ])
+
+    [<Given>]
+    member _.``pre-push has a missing configured execution guard and a recording gate``() =
+        prepareRecordingGate (
+            String.concat
+                "\n"
+                [ "gate-surface-guards:"
+                  "  pre-push:"
+                  "    command: ./missing-guard"
+                  "    active-env: RHINO_TEST_GUARD_ACTIVE"
+                  "" ]
+        )
+
+    [<Given>]
+    member _.``pre-push has no execution guard and has a recording gate``() = prepareRecordingGate ""
+
+    [<When>]
+    member _.``the guarded pre-push surface runs``() =
+        runGate
+            "pre-push"
+            (if File.Exists(Path.Combine(root, "record-leaf.sh")) then
+                 Some "recording"
+             else
+                 None)
+
+    [<Then>]
+    member _.``gate run exits with code 23``() =
+        Assert.Equal<int option>(Some 23, lastExitCode)
+
+    [<Then>]
+    member _.``gate run fails without running the selected gate``() =
+        Assert.False(isSuccess ())
+        Assert.Contains("surface guard", output)
+        Assert.False(File.Exists(Path.Combine(root, "leaf.txt")))
+
+    [<Then>]
+    member _.``the selected gate runs without a guard invocation``() =
+        Assert.True(isSuccess (), sprintf "unguarded gate failed: %s" output)
+        Assert.Equal("leaf-ran\n", File.ReadAllText(Path.Combine(root, "leaf.txt")))
+        Assert.False(File.Exists(Path.Combine(root, "guard-arguments.txt")))
 
     // --- Rhino CLI kind receives derived files -----------------------------
 
@@ -1434,6 +1561,26 @@ module private FeatureRunner =
 
     let gateDeclarationFeaturePath: string =
         Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-declaration.feature")
+
+[<Fact>]
+let ``A configured surface guard re-executes the complete gate run exactly once`` () =
+    FeatureRunner.run "A configured surface guard re-executes the complete gate run exactly once"
+
+[<Fact>]
+let ``An active surface guard marker prevents recursive re-execution`` () =
+    FeatureRunner.run "An active surface guard marker prevents recursive re-execution"
+
+[<Fact>]
+let ``A surface guard child exit code is preserved`` () =
+    FeatureRunner.run "A surface guard child exit code is preserved"
+
+[<Fact>]
+let ``A configured surface guard fails closed when it cannot start`` () =
+    FeatureRunner.run "A configured surface guard fails closed when it cannot start"
+
+[<Fact>]
+let ``An unconfigured surface executes gates directly`` () =
+    FeatureRunner.run "An unconfigured surface executes gates directly"
 
 [<Fact>]
 let ``Rhino CLI kind receives derived files`` () =

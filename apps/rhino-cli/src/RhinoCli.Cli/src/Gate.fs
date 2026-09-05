@@ -909,6 +909,52 @@ let private parseRunSurface (surface: string) : Result<GateSurface, string> =
     | "ci" -> Ok Ci
     | other -> Error(sprintf "unknown gate surface \"%s\"" other)
 
+/// Result of checking the optional whole-surface execution guard. An active
+/// marker or absent declaration continues in this process; otherwise the
+/// complete invocation has already run as the configured guard's child and
+/// its exact exit code must become this process's exit code.
+type SurfaceGuardRun =
+    | ContinueWithoutSurfaceGuard
+    | SurfaceGuardExited of exitCode: int
+
+/// Re-executes an entire `gate run` invocation through the configured
+/// tool-neutral surface guard. The guard receives its configured arguments,
+/// the current Rhino executable, then `gate run` and `gateRunArgs` unchanged.
+/// Its `active-env` marker is expected to be present in the re-executed child,
+/// which prevents recursive wrapping.
+let runSurfaceGuardAtRoot
+    (repoRoot: string)
+    (surface: string)
+    (gateRunArgs: string list)
+    : Result<SurfaceGuardRun, string> =
+    match parseRunSurface surface with
+    | Error message -> Error message
+    | Ok parsedSurface ->
+        match load repoRoot with
+        | Error message -> Error message
+        | Ok config ->
+            match Map.tryFind parsedSurface config.GateSurfaceGuards with
+            | None -> Ok ContinueWithoutSurfaceGuard
+            | Some guard ->
+                let activeValue = Environment.GetEnvironmentVariable guard.ActiveEnv
+
+                if not (String.IsNullOrEmpty activeValue) then
+                    Ok ContinueWithoutSurfaceGuard
+                else
+                    try
+                        let currentExe = Diagnostics.Process.GetCurrentProcess().MainModule.FileName
+
+                        let exitCode =
+                            runInherited
+                                guard.Command
+                                (guard.Args @ [ currentExe; "gate"; "run" ] @ gateRunArgs)
+                                repoRoot
+                                []
+
+                        Ok(SurfaceGuardExited exitCode)
+                    with ex ->
+                        Error(sprintf "gate surface guard for \"%s\" failed to start: %s" surface ex.Message)
+
 /// Resolves the gates selected by a declared CI group, excluding hand-wired
 /// members: they are dispatched by their own dedicated CI workflow job, not
 /// by `--group` [Repo-grounded — `gate/run.rs::resolve_group_gates`].
