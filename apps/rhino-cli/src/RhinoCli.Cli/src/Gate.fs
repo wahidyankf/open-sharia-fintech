@@ -921,9 +921,14 @@ let unguardedNpmCiSteps (steps: string list) : string list =
 
         let named =
             lines
-            |> Array.exists (fun line -> line.StartsWith("name:") || line.StartsWith("- name:"))
+            |> Array.exists (fun line ->
+                line.StartsWith("name:", StringComparison.Ordinal)
+                || line.StartsWith("- name:", StringComparison.Ordinal))
 
-        let guarded = lines |> Array.exists (fun line -> line.StartsWith("if:"))
+        let guarded =
+            lines
+            |> Array.exists (fun line -> line.StartsWith("if:", StringComparison.Ordinal))
+
         invokesNpmCi && (not named || not guarded))
 
 /// Runs a process to completion, inheriting stdio, returning its exit code
