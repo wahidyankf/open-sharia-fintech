@@ -8,12 +8,57 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set persistent .NET install directory on self-hosted runners
+      if: runner.environment == 'self-hosted'
+      shell: bash
+      run: |
+        # $HOME/.dotnet-ose remains unprivileged and runner-writable while surviving between jobs.
+        # GitHub-hosted runners intentionally use setup-dotnet's default so preinstalled SDKs remain
+        # reusable instead of being downloaded into an ephemeral runner.temp directory every job.
+        echo "DOTNET_INSTALL_DIR=$HOME/.dotnet-ose" >> "$GITHUB_ENV"
+        echo "DOTNET_ROOT=$HOME/.dotnet-ose" >> "$GITHUB_ENV"
+
+    - name: Probe for an already-persisted SDK
+      if: runner.environment == 'self-hosted'
+      id: probe
+      shell: bash
+      run: |
+        # Source of truth for the pinned major: this action's own `dotnet-version` default (10.0.x).
+        want="$(printf '%s' "${{ inputs.dotnet-version }}" | cut -d. -f1)"
+        if [ -x "$DOTNET_INSTALL_DIR/dotnet" ] \
+           && "$DOTNET_INSTALL_DIR/dotnet" --list-sdks 2>/dev/null | grep -q "^${want}\."; then
+          echo "present=true" >> "$GITHUB_OUTPUT"
+          echo "SETUP_DOTNET_REUSED_PERSISTENT_SDK=true — SDK ${want}.x already at ${DOTNET_INSTALL_DIR}"
+        else
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "SETUP_DOTNET_REUSED_PERSISTENT_SDK=false — installing SDK ${want}.x"
+        fi
+
     - name: Setup .NET
+      if: runner.environment == 'github-hosted' || steps.probe.outputs.present != 'true'
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - name: Cache NuGet packages
+    - name: Add the persisted SDK to PATH
+      if: runner.environment == 'self-hosted'
+      shell: bash
+      run: echo "$DOTNET_INSTALL_DIR" >> "$GITHUB_PATH"
+
+    # Pull requests restore the default branch's cache but never create a merge-ref-scoped copy.
+    # Self-hosted runners already retain $HOME between jobs, so sending the same package tree to
+    # GitHub storage adds transfer time and one ~328 MB cache entry per PR without improving reuse.
+    - name: Restore NuGet packages from Actions cache
+      if: runner.environment == 'github-hosted' && github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.fsproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
+    - name: Cache NuGet packages on main
+      if: runner.environment == 'github-hosted' && github.ref == 'refs/heads/main'
       uses: actions/cache@v5
       with:
         path: ~/.nuget/packages
@@ -23,8 +68,14 @@ runs:
 
     - name: Install Fantomas
       shell: bash
-      run: dotnet tool install -g fantomas
+      # A persisted $HOME/.dotnet/tools from a prior job already has this tool installed, which
+      # makes a bare `install` fail; `update` is idempotent for both the first-ever and repeat case.
+      run: dotnet tool install -g fantomas || dotnet tool update -g fantomas
 
     - name: Install fsharplint
       shell: bash
-      run: dotnet tool install -g dotnet-fsharplint
+      run: dotnet tool install -g dotnet-fsharplint || dotnet tool update -g dotnet-fsharplint
+
+    - name: Add dotnet tools to PATH
+      shell: bash
+      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH

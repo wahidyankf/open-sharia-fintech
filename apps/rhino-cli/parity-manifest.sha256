@@ -1,5 +1,5 @@
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
-13dc47ceb27f2f30b0ca90c193fc63320b1b00fef944a280b17f976c33b3145e  apps/rhino-cli/project.json
+3cb823cae9c07435c7a7029ec445fe7aced4d1abd23d48ba488201ad75903995  apps/rhino-cli/project.json
 22b1d0652e8937a20c83841966e4f8b1c451d671d34dd27fb5fa13f11d340a4d  apps/rhino-cli/src/.gitignore
 c141b1053959ee068093be264caca9e34e9bc505e5ea602b81c621d35bc730a4  apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
 12002d21e09962fad95d9dd8aef219b00707f67513823b918c4bf42797bdf4d9  apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs

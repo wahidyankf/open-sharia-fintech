@@ -15,7 +15,7 @@ when_to_use: "Read this index to find the right CI/CD Conventions child document
 - [Docker Conventions](./docker-conventions.md) — The Dockerfile template, compose file roles, and .dockerignore pattern. Use when writing a Dockerfile, compose file, or .dockerignore.
 - [GitHub Actions Conventions — File Organisation and Composite Actions](./github-actions-file-organisation-and-composite-actions.md) — The path pattern for workflow and action files. Use when creating or locating a workflow file or action.
 - [Expression Safety](./github-actions-expression-safety.md) — Two GitHub Actions expression-injection and falsy-value antipatterns. Use when a run step references a ${{ ... }} expression.
-- [Artifact Retention](./github-actions-artifact-retention.md) — Why every upload-artifact step must declare retention-days. Use when a workflow step uploads a build artifact or test report.
+- [GitHub Actions Storage](./github-actions-storage.md) — Storage limits for artifacts, Packages, and caches. Use when a workflow creates or retains GitHub-hosted data.
 - [GitHub Actions Conventions — Reusable Workflows and CRON Scheduling](./github-actions-reusable-workflows-and-cron-scheduling.md) — Reusable workflow structure and the staggered CRON tracks. Use when writing a reusable workflow or scheduling a CRON job.
 - [Naming Conventions and Adding a New App to CI](./naming-conventions-and-adding-a-new-app-to-ci.md) — App/workflow filename grammar and the new-app checklist. Use when naming or onboarding a new app.
 - [E2E Test Pairing Rule and Environment Variable Standard](./e2e-test-pairing-rule-and-environment-variable-standard.md) — E2E runner pairing and required env-variable rules. Use when wiring an E2E runner or env variable.
